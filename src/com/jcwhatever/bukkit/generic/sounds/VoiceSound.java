@@ -1,7 +1,7 @@
 package com.jcwhatever.bukkit.generic.sounds;
 
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 
 public class VoiceSound extends ResourceSound {
 

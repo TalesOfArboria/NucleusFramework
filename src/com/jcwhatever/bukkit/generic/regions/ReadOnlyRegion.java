@@ -1,6 +1,6 @@
 package com.jcwhatever.bukkit.generic.regions;
 
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;

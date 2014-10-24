@@ -6,7 +6,7 @@ import com.jcwhatever.bukkit.generic.items.ItemStackSerializer.SerializerOutputT
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

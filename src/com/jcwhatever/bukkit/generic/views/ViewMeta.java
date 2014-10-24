@@ -1,7 +1,7 @@
 package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -5,7 +5,6 @@ import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
 import com.jcwhatever.bukkit.generic.file.IGenericsSerializable;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
-import com.sun.istack.internal.Nullable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -21,6 +20,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**

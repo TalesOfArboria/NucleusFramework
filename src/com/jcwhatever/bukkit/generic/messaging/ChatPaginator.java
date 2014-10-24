@@ -2,7 +2,7 @@ package com.jcwhatever.bukkit.generic.messaging;
 
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
