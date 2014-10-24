@@ -3,7 +3,6 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.Copy
 apply plugin: 'java'
 
 sourceCompatibility = 1.7
-baseName = "GenericsLib"
 version = '1.0'
 
 
