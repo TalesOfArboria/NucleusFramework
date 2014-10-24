@@ -46,6 +46,8 @@ jar {
         attributes("Implementation-Title": "GenericsLib",
                    "Implementation-Version": version)
     }
+
+    with jar
 }
 
 
