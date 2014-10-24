@@ -61,6 +61,18 @@ processResources {
     from 'plugin.yml'
 }
 
+jar {
+
+    archiveName = projectName + '.jar'
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    manifest {
+        attributes("Implementation-Title": projectName,
+                "Implementation-Version": version)
+    }
+
+}
 
 jar {
 
