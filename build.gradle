@@ -1,8 +1,11 @@
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Copy
+
 apply plugin: 'java'
 
 sourceCompatibility = 1.7
+baseName = "GenericsLib"
 version = '1.0'
-jar.archiveName="GenericsLib.jar"
+
 
 repositories {
     mavenCentral()
@@ -30,6 +33,7 @@ sourceSets {
     }
 }
 
+/*
 jar {
     manifest {
         attributes("Implementation-Title": "GenericsLib",
@@ -40,3 +44,18 @@ jar {
         ["plugin.yml"]
     }
 }
+
+
+
+task clearJar(type: Delete) {
+    delete 'build/libs/ProjectName.jar'
+}
+*/
+task makeJar(type: Jar) {
+    from('plugin.yml')
+    into('plugin.yml')
+    //include('classes.jar')
+    //rename ('classes.jar', 'ProjectName.jar')
+}
+
+makeJar.dependsOn(build)
