@@ -6,7 +6,7 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
-version = '1.0'
+version = '0.27'
 archivesBaseName = projectName + '-' + archivesBaseName
 
 repositories {
