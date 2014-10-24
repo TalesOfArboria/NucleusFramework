@@ -14,9 +14,6 @@ if (hasProperty("teamcity")) {
     version = '0'
 }
 
-
-archiveName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName
-
 repositories {
     mavenCentral()
 }
@@ -66,6 +63,9 @@ processResources {
 
 
 jar {
+
+    archiveName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName
+
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
     manifest {
