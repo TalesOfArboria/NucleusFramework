@@ -2,6 +2,7 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.7
 version = '1.0'
+jar.archiveName="GenericsLib.jar"
 
 repositories {
     mavenCentral()
