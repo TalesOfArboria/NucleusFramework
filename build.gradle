@@ -3,6 +3,7 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.Copy
 apply plugin: 'java'
 
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
 version = '1.0'
 
 
