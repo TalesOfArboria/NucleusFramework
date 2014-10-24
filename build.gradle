@@ -1,4 +1,5 @@
 def projectName = 'GenericsLib'
+def majorVersion = '0'
 
 defaultTasks 'build'
 
@@ -6,8 +7,15 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
-version = '0.27'
-archivesBaseName = projectName + '-' + archivesBaseName
+
+if (hasProperty("teamcity")) {
+    version = teamcity["build.number"]
+}else {
+    version = '0'
+}
+
+
+archivesName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName
 
 repositories {
     mavenCentral()
