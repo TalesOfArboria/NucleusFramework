@@ -40,6 +40,8 @@ processResources {
 
 
 jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
     manifest {
         attributes("Implementation-Title": "GenericsLib",
                    "Implementation-Version": version)
