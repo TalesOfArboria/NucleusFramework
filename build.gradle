@@ -61,7 +61,7 @@ processResources {
     from 'plugin.yml'
 }
 
-jar {
+task jar1(type: Jar) {
 
     archiveName = projectName + '.jar'
 
@@ -71,10 +71,9 @@ jar {
         attributes("Implementation-Title": projectName,
                 "Implementation-Version": version)
     }
-
 }
 
-jar {
+task jar2(type: Jar) {
 
     archiveName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName + '.jar'
 
@@ -82,10 +81,11 @@ jar {
 
     manifest {
         attributes("Implementation-Title": projectName,
-                   "Implementation-Version": version)
+                "Implementation-Version": version)
     }
-
 }
 
 
-
+artifacts {
+    archives jar1, jar2
+}
