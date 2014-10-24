@@ -64,7 +64,7 @@ processResources {
 
 jar {
 
-    archiveName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName
+    archiveName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName + '.jar'
 
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
