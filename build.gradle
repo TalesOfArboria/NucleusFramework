@@ -17,17 +17,24 @@ configurations {
 sourceSets {
 
     main {
-
         compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
 
         java {
             srcDir 'src'
         }
+
         /*
-        resources {
-            srcDir 'src/resources'
-        }
-        */
+resources {
+    srcDir 'src/resources'
+}
+*/
+
+    }
+
+    test {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
     }
 }
 
