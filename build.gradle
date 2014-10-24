@@ -52,7 +52,6 @@ task clearJar(type: Delete) {
 */
 task makeJar(type: Jar) {
     from('plugin.yml')
-    into('plugin.yml')
     //include('classes.jar')
     //rename ('classes.jar', 'ProjectName.jar')
 }
