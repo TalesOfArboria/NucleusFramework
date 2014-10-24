@@ -1,4 +1,4 @@
-def projectName = 'PVStar-API'
+def projectName = 'GenericsLib'
 def majorVersion = '0'
 def buildBy = System.properties['user.name']
 
