@@ -1,15 +1,23 @@
 def projectName = 'GenericsLib'
 def majorVersion = '0'
-def buildBy = System.properties['user.name']
+def buildBy
 
 // Set version number
 if (hasProperty("teamcity")) {
     version = majorVersion + '.' + teamcity["build.number"] + '.git-' + teamcity["build.vcs.number"]
     buildBy = teamcity["build.triggeredBy.username"]
+
+    if (!buildBy) {
+        buildBy = teamcity["build.triggeredBy"]
+    }
+
 }else {
     version = majorVerion + '.000.git-unknown'
 }
 
+if (!buildBy) {
+    buildBy = System.properties['user.name']
+}
 
 defaultTasks 'build'
 
