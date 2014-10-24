@@ -38,49 +38,49 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="jdk" jdkName="JavaSE-1.7" jdkType="JavaSDK" />
     <orderEntry type="module-library" scope="PROVIDED">
-      <library name="ProtocolLib-3.2.0.jar">
+      <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/ProtocolLib-3.2.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../depends/bukkit-1.7.9-R0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../depends/bukkit-1.7.9-R0.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../depends/BarAPI.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="PROVIDED">
-      <library name="WorldEdit.jar">
+      <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/WorldEdit.jar!/" />
+          <root url="jar://$MODULE_DIR$/../depends/ProtocolLib-3.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="PROVIDED">
-      <library name="Vault.jar">
+      <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/Vault.jar!/" />
+          <root url="jar://$MODULE_DIR$/../depends/Vault.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="PROVIDED">
-      <library name="BarAPI.jar">
+      <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/BarAPI.jar!/" />
+          <root url="jar://$MODULE_DIR$/../depends/WorldEdit.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library name="bukkit-1.7.9-R0.1-20140501.232652-9.jar">
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/bukkit-1.7.9-R0.1-20140501.232652-9.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="http://jd.bukkit.org/rb/apidocs/" />
-        </JAVADOC>
         <SOURCES />
       </library>
     </orderEntry>
