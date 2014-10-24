@@ -61,7 +61,20 @@ processResources {
     from 'plugin.yml'
 }
 
-task jar1(type: Jar) {
+jar {
+
+    archiveName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName + '.jar'
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    manifest {
+        attributes("Implementation-Title": projectName,
+                   "Implementation-Version": version)
+    }
+
+}
+
+task simpleNamedJar(type: Jar) {
 
     archiveName = projectName + '.jar'
 
@@ -71,21 +84,13 @@ task jar1(type: Jar) {
         attributes("Implementation-Title": projectName,
                 "Implementation-Version": version)
     }
+
+    with jar
 }
-
-task jar2(type: Jar) {
-
-    archiveName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName + '.jar'
-
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-
-    manifest {
-        attributes("Implementation-Title": projectName,
-                "Implementation-Version": version)
-    }
-}
-
 
 artifacts {
-    archives jar1, jar2
+    archives simpleNamedJar
 }
+
+
+
