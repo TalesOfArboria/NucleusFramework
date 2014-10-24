@@ -6,7 +6,6 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 version = '1.0'
 
-
 repositories {
     mavenCentral()
 }
@@ -33,30 +32,21 @@ sourceSets {
     }
 }
 
-/*
+processResources {
+    inputs.property "version", version
+    inputs.property "mcversion", project.minecraft.version
+
+    // Include in final JAR
+    from 'plugin.yml'
+}
+
+
 jar {
     manifest {
         attributes("Implementation-Title": "GenericsLib",
                    "Implementation-Version": version)
     }
-
-    from {
-        ["plugin.yml"]
-    }
 }
 
 
 
-task clearJar(type: Delete) {
-    delete 'build/libs/ProjectName.jar'
-}
-*/
-task makeJar(type: Jar) {
-    baseName = "GenericsLib"
-    //include('classes.jar')
-    //rename ('classes.jar', 'ProjectName.jar')
-    from('plugin.yml')
-    with jar
-}
-
-makeJar.dependsOn(build)
