@@ -1,0 +1,103 @@
+package com.jcwhatever.bukkit.generic.utils;
+
+import com.sun.istack.internal.Nullable;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Generic utilities
+ */
+public class Utils {
+
+    private Utils() {}
+
+    /**
+     * Execute a command as console.
+     *
+     * @param cmd  The command to execute.
+     */
+	public static void executeAsConsole(String cmd) {
+		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
+	}
+
+    /**
+     * Execute a command as a player.
+     *
+     * @param p    The player.
+     * @param cmd  The command to execute.
+     */
+	public static void executeAsPlayer(Player p, String cmd) {
+		p.performCommand(cmd);
+	}
+
+    /**
+     * Parse the {@code UUID} from the supplied string.
+     * If parsing fails, null is returned.
+     *
+     * @param id  The id to parse.
+     */
+    @Nullable
+	public static UUID getId(String id) {
+
+		try {
+			return UUID.fromString(id);
+		}
+		catch (IllegalArgumentException iae) {
+			return null;
+		}
+	}
+
+    /**
+     * Parse the {@code UUID}'s from the supplied collection
+     * of strings. If a string cannot be parsed, it is not
+     * included in the results.
+     *
+     * @param uuids  The ids to parse.
+     */
+	public static List<UUID> getIds(Collection<String> uuids) {
+
+		List<UUID> results = new ArrayList<UUID>(uuids.size());
+
+		for (String raw : uuids) {
+			UUID id = Utils.getId(raw);
+			if (id == null)
+				continue;
+
+			results.add(id);
+		}
+		return results;
+	}
+
+    /**
+     * Parse the {@code UUID}'s from the supplied comma
+     * delimited string of ids. If an Id cannot be parsed,
+     * it is not included in the results.
+     *
+     * @param uuidStr  The string Ids to parse.
+     */
+	public static List<UUID> getIds(String uuidStr) {
+		uuidStr = uuidStr.toLowerCase();
+		String[] rawIds = TextUtils.PATTERN_COMMA.split(uuidStr);
+
+		List<UUID> results = new ArrayList<UUID>(rawIds.length);
+
+        for (String rawId : rawIds) {
+            String trimmedId = rawId.trim();
+
+            UUID id = Utils.getId(trimmedId);
+            if (id == null)
+                continue;
+
+            results.add(id);
+        }
+
+		return results;
+	}
+
+}
+

@@ -1,0 +1,291 @@
+package com.jcwhatever.bukkit.generic.utils;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class FileUtils {
+
+    /**
+     * UTF-8 character set string
+     */
+    public static final String CHARSET_UTF8 = "UTF-8";
+
+    /**
+     * Specifies how sub directories are traversed when
+     * searching for script files.
+     */
+    public enum DirectoryTraversal {
+        /**
+         * Do not traverse sub directories.
+         */
+        NONE,
+        /**
+         * Traverse all sub directories.
+         */
+        RECURSIVE
+    }
+
+    /**
+     * Get all non-directory files in a folder.
+     *
+     * @param folder     The folder to search for files in.
+     * @param traversal  The directory traversal of the search.
+     */
+    public static List<File> getFiles(File folder, DirectoryTraversal traversal) {
+        PreCon.notNull(folder);
+        PreCon.notNull(traversal);
+        PreCon.isValid(folder.isDirectory());
+
+        File[] files = folder.listFiles();
+        if (files == null)
+            return new ArrayList<>(0);
+
+        List<File> results = new ArrayList<File>(files.length);
+
+        for (File file : files) {
+
+            if (file.isDirectory() && traversal == DirectoryTraversal.RECURSIVE) {
+                List<File> traversed = getFiles(file, DirectoryTraversal.RECURSIVE);
+                results.addAll(traversed);
+            }
+            else if (!file.isDirectory()) {
+                results.add(file);
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * Get the extension of a file, not including a dot.
+     *
+     * @param file  The file to check.
+     * @return
+     */
+    public static String getFileExtension(File file) {
+        PreCon.notNull(file);
+
+        return getFileExtension(file.getName());
+    }
+
+    /**
+     * Get the extension of a file name, not including a dot.
+     *
+     * @param fileName  The file name to check.
+     * @return
+     */
+    public static String getFileExtension(String fileName) {
+        PreCon.notNull(fileName);
+
+        int i = fileName.lastIndexOf('.');
+        if (i != -1) {
+            return fileName.substring(i + 1);
+        }
+
+        return "";
+    }
+
+    /**
+     * Get the name of a file not including the extension.
+     *
+     * @param file The file to check.
+     */
+    public static String getNameWithoutExtension(File file) {
+        PreCon.notNull(file);
+
+        return getNameWithoutExtension(file.getName());
+    }
+
+    /**
+     * Get the name of a file not including the extension.
+     *
+     * @param fileName  The file name to check.
+     */
+    public static String getNameWithoutExtension(String fileName) {
+        PreCon.notNull(fileName);
+
+        int i = fileName.lastIndexOf('.');
+        if (i != -1) {
+            return fileName.substring(0, i);
+        }
+
+        return fileName;
+    }
+
+    /**
+     * Get the relative path of a file using a base path
+     * to specify the absolute portion.
+     *
+     * @param base  The absolute portion of the path.
+     * @param path  The absolute path to convert to a relative path.
+     */
+    public static String getRelative(File base, File path) {
+        String absBase = base.getAbsolutePath();
+        String absPath = path.getAbsolutePath();
+
+        if (absPath.indexOf(absBase) != 0)
+            return absPath;
+
+        return absPath.substring(absBase.length());
+    }
+
+    /**
+     * Get a text file from a class resource.
+     *
+     * @param cls           The class to get a resource stream from.
+     * @param resourcePath  The path of the file within the class jar file.
+     * @param charSet       The encoding type used by the text file.
+     *
+     * @throws java.lang.IllegalArgumentException
+     */
+    @Nullable
+    public static String scanTextFile(Class<?> cls, String resourcePath, String charSet) {
+        PreCon.notNull(cls);
+        PreCon.notNullOrEmpty(resourcePath);
+        PreCon.notNullOrEmpty(charSet);
+
+        InputStream input = cls.getResourceAsStream(resourcePath);
+        if (input == null)
+            return null;
+
+        StringBuilder result = new StringBuilder(250);
+
+        Scanner scanner = new Scanner(input, charSet);
+
+        while (scanner.hasNextLine()) {
+            result.append(scanner.nextLine());
+            result.append('\n');
+        }
+
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result.toString();
+    }
+
+
+    /**
+     * Get text file contents as a string.
+     *
+     * @param file      The file to scan.
+     * @param charSet   The encoding type used by the text file.
+     *
+     * @throws java.lang.IllegalArgumentException
+     */
+    @Nullable
+    public static String scanTextFile(File file, String charSet) {
+        PreCon.notNull(file);
+        PreCon.notNullOrEmpty(charSet);
+
+        InputStream input = null;
+
+        try {
+            input = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (input == null)
+            return null;
+
+        StringBuilder result = new StringBuilder((int)file.length());
+
+        Scanner scanner = new Scanner(input, charSet);
+
+        while (scanner.hasNextLine()) {
+            result.append(scanner.nextLine());
+            result.append('\n');
+        }
+
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Extract a class resource into a file.
+     *
+     * @param cls           The class to get a resource stream from.
+     * @param resourcePath  The path of the file within the class jar file.
+     * @param outDir        The output directory.
+     *
+     * @throws java.lang.RuntimeException
+     */
+    @Nullable
+    public static File extractResource(Class<?> cls, String resourcePath, File outDir) {
+        PreCon.notNull(cls);
+        PreCon.notNull(resourcePath);
+        PreCon.notNull(outDir);
+
+        if (!outDir.exists() && !outDir.mkdirs())
+            throw new RuntimeException("Failed to create output folder(s).");
+
+        File outFile = new File(outDir, getFilename(resourcePath));
+        if (outFile.exists())
+            return outFile;
+
+        InputStream input = cls.getResourceAsStream("/res/" + resourcePath);
+        if (input == null)
+            return null;
+
+        FileOutputStream output = null;
+        try {
+
+            if (!outFile.createNewFile()) {
+                return null;
+            }
+
+            output = new FileOutputStream(outFile);
+
+            byte[] buffer = new byte[4096];
+
+            int read;
+            while ((read = input.read(buffer)) > 0) {
+                output.write(buffer, 0, read);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+
+            try {
+                input.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (output != null)
+                    output.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return outFile;
+    }
+
+    private static String getFilename(String resource) {
+        String[] components = TextUtils.PATTERN_FILEPATH_SLASH.split(resource);
+        return components[components.length - 1];
+    }
+
+
+}
+

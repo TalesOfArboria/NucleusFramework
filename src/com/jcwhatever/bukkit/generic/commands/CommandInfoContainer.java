@@ -1,0 +1,145 @@
+package com.jcwhatever.bukkit.generic.commands;
+
+import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatPattern;
+import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.Plugin;
+
+import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localized;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
+import javax.annotation.Nullable;
+
+/**
+ * Container for a commands {@code ICommandInfo} annotation.
+ */
+public class CommandInfoContainer {
+
+    private static final FormatPattern PATTERN_COMMAND = new FormatPattern("\\{command}");
+    
+    private final ICommandInfo _commandInfo;
+    private final String _masterCommandName;
+    private final Plugin _plugin;
+    private final String _usage;
+
+    /**
+     * Constructor.
+     *
+     * @param plugin             The commands owning plugin.
+     * @param commandInfo        The command info annotation.
+     * @param masterCommandName  The name of the top level command in the commands hierarchy.
+     */
+    public CommandInfoContainer(Plugin plugin, ICommandInfo commandInfo, @Nullable String masterCommandName) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(commandInfo);
+
+        _plugin = plugin;
+        _commandInfo = commandInfo;
+        _masterCommandName = masterCommandName != null ? masterCommandName : commandInfo.command()[0];
+        _usage = TextUtils.formatCustom(TextUtils.formatPluginInfo(plugin, commandInfo.usage()),
+                                                    PATTERN_COMMAND.getEntry(_masterCommandName));
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+
+    /**
+     * Determine if the command can be seen in help views.
+     */
+    public boolean isHelpVisible() {
+        return _commandInfo.isHelpVisible();
+    }
+
+    /**
+     * Get the default permission.
+     */
+    public PermissionDefault getPermissionDefault() {
+        return _commandInfo.permissionDefault();
+    }
+
+    /**
+     * Get the parent name sanity check.
+     *
+     * <p>This is optional and may return an empty string.</p>
+     *
+     * <p>If the string returned is not empty, the parent must have the same name
+     * as the string returned.</p>
+     */
+    public String getParentName() {
+        return _commandInfo.parent();
+    }
+
+    /**
+     * Get the name of the top level command in the commands
+     * hierarchy.
+     */
+    public String getMasterCommandName() {
+        return _masterCommandName;
+    }
+
+    /**
+     * Get the primary command name.
+     */
+    public String getCommandName() {
+        return _commandInfo.command()[0];
+    }
+
+    /**
+     * Get all command names.
+     */
+    public String[] getCommandNames() {
+        return _commandInfo.command();
+    }
+
+    /**
+     * Get the usage text.
+     */
+    public String getUsage() {
+        return _usage;
+    }
+
+    /**
+     * Get defined static parameter names/options.
+     */
+    public String[] getStaticParams() {
+        return _commandInfo.staticParams();
+    }
+
+    /**
+     * Get defined floating parameter names/options.
+     */
+    public String[] getFloatingParams() {
+        return _commandInfo.floatingParams();
+    }
+
+    /**
+     * Get parameter descriptions.
+     */
+    public String[] getParamDescriptions() {
+        return _commandInfo.paramDescriptions();
+    }
+
+    /**
+     * Get a language localized description of the command.
+     */
+    @Localized
+    @Nullable
+    public String getDescription() {
+        return Lang.get(_plugin, _commandInfo.description());
+    }
+
+    /**
+     * Get a language localized long description of the command.
+     */
+    @Localized
+    public String getLongDescription() {
+        return Lang.get(_plugin, _commandInfo.longDescription());
+    }
+    
+
+}

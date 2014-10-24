@@ -1,0 +1,905 @@
+package com.jcwhatever.bukkit.generic.storage;
+
+import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.items.ItemStackSerializer.SerializerOutputType;
+import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
+import com.jcwhatever.bukkit.generic.utils.BatchTracker;
+import com.jcwhatever.bukkit.generic.utils.EnumUtils;
+import com.jcwhatever.bukkit.generic.utils.LocationUtils;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+public class YamlDataStorage implements IDataNode {
+
+    private final BatchTracker _batch = new BatchTracker();
+    private final Object _sync = new Object();
+    private final Plugin _plugin;
+
+    private LinkedList<StorageSaveHandler> _saveHandlers = new LinkedList<StorageSaveHandler>();
+    private YamlConfiguration _yaml = new YamlConfiguration();
+    private File _file;
+    private String _yamlString;
+    private Map<String, Boolean> _booleans;
+    private Map<String, Long> _numbers;
+    private Map<String, Double> _doubles;
+    private Map<String, String> _strings;
+    private Map<String, ItemStack[]> _items;
+    private boolean _isLoaded;
+
+
+    public YamlDataStorage(Plugin plugin, DataPath storagePath) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(storagePath);
+
+        _file = convertStoragePathToFile(plugin, storagePath);
+
+        if (!_file.exists()) {
+            try {
+                if (!_file.createNewFile()) {
+                    throw new RuntimeException("Failed to crate initial Yaml file.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        _plugin = plugin;
+        _booleans = new HashMap<String, Boolean>(50);
+        _numbers = new HashMap<String, Long>(100);
+        _doubles = new HashMap<String, Double>(100);
+        _strings = new HashMap<String, String>(100);
+        _items = new HashMap<String, ItemStack[]>(50);
+        _yaml.options().indent(2);
+    }
+
+    public YamlDataStorage(Plugin plugin, File configFile) {
+
+        _file = configFile;
+        _plugin = plugin;
+        _booleans = new HashMap<String, Boolean>(50);
+        _numbers = new HashMap<String, Long>(100);
+        _doubles = new HashMap<String, Double>(100);
+        _strings = new HashMap<String, String>(100);
+        _items = new HashMap<String, ItemStack[]>(50);
+        _yaml.options().indent(2);
+    }
+
+    public YamlDataStorage(Plugin plugin, String yamlString) {
+
+        _yamlString = yamlString;
+        _plugin = plugin;
+        _booleans = new HashMap<String, Boolean>(50);
+        _numbers = new HashMap<String, Long>(100);
+        _doubles = new HashMap<String, Double>(100);
+        _strings = new HashMap<String, String>(100);
+        _items = new HashMap<String, ItemStack[]>(50);
+        _yaml.options().indent(2);
+    }
+
+    public static File convertStoragePathToFile(Plugin plugin, DataPath storagePath) {
+        String[] pathComp = storagePath.getPath();
+
+        if (pathComp.length == 0)
+            throw new IllegalArgumentException("Storage path cannot be empty.");
+
+        File directory = plugin.getDataFolder();
+
+        for (int i = 0; i < pathComp.length - 1; i++) {
+            directory = new File(directory, pathComp[i]);
+        }
+
+        if (!directory.exists() && !directory.mkdirs())
+            throw new RuntimeException("Failed to create folders corresponding to supplied data path.");
+
+        return new File(directory, pathComp[pathComp.length - 1] + ".yml");
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+
+    @Override
+    public boolean isLoaded() {
+
+        return _isLoaded;
+    }
+
+    @Override
+    public boolean load() {
+
+        synchronized (_sync) {
+            try {
+
+                if (_file != null) {
+                    if (!_file.exists() && !_file.createNewFile()) {
+                        return false;
+                    }
+                    _yaml.load(_file);
+                }
+                else if (_yamlString != null) {
+                    _yaml.loadFromString(_yamlString);
+                }
+                else {
+                    return false;
+                }
+                reloadMaps();
+            } catch (Exception e) {
+
+                if (_file != null)
+                    Messenger.severe(null, "The config-file '{0}' failed to load.", _file.getName());
+
+                e.printStackTrace();
+                _isLoaded = false;
+                return false;
+            }
+            _isLoaded = true;
+            return true;
+        }
+    }
+
+
+    @Override
+    public void loadAsync() {
+
+        loadAsync(null);
+    }
+
+
+    @Override
+    public void loadAsync(@Nullable final StorageLoadHandler loadHandler) {
+
+        if (loadHandler != null && loadHandler._dataNode == null)
+            loadHandler._dataNode = this;
+
+        Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getInstance(), new Runnable() {
+
+            @Override
+            public void run() {
+
+                synchronized (_sync) {
+
+                    boolean loaded = load();
+
+                    if (loadHandler != null) {
+
+                        StorageLoadResult result = new StorageLoadResult(loaded, loadHandler);
+
+                        loadHandler.onFinish(result);
+
+                    }
+                }
+
+            }
+
+        });
+
+    }
+
+
+    public void reloadMaps() {
+
+        synchronized (_sync) {
+
+            for (String key : _yaml.getKeys(true)) {
+                Object value = _yaml.get(key);
+
+                if (value instanceof Boolean) {
+                    _booleans.put(key, (Boolean) value);
+                    continue;
+                }
+
+                if (value instanceof Integer) {
+                    _numbers.put(key, ((Integer) value).longValue());
+                    continue;
+                }
+
+                if (value instanceof Long) {
+                    _numbers.put(key, (Long) value);
+                    continue;
+                }
+
+                if (value instanceof Double) {
+                    _doubles.put(key, (Double) value);
+                    continue;
+                }
+
+                if (!(value instanceof String))
+                    continue;
+
+                String str = (String) value;
+
+                if (str.indexOf("%ItemStack[]% ") == 0) {
+                    str = str.substring(14);
+                    _items.put(key, ItemStackHelper.parse(str));
+                    continue;
+                }
+
+                _strings.put(key, (String) value);
+            }
+        }
+    }
+
+
+    @Override
+    public boolean save() {
+
+        if (_batch.isRunning())
+            return false;
+
+        synchronized (_sync) {
+
+            boolean isSaved;
+            try {
+
+                if (_file != null) {
+                    _yaml.save(_file);
+                }
+                else if (_yamlString != null) {
+                    _yamlString = _yaml.saveToString();
+                }
+                else {
+                    return false;
+                }
+
+                isSaved = true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                isSaved = false;
+            }
+
+            if (_saveHandlers.isEmpty())
+                return isSaved;
+
+            final boolean saveResult = isSaved;
+
+            // return results on main thread
+            Scheduler.runTaskLater(GenericsLib.getInstance(), new Runnable() {
+
+                @Override
+                public void run() {
+
+                    while (!_saveHandlers.isEmpty()) {
+                        StorageSaveHandler saveHandler = _saveHandlers.removeFirst();
+                        saveHandler.onFinish(new StorageSaveResult(saveResult, saveHandler));
+                    }
+
+                }
+
+            });
+
+            return isSaved;
+        }
+    }
+
+
+    @Override
+    public void saveAsync(@Nullable final StorageSaveHandler saveHandler) {
+
+        // set data node on save handler
+        if (saveHandler != null && saveHandler._dataNode == null)
+            saveHandler._dataNode = this;
+
+        // check that 1 or more batch operations are not in progress.
+        if (_batch.isRunning()) {
+
+            // put away the save handler for later
+            if (saveHandler != null)
+                _saveHandlers.add(saveHandler);
+
+            return;
+        }
+
+        // save data node on alternate thread
+        Scheduler.runTaskLaterAsync(GenericsLib.getInstance(), 1, new Runnable() {
+
+            @Override
+            public void run() {
+
+                final boolean isSaved = save();
+
+                if (saveHandler != null) {
+                    // return results on main thread
+                    Scheduler.runTaskLater(GenericsLib.getInstance(), new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
+                        }
+
+                    });
+                }
+
+            }
+
+        });
+
+    }
+
+
+    @Override
+    public boolean save(File destination) {
+
+        synchronized (_sync) {
+            try {
+                getYamlConfiguration().save(destination);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public void saveAsync(final File destination, @Nullable final StorageSaveHandler saveHandler) {
+
+        // set data node on save handler
+        if (saveHandler != null && saveHandler._dataNode == null)
+            saveHandler._dataNode = this;
+
+        // save on alternate thread
+        Scheduler.runTaskLaterAsync(GenericsLib.getInstance(), 1, new Runnable() {
+
+            @Override
+            public void run() {
+
+                final boolean isSaved = save(destination);
+
+                if (saveHandler != null) {
+
+                    // return results on main thread
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(GenericsLib.getInstance(), new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
+                        }
+
+                    });
+
+                }
+
+            }
+
+        });
+    }
+
+
+    @Override
+    public void runBatchOperation(BatchOperation batch) {
+
+        runBatchOperation(batch, this);
+    }
+
+
+    void runBatchOperation(final BatchOperation batch, IDataNode config) {
+
+        synchronized (_sync) {
+            _batch.start();
+            batch.run(config);
+            _batch.end();
+
+            if (!_batch.isRunning()) {
+                saveAsync(new StorageSaveHandler() {
+
+                    @Override
+                    public void onFinish(StorageSaveResult result) {
+
+                        batch.onFinish();
+                    }
+                });
+            }
+        }
+    }
+
+
+    @Override
+    public void preventSave(BatchOperation batch) {
+
+        preventSave(batch, this);
+    }
+
+
+    void preventSave(BatchOperation batch, IDataNode config) {
+
+        synchronized (_sync) {
+            _batch.start();
+            batch.run(config);
+            _batch.end();
+        }
+    }
+
+
+    public String getHeader() {
+
+        synchronized (_sync) {
+            return _yaml.options().header();
+        }
+    }
+
+
+    public void setHeader(String header) {
+
+        synchronized (_sync) {
+            _yaml.options().header(header);
+        }
+    }
+
+
+    public YamlConfiguration getYamlConfiguration() {
+
+        synchronized (_sync) {
+            return _yaml;
+        }
+    }
+
+
+    @Override
+    public Object get(String keyPath) {
+
+        synchronized (_sync) {
+            return _yaml.get(keyPath);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Object get(String keyPath, DataType type) {
+        PreCon.notNullOrEmpty(keyPath);
+        PreCon.notNull(type);
+
+        if (!hasNode(keyPath))
+            return null;
+
+        switch (type) {
+            case INTEGER:
+                return getInteger(keyPath);
+            case LONG:
+                return getLong(keyPath);
+            case DOUBLE:
+                return getDouble(keyPath);
+            case BOOLEAN:
+                return getBoolean(keyPath);
+            case STRING:
+                return getString(keyPath);
+            case UUID:
+                return getUUID(keyPath);
+            case LOCATION:
+                return getLocation(keyPath);
+            case ITEMSTACKS:
+                return getItemStacks(keyPath);
+            default:
+                return null;
+        }
+    }
+
+
+    @Override
+    public boolean getBoolean(String keyPath) {
+
+        return getBoolean(keyPath, false);
+    }
+
+
+    @Override
+    public boolean getBoolean(String keyPath, boolean def) {
+
+        synchronized (_sync) {
+            Boolean result = _booleans.get(keyPath);
+            return result != null
+                    ? result
+                    : def;
+        }
+    }
+
+
+    @Override
+    public int getInteger(String keyPath) {
+
+        return getInteger(keyPath, 0);
+    }
+
+
+    @Override
+    public int getInteger(String keyPath, int def) {
+
+        synchronized (_sync) {
+            Long result = _numbers.get(keyPath);
+            return result != null
+                    ? result.intValue()
+                    : def;
+        }
+    }
+
+
+    @Override
+    public long getLong(String keyPath) {
+
+        return getLong(keyPath, 0);
+    }
+
+
+    @Override
+    public long getLong(String keyPath, long def) {
+
+        synchronized (_sync) {
+            Long result = _numbers.get(keyPath);
+            return result != null
+                    ? result
+                    : def;
+        }
+    }
+
+
+    @Override
+    public double getDouble(String keyPath) {
+
+        return getDouble(keyPath, 0.0);
+    }
+
+
+    @Override
+    public double getDouble(String keyPath, double def) {
+
+        synchronized (_sync) {
+            Double result = _doubles.get(keyPath);
+            return result != null
+                    ? result
+                    : def;
+        }
+    }
+
+
+    @Override
+    @Nullable
+    public String getString(String keyPath) {
+
+        return getString(keyPath, null);
+    }
+
+
+    @Override
+    @Nullable
+    public String getString(String keyPath, @Nullable String def) {
+
+        synchronized (_sync) {
+            String result = _strings.get(keyPath);
+            return result != null
+                    ? result
+                    : def;
+        }
+    }
+
+
+    @Override
+    @Nullable
+    public UUID getUUID(String keyPath) {
+
+        return getUUID(keyPath, null);
+    }
+
+
+    @Override
+    @Nullable
+    public UUID getUUID(String keyPath, @Nullable UUID def) {
+
+        synchronized (_sync) {
+            String result = _strings.get(keyPath);
+            if (result == null)
+                return def;
+            try {
+                return UUID.fromString(result);
+            } catch (IllegalArgumentException iae) {
+                iae.printStackTrace();
+                return def;
+            }
+        }
+    }
+
+
+    @Override
+    @Nullable
+    public Location getLocation(String keyPath) {
+
+        return getLocation(keyPath, null);
+    }
+
+    @Override
+    @Nullable
+    public Location getLocation(String keyPath, @Nullable Location def) {
+
+        synchronized (_sync) {
+            String coords = getString(keyPath);
+            if (coords != null) {
+                try {
+                    return LocationUtils.parseLocation(coords);
+                } catch (IllegalArgumentException unused) {
+                    return def;
+                }
+            }
+            return def;
+        }
+    }
+
+
+    @Override
+    @Nullable
+    public ItemStack[] getItemStacks(String keyPath) {
+
+        return getItemStacks(keyPath, (ItemStack[]) null);
+    }
+
+
+    @Override
+    @Nullable
+    public ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack def) {
+
+        return getItemStacks(keyPath, new ItemStack[]{
+                def
+        });
+    }
+
+
+    @Override
+    @Nullable
+    public ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack[] def) {
+
+        synchronized (_sync) {
+            ItemStack[] result = _items.get(keyPath);
+            return result != null
+                    ? result
+                    : def;
+        }
+    }
+
+
+    @Override
+    @Nullable
+    public <T extends Enum<T>> T getEnum(String keyPath, Class<T> enumClass) {
+
+        return getEnum(keyPath, null, enumClass);
+    }
+
+
+    @Override
+    @Nullable
+    public <T extends Enum<T>> T getEnum(String keyPath, @Nullable T def, Class<T> enumClass) {
+
+        String string = getString(keyPath);
+        return EnumUtils.getEnum(string, def, enumClass);
+    }
+
+
+    @Override
+    @Nullable
+    public Enum<?> getEnumGeneric(String keyPath, @Nullable Enum<?> def, Class<? extends Enum<?>> enumClass) {
+
+        String string = getString(keyPath);
+        return EnumUtils.getGenericEnum(string, def, enumClass);
+    }
+
+
+    @Override
+    public Set<String> getSubNodeNames() {
+
+        return getSubNodeNames("");
+    }
+
+
+    @Override
+    public Set<String> getSubNodeNames(String nodePath) {
+        PreCon.notNull(nodePath);
+
+        synchronized (_sync) {
+            ConfigurationSection section;
+            if (_yaml.get(nodePath) == null) {
+                return new HashSet<>(0);
+            }
+            return (section = _yaml.getConfigurationSection(nodePath)) != null
+                    ? section.getKeys(false)
+                    : new HashSet<String>(0);
+        }
+    }
+
+
+    @Override
+    @Nullable
+    public List<String> getStringList(String keyPath, @Nullable List<String> def) {
+
+        synchronized (_sync) {
+            if (_yaml.get(keyPath) == null) {
+                return def;
+            }
+            return _yaml.getStringList(keyPath);
+        }
+    }
+
+    @Override
+    public boolean set(String keyPath, Object value) {
+
+        synchronized (_sync) {
+            if (value instanceof UUID) {
+                value = String.valueOf(value);
+                _strings.put(keyPath, (String) value);
+            }
+            else if (value instanceof Boolean) {
+                _booleans.put(keyPath, (Boolean) value);
+            }
+            else if (value instanceof Integer) {
+                _numbers.put(keyPath, ((Integer) value).longValue());
+            }
+            else if (value instanceof Long) {
+                _numbers.put(keyPath, (Long) value);
+            }
+            else if (value instanceof Double) {
+                _doubles.put(keyPath, (Double) value);
+            }
+            else if (value instanceof String) {
+                _strings.put(keyPath, (String) value);
+            }
+            else if (value instanceof Location) {
+                value = LocationUtils.locationToString((Location) value);
+                _strings.put(keyPath, value.toString());
+            }
+            else if (value instanceof ItemStack) {
+                _items.put(keyPath, new ItemStack[]{
+                        ((ItemStack) value).clone()
+                });
+                value = "%ItemStack[]% " + ItemStackHelper.serializeToString((ItemStack) value, SerializerOutputType.RAW);
+            }
+            else if (value instanceof ItemStack[]) {
+                ItemStack[] stored = ((ItemStack[]) value).clone();
+                for (int i = 0; i < stored.length; i++) {
+                    if (stored[i] != null) {
+                        stored[i] = stored[i].clone();
+                    }
+                }
+                _items.put(keyPath, stored);
+                value = "%ItemStack[]% " + ItemStackHelper.serializeToString((ItemStack[]) value, SerializerOutputType.RAW);
+            }
+            else if (value instanceof Enum<?>) {
+                Enum<?> e = (Enum<?>) value;
+                value = e.name();
+            }
+
+            if (value == null) {
+
+                _booleans.remove(keyPath);
+                _numbers.remove(keyPath);
+                _doubles.remove(keyPath);
+                _strings.remove(keyPath);
+                _items.remove(keyPath);
+            }
+
+            _yaml.set(keyPath, value);
+            return true;
+        }
+    }
+
+
+    @Override
+    public void remove() {
+
+        Set<String> subNodes = getSubNodeNames();
+        if (subNodes != null && !subNodes.isEmpty()) {
+            for (String subNode : subNodes) {
+                remove(subNode);
+            }
+        }
+    }
+
+
+    @Override
+    public void remove(String nodePath) {
+
+        set(nodePath, null);
+    }
+
+
+    public void clear(String path) {
+
+        set(path, null);
+    }
+
+
+    @Override
+    public String getNodeName() {
+
+        return null;
+    }
+
+
+    @Override
+    public YamlDataStorage getRoot() {
+        return this;
+    }
+
+
+    @Override
+    public boolean hasNode(String nodePath) {
+
+        return get(nodePath) != null;
+    }
+
+    @Override
+    public IDataNode getNode(String nodePath) {
+        return new YamlDataNode(this, nodePath);
+    }
+
+    @Override
+    public void clear() {
+
+        synchronized (_sync) {
+            Set<String> keys = getSubNodeNames();
+            for (String key : keys) {
+                set(key, null);
+            }
+        }
+    }
+
+
+    public void assertNodes(File defaultConfig) {
+
+        assertNodes(defaultConfig, "");
+    }
+
+
+    void assertNodes(File defaultConfig, final String destNode) {
+
+        synchronized (_sync) {
+
+            final YamlDataStorage config = new YamlDataStorage(_plugin, defaultConfig);
+            final YamlDataStorage self = this;
+
+            config.loadAsync(new StorageLoadHandler() {
+
+                @Override
+                public void onFinish(StorageLoadResult result) {
+
+                    IDataNode dest = destNode.isEmpty()
+                            ? self
+                            : self.getNode(destNode);
+
+                    Set<String> keys = config.getSubNodeNames();
+                    if (keys == null)
+                        return;
+
+                    for (String key : keys) {
+                        if (dest.get(key) == null)
+                            continue;
+
+                        dest.set(key, config.get(key));
+                    }
+
+                }
+
+            });
+
+        }
+    }
+
+}

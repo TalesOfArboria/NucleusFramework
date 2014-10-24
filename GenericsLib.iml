@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/ProtocolLib-3.2.0.jar!/" />
+    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/WorldEdit.jar!/" />
+    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/Vault.jar!/" />
+    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/Citizens2.0.12.jar!/" />
+    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/BarAPI.jar!/" />
+    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/bukkit-1.7.9-R0.1-20140501.232652-9.jar!/" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/../jcGenerics/src" expected_position="0" />
+    </src_description>
+  </component>
+  <component name="FacetManager">
+    <facet type="JRebel" name="JRebel">
+      <configuration>
+        <option name="autosync" value="false" />
+        <option name="deleteUnindexed" value="true" />
+        <option name="manualXML" value="false" />
+        <option name="masterModuleName" />
+        <option name="remotingEnabled" value="true" />
+        <option name="scanAllFiles" value="false" />
+        <option name="secure" value="false" />
+        <option name="url" value="http://localhost:5006/" />
+        <option name="xmlDir" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/../jcGenerics/bin" />
+    <exclude-output />
+    <annotation-paths>
+      <root url="file://$MODULE_DIR$/.." />
+    </annotation-paths>
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="jdk" jdkName="JavaSE-1.7" jdkType="JavaSDK" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="ProtocolLib-3.2.0.jar">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/ProtocolLib-3.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="WorldEdit.jar">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/WorldEdit.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="Vault.jar">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/Vault.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="BarAPI.jar">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/BarAPI.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="bukkit-1.7.9-R0.1-20140501.232652-9.jar">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Documents/Eclipse/Libs/bukkit-1.7.9-R0.1-20140501.232652-9.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="http://jd.bukkit.org/rb/apidocs/" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>
+

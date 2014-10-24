@@ -1,0 +1,11 @@
+name: jcGenerics
+author: JC The Pants
+main: com.jcwhatever.bukkit.generic.GenericsLib
+version: 0.27
+depend: [ProtocolLib]
+softdepend: [Vault, BarAPI]
+commands:
+    jcg:
+        description: Base command for jcGenerics
+        usage: |
+            ERROR!
