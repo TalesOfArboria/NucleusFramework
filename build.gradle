@@ -33,8 +33,6 @@ sourceSets {
 }
 
 processResources {
-    inputs.property "version", version
-    inputs.property "mcversion", project.minecraft.version
 
     // Include in final JAR
     from 'plugin.yml'
