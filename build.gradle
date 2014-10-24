@@ -1,4 +1,4 @@
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Copy
+defaultTasks 'build'
 
 apply plugin: 'java'
 
