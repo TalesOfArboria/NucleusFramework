@@ -10,17 +10,17 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-     provided files('C:/JavaRepo/bukkit/bukkit-1.7.9-R0.jar',
-                    'C:/JavaRepo/bukkit/BarAPI.jar',
-                    'C:/JavaRepo/bukkit/ProtocolLib-3.2.0.jar',
-                    'C:/JavaRepo/bukkit/Vault.jar',
-                    'C:/JavaRepo/bukkit/WorldEdit.jar')
+configurations {
+    provided
+    provided.extendsFrom(compile)
 }
 
 sourceSets {
 
     main {
+
+        compileClasspath += configurations.provided
+
         java {
             srcDir 'src'
         }
@@ -31,6 +31,15 @@ sourceSets {
         */
     }
 }
+
+dependencies {
+    provided files('C:/JavaRepo/bukkit/bukkit-1.7.9-R0.jar',
+            'C:/JavaRepo/bukkit/BarAPI.jar',
+            'C:/JavaRepo/bukkit/ProtocolLib-3.2.0.jar',
+            'C:/JavaRepo/bukkit/Vault.jar',
+            'C:/JavaRepo/bukkit/WorldEdit.jar')
+}
+
 
 processResources {
 
