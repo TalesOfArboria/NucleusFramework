@@ -5,6 +5,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 version = '1.0'
+archivesBaseName = 'GenericsLib'
 
 repositories {
     mavenCentral()
@@ -58,7 +59,7 @@ jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
     manifest {
-        attributes("Implementation-Title": "GenericsLib",
+        attributes("Implementation-Title": archivesBaseName,
                    "Implementation-Version": version)
     }
 
