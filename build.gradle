@@ -15,8 +15,8 @@ if (hasProperty("teamcity")) {
     version = majorVerion + '.000.git-unknown'
 }
 
-if (buildBy == null) {
-    buildBy = System.properties['agent.name']
+if (buildBy == null && hasProperty("agent")) {
+    buildBy = agent["name"]
 }
 
 
