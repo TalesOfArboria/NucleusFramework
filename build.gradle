@@ -15,7 +15,7 @@ if (hasProperty("teamcity")) {
 }
 
 
-archivesName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName
+archiveName = projectName + '.' + majorVersion + '.' + version + '.' + archivesBaseName
 
 repositories {
     mavenCentral()

@@ -1,7 +1,7 @@
 name: jcGenerics
 author: JC The Pants
 main: com.jcwhatever.bukkit.generic.GenericsLib
-version: 0.27
+version: 0-beta
 depend: [ProtocolLib]
 softdepend: [Vault, BarAPI]
 commands:
