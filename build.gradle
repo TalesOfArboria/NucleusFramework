@@ -11,14 +11,13 @@ if (hasProperty("teamcity")) {
         buildBy = teamcity["build.triggeredBy"]
     }
 
+    if (!buildBy) {
+        buildBy = teamcity["agent.name"]
+    }
+
 }else {
     version = majorVerion + '.000.git-unknown'
 }
-
-if (buildBy == null && hasProperty("agent")) {
-    buildBy = agent["name"]
-}
-
 
 if (buildBy == null) {
     buildBy = System.properties['user.name']
