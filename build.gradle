@@ -62,7 +62,6 @@ jar {
                    "Implementation-Version": version)
     }
 
-    with jar
 }
 
 
