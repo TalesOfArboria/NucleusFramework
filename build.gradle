@@ -28,3 +28,14 @@ sourceSets {
         */
     }
 }
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "GenericsLib",
+                   "Implementation-Version": version)
+    }
+
+    from {
+        ["plugin.yml"]
+    }
+}
