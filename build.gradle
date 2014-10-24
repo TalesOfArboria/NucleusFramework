@@ -51,9 +51,11 @@ task clearJar(type: Delete) {
 }
 */
 task makeJar(type: Jar) {
-    from('plugin.yml')
+    baseName = "GenericsLib"
     //include('classes.jar')
     //rename ('classes.jar', 'ProjectName.jar')
+    from('plugin.yml')
+    with jar
 }
 
 makeJar.dependsOn(build)
