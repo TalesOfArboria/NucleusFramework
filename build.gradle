@@ -16,6 +16,11 @@ if (hasProperty("teamcity")) {
 }
 
 if (buildBy == null) {
+    buildBy = System.properties['agent.name']
+}
+
+
+if (buildBy == null) {
     buildBy = System.properties['user.name']
 }
 
