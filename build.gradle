@@ -1,0 +1,36 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+def repositoryPath = 'C:\\JavaRepo'
+
+repositories {
+    mavenCentral()
+
+    flatDir {
+        dirs repositoryPath
+    }
+}
+
+dependencies {
+    compile files('bukkit/bukkit-1.7.9-R0.jar')
+    compile files('bukkit/BarAPI.jar')
+    compile files('bukkit/ProtocolLib-3.2.0.jar')
+    compile files('bukkit/Vault.jar')
+    compile files('bukkit/WorldEdit.jar')
+}
+
+sourceSets {
+
+    main {
+        java {
+            srcDir 'src'
+        }
+        /*
+        resources {
+            srcDir 'src/resources'
+        }
+        */
+    }
+}
