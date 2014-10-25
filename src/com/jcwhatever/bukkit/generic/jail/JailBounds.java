@@ -1,6 +1,7 @@
 package com.jcwhatever.bukkit.generic.jail;
 
 import com.jcwhatever.bukkit.generic.regions.Region;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -24,6 +25,9 @@ public class JailBounds extends Region {
      */
     JailBounds(Plugin plugin, JailManager jailManager, String name, IDataNode settings) {
         super(plugin, name, settings);
+
+        PreCon.notNull(jailManager);
+
         _jailManager = jailManager;
     }
 
@@ -34,6 +38,8 @@ public class JailBounds extends Region {
      */
     @Override
     protected boolean canDoPlayerLeave(Player p) {
+        PreCon.notNull(p);
+
         return _jailManager.isPrisoner(p);
     }
 
@@ -43,6 +49,7 @@ public class JailBounds extends Region {
      */
     @Override
     protected void onPlayerLeave (Player p) {
+        PreCon.notNull(p);
 
         // prevent player from leaving jail
         Location tpLocation = _jailManager.getRandomTeleport();

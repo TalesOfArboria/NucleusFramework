@@ -10,9 +10,10 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.DateUtils.TimeRound;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.Rand;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.Utils;
-import com.jcwhatever.bukkit.generic.utils.Rand;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -83,7 +84,7 @@ public class JailManager {
         loadSettings();
 
         // check for prisoner release every 1 minute.
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(GenericsLib.getInstance(), _warden, 20, 1200);
+        Scheduler.runTaskRepeat(GenericsLib.getInstance(),  20, 1200, _warden);
 
         BukkitEventListener _eventListener = new BukkitEventListener();
         Bukkit.getPluginManager().registerEvents(_eventListener, plugin);
@@ -109,11 +110,12 @@ public class JailManager {
      * @param p        The player to imprison.
      * @param minutes  The number of minutes to imprison the player.
      */
+    @Nullable
     public JailSession imprison(Player p, int minutes) {
         PreCon.notNull(p);
 
         // can't teleport to jail if there is none.
-        if (_bounds == null)
+        if (!_bounds.isDefined())
             return null;
 
         // get release time
@@ -436,7 +438,7 @@ public class JailManager {
             }
 
             // re-spawn imprisoned players in jail
-            if (_bounds != null) {
+            if (_bounds.isDefined()) {
 
                 JailSession session = _sessionMap.get(event.getPlayer().getUniqueId());
                 if (session != null && !session.isExpired()) {

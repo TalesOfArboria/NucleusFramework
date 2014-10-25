@@ -4,6 +4,7 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Location;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -58,7 +59,6 @@ public class JailSession {
 
     /**
      * Determine if the session is expired.
-     * @return
      */
     public boolean isExpired() {
         return _expires.compareTo(new Date()) <= 0;
@@ -86,7 +86,7 @@ public class JailSession {
     }
 
     // remove the session from the data node.
-    void expire(IDataNode dataNode) {
+    void expire(@Nullable IDataNode dataNode) {
         if (dataNode != null) {
             dataNode.remove();
             dataNode.saveAsync(null);
