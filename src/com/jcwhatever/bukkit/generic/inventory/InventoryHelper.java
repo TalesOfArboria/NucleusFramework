@@ -19,15 +19,14 @@ import java.util.List;
 public class InventoryHelper {
 
     private InventoryHelper() {}
-	
-	/**
-	 * Gets the number of items of the specified stack that 
-	 * can be stored in the specified inventory.
+
+    /**
+     * Gets the number of items of the specified stack that
+     * can be stored in the specified inventory.
      *
-	 * @param inventory  The inventory to check.
-	 * @param itemStack  The {@code ItemStack} to check.
-	 * @return
-	 */
+     * @param inventory  The inventory to check.
+     * @param itemStack  The {@code ItemStack} to check.
+     */
     public static int getMax(Inventory inventory, ItemStack itemStack) {
         return getMax(inventory.getContents(), itemStack, ItemStackComparer.getDurability(), -1);
     }
@@ -55,15 +54,15 @@ public class InventoryHelper {
     public static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
         return getMax(contents, itemStack, comparer, -1);
     }
-	
-	/**
-	 * Determine if there is enough room in the specified inventory
-	 * for the specified stack.
-	 * @param inventory  The inventory to check.
-	 * @param itemStack  The {@code ItemStack} to check.
-	 * @return
-	 */
-	public static boolean hasRoom(Inventory inventory, ItemStack itemStack) {
+
+    /**
+     * Determine if there is enough room in the specified inventory
+     * for the specified stack.
+     * @param inventory  The inventory to check.
+     * @param itemStack  The {@code ItemStack} to check.
+     * @return
+     */
+    public static boolean hasRoom(Inventory inventory, ItemStack itemStack) {
         return hasRoom(inventory, itemStack, itemStack.getAmount());
     }
 
@@ -75,21 +74,20 @@ public class InventoryHelper {
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
-	public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+    public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
         return hasRoom(inventory, itemStack, comparer, itemStack.getAmount());
     }
-	
-	/**
-	 * Determine if there is enough room in the specified inventory for
-	 * items of the same type as the specified stack in the amount of
-	 * the specified quantity.
+
+    /**
+     * Determine if there is enough room in the specified inventory for
+     * items of the same type as the specified stack in the amount of
+     * the specified quantity.
      *
-	 * @param inventory  The inventory to check.
-	 * @param itemStack  The {@code ItemStack} to check.
-	 * @param qty        The amount of space needed.
-	 * @return
-	 */
-	public static boolean hasRoom(Inventory inventory, ItemStack itemStack, int qty) {
+     * @param inventory  The inventory to check.
+     * @param itemStack  The {@code ItemStack} to check.
+     * @param qty        The amount of space needed.
+     */
+    public static boolean hasRoom(Inventory inventory, ItemStack itemStack, int qty) {
         return getMax(inventory.getContents(), itemStack, ItemStackComparer.getDurability(), qty) >= qty;
     }
 
@@ -103,7 +101,7 @@ public class InventoryHelper {
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
      */
-	public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+    public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
         return getMax(inventory.getContents(), itemStack, comparer, qty) >= qty;
     }
 
@@ -117,7 +115,7 @@ public class InventoryHelper {
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
      */
-	public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+    public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
         return getMax(contents, itemStack, comparer, qty) >= qty;
     }
 
@@ -128,9 +126,9 @@ public class InventoryHelper {
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
      */
-	public static int count (Inventory inventory, ItemStack itemStack) {
-	    return count(inventory, itemStack, ItemStackComparer.getDurability());
-	}
+    public static int count (Inventory inventory, ItemStack itemStack) {
+        return count(inventory, itemStack, ItemStackComparer.getDurability());
+    }
 
     /**
      * Count the number of items of the same type as the specified item stack
@@ -140,7 +138,7 @@ public class InventoryHelper {
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
-	public static int count (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+    public static int count (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
         return count(inventory.getContents(), itemStack, comparer, -1);
     }
 
@@ -152,7 +150,7 @@ public class InventoryHelper {
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
-	public static int count (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
+    public static int count (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
         return count(contents, itemStack, comparer, -1);
     }
 
@@ -163,9 +161,9 @@ public class InventoryHelper {
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
      */
-	public static boolean has(Inventory inventory, ItemStack itemStack) {
-	    return has (inventory, itemStack, ItemStackComparer.getDurability());
-	}
+    public static boolean has(Inventory inventory, ItemStack itemStack) {
+        return has (inventory, itemStack, ItemStackComparer.getDurability());
+    }
 
     /**
      * Determine if the specified inventory contains an item stack
@@ -174,9 +172,11 @@ public class InventoryHelper {
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
-     * @return
      */
-	public static boolean has(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+    public static boolean has(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+        PreCon.notNull(inventory);
+        PreCon.notNull(itemStack);
+        PreCon.notNull(comparer);
 
         ItemStack[] contents = inventory.getContents();
 
@@ -207,7 +207,7 @@ public class InventoryHelper {
         }
 
         return false;
-	}
+    }
 
     /**
      * Determine if the specified {@code ItemStack} array contains an item stack
@@ -217,18 +217,21 @@ public class InventoryHelper {
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
-	public static boolean has(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-		
-		for (ItemStack item : contents) {
-			if (item == null || item.getType() == Material.AIR)
-				continue;
-			
-			if (comparer.isSame(itemStack, item))
-				return true;
-		}
-		
-		return false;
-	}
+    public static boolean has(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
+        PreCon.notNull(contents);
+        PreCon.notNull(itemStack);
+        PreCon.notNull(comparer);
+
+        for (ItemStack item : contents) {
+            if (item == null || item.getType() == Material.AIR)
+                continue;
+
+            if (comparer.isSame(itemStack, item))
+                return true;
+        }
+
+        return false;
+    }
 
     /**
      * Determine if the specified inventory contains the specified quantity
@@ -237,9 +240,8 @@ public class InventoryHelper {
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param qty        The quantity.
-     * @return
      */
-	public static boolean has (Inventory inventory, ItemStack itemStack, int qty) {
+    public static boolean has (Inventory inventory, ItemStack itemStack, int qty) {
         return has(inventory, itemStack, ItemStackComparer.getDurability(), qty);
     }
 
@@ -252,7 +254,7 @@ public class InventoryHelper {
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
      */
-	public static boolean has (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+    public static boolean has (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
         return count(inventory, itemStack, comparer, qty) == qty;
     }
 
@@ -264,12 +266,15 @@ public class InventoryHelper {
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
-     * @return
      */
-	public static boolean has (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-        
+    public static boolean has (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        PreCon.notNull(contents);
+        PreCon.notNull(itemStack);
+        PreCon.notNull(comparer);
+        PreCon.positiveNumber(qty);
+
         int count = count(contents, itemStack, comparer, qty);
-        
+
         return count >= qty;
     }
 
@@ -280,7 +285,7 @@ public class InventoryHelper {
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
      */
-	public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack) {
+    public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack) {
         return getAll(inventory, itemStack, ItemStackComparer.getDurability());
     }
 
@@ -292,9 +297,9 @@ public class InventoryHelper {
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
-	public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
-	    return getAll(inventory.getContents(), itemStack, comparer);
-	}
+    public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+        return getAll(inventory.getContents(), itemStack, comparer);
+    }
 
     /**
      * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
@@ -304,20 +309,24 @@ public class InventoryHelper {
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
-	public static ItemStack[] getAll (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-	    List<ItemStack> items = new ArrayList<ItemStack>(contents.length);
-        
+    public static ItemStack[] getAll (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
+        PreCon.notNull(contents);
+        PreCon.notNull(itemStack);
+        PreCon.notNull(comparer);
+
+        List<ItemStack> items = new ArrayList<ItemStack>(contents.length);
+
         for (ItemStack item : contents) {
-            
+
             if (item == null || item.getType() == Material.AIR)
                 continue;
-            
+
             if (comparer.isSame(itemStack, item))
                 items.add(item);
         }
-        
+
         return items.toArray(new ItemStack[items.size()]);
-	}
+    }
 
     /**
      * Remove a specified quantity of {@code ItemStack}'s from the specified inventory
@@ -329,6 +338,10 @@ public class InventoryHelper {
      * @param qty        The quantity.
      */
     public static List<ItemStack> remove (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        PreCon.notNull(inventory);
+        PreCon.notNull(itemStack);
+        PreCon.notNull(comparer);
+        PreCon.positiveNumber(qty);
 
         ItemStack[] contents = inventory.getContents();
 
@@ -412,43 +425,47 @@ public class InventoryHelper {
      * @param qty        The quantity.
      */
     public static List<ItemStack> remove (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        PreCon.notNull(contents);
+        PreCon.notNull(itemStack);
+        PreCon.notNull(comparer);
+        PreCon.positiveNumber(qty);
 
         List<ItemStack> results = new ArrayList<ItemStack>(contents.length);
-        
+
         int qtyLeft = qty;
-        
+
         for (int i=0; i < contents.length; i++) {
-            
+
             if (qtyLeft <= 0)
                 return results;
-            
+
             ItemStack item = contents[i];
-            
+
             if (item == null || item.getType() == Material.AIR)
                 continue;
-            
+
             if (comparer.isSame(itemStack, item)) {
-                
+
                 ItemStack clone = item.clone();
-                
+
                 if (item.getAmount() > qtyLeft) {
 
                     int newAmount = item.getAmount() - qtyLeft;
                     item.setAmount(newAmount);
                     clone.setAmount(qtyLeft);
                     results.add(clone);
-                    
+
                     contents[i] = item;
-                    
+
                     return results;
                 }
                 else {
-                    
+
                     qtyLeft -= item.getAmount();
-                    
+
                     clone.setAmount(item.getAmount());
                     results.add(clone);
-                    
+
                     contents[i] = ItemStackHelper.AIR;
                 }
             }
@@ -464,7 +481,7 @@ public class InventoryHelper {
      * @param inventory  The inventory to clear.
      */
     public static void clearAll(Inventory inventory) {
-
+        PreCon.notNull(inventory);
 
         inventory.clear();
         inventory.setContents(new ItemStack[inventory.getSize()]); // 36
@@ -502,6 +519,7 @@ public class InventoryHelper {
      * @param inventory  The inventory to repair.
      */
     public static void repairAll(Inventory inventory) {
+        PreCon.notNull(inventory);
 
         ItemStack[] contents = inventory.getContents();
         repairAll(contents);
@@ -520,6 +538,7 @@ public class InventoryHelper {
      * @param contents  The inventory contents.
      */
     public static void repairAll(ItemStack[] contents) {
+        PreCon.notNull(contents);
 
         for (ItemStack stack : contents) {
             if (stack == null || !ItemStackHelper.isRepairable(stack))
@@ -537,6 +556,7 @@ public class InventoryHelper {
      * @param inventory  The inventory to check.
      */
     public static boolean isEmpty(Inventory inventory) {
+        PreCon.notNull(inventory);
 
         boolean isContentsEmpty = isEmpty(inventory.getContents());
 
@@ -554,6 +574,7 @@ public class InventoryHelper {
      * @param contents  The inventory contents.
      */
     public static boolean isEmpty(ItemStack[] contents) {
+        PreCon.notNull(contents);
 
         for (ItemStack stack : contents) {
             if (stack == null || stack.getType() == Material.AIR)
@@ -570,47 +591,47 @@ public class InventoryHelper {
     private static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int totalRequired) {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
-        
+
         MaterialExt ext = MaterialExt.from(itemStack.getType());
         if (ext.getMaxStackSize() == 0)
             return 0;
-        
+
         int totalSpace = 0;
         int maxStackSize = ext.getMaxStackSize();
-        
+
         for (ItemStack slotStack : contents) {
             if (slotStack == null || slotStack.getType() == Material.AIR) {
                 totalSpace += maxStackSize;
             }
             else if (comparer.isSame(slotStack, itemStack)) {
-                
+
                 if (slotStack.getAmount() <= maxStackSize)
-                    totalSpace += (maxStackSize - slotStack.getAmount());               
+                    totalSpace += (maxStackSize - slotStack.getAmount());
             }
-            
+
             if (totalRequired > 0 && totalSpace >= totalRequired)
                 return totalRequired;
         }
-        
+
         return totalSpace;
     }
-    
-    
+
+
     private static int count (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-        
+
         int count = 0;
-        
+
         for (ItemStack item : contents) {
             if (item == null || item.getType() == Material.AIR)
                 continue;
-            
+
             if (comparer.isSame(itemStack, item))
                 count += item.getAmount();
-            
+
             if (qty >= 0 && count >= qty)
                 return count;
         }
-        
+
         return count;
     }
 
@@ -641,6 +662,6 @@ public class InventoryHelper {
 
         return count;
     }
-    
-    
+
+
 }

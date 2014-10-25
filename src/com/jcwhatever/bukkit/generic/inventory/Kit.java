@@ -2,6 +2,7 @@ package com.jcwhatever.bukkit.generic.inventory;
 
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -9,15 +10,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * A kit of items that can be given to a player
- *
- * @author JC The Pants
- *
+ * A kit of items that can be given to a player.
  */
 public class Kit {
 
@@ -33,10 +32,15 @@ public class Kit {
 
 
     /**
-     * Constructor
-     * @param name {String} - The name of the kit
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     * @param name    The name of the kit.
      */
     public Kit(Plugin plugin, String name) {
+        PreCon.notNull(plugin);
+        PreCon.notNullOrEmpty(name);
+
         _plugin = plugin;
         _name = name;
         _searchName = name.toLowerCase();
@@ -44,56 +48,53 @@ public class Kit {
     }
 
     /**
-     * Gets the name of the kit
-     * @return {String}
+     * Get the name of the kit.
      */
     public String getName() {
         return _name;
     }
 
     /**
-     * Gets the name of the kit in lowercase
-     * @return {String}
+     * Get the name of the kit in lowercase.
      */
     public String getSearchName() {
         return _searchName;
     }
 
     /**
-     * Gets the kit helmet, if any. Null if none.
-     * @return {ItemStack}
+     * Get the kit helmet, if any.
      */
+    @Nullable
     public ItemStack getHelmet() {
         return _helmet != null ? _helmet.clone() : null;
     }
 
     /**
-     * Gets the kit chest plate, if any. Null if none.
-     * @return {ItemStack}
+     * Get the kit chest plate, if any.
      */
+    @Nullable
     public ItemStack getChestplate() {
         return _chestplate != null ? _chestplate.clone() : null;
     }
 
     /**
-     * Gets the kit leggings, if any. Null if none.
-     * @return {ItemStack}
+     * Get the kit leggings, if any.
      */
+    @Nullable
     public ItemStack getLeggings() {
         return _leggings != null ? _leggings.clone() : null;
     }
 
     /**
-     * Gets the kit boots, if any. Null if none.
-     * @return
+     * Gets the kit boots, if any.
      */
+    @Nullable
     public ItemStack getBoots() {
         return _boots != null ? _boots : null;
     }
 
     /**
      * Gets a new array of non-armor items in the kit.
-     * @return {ItemStack[]}
      */
     public ItemStack[] getItems() {
 
@@ -107,12 +108,10 @@ public class Kit {
 
     /**
      * Gets the kit armor items as an a new array.
-     * @return {ItemStack[]}
      */
     public ItemStack[] getArmor() {
         List<ItemStack> armorList = getArmorList();
 
-        // deep clone into an array
         ItemStack[] array = new ItemStack[armorList.size()];
         for (int i = 0; i < armorList.size(); ++i) {
             array[i] = armorList.get(i);
@@ -121,9 +120,9 @@ public class Kit {
     }
 
     /**
-     * Gets a list of the kits armor items.
-     * @return {List<ItemStack>}
+     * Get a new list of the kits armor items.
      */
+    @Nullable
     private List<ItemStack> getArmorList() {
         List<ItemStack> armorList = new ArrayList<ItemStack>(5);
 
@@ -144,41 +143,51 @@ public class Kit {
 
     /**
      * Set the kits helmet item.
-     * @param helmet {ItemStack}
+     *
+     * @param helmet  The helmet.
      */
-    public void setHelmet(ItemStack helmet) {
+    public void setHelmet(@Nullable ItemStack helmet) {
         _helmet = helmet != null ? helmet.clone() : null;
     }
 
     /**
      * Set the kits chest plate item.
-     * @param chestplate {ItemStack}
+     *
+     * @param chestplate  The chestplate.
      */
-    public void setChestplate(ItemStack chestplate) {
+    public void setChestplate(@Nullable ItemStack chestplate) {
         _chestplate = chestplate != null ? chestplate.clone() : null;
     }
 
     /**
      * Set the kits legging item.
-     * @param leggings {ItemStack}
+     *
+     * @param leggings  The leggings.
      */
-    public void setLeggings(ItemStack leggings) {
+    public void setLeggings(@Nullable ItemStack leggings) {
         _leggings = leggings != null ? leggings.clone() : null;
     }
 
     /**
      * Set the kits boots item.
-     * @param boots {ItemStack}
+     *
+     * @param boots  The boots.
      */
-    public void setBoots(ItemStack boots) {
+    public void setBoots(@Nullable ItemStack boots) {
         _boots = boots != null ? boots.clone() : null;
     }
 
     /**
      * Add an item, armor or non-armor, to the kit.
-     * @param item {ItemStack}
+     *
+     * <p>An armor item automatically replaces to the appropriate
+     * armor item.</p>
+     *
+     * @param item  The item to add.
      */
     public void addItem(ItemStack item) {
+        PreCon.notNull(item);
+
         if (ArmorType.getType(item) == ArmorType.NOT_ARMOR) {
             _items.add(item.clone());
         } else {
@@ -188,12 +197,15 @@ public class Kit {
 
     /**
      * Add an array of items, armor or non-armor, to the kit.
-     * @param items {ItemStack}
+     *
+     * <p>Armor items automatically replace the appropriate
+     * armor item.</p>
+     *
+     * @param items  The items to add.
      */
     public void addItems(ItemStack[] items) {
-        if (items == null) {
-            return;
-        }
+        PreCon.notNull(items);
+
         for (ItemStack item : items) {
             addItem(item);
         }
@@ -201,12 +213,15 @@ public class Kit {
 
     /**
      * Add a collection of items, armor or non-armor, to the kit.
-     * @param items {Collection<ItemStack> items}
+     *
+     * <p>Armor items automatically replace the appropriate
+     * armor item.</p>
+     *
+     * @param items  The items to add.
      */
     public void addItems(Collection<ItemStack> items) {
-        if (items == null) {
-            return;
-        }
+        PreCon.notNull(items);
+
         for (ItemStack item : items) {
             addItem(item);
         }
@@ -214,12 +229,14 @@ public class Kit {
 
     /**
      * Add an array of armor items to the kit.
-     * @param armor {ItemStack[]}
+     *
+     * <p>If an item is not armor, it is ignored.</p>
+     *
+     * @param armor  The armor items to add.
      */
     public void addArmor(ItemStack[] armor) {
-        if (armor == null) {
-            return;
-        }
+        PreCon.notNull(armor);
+
         for (ItemStack item : armor) {
             addArmor(item);
         }
