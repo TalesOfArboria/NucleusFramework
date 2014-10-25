@@ -17,6 +17,9 @@ public class QueueWorker {
 
     private static QueueWorker _globalWorker;
 
+    /**
+     * Get the global singleton {@code QueueWorker} instance.
+     */
     public static QueueWorker get() {
         if (_globalWorker == null)
             _globalWorker = new QueueWorker();
@@ -34,6 +37,14 @@ public class QueueWorker {
         _worker = new Worker();
     }
 
+    /**
+     * Add a task to the queue worker.
+     *
+     * <p>If the queue worker is not already running, it
+     * will automatically start after the task is added.</p>
+     *
+     * @param task  The task to add.
+     */
     public void addTask(QueueTask task) {
         PreCon.notNull(task);
 
@@ -42,6 +53,14 @@ public class QueueWorker {
         run();
     }
 
+    /**
+     * Add a collection of tasks to the queue worker.
+     *
+     * <p>If the queue worker is not already running, it
+     * will automatically start after tasks are added.</p>
+     *
+     * @param tasks  The tasks to add.
+     */
     public void addTasks(Collection<QueueTask> tasks) {
         PreCon.notNull(tasks);
 
@@ -50,6 +69,7 @@ public class QueueWorker {
         run();
     }
 
+    // called when a task is added.
     private void run() {
 
         if (_workerTask == null || _workerTask.isCancelled())

@@ -11,6 +11,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A project that accepts tasks to be completed in
+ * synchronous order.
+ *
+ * <p>
+ *     A project is a task and therefore can be added to
+ *     other projects.
+ * </p>
+ */
 public class QueueProject extends QueueTask {
 
     private QueueTask _currentTask;
@@ -28,12 +37,22 @@ public class QueueProject extends QueueTask {
     // failed tasks
     protected Set<QueueTask> _failed;
 
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     */
     public QueueProject(Plugin plugin) {
         super(plugin, TaskConcurrency.MAIN_THREAD);
 
         _managerTask = new ProjectManager();
     }
 
+    /**
+     * Add a task to the project.
+     *
+     * @param task  The task to add.
+     */
     public void addTask(QueueTask task) {
         PreCon.notNull(task);
 
@@ -45,6 +64,11 @@ public class QueueProject extends QueueTask {
         task.setParentProject(this);
     }
 
+    /**
+     * Add a collection of tasks.
+     *
+     * @param tasks  The tasks to add.
+     */
     public void addTasks(Collection<QueueTask> tasks) {
         PreCon.notNull(tasks);
 
@@ -52,7 +76,13 @@ public class QueueProject extends QueueTask {
             addTask(task);
     }
 
-
+    /**
+     * Get all tasks in the project.
+     *
+     * <p>
+     *     Do no call while the task is running.
+     * </p>
+     */
     public List<QueueTask> getTasks() {
         if (isRunning())
             throw new IllegalAccessError("Cannot retrieve tasks while the project is running.");

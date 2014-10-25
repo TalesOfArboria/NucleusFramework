@@ -60,8 +60,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the starting coordinates X value.
-     *
-     * @return
      */
     public final int getXStart() {
         return _xStart;
@@ -69,8 +67,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the starting coordinates Y value.
-     *
-     * @return
      */
     public final int getYStart() {
         return _yStart;
@@ -78,8 +74,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the starting coordinates Z value.
-     *
-     * @return
      */
     public final int getZStart() {
         return _zStart;
@@ -88,7 +82,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the end coordinates X value.
-     * @return
      */
     public final int getXEnd() {
         return _xEnd;
@@ -96,7 +89,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the end coordinates Y value.
-     * @return
      */
     public final int getYEnd() {
         return _yEnd;
@@ -104,7 +96,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the end coordinates Z value.
-     * @return
      */
     public final int getZEnd() {
         return _zEnd;
@@ -112,8 +103,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the current X index.
-     *
-     * @return
      */
     public final int getXCurrent() {
         return _xCurrent;
@@ -121,8 +110,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the current Y index.
-     *
-     * @return
      */
     public final int getYCurrent() {
         return _yCurrent;
@@ -130,7 +117,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the current Z index.
-     * @return
      */
     public final int getZCurrent() {
         return _zCurrent;
@@ -138,7 +124,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the total number of segments completed.
-     * @return
      */
     public final long getSegmentsCompleted() {
         return _segmentsCompleted;
@@ -146,7 +131,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the size of an iterated segment
-     * @return
      */
     public final long getSegmentSize() {
         return _segmentSize;
@@ -154,7 +138,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the total number of iterations completed.
-     * @return
      */
     public final long getIterations() {
         return _iterations;
@@ -162,7 +145,6 @@ public abstract class Iteration3DTask extends QueueTask {
 
     /**
      * Get the total volume of the 3D cuboid.
-     * @return
      */
     public final long getVolume() {
         return _volume;
@@ -282,7 +264,5 @@ public abstract class Iteration3DTask extends QueueTask {
 
         }
     }
-
-
 }
 

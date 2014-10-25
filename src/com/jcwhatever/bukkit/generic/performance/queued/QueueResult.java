@@ -8,6 +8,11 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 
+/**
+ * Handles the results of a tasks. Provides futures
+ * that can be used in method returns so that callbacks
+ * can be added for different task events.
+ */
 public class QueueResult {
 
     private final Plugin _plugin;
@@ -313,10 +318,16 @@ public class QueueResult {
     }
 
 
+    /**
+     * Callback used for handling a tasks cancel event.
+     */
     public static interface CancelHandler {
         void run(@Nullable String reason);
     }
 
+    /**
+     * Callback used for handling a tasks fail event.
+     */
     public static interface FailHandler {
         void run(@Nullable String reason);
     }

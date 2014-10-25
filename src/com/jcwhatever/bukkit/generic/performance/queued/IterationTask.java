@@ -40,26 +40,20 @@ public abstract class IterationTask extends QueueTask {
 
     /**
      * Get the start index
-     *
-     * @return
      */
     public final int getStart() {
         return _start;
     }
 
     /**
-     * Get the end index + 1
-     *
-     * @return
+     * Get the index that will be stopped at.
      */
     public final int getEnd() {
-        return _end;
+        return _end - 1;
     }
 
     /**
      * Get the increment per iteration
-     *
-     * @return
      */
     public final int getIncrement() {
         return _increment;
@@ -67,8 +61,6 @@ public abstract class IterationTask extends QueueTask {
 
     /**
      * Get the number of iteration segments completed.
-     *
-     * @return
      */
     public final int getSegmentsCompleted() {
         return _segmentsCompleted;
@@ -76,8 +68,6 @@ public abstract class IterationTask extends QueueTask {
 
     /**
      * Get the number of iterations completed.
-     *
-     * @return
      */
     public final int getIterations() {
         return _iterations;
@@ -171,7 +161,4 @@ public abstract class IterationTask extends QueueTask {
 
         }
     }
-
-
-
 }
