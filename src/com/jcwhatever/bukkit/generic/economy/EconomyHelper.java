@@ -1,20 +1,18 @@
 package com.jcwhatever.bukkit.generic.economy;
 
-import java.util.UUID;
-
+import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconGiveEvent;
+import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconWithdrawEvent;
+import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconGiveEvent;
-import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconWithdrawEvent;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
+import java.util.UUID;
 
 /**
  * Provides static functions to interface with the installed economy
@@ -230,7 +228,7 @@ public class EconomyHelper {
 
 	private static void init() {
         Plugin _vault = Bukkit.getPluginManager().getPlugin("Vault");
-		if (_vault == null || !(_vault instanceof Vault)) {
+		if (!(_vault instanceof Vault)) {
 			_hasEconomy = false;
 			return;
 		}
