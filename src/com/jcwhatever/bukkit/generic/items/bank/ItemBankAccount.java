@@ -1,21 +1,19 @@
 package com.jcwhatever.bukkit.generic.items.bank;
 
+import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
+import com.jcwhatever.bukkit.generic.items.ItemWrapper;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.Utils;
+import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-import org.bukkit.inventory.ItemStack;
-
-import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
-import com.jcwhatever.bukkit.generic.items.ItemWrapper;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.jcwhatever.bukkit.generic.utils.Utils;
-
-import javax.annotation.Nullable;
 
 /**
  * Represents a single players Item Bank Account.
@@ -75,6 +73,7 @@ class ItemBankAccount {
 
     /**
      * Get a bank item by item id.
+     *
      * @param itemId  The id of the bank item.
      */
     @Nullable

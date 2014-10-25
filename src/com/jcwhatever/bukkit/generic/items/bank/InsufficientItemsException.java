@@ -42,7 +42,6 @@ public class InsufficientItemsException extends Exception {
 
     /**
      * Get the number of items the player has.
-     * @return
      */
     public int getBalance() {
         return _balance;

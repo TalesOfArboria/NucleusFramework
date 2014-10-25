@@ -1,18 +1,23 @@
 package com.jcwhatever.bukkit.generic.items;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import com.jcwhatever.bukkit.generic.converters.ValueConverters;
+import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.material.MaterialData;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
+/**
+ * Parses a string representing a single {@code ItemStacks} serialized
+ * by {@code ItemStackSerializer}.
+ */
 public class ItemStringParser {
 
     private static final Pattern PATTER_LORE_SPLITTER = Pattern.compile("\\|");
@@ -27,7 +32,7 @@ public class ItemStringParser {
 	private static final int COLOR = 4;
 	private static final int LORE = 5;
 	
-	private String _itemString;
+	private final String _itemString;
 	private MaterialData _materialData;
 	private short _data;
 	private int _qty;
@@ -37,62 +42,107 @@ public class ItemStringParser {
 	private List<String> _lore;
 		
 	private boolean _isValid;
-		
+
+    /**
+     * Constructor.
+     *
+     * @param itemString  The string to parse. The string must represent a single {@code ItemStack}
+     */
 	public ItemStringParser(String itemString) {
+        PreCon.notNull(itemString);
+
 		_itemString = itemString;
 		_enchantments = new ArrayList<EnchantmentWrapper>(10);
 		_isValid = parse(itemString);
 	}
-	
-	
+
+    /**
+     * Determine if the string is a valid {@code ItemStack} string.
+     */
 	public boolean isValid() {
 		return _isValid;
 	}
-	
+
+    /**
+     * Get the {@code ItemStack} string.
+     */
 	public String getItemString() {
 		return _itemString;
 	}
-	
+
+    /**
+     * Get the material data parsed from the string.
+     *
+     * @return  Null if the {@code ItemStack} string is not valid.
+     */
+    @Nullable
 	public MaterialData getMaterialData() {
 		return _materialData;
 	}
-	
+
+    /**
+     * Get the item stack raw data parsed from the string.
+     */
 	public short getData() {
 		return _data;
 	}
-	
+
+    /**
+     * Get the item stack quantity/amount parsed from the string.
+     */
 	public int getQuantity() {
 		return _qty;
 	}
-	
+
+    /**
+     * Get the the 32-bit color of the item parsed from the string.
+     *
+     * @return  Null if the string did not contain 32-bit color info.
+     */
+    @Nullable
 	public Color getColor() {
 		return _color;
 	}
-	
+
+    /**
+     * Get the item lore parsed from the string.
+     *
+     * @return  Null if the string did not contain lore.
+     */
+    @Nullable
 	public List<String> getLore() {
 		return _lore;
 	}
-	
+
+    /**
+     * Get the item stack display name parsed from the string.
+     *
+     * @return  Null if the string did not contain display name info.
+     */
+    @Nullable
 	public String getDisplayName() {
 		return _displayName;
 	}
-	
+
+    /**
+     * Get enchantments parsed from the string.
+     */
 	public List<EnchantmentWrapper> getEnchantments() {
 		return _enchantments;
 	}
-	
+
+    /**
+     * Returns the raw {@code ItemString} string.
+     */
 	@Override
 	public String toString() {
-		return _itemString != null ? _itemString : "";
+		return _itemString;
 	}
 	
 	
-	/**
+	/*
 	 * Parses a string representation of an ItemStackWrapper instance
 	 * into the ItemComponents instance.
-	 * 
-	 * @param itemString - The string to parse.
-	 * @return {Boolean} - Returns false if the string provided is invalid
 	 */
 	private boolean parse(String itemString) {
 		
@@ -199,8 +249,9 @@ public class ItemStringParser {
 	 * 
 	 * All items in the array are guaranteed to have a value
 	 * 
-	 * @return {String[]} - Returns null if invalid string provided
+	 * @return  Returns null if invalid string provided
 	 */
+    @Nullable
 	private static String[] parsePrimaryComponents(String itemStackString) {
 		
 		if (itemStackString == null || itemStackString.trim().length() == 0)
@@ -225,26 +276,22 @@ public class ItemStringParser {
 				components[QUANTITY] = "1";
 		} else 
 			components[QUANTITY] = "1";
-		
-		if (rawComponents.length > 2)
-			components[ENCHANTMENTS] = rawComponents[ENCHANTMENTS].trim();
-		else
-			components[ENCHANTMENTS] = "";
-				
-		if (rawComponents.length > 3)
-			components[DISPLAY_NAME] = rawComponents[DISPLAY_NAME].trim();
-		else
-			components[DISPLAY_NAME] = "";
-		
-		if (rawComponents.length > 4)
-			components[COLOR] = rawComponents[COLOR].trim();
-		else
-			components[COLOR] = "";
-		
-		if (rawComponents.length == 6)
-			components[LORE] = rawComponents[LORE].trim();
-		else
-			components[LORE] = "";
+
+        components[ENCHANTMENTS] = rawComponents.length > 2
+                ? rawComponents[ENCHANTMENTS].trim()
+                : "";
+
+        components[DISPLAY_NAME] = rawComponents.length > 3
+                ? rawComponents[DISPLAY_NAME].trim()
+                : "";
+
+        components[COLOR] = rawComponents.length > 4
+                ? rawComponents[COLOR].trim()
+                : "";
+
+        components[LORE] = rawComponents.length == 6
+                ? rawComponents[LORE].trim()
+                : "";
 		
 		return components;
 	}
@@ -252,9 +299,8 @@ public class ItemStringParser {
 	
 	/**
 	 * Parses lore into a String[] based on '|' delimeter.
-	 * @param lore {String}
-	 * @return
 	 */
+    @Nullable
 	private static List<String> parseLoreComponents(String lore) {
 		
 		if (lore == null)
@@ -285,10 +331,8 @@ public class ItemStringParser {
 	 * [1] = Data
 	 * 
 	 * All items in the array are guaranteed to have a value.
-	 * 
-	 * @param material {String}
-	 * @return {String[]} - Returns null if invalid string provided
 	 */
+    @Nullable
 	private static String[] parseMaterialComponents(String material) {
 		
 		if (material == null || material.trim().length() == 0)
@@ -302,13 +346,10 @@ public class ItemStringParser {
 			return null;
 		
 		components[MATERIAL] = rawComponents[MATERIAL];
-		
-		if (rawComponents.length == 1) {
-			components[DATA] = "0";
-		}
-		else {
-			components[DATA] = rawComponents[DATA];
-		}
+
+        components[DATA] = rawComponents.length == 1
+                ? "0"
+                : rawComponents[DATA];
 		
 		return components;
 	}
@@ -317,10 +358,8 @@ public class ItemStringParser {
 	/**
 	 * Parses the enchantment components from a string. The enchantment string
 	 * is located in the 3rd primary components of the item string.
-	 * 
-	 * @param enchantments {String}
-	 * @return {List<String>}
 	 */
+    @Nullable
 	private static List<String> parseEnchantmentComponents(String enchantments) {
 		if (enchantments == null) { 
 			return null;
@@ -352,10 +391,8 @@ public class ItemStringParser {
 	/**
 	 * Parse an individual enchantment string component into an 
 	 * Enchantment instance. 
-	 * 
-	 * @param enchantment {String}
-	 * @return {Enchantment} - Returns null if parsing failed.
 	 */
+    @Nullable
 	private static EnchantmentWrapper parseEnchantment(String enchantment) {
 		
 		String[] rawComponents = TextUtils.PATTERN_DASH.split(enchantment);

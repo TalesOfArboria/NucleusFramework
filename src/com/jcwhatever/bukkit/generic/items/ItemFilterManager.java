@@ -1,5 +1,13 @@
 package com.jcwhatever.bukkit.generic.items;
 
+import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,16 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-
-import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
-
-import javax.annotation.Nullable;
 
 /**
  * A collection of ItemStacks that can be used for validation/filtering of ItemStacks.
@@ -141,7 +139,6 @@ public class ItemFilterManager {
 
     /**
      * Get the compare operations bit flags.
-     * @return
      */
 	public byte getCompareOperations() {
 		return _comparer.getCompareOperations();
@@ -162,6 +159,7 @@ public class ItemFilterManager {
      * @param item  The item to check.
      */
 	public boolean isValidItem(ItemStack item) {
+        PreCon.notNull(item);
 		
 		ItemWrapper wrapper = _filterItems.get(new ItemWrapper(item, _comparer));
 		if (wrapper == null)
@@ -181,9 +179,10 @@ public class ItemFilterManager {
      * Add an item to the collection.
      *
      * @param itemStack  The item to add.
-     * @return
      */
 	public boolean addItem(ItemStack itemStack) {
+        PreCon.notNull(itemStack);
+
 		ItemWrapper wrapper = new ItemWrapper(itemStack, _comparer);
 		if (_filterItems.put(wrapper, wrapper) != null) {
 			saveFilterItems();
@@ -196,9 +195,9 @@ public class ItemFilterManager {
      * Add multiple items to the collection.
      *
      * @param itemStacks  The items to add.
-     * @return
      */
 	public boolean addItems(ItemStack[] itemStacks) {
+        PreCon.notNull(itemStacks);
 		
 		for (ItemStack stack : itemStacks) {
 			ItemWrapper wrapper = new ItemWrapper(stack, _comparer);
@@ -216,6 +215,8 @@ public class ItemFilterManager {
      * @param itemStack  The item to remove.
      */
 	public boolean removeItem(ItemStack itemStack) {
+        PreCon.notNull(itemStack);
+
 		if (_filterItems.remove(new ItemWrapper(itemStack, _comparer)) != null) {
 			saveFilterItems();
 			return true;
@@ -229,6 +230,7 @@ public class ItemFilterManager {
      * @param itemStacks  The items to remove.
      */
 	public boolean removeItems(ItemStack[] itemStacks) {
+        PreCon.notNull(itemStacks);
 
 		for (ItemStack stack : itemStacks) {
 			_filterItems.remove(new ItemWrapper(stack, _comparer));

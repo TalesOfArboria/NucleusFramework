@@ -14,6 +14,16 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Serializes {@code ItemStack}'s into a string.
+ *
+ * <p>
+ *     Add item stacks to serialize them. The result can be obtained
+ *     by calling the instances {@code toString} method or the results
+ *     can be appended to a {@code StringBuilder} provided in the
+ *     constructor.
+ * </p>
+ */
 public class ItemStackSerializer {
 
     private static final Pattern PATTERN_TEXT_FILTER = Pattern.compile("[,:;]");
@@ -30,25 +40,63 @@ public class ItemStackSerializer {
         RAW,
         COLOR
     }
-		
+
+    /**
+     * Constructor.
+     *
+     * <p>
+     *     Raw output type.
+     * </p>
+     *
+     * @param size  The initial buffer size
+     */
 	public ItemStackSerializer(int size) {
 		_buffy = new StringBuilder(size);
 	}
 
+    /**
+     * Constructor.
+     *
+     * @param size        The initial buffer size
+     * @param outputType  The output type.
+     */
     public ItemStackSerializer(int size, SerializerOutputType outputType) {
         _buffy = new StringBuilder(size);
         _outputType = outputType;
     }
-	
+
+    /**
+     * Constructor.
+     *
+     * <p>
+     *     Raw output type.
+     * </p>
+     *
+     * @param buffy  The {@code StringBuilder} to append the results to.
+     */
 	public ItemStackSerializer(StringBuilder buffy) {
 		_buffy = buffy;
 	}
 
+    /**
+     * Constructor.
+     *
+     * @param buffy       The The {@code StringBuilder} to append the results to.
+     * @param outputType  The output type.
+     */
     public ItemStackSerializer(StringBuilder buffy, SerializerOutputType outputType) {
         _buffy = buffy;
         _outputType = outputType;
     }
-		
+
+    /**
+     * Serialize an {@code ItemStack} and append the results to
+     * the current results.
+     *
+     * @param stack  The {@code ItemStack} to serialize.
+     *
+     * @return Self
+     */
 	public ItemStackSerializer append(ItemStack stack) {
 		if (_itemsAppended > 0)
 			_buffy.append(", ");
@@ -57,25 +105,49 @@ public class ItemStackSerializer {
 		_itemsAppended++;
 		return this;
 	}
-	
+
+    /**
+     * Serialize a collection of {@code ItemStack}'s and append the results
+     * to the current results.
+     *
+     * @param stacks  The {@code ItemStack}'s to serialize.
+     *
+     * @return  Self
+     */
 	public ItemStackSerializer appendAll(Collection<? extends ItemStack> stacks) {
 		for (ItemStack stack : stacks) {
 			append(stack);
 		}
 		return this;
 	}
-	
+
+    /**
+     * Serialize an array of {@code ItemStack}'s and append the results
+     * to the current results.
+     *
+     * @param stacks  The array of {@code ItemStack}'s to serialize.
+     *
+     * @param <T>  The ItemStack type
+     *
+     * @return  Self
+     */
 	public <T extends ItemStack> ItemStackSerializer appendAll(T[] stacks) {
 		for (ItemStack stack : stacks) {
 			append(stack);
 		}
 		return this;
 	}
-	
+
+    /**
+     * Get the number of {@code ItemStacks} serialized.
+     */
 	public int getTotalItems() {
 		return _itemsAppended;
 	}
-	
+
+    /**
+     * Return the serialized result.
+     */
 	@Override
 	public String toString() {
 		return _buffy.toString();

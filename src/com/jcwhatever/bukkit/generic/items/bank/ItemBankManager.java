@@ -75,6 +75,8 @@ public class ItemBankManager {
      */
     @Nullable
     public static BankItem getBankItem (UUID playerId, UUID itemId) {
+        PreCon.notNull(playerId);
+        PreCon.notNull(itemId);
 
         ItemBankAccount account = getAccount(playerId);
         if (account == null)
@@ -92,7 +94,6 @@ public class ItemBankManager {
      */
     @Nullable
     public static BankItem getBankItem (Player p, ItemStack itemStack) {
-
         return getBankItem(p.getUniqueId(), itemStack);
     }
 
@@ -105,6 +106,8 @@ public class ItemBankManager {
      */
     @Nullable
     public static BankItem getBankItem (UUID playerId, ItemStack itemStack) {
+        PreCon.notNull(playerId);
+        PreCon.notNull(itemStack);
 
         ItemBankAccount account = getAccount(playerId);
         if (account == null)

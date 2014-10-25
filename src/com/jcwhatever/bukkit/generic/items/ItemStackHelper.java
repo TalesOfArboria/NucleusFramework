@@ -6,7 +6,6 @@ import com.jcwhatever.bukkit.generic.items.ItemStackSerializer.SerializerOutputT
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
-import javax.annotation.Nullable;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,6 +18,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -365,7 +365,7 @@ public class ItemStackHelper {
      * @param enchantName  The enchantment to add.
      * @param level        The enchantment level.
      *
-     * @result True if the enchantName was found and applied.
+     * @return True if the enchantName was found and applied.
      */
     public static boolean addEnchantment(ItemStack stack, String enchantName, int level) {
         PreCon.notNull(stack);
