@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * Write bytes to a stream. In order to read the stream
+ * properly, {@code GenericsByteReader} needs to be used.
+ */
 public class GenericsByteWriter extends OutputStream {
 
     private final OutputStream _stream;
