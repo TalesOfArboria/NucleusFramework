@@ -110,6 +110,9 @@ public class QueueWorker {
 
                 switch (_currentTask.getConcurrency()) {
                     case MAIN_THREAD:
+                        // fall through
+
+                    case CURRENT_THREAD:
                         _currentTask.run();
                         break;
 

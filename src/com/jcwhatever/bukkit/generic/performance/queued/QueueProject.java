@@ -43,7 +43,7 @@ public class QueueProject extends QueueTask {
      * @param plugin  The owning plugin.
      */
     public QueueProject(Plugin plugin) {
-        super(plugin, TaskConcurrency.MAIN_THREAD);
+        super(plugin, TaskConcurrency.CURRENT_THREAD);
 
         _managerTask = new ProjectManager();
     }
@@ -165,6 +165,16 @@ public class QueueProject extends QueueTask {
 
                 switch (_currentTask.getConcurrency()) {
                     case MAIN_THREAD:
+                        Scheduler.runTaskSync(_currentTask.getPlugin(), new Runnable() {
+
+                            @Override
+                            public void run() {
+                                _currentTask.run();
+                            }
+                        });
+                        break;
+
+                    case CURRENT_THREAD:
                         _currentTask.run();
                         break;
 

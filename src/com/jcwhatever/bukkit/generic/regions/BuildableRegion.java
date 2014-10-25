@@ -146,7 +146,7 @@ public abstract class BuildableRegion extends Region {
                                    int xStart, int yStart, int zStart,
                                    int xEnd, int yEnd, int zEnd) {
 
-			super(_plugin, TaskConcurrency.MAIN_THREAD, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
+			super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
 			this.snapshot = snapshot;
 			this.chunk = region.getWorld().getChunkAt(snapshot.getX(), snapshot.getZ());
@@ -175,7 +175,7 @@ public abstract class BuildableRegion extends Region {
 		protected void onPreComplete() {
 
             // schedule block update
-            Scheduler.runTaskLater(_plugin, 1, new UpdateBlocks());
+            Scheduler.runTaskSync(_plugin, 1, new UpdateBlocks());
 		}
 
 		/**
