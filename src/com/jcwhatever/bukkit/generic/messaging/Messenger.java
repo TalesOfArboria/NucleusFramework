@@ -152,7 +152,7 @@ public class Messenger {
         PreCon.notNull(params);
         
         if (!TextUtils.isValidName(context, 64))
-            throw new IllegalArgumentException("illegal characters in context argument or argument is to long.");
+            throw new IllegalArgumentException("illegal characters in context argument or argument is too long.");
                 
 		Player p = PlayerHelper.getPlayer(playerId);
 		if (p != null && p.isOnline()) {
