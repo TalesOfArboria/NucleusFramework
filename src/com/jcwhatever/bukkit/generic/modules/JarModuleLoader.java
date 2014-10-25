@@ -17,10 +17,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * Aids in loading jar files that implement {@code IJarModule}.
- *
- * @author JC The Pants
- *
+ * Aids in loading jar file classes that implement {@code IJarModule}.
  */
 public class JarModuleLoader<T extends IJarModule> {
 
@@ -31,8 +28,8 @@ public class JarModuleLoader<T extends IJarModule> {
      * Get all {@code IJarModule} classes from jar files
      * in a directory.
      *
-     * @param directory
-     * @return
+     * @param moduleClass  The class to search for.
+     * @param directory    The directory to search for jar files in.
      */
     public List<Class<T>> getModules(Class<T> moduleClass, File directory) {
         PreCon.notNull(directory);
@@ -71,8 +68,9 @@ public class JarModuleLoader<T extends IJarModule> {
      * Get an {@code IJarModule} class from the
      * specified jar file.
      *
-     * @param file
-     * @return
+     * @param moduleClass  The class to search for.
+     * @param file         The jar file to search in.
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -145,8 +143,10 @@ public class JarModuleLoader<T extends IJarModule> {
      * Get all {@code IJarModule} classes from jar files
      * in a directory and instantiate them.
      *
-     * @param directory
-     * @return
+     * <p>Can only load implementations with an empty constructor.</p>
+     *
+     * @param moduleClass  The class to search for.
+     * @param directory    The directory to search for jar files in.
      */
     public List<T> loadModules(Class<T> moduleClass, File directory) {
         PreCon.notNull(directory);
@@ -186,8 +186,11 @@ public class JarModuleLoader<T extends IJarModule> {
      * Get an {@code IJarModule} class from the
      * specified jar file and instantiate it.
      *
-     * @param file
-     * @return
+     * <p>Can only load implementations with an empty constructor.</p>
+     *
+     * @param moduleClass  The class to search for.
+     * @param file         The jar file to search in.
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */
