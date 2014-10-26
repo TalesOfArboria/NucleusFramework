@@ -18,7 +18,7 @@ import java.util.UUID;
         parent="jail",
         command="release",
         staticParams={"playerName"},
-        usage="/jcg jail release <playerName>",
+        usage="/{plugin-command} jail release <playerName>",
         description="Release prisoner from default jail.")
 
 public class ReleaseSubCommand extends AbstractCommand {

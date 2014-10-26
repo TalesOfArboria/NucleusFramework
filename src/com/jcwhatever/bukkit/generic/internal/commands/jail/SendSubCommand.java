@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
         parent="jail",
         command="send",
         staticParams={"playerName", "minutes"},
-        usage="/jcg jail send <playerName> <minutes>",
+        usage="/{plugin-command} jail send <playerName> <minutes>",
         description="Imprison player at the default jail.")
 
 public class SendSubCommand extends AbstractCommand {

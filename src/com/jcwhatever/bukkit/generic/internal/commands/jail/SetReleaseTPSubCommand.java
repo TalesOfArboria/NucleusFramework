@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 @ICommandInfo(
         parent="jail",
         command="setreleasetp",
-        usage="/jcg jail setreleasetp",
+        usage="/{plugin-command} jail setreleasetp",
         description="Set location where players are teleported when they are released from the default jail.")
 
 public class SetReleaseTPSubCommand extends AbstractCommand {

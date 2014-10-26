@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
         parent="jail",
         command="deltp",
         staticParams = { "name" },
-        usage="/jcg jail deltp <name>",
+        usage="/{plugin-command} jail deltp <name>",
         description="Remove a location where players are teleported within the jail.")
 
 public class DelTPSubCommand extends AbstractCommand {

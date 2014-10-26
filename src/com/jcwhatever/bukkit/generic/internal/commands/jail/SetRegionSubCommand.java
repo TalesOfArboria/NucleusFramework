@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 @ICommandInfo(
         parent="jail",
         command="setregion", 
-        usage="/jcg jail setregion",
+        usage="/{plugin-command} jail setregion",
         description="Set jail region using your current world edit selection.")
 
 public class SetRegionSubCommand extends AbstractCommand {

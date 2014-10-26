@@ -20,7 +20,7 @@ import java.util.List;
         parent="jail",
         command="listtp",
         staticParams = { "page=1" },
-        usage="/jcg jail listtp [page]",
+        usage="/{plugin-command} jail listtp [page]",
         description="List locations where players are teleported within the jail.")
 
 public class ListTPSubCommand extends AbstractCommand {
