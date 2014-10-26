@@ -26,9 +26,10 @@ package com.jcwhatever.bukkit.generic.pathing.astar;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 import org.bukkit.Location;
 import org.bukkit.Material;
+
+import javax.annotation.Nullable;
 
 /**
  * {@code AStarPathNode} implementation of the

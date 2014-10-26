@@ -26,9 +26,9 @@ package com.jcwhatever.bukkit.generic.warp;
 
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 import org.bukkit.Location;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

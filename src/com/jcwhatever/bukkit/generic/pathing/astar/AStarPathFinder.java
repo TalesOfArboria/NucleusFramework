@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.pathing.astar;
 
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.bukkit.Location;
 
 import java.util.LinkedList;

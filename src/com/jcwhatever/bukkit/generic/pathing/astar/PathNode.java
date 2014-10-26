@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.pathing.astar;
 
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 

@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
