@@ -84,7 +84,7 @@ public class GenericsLib extends GenericsPlugin {
     protected void onEnablePlugin() {
         _protocolManager = ProtocolLibrary.getProtocolManager();
         _regionManager = new RegionManager();
-        _jailManager = new JailManager(this, "default", getSettings().getNode("jail"));
+        _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
 
         // remove world guard message
         _protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.CHAT) {

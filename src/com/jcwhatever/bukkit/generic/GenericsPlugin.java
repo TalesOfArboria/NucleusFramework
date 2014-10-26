@@ -11,26 +11,47 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Set;
 
+/**
+ * An abstract implementation of a Bukkit plugin with
+ * GenericsLib specific features.
+ */
 public abstract class GenericsPlugin extends JavaPlugin {
 
 	private IDataNode _settings;
     private boolean _isDebugging;
 
-
+    /**
+     * Constructor.
+     */
 	public GenericsPlugin() {
+        super();
 		init();
 	}
 
+    /**
+     * Determine if the plugin is in debug mode.
+     */
     public final boolean isDebugging() {
         return _isDebugging;
     }
 
+    /**
+     * Set the plugins debug mode.
+     *
+     * @param isDebugging  True to turn debug on.
+     */
     public final void setDebugging(boolean isDebugging) {
         _isDebugging = isDebugging;
     }
 
+    /**
+     * Get the plugins chat message prefix.
+     */
     public abstract String getChatPrefix();
 
+    /**
+     * Get the plugins console message prefix.
+     */
     public abstract String getConsolePrefix();
 
     @Override
@@ -47,23 +68,66 @@ public abstract class GenericsPlugin extends JavaPlugin {
         onDisablePlugin();
     }
 
+    /**
+     * Called when the plugin is instantiated.
+     */
 	protected void init() {
 		// do nothing
 	}
 
+    /**
+     * Called before the plugin config is loaded.
+     */
     protected void onPreEnable() {
         // do nothing
     }
 
+    /**
+     * Called when the plugin is enabled.
+     */
     protected abstract void onEnablePlugin();
 
+    /**
+     * Called when the plugin is disabled.
+     */
     protected abstract void onDisablePlugin();
 
-	public IDataNode getSettings() {
+    /**
+     * Get the plugins data node.
+     */
+	public IDataNode getDataNode() {
 	
 		return _settings;
 	}
 
+    /**
+     * Register all commands defined in the plugin.yml
+     * file to the specified command handler.
+     *
+     * @param handler  The handler to register.
+     */
+    protected void registerCommands(CommandExecutor handler) {
+        Set<String> commands = getDescription().getCommands().keySet();
+        for (String cmd : commands) {
+            getCommand(cmd).setExecutor(handler);
+        }
+    }
+
+    /**
+     * Register event listeners.
+     *
+     * @param listeners  The listeners to register.
+     */
+    protected void registerEventListeners(Listener...listeners) {
+        PluginManager pm = getServer().getPluginManager();
+        for (Listener listener : listeners) {
+            pm.registerEvents(listener, this);
+        }
+    }
+
+    /*
+     * Load the plugins config file.
+     */
 	private void loadConfigFile() {
 		File dir = getDataFolder();
 		if (!dir.exists() && !dir.mkdirs()) {
@@ -78,19 +142,4 @@ public abstract class GenericsPlugin extends JavaPlugin {
 
         _isDebugging = _settings.getBoolean("debug");
 	}
-
-	protected void registerCommands(CommandExecutor handler) {
-		Set<String> commands = getDescription().getCommands().keySet();
-		for (String cmd : commands) {
-			getCommand(cmd).setExecutor(handler);
-		}
-	}
-	
-	protected void registerEventListeners(Listener...listeners) {
-        PluginManager pm = getServer().getPluginManager();
-        for (Listener listener : listeners) {
-            pm.registerEvents(listener, this);
-        }
-	}
-
 }
