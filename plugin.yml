@@ -3,7 +3,7 @@ author: JC The Pants
 main: com.jcwhatever.bukkit.generic.GenericsLib
 version: 0-beta
 depend: [ProtocolLib]
-softdepend: [Vault, BarAPI]
+softdepend: [Vault]
 commands:
     jcg:
         description: Base command for jcGenerics
