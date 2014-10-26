@@ -50,8 +50,8 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
         LinkedList<AStarPathNode> results = new LinkedList<>();
 
         if (adjustment == LocationAdjustment.FIND_SURFACE) {
-            start = LocationUtils.findSolidBlockBelow(start);
-            end = LocationUtils.findSolidBlockBelow(end);
+            start = LocationUtils.findSurfaceBelow(start);
+            end = LocationUtils.findSurfaceBelow(end);
         }
 
         if (start == null || end == null)
@@ -88,8 +88,8 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
     public int getPathDistance(Location start, Location end, LocationAdjustment adjustment) {
 
         if (adjustment == LocationAdjustment.FIND_SURFACE) {
-            start = LocationUtils.findSolidBlockBelow(start);
-            end = LocationUtils.findSolidBlockBelow(end);
+            start = LocationUtils.findSurfaceBelow(start);
+            end = LocationUtils.findSurfaceBelow(end);
         }
 
         if (start == null || end == null)
