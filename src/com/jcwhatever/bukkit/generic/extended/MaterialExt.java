@@ -714,6 +714,63 @@ public enum MaterialExt {
 		return new ArrayList<MaterialExt>(matches);
 	}
 
+    public static boolean isOpenable(Material material) {
+        return material == Material.FENCE_GATE ||
+               material == Material.IRON_DOOR_BLOCK ||
+               material == Material.WOODEN_DOOR ||
+               material == Material.TRAP_DOOR;
+    }
+
+    /**
+     * Determine if a material is a surface.
+     *
+     * @param material  The material to check.
+     */
+    public static boolean isSurface(Material material) {
+        return !(material == Material.LAVA ||
+                 material == Material.STATIONARY_LAVA ||
+                 material == Material.FIRE ||
+                 material == Material.WHEAT ||
+                 material == Material.LADDER ||
+                 material == Material.FENCE ||
+                 material == Material.FENCE_GATE ||
+                 material == Material.IRON_DOOR_BLOCK ||
+                 material == Material.WOODEN_DOOR ||
+                 material == Material.NETHER_FENCE)
+                 && !isTransparent(material);
+    }
+
+    /**
+     * Determine if a material is transparent.
+     *
+     * @param material  The material to check.
+     */
+    public static boolean isTransparent(Material material) {
+        return material == Material.AIR ||
+                material == Material.STATIONARY_WATER ||
+                material == Material.WATER ||
+                material == Material.SAPLING ||
+                material == Material.WEB ||
+                material == Material.DOUBLE_PLANT ||
+                material == Material.YELLOW_FLOWER ||
+                material == Material.RED_ROSE ||
+                material == Material.BROWN_MUSHROOM ||
+                material == Material.RED_MUSHROOM ||
+                material == Material.TORCH ||
+                material == Material.SIGN ||
+                material == Material.WALL_SIGN ||
+                material == Material.SIGN_POST ||
+                material == Material.REDSTONE_WIRE ||
+                material == Material.REDSTONE_TORCH_ON ||
+                material == Material.REDSTONE_TORCH_OFF ||
+                material == Material.RAILS ||
+                material == Material.LADDER ||
+                material == Material.DEAD_BUSH ||
+                material == Material.WHEAT ||
+                material == Material.CARPET ||
+                material == Material.LONG_GRASS;
+    }
+
     // build the material to extended material map.
 	private static void buildMaterialMap() {
 		if (_materialMap != null)

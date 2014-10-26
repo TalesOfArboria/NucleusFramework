@@ -1,8 +1,11 @@
 package com.jcwhatever.bukkit.generic.utils;
 
+import com.jcwhatever.bukkit.generic.extended.MaterialExt;
+import com.sun.istack.internal.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import org.bukkit.entity.Entity;
@@ -134,7 +137,32 @@ public class LocationUtils {
 	}
 
 
-	private static Integer parseInteger(String s) {
+    @Nullable
+    public static Location findSolidBlockBelow(Location searchLoc) {
+        PreCon.notNull(searchLoc);
+
+        searchLoc = getBlockLocation(searchLoc);
+
+        if (!MaterialExt.isTransparent(searchLoc.getBlock().getType()))
+            return searchLoc;
+
+        searchLoc.add(0, -1, 0);
+        Block current = searchLoc.getBlock();
+
+        while (!MaterialExt.isSurface(current.getType())) {
+            searchLoc.add(0, -1, 0);
+            current = searchLoc.getBlock();
+
+            if (searchLoc.getY() < 0) {
+                return null;
+            }
+        }
+        return searchLoc;
+    }
+
+
+
+    private static Integer parseInteger(String s) {
 		try {
 			return Integer.parseInt(s.trim());
 		}
@@ -145,7 +173,7 @@ public class LocationUtils {
 
 	private static Float parseFloat(String s) {
 		try {
-			return Float.valueOf(Float.parseFloat(s.trim()));
+			return Float.parseFloat(s.trim());
 		}
 		catch (Exception e) {
 			return null;
