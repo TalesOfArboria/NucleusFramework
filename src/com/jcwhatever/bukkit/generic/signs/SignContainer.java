@@ -12,7 +12,8 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 
 /**
- * Container for a sign.
+ * Container for a sign. Used to pass signs into
+ * sign handler event methods.
  */
 public class SignContainer {
 
