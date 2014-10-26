@@ -127,6 +127,9 @@ public class TextUtils {
 	 * @param pad      The character to path with
 	 */
 	public static String padRight(String s, int length, char pad) {
+        PreCon.notNull(s);
+        PreCon.positiveNumber(length);
+
 		StringBuilder buffy = new StringBuilder(s.length() + length);
 		buffy.append(s);
 		for (int i = 0; i < length; ++i) {
@@ -153,6 +156,9 @@ public class TextUtils {
      * @param pad     The character to path with
      */
 	public static String padLeft(String s, int length, char pad) {
+        PreCon.notNull(s);
+        PreCon.positiveNumber(length);
+
 		StringBuilder buffy = new StringBuilder(s.length() + length);
 		for (int i = 0; i < length; i++) {
 			buffy.append(pad);
@@ -193,7 +199,8 @@ public class TextUtils {
 	}
 
     /**
-     * Reduce the number of characters in a string to 16.
+     * Reduce the number of characters in a string by removing
+     * characters from the end.
      * Returns input string if input string length is
      * less than or equal to 16 characters.
      *
@@ -201,7 +208,13 @@ public class TextUtils {
      * @param length  The new length of the string.
      */
 	public static String truncate(String s, int length) {
-		if (s.length() > length) return s.substring(0, length - 1);
+        PreCon.notNull(s);
+        PreCon.positiveNumber(length);
+        PreCon.lessThan(length, s.length());
+
+		if (s.length() > length)
+            return s.substring(0, length - 1);
+
 		return s;
 	}
 
