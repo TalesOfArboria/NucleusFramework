@@ -14,7 +14,7 @@ public class ModifiedEffects {
 	private static boolean _suppressExplosionSound = true;
 
 	static {
-		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(GenericsLib.getInstance(), PacketType.Play.Server.NAMED_SOUND_EFFECT) {
+		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(GenericsLib.getPlugin(), PacketType.Play.Server.NAMED_SOUND_EFFECT) {
 			@Override
 			public void onPacketSending(PacketEvent event) {
 				String soundName = event.getPacket().getStrings().read(0);

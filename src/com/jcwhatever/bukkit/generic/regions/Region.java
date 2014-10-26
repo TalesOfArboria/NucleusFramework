@@ -154,7 +154,7 @@ public abstract class Region {
 
         }
 
-        Bukkit.getScheduler().runTaskLater(GenericsLib.getInstance(), new Runnable() {
+        Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable() {
 
             @Override
             public void run () {

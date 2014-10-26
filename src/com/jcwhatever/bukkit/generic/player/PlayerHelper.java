@@ -435,13 +435,13 @@ public class PlayerHelper {
 
 			synchronized (_sync) {
 
-				IDataNode data = DataStorage.getStorage(GenericsLib.getInstance(), new DataPath("player-names"));
+				IDataNode data = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("player-names"));
 				data.loadAsync(new StorageLoadHandler() {
 
                     @Override
                     public void onFinish(StorageLoadResult result) {
                         if (!result.isLoaded())
-                            Messenger.warning(GenericsLib.getInstance(), "Failed to load player names file.");
+                            Messenger.warning(GenericsLib.getPlugin(), "Failed to load player names file.");
 
                     }
 

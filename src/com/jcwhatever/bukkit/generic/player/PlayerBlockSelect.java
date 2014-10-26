@@ -51,7 +51,7 @@ public class PlayerBlockSelect implements Listener {
         if (_listener == null) {
             _listener = new PlayerBlockSelect();
 
-            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getInstance());
+            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getPlugin());
         }
 
     }

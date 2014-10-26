@@ -171,7 +171,7 @@ public class YamlDataStorage implements IDataNode {
         if (loadHandler != null && loadHandler._dataNode == null)
             loadHandler._dataNode = this;
 
-        Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getInstance(), new Runnable() {
+        Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getPlugin(), new Runnable() {
 
             @Override
             public void run() {
@@ -274,7 +274,7 @@ public class YamlDataStorage implements IDataNode {
             final boolean saveResult = isSaved;
 
             // return results on main thread
-            Scheduler.runTaskLater(GenericsLib.getInstance(), new Runnable() {
+            Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
 
                 @Override
                 public void run() {
@@ -311,7 +311,7 @@ public class YamlDataStorage implements IDataNode {
         }
 
         // save data node on alternate thread
-        Scheduler.runTaskLaterAsync(GenericsLib.getInstance(), 1, new Runnable() {
+        Scheduler.runTaskLaterAsync(GenericsLib.getPlugin(), 1, new Runnable() {
 
             @Override
             public void run() {
@@ -320,7 +320,7 @@ public class YamlDataStorage implements IDataNode {
 
                 if (saveHandler != null) {
                     // return results on main thread
-                    Scheduler.runTaskLater(GenericsLib.getInstance(), new Runnable() {
+                    Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
 
                         @Override
                         public void run() {
@@ -361,7 +361,7 @@ public class YamlDataStorage implements IDataNode {
             saveHandler._dataNode = this;
 
         // save on alternate thread
-        Scheduler.runTaskLaterAsync(GenericsLib.getInstance(), 1, new Runnable() {
+        Scheduler.runTaskLaterAsync(GenericsLib.getPlugin(), 1, new Runnable() {
 
             @Override
             public void run() {
@@ -371,7 +371,7 @@ public class YamlDataStorage implements IDataNode {
                 if (saveHandler != null) {
 
                     // return results on main thread
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(GenericsLib.getInstance(), new Runnable() {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(GenericsLib.getPlugin(), new Runnable() {
 
                         @Override
                         public void run() {

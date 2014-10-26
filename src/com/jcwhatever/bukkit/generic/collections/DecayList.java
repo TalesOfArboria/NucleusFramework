@@ -160,7 +160,7 @@ public class DecayList<T> extends LinkedList<T>{
         if (_rot == null)
             _rot = new Rot(this);
 
-        _decayTask = Bukkit.getScheduler().runTaskTimer(GenericsLib.getInstance(), new Rot(this), _decayTicks, _decayTicks);
+        _decayTask = Bukkit.getScheduler().runTaskTimer(GenericsLib.getPlugin(), new Rot(this), _decayTicks, _decayTicks);
 	}
 	
 	public static abstract class DecayAction<T> {

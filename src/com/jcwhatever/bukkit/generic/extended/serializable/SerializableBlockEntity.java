@@ -170,7 +170,7 @@ public class SerializableBlockEntity implements IGenericsSerializable {
             _location.getBlock().setType(getMaterial());
             _location.getBlock().setData(getRawData());
 
-            Scheduler.runTaskLater(GenericsLib.getInstance(), new Runnable() {
+            Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
                     applyTile(blockState);

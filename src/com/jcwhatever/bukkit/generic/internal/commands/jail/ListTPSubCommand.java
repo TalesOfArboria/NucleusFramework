@@ -37,7 +37,7 @@ public class ListTPSubCommand extends AbstractCommand {
 
         List<INamedLocation> locations = jailManager.getTeleports();
 
-        ChatPaginator pagin = new ChatPaginator(GenericsLib.getInstance(), 6,
+        ChatPaginator pagin = new ChatPaginator(GenericsLib.getPlugin(), 6,
                 PaginatorTemplate.HEADER, PaginatorTemplate.FOOTER, _PAGINATOR);
 
         for (INamedLocation loc : locations) {

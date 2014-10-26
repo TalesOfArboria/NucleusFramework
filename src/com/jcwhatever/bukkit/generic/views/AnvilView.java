@@ -37,7 +37,7 @@ public class AnvilView extends AbstractView {
 		
 		if (_eventListener == null) {
 			_eventListener = new EventListener();
-			Bukkit.getPluginManager().registerEvents(_eventListener, GenericsLib.getInstance());
+			Bukkit.getPluginManager().registerEvents(_eventListener, GenericsLib.getPlugin());
 		}
 	}
 	

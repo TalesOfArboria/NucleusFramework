@@ -14,7 +14,7 @@ public class Lang {
 
     @Localized
     public static String get(String text, Object... params) {
-        return _languageManager.get(GenericsLib.getInstance(), text, params);
+        return _languageManager.get(GenericsLib.getPlugin(), text, params);
     }
 
     public static String get(Plugin plugin, String text, Object... params) {

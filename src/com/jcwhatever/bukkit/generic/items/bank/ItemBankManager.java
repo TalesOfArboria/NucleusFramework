@@ -297,7 +297,7 @@ public class ItemBankManager {
 
     private static ItemBankAccount loadAccountFromFile (UUID playerId) {
 
-        IDataNode dataNode = DataStorage.getStorage(GenericsLib.getInstance(), new DataPath("bank." + playerId));
+        IDataNode dataNode = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("bank." + playerId));
 
         if (!dataNode.load())
             return null;

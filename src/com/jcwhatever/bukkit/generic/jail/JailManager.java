@@ -46,7 +46,7 @@ public class JailManager {
      * Get the global default jail instance.
      */
     public static JailManager getDefault() {
-        return GenericsLib.getInstance().getJailManager();
+        return GenericsLib.getPlugin().getJailManager();
     }
 
     private Plugin _plugin;
@@ -79,7 +79,7 @@ public class JailManager {
         loadSettings();
 
         // check for prisoner release every 1 minute.
-        Scheduler.runTaskRepeat(GenericsLib.getInstance(),  20, 1200, _warden);
+        Scheduler.runTaskRepeat(GenericsLib.getPlugin(),  20, 1200, _warden);
 
         BukkitEventListener _eventListener = new BukkitEventListener();
         Bukkit.getPluginManager().registerEvents(_eventListener, plugin);

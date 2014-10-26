@@ -8,7 +8,7 @@ import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
 public class CommandHandler extends AbstractCommandHandler {
 
     public CommandHandler() {
-        super(GenericsLib.getInstance());
+        super(GenericsLib.getPlugin());
     }
 
     @Override

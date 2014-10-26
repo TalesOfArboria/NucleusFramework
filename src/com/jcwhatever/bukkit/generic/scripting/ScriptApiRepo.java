@@ -33,15 +33,15 @@ public class ScriptApiRepo {
     private static Map<String, ApiPackage>  _scriptApis = new HashMap<>(50);
 
     static {
-        registerApiType(GenericsLib.getInstance(), ScriptApiBukkitEvents.class);
-        registerApiType(GenericsLib.getInstance(), ScriptApiEconomy.class);
-        registerApiType(GenericsLib.getInstance(), ScriptApiInventory.class);
-        registerApiType(GenericsLib.getInstance(), ScriptApiItemBank.class);
-        registerApiType(GenericsLib.getInstance(), ScriptApiJail.class);
-        registerApiType(GenericsLib.getInstance(), ScriptApiLoader.class);
-        registerApiType(GenericsLib.getInstance(), ScriptApiMsg.class);
-        registerApiType(GenericsLib.getInstance(), ScriptApiPermissions.class);
-        registerApiType(GenericsLib.getInstance(), ScriptApiSounds.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiBukkitEvents.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiEconomy.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiInventory.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiItemBank.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiJail.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiLoader.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiMsg.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiPermissions.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiSounds.class);
     }
 
     /**

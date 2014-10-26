@@ -24,7 +24,7 @@ public class BukkitPermissions extends AbstractBukkitPermissions {
 
 	BukkitPermissions() {
 		
-		_permissions = DataStorage.getStorage(GenericsLib.getInstance(), new DataPath("permissions"));
+		_permissions = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("permissions"));
 		_permissions.load();
 		
 	}

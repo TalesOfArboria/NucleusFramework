@@ -51,7 +51,7 @@ public class ProjectileUtils {
 
 		//Check unhittable.
 		if (v4 < derp) {
-			GenericsLib.getInstance().getLogger().warning("V4: " + v4 + ", DERP: " + derp);
+			GenericsLib.getPlugin().getLogger().warning("V4: " + v4 + ", DERP: " + derp);
 			//target unreachable
 			// use this to fire at optimal max angle launchAngle = Math.atan( ( 2*g*elev + v2) / (2*g*elev + 2*v2));
 			return null;
@@ -95,7 +95,7 @@ public class ProjectileUtils {
 		if (isBallistic) {
 			Double launchAngle = getLaunchAngle(source, target, vector.getY(), velocity);
 			if (launchAngle == null) {
-				GenericsLib.getInstance().getLogger().warning("Failed to get launch angle");
+				GenericsLib.getPlugin().getLogger().warning("Failed to get launch angle");
 				//return false;
 				launchAngle = 0.0D;
 			}

@@ -48,7 +48,7 @@ public class RegionManager {
         _playerMap = new PlayerMap<>();
         _playerLocationCache = new PlayerMap<>();
         PlayerWatcher _playerWatcher = new PlayerWatcher();
-        Scheduler.runTaskRepeat(GenericsLib.getInstance(),  7, 7, _playerWatcher);
+        Scheduler.runTaskRepeat(GenericsLib.getPlugin(),  7, 7, _playerWatcher);
     }
 
     /**
@@ -214,7 +214,7 @@ public class RegionManager {
         PreCon.notNull(region);
 
         if (!region.isDefined()) {
-            Messenger.debug(GenericsLib.getInstance(), "Failed to register region '{0}' with RegionManager because it's coords are undefined.", region.getName());
+            Messenger.debug(GenericsLib.getPlugin(), "Failed to register region '{0}' with RegionManager because it's coords are undefined.", region.getName());
             return;
         }
 
@@ -326,7 +326,7 @@ public class RegionManager {
      */
     private void onPlayerLeave(final Region region, final Player p) {
 
-        Scheduler.runTaskSync(GenericsLib.getInstance(), new Runnable() {
+        Scheduler.runTaskSync(GenericsLib.getPlugin(), new Runnable() {
 
             @Override
             public void run() {
@@ -341,7 +341,7 @@ public class RegionManager {
      */
     private void onPlayerEnter(final Region region, final Player p) {
 
-        Scheduler.runTaskSync(GenericsLib.getInstance(), new Runnable() {
+        Scheduler.runTaskSync(GenericsLib.getPlugin(), new Runnable() {
 
             @Override
             public void run() {
@@ -417,7 +417,7 @@ public class RegionManager {
 
             if (!worldPlayers.isEmpty()) {
 
-                Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getInstance(), new Runnable() {
+                Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getPlugin(), new Runnable() {
 
                     @Override
                     public void run() {

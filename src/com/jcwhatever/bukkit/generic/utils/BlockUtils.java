@@ -21,14 +21,14 @@ public class BlockUtils {
 
 		location.getBlock().setType(Material.AIR);
 
-		Bukkit.getScheduler().scheduleSyncDelayedTask(GenericsLib.getInstance(), new Runnable() {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(GenericsLib.getPlugin(), new Runnable() {
 
 			@Override
 			public void run() {
 
 				final FallingBlock fallBlock = location.getWorld().spawnFallingBlock(location, startBlock.getType(), startBlock.getData().getData());
 
-				Bukkit.getScheduler().runTaskLater(GenericsLib.getInstance(), new Runnable () {
+				Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable () {
 
 					@Override
 					public void run() {

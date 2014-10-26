@@ -312,7 +312,7 @@ public class TimedList<T> extends ArrayList<T>{
         if (lifespan < 1)
             return;
 
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(GenericsLib.getInstance(), new Runnable() {
+        BukkitTask task = Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable() {
 
             @Override
             public void run() {

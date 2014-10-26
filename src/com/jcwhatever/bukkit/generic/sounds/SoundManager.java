@@ -225,7 +225,7 @@ public class SoundManager {
      */
     private static void load() {
 
-        IDataNode config = DataStorage.getStorage(GenericsLib.getInstance(), new DataPath("resource-sounds"));
+        IDataNode config = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("resource-sounds"));
         config.load();
 
         Set<String> soundNames = config.getSubNodeNames();

@@ -84,7 +84,7 @@ public class PlayerBlockView {
 		
 		for (final Region region : regions) {
 			if (region.contains(loc)) {
-				Bukkit.getScheduler().runTaskLater(GenericsLib.getInstance(), new Runnable() {
+				Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable() {
 
 					@Override
 					public void run() {
