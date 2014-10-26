@@ -52,8 +52,8 @@ final class PlayerCollectionListener implements Listener {
      * @param p           The player.
      * @param collection  The collection.
      */
-    public void addCollection(Player p, IPlayerCollection collection) {
-        addCollection(p.getUniqueId(), collection);
+    public void addPlayer(Player p, IPlayerCollection collection) {
+        addPlayer(p.getUniqueId(), collection);
     }
 
     /**
@@ -62,7 +62,7 @@ final class PlayerCollectionListener implements Listener {
      * @param playerId    The player Id.
      * @param collection  The collection.
      */
-    public void addCollection(UUID playerId, IPlayerCollection collection) {
+    public void addPlayer(UUID playerId, IPlayerCollection collection) {
         synchronized (_sync) {
             _collectionMap.put(playerId, collection);
         }
@@ -74,7 +74,7 @@ final class PlayerCollectionListener implements Listener {
      * @param p           The player.
      * @param collection  The collection.
      */
-    public void removeCollection(Player p, IPlayerCollection collection) {
+    public void removePlayer(Player p, IPlayerCollection collection) {
         removePlayer(p.getUniqueId(), collection);
     }
 

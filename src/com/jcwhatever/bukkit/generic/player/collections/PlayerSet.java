@@ -26,7 +26,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
     @Override
     public synchronized boolean add(Player p) {
         if (_players.add(p)) {
-            _listener.addCollection(p, this);
+            _listener.addPlayer(p, this);
             return true;
         }
 
@@ -37,7 +37,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
     public synchronized boolean addAll(Collection<? extends Player> c) {
 
         for (Player p : c) {
-            _listener.addCollection(p, this);
+            _listener.addPlayer(p, this);
         }
 
         return _players.addAll(c);
@@ -47,7 +47,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
     public synchronized void clear() {
 
         for (Player p : _players) {
-            _listener.removeCollection(p, this);
+            _listener.removePlayer(p, this);
         }
 
         _players.clear();
@@ -77,7 +77,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
     public synchronized boolean remove(Object o) {
         if (_players.remove(o)) {
             if (o instanceof Player) {
-                _listener.removeCollection((Player) o, this);
+                _listener.removePlayer((Player) o, this);
             }
             return true;
         }
@@ -89,7 +89,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
 
         for (Object obj : c) {
             if (obj instanceof Player) {
-                _listener.removeCollection((Player) obj, this);
+                _listener.removePlayer((Player) obj, this);
             }
         }
 
@@ -103,7 +103,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
         temp.removeAll(c);
 
         for (Player p : temp) {
-            _listener.removeCollection(p, this);
+            _listener.removePlayer(p, this);
         }
 
         return _players.retainAll(c);
@@ -129,7 +129,15 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
         remove(p);
     }
 
-
+    /**
+     * Call to remove references that prevent
+     * the garbage collector from collecting
+     * the instance after it is not longer needed.
+     */
+    @Override
+    public void dispose() {
+        clear();
+    }
 
     private final class Iter implements Iterator<Player> {
 
@@ -156,7 +164,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
         @Override
         public void remove() {
             _iterator.remove();
-            _listener.removeCollection(_current, _parent);
+            _listener.removePlayer(_current, _parent);
         }
 
     }

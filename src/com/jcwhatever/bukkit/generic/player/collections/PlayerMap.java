@@ -21,6 +21,11 @@ public class PlayerMap<T> implements Map<UUID, T>, IPlayerCollection {
 	
 	@Override
 	public synchronized void clear() {
+
+        for (UUID playerId : _map.keySet()) {
+            _listener.removePlayer(playerId, this);
+        }
+
 		_map.clear();
 	}
 
@@ -61,14 +66,14 @@ public class PlayerMap<T> implements Map<UUID, T>, IPlayerCollection {
 	@Override
 	public synchronized T put(UUID key, T value) {
 
-        _listener.addCollection(key, this);
+        _listener.addPlayer(key, this);
         return _map.put(key, value);
 	}
 
 	@Override
 	public synchronized void putAll(Map<? extends UUID, ? extends T> pairs) {
         for (UUID playerId : pairs.keySet()) {
-            _listener.addCollection(playerId, this);
+            _listener.addPlayer(playerId, this);
         }
 		_map.putAll(pairs);
 	}
@@ -98,5 +103,15 @@ public class PlayerMap<T> implements Map<UUID, T>, IPlayerCollection {
 	public synchronized void removePlayer(Player p) {
 		_map.remove(p.getUniqueId());
 	}
-	
+
+
+    /**
+     * Call to remove references that prevent
+     * the garbage collector from collecting
+     * the instance after it is not longer needed.
+     */
+    @Override
+    public void dispose() {
+        clear();
+    }
 }
