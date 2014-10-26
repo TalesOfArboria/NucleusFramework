@@ -4,16 +4,12 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.events.JCGEventListener;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
-import com.jcwhatever.bukkit.generic.player.PlayerBlockView;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
-import org.bukkit.World;
 
 /**
  * GenericsLib Bukkit plugin.
@@ -95,24 +91,6 @@ public class GenericsLib extends GenericsPlugin {
                 if (chat.getJson().contains("You don't have permission for this area.")) {
                     event.setCancelled(true);
                 }
-            }
-        });
-
-
-        // handle block change packets
-        _protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.BLOCK_CHANGE) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                PacketContainer packet = event.getPacket();
-                World world = event.getPlayer().getWorld();
-                StructureModifier<Integer> ints = packet.getIntegers();
-                int x = ints.read(0);
-                int y = ints.read(1);
-                int z = ints.read(2);
-
-                if (PlayerBlockView.isAlternateViewed(event.getPlayer(), world, x, y, z))
-                    event.setCancelled(true);
-
             }
         });
 

@@ -10,7 +10,6 @@ import com.jcwhatever.bukkit.generic.items.ItemStackHelper.DisplayNameResult;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.permissions.BukkitPermissions;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
-import com.jcwhatever.bukkit.generic.player.PlayerBlockView;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -130,8 +129,6 @@ public final class JCGEventListener implements Listener {
 		if (!event.hasBlock()) {
 			return;
 		}
-
-		PlayerBlockView.setPlayerView(event.getPlayer(), event.getClickedBlock().getLocation());
 
 		Block clicked = event.getClickedBlock();
 
