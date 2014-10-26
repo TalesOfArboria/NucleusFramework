@@ -9,7 +9,8 @@ def providedDepends = [
 
 def compileDepends = null
 def includeFiles = [
-        'plugin.yml'
+        'plugin.yml',
+        'LICENSE.txt'
 ]
 
 // Set version number
