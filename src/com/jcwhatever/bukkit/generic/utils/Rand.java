@@ -1,8 +1,5 @@
 package com.jcwhatever.bukkit.generic.utils;
 
-import com.jcwhatever.bukkit.generic.collections.Weighted;
-import com.jcwhatever.bukkit.generic.collections.WeightedList;
-
 import java.util.List;
 import java.util.Random;
 
@@ -83,29 +80,6 @@ public class Rand {
 	public static int getInt() {
 		Random random = new Random(RANDOM.nextInt());
 		return random.nextInt();
-	}
-
-    /**
-     * Get a random item from a weighted list using the
-     * the weighted values to influence the outcome.
-     *
-     * @param weightedList  The weighted list.
-     */
-	public static <T> Weighted<T> weighted(WeightedList<T> weightedList) {
-		Random random = new Random(RANDOM.nextInt());
-		int sumOfWeights = weightedList.getSumOfWeight();
-		
-		int randomInt = random.nextInt(sumOfWeights) + 1;
-		
-		for (Weighted<T> weighted : weightedList) {
-			randomInt -= weighted.getWeight();
-			
-			if (randomInt <= 0) {
-				return weighted;
-			}
-		}
-		
-		return weightedList.get(getInt(weightedList.size()));
 	}
 
     /**
