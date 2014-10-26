@@ -1,11 +1,10 @@
 package com.jcwhatever.bukkit.generic.messaging;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
