@@ -10,40 +10,73 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.events.JCGEventListener;
+import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockView;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 
+/**
+ * GenericsLib Bukkit plugin.
+ */
 public class GenericsLib extends GenericsPlugin {
 
     private static GenericsLib _instance;
     private static RegionManager _regionManager;
 
 	private ProtocolManager _protocolManager;
-    private IDataNode _jailDataNode;
+    private JailManager _jailManager;
 
-
+    /**
+     * Get the {@code GenericsLib} plugin instance.
+     * @return
+     */
 	public static GenericsLib getInstance() {
 		return _instance;
 	}
 
+    /**
+     * Get the global {@code RegionManager}.
+     */
     public static RegionManager getRegionManager() {
         return _regionManager;
     }
 
+    /**
+     * Constructor.
+     */
 	public GenericsLib() {
 		super();
 
 		_instance = this;
 	}
 
-	@Override
+    /**
+     * Get the default Jail Manager.
+     */
+    public JailManager getJailManager() {
+        return _jailManager;
+    }
+
+    /**
+     * Get Protocol Manager.
+     */
+    public ProtocolManager getProtocolManager() {
+        return _protocolManager;
+    }
+
+
+    /**
+     * Get the chat prefix.
+     */
+    @Override
 	public String getChatPrefix() {
-		return "[jcGenerics] ";
+		return "[GenericsLib] ";
 	}
 
+    /**
+     * Get the console prefix.
+     */
 	@Override
 	public String getConsolePrefix() {
 		return getChatPrefix();
@@ -53,6 +86,7 @@ public class GenericsLib extends GenericsPlugin {
     protected void onEnablePlugin() {
         _protocolManager = ProtocolLibrary.getProtocolManager();
         _regionManager = new RegionManager();
+        _jailManager = new JailManager(this, "default", getSettings().getNode("jail"));
 
         // remove world guard message
         _protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.CHAT) {
@@ -86,7 +120,7 @@ public class GenericsLib extends GenericsPlugin {
 
         registerListeners();
 
-        getCommand("jcg").setExecutor(new CommandHandler());
+        registerCommands(new CommandHandler());
     }
 
     @Override
@@ -94,21 +128,9 @@ public class GenericsLib extends GenericsPlugin {
 
     }
 
-	public ProtocolManager getProtocolManager() {
-		return _protocolManager;
-	}
-	
-	public IDataNode getJailDataNode() {
-	    if (_jailDataNode == null) {
-	        _jailDataNode = this.getSettings().getNode("jail");
-	    }
-	    
-	    return _jailDataNode;
-	}
-
 	private void registerListeners() {
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(JCGEventListener.get(), this);
+		pm.registerEvents(new JCGEventListener(), this);
 	}
 
 

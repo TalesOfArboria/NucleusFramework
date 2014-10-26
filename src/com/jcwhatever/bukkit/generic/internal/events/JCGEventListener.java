@@ -25,7 +25,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -39,28 +38,14 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Set;
 
 public final class JCGEventListener implements Listener {
 
-	private static WeakReference<JCGEventListener> _instance;
-
-	public static JCGEventListener get() {
-		if (_instance == null || _instance.get() == null) {
-			_instance = new WeakReference<JCGEventListener>(new JCGEventListener());
-		}
-		return _instance.get();
-	}
-
-
 	@EventHandler(priority=EventPriority.HIGHEST)
     private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 	    
-
-        Messenger.debug(null, "Command {0}", event.getMessage());
-
         if (CommandRequests.onResponse(event.getPlayer(), event.getMessage())) {
             Messenger.debug(null, "Response Processed");
             event.setCancelled(true);
@@ -139,14 +124,6 @@ public final class JCGEventListener implements Listener {
 		}
 	}
 
-
-	@EventHandler(priority=EventPriority.NORMAL)
-	private void onCreatureSpawn(CreatureSpawnEvent event) {
-		// TODO: Map Player Spawning Egg to Creature Spawn Event
-	    
-	}
-
-
 	@EventHandler(priority=EventPriority.NORMAL)
 	private void onPlayerInteract(PlayerInteractEvent event) {
 
@@ -175,11 +152,6 @@ public final class JCGEventListener implements Listener {
 			SignInteractEvent.callEvent(event, sign);
 		}
 
-		// spawn eggs
-		ItemStack inHand = event.getPlayer().getItemInHand();
-		if (inHand.getType() == Material.MONSTER_EGG) {
-			// TODO: Map Player Spawning Egg to Creature Spawn Event
-		}
 	}
 
 	@EventHandler(priority=EventPriority.NORMAL)

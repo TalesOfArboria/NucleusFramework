@@ -42,16 +42,11 @@ import java.util.UUID;
  */
 public class JailManager {
 
-    private static JailManager _defaultManager;
-
     /**
      * Get the global default jail instance.
      */
     public static JailManager getDefault() {
-        if (_defaultManager == null)
-            _defaultManager = new JailManager(GenericsLib.getInstance(), "default", GenericsLib.getInstance().getJailDataNode());
-
-        return _defaultManager;
+        return GenericsLib.getInstance().getJailManager();
     }
 
     private Plugin _plugin;

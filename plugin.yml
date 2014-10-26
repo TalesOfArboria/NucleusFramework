@@ -5,7 +5,7 @@ version: 0-beta
 depend: [ProtocolLib]
 softdepend: [Vault]
 commands:
-    jcg:
+    generics:
         description: Base command for jcGenerics
         usage: |
             ERROR!
