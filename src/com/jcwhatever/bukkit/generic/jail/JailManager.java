@@ -46,7 +46,7 @@ public class JailManager {
      * Get the global default jail instance.
      */
     public static JailManager getDefault() {
-        return GenericsLib.getPlugin().getJailManager();
+        return GenericsLib.getJailManager();
     }
 
     private Plugin _plugin;

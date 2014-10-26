@@ -2,7 +2,6 @@ name: GenericsLib
 author: JC The Pants
 main: com.jcwhatever.bukkit.generic.GenericsLib
 version: 0-beta
-depend: [ProtocolLib]
 softdepend: [Vault]
 commands:
     generics:
