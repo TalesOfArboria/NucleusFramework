@@ -14,7 +14,6 @@ import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockView;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
 import org.bukkit.World;
-import org.bukkit.plugin.PluginManager;
 
 /**
  * GenericsLib Bukkit plugin.
@@ -29,7 +28,6 @@ public class GenericsLib extends GenericsPlugin {
 
     /**
      * Get the {@code GenericsLib} plugin instance.
-     * @return
      */
 	public static GenericsLib getPlugin() {
 		return _instance;
@@ -118,8 +116,7 @@ public class GenericsLib extends GenericsPlugin {
             }
         });
 
-        registerListeners();
-
+        registerEventListeners(new JCGEventListener());
         registerCommands(new CommandHandler());
     }
 
@@ -127,11 +124,4 @@ public class GenericsLib extends GenericsPlugin {
     protected void onDisablePlugin() {
 
     }
-
-	private void registerListeners() {
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new JCGEventListener(), this);
-	}
-
-
 }
