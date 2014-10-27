@@ -30,7 +30,7 @@ if (hasProperty("teamcity")) {
     }
 
 }else {
-    version = majorVerion + '.000.git-unknown'
+    version = majorVersion + '.000.git-unknown'
 }
 
 if (buildBy == null) {
