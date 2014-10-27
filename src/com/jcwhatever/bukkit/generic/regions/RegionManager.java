@@ -66,7 +66,7 @@ public class RegionManager {
 
 
     /**
-     * Constructor. Used by jcGenerics to initialize RegionEventManager.
+     * Constructor. Used by GenericsLib to initialize RegionEventManager.
      */
     public RegionManager() {
         _playerMap = new PlayerMap<>();
@@ -514,8 +514,8 @@ public class RegionManager {
 
 
             // schedule next check
-            //if (jcGenerics.getInstance().isEnabled())
-            //	Bukkit.getScheduler().runTaskLater(jcGenerics.getInstance(), _instance, 7);
+            //if (GenericsLib.getInstance().isEnabled())
+            //	Bukkit.getScheduler().runTaskLater(GenericsLib.getInstance(), _instance, 7);
         }
     }
 

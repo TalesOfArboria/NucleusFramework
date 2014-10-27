@@ -8,7 +8,7 @@
     <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/BarAPI.jar!/" />
     <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/bukkit-1.7.9-R0.1-20140501.232652-9.jar!/" />
     <src_description expected_position="0">
-      <src_folder value="file://$MODULE_DIR$/../jcGenerics/src" expected_position="0" />
+      <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
     </src_description>
   </component>
   <component name="FacetManager">
@@ -27,7 +27,7 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/../jcGenerics/bin" />
+    <output url="file://$MODULE_DIR$/bin" />
     <exclude-output />
     <annotation-paths>
       <root url="file://$MODULE_DIR$/.." />

@@ -1,10 +1,10 @@
 name: GenericsLib
 author: JC The Pants
 main: com.jcwhatever.bukkit.generic.GenericsLib
-version: 0-beta
+version: 0.0-beta
 softdepend: [Vault]
 commands:
     generics:
-        description: Base command for jcGenerics
+        description: Base command for GenericsLib
         usage: |
             ERROR!
