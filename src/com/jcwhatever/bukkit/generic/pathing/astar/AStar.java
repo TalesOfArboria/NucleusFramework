@@ -260,10 +260,10 @@ public abstract class AStar<T extends PathNode> {
 
 
     /**
-    *  Called to find a path to the destination node. If a path is not found,
-    *  null is returned. Otherwise, the destination path node is returned
-    *  and the path can be found by traversing its parent nodes.
-    */
+     *  Called to find a path to the destination node. If a path is not found,
+     *  null is returned. Otherwise, the destination path node is returned
+     *  and the path can be found by traversing its parent nodes.
+     */
     @Nullable
     protected T searchDestination(Location start, Location end) {
 
@@ -395,7 +395,7 @@ public abstract class AStar<T extends PathNode> {
         // Check for diagonal obstruction
         if (x != 0 && z != 0 && y >= 0) {
             T diagX = createNodeChild(candidateParent, x, y, 0),
-              diagZ = createNodeChild(candidateParent, 0, y, z);
+                    diagZ = createNodeChild(candidateParent, 0, y, z);
 
             boolean isXValid = AStarUtils.hasRoomForEntity(diagX.getLocation(), getEntityHeight(), getDoorPathMode());
             boolean isZValid = AStarUtils.hasRoomForEntity(diagZ.getLocation(), getEntityHeight(), getDoorPathMode());

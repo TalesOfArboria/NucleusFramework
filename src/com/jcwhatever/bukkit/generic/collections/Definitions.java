@@ -37,7 +37,7 @@ import java.util.ArrayList;
  */
 public class Definitions<T, D> extends ArrayList<Definition> {
 
-	private static final long serialVersionUID = -3078314350437433749L;
+    private static final long serialVersionUID = -3078314350437433749L;
 
     /**
      * Constructor.
@@ -60,9 +60,9 @@ public class Definitions<T, D> extends ArrayList<Definition> {
      *
      * @param definitions Another Definitions object to initialize from.
      */
-	public Definitions(Definitions<T, D> definitions) {
-		super(definitions);
-	}
+    public Definitions(Definitions<T, D> definitions) {
+        super(definitions);
+    }
 
     /**
      * Set a term and definition.
@@ -71,10 +71,10 @@ public class Definitions<T, D> extends ArrayList<Definition> {
      * @param definition  The definition of the term.
      * @return  Returns self.
      */
-	public Definitions<T, D> set(T term, D definition) {
-		this.add(new Definition<T, D>(term, definition));
-		return this;
-	}
+    public Definitions<T, D> set(T term, D definition) {
+        this.add(new Definition<T, D>(term, definition));
+        return this;
+    }
 
 
     /**
@@ -128,5 +128,5 @@ public class Definitions<T, D> extends ArrayList<Definition> {
                     ((Definition) o)._definition.equals(_definition);
         }
     }
-	
+
 }

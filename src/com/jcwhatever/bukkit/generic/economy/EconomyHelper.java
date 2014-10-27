@@ -43,11 +43,11 @@ import java.util.UUID;
  * via Vault plugin.
  */
 public class EconomyHelper {
-	private static boolean _hasEconomy = false;
+    private static boolean _hasEconomy = false;
     private static Object _econ;
-    
+
     static {
-    	init();
+        init();
     }
 
     private EconomyHelper() {}
@@ -56,22 +56,22 @@ public class EconomyHelper {
      * Specifies how a currency name is used.
      */
     public enum CurrencyNoun {
-    	SINGULAR,
-    	PLURAL
+        SINGULAR,
+        PLURAL
     }
 
     /**
      * Determine if the an economy plugin is uninstalled.
      */
     public static boolean hasEconomy() {
-    	return _hasEconomy;
+        return _hasEconomy;
     }
 
     /**
      * Get the vault Economy wrapper.
      */
     public static Economy getEconomy() {
-    	return hasEconomy() ? (Economy)_econ : null;
+        return hasEconomy() ? (Economy)_econ : null;
     }
 
     /**
@@ -168,33 +168,33 @@ public class EconomyHelper {
      * @return  True if the operation completed successfully.
      */
     public static boolean transferMoney(UUID giverPlayerId, UUID receiverPlayerId, double amount) {
-    	String giverName = PlayerHelper.getPlayerName(giverPlayerId);
-		if (giverName == null || giverName.equals("[unknown]")) {
-			return false;
-		}
-	
-		String receiverName = PlayerHelper.getPlayerName(receiverPlayerId);
-		if (receiverName == null || receiverName.equals("[unknown]")) {
-			return false;
-		}
+        String giverName = PlayerHelper.getPlayerName(giverPlayerId);
+        if (giverName == null || giverName.equals("[unknown]")) {
+            return false;
+        }
 
-		// check givers balance
-		if (getBalance(giverPlayerId) < amount) {
-			return false;
-		}
-		
-		if (!giveMoney(giverName, giverPlayerId, -amount)) {
-			return false;
-		}
-		
-		if (!giveMoney(receiverName, receiverPlayerId, amount)) {
-			// give money back
-			giveMoney(giverName, giverPlayerId, amount);
-			return false;
-		}
-		
-		return true;
-	}
+        String receiverName = PlayerHelper.getPlayerName(receiverPlayerId);
+        if (receiverName == null || receiverName.equals("[unknown]")) {
+            return false;
+        }
+
+        // check givers balance
+        if (getBalance(giverPlayerId) < amount) {
+            return false;
+        }
+
+        if (!giveMoney(giverName, giverPlayerId, -amount)) {
+            return false;
+        }
+
+        if (!giveMoney(receiverName, receiverPlayerId, amount)) {
+            // give money back
+            giveMoney(giverName, giverPlayerId, amount);
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Give money to a player. Take money by providing a negative number.
@@ -220,56 +220,56 @@ public class EconomyHelper {
         String playerName = PlayerHelper.getPlayerName(playerId);
         return !(playerName == null || playerName.equals("[unknown]")) && giveMoney(playerName, playerId, amount);
     }
-    
+
     private static boolean giveMoney(String playerName, UUID playerId, double amount) {
-    	PreCon.notNullOrEmpty(playerName);
-    	PreCon.notNull(playerId);
-    	
-		if (!hasEconomy()) 
-			return false;
-		
-		Economy econ = getEconomy();
-		EconomyResponse r;
-		
-		if (amount > 0) {
-			EconGiveEvent event = EconGiveEvent.callEvent(playerId, amount);
-			
-			r = econ.depositPlayer(playerName, event.getAmount());
-		}
-		else {
-			EconWithdrawEvent event = EconWithdrawEvent.callEvent(playerId, amount);
-			
-			r = econ.withdrawPlayer(playerName, Math.abs(event.getAmount()));
-		}
-		
-		
-		if (!r.transactionSuccess()) {
-			return false;
-		}
+        PreCon.notNullOrEmpty(playerName);
+        PreCon.notNull(playerId);
 
-		return true;
-	}
+        if (!hasEconomy())
+            return false;
 
-	private static void init() {
+        Economy econ = getEconomy();
+        EconomyResponse r;
+
+        if (amount > 0) {
+            EconGiveEvent event = EconGiveEvent.callEvent(playerId, amount);
+
+            r = econ.depositPlayer(playerName, event.getAmount());
+        }
+        else {
+            EconWithdrawEvent event = EconWithdrawEvent.callEvent(playerId, amount);
+
+            r = econ.withdrawPlayer(playerName, Math.abs(event.getAmount()));
+        }
+
+
+        if (!r.transactionSuccess()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static void init() {
         Plugin _vault = Bukkit.getPluginManager().getPlugin("Vault");
-		if (!(_vault instanceof Vault)) {
-			_hasEconomy = false;
-			return;
-		}
-		
-		RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+        if (!(_vault instanceof Vault)) {
+            _hasEconomy = false;
+            return;
+        }
+
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-        	_hasEconomy = false;
-        	return;
+            _hasEconomy = false;
+            return;
         }
         Economy econ = rsp.getProvider();
         if (econ == null) {
-        	_hasEconomy = false;
-        	return;
+            _hasEconomy = false;
+            return;
         }
         _econ = econ;
         _hasEconomy = true;
     }
-    
+
 
 }

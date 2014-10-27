@@ -37,98 +37,98 @@ import java.util.Set;
 
 public class DummyCommandSender implements CommandSender {
 
-	private boolean _isOp = false;
-	
-	public DummyCommandSender() {}
-	
-	public DummyCommandSender(boolean isOp) {
-		_isOp = isOp;
-	}
-	
-	
-	@Override
-	public PermissionAttachment addAttachment(Plugin arg0) {
-		return null;
-	}
+    private boolean _isOp = false;
 
-	@Override
-	public PermissionAttachment addAttachment(Plugin arg0, int arg1) {
-		return null;
-	}
+    public DummyCommandSender() {}
 
-	@Override
-	public PermissionAttachment addAttachment(Plugin arg0, String arg1,	boolean arg2) {
-		return null;
-	}
+    public DummyCommandSender(boolean isOp) {
+        _isOp = isOp;
+    }
 
-	@Override
-	public PermissionAttachment addAttachment(Plugin arg0, String arg1,	boolean arg2, int arg3) {
-		return null;
-	}
 
-	@Override
-	public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-		return new HashSet<PermissionAttachmentInfo>(0);
-	}
+    @Override
+    public PermissionAttachment addAttachment(Plugin arg0) {
+        return null;
+    }
 
-	@Override
-	public boolean hasPermission(String arg0) {
-		return false;
-	}
+    @Override
+    public PermissionAttachment addAttachment(Plugin arg0, int arg1) {
+        return null;
+    }
 
-	@Override
-	public boolean hasPermission(Permission arg0) {
-		return false;
-	}
+    @Override
+    public PermissionAttachment addAttachment(Plugin arg0, String arg1,	boolean arg2) {
+        return null;
+    }
 
-	@Override
-	public boolean isPermissionSet(String arg0) {
-		return false;
-	}
+    @Override
+    public PermissionAttachment addAttachment(Plugin arg0, String arg1,	boolean arg2, int arg3) {
+        return null;
+    }
 
-	@Override
-	public boolean isPermissionSet(Permission arg0) {
-		return false;
-	}
+    @Override
+    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
+        return new HashSet<PermissionAttachmentInfo>(0);
+    }
 
-	@Override
-	public void recalculatePermissions() {
-		
-	}
+    @Override
+    public boolean hasPermission(String arg0) {
+        return false;
+    }
 
-	@Override
-	public void removeAttachment(PermissionAttachment arg0) {
-	
-	}
+    @Override
+    public boolean hasPermission(Permission arg0) {
+        return false;
+    }
 
-	@Override
-	public boolean isOp() {
-		return _isOp;
-	}
+    @Override
+    public boolean isPermissionSet(String arg0) {
+        return false;
+    }
 
-	@Override
-	public void setOp(boolean isOp) {
-		_isOp = isOp; 		
-	}
+    @Override
+    public boolean isPermissionSet(Permission arg0) {
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return "dummy";
-	}
+    @Override
+    public void recalculatePermissions() {
 
-	@Override
-	public Server getServer() {
-		return Bukkit.getServer();
-	}
+    }
 
-	@Override
-	public void sendMessage(String arg0) {
-				
-	}
+    @Override
+    public void removeAttachment(PermissionAttachment arg0) {
 
-	@Override
-	public void sendMessage(String[] arg0) {
-		
-	}
+    }
+
+    @Override
+    public boolean isOp() {
+        return _isOp;
+    }
+
+    @Override
+    public void setOp(boolean isOp) {
+        _isOp = isOp;
+    }
+
+    @Override
+    public String getName() {
+        return "dummy";
+    }
+
+    @Override
+    public Server getServer() {
+        return Bukkit.getServer();
+    }
+
+    @Override
+    public void sendMessage(String arg0) {
+
+    }
+
+    @Override
+    public void sendMessage(String[] arg0) {
+
+    }
 
 }

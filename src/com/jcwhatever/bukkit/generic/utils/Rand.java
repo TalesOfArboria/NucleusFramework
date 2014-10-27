@@ -33,11 +33,11 @@ import java.util.Random;
 public class Rand {
 
     private Rand() {}
-	
-	private static final Random RANDOM = new Random();
+
+    private static final Random RANDOM = new Random();
     private static final String SAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String UNSAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-                                                    "01234567890`~!@#$%^&*()_+-=";
+            "01234567890`~!@#$%^&*()_+-=";
 
     /**
      * Get a random item from a list.
@@ -80,12 +80,12 @@ public class Rand {
      * @param min  The minimum result.
      * @param max  The maximum result.
      */
-	public static int getInt(int min, int max) {
-		Random random = new Random(RANDOM.nextInt());
-		int range = max - min + 1;
-		int i = random.nextInt() % range;
-		return  min + i;
-	}
+    public static int getInt(int min, int max) {
+        Random random = new Random(RANDOM.nextInt());
+        int range = max - min + 1;
+        int i = random.nextInt() % range;
+        return  min + i;
+    }
 
     /**
      * Get a random integer from 0 up to the
@@ -93,18 +93,18 @@ public class Rand {
      *
      * @param max  The maximum result.
      */
-	public static int getInt(int max) {
-		Random random = new Random(RANDOM.nextInt());
-		return random.nextInt(max);
-	}
+    public static int getInt(int max) {
+        Random random = new Random(RANDOM.nextInt());
+        return random.nextInt(max);
+    }
 
     /**
      * Get a random integer.
      */
-	public static int getInt() {
-		Random random = new Random(RANDOM.nextInt());
-		return random.nextInt();
-	}
+    public static int getInt() {
+        Random random = new Random(RANDOM.nextInt());
+        return random.nextInt();
+    }
 
     /**
      * Get a random alphabet string of the specified length.
@@ -116,11 +116,11 @@ public class Rand {
      *
      * @param length  The length of the returned string.
      */
-	public static String getSafeString(int length) {
+    public static String getSafeString(int length) {
         PreCon.positiveNumber(length);
 
-		return getString(length, SAFE_CHARACTERS);
-	}
+        return getString(length, SAFE_CHARACTERS);
+    }
 
     /**
      * Get a random string of characters, including symbols,

@@ -34,12 +34,12 @@ import java.util.Iterator;
  */
 public class RegionBlockIterator implements Iterator<Block> {
 
-	private int _currentY;
-	private int _currentX;
-	private int _currentZ;
-	private Block _current;
+    private int _currentY;
+    private int _currentX;
+    private int _currentZ;
+    private Block _current;
 
-	private Region _region;
+    private Region _region;
 
     /**
      * Constructor.
@@ -70,52 +70,52 @@ public class RegionBlockIterator implements Iterator<Block> {
     /**
      * Determine if there is a next block.
      */
-	@Override
-	public boolean hasNext() {
-		if (_region.getWorld() == null)
-			return false;
-		
-		if (_currentY > _region.getYEnd())
-			return false;
-		
-		return true;
-	}
+    @Override
+    public boolean hasNext() {
+        if (_region.getWorld() == null)
+            return false;
+
+        if (_currentY > _region.getYEnd())
+            return false;
+
+        return true;
+    }
 
     /**
      * Get the next block.
      */
-	@Override
-	public Block next() {
-		
-		if (!hasNext())
-			return null;
-		
-		_current = _region.getWorld().getBlockAt(_currentX, _currentY, _currentZ);
-		
-		_currentZ++;
-		
-		if (_currentZ > _region.getZEnd()) {
-			_currentZ = _region.getZStart();
-			_currentX++;
-			
-			if (_currentX > _region.getXEnd()) {
-				_currentX = _region.getXStart();
-				
-				_currentY++;
-			}
-		}
-		
-		return _current;
-		
-	}
+    @Override
+    public Block next() {
+
+        if (!hasNext())
+            return null;
+
+        _current = _region.getWorld().getBlockAt(_currentX, _currentY, _currentZ);
+
+        _currentZ++;
+
+        if (_currentZ > _region.getZEnd()) {
+            _currentZ = _region.getZStart();
+            _currentX++;
+
+            if (_currentX > _region.getXEnd()) {
+                _currentX = _region.getXStart();
+
+                _currentY++;
+            }
+        }
+
+        return _current;
+
+    }
 
     /**
      * Remove the current block. Sets the block material
      * to {@code AIR}.
      */
-	@Override
-	public void remove() {
-		if (_current != null)
-			_current.setType(Material.AIR);		
-	}
+    @Override
+    public void remove() {
+        if (_current != null)
+            _current.setType(Material.AIR);
+    }
 }

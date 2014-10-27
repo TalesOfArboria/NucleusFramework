@@ -47,7 +47,7 @@ import java.util.ListIterator;
  */
 public class WeakList<T> implements List<T> {
 
-	private List<WeakReference<T>> _references;
+    private List<WeakReference<T>> _references;
 
     /**
      * Constructor.
@@ -75,37 +75,37 @@ public class WeakList<T> implements List<T> {
      *
      * @return  The item or null.
      */
-	@Override
+    @Override
     @Nullable
-	public T get(int index) {
+    public T get(int index) {
         PreCon.positiveNumber(index);
 
         if (index >= _references.size())
             return null;
 
-		return _references.get(index).get();
-	}
+        return _references.get(index).get();
+    }
 
     /**
      * Get the size of the list.
      */
-	@Override
-	public int size() {
-		clean();
-		return _references.size();
-	}
+    @Override
+    public int size() {
+        clean();
+        return _references.size();
+    }
 
     /**
      * Add an item.
      *
      * @param item  The item to add.
      */
-	@Override
-	public boolean add(T item) {
+    @Override
+    public boolean add(T item) {
         PreCon.notNull(item);
 
-		return _references.add(new WeakReference<T>(item));
-	}
+        return _references.add(new WeakReference<T>(item));
+    }
 
     /**
      * Insert an item at the specified index position.
@@ -116,8 +116,8 @@ public class WeakList<T> implements List<T> {
      * @param index  The index position.
      * @param item   The item to insert.
      */
-	@Override
-	public void add(int index, T item) {
+    @Override
+    public void add(int index, T item) {
         PreCon.positiveNumber(index);
         PreCon.notNull(item);
 
@@ -126,22 +126,22 @@ public class WeakList<T> implements List<T> {
             return;
         }
 
-		_references.add(index, new WeakReference<T>(item));		
-	}
+        _references.add(index, new WeakReference<T>(item));
+    }
 
     /**
      * Add all items from a collection.
      *
      * @param collection  The collection to add.
      */
-	@Override
-	public boolean addAll(Collection<? extends T> collection) {
+    @Override
+    public boolean addAll(Collection<? extends T> collection) {
         PreCon.notNull(collection);
 
-		for (T item : collection)
-			add(item);
-		return true;
-	}
+        for (T item : collection)
+            add(item);
+        return true;
+    }
 
     /**
      * Insert all items from a collection at the specified
@@ -150,51 +150,51 @@ public class WeakList<T> implements List<T> {
      * @param index       The index position.
      * @param collection  The collection to insert.
      */
-	@Override
-	public boolean addAll(int index, Collection<? extends T> collection) {
+    @Override
+    public boolean addAll(int index, Collection<? extends T> collection) {
         PreCon.positiveNumber(index);
         PreCon.notNull(collection);
 
-		for (T item : collection) {
-			add(index, item);
-			index++;
-		}
-		return true;
-	}
+        for (T item : collection) {
+            add(index, item);
+            index++;
+        }
+        return true;
+    }
 
     /**
      * Remove all items.
      */
-	@Override
-	public void clear() {
-		_references.clear();
-	}
+    @Override
+    public void clear() {
+        _references.clear();
+    }
 
     /**
      * Determine if the list contains the specified item.
      *
      * @param obj  The item to check.
      */
-	@Override
-	public boolean contains(Object obj) {
+    @Override
+    public boolean contains(Object obj) {
         PreCon.notNull(obj);
-		
-		Iterator<WeakReference<T>> wIterator = _references.iterator();
-		
-		while (wIterator.hasNext()) {
-			WeakReference<T> item = wIterator.next();
-			if (item.get() == null) {
-				wIterator.remove();
-			}
-			else {
+
+        Iterator<WeakReference<T>> wIterator = _references.iterator();
+
+        while (wIterator.hasNext()) {
+            WeakReference<T> item = wIterator.next();
+            if (item.get() == null) {
+                wIterator.remove();
+            }
+            else {
                 T value = item.get();
-				if (value != null && value.equals(obj))
-					return true;
-			}
-		}
-		
-		return false;
-	}
+                if (value != null && value.equals(obj))
+                    return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Determine if the items of a collection are
@@ -202,188 +202,188 @@ public class WeakList<T> implements List<T> {
      *
      * @param collection  The collection to check.
      */
-	@Override
-	public boolean containsAll(Collection<?> collection) {
+    @Override
+    public boolean containsAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
-		for (Object item : collection) {
-			if (!contains(item))
-				return false;
-		}
-		return true;
-	}
+        for (Object item : collection) {
+            if (!contains(item))
+                return false;
+        }
+        return true;
+    }
 
     /**
      * Get the index position of the specified object.
      *
      * @param obj  The object to check.
      */
-	@Override
-	public int indexOf(Object obj) {
+    @Override
+    public int indexOf(Object obj) {
         PreCon.notNull(obj);
 
-		Iterator<WeakReference<T>> wIterator = _references.iterator();
-		
-		int index = 0;
-		
-		while (wIterator.hasNext()) {
-			WeakReference<T> item = wIterator.next();
-			if (item.get() == null) {
-				wIterator.remove();
-			}
-			else {
+        Iterator<WeakReference<T>> wIterator = _references.iterator();
+
+        int index = 0;
+
+        while (wIterator.hasNext()) {
+            WeakReference<T> item = wIterator.next();
+            if (item.get() == null) {
+                wIterator.remove();
+            }
+            else {
                 T value = item.get();
-				if (value != null && value.equals(obj))
-					return index;
-				index++;
-			}
-		}
-		
-		return -1;
-	}
+                if (value != null && value.equals(obj))
+                    return index;
+                index++;
+            }
+        }
+
+        return -1;
+    }
 
     /**
      * Determine if the collection is empty.
      */
-	@Override
-	public boolean isEmpty() {
-		return _references.isEmpty();
-	}
+    @Override
+    public boolean isEmpty() {
+        return _references.isEmpty();
+    }
 
     /**
      * Get an iterator.
      */
-	@Override
-	public Iterator<T> iterator() {
-		clean();
-		return new WeakIterator();
-	}
+    @Override
+    public Iterator<T> iterator() {
+        clean();
+        return new WeakIterator();
+    }
 
     /**
      * Get the last index of the specified value.
      *
      * @param obj  The value to search for.
      */
-	@Override
-	public int lastIndexOf(Object obj) {
+    @Override
+    public int lastIndexOf(Object obj) {
         PreCon.notNull(obj);
 
-		Iterator<WeakReference<T>> wIterator = _references.iterator();
-		
-		int index = 0;
-		int lastIndex = -1;
-		
-		while (wIterator.hasNext()) {
-			WeakReference<T> item = wIterator.next();
-			if (item.get() == null) {
-				wIterator.remove();
-			}
-			else {
+        Iterator<WeakReference<T>> wIterator = _references.iterator();
+
+        int index = 0;
+        int lastIndex = -1;
+
+        while (wIterator.hasNext()) {
+            WeakReference<T> item = wIterator.next();
+            if (item.get() == null) {
+                wIterator.remove();
+            }
+            else {
                 T value = item.get();
-				if (value != null && value.equals(obj))
-					lastIndex = index;
-				index++;
-			}
-		}
-		
-		return lastIndex;
-	}
+                if (value != null && value.equals(obj))
+                    lastIndex = index;
+                index++;
+            }
+        }
+
+        return lastIndex;
+    }
 
     /**
      * Get a list iterator.
      */
-	@Override
-	public ListIterator<T> listIterator() {
-		clean();
-		return new WeakListIterator(0);
-	}
+    @Override
+    public ListIterator<T> listIterator() {
+        clean();
+        return new WeakListIterator(0);
+    }
 
     /**
      * Get a list iterator.
      *
      * @param start  The start position of the iterator.
      */
-	@Override
-	public ListIterator<T> listIterator(int start) {
+    @Override
+    public ListIterator<T> listIterator(int start) {
         PreCon.positiveNumber(start);
 
-		clean();
-		return new WeakListIterator(start);
-	}
+        clean();
+        return new WeakListIterator(start);
+    }
 
     /**
      * Remove an item from the list.
      *
      * @param obj  The item to remove.
      */
-	@Override
-	public boolean remove(Object obj) {
+    @Override
+    public boolean remove(Object obj) {
         PreCon.notNull(obj);
 
-		Iterator<WeakReference<T>> wIterator = _references.iterator();
-		
-		boolean found = false;
-		
-		while (wIterator.hasNext()) {
-			WeakReference<T> item = wIterator.next();
-			if (item.get() == null) {
-				wIterator.remove();
-			}
-			else {
+        Iterator<WeakReference<T>> wIterator = _references.iterator();
+
+        boolean found = false;
+
+        while (wIterator.hasNext()) {
+            WeakReference<T> item = wIterator.next();
+            if (item.get() == null) {
+                wIterator.remove();
+            }
+            else {
                 T value = item.get();
-				if (value != null && value.equals(obj)) {
-					wIterator.remove();
-					found = true;
-				}
-			}
-		}
-		
-		return found;
-	}
+                if (value != null && value.equals(obj)) {
+                    wIterator.remove();
+                    found = true;
+                }
+            }
+        }
+
+        return found;
+    }
 
     /**
      * Remove the item at the specified index.
      *
      * @param index  The index position.
      */
-	@Override
+    @Override
     @Nullable
-	public T remove(int index) {
+    public T remove(int index) {
         PreCon.positiveNumber(index);
 
-		WeakReference<T> item = _references.remove(index);
-		return item.get();
-	}
+        WeakReference<T> item = _references.remove(index);
+        return item.get();
+    }
 
     /**
      * Remove all items from the list that are in the specified collection.
      *
      * @param collection  The collection.
      */
-	@Override
-	public boolean removeAll(Collection<?> collection) {
+    @Override
+    public boolean removeAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
-		Iterator<WeakReference<T>> wIterator = _references.iterator();
-		
-		boolean found = false;
-		
-		while (wIterator.hasNext()) {
-			WeakReference<T> item = wIterator.next();
-			if (item.get() == null) {
-				wIterator.remove();
-			}
-			else {
-				T inner = item.get();
-				if (collection.contains(inner)) {
-					wIterator.remove();
-					found = true;
-				}
-			}
-		}
-		
-		return found;
-	}
+        Iterator<WeakReference<T>> wIterator = _references.iterator();
+
+        boolean found = false;
+
+        while (wIterator.hasNext()) {
+            WeakReference<T> item = wIterator.next();
+            if (item.get() == null) {
+                wIterator.remove();
+            }
+            else {
+                T inner = item.get();
+                if (collection.contains(inner)) {
+                    wIterator.remove();
+                    found = true;
+                }
+            }
+        }
+
+        return found;
+    }
 
     /**
      * Remove all items from the list with the exception of items contained
@@ -391,30 +391,30 @@ public class WeakList<T> implements List<T> {
      *
      * @param collection  The collection.
      */
-	@Override
-	public boolean retainAll(Collection<?> collection) {
+    @Override
+    public boolean retainAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
-		Iterator<WeakReference<T>> wIterator = _references.iterator();
-		
-		boolean found = false;
-		
-		while (wIterator.hasNext()) {
-			WeakReference<T> item = wIterator.next();
-			if (item.get() == null) {
-				wIterator.remove();
-			}
-			else {
-				T inner = item.get();
-				if (!collection.contains(inner)) {
-					wIterator.remove();
-					found = true;
-				}
-			}
-		}
-		
-		return found;
-	}
+        Iterator<WeakReference<T>> wIterator = _references.iterator();
+
+        boolean found = false;
+
+        while (wIterator.hasNext()) {
+            WeakReference<T> item = wIterator.next();
+            if (item.get() == null) {
+                wIterator.remove();
+            }
+            else {
+                T inner = item.get();
+                if (!collection.contains(inner)) {
+                    wIterator.remove();
+                    found = true;
+                }
+            }
+        }
+
+        return found;
+    }
 
     /**
      * Set the value of an item at the specified index location.
@@ -423,14 +423,14 @@ public class WeakList<T> implements List<T> {
      * @param item   The item to set.
      * @return
      */
-	@Override
-	public T set(int index, T item) {
+    @Override
+    public T set(int index, T item) {
         PreCon.positiveNumber(index);
         PreCon.notNull(item);
 
-		_references.set(index, new WeakReference<T>(item));
-		return item;
-	}
+        _references.set(index, new WeakReference<T>(item));
+        return item;
+    }
 
     /**
      * Get a segment of the list as a new list.
@@ -438,79 +438,79 @@ public class WeakList<T> implements List<T> {
      * @param start  The index position of the first item to add to the new list.
      * @param end    The index position of the last item to add to the new list.
      */
-	@Override
-	public List<T> subList(int start, int end) {
+    @Override
+    public List<T> subList(int start, int end) {
         PreCon.positiveNumber(start);
         PreCon.positiveNumber(end);
         PreCon.isValid(start <= end);
 
-		clean();
+        clean();
 
-		List<WeakReference<T>> subList = _references.subList(start, end);
+        List<WeakReference<T>> subList = _references.subList(start, end);
 
-		List<T> items = new ArrayList<T>(end - start);
-		for (WeakReference<T> item : subList) {
-			items.add(item.get());
-		}
-		return items;
-	}
+        List<T> items = new ArrayList<T>(end - start);
+        for (WeakReference<T> item : subList) {
+            items.add(item.get());
+        }
+        return items;
+    }
 
     /**
      * Convert the list into an object array.
      */
-	@Override
-	public Object[] toArray() {
+    @Override
+    public Object[] toArray() {
 
-		clean();
+        clean();
 
-		Object[] items = new Object[_references.size()];
-		for (int i=0; i < items.length; i++) {
-			WeakReference<T> item = _references.get(i);
-			items[i] = item.get();
-		}
-		return items;
-	}
+        Object[] items = new Object[_references.size()];
+        for (int i=0; i < items.length; i++) {
+            WeakReference<T> item = _references.get(i);
+            items[i] = item.get();
+        }
+        return items;
+    }
 
     /**
      * Convert the list into an array.
      */
-	@Override
-	public <E> E[] toArray(E[] array) {
+    @Override
+    public <E> E[] toArray(E[] array) {
         PreCon.notNull(array);
 
-		for (int i=0; i < array.length; i++) {
-			WeakReference<T> item = _references.get(i);
+        for (int i=0; i < array.length; i++) {
+            WeakReference<T> item = _references.get(i);
 
             @SuppressWarnings("unchecked") E reference = (E)item.get();
             array[i] = reference;
-		}
-		return array;
-	}
+        }
+        return array;
+    }
 
     // remove lost references
-	private void clean() {
-		Iterator<WeakReference<T>> wIterator = _references.iterator();
-		while (wIterator.hasNext()) {
-			WeakReference<T> item = wIterator.next();
-			if (item.get() == null) {
-				wIterator.remove();
-			}
-		}
-	}
-	
-	private class WeakIterator implements Iterator<T> {
-        
-		private Iterator<WeakReference<T>> wIterator = _references.iterator();
-		
-		public WeakIterator () {
-			clean();
-		}
-        
+    private void clean() {
+        Iterator<WeakReference<T>> wIterator = _references.iterator();
+        while (wIterator.hasNext()) {
+            WeakReference<T> item = wIterator.next();
+            if (item.get() == null) {
+                wIterator.remove();
+            }
+        }
+    }
+
+    private class WeakIterator implements Iterator<T> {
+
+        private Iterator<WeakReference<T>> wIterator = _references.iterator();
+
+        public WeakIterator () {
+            clean();
+        }
+
         @Override
         public boolean hasNext() {
             return wIterator.hasNext();
         }
-        
+
         @Override
         public T next() {
             while (wIterator.hasNext()) {
@@ -519,43 +519,43 @@ public class WeakList<T> implements List<T> {
                 if (value != null)
                     return value;
             }
-        	return null;
+            return null;
         }
-        
+
         @Override
         public void remove() {
             wIterator.remove();
         }
-        
+
     }
-	
-	private class WeakListIterator implements ListIterator<T> {
-		
-		private ListIterator<WeakReference<T>> iterator;
 
-		public WeakListIterator(int start) {
-			iterator = _references.listIterator(start);
-		}
+    private class WeakListIterator implements ListIterator<T> {
 
-		@Override
-		public void add(T item) {
-			iterator.add(new WeakReference<T>(item));
-			
-		}
+        private ListIterator<WeakReference<T>> iterator;
 
-		@Override
-		public boolean hasNext() {
-			return iterator.hasNext();
-		}
+        public WeakListIterator(int start) {
+            iterator = _references.listIterator(start);
+        }
 
-		@Override
-		public boolean hasPrevious() {
-			return iterator.hasPrevious();
-		}
+        @Override
+        public void add(T item) {
+            iterator.add(new WeakReference<T>(item));
 
-		@Override
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return iterator.hasPrevious();
+        }
+
+        @Override
         @Nullable
-		public T next() {
+        public T next() {
             while (iterator.hasNext()) {
                 WeakReference<T> item = iterator.next();
                 T value = item.get();
@@ -563,16 +563,16 @@ public class WeakList<T> implements List<T> {
                     return value;
             }
             return null;
-		}
+        }
 
-		@Override
-		public int nextIndex() {
-			return iterator.nextIndex();
-		}
+        @Override
+        public int nextIndex() {
+            return iterator.nextIndex();
+        }
 
-		@Override
+        @Override
         @Nullable
-		public T previous() {
+        public T previous() {
             while (iterator.hasPrevious()) {
                 WeakReference<T> item = iterator.previous();
                 T value = item.get();
@@ -581,26 +581,26 @@ public class WeakList<T> implements List<T> {
             }
 
             return null;
-		}
+        }
 
-		@Override
-		public int previousIndex() {
-			return iterator.previousIndex();
-		}
+        @Override
+        public int previousIndex() {
+            return iterator.previousIndex();
+        }
 
-		@Override
-		public void remove() {
-			iterator.remove();
-			
-		}
+        @Override
+        public void remove() {
+            iterator.remove();
 
-		@Override
-		public void set(T item) {
-			iterator.set(new WeakReference<T>(item));
-			
-		}
-		
-	}
-	
+        }
+
+        @Override
+        public void set(T item) {
+            iterator.set(new WeakReference<T>(item));
+
+        }
+
+    }
+
 
 }

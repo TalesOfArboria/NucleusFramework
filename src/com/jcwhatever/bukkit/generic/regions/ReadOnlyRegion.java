@@ -481,7 +481,7 @@ public class ReadOnlyRegion {
         else {
             return false;
         }
-        
+
         return region.equals(_region);
     }
 

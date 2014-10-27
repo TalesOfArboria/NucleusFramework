@@ -53,7 +53,7 @@ import java.util.Stack;
 
 /**
  * Base implementation of a command
- * 
+ *
  * <p>The command implementation must have an {@code ICommandInfo} annotation.</p>
  */
 public abstract class AbstractCommand extends AbstractCommandUtils implements Comparable<AbstractCommand> {
@@ -70,7 +70,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
 
     /**
      * Constructor.
-     * 
+     *
      * <p>Only a parameter-less constructor should be used.</p>
      */
     public AbstractCommand () {
@@ -87,11 +87,11 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
 
     /**
      * Register a sub command.
-     * 
+     *
      * <p>Prefer registering sub commands in the implementations command constructor
      * to take advantage of the command handlers permission batch operation in order to improve
      * registration performance.</p>
-     * 
+     *
      * @param subCommandClass
      */
     public final void registerSubCommand(Class<? extends AbstractCommand> subCommandClass) {
@@ -106,7 +106,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             _subCommandQueue.add(subCommandClass);
             return;
         }
-        
+
         // make sure sub command has required ICommandInfo annotation
         ICommandInfo commandInfo = subCommandClass.getAnnotation(ICommandInfo.class);
         if (commandInfo == null)
@@ -118,7 +118,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         if (!commandInfo.parent().isEmpty() && !isCommandMatch(commandInfo.parent(), _info.getCommandNames())) {
             Messenger.debug(getPlugin(), "Failed to register sub command. Registered with incorrect parent: " + this.getClass().getName());
             return;
-        }        
+        }
 
         // instantiate command
         AbstractCommand instance;
@@ -137,14 +137,14 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         // set the instances command handler
         if (_commandHandler != null)
             instance.setCommandHandler(_commandHandler, _info.getMasterCommandName());
-        
+
         onSubCommandInstantiated(instance);
 
         // split commands and add each command
         for (String cmd : commandInfo.command()) {
             _subCommands.put(cmd.trim().toLowerCase(), instance);
         }
-        
+
         // clear sorted sub commands cache
         _sortedSubCommands = null;
     }
@@ -179,7 +179,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     public final CommandExecutor getCommandHandler() {
         return _commandHandler;
     }
-    
+
     /**
      * Get the commands parent command, if any.
      */
@@ -194,7 +194,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     @Nullable
     public final AbstractCommand getSubCommand(String subCommandName) {
         PreCon.notNullOrEmpty(subCommandName);
-        
+
         return _subCommands.get(subCommandName.toLowerCase());
     }
 
@@ -205,11 +205,11 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         if (_sortedSubCommands == null) {
             List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(_subCommands.values());
             Collections.sort(subCommands);
-            _sortedSubCommands = subCommands;	
+            _sortedSubCommands = subCommands;
         }
         return new ArrayList<AbstractCommand>(_sortedSubCommands);
     }
-    
+
     /**
      * Get the commands permission object.
      */
@@ -252,20 +252,20 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         final List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
 
         String usage = _info.getUsage();
-        
+
         if (!usage.isEmpty())
             pagin.add(usage, _info.getDescription());
 
-        
+
         // batch operation to prevent each registered permission
         // from causing a permission recalculation
         Permissions.runBatchOperation(true, new Runnable() {
 
-            
+
             @Override
             public void run () {
 
-                
+
                 for (AbstractCommand cmd : getSubCommands()) {
 
                     // Determine if the command has its own own sub commands 
@@ -283,7 +283,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                         continue;
 
                     // determine if the CommandSender has permission to use the command
-                    if (!Permissions.has(sender, cmd.getPermission().getName())) 
+                    if (!Permissions.has(sender, cmd.getPermission().getName()))
                         continue;
 
                     // add command to paginator
@@ -301,7 +301,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                         continue;
 
                     // determine if the CommandSender has permission to use the command
-                    if (!Permissions.has(sender, cmd.getPermission().getName())) 
+                    if (!Permissions.has(sender, cmd.getPermission().getName()))
                         continue;
 
                     // add info to get sub commands help to paginator
@@ -310,7 +310,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             }
 
         });
-        
+
         // show paginator to CommandSender
         pagin.show(sender, page, FormatTemplate.DEFINITION);
     }
@@ -349,7 +349,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     /**
      * Determine if the supplied command name matches one of the
      * command names of the this command.
-     * 
+     *
      * @param parentName     The command name to match
      * @param possibleNames  A {@code String[]} of valid names
      */
@@ -369,7 +369,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     /**
      * Determine if one of the supplied command names match any one of the
      * command names of the this command.
-     * 
+     *
      * @param parentNames    A {@code String[]} of possible names
      * @param possibleNames  A {@code String[]} of valid names
      */
@@ -386,29 +386,29 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         }
         return false;
     }
-    
+
     /**
      * Construct a string representing the command
      * a user should type to get help with this specific
      * command.
      */
     final String constructHelpUsage() {
-        return constructHelpUsage(this);        
+        return constructHelpUsage(this);
     }
-    
+
     /**
      * Set the commands command handler
      * Should only be called by the command handler or parent command
      */
     final void setCommandHandler(AbstractCommandHandler commandHandler, String masterCommandName) {
         PreCon.notNull(commandHandler);
-        
+
         if (_commandHandler != null)
             return;
 
         _commandHandler = commandHandler;
         _plugin = commandHandler.getPlugin();
-        
+
         ICommandInfo info = this.getClass().getAnnotation(ICommandInfo.class);
         _info = new CommandInfoContainer(_plugin, info, masterCommandName);
 
@@ -426,14 +426,14 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                 subCommand.setCommandHandler(_commandHandler, masterCommandName);
             }
         }
-        
+
         // register permission
         getPermission();
-        
+
         onCommandHandlerSet(commandHandler);
     }
-    
-    
+
+
     /**
      * Construct a string representing the command
      * a user should type to get help with the specified
@@ -441,7 +441,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      */
     final String constructHelpUsage(AbstractCommand command) {
         PreCon.notNull(command);
-        
+
         Stack<AbstractCommand> commands = new Stack<AbstractCommand>();
 
         commands.add(command);
@@ -460,7 +460,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         }
 
         usage.append('?');
-        
+
         // format plugin info into usage
         String result = TextUtils.formatPluginInfo(_plugin, usage.toString());
 

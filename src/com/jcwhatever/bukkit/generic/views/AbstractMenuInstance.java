@@ -49,17 +49,17 @@ public abstract class AbstractMenuInstance extends ViewInstance {
      * @param sessionMeta   The view session meta.
      * @param instanceMeta  The instance meta.
      */
-	public AbstractMenuInstance(IView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
-		super(view, previous, p, sessionMeta, instanceMeta);
-	}
+    public AbstractMenuInstance(IView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
+        super(view, previous, p, sessionMeta, instanceMeta);
+    }
 
     /**
      * Called when the view is shown to the player.
      *
      * @param instanceMeta  The meta data for the instance.
      */
-	@Override
-	protected abstract InventoryView onShow(ViewMeta instanceMeta);
+    @Override
+    protected abstract InventoryView onShow(ViewMeta instanceMeta);
 
     /**
      * Called when the view is shown to the player after
@@ -68,15 +68,15 @@ public abstract class AbstractMenuInstance extends ViewInstance {
      * @param instanceMeta  The meta data for the instance.
      * @param result        The result meta data from the closing view instance.
      */
-	@Override
-	protected abstract InventoryView onShowAsPrev (ViewMeta instanceMeta, ViewResult result);
+    @Override
+    protected abstract InventoryView onShowAsPrev (ViewMeta instanceMeta, ViewResult result);
 
     /**
      * Called when the view instance is closed.
      *
      * @param reason  The reason the view was closed.
      */
-	@Override
+    @Override
     protected abstract void onClose (ViewCloseReason reason);
 
     /**
@@ -84,61 +84,61 @@ public abstract class AbstractMenuInstance extends ViewInstance {
      *
      * @param slot  The slot to find the menu item from.
      */
-	protected abstract MenuItem getMenuItem(int slot);
+    protected abstract MenuItem getMenuItem(int slot);
 
     /**
      * Called when a menu item is selected.
      *
      * @param menuItem  The selected menu item.
      */
-	protected abstract void onItemSelect(MenuItem menuItem);
+    protected abstract void onItemSelect(MenuItem menuItem);
 
     /**
      *  Items in a menu cannot be dragged or moved.
      */
-	@Override
-	protected final boolean onItemsPlaced(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
-		return false; // cancel placing an item
-	}
+    @Override
+    protected final boolean onItemsPlaced(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
+        return false; // cancel placing an item
+    }
 
     /**
      * Called when an item is picked up. For the menu context,
      * it is used to determine when the player clicks a menu item
      * and the pickup is always cancelled.
      */
-	@Override
-	protected final boolean onItemsPickup(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
-		
-		MenuItem item = getMenuItem(actionInfo.getRawSlot());
-		if (item == null)
-			return false;
-		
-		item.setSlot(actionInfo.getRawSlot());
-		
-		onItemSelect(item);
-		
-		
-		String clickCommand = item.getClickCommand();
+    @Override
+    protected final boolean onItemsPickup(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
 
-		if (clickCommand != null && !clickCommand.isEmpty())
-			Utils.executeAsPlayer(getPlayer(), clickCommand);
+        MenuItem item = getMenuItem(actionInfo.getRawSlot());
+        if (item == null)
+            return false;
 
-		String clickViewName = item.getClickViewName();
-		if (clickViewName != null && !clickViewName.isEmpty()) {
+        item.setSlot(actionInfo.getRawSlot());
 
-			getView().getViewManager().show(getPlayer(), clickViewName, getSourceBlock(), item);
-		}
-		
-		return false;
-	}
+        onItemSelect(item);
+
+
+        String clickCommand = item.getClickCommand();
+
+        if (clickCommand != null && !clickCommand.isEmpty())
+            Utils.executeAsPlayer(getPlayer(), clickCommand);
+
+        String clickViewName = item.getClickViewName();
+        if (clickViewName != null && !clickViewName.isEmpty()) {
+
+            getView().getViewManager().show(getPlayer(), clickViewName, getSourceBlock(), item);
+        }
+
+        return false;
+    }
 
     /**
      * Items in menu view cannot be dropped out of the view.
      */
-	@Override
-	protected boolean onItemsDropped(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
-		return false; // cancel dropping items out of the view.
-	}
+    @Override
+    protected boolean onItemsDropped(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
+        return false; // cancel dropping items out of the view.
+    }
 
     /**
      * Items in the menu view cannot be placed.
@@ -165,14 +165,14 @@ public abstract class AbstractMenuInstance extends ViewInstance {
      *
      * @return  True if successful.
      */
-	protected boolean setItemVisible(int slot, Inventory inventory, boolean visible) {
-        
+    protected boolean setItemVisible(int slot, Inventory inventory, boolean visible) {
+
         MenuItem menuItem = getMenuItem(slot);
         if (menuItem == null)
             return false;
-        
+
         boolean isEmpty = isSlotEmpty(slot, inventory);
-        
+
         if (visible && isEmpty) {
             inventory.setItem(slot, menuItem.getItemStack());
         }
@@ -182,7 +182,7 @@ public abstract class AbstractMenuInstance extends ViewInstance {
         else {
             return false;
         }
-        
+
         return true;
     }
 
@@ -195,9 +195,9 @@ public abstract class AbstractMenuInstance extends ViewInstance {
      * @return  True if the slot is empty.
      */
     protected boolean isSlotEmpty(int slot, Inventory inventory) {
-        
+
         ItemStack itemStack = inventory.getItem(slot);
-        
+
         return itemStack == null || itemStack.getType() == Material.AIR;
     }
 }

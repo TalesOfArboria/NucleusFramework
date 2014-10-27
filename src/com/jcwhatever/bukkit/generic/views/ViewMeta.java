@@ -35,8 +35,8 @@ import java.util.Map;
  * A meta data container used in view instances.
  */
 public class ViewMeta {
-	
-	private Map<Object, Object> _metaMap = new HashMap<Object, Object>(10);
+
+    private Map<Object, Object> _metaMap = new HashMap<Object, Object>(10);
 
     /**
      * Set a meta data key value.
@@ -46,17 +46,17 @@ public class ViewMeta {
      *
      * @return  Own instance.
      */
-	public ViewMeta setMeta(Object key, @Nullable Object value) {
+    public ViewMeta setMeta(Object key, @Nullable Object value) {
         PreCon.notNull(key);
 
-		if (value == null) {
-			_metaMap.remove(key);
-			return this;
-		}
-		_metaMap.put(key, value);
-		
-		return this;
-	}
+        if (value == null) {
+            _metaMap.remove(key);
+            return this;
+        }
+        _metaMap.put(key, value);
+
+        return this;
+    }
 
     /**
      * Get a meta data key value.
@@ -66,12 +66,12 @@ public class ViewMeta {
      * @param <T>  The value type.
      */
     @Nullable
-	@SuppressWarnings("unchecked")
-	public <T> T getMeta(Object key) {
+    @SuppressWarnings("unchecked")
+    public <T> T getMeta(Object key) {
         PreCon.notNull(key);
 
-		return (T)_metaMap.get(key);
-	}
+        return (T)_metaMap.get(key);
+    }
 
     /**
      * Get a meta data key value.
@@ -79,11 +79,11 @@ public class ViewMeta {
      * @param key  The object key.
      */
     @Nullable
-	public Object getMetaObject(Object key) {
+    public Object getMetaObject(Object key) {
         PreCon.notNull(key);
 
-		return _metaMap.get(key);
-	}
-	
-	
+        return _metaMap.get(key);
+    }
+
+
 }

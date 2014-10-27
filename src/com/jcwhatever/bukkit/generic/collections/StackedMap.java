@@ -44,7 +44,7 @@ import java.util.Stack;
  */
 public class StackedMap <K, V> implements Map<K, V> {
 
-	Map<K, Stack<V>> _map;
+    Map<K, Stack<V>> _map;
 
     /**
      * Constructor.
@@ -75,46 +75,46 @@ public class StackedMap <K, V> implements Map<K, V> {
     /**
      * Clear all items
      */
-	@Override
-	public void clear() {
-		_map.clear();
-	}
+    @Override
+    public void clear() {
+        _map.clear();
+    }
 
     /**
      * Determine if the map contains the specified key.
      *
      * @param key  The key to check.
      */
-	@Override
-	public boolean containsKey(Object key) {
+    @Override
+    public boolean containsKey(Object key) {
         PreCon.notNull(key);
 
-		return _map.containsKey(key);
-	}
+        return _map.containsKey(key);
+    }
 
     /**
      * Determine if the map contains the specified value.
      *
      * @param value  The value to check.
      */
-	@Override
-	public boolean containsValue(Object value) {
+    @Override
+    public boolean containsValue(Object value) {
         PreCon.notNull(value);
 
-		for (Stack<V> stack : _map.values()) {
-			if (stack.contains(value))
-				return true;
-		}
-		return false;
-	}
+        for (Stack<V> stack : _map.values()) {
+            if (stack.contains(value))
+                return true;
+        }
+        return false;
+    }
 
     /**
      * Unsupported.
      */
-	@Override
-	public Set<java.util.Map.Entry<K, V>> entrySet() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Set<java.util.Map.Entry<K, V>> entrySet() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Get a value using the specified key.
@@ -122,26 +122,26 @@ public class StackedMap <K, V> implements Map<K, V> {
      *
      * @param key  The key to check.
      */
-	@Override
+    @Override
     @Nullable
-	public V get(Object key) {
+    public V get(Object key) {
         PreCon.notNull(key);
 
-		Stack<V> stack = _map.get(key);
-		if (stack != null && !stack.isEmpty())
-			return stack.peek();
-		
-		return null;
-	}
+        Stack<V> stack = _map.get(key);
+        if (stack != null && !stack.isEmpty())
+            return stack.peek();
+
+        return null;
+    }
 
 
     /**
      * Get the maps keys.
      */
-	@Override
-	public Set<K> keySet() {
-		return _map.keySet();
-	}
+    @Override
+    public Set<K> keySet() {
+        return _map.keySet();
+    }
 
     /**
      * Put a value into the map.
@@ -149,29 +149,29 @@ public class StackedMap <K, V> implements Map<K, V> {
      * @param key    The key to use.
      * @param value  The value to add.
      */
-	@Override
-	public V put(K key, V value) {
+    @Override
+    public V put(K key, V value) {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
-		Stack<V> stack = _map.get(key);
-		if (stack == null) {
-			stack = new Stack<V>();
-			_map.put(key, stack);
-		}
+        Stack<V> stack = _map.get(key);
+        if (stack == null) {
+            stack = new Stack<V>();
+            _map.put(key, stack);
+        }
 
-		stack.push(value);
-		
-		return value;
-	}
+        stack.push(value);
+
+        return value;
+    }
 
     /**
      * Unsupported.
      */
-	@Override
-	public void putAll(Map<? extends K, ? extends V> map) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Remove a value by key. Pops a value from the internal stack
@@ -181,31 +181,31 @@ public class StackedMap <K, V> implements Map<K, V> {
      *
      * @return Returns the popped value, if any.
      */
-	@Override
+    @Override
     @Nullable
-	public V remove(Object key) {
+    public V remove(Object key) {
         PreCon.notNull(key);
 
-		Stack<V> stack = _map.get(key);
-		if (stack == null) {
-			return null;
-		}
-		
-		if (stack.isEmpty())
-			_map.remove(key);
+        Stack<V> stack = _map.get(key);
+        if (stack == null) {
+            return null;
+        }
 
-		return stack.pop();
-	}
+        if (stack.isEmpty())
+            _map.remove(key);
+
+        return stack.pop();
+    }
 
     /**
      * Get the number of entries in the map.
      * Or in other terms the number of keys, or
      * the number of stacks.
      */
-	@Override
-	public int size() {
-		return _map.size();
-	}
+    @Override
+    public int size() {
+        return _map.size();
+    }
 
     /**
      * Get the number of items in the internal stack
@@ -213,31 +213,31 @@ public class StackedMap <K, V> implements Map<K, V> {
      *
      * @param key  The key to check.
      */
-	public int keySize(Object key) {
+    public int keySize(Object key) {
         PreCon.notNull(key);
 
-		Stack<V> stack = _map.get(key);
-		if (stack == null || stack.isEmpty()) {
-			return 0;
-		}
-		
-		return stack.size();
-	}
+        Stack<V> stack = _map.get(key);
+        if (stack == null || stack.isEmpty()) {
+            return 0;
+        }
+
+        return stack.size();
+    }
 
     /**
      * Get all values in the map.
      */
-	@Override
-	public Collection<V> values() {
+    @Override
+    public Collection<V> values() {
 
-		Collection<Stack<V>> values = _map.values();
-		Set<V> results = new HashSet<V>(values.size());
-		
-		for (Stack<V> stack : values) {
-			results.addAll(stack);
-		}
+        Collection<Stack<V>> values = _map.values();
+        Set<V> results = new HashSet<V>(values.size());
 
-		return results;
-	}
+        for (Stack<V> stack : values) {
+            results.addAll(stack);
+        }
+
+        return results;
+    }
 
 }

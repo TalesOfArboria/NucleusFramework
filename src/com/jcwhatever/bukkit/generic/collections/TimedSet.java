@@ -42,38 +42,38 @@ import java.util.Map;
  *
  * <p>If a duplicate item is added, the items lifespan is reset, in addition to normal
  * hash set operations.</p>
-  */
+ */
 public class TimedSet<T> extends HashSet<T> {
 
-	private static final long serialVersionUID = -5446406109300331584L;
-	
-	private final int _defaultTime;
-	private final TimedSet<T> _instance;
-	private Map<T, BukkitTask> _tasks;
+    private static final long serialVersionUID = -5446406109300331584L;
+
+    private final int _defaultTime;
+    private final TimedSet<T> _instance;
+    private Map<T, BukkitTask> _tasks;
     private List<LifespanEndAction<T>> _onLifespanEnd = new ArrayList<>(5);
     private List<CollectionEmptyAction<TimedSet<T>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default lifespan is 1 second.
      */
-	public TimedSet() {
-		super();
-		_defaultTime = 20;
-		_instance = this;
+    public TimedSet() {
+        super();
+        _defaultTime = 20;
+        _instance = this;
         _tasks = new HashMap<T, BukkitTask>(10);
-	}
+    }
 
     /**
      * Constructor. Default lifespan is 1 second.
      *
      * @param size  The initial capacity.
      */
-	public TimedSet(int size) {
-		super(size);
-		_defaultTime = 20;
-		_instance = this;
+    public TimedSet(int size) {
+        super(size);
+        _defaultTime = 20;
+        _instance = this;
         _tasks = new HashMap<T, BukkitTask>(30);
-	}
+    }
 
     /**
      * Constructor.
@@ -98,14 +98,14 @@ public class TimedSet<T> extends HashSet<T> {
      * @param item      The item to add.
      * @param lifespan  The lifespan of the item in ticks.
      */
-	public boolean add(final T item, int lifespan) {
+    public boolean add(final T item, int lifespan) {
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
-		scheduleRemoval(item, lifespan);
+        scheduleRemoval(item, lifespan);
 
-		return super.add(item);
-	}
+        return super.add(item);
+    }
 
     /**
      * Add an item to the hash set using the default lifespan.
@@ -115,12 +115,12 @@ public class TimedSet<T> extends HashSet<T> {
      *
      * @param item  The item to add.
      */
-	@Override
-	public boolean add(T item) {
+    @Override
+    public boolean add(T item) {
         PreCon.notNull(item);
 
-		return add(item, _defaultTime);
-	}
+        return add(item, _defaultTime);
+    }
 
     /**
      * Add items from a collection using the specified lifespan.
@@ -131,15 +131,15 @@ public class TimedSet<T> extends HashSet<T> {
      * @param collection  The collection to add.
      * @param lifespan    The lifespan of the item in ticks.
      */
-	public boolean addAll(Collection<? extends T> collection, int lifespan) {
+    public boolean addAll(Collection<? extends T> collection, int lifespan) {
         PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
-		for (T item : collection) {
-			scheduleRemoval(item, lifespan);
-		}
-		return super.addAll(collection);
-	}
+        for (T item : collection) {
+            scheduleRemoval(item, lifespan);
+        }
+        return super.addAll(collection);
+    }
 
     /**
      * Add items from a collection using the default lifespan.
@@ -149,40 +149,40 @@ public class TimedSet<T> extends HashSet<T> {
      *
      * @param collection  The collection to add.
      */
-	@Override
-	public boolean addAll(Collection<? extends T> collection) {
+    @Override
+    public boolean addAll(Collection<? extends T> collection) {
         PreCon.notNull(collection);
 
-		return addAll(collection, _defaultTime);
-	}
+        return addAll(collection, _defaultTime);
+    }
 
     /**
      * Remove all items.
      */
-	@Override
-	public void clear() {
-		for (BukkitTask task : _tasks.values()) {
-			task.cancel();
-		}
-		_tasks.clear();
-		super.clear();
+    @Override
+    public void clear() {
+        for (BukkitTask task : _tasks.values()) {
+            task.cancel();
+        }
+        _tasks.clear();
+        super.clear();
 
         onEmpty();
-	}
+    }
 
     /**
      * Remove an item.
      *
      * @param item  The item to remove.
      */
-	@Override
-	public boolean remove(Object item) {
+    @Override
+    public boolean remove(Object item) {
         PreCon.notNull(item);
 
-		BukkitTask task = _tasks.remove(item);
-		if (task != null) {
-			task.cancel();
-		}
+        BukkitTask task = _tasks.remove(item);
+        if (task != null) {
+            task.cancel();
+        }
 
         if (super.remove(item)) {
             onEmpty();
@@ -190,31 +190,31 @@ public class TimedSet<T> extends HashSet<T> {
         }
 
         return false;
-	}
+    }
 
     /**
      * Remove all items from the collection.
      *
      * @param collection  The items to remove.
      */
-	@Override
-	public boolean removeAll(Collection<?> collection) {
+    @Override
+    public boolean removeAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
-		for (Object item : collection) {
-			BukkitTask task = _tasks.remove(item);
-			if (task != null) {
-				task.cancel();
-			}
-		}
+        for (Object item : collection) {
+            BukkitTask task = _tasks.remove(item);
+            if (task != null) {
+                task.cancel();
+            }
+        }
 
-		if (super.removeAll(collection)) {
+        if (super.removeAll(collection)) {
             onEmpty();
             return true;
         }
 
         return false;
-	}
+    }
 
     /**
      * Determine if the set contains the specified item and
@@ -223,25 +223,25 @@ public class TimedSet<T> extends HashSet<T> {
      * @param item       The item to check.
      * @param lifespan   The new lifespan of the item.
      */
-	public boolean contains(T item, int lifespan) {
+    public boolean contains(T item, int lifespan) {
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
         scheduleRemoval(item, lifespan);
-		
-		return super.contains(item);
-	}
+
+        return super.contains(item);
+    }
 
     /**
      * Add a handler to be called whenever an items lifespan ends.
      *
      * @param action  The handler to call.
      */
-	public void addOnLifetimeEnd(LifespanEndAction<T> action) {
+    public void addOnLifetimeEnd(LifespanEndAction<T> action) {
         PreCon.notNull(action);
 
-		_onLifespanEnd.add(action);
-	}
+        _onLifespanEnd.add(action);
+    }
 
     /**
      * Remove a handler.
@@ -277,35 +277,35 @@ public class TimedSet<T> extends HashSet<T> {
     }
 
 
-	protected void scheduleRemoval(final T item, int lifespan) {
-		if (lifespan < 1)
-			return;
+    protected void scheduleRemoval(final T item, int lifespan) {
+        if (lifespan < 1)
+            return;
 
         BukkitTask task = _tasks.remove(item);
         if (task != null) {
             task.cancel();
         }
 
-		task = Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable() {
+        task = Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable() {
 
-			@Override
-			public void run() {
-				BukkitTask task = _tasks.remove(item);
-				if (task != null) {
-					task.cancel();
-				}
-				
-				if (_instance.remove(item)) {
+            @Override
+            public void run() {
+                BukkitTask task = _tasks.remove(item);
+                if (task != null) {
+                    task.cancel();
+                }
+
+                if (_instance.remove(item)) {
                     onLifespanEnd(item);
-				}
+                }
 
                 onEmpty();
-			}
+            }
 
-		}, lifespan);
+        }, lifespan);
 
-		_tasks.put(item, task);
-	}
+        _tasks.put(item, task);
+    }
 
     private void onEmpty() {
         if (!isEmpty() || _onEmpty.isEmpty())

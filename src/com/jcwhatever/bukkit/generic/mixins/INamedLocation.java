@@ -35,23 +35,23 @@ public interface INamedLocation {
     /**
      * Get the name of the location.
      */
-	String getName();
+    String getName();
 
     /**
      * Get the name of the location in
      * lowercase.
      */
-	String getSearchName();
+    String getSearchName();
 
     /**
      * Get the location.
      */
-	Location getLocation();
+    Location getLocation();
 
     /**
      * Get the distance to another location.
      *
      * @param location  The location to check.
      */
-	INamedLocationDistance getDistance(Location location);
+    INamedLocationDistance getDistance(Location location);
 }

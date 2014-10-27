@@ -45,7 +45,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
  *
  */
 public class ItemWrapper {
-    
+
     private ItemStack _itemStack;
     private MaterialExt _materialExt;
     private ItemStackComparer _comparer;
@@ -62,7 +62,7 @@ public class ItemWrapper {
      */
     public ItemWrapper(ItemStack itemStack) {
         PreCon.notNull(itemStack);
-        
+
         _itemStack = itemStack;
         _comparer = ItemStackComparer.getDefault();
     }
@@ -76,7 +76,7 @@ public class ItemWrapper {
     public ItemWrapper(ItemStack itemStack, ItemStackComparer comparer) {
         PreCon.notNull(itemStack);
         PreCon.notNull(comparer);
-        
+
         _itemStack = itemStack;
         _comparer = comparer;
     }
@@ -95,7 +95,7 @@ public class ItemWrapper {
         if (_materialExt == null) {
             _materialExt = MaterialExt.from(_itemStack.getType());
         }
-        
+
         return _materialExt;
     }
 

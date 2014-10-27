@@ -68,7 +68,7 @@ public class ItemStackComparer {
      * Bit flag. Compares by type, meta data, and durability.
      */
     public static final byte DURABILITY_COMPARE = COMPARE_TYPE | COMPARE_META | COMPARE_DURABILITY;
-    
+
     private static ItemStackComparer _default;
     private static ItemStackComparer _typeComparer;
     private static ItemStackComparer _durability;
@@ -81,7 +81,7 @@ public class ItemStackComparer {
     public static ItemStackComparer getDefault() {
         if (_default == null)
             _default = new ItemStackComparer(DEFAULT_COMPARE);
-        
+
         return _default;
     }
 
@@ -199,7 +199,7 @@ public class ItemStackComparer {
         if (_compareType) {
             if (stack1.getType() != stack2.getType())
                 return false;
-            
+
             MaterialExt ext = MaterialExt.from(stack1.getType());
 
             if (!_compareMeta && (ext.usesColorData() || ext.usesSubMaterialData()) &&
@@ -228,5 +228,5 @@ public class ItemStackComparer {
 
         return true;
     }
-    
+
 }

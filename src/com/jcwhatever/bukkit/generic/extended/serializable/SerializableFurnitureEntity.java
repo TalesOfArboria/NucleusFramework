@@ -62,7 +62,7 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
      */
     public static boolean isFurnitureEntity(Entity entity) {
         return entity instanceof Painting ||
-               entity instanceof ItemFrame;
+                entity instanceof ItemFrame;
     }
 
     /**

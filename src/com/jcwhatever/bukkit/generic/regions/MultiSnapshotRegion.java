@@ -43,16 +43,16 @@ import java.util.Set;
  */
 public abstract class MultiSnapshotRegion extends RestorableRegion {
 
-	private String _currentSnapshot = "";
+    private String _currentSnapshot = "";
 
     /**
      * Constructor.
      *
      * @param plugin  The owning plugin.
      */
-	protected MultiSnapshotRegion(Plugin plugin) {
-		super(plugin);
-	}
+    protected MultiSnapshotRegion(Plugin plugin) {
+        super(plugin);
+    }
 
     /**
      * Constructor.
@@ -60,9 +60,9 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      * @param plugin  The owning plugin.
      * @param name    The name of the region.
      */
-	public MultiSnapshotRegion(Plugin plugin, String name) {
-		super(plugin, name);
-	}
+    public MultiSnapshotRegion(Plugin plugin, String name) {
+        super(plugin, name);
+    }
 
     /**
      * Get the current snapshot state of the region.
@@ -82,35 +82,35 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      *
      * @throws IOException
      */
-	public Set<String> getSnapshotNames() throws IOException {
+    public Set<String> getSnapshotNames() throws IOException {
 
         File folder = getRegionDataFolder();
 
-		File[] files = folder.listFiles();
+        File[] files = folder.listFiles();
         Set<String> names = new HashSet<String>(files.length);
-		
-		for (File file : files) {
-			
-			String[] comp = TextUtils.PATTERN_DOT.split(file.getName());
-			
-			if (comp.length != 8)
-				continue;
-			
-			names.add(comp[6]);
-		}
-		
-		return names;
-	}
+
+        for (File file : files) {
+
+            String[] comp = TextUtils.PATTERN_DOT.split(file.getName());
+
+            if (comp.length != 8)
+                continue;
+
+            names.add(comp[6]);
+        }
+
+        return names;
+    }
 
     /**
      * Determine if the specified snapshot can be restored.
      *
      * @param snapshotName  The name of the snapshot.
      */
-	@Override
-	public boolean canRestore(String snapshotName) {
-		return super.canRestore(snapshotName);
-	}
+    @Override
+    public boolean canRestore(String snapshotName) {
+        return super.canRestore(snapshotName);
+    }
 
     /**
      * Restore primary snapshot.
@@ -119,18 +119,18 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      *
      * @throws IOException
      */
-	@Override
-	public Future restoreData(BuildMethod buildMethod) throws IOException {
+    @Override
+    public Future restoreData(BuildMethod buildMethod) throws IOException {
 
-		return super.restoreData(buildMethod).onComplete(new Runnable() {
+        return super.restoreData(buildMethod).onComplete(new Runnable() {
 
-			@Override
-			public void run() {
-				_currentSnapshot = "";				
-			}
-			
-		});
-	}
+            @Override
+            public void run() {
+                _currentSnapshot = "";
+            }
+
+        });
+    }
 
     /**
      * Restore the specified snapshot.
@@ -140,17 +140,17 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      *
      * @throws IOException
      */
-	@Override
-	public Future restoreData(BuildMethod buildMethod, final String snapshotName) throws IOException {
-		return super.restoreData(buildMethod, snapshotName).onComplete(new Runnable() {
+    @Override
+    public Future restoreData(BuildMethod buildMethod, final String snapshotName) throws IOException {
+        return super.restoreData(buildMethod, snapshotName).onComplete(new Runnable() {
 
-			@Override
-			public void run() {
-				_currentSnapshot = snapshotName;				
-			}
-			
-		});
-	}
+            @Override
+            public void run() {
+                _currentSnapshot = snapshotName;
+            }
+
+        });
+    }
 
     /**
      * Save the regions current state to the specified snapshot.
@@ -159,10 +159,10 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      *
      * @throws IOException
      */
-	@Override
-	public Future saveData(String snapshotName) throws IOException {
-		return super.saveData(snapshotName);
-	}
+    @Override
+    public Future saveData(String snapshotName) throws IOException {
+        return super.saveData(snapshotName);
+    }
 
     /**
      * Delete the specified snapshots data.
@@ -171,16 +171,16 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      *
      * @throws IOException
      */
-	public void deleteData(String snapshotName) throws IOException {
-		List<Chunk> chunks = this.getChunks();
+    public void deleteData(String snapshotName) throws IOException {
+        List<Chunk> chunks = this.getChunks();
 
-		if (chunks.size() == 0) {
-			return;
-		}
+        if (chunks.size() == 0) {
+            return;
+        }
 
-		for (Chunk chunk : chunks) {
-			getChunkFile(chunk, snapshotName, true); // deletes file
-		}
-	}
+        for (Chunk chunk : chunks) {
+            getChunkFile(chunk, snapshotName, true); // deletes file
+        }
+    }
 
 }

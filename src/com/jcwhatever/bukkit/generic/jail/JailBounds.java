@@ -77,13 +77,13 @@ public class JailBounds extends Region {
 
         // prevent player from leaving jail
         Location tpLocation = _jailManager.getRandomTeleport();
-        
+
         if (tpLocation == null)
             tpLocation = this.getCenter();
-        
+
         p.teleport(tpLocation);
     }
-    
-    
+
+
 
 }

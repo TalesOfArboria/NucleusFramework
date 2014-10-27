@@ -72,31 +72,31 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
     private final Map<String, AbstractCommand> _masterCommands;
     private AbstractCommand _baseCommand;
-    
+
     private List<AbstractCommand> _sortedCommands;
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param plugin   The plugin the command handler is for
      */
     public AbstractCommandHandler(Plugin plugin) {
         super(plugin);
-    	_masterCommands = new HashMap<String, AbstractCommand>(20);
-        
-    	Permissions.runBatchOperation(true, new Runnable() {
+        _masterCommands = new HashMap<String, AbstractCommand>(20);
 
-			@Override
-			public void run() {
+        Permissions.runBatchOperation(true, new Runnable() {
+
+            @Override
+            public void run() {
                 registerCommand(AboutCommand.class);
-				registerCommands();
-			}
-    		
-    	});
-        
+                registerCommands();
+            }
+
+        });
+
         registerHelpCommand();
     }
-    
+
     /**
      * Get a collection of all registered top level commands.
      */
@@ -105,13 +105,13 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         if (_sortedCommands == null) {
 
             Set<AbstractCommand> commandSet = new HashSet<AbstractCommand>(_masterCommands.values());
-    		List<AbstractCommand> commands = new ArrayList<AbstractCommand>(commandSet);
+            List<AbstractCommand> commands = new ArrayList<AbstractCommand>(commandSet);
 
-    		Collections.sort(commands);
+            Collections.sort(commands);
 
             _sortedCommands = commands;
-    	}
-    	return new ArrayList<AbstractCommand>(_sortedCommands);
+        }
+        return new ArrayList<AbstractCommand>(_sortedCommands);
     }
 
     /**
@@ -124,8 +124,8 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         PreCon.notNull(baseCommandName);
         PreCon.notNull(args);
 
-    	// get the primary command from the first argument
-    	AbstractCommand command = null;
+        // get the primary command from the first argument
+        AbstractCommand command = null;
 
         if (args.length > 0) {
             command = _masterCommands.get(args[0]);
@@ -155,56 +155,56 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         String[] argArray = trimFirstArg(args);
 
-    	// parse parameters and get command and command specific parameters
-    	CommandPackage commandPackage = getCommand(command, argArray);
-    	if (commandPackage != null) {
-    	    // update command and parameters
-    		command = commandPackage.command;
-    		argArray = commandPackage.parameters;
-    	}
-    	
+        // parse parameters and get command and command specific parameters
+        CommandPackage commandPackage = getCommand(command, argArray);
+        if (commandPackage != null) {
+            // update command and parameters
+            command = commandPackage.command;
+            argArray = commandPackage.parameters;
+        }
+
         // Check if the player has permissions to run the command
         if (!Permissions.has(sender, command.getPermission().getName())) {
             tellError(sender, Lang.get(_ACCESS_DENIED));
             return true;
         }
 
-    	// handle command help, display if the command argument is '?' or 'help'
-        if (argArray.length > 0 && 
-        		((argArray[0].equals("?")) || 
-        				argArray[0].equalsIgnoreCase("help"))) {
+        // handle command help, display if the command argument is '?' or 'help'
+        if (argArray.length > 0 &&
+                ((argArray[0].equals("?")) ||
+                        argArray[0].equalsIgnoreCase("help"))) {
 
-        	int page = 1;
+            int page = 1;
 
-        	if (argArray.length == 2) {
-        		try {
-        			page = Integer.parseInt(argArray[1]);
-        		}
-        		catch (NumberFormatException ignored) {}
-        	}
+            if (argArray.length == 2) {
+                try {
+                    page = Integer.parseInt(argArray[1]);
+                }
+                catch (NumberFormatException ignored) {}
+            }
 
-        	command.showHelp(sender, page);
+            command.showHelp(sender, page);
 
-        	return true; // finished
+            return true; // finished
         }
 
-    	// Determine if the command can execute or if it requires sub commands
+        // Determine if the command can execute or if it requires sub commands
         boolean canExecute = command.getInfo().getStaticParams().length > 0 || !command.getInfo().getUsage().isEmpty();
-        
+
         if (!canExecute) {
-        	tellError(sender, Lang.get(_COMMAND_INCOMPLETE, baseCommandName));
-			return true; // finished
-		}
-        
+            tellError(sender, Lang.get(_COMMAND_INCOMPLETE, baseCommandName));
+            return true; // finished
+        }
+
         // get arguments
-	    CommandArguments arguments = getCommandArguments(sender, command, argArray, true);
-	    if (arguments == null)
-	        return true; // finished
-        
+        CommandArguments arguments = getCommandArguments(sender, command, argArray, true);
+        if (arguments == null)
+            return true; // finished
+
         // execute the command
         executeCommand(sender, command, arguments, true);
 
-        
+
         return true;
     }
 
@@ -243,17 +243,17 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         return commandPackage.command;
     }
-        
+
     /**
      * Registers a command with the command handler.
-     * 
+     *
      * @param commandClass  The commands implementation class
      */
     public final boolean registerCommand(Class<? extends AbstractCommand> commandClass) {
         PreCon.notNull(commandClass);
-        
+
         return registerCommand(commandClass, false);
-	}
+    }
 
     /**
      * Unregister a command from the command handler.
@@ -276,11 +276,11 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     /**
      * Called when the command handler is instantiated.
      * Implementation should register permanent commands here.
-     * 
+     *
      * <p>Called within a permissions batch operation to improve permissions performance.</p>
      */
     protected abstract void registerCommands();
-    
+
     /**
      * Optional method called after a command is instantiated.
      *
@@ -296,13 +296,13 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
      * Register the help command
      */
     protected void registerHelpCommand() {
-    	this.registerCommand(HelpCommand.class);
+        this.registerCommand(HelpCommand.class);
     }
-    
+
     /**
      * Set the command called when no arguments or sub classes are provided.
      * If not set, default is used.
-     * 
+     *
      * @param commandClass The commands implementation class.
      */
     protected final void setBaseCommand(Class<? extends AbstractCommand> commandClass) {
@@ -310,13 +310,13 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         this.registerCommand(commandClass, true);
     }
-    
+
     /**
      * Recursively parses a String[] of arguments for the specified
      * parent command and return a {@code CommandPackage} containing the
      * {@code AbstractCommand} implementation that should be used to execute the command
      * as well as the arguments to be used for the returned command.
-     * 
+     *
      * @param parentCommand  The command the supplied arguments are for
      * @param args           The command arguments
      */
@@ -325,10 +325,10 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         if (args == null || args.length == 0)
             return new CommandPackage(parentCommand, new String[0]);
-                
+
         String subCmd = args[0].toLowerCase();
         String[] params = trimFirstArg(args);
-        
+
         AbstractCommand subCommand = parentCommand.getSubCommand(subCmd);
         if (subCommand == null)
             return new CommandPackage(parentCommand, args);
@@ -336,11 +336,11 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
             CommandPackage p = getCommand(subCommand, params);
             if (p == null)
                 return new CommandPackage(parentCommand, args);
-            
+
             return p;
         }
     }
-    
+
     /**
      * Trim the first element of a {@code String[]}
      */
@@ -349,27 +349,27 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         if (args.length <= 1)
             return new String[0];
-        
+
         return Arrays.copyOfRange(args, 1, args.length);
     }
-    
-    
+
+
     private CommandArguments getCommandArguments(CommandSender sender, AbstractCommand command, String[] argArray, boolean showMessages) {
-        
+
         // Parse command arguments
-        
+
         CommandArguments arguments;
 
         try {
             arguments = new CommandArguments(getPlugin(), command.getInfo(), argArray);
-        
+
         } catch (TooManyArgsException e) {
 
             if (showMessages)
                 tellError(sender, Lang.get(_TO_MANY_ARGS, command.constructHelpUsage()));
-            
+
             return null; // finished
-                        
+
         } catch (InvalidValueException e) {
 
             if (showMessages) {
@@ -379,9 +379,9 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
                     tell(sender, Lang.get(_PARAMETER_DESCRIPTION, e.getParameterDescription()));
                 }
             }
-            
+
             return null; // finished
-            
+
         } catch (DuplicateParameterException e) {
 
             if (showMessages) {
@@ -391,31 +391,31 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
                     tellError(sender, Lang.get(_DUPLICATE_PARAMETER, e.getParameterName()));
                 }
             }
-            
+
             return null; // finished
-            
+
         } catch (InvalidParameterException e) {
 
             if (showMessages)
                 tellError(sender, Lang.get(_INVALID_PARAMETER, e.getParameterName()));
-            
+
             return null; // finished
         }
-                    
+
         // Make sure the number of provided parameters match the expected amount
         if (arguments.staticSize() < arguments.expectedSize()) {
 
             if (showMessages)
                 tellError(sender, Lang.get(_MISSING_ARGS, command.constructHelpUsage()));
-                        
+
             return null; // finished
         }
-        
+
         return arguments;
     }
-    
+
     private boolean executeCommand(CommandSender sender, AbstractCommand command, CommandArguments parameters, boolean showMessages) {
-     // execute the command
+        // execute the command
         try {
             command.execute(sender, parameters);
         }
@@ -444,19 +444,19 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         }
         return true;
     }
-    
-    
+
+
     private boolean registerCommand(Class<? extends AbstractCommand> commandClass, boolean isBaseCommand) {
-        
+
         // make sure command has required command info annotation
         ICommandInfo info = commandClass.getAnnotation(ICommandInfo.class);
         if (info == null) {
             throw new MissingCommandAnnotationException(commandClass);
         }
-        
+
         // instantiate command
         AbstractCommand instance;
-        
+
         try {
             instance = commandClass.newInstance();
         }
@@ -486,9 +486,9 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         // set the commands command handler
         instance.setCommandHandler(this, commandName);
-        
+
         onMasterCommandInstantiated(instance);
-        
+
         if (isBaseCommand) {
             _baseCommand = instance;
             return true; // finish
@@ -496,10 +496,10 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         // clear sorted commands cache
         _sortedCommands = null;
-        
+
         return true;
     }
-    
+
     /**
      * A data object that holds an {@code AbstractCommand} implementation
      * as well as a {@code String[]} of parameters it should be
@@ -508,12 +508,12 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     private static class CommandPackage {
         AbstractCommand command;
         String[] parameters;
-        
+
         CommandPackage (AbstractCommand command, String[] parameters) {
             this.command = command;
             this.parameters = parameters;
         }
     }
-    
+
 }
 

@@ -42,17 +42,17 @@ public class InventoryActionInfoHandler {
     private InventoryAction _inventoryAction;
     private int _rawSlot;
     private int _slot;
-    
+
     private InventoryActionInfo _primaryInfo;
     private InventoryActionInfo _secondaryInfo;
-    
+
     private ViewAction _primaryAction;
     private ViewAction _secondaryAction;
-    
+
     private ItemStack _slotStack;
     private ItemStack _cursorStack;
-    
-    
+
+
     /**
      * Generic Action info about the process being performed.
      */
@@ -64,7 +64,7 @@ public class InventoryActionInfoHandler {
         LOWER_PLACED,
         LOWER_PICKUP
     }
-    
+
     /**
      * Labels view action order/priority
      */
@@ -72,7 +72,7 @@ public class InventoryActionInfoHandler {
         PRIMARY,
         SECONDARY
     }
-    
+
     /**
      * Constructor.
      *
@@ -84,7 +84,7 @@ public class InventoryActionInfoHandler {
      */
     public InventoryActionInfoHandler(InventoryClickEvent event) {
         PreCon.notNull(event);
-        
+
         _clickEvent = event;
         _inventory = event.getInventory();
         _inventoryAction = event.getAction();
@@ -94,55 +94,55 @@ public class InventoryActionInfoHandler {
         _secondaryAction = ViewAction.NONE;
         _slotStack = event.getCurrentItem();
         _cursorStack = event.getCursor().clone();
-        
+
         boolean isUpperInventory = _rawSlot < event.getView().getTopInventory().getContents().length;
 
         switch (event.getAction()) {
-        case PLACE_SOME:
-        case PLACE_ALL:
-        case PLACE_ONE:
-        case SWAP_WITH_CURSOR:
-            _primaryAction = isUpperInventory
-                    ? ViewAction.ITEMS_PLACED
-                    : ViewAction.LOWER_PLACED;
-            break;
-            
-        case MOVE_TO_OTHER_INVENTORY:
-            if (isUpperInventory) {
-                _primaryAction = ViewAction.ITEMS_PICKUP;
-                _secondaryAction = ViewAction.LOWER_PLACED;
-            } else {
-                _primaryAction = ViewAction.LOWER_PICKUP;
-                _secondaryAction = ViewAction.ITEMS_PLACED;
-            }
-            break;
+            case PLACE_SOME:
+            case PLACE_ALL:
+            case PLACE_ONE:
+            case SWAP_WITH_CURSOR:
+                _primaryAction = isUpperInventory
+                        ? ViewAction.ITEMS_PLACED
+                        : ViewAction.LOWER_PLACED;
+                break;
 
-        case PICKUP_ALL:
-        case PICKUP_HALF:
-        case PICKUP_ONE:
-        case PICKUP_SOME:
-            _primaryAction = isUpperInventory
-                    ? ViewAction.ITEMS_PICKUP
-                    : ViewAction.LOWER_PICKUP;
-            break;
+            case MOVE_TO_OTHER_INVENTORY:
+                if (isUpperInventory) {
+                    _primaryAction = ViewAction.ITEMS_PICKUP;
+                    _secondaryAction = ViewAction.LOWER_PLACED;
+                } else {
+                    _primaryAction = ViewAction.LOWER_PICKUP;
+                    _secondaryAction = ViewAction.ITEMS_PLACED;
+                }
+                break;
 
-        case DROP_ALL_CURSOR:
-        case DROP_ONE_CURSOR:
-            _primaryAction = ViewAction.ITEMS_DROPPED;
-            break;
+            case PICKUP_ALL:
+            case PICKUP_HALF:
+            case PICKUP_ONE:
+            case PICKUP_SOME:
+                _primaryAction = isUpperInventory
+                        ? ViewAction.ITEMS_PICKUP
+                        : ViewAction.LOWER_PICKUP;
+                break;
 
-        default:
-            _primaryAction = ViewAction.NONE;
-            break;
+            case DROP_ALL_CURSOR:
+            case DROP_ONE_CURSOR:
+                _primaryAction = ViewAction.ITEMS_DROPPED;
+                break;
+
+            default:
+                _primaryAction = ViewAction.NONE;
+                break;
 
         }
-        
+
         ItemStack stack = getStack(_primaryAction, _slotStack, _cursorStack);
-        
+
         if (_primaryAction != ViewAction.NONE) {
             _primaryInfo = new InventoryActionInfo(stack, _primaryAction, ViewActionOrder.PRIMARY);
         }
-        
+
         if (_secondaryAction != ViewAction.NONE) {
             _secondaryInfo = new InventoryActionInfo(stack, _secondaryAction, ViewActionOrder.SECONDARY);
         }
@@ -188,20 +188,20 @@ public class InventoryActionInfoHandler {
      */
     private ItemStack getStack(ViewAction viewAction, ItemStack slotStack, ItemStack cursorStack) {
         switch (viewAction) {
-        case ITEMS_PLACED:
-            // fall through
-        case LOWER_PLACED:
-            // fall through
-        case ITEMS_DROPPED:
-            if (_inventoryAction == InventoryAction.MOVE_TO_OTHER_INVENTORY)
+            case ITEMS_PLACED:
+                // fall through
+            case LOWER_PLACED:
+                // fall through
+            case ITEMS_DROPPED:
+                if (_inventoryAction == InventoryAction.MOVE_TO_OTHER_INVENTORY)
+                    return slotStack;
+
+                return cursorStack;
+            default:
                 return slotStack;
-            
-            return cursorStack;
-        default:
-            return slotStack;
         }
     }
-    
+
     /**
      * Provides information about an inventory click event.
      */
@@ -225,7 +225,7 @@ public class InventoryActionInfoHandler {
             _viewAction = viewAction;
             _actionOrder = actionOrder;
         }
-        
+
         /**
          * Get the item stack from the slot clicked on
          * in the primary action event.
@@ -233,28 +233,28 @@ public class InventoryActionInfoHandler {
         public ItemStack getSlotStack() {
             return _slotStack;
         }
-        
+
         /**
          * Get the item stack from the cursor.
          */
         public ItemStack getCursorStack() {
             return _cursorStack;
         }
-        
+
         /**
          * Get the item stack relevant to the event.
          */
         public ItemStack getStack() {
-            return _stack;         
+            return _stack;
         }
-                
+
         /**
          * Get the event inventory.
          */
         public Inventory getInventory() {
             return _inventory;
         }
-        
+
         /**
          * Get the event inventory action of
          * the primary action.
@@ -262,14 +262,14 @@ public class InventoryActionInfoHandler {
         public InventoryAction getInventoryAction() {
             return _inventoryAction;
         }
-        
+
         /**
          * Get the view action to be taken.
          */
         public ViewAction getViewAction() {
             return _viewAction;
         }
-        
+
         /**
          * Determine if the action info instance
          * represents the primary event action or
@@ -278,7 +278,7 @@ public class InventoryActionInfoHandler {
         public ViewActionOrder getViewActionOrder() {
             return _actionOrder;
         }
-                
+
         /**
          * Get the event raw slot for
          * the primary action.
@@ -301,7 +301,7 @@ public class InventoryActionInfoHandler {
         public Inventory getTopInventory() {
             return _clickEvent.getView().getTopInventory();
         }
-        
+
         /**
          * Get the players inventory.
          */

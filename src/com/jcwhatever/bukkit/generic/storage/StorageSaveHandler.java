@@ -29,8 +29,8 @@ package com.jcwhatever.bukkit.generic.storage;
  * a data node is saved asynchronously.
  */
 public abstract class StorageSaveHandler {
-	
-	IDataNode _dataNode;
-	
-	public abstract void onFinish(StorageSaveResult result);
+
+    IDataNode _dataNode;
+
+    public abstract void onFinish(StorageSaveResult result);
 }

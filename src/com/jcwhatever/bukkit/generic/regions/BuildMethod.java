@@ -32,17 +32,17 @@ public enum BuildMethod {
      * Build method maximizes server performance
      * at the cost of build speed.
      */
-	PERFORMANCE,
+    PERFORMANCE,
 
     /**
      * Build method is balanced to increase server performance
      * but not reduce the build speed as much.
      */
-	BALANCED,
+    BALANCED,
 
     /**
      * Build method will build as fast as possible while
      * possibly sacrificing server performance.
      */
-	FAST
+    FAST
 }

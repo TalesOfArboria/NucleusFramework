@@ -32,31 +32,31 @@ import org.bukkit.event.inventory.InventoryType;
  */
 public abstract class AbstractMenuView extends AbstractView {
 
-	@Override
-	protected final void onInit(String name, IDataNode dataNode, ViewManager viewManager) {
+    @Override
+    protected final void onInit(String name, IDataNode dataNode, ViewManager viewManager) {
         // menu view does not store a name, data node, or view manager
-		onInit();
-	}
+        onInit();
+    }
 
-	@Override
-	public final InventoryType getInventoryType() {
-		return InventoryType.CHEST;
-	}
+    @Override
+    public final InventoryType getInventoryType() {
+        return InventoryType.CHEST;
+    }
 
-	@Override
-	public final ViewType getViewType() {
-		return ViewType.MENU;
-	}
+    @Override
+    public final ViewType getViewType() {
+        return ViewType.MENU;
+    }
 
-	@Override
-	public final void dispose() {
-		onDispose();
-	}
-	
-	protected abstract void onInit();
-	protected abstract void buildInventory();
-	protected void onDispose() {}
-	
+    @Override
+    public final void dispose() {
+        onDispose();
+    }
+
+    protected abstract void onInit();
+    protected abstract void buildInventory();
+    protected void onDispose() {}
+
 }
 
 

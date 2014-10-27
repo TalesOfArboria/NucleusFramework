@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 public class CommandInfoContainer {
 
     private static final FormatPattern PATTERN_COMMAND = new FormatPattern("\\{command}");
-    
+
     private final ICommandInfo _commandInfo;
     private final String _masterCommandName;
     private final Plugin _plugin;
@@ -62,7 +62,7 @@ public class CommandInfoContainer {
         _commandInfo = commandInfo;
         _masterCommandName = masterCommandName != null ? masterCommandName : commandInfo.command()[0];
         _usage = TextUtils.formatCustom(TextUtils.formatPluginInfo(plugin, commandInfo.usage()),
-                                                    PATTERN_COMMAND.getEntry(_masterCommandName));
+                PATTERN_COMMAND.getEntry(_masterCommandName));
     }
 
     /**
@@ -164,6 +164,6 @@ public class CommandInfoContainer {
     public String getLongDescription() {
         return Lang.get(_plugin, _commandInfo.longDescription());
     }
-    
+
 
 }

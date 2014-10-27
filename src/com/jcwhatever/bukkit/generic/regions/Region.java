@@ -536,7 +536,7 @@ public abstract class Region {
                     for (int z = _startZ; z <= zlen; z++) {
 
                         Block block = getWorld().getBlockAt(x, y, z);
-                        if (block.getType() != material) 
+                        if (block.getType() != material)
                             continue;
 
                         return true;
@@ -570,7 +570,7 @@ public abstract class Region {
 
             _sync.notifyAll();
 
-            return x >= _startX && x <= _endX && 
+            return x >= _startX && x <= _endX &&
                     y >= _startY && y <= _endY &&
                     z >= _startZ && z <= _endZ;
         }
@@ -644,7 +644,7 @@ public abstract class Region {
                     for (int z = _startZ; z <= zlen; z++) {
 
                         Block block = getWorld().getBlockAt(x, y, z);
-                        if (block.getType() != material) 
+                        if (block.getType() != material)
                             continue;
 
                         results.add(block.getLocation());
@@ -970,9 +970,9 @@ public abstract class Region {
      * Called when a player enters the region,
      * but only if the region is a player watcher and 
      * canDoPlayerEnter() returns true.
-     * 
+     *
      * Intended for override if needed.
-     * 
+     *
      * @param p  the player entering the region.
      */
     protected void onPlayerEnter (Player p) {
@@ -983,9 +983,9 @@ public abstract class Region {
      * Called when a player leaves the region,
      * but only if the region is a player watcher and 
      * canDoPlayerLeave() returns true.
-     * 
+     *
      * Intended for override if needed.
-     * 
+     *
      * @param p  the player leaving the region.
      */
     protected void onPlayerLeave (Player p) {
@@ -997,7 +997,7 @@ public abstract class Region {
      * can be called on the specified player.
      *
      * <p>Intended for override if needed.</p>
-     * 
+     *
      * @param p  The player entering the region.
      */
     protected boolean canDoPlayerEnter(Player p) {
@@ -1009,7 +1009,7 @@ public abstract class Region {
      * can be called on the specified player.
      *
      * <p>Intended for override if needed.</p>
-     * 
+     *
      * @param p  The player leaving the region.
      */
     protected boolean canDoPlayerLeave(Player p) {
@@ -1129,9 +1129,9 @@ public abstract class Region {
      */
     private void loadExtMessages(IDataNode settings, MessageType type) {
 
-        String msgNodeName = type == MessageType.ENTRY 
-                ? "ext-entry-messages" 
-                        : "ext-exit-messages"; 
+        String msgNodeName = type == MessageType.ENTRY
+                ? "ext-entry-messages"
+                : "ext-exit-messages";
 
         Set<String> pluginNames = settings.getSubNodeNames(msgNodeName);
         if (pluginNames != null && !pluginNames.isEmpty()) {
@@ -1177,18 +1177,18 @@ public abstract class Region {
             case P1: {
                 _lastP1 = l.clone();
                 lower = _lastP1.clone();
-                upper = _lastP2 != null 
-                        ? _lastP2.clone() 
-                                : _p2;
-                        break;
+                upper = _lastP2 != null
+                        ? _lastP2.clone()
+                        : _p2;
+                break;
             }
             case P2: {
                 _lastP2 = l.clone();
-                lower = _lastP1 != null 
-                        ? _lastP1.clone() 
-                                : _p1;
-                        upper = _lastP2.clone();
-                        break;
+                lower = _lastP1 != null
+                        ? _lastP1.clone()
+                        : _p1;
+                upper = _lastP2.clone();
+                break;
             }
             default: {
                 upper = null;

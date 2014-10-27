@@ -29,8 +29,8 @@ package com.jcwhatever.bukkit.generic.storage;
  * data node is loaded asynchronously.
  */
 public abstract class StorageLoadHandler {
-	
-	IDataNode _dataNode;
-	
-	public abstract void onFinish(StorageLoadResult result);
+
+    IDataNode _dataNode;
+
+    public abstract void onFinish(StorageLoadResult result);
 }

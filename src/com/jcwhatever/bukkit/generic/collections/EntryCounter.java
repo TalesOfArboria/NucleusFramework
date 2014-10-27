@@ -44,7 +44,7 @@ import java.util.Set;
  */
 public class EntryCounter<T> implements Iterable<T> {
 
-	private Map<T, Entry> _countMap;
+    private Map<T, Entry> _countMap;
     private RemovalPolicy _removalPolicy;
 
     // cache to quickly increment a value without having to look it up in the type count map.
@@ -96,10 +96,10 @@ public class EntryCounter<T> implements Iterable<T> {
      *
      * @param items  The collection to add
      */
-	public void addAll(Collection<T> items) {
-		for (T item : items)
-			add(item);
-	}
+    public void addAll(Collection<T> items) {
+        for (T item : items)
+            add(item);
+    }
 
     /**
      * Add an item to the counter.
@@ -108,8 +108,8 @@ public class EntryCounter<T> implements Iterable<T> {
      *
      * @return  The new count for the item.
      */
-	public int add(T item) {
-		PreCon.notNull(item);
+    public int add(T item) {
+        PreCon.notNull(item);
 
         Entry entry;
 
@@ -118,21 +118,21 @@ public class EntryCounter<T> implements Iterable<T> {
                 : _countMap.get(item);
 
         // establish baseline value
-		if (entry == null) {
+        if (entry == null) {
             entry = new Entry(1);
             _countMap.put(item, entry);
-		}
+        }
         // increment value
-		else {
-			entry.increment(1);
-		}
+        else {
+            entry.increment(1);
+        }
 
         // place value in cache
-		_currentItem = item;
+        _currentItem = item;
         _currentEntry = entry;
 
-		return entry.count();
-	}
+        return entry.count();
+    }
 
     /**
      * Subtract a collection of items from the counter
@@ -151,8 +151,8 @@ public class EntryCounter<T> implements Iterable<T> {
      *
      * @return  The new count for the item.
      */
-	public int subtract(T item) {
-		PreCon.notNull(item);
+    public int subtract(T item) {
+        PreCon.notNull(item);
 
         Entry entry;
 
@@ -161,7 +161,7 @@ public class EntryCounter<T> implements Iterable<T> {
                 : _countMap.get(item);
 
         // Check if item is in counter
-		if (entry == null) {
+        if (entry == null) {
             if (_removalPolicy == RemovalPolicy.REMOVE) {
                 return 0;
             }
@@ -169,7 +169,7 @@ public class EntryCounter<T> implements Iterable<T> {
                 entry = new Entry(-1);
                 _countMap.put(item, entry);
             }
-		}
+        }
         // decrement count
         else {
             entry.increment(-1);
@@ -187,29 +187,29 @@ public class EntryCounter<T> implements Iterable<T> {
         _currentItem = item;
         _currentEntry = entry;
 
-		return entry.count();
-	}
+        return entry.count();
+    }
 
     /**
      * Get the current counter value for the specified item.
      *
      * @param item  The item to get the count value for
      */
-	public int getCount(T item) {
-		PreCon.notNull(item);
+    public int getCount(T item) {
+        PreCon.notNull(item);
 
-		if (_currentItem != null && _currentItem.equals(item)) {
-			return _currentEntry.count();
-		}
+        if (_currentItem != null && _currentItem.equals(item)) {
+            return _currentEntry.count();
+        }
 
-		Entry entry = _countMap.get(item);
+        Entry entry = _countMap.get(item);
 
-		if (entry == null) {
-			return 0;
-		}
+        if (entry == null) {
+            return 0;
+        }
 
-		return entry.count();
-	}
+        return entry.count();
+    }
 
     /**
      * Determine if an item is in the counter.
@@ -226,19 +226,19 @@ public class EntryCounter<T> implements Iterable<T> {
     /**
      * Get a new hash set containing the items that were counted.
      */
-	public Set<T> getTypesCounted() {
+    public Set<T> getTypesCounted() {
 
-		return new HashSet<T>(_countMap.keySet());
-	}
+        return new HashSet<T>(_countMap.keySet());
+    }
 
     /**
      * Clear all items and counts.
      */
-	public void reset() {
-		_countMap.clear();
-		_currentItem = null;
+    public void reset() {
+        _countMap.clear();
+        _currentItem = null;
         _currentEntry = null;
-	}
+    }
 
     /**
      * Get an iterator to iterate over the items in the counter.
@@ -248,12 +248,12 @@ public class EntryCounter<T> implements Iterable<T> {
      *
      * <p>Each item appears only once in the iteration regardless of its count.</p>
      */
-	@Override
-	public Iterator<T> iterator() {
+    @Override
+    public Iterator<T> iterator() {
 
-		List<T> types = new ArrayList<T>(_countMap.keySet());
-		return types.iterator();
-	}
+        List<T> types = new ArrayList<T>(_countMap.keySet());
+        return types.iterator();
+    }
 
     private class Entry {
 

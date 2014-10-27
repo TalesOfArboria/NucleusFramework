@@ -58,7 +58,7 @@ public class PlayerHelper {
 
     private static final Object _sync = new Object();
 
-	private static IDataNode _nameData;
+    private static IDataNode _nameData;
 
     /**
      * Get an online player by name.
@@ -66,15 +66,15 @@ public class PlayerHelper {
      * @param playerName  The name of the player.
      */
     @Nullable
-	public static Player getPlayer(String playerName) {
-		PreCon.notNullOrEmpty(playerName);
+    public static Player getPlayer(String playerName) {
+        PreCon.notNullOrEmpty(playerName);
 
-		UUID playerId = getPlayerId(playerName);
-		if (playerId == null)
-		    return null;
+        UUID playerId = getPlayerId(playerName);
+        if (playerId == null)
+            return null;
 
-		return Bukkit.getServer().getPlayer(playerId);
-	}
+        return Bukkit.getServer().getPlayer(playerId);
+    }
 
     /**
      * Get an online player by Id.
@@ -82,11 +82,11 @@ public class PlayerHelper {
      * @param playerId  The id of the player.
      */
     @Nullable
-	public static Player getPlayer(UUID playerId) {
-		PreCon.notNull(playerId);
-		
-		return Bukkit.getServer().getPlayer(playerId);
-	}
+    public static Player getPlayer(UUID playerId) {
+        PreCon.notNull(playerId);
+
+        return Bukkit.getServer().getPlayer(playerId);
+    }
 
     /**
      * Get player object from provided object.
@@ -116,41 +116,41 @@ public class PlayerHelper {
 
         return null;
     }
-	
-	/**
-	 * Gets player Id from name using stored id to name map.
-	 * Null if not found.
-	 * Avoid usage due to low performance.
-	 * 
-	 * @param playerName  The name of the player
-	 * @return
-	 */
-	public static UUID getPlayerId(String playerName) {
+
+    /**
+     * Gets player Id from name using stored id to name map.
+     * Null if not found.
+     * Avoid usage due to low performance.
+     *
+     * @param playerName  The name of the player
+     * @return
+     */
+    public static UUID getPlayerId(String playerName) {
         PreCon.notNull(playerName);
 
-		IDataNode nameData = getNameData();
-		
-		Set<String> ids = nameData.getSubNodeNames();
-		if (ids == null || ids.isEmpty())
-			return null;
-		
-		for (String idStr : ids) {
-			String name = nameData.getString(idStr);
-			
-			if (name != null && name.equalsIgnoreCase(playerName)) {
-				
-				try {
-					return UUID.fromString(idStr);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					return null;
-				}
-			}
-		}
-		
-		return null;
-	}
+        IDataNode nameData = getNameData();
+
+        Set<String> ids = nameData.getSubNodeNames();
+        if (ids == null || ids.isEmpty())
+            return null;
+
+        for (String idStr : ids) {
+            String name = nameData.getString(idStr);
+
+            if (name != null && name.equalsIgnoreCase(playerName)) {
+
+                try {
+                    return UUID.fromString(idStr);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Get the name of a player from the player Id.
@@ -161,16 +161,16 @@ public class PlayerHelper {
      *
      * @return  Returns the string "[unknown]" if a record was not found.
      */
-	public static String getPlayerName(UUID playerId) {
+    public static String getPlayerName(UUID playerId) {
 
-		IDataNode nameData = getNameData();
+        IDataNode nameData = getNameData();
 
-		String name = nameData.getString(playerId.toString());
-		if (name == null)
-			return "[unknown]";
+        String name = nameData.getString(playerId.toString());
+        if (name == null)
+            return "[unknown]";
 
-		return name;
-	}
+        return name;
+    }
 
     /**
      * Update the GenericsLib player name/player id map.
@@ -178,20 +178,20 @@ public class PlayerHelper {
      * @param playerId  The id of the player.
      * @param name      The new player name.
      */
-	public static void setPlayerName(UUID playerId, String name) {
-		IDataNode nameData = getNameData();
+    public static void setPlayerName(UUID playerId, String name) {
+        IDataNode nameData = getNameData();
 
-		String currentName = getPlayerName(playerId);
+        String currentName = getPlayerName(playerId);
 
-		if (currentName.equals(name))
-			return;
+        if (currentName.equals(name))
+            return;
 
-		synchronized (_sync) {
-			nameData.set(playerId.toString(), name);
-		}
+        synchronized (_sync) {
+            nameData.set(playerId.toString(), name);
+        }
 
-		nameData.saveAsync(null);
-	}
+        nameData.saveAsync(null);
+    }
 
     /**
      * Get a list of players that are near the specified location.
@@ -199,12 +199,12 @@ public class PlayerHelper {
      * @param loc          The location to check.
      * @param chunkRadius  The chunk radius to check in.
      */
-	public static List<Player> getClosestPlayers(Location loc, int chunkRadius) {
+    public static List<Player> getClosestPlayers(Location loc, int chunkRadius) {
         PreCon.notNull(loc);
         PreCon.greaterThanZero(chunkRadius);
 
-		return getClosestPlayers(loc, chunkRadius, null);
-	}
+        return getClosestPlayers(loc, chunkRadius, null);
+    }
 
     /**
      * Get a list of players that are near the specified location.
@@ -213,36 +213,36 @@ public class PlayerHelper {
      * @param chunkRadius  The chunk radius to check in.
      * @param validator    A validator used to validate if a player is a candidate to return.
      */
-	public static List<Player> getClosestPlayers(Location loc, int chunkRadius, @Nullable ItemValidator<Player> validator) {
-		PreCon.notNull(loc);
-		PreCon.greaterThanZero(chunkRadius);
-		
-		Chunk chunk = loc.getChunk();
-		List<Player> players = new ArrayList<Player>(20);
-		
-		for (int x = -chunkRadius; x <= chunkRadius; x++) {
-			for (int z = -chunkRadius; z <= chunkRadius; z++) {
-				Entity[] entities = chunk.getWorld().getChunkAt(chunk.getX() + x, chunk.getZ() + z).getEntities();
-				
-				for (Entity entity : entities) {
-					if (!(entity instanceof Player))
-						continue;
-					
-					if (entity.hasMetadata("NPC"))
-						continue;
-					
-					if (validator != null && validator.isValid((Player)entity))
-						continue;
-					
-					players.add((Player)entity);
-					
-				}
-				
-			}
-		}
-		
-		return players;
-	}
+    public static List<Player> getClosestPlayers(Location loc, int chunkRadius, @Nullable ItemValidator<Player> validator) {
+        PreCon.notNull(loc);
+        PreCon.greaterThanZero(chunkRadius);
+
+        Chunk chunk = loc.getChunk();
+        List<Player> players = new ArrayList<Player>(20);
+
+        for (int x = -chunkRadius; x <= chunkRadius; x++) {
+            for (int z = -chunkRadius; z <= chunkRadius; z++) {
+                Entity[] entities = chunk.getWorld().getChunkAt(chunk.getX() + x, chunk.getZ() + z).getEntities();
+
+                for (Entity entity : entities) {
+                    if (!(entity instanceof Player))
+                        continue;
+
+                    if (entity.hasMetadata("NPC"))
+                        continue;
+
+                    if (validator != null && validator.isValid((Player)entity))
+                        continue;
+
+                    players.add((Player)entity);
+
+                }
+
+            }
+        }
+
+        return players;
+    }
 
     /**
      * Get the location closest to the specified player.
@@ -250,9 +250,9 @@ public class PlayerHelper {
      * @param p          The player.
      * @param locations  The location candidates.
      */
-	public static Location getClosestLocation(Player p, Collection<Location> locations) {
-		return getClosestLocation(p, locations, null);
-	}
+    public static Location getClosestLocation(Player p, Collection<Location> locations) {
+        return getClosestLocation(p, locations, null);
+    }
 
     /**
      * Get the location closest to the specified player.
@@ -261,27 +261,27 @@ public class PlayerHelper {
      * @param locations  The location candidates.
      * @param validator  The validator used to determine if a location is a candidate.
      */
-	public static Location getClosestLocation(Player p, Collection<Location> locations,
+    public static Location getClosestLocation(Player p, Collection<Location> locations,
                                               @Nullable ItemValidator<Location> validator) {
-		PreCon.notNull(p);
-		PreCon.notNull(locations);
-				
-		Location closest = null;
-		double closestDist = 0.0D;
-		
-		for (Location loc : locations) {
-			if (validator != null && !validator.isValid(loc))
-				continue;
-						
-			double dist = 0.0D;
-			if (closest == null || (dist = p.getLocation().distanceSquared(loc)) < closestDist) {
-				closest = loc;
-				closestDist = dist;
-			}
-		}
-		
-		return closest;
-	}
+        PreCon.notNull(p);
+        PreCon.notNull(locations);
+
+        Location closest = null;
+        double closestDist = 0.0D;
+
+        for (Location loc : locations) {
+            if (validator != null && !validator.isValid(loc))
+                continue;
+
+            double dist = 0.0D;
+            if (closest == null || (dist = p.getLocation().distanceSquared(loc)) < closestDist) {
+                closest = loc;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
 
     /**
      * Get the closest entity to a player.
@@ -290,9 +290,9 @@ public class PlayerHelper {
      * @param range  The search range.
      */
     @Nullable
-	public static Entity getClosestEntity(Player p, double range) {
-		return getClosestEntity(p, range, range, range, null);
-	}
+    public static Entity getClosestEntity(Player p, double range) {
+        return getClosestEntity(p, range, range, range, null);
+    }
 
     /**
      * Get the closest entity to a player.
@@ -302,9 +302,9 @@ public class PlayerHelper {
      * @param validator  The validator used to determine if an entity is a candidate.
      */
     @Nullable
-	public static Entity getClosestEntity(Player p, double range, @Nullable ItemValidator<Entity> validator) {
-		return getClosestEntity(p, range, range, range, validator);
-	}
+    public static Entity getClosestEntity(Player p, double range, @Nullable ItemValidator<Entity> validator) {
+        return getClosestEntity(p, range, range, range, validator);
+    }
 
     /**
      * Get the closest entity to a player.
@@ -315,9 +315,9 @@ public class PlayerHelper {
      * @param rangeZ  The search range on the Z axis.
      */
     @Nullable
-	public static Entity getClosestEntity(Player p, double rangeX, double rangeY, double rangeZ) {
-		return getClosestEntity(p, rangeX, rangeY, rangeZ, null);
-	}
+    public static Entity getClosestEntity(Player p, double rangeX, double rangeY, double rangeZ) {
+        return getClosestEntity(p, rangeX, rangeY, rangeZ, null);
+    }
 
     /**
      *
@@ -328,31 +328,31 @@ public class PlayerHelper {
      * @param validator  The validator used to determine if an entity is a candidate.
      */
     @Nullable
-	public static Entity getClosestEntity(Player p, double rangeX, double rangeY, double rangeZ,
+    public static Entity getClosestEntity(Player p, double rangeX, double rangeY, double rangeZ,
                                           @Nullable ItemValidator<Entity> validator) {
-		PreCon.notNull(p);
+        PreCon.notNull(p);
         PreCon.positiveNumber(rangeX);
         PreCon.positiveNumber(rangeY);
         PreCon.positiveNumber(rangeZ);
-		
-		List<Entity> entities = p.getNearbyEntities(rangeX, rangeY, rangeZ);
-		
-		Entity closest = null;
-		double closestDist = 0.0D;
-				
-		for (Entity entity : entities) {
-			if (validator != null && !validator.isValid(entity))
-				continue;
-						
-			double dist = 0.0D;
-			if (closest == null || (dist = p.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
-				closest = entity;
-				closestDist = dist;
-			}
-		}
-		
-		return closest;
-	}
+
+        List<Entity> entities = p.getNearbyEntities(rangeX, rangeY, rangeZ);
+
+        Entity closest = null;
+        double closestDist = 0.0D;
+
+        for (Entity entity : entities) {
+            if (validator != null && !validator.isValid(entity))
+                continue;
+
+            double dist = 0.0D;
+            if (closest == null || (dist = p.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
+                closest = entity;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
 
     /**
      * Get the closest living entity to a player.
@@ -361,9 +361,9 @@ public class PlayerHelper {
      * @param range  The search range.
      */
     @Nullable
-	public static LivingEntity getClosestLivingEntity(Player p, double range) {
-		return getClosestLivingEntity(p, range, range, range, null);
-	}
+    public static LivingEntity getClosestLivingEntity(Player p, double range) {
+        return getClosestLivingEntity(p, range, range, range, null);
+    }
 
     /**
      * Get the closest living entity to a player.
@@ -373,10 +373,10 @@ public class PlayerHelper {
      * @param validator  The validator used to determine if a living entity is a candidate.
      */
     @Nullable
-	public static LivingEntity getClosestLivingEntity(Player p, double range,
+    public static LivingEntity getClosestLivingEntity(Player p, double range,
                                                       @Nullable ItemValidator<LivingEntity> validator) {
-		return getClosestLivingEntity(p, range, range, range, validator);
-	}
+        return getClosestLivingEntity(p, range, range, range, validator);
+    }
 
     /**
      * Get the closest living entity to a player.
@@ -387,9 +387,9 @@ public class PlayerHelper {
      * @param rangeZ  The search range on the Z axis.
      */
     @Nullable
-	public static LivingEntity getClosestLivingEntity(Player p, double rangeX, double rangeY, double rangeZ) {
-		return getClosestLivingEntity(p, rangeX, rangeY, rangeZ, null);
-	}
+    public static LivingEntity getClosestLivingEntity(Player p, double rangeX, double rangeY, double rangeZ) {
+        return getClosestLivingEntity(p, rangeX, rangeY, rangeZ, null);
+    }
 
     /**
      * Get the closest living entity to a player.
@@ -401,33 +401,33 @@ public class PlayerHelper {
      * @param validator  The validator used to determine if a living entity is a candidate.
      */
     @Nullable
-	public static LivingEntity getClosestLivingEntity(Player p, double rangeX, double rangeY, double rangeZ,
+    public static LivingEntity getClosestLivingEntity(Player p, double rangeX, double rangeY, double rangeZ,
                                                       @Nullable ItemValidator<LivingEntity> validator) {
-		PreCon.notNull(p); 
-		
-		List<Entity> entities = p.getNearbyEntities(rangeX, rangeY, rangeZ);
-		
-		LivingEntity closest = null;
-		double closestDist = 0.0D;
-				
-		for (Entity entity : entities) {
-			if (!(entity instanceof LivingEntity))
-				continue;
-			
-			LivingEntity livingEntity = (LivingEntity)entity;
-			
-			if (validator != null && !validator.isValid(livingEntity))
-				continue;
-							
-			double dist = 0.0D;
-			if (closest == null || (dist = p.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
-				closest = livingEntity;
-				closestDist = dist;
-			}
-		}
-		
-		return closest;
-	}
+        PreCon.notNull(p);
+
+        List<Entity> entities = p.getNearbyEntities(rangeX, rangeY, rangeZ);
+
+        LivingEntity closest = null;
+        double closestDist = 0.0D;
+
+        for (Entity entity : entities) {
+            if (!(entity instanceof LivingEntity))
+                continue;
+
+            LivingEntity livingEntity = (LivingEntity)entity;
+
+            if (validator != null && !validator.isValid(livingEntity))
+                continue;
+
+            double dist = 0.0D;
+            if (closest == null || (dist = p.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
+                closest = livingEntity;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
 
     /**
      * Iterates over blocks in the direction the player is looking
@@ -438,29 +438,29 @@ public class PlayerHelper {
      * @param maxDistance  The max distance to search.
      */
     @Nullable
-	public static Block getTargetBlock(Player p, int maxDistance) {
-		BlockIterator bit = new BlockIterator(p, maxDistance);
-		Block next;
-		while(bit.hasNext())
-		{
-			next = bit.next();
+    public static Block getTargetBlock(Player p, int maxDistance) {
+        BlockIterator bit = new BlockIterator(p, maxDistance);
+        Block next;
+        while(bit.hasNext())
+        {
+            next = bit.next();
 
-			if (next != null && next.getType() != Material.AIR)
-				return next;
-		}
+            if (next != null && next.getType() != Material.AIR)
+                return next;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
     // get the node that contains player id/name data.
     private static IDataNode getNameData() {
 
-		if (_nameData == null) {
+        if (_nameData == null) {
 
-			synchronized (_sync) {
+            synchronized (_sync) {
 
-				IDataNode data = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("player-names"));
-				data.loadAsync(new StorageLoadHandler() {
+                IDataNode data = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("player-names"));
+                data.loadAsync(new StorageLoadHandler() {
 
                     @Override
                     public void onFinish(StorageLoadResult result) {
@@ -470,10 +470,10 @@ public class PlayerHelper {
                     }
 
                 });
-				
-				_nameData = data;
-			}
-		}
-		return _nameData;
-	}
+
+                _nameData = data;
+            }
+        }
+        return _nameData;
+    }
 }

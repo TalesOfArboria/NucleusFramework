@@ -45,15 +45,15 @@ import com.jcwhatever.bukkit.generic.views.triggers.TriggerType;
  */
 public abstract class AbstractView implements IView {
 
-	private static EventListener _eventListener;
+    private static EventListener _eventListener;
 
-	private String _name;
-	private String _title;
-	protected IDataNode _dataNode;
-	private ViewManager _viewManager;
+    private String _name;
+    private String _title;
+    protected IDataNode _dataNode;
+    private ViewManager _viewManager;
 
-	private boolean _isInitialized;
-	private IViewTrigger _trigger;
+    private boolean _isInitialized;
+    private IViewTrigger _trigger;
 
     /**
      * Initialize the view.
@@ -62,206 +62,206 @@ public abstract class AbstractView implements IView {
      * @param dataNode     The data node to save settings to.
      * @param viewManager  The view manager responsible for the view.
      */
-	@Override
-	public final void init(String name, IDataNode dataNode, ViewManager viewManager) {
-		if (_isInitialized)
-			throw new IllegalStateException("Custom inventory view can only be initialized once.");
+    @Override
+    public final void init(String name, IDataNode dataNode, ViewManager viewManager) {
+        if (_isInitialized)
+            throw new IllegalStateException("Custom inventory view can only be initialized once.");
 
-		_isInitialized = true;
+        _isInitialized = true;
 
-		_name = name;
-		_dataNode = dataNode;
-		_viewManager = viewManager;
+        _name = name;
+        _dataNode = dataNode;
+        _viewManager = viewManager;
 
-		onInit(name, dataNode, viewManager);
+        onInit(name, dataNode, viewManager);
 
-		loadSettings();
+        loadSettings();
 
-		if (_eventListener == null) {
-			_eventListener = new EventListener();
-			Bukkit.getPluginManager().registerEvents(_eventListener, viewManager.getPlugin());
-		}
+        if (_eventListener == null) {
+            _eventListener = new EventListener();
+            Bukkit.getPluginManager().registerEvents(_eventListener, viewManager.getPlugin());
+        }
 
-	}
+    }
 
-	@Override
-	public final String getName() {
-		return _name;
-	}
+    @Override
+    public final String getName() {
+        return _name;
+    }
 
-	@Override
-	public final String getDefaultTitle() {
-		return _title != null ? _title : _name;
-	}
-	
-	protected final void setDefaultTitle(String title) {
-		_title = title;
-	}
+    @Override
+    public final String getDefaultTitle() {
+        return _title != null ? _title : _name;
+    }
 
-	@Override
-	public final IViewTrigger getViewTrigger() {
-		return _trigger;
-	}
+    protected final void setDefaultTitle(String title) {
+        _title = title;
+    }
 
-	@Override
-	public final void setViewTrigger(TriggerType type) {
+    @Override
+    public final IViewTrigger getViewTrigger() {
+        return _trigger;
+    }
 
-		if (_trigger != null) {
+    @Override
+    public final void setViewTrigger(TriggerType type) {
 
-			if (_trigger.getType() == type)
-				return;
+        if (_trigger != null) {
 
-			_trigger.dispose();
-		}
+            if (_trigger.getType() == type)
+                return;
 
-		if (_dataNode != null) {
-			_dataNode.remove("trigger");
-			_dataNode.set("trigger.type", type);
-			_dataNode.saveAsync(null);
-		}
+            _trigger.dispose();
+        }
 
-		_trigger = type.getNewTrigger(this, _dataNode != null ? _dataNode.getNode("trigger") : null, _viewManager);
-	}
+        if (_dataNode != null) {
+            _dataNode.remove("trigger");
+            _dataNode.set("trigger.type", type);
+            _dataNode.saveAsync(null);
+        }
 
-
-	@Override
-	public final ViewManager getViewManager() {
-		return _viewManager;
-	}
-
-	@Override
-	public ViewInstance createInstance(Player p, ViewInstance previous, ViewMeta sessionMeta) {
-		return createInstance(p, previous, sessionMeta, null);
-	}
-
-	@Override
-	public ViewInstance createInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta) {
-		return onCreateInstance(p, previous, sessionMeta, instanceMeta);
-	}
+        _trigger = type.getNewTrigger(this, _dataNode != null ? _dataNode.getNode("trigger") : null, _viewManager);
+    }
 
 
-	private void loadSettings() {
-		if (_dataNode == null)
-			return;
+    @Override
+    public final ViewManager getViewManager() {
+        return _viewManager;
+    }
 
-		_title = _dataNode.getString("title", "Menu");
+    @Override
+    public ViewInstance createInstance(Player p, ViewInstance previous, ViewMeta sessionMeta) {
+        return createInstance(p, previous, sessionMeta, null);
+    }
 
-		TriggerType type = _dataNode.getEnum("trigger.type", TriggerType.NONE, TriggerType.class);
-		if (_trigger != null) {
+    @Override
+    public ViewInstance createInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta) {
+        return onCreateInstance(p, previous, sessionMeta, instanceMeta);
+    }
 
-			if (_trigger.getType() == type)
-				return;
 
-			_trigger.dispose();
-		}
+    private void loadSettings() {
+        if (_dataNode == null)
+            return;
+
+        _title = _dataNode.getString("title", "Menu");
+
+        TriggerType type = _dataNode.getEnum("trigger.type", TriggerType.NONE, TriggerType.class);
+        if (_trigger != null) {
+
+            if (_trigger.getType() == type)
+                return;
+
+            _trigger.dispose();
+        }
 
         if (type != null)
-		    _trigger = type.getNewTrigger(this, _dataNode.getNode("trigger"), _viewManager);
+            _trigger = type.getNewTrigger(this, _dataNode.getNode("trigger"), _viewManager);
 
-		onLoadSettings(_dataNode);
-	}
+        onLoadSettings(_dataNode);
+    }
 
 
-	protected abstract void onInit(String name, IDataNode dataNode, ViewManager viewManager);
-	protected abstract ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta);
-	protected abstract void onLoadSettings(IDataNode dataNode);
+    protected abstract void onInit(String name, IDataNode dataNode, ViewManager viewManager);
+    protected abstract ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta);
+    protected abstract void onLoadSettings(IDataNode dataNode);
 
-	/**
-	 * Global Bukkit event listener
-	 */
-	private static class EventListener implements Listener {
+    /**
+     * Global Bukkit event listener
+     */
+    private static class EventListener implements Listener {
 
-		@EventHandler(priority = EventPriority.HIGHEST)
-		private void onInventoryClick(final InventoryClickEvent event) {
-			
-			HumanEntity entity = event.getWhoClicked();
-			if (!(entity instanceof Player))
-				return;
+        @EventHandler(priority = EventPriority.HIGHEST)
+        private void onInventoryClick(final InventoryClickEvent event) {
 
-			Player p = (Player)entity;
+            HumanEntity entity = event.getWhoClicked();
+            if (!(entity instanceof Player))
+                return;
 
-			ViewInstance instance = ViewManager.getCurrent(p);
-			if (instance == null)
-				return;
-			
-			boolean allow = true;
-			
-			InventoryActionInfoHandler actionInfoHandler = new InventoryActionInfoHandler(event);
-			
-			InventoryActionInfo primaryInfo = actionInfoHandler.getPrimaryInfo();
-			InventoryActionInfo secondaryInfo = actionInfoHandler.getSecondaryInfo();
-			
-			switch (actionInfoHandler.getPrimaryViewAction()) {
-	            case ITEMS_PLACED:
-	                allow = instance.onItemsPlaced(primaryInfo, ViewActionOrder.PRIMARY);
-	                break;
-	            case ITEMS_PICKUP:
-	                allow = instance.onItemsPickup(primaryInfo, ViewActionOrder.PRIMARY);
-	                break;
-	            case ITEMS_DROPPED:
-	                allow = instance.onItemsDropped(primaryInfo, ViewActionOrder.PRIMARY);
-	                break;
-	            case LOWER_PLACED:
-	                allow = instance.onLowerItemsPlaced(primaryInfo, ViewActionOrder.PRIMARY);
-	                break;
-	            case LOWER_PICKUP:
-	                allow = instance.onLowerItemsPickup(primaryInfo, ViewActionOrder.PRIMARY);
-	                break;
-	            default:
-	                break;
-	        }
-			
-			switch (actionInfoHandler.getSecondaryViewAction()) {
-	            case ITEMS_PLACED:
-	                allow = allow && instance.onItemsPlaced(secondaryInfo, ViewActionOrder.SECONDARY);
-	                break;
-	            case ITEMS_PICKUP:
-	                allow = allow && instance.onItemsPickup(secondaryInfo, ViewActionOrder.SECONDARY);
-	                break;
-	            case ITEMS_DROPPED:
-	                allow = allow && instance.onItemsDropped(secondaryInfo, ViewActionOrder.SECONDARY);
-	                break;
-	            case LOWER_PLACED:
-	                allow = allow && instance.onLowerItemsPlaced(secondaryInfo, ViewActionOrder.SECONDARY);
-	                break;
-	            case LOWER_PICKUP:
-	                allow = allow && instance.onLowerItemsPickup(secondaryInfo, ViewActionOrder.SECONDARY);
-	                break;
-	            default:
-	                break;
-	        }
+            Player p = (Player)entity;
 
-			// cancel event
-			if (!allow) {
-				event.setCancelled(true);
-			}
+            ViewInstance instance = ViewManager.getCurrent(p);
+            if (instance == null)
+                return;
 
-			Messenger.debug(null, "Cursor: {0}. Current: {1}", event.getCursor() != null ? event.getCursor().getType() : "null", event.getCurrentItem() != null ? event.getCurrentItem().getType() : "null");
+            boolean allow = true;
 
-			Messenger.debug(null, "ACTION: {0}, SLOT: {1}", event.getAction().name(), event.getRawSlot());
+            InventoryActionInfoHandler actionInfoHandler = new InventoryActionInfoHandler(event);
 
-		}
-		
+            InventoryActionInfo primaryInfo = actionInfoHandler.getPrimaryInfo();
+            InventoryActionInfo secondaryInfo = actionInfoHandler.getSecondaryInfo();
 
-		// Cleanup data related to closed inventory
-		@EventHandler(priority = EventPriority.HIGHEST)
-		private void onInventoryClose(InventoryCloseEvent event) {
-			HumanEntity entity = event.getPlayer();
-			if (!(entity instanceof Player))
-				return;
+            switch (actionInfoHandler.getPrimaryViewAction()) {
+                case ITEMS_PLACED:
+                    allow = instance.onItemsPlaced(primaryInfo, ViewActionOrder.PRIMARY);
+                    break;
+                case ITEMS_PICKUP:
+                    allow = instance.onItemsPickup(primaryInfo, ViewActionOrder.PRIMARY);
+                    break;
+                case ITEMS_DROPPED:
+                    allow = instance.onItemsDropped(primaryInfo, ViewActionOrder.PRIMARY);
+                    break;
+                case LOWER_PLACED:
+                    allow = instance.onLowerItemsPlaced(primaryInfo, ViewActionOrder.PRIMARY);
+                    break;
+                case LOWER_PICKUP:
+                    allow = instance.onLowerItemsPickup(primaryInfo, ViewActionOrder.PRIMARY);
+                    break;
+                default:
+                    break;
+            }
 
-			Player p = (Player)entity;
+            switch (actionInfoHandler.getSecondaryViewAction()) {
+                case ITEMS_PLACED:
+                    allow = allow && instance.onItemsPlaced(secondaryInfo, ViewActionOrder.SECONDARY);
+                    break;
+                case ITEMS_PICKUP:
+                    allow = allow && instance.onItemsPickup(secondaryInfo, ViewActionOrder.SECONDARY);
+                    break;
+                case ITEMS_DROPPED:
+                    allow = allow && instance.onItemsDropped(secondaryInfo, ViewActionOrder.SECONDARY);
+                    break;
+                case LOWER_PLACED:
+                    allow = allow && instance.onLowerItemsPlaced(secondaryInfo, ViewActionOrder.SECONDARY);
+                    break;
+                case LOWER_PICKUP:
+                    allow = allow && instance.onLowerItemsPickup(secondaryInfo, ViewActionOrder.SECONDARY);
+                    break;
+                default:
+                    break;
+            }
 
-			final ViewInstance instance = ViewManager.getCurrent(p);
-			if (instance == null)
-				return;
+            // cancel event
+            if (!allow) {
+                event.setCancelled(true);
+            }
+
+            Messenger.debug(null, "Cursor: {0}. Current: {1}", event.getCursor() != null ? event.getCursor().getType() : "null", event.getCurrentItem() != null ? event.getCurrentItem().getType() : "null");
+
+            Messenger.debug(null, "ACTION: {0}, SLOT: {1}", event.getAction().name(), event.getRawSlot());
+
+        }
+
+
+        // Cleanup data related to closed inventory
+        @EventHandler(priority = EventPriority.HIGHEST)
+        private void onInventoryClose(InventoryCloseEvent event) {
+            HumanEntity entity = event.getPlayer();
+            if (!(entity instanceof Player))
+                return;
+
+            Player p = (Player)entity;
+
+            final ViewInstance instance = ViewManager.getCurrent(p);
+            if (instance == null)
+                return;
 
             // determine if closing for next view
-			if (instance.isClosingForNext()) {
-				instance.resetIsClosingForNext();
-				instance.onClose(ViewCloseReason.OPEN_NEXT);
-				return;
-			}
+            if (instance.isClosingForNext()) {
+                instance.resetIsClosingForNext();
+                instance.onClose(ViewCloseReason.OPEN_NEXT);
+                return;
+            }
 
             // determine if closing to refresh
             if (instance.isRefreshing()) {
@@ -276,37 +276,37 @@ public abstract class AbstractView implements IView {
                 return;
             }
 
-			final ViewInstance previous = instance.getPrev();
+            final ViewInstance previous = instance.getPrev();
 
-			if (previous == null) {
-				ViewManager.clearCurrent(p);
-				instance.onClose(ViewCloseReason.GOING_BACK);
-			}
-			else if (!previous.isClosingForNext()) {
-				
-				instance.onClose(ViewCloseReason.GOING_BACK);
-				
-				Bukkit.getScheduler().runTaskLater(instance.getView().getViewManager().getPlugin(), new Runnable() {
+            if (previous == null) {
+                ViewManager.clearCurrent(p);
+                instance.onClose(ViewCloseReason.GOING_BACK);
+            }
+            else if (!previous.isClosingForNext()) {
 
-					@Override
-					public void run() {
+                instance.onClose(ViewCloseReason.GOING_BACK);
 
-						previous.showAsPrev(instance);
-						previous.setNext(null);
-					}
+                Bukkit.getScheduler().runTaskLater(instance.getView().getViewManager().getPlugin(), new Runnable() {
 
-				}, 2);
+                    @Override
+                    public void run() {
 
-			}
-			else {
-				previous.resetIsClosingForNext();
-				instance.onClose(ViewCloseReason.OPEN_NEXT);
-			}
+                        previous.showAsPrev(instance);
+                        previous.setNext(null);
+                    }
 
-		}
+                }, 2);
+
+            }
+            else {
+                previous.resetIsClosingForNext();
+                instance.onClose(ViewCloseReason.OPEN_NEXT);
+            }
+
+        }
 
 
-	}
+    }
 
 }
 

@@ -51,29 +51,29 @@ public class SignHelper {
      * @return  Null if the block is not a sign.
      */
     @Nullable
-	public static BlockFace getSignFacing(Block block) {
+    public static BlockFace getSignFacing(Block block) {
         PreCon.notNull(block);
 
-		Sign sign = getSign(block);
-		if (sign == null)
-			return null;
-		return getSignFacing(sign);
-	}
+        Sign sign = getSign(block);
+        if (sign == null)
+            return null;
+        return getSignFacing(sign);
+    }
 
     /**
      * Get the facing direction of a sign.
      *
      * @param sign  The sign to check.
      */
-	public static BlockFace getSignFacing(Sign sign) {
+    public static BlockFace getSignFacing(Sign sign) {
         PreCon.notNull(sign);
 
         MaterialData materialData = sign.getData();
 
-		org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)materialData;
-		
-		return matSign.getFacing();
-	}
+        org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)materialData;
+
+        return matSign.getFacing();
+    }
 
     /**
      * Set the direction a sign is facing.
@@ -84,11 +84,11 @@ public class SignHelper {
      *
      * @return  True if the block is a sign and the direction is set.
      */
-	public static boolean setSignFacing(Block block, BlockFace face, boolean update) {
+    public static boolean setSignFacing(Block block, BlockFace face, boolean update) {
         PreCon.notNull(block);
         PreCon.notNull(face);
 
-		Sign sign = getSign(block);
+        Sign sign = getSign(block);
         return sign != null && setSignFacing(sign, face, update);
     }
 
@@ -101,15 +101,15 @@ public class SignHelper {
      *
      * @return True if the sign is updated or true if update parameter is false.
      */
-	public static boolean setSignFacing(Sign sign, BlockFace face, boolean update) {
+    public static boolean setSignFacing(Sign sign, BlockFace face, boolean update) {
         PreCon.notNull(sign);
         PreCon.notNull(face);
 
-		MaterialData materialData = sign.getData();
+        MaterialData materialData = sign.getData();
 
-		org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)materialData;
+        org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)materialData;
 
-		matSign.setFacingDirection(face);
+        matSign.setFacingDirection(face);
 
         return !update || sign.update(true);
     }
@@ -121,28 +121,28 @@ public class SignHelper {
      *
      * @return  Null if the block is not a sign.
      */
-	public static BlockFace getSignAttachedFace(Block block) {
+    public static BlockFace getSignAttachedFace(Block block) {
         PreCon.notNull(block);
 
-		Sign sign = getSign(block);
-		if (sign == null)
-			return null;
-		
-		return getSignAttachedFace(sign);		
-	}
+        Sign sign = getSign(block);
+        if (sign == null)
+            return null;
+
+        return getSignAttachedFace(sign);
+    }
 
     /**
      * Get the attached face direction of a sign.
      *
      * @param sign  The sign to check.
      */
-	public static BlockFace getSignAttachedFace(Sign sign) {
-		MaterialData materialData = sign.getData();
+    public static BlockFace getSignAttachedFace(Sign sign) {
+        MaterialData materialData = sign.getData();
 
-		org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)materialData;
+        org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)materialData;
 
-		return matSign.getAttachedFace();
-	}
+        return matSign.getAttachedFace();
+    }
 
     /**
      * Create a new {@code MaterialData} instance representing a sign.
@@ -150,14 +150,14 @@ public class SignHelper {
      * @param type    The material type. Must be a sign type.
      * @param facing  The facing direction of the sign.
      */
-	public static MaterialData createSignData(Material type, BlockFace facing) {
+    public static MaterialData createSignData(Material type, BlockFace facing) {
         PreCon.notNull(type);
         PreCon.notNull(facing);
 
-		org.bukkit.material.Sign matSign = new org.bukkit.material.Sign(type);
-		matSign.setFacingDirection(facing);
-		return matSign;
-	}
+        org.bukkit.material.Sign matSign = new org.bukkit.material.Sign(type);
+        matSign.setFacingDirection(facing);
+        return matSign;
+    }
 
     /**
      * Set the text lines of a block that is a sign.
@@ -165,17 +165,17 @@ public class SignHelper {
      * @param block  The block that is a sign.
      * @param lines  The lines to set. There must be exactly 4 lines provided.
      */
-	public static void setLines(Block block, String... lines) {
+    public static void setLines(Block block, String... lines) {
         PreCon.notNull(block);
         PreCon.notNull(lines);
         PreCon.isValid(lines.length == 4);
 
-		Sign sign = getSign(block);
-		if (sign == null)
-			return;
-		
-		setLines(sign, lines);
-	}
+        Sign sign = getSign(block);
+        if (sign == null)
+            return;
+
+        setLines(sign, lines);
+    }
 
     /**
      * Set the text lines of a sign.
@@ -201,12 +201,12 @@ public class SignHelper {
      * @return  Null if the block is not a sign.
      */
     @Nullable
-	public static Sign getSign(Block block) {
+    public static Sign getSign(Block block) {
         PreCon.notNull(block);
 
-		BlockState state = block.getState();
-		return (state instanceof Sign) ? (Sign)state : null;
-	}
+        BlockState state = block.getState();
+        return (state instanceof Sign) ? (Sign)state : null;
+    }
 
     /**
      * Get the sign adjacent of the provided block in the specified
@@ -259,8 +259,8 @@ public class SignHelper {
     public static Block getSignAttachedBlock(Sign sign) {
         PreCon.notNull(sign);
 
-    	org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)sign.getBlock().getState().getData();
-    	return sign.getBlock().getRelative(matSign.getAttachedFace());
+        org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)sign.getBlock().getState().getData();
+        return sign.getBlock().getRelative(matSign.getAttachedFace());
     }
 
     /**
@@ -291,12 +291,12 @@ public class SignHelper {
      */
     @Nullable
     public static Sign getRecent(Sign sign) {
-    	PreCon.notNull(sign);
-    	
-    	BlockState state = sign.getLocation().getBlock().getState();
-    	
-    	return (state instanceof Sign) ? (Sign)state : null;
+        PreCon.notNull(sign);
+
+        BlockState state = sign.getLocation().getBlock().getState();
+
+        return (state instanceof Sign) ? (Sign)state : null;
     }
-    
+
 
 }

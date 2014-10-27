@@ -47,12 +47,12 @@ import java.util.LinkedList;
  */
 public final class RegionChunkFileLoader {
 
-	public static final int RESTORE_FILE_VERSION = 1;
-	private Plugin _plugin;
-	private RestorableRegion _region;
-	private Chunk _chunk;
-	private boolean _isLoading;
-	private final LinkedList<BlockInfo> _blockInfo = new LinkedList<>();
+    public static final int RESTORE_FILE_VERSION = 1;
+    private Plugin _plugin;
+    private RestorableRegion _region;
+    private Chunk _chunk;
+    private boolean _isLoading;
+    private final LinkedList<BlockInfo> _blockInfo = new LinkedList<>();
     private final LinkedList<SerializableBlockEntity> _blockEntities = new LinkedList<>();
     private final LinkedList<SerializableFurnitureEntity> _entities = new LinkedList<>();
 
@@ -62,11 +62,11 @@ public final class RegionChunkFileLoader {
      * @param region  The region to load a chunk file for.
      * @param chunk   The region chunk that the file was created from.
      */
-	public RegionChunkFileLoader (RestorableRegion region, Chunk chunk) {
-		_region = region;
-		_chunk = chunk;
-		_plugin = region.getPlugin();
-	}
+    public RegionChunkFileLoader (RestorableRegion region, Chunk chunk) {
+        _region = region;
+        _chunk = chunk;
+        _plugin = region.getPlugin();
+    }
 
     /**
      * Get the chunk.
@@ -125,38 +125,38 @@ public final class RegionChunkFileLoader {
      * @param file         The file.
      * @param project      The project to add the loading task to.
      */
-	public Future loadInProject(File file, QueueProject project) {
+    public Future loadInProject(File file, QueueProject project) {
         PreCon.notNull(file);
         PreCon.notNull(project);
 
-		if (isLoading())
-			return project.cancel("Region cannot load because it is already loading.");
+        if (isLoading())
+            return project.cancel("Region cannot load because it is already loading.");
 
-		_isLoading = true;
+        _isLoading = true;
 
         RegionChunkSection section = new RegionChunkSection(_region, _chunk);
-		LoadChunkIterator iterator = new LoadChunkIterator(file, 8192, section.getStartChunkX(), section.getStartY(),
+        LoadChunkIterator iterator = new LoadChunkIterator(file, 8192, section.getStartChunkX(), section.getStartY(),
                 section.getStartChunkZ(), section.getEndChunkX(), section.getEndY(), section.getEndChunkZ());
-		
-		project.addTask(iterator);
 
-		return iterator.getResult();
-	}
+        project.addTask(iterator);
 
-	/**
-	 * Data object to hold information about a single block
-	 */
-	public static final class BlockInfo implements Comparable<BlockInfo> {
-		public final int data, x, y, z;
-		public final Material material;
+        return iterator.getResult();
+    }
 
-		public BlockInfo (Material material, int data, int x, int y, int z) {
-			this.material = material;
-			this.data = data;
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
+    /**
+     * Data object to hold information about a single block
+     */
+    public static final class BlockInfo implements Comparable<BlockInfo> {
+        public final int data, x, y, z;
+        public final Material material;
+
+        public BlockInfo (Material material, int data, int x, int y, int z) {
+            this.material = material;
+            this.data = data;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
 
         @Override
         public int compareTo(BlockInfo o) {
@@ -164,26 +164,26 @@ public final class RegionChunkFileLoader {
         }
     }
 
-	/**
-	 * Iteration worker for loading region chunk data from a file.
-	 */
-	private final class LoadChunkIterator extends Iteration3DTask {
+    /**
+     * Iteration worker for loading region chunk data from a file.
+     */
+    private final class LoadChunkIterator extends Iteration3DTask {
 
-		private GenericsByteReader reader;
-		private final ChunkSnapshot snapshot;
-		private final File file;
+        private GenericsByteReader reader;
+        private final ChunkSnapshot snapshot;
+        private final File file;
 
         /**
          * Constructor
          */
-		LoadChunkIterator (File file, long segmentSize, int xStart, int yStart, int zStart,
-                                  int xEnd, int yEnd, int zEnd) {
+        LoadChunkIterator (File file, long segmentSize, int xStart, int yStart, int zStart,
+                           int xEnd, int yEnd, int zEnd) {
 
-			super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
+            super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
             this.snapshot = _chunk.getChunkSnapshot();
             this.file = file;
-		}
+        }
 
         /**
          * Read file header
@@ -235,29 +235,29 @@ public final class RegionChunkFileLoader {
         /**
          * Iterate block items from file
          */
-		@Override
-		protected void onIterateItem(final int x, final int y, final int z) {
+        @Override
+        protected void onIterateItem(final int x, final int y, final int z) {
 
-			Material chunkType = Material.getMaterial(snapshot.getBlockTypeId(x, y, z));
-			int chunkData = snapshot.getBlockData(x, y, z);
+            Material chunkType = Material.getMaterial(snapshot.getBlockTypeId(x, y, z));
+            int chunkData = snapshot.getBlockData(x, y, z);
 
-			Material type;
-			int data;
+            Material type;
+            int data;
 
-			try {
-				type = reader.getEnum(Material.class);
-				data = reader.getInteger();
-			}
-			catch (IOException io) {
-				io.printStackTrace();
-				fail("Failed to read from file.");
-				return;
-			}
+            try {
+                type = reader.getEnum(Material.class);
+                data = reader.getInteger();
+            }
+            catch (IOException io) {
+                io.printStackTrace();
+                fail("Failed to read from file.");
+                return;
+            }
 
-			if (chunkType != type || chunkData != data) {
-				_blockInfo.add(new BlockInfo(type, data, x, y, z));
-			}
-		}
+            if (chunkType != type || chunkData != data) {
+                _blockInfo.add(new BlockInfo(type, data, x, y, z));
+            }
+        }
 
         /**
          * Read block entities and entities from file on
@@ -304,26 +304,26 @@ public final class RegionChunkFileLoader {
             }
         }
 
-		@Override
-		protected void onEnd() {
-			cleanup();
-		}
+        @Override
+        protected void onEnd() {
+            cleanup();
+        }
 
-		private void cleanup() {
-			
-			if (reader != null) {
-				try {
-					// close the file
-					reader.close();
-				}
-				catch (IOException io) {
-					cancel("Failed to close region data file.");
-					io.printStackTrace();
-				}
-			}
-			
-			_isLoading = false;
-		}
+        private void cleanup() {
 
-	}
+            if (reader != null) {
+                try {
+                    // close the file
+                    reader.close();
+                }
+                catch (IOException io) {
+                    cancel("Failed to close region data file.");
+                    io.printStackTrace();
+                }
+            }
+
+            _isLoading = false;
+        }
+
+    }
 }

@@ -47,7 +47,7 @@ public abstract class SignHandler {
      * The name of the sign handler, must be a valid name.
      * Starts with a letter, alphanumerics only. Underscores allowed.
      */
-	public abstract String getName();
+    public abstract String getName();
 
     /**
      * Get a prefix to append to the header of a sign.
@@ -132,19 +132,19 @@ public abstract class SignHandler {
     protected abstract boolean onSignBreak(Player p, SignContainer sign);
 
 
-	boolean signClick(Player p, SignContainer sign) {
+    boolean signClick(Player p, SignContainer sign) {
         return onSignClick(p, sign);
     }
-	
-	boolean signChange(Player p, SignContainer sign) {
+
+    boolean signChange(Player p, SignContainer sign) {
         return onSignChange(p, sign);
     }
-	
-	boolean signBreak(Player p, SignContainer sign) {
+
+    boolean signBreak(Player p, SignContainer sign) {
         return onSignBreak(p, sign);
     }
-	
-	void signLoad(SignContainer sign) {
+
+    void signLoad(SignContainer sign) {
         onSignLoad(sign);
     }
 

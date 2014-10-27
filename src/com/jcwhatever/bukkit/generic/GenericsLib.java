@@ -43,9 +43,9 @@ public class GenericsLib extends GenericsPlugin {
     /**
      * Get the {@code GenericsLib} plugin instance.
      */
-	public static GenericsLib getPlugin() {
-		return _instance;
-	}
+    public static GenericsLib getPlugin() {
+        return _instance;
+    }
 
     /**
      * Get the global {@code RegionManager}.
@@ -64,27 +64,27 @@ public class GenericsLib extends GenericsPlugin {
     /**
      * Constructor.
      */
-	public GenericsLib() {
-		super();
+    public GenericsLib() {
+        super();
 
-		_instance = this;
-	}
+        _instance = this;
+    }
 
     /**
      * Get the chat prefix.
      */
     @Override
-	public String getChatPrefix() {
-		return "[GenericsLib] ";
-	}
+    public String getChatPrefix() {
+        return "[GenericsLib] ";
+    }
 
     /**
      * Get the console prefix.
      */
-	@Override
-	public String getConsolePrefix() {
-		return getChatPrefix();
-	}
+    @Override
+    public String getConsolePrefix() {
+        return getChatPrefix();
+    }
 
     @Override
     protected void onEnablePlugin() {

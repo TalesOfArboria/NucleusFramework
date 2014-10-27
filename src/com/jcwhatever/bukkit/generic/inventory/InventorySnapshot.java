@@ -41,7 +41,7 @@ import java.util.Map;
  * Takes a snapshot of an inventory.
  */
 public class InventorySnapshot {
-    
+
     private Map<ItemWrapper, Item> _itemMap = new HashMap<ItemWrapper, Item>(6 * 9);
     private ItemStack[] _items;
     private ItemStack[] _snapshot;
@@ -58,7 +58,7 @@ public class InventorySnapshot {
      */
     public InventorySnapshot(Inventory inventory) {
         PreCon.notNull(inventory);
-        
+
         init(inventory, ItemStackComparer.getDefault());
     }
 
@@ -71,7 +71,7 @@ public class InventorySnapshot {
     public InventorySnapshot(Inventory inventory, ItemStackComparer comparer) {
         PreCon.notNull(inventory);
         PreCon.notNull(comparer);
-        
+
         init(inventory, comparer);
     }
 

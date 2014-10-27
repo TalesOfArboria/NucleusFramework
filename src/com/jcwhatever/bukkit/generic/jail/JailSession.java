@@ -95,7 +95,7 @@ public class JailSession {
      */
     public void release(boolean forceRelease) {
         _isReleased = true;
-        
+
         if (forceRelease) {
             _expires = new Date();
             _jailManager._warden.run(true);
@@ -115,7 +115,7 @@ public class JailSession {
             dataNode.remove();
             dataNode.saveAsync(null);
         }
-        
+
         _expires = new Date();
     }
 

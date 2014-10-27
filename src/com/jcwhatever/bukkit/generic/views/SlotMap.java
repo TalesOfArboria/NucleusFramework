@@ -33,9 +33,9 @@ import java.util.HashMap;
  */
 public class SlotMap extends HashMap<Integer, MenuItem> {
 
-	private static final long serialVersionUID = 1L;
-	
-	private int _slots;
+    private static final long serialVersionUID = 1L;
+
+    private int _slots;
 
     /**
      * Get number of slots in inventory.
@@ -44,9 +44,9 @@ public class SlotMap extends HashMap<Integer, MenuItem> {
      *     using the {@code SlotMap}.
      * </p>
      */
-	public int getTotalSlots() {
-		return _slots;
-	}
+    public int getTotalSlots() {
+        return _slots;
+    }
 
     /**
      * Set the number of slots in the inventory
@@ -54,10 +54,10 @@ public class SlotMap extends HashMap<Integer, MenuItem> {
      *
      * @param slots  The number of slots.
      */
-	public void setTotalSlots(int slots) {
+    public void setTotalSlots(int slots) {
         PreCon.positiveNumber(slots);
 
-		_slots = slots;
-	}
+        _slots = slots;
+    }
 
 }

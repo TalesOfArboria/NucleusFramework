@@ -35,18 +35,18 @@ public interface INamedLocationDistance extends Comparable<NamedLocationDistance
     /**
      * The named location the distance is for.
      */
-	INamedLocation getNamedLocation();
+    INamedLocation getNamedLocation();
 
     /**
      * The target location.
      */
-	Location getTarget();
+    Location getTarget();
 
     /**
      * Get the distance between the named location
      * and the target location.
      */
-	double getDistance();
+    double getDistance();
 
     /**
      * Get the distance between the named location
@@ -55,6 +55,6 @@ public interface INamedLocationDistance extends Comparable<NamedLocationDistance
      * <p>Should generally provide a faster implementation than
      * using {@code getDistance}.</p>
      */
-	double getDistanceSquared();
-	
+    double getDistanceSquared();
+
 }

@@ -25,15 +25,15 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
-import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+
+import javax.annotation.Nullable;
 
 /**
  * Location utilities.
@@ -42,13 +42,13 @@ public class LocationUtils {
 
     private LocationUtils () {}
 
-	private static final BlockFace[] YAW_FACES = new BlockFace[] {
-		BlockFace.SOUTH, BlockFace.SOUTH_SOUTH_WEST, BlockFace.SOUTH_WEST, BlockFace.WEST_SOUTH_WEST,
-		BlockFace.WEST,  BlockFace.WEST_NORTH_WEST,  BlockFace.NORTH_WEST, BlockFace.NORTH_NORTH_WEST,
-		BlockFace.NORTH, BlockFace.NORTH_NORTH_EAST, BlockFace.NORTH_EAST, BlockFace.EAST_NORTH_EAST,
-		BlockFace.EAST,  BlockFace.EAST_SOUTH_EAST,  BlockFace.SOUTH_EAST, BlockFace.SOUTH_SOUTH_EAST,
-		BlockFace.SOUTH
-	};
+    private static final BlockFace[] YAW_FACES = new BlockFace[] {
+            BlockFace.SOUTH, BlockFace.SOUTH_SOUTH_WEST, BlockFace.SOUTH_WEST, BlockFace.WEST_SOUTH_WEST,
+            BlockFace.WEST,  BlockFace.WEST_NORTH_WEST,  BlockFace.NORTH_WEST, BlockFace.NORTH_NORTH_WEST,
+            BlockFace.NORTH, BlockFace.NORTH_NORTH_EAST, BlockFace.NORTH_EAST, BlockFace.EAST_NORTH_EAST,
+            BlockFace.EAST,  BlockFace.EAST_SOUTH_EAST,  BlockFace.SOUTH_EAST, BlockFace.SOUTH_SOUTH_EAST,
+            BlockFace.SOUTH
+    };
 
     /**
      * Get a location centered on the X and Z axis of the block
@@ -100,30 +100,30 @@ public class LocationUtils {
      * @param radiusY   The max radius on the Y axis.
      * @param radiusZ   The max radius on the Z axis.
      */
-	public static Location addNoise(Location location, int radiusX, int radiusY, int radiusZ) {
+    public static Location addNoise(Location location, int radiusX, int radiusY, int radiusZ) {
         PreCon.notNull(location);
         PreCon.positiveNumber(radiusX);
         PreCon.positiveNumber(radiusY);
         PreCon.positiveNumber(radiusZ);
 
-		location = location.clone();
-		
-		int noiseX = 0, noiseY = 0, noiseZ = 0;
-		
-		if (radiusX > 0) {
-			 noiseX = Rand.getInt(radiusX * 2) - radiusX;
-		}
-		
-		if (radiusY > 0) {
-			noiseY = Rand.getInt(radiusY * 2) - radiusY;
-		}
-		
-		if (radiusZ > 0) {
-			noiseZ = Rand.getInt(radiusZ * 2) - radiusZ;
-		}
-		
-		return location.add(noiseX, noiseY, noiseZ);
-	}
+        location = location.clone();
+
+        int noiseX = 0, noiseY = 0, noiseZ = 0;
+
+        if (radiusX > 0) {
+            noiseX = Rand.getInt(radiusX * 2) - radiusX;
+        }
+
+        if (radiusY > 0) {
+            noiseY = Rand.getInt(radiusY * 2) - radiusY;
+        }
+
+        if (radiusZ > 0) {
+            noiseZ = Rand.getInt(radiusZ * 2) - radiusZ;
+        }
+
+        return location.add(noiseX, noiseY, noiseZ);
+    }
 
 
     /**
@@ -134,16 +134,16 @@ public class LocationUtils {
      * @param location2  The second location to compare.
      * @param precision  The precision.
      */
-	public static boolean isLocationMatch(Location location1, Location location2, double precision) {
+    public static boolean isLocationMatch(Location location1, Location location2, double precision) {
         PreCon.notNull(location1);
         PreCon.notNull(location2);
 
-		double xDelta = Math.abs(location1.getX() - location2.getX());
-		double zDelta = Math.abs(location1.getZ() - location2.getZ());
-		double yDelta = Math.abs(location1.getY() - location2.getY());
+        double xDelta = Math.abs(location1.getX() - location2.getX());
+        double zDelta = Math.abs(location1.getZ() - location2.getZ());
+        double yDelta = Math.abs(location1.getY() - location2.getY());
 
-		return xDelta < precision && zDelta < precision && yDelta < precision;
-	}
+        return xDelta < precision && zDelta < precision && yDelta < precision;
+    }
 
     /**
      * Parse a location from a formatted string.
@@ -157,24 +157,24 @@ public class LocationUtils {
      * @return  null if a location could not be parsed.
      */
     @Nullable
-	public static Location parseSimpleLocation(World world, String coordinates) {
+    public static Location parseSimpleLocation(World world, String coordinates) {
         PreCon.notNull(world);
         PreCon.notNull(coordinates);
 
-		String[] parts = TextUtils.PATTERN_COMMA.split(coordinates);
-		if (parts.length != 3) {
-			throw new IllegalArgumentException("Input string must contain only x, y, and z");
-		}
+        String[] parts = TextUtils.PATTERN_COMMA.split(coordinates);
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Input string must contain only x, y, and z");
+        }
 
-		Double x = parseDouble(parts[0]);
-		Double y = parseDouble(parts[1]);
-		Double z = parseDouble(parts[2]);
+        Double x = parseDouble(parts[0]);
+        Double y = parseDouble(parts[1]);
+        Double z = parseDouble(parts[2]);
 
-		if (x != null && y != null && z != null) 
-			return new Location(world, x, y, z);
+        if (x != null && y != null && z != null)
+            return new Location(world, x, y, z);
 
-		return null;
-	}
+        return null;
+    }
 
     /**
      * Parse a location from a formatted string.
@@ -187,30 +187,30 @@ public class LocationUtils {
      * @return  null if the string could not be parsed.
      */
     @Nullable
-	public static Location parseLocation(String coordinates) {
+    public static Location parseLocation(String coordinates) {
         PreCon.notNull(coordinates);
 
         String[] parts =  TextUtils.PATTERN_COMMA.split(coordinates);
-		if (parts.length != 6)
-			return null;
+        if (parts.length != 6)
+            return null;
 
-		Double x = parseDouble(parts[0]);
+        Double x = parseDouble(parts[0]);
         if (x == null)
             return null;
 
-		Double y = parseDouble(parts[1]);
+        Double y = parseDouble(parts[1]);
         if (y == null)
             return null;
 
-		Double z = parseDouble(parts[2]);
+        Double z = parseDouble(parts[2]);
         if (z == null)
             return null;
 
-		Float yaw = parseFloat(parts[3]);
+        Float yaw = parseFloat(parts[3]);
         if (yaw == null)
             return null;
 
-		Float pitch = parseFloat(parts[4]);
+        Float pitch = parseFloat(parts[4]);
         if (pitch == null)
             return null;
 
@@ -218,40 +218,40 @@ public class LocationUtils {
         if (world == null)
             return null;
 
-    	return new Location(world, x, y, z, yaw, pitch);
-	}
+        return new Location(world, x, y, z, yaw, pitch);
+    }
 
     /**
      * Convert a location to a parsable string.
      *
      * @param location  The location to convert.
      */
-	public static String locationToString(Location location) {
+    public static String locationToString(Location location) {
         PreCon.notNull(location);
 
         return String.valueOf(location.getBlockX()) + ',' +
                 location.getBlockY() + ',' + location.getBlockZ() + ',' + location.getYaw() + ',' +
                 location.getPitch() + ',' + location.getWorld().getName();
-	}
+    }
 
     /**
      * Convert a locations yaw angle to a {@code BlockFace}.
      *
      * @param location  The location to convert.
      */
-	public static BlockFace getBlockFacingYaw(Location location) {
+    public static BlockFace getBlockFacingYaw(Location location) {
         PreCon.notNull(location);
 
-		float yaw = (location.getYaw() + (location.getYaw() < 0 ? 360 : 0)) % 360;
+        float yaw = (location.getYaw() + (location.getYaw() < 0 ? 360 : 0)) % 360;
 
-		int i = (int)(yaw / 22.5);
+        int i = (int)(yaw / 22.5);
 
-		if (i > YAW_FACES.length - 1 || i < 0) {
-			i = YAW_FACES.length - 1;
-		}
+        if (i > YAW_FACES.length - 1 || i < 0) {
+            i = YAW_FACES.length - 1;
+        }
 
-		return YAW_FACES[i];
-	}
+        return YAW_FACES[i];
+    }
 
     /**
      * Find a surface block (solid block that can be walked on) location below the provided
@@ -292,10 +292,10 @@ public class LocationUtils {
     private static Double parseDouble(String s) {
         s = s.trim();
 
-		try {
-			return Double.parseDouble(s);
-		}
-		catch (Exception ignore) {}
+        try {
+            return Double.parseDouble(s);
+        }
+        catch (Exception ignore) {}
 
         try {
             return (double) Integer.parseInt(s);
@@ -303,17 +303,17 @@ public class LocationUtils {
         catch (Exception e) {
             return null;
         }
-	}
+    }
 
     // helper to convert a string number to a float.
-	private static Float parseFloat(String s) {
-		try {
-			return Float.parseFloat(s.trim());
-		}
-		catch (Exception e) {
-			return null;
-		}
-	}
+    private static Float parseFloat(String s) {
+        try {
+            return Float.parseFloat(s.trim());
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
 
 
 

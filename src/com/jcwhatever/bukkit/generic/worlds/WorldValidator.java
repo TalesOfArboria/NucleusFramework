@@ -39,56 +39,56 @@ import java.util.Set;
  */
 public class WorldValidator {
 
-	private IDataNode _worldNode;
-	private WorldValidationMode _worldMode = WorldValidationMode.BLACKLIST;
-	private Set<String> _worlds = new HashSet<String>(10);
+    private IDataNode _worldNode;
+    private WorldValidationMode _worldMode = WorldValidationMode.BLACKLIST;
+    private Set<String> _worlds = new HashSet<String>(10);
 
     /**
      * Constructor.
      *
      * @param dataNode  The managers data node.
      */
-	public WorldValidator(IDataNode dataNode) {
+    public WorldValidator(IDataNode dataNode) {
         PreCon.notNull(dataNode);
 
-		_worldNode = dataNode;
+        _worldNode = dataNode;
 
-		loadSettings();
-	}
+        loadSettings();
+    }
 
     /**
      * Determine if a world is considered valid.
      *
      * @param world  The world to check.
      */
-	public boolean isValidWorld(World world) {
+    public boolean isValidWorld(World world) {
         PreCon.notNull(world);
 
-		boolean result = false;
-		
-		if (_worldMode == WorldValidationMode.BLACKLIST)
-			result = !_worlds.contains(world.getName());
+        boolean result = false;
 
-		else if (_worldMode == WorldValidationMode.WHITELIST)
-			result = _worlds.contains(world.getName());
+        if (_worldMode == WorldValidationMode.BLACKLIST)
+            result = !_worlds.contains(world.getName());
 
-		return result;
-	}
+        else if (_worldMode == WorldValidationMode.WHITELIST)
+            result = _worlds.contains(world.getName());
+
+        return result;
+    }
 
     /**
      * Get the names of the worlds in the collection.
      */
-	public List<String> getWorlds() {
-		return new ArrayList<String>(_worlds);
-	}
+    public List<String> getWorlds() {
+        return new ArrayList<String>(_worlds);
+    }
 
     /**
      * Get the mode used to determine how worlds in the collection
      * are used for validation.
      */
-	public WorldValidationMode getMode() {
-		return _worldMode;
-	}
+    public WorldValidationMode getMode() {
+        return _worldMode;
+    }
 
     /**
      * Set the mode used to determine how worlds in the collection
@@ -96,72 +96,72 @@ public class WorldValidator {
      *
      * @param validationMode  The world validation mode.
      */
-	public void setMode(WorldValidationMode validationMode) {
+    public void setMode(WorldValidationMode validationMode) {
         PreCon.notNull(validationMode);
 
-		_worldMode = validationMode;
-		_worldNode.set("mode", validationMode);
-		_worldNode.saveAsync(null);
-	}
+        _worldMode = validationMode;
+        _worldNode.set("mode", validationMode);
+        _worldNode.saveAsync(null);
+    }
 
     /**
      * Add a world to the collection.
      *
      * @param world  The world to add.
      */
-	public boolean addWorld(World world) {
+    public boolean addWorld(World world) {
         PreCon.notNull(world);
 
-		if (_worlds.add(world.getName())) {
-			_worldNode.set("worlds", new ArrayList<String>(_worlds));
-			_worldNode.saveAsync(null);
+        if (_worlds.add(world.getName())) {
+            _worldNode.set("worlds", new ArrayList<String>(_worlds));
+            _worldNode.saveAsync(null);
 
-			return true;
-		}
-		return false;
-	}
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Remove a world from the collection.
      *
      * @param world  The world to removed.
      */
-	public boolean removeWorld(World world) {
+    public boolean removeWorld(World world) {
         PreCon.notNull(world);
 
-		return removeWorld(world.getName());
-	}
+        return removeWorld(world.getName());
+    }
 
     /**
      * Remove a world from the collection.
      *
      * @param worldName  The name of the world.
      */
-	public boolean removeWorld(String worldName) {
+    public boolean removeWorld(String worldName) {
         PreCon.notNullOrEmpty(worldName);
 
-		if (!_worlds.contains(worldName))
-			return false;
-		
-		if (_worlds.remove(worldName)) {
-			_worldNode.set("worlds", new ArrayList<String>(_worlds));
-			_worldNode.saveAsync(null);
+        if (!_worlds.contains(worldName))
+            return false;
 
-			return true;
-		}
-		
-		return false;
-	}
+        if (_worlds.remove(worldName)) {
+            _worldNode.set("worlds", new ArrayList<String>(_worlds));
+            _worldNode.saveAsync(null);
+
+            return true;
+        }
+
+        return false;
+    }
 
     // initial load of settings
-	private void loadSettings() {
-		_worldMode = _worldNode.getEnum("mode", _worldMode, WorldValidationMode.class);
+    private void loadSettings() {
+        _worldMode = _worldNode.getEnum("mode", _worldMode, WorldValidationMode.class);
 
-		_worlds.clear();
-		List<String> worldNames = _worldNode.getStringList("worlds", null);
-		if (worldNames != null && !worldNames.isEmpty()) {
-			_worlds.addAll(worldNames);
-		}
-	}
+        _worlds.clear();
+        List<String> worldNames = _worldNode.getStringList("worlds", null);
+        if (worldNames != null && !worldNames.isEmpty()) {
+            _worlds.addAll(worldNames);
+        }
+    }
 
 }

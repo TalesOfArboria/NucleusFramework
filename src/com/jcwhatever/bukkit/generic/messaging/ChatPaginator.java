@@ -39,27 +39,27 @@ import java.util.List;
 public class ChatPaginator {
 
     private final Plugin _plugin;
-	private final List<Object[]> _printList = new ArrayList<>(50);
+    private final List<Object[]> _printList = new ArrayList<>(50);
 
-	protected int _itemsPerPage = 5;
-	protected String _headerFormat;
-	protected String _footerFormat;
-	protected String _title;
+    protected int _itemsPerPage = 5;
+    protected String _headerFormat;
+    protected String _footerFormat;
+    protected String _title;
 
     /**
      * A default paginator template that can be used for the paginator
      * header and footer.
      */
-	public enum PaginatorTemplate {
+    public enum PaginatorTemplate {
         HEADER  ("----------------------------------------\r{AQUA}{0} {GRAY}(Page {1} of {2})"),
         FOOTER  ("----------------------------------------");
-        
+
         private final String _template;
 
         PaginatorTemplate(String template) {
             _template = template;
         }
-        
+
         @Override
         public String toString() {
             return _template;
@@ -75,11 +75,11 @@ public class ChatPaginator {
      *
      * @param plugin  The owning plugin.
      */
-	public ChatPaginator(Plugin plugin) {
+    public ChatPaginator(Plugin plugin) {
         PreCon.notNull(plugin);
 
-		_plugin = plugin;
-	}
+        _plugin = plugin;
+    }
 
     /**
      * Constructor.
@@ -91,13 +91,13 @@ public class ChatPaginator {
      * @param plugin        The owning plugin.
      * @param itemsPerPage  Number of items to show per page.
      */
-	public ChatPaginator(Plugin plugin, int itemsPerPage) {
+    public ChatPaginator(Plugin plugin, int itemsPerPage) {
         PreCon.notNull(plugin);
         PreCon.greaterThanZero(itemsPerPage);
 
-		_plugin = plugin;
-		_itemsPerPage = itemsPerPage;
-	}
+        _plugin = plugin;
+        _itemsPerPage = itemsPerPage;
+    }
 
     /**
      * Constructor.
@@ -117,9 +117,9 @@ public class ChatPaginator {
      * @param footerFormat  The footer format.
      * @param title         The title to insert into the header.
      */
-	public ChatPaginator(Plugin plugin, Object headerFormat, Object footerFormat, String title) {
-		this(plugin, 5, headerFormat, footerFormat, title);
-	}
+    public ChatPaginator(Plugin plugin, Object headerFormat, Object footerFormat, String title) {
+        this(plugin, 5, headerFormat, footerFormat, title);
+    }
 
     /**
      * Constructor.
@@ -137,17 +137,17 @@ public class ChatPaginator {
      * @param footerFormat  The footer format.
      * @param title         The title to insert into the header.
      */
-	public ChatPaginator(Plugin plugin, int itemsPerPage, Object headerFormat, Object footerFormat, String title) {
-	    PreCon.notNull(headerFormat);
-	    PreCon.notNull(footerFormat);
-	    PreCon.notNull(title);
-	    
-		_plugin = plugin;
-		_itemsPerPage = itemsPerPage;
-		_headerFormat = headerFormat.toString();
-		_footerFormat = footerFormat.toString();
-		_title = title;
-	}
+    public ChatPaginator(Plugin plugin, int itemsPerPage, Object headerFormat, Object footerFormat, String title) {
+        PreCon.notNull(headerFormat);
+        PreCon.notNull(footerFormat);
+        PreCon.notNull(title);
+
+        _plugin = plugin;
+        _itemsPerPage = itemsPerPage;
+        _headerFormat = headerFormat.toString();
+        _footerFormat = footerFormat.toString();
+        _title = title;
+    }
 
     /**
      * Get the owning plugin.
@@ -175,12 +175,12 @@ public class ChatPaginator {
      *
      * @param parameters  The object parameters inserted into the item format.
      */
-	public void add(Object...parameters) {
+    public void add(Object...parameters) {
         PreCon.notNull(parameters);
         PreCon.greaterThanZero(parameters.length);
 
-		_printList.add(parameters);
-	}
+        _printList.add(parameters);
+    }
 
     /**
      * Add an item with a format that overrides the item format used when
@@ -189,13 +189,13 @@ public class ChatPaginator {
      * @param format      The format that applies to the item.
      * @param parameters  The object parameters inserted into the item format.
      */
-	public void addFormatted(Object format, Object...parameters) {
+    public void addFormatted(Object format, Object...parameters) {
         PreCon.notNull(format);
         PreCon.notNull(parameters);
         PreCon.greaterThanZero(parameters.length);
 
-		_printList.add(new Object[]{new PreFormattedLine(format.toString(), parameters)});
-	}
+        _printList.add(new Object[]{new PreFormattedLine(format.toString(), parameters)});
+    }
 
     /**
      * Add all objects from a collection.
@@ -208,18 +208,18 @@ public class ChatPaginator {
      *
      * @param collection  The collection to add.
      */
-	public void addAll(Collection<?> collection) {
+    public void addAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
-		for (Object object : collection) {
-			if (object instanceof Object[]) {
-				_printList.add((Object[]) object );
-			}
-			else {
-				_printList.add(new Object[] { object });
-			}
-		}
-	}
+        for (Object object : collection) {
+            if (object instanceof Object[]) {
+                _printList.add((Object[]) object );
+            }
+            else {
+                _printList.add(new Object[] { object });
+            }
+        }
+    }
 
     /**
      * Show a page of the paginator to a {@code CommandSender}.
@@ -233,16 +233,16 @@ public class ChatPaginator {
      * @param page    The page to display.
      * @param format  The format that applies to the items on the page.
      */
-	public void show(CommandSender sender, int page, Object format) {
+    public void show(CommandSender sender, int page, Object format) {
         PreCon.notNull(sender);
         PreCon.notNull(format);
 
         page = page > 0 ? page : 1;
 
         int totalPages = (int)Math.ceil((double)_printList.size() / _itemsPerPage);
-        
+
         if (_headerFormat != null) {
-        	Messenger.tell(_plugin, sender, _headerFormat, _title, Math.max(1, page), Math.max(1, totalPages));
+            Messenger.tell(_plugin, sender, _headerFormat, _title, Math.max(1, page), Math.max(1, totalPages));
         }
 
         if (page < 1 || page > totalPages) {
@@ -268,23 +268,23 @@ public class ChatPaginator {
                 }
             }
         }
-        
+
         if (_footerFormat != null) {
-        	Messenger.tell(_plugin, sender, _footerFormat, _title, Math.max(1, page), Math.max(1, totalPages));
+            Messenger.tell(_plugin, sender, _footerFormat, _title, Math.max(1, page), Math.max(1, totalPages));
         }
-	}
+    }
 
     /*
      * Used to store formatting information for a single item.
      */
-	private static final class PreFormattedLine {
-		public final String format;
-		public final Object[] parameters;
-		
-		public PreFormattedLine(String format, Object[] parameters) {
-			this.format = format;
-			this.parameters = parameters;
-		}
-	}
+    private static final class PreFormattedLine {
+        public final String format;
+        public final Object[] parameters;
+
+        public PreFormattedLine(String format, Object[] parameters) {
+            this.format = format;
+            this.parameters = parameters;
+        }
+    }
 
 }

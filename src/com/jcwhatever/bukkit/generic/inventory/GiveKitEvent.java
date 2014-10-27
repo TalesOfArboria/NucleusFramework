@@ -50,7 +50,7 @@ public class GiveKitEvent extends Event {
     public GiveKitEvent(Player p, Kit kit) {
         _p = p;
         _kit = kit;
-        
+
         if (kit.getHelmet() != null) {
             _helmet = kit.getHelmet().clone();
         }
@@ -63,9 +63,9 @@ public class GiveKitEvent extends Event {
         if (kit.getBoots() != null) {
             _boots = kit.getBoots().clone();
         }
-        
+
         _items = new ArrayList<ItemStack>(6 * 9);
-                
+
         for (ItemStack item : kit.getItems()) {
             _items.add(item.clone());
         }
@@ -74,9 +74,9 @@ public class GiveKitEvent extends Event {
     public UUID getPlayerId() {
         return _p.getUniqueId();
     }
-    
+
     public Player getPlayer() {
-    	return _p;
+        return _p;
     }
 
     public String getName() {
@@ -222,9 +222,9 @@ public class GiveKitEvent extends Event {
             default: {
                 int count = _items.size();
                 for (int i = 0; i < count; i++) {
-                    
-                    if (_items.get(i).getType() != item.getType()) 
-                    	continue;
+
+                    if (_items.get(i).getType() != item.getType())
+                        continue;
                     _items.remove(i);
                     i--;
                     count--;
@@ -249,6 +249,6 @@ public class GiveKitEvent extends Event {
     public static HandlerList getHandlerList() {
         return _handlers;
     }
-   
+
 }
 

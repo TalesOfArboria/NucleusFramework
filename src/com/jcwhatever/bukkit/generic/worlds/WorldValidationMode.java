@@ -32,10 +32,10 @@ public enum WorldValidationMode {
     /**
      * Worlds are blacklisted/
      */
-	BLACKLIST,
+    BLACKLIST,
 
     /**
      * Worlds are whitelisted.
      */
-	WHITELIST
+    WHITELIST
 }

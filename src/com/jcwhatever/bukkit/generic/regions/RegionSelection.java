@@ -32,7 +32,7 @@ import org.bukkit.Location;
  * designate a cuboid area of a world.
  */
 public class RegionSelection {
-    
+
     private Location _p1;
     private Location _p2;
 

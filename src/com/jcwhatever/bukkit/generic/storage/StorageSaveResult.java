@@ -30,9 +30,9 @@ package com.jcwhatever.bukkit.generic.storage;
  * save is complete.
  */
 public class StorageSaveResult {
-	
-	private boolean _isSaved = false;
-	private IDataNode _dataNode;
+
+    private boolean _isSaved = false;
+    private IDataNode _dataNode;
 
     /**
      * Constructor.
@@ -40,23 +40,23 @@ public class StorageSaveResult {
      * @param isSaved      True if the data node was saved successfully.
      * @param saveHandler  The handler.
      */
-	StorageSaveResult(boolean isSaved, StorageSaveHandler saveHandler) {
-		_isSaved = isSaved;
-		_dataNode = saveHandler._dataNode;		
-	}
+    StorageSaveResult(boolean isSaved, StorageSaveHandler saveHandler) {
+        _isSaved = isSaved;
+        _dataNode = saveHandler._dataNode;
+    }
 
     /**
      * Determine if the data node was saved successfully.
      */
-	public boolean isSaved() {
-		return _isSaved;
-	}
+    public boolean isSaved() {
+        return _isSaved;
+    }
 
     /**
      * Get the data node.
      */
-	public IDataNode getDataNode() {
-		return _dataNode;
-	}
-	
+    public IDataNode getDataNode() {
+        return _dataNode;
+    }
+
 }

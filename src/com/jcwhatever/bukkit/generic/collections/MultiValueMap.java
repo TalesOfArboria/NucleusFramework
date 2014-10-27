@@ -46,10 +46,10 @@ import java.util.Set;
 public class MultiValueMap <K, V> {
 
     // keyed to key type
-	Map<K, Set<V>> _valueMap;
+    Map<K, Set<V>> _valueMap;
 
     // keyed to value type
-	Map<V, Set<K>> _keyMap;
+    Map<V, Set<K>> _keyMap;
 
     private int _initialSetSize = 10;
 
@@ -92,10 +92,10 @@ public class MultiValueMap <K, V> {
     /**
      * Remove all items from the map.
      */
-	public void clear() {
-		_valueMap.clear();
-		_keyMap.clear();
-	}
+    public void clear() {
+        _valueMap.clear();
+        _keyMap.clear();
+    }
 
     /**
      * Get the number of values in the map.
@@ -120,22 +120,22 @@ public class MultiValueMap <K, V> {
      *
      * @param key  The key to check.
      */
-	public boolean containsKey(K key) {
+    public boolean containsKey(K key) {
         PreCon.notNull(key);
 
-		return _valueMap.containsKey(key);
-	}
+        return _valueMap.containsKey(key);
+    }
 
     /**
      * Determine if the map contains a value.
      *
      * @param value  The value to check for.
      */
-	public boolean containsValue(V value) {
+    public boolean containsValue(V value) {
         PreCon.notNull(value);
 
-		return _keyMap.containsKey(value);
-	}
+        return _keyMap.containsKey(value);
+    }
 
     /**
      * Get a value associated with a key in the map.
@@ -145,18 +145,18 @@ public class MultiValueMap <K, V> {
      * @param key  The key to check.
      */
     @Nullable
-	public V getValue(K key) {
+    public V getValue(K key) {
         PreCon.notNull(key);
 
-		Set<V> set = _valueMap.get(key);
-		if (set == null)
-			return null;
-		
-		if (set.isEmpty())
-			return null;
-		
-		return new ArrayList<V>(set).get(0);
-	}
+        Set<V> set = _valueMap.get(key);
+        if (set == null)
+            return null;
+
+        if (set.isEmpty())
+            return null;
+
+        return new ArrayList<V>(set).get(0);
+    }
 
     /**
      * Get a list of values associated with the specified key.
@@ -181,18 +181,18 @@ public class MultiValueMap <K, V> {
      * @param value  The value to check.
      */
     @Nullable
-	public K getKey(V value) {
+    public K getKey(V value) {
         PreCon.notNull(value);
 
-		Set<K> set = _keyMap.get(value);
-		if (set == null)
-			return null;
-		
-		if (set.isEmpty())
-			return null;
-		
-		return new ArrayList<K>(set).get(0);
-	}
+        Set<K> set = _keyMap.get(value);
+        if (set == null)
+            return null;
+
+        if (set.isEmpty())
+            return null;
+
+        return new ArrayList<K>(set).get(0);
+    }
 
     /**
      * Get a list of keys associated with the specified value.
@@ -200,29 +200,29 @@ public class MultiValueMap <K, V> {
      * @param value  The value to check.
      */
     @Nullable
-	public List<K> getKeys(V value) {
+    public List<K> getKeys(V value) {
         PreCon.notNull(value);
 
-		Set<K> keys = _keyMap.get(value);
-		if (keys == null)
-			return null;
-		
-		return new ArrayList<K>(keys);
-	}
+        Set<K> keys = _keyMap.get(value);
+        if (keys == null)
+            return null;
+
+        return new ArrayList<K>(keys);
+    }
 
     /**
      * Determine if the map is empty.
      */
-	public boolean isEmpty() {
-		return _valueMap.isEmpty();
-	}
+    public boolean isEmpty() {
+        return _valueMap.isEmpty();
+    }
 
     /**
      * Get the keys from the map.
      */
-	public Set<K> keySet() {
-		return _valueMap.keySet();
-	}
+    public Set<K> keySet() {
+        return _valueMap.keySet();
+    }
 
     /**
      * Put a value into the map.
@@ -232,20 +232,20 @@ public class MultiValueMap <K, V> {
      *
      * @return self
      */
-	public MultiValueMap<K, V> put(K key, V value) {
+    public MultiValueMap<K, V> put(K key, V value) {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
-		Set<V> set = _valueMap.get(key);
-		if (set == null) {
-			set = new HashSet<V>(_initialSetSize);
-			_valueMap.put(key, set);
-		}
-		
-		set.add(value);
-		
-		return this;
-	}
+        Set<V> set = _valueMap.get(key);
+        if (set == null) {
+            set = new HashSet<V>(_initialSetSize);
+            _valueMap.put(key, set);
+        }
+
+        set.add(value);
+
+        return this;
+    }
 
     /**
      * Remove all values associated with a key.
@@ -255,12 +255,12 @@ public class MultiValueMap <K, V> {
      * @return  Returns removed values, if any.
      */
     @Nullable
-	public List<V> remove(K key) {
+    public List<V> remove(K key) {
         PreCon.notNull(key);
 
-		Set<V> values = _valueMap.get(key);
-		if (values == null)
-			return null;
+        Set<V> values = _valueMap.get(key);
+        if (values == null)
+            return null;
 
         for (V value : values) {
             removeValue(value);
@@ -268,8 +268,8 @@ public class MultiValueMap <K, V> {
 
         _valueMap.remove(key);
 
-		return new ArrayList<V>(values);
-	}
+        return new ArrayList<V>(values);
+    }
 
     /**
      * Remove a value from all keys in the map.
@@ -278,29 +278,29 @@ public class MultiValueMap <K, V> {
      *
      * @return Number of values removed.
      */
-	public int removeValue(V value) {
+    public int removeValue(V value) {
         PreCon.notNull(value);
 
-		Set<K> keys = _keyMap.get(value);
-		if (keys == null)
-			return 0;
+        Set<K> keys = _keyMap.get(value);
+        if (keys == null)
+            return 0;
 
         int removeCount = 0;
-		
-		for (K key : keys) {
-			Set<V> values = _valueMap.get(key);
-			if (values == null)
-				continue;
-			
-			values.remove(value);
+
+        for (K key : keys) {
+            Set<V> values = _valueMap.get(key);
+            if (values == null)
+                continue;
+
+            values.remove(value);
             removeCount++;
-			
-			if (values.size() == 0)
-				remove(key);
-		}
+
+            if (values.size() == 0)
+                remove(key);
+        }
 
         return removeCount;
-	}
+    }
 
     /**
      * Remove a value from a key value collection.
@@ -321,8 +321,8 @@ public class MultiValueMap <K, V> {
     /**
      * Get all values in the map.
      */
-	public Collection<V> values() {
-		return _keyMap.keySet();
-	}
+    public Collection<V> values() {
+        return _keyMap.keySet();
+    }
 
 }

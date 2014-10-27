@@ -45,23 +45,23 @@ import java.util.Map;
  */
 public class TimedList<T> extends ArrayList<T>{
 
-	private static final long serialVersionUID = 6625205971219435341L;
+    private static final long serialVersionUID = 6625205971219435341L;
 
-	private final int _defaultTime;
-	private final TimedList<T> _instance;
-	private Map<Object, BukkitTask> _tasks;
+    private final int _defaultTime;
+    private final TimedList<T> _instance;
+    private Map<Object, BukkitTask> _tasks;
     private List<LifespanEndAction<T>> _onLifespanEnd = new ArrayList<>(5);
     private List<CollectionEmptyAction<TimedList<T>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default item lifespan is 1 second.
      */
-	public TimedList() {
-		super(20);
-		_defaultTime = 20;
-		_instance = this;
+    public TimedList() {
+        super(20);
+        _defaultTime = 20;
+        _instance = this;
         _tasks = new HashMap<>(20);
-	}
+    }
 
     /**
      * Constructor. Default item lifespan is 1 second.
@@ -96,14 +96,14 @@ public class TimedList<T> extends ArrayList<T>{
      * @param item      The item to add.
      * @param lifespan  The amount of time in ticks it will stay in the list.
      */
-	public boolean add(final T item, int lifespan) {
+    public boolean add(final T item, int lifespan) {
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
-		scheduleRemoval(item, lifespan);
+        scheduleRemoval(item, lifespan);
 
-		return super.add(item);
-	}
+        return super.add(item);
+    }
 
 
     /**
@@ -112,10 +112,10 @@ public class TimedList<T> extends ArrayList<T>{
      * @param item  The item to add.
      * @return
      */
-	@Override
-	public boolean add(T item) {
-		return add(item, _defaultTime);
-	}
+    @Override
+    public boolean add(T item) {
+        return add(item, _defaultTime);
+    }
 
     /**
      * Insert an item into the list at the specified index
@@ -125,15 +125,15 @@ public class TimedList<T> extends ArrayList<T>{
      * @param item      The item to insert.
      * @param lifespan  The amount of time in ticks the item will stay in the list.
      */
-	public void add(int index, T item, int lifespan) {
+    public void add(int index, T item, int lifespan) {
         PreCon.positiveNumber(index);
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
-		scheduleRemoval(item, lifespan);
+        scheduleRemoval(item, lifespan);
 
-		super.add(index, item);
-	}
+        super.add(index, item);
+    }
 
     /**
      * Insert an item into the list at the specified index
@@ -142,13 +142,13 @@ public class TimedList<T> extends ArrayList<T>{
      * @param index  The index position to insert at.
      * @param item   The item to insert.
      */
-	@Override
-	public void add(int index, T item) {
+    @Override
+    public void add(int index, T item) {
         PreCon.positiveNumber(index);
         PreCon.notNull(item);
 
-		add(index, item, _defaultTime);
-	}
+        add(index, item, _defaultTime);
+    }
 
     /**
      * Add a collection to the list and specify the lifetime in ticks.
@@ -157,27 +157,27 @@ public class TimedList<T> extends ArrayList<T>{
      * @param lifespan    The amount of time in ticks it will stay in the list.
      * @return
      */
-	public boolean addAll(Collection<? extends T> collection, int lifespan) {
+    public boolean addAll(Collection<? extends T> collection, int lifespan) {
         PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
-		for (T item : collection) {
-			scheduleRemoval(item, lifespan);
-		}
-		return super.addAll(collection);
-	}
+        for (T item : collection) {
+            scheduleRemoval(item, lifespan);
+        }
+        return super.addAll(collection);
+    }
 
     /**
      * Add a collection to the list using the default lifespan.
      *
      * @param collection  The collection to add.
      */
-	@Override
-	public boolean addAll(Collection<? extends T> collection) {
+    @Override
+    public boolean addAll(Collection<? extends T> collection) {
         PreCon.notNull(collection);
 
-		return addAll(collection, _defaultTime);
-	}
+        return addAll(collection, _defaultTime);
+    }
 
     /**
      * Insert a collection into the list at the specified index
@@ -187,16 +187,16 @@ public class TimedList<T> extends ArrayList<T>{
      * @param collection  The collection to add.
      * @param lifespan    The amount of time in ticks it will stay in the list.
      */
-	public boolean addAll(int index, Collection<? extends T> collection, int lifespan) {
+    public boolean addAll(int index, Collection<? extends T> collection, int lifespan) {
         PreCon.positiveNumber(index);
         PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
-		for (T item : collection) {
-			scheduleRemoval(item, lifespan);
-		}
-		return super.addAll(index, collection);
-	}
+        for (T item : collection) {
+            scheduleRemoval(item, lifespan);
+        }
+        return super.addAll(index, collection);
+    }
 
     /**
      * Insert a collection into the list at the specified index
@@ -205,72 +205,72 @@ public class TimedList<T> extends ArrayList<T>{
      * @param index       The index position to insert at.
      * @param collection  The collection to add.
      */
-	@Override
-	public boolean addAll(int index, Collection<? extends T> collection) {
+    @Override
+    public boolean addAll(int index, Collection<? extends T> collection) {
         PreCon.positiveNumber(index);
         PreCon.notNull(collection);
 
-		return addAll(index, collection, _defaultTime);
-	}
+        return addAll(index, collection, _defaultTime);
+    }
 
     @Override
-	public void clear() {
-		for (BukkitTask task : _tasks.values()) {
-			task.cancel();
-		}
+    public void clear() {
+        for (BukkitTask task : _tasks.values()) {
+            task.cancel();
+        }
 
-		_tasks.clear();
-		super.clear();
+        _tasks.clear();
+        super.clear();
 
         onEmpty();
-	}
+    }
 
-	@Override
-	public boolean remove(Object item) {
+    @Override
+    public boolean remove(Object item) {
         PreCon.notNull(item);
 
-		BukkitTask task = _tasks.remove(item);
+        BukkitTask task = _tasks.remove(item);
 
         if (task != null)
-			task.cancel();
+            task.cancel();
 
         onEmpty();
 
-		return super.remove(item);
-	}
+        return super.remove(item);
+    }
 
-	@Override
-	public T remove(int index) {
+    @Override
+    public T remove(int index) {
         PreCon.positiveNumber(index);
 
-		T item = super.remove(index);
-		BukkitTask task = _tasks.remove(item);
+        T item = super.remove(index);
+        BukkitTask task = _tasks.remove(item);
 
-		if (task != null)
-			task.cancel();
+        if (task != null)
+            task.cancel();
 
         onEmpty();
 
-		return item;
-	}
+        return item;
+    }
 
-	@Override
-	public boolean removeAll(Collection<?> collection) {
+    @Override
+    public boolean removeAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
-		for (Object item : collection) {
-			BukkitTask task = _tasks.remove(item);
-			if (task != null)
-				task.cancel();
-		}
+        for (Object item : collection) {
+            BukkitTask task = _tasks.remove(item);
+            if (task != null)
+                task.cancel();
+        }
 
-		if (super.removeAll(collection)) {
+        if (super.removeAll(collection)) {
             onEmpty();
             return true;
         }
 
         return false;
-	}
+    }
 
 
     /**

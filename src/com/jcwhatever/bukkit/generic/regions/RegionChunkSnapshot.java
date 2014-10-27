@@ -58,18 +58,18 @@ import java.util.LinkedList;
  */
 public final class RegionChunkSnapshot implements ChunkSnapshot {
 
-	public static final int RESTORE_FILE_VERSION = 1;
+    public static final int RESTORE_FILE_VERSION = 1;
 
-	private Plugin _plugin;
-	private Region _region;
-	private World _world;
+    private Plugin _plugin;
+    private Region _region;
+    private World _world;
     private ChunkSnapshot _snapshot;
-	private RegionChunkSection _section;
+    private RegionChunkSection _section;
 
-	private final LinkedList<SerializableBlockEntity> _tileEntities = new LinkedList<>();
-	private final LinkedList<SerializableFurnitureEntity> _entities = new LinkedList<>();
+    private final LinkedList<SerializableBlockEntity> _tileEntities = new LinkedList<>();
+    private final LinkedList<SerializableFurnitureEntity> _entities = new LinkedList<>();
 
-	private boolean _isSaving;
+    private boolean _isSaving;
 
     /**
      * Constructor.
@@ -78,10 +78,10 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
      * @param chunkX  The X coordinates of the chunk.
      * @param chunkZ  The Y coordinates of the chunk.
      */
-	public RegionChunkSnapshot (Region region, int chunkX, int chunkZ) {
-		Chunk chunk = region.getWorld().getChunkAt(chunkX, chunkZ);
-		init(region, chunk);
-	}
+    public RegionChunkSnapshot (Region region, int chunkX, int chunkZ) {
+        Chunk chunk = region.getWorld().getChunkAt(chunkX, chunkZ);
+        init(region, chunk);
+    }
 
     /**
      * Constructor.
@@ -89,9 +89,9 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
      * @param region  The region the snapshot is for.
      * @param chunk   The chunk to snapshot.
      */
-	public RegionChunkSnapshot (Region region, Chunk chunk) {
-		init(region, chunk);
-	}
+    public RegionChunkSnapshot (Region region, Chunk chunk) {
+        init(region, chunk);
+    }
 
     /**
      * Get the region the snapshot is for.
@@ -115,9 +115,9 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
      *
      * @param file  The file to save to.
      */
-	public Future saveData(File file) {
-		return saveData(file, null);
-	}
+    public Future saveData(File file) {
+        return saveData(file, null);
+    }
 
     /**
      * Save the chunk section snapshot to a file.
@@ -127,101 +127,101 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
      * @param file     The file to save to.
      * @param project  The optional project to add tasks to.
      */
-	public Future saveData(File file, @Nullable QueueProject project) {
+    public Future saveData(File file, @Nullable QueueProject project) {
         PreCon.notNull(file);
 
         boolean runNow = project == null;
 
-		if (project == null)
-			project = new QueueProject(_plugin);
+        if (project == null)
+            project = new QueueProject(_plugin);
 
-		if (isSaving())
+        if (isSaving())
             return project.cancel("Cannot save region because it is already saving.");
 
-		_isSaving = true;
+        _isSaving = true;
 
-		SaveChunkIterator iterator = new SaveChunkIterator(file, 8192,
+        SaveChunkIterator iterator = new SaveChunkIterator(file, 8192,
                 _section.getStartChunkX(), _section.getStartY(), _section.getStartChunkZ(),
                 _section.getEndChunkX(), _section.getEndY(), _section.getEndChunkZ());
 
-		project.addTask(iterator);
+        project.addTask(iterator);
 
         if (runNow) {
             project.run();
         }
 
-		return project.getResult().onEnd(new Runnable() {
+        return project.getResult().onEnd(new Runnable() {
             @Override
             public void run() {
                 _isSaving = false;
             }
         });
-	}
-
-	@Override
-	public Biome getBiome(int x, int z) {
-		return _snapshot.getBiome(x, z);
-	}
-
-	@Override
-	public int getBlockData(int x, int y, int z) {
-		return _snapshot.getBlockData(x, y, z);
-	}
+    }
 
     @Override
-	public int getBlockEmittedLight(int x, int y, int z) {
-		return _snapshot.getBlockEmittedLight(x, y, z);
-	}
+    public Biome getBiome(int x, int z) {
+        return _snapshot.getBiome(x, z);
+    }
 
     @Override
-	public int getBlockSkyLight(int x, int y, int z) {
-		return _snapshot.getBlockSkyLight(x, y, z);
-	}
+    public int getBlockData(int x, int y, int z) {
+        return _snapshot.getBlockData(x, y, z);
+    }
 
     @Override
-	public int getBlockTypeId(int x, int y, int z) {
-		return _snapshot.getBlockTypeId(x, y, z);
-	}
+    public int getBlockEmittedLight(int x, int y, int z) {
+        return _snapshot.getBlockEmittedLight(x, y, z);
+    }
 
-	@Override
-	public long getCaptureFullTime() {
-		return _snapshot.getCaptureFullTime();
-	}
+    @Override
+    public int getBlockSkyLight(int x, int y, int z) {
+        return _snapshot.getBlockSkyLight(x, y, z);
+    }
 
-	@Override
-	public int getHighestBlockYAt(int x, int z) {
-		return _snapshot.getHighestBlockYAt(x, z);
-	}
+    @Override
+    public int getBlockTypeId(int x, int y, int z) {
+        return _snapshot.getBlockTypeId(x, y, z);
+    }
 
-	@Override
-	public double getRawBiomeRainfall(int x, int z) {
-		return _snapshot.getRawBiomeRainfall(x, z);
-	}
+    @Override
+    public long getCaptureFullTime() {
+        return _snapshot.getCaptureFullTime();
+    }
 
-	@Override
-	public double getRawBiomeTemperature(int x, int z) {
-		return _snapshot.getRawBiomeTemperature(x, z);
-	}
+    @Override
+    public int getHighestBlockYAt(int x, int z) {
+        return _snapshot.getHighestBlockYAt(x, z);
+    }
 
-	@Override
-	public String getWorldName() {
-		return _snapshot.getWorldName();
-	}
+    @Override
+    public double getRawBiomeRainfall(int x, int z) {
+        return _snapshot.getRawBiomeRainfall(x, z);
+    }
 
-	@Override
-	public int getX() {
-		return _snapshot.getX();
-	}
+    @Override
+    public double getRawBiomeTemperature(int x, int z) {
+        return _snapshot.getRawBiomeTemperature(x, z);
+    }
 
-	@Override
-	public int getZ() {
-		return _snapshot.getZ();
-	}
+    @Override
+    public String getWorldName() {
+        return _snapshot.getWorldName();
+    }
 
-	@Override
-	public boolean isSectionEmpty(int arg0) {
-		return _snapshot.isSectionEmpty(arg0);
-	}
+    @Override
+    public int getX() {
+        return _snapshot.getX();
+    }
+
+    @Override
+    public int getZ() {
+        return _snapshot.getZ();
+    }
+
+    @Override
+    public boolean isSectionEmpty(int arg0) {
+        return _snapshot.isSectionEmpty(arg0);
+    }
 
     private void init(Region region, Chunk chunk) {
         _plugin = region.getPlugin();
@@ -261,71 +261,71 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
         }
     }
 
-	/**
-	 * Iteration worker for saving a region area within a specified
-	 * chunk to a file.
-	 */
-	private final class SaveChunkIterator extends Iteration3DTask {
+    /**
+     * Iteration worker for saving a region area within a specified
+     * chunk to a file.
+     */
+    private final class SaveChunkIterator extends Iteration3DTask {
 
-		private GenericsByteWriter writer;
-		private final File file;
+        private GenericsByteWriter writer;
+        private final File file;
 
-		public SaveChunkIterator (File file, long segmentSize,
+        public SaveChunkIterator (File file, long segmentSize,
                                   int xStart, int yStart, int zStart,
                                   int xEnd, int yEnd, int zEnd) {
-			super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
+            super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
-			this.file = file;
-		}
+            this.file = file;
+        }
 
         /**
          * Write file header.
          */
-		@Override
-		protected void onIterateBegin() {
+        @Override
+        protected void onIterateBegin() {
 
-			try {
-				writer = new GenericsByteWriter(new FileOutputStream(file));
-				writer.write(RESTORE_FILE_VERSION);
-				writer.write(_region.getName());
-				writer.write(_world.getName());
-				writer.write(_region.getP1()); // Location
-				writer.write(_region.getP2()); // Location
-				writer.write(getVolume());
-			}
-			catch (IOException io) {
+            try {
+                writer = new GenericsByteWriter(new FileOutputStream(file));
+                writer.write(RESTORE_FILE_VERSION);
+                writer.write(_region.getName());
+                writer.write(_world.getName());
+                writer.write(_region.getP1()); // Location
+                writer.write(_region.getP2()); // Location
+                writer.write(getVolume());
+            }
+            catch (IOException io) {
 
                 io.printStackTrace();
 
-				Messenger.debug(_plugin, "IOException while writing region data.");
-				fail("IOException while writing region data.");
-				_isSaving = false;
-			}
-		}
+                Messenger.debug(_plugin, "IOException while writing region data.");
+                fail("IOException while writing region data.");
+                _isSaving = false;
+            }
+        }
 
 
         /**
          * Save section blocks to file
          */
-		@Override
-		public void onIterateItem(int x, int y, int z) {
+        @Override
+        public void onIterateItem(int x, int y, int z) {
 
-			Material type = Material.getMaterial(_snapshot.getBlockTypeId(x,  y, z));
-			int data = _snapshot.getBlockData(x,  y,  z);
+            Material type = Material.getMaterial(_snapshot.getBlockTypeId(x,  y, z));
+            int data = _snapshot.getBlockData(x,  y,  z);
 
-			try {
-				writer.write(type);
-				writer.write(data);
-			}
-			catch (IOException ioe) {
+            try {
+                writer.write(type);
+                writer.write(data);
+            }
+            catch (IOException ioe) {
 
-				ioe.printStackTrace();
+                ioe.printStackTrace();
 
                 Messenger.debug(_plugin, "IOException while writing region data.");
-				fail("IOException while writing region data.");
-				_isSaving = false;
-			}
-		}
+                fail("IOException while writing region data.");
+                _isSaving = false;
+            }
+        }
 
         /**
          * Write Block Entities and Entities to end of file
@@ -362,22 +362,22 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
             cleanup();
         }
 
-		private void cleanup() {
-			_isSaving = false;
+        private void cleanup() {
+            _isSaving = false;
 
-			if (writer != null) {
-				try {
-					// close chunk file
-					writer.close();
-				}
-				catch (IOException io) {
-					io.printStackTrace();
+            if (writer != null) {
+                try {
+                    // close chunk file
+                    writer.close();
+                }
+                catch (IOException io) {
+                    io.printStackTrace();
 
                     Messenger.debug(_plugin, "IOException while closing file input stream.");
-					fail("IOException while closing file input stream.");
-				}
-			}
-		}
+                    fail("IOException while closing file input stream.");
+                }
+            }
+        }
 
     }
 

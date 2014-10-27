@@ -118,7 +118,7 @@ public class ScriptHelper {
      * @param <T>                Script instance type.
      */
     public static <T extends IScript> List<T> loadScripts(ScriptEngineManager engineManager, File scriptFolder,
-                                           DirectoryTraversal traversal, ScriptConstructor<T> scriptConstructor) {
+                                                          DirectoryTraversal traversal, ScriptConstructor<T> scriptConstructor) {
 
         PreCon.notNull(scriptFolder);
         PreCon.isValid(scriptFolder.isDirectory());

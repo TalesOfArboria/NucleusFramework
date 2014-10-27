@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
  * Utilities used by inheriting implementations to reduce redundant code
  * in commands and provide a central place to modify complex but generic
  * functionality.
-  */
+ */
 public abstract class AbstractCommandUtils {
 
     @Localizable private static final String _INSTALL_WORLD_EDIT = "Please install World Edit plugin.";
@@ -74,26 +74,26 @@ public abstract class AbstractCommandUtils {
 
     private static final Pattern FORMAT_ENABLE = Pattern.compile("\\{e}");
 
-	Plugin _plugin;
-	
-	AbstractCommandUtils() {}
+    Plugin _plugin;
+
+    AbstractCommandUtils() {}
 
     /**
      * Constructor.
      *
      * @param plugin  The owning plugin
      */
-	public AbstractCommandUtils (Plugin plugin) {
-		_plugin = plugin;
-	}
+    public AbstractCommandUtils (Plugin plugin) {
+        _plugin = plugin;
+    }
 
     /**
      * Get the owning plugin
      */
-	public Plugin getPlugin() {
+    public Plugin getPlugin() {
         return _plugin;
     }
-	
+
     /**
      * Tell the {@code CommandSender} a generic message.
      */
@@ -103,7 +103,7 @@ public abstract class AbstractCommandUtils {
 
     /**
      * Tell the {@code CommandSender} that something is enabled or disabled.
-     * 
+     *
      * <p>Use format code {e} to specify where to place the word Enabled or Disabled.</p>
      */
     protected void tellEnabled(CommandSender sender, String msg, boolean isEnabled, Object...params) {
@@ -113,12 +113,12 @@ public abstract class AbstractCommandUtils {
 
         Matcher matcher = FORMAT_ENABLE.matcher(msg);
         msg = matcher.replaceAll("{" + params.length +'}');
-        
+
         params = ArrayUtils.add(params, isEnabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
-        
+
         Messenger.tell(_plugin, sender, msg, params);
     }
-    
+
     /**
      * Tell the {@code CommandSender} the command executed the request successfully.
      */
@@ -141,16 +141,16 @@ public abstract class AbstractCommandUtils {
      *
      * @param sender  The command sender.
      */
-	protected boolean isWorldEditInstalled(@Nullable CommandSender sender) {
-		// Check that World Edit is installed
-		if (!WorldEditUtils.isWorldEditInstalled()) {
+    protected boolean isWorldEditInstalled(@Nullable CommandSender sender) {
+        // Check that World Edit is installed
+        if (!WorldEditUtils.isWorldEditInstalled()) {
             if (sender != null) {
                 tellError(sender, Lang.get(_INSTALL_WORLD_EDIT));
             }
-			return false;
-		}
-		return true;
-	}
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Set the specified players world edit selection.
@@ -160,34 +160,34 @@ public abstract class AbstractCommandUtils {
      * @param p1  The first location of the selection.
      * @param p2  The second location of the selection.
      */
-	protected boolean setWorldEditSelection(Player p, Location p1, Location p2) {
-		PreCon.notNull(p);
-		PreCon.notNull(p1);
-		PreCon.notNull(p2);
-		
-		// Check that World Edit is installed
-		if (!isWorldEditInstalled(p)) {
-			return false;
-		}
-		
-		if (!p.getWorld().equals(p1.getWorld())) {
-			tellError(p, Lang.get(_SAME_WORLD_REGION_SELECT));
-			return false;
-		}
-		
-		if (!p1.getWorld().equals(p2.getWorld())) {
-			tellError(p, Lang.get(_INVALID_REGION));
-			return false;
-		}
-		
-		if (!WorldEditUtils.setWorldEditSelection(p, p1, p2)) {
-			tellError(p, Lang.get(_SET_SELECTION_FAILED));
-			return false;
-		}
-		
-		return true;
-		
-	}
+    protected boolean setWorldEditSelection(Player p, Location p1, Location p2) {
+        PreCon.notNull(p);
+        PreCon.notNull(p1);
+        PreCon.notNull(p2);
+
+        // Check that World Edit is installed
+        if (!isWorldEditInstalled(p)) {
+            return false;
+        }
+
+        if (!p.getWorld().equals(p1.getWorld())) {
+            tellError(p, Lang.get(_SAME_WORLD_REGION_SELECT));
+            return false;
+        }
+
+        if (!p1.getWorld().equals(p2.getWorld())) {
+            tellError(p, Lang.get(_INVALID_REGION));
+            return false;
+        }
+
+        if (!WorldEditUtils.setWorldEditSelection(p, p1, p2)) {
+            tellError(p, Lang.get(_SET_SELECTION_FAILED));
+            return false;
+        }
+
+        return true;
+
+    }
 
     /**
      * Get the specified players current world edit selection.
@@ -198,21 +198,21 @@ public abstract class AbstractCommandUtils {
      * @return  {@code AreaSelection} object that defines the selection.
      */
     @Nullable
-	protected RegionSelection getWorldEditSelection(Player p) {
+    protected RegionSelection getWorldEditSelection(Player p) {
         PreCon.notNull(p);
 
-		// Check that World Edit is installed
-		if (!isWorldEditInstalled(p)) {
-		    return null;
-		}
+        // Check that World Edit is installed
+        if (!isWorldEditInstalled(p)) {
+            return null;
+        }
 
-		Selection sel = WorldEditUtils.getWorldEditSelection(p);
+        Selection sel = WorldEditUtils.getWorldEditSelection(p);
 
-		// Check for World Edit selection
-		if (sel == null) {
-			tellError(p, Lang.get(_NO_REGION_SELECTED));
-			return null;
-		}
+        // Check for World Edit selection
+        if (sel == null) {
+            tellError(p, Lang.get(_NO_REGION_SELECTED));
+            return null;
+        }
 
         if (sel.getMinimumPoint() == null || sel.getMaximumPoint() == null ||
                 !sel.getMinimumPoint().getWorld().equals(sel.getMaximumPoint().getWorld())) {
@@ -221,8 +221,8 @@ public abstract class AbstractCommandUtils {
             return null; // finish
         }
 
-		return new RegionSelection(sel.getMinimumPoint(), sel.getMaximumPoint());
-	}
+        return new RegionSelection(sel.getMinimumPoint(), sel.getMaximumPoint());
+    }
 
     /**
      * Clear a setting from a settings manager back to it's default value.
@@ -237,29 +237,29 @@ public abstract class AbstractCommandUtils {
      *
      * @throws InvalidValueException
      */
-	protected void clearSetting(CommandSender sender, final ISettingsManager settings, CommandArguments args, String propertyArgName) throws InvalidValueException {
-				
-		final String settingName = args.getString(propertyArgName);
-		
-		SettingDefinitions defs = settings.getPossibleSettings();
-		if (!defs.containsKey(settingName)) {
-			tellError(sender, Lang.get(_UNRECOGNIZED_PROPERTY, settingName));
-			return; // finish
-		}
+    protected void clearSetting(CommandSender sender, final ISettingsManager settings, CommandArguments args, String propertyArgName) throws InvalidValueException {
 
-		ValidationResults result = settings.set(settingName, null);
-		
-		if (!result.isValid()) {
-			
-			if (!result.tellMessage(_plugin, sender)) {
-				tellError(sender, Lang.get(_CLEAR_PROPERTY_FAILED, settingName));
-			}
-			
-			return; // finish
-		}
+        final String settingName = args.getString(propertyArgName);
 
-		tellSuccess(sender, Lang.get(_CLEAR_PROPERTY_SUCCESS, settingName));
-	}
+        SettingDefinitions defs = settings.getPossibleSettings();
+        if (!defs.containsKey(settingName)) {
+            tellError(sender, Lang.get(_UNRECOGNIZED_PROPERTY, settingName));
+            return; // finish
+        }
+
+        ValidationResults result = settings.set(settingName, null);
+
+        if (!result.isValid()) {
+
+            if (!result.tellMessage(_plugin, sender)) {
+                tellError(sender, Lang.get(_CLEAR_PROPERTY_FAILED, settingName));
+            }
+
+            return; // finish
+        }
+
+        tellSuccess(sender, Lang.get(_CLEAR_PROPERTY_SUCCESS, settingName));
+    }
 
     /**
      * Set a setting into a settings manager using user command input. Handles error and success
@@ -298,36 +298,36 @@ public abstract class AbstractCommandUtils {
      * @throws InvalidValueException          If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
-	protected void setSetting(CommandSender sender, final ISettingsManager settings,
-	                          CommandArguments args, String propertyArgName, String valueArgName, @Nullable final Runnable onSuccess)
-	                                  throws InvalidValueException, InvalidCommandSenderException {
+    protected void setSetting(CommandSender sender, final ISettingsManager settings,
+                              CommandArguments args, String propertyArgName, String valueArgName, @Nullable final Runnable onSuccess)
+            throws InvalidValueException, InvalidCommandSenderException {
         PreCon.notNull(sender);
         PreCon.notNull(settings);
         PreCon.notNull(args);
         PreCon.notNullOrEmpty(propertyArgName);
         PreCon.notNullOrEmpty(valueArgName);
-	    
-		final String settingName = args.getString(propertyArgName);
-		Object value;
+
+        final String settingName = args.getString(propertyArgName);
+        Object value;
 
         // get settings definitions
-		SettingDefinitions defs = settings.getPossibleSettings();
-		if (!defs.containsKey(settingName)) {
-			tellError(sender, Lang.get(_UNRECOGNIZED_PROPERTY, settingName));
-			return; // finished
-		}
+        SettingDefinitions defs = settings.getPossibleSettings();
+        if (!defs.containsKey(settingName)) {
+            tellError(sender, Lang.get(_UNRECOGNIZED_PROPERTY, settingName));
+            return; // finished
+        }
 
-		Class<?> valueType = defs.get(settingName).getValueType();
-		
-		// Special case: Location
-		if (valueType.isAssignableFrom(Location.class)) {
+        Class<?> valueType = defs.get(settingName).getValueType();
 
-		    // get location value to use
-		    args.getLocation(sender, valueArgName, new LocationResponse() {
+        // Special case: Location
+        if (valueType.isAssignableFrom(Location.class)) {
+
+            // get location value to use
+            args.getLocation(sender, valueArgName, new LocationResponse() {
 
                 @Override
                 public void onLocationRetrieved (Player p, Location location) {
-                    
+
                     ValidationResults result = settings.set(settingName, location);
 
                     if (result.isValid()) {
@@ -341,36 +341,36 @@ public abstract class AbstractCommandUtils {
 
                     } else if (!result.tellMessage(_plugin, p)) {
 
-                       tellError(p, Lang.get(_SET_PROPERTY_FAILED, settingName));
+                        tellError(p, Lang.get(_SET_PROPERTY_FAILED, settingName));
                     }
                 }
-		        
-		    });
+
+            });
             return; // finished
-		}
-		else {
+        }
+        else {
 
             value = valueType.isAssignableFrom(ItemStack.class)  // Special case: ItemStack
                     ? args.getItemStack(sender, propertyArgName)
                     : args.getString(valueArgName);
         }
 
-		ValidationResults result = settings.set(settingName, value);
+        ValidationResults result = settings.set(settingName, value);
 
         // make sure the result is valid
-		if (!result.isValid()) {
-			
-			if (!result.tellMessage(_plugin, sender)) {
-				tellError(sender, Lang.get(_INVALID_PROPERTY_VALUE, value, settingName));
-			}
-			
-			return; // finished
-		}
+        if (!result.isValid()) {
 
-		tellSuccess(sender, Lang.get(_SET_PROPERTY_SUCCESS, settingName, args.getString(valueArgName)));
+            if (!result.tellMessage(_plugin, sender)) {
+                tellError(sender, Lang.get(_INVALID_PROPERTY_VALUE, value, settingName));
+            }
+
+            return; // finished
+        }
+
+        tellSuccess(sender, Lang.get(_SET_PROPERTY_SUCCESS, settingName, args.getString(valueArgName)));
 
         if (onSuccess != null)
             onSuccess.run();
-	}
+    }
 
 }

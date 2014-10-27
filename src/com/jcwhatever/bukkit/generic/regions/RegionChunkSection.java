@@ -37,7 +37,7 @@ import java.util.List;
 public class RegionChunkSection {
 
     private final int _chunkX;
-	private final int _chunkZ;
+    private final int _chunkZ;
 
     private int _chunkBlockX;
     private int _chunkBlockZ;
@@ -70,8 +70,8 @@ public class RegionChunkSection {
     private int _firstChunkX;
     private int _firstChunkZ;
 
-	Location _p1;
-	Location _p2;
+    Location _p1;
+    Location _p2;
 
     /**
      * Constructor.
@@ -92,11 +92,11 @@ public class RegionChunkSection {
      * @param region  The region.
      * @param chunk   The chunk to get chunk coordinates from.
      */
-	public RegionChunkSection (Region region, Chunk chunk) {
-		_chunkX = chunk.getX();
-		_chunkZ = chunk.getZ();
-		init(region);
-	}
+    public RegionChunkSection (Region region, Chunk chunk) {
+        _chunkX = chunk.getX();
+        _chunkZ = chunk.getZ();
+        init(region);
+    }
 
     /**
      * Constructor.
@@ -104,177 +104,177 @@ public class RegionChunkSection {
      * @param region  The region.
      * @param chunk   The chunk snapshot to get chunk coordinates from.
      */
-	public RegionChunkSection (Region region, ChunkSnapshot chunk) {
-		_chunkX = chunk.getX();
-		_chunkZ = chunk.getZ();
-		init(region);
-	}
+    public RegionChunkSection (Region region, ChunkSnapshot chunk) {
+        _chunkX = chunk.getX();
+        _chunkZ = chunk.getZ();
+        init(region);
+    }
 
     /**
      * Get the section cuboid first point location.
      */
-	public Location getP1() {
-		return _p1;
-	}
+    public Location getP1() {
+        return _p1;
+    }
 
     /**
      * Get the section cuboid second point location.
      */
-	public Location getP2() {
-		return _p2;
-	}
+    public Location getP2() {
+        return _p2;
+    }
 
     /**
      * Get the regions ChunkX value.
      */
-	public int getRegionChunkX() {
-		return _firstChunkX;
-	}
+    public int getRegionChunkX() {
+        return _firstChunkX;
+    }
 
     /**
      * Get the regions ChunkZ value.
      */
-	public int getRegionChunkZ() {
-		return _firstChunkZ;
-	}
+    public int getRegionChunkZ() {
+        return _firstChunkZ;
+    }
 
     /**
      * Get the regions StartX value.
      */
-	public int getRegionStartX() {
-		return _regionStartX;
-	}
+    public int getRegionStartX() {
+        return _regionStartX;
+    }
 
     /**
      * Get the regions EndX value.
      */
-	public int getRegionEndX() {
-		return _regionEndX;
-	}
+    public int getRegionEndX() {
+        return _regionEndX;
+    }
 
     /**
      * Get the regions StartZ value.
      */
-	public int getRegionStartZ() {
-		return _regionStartZ;
-	}
+    public int getRegionStartZ() {
+        return _regionStartZ;
+    }
 
     /**
      * Get the regions EndZ value
      */
-	public int getRegionEndZ() {
-		return _regionEndZ;
-	}
+    public int getRegionEndZ() {
+        return _regionEndZ;
+    }
 
     /**
      * Get the sections chunk X coordinates.
      */
-	public int getChunkX() {
-		return _chunkX;
-	}
+    public int getChunkX() {
+        return _chunkX;
+    }
 
     /**
      * Get the section chunk Z coordinates.
      */
-	public int getChunkZ() {
-		return _chunkZ;
-	}
+    public int getChunkZ() {
+        return _chunkZ;
+    }
 
     /**
      * Get the sections chunk X coordinate as
      * a block coordinate.
      */
-	public int getChunkBlockX() {
-		return _chunkBlockX;
-	}
+    public int getChunkBlockX() {
+        return _chunkBlockX;
+    }
 
     /**
      * Get the sections chunk Z coordinate as
      * a block coordinate.
      */
-	public int getChunkBlockZ() {
-		return _chunkBlockZ;
-	}
+    public int getChunkBlockZ() {
+        return _chunkBlockZ;
+    }
 
     /**
      * Get the coordinates relative to the chunk
      * where the section begins on the X axis.
      */
-	public int getStartChunkX() {
-		return  _startChunkX;
-	}
+    public int getStartChunkX() {
+        return  _startChunkX;
+    }
 
     /**
      * Get the coordinates relative to the chunk
      * where the section ends on the X axis.
      */
-	public int getEndChunkX() {
-		return  _endChunkX;
-	}
+    public int getEndChunkX() {
+        return  _endChunkX;
+    }
 
     /**
      * Get the coordinates relative to the chunk
      * where the section starts on the Z axis.
      */
-	public int getStartChunkZ() {
-		return _startChunkZ;
-	}
+    public int getStartChunkZ() {
+        return _startChunkZ;
+    }
 
     /**
      * Get the coordinates relative to the chunk
      * where the section ends on the Z axis.
      */
-	public int getEndChunkZ() {
-		return _endChunkZ;
-	}
+    public int getEndChunkZ() {
+        return _endChunkZ;
+    }
 
     /**
      * Get the block coordinates relative to the world
      * center where the section starts on the X axis.
      */
-	public int getStartBlockX() {
-		return  _startBlockX;
-	}
+    public int getStartBlockX() {
+        return  _startBlockX;
+    }
 
     /**
      * Get the block coordinates relative to the world
      * center where the section ends on the X axis.
      */
-	public int getEndBlockX() {
-		return  _endBlockX;
-	}
+    public int getEndBlockX() {
+        return  _endBlockX;
+    }
 
     /**
      * Get the block coordinates relative to the world
      * center where the section starts on the Z axis.
      */
-	public int getStartBlockZ() {
-		return _startBlockZ;
-	}
+    public int getStartBlockZ() {
+        return _startBlockZ;
+    }
 
     /**
      * Get the block coordinates relative to the world
      * center where the section ends on the Z axis.
      */
-	public int getEndBlockZ() {
-		return _endBlockZ;
-	}
+    public int getEndBlockZ() {
+        return _endBlockZ;
+    }
 
     /**
      * Get the lowest coordinates of the section
      * on the Y axis.
      */
-	public int getStartY() {
-		return _yStart;
-	}
+    public int getStartY() {
+        return _yStart;
+    }
 
     /**
      * Get the highest coordinates of the section
      * on the Y axis.
      */
-	public int getEndY() {
-		return _yEnd;
-	}
+    public int getEndY() {
+        return _yEnd;
+    }
 
     /**
      * Determine if the specified block coordinates relative to the world center
@@ -284,11 +284,11 @@ public class RegionChunkSection {
      * @param y  The Y coordinates.
      * @param z  The Z coordinates.
      */
-	public boolean containsBlockCoords(int x, int y, int z) {
-		return x >= getStartBlockX() && x <= getEndBlockX() &&
-			   y >= getStartY() && y <= getEndY() &&
-			   z >= getStartBlockZ() && z <= getEndBlockZ();
-	}
+    public boolean containsBlockCoords(int x, int y, int z) {
+        return x >= getStartBlockX() && x <= getEndBlockX() &&
+                y >= getStartY() && y <= getEndY() &&
+                z >= getStartBlockZ() && z <= getEndBlockZ();
+    }
 
     /**
      * Determine if the specified block coordinates relative to the chunk
@@ -298,11 +298,11 @@ public class RegionChunkSection {
      * @param y  The Y coordinates.
      * @param z  The Z coordinates.
      */
-	public boolean containsChunkCoords(int x, int y, int z) {
-		return x >= getStartChunkX() && x <= getEndChunkX() &&
-			   y >= getStartY() && y <= getEndY() &&
-			   z >= getStartChunkZ() && z <= getEndChunkZ();
-	}
+    public boolean containsChunkCoords(int x, int y, int z) {
+        return x >= getStartChunkX() && x <= getEndChunkX() &&
+                y >= getStartY() && y <= getEndY() &&
+                z >= getStartChunkZ() && z <= getEndChunkZ();
+    }
 
 
     // initialize all variables
@@ -351,6 +351,6 @@ public class RegionChunkSection {
             _firstChunkZ = Math.min(chunk.getZ(), _firstChunkZ);
         }
     }
-	
+
 
 }

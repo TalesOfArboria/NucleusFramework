@@ -45,9 +45,9 @@ public class Utils {
      *
      * @param cmd  The command to execute.
      */
-	public static void executeAsConsole(String cmd) {
-		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
-	}
+    public static void executeAsConsole(String cmd) {
+        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
+    }
 
     /**
      * Execute a command as a player.
@@ -55,9 +55,9 @@ public class Utils {
      * @param p    The player.
      * @param cmd  The command to execute.
      */
-	public static void executeAsPlayer(Player p, String cmd) {
-		p.performCommand(cmd);
-	}
+    public static void executeAsPlayer(Player p, String cmd) {
+        p.performCommand(cmd);
+    }
 
     /**
      * Parse the {@code UUID} from the supplied string.
@@ -66,15 +66,15 @@ public class Utils {
      * @param id  The id to parse.
      */
     @Nullable
-	public static UUID getId(String id) {
+    public static UUID getId(String id) {
 
-		try {
-			return UUID.fromString(id);
-		}
-		catch (IllegalArgumentException iae) {
-			return null;
-		}
-	}
+        try {
+            return UUID.fromString(id);
+        }
+        catch (IllegalArgumentException iae) {
+            return null;
+        }
+    }
 
     /**
      * Parse the {@code UUID}'s from the supplied collection
@@ -83,19 +83,19 @@ public class Utils {
      *
      * @param uuids  The ids to parse.
      */
-	public static List<UUID> getIds(Collection<String> uuids) {
+    public static List<UUID> getIds(Collection<String> uuids) {
 
-		List<UUID> results = new ArrayList<UUID>(uuids.size());
+        List<UUID> results = new ArrayList<UUID>(uuids.size());
 
-		for (String raw : uuids) {
-			UUID id = Utils.getId(raw);
-			if (id == null)
-				continue;
+        for (String raw : uuids) {
+            UUID id = Utils.getId(raw);
+            if (id == null)
+                continue;
 
-			results.add(id);
-		}
-		return results;
-	}
+            results.add(id);
+        }
+        return results;
+    }
 
     /**
      * Parse the {@code UUID}'s from the supplied comma
@@ -104,11 +104,11 @@ public class Utils {
      *
      * @param uuidStr  The string Ids to parse.
      */
-	public static List<UUID> getIds(String uuidStr) {
-		uuidStr = uuidStr.toLowerCase();
-		String[] rawIds = TextUtils.PATTERN_COMMA.split(uuidStr);
+    public static List<UUID> getIds(String uuidStr) {
+        uuidStr = uuidStr.toLowerCase();
+        String[] rawIds = TextUtils.PATTERN_COMMA.split(uuidStr);
 
-		List<UUID> results = new ArrayList<UUID>(rawIds.length);
+        List<UUID> results = new ArrayList<UUID>(rawIds.length);
 
         for (String rawId : rawIds) {
             String trimmedId = rawId.trim();
@@ -120,8 +120,8 @@ public class Utils {
             results.add(id);
         }
 
-		return results;
-	}
+        return results;
+    }
 
 }
 

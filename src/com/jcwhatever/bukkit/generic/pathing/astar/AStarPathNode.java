@@ -264,8 +264,8 @@ public class AStarPathNode implements PathNode {
             AStarPathNode node = (AStarPathNode)obj;
 
             return node._xOffset == _xOffset &&
-                   node._yOffset == _yOffset &&
-                   node._zOffset == _zOffset;
+                    node._yOffset == _yOffset &&
+                    node._zOffset == _zOffset;
         }
         return false;
     }

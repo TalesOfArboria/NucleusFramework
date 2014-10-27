@@ -47,7 +47,7 @@ public interface IDataNode {
     /**
      * Determine if the data is loaded.
      */
-	boolean isLoaded();
+    boolean isLoaded();
 
     /**
      * Get the name of the node.
@@ -55,43 +55,43 @@ public interface IDataNode {
      * @return  Null if the node is the root node.
      */
     @Nullable
-	String getNodeName();
+    String getNodeName();
 
     /**
      * Get the root node.
      */
-	IDataNode getRoot();
+    IDataNode getRoot();
 
     /**
      * Load the data synchronously.
      */
-	boolean load();
+    boolean load();
 
     /**
      * Load the data asynchronously.
      */
-	void loadAsync();
+    void loadAsync();
 
     /**
      * Load the data asynchronously.
      *
      * @param loadHandler  The handler to run when the loading is completed.
      */
-	void loadAsync(@Nullable StorageLoadHandler loadHandler);
+    void loadAsync(@Nullable StorageLoadHandler loadHandler);
 
     /**
      * Save the data synchronously.
      *
      * @return  True if the data was saved successfully.
      */
-	boolean save();
+    boolean save();
 
     /**
      * Save the data asynchronously.
      *
      * @param saveHandler  The handler to run when the save is completed.
      */
-	void saveAsync(@Nullable StorageSaveHandler saveHandler);
+    void saveAsync(@Nullable StorageSaveHandler saveHandler);
 
     /**
      * Save the data to the specified file.
@@ -100,7 +100,7 @@ public interface IDataNode {
      *
      * @return  True if the save was completed successfully.
      */
-	boolean save(File destination);
+    boolean save(File destination);
 
     /**
      * Save the data to the specified file asynchronously.
@@ -108,14 +108,14 @@ public interface IDataNode {
      * @param destination  The destination file.
      * @param saveHandler  The handler to run when the save is completed.
      */
-	void saveAsync(File destination, @Nullable StorageSaveHandler saveHandler);
+    void saveAsync(File destination, @Nullable StorageSaveHandler saveHandler);
 
     /**
      * Determine if the current node has the specified node.
      *
      * @param nodePath  The node path to check.
      */
-	boolean hasNode(String nodePath);
+    boolean hasNode(String nodePath);
 
     /**
      * Get a child node.
@@ -124,7 +124,7 @@ public interface IDataNode {
      *
      * @return  The data node. Guaranteed to return a node even if it does not exist.
      */
-	IDataNode getNode(String nodePath);
+    IDataNode getNode(String nodePath);
 
     /**
      * Get the names of the direct child nodes.
@@ -177,7 +177,7 @@ public interface IDataNode {
      * @return Null of the key is not found.
      */
     @Nullable
-	Object get(String keyPath);
+    Object get(String keyPath);
 
     /**
      * Get the value of a node key.
@@ -197,7 +197,7 @@ public interface IDataNode {
      *
      * @return  Value of key or 0.
      */
-	int getInteger(String keyPath);
+    int getInteger(String keyPath);
 
     /**
      * Get the integer value of a node key.
@@ -207,7 +207,7 @@ public interface IDataNode {
      *
      * @return  Value of key or default.
      */
-	int getInteger(String keyPath, int def);
+    int getInteger(String keyPath, int def);
 
     /**
      * Get the long value of a node key.
@@ -216,7 +216,7 @@ public interface IDataNode {
      *
      * @return  Value of key or 0L.
      */
-	long getLong(String keyPath);
+    long getLong(String keyPath);
 
     /**
      * Get the long value of a node key.
@@ -226,7 +226,7 @@ public interface IDataNode {
      *
      * @return  Value of key or default.
      */
-	long getLong(String keyPath, long def);
+    long getLong(String keyPath, long def);
 
     /**
      * Get the double value of a node key.
@@ -235,7 +235,7 @@ public interface IDataNode {
      *
      * @return  Value of key or 0.0D
      */
-	double getDouble(String keyPath);
+    double getDouble(String keyPath);
 
     /**
      * Get the double value of a node key.
@@ -245,7 +245,7 @@ public interface IDataNode {
      *
      * @return  Value of key or default.
      */
-	double getDouble(String keyPath, double def);
+    double getDouble(String keyPath, double def);
 
     /**
      * Get the boolean value of a node key.
@@ -254,7 +254,7 @@ public interface IDataNode {
      *
      * @return  Value of key or false.
      */
-	boolean getBoolean(String keyPath);
+    boolean getBoolean(String keyPath);
 
     /**
      * Get the boolean value of a node key.
@@ -264,7 +264,7 @@ public interface IDataNode {
      *
      * @return  Value of key or default.
      */
-	boolean getBoolean(String keyPath, boolean def);
+    boolean getBoolean(String keyPath, boolean def);
 
     /**
      * Get the string value of a node key.
@@ -274,7 +274,7 @@ public interface IDataNode {
      * @return  Value of key or null.
      */
     @Nullable
-	String getString(String keyPath);
+    String getString(String keyPath);
 
     /**
      * Get the string value of a node key.
@@ -285,7 +285,7 @@ public interface IDataNode {
      * @return  Value of key or default.
      */
     @Nullable
-	String getString(String keyPath, @Nullable String def);
+    String getString(String keyPath, @Nullable String def);
 
     /**
      * Get the {@code UUID} value of a node key.
@@ -295,7 +295,7 @@ public interface IDataNode {
      * @return  Value of key or null.
      */
     @Nullable
-	UUID getUUID(String keyPath);
+    UUID getUUID(String keyPath);
 
     /**
      * Get the {@code UUID} value of a node key.
@@ -306,7 +306,7 @@ public interface IDataNode {
      * @return  Value of key or default.
      */
     @Nullable
-	UUID getUUID(String keyPath, @Nullable UUID def);
+    UUID getUUID(String keyPath, @Nullable UUID def);
 
     /**
      * Get the {@code Location} value of a node key.
@@ -316,7 +316,7 @@ public interface IDataNode {
      * @return  Value of key or null.
      */
     @Nullable
-	Location getLocation(String keyPath);
+    Location getLocation(String keyPath);
 
     /**
      * Get the {@code Location} value of a node key.
@@ -327,7 +327,7 @@ public interface IDataNode {
      * @return  Value of key or default.
      */
     @Nullable
-	Location getLocation(String keyPath, @Nullable Location def);
+    Location getLocation(String keyPath, @Nullable Location def);
 
     /**
      * Get the {@code ItemStack[]} value of a node key.
@@ -337,7 +337,7 @@ public interface IDataNode {
      * @return  Value of key or null.
      */
     @Nullable
-	ItemStack[] getItemStacks(String keyPath);
+    ItemStack[] getItemStacks(String keyPath);
 
     /**
      * Get the {@code ItemStack[]} value of a node key.
@@ -348,7 +348,7 @@ public interface IDataNode {
      * @return  Value of key or default.
      */
     @Nullable
-	ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack def);
+    ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack def);
 
     /**
      * Get the {@code ItemStack[]} value of a node key.
@@ -359,7 +359,7 @@ public interface IDataNode {
      * @return  Value of key or default.
      */
     @Nullable
-	ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack[] def);
+    ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack[] def);
 
     /**
      * Get the enum value of a node key.
@@ -372,7 +372,7 @@ public interface IDataNode {
      * @return  Value of key or null.
      */
     @Nullable
-	<T extends Enum<T>> T getEnum(String keyPath, Class<T> enumClass);
+    <T extends Enum<T>> T getEnum(String keyPath, Class<T> enumClass);
 
     /**
      * Get the enum value of a node key.
@@ -386,7 +386,7 @@ public interface IDataNode {
      * @return  Value of key or default.
      */
     @Nullable
-	<T extends Enum<T>> T getEnum(String keyPath, @Nullable T def, Class<T> enumClass);
+    <T extends Enum<T>> T getEnum(String keyPath, @Nullable T def, Class<T> enumClass);
 
     /**
      * Get an unknown enum value of a node key.
@@ -398,7 +398,7 @@ public interface IDataNode {
      * @return  Value of key or default.
      */
     @Nullable
-	Enum<?> getEnumGeneric(String keyPath, @Nullable Enum<?> def, Class<? extends Enum<?>> enumClass);
+    Enum<?> getEnumGeneric(String keyPath, @Nullable Enum<?> def, Class<? extends Enum<?>> enumClass);
 
     /**
      * Get a list of strings from a node key.
@@ -409,7 +409,7 @@ public interface IDataNode {
      * @return  Value of key or default.
      */
     @Nullable
-	List<String> getStringList(String keyPath, @Nullable List<String> def);
+    List<String> getStringList(String keyPath, @Nullable List<String> def);
 
     /**
      * Run a batch operation on the node that prevents
@@ -433,6 +433,6 @@ public interface IDataNode {
      *
      * @param batch  The batch operation handler.
      */
-	void preventSave(BatchOperation batch);
+    void preventSave(BatchOperation batch);
 
 }

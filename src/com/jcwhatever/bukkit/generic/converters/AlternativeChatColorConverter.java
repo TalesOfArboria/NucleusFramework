@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
  */
 public class AlternativeChatColorConverter extends ValueConverter<String, String> {
 
-	AlternativeChatColorConverter() {}
+    AlternativeChatColorConverter() {}
 
     /**
      * Convert chat color codes in a string that use the '&' character into valid chat color codes.
@@ -42,14 +42,14 @@ public class AlternativeChatColorConverter extends ValueConverter<String, String
      *
      * @return Null if a string is not provided.
      */
-	@Override
+    @Override
     @Nullable
-	protected String onConvert(Object value) {
-		if (!(value instanceof String))
-			return null;
-		
-		return ChatColor.translateAlternateColorCodes('&', (String)value);
-	}
+    protected String onConvert(Object value) {
+        if (!(value instanceof String))
+            return null;
+
+        return ChatColor.translateAlternateColorCodes('&', (String)value);
+    }
 
     /**
      * Convert valid chat color codes in a string into '&' codes;
@@ -58,13 +58,13 @@ public class AlternativeChatColorConverter extends ValueConverter<String, String
      *
      * @return  Null if a string is not provided.
      */
-	@Override
+    @Override
     @Nullable
-	protected String onUnconvert(Object value) {
-		if (!(value instanceof String))
-			return null;
-		
-		return ((String)value).replaceAll("\\�", "&");
-	}
+    protected String onUnconvert(Object value) {
+        if (!(value instanceof String))
+            return null;
+
+        return ((String)value).replaceAll("\\�", "&");
+    }
 
 }

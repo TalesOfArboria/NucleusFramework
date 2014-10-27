@@ -31,12 +31,12 @@ import com.jcwhatever.bukkit.generic.views.ViewManager;
 
 public interface IViewTrigger {
 
-	void init(IView view, IDataNode triggerNode, ViewManager viewManager);
-	
-	TriggerType getType();
-	
-	ISettingsManager getSettingsManager();
-	
-	void dispose();
-	
+    void init(IView view, IDataNode triggerNode, ViewManager viewManager);
+
+    TriggerType getType();
+
+    ISettingsManager getSettingsManager();
+
+    void dispose();
+
 }

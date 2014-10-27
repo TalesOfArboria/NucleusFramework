@@ -53,5 +53,5 @@ public class BasicRegion extends Region {
     public BasicRegion(Plugin plugin, String name, IDataNode settings) {
         super(plugin, name, settings);
     }
-	
+
 }

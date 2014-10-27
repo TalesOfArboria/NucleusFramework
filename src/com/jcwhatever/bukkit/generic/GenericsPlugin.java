@@ -41,16 +41,16 @@ import java.util.Set;
  */
 public abstract class GenericsPlugin extends JavaPlugin {
 
-	private IDataNode _settings;
+    private IDataNode _settings;
     private boolean _isDebugging;
 
     /**
      * Constructor.
      */
-	public GenericsPlugin() {
+    public GenericsPlugin() {
         super();
-		init();
-	}
+        init();
+    }
 
     /**
      * Determine if the plugin is in debug mode.
@@ -95,9 +95,9 @@ public abstract class GenericsPlugin extends JavaPlugin {
     /**
      * Called when the plugin is instantiated.
      */
-	protected void init() {
-		// do nothing
-	}
+    protected void init() {
+        // do nothing
+    }
 
     /**
      * Called before the plugin config is loaded.
@@ -119,10 +119,10 @@ public abstract class GenericsPlugin extends JavaPlugin {
     /**
      * Get the plugins data node.
      */
-	public IDataNode getDataNode() {
-	
-		return _settings;
-	}
+    public IDataNode getDataNode() {
+
+        return _settings;
+    }
 
     /**
      * Register all commands defined in the plugin.yml
@@ -152,18 +152,18 @@ public abstract class GenericsPlugin extends JavaPlugin {
     /*
      * Load the plugins config file.
      */
-	private void loadConfigFile() {
-		File dir = getDataFolder();
-		if (!dir.exists() && !dir.mkdirs()) {
-			throw new RuntimeException("Failed to crate data folders.");
-		}
+    private void loadConfigFile() {
+        File dir = getDataFolder();
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new RuntimeException("Failed to crate data folders.");
+        }
 
-		_settings = DataStorage.getStorage(this, new DataPath("config"));
-		if (!_settings.load()) {
-			getServer().getPluginManager().disablePlugin(this);
-			throw new RuntimeException("The config-file could not be loaded!");
-		}
+        _settings = DataStorage.getStorage(this, new DataPath("config"));
+        if (!_settings.load()) {
+            getServer().getPluginManager().disablePlugin(this);
+            throw new RuntimeException("The config-file could not be loaded!");
+        }
 
         _isDebugging = _settings.getBoolean("debug");
-	}
+    }
 }

@@ -45,30 +45,30 @@ public class PlayerBlockSelect implements Listener {
 
     private PlayerBlockSelect() {}
 
-	private static Map<UUID, PlayerBlockSelectHandler> _actions = new PlayerMap<PlayerBlockSelectHandler>();
+    private static Map<UUID, PlayerBlockSelectHandler> _actions = new PlayerMap<PlayerBlockSelectHandler>();
     private static PlayerBlockSelect _listener;
 
-	public static void query(Player p, PlayerBlockSelectHandler action) {
+    public static void query(Player p, PlayerBlockSelectHandler action) {
         registerListener();
 
-		_actions.put(p.getUniqueId(), action);
-	}
+        _actions.put(p.getUniqueId(), action);
+    }
 
-	private static boolean doSelect(Player p, Block selectedBlock, Action clickAction) {
-		if (clickAction != Action.LEFT_CLICK_BLOCK && clickAction != Action.RIGHT_CLICK_BLOCK)
-			return false;
-		
-		PlayerBlockSelectHandler action = _actions.remove(p.getUniqueId());
-		if (action == null)
-			return false;
-		
-		if (!action.onBlockSelect(p, selectedBlock, clickAction)) {
-			_actions.put(p.getUniqueId(), action);
-			return false;
-		}
-		
-		return true;
-	}
+    private static boolean doSelect(Player p, Block selectedBlock, Action clickAction) {
+        if (clickAction != Action.LEFT_CLICK_BLOCK && clickAction != Action.RIGHT_CLICK_BLOCK)
+            return false;
+
+        PlayerBlockSelectHandler action = _actions.remove(p.getUniqueId());
+        if (action == null)
+            return false;
+
+        if (!action.onBlockSelect(p, selectedBlock, clickAction)) {
+            _actions.put(p.getUniqueId(), action);
+            return false;
+        }
+
+        return true;
+    }
 
     private static void registerListener() {
 
@@ -91,10 +91,10 @@ public class PlayerBlockSelect implements Listener {
 
 
     public static abstract class PlayerBlockSelectHandler {
-		public abstract boolean onBlockSelect(Player p, Block selectedBlock, Action clickAction);
-	}
+        public abstract boolean onBlockSelect(Player p, Block selectedBlock, Action clickAction);
+    }
 
 
-	
+
 }
 

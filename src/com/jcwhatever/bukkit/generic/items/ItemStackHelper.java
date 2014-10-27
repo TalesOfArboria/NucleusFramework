@@ -53,8 +53,8 @@ import java.util.List;
 public class ItemStackHelper {
 
     private ItemStackHelper() {}
-	
-	public static final ItemStack AIR = new ItemStack(Material.AIR);
+
+    public static final ItemStack AIR = new ItemStack(Material.AIR);
 
     /**
      * Used to specify if a display name for an item
@@ -74,168 +74,168 @@ public class ItemStackHelper {
          */
         OPTIONAL
     }
-	
-	/**
-	 * Set the specified block material and data
-	 * to the material and data represented by
-	 * the ItemStack.
-	 * 
-	 * @param block  The block to set.
-	 */
-	public static void setBlock(Block block, ItemStack stack) {
+
+    /**
+     * Set the specified block material and data
+     * to the material and data represented by
+     * the ItemStack.
+     *
+     * @param block  The block to set.
+     */
+    public static void setBlock(Block block, ItemStack stack) {
         PreCon.notNull(block);
         PreCon.notNull(stack);
 
-		if (block.getType() != stack.getType())
-			block.setType(stack.getType());
-		
-		if (block.getData() != stack.getData().getData())
-			block.setData(stack.getData().getData());
-	}
-	
-	/**
-	 * Set the specified block material and data
-	 * to the material and data represented by
-	 * the MaterialData.
-	 * 
-	 * @param block The block to set.
-	 */
-	public static void setBlock(Block block, MaterialData data) {
+        if (block.getType() != stack.getType())
+            block.setType(stack.getType());
+
+        if (block.getData() != stack.getData().getData())
+            block.setData(stack.getData().getData());
+    }
+
+    /**
+     * Set the specified block material and data
+     * to the material and data represented by
+     * the MaterialData.
+     *
+     * @param block The block to set.
+     */
+    public static void setBlock(Block block, MaterialData data) {
         PreCon.notNull(block);
         PreCon.notNull(data);
 
-		BlockState state = block.getState();
-		state.setType(data.getItemType());
-		state.update(true);
-		
-		state = block.getState();
-		state.setData(data.clone());
-		state.update(true);
-	}
+        BlockState state = block.getState();
+        state.setType(data.getItemType());
+        state.update(true);
 
-	/**
-	 * Set the lore on an item stack.
+        state = block.getState();
+        state.setData(data.clone());
+        state.update(true);
+    }
+
+    /**
+     * Set the lore on an item stack.
      *
-	 * @param stack  The item stack.
-	 * @param lore   The lore to set.
-	 */
-	public static void setLore(ItemStack stack, @Nullable List<String> lore) {
+     * @param stack  The item stack.
+     * @param lore   The lore to set.
+     */
+    public static void setLore(ItemStack stack, @Nullable List<String> lore) {
         PreCon.notNull(stack);
 
-		ItemMeta meta = stack.getItemMeta();
-		if (meta == null) {
-			return;
-		}
-					
-		meta.setLore(lore);
-		stack.setItemMeta(meta);
-	}
-	
-	/**
-	 * Set the lore on an item stack.
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+
+        meta.setLore(lore);
+        stack.setItemMeta(meta);
+    }
+
+    /**
+     * Set the lore on an item stack.
      *
-	 * @param stack  The item stack.
-	 * @param lore   The lore to set.
-	 */
-	public static void setLore(ItemStack stack, @Nullable String lore) {
+     * @param stack  The item stack.
+     * @param lore   The lore to set.
+     */
+    public static void setLore(ItemStack stack, @Nullable String lore) {
         PreCon.notNull(stack);
 
-		ItemMeta meta = stack.getItemMeta();
-		if (meta == null) {
-			return;
-		}
-		
-		List<String> list = new ArrayList<String>(5);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+
+        List<String> list = new ArrayList<String>(5);
 
         if (lore != null)
-		    list.add(lore);
-					
-		meta.setLore(list);
-		stack.setItemMeta(meta);
-	}
-	
-	/**
-	 * Gets the lore from an item stack.
+            list.add(lore);
+
+        meta.setLore(list);
+        stack.setItemMeta(meta);
+    }
+
+    /**
+     * Gets the lore from an item stack.
      *
-	 * @param stack  The item stack.
-	 */
+     * @param stack  The item stack.
+     */
     @Nullable
-	public static List<String> getLore(ItemStack stack) {
+    public static List<String> getLore(ItemStack stack) {
         PreCon.notNull(stack);
 
-		ItemMeta meta = stack.getItemMeta();
-		if (meta == null)
-			return null;
-		
-		return meta.getLore();
-	}
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null)
+            return null;
 
-	/**
-	 * Determine if an item stack represents a repairable item.
+        return meta.getLore();
+    }
+
+    /**
+     * Determine if an item stack represents a repairable item.
      *
-	 * @param stack  The item stack.
-	 */
-	public static boolean isRepairable(ItemStack stack) {
+     * @param stack  The item stack.
+     */
+    public static boolean isRepairable(ItemStack stack) {
         PreCon.notNull(stack);
 
-		return isRepairable(stack.getType());
-	}
-	
-	/**
-	 * Determine if a material type represents a repairable item.
+        return isRepairable(stack.getType());
+    }
+
+    /**
+     * Determine if a material type represents a repairable item.
      *
-	 * @param type  The item stack material.
-	 */
-	public static boolean isRepairable(Material type) {
+     * @param type  The item stack material.
+     */
+    public static boolean isRepairable(Material type) {
         PreCon.notNull(type);
 
-		MaterialExt material = MaterialExt.from(type);
+        MaterialExt material = MaterialExt.from(type);
         return material != MaterialExt.UNKNOWN && material.isRepairable();
     }
-	
-	/**
-	 * Repair an item stack
+
+    /**
+     * Repair an item stack
      *
-	 * @param item  The item stack.
-	 */
-	public static void repair(ItemStack item) {
+     * @param item  The item stack.
+     */
+    public static void repair(ItemStack item) {
         PreCon.notNull(item);
 
-		if (!isRepairable(item))
-			return;
-		
-		item.setDurability((short)0);
-	}
-	
-	/**
-	 * Repair an array of items.
+        if (!isRepairable(item))
+            return;
+
+        item.setDurability((short)0);
+    }
+
+    /**
+     * Repair an array of items.
      *
-	 * @param items The array of items to repair.
-	 */
-	public static void repair(ItemStack[] items) {
+     * @param items The array of items to repair.
+     */
+    public static void repair(ItemStack[] items) {
         PreCon.notNull(items);
 
-		if (items.length == 0)
+        if (items.length == 0)
             return;
 
         for (ItemStack item : items) {
             repair(item);
         }
-	}
+    }
 
-	/**
-	 * Gets the display name of an item stack. Returns empty string
-	 * if the item has no display name.
+    /**
+     * Gets the display name of an item stack. Returns empty string
+     * if the item has no display name.
      *
-	 * @param stack       The item stack to get a display name from.
-	 * @param nameResult  Specify how a missing display name should be returned.
-	 */
+     * @param stack       The item stack to get a display name from.
+     * @param nameResult  Specify how a missing display name should be returned.
+     */
     @Nullable
-	public static String getDisplayName(ItemStack stack, DisplayNameResult nameResult) {
+    public static String getDisplayName(ItemStack stack, DisplayNameResult nameResult) {
         PreCon.notNull(stack);
 
-		ItemMeta meta = stack.getItemMeta();
-		if (meta == null || !meta.hasDisplayName()) {
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null || !meta.hasDisplayName()) {
 
             switch (nameResult) {
                 case REQUIRED:
@@ -248,126 +248,126 @@ public class ItemStackHelper {
                 default:
                     return null;
             }
-		}
-		
-		return meta.getDisplayName();
-	}
+        }
 
-	/**
-	 * Sets the display name of an item stack.
+        return meta.getDisplayName();
+    }
+
+    /**
+     * Sets the display name of an item stack.
      *
-	 * @param stack        The item stack.
-	 * @param displayName  The display name.
-	 */
-	public static void setDisplayName(ItemStack stack, @Nullable String displayName) {
+     * @param stack        The item stack.
+     * @param displayName  The display name.
+     */
+    public static void setDisplayName(ItemStack stack, @Nullable String displayName) {
         PreCon.notNull(stack);
 
-		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName(displayName);
-		stack.setItemMeta(meta);
-	}
-		
-	/**
-	 * Sets 32 bit Color of an item, if possible.
+        ItemMeta meta = stack.getItemMeta();
+        meta.setDisplayName(displayName);
+        stack.setItemMeta(meta);
+    }
+
+    /**
+     * Sets 32 bit Color of an item, if possible.
      *
-	 * @param item   The item stack.
-	 * @param red    The red component
-	 * @param green  The green component
-	 * @param blue   The blue component
+     * @param item   The item stack.
+     * @param red    The red component
+     * @param green  The green component
+     * @param blue   The blue component
      *
-	 * @return  True if color changed.
-	 */
-	public static boolean setColor(ItemStack item, int red, int green, int blue){
+     * @return  True if color changed.
+     */
+    public static boolean setColor(ItemStack item, int red, int green, int blue){
         PreCon.notNull(item);
 
-		return setColor(item, Color.fromRGB(red, green, blue));
-	}
-	
-	/**
-	 * Sets RGB Color of an item, if possible.
+        return setColor(item, Color.fromRGB(red, green, blue));
+    }
+
+    /**
+     * Sets RGB Color of an item, if possible.
      *
-	 * @param item   The item stack.
-	 * @param color  The 32 bit RGB integer color.
+     * @param item   The item stack.
+     * @param color  The 32 bit RGB integer color.
      *
-	 * @return True if color changed.
-	 */
-	public static boolean setColor(ItemStack item, int color){
+     * @return True if color changed.
+     */
+    public static boolean setColor(ItemStack item, int color){
         PreCon.notNull(item);
 
-		return setColor(item, Color.fromRGB(color));
-	}
-	
-	/**
-	 * Sets Color of an item, if possible.
+        return setColor(item, Color.fromRGB(color));
+    }
+
+    /**
+     * Sets Color of an item, if possible.
      *
-	 * @param item   The item stack.
-	 * @param color  The color to set.
+     * @param item   The item stack.
+     * @param color  The color to set.
      *
-	 * @return  True if color changed.
-	 */
-	public static boolean setColor(ItemStack item, Color color){
+     * @return  True if color changed.
+     */
+    public static boolean setColor(ItemStack item, Color color){
         PreCon.notNull(item);
         PreCon.notNull(color);
-		
-		ItemMeta meta = item.getItemMeta();
-		
-		if (meta instanceof LeatherArmorMeta) {
-			LeatherArmorMeta laMeta = (LeatherArmorMeta)meta;
-			laMeta.setColor(color);
-			item.setItemMeta(laMeta);
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Gets the 32-bit color of an item if it has any.
+
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta instanceof LeatherArmorMeta) {
+            LeatherArmorMeta laMeta = (LeatherArmorMeta)meta;
+            laMeta.setColor(color);
+            item.setItemMeta(laMeta);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Gets the 32-bit color of an item if it has any.
      *
-	 * @param item  The item stack.
+     * @param item  The item stack.
      *
-	 * @return Null if item does not have 32-bit color.
-	 */
+     * @return Null if item does not have 32-bit color.
+     */
     @Nullable
-	public static Color getColor(ItemStack item) {
+    public static Color getColor(ItemStack item) {
         PreCon.notNull(item);
 
-		ItemMeta meta = item.getItemMeta();
-		
-		if (meta instanceof LeatherArmorMeta) {
-			LeatherArmorMeta laMeta = (LeatherArmorMeta)meta;
-			return laMeta.getColor();
-		}
-		return null;
-	}
-	
-	/**
-	 * Add enchantments to an item.
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta instanceof LeatherArmorMeta) {
+            LeatherArmorMeta laMeta = (LeatherArmorMeta)meta;
+            return laMeta.getColor();
+        }
+        return null;
+    }
+
+    /**
+     * Add enchantments to an item.
      *
-	 * @param stack         The item stack to add enchantments to.
+     * @param stack         The item stack to add enchantments to.
      * @param enchantments  Enchantments to add
-	 */
-	public static void addEnchantments(ItemStack stack, Collection<EnchantmentWrapper> enchantments) {
+     */
+    public static void addEnchantments(ItemStack stack, Collection<EnchantmentWrapper> enchantments) {
         PreCon.notNull(stack);
         PreCon.notNull(enchantments);
-		
-		ItemMeta meta = stack.getItemMeta();
-		
-		// check for enchantment storage items such as enchanted books
-		if (meta instanceof EnchantmentStorageMeta) {
-			EnchantmentStorageMeta storage = (EnchantmentStorageMeta)meta;
-			
-			for (EnchantmentWrapper enchant : enchantments) {
-				storage.addStoredEnchant(enchant.getEnchantment(), enchant.getLevel(), true);
-			}
-			
-			stack.setItemMeta(storage);
-		}
-		else {
-			for (EnchantmentWrapper enchant : enchantments) {
-				stack.addUnsafeEnchantment(enchant.getEnchantment(), enchant.getLevel());
-			}
-		}
-	}
+
+        ItemMeta meta = stack.getItemMeta();
+
+        // check for enchantment storage items such as enchanted books
+        if (meta instanceof EnchantmentStorageMeta) {
+            EnchantmentStorageMeta storage = (EnchantmentStorageMeta)meta;
+
+            for (EnchantmentWrapper enchant : enchantments) {
+                storage.addStoredEnchant(enchant.getEnchantment(), enchant.getLevel(), true);
+            }
+
+            stack.setItemMeta(storage);
+        }
+        else {
+            for (EnchantmentWrapper enchant : enchantments) {
+                stack.addUnsafeEnchantment(enchant.getEnchantment(), enchant.getLevel());
+            }
+        }
+    }
 
     /**
      * Add an enchantment to an item.
@@ -405,30 +405,30 @@ public class ItemStackHelper {
         return true;
     }
 
-	/**
-	 * Add an enchantment to an item.
+    /**
+     * Add an enchantment to an item.
      *
-	 * @param stack    The item stack.
-	 * @param enchant  The enchantment to add.
-	 * @param level    The enchantment level.
-	 */
-	public static void addEnchantment(ItemStack stack, Enchantment enchant, int level) {
+     * @param stack    The item stack.
+     * @param enchant  The enchantment to add.
+     * @param level    The enchantment level.
+     */
+    public static void addEnchantment(ItemStack stack, Enchantment enchant, int level) {
         PreCon.notNull(stack);
         PreCon.notNull(enchant);
         PreCon.positiveNumber(level);
-		
-		ItemMeta meta = stack.getItemMeta();
-		
-		// check for enchantment storage items such as enchanted books
-		if (meta instanceof EnchantmentStorageMeta) {
-			EnchantmentStorageMeta storage = (EnchantmentStorageMeta)meta;
-			storage.addStoredEnchant(enchant, level, true);
-			stack.setItemMeta(storage);
-		}
-		else {
-			stack.addUnsafeEnchantment(enchant, level);
-		}
-	}
+
+        ItemMeta meta = stack.getItemMeta();
+
+        // check for enchantment storage items such as enchanted books
+        if (meta instanceof EnchantmentStorageMeta) {
+            EnchantmentStorageMeta storage = (EnchantmentStorageMeta)meta;
+            storage.addStoredEnchant(enchant, level, true);
+            stack.setItemMeta(storage);
+        }
+        else {
+            stack.addUnsafeEnchantment(enchant, level);
+        }
+    }
 
     /**
      * Removes an enchantment from an item and returns an
@@ -475,138 +475,138 @@ public class ItemStackHelper {
         return new EnchantmentWrapper(enchantment, level);
     }
 
-	/**
-	 * Parses item stack string to {@code ItemStack} array.
+    /**
+     * Parses item stack string to {@code ItemStack} array.
      *
-	 * @param itemString  The item stack string.
+     * @param itemString  The item stack string.
      *
      * @return  Null if the string could not be parsed.
-	 */
+     */
     @Nullable
-	public static ItemStack[] parse(String itemString) {
-		
-		if (itemString == null || itemString.length() == 0)
-			return new ItemStack[0];
-		
-		String[] items = TextUtils.PATTERN_COMMA.split(itemString);
-		
-		//Messenger.debug(null, "ItemStackHelper: parse: parsing " + items.length + " possible ItemStacks from string: " + itemString);
-				
-		Collection<ItemStack> wrappers = new ArrayList<ItemStack>(items.length);
-		
-		for (String item : items) {
-			ItemStack stack = parseItemString(item);
-			if (stack == null) {
-				Messenger.debug(null, "ItemStackHelper: parse: Failed to parse item string item.");
-				return null;
-			}
-			wrappers.add(stack);
-		}
-		
-		//Messenger.debug(null, "ItemStackExt: parse: Successfully parsed " + items.length + " items.");		
-		return wrappers.toArray(new ItemStack[wrappers.size()]);
-	}
-	
-	/**
-	 * Serialize a collection of item stacks into a string.
+    public static ItemStack[] parse(String itemString) {
+
+        if (itemString == null || itemString.length() == 0)
+            return new ItemStack[0];
+
+        String[] items = TextUtils.PATTERN_COMMA.split(itemString);
+
+        //Messenger.debug(null, "ItemStackHelper: parse: parsing " + items.length + " possible ItemStacks from string: " + itemString);
+
+        Collection<ItemStack> wrappers = new ArrayList<ItemStack>(items.length);
+
+        for (String item : items) {
+            ItemStack stack = parseItemString(item);
+            if (stack == null) {
+                Messenger.debug(null, "ItemStackHelper: parse: Failed to parse item string item.");
+                return null;
+            }
+            wrappers.add(stack);
+        }
+
+        //Messenger.debug(null, "ItemStackExt: parse: Successfully parsed " + items.length + " items.");
+        return wrappers.toArray(new ItemStack[wrappers.size()]);
+    }
+
+    /**
+     * Serialize a collection of item stacks into a string.
      *
-	 * @param stacks  The item stack collection.
-	 */
-	public static String serializeToString(Collection<ItemStack> stacks, SerializerOutputType outputType) {
+     * @param stacks  The item stack collection.
+     */
+    public static String serializeToString(Collection<ItemStack> stacks, SerializerOutputType outputType) {
         PreCon.notNull(stacks);
         PreCon.notNull(outputType);
 
-		return new ItemStackSerializer(stacks.size() * 20, outputType).appendAll(stacks).toString();
-	}
-	
-	/**
-	 * Serialize an item stack array into a string.
+        return new ItemStackSerializer(stacks.size() * 20, outputType).appendAll(stacks).toString();
+    }
+
+    /**
+     * Serialize an item stack array into a string.
      *
-	 * @param stacks  The item stacks to serialize.
-	 */
-	public static String serializeToString(ItemStack[] stacks, SerializerOutputType outputType) {
+     * @param stacks  The item stacks to serialize.
+     */
+    public static String serializeToString(ItemStack[] stacks, SerializerOutputType outputType) {
         PreCon.notNull(stacks);
         PreCon.notNull(outputType);
 
-		return new ItemStackSerializer(stacks.length * 20, outputType).appendAll(stacks).toString();
-	}
-	
-	/**
-	 * Serialize an item stack into a string.
+        return new ItemStackSerializer(stacks.length * 20, outputType).appendAll(stacks).toString();
+    }
+
+    /**
+     * Serialize an item stack into a string.
      *
-	 * @param stack  The item stack.
-	 */
-	public static String serializeToString(ItemStack stack, SerializerOutputType outputType) {
+     * @param stack  The item stack.
+     */
+    public static String serializeToString(ItemStack stack, SerializerOutputType outputType) {
         PreCon.notNull(stack);
         PreCon.notNull(outputType);
 
-		return new ItemStackSerializer(40, outputType).append(stack).toString();
-	}
+        return new ItemStackSerializer(40, outputType).append(stack).toString();
+    }
 
-	/*
-	 * Parses a serialized item string into an item stack.
-	 */
+    /*
+     * Parses a serialized item string into an item stack.
+     */
     @Nullable
-	private static ItemStack parseItemString(String itemString) {
-		ItemStringParser parser = new ItemStringParser(itemString);
-		
-		if (!parser.isValid()) {
-			Messenger.debug(null,
+    private static ItemStack parseItemString(String itemString) {
+        ItemStringParser parser = new ItemStringParser(itemString);
+
+        if (!parser.isValid()) {
+            Messenger.debug(null,
                     "ItemStackHelper: parseItemString: Attempted to parse invalid item string: {0}", itemString);
-			return null;
-		}
+            return null;
+        }
 
         int qty = parser.getQuantity();
         Color color = parser.getColor();
-		MaterialData data = parser.getMaterialData();
+        MaterialData data = parser.getMaterialData();
         List<String> lore = parser.getLore();
-		String displayName = parser.getDisplayName();
+        String displayName = parser.getDisplayName();
 
-		if (data == null)
-			return null;
-		
-		List<EnchantmentWrapper> enchants = parser.getEnchantments();
-		Material material = data.getItemType();
-		
-		// create stack
-		ItemStack stack;
-		Potion potion;
-				
-		// handle special cases
-		if (material == Material.POTION && (potion = ValueConverters.POTION_ID.convert(parser.getData())) != null) {
-			stack = potion.toItemStack(qty);
-		}
-		else if (material == Material.WOOL) {
-			stack = new ItemStack(material, qty);
-			stack.setData(data);
-			stack.setDurability(parser.getData());
-		}
-		else {
-			// set stack data
-			stack = new ItemStack(material, qty);
-			stack.setData(data);
-			stack.setDurability(parser.getData());
-		}
-		
-		// set enchantments
-		if (enchants.size() > 0) {
-			addEnchantments(stack, enchants);
-		}
-		
-		// set display name
-		if (displayName.length() != 0)
-			setDisplayName(stack, displayName);
-		
-		// set display
-		if (color != null) {
-			setColor(stack, color);
-		}
-		
-		//set lore
-		if (lore != null) {
-			setLore(stack, lore);
-		}
-		
-		return stack;
-	}
+        if (data == null)
+            return null;
+
+        List<EnchantmentWrapper> enchants = parser.getEnchantments();
+        Material material = data.getItemType();
+
+        // create stack
+        ItemStack stack;
+        Potion potion;
+
+        // handle special cases
+        if (material == Material.POTION && (potion = ValueConverters.POTION_ID.convert(parser.getData())) != null) {
+            stack = potion.toItemStack(qty);
+        }
+        else if (material == Material.WOOL) {
+            stack = new ItemStack(material, qty);
+            stack.setData(data);
+            stack.setDurability(parser.getData());
+        }
+        else {
+            // set stack data
+            stack = new ItemStack(material, qty);
+            stack.setData(data);
+            stack.setDurability(parser.getData());
+        }
+
+        // set enchantments
+        if (enchants.size() > 0) {
+            addEnchantments(stack, enchants);
+        }
+
+        // set display name
+        if (displayName.length() != 0)
+            setDisplayName(stack, displayName);
+
+        // set display
+        if (color != null) {
+            setColor(stack, color);
+        }
+
+        //set lore
+        if (lore != null) {
+            setLore(stack, lore);
+        }
+
+        return stack;
+    }
 }

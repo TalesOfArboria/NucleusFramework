@@ -163,8 +163,8 @@ public class InteriorFinder {
                     // check for corner obstruction
                     if (x != 0 && y != 0 && z != 0) {
                         Location adjac1 = node.clone().add(x, 0, 0),
-                                 adjac2 = node.clone().add(0, 0, z),
-                                 middle = node.clone().add(0, y, 0);
+                                adjac2 = node.clone().add(0, 0, z),
+                                middle = node.clone().add(0, y, 0);
 
                         if (!MaterialExt.isTransparent(adjac1.getBlock().getType()) &&
                                 !MaterialExt.isTransparent(adjac2.getBlock().getType()) &&

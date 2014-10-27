@@ -92,10 +92,10 @@ public class TextUtils {
         DEFINITION        ("{GOLD}{0}{AQUA} - {GRAY}{1}", "definition", "description"),
         ITEM_DESCRIPTION  ("{YELLOW}{0}{AQUA} - {GRAY}{1}", "list item", "description")
         ;
-        
+
         private final String _template;
         private final String[] _paramDescriptions;
-        
+
         FormatTemplate(String template, String... paramDescription) {
             _template = template;
             _paramDescriptions = paramDescription;
@@ -104,7 +104,7 @@ public class TextUtils {
         public String[] getParamDescriptions() {
             return _paramDescriptions;
         }
-        
+
         @Override
         public String toString() {
             return _template;
@@ -143,24 +143,24 @@ public class TextUtils {
                 name.length() > 0 && PATTERN_NAMES.matcher(name).matches();
     }
 
-	/**
-	 * Pad the right side of a string with the specified characters
+    /**
+     * Pad the right side of a string with the specified characters
      *
-	 * @param s        The String to pad
-	 * @param length   The number of characters to pad
-	 * @param pad      The character to path with
-	 */
-	public static String padRight(String s, int length, char pad) {
+     * @param s        The String to pad
+     * @param length   The number of characters to pad
+     * @param pad      The character to path with
+     */
+    public static String padRight(String s, int length, char pad) {
         PreCon.notNull(s);
         PreCon.positiveNumber(length);
 
-		StringBuilder buffy = new StringBuilder(s.length() + length);
-		buffy.append(s);
-		for (int i = 0; i < length; ++i) {
-			buffy.append(pad);
-		}
-		return buffy.toString();
-	}
+        StringBuilder buffy = new StringBuilder(s.length() + length);
+        buffy.append(s);
+        for (int i = 0; i < length; ++i) {
+            buffy.append(pad);
+        }
+        return buffy.toString();
+    }
 
     /**
      * Pad the right side of a string with spaces.
@@ -168,9 +168,9 @@ public class TextUtils {
      * @param s       The String to pad
      * @param length  The number of spaces to pad with
      */
-	public static String padRight(String s, int length) {
-		return TextUtils.padRight(s, length, ' ');
-	}
+    public static String padRight(String s, int length) {
+        return TextUtils.padRight(s, length, ' ');
+    }
 
     /**
      * Pad the left side of a string with the specified characters
@@ -179,48 +179,48 @@ public class TextUtils {
      * @param length  The number of characters to pad
      * @param pad     The character to path with
      */
-	public static String padLeft(String s, int length, char pad) {
+    public static String padLeft(String s, int length, char pad) {
         PreCon.notNull(s);
         PreCon.positiveNumber(length);
 
-		StringBuilder buffy = new StringBuilder(s.length() + length);
-		for (int i = 0; i < length; i++) {
-			buffy.append(pad);
-		}
-		buffy.append(s);
-		return buffy.toString();
-	}
+        StringBuilder buffy = new StringBuilder(s.length() + length);
+        for (int i = 0; i < length; i++) {
+            buffy.append(pad);
+        }
+        buffy.append(s);
+        return buffy.toString();
+    }
 
-	/**
-	 * Pad left side of specified string with spaces
-	 * @param s       The string to pad
-	 * @param length  The number of spaces to pad with
-	 */
-	public static String padLeft(String s, int length) {
-		return TextUtils.padLeft(s, length, ' ');
-	}
+    /**
+     * Pad left side of specified string with spaces
+     * @param s       The string to pad
+     * @param length  The number of spaces to pad with
+     */
+    public static String padLeft(String s, int length) {
+        return TextUtils.padLeft(s, length, ' ');
+    }
 
-	/**
-	 * Pad the left side of string created from the specified number
-	 * with spaces
-	 * 
-	 * @param s       The number to convert to string and pad
-	 * @param length  The number of spaces to pad with
-	 */
-	public static String padLeft(int s, int length) {
-		return TextUtils.padLeft(Integer.toString(s), length, ' ');
-	}
+    /**
+     * Pad the left side of string created from the specified number
+     * with spaces
+     *
+     * @param s       The number to convert to string and pad
+     * @param length  The number of spaces to pad with
+     */
+    public static String padLeft(int s, int length) {
+        return TextUtils.padLeft(Integer.toString(s), length, ' ');
+    }
 
-	/**
-	 * Pad the left side of string created from the specified number
-	 * with spaces
-	 * 
-	 * @param s       The number to convert to string and pad
-	 * @param length  The number of spaces to pad with
-	 */
-	public static String padLeft(double s, int length) {
-		return TextUtils.padLeft(Double.toString(s), length, ' ');
-	}
+    /**
+     * Pad the left side of string created from the specified number
+     * with spaces
+     *
+     * @param s       The number to convert to string and pad
+     * @param length  The number of spaces to pad with
+     */
+    public static String padLeft(double s, int length) {
+        return TextUtils.padLeft(Double.toString(s), length, ' ');
+    }
 
     /**
      * Reduce the number of characters in a string by removing
@@ -231,16 +231,16 @@ public class TextUtils {
      * @param s       The string to truncate
      * @param length  The new length of the string.
      */
-	public static String truncate(String s, int length) {
+    public static String truncate(String s, int length) {
         PreCon.notNull(s);
         PreCon.positiveNumber(length);
         PreCon.lessThan(length, s.length());
 
-		if (s.length() > length)
+        if (s.length() > length)
             return s.substring(0, length - 1);
 
-		return s;
-	}
+        return s;
+    }
 
     /**
      * Reduce the number of characters in a string to 16.
@@ -249,16 +249,16 @@ public class TextUtils {
      *
      * @param s       The string to truncate
      */
-	public static String truncate(String s) {
-		return TextUtils.truncate(s, 15);
-	}
+    public static String truncate(String s) {
+        return TextUtils.truncate(s, 15);
+    }
 
     /**
      * Converts supplied string to camel casing.
      *
      * @param s  the string to convert
      */
-	public static String camelCase(String s) {
+    public static String camelCase(String s) {
         PreCon.notNull(s);
 
         if (s.length() < 2) {
@@ -276,7 +276,7 @@ public class TextUtils {
         }
 
         return resultSB.toString();
-	}
+    }
 
     /**
      * Converts the casing of the supplied string
@@ -284,34 +284,34 @@ public class TextUtils {
      *
      * @param s  The string to modify
      */
-	public static String titleCase(String s) {
+    public static String titleCase(String s) {
         PreCon.notNull(s);
 
         if (s.length() < 2) {
             return s;
         }
-		
-		String[] words = PATTERN_SPACE.split(s);
-		StringBuilder resultSB = new StringBuilder(s.length() + 10);
-				
-		for (int i=0; i < words.length; i++) {
-		    
-			if (i != 0)
-				resultSB.append(' ');
-			
-			String word = words[i];
-			if (word.length() <= 3) {
-				resultSB.append(word);
-			} else {
-				
-				String firstLetter = word.substring(0, 1).toUpperCase();
-				resultSB.append(firstLetter);
-				resultSB.append(word.subSequence(1, word.length()));
-			}
-		}
-		
-		return resultSB.toString();
-	}
+
+        String[] words = PATTERN_SPACE.split(s);
+        StringBuilder resultSB = new StringBuilder(s.length() + 10);
+
+        for (int i=0; i < words.length; i++) {
+
+            if (i != 0)
+                resultSB.append(' ');
+
+            String word = words[i];
+            if (word.length() <= 3) {
+                resultSB.append(word);
+            } else {
+
+                String firstLetter = word.substring(0, 1).toUpperCase();
+                resultSB.append(firstLetter);
+                resultSB.append(word.subSequence(1, word.length()));
+            }
+        }
+
+        return resultSB.toString();
+    }
 
     /**
      * Concatenates a collection into a single string using the
@@ -320,9 +320,9 @@ public class TextUtils {
      * @param collection  The collection to concatenate
      * @param separator   The string to insert between elements
      */
-	public static String concat(Collection<?> collection, String separator) {
-		return concat(collection, separator, "");
-	}
+    public static String concat(Collection<?> collection, String separator) {
+        return concat(collection, separator, "");
+    }
 
     /**
      * Concatenates a collection into a single string using the
@@ -333,21 +333,21 @@ public class TextUtils {
      * @param emptyValue  The string to return if the collection is null or empty
      */
     @Nullable
-	public static String concat(Collection<?> collection, String separator, String emptyValue) {
-		if (collection == null || collection.isEmpty()) {
-			return emptyValue;
-		}
+    public static String concat(Collection<?> collection, String separator, String emptyValue) {
+        if (collection == null || collection.isEmpty()) {
+            return emptyValue;
+        }
 
-		if (separator == null)
-			separator = "";
+        if (separator == null)
+            separator = "";
 
-		StringBuilder buffy = new StringBuilder(collection.size() * 25);
-		for (Object o : collection) {
-			buffy.append(separator);
-			buffy.append(o.toString());
-		}
-		return buffy.substring(separator.length());
-	}
+        StringBuilder buffy = new StringBuilder(collection.size() * 25);
+        for (Object o : collection) {
+            buffy.append(separator);
+            buffy.append(o.toString());
+        }
+        return buffy.substring(separator.length());
+    }
 
 
 
@@ -358,7 +358,7 @@ public class TextUtils {
      * @param strArray   The array to concatenate
      * @param separator  The string to insert between elements
      */
-	public static <T> String concat(T[] strArray, @Nullable String separator) {
+    public static <T> String concat(T[] strArray, @Nullable String separator) {
         return concat(0, strArray.length, strArray, separator, "");
     }
 
@@ -371,8 +371,8 @@ public class TextUtils {
      * @param emptyValue  The string to return if the array is null or empty
      */
     @Nullable
-	public static <T> String concat(T[] strArray, @Nullable String separator, @Nullable String emptyValue) {
-        return concat(0, strArray.length, strArray, separator, emptyValue);        
+    public static <T> String concat(T[] strArray, @Nullable String separator, @Nullable String emptyValue) {
+        return concat(0, strArray.length, strArray, separator, emptyValue);
     }
 
     /**
@@ -383,8 +383,8 @@ public class TextUtils {
      * @param strArray    The array to concatenate
      * @param separator   The separator to insert between elements
      */
-	public static <T> String concat(int startIndex, T[] strArray, @Nullable String separator) {
-        return concat(startIndex, strArray.length, strArray, separator, "");        
+    public static <T> String concat(int startIndex, T[] strArray, @Nullable String separator) {
+        return concat(startIndex, strArray.length, strArray, separator, "");
     }
 
     /**
@@ -397,8 +397,8 @@ public class TextUtils {
      * @param emptyValue  The value to return if the array is empty or null
      */
     @Nullable
-	public static <T> String concat(int startIndex, T[] strArray, @Nullable String separator, @Nullable String emptyValue) {
-        return concat(startIndex, strArray.length, strArray, separator, emptyValue);        
+    public static <T> String concat(int startIndex, T[] strArray, @Nullable String separator, @Nullable String emptyValue) {
+        return concat(startIndex, strArray.length, strArray, separator, emptyValue);
     }
 
 
@@ -437,31 +437,31 @@ public class TextUtils {
      * @param endIndex    The index to stop concatenating at
      * @param strArray    The array to concatenate
      */
-	public static <T> String concat(int startIndex, int endIndex, T[] strArray, String separator, String emptyValue) {
+    public static <T> String concat(int startIndex, int endIndex, T[] strArray, String separator, String emptyValue) {
         if (strArray == null || strArray.length == 0 || startIndex == endIndex)
             return emptyValue;
 
-		if (separator == null)
-			separator = "";
+        if (separator == null)
+            separator = "";
 
-		StringBuilder buffy = new StringBuilder((endIndex - startIndex) * 25);
-		boolean isEnum = strArray[0] instanceof Enum<?>;
-		for (int i = startIndex; i < endIndex; i++) {
-		    T str = strArray[i]; 
-			if (str == null)
-				continue;
+        StringBuilder buffy = new StringBuilder((endIndex - startIndex) * 25);
+        boolean isEnum = strArray[0] instanceof Enum<?>;
+        for (int i = startIndex; i < endIndex; i++) {
+            T str = strArray[i];
+            if (str == null)
+                continue;
 
-			buffy.append(separator);
-			if (isEnum) {
-				Enum<?> en = (Enum<?>)str;
-				buffy.append(en.name());	
-			}
-			else {
-				buffy.append(str);
-			}
-		}
-		return buffy.substring(separator.length());
-	}
+            buffy.append(separator);
+            if (isEnum) {
+                Enum<?> en = (Enum<?>)str;
+                buffy.append(en.name());
+            }
+            else {
+                buffy.append(str);
+            }
+        }
+        return buffy.substring(separator.length());
+    }
 
     /**
      * Splits a string into multiple string based on max
@@ -471,9 +471,9 @@ public class TextUtils {
      * @param maxLineLen            The max length of a line
      * @param excludeColorsFromLen  True to exclude color characters from length calculations
      */
-	public static List<String> paginateString(String str, int maxLineLen, boolean excludeColorsFromLen) {
-		return paginateString(str, null, maxLineLen, excludeColorsFromLen);
-	}
+    public static List<String> paginateString(String str, int maxLineLen, boolean excludeColorsFromLen) {
+        return paginateString(str, null, maxLineLen, excludeColorsFromLen);
+    }
 
     /**
      * Splits a string into multiple string based on max
@@ -484,16 +484,16 @@ public class TextUtils {
      * @param maxLineLen            The max length of a line
      * @param excludeColorsFromLen  True to exclude color characters from length calculations
      */
-	public static List<String> paginateString(String str, String linePrefix, int maxLineLen, boolean excludeColorsFromLen) {
+    public static List<String> paginateString(String str, String linePrefix, int maxLineLen, boolean excludeColorsFromLen) {
 
-		if (linePrefix != null)
-			str = str.replace(linePrefix, "");
+        if (linePrefix != null)
+            str = str.replace(linePrefix, "");
         else
-			linePrefix = "";
+            linePrefix = "";
 
-		String[] words = PATTERN_SPACE.split(str);
+        String[] words = PATTERN_SPACE.split(str);
 
-		List<String> results = new ArrayList<String>(str.length() / maxLineLen);
+        List<String> results = new ArrayList<String>(str.length() / maxLineLen);
 
         String format;
         StringBuilder line = new StringBuilder(maxLineLen);
@@ -501,65 +501,44 @@ public class TextUtils {
 
         boolean wordAddedToLine = false;
 
-		for (int i=0; i < words.length; i++) {
+        for (int i=0; i < words.length; i++) {
 
-			int lineLength = excludeColorsFromLen ? ChatColor.stripColor(line.toString()).length() : line.length();
-			int wordLength = excludeColorsFromLen ? ChatColor.stripColor(words[i]).length() : words[i].length();
+            int lineLength = excludeColorsFromLen ? ChatColor.stripColor(line.toString()).length() : line.length();
+            int wordLength = excludeColorsFromLen ? ChatColor.stripColor(words[i]).length() : words[i].length();
 
-			if (lineLength + wordLength + 1 < maxLineLen ||
-					wordLength > maxLineLen) {
+            if (lineLength + wordLength + 1 < maxLineLen ||
+                    wordLength > maxLineLen) {
 
-				if (wordAddedToLine)
-					line.append(' ');
+                if (wordAddedToLine)
+                    line.append(' ');
 
-				line.append(words[i]);
+                line.append(words[i]);
                 wordAddedToLine = true;
-			}
-			else {
-				i = (i == 0) ? i : i - 1;
+            }
+            else {
+                i = (i == 0) ? i : i - 1;
 
                 String finishedLine = line.toString();
-				format = ChatColor.getLastColors(finishedLine);
-				results.add(finishedLine);
+                format = ChatColor.getLastColors(finishedLine);
+                results.add(finishedLine);
 
                 line.setLength(0);
-				line.append(linePrefix);
+                line.append(linePrefix);
                 line.append(format);
 
                 wordAddedToLine = false;
-			}
-		}
+            }
+        }
 
         // make sure last line is added.
         // get left behind if number of words runs out
         // and there is still room for more.
-		if (wordAddedToLine) {
-			results.add(line.toString());
-		}
+        if (wordAddedToLine) {
+            results.add(line.toString());
+        }
 
-		return results;
-	}
-
-    /**
-     * Remove null items from an array and return
-     * as a {@code String[]}
-     *
-     * @param array  Array to trim
-     */
-	public static <T> String[] trimArray(T[] array) {
-
-		List<String> items = new ArrayList<String>(array.length);
-
-		for (T item : array) {
-			if (item == null)
-				continue;
-
-			items.add(String.valueOf(item));
-		}
-
-		return items.toArray(new String[items.size()]);
-
-	}
+        return results;
+    }
 
     /**
      * Remove null items from an array and return
@@ -567,24 +546,45 @@ public class TextUtils {
      *
      * @param array  Array to trim
      */
-	public static <T> String[] trimArray(T[] array, T nullValue) {
+    public static <T> String[] trimArray(T[] array) {
 
-		List<String> items = new ArrayList<String>(array.length);
+        List<String> items = new ArrayList<String>(array.length);
 
-		for (T item : array) {
-			if (item == null && nullValue != null) {
-				items.add(String.valueOf(nullValue));
-			}
+        for (T item : array) {
+            if (item == null)
+                continue;
 
-			if (item == null)
-				continue;
+            items.add(String.valueOf(item));
+        }
 
-			items.add(String.valueOf(item));
-		}
+        return items.toArray(new String[items.size()]);
 
-		return items.toArray(new String[items.size()]);
+    }
 
-	}
+    /**
+     * Remove null items from an array and return
+     * as a {@code String[]}
+     *
+     * @param array  Array to trim
+     */
+    public static <T> String[] trimArray(T[] array, T nullValue) {
+
+        List<String> items = new ArrayList<String>(array.length);
+
+        for (T item : array) {
+            if (item == null && nullValue != null) {
+                items.add(String.valueOf(nullValue));
+            }
+
+            if (item == null)
+                continue;
+
+            items.add(String.valueOf(item));
+        }
+
+        return items.toArray(new String[items.size()]);
+
+    }
 
 
     /**
@@ -621,23 +621,23 @@ public class TextUtils {
      * @param loc       The location to format
      * @param addColor  True to add color
      */
-	public static String formatLocation(Location loc, boolean addColor) {
-		if (loc == null)
-			return "null";
+    public static String formatLocation(Location loc, boolean addColor) {
+        if (loc == null)
+            return "null";
 
-		DecimalFormat format = new DecimalFormat("###.##");
-		if (addColor) {
-			return ChatColor.LIGHT_PURPLE + "X:" + ChatColor.YELLOW + format.format(loc.getX()) +
-				   ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "Y:" + ChatColor.YELLOW + format.format(loc.getY()) +
-				   ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "Z:" + ChatColor.YELLOW + format.format(loc.getZ()) +
-				   ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "WORLD:" + ChatColor.YELLOW + loc.getWorld().getName();
-		} else {
-			return "X:" + format.format(loc.getX()) +
-				   ", Y:" + format.format(loc.getY()) +
-				   ", Z:" + format.format(loc.getZ()) +
-				   ", WORLD:" + loc.getWorld().getName();
-		}
-	}
+        DecimalFormat format = new DecimalFormat("###.##");
+        if (addColor) {
+            return ChatColor.LIGHT_PURPLE + "X:" + ChatColor.YELLOW + format.format(loc.getX()) +
+                    ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "Y:" + ChatColor.YELLOW + format.format(loc.getY()) +
+                    ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "Z:" + ChatColor.YELLOW + format.format(loc.getZ()) +
+                    ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "WORLD:" + ChatColor.YELLOW + loc.getWorld().getName();
+        } else {
+            return "X:" + format.format(loc.getX()) +
+                    ", Y:" + format.format(loc.getY()) +
+                    ", Z:" + format.format(loc.getZ()) +
+                    ", WORLD:" + loc.getWorld().getName();
+        }
+    }
 
     /**
      * Determine if specified character is an english vowel.
@@ -645,30 +645,30 @@ public class TextUtils {
      * @param ch  The character to check
      * @return
      */
-	public static boolean isVowel(char ch) {
-		return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' ||
-				ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U';
-	}
+    public static boolean isVowel(char ch) {
+        return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' ||
+                ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U';
+    }
 
-	public static String getIndefiniteArticle(String following, boolean lowercase) {
-		PreCon.notNull(following);
+    public static String getIndefiniteArticle(String following, boolean lowercase) {
+        PreCon.notNull(following);
         PreCon.notNull(following);
 
-		following = following.trim();
+        following = following.trim();
 
         if (following.isEmpty())
             return following;
 
-		return getIndefiniteArticle(following.charAt(0), lowercase);
-	}
+        return getIndefiniteArticle(following.charAt(0), lowercase);
+    }
 
-	public static String getIndefiniteArticle(char following, boolean lowercase) {
-		if (lowercase) {
-			return isVowel(following) ? "an" : "a";
-		}
+    public static String getIndefiniteArticle(char following, boolean lowercase) {
+        if (lowercase) {
+            return isVowel(following) ? "an" : "a";
+        }
 
-		return isVowel(following) ? "An" : "A";
-	}
+        return isVowel(following) ? "An" : "A";
+    }
 
     /**
      * Format text string by replacing placeholders with the information
@@ -748,7 +748,7 @@ public class TextUtils {
                 }
             }
         }
-        return msg;     
+        return msg;
     }
 
 
@@ -767,9 +767,9 @@ public class TextUtils {
      * @param template  An object whose toString method yields the message template.
      * @param params    The object to format into the message.
      */
-	public static String format(Object template, Object... params) {
-	    return format(template.toString(), params);
-	}
+    public static String format(Object template, Object... params) {
+        return format(template.toString(), params);
+    }
 
     /**
      * Format text string by replacing placeholders (i.e {0})
@@ -786,7 +786,7 @@ public class TextUtils {
      * @param msg     The message to format.
      * @param params  The object to format into the message.
      */
-	public static String format(String msg, Object... params) {
+    public static String format(String msg, Object... params) {
 
         if (msg.indexOf('{') == -1)
             return msg; // finished

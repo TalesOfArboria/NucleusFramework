@@ -154,7 +154,7 @@ public class PathAreaFinder<T extends PathNode> {
                     // Check for diagonal obstruction
                     if (x != 0 && z != 0 && y >= 0) {
                         Location diagX = node.clone().add(x, y, (short)0),
-                                 diagZ = node.clone().add((short)0, y, z);
+                                diagZ = node.clone().add((short)0, y, z);
 
                         if(!isValid(diagX) && !isValid(diagZ)) {
                             columns[x + 1][z + 1] = false;

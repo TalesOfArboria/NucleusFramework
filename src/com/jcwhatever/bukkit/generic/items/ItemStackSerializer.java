@@ -52,8 +52,8 @@ public class ItemStackSerializer {
 
     private static final Pattern PATTERN_TEXT_FILTER = Pattern.compile("[,:;]");
     private static final Pattern PATTERN_APPEND_LORE = Pattern.compile("[,\\|]");
-	private StringBuilder _buffy;
-	private int _itemsAppended = 0;
+    private StringBuilder _buffy;
+    private int _itemsAppended = 0;
     private SerializerOutputType _outputType = SerializerOutputType.RAW;
 
     /**
@@ -74,9 +74,9 @@ public class ItemStackSerializer {
      *
      * @param size  The initial buffer size
      */
-	public ItemStackSerializer(int size) {
-		_buffy = new StringBuilder(size);
-	}
+    public ItemStackSerializer(int size) {
+        _buffy = new StringBuilder(size);
+    }
 
     /**
      * Constructor.
@@ -98,9 +98,9 @@ public class ItemStackSerializer {
      *
      * @param buffy  The {@code StringBuilder} to append the results to.
      */
-	public ItemStackSerializer(StringBuilder buffy) {
-		_buffy = buffy;
-	}
+    public ItemStackSerializer(StringBuilder buffy) {
+        _buffy = buffy;
+    }
 
     /**
      * Constructor.
@@ -121,14 +121,14 @@ public class ItemStackSerializer {
      *
      * @return Self
      */
-	public ItemStackSerializer append(ItemStack stack) {
-		if (_itemsAppended > 0)
-			_buffy.append(", ");
-		
-		appendItemStackString(_buffy, stack, _outputType);
-		_itemsAppended++;
-		return this;
-	}
+    public ItemStackSerializer append(ItemStack stack) {
+        if (_itemsAppended > 0)
+            _buffy.append(", ");
+
+        appendItemStackString(_buffy, stack, _outputType);
+        _itemsAppended++;
+        return this;
+    }
 
     /**
      * Serialize a collection of {@code ItemStack}'s and append the results
@@ -138,12 +138,12 @@ public class ItemStackSerializer {
      *
      * @return  Self
      */
-	public ItemStackSerializer appendAll(Collection<? extends ItemStack> stacks) {
-		for (ItemStack stack : stacks) {
-			append(stack);
-		}
-		return this;
-	}
+    public ItemStackSerializer appendAll(Collection<? extends ItemStack> stacks) {
+        for (ItemStack stack : stacks) {
+            append(stack);
+        }
+        return this;
+    }
 
     /**
      * Serialize an array of {@code ItemStack}'s and append the results
@@ -155,167 +155,167 @@ public class ItemStackSerializer {
      *
      * @return  Self
      */
-	public <T extends ItemStack> ItemStackSerializer appendAll(T[] stacks) {
-		for (ItemStack stack : stacks) {
-			append(stack);
-		}
-		return this;
-	}
+    public <T extends ItemStack> ItemStackSerializer appendAll(T[] stacks) {
+        for (ItemStack stack : stacks) {
+            append(stack);
+        }
+        return this;
+    }
 
     /**
      * Get the number of {@code ItemStacks} serialized.
      */
-	public int getTotalItems() {
-		return _itemsAppended;
-	}
+    public int getTotalItems() {
+        return _itemsAppended;
+    }
 
     /**
      * Return the serialized result.
      */
-	@Override
-	public String toString() {
-		return _buffy.toString();
-	}
-	
-	
-	private static void appendItemStackString(StringBuilder buffy, ItemStack stack, SerializerOutputType outputType) {
-		
-		if (stack == null) {
-			stack = new ItemStack(Material.AIR, -1);
-		}
-			
-		
-		// material name
+    @Override
+    public String toString() {
+        return _buffy.toString();
+    }
+
+
+    private static void appendItemStackString(StringBuilder buffy, ItemStack stack, SerializerOutputType outputType) {
+
+        if (stack == null) {
+            stack = new ItemStack(Material.AIR, -1);
+        }
+
+
+        // material name
         if (outputType == SerializerOutputType.COLOR)
             buffy.append(ChatColor.GREEN);
 
-		buffy.append(stack.getType().name());
+        buffy.append(stack.getType().name());
 
         // material data
-		short data = stack.getData().getData();
-		if (data != 0) {
+        short data = stack.getData().getData();
+        if (data != 0) {
             if (outputType == SerializerOutputType.COLOR)
                 buffy.append(ChatColor.DARK_GRAY);
-			buffy.append(':');
+            buffy.append(':');
 
             if (outputType == SerializerOutputType.COLOR)
                 buffy.append(ChatColor.YELLOW);
-			buffy.append(data);
+            buffy.append(data);
 
             if (outputType == SerializerOutputType.COLOR)
                 buffy.append(ChatColor.GRAY);
-		}
+        }
         else if (outputType == SerializerOutputType.COLOR) {
             buffy.append(ChatColor.GRAY);
         }
-		
-		// quantity
 
-		buffy.append(';');
-		if (stack.getAmount() != 1) {
+        // quantity
+
+        buffy.append(';');
+        if (stack.getAmount() != 1) {
 
             if (outputType == SerializerOutputType.COLOR)
                 buffy.append(ChatColor.AQUA);
 
             buffy.append(stack.getAmount());
         }
-				
-		// enchantments
-		buffy.append(';');
-		appendEnchantments(buffy, stack);
-		
-		// displayname
-		buffy.append(';');
-		appendDisplayName(buffy, stack);
-		
-		// color
-		buffy.append(';');
-		appendColor(buffy, stack);
-		
-		buffy.append(';');
-		appendLore(buffy, stack);
-		
-		while (buffy.length() > 0 && buffy.charAt(buffy.length() - 1) == ';') {
-			buffy.setLength(buffy.length() - 1);
-		}
-	}
-	
-	
-	private static void appendEnchantments(StringBuilder buffy, ItemStack stack) {
-		Set<Enchantment> enchantments = stack.getEnchantments().keySet();
-		if (enchantments.size() == 0)
-			return;
-		
-		int i=0;
-		int last = enchantments.size() - 1;
-		for (Enchantment enchant: enchantments) {
-			int level = stack.getEnchantmentLevel(enchant);
-			
-			appendEnchantment(buffy, enchant, level);
-			if (i < last) {
-				buffy.append(':');
-			}
-			
-			i++;
-		}
-	}
-	
-	
-	private static void appendEnchantment(StringBuilder buffy, Enchantment enchant, int level) {
-		buffy.append(enchant.getName());
-		buffy.append('-');
-		buffy.append(level);
-	}
 
-	private static void appendDisplayName(StringBuilder buffy, ItemStack stack) {
+        // enchantments
+        buffy.append(';');
+        appendEnchantments(buffy, stack);
 
-		String stackDisplayName = ItemStackHelper.getDisplayName(stack, DisplayNameResult.OPTIONAL);
-		if (stackDisplayName == null)
-			return;
+        // displayname
+        buffy.append(';');
+        appendDisplayName(buffy, stack);
+
+        // color
+        buffy.append(';');
+        appendColor(buffy, stack);
+
+        buffy.append(';');
+        appendLore(buffy, stack);
+
+        while (buffy.length() > 0 && buffy.charAt(buffy.length() - 1) == ';') {
+            buffy.setLength(buffy.length() - 1);
+        }
+    }
+
+
+    private static void appendEnchantments(StringBuilder buffy, ItemStack stack) {
+        Set<Enchantment> enchantments = stack.getEnchantments().keySet();
+        if (enchantments.size() == 0)
+            return;
+
+        int i=0;
+        int last = enchantments.size() - 1;
+        for (Enchantment enchant: enchantments) {
+            int level = stack.getEnchantmentLevel(enchant);
+
+            appendEnchantment(buffy, enchant, level);
+            if (i < last) {
+                buffy.append(':');
+            }
+
+            i++;
+        }
+    }
+
+
+    private static void appendEnchantment(StringBuilder buffy, Enchantment enchant, int level) {
+        buffy.append(enchant.getName());
+        buffy.append('-');
+        buffy.append(level);
+    }
+
+    private static void appendDisplayName(StringBuilder buffy, ItemStack stack) {
+
+        String stackDisplayName = ItemStackHelper.getDisplayName(stack, DisplayNameResult.OPTIONAL);
+        if (stackDisplayName == null)
+            return;
 
         Matcher matcher = PATTERN_TEXT_FILTER.matcher(stackDisplayName);
         stackDisplayName = matcher.replaceAll("");
-		
-		ItemStack checkStack = new ItemStack(stack.getType());
-		
-		if (stackDisplayName.equals(ItemStackHelper.getDisplayName(checkStack, DisplayNameResult.OPTIONAL)))
-			return;
-		
-		buffy.append(stackDisplayName);
-	}
-	
-	
-	private static void appendColor(StringBuilder buffy, ItemStack stack) {
-		Color color = ItemStackHelper.getColor(stack);
-		if (color == null)
-			return;
-		
-		buffy.append(Integer.toHexString(color.asRGB()));
-	}
-	
-	private static void appendLore(StringBuilder buffy, ItemStack stack) {
-		ItemMeta meta = stack.getItemMeta();
-		if (meta == null)
-			return;
-		
-		List<String> lore = meta.getLore();
-		if (lore == null)
-			return;
-		
-		
-		for (int i=0, last = lore.size() - 1; i < lore.size(); i++) {
-			
-			String line = lore.get(i);
-			if (line == null)
-				continue;
+
+        ItemStack checkStack = new ItemStack(stack.getType());
+
+        if (stackDisplayName.equals(ItemStackHelper.getDisplayName(checkStack, DisplayNameResult.OPTIONAL)))
+            return;
+
+        buffy.append(stackDisplayName);
+    }
+
+
+    private static void appendColor(StringBuilder buffy, ItemStack stack) {
+        Color color = ItemStackHelper.getColor(stack);
+        if (color == null)
+            return;
+
+        buffy.append(Integer.toHexString(color.asRGB()));
+    }
+
+    private static void appendLore(StringBuilder buffy, ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null)
+            return;
+
+        List<String> lore = meta.getLore();
+        if (lore == null)
+            return;
+
+
+        for (int i=0, last = lore.size() - 1; i < lore.size(); i++) {
+
+            String line = lore.get(i);
+            if (line == null)
+                continue;
 
             Matcher matcher = PATTERN_APPEND_LORE.matcher(line);
-			buffy.append(matcher.replaceAll(""));
-			
-			if (i < last) {
-				buffy.append('|');
-			}
-		}
-	}
+            buffy.append(matcher.replaceAll(""));
+
+            if (i < last) {
+                buffy.append('|');
+            }
+        }
+    }
 
 }

@@ -46,111 +46,111 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class AnvilView extends AbstractView {
-	
-	private static EventListener _eventListener;
-	
-	private ItemFilterManager _filterManager;
 
-	
-	
-	@Override
-	protected void onInit(String name, IDataNode dataNode, ViewManager viewManager) {
-		
-		_filterManager = new ItemFilterManager(viewManager.getPlugin(), dataNode.getNode("item-filter"));
-		
-		if (_eventListener == null) {
-			_eventListener = new EventListener();
-			Bukkit.getPluginManager().registerEvents(_eventListener, GenericsLib.getPlugin());
-		}
-	}
-	
-	@Override
-	public InventoryType getInventoryType() {
-		return InventoryType.ANVIL;
-	}
-	
-	@Override
-	public ViewType getViewType() {
-		return ViewType.ANVIL;
-	}
+    private static EventListener _eventListener;
 
-	@Override
-	public void dispose() {
-		// do nothing
-	}
-	
-	@Override
-	protected void onLoadSettings(IDataNode dataNode) {
-		// do nothing
-	}
-	
-	
-	public ItemFilterManager getFilterManager() {
-		return _filterManager;
-	}
-	
-	private static class EventListener implements Listener {
-		
-		@EventHandler(priority = EventPriority.HIGHEST)
-		private void onAnvilItemRepair(AnvilItemRenameEvent event) {
-			Player p = event.getPlayer();
-			
-			ViewInstance current = ViewManager.getCurrent(p);
+    private ItemFilterManager _filterManager;
 
-			if (current instanceof AnvilInstance) {
-				
-				AnvilView view = (AnvilView)current.getView();
-				ItemStack result = event.getRenamedItem();
-				
-				if (!view.getFilterManager().isValidItem(result)) {
-					InventoryView invView = current.getInventoryView();
-					if (invView != null) {
-						ItemStack stack = result.clone();
-						ItemStackHelper.setLore(stack, ChatColor.RED + "Not repairable here.");
-						invView.setItem(0, stack);
-					}
-				}
-			}
-		}
-	}
 
-	@Override
-	protected ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta meta) {
-		AnvilInstance instance = new AnvilInstance(this, previous, p, sessionMeta, meta);
-		return instance;
-	}
-	
-	
-	
-	public class AnvilInstance extends ViewInstance {
 
-		public AnvilInstance(IView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta initialMeta) {
-			super(view, previous, p, sessionMeta, initialMeta);
-		}
+    @Override
+    protected void onInit(String name, IDataNode dataNode, ViewManager viewManager) {
 
-		@Override
-		protected InventoryView onShow(ViewMeta meta) {
-			
-			if (getSourceBlock() == null)
-				return null;
-			
-			Location loc = getSourceBlock().getLocation();
-			try {
-				
-				Player p = getPlayer();
+        _filterManager = new ItemFilterManager(viewManager.getPlugin(), dataNode.getNode("item-filter"));
 
-				Method getHandle = p.getClass().getDeclaredMethod("getHandle");
+        if (_eventListener == null) {
+            _eventListener = new EventListener();
+            Bukkit.getPluginManager().registerEvents(_eventListener, GenericsLib.getPlugin());
+        }
+    }
 
-				Object entityHuman = getHandle.invoke(p);
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.ANVIL;
+    }
 
-				Method openAnvil = entityHuman.getClass().getDeclaredMethod("openAnvil", int.class, int.class, int.class);
+    @Override
+    public ViewType getViewType() {
+        return ViewType.ANVIL;
+    }
 
-				openAnvil.invoke(entityHuman, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    @Override
+    public void dispose() {
+        // do nothing
+    }
 
-			}
+    @Override
+    protected void onLoadSettings(IDataNode dataNode) {
+        // do nothing
+    }
+
+
+    public ItemFilterManager getFilterManager() {
+        return _filterManager;
+    }
+
+    private static class EventListener implements Listener {
+
+        @EventHandler(priority = EventPriority.HIGHEST)
+        private void onAnvilItemRepair(AnvilItemRenameEvent event) {
+            Player p = event.getPlayer();
+
+            ViewInstance current = ViewManager.getCurrent(p);
+
+            if (current instanceof AnvilInstance) {
+
+                AnvilView view = (AnvilView)current.getView();
+                ItemStack result = event.getRenamedItem();
+
+                if (!view.getFilterManager().isValidItem(result)) {
+                    InventoryView invView = current.getInventoryView();
+                    if (invView != null) {
+                        ItemStack stack = result.clone();
+                        ItemStackHelper.setLore(stack, ChatColor.RED + "Not repairable here.");
+                        invView.setItem(0, stack);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta meta) {
+        AnvilInstance instance = new AnvilInstance(this, previous, p, sessionMeta, meta);
+        return instance;
+    }
+
+
+
+    public class AnvilInstance extends ViewInstance {
+
+        public AnvilInstance(IView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta initialMeta) {
+            super(view, previous, p, sessionMeta, initialMeta);
+        }
+
+        @Override
+        protected InventoryView onShow(ViewMeta meta) {
+
+            if (getSourceBlock() == null)
+                return null;
+
+            Location loc = getSourceBlock().getLocation();
+            try {
+
+                Player p = getPlayer();
+
+                Method getHandle = p.getClass().getDeclaredMethod("getHandle");
+
+                Object entityHuman = getHandle.invoke(p);
+
+                Method openAnvil = entityHuman.getClass().getDeclaredMethod("openAnvil", int.class, int.class, int.class);
+
+                openAnvil.invoke(entityHuman, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+
+            }
             catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			}
+                e.printStackTrace();
+            }
             catch (SecurityException e) {
                 e.printStackTrace();
             }
@@ -163,40 +163,40 @@ public class AnvilView extends AbstractView {
             catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
-			
-			return null;
-		}
-		
-		@Override
-		public ViewResult getResult() {
-			return null;
-		}
 
-		@Override
-		protected InventoryView onShowAsPrev(ViewMeta instanceMeta, ViewResult result) {
-			return onShow(instanceMeta);
-		}
+            return null;
+        }
+
+        @Override
+        public ViewResult getResult() {
+            return null;
+        }
+
+        @Override
+        protected InventoryView onShowAsPrev(ViewMeta instanceMeta, ViewResult result) {
+            return onShow(instanceMeta);
+        }
 
 
-		@Override
-		protected void onClose(ViewCloseReason reason) {
-			// do nothing
-		}
+        @Override
+        protected void onClose(ViewCloseReason reason) {
+            // do nothing
+        }
 
-		@Override
-		protected boolean onItemsPlaced(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
-			return true;
-		}
+        @Override
+        protected boolean onItemsPlaced(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
+            return true;
+        }
 
-		@Override
-		protected boolean onItemsPickup(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
-			return true;
-		}
+        @Override
+        protected boolean onItemsPickup(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
+            return true;
+        }
 
-		@Override
-		protected boolean onItemsDropped(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
-			return true;
-		}
+        @Override
+        protected boolean onItemsDropped(InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
+            return true;
+        }
 
         @Override
         protected boolean onLowerItemsPlaced (InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
@@ -207,9 +207,9 @@ public class AnvilView extends AbstractView {
         protected boolean onLowerItemsPickup (InventoryActionInfo actionInfo, ViewActionOrder actionOrder) {
             return true;
         }
-				
-	}
 
-	
-	
+    }
+
+
+
 }

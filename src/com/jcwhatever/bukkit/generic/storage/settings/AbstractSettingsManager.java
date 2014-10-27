@@ -35,254 +35,254 @@ import java.util.UUID;
 
 public abstract class AbstractSettingsManager implements ISettingsManager {
 
-	private List<Runnable> _onSettingsChanged = new ArrayList<Runnable>(5);
-	
-	public AbstractSettingsManager() {
-		
-	}
+    private List<Runnable> _onSettingsChanged = new ArrayList<Runnable>(5);
 
-	@Override
-	public void addOnSettingsChanged(Runnable runnable, boolean run) {
-		_onSettingsChanged.add(runnable);
+    public AbstractSettingsManager() {
 
-		if (run) {
-			//Bukkit.getScheduler().scheduleSyncDelayedTask(_plugin, runnable, 5);
-			runnable.run();
-		}
+    }
 
-	}
+    @Override
+    public void addOnSettingsChanged(Runnable runnable, boolean run) {
+        _onSettingsChanged.add(runnable);
 
-	
-	@Override
-	public ValidationResults set(String property, Object value) {
-		SettingDefinitions definitions = getPossibleSettings();
-		
-		if (definitions == null)
-			return ValidationResults.FALSE;
+        if (run) {
+            //Bukkit.getScheduler().scheduleSyncDelayedTask(_plugin, runnable, 5);
+            runnable.run();
+        }
 
-		SettingDefinition def = definitions.get(property);
+    }
 
-		if (def == null)
-			return ValidationResults.FALSE;
-		
-		if (value == null) {
-			return onSet(property, null);
-		}
 
-		ValueConverter<?, ?> converter = def.getValueConverter();
-		if (converter != null) {
-			value = converter.convert(value);
-			if (value == null)
-				return ValidationResults.FALSE;
-		}
-		
-		Class<?> type = def.getValueType();
+    @Override
+    public ValidationResults set(String property, Object value) {
+        SettingDefinitions definitions = getPossibleSettings();
 
-		// BOOLEAN
-		if (type.isAssignableFrom(Boolean.class)) {
+        if (definitions == null)
+            return ValidationResults.FALSE;
 
-			if (!(value instanceof Boolean))
-				value = Boolean.parseBoolean(value.toString());
-		}
+        SettingDefinition def = definitions.get(property);
 
-		// UUID
-		else if (type.isAssignableFrom(UUID.class)) {
+        if (def == null)
+            return ValidationResults.FALSE;
 
-			if (!(value instanceof UUID)) {
-				try {
-					value = UUID.fromString(value.toString());
-				}
-				catch (IllegalArgumentException iae) {
-					return ValidationResults.FALSE;
-				}
-			}
-		}
+        if (value == null) {
+            return onSet(property, null);
+        }
 
-		// STRING
-		else if (type.isAssignableFrom(String.class)) {
+        ValueConverter<?, ?> converter = def.getValueConverter();
+        if (converter != null) {
+            value = converter.convert(value);
+            if (value == null)
+                return ValidationResults.FALSE;
+        }
 
-			if (!(value instanceof String))
-				value = value.toString();
-		}
+        Class<?> type = def.getValueType();
 
-		// BYTE, SHORT, INTEGER
-		else if (type.isAssignableFrom(Byte.class) ||
-				type.isAssignableFrom(Short.class) ||
-				type.isAssignableFrom(Integer.class)) {
+        // BOOLEAN
+        if (type.isAssignableFrom(Boolean.class)) {
 
-			try {
-				value = Integer.parseInt(value.toString());
-			}
-			catch (NumberFormatException nfe) {
-				return ValidationResults.FALSE;
-			}
+            if (!(value instanceof Boolean))
+                value = Boolean.parseBoolean(value.toString());
+        }
 
-		}
+        // UUID
+        else if (type.isAssignableFrom(UUID.class)) {
 
-		// DOUBLE
-		else if (type.isAssignableFrom(Double.class)) {
-			try {
-				value = Double.parseDouble(value.toString());
-			}
-			catch (NumberFormatException nfe) {
-				return ValidationResults.FALSE;
-			}
-		}
+            if (!(value instanceof UUID)) {
+                try {
+                    value = UUID.fromString(value.toString());
+                }
+                catch (IllegalArgumentException iae) {
+                    return ValidationResults.FALSE;
+                }
+            }
+        }
 
-		// ITEM STACK
-		else if (type.isAssignableFrom(ItemStack.class)) {
+        // STRING
+        else if (type.isAssignableFrom(String.class)) {
 
-			if (value instanceof ItemStack) {
-				value = new ItemStack[] { (ItemStack)value };
-			}
-			else if (value instanceof String) {
-				value = ItemStackHelper.parse((String)value);
-				if (value == null)
-					return ValidationResults.FALSE;
-			}
-		}
+            if (!(value instanceof String))
+                value = value.toString();
+        }
 
-		// ENUM
-		else if (type.isEnum()) {
+        // BYTE, SHORT, INTEGER
+        else if (type.isAssignableFrom(Byte.class) ||
+                type.isAssignableFrom(Short.class) ||
+                type.isAssignableFrom(Integer.class)) {
 
-			if (value instanceof String) { // convert string to enum
+            try {
+                value = Integer.parseInt(value.toString());
+            }
+            catch (NumberFormatException nfe) {
+                return ValidationResults.FALSE;
+            }
 
-				String constantName = (String)value;
-				@SuppressWarnings("unchecked")
-				Enum<?>[] constants = ((Class<Enum<?>>)type).getEnumConstants();
+        }
 
-				for (Enum<?> constant : constants) {
-					if (constant.name().equalsIgnoreCase(constantName)) {
-						if (!type.isInstance(constant))
-							return ValidationResults.FALSE;
-						
-						value = constant.name();
-						
-						break;
-					}
-				}
+        // DOUBLE
+        else if (type.isAssignableFrom(Double.class)) {
+            try {
+                value = Double.parseDouble(value.toString());
+            }
+            catch (NumberFormatException nfe) {
+                return ValidationResults.FALSE;
+            }
+        }
 
-			}
-		}
-		
-		
-		SettingValidator validator = def.getValidator();
-		if (validator != null) {
-			ValidationResults results = validator.validate(value);
-			
-			if (!results.isValid())
-				return results;
-		}
+        // ITEM STACK
+        else if (type.isAssignableFrom(ItemStack.class)) {
 
-		ValidationResults result = onSet(property, value);
-		if (result.isValid()) {
-			for (Runnable runnable : _onSettingsChanged) {
-				runnable.run();
-			}
-		}
-		
-		return result;
-	}
-	
-	@Override
+            if (value instanceof ItemStack) {
+                value = new ItemStack[] { (ItemStack)value };
+            }
+            else if (value instanceof String) {
+                value = ItemStackHelper.parse((String)value);
+                if (value == null)
+                    return ValidationResults.FALSE;
+            }
+        }
+
+        // ENUM
+        else if (type.isEnum()) {
+
+            if (value instanceof String) { // convert string to enum
+
+                String constantName = (String)value;
+                @SuppressWarnings("unchecked")
+                Enum<?>[] constants = ((Class<Enum<?>>)type).getEnumConstants();
+
+                for (Enum<?> constant : constants) {
+                    if (constant.name().equalsIgnoreCase(constantName)) {
+                        if (!type.isInstance(constant))
+                            return ValidationResults.FALSE;
+
+                        value = constant.name();
+
+                        break;
+                    }
+                }
+
+            }
+        }
+
+
+        SettingValidator validator = def.getValidator();
+        if (validator != null) {
+            ValidationResults results = validator.validate(value);
+
+            if (!results.isValid())
+                return results;
+        }
+
+        ValidationResults result = onSet(property, value);
+        if (result.isValid()) {
+            for (Runnable runnable : _onSettingsChanged) {
+                runnable.run();
+            }
+        }
+
+        return result;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
-	public <T> T get(String property) {
-		return (T)get(property, false);
-	}
+    public <T> T get(String property) {
+        return (T)get(property, false);
+    }
 
 
     @Override
     @SuppressWarnings("unchecked")
-	public <T> T get(String property, boolean unconvertValue) {
-		
-		SettingDefinitions definitions = getPossibleSettings();
-		
-		if (definitions == null)
-			return null;
+    public <T> T get(String property, boolean unconvertValue) {
+
+        SettingDefinitions definitions = getPossibleSettings();
+
+        if (definitions == null)
+            return null;
 
 
-		SettingDefinition def = definitions.get(property);
+        SettingDefinition def = definitions.get(property);
 
-		if (def == null)
-			return null;
+        if (def == null)
+            return null;
 
-		Class<?> type = def.getValueType();
-		Object value;
+        Class<?> type = def.getValueType();
+        Object value;
 
-		// BOOLEAN
-		if (type.isAssignableFrom(Boolean.class))
-			value = getBoolean(property, def.hasDefaultVal() ? (Boolean)def.getDefaultVal() : false);
+        // BOOLEAN
+        if (type.isAssignableFrom(Boolean.class))
+            value = getBoolean(property, def.hasDefaultVal() ? (Boolean)def.getDefaultVal() : false);
 
-		// INTEGER
-		else if (type.isAssignableFrom(Integer.class))
-			value = getInteger(property, def.hasDefaultVal() ? (Integer)def.getDefaultVal() : 0);
-		
-		// LONG
-		else if (type.isAssignableFrom(Long.class))
-			value = getLong(property, def.hasDefaultVal() ? (Long)def.getDefaultVal() : 0);
+            // INTEGER
+        else if (type.isAssignableFrom(Integer.class))
+            value = getInteger(property, def.hasDefaultVal() ? (Integer)def.getDefaultVal() : 0);
 
-		// DOUBLE
-		else if (type.isAssignableFrom(Double.class))
-			value = getDouble(property, def.hasDefaultVal() ? (Double)def.getDefaultVal() : 0.0D);
+            // LONG
+        else if (type.isAssignableFrom(Long.class))
+            value = getLong(property, def.hasDefaultVal() ? (Long)def.getDefaultVal() : 0);
 
-		// STRING
-		else if (type.isAssignableFrom(String.class))
-			value = getString(property, def.hasDefaultVal() ? (String)def.getDefaultVal() : null);
+            // DOUBLE
+        else if (type.isAssignableFrom(Double.class))
+            value = getDouble(property, def.hasDefaultVal() ? (Double)def.getDefaultVal() : 0.0D);
 
-		// LOCATION
-		else if (type.isAssignableFrom(Location.class))
-			value = getLocation(property, def.hasDefaultVal() ? (Location)def.getDefaultVal() : null);
+            // STRING
+        else if (type.isAssignableFrom(String.class))
+            value = getString(property, def.hasDefaultVal() ? (String)def.getDefaultVal() : null);
 
-		// ITEMSTACK
-		else if (type.isAssignableFrom(ItemStack.class))
-			value = getItemStacks(property, def.hasDefaultVal() ? (ItemStack[])def.getDefaultVal() : null);
+            // LOCATION
+        else if (type.isAssignableFrom(Location.class))
+            value = getLocation(property, def.hasDefaultVal() ? (Location)def.getDefaultVal() : null);
+
+            // ITEMSTACK
+        else if (type.isAssignableFrom(ItemStack.class))
+            value = getItemStacks(property, def.hasDefaultVal() ? (ItemStack[])def.getDefaultVal() : null);
 
 
-		// UUID
-		else if (type.isAssignableFrom(UUID.class))
-			value = getUUID(property, def.hasDefaultVal() ? (UUID)def.getDefaultVal() : null);
+            // UUID
+        else if (type.isAssignableFrom(UUID.class))
+            value = getUUID(property, def.hasDefaultVal() ? (UUID)def.getDefaultVal() : null);
 
-		else if (type.isEnum())
-			value = getGenericEnum(property, (Enum<?>)(def.hasDefaultVal() ? type.cast(def.getDefaultVal()) : null), (Class<Enum<?>>)type);
-		
-		else {
-			value = getObject(property);
-			if (value == null)
-				return (T)def.getDefaultVal();
-		}
-		
-		if (unconvertValue) {
-			ValueConverter<?, ?> converter = def.getValueConverter();
-			if (converter != null) {
-				value = converter.unconvert(value);
-			}
-		}
-		
-		return (T)value;
-	}
+        else if (type.isEnum())
+            value = getGenericEnum(property, (Enum<?>)(def.hasDefaultVal() ? type.cast(def.getDefaultVal()) : null), (Class<Enum<?>>)type);
 
-	
-	
-	protected abstract ValidationResults onSet(String property, Object value);
-	
-	protected abstract Boolean getBoolean(String property, boolean defaultVal);
-	
-	protected abstract Integer getInteger(String property, int defaultVal);
-	
-	protected abstract Long getLong(String property, long defaultVal);
-	
-	protected abstract Double getDouble(String property, double defaultVal);
-	
-	protected abstract String getString(String property, String defaultVal);
-	
-	protected abstract Location getLocation(String property, Location defaultVal);
-	
-	protected abstract ItemStack[] getItemStacks(String property, ItemStack[] defaultVal);
-	
-	protected abstract UUID getUUID(String property, UUID defaultValue);
-	
-	protected abstract Enum<?> getGenericEnum(String property, Enum<?> defaultValue, Class<Enum<?>> type);
-	
-	protected abstract Object getObject(String property);
-	
+        else {
+            value = getObject(property);
+            if (value == null)
+                return (T)def.getDefaultVal();
+        }
+
+        if (unconvertValue) {
+            ValueConverter<?, ?> converter = def.getValueConverter();
+            if (converter != null) {
+                value = converter.unconvert(value);
+            }
+        }
+
+        return (T)value;
+    }
+
+
+
+    protected abstract ValidationResults onSet(String property, Object value);
+
+    protected abstract Boolean getBoolean(String property, boolean defaultVal);
+
+    protected abstract Integer getInteger(String property, int defaultVal);
+
+    protected abstract Long getLong(String property, long defaultVal);
+
+    protected abstract Double getDouble(String property, double defaultVal);
+
+    protected abstract String getString(String property, String defaultVal);
+
+    protected abstract Location getLocation(String property, Location defaultVal);
+
+    protected abstract ItemStack[] getItemStacks(String property, ItemStack[] defaultVal);
+
+    protected abstract UUID getUUID(String property, UUID defaultValue);
+
+    protected abstract Enum<?> getGenericEnum(String property, Enum<?> defaultValue, Class<Enum<?>> type);
+
+    protected abstract Object getObject(String property);
+
 }

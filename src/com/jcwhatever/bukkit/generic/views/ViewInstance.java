@@ -35,7 +35,7 @@ import org.bukkit.inventory.InventoryView;
 import javax.annotation.Nullable;
 
 /**
- * 
+ *
  * Represents an instance of a View created for a specific player
  */
 public abstract class ViewInstance {
@@ -59,7 +59,7 @@ public abstract class ViewInstance {
 
     /**
      * Constructor.
-     * 
+     *
      * @param view          The view that spawned this instance.
      * @param previous      The previous instance the player was viewing, if any.
      * @param p             The player the instance is for.
@@ -407,7 +407,7 @@ public abstract class ViewInstance {
      * Called when the view is shown as a previous view.
      * If there is no action to be taken when shown as previous,
      * be sure to forward this method to onShow(instanceMeta)
-     * 
+     *
      * @param instanceMeta  The meta data for the instance.
      * @param result        The result meta data from the closing view instance. 
      */
@@ -451,18 +451,18 @@ public abstract class ViewInstance {
 
     /**
      * Called when an item is placed into the lower inventory area.
-     * 
+     *
      * @param actionInfo  Information pertaining to the event
-     * 
+     *
      * @return True to allow the click action. False to cancel event.
      */
     protected abstract boolean onLowerItemsPlaced(InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
-    
+
     /**
      * Called when an item is picked up from the lower inventory area.
-     * 
+     *
      * @param actionInfo  Information pertaining to the event
-     * 
+     *
      * @return True to allow the click action. False to cancel event.
      */
     protected abstract boolean onLowerItemsPickup(InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
