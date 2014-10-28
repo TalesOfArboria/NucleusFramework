@@ -35,6 +35,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+/**
+ * A child Yaml data node of a Yaml data storage.
+ */
 public class YamlDataNode implements IDataNode {
 
     private static Pattern PATTERN_PATH_SPLITTER = Pattern.compile("\\.");
@@ -43,6 +46,12 @@ public class YamlDataNode implements IDataNode {
     private String _path;
     private String _nodeName;
 
+    /**
+     * Constructor.
+     *
+     * @param storage  The parent data storage.
+     * @param path     The data node path.
+     */
     YamlDataNode(YamlDataStorage storage, String path) {
 
         _storage = storage;

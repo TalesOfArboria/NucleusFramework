@@ -30,8 +30,16 @@ package com.jcwhatever.bukkit.generic.storage;
  */
 public abstract class BatchOperation {
 
-    public abstract void run(IDataNode config);
+    /**
+     * Called to run batch data storage operations.
+     *
+     * @param dataNode The data node the batch operation is being run on.
+     */
+    public abstract void run(IDataNode dataNode);
 
+    /**
+     * Called when the batch operation is finished.
+     */
     public void onFinish() {}
 
 }

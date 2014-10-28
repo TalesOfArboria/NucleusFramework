@@ -420,11 +420,11 @@ public class YamlDataStorage implements IDataNode {
     }
 
 
-    void runBatchOperation(final BatchOperation batch, IDataNode config) {
+    void runBatchOperation(final BatchOperation batch, IDataNode dataNode) {
 
         synchronized (_sync) {
             _batch.start();
-            batch.run(config);
+            batch.run(dataNode);
             _batch.end();
 
             if (!_batch.isRunning()) {
@@ -448,11 +448,11 @@ public class YamlDataStorage implements IDataNode {
     }
 
 
-    void preventSave(BatchOperation batch, IDataNode config) {
+    void preventSave(BatchOperation batch, IDataNode dataNode) {
 
         synchronized (_sync) {
             _batch.start();
-            batch.run(config);
+            batch.run(dataNode);
             _batch.end();
         }
     }
