@@ -71,7 +71,8 @@ public class GenericsEventManager {
     /**
      * Constructor.
      *
-     * @param parent  The parent event manager.
+     * @param parent  The parent event manager. The parent receives all
+     *                event calls the child receives.
      */
     public GenericsEventManager(@Nullable GenericsEventManager parent) {
         _parent = parent;
