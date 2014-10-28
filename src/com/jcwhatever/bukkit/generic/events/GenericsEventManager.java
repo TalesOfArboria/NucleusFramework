@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.events;
 import com.jcwhatever.bukkit.generic.events.exceptions.EventManagerDisposedException;
 import com.jcwhatever.bukkit.generic.events.exceptions.HandlerAlreadyRegisteredException;
 import com.jcwhatever.bukkit.generic.events.exceptions.ListenerAlreadyRegisteredException;
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import javax.annotation.Nullable;
@@ -39,7 +40,7 @@ import java.util.Set;
 /**
  * Generics event manager.
  */
-public class GenericsEventManager {
+public class GenericsEventManager implements IDisposable {
 
     private static GenericsEventManager _globalInstance;
 
@@ -260,6 +261,7 @@ public class GenericsEventManager {
     /**
      * Dispose the event manager.
      */
+    @Override
     public void dispose() {
 
         // The global manager cannot be disposed.
