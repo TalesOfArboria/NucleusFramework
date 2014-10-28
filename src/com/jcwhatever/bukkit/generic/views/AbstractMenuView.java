@@ -53,8 +53,19 @@ public abstract class AbstractMenuView extends AbstractView {
         onDispose();
     }
 
+    /**
+     * Called when the view is initialized.
+     */
     protected abstract void onInit();
+
+    /**
+     * Called when the inventory needs to be rebuilt.
+     */
     protected abstract void buildInventory();
+
+    /**
+     * Called when the view is disposed.
+     */
     protected void onDispose() {}
 
 }
