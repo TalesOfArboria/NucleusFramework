@@ -61,6 +61,20 @@ public class PlayerHelper {
     private static IDataNode _nameData;
 
     /**
+     * Determine if a player is online.
+     *
+     * @param p  The player to check.
+     */
+    public static boolean isOnline(Player p) {
+        Player[] players = Bukkit.getServer().getOnlinePlayers();
+        for (Player plyr : players) {
+            if (plyr.getUniqueId().equals(p.getUniqueId()))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Get an online player by name.
      *
      * @param playerName  The name of the player.
