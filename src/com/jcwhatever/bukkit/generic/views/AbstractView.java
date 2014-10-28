@@ -218,7 +218,8 @@ public abstract class AbstractView implements IView {
      *
      * @return  A new view instance.
      */
-    protected abstract ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta);
+    protected abstract ViewInstance onCreateInstance(
+            Player p, @Nullable ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta);
 
     /**
      * Called whenever the settings are loaded or reloaded.

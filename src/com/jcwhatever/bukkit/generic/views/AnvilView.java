@@ -42,16 +42,18 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Represents an Anvil GUI view.
+ */
 public class AnvilView extends AbstractView {
 
     private static EventListener _eventListener;
 
     private ItemFilterManager _filterManager;
-
-
 
     @Override
     protected void onInit(String name, IDataNode dataNode, ViewManager viewManager) {
@@ -84,51 +86,40 @@ public class AnvilView extends AbstractView {
         // do nothing
     }
 
-
+    /**
+     * Get the filter manager that specifies what can be created
+     * or repaired on the anvil view.
+     */
     public ItemFilterManager getFilterManager() {
         return _filterManager;
     }
 
-    private static class EventListener implements Listener {
-
-        @EventHandler(priority = EventPriority.HIGHEST)
-        private void onAnvilItemRepair(AnvilItemRenameEvent event) {
-            Player p = event.getPlayer();
-
-            ViewInstance current = ViewManager.getCurrent(p);
-
-            if (current instanceof AnvilInstance) {
-
-                AnvilView view = (AnvilView)current.getView();
-                ItemStack result = event.getRenamedItem();
-
-                if (!view.getFilterManager().isValidItem(result)) {
-                    InventoryView invView = current.getInventoryView();
-                    if (invView != null) {
-                        ItemStack stack = result.clone();
-                        ItemStackHelper.setLore(stack, ChatColor.RED + "Not repairable here.");
-                        invView.setItem(0, stack);
-                    }
-                }
-            }
-        }
-    }
 
     @Override
-    protected ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta meta) {
-        AnvilInstance instance = new AnvilInstance(this, previous, p, sessionMeta, meta);
-        return instance;
+    protected ViewInstance onCreateInstance(Player p, @Nullable ViewInstance previous, ViewMeta sessionMeta, ViewMeta meta) {
+        return new AnvilInstance(this, previous, p, sessionMeta, meta);
     }
 
-
-
+    /**
+     * Instance of an anvil GUI view shown to a player.
+     */
     public class AnvilInstance extends ViewInstance {
 
-        public AnvilInstance(IView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta initialMeta) {
+        /**
+         * Constructor.
+         *
+         * @param view         The owning view.
+         * @param previous     The previous view the player was looking at.
+         * @param p            The player.
+         * @param sessionMeta  The sessionMeta.
+         * @param initialMeta  The initial instance meta.
+         */
+        public AnvilInstance(IView view, @Nullable ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta initialMeta) {
             super(view, previous, p, sessionMeta, initialMeta);
         }
 
         @Override
+        @Nullable
         protected InventoryView onShow(ViewMeta meta) {
 
             if (getSourceBlock() == null)
@@ -148,19 +139,8 @@ public class AnvilView extends AbstractView {
                 openAnvil.invoke(entityHuman, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
             }
-            catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-            catch (SecurityException e) {
-                e.printStackTrace();
-            }
-            catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-            catch (InvocationTargetException e) {
+            catch (NoSuchMethodException | SecurityException | IllegalAccessException |
+                    IllegalArgumentException | InvocationTargetException e) {
                 e.printStackTrace();
             }
 
@@ -168,11 +148,13 @@ public class AnvilView extends AbstractView {
         }
 
         @Override
+        @Nullable
         public ViewResult getResult() {
-            return null;
+            return null; // no result is returned
         }
 
         @Override
+        @Nullable
         protected InventoryView onShowAsPrev(ViewMeta instanceMeta, ViewResult result) {
             return onShow(instanceMeta);
         }
@@ -208,6 +190,35 @@ public class AnvilView extends AbstractView {
             return true;
         }
 
+    }
+
+
+    /*
+     * Global Bukkit event listener for AnvilView
+     */
+    private static class EventListener implements Listener {
+
+        @EventHandler(priority = EventPriority.HIGHEST)
+        private void onAnvilItemRepair(AnvilItemRenameEvent event) {
+            Player p = event.getPlayer();
+
+            ViewInstance current = ViewManager.getCurrent(p);
+
+            if (current instanceof AnvilInstance) {
+
+                AnvilView view = (AnvilView)current.getView();
+                ItemStack result = event.getRenamedItem();
+
+                if (!view.getFilterManager().isValidItem(result)) {
+                    InventoryView invView = current.getInventoryView();
+                    if (invView != null) {
+                        ItemStack stack = result.clone();
+                        ItemStackHelper.setLore(stack, ChatColor.RED + "Not repairable here.");
+                        invView.setItem(0, stack);
+                    }
+                }
+            }
+        }
     }
 
 

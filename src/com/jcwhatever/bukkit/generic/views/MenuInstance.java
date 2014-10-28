@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
+import com.sun.istack.internal.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 
@@ -35,14 +36,23 @@ public class MenuInstance extends AbstractMenuInstance {
 
     private MenuView _view;
 
-    public MenuInstance(MenuView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
+    /**
+     * Constructor.
+     *
+     * @param view          The owning view.
+     * @param previous      The view the player was previously looking at.
+     * @param p             The player the view instance will be shown to.
+     * @param sessionMeta   The players session meta.
+     * @param instanceMeta  The instance meta.
+     */
+    public MenuInstance(MenuView view, @Nullable ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
         super(view, previous, p, sessionMeta, instanceMeta);
         _view = view;
     }
 
     @Override
     public ViewResult getResult() {
-        return null;
+        return null; // no result returned.
     }
 
     @Override

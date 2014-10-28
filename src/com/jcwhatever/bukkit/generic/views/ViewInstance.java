@@ -393,14 +393,23 @@ public abstract class ViewInstance {
     /**
      * Get the optional result of the view instance.
      */
+    @Nullable
     public abstract ViewResult getResult ();
 
     /**
-     * Called when the view is shown. Is not called if the view
+     * Called when the view needs to be shown. Is not called if the view
      * is being shown as a previous view.
      *
+     * <p>
+     *     It is left to the implementation to actually construct
+     *     and show the view to the player.
+     * </p>
+     *
      * @param instanceMeta  The meta data for the instance.
+     *
+     * @return Null if the view could not be shown.
      */
+    @Nullable
     protected abstract InventoryView onShow (ViewMeta instanceMeta);
 
     /**
@@ -408,9 +417,17 @@ public abstract class ViewInstance {
      * If there is no action to be taken when shown as previous,
      * be sure to forward this method to onShow(instanceMeta)
      *
+     * <p>
+     *     It is left to the implementation to actually show
+     *     and construct the view to the player.
+     * </p>
+     *
      * @param instanceMeta  The meta data for the instance.
-     * @param result        The result meta data from the closing view instance. 
+     * @param result        The result meta data from the closing view instance.
+     *
+     * @return Null if the view could not be shown.
      */
+    @Nullable
     protected abstract InventoryView onShowAsPrev (ViewMeta instanceMeta, ViewResult result);
 
     /**

@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
+import com.sun.istack.internal.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
@@ -46,12 +47,14 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+/**
+ * Represents a crafting workbench GUI view.
+ */
 public class WorkbenchView extends AbstractView {
 
     private static EventListener _eventListener;
 
     private ItemFilterManager _filterManager;
-
 
     @Override
     protected void onInit(String name, IDataNode dataNode, ViewManager viewManager) {
@@ -84,6 +87,10 @@ public class WorkbenchView extends AbstractView {
         // do nothing
     }
 
+    /**
+     * Get the filter manager used to determine which items
+     * can be crafted in the workbench view.
+     */
     public ItemFilterManager getFilterManager() {
         return _filterManager;
     }
@@ -163,26 +170,42 @@ public class WorkbenchView extends AbstractView {
     }
 
     @Override
-    protected ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta) {
-        WorkbenchInstance instance = new WorkbenchInstance(this, previous, p, sessionMeta, instanceMeta);
-        return instance;
+    protected ViewInstance onCreateInstance(Player p, @Nullable ViewInstance previous,
+                                            ViewMeta sessionMeta, ViewMeta instanceMeta) {
+        return new WorkbenchInstance(this, previous, p, sessionMeta, instanceMeta);
     }
 
-
+    /**
+     * The view instance for a specific player
+     */
     public class WorkbenchInstance extends ViewInstance {
 
-        public WorkbenchInstance(IView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
+        /**
+         * Constructor.
+         *
+         * @param view          The owning view.
+         * @param previous      The previous view instance the player was looking at.
+         * @param p             The player.
+         * @param sessionMeta   The players session meta.
+         * @param instanceMeta  The instance meta.
+         */
+        public WorkbenchInstance(IView view, @Nullable ViewInstance previous, Player p,
+                                 ViewMeta sessionMeta, ViewMeta instanceMeta) {
             super(view, previous, p, sessionMeta, instanceMeta);
         }
 
         @Override
+        @Nullable
         public ViewResult getResult() {
-            return null;
+            return null; // does not return a result
         }
 
         @Override
         protected InventoryView onShow(ViewMeta meta) {
-            return getPlayer().openWorkbench(getSourceBlock() != null ? getSourceBlock().getLocation() : getPlayer().getLocation(), true);
+            return getPlayer().openWorkbench(
+                    getSourceBlock() != null
+                            ? getSourceBlock().getLocation()
+                            : getPlayer().getLocation(), true);
         }
 
         @Override

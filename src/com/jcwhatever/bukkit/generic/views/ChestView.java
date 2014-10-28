@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
+import com.sun.istack.internal.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -34,11 +35,13 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
 
+/**
+ * Represents a Chest inventory GUI view.
+ */
 public class ChestView extends AbstractView {
 
     private static final int MAX_ROWS = 6;
     private int _rows = 6;
-
 
     public int getRows() {
         return _rows;
@@ -75,21 +78,32 @@ public class ChestView extends AbstractView {
     }
 
     @Override
-    protected ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta) {
-        ChestInstance instance = new ChestInstance(this, previous, p, sessionMeta, instanceMeta);
-        return instance;
+    protected ViewInstance onCreateInstance(Player p, @Nullable ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta) {
+        return new ChestInstance(this, previous, p, sessionMeta, instanceMeta);
     }
 
-
+    /**
+     * Instance of a Chest GUI view shown to a player.
+     */
     public class ChestInstance extends ViewInstance {
 
-        public ChestInstance(IView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
+        /**
+         * Constructor.
+         *
+         * @param view          The owning view.
+         * @param previous      The view the player was previously looking at, if any.
+         * @param p             The player to show the view to.
+         * @param sessionMeta   The players session meta.
+         * @param instanceMeta  The instance meta.
+         */
+        public ChestInstance(IView view, @Nullable ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
             super(view, previous, p, sessionMeta, instanceMeta);
         }
 
         @Override
+        @Nullable
         public ViewResult getResult() {
-            return null;
+            return null; // no result returned
         }
 
         @Override

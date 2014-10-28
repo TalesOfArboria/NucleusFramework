@@ -31,18 +31,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Represents a Menu GUI view, an inventory view with
+ * functionality of a menu.
+ */
 public class MenuView extends AbstractMenuView {
 
     protected Inventory _menu;
 
-    protected Map<String, MenuItem> _itemMap = new HashMap<String, MenuItem>();
-    protected Map<Integer, MenuItem> _slotMap = new HashMap<Integer, MenuItem>();
+    protected Map<String, MenuItem> _itemMap = new HashMap<String, MenuItem>(36);
+    protected Map<Integer, MenuItem> _slotMap = new HashMap<Integer, MenuItem>(36);
 
 
     @Override
@@ -50,7 +55,12 @@ public class MenuView extends AbstractMenuView {
         //do nothing
     }
 
-
+    /**
+     * Get a menu item by name.
+     *
+     * @param name  The name of the menu item.
+     */
+    @Nullable
     public MenuItem getMenuItem(String name) {
         PreCon.notNullOrEmpty(name);
 
@@ -59,11 +69,23 @@ public class MenuView extends AbstractMenuView {
         return _itemMap.get(name);
     }
 
+    /**
+     * Get a list of menu items.
+     */
     public List<MenuItem> getMenuItems() {
         return new ArrayList<MenuItem>(_itemMap.values());
     }
 
-
+    /**
+     * Add a menu item.
+     *
+     * @param name         The name of the menu item.
+     * @param item         The {@code ItemStack} used to represent the item.
+     * @param title        The menu item title.
+     * @param description  The menu item description.
+     *
+     * @return  True if the item was added.
+     */
     public boolean addMenuItem(String name, ItemStack item, String title, String description) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(item);
@@ -93,6 +115,13 @@ public class MenuView extends AbstractMenuView {
         return true;
     }
 
+    /**
+     * Remove a menu item by name.
+     *
+     * @param name  The name of the menu item.
+     *
+     * @return  True if the item was removed.
+     */
     public boolean removeMenuItem(String name) {
         PreCon.notNullOrEmpty(name);
 
@@ -128,6 +157,7 @@ public class MenuView extends AbstractMenuView {
         buildInventory();
     }
 
+    @Override
     protected void buildInventory() {
 
         List<MenuItem> menuItems = new ArrayList<MenuItem>(_itemMap.values());
@@ -152,8 +182,7 @@ public class MenuView extends AbstractMenuView {
 
     @Override
     protected ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta) {
-        MenuInstance menuInstance = new MenuInstance(this, previous, p, sessionMeta, instanceMeta);
-        return menuInstance;
+        return new MenuInstance(this, previous, p, sessionMeta, instanceMeta);
     }
 
 }
