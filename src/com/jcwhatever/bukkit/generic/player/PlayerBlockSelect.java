@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.player;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -45,56 +46,66 @@ public class PlayerBlockSelect implements Listener {
 
     private PlayerBlockSelect() {}
 
-    private static Map<UUID, PlayerBlockSelectHandler> _actions = new PlayerMap<PlayerBlockSelectHandler>();
+    private static Map<UUID, PlayerBlockSelectHandler> _handlers = new PlayerMap<PlayerBlockSelectHandler>();
     private static PlayerBlockSelect _listener;
 
-    public static void query(Player p, PlayerBlockSelectHandler action) {
-        registerListener();
+    /**
+     * Wait for the player to click a block and run the handler.
+     *
+     * @param p        The player.
+     * @param handler  The handler to run when the player selects a block.
+     */
+    public static void query(Player p, PlayerBlockSelectHandler handler) {
+        PreCon.notNull(p);
+        PreCon.notNull(handler);
 
-        _actions.put(p.getUniqueId(), action);
-    }
-
-    private static boolean doSelect(Player p, Block selectedBlock, Action clickAction) {
-        if (clickAction != Action.LEFT_CLICK_BLOCK && clickAction != Action.RIGHT_CLICK_BLOCK)
-            return false;
-
-        PlayerBlockSelectHandler action = _actions.remove(p.getUniqueId());
-        if (action == null)
-            return false;
-
-        if (!action.onBlockSelect(p, selectedBlock, clickAction)) {
-            _actions.put(p.getUniqueId(), action);
-            return false;
-        }
-
-        return true;
-    }
-
-    private static void registerListener() {
-
+        // register event listener if its not already registered.
         if (_listener == null) {
             _listener = new PlayerBlockSelect();
 
             Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getPlugin());
         }
 
+        // place handler into map
+        _handlers.put(p.getUniqueId(), handler);
     }
 
     @EventHandler(priority= EventPriority.HIGHEST)
     private void onPlayerSelectBlock(PlayerInteractEvent event) {
+
+        // make sure the event has a block
         if (!event.hasBlock())
             return;
 
-        if (doSelect(event.getPlayer(), event.getClickedBlock(), event.getAction()))
-            event.setCancelled(true);
+        // make sure the player clicked the block
+        if (event.getAction() != Action.LEFT_CLICK_BLOCK &&
+                event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        // see if the player is expected to select a block
+        PlayerBlockSelectHandler action = _handlers.remove(event.getPlayer().getUniqueId());
+        if (action == null)
+            return;
+
+        // cancel event to prevent damage due to selection
+        event.setCancelled(true);
+
+        boolean isSelectAccepted = action.onBlockSelect(
+                event.getPlayer(), event.getClickedBlock(), event.getAction());
+
+        if (!isSelectAccepted) {
+
+            // place handler back into map to try again
+            _handlers.put(event.getPlayer().getUniqueId(), action);
+        }
     }
 
-
+    /**
+     * A handler to call when the player selects a block.
+     */
     public static abstract class PlayerBlockSelectHandler {
         public abstract boolean onBlockSelect(Player p, Block selectedBlock, Action clickAction);
     }
-
-
-
 }
 
