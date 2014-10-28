@@ -25,7 +25,6 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,36 +32,71 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.FallingBlock;
 
+/**
+ * {@code Block} utilities.
+ */
 public class BlockUtils {
 
+    private BlockUtils() {}
+
+    /**
+     * Converts the specified block to a falling block and
+     * removes the fallen block after the specified delay.
+     *
+     * <p>
+     *     If the falling block has not reached the ground and turned into
+     *     a block after the delay has elapsed, the falling block is removed.
+     * </p>
+     *
+     * @param block             The block to drop.
+     * @param removeDelayTicks  The delay in ticks before removing the fallen block.
+     */
     public static void dropRemoveBlock(Block block, int removeDelayTicks) {
         dropRemoveBlock(block.getLocation(), removeDelayTicks);
     }
 
+    /**
+     * Converts the block at the specified location to a falling block and
+     * removes the fallen block after the specified delay.
+     *
+     * <p>
+     *     If the falling block has not reached the ground and turned into
+     *     a block after the delay has elapsed, the falling block is removed.
+     * </p>
+     *
+     * @param location          The location of the block to drop.
+     * @param removeDelayTicks  The delay in ticks before removing the fallen block.
+     */
     public static void dropRemoveBlock(final Location location, final int removeDelayTicks) {
 
         final BlockState startBlock = location.getBlock().getState();
 
         location.getBlock().setType(Material.AIR);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(GenericsLib.getPlugin(), new Runnable() {
+        // schedule task so the block has a chance to turn into air
+        Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
 
             @Override
             public void run() {
 
-                final FallingBlock fallBlock = location.getWorld().spawnFallingBlock(location, startBlock.getType(), startBlock.getData().getData());
+                // spawn a falling block
+                final FallingBlock fallBlock = location.getWorld().spawnFallingBlock(
+                        location, startBlock.getType(), startBlock.getData().getData());
 
-                Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable () {
+                // schedule the removal of the block
+                Scheduler.runTaskLater(GenericsLib.getPlugin(), removeDelayTicks, new Runnable () {
 
                     @Override
                     public void run() {
                         if (fallBlock.isOnGround() || fallBlock.isDead()) {
-                            Location landedLoc = findSolidBlockBelow(location);
-                            if (landedLoc == null) {
+
+                            // find the fallen block
+                            Location landedLoc = LocationUtils.findSurfaceBelow(location);
+                            if (landedLoc == null)
                                 return;
-                            }
 
                             if (fallBlock.getFallDistance() == 0.0) {
+
                                 Block landedBlock = landedLoc.getBlock();
                                 if (landedBlock.getType() != startBlock.getType())
                                     return;
@@ -71,43 +105,25 @@ public class BlockUtils {
                             }
                         }
                         else {
+                            // remove the falling block if it has not
+                            // become a block yet.
                             fallBlock.remove();
                         }
 
                     }
 
-                }, removeDelayTicks);
-
-
+                });
             }
-
-        }, 1);
-
+        });
     }
 
-
-
-    public static Block getAdjacentBlock(Block current, BlockFace direction) {
-        return current.getRelative(direction).getState().getBlock();
+    /**
+     * Get the block adjacent to the specified block.
+     *
+     * @param block      The block to check.
+     * @param direction  The direction to search for the adjacent block.
+     */
+    public static Block getAdjacentBlock(Block block, BlockFace direction) {
+        return block.getRelative(direction).getState().getBlock();
     }
-
-    public static Location findSolidBlockBelow(Location searchLoc) {
-        searchLoc = searchLoc.clone();
-        searchLoc.setY(searchLoc.getY() - 1);
-        Block current = searchLoc.getBlock();
-
-        while (current.getType() == Material.AIR ||
-                current.getType() == Material.WATER ||
-                current.getType() == Material.LAVA) {
-            searchLoc.setY(searchLoc.getY() - 1);
-            current = searchLoc.getBlock();
-
-            if (searchLoc.getY() < 0) {
-                return null;
-            }
-        }
-
-        return searchLoc;
-    }
-
 }
