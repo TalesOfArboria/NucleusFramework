@@ -35,7 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * File handling utilities.
+ */
 public class FileUtils {
+
+    private FileUtils() {}
 
     /**
      * UTF-8 character set string
