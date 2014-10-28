@@ -31,11 +31,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * A Queue of {@code Player} objects.
+ *
+ * <p>{@code Player} objects are automatically removed if the player logs out.</p>
+ */
 public class PlayerQueue implements Queue<Player>, IPlayerCollection{
 
 	private final Queue<Player> _queue = new LinkedList<Player>();
     private final PlayerCollectionListener _listener;
-		
+
+    /**
+     * Constructor.
+     */
 	public PlayerQueue() {
 		_listener = PlayerCollectionListener.get();
 	}

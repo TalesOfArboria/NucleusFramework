@@ -32,16 +32,31 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+/**
+ * A {@code HashSet} of {@code Player} objects.
+ *
+ * <p>
+ *     {@code Player} object is automatically removed when the player logs out.
+ * </p>
+ */
 public class PlayerSet implements Set<Player>, IPlayerCollection {
 
     private final Set<Player> _players;
     private final PlayerCollectionListener _listener;
 
+    /**
+     * Constructor.
+     */
     public PlayerSet() {
         _players = new HashSet<Player>(10);
         _listener = PlayerCollectionListener.get();
     }
 
+    /**
+     * Constructor.
+     *
+     * @param size  The initial capacity.
+     */
     public PlayerSet(int size) {
         _players = new HashSet<Player>(size);
         _listener = PlayerCollectionListener.get();

@@ -34,11 +34,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class PlayerMap<T> implements Map<UUID, T>, IPlayerCollection {
+/**
+ * A {@code HashMap} that stores elements using the player ID as key.
+ * <p>
+ *     When the player logs out, the entry is automatically removed.
+ * </p>
+ *
+ * @param <V>  The value type
+ */
+public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 
-	private final Map<UUID, T> _map = new HashMap<UUID, T>(50);
+	private final Map<UUID, V> _map = new HashMap<UUID, V>(50);
     private final PlayerCollectionListener _listener;
-	
+
+    /**
+     * Constructor.
+     */
 	public PlayerMap() {
 		_listener = PlayerCollectionListener.get();
 	}
@@ -64,16 +75,16 @@ public class PlayerMap<T> implements Map<UUID, T>, IPlayerCollection {
 	}
 
 	@Override
-	public synchronized Set<Entry<UUID, T>> entrySet() {
-		return new HashSet<Entry<UUID, T>>(_map.entrySet());
+	public synchronized Set<Entry<UUID, V>> entrySet() {
+		return new HashSet<Entry<UUID, V>>(_map.entrySet());
 	}
 
 	@Override
-	public synchronized T get(Object key) {
+	public synchronized V get(Object key) {
 		return _map.get(key);
 	}
 	
-	public synchronized T get(Player p) {
+	public synchronized V get(Player p) {
 		return _map.get(p.getUniqueId());
 	}
 
@@ -88,14 +99,14 @@ public class PlayerMap<T> implements Map<UUID, T>, IPlayerCollection {
 	}
 
 	@Override
-	public synchronized T put(UUID key, T value) {
+	public synchronized V put(UUID key, V value) {
 
         _listener.addPlayer(key, this);
         return _map.put(key, value);
 	}
 
 	@Override
-	public synchronized void putAll(Map<? extends UUID, ? extends T> pairs) {
+	public synchronized void putAll(Map<? extends UUID, ? extends V> pairs) {
         for (UUID playerId : pairs.keySet()) {
             _listener.addPlayer(playerId, this);
         }
@@ -103,8 +114,8 @@ public class PlayerMap<T> implements Map<UUID, T>, IPlayerCollection {
 	}
 
 	@Override
-	public synchronized T remove(Object key) {
-		T item = _map.remove(key);
+	public synchronized V remove(Object key) {
+		V item = _map.remove(key);
 
         if (key instanceof UUID) {
             _listener.removePlayer((UUID)key, this);
@@ -119,8 +130,8 @@ public class PlayerMap<T> implements Map<UUID, T>, IPlayerCollection {
 	}
 
 	@Override
-	public synchronized Collection<T> values() {
-		return new ArrayList<T>(_map.values());
+	public synchronized Collection<V> values() {
+		return new ArrayList<V>(_map.values());
 	}
 
 	@Override
