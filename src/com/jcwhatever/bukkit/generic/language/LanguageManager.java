@@ -39,34 +39,49 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by John on 10/13/2014.
+ * Manage string language and localization.
  */
 public class LanguageManager {
 
-    /**
-     * TODO
-     *
-     * ICommandInfo description should also be parsed and localized
-     *
-     *
-     * Resource file named lang.txt
-     *
-     *
-     *
-     */
-
     private final Plugin _plugin;
+    private final Object _owner;
+
     private Map<String, String> _localizationMap;
     private LanguageKeys _keys;
 
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     */
     public LanguageManager(Plugin plugin) {
-        _plugin = plugin;
+        this(plugin, null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     */
+    public LanguageManager(Plugin plugin, @Nullable Object owner) {
+        PreCon.notNull(plugin);
+
+        _plugin = plugin;
+        _owner = owner == null ? plugin : owner;
+
+        loadInternalLanguage();
+    }
+
+    /**
+     * Clear all localizations.
+     */
     public void clear() {
         _localizationMap.clear();
     }
 
+    /**
+     * Reload internal localizations.
+     */
     public void reload() {
         _localizationMap.clear();
 
@@ -74,11 +89,13 @@ public class LanguageManager {
     }
 
     /**
-     * Add a language file.
+     * Merge a language file into the language manager.
      *
      * @param file  The language file to include
+     *
+     * @return  True if the file was merged.
      */
-    public void addFile(File file) throws FileNotFoundException {
+    public boolean addFile(File file) throws FileNotFoundException {
         PreCon.notNull(file);
         PreCon.isValid(file.isFile());
 
@@ -86,10 +103,19 @@ public class LanguageManager {
 
         Language language = new Language(stream);
 
-        mergeLanguage(language);
+        return mergeLanguage(language);
     }
 
-
+    /**
+     * Localize a text string.
+     *
+     * <p>The text must be a key that was parsed from the compiled
+     * jar file and is an entry in the lang.key.txt file in the plugins
+     * resource file.</p>
+     *
+     * @param text    The text to localize.
+     * @param params  Optional format parameters.
+     */
     @Localized
     public String get(String text, Object... params) {
         PreCon.notNull(text);
@@ -109,26 +135,23 @@ public class LanguageManager {
         return format(localizedText);
     }
 
-    private String format(String text, Object... params) {
-
-        text = TextUtils.format(text, params);
-
-        return TextUtils.formatPluginInfo(_plugin, text);
-    }
-
-
+    /*
+     * Load language key and file from owner jar file, if any.
+     */
     private void loadInternalLanguage() {
 
-        InputStream langStream = getClass().getResourceAsStream("/res/lang.txt");
+        InputStream langStream = _owner.getClass().getResourceAsStream("/res/lang.txt");
         if (langStream == null)
             return;
 
         Language language = new Language(langStream);
 
         mergeLanguage(language);
-
     }
 
+    /*
+     * Parse language file from stream.
+     */
     @Nullable
     private LanguageParser parseLanguage(InputStream stream) {
 
@@ -139,31 +162,41 @@ public class LanguageManager {
 
             return langParser;
         }
-        catch (InvalidLocalizedTextLineException e) {
+        catch (InvalidLocalizedTextException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-
+    /*
+     *  Get or load language keys from resource file.
+     */
     private LanguageKeys getLanguageKeys() {
 
         if (_keys != null)
             return _keys;
 
-        InputStream langStream = getClass().getResourceAsStream("/res/lang.keys.txt");
+        InputStream langStream = _owner.getClass().getResourceAsStream("/res/lang.keys.txt");
         if (langStream == null)
             return null;
 
         return _keys = new LanguageKeys(langStream);
     }
 
-
-    private void mergeLanguage(Language language) {
+    /*
+     *  Merge a language into the language manager.
+     *  The new language entries overwrite the existing.
+     */
+    private boolean mergeLanguage(Language language) {
 
         LanguageKeys keys = getLanguageKeys();
         if (keys == null)
-            return;
+            return false;
+
+        if (!keys.isCompatible(language)) {
+            Messenger.warning(_plugin, "Could not merge language file due to incompatible version.");
+            return false;
+        }
 
         _localizationMap = new HashMap<>(keys.size());
 
@@ -179,6 +212,20 @@ public class LanguageManager {
 
             _localizationMap.put(key, text.getText());
         }
+
+        return true;
     }
+
+
+    /*
+     * text format helper
+     */
+    private String format(String text, Object... params) {
+
+        text = TextUtils.format(text, params);
+
+        return TextUtils.formatPluginInfo(_plugin, text);
+    }
+
 
 }

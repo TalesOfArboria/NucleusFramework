@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.language;
 
+import javax.annotation.Nullable;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,26 +34,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Parsed language localization data.
+ */
 public class Language {
 
     private final Set<String> _versions;
     private final Set<LocalizedText> _localizedText;
     private final Map<Integer, LocalizedText> _localizedTextMap;
 
-    public Language() {
-        _versions = new HashSet<>(5);
-        _localizedText = new HashSet<LocalizedText>(50);
-        _localizedTextMap = new HashMap<>(50);
-    }
+    /**
+     * Constructor.
+     *
+     * @param languageStream  The language file stream.
+     */
+    public Language(InputStream languageStream) {
 
-    public Language(InputStream keyStream) {
-
-        LanguageParser parser = new LanguageParser(keyStream);
+        LanguageParser parser = new LanguageParser(languageStream);
 
         try {
             parser.parseStream();
 
-        } catch (InvalidLocalizedTextLineException e) {
+        } catch (InvalidLocalizedTextException e) {
             e.printStackTrace();
         }
         finally {
@@ -72,18 +76,38 @@ public class Language {
         }
     }
 
+    /**
+     * Get the number of localized strings in the language.
+     */
     public int size() {
         return _localizedText.size();
     }
 
+    /**
+     * Determine if the language is of the specified version.
+     *
+     * @param version  The version to check.
+     */
     public boolean isValidVersion(String version) {
         return _versions.contains(version);
     }
 
+    /**
+     * Get all versions specified by the language.
+     */
     public List<String> getVersions() {
         return new ArrayList<>(_versions);
     }
 
+    /**
+     * Get the localized text from the language corresponding
+     * to the specified key index.
+     *
+     * @param index  The key index.
+     *
+     * @return  Null if there is no entry.
+     */
+    @Nullable
     public String getText(int index) {
 
         LocalizedText text = _localizedTextMap.get(index);
@@ -93,6 +117,9 @@ public class Language {
         return text.getText();
     }
 
+    /**
+     * Get all localized text in the language.
+     */
     public List<LocalizedText> getLocalizedText() {
         return new ArrayList<>(_localizedText);
     }

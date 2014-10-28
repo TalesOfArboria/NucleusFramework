@@ -33,9 +33,6 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates a static final {@code String} field is a candidate for localization.
- * 
- * @author JC The Pants
- *
  */
 @Documented
 @Target({ElementType.FIELD}) 

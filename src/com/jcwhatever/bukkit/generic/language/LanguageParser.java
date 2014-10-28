@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.language;
 
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import javax.annotation.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,28 +34,46 @@ import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Set;
 
+/*
+ * Parse GenericsLib language file from stream.
+ */
 public class LanguageParser {
 
     private final InputStream _stream;
     private final Set<String> _versions = new HashSet<>(10);
     private final LinkedList<LocalizedText> _localizedText = new LinkedList<>();
 
-
+    /**
+     * Constructor.
+     *
+     * @param stream  The stream to parse.
+     */
     public LanguageParser(InputStream stream) {
         _stream = stream;
     }
 
+    /**
+     * Get valid language versions parsed from stream.
+     */
     public Set<String> getVersions() {
         return _versions;
     }
 
+    /**
+     * Get all parsed localized text.
+     */
     public LinkedList<LocalizedText> getLocalizedText() {
         return _localizedText;
     }
 
-    public void parseStream() throws InvalidLocalizedTextLineException {
+    /**
+     * Begin parsing the stream provided in the constructor.
+     *
+     * @throws InvalidLocalizedTextException  If the stream contains invalid lines.
+     */
+    public void parseStream() throws InvalidLocalizedTextException {
 
-        Scanner scanner = new Scanner(_stream, "UTF-16");
+        Scanner scanner = new Scanner(_stream, "UTF-8");
 
         int lineNumber = 1;
 
@@ -70,25 +89,30 @@ public class LanguageParser {
         }
     }
 
-    private void parseLine(int lineNumber, String line) throws InvalidLocalizedTextLineException {
+    /*
+     *  Parse a single line from the stream.
+     */
+    private void parseLine(int lineNumber, String line) throws InvalidLocalizedTextException {
 
-        // version>  empty lines   comments   language index
-
+        // check for version
         if (line.startsWith("version> ")) {
             parseVersion(line);
         }
+        // excluding comments and empty lines, parse localized text.
         else if (!line.startsWith("#") && !line.trim().isEmpty()) {
 
             LocalizedText text = parseLocalizedLine(line);
             if (text == null) {
-                throw new InvalidLocalizedTextLineException("Invalid entry on line " + lineNumber + '.');
+                throw new InvalidLocalizedTextException("Invalid entry on line " + lineNumber + '.');
             }
 
             _localizedText.add(text);
         }
     }
 
-
+    /*
+     * Parse the language version from a line.
+     */
     private void parseVersion(String versionLine) {
 
         String rawVersion = versionLine.substring(9, versionLine.length());
@@ -100,16 +124,17 @@ public class LanguageParser {
         }
     }
 
-
-    // return null if its not a localized line
+    /*
+     * Parse a localized line. Returns null if the line is invalid.
+     */
+    @Nullable
     private LocalizedText parseLocalizedLine(String line) {
 
         int angleIndex = line.indexOf("> ");
 
         String rawNumber = line.substring(0, angleIndex);
-        System.out.println("DEBUG RAW NUMBER: " + rawNumber);
 
-        int index = -1;
+        int index;
 
         try {
             index = Integer.parseInt(rawNumber);
@@ -119,8 +144,6 @@ public class LanguageParser {
         }
 
         String text = line.substring(angleIndex + 2, line.length());
-        System.out.println("DEBUG TEXT:" + text);
-
         return new LocalizedText(index, text);
     }
 

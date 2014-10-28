@@ -24,11 +24,19 @@
 
 package com.jcwhatever.bukkit.generic.language;
 
-public class InvalidLocalizedTextLineException extends Exception {
+/**
+ * Thrown when a line from a language file is not valid.
+ */
+public class InvalidLocalizedTextException extends Exception {
 
     private final String _message;
 
-    public InvalidLocalizedTextLineException(String message) {
+    /**
+     * Constructor.
+     *
+     * @param message  The exception message.
+     */
+    public InvalidLocalizedTextException(String message) {
         _message = message;
     }
 

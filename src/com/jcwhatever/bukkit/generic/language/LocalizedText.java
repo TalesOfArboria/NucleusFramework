@@ -24,19 +24,34 @@
 
 package com.jcwhatever.bukkit.generic.language;
 
+/**
+ * Represents a single line from a language file.
+ */
 public class LocalizedText {
     private final int _index;
     private final String _text;
 
+    /**
+     * Constructor.
+     *
+     * @param index  The key index.
+     * @param text   The text.
+     */
     public LocalizedText(int index, String text) {
         _index = index;
         _text = text;
     }
 
+    /**
+     * Get the key index.
+     */
     public int getIndex() {
         return _index;
     }
 
+    /**
+     * Get the text.
+     */
     public String getText() {
         return _text;
     }

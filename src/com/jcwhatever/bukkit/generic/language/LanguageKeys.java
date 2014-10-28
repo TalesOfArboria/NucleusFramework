@@ -25,10 +25,39 @@
 package com.jcwhatever.bukkit.generic.language;
 
 import java.io.InputStream;
+import java.util.List;
 
+/**
+ * Parsed language key file data.
+ */
 public class LanguageKeys extends Language {
 
+    /**
+     * Constructor.
+     *
+     * @param keyStream  The key file stream.
+     */
     public LanguageKeys(InputStream keyStream) {
         super(keyStream);
+    }
+
+    /**
+     * Determine if a language's versions are compatible.
+     *
+     * @param language  The language to check.
+     */
+    public boolean isCompatible(Language language) {
+
+        List<String> versions = language.getVersions();
+
+        if (versions.isEmpty())
+            return false;
+
+        for (String version : versions) {
+            if (!isValidVersion(version))
+                return false;
+        }
+
+        return true;
     }
 }
