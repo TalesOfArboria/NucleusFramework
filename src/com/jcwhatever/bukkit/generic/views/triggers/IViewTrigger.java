@@ -25,7 +25,6 @@
 package com.jcwhatever.bukkit.generic.views.triggers;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
 import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.ViewManager;
@@ -37,15 +36,6 @@ import com.jcwhatever.bukkit.generic.views.ViewManager;
 public interface IViewTrigger extends IDisposable {
 
     /**
-     * Initialize the view trigger.
-     *
-     * @param view         The view that is triggered.
-     * @param dataNode     The triggers data node.
-     * @param viewManager  The owning view manager.
-     */
-    void init(IView view, IDataNode dataNode, ViewManager viewManager);
-
-    /**
      * Get the view that is triggered.
      */
     public IView getView();
@@ -54,11 +44,6 @@ public interface IViewTrigger extends IDisposable {
      * Get the owning view manager.
      */
     public ViewManager getViewManager();
-
-    /**
-     * Get the trigger type.
-     */
-    TriggerType getType();
 
     /**
      * Get the triggers settings manager.
