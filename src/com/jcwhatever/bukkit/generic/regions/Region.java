@@ -970,7 +970,7 @@ public abstract class Region {
      * but only if the region is a player watcher and 
      * canDoPlayerEnter() returns true.
      *
-     * Intended for override if needed.
+     * <p>Intended for implementation use.</p>
      *
      * @param p  the player entering the region.
      */
@@ -983,7 +983,7 @@ public abstract class Region {
      * but only if the region is a player watcher and 
      * canDoPlayerLeave() returns true.
      *
-     * Intended for override if needed.
+     * <p>Intended for implementation use.</p>
      *
      * @param p  the player leaving the region.
      */
@@ -1018,7 +1018,7 @@ public abstract class Region {
     /**
      * Called when the owner of the region is changed.
      *
-     * Intended for override if needed.
+     * <p>Intended for implementation use.</p>
      *
      * @param oldOwnerId  The id of the previous owner of the region.
      * @param newOwnerId  The id of the new owner of the region.
