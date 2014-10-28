@@ -36,7 +36,7 @@ import java.util.Queue;
  *
  * <p>{@code Player} objects are automatically removed if the player logs out.</p>
  */
-public class PlayerQueue implements Queue<Player>, IPlayerCollection{
+public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 
 	private final Queue<Player> _queue = new LinkedList<Player>();
     private final PlayerCollectionListener _listener;

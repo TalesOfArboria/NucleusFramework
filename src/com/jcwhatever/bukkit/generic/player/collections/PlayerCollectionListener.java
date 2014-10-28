@@ -38,6 +38,11 @@ import org.bukkit.plugin.PluginManager;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Collections that implement {@code IPlayerCollection} register
+ * players added to the collection with {@code PlayerCollectionListener}
+ * so that the player entry can be removed if the player logs out.
+ */
 final class PlayerCollectionListener implements Listener {
 
     // keyed to player id, a map of collections a player is contained in
@@ -51,7 +56,6 @@ final class PlayerCollectionListener implements Listener {
 
     /**
      * Get the singleton instance of the player collection listener
-     * @return
      */
 	static PlayerCollectionListener get() {
         if (_listener == null) {

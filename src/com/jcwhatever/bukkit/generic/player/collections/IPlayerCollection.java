@@ -27,8 +27,22 @@ package com.jcwhatever.bukkit.generic.player.collections;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import org.bukkit.entity.Player;
 
+/**
+ * Collection that contains player references that must be
+ * removed when a player logs out.
+ * <p>
+ *     The implementation is responsible for registering
+ *     with {@code PlayerCollectionListener}.
+ * </p>
+ */
 public interface IPlayerCollection extends IDisposable {
 
+    /**
+     * Called to remove the specified player
+     * from the collection.
+     *
+     * @param p  The player to remove.
+     */
 	void removePlayer(Player p);
 	
 }

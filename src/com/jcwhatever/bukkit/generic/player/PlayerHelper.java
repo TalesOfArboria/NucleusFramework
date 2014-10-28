@@ -136,10 +136,11 @@ public class PlayerHelper {
     /**
      * Gets player Id from name using stored id to name map.
      * Null if not found.
-     * Avoid usage due to low performance.
      *
+     * <p>
+     *    Avoid usage due to low performance.
+     * </p>
      * @param playerName  The name of the player
-     * @return
      */
     public static UUID getPlayerId(String playerName) {
         PreCon.notNull(playerName);
