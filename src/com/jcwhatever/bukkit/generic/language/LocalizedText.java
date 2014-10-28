@@ -24,10 +24,18 @@
 
 package com.jcwhatever.bukkit.generic.language;
 
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Represents a single line from a language file.
  */
 public class LocalizedText {
+
+    private static final Pattern PATTERN_ESCAPED_NEW_LINE = Pattern.compile("\\n");
+
     private final int _index;
     private final String _text;
 
@@ -38,8 +46,12 @@ public class LocalizedText {
      * @param text   The text.
      */
     public LocalizedText(int index, String text) {
+        PreCon.notNull(text);
+
         _index = index;
-        _text = text;
+
+        Matcher matcher = PATTERN_ESCAPED_NEW_LINE.matcher(text);
+        _text = matcher.replaceAll("\n");
     }
 
     /**
