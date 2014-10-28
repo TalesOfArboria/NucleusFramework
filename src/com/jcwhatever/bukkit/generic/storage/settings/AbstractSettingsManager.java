@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.storage.settings;
 
 import com.jcwhatever.bukkit.generic.converters.ValueConverter;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -148,23 +149,17 @@ public abstract class AbstractSettingsManager implements ISettingsManager {
             if (value instanceof String) { // convert string to enum
 
                 String constantName = (String)value;
+
                 @SuppressWarnings("unchecked")
-                Enum<?>[] constants = ((Class<Enum<?>>)type).getEnumConstants();
-
-                for (Enum<?> constant : constants) {
-                    if (constant.name().equalsIgnoreCase(constantName)) {
-                        if (!type.isInstance(constant))
-                            return ValidationResults.FALSE;
-
-                        value = constant.name();
-
-                        break;
-                    }
+                Enum<?> e = EnumUtils.searchGenericEnum(constantName, (Class<Enum<?>>)type, null);
+                if (e == null) {
+                    return ValidationResults.FALSE;
                 }
-
+                else {
+                    value = e;
+                }
             }
         }
-
 
         SettingValidator validator = def.getValidator();
         if (validator != null) {

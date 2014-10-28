@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.file;
 
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -216,12 +217,13 @@ public class GenericsByteReader extends InputStream {
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
         String constantName = getString();
 
-        for (T e : enumClass.getEnumConstants()) {
-            if (e.name().equals(constantName))
-                return e;
+        T e = EnumUtils.getEnum(constantName, enumClass);
+        if (e == null) {
+            throw new IllegalStateException(
+                    "The enum name retrieved is not a valid constant name for enum type: " + enumClass.getName());
         }
 
-        throw new IllegalStateException("The enum name retrieved is not a valid constant name for enum type: " + enumClass.getName());
+        return e;
     }
 
     /**

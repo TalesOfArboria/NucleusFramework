@@ -36,6 +36,7 @@ import com.jcwhatever.bukkit.generic.items.ItemWrapper;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect.PlayerBlockSelectHandler;
+import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import org.apache.commons.lang.StringUtils;
@@ -818,22 +819,11 @@ public class CommandArguments implements Iterable<CommandArgument> {
         // get raw argument
         String arg = getRawArgument(parameterName);
 
-        T evalue;
+        T evalue = EnumUtils.searchEnum(arg, enumClass);
 
-        // get enum constant from argument
-        try {
-            evalue = Enum.valueOf(enumClass, arg.toUpperCase());
-        }
-        catch (Exception e) {
-
-            try {
-                evalue = Enum.valueOf(enumClass, arg);
-            }
-            catch (Exception e2) {
-
-                throw new InvalidValueException(parameterName,
-                        _paramDescriptions.get(parameterName, validValues));
-            }
+        if (evalue == null) {
+            throw new InvalidValueException(parameterName,
+                    _paramDescriptions.get(parameterName, validValues));
         }
 
         // make sure the enum constant is valid
@@ -870,22 +860,11 @@ public class CommandArguments implements Iterable<CommandArgument> {
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
-        T evalue;
+        T evalue = EnumUtils.searchEnum(arg, enumClass);
 
-        // get enum constant from argument
-        try {
-            evalue = Enum.valueOf(enumClass, arg.toUpperCase());
-        }
-        catch (Exception e) {
-
-            try {
-                evalue = Enum.valueOf(enumClass, arg);
-            }
-            catch (Exception e2) {
-
-                throw new InvalidValueException(parameterName,
-                        _paramDescriptions.get(parameterName, validValues));
-            }
+        if (evalue == null) {
+            throw new InvalidValueException(parameterName,
+                    _paramDescriptions.get(parameterName, validValues));
         }
 
         // make sure the enum constant is valid
