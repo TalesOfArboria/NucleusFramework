@@ -44,6 +44,10 @@ public class ViewTriggerRegistry {
 
     private static Map<String, Class<? extends IViewTrigger>> _triggerMap = new HashMap<>(15);
 
+    static {
+        registerType(BlockTypeTrigger.class);
+    }
+
     /**
      * Register a view trigger type.
      *
