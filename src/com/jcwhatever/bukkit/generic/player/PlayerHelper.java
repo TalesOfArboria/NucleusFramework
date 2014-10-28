@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.player;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.inventory.InventoryHelper;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.mixins.IPlayerWrapper;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
@@ -36,6 +37,7 @@ import com.jcwhatever.bukkit.generic.utils.ItemValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -206,6 +208,38 @@ public class PlayerHelper {
 
         nameData.saveAsync(null);
     }
+
+    /**
+     * Reset player state.
+     *
+     * <ul>
+     *     <li>Inventory cleared, including armor.</li>
+     *     <li>GameMode set to SURVIVAL</li>
+     *     <li>Potion effects cleared</li>
+     *     <li>Food level restored</li>
+     *     <li>Exp set to 0</li>
+     *     <li>Flying turned off</li>
+     *     <li>Fire ticks set to 0</li>
+     *     <li>Fall distance set to 0</li>
+     * </ul>
+     *
+     * @param p  The player.
+     */
+    public static void resetPlayer(Player p) {
+        InventoryHelper.clearAll(p.getInventory());
+
+        p.setGameMode(GameMode.SURVIVAL);
+        p.getActivePotionEffects().clear();
+        p.setHealth(p.getMaxHealth());
+        p.setFoodLevel(20);
+        p.setLevel(0);
+        p.setExp(0);
+        p.setFlying(false);
+        p.setAllowFlight(false);
+        p.setFireTicks(0);
+        p.setFallDistance(0);
+    }
+
 
     /**
      * Get a list of players that are near the specified location.
