@@ -129,6 +129,8 @@ public class LanguageManager {
      * jar file and is an entry in the lang.key.txt file in the plugins
      * resource file.</p>
      *
+     * <p>If an entry is not found, the unlocalized text is formatted and returned.</p>
+     *
      * @param text    The text to localize.
      * @param params  Optional format parameters.
      */
