@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.internal;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.language.LanguageManager;
+import com.jcwhatever.bukkit.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import org.bukkit.plugin.Plugin;
 
@@ -33,15 +33,18 @@ public class Lang {
 
     private Lang() {}
 
-    private static LanguageManager _languageManager = new LanguageManager();
-
-
     @Localized
     public static String get(String text, Object... params) {
-        return _languageManager.get(GenericsLib.getPlugin(), text, params);
+        return GenericsLib.getPlugin().getLanguageManager().get(text, params);
     }
 
     public static String get(Plugin plugin, String text, Object... params) {
-        return _languageManager.get(plugin, text, params);
+
+        if (plugin instanceof GenericsPlugin) {
+            GenericsPlugin generic = (GenericsPlugin)plugin;
+            return generic.getLanguageManager().get(text, params);
+        }
+
+        return get(text, params);
     }
 }

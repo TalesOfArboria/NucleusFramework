@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic;
 
+import com.jcwhatever.bukkit.generic.language.LanguageManager;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -41,6 +42,7 @@ import java.util.Set;
  */
 public abstract class GenericsPlugin extends JavaPlugin {
 
+    private LanguageManager _languageManager;
     private IDataNode _settings;
     private boolean _isDebugging;
 
@@ -83,6 +85,7 @@ public abstract class GenericsPlugin extends JavaPlugin {
         onPreEnable();
 
         loadConfigFile();
+        _languageManager = new LanguageManager(this);
 
         onEnablePlugin();
     }
@@ -122,6 +125,13 @@ public abstract class GenericsPlugin extends JavaPlugin {
     public IDataNode getDataNode() {
 
         return _settings;
+    }
+
+    /**
+     * Get the plugins language manager.
+     */
+    public LanguageManager getLanguageManager() {
+        return _languageManager;
     }
 
     /**
