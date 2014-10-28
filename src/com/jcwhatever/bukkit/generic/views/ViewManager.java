@@ -286,7 +286,7 @@ public class ViewManager {
             return null;
         }
 
-        view.init(name, node, this);
+        view.init(name, this, node);
 
         _viewMap.put(name, view);
 
@@ -398,7 +398,7 @@ public class ViewManager {
                             continue;
                         }
 
-                        view.init(viewName.toLowerCase(), node, this);
+                        view.init(viewName.toLowerCase(), this, node);
 
                         _viewMap.put(viewName.toLowerCase(), view);
 

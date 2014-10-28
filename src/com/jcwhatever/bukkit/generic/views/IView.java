@@ -25,12 +25,11 @@
 package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
-
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.triggers.IViewTrigger;
-import com.jcwhatever.bukkit.generic.views.triggers.TriggerType;
+import com.sun.istack.internal.Nullable;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 
 /**
  * Represents a type of player view
@@ -41,10 +40,10 @@ public interface IView extends IDisposable {
      * Called only once. Used internally after instantiating view.
      *
      * @param name         The name of the view.
-     * @param dataNode     The data node to save settings to.
      * @param viewManager  The view manager responsible for the view.
+     * @param dataNode     The data node to save settings to.
      */
-    void init(String name, IDataNode dataNode, ViewManager viewManager);
+    void init(String name, ViewManager viewManager, IDataNode dataNode);
 
     /**
      * Get the name of the view
@@ -79,9 +78,11 @@ public interface IView extends IDisposable {
     /**
      * Set the optional view trigger
      *
-     * @param type  The trigger type
+     * @param triggerClass  The trigger class.
+     *
+     * @return True if the trigger was successfully changed.
      */
-    void setViewTrigger(TriggerType type);
+    boolean setViewTrigger(@Nullable Class<? extends IViewTrigger> triggerClass);
 
     /**
      * Create a new instance of the view to display to a player.

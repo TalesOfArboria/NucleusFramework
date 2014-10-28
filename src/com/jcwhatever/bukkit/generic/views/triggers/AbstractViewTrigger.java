@@ -28,33 +28,51 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
 import com.jcwhatever.bukkit.generic.storage.settings.SettingDefinitions;
 import com.jcwhatever.bukkit.generic.storage.settings.SettingsManager;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.ViewManager;
 
+/**
+ * Abstract implementation of a view trigger.
+ */
 public abstract class AbstractViewTrigger implements IViewTrigger {
 
-    protected IView _view;
-    protected IDataNode _triggerNode;
-    protected ViewManager _viewManager;
+    private IView _view;
+    private IDataNode _dataNode;
+    private ViewManager _viewManager;
     private SettingsManager _settingsManager;
 
     @Override
-    public final void init(IView view, IDataNode triggerNode, ViewManager viewManager) {
+    public final void init(IView view, ViewManager viewManager, IDataNode dataNode) {
+        PreCon.notNull(view);
+        PreCon.notNull(viewManager);
+        PreCon.notNull(dataNode);
+
         _view = view;
-        _triggerNode = triggerNode;
+        _dataNode = dataNode;
         _viewManager = viewManager;
 
-        _settingsManager = new SettingsManager(triggerNode, getPossibleSettings());
+        _settingsManager = new SettingsManager(dataNode, getPossibleSettings());
         _settingsManager.addOnSettingsChanged(new Runnable() {
 
             @Override
             public void run() {
-                onLoadSettings(_triggerNode);
+                onLoadSettings(_dataNode);
             }
 
         }, true);
 
-        onInit(view, triggerNode, viewManager);
+        onInit(view, viewManager, dataNode);
+    }
+
+    @Override
+    public final IView getView() {
+        return _view;
+    }
+
+    @Override
+    public final ViewManager getViewManager() {
+        return _viewManager;
     }
 
     @Override
@@ -65,8 +83,25 @@ public abstract class AbstractViewTrigger implements IViewTrigger {
     @Override
     public abstract void dispose();
 
-    protected abstract void onInit(IView view, IDataNode triggerNode, ViewManager viewManager);
+    /**
+     * Called after the view trigger is initialized.
+     *
+     * @param view         The view that is triggered.
+     * @param viewManager  The owning view manager.
+     * @param dataNode     The triggers data node.
+     */
+    protected abstract void onInit(IView view, ViewManager viewManager, IDataNode dataNode);
+
+    /**
+     * Called when the settings are reloaded.
+     *
+     * @param dataNode  The triggers data node.
+     */
     protected abstract void onLoadSettings(IDataNode dataNode);
+
+    /**
+     * Called to retrieve the implementations setting definitions.
+     */
     protected abstract SettingDefinitions getPossibleSettings();
 
 }

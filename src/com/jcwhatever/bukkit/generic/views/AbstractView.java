@@ -24,6 +24,12 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
+import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
+import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
+import com.jcwhatever.bukkit.generic.views.triggers.IViewTrigger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -33,12 +39,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
-import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
-import com.jcwhatever.bukkit.generic.views.triggers.IViewTrigger;
-import com.jcwhatever.bukkit.generic.views.triggers.TriggerType;
+import javax.annotation.Nullable;
 
 /**
  * Abstract implementation of a view.
@@ -59,11 +60,15 @@ public abstract class AbstractView implements IView {
      * Initialize the view.
      *
      * @param name         The name of the view.
-     * @param dataNode     The data node to save settings to.
      * @param viewManager  The view manager responsible for the view.
+     * @param dataNode     The data node to save settings to.
      */
     @Override
-    public final void init(String name, IDataNode dataNode, ViewManager viewManager) {
+    public final void init(String name, ViewManager viewManager, IDataNode dataNode) {
+        PreCon.notNullOrEmpty(name);
+        PreCon.notNull(viewManager);
+        PreCon.notNull(dataNode);
+
         if (_isInitialized)
             throw new IllegalStateException("Custom inventory view can only be initialized once.");
 
@@ -81,7 +86,6 @@ public abstract class AbstractView implements IView {
             _eventListener = new EventListener();
             Bukkit.getPluginManager().registerEvents(_eventListener, viewManager.getPlugin());
         }
-
     }
 
     @Override
@@ -94,7 +98,12 @@ public abstract class AbstractView implements IView {
         return _title != null ? _title : _name;
     }
 
-    protected final void setDefaultTitle(String title) {
+    /**
+     * Set or remove the default title.
+     *
+     * @param title  The title to set.
+     */
+    protected final void setDefaultTitle(@Nullable String title) {
         _title = title;
     }
 
@@ -104,25 +113,41 @@ public abstract class AbstractView implements IView {
     }
 
     @Override
-    public final void setViewTrigger(TriggerType type) {
+    public final boolean setViewTrigger(@Nullable Class<? extends IViewTrigger> triggerClass) {
 
-        if (_trigger != null) {
-
-            if (_trigger.getType() == type)
-                return;
-
-            _trigger.dispose();
+        // don't make changes if the new trigger is the same as the current trigger
+        if (_trigger != null && triggerClass != null && triggerClass.equals(_trigger.getClass())) {
+            return false;
         }
 
-        if (_dataNode != null) {
-            _dataNode.remove("trigger");
-            _dataNode.set("trigger.type", type);
-            _dataNode.saveAsync(null);
+        IDataNode triggerNode = _dataNode.getNode("trigger");
+        triggerNode.remove();
+
+        // check if removing current trigger.
+        if (triggerClass == null) {
+
+            // dispose current trigger
+            if (_trigger != null) {
+                _trigger.dispose();
+            }
+
+            _trigger = null;
+            triggerNode.saveAsync(null);
+            return true;
         }
 
-        _trigger = type.getNewTrigger(this, _dataNode != null ? _dataNode.getNode("trigger") : null, _viewManager);
+        // instantiate new trigger
+        IViewTrigger trigger = instantiateTrigger(triggerClass, triggerNode);
+        if (trigger == null)
+            return false;
+
+        _dataNode.set("trigger.class-name", triggerClass.getName());
+        _dataNode.saveAsync(null);
+
+        _trigger = trigger;
+
+        return true;
     }
-
 
     @Override
     public final ViewManager getViewManager() {
@@ -139,32 +164,88 @@ public abstract class AbstractView implements IView {
         return onCreateInstance(p, previous, sessionMeta, instanceMeta);
     }
 
-
+    /*
+     * load initial settings.
+     */
     private void loadSettings() {
-        if (_dataNode == null)
-            return;
 
         _title = _dataNode.getString("title", "Menu");
 
-        TriggerType type = _dataNode.getEnum("trigger.type", TriggerType.NONE, TriggerType.class);
-        if (_trigger != null) {
+        final String triggerClassName = _dataNode.getString("trigger.class-name");
+        if (triggerClassName != null) {
 
-            if (_trigger.getType() == type)
-                return;
+            Class<?> clazz = null;
 
-            _trigger.dispose();
+            try {
+                // get the class by name
+                clazz = Class.forName(triggerClassName);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            if (clazz != null) {
+
+                // make sure the class implements IViewTrigger
+                if (IViewTrigger.class.isAssignableFrom(clazz)) {
+
+                    Class<? extends IViewTrigger> triggerClass = clazz.asSubclass(IViewTrigger.class);
+
+                    _trigger = instantiateTrigger(triggerClass, _dataNode.getNode("trigger"));
+                }
+            }
         }
-
-        if (type != null)
-            _trigger = type.getNewTrigger(this, _dataNode.getNode("trigger"), _viewManager);
 
         onLoadSettings(_dataNode);
     }
 
 
+    /**
+     * Called after the view is initialized.
+     *
+     * @param name         The name of the view.
+     * @param dataNode     The views data node.
+     * @param viewManager  The owning view manager.
+     */
     protected abstract void onInit(String name, IDataNode dataNode, ViewManager viewManager);
+
+    /**
+     * Called whenever a view instance needs to be created for a player.
+     *
+     * @param p             The player to create a view instance for.
+     * @param previous      The players previous view instance.
+     * @param sessionMeta   The view session meta.
+     * @param instanceMeta  The meta for the view instance.
+     *
+     * @return  A new view instance.
+     */
     protected abstract ViewInstance onCreateInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta);
+
+    /**
+     * Called whenever the settings are loaded or reloaded.
+     *
+     * @param dataNode  The views data node.
+     */
     protected abstract void onLoadSettings(IDataNode dataNode);
+
+    /*
+     *  Create a new instance of a trigger.
+     */
+    @Nullable
+    private IViewTrigger instantiateTrigger(Class<? extends IViewTrigger> triggerClass, IDataNode dataNode) {
+
+        IViewTrigger trigger;
+
+        try {
+            trigger = triggerClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        trigger.init(this, getViewManager(), dataNode);
+
+        return trigger;
+    }
 
     /**
      * Global Bukkit event listener
@@ -236,10 +317,11 @@ public abstract class AbstractView implements IView {
                 event.setCancelled(true);
             }
 
-            Messenger.debug(null, "Cursor: {0}. Current: {1}", event.getCursor() != null ? event.getCursor().getType() : "null", event.getCurrentItem() != null ? event.getCurrentItem().getType() : "null");
+            Messenger.debug(null, "Cursor: {0}. Current: {1}",
+                    event.getCursor() != null ? event.getCursor().getType() : "null",
+                    event.getCurrentItem() != null ? event.getCurrentItem().getType() : "null");
 
             Messenger.debug(null, "ACTION: {0}, SLOT: {1}", event.getAction().name(), event.getRawSlot());
-
         }
 
 

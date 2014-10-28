@@ -44,15 +44,20 @@ import org.bukkit.material.MaterialData;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * View trigger that activates when a block type is clicked.
+ */
 public class BlockTypeTrigger extends AbstractViewTrigger {
 
-    private static Set<BlockTypeTrigger> _instances = new HashSet<BlockTypeTrigger>();
+    private static Set<BlockTypeTrigger> _instances = new HashSet<BlockTypeTrigger>(10);
     private static EventListener _eventListener;
     private static SettingDefinitions _possibleSettings = new SettingDefinitions();
 
     static {
         _possibleSettings
-                .set("block-type", ValueType.ITEMSTACK, "An ItemStack that represents the block material type that must be right clicked to activate trigger.")
+                .set("block-type", ValueType.ITEMSTACK,
+                        "An ItemStack that represents the block material type that must be " +
+                                "right clicked to activate trigger.")
         ;
     }
 
@@ -60,17 +65,13 @@ public class BlockTypeTrigger extends AbstractViewTrigger {
     private MaterialExt _material;
 
     @Override
-    protected void onInit(IView view, IDataNode triggerNode, ViewManager viewManager) {
+    protected void onInit(IView view, ViewManager viewManager, IDataNode dataNode) {
 
+        // initialize global Bukkit event listener if it isn't already initialized
         if (_eventListener == null) {
             _eventListener = new EventListener();
-            Bukkit.getPluginManager().registerEvents(_eventListener, _viewManager.getPlugin());
+            Bukkit.getPluginManager().registerEvents(_eventListener, getViewManager().getPlugin());
         }
-    }
-
-    @Override
-    public TriggerType getType() {
-        return TriggerType.BLOCK_TYPE;
     }
 
     @Override
@@ -78,21 +79,31 @@ public class BlockTypeTrigger extends AbstractViewTrigger {
         _instances.remove(this);
     }
 
-
+    /**
+     * Get the material data of the block type that
+     * must be clicked in order to activate the view.
+     */
     public MaterialData getMaterialData() {
         return _blockTypeData;
     }
 
+    /**
+     * Set the material data of the block type that
+     * must be clicked in order to activate the view.
+     */
     public void setMaterialData(ItemStack stack) {
         _blockTypeData = stack.getData().clone();
         _material = MaterialExt.from(_blockTypeData.getItemType());
     }
 
+    /**
+     * Set the material data of the block type that
+     * must be clicked in order to activate the view.
+     */
     public void setMaterialData(MaterialData data) {
         _blockTypeData = data;
         _material = MaterialExt.from(_blockTypeData.getItemType());
     }
-
 
     @Override
     protected void onLoadSettings(IDataNode dataNode) {
@@ -116,15 +127,12 @@ public class BlockTypeTrigger extends AbstractViewTrigger {
 
     private boolean trigger(Player p, BlockState blockState) {
 
-        boolean isMatch = false;
-
-        if (!_material.usesColorData() && !_material.usesSubMaterialData())
-            isMatch = blockState.getType() == _material.getMaterial();
-        else
-            isMatch = blockState.getData().equals(_blockTypeData);
+        boolean isMatch = !_material.usesColorData() && !_material.usesSubMaterialData()
+                ? blockState.getType() == _material.getMaterial()
+                : blockState.getData().equals(_blockTypeData);
 
         if (isMatch) {
-            _viewManager.show(p, _view, blockState.getBlock(), null);
+            getViewManager().show(p, getView(), blockState.getBlock(), null);
             return true;
         }
 
