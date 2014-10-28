@@ -24,7 +24,6 @@
 
 package com.jcwhatever.bukkit.generic.player;
 
-import com.jcwhatever.bukkit.generic.inventory.InventoryHelper;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
@@ -32,7 +31,6 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -46,19 +44,41 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
+/**
+ * Saves and restores snapshots of a players state.
+ * <p>
+ *     The players state consists of inventory items, armor, applied enchantments,
+ *     game mode, flight, health, food level, exp, fire ticks, fall distance,
+ *     and location.
+ * </p>
+ */
 public class PlayerState {
 
+    // store player states by plugin
     private static Map<Plugin, PlayerMap<PlayerState>> _statesByPlugin;
 
     static {
-        _statesByPlugin = new HashMap<>(50);
+        _statesByPlugin = new WeakHashMap<>(50);
     }
 
+    /**
+     * Get the currently stored player state.
+     *
+     * <p>
+     *     If no player state is found in memory, an attempt
+     *     is made to see if a player state is saved to disk.
+     * </p>
+     *
+     * @param plugin  The owning plugin.
+     * @param p       The player.
+     *
+     * @return  Null if no player state is stored.
+     */
     @Nullable
     public static PlayerState get(Plugin plugin, Player p) {
         PlayerMap<PlayerState> states = getStateMap(plugin);
@@ -76,6 +96,20 @@ public class PlayerState {
         return state;
     }
 
+    /**
+     * Saves a player current state and returns the information in
+     * a {@code PlayerState} object.
+     *
+     * <p>
+     *     If a player state is already saved for the specified plugin,
+     *     the current player state data overwrites the data in the
+     *     existing {@code PlayerState} object. Otherwise, a new object
+     *     is created.
+     * </p>
+     *
+     * @param plugin  The owning plugin.
+     * @param p       The player.
+     */
     public static PlayerState store(Plugin plugin, Player p) {
         PlayerMap<PlayerState> states = getStateMap(plugin);
 
@@ -90,23 +124,12 @@ public class PlayerState {
         return state;
     }
 
-    public static boolean isOnline(Player p) {
-        Player[] players = Bukkit.getServer().getOnlinePlayers();
-        for (Player plyr : players) {
-            if (plyr.getUniqueId().equals(p.getUniqueId()))
-                return true;
-        }
-        return false;
-    }
-
+    /**
+     * Specify if the players location should be restored.
+     */
     public enum RestoreLocation {
         TRUE,
         FALSE
-    }
-
-    public enum RestoreChecks {
-        NORMAL,
-        FORCE_RESTORE,
     }
 
     private final Player _player;
@@ -128,48 +151,47 @@ public class PlayerState {
     private int _fireTicks;
     private double _fallDistance;
 
+    /**
+     * Private Constructor.
+     *
+     * @param plugin  The owning plugin.
+     * @param p       The player.
+     */
     private PlayerState(Plugin plugin, Player p) {
         _player = p;
         _playerId = p.getUniqueId();
         _plugin = plugin;
     }
 
+    /**
+     * Determine if the player state is saved.
+     */
     public boolean isSaved() {
         return _isSaved;
     }
 
+    /**
+     * Get the saved items.
+     */
     public ItemStack[] getSavedItems() {
         return _items;
     }
 
+    /**
+     * Get the saved armor.
+     */
     public ItemStack[] getSavedArmor() {
         return _armor;
     }
 
-    public void resetPlayer() {
-        InventoryHelper.clearAll(_player.getInventory());
-
-        _player.setGameMode(GameMode.SURVIVAL);
-        _player.getActivePotionEffects().clear();
-        _potions = new ArrayList<PotionEffect>(_player.getActivePotionEffects());
-        _player.setHealth(_player.getMaxHealth());
-        _player.setFoodLevel(20);
-        _player.setLevel(0);
-        _player.setExp(0);
-        _player.setFlying(false);
-        _player.setAllowFlight(false);
-        _player.setFireTicks(0);
-        _player.setFallDistance(0);
-    }
-
-    public Location getRecordedLocation() {
+    public Location getSavedLocation() {
         return _location;
     }
 
     /**
      * Records player inventory and saves to disk.
      *
-     * @return {Boolean} - True if saving to disk is successful
+     * @return  True if saving to disk is successful. Save to memory is always successful.
      */
     public boolean save() {
 
@@ -217,14 +239,22 @@ public class PlayerState {
         return true;
     }
 
+    /**
+     * Restore the players state.
+     * <p>
+     *     The stored to disk player state is deleted.
+     * </p>
+     *
+     * @param restoreLocation  Specify if the players saved location should be restored.
+     *
+     * @return  The restore location or null if no location is stored.
+     *
+     * @throws IOException
+     * @throws InvalidConfigurationException
+     */
+    @Nullable
     public Location restore(RestoreLocation restoreLocation) throws IOException, InvalidConfigurationException {
-        return restore(restoreLocation, RestoreChecks.NORMAL);
-    }
-
-    public Location restore(RestoreLocation restoreLocation, RestoreChecks restoreChecks) throws IOException, InvalidConfigurationException {
-
-        if (restoreChecks == RestoreChecks.NORMAL && !isOnline(_player))
-            return null;
+        PreCon.notNull(restoreLocation);
 
         _isSaved = false;
 
@@ -254,10 +284,9 @@ public class PlayerState {
                 _player.setAllowFlight(_allowFlight);
                 _player.setFlying(_flight);
                 _player.setFireTicks(_fireTicks);
-                _player.setFallDistance(0);// prevent player respawn deaths //_player.setFallDistance((float)_fallDistance);
+                _player.setFallDistance(0);// prevent player respawn deaths
             }
         });
-
 
         // remove back up state storage
         DataStorage.removeTransientStorage(_plugin, new DataPath("player-states." + _playerId));
@@ -269,7 +298,10 @@ public class PlayerState {
         return _location != null ? LocationUtils.getCenteredLocation(_location) : null;
     }
 
-
+    /*
+     * Get a player state map for the specified plugin.
+      * Finds the existing one or creates a new one.
+     */
     private static PlayerMap<PlayerState> getStateMap(Plugin plugin) {
         PlayerMap<PlayerState> state = _statesByPlugin.get(plugin);
         if (state == null) {
@@ -279,7 +311,10 @@ public class PlayerState {
         return state;
     }
 
-
+    /*
+     *  Loads player state data from a file a fills the provided
+     *  PlayerState object with the data.
+     */
     private static boolean loadFromFile(PlayerState state) {
 
         if (!DataStorage.hasTransientStorage(state._plugin, new DataPath("player-states." + state._playerId)))
