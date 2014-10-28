@@ -27,86 +27,129 @@ package com.jcwhatever.bukkit.generic.scoreboards;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.UUID;
 
+/**
+ * Base implementation of a scoreboard container.
+ *
+ * <p>
+ *     Scoreboards applied to a player are tracked. If another scoreboard is
+ *     applied then removed, the previous scoreboard is applied.
+ * </p>
+ */
 public abstract class AbstractScoreboard implements IScoreboard {
 
-    private static Map<UUID, Stack<IScoreboard>> _stackMap = new PlayerMap<Stack<IScoreboard>>();
+    // stores scoreboard instances applied to a player, auto removes player entries
+    // when the player logs out. Use to reapply previous scoreboards when the most recent
+    // scoreboard is removed.
+    private static Map<UUID, LinkedList<IScoreboard>> _stackMap = new PlayerMap<>();
     
-	private boolean _isInitialized = false;
-		
-	protected Plugin _plugin;
-	protected IScoreboardInfo _typeInfo;
-	protected Scoreboard _scoreboard;
-	protected Map<String, ScoreItem> _scoreItems = new HashMap<String, ScoreItem>();
-	
-	@Override
-	public void init(Plugin plugin, IScoreboardInfo typeInfo) {
-	    PreCon.notNull(plugin);
-		PreCon.notNull(typeInfo);
-				
-		if (_isInitialized) {
-			throw new IllegalStateException("Cannot initialize scoreboard because it's already initialized.");
-		}
+	private final Plugin _plugin;
+	private final ScoreboardInfo _typeInfo;
+	private final Scoreboard _scoreboard;
 
-		_isInitialized = true;
-		_plugin = plugin;
-		_typeInfo = typeInfo;
-		_scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		
-		onInit();
-	}
-	
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     */
+    public AbstractScoreboard(Plugin plugin) {
+        PreCon.notNull(plugin);
+
+        ScoreboardInfo typeInfo = this.getClass().getAnnotation(ScoreboardInfo.class);
+        if (typeInfo == null)
+            throw new IllegalStateException("Scoreboard class is missing its ITypeInfo annotation.");
+
+        _plugin = plugin;
+        _typeInfo = typeInfo;
+        _scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+        onInit();
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+
+    /**
+     * Get the scoreboard type name.
+     */
 	@Override
 	public final String getType() {
 		return _typeInfo.name();
 	}
-	
+
+    /**
+     * Get the encapsulated scoreboard.
+     */
 	@Override
 	public final Scoreboard getScoreboard() {
 		return _scoreboard;
 	}
-	
+
+    /**
+     * Apply the scoreboard to the specified player.
+     *
+     * @param p  The player.
+     */
 	@Override
 	public final void apply(Player p) {
-	    
-	    Stack<IScoreboard> stack = _stackMap.get(p.getUniqueId());
+        PreCon.notNull(p);
+
+        // get the list of scoreboard instances applied to the player
+	    LinkedList<IScoreboard> stack = _stackMap.get(p.getUniqueId());
+
+        // add a new list if one doesn't exist
 	    if (stack == null) {
-	        stack = new Stack<IScoreboard>();
+	        stack = new LinkedList<IScoreboard>();
 	        _stackMap.put(p.getUniqueId(), stack);
 	    }
-	    
+
+        // apply scoreboards
 	    p.setScoreboard(_scoreboard);
-	    
+
+        // make sure the scoreboard isn't already the most recent scoreboard
 	    if (!stack.isEmpty()) {
 	        IScoreboard current = stack.peek();
 	        if (current == this) {
 	            return;
 	        }
 	    }
-	    
+
+        // push scoreboard
 	    stack.push(this);
 	    
 	    onApply(p);
 	}
-	
+
+    /**
+     * Remove the player from the scoreboard.
+     *
+     * @param p  The player.
+     */
 	@Override
-	public final void cease(Player p) {
-	    Stack<IScoreboard> stack = _stackMap.get(p.getUniqueId());
-	    IScoreboard next = null;
+	public final void remove(Player p) {
+        PreCon.notNull(p);
+
+        // get the list of scoreboard instances applied to the player
+	    LinkedList<IScoreboard> stack = _stackMap.get(p.getUniqueId());
+	    IScoreboard previous = null;
 	    
 	    if (stack != null && !stack.isEmpty()) {
+
+            // remove the current scoreboard from the list.
 	        if (stack.peek() == this) {
 	            stack.pop();
 	        }
@@ -114,21 +157,27 @@ public abstract class AbstractScoreboard implements IScoreboard {
 	            stack.remove(this);
 	        }
 	    }
-	    
+
+        // get the previous scoreboard
 	    if (stack != null && !stack.isEmpty()) {
-	        next = stack.peek();
+	        previous = stack.peek();
 	    }
 	    
-	    if (next != null) {
-	        p.setScoreboard(next.getScoreboard());
+	    if (previous != null) {
+            // apply the previous scoreboard
+	        p.setScoreboard(previous.getScoreboard());
 	    }
 	    else {
+            // remove the player scoreboard
 	        p.setScoreboard(null);
 	    }
 	    	    
-	    onCease(p);
+	    onRemove(p);
 	}
-	
+
+    /**
+     * Dispose the scoreboard.
+     */
 	@Override
 	public void dispose() {
 	    Set<Objective> objectives = _scoreboard.getObjectives();
@@ -137,116 +186,28 @@ public abstract class AbstractScoreboard implements IScoreboard {
 	    }
 	}
 
-	protected final void addScoreItem(ScoreItem scoreItem) {
-		_scoreItems.put(scoreItem.getKey(), scoreItem);
-		initScore(scoreItem);
-	}
 
-	protected final ScoreItem getScoreItem(String key) {
-		return _scoreItems.get(key);
-	}
-	
-	protected abstract void onInit();
+    /**
+     * Called to get the display header.
+     */
 	protected abstract String getDisplayHeader();
-	protected abstract void onInitScore(ScoreItem scoreItem, Score score);
 
-	protected abstract void onApply(Player p);
-    protected abstract void onCease(Player p);
-	
-	protected final class ScoreItem {
+    /**
+     * Called after the instance is initialized.
+     */
+    protected abstract void onInit();
 
-		private OfflinePlayer _scoreItem;
-		private String _key;
-		private int _initScore;
-		private String _objectiveName;
-		
-		public ScoreItem(String key, String objectiveName, Player p, int initVal) {
-			_scoreItem = p;
-			_initScore = initVal;
-			_objectiveName = objectiveName;
-			_key = key;
-		}
+    /**
+     * Called after the scoreboard is applied to a player.
+     *
+     * @param p  The player.
+     */
+    protected abstract void onApply(Player p);
 
-		public ScoreItem(String key, String objectiveName, String text, int initVal) {
-			_scoreItem = Bukkit.getOfflinePlayer(text);
-			_initScore = initVal;
-			_objectiveName = objectiveName;
-			_key = key;
-		}
-
-		public String getKey() {
-			return _key;
-		}
-		
-		public String getObjectiveName() {
-		    return _objectiveName;
-		}
-
-		public OfflinePlayer getOfflinePlayer() {
-			return _scoreItem;
-		}
-
-		public int getInitScore() {
-			return _initScore;
-		}
-
-		public int getScore() {
-		    Objective objective = _scoreboard.getObjective(_objectiveName);
-		    if (objective == null)
-		        return 0;
-		    
-			Score score = objective.getScore(_scoreItem);
-			return score.getScore();
-		}
-
-		public void setScore(int value) {
-		    Objective objective = _scoreboard.getObjective(_objectiveName);
-		    if (objective == null)
-		        return;
-		    
-			Score score = objective.getScore(_scoreItem);
-			score.setScore(value);
-		}
-
-		public int incrementScore() {
-			return incrementScore(1);
-		}
-
-		public int incrementScore(int amount) {
-		    Objective objective = _scoreboard.getObjective(_objectiveName);
-		    if (objective == null)
-		        return 0;
-		    
-			Score score = objective.getScore(_scoreItem);
-			int scoreCount = score.getScore() + amount;
-			score.setScore(scoreCount);
-			return scoreCount;
-		}
-
-	}
-
-
-	private void initScore(final ScoreItem scoreItem) {
-	    Objective objective = _scoreboard.getObjective(scoreItem.getObjectiveName());
-	    if (objective == null) {
-	        objective = _scoreboard.registerNewObjective(scoreItem.getObjectiveName(), "dummy");
-	    }
-	    
-		final Score score = objective.getScore(scoreItem.getOfflinePlayer());
-		
-		Bukkit.getScheduler().runTaskLater(_plugin, new Runnable() {
-
-            @Override
-            public void run () {
-                score.setScore(1);
-                onInitScore(scoreItem, score);
-            }
-		    
-		}, 1);
-	}
-	
-	
-	
-	
-
+    /**
+     * Called after the scoreboard is remove from a player.
+     *
+     * @param p  The player.
+     */
+    protected abstract void onRemove(Player p);
 }

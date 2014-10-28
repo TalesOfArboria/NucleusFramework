@@ -24,23 +24,48 @@
 
 package com.jcwhatever.bukkit.generic.scoreboards;
 
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 
-public interface IScoreboard {
+/**
+ * Represents a scoreboard wrapper.
+ */
+public interface IScoreboard extends IDisposable {
 
-    void init(Plugin plugin, IScoreboardInfo typeInfo);
-    
+    /**
+     * Get the scoreboards owning plugin.
+     */
+    Plugin getPlugin();
+
+    /**
+     * Get the scoreboard type name.
+     */
 	String getType();
-	
+
+    /**
+     * Get the encapsulated Bukkit scoreboard.
+     */
 	Scoreboard getScoreboard();
-	
-	
+
+    /**
+     * Apply the scoreboard to the specified player.
+     *
+     * @param p  The player.
+     */
 	void apply(Player p);
-    
-	void cease(Player p);
-	
-	
-	void dispose();
+
+    /**
+     * Remove the scoreboard from the specified player.
+     *
+     * @param p  The player.
+     */
+	void remove(Player p);
+
+    /**
+     * Dispose the scoreboard.
+     */
+    @Override
+    void dispose();
 }

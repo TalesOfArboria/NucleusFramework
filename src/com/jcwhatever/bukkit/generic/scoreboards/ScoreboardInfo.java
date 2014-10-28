@@ -29,12 +29,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Scoreboard info annotation required
+ * for {@code AbstractScoreboard} implementations.
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IScoreboardInfo {
+public @interface ScoreboardInfo {
 
+    /**
+     * The scoreboard type name.
+     */
     public String name();
 
+    /**
+     * Get the scoreboard description.
+     */
     public String description();
 
 }
