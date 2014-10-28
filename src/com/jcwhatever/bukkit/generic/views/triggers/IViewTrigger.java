@@ -24,19 +24,51 @@
 
 package com.jcwhatever.bukkit.generic.views.triggers;
 
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
 import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.ViewManager;
 
-public interface IViewTrigger {
+/**
+ * Represents a type that triggers a view
+ * to show to a player.
+ */
+public interface IViewTrigger extends IDisposable {
 
-    void init(IView view, IDataNode triggerNode, ViewManager viewManager);
+    /**
+     * Initialize the view trigger.
+     *
+     * @param view         The view that is triggered.
+     * @param dataNode     The triggers data node.
+     * @param viewManager  The owning view manager.
+     */
+    void init(IView view, IDataNode dataNode, ViewManager viewManager);
 
+    /**
+     * Get the view that is triggered.
+     */
+    public IView getView();
+
+    /**
+     * Get the owning view manager.
+     */
+    public ViewManager getViewManager();
+
+    /**
+     * Get the trigger type.
+     */
     TriggerType getType();
 
+    /**
+     * Get the triggers settings manager.
+     */
     ISettingsManager getSettingsManager();
 
+    /**
+     * Release resources used by the view.
+     */
+    @Override
     void dispose();
 
 }
