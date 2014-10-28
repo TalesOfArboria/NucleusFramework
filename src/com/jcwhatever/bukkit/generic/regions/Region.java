@@ -239,7 +239,6 @@ public abstract class Region {
 
     /**
      * Get the id of the region owner.
-     * @return
      */
     @Nullable
     public UUID getOwnerId() {
