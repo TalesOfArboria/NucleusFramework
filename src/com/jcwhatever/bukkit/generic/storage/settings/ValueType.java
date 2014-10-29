@@ -27,7 +27,12 @@ package com.jcwhatever.bukkit.generic.storage.settings;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Pre-defined setting value types.
+ */
 public class ValueType {
+
+    private ValueType() {}
 
     public static final Class<Boolean> BOOLEAN = Boolean.class;
     public static final Class<String> STRING = String.class;

@@ -27,56 +27,58 @@ package com.jcwhatever.bukkit.generic.storage.settings;
 import com.jcwhatever.bukkit.generic.converters.ValueConverter;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Abstract implementation of {@code ISettingsManager}.
+ */
 public abstract class AbstractSettingsManager implements ISettingsManager {
 
     private List<Runnable> _onSettingsChanged = new ArrayList<Runnable>(5);
 
-    public AbstractSettingsManager() {
-
-    }
-
     @Override
-    public void addOnSettingsChanged(Runnable runnable, boolean run) {
-        _onSettingsChanged.add(runnable);
+    public ValidationResults set(String settingName, @Nullable Object value) {
+        PreCon.notNull(settingName);
 
-        if (run) {
-            //Bukkit.getScheduler().scheduleSyncDelayedTask(_plugin, runnable, 5);
-            runnable.run();
-        }
-
-    }
-
-
-    @Override
-    public ValidationResults set(String property, Object value) {
         SettingDefinitions definitions = getPossibleSettings();
 
+        // make sure definitions have been defined.
         if (definitions == null)
             return ValidationResults.FALSE;
 
-        SettingDefinition def = definitions.get(property);
+        SettingDefinition def = definitions.get(settingName);
 
+        // make sure the property definition is defined.
         if (def == null)
             return ValidationResults.FALSE;
 
+        // set null value
         if (value == null) {
-            return onSet(property, null);
+            ValidationResults result = onSet(settingName, null);
+            if (result.isValid()) {
+                runSettingsChangedCallback();
+            }
+
+            return result;
         }
 
+        // get the properties value converter.
         ValueConverter<?, ?> converter = def.getValueConverter();
         if (converter != null) {
+
             value = converter.convert(value);
             if (value == null)
                 return ValidationResults.FALSE;
         }
 
+        // get the properties value type.
         Class<?> type = def.getValueType();
 
         // BOOLEAN
@@ -161,7 +163,8 @@ public abstract class AbstractSettingsManager implements ISettingsManager {
             }
         }
 
-        SettingValidator validator = def.getValidator();
+        // get the properties validator, if any.
+        ISettingValidator validator = def.getValidator();
         if (validator != null) {
             ValidationResults results = validator.validate(value);
 
@@ -169,83 +172,91 @@ public abstract class AbstractSettingsManager implements ISettingsManager {
                 return results;
         }
 
-        ValidationResults result = onSet(property, value);
+        // call onSet and receive validation results.
+        ValidationResults result = onSet(settingName, value);
         if (result.isValid()) {
-            for (Runnable runnable : _onSettingsChanged) {
-                runnable.run();
-            }
+            runSettingsChangedCallback();
         }
 
         return result;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> T get(String property) {
-        return (T)get(property, false);
+    @Nullable
+    public <T> T get(String settingName) {
+        return get(settingName, false);
     }
 
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> T get(String property, boolean unconvertValue) {
+    @Nullable
+    public <T> T get(String settingName, boolean unconvertValue) {
 
+        // get possible settings
         SettingDefinitions definitions = getPossibleSettings();
-
         if (definitions == null)
             return null;
 
-
-        SettingDefinition def = definitions.get(property);
-
+        // get setting definition
+        SettingDefinition def = definitions.get(settingName);
         if (def == null)
             return null;
 
+        // get setting type
         Class<?> type = def.getValueType();
+
         Object value;
 
         // BOOLEAN
         if (type.isAssignableFrom(Boolean.class))
-            value = getBoolean(property, def.hasDefaultVal() ? (Boolean)def.getDefaultVal() : false);
+            value = getBoolean(settingName, def.hasDefaultVal() ? (Boolean)def.getDefaultVal() : false);
 
             // INTEGER
         else if (type.isAssignableFrom(Integer.class))
-            value = getInteger(property, def.hasDefaultVal() ? (Integer)def.getDefaultVal() : 0);
+            value = getInteger(settingName, def.hasDefaultVal() ? (Integer)def.getDefaultVal() : 0);
 
             // LONG
         else if (type.isAssignableFrom(Long.class))
-            value = getLong(property, def.hasDefaultVal() ? (Long)def.getDefaultVal() : 0);
+            value = getLong(settingName, def.hasDefaultVal() ? (Long)def.getDefaultVal() : 0);
 
             // DOUBLE
         else if (type.isAssignableFrom(Double.class))
-            value = getDouble(property, def.hasDefaultVal() ? (Double)def.getDefaultVal() : 0.0D);
+            value = getDouble(settingName, def.hasDefaultVal() ? (Double)def.getDefaultVal() : 0.0D);
 
             // STRING
         else if (type.isAssignableFrom(String.class))
-            value = getString(property, def.hasDefaultVal() ? (String)def.getDefaultVal() : null);
+            value = getString(settingName, def.hasDefaultVal() ? (String)def.getDefaultVal() : null);
 
             // LOCATION
         else if (type.isAssignableFrom(Location.class))
-            value = getLocation(property, def.hasDefaultVal() ? (Location)def.getDefaultVal() : null);
+            value = getLocation(settingName, def.hasDefaultVal() ? (Location)def.getDefaultVal() : null);
 
             // ITEMSTACK
         else if (type.isAssignableFrom(ItemStack.class))
-            value = getItemStacks(property, def.hasDefaultVal() ? (ItemStack[])def.getDefaultVal() : null);
-
+            value = getItemStacks(settingName, def.hasDefaultVal() ? (ItemStack[])def.getDefaultVal() : null);
 
             // UUID
         else if (type.isAssignableFrom(UUID.class))
-            value = getUUID(property, def.hasDefaultVal() ? (UUID)def.getDefaultVal() : null);
+            value = getUUID(settingName, def.hasDefaultVal() ? (UUID)def.getDefaultVal() : null);
 
-        else if (type.isEnum())
-            value = getGenericEnum(property, (Enum<?>)(def.hasDefaultVal() ? type.cast(def.getDefaultVal()) : null), (Class<Enum<?>>)type);
+        else if (type.isEnum()) {
 
-        else {
-            value = getObject(property);
-            if (value == null)
-                return (T)def.getDefaultVal();
+            @SuppressWarnings("unchecked") Class<Enum<?>> e = (Class<Enum<?>>) type;
+
+            value = getGenericEnum(settingName,
+                    (Enum<?>) (def.hasDefaultVal()
+                            ? type.cast(def.getDefaultVal())
+                            : null), e);
+
+        } else {
+            value = getObject(settingName);
+            if (value == null) {
+                @SuppressWarnings("unchecked") T result = (T) def.getDefaultVal();
+                return result;
+            }
         }
 
+        // unconvert store value
         if (unconvertValue) {
             ValueConverter<?, ?> converter = def.getValueConverter();
             if (converter != null) {
@@ -253,31 +264,143 @@ public abstract class AbstractSettingsManager implements ISettingsManager {
             }
         }
 
-        return (T)value;
+        @SuppressWarnings("unchecked") T result = (T)value;
+        return result;
     }
 
+    @Override
+    public void addOnSettingsChanged(Runnable runnable, boolean run) {
+        _onSettingsChanged.add(runnable);
 
+        if (run) {
+            runnable.run();
+        }
 
-    protected abstract ValidationResults onSet(String property, Object value);
+    }
 
-    protected abstract Boolean getBoolean(String property, boolean defaultVal);
+    /**
+     * Called to set a value.
+     *
+     * @param settingName  The property name.
+     * @param value     The value to set.
+     *
+     * @return  Setting of setting the value.
+     */
+    protected abstract ValidationResults onSet(String settingName, @Nullable Object value);
 
-    protected abstract Integer getInteger(String property, int defaultVal);
+    /**
+     * Called to get a boolean setting value.
+     *
+     * @param settingName    The property name.
+     * @param defaultVal  The value to return if the property is not set or found.
+     *
+     * @return  Setting value or default value.
+     */
+    protected abstract Boolean getBoolean(String settingName, boolean defaultVal);
 
-    protected abstract Long getLong(String property, long defaultVal);
+    /**
+     * Called to get an integer setting value.
+     *
+     * @param settingName    The property name.
+     * @param defaultVal  The value to return if the property is not set or found.
+     *
+     * @return  Setting value or default value.
+     */
+    protected abstract Integer getInteger(String settingName, int defaultVal);
 
-    protected abstract Double getDouble(String property, double defaultVal);
+    /**
+     * Called to get a long setting value.
+     *
+     * @param settingName    The property name.
+     * @param defaultVal  The value to return if the property is not set or found.
+     *
+     * @return  Setting value or default value.
+     */
+    protected abstract Long getLong(String settingName, long defaultVal);
 
-    protected abstract String getString(String property, String defaultVal);
+    /**
+     * Called to get a double setting value.
+     *
+     * @param settingName    The property name.
+     * @param defaultVal  The value to return if the property is not set or found.
+     *
+     * @return  Setting value or default value.
+     */
+    protected abstract Double getDouble(String settingName, double defaultVal);
 
-    protected abstract Location getLocation(String property, Location defaultVal);
+    /**
+     * Called to get a string setting value.
+     *
+     * @param settingName    The property name.
+     * @param defaultVal  The value to return if the property is not set or found.
+     *
+     * @return  Setting value or default value.
+     */
+    @Nullable
+    protected abstract String getString(String settingName, @Nullable String defaultVal);
 
-    protected abstract ItemStack[] getItemStacks(String property, ItemStack[] defaultVal);
+    /**
+     * Called to get a location setting value.
+     *
+     * @param settingName    The property name.
+     * @param defaultVal  The value to return if the property is not set or found.
+     *
+     * @return  Setting value or default value.
+     */
+    @Nullable
+    protected abstract Location getLocation(String settingName, @Nullable Location defaultVal);
 
-    protected abstract UUID getUUID(String property, UUID defaultValue);
+    /**
+     * Called to get an item stack array setting value.
+     *
+     * @param settingName    The property name.
+     * @param defaultVal  The value to return if the property is not set or found.
+     *
+     * @return  Setting value or default value.
+     */
+    @Nullable
+    protected abstract ItemStack[] getItemStacks(String settingName, @Nullable ItemStack[] defaultVal);
 
-    protected abstract Enum<?> getGenericEnum(String property, Enum<?> defaultValue, Class<Enum<?>> type);
+    /**
+     * Called to get a unique ID setting value.
+     *
+     * @param settingName      The property name.
+     * @param defaultValue  The value to return if the property is not set or found.
+     *
+     * @return  Setting value or default value.
+     */
+    @Nullable
+    protected abstract UUID getUUID(String settingName, @Nullable UUID defaultValue);
 
-    protected abstract Object getObject(String property);
+    /**
+     * Called to get an enum setting value.
+     *
+     * @param settingName      The property name.
+     * @param defaultValue  The value to return if the property is not set or found.
+     * @param type          The enum type.
+     *
+     * @return  Setting value or default value.
+     */
+    @Nullable
+    protected abstract Enum<?> getGenericEnum(String settingName, Enum<?> defaultValue, @Nullable Class<Enum<?>> type);
+
+    /**
+     * Called to get a setting value of any type.
+     *
+     * @param settingName  The property name.
+     *
+     * @return  Setting value or null.
+     */
+    @Nullable
+    protected abstract Object getObject(String settingName);
+
+    /*
+     * Run callbacks that listen to setting changed event
+     */
+    private void runSettingsChangedCallback() {
+        for (Runnable runnable : _onSettingsChanged) {
+            runnable.run();
+        }
+    }
 
 }

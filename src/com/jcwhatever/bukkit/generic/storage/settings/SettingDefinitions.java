@@ -25,6 +25,8 @@
 package com.jcwhatever.bukkit.generic.storage.settings;
 
 import com.jcwhatever.bukkit.generic.converters.ValueConverter;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,133 +37,211 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A collection of setting definitions.
+ */
 public class SettingDefinitions extends HashMap<String, SettingDefinition> {
 
-    Map<String, ValueConverter<?, ?>> _converters;
-    Map<String, SettingValidator> _validators;
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -6642577546249886916L;
 
+    private Map<String, ValueConverter<?, ?>> _converters;
+    private Map<String, ISettingValidator> _validators;
     private List<SettingDefinition> _sortedList;
     private Set<String> _banned;
 
-
+    /**
+     * Constructor.
+     */
     public SettingDefinitions() {
         super();
     }
 
+    /**
+     * Constructor.
+     *
+     * @param size  Initial capacity.
+     */
+    public SettingDefinitions(int size) {
+        super(size);
+    }
 
-
+    /**
+     * Constructor.
+     *
+     * @param definitions  Initial setting definitions
+     */
     public SettingDefinitions(Map<String, SettingDefinition> definitions) {
         super(definitions);
     }
 
-    public SettingDefinitions set(String configName, Class<?> type) {
-        if (!canAdd(configName))
+    /**
+     * Define a new setting property and its value type.
+     *
+     * @param settingName  The name of the setting.
+     * @param type         The value type.
+     *
+     * @return  Self for chainable calls.
+     */
+    public SettingDefinitions set(String settingName, Class<?> type) {
+        if (!canAdd(settingName))
             return this;
 
         ValueConverter<?, ?> converter = null;
         if (_converters != null) {
-            converter = _converters.get(configName);
+            converter = _converters.get(settingName);
         }
 
-        SettingValidator validator = null;
+        ISettingValidator validator = null;
         if (_validators != null) {
-            validator = _validators.get(configName);
+            validator = _validators.get(settingName);
         }
 
-        SettingDefinition definition = new SettingDefinition(configName, type, converter, validator);
+        SettingDefinition definition = new SettingDefinition(settingName, type, converter, validator);
 
-        put(configName, definition);
+        put(settingName, definition);
 
         _sortedList = null;
 
         return this;
     }
 
-    public <T> SettingDefinitions set(String configName, T defaultVal, Class<T> type) {
-        if (!canAdd(configName))
+    /**
+     * Define a new setting property, its default value, and value type.
+     *
+     * @param settingName  The name of the setting.
+     * @param defaultVal   The default value.
+     * @param type         The value type.
+     *
+     * @param <T>  The value type
+     *
+     * @return  Self for chainable calls.
+     */
+    public <T> SettingDefinitions set(String settingName, @Nullable T defaultVal, Class<T> type) {
+        PreCon.notNullOrEmpty(settingName);
+        PreCon.notNull(type);
+
+        if (!canAdd(settingName))
             return this;
 
         ValueConverter<?, ?> converter = null;
         if (_converters != null) {
-            converter = _converters.get(configName);
+            converter = _converters.get(settingName);
         }
 
-        SettingValidator validator = null;
+        ISettingValidator validator = null;
         if (_validators != null) {
-            validator = _validators.get(configName);
+            validator = _validators.get(settingName);
         }
 
-        SettingDefinition definition = new SettingDefinition(configName, defaultVal, type, converter, validator);
+        SettingDefinition definition = new SettingDefinition(settingName, defaultVal, type, converter, validator);
 
-        this.put(configName, definition);
+        this.put(settingName, definition);
 
         _sortedList = null;
 
         return this;
     }
 
-    public SettingDefinitions set(String configName, Class<?> type, String descr) {
-        if (!canAdd(configName))
+    /**
+     * Define a new setting property, its value type, and description.
+     *
+     * @param settingName  The name of the setting.
+     * @param type         The value type.
+     * @param description  The setting description.
+     *
+     * @return  Self for chainable calls.
+     */
+    public SettingDefinitions set(String settingName, Class<?> type, String description) {
+        PreCon.notNullOrEmpty(settingName);
+        PreCon.notNull(type);
+        PreCon.notNull(description);
+
+        if (!canAdd(settingName))
             return this;
 
         ValueConverter<?, ?> converter = null;
         if (_converters != null) {
-            converter = _converters.get(configName);
+            converter = _converters.get(settingName);
         }
 
-        SettingValidator validator = null;
+        ISettingValidator validator = null;
         if (_validators != null) {
-            validator = _validators.get(configName);
+            validator = _validators.get(settingName);
         }
 
-        SettingDefinition definition = new SettingDefinition(configName, type, descr, converter, validator);
+        SettingDefinition definition = new SettingDefinition(settingName, type, description, converter, validator);
 
-        this.put(configName, definition);
+        this.put(settingName, definition);
 
         _sortedList = null;
 
         return this;
     }
 
-    public <T> SettingDefinitions set(String configName, T defaultVal, Class<T> type, String descr) {
-        if (!canAdd(configName))
+    /**
+     * Define a new setting property, its default value, value type, and description.
+     *
+     * @param settingName  The name of the setting.
+     * @param defaultVal   The default value.
+     * @param type         The value type.
+     * @param description  The setting description.
+     *
+     * @param <T>  The value type.
+     *
+     * @return  Self for chainable calls.
+     */
+    public <T> SettingDefinitions set(
+            String settingName, @Nullable T defaultVal, Class<T> type, String description) {
+
+        PreCon.notNullOrEmpty(settingName);
+        PreCon.notNull(type);
+        PreCon.notNull(description);
+
+        if (!canAdd(settingName))
             return this;
 
         ValueConverter<?, ?> converter = null;
         if (_converters != null) {
-            converter = _converters.get(configName);
+            converter = _converters.get(settingName);
         }
 
-        SettingValidator validator = null;
+        ISettingValidator validator = null;
         if (_validators != null) {
-            validator = _validators.get(configName);
+            validator = _validators.get(settingName);
         }
 
-        SettingDefinition definition = new SettingDefinition(configName, defaultVal, type, descr, converter, validator);
+        SettingDefinition definition = new SettingDefinition(
+                settingName, defaultVal, type, description, converter, validator);
 
-        this.put(configName, definition);
+        this.put(settingName, definition);
 
         _sortedList = null;
 
         return this;
     }
 
-    public SettingDefinitions setValueConverter(String configName, ValueConverter<?, ?> converter) {
-        if (!canAdd(configName))
+    /**
+     * Set a setting definitions value converter.
+     *
+     * @param settingName  The name of the setting.
+     * @param converter    The converter to use.
+     *
+     * @return  Self for chainable calls.
+     */
+    public SettingDefinitions setValueConverter(String settingName, ValueConverter<?, ?> converter) {
+        PreCon.notNullOrEmpty(settingName);
+        PreCon.notNull(converter);
+
+        if (!canAdd(settingName))
             return this;
 
-        SettingDefinition def = this.get(configName);
+        SettingDefinition def = this.get(settingName);
 
         if (def == null) {
             if (_converters == null)
                 _converters = new HashMap<String, ValueConverter<?, ?>>(3);
 
-            _converters.put(configName, converter);
+            _converters.put(settingName, converter);
         }
         else {
             def.setValueConverter(converter);
@@ -172,17 +252,28 @@ public class SettingDefinitions extends HashMap<String, SettingDefinition> {
         return this;
     }
 
-    public SettingDefinitions setValidator(String configName, SettingValidator validator) {
-        if (!canAdd(configName))
+    /**
+     * Set a setting definitions value validator.
+     *
+     * @param settingName  The name of the setting.
+     * @param validator    The validator to use.
+     *
+     * @return  Self for chainable calls.
+     */
+    public SettingDefinitions setValidator(String settingName, ISettingValidator validator) {
+        PreCon.notNullOrEmpty(settingName);
+        PreCon.notNull(validator);
+
+        if (!canAdd(settingName))
             return this;
 
-        SettingDefinition def = this.get(configName);
+        SettingDefinition def = this.get(settingName);
 
         if (def == null) {
             if (_validators == null)
-                _validators = new HashMap<String, SettingValidator>(3);
+                _validators = new HashMap<String, ISettingValidator>(3);
 
-            _validators.put(configName, validator);
+            _validators.put(settingName, validator);
         }
         else {
             def.setValidator(validator);
@@ -191,39 +282,60 @@ public class SettingDefinitions extends HashMap<String, SettingDefinition> {
         return this;
     }
 
-    public SettingDefinitions merge(SettingDefinitions defs) {
+    /**
+     * Merge another {@code SettingDefinitions} map into this one.
+     *
+     * <p>
+     *     Adds all setting definitions, converters and validators
+     *     from the provided {@code SettingDefinitions} with the exception
+     *     of settings that have been banned in the current {@code SettingDefinitions}.
+     * </p>
+     * <p>
+     *     Settings that are already defined in the current {@code SettingDefinitions}
+     *     are not merged. However, if the current setting does not have
+     *     a converter or validator that the provided {@code SettingDefinitions}
+     *     has, the convert and/or validator is merged.
+     * </p>
+     * <p>
+     *     Banned settings from the provided {@code SettingDefinitions} are merged. If the
+     *     current {@code SettingDefinitions} contains any banned settings, they are
+     *     removed.
+     * </p>
+     *
+     * @param definitions  The definitions to merge.
+     *
+     * @return  Self for chainable calls.
+     */
+    public SettingDefinitions merge(SettingDefinitions definitions) {
 
-        if (defs == null)
+        if (definitions == null)
             return this;
 
-        Set<String> keys = defs.keySet();
+        Set<String> keys = definitions.keySet();
 
         // merge banned
-        if (defs._banned != null) {
+        if (definitions._banned != null) {
             if (_banned == null)
                 _banned = new HashSet<String>(3);
 
             _banned.addAll(_banned);
         }
 
-
-
         // merge settings
         for (String key : keys) {
             if (this.containsKey(key) || !canAdd(key))
                 continue;
 
-            SettingDefinition setting = defs.get(key);
+            SettingDefinition setting = definitions.get(key);
             if (setting == null)
                 continue;
 
             this.put(key, setting);
         }
 
-
         // merge converters
-        if (defs._converters != null) {
-            keys = defs._converters.keySet();
+        if (definitions._converters != null) {
+            keys = definitions._converters.keySet();
 
             if (_converters == null)
                 _converters = new HashMap<String, ValueConverter<?, ?>>(3);
@@ -233,7 +345,7 @@ public class SettingDefinitions extends HashMap<String, SettingDefinition> {
                 if (_converters.containsKey(key) || !canAdd(key))
                     continue;
 
-                ValueConverter<?, ?> converter = defs._converters.get(key);
+                ValueConverter<?, ?> converter = definitions._converters.get(key);
                 if (converter == null)
                     continue;
 
@@ -242,26 +354,24 @@ public class SettingDefinitions extends HashMap<String, SettingDefinition> {
 
         }
 
-
         // merge validators
-        if (defs._validators != null) {
-            keys = defs._validators.keySet();
+        if (definitions._validators != null) {
+            keys = definitions._validators.keySet();
 
             if (_validators == null)
-                _validators = new HashMap<String, SettingValidator>(3);
+                _validators = new HashMap<String, ISettingValidator>(3);
 
 
             for (String key : keys) {
                 if (_validators.containsKey(key) || !canAdd(key))
                     continue;
 
-                SettingValidator validator = defs._validators.get(key);
+                ISettingValidator validator = definitions._validators.get(key);
                 if (validator == null)
                     continue;
 
                 _validators.put(key, validator);
             }
-
         }
 
         // remove banned
@@ -276,30 +386,40 @@ public class SettingDefinitions extends HashMap<String, SettingDefinition> {
         return this;
     }
 
-    public SettingDefinitions ban(String key) {
-        remove(key);
+    /**
+     * Ban a settings definition by setting name. This prevents
+     * the setting from being added or merged.
+     *
+     * @param settingName  The name of the setting.
+     *
+     * @return  Self for chainable calls.
+     */
+    public SettingDefinitions ban(String settingName) {
+        remove(settingName);
 
         if (_banned == null)
             _banned = new HashSet<String>(3);
 
-        _banned.add(key);
+        _banned.add(settingName);
 
         return this;
     }
 
     @Override
-    public SettingDefinition put(String key, SettingDefinition def) {
-        if (!canAdd(key))
+    @Nullable
+    public SettingDefinition put(String settingName, SettingDefinition def) {
+        if (!canAdd(settingName))
             return null;
 
         _sortedList = null;
-        return super.put(key, def);
+        return super.put(settingName, def);
     }
 
     @Override
-    public SettingDefinition remove(Object key) {
+    @Nullable
+    public SettingDefinition remove(Object settingName) {
         _sortedList = null;
-        return super.remove(key);
+        return super.remove(settingName);
     }
 
     @Override
@@ -318,9 +438,11 @@ public class SettingDefinitions extends HashMap<String, SettingDefinition> {
         return new ArrayList<SettingDefinition>(_sortedList);
     }
 
-    private boolean canAdd(String key) {
-        return _banned == null || !_banned.contains(key);
+    /*
+     * Determine if a definition can be added.
+     */
+    private boolean canAdd(String settingName) {
+        return _banned == null || !_banned.contains(settingName);
 
     }
-
 }

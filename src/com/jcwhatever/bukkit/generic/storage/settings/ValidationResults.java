@@ -24,12 +24,16 @@
 
 package com.jcwhatever.bukkit.generic.storage.settings;
 
+import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
-
+/**
+ * Object that defines the results of setting a value in a
+ * {@code SettingManager}.
+ */
 public class ValidationResults {
 
     private boolean _isValid;
@@ -40,22 +44,48 @@ public class ValidationResults {
     public static final ValidationResults TRUE = new ValidationResults(true);
     public static final ValidationResults FALSE = new ValidationResults(false);
 
+    /**
+     * Constructor.
+     *
+     * @param isValid  True to create a valid result.
+     */
     public ValidationResults(boolean isValid) {
         _isValid = isValid;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param isValid        True to create a valid result.
+     * @param message        A message to return with the result which might be displayed to a user.
+     * @param messageParams  Optional message format parameters.
+     */
     public ValidationResults(boolean isValid, String message, Object...messageParams) {
+        PreCon.notNull(message);
+        PreCon.notNull(messageParams);
+
         _isValid = isValid;
+        _message = message;
+        _messageParams = messageParams;
     }
 
+    /**
+     * Determine if the result is valid.
+     */
     public boolean isValid() {
         return _isValid;
     }
 
+    /**
+     * Determine if the result contains a message.
+     */
     public boolean hasMessage() {
         return _message != null;
     }
 
+    /**
+     * Get the result message.
+     */
     public String getMessage() {
         if (!hasMessage())
             return null;
@@ -66,11 +96,16 @@ public class ValidationResults {
         return _formattedMessage;
     }
 
+    /**
+     * Display the result message to a {@code CommandSender}.
+     *
+     * @param plugin  The owning plugin.
+     * @param sender  The command sender.
+     *
+     * @return  True if the message was displayed.
+     */
     public boolean tellMessage(Plugin plugin, CommandSender sender) {
-        if (!hasMessage())
-            return false;
-
-        return Messenger.tell(plugin, sender, _message, _messageParams);
+        return hasMessage() && Messenger.tell(plugin, sender, _message, _messageParams);
     }
 
 }

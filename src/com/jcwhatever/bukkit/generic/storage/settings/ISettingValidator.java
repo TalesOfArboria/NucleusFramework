@@ -24,8 +24,16 @@
 
 package com.jcwhatever.bukkit.generic.storage.settings;
 
-public abstract class SettingValidator {
+/**
+ * A validator used to validate a value being set
+ * on a setting.
+ */
+public interface ISettingValidator {
 
-    public abstract ValidationResults validate(Object value);
-
+    /**
+     * Called to validate a value.
+     *
+     * @param value  The value to validate.
+     */
+    ValidationResults validate(Object value);
 }

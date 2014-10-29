@@ -24,7 +24,14 @@
 
 package com.jcwhatever.bukkit.generic.storage.settings;
 
+/**
+ * Mixin interface that defines a class as
+ * implementing a settings manager.
+ */
 public interface ISettable {
 
+    /**
+     * Get the settings manager.
+     */
     ISettingsManager getSettingsManager();
 }

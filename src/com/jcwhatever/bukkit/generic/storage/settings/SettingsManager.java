@@ -25,134 +25,147 @@
 package com.jcwhatever.bukkit.generic.storage.settings;
 
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.sun.istack.internal.Nullable;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
+/**
+ * {@code ISettingsManager} implementation.
+ */
 public class SettingsManager extends AbstractSettingsManager {
 
-    private IDataNode _settings;
+    private IDataNode _dataNode;
     private SettingDefinitions _definitions;
 
+    /**
+     * Constructor.
+     */
     public SettingsManager() {
+        super();
     }
 
-    public SettingsManager (IDataNode settings, SettingDefinitions definitions) {
-        _settings = settings;
+    /**
+     * Constructor.
+     *
+     * @param dataNode     The data node being managed.
+     * @param definitions  The setting definitions that define possible settings.
+     */
+    public SettingsManager (IDataNode dataNode, @Nullable SettingDefinitions definitions) {
+        super();
+        PreCon.notNull(dataNode);
+
+        _dataNode = dataNode;
         _definitions = definitions;
     }
 
     @Override
     public SettingDefinitions getPossibleSettings() {
-        if (_definitions == null)
-            return new SettingDefinitions();
-        else
-            return new SettingDefinitions(_definitions);
+        return _definitions == null
+                ? new SettingDefinitions()
+                : new SettingDefinitions(_definitions);
     }
 
     @Override
-    public boolean isSetting(String property) {
-        return _definitions != null && _definitions.containsKey(property);
+    public boolean isSetting(String settingName) {
+        return _definitions != null && _definitions.containsKey(settingName);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> T get(String property) {
-        return (T)get(property, false);
+    public <T> T get(String settingName) {
+        return get(settingName, false);
     }
 
-
     @Override
-    protected ValidationResults onSet(String property, Object value) {
-        if (_settings == null) {
+    protected ValidationResults onSet(String settingName, Object value) {
+        if (_dataNode == null) {
             return new ValidationResults(false, "Settings can't be saved because no data storage available.");
         }
 
-        _settings.set(property, value);
+        _dataNode.set(settingName, value);
 
-        return _settings.save() ? ValidationResults.TRUE : ValidationResults.FALSE;
+        return _dataNode.save() ? ValidationResults.TRUE : ValidationResults.FALSE;
     }
 
     @Override
-    protected Boolean getBoolean(String property, boolean defaultVal) {
-        if (_settings == null)
+    protected Boolean getBoolean(String settingName, boolean defaultVal) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getBoolean(property, defaultVal);
+        return _dataNode.getBoolean(settingName, defaultVal);
     }
 
     @Override
-    protected Integer getInteger(String property, int defaultVal) {
-        if (_settings == null)
+    protected Integer getInteger(String settingName, int defaultVal) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getInteger(property, defaultVal);
+        return _dataNode.getInteger(settingName, defaultVal);
     }
 
     @Override
-    protected Long getLong(String property, long defaultVal) {
-        if (_settings == null)
+    protected Long getLong(String settingName, long defaultVal) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getLong(property, defaultVal);
+        return _dataNode.getLong(settingName, defaultVal);
     }
 
     @Override
-    protected Double getDouble(String property, double defaultVal) {
-        if (_settings == null)
+    protected Double getDouble(String settingName, double defaultVal) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getDouble(property, defaultVal);
+        return _dataNode.getDouble(settingName, defaultVal);
     }
 
     @Override
-    protected String getString(String property, String defaultVal) {
-        if (_settings == null)
+    protected String getString(String settingName, String defaultVal) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getString(property, defaultVal);
+        return _dataNode.getString(settingName, defaultVal);
     }
 
     @Override
-    protected Location getLocation(String property, Location defaultVal) {
-        if (_settings == null)
+    protected Location getLocation(String settingName, Location defaultVal) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getLocation(property, defaultVal);
+        return _dataNode.getLocation(settingName, defaultVal);
     }
 
     @Override
-    protected ItemStack[] getItemStacks(String property, ItemStack[] defaultVal) {
-        if (_settings == null)
+    protected ItemStack[] getItemStacks(String settingName, ItemStack[] defaultVal) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getItemStacks(property, defaultVal);
+        return _dataNode.getItemStacks(settingName, defaultVal);
     }
 
     @Override
-    protected UUID getUUID(String property, UUID defaultVal) {
-        if (_settings == null)
+    protected UUID getUUID(String settingName, UUID defaultVal) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getUUID(property, defaultVal);
+        return _dataNode.getUUID(settingName, defaultVal);
     }
 
     @Override
-    protected Enum<?> getGenericEnum(String property, Enum<?> defaultVal, Class<Enum<?>> type) {
-        if (_settings == null)
+    protected Enum<?> getGenericEnum(String settingName, Enum<?> defaultVal, Class<Enum<?>> type) {
+        if (_dataNode == null)
             return defaultVal;
 
-        return _settings.getEnumGeneric(property, defaultVal, type);
+        return _dataNode.getEnumGeneric(settingName, defaultVal, type);
     }
 
     @Override
-    protected Object getObject(String property) {
-        if (_settings == null)
+    protected Object getObject(String settingName) {
+        if (_dataNode == null)
             return null;
 
-        return _settings.get(property);
+        return _dataNode.get(settingName);
     }
-
-
 }
