@@ -45,13 +45,17 @@ public class AboutCommand extends AbstractCommand {
 
         Messenger.tell(_plugin, sender, "----------------------------------------");
 
-        String text = TextUtils.formatPluginInfo(_plugin, "{BOLD}{GREEN}{plugin-name} v{plugin-version}");
+        String text = TextUtils.formatPluginInfo(_plugin, "{BOLD}{GREEN}{plugin-name} {plugin-version}");
         Messenger.tell(_plugin, sender, text);
 
-        String author = TextUtils.formatPluginInfo(_plugin, "Plugin by {plugin-author}");
-        Messenger.tell(_plugin, sender, author);
+        if (_plugin.getDescription().getAuthors() != null &&
+                !_plugin.getDescription().getAuthors().isEmpty()) {
 
-        String list = TextUtils.formatPluginInfo(_plugin, "{AQUA}For a list of commands, type '/{plugin-command} help'\r");
+            String author = TextUtils.formatPluginInfo(_plugin, "Plugin by {plugin-author}");
+            Messenger.tell(_plugin, sender, author);
+        }
+
+        String list = TextUtils.formatPluginInfo(_plugin, "{AQUA}For a list of commands, type '/{plugin-command} ?'");
         Messenger.tell(_plugin, sender, list);
 
         Messenger.tell(_plugin, sender, "----------------------------------------");
