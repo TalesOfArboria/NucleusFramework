@@ -42,26 +42,26 @@ public interface IScoreboard extends IDisposable {
     /**
      * Get the scoreboard type name.
      */
-	String getType();
+    String getType();
 
     /**
      * Get the encapsulated Bukkit scoreboard.
      */
-	Scoreboard getScoreboard();
+    Scoreboard getScoreboard();
 
     /**
      * Apply the scoreboard to the specified player.
      *
      * @param p  The player.
      */
-	void apply(Player p);
+    void apply(Player p);
 
     /**
      * Remove the scoreboard from the specified player.
      *
      * @param p  The player.
      */
-	void remove(Player p);
+    void remove(Player p);
 
     /**
      * Dispose the scoreboard.

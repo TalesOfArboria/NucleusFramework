@@ -51,10 +51,10 @@ public abstract class AbstractScoreboard implements IScoreboard {
     // when the player logs out. Use to reapply previous scoreboards when the most recent
     // scoreboard is removed.
     private static Map<UUID, LinkedList<IScoreboard>> _stackMap = new PlayerMap<>();
-    
-	private final Plugin _plugin;
-	private final ScoreboardInfo _typeInfo;
-	private final Scoreboard _scoreboard;
+
+    private final Plugin _plugin;
+    private final ScoreboardInfo _typeInfo;
+    private final Scoreboard _scoreboard;
 
     /**
      * Constructor.
@@ -86,111 +86,111 @@ public abstract class AbstractScoreboard implements IScoreboard {
     /**
      * Get the scoreboard type name.
      */
-	@Override
-	public final String getType() {
-		return _typeInfo.name();
-	}
+    @Override
+    public final String getType() {
+        return _typeInfo.name();
+    }
 
     /**
      * Get the encapsulated scoreboard.
      */
-	@Override
-	public final Scoreboard getScoreboard() {
-		return _scoreboard;
-	}
+    @Override
+    public final Scoreboard getScoreboard() {
+        return _scoreboard;
+    }
 
     /**
      * Apply the scoreboard to the specified player.
      *
      * @param p  The player.
      */
-	@Override
-	public final void apply(Player p) {
+    @Override
+    public final void apply(Player p) {
         PreCon.notNull(p);
 
         // get the list of scoreboard instances applied to the player
-	    LinkedList<IScoreboard> stack = _stackMap.get(p.getUniqueId());
+        LinkedList<IScoreboard> stack = _stackMap.get(p.getUniqueId());
 
         // add a new list if one doesn't exist
-	    if (stack == null) {
-	        stack = new LinkedList<IScoreboard>();
-	        _stackMap.put(p.getUniqueId(), stack);
-	    }
+        if (stack == null) {
+            stack = new LinkedList<IScoreboard>();
+            _stackMap.put(p.getUniqueId(), stack);
+        }
 
         // apply scoreboards
-	    p.setScoreboard(_scoreboard);
+        p.setScoreboard(_scoreboard);
 
         // make sure the scoreboard isn't already the most recent scoreboard
-	    if (!stack.isEmpty()) {
-	        IScoreboard current = stack.peek();
-	        if (current == this) {
-	            return;
-	        }
-	    }
+        if (!stack.isEmpty()) {
+            IScoreboard current = stack.peek();
+            if (current == this) {
+                return;
+            }
+        }
 
         // push scoreboard
-	    stack.push(this);
-	    
-	    onApply(p);
-	}
+        stack.push(this);
+
+        onApply(p);
+    }
 
     /**
      * Remove the player from the scoreboard.
      *
      * @param p  The player.
      */
-	@Override
-	public final void remove(Player p) {
+    @Override
+    public final void remove(Player p) {
         PreCon.notNull(p);
 
         // get the list of scoreboard instances applied to the player
-	    LinkedList<IScoreboard> stack = _stackMap.get(p.getUniqueId());
-	    IScoreboard previous = null;
-	    
-	    if (stack != null && !stack.isEmpty()) {
+        LinkedList<IScoreboard> stack = _stackMap.get(p.getUniqueId());
+        IScoreboard previous = null;
+
+        if (stack != null && !stack.isEmpty()) {
 
             // remove the current scoreboard from the list.
-	        if (stack.peek() == this) {
-	            stack.pop();
-	        }
-	        else {     
-	            stack.remove(this);
-	        }
-	    }
+            if (stack.peek() == this) {
+                stack.pop();
+            }
+            else {
+                stack.remove(this);
+            }
+        }
 
         // get the previous scoreboard
-	    if (stack != null && !stack.isEmpty()) {
-	        previous = stack.peek();
-	    }
-	    
-	    if (previous != null) {
+        if (stack != null && !stack.isEmpty()) {
+            previous = stack.peek();
+        }
+
+        if (previous != null) {
             // apply the previous scoreboard
-	        p.setScoreboard(previous.getScoreboard());
-	    }
-	    else {
+            p.setScoreboard(previous.getScoreboard());
+        }
+        else {
             // remove the player scoreboard
-	        p.setScoreboard(null);
-	    }
-	    	    
-	    onRemove(p);
-	}
+            p.setScoreboard(null);
+        }
+
+        onRemove(p);
+    }
 
     /**
      * Dispose the scoreboard.
      */
-	@Override
-	public void dispose() {
-	    Set<Objective> objectives = _scoreboard.getObjectives();
-	    for (Objective objective : objectives) {
-	        objective.unregister();
-	    }
-	}
+    @Override
+    public void dispose() {
+        Set<Objective> objectives = _scoreboard.getObjectives();
+        for (Objective objective : objectives) {
+            objective.unregister();
+        }
+    }
 
 
     /**
      * Called to get the display header.
      */
-	protected abstract String getDisplayHeader();
+    protected abstract String getDisplayHeader();
 
     /**
      * Called after the instance is initialized.
