@@ -1,5 +1,5 @@
 name: GenericsLib
-author: JC The Pants
+author: JCThePants
 main: com.jcwhatever.bukkit.generic.GenericsLib
 version: 0.0-beta
 softdepend: [Vault]
