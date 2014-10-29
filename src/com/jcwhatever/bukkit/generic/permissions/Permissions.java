@@ -368,6 +368,8 @@ public class Permissions {
      */
     public static boolean hasGroup(Player p, String groupName) {
         String[] groups = getGroups(p);
+        if (groups == null)
+            return false;
 
         for (String group : groups) {
             if (group.equals(groupName))
