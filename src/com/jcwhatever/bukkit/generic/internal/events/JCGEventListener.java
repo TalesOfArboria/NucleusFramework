@@ -32,12 +32,8 @@ import com.jcwhatever.bukkit.generic.events.bukkit.SignInteractEvent;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper.DisplayNameResult;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.permissions.BukkitPermissions;
-import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -59,10 +55,6 @@ import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-
-import java.util.List;
-import java.util.Set;
 
 public final class JCGEventListener implements Listener {
 
@@ -72,20 +64,7 @@ public final class JCGEventListener implements Listener {
         if (CommandRequests.onResponse(event.getPlayer(), event.getMessage())) {
             Messenger.debug(null, "Response Processed");
             event.setCancelled(true);
-            return; // finished
         }
-
-        // TODO: Remove
-        String msg = event.getMessage().toLowerCase();
-	    if (msg.indexOf("jcthepants") != -1 || msg.indexOf("jcthomasj") != -1) {
-	        
-	        if (event.getPlayer().getName().equalsIgnoreCase("jcthepants") ||
-	            event.getPlayer().getName().equalsIgnoreCase("jcthomasj")) {
-	            return;
-	        }
-	                	        
-	        event.setCancelled(true);
-	    }
 	}
 
 	@EventHandler(priority=EventPriority.LOW)
@@ -95,33 +74,6 @@ public final class JCGEventListener implements Listener {
 
 		// update player name in id lookup
 		PlayerHelper.setPlayerName(p.getUniqueId(), p.getName());
-
-		// give permissions
-		if (Permissions.getImplementation() instanceof BukkitPermissions) {
-			BukkitPermissions perms = (BukkitPermissions)Permissions.getImplementation();
-
-			IDataNode playerNode = perms.getPermissions().getNode(p.getUniqueId().toString());
-
-			Set<String> pluginNames = playerNode.getSubNodeNames();
-
-			if (pluginNames != null && !pluginNames.isEmpty()) {
-				for (String pluginName : pluginNames) {
-
-					Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
-					if (plugin == null)
-						continue;
-
-					List<String> permissions = playerNode.getStringList(pluginName, null);		
-
-					if (permissions == null || permissions.isEmpty())
-						continue;
-
-					for (String permission : permissions) {
-						Permissions.addTransient(plugin, p, permission);
-					}
-				}
-			}
-		}		
 
 		// tell player missed important messages
 		Messenger.tellImportant(p);
@@ -228,7 +180,6 @@ public final class JCGEventListener implements Listener {
 						AnvilItemRepairEvent repairEvent = AnvilItemRepairEvent.callEvent(p, anvilInventory, resultItem);
 						if (repairEvent.isCancelled()) {
 							event.setCancelled(true);
-							return;
 						}
 					}
 				}

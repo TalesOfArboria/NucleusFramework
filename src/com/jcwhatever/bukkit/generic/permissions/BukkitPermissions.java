@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class BukkitPermissions extends AbstractBukkitPermissions {
+public class BukkitPermissions extends AbstractPermissions {
 	
 	private static Map<UUID, PermissionAttachment> _transient = new PlayerMap<PermissionAttachment>();
 	private IDataNode _permissions;
