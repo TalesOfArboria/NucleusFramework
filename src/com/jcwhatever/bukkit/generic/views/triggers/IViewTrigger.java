@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
 import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.ViewManager;
+import javax.annotation.Nullable;
 
 /**
  * Represents a type that triggers a view
@@ -43,7 +44,7 @@ public interface IViewTrigger extends IDisposable {
      * @param viewManager  The owning view manager.
      * @param dataNode     The triggers data node.
      */
-    void init(IView view, ViewManager viewManager, IDataNode dataNode);
+    void init(IView view, ViewManager viewManager, @Nullable IDataNode dataNode);
 
     /**
      * Get the view that is triggered.

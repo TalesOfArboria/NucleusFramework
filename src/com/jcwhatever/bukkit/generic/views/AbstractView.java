@@ -64,10 +64,9 @@ public abstract class AbstractView implements IView {
      * @param dataNode     The data node to save settings to.
      */
     @Override
-    public final void init(String name, ViewManager viewManager, IDataNode dataNode) {
+    public final void init(String name, ViewManager viewManager, @Nullable IDataNode dataNode) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(viewManager);
-        PreCon.notNull(dataNode);
 
         if (_isInitialized)
             throw new IllegalStateException("Custom inventory view can only be initialized once.");
@@ -120,8 +119,12 @@ public abstract class AbstractView implements IView {
             return false;
         }
 
-        IDataNode triggerNode = _dataNode.getNode("trigger");
-        triggerNode.remove();
+        IDataNode triggerNode = null;
+
+        if (_dataNode != null) {
+            triggerNode = _dataNode.getNode("trigger");
+            triggerNode.remove();
+        }
 
         // check if removing current trigger.
         if (triggerClass == null) {
@@ -132,7 +135,10 @@ public abstract class AbstractView implements IView {
             }
 
             _trigger = null;
-            triggerNode.saveAsync(null);
+
+            if (triggerNode != null) {
+                triggerNode.saveAsync(null);
+            }
             return true;
         }
 
@@ -141,8 +147,10 @@ public abstract class AbstractView implements IView {
         if (trigger == null)
             return false;
 
-        _dataNode.set("trigger.class-name", triggerClass.getName());
-        _dataNode.saveAsync(null);
+        if (_dataNode != null) {
+            _dataNode.set("trigger.class-name", triggerClass.getName());
+            _dataNode.saveAsync(null);
+        }
 
         _trigger = trigger;
 
@@ -169,6 +177,9 @@ public abstract class AbstractView implements IView {
      * load initial settings.
      */
     private void loadSettings() {
+
+        if (_dataNode == null)
+            return;
 
         _title = _dataNode.getString("title", "Menu");
 
@@ -207,7 +218,7 @@ public abstract class AbstractView implements IView {
      * @param dataNode     The views data node.
      * @param viewManager  The owning view manager.
      */
-    protected abstract void onInit(String name, IDataNode dataNode, ViewManager viewManager);
+    protected abstract void onInit(String name, @Nullable IDataNode dataNode, ViewManager viewManager);
 
     /**
      * Called whenever a view instance needs to be created for a player.
@@ -233,7 +244,8 @@ public abstract class AbstractView implements IView {
      *  Create a new instance of a trigger.
      */
     @Nullable
-    private IViewTrigger instantiateTrigger(Class<? extends IViewTrigger> triggerClass, IDataNode dataNode) {
+    private IViewTrigger instantiateTrigger(
+            Class<? extends IViewTrigger> triggerClass, @Nullable IDataNode dataNode) {
 
         IViewTrigger trigger;
 
