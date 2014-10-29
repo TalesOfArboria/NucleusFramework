@@ -33,8 +33,13 @@ public class MissingCommandAnnotationException extends RuntimeException {
 
     private String _message;
 
+    /**
+     * Constructor.
+     *
+     * @param commandClass  The command that is missing its command annotation.
+     */
     public MissingCommandAnnotationException(Class<? extends AbstractCommand> commandClass) {
-        _message = "Could not find expected type annotation for command class: " + commandClass.getName();
+        _message = "Could not find expected ICommandInfo annotation for command class: " + commandClass.getName();
     }
 
     @Override

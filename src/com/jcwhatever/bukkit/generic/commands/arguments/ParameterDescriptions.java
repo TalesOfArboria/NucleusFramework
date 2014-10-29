@@ -40,7 +40,7 @@ import java.util.Map;
  * and makes them available.
  */
 public class ParameterDescriptions {
-        
+
     private CommandInfoContainer _commandInfo;
     private Map<String, String> _descriptionMap = null;
 
@@ -69,9 +69,9 @@ public class ParameterDescriptions {
     @Localized
     public String get(String parameterName) {
         PreCon.notNullOrEmpty(parameterName);
-        
+
         parseDescriptions();
-        
+
         return _descriptionMap.get(parameterName);
     }
 
@@ -88,11 +88,11 @@ public class ParameterDescriptions {
     public String get(String parameterName, ArgumentValueType valueType) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(valueType);
-        
+
         String description = get(parameterName);
         if (description != null)
             return description;
-        
+
         return ArgumentValueType.getDescription(parameterName, valueType);
     }
 
@@ -106,11 +106,11 @@ public class ParameterDescriptions {
     public String get(String parameterName, int maxNameLength) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.positiveNumber(maxNameLength);
-        
+
         String description = get(parameterName);
         if (description != null)
             return description;
-        
+
         return ArgumentValueType.getNameDescription(maxNameLength);
     }
 
@@ -126,7 +126,7 @@ public class ParameterDescriptions {
     public <T extends Enum<T>> String get(String parameterName, Class<T> enumClass) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(enumClass);
-        
+
         String description = get(parameterName);
         if (description != null)
             return description;
@@ -146,7 +146,7 @@ public class ParameterDescriptions {
     public <T extends Enum<T>> String get(String parameterName, T[] validEnumValues) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(validEnumValues);
-        
+
         String description = get(parameterName);
         if (description != null)
             return description;
@@ -166,33 +166,33 @@ public class ParameterDescriptions {
     public <T extends Enum<T>> String get(String parameterName, Collection<T> validEnumValues) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(validEnumValues);
-        
+
         String description = get(parameterName);
         if (description != null)
             return description;
-        
+
         return ArgumentValueType.getEnumDescription(validEnumValues);
     }
-    
+
 
     private void parseDescriptions() {
         if (_descriptionMap != null)
             return;
-        
+
         String[] descriptions = _commandInfo.getParamDescriptions();
         _descriptionMap = new HashMap<String, String>(descriptions.length);
 
         for (String desc : descriptions) {
             String[] descComp =  TextUtils.PATTERN_EQUALS.split(desc, -1);
-            
+
             String parameterName = descComp[0].trim();
-            
+
             if (descComp.length < 2) {
                 throw new InvalidParameterDescriptionException(_commandInfo, descComp[0]);
             }
-            
+
             String description = TextUtils.concat(1, descComp, "=");
-            
+
             _descriptionMap.put(parameterName, description);
         }
     }

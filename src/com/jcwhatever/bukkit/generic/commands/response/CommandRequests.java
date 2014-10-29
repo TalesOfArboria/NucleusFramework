@@ -36,6 +36,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Command helper used to request a one time response from a player.
+ */
 public class CommandRequests {
 
     private CommandRequests() {}

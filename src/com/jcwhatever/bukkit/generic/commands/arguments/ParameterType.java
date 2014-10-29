@@ -26,8 +26,6 @@ package com.jcwhatever.bukkit.generic.commands.arguments;
 
 /**
  * Specifies the type of command parameter
- * @author JC The Pants
- *
  */
 public enum ParameterType {
     /**

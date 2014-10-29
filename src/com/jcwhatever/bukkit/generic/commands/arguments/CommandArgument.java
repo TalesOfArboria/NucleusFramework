@@ -29,7 +29,6 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 /**
  * A data storage object that represents
  * a single supplied parameter to a command.
- *
  */
 public class CommandArgument {
 
@@ -96,28 +95,27 @@ public class CommandArgument {
     
     /**
      * Get the predefined name of the parameter.
-     * @return
      */
     public String getParameterName() {
         return _name;
     }
     
     /**
-     * Get the type of parameter 
+     * Get the type of parameter.
      */
     public ParameterType getParameterType () {
         return _paramType;
     }
 
     /**
-     * Get the argument type
+     * Get the argument type.
      */
     public ArgumentType getArgumentType () {
         return _argType;
     }
     
     /**
-     * Get the supplied value
+     * Get the supplied value.
      */
     public String getValue() {
         return _value;

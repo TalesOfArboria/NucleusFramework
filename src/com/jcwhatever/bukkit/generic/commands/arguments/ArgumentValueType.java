@@ -56,16 +56,14 @@ public class ArgumentValueType {
     @Localizable static final String _BOOLEAN = "Boolean. i.e. true, false, yes, no, on, off";
     @Localizable static final String _PERCENT = "Percentage. i.e 32.2%";
     @Localizable static final String _ITEMSTACK = "Item stack. Use 'inhand' for the item in your hand. " +
-                                                  "'inventory' uses all items in your inventory. " +
-                                                  "'hotbar' uses items in your hotbar. Parsable text " +
-                                                  "can also be provided in the following format: " +
-                                                  "<materialName>[:<data>][;<quantity>]";
+            "'inventory' uses all items in your inventory. " +
+            "'hotbar' uses items in your hotbar. Parsable text " +
+            "can also be provided in the following format: " +
+            "<materialName>[:<data>][;<quantity>]";
     @Localizable static final String _LOCATION = "Use 'current' to provide you current location. 'select' will allow you " +
-                                                 "to click on a block to provide it's location.";
+            "to click on a block to provide it's location.";
     @Localizable static final String _ENUM = "Unspecified enumeration constant. Consult documentation, if any.";
     @Localizable static final String _USE_ONE_OF = "Use one of the following values: {0}";
-
-
 
     public static final ArgumentValueType UNKNOWN = new ArgumentValueType(_UNKNOWN);
     public static final ArgumentValueType NAME = new ArgumentValueType(_NAME);
@@ -82,7 +80,7 @@ public class ArgumentValueType {
     public static final ArgumentValueType ITEMSTACK = new ArgumentValueType(_ITEMSTACK);
     public static final ArgumentValueType LOCATION = new ArgumentValueType(_LOCATION);
     public static final ArgumentValueType ENUM = new ArgumentValueType(_ENUM);
-    
+
     private final String _description;
 
     /**

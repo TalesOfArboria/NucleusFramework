@@ -31,6 +31,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Required annotation for all commands. Defines
+ * basic operation of command.
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ICommandInfo {
@@ -97,7 +101,6 @@ public @interface ICommandInfo {
      * Define if the command can be seen in help command lists. 
      */
     boolean isHelpVisible() default true;
-
 
     /**
      * Define the default permission for the command
