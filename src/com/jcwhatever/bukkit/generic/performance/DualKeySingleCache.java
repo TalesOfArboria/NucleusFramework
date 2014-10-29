@@ -28,6 +28,19 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import javax.annotation.Nullable;
 
+/**
+ * Caches a single value represented by two keys.
+ * <p>
+ *     Useful when an operation is required to do lengthy
+ *     operations and external caching of the results is not possible.
+ *     Methods employing this cache can cache the previous results
+ *     in case the results for the same key pair is needed consecutively.
+ * </p>
+ *
+ * @param <K1>  The 1st key type.
+ * @param <K2>  The 2nd key type.
+ * @param <V>  The value type.
+ */
 public class DualKeySingleCache <K1, K2, V> {
 
     private K1 _key1;
@@ -35,26 +48,49 @@ public class DualKeySingleCache <K1, K2, V> {
     private V _value;
     private boolean _hasValue = false;
 
+    /**
+     * Determine if the cached key pairs are equal to the provided
+     * key pairs.
+     *
+     * @param key1  The 1st key to check.
+     * @param key2  The 2nd key to check.
+     */
     public boolean keyEquals(@Nullable Object key1, @Nullable Object key2) {
         return !(_key1 == null || _key2 == null) &&
                 _key1.equals(key1) && _key2.equals(key2);
     }
 
+    /**
+     * Get the currently cached 1st key.
+     */
     @Nullable
     public K1 getKey1() {
         return _key1;
     }
 
+    /**
+     * Get the currently cached 2nd key.
+     */
     @Nullable
     public K2 getKey2() {
         return _key2;
     }
 
+    /**
+     * Get the currently cached value.
+     */
     @Nullable
     public V getValue() {
         return _value;
     }
 
+    /**
+     * Set the current cache key/values.
+     *
+     * @param key1   The 1st key.
+     * @param key2   The 2nd key.
+     * @param value  The value.
+     */
     public void set(K1 key1, K2 key2, @Nullable V value) {
         PreCon.notNull(key1);
         PreCon.notNull(key2);
@@ -65,6 +101,10 @@ public class DualKeySingleCache <K1, K2, V> {
         _hasValue = true;
     }
 
+    /**
+     * Reset the cache by removing cached
+     * keys and value.
+     */
     public void reset() {
         _key1 = null;
         _key2 = null;
@@ -72,6 +112,10 @@ public class DualKeySingleCache <K1, K2, V> {
         _hasValue = false;
     }
 
+    /**
+     * Determine if the cache has keys
+     * and value set.
+     */
     public boolean hasValue() {
         return _hasValue;
     }

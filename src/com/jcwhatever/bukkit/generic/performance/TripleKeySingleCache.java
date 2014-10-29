@@ -28,6 +28,20 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import javax.annotation.Nullable;
 
+/**
+ * Caches a single value represented by three keys.
+ * <p>
+ *     Useful when an operation is required to do lengthy
+ *     operations and external caching of the results is not possible.
+ *     Methods employing this cache can cache the previous results
+ *     in case the results for the same keys is needed consecutively.
+ * </p>
+ *
+ * @param <K1>  The 1st key type.
+ * @param <K2>  The 2nd key type.
+ * @param <K3>  The 3rd key type.
+ * @param <V>  The value type.
+ */
 public class TripleKeySingleCache <K1, K2, K3, V> {
 
     private K1 _key1;
@@ -36,33 +50,60 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
     private V _value;
     private boolean _hasValue = false;
 
+    /**
+     * Determine if the cached keys are equal to the provided keys.
+     *
+     * @param key1  The first key to check.
+     * @param key2  The second key to check.
+     * @param key3  The third key to check.
+     */
     public boolean keyEquals(@Nullable Object key1, @Nullable Object key2, @Nullable Object key3) {
-        if (_key1 == null || _key2 == null || _key3 == null)
-            return false;
-
-        return _key1.equals(key1) && _key2.equals(key2) && _key3.equals(key3);
+        return !(_key1 == null || _key2 == null || _key3 == null) &&
+                _key1.equals(key1) &&
+                _key2.equals(key2) &&
+                _key3.equals(key3);
     }
 
+    /**
+     * Get the currently cached 1st key value.
+     */
     @Nullable
     public K1 getKey1() {
         return _key1;
     }
 
+    /**
+     * Get the currently cached 2nd key value.
+     */
     @Nullable
     public K2 getKey2() {
         return _key2;
     }
 
+    /**
+     * Get the currently cached 3rd key value.
+     */
     @Nullable
     public K3 getKey3() {
         return _key3;
     }
 
+    /**
+     * Get the currently cached value.
+     */
     @Nullable
     public V getValue() {
         return _value;
     }
 
+    /**
+     * Set the current cache key/values.
+     *
+     * @param key1   The 1st key.
+     * @param key2   The 2nd key.
+     * @param key3   The 3rd key.
+     * @param value  The value.
+     */
     public void set(K1 key1, K2 key2, K3 key3, @Nullable V value) {
         PreCon.notNull(key1);
         PreCon.notNull(key2);
@@ -75,6 +116,10 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
         _hasValue = true;
     }
 
+    /**
+     * Reset the cache by removing cached
+     * keys and values.
+     */
     public void reset() {
         _key1 = null;
         _key2 = null;
@@ -83,6 +128,10 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
         _hasValue = false;
     }
 
+    /**
+     * Determine if the cache has keys
+     * and value set
+     */
     public boolean hasValue() {
         return _hasValue;
     }
