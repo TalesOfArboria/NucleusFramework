@@ -29,16 +29,17 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderExc
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.MissingCommandAnnotationException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
+import com.jcwhatever.bukkit.generic.messaging.ChatPaginator.PaginatorTemplate;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.permissions.IPermission;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
-import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
-import com.jcwhatever.bukkit.generic.messaging.ChatPaginator.PaginatorTemplate;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatTemplate;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -283,7 +284,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                         continue;
 
                     // determine if the CommandSender has permission to use the command
-                    if (!Permissions.has(sender, cmd.getPermission().getName()))
+                    if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
                         continue;
 
                     // add command to paginator
@@ -301,7 +302,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                         continue;
 
                     // determine if the CommandSender has permission to use the command
-                    if (!Permissions.has(sender, cmd.getPermission().getName()))
+                    if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
                         continue;
 
                     // add info to get sub commands help to paginator

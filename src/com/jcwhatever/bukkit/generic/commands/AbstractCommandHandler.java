@@ -40,6 +40,7 @@ import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
@@ -164,7 +165,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         }
 
         // Check if the player has permissions to run the command
-        if (!Permissions.has(sender, command.getPermission().getName())) {
+        if (sender instanceof Player && !Permissions.has((Player)sender, command.getPermission().getName())) {
             tellError(sender, Lang.get(_ACCESS_DENIED));
             return true;
         }

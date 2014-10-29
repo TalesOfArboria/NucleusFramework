@@ -33,6 +33,7 @@ import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatTemplate;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class HelpCommand extends AbstractCommand {
                     if (!info.isHelpVisible())
                         continue;
 
-                    if (!Permissions.has(sender, cmd.getPermission().getName()))
+                    if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
                         continue;
 
                     pagin.add(info.getUsage(), info.getDescription());
@@ -95,7 +96,7 @@ public class HelpCommand extends AbstractCommand {
                     if (!info.isHelpVisible())
                         continue;
 
-                    if (!Permissions.has(sender, cmd.getPermission().getName()))
+                    if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
                         continue;
 
                     // format colors and command name
