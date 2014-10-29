@@ -24,38 +24,69 @@
 
 package com.jcwhatever.bukkit.generic.permissions;
 
-import org.bukkit.permissions.Permissible;
-import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
+import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.Set;
 
+/**
+ * Interface for a Permission container.
+ */
 public interface IPermission {
-	
-	boolean hasSuperPermission();
-	
-	Permission getSuperPermission();
-	
-	
-	String getName();
-		
-	void addParent(IPermission permission, boolean value);
-	
-	void addParent(String name, boolean value);
-	
-	Map<String, Boolean> getChildren();
-	
-	PermissionDefault getDefault();
-	
-	String getDescription();
-	
-	Set<Permissible> getPermissables();
-	
-	void recalculatePermissibles();
-	
-	void setDefault(PermissionDefault value);
 
+    /**
+     * Get the permission name.
+     */
+	String getName();
+
+    /**
+     * Add a parent permission.
+     *
+     * @param permission  The parent permission.
+     * @param isAllowed   True for permission allowed.
+     */
+	void addParent(IPermission permission, boolean isAllowed);
+
+    /**
+     * Add a parent permission.
+     *
+     * @param name       The name of the parent permission.
+     * @param isAllowed  True for permission allowed.
+     */
+	void addParent(String name, boolean isAllowed);
+
+    /**
+     * Get the permission children names  and
+     * permission value map.
+     */
+	Map<String, Boolean> getChildren();
+
+    /**
+     * Get the permission default.
+     */
+	PermissionDefault getDefault();
+
+    /**
+     * Set the default permission value.
+     */
+    void setDefault(PermissionDefault value);
+
+    /**
+     * Get the permission description.
+     */
+    @Nullable
+	String getDescription();
+
+    /**
+     * Set the permission description.
+     *
+     * @param description  The description.
+     */
 	void setDescription(String description);
+
+    /**
+     * Get the encapsulated permission handle.
+     */
+    Object getHandle();
 
 }

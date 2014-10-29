@@ -24,57 +24,66 @@
 
 package com.jcwhatever.bukkit.generic.permissions;
 
-import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.Map;
-import java.util.Set;
 
-public class SuperPerm implements IPermission {
+/**
+ * Container for Bukkits {@code Permission} permission.
+ */
+public class SuperPermission implements IPermission {
 	
 	private Permission _permission;
 	
-	public SuperPerm(Permission permission) {
+	public SuperPermission(Permission permission) {
 		_permission = permission;
 	}
 	
-	public String getName() {
+	@Override
+    public String getName() {
 		return _permission.getName();
-		
 	}
 		
-	public void addParent(IPermission permission, boolean value) {
-		_permission.addParent(permission.getSuperPermission(), value);
+	@Override
+    public void addParent(IPermission permission, boolean isAllowed) {
+		_permission.addParent((Permission)permission.getHandle(), isAllowed);
 	}
 	
-	public void addParent(String name, boolean value) {
-		_permission.addParent(name, value);
+	@Override
+    public void addParent(String name, boolean isAllowed) {
+		_permission.addParent(name, isAllowed);
 	}
 	
-	public Map<String, Boolean> getChildren() {
+	@Override
+    public Map<String, Boolean> getChildren() {
 		return _permission.getChildren();
 	}
 	
-	public PermissionDefault getDefault() {
+	@Override
+    public PermissionDefault getDefault() {
 		return _permission.getDefault();
 	}
+
+    @Override
+    public void setDefault(PermissionDefault value) {
+        _permission.setDefault(value);
+    }
 	
-	public String getDescription() {
+	@Override
+    public String getDescription() {
 		return _permission.getDescription();
 	}
-	
-	public Set<Permissible> getPermissables() {
-		return _permission.getPermissibles();
-	}
-	
-	public void recalculatePermissibles() {
-		_permission.getPermissibles();
-	}
-	
-	public void setDefault(PermissionDefault value) {
-		_permission.setDefault(value);
-	}
+
+    @Override
+    public void setDescription(String description) {
+        _permission.setDescription(description);
+    }
+
+    @Override
+    public Permission getHandle() {
+        return _permission;
+    }
 	
 	@Override
 	public int hashCode() {
@@ -83,22 +92,14 @@ public class SuperPerm implements IPermission {
 	
 	@Override
 	public boolean equals(Object o) {
-		return _permission.equals(o);
-	}
-		
-	public boolean hasSuperPermission() {
-		return true;
-	}
-	
-	public Permission getSuperPermission() {
-		return _permission;
-	}
+        if (o instanceof Permission) {
+            return _permission.equals(o);
+        }
+        else if (o instanceof SuperPermission) {
+            return _permission.equals(((SuperPermission)o)._permission);
+        }
 
-	@Override
-	public void setDescription(String description) {
-		_permission.setDescription(description);
+		return false;
 	}
-	
-	
 
 }

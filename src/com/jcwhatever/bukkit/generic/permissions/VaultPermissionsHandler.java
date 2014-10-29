@@ -25,78 +25,79 @@
 package com.jcwhatever.bukkit.generic.permissions;
 
 import net.milkbowl.vault.permission.Permission;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class VaultPermissions extends AbstractBukkitPermissions {
+/**
+ * Vault interface implementation.
+ */
+public class VaultPermissionsHandler extends AbstractPermissionsHandler {
 	
 	private Permission _perms = null;
-	
-	VaultPermissions () {
-		RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+
+    /**
+     * Constructor.
+     */
+    VaultPermissionsHandler() {
+		RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
+                .getRegistration(net.milkbowl.vault.permission.Permission.class);
+
         if (permissionProvider != null) {
             _perms = permissionProvider.getProvider();
         }
-        
+	}
+
+    @Override
+    public boolean hasGroupSupport() {
+        return _perms.hasGroupSupport();
+    }
+
+    @Override
+    public boolean hasWorldSupport() {
+        return true;
+    }
+
+    @Override
+	public boolean has(Player p, String permissionName) {
+		return _perms.has(p, permissionName);
 	}
 
 	@Override
-	public boolean has(Player p, String permission) {
-		return _perms.has(p, permission);
+	public boolean has(Player p, World world, String permissionName) {
+		return _perms.has(p.getWorld(), p.getName(), permissionName);
 	}
 
 	@Override
-	public boolean has(CommandSender sender, String permission) {
-		return _perms.has(sender, permission);
+	public boolean addTransient(Plugin plugin, Player p, String permissionName) {
+		return _perms.playerAddTransient(p, permissionName);
 	}
 
 	@Override
-	public boolean has(Player p, World world, String permission) {
-		return _perms.has(p.getWorld(), p.getName(), permission);
+	public boolean removeTransient(Plugin plugin, Player p, String permissionName) {
+		return _perms.playerRemoveTransient(p, permissionName);
 	}
 
 	@Override
-	public boolean has(CommandSender sender, World world, String permission) {
-		if (sender instanceof Player) {
-			return _perms.has(((Player)sender).getWorld(), ((Player)sender).getName(), permission);
-		}
-		
-		return true;
+	public boolean add(Plugin plugin, Player p, String permissionName) {
+		return _perms.playerAdd(p, permissionName);
 	}
 
 	@Override
-	public boolean addTransient(Plugin plugin, Player p, String permission) {
-		return _perms.playerAddTransient(p, permission);
+	public boolean add(Plugin plugin, Player p, World world, String permissionName) {
+		return _perms.playerAdd(world, p.getName(), permissionName);
 	}
 
 	@Override
-	public boolean removeTransient(Plugin plugin, Player p, String permission) {
-		return _perms.playerRemoveTransient(p, permission);
+	public boolean remove(Plugin plugin, Player p, String permissionName) {
+		return _perms.playerRemove(p, permissionName);
 	}
 
 	@Override
-	public boolean add(Plugin plugin, Player p, String permission) {
-		return _perms.playerAdd(p, permission);
-	}
-
-	@Override
-	public boolean add(Plugin plugin, Player p, World world, String permission) {
-		return _perms.playerAdd(world, p.getName(), permission);
-	}
-
-	@Override
-	public boolean remove(Plugin plugin, Player p, String permission) {
-		return _perms.playerRemove(p, permission);
-	}
-
-	@Override
-	public boolean remove(Plugin plugin, Player p, World world,	String permission) {
-		return _perms.playerRemove(world, p.getName(), permission);
+	public boolean remove(Plugin plugin, Player p, World world,	String permissionName) {
+		return _perms.playerRemove(world, p.getName(), permissionName);
 	}
 
 	@Override
@@ -119,12 +120,7 @@ public class VaultPermissions extends AbstractBukkitPermissions {
 		return _perms.playerRemoveGroup(world, p.getName(), groupName);
 	}
 
-	@Override
-	public boolean hasGroupSupport() {
-		return _perms.hasGroupSupport();
-	}
-
-	@Override
+    @Override
 	public String[] getGroups() {
 		return _perms.getGroups();
 	}

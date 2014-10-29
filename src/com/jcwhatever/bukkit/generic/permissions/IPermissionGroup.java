@@ -26,9 +26,20 @@ package com.jcwhatever.bukkit.generic.permissions;
 
 import java.util.UUID;
 
+/**
+ * Represents a permissions group.
+ */
 public interface IPermissionGroup extends Comparable<IPermissionGroup> {
 
+    /**
+     * Get the name of the permissions group.
+     */
 	String getPermissionGroupName();
-	
+
+    /**
+     * Determine if the permissions group can be assigned to the specified player.
+     *
+     * @param playerId  The id of the player.
+     */
 	boolean canAssignPermissionGroup(UUID playerId);
 }
