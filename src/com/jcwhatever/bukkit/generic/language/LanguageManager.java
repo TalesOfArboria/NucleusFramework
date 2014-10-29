@@ -150,7 +150,7 @@ public class LanguageManager {
             return format(text, params);
         }
 
-        return format(localizedText);
+        return format(localizedText, params);
     }
 
     /*
