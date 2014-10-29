@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.views;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.triggers.IViewTrigger;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 

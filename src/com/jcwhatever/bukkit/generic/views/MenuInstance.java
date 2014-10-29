@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 
