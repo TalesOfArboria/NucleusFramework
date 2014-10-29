@@ -32,8 +32,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -53,7 +51,7 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
 
     // reflection
     private Object _permissionsMap;
-    private MethodHandle _putMethod;
+    private Method _putMethod;
     private boolean _canReflect = true;
 
     @Override
@@ -173,9 +171,7 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
 
                 _permissionsMap = field.get(_pm);
 
-                Method putMethod = _permissionsMap.getClass().getDeclaredMethod("put", Object.class, Object.class);
-
-                _putMethod = MethodHandles.lookup().unreflect(putMethod);
+                _putMethod = _permissionsMap.getClass().getDeclaredMethod("put", Object.class, Object.class);
 
             } catch (Exception e) {
 
