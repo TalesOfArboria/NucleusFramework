@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
-  <component name="EclipseModuleManager">
-    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/ProtocolLib-3.2.0.jar!/" />
-    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/WorldEdit.jar!/" />
-    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/Vault.jar!/" />
-    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/Citizens2.0.12.jar!/" />
-    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/BarAPI.jar!/" />
-    <libelement value="jar://$USER_HOME$/Documents/Eclipse/Libs/bukkit-1.7.9-R0.1-20140501.232652-9.jar!/" />
-    <src_description expected_position="0">
-      <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
-    </src_description>
-  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/bin" />
     <exclude-output />
