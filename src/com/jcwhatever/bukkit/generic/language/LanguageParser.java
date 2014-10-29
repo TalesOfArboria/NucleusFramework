@@ -73,7 +73,7 @@ public class LanguageParser {
      */
     public void parseStream() throws InvalidLocalizedTextException {
 
-        Scanner scanner = new Scanner(_stream, "UTF-8");
+        Scanner scanner = new Scanner(_stream, "UTF-16");
 
         int lineNumber = 1;
 
