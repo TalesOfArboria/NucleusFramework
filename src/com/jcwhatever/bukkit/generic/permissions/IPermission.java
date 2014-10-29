@@ -37,7 +37,7 @@ public interface IPermission {
     /**
      * Get the permission name.
      */
-	String getName();
+    String getName();
 
     /**
      * Add a parent permission.
@@ -45,7 +45,7 @@ public interface IPermission {
      * @param permission  The parent permission.
      * @param isAllowed   True for permission allowed.
      */
-	void addParent(IPermission permission, boolean isAllowed);
+    void addParent(IPermission permission, boolean isAllowed);
 
     /**
      * Add a parent permission.
@@ -53,18 +53,18 @@ public interface IPermission {
      * @param name       The name of the parent permission.
      * @param isAllowed  True for permission allowed.
      */
-	void addParent(String name, boolean isAllowed);
+    void addParent(String name, boolean isAllowed);
 
     /**
      * Get the permission children names  and
      * permission value map.
      */
-	Map<String, Boolean> getChildren();
+    Map<String, Boolean> getChildren();
 
     /**
      * Get the permission default.
      */
-	PermissionDefault getDefault();
+    PermissionDefault getDefault();
 
     /**
      * Set the default permission value.
@@ -75,14 +75,14 @@ public interface IPermission {
      * Get the permission description.
      */
     @Nullable
-	String getDescription();
+    String getDescription();
 
     /**
      * Set the permission description.
      *
      * @param description  The description.
      */
-	void setDescription(String description);
+    void setDescription(String description);
 
     /**
      * Get the encapsulated permission handle.

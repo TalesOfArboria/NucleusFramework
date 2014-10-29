@@ -33,47 +33,47 @@ import java.util.Map;
  * Container for Bukkits {@code Permission} permission.
  */
 public class SuperPermission implements IPermission {
-	
-	private Permission _permission;
-	
-	public SuperPermission(Permission permission) {
-		_permission = permission;
-	}
-	
-	@Override
+
+    private Permission _permission;
+
+    public SuperPermission(Permission permission) {
+        _permission = permission;
+    }
+
+    @Override
     public String getName() {
-		return _permission.getName();
-	}
-		
-	@Override
+        return _permission.getName();
+    }
+
+    @Override
     public void addParent(IPermission permission, boolean isAllowed) {
-		_permission.addParent((Permission)permission.getHandle(), isAllowed);
-	}
-	
-	@Override
+        _permission.addParent((Permission)permission.getHandle(), isAllowed);
+    }
+
+    @Override
     public void addParent(String name, boolean isAllowed) {
-		_permission.addParent(name, isAllowed);
-	}
-	
-	@Override
+        _permission.addParent(name, isAllowed);
+    }
+
+    @Override
     public Map<String, Boolean> getChildren() {
-		return _permission.getChildren();
-	}
-	
-	@Override
+        return _permission.getChildren();
+    }
+
+    @Override
     public PermissionDefault getDefault() {
-		return _permission.getDefault();
-	}
+        return _permission.getDefault();
+    }
 
     @Override
     public void setDefault(PermissionDefault value) {
         _permission.setDefault(value);
     }
-	
-	@Override
+
+    @Override
     public String getDescription() {
-		return _permission.getDescription();
-	}
+        return _permission.getDescription();
+    }
 
     @Override
     public void setDescription(String description) {
@@ -84,14 +84,14 @@ public class SuperPermission implements IPermission {
     public Permission getHandle() {
         return _permission;
     }
-	
-	@Override
-	public int hashCode() {
-		return _permission.hashCode();
-	}
-	
-	@Override
-	public boolean equals(Object o) {
+
+    @Override
+    public int hashCode() {
+        return _permission.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
         if (o instanceof Permission) {
             return _permission.equals(o);
         }
@@ -99,7 +99,7 @@ public class SuperPermission implements IPermission {
             return _permission.equals(((SuperPermission)o)._permission);
         }
 
-		return false;
-	}
+        return false;
+    }
 
 }

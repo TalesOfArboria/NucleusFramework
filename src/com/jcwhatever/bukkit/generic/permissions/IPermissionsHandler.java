@@ -56,7 +56,7 @@ public interface IPermissionsHandler {
      *
      * @return  The permission.
      */
-	IPermission register(String permissionName, PermissionDefault value);
+    IPermission register(String permissionName, PermissionDefault value);
 
     /**
      * Unregister a permission.
@@ -79,7 +79,7 @@ public interface IPermissionsHandler {
      * @param parent  The parent permission.
      * @param value   The permission value.
      */
-	void addParent(IPermission child, IPermission parent, boolean value);
+    void addParent(IPermission child, IPermission parent, boolean value);
 
     /**
      * Run a batch operations of permissions. Many permissions being registered and or
@@ -93,7 +93,7 @@ public interface IPermissionsHandler {
      * @param recalculate  True to recalculate permissions when the batch operation is finished.
      * @param operations   The runnable that runs the permissions operations.
      */
-	void runBatchOperation(boolean recalculate, Runnable operations);
+    void runBatchOperation(boolean recalculate, Runnable operations);
 
     /**
      * Get a permission by name.
@@ -109,7 +109,7 @@ public interface IPermissionsHandler {
      * @param p               The player to check.
      * @param permissionName  The name of the permission.
      */
-	boolean has(Player p, String permissionName);
+    boolean has(Player p, String permissionName);
 
     /**
      * Determine if the player has permission in the specified world.
@@ -121,7 +121,7 @@ public interface IPermissionsHandler {
      * @param world           The world to check.
      * @param permissionName  The name of the permission.
      */
-	boolean has(Player p, World world, String permissionName);
+    boolean has(Player p, World world, String permissionName);
 
     /**
      * Add a transient permission to a player.
@@ -269,5 +269,5 @@ public interface IPermissionsHandler {
      */
     @Nullable
     String[] getGroups(Player p, World world);
-    
+
 }

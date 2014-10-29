@@ -41,8 +41,8 @@ import java.util.UUID;
 public class Permissions {
 
     private Permissions() {}
-	
-	private static IPermissionsHandler _handler;
+
+    private static IPermissionsHandler _handler;
 
     /**
      * Determine if the permissions implementation has group support.
@@ -67,8 +67,8 @@ public class Permissions {
      *
      * @return  The permission.
      */
-	public static IPermission register(String permissionName, PermissionDefault value) {
-		return getImplementation().register(permissionName, value);
+    public static IPermission register(String permissionName, PermissionDefault value) {
+        return getImplementation().register(permissionName, value);
     }
 
     /**
@@ -96,9 +96,9 @@ public class Permissions {
      * @param parent  The parent permission.
      * @param value   The permission value.
      */
-	public static void addParent(IPermission child, IPermission parent, boolean value) {
-		getImplementation().addParent(child, parent, value);
-	}
+    public static void addParent(IPermission child, IPermission parent, boolean value) {
+        getImplementation().addParent(child, parent, value);
+    }
 
     /**
      * Run a batch operations of permissions. Many permissions being registered and or
@@ -112,9 +112,9 @@ public class Permissions {
      * @param recalculate  True to recalculate permissions when the batch operation is finished.
      * @param operations   The runnable that runs the permissions operations.
      */
-	public static void runBatchOperation(boolean recalculate, Runnable operations) {
-		getImplementation().runBatchOperation(recalculate, operations);
-	}
+    public static void runBatchOperation(boolean recalculate, Runnable operations) {
+        getImplementation().runBatchOperation(recalculate, operations);
+    }
 
     /**
      * Get a permission by name.
@@ -123,7 +123,7 @@ public class Permissions {
      */
     @Nullable
     public static IPermission get(String permissionName) {
-    	return getImplementation().get(permissionName);
+        return getImplementation().get(permissionName);
     }
 
     /**
@@ -134,7 +134,7 @@ public class Permissions {
      */
     public static boolean has(Player p, String permissionName) {
         return getImplementation().has(p, permissionName);
-	}
+    }
 
     /**
      * Determine if the player has permission.
@@ -144,7 +144,7 @@ public class Permissions {
      */
     public static boolean has(Player p, IPermission permission) {
         return getImplementation().has(p, permission.getName());
-	}
+    }
 
     /**
      * Determine if the player has permission in the specified world.
@@ -157,8 +157,8 @@ public class Permissions {
      * @param permissionName  The name of the permission.
      */
     public static boolean has(Player p, World world, String permissionName) {
-		return getImplementation().has(p, world, permissionName);
-	}
+        return getImplementation().has(p, world, permissionName);
+    }
 
     /**
      * Add a transient permission to a player.
@@ -169,9 +169,9 @@ public class Permissions {
      *
      * @return  True if the permission was added.
      */
-	public static boolean addTransient(Plugin plugin, Player p, String permissionName) {
-		return getImplementation().addTransient(plugin, p, permissionName);
-	}
+    public static boolean addTransient(Plugin plugin, Player p, String permissionName) {
+        return getImplementation().addTransient(plugin, p, permissionName);
+    }
 
     /**
      * Remove a transient permission from a player.
@@ -182,9 +182,9 @@ public class Permissions {
      *
      * @return  True if the permission was removed.
      */
-	public static boolean removeTransient(Plugin plugin, Player p, String permissionName) {
-		return getImplementation().removeTransient(plugin, p, permissionName);
-	}
+    public static boolean removeTransient(Plugin plugin, Player p, String permissionName) {
+        return getImplementation().removeTransient(plugin, p, permissionName);
+    }
 
     /**
      * Add a permission to a player.
@@ -195,9 +195,9 @@ public class Permissions {
      *
      * @return  True if the permission was added.
      */
-	public static boolean add(Plugin plugin, Player p, String permissionName) {
-		return getImplementation().add(plugin, p, permissionName);
-	}
+    public static boolean add(Plugin plugin, Player p, String permissionName) {
+        return getImplementation().add(plugin, p, permissionName);
+    }
 
     /**
      * Add a permission to a player.
@@ -208,9 +208,9 @@ public class Permissions {
      *
      * @return  True if the permission was added.
      */
-	public static boolean add(Plugin plugin, Player p, IPermission permission) {
-		return getImplementation().add(plugin, p, permission.getName());
-	}
+    public static boolean add(Plugin plugin, Player p, IPermission permission) {
+        return getImplementation().add(plugin, p, permission.getName());
+    }
 
     /**
      * Add a permission to a player when in a specific world.
@@ -225,9 +225,9 @@ public class Permissions {
      *
      * @return  True if the permission was added.
      */
-	public static boolean add(Plugin plugin, Player p, World world, String permissionName) {
-		return getImplementation().add(plugin, p, world, permissionName);
-	}
+    public static boolean add(Plugin plugin, Player p, World world, String permissionName) {
+        return getImplementation().add(plugin, p, world, permissionName);
+    }
 
     /**
      * Add a permission to a player when in a specific world.
@@ -242,9 +242,9 @@ public class Permissions {
      *
      * @return  True if the permission was added.
      */
-	public static boolean add(Plugin plugin, Player p, World world, IPermission permission) {
-		return getImplementation().add(plugin, p, world, permission.getName());
-	}
+    public static boolean add(Plugin plugin, Player p, World world, IPermission permission) {
+        return getImplementation().add(plugin, p, world, permission.getName());
+    }
 
     /**
      * Remove a players permission.
@@ -255,9 +255,9 @@ public class Permissions {
      *
      * @return  True if the permission was removed.
      */
-	public static boolean remove(Plugin plugin, Player p, String permissionName) {
-		return getImplementation().remove(plugin, p, permissionName);
-	}
+    public static boolean remove(Plugin plugin, Player p, String permissionName) {
+        return getImplementation().remove(plugin, p, permissionName);
+    }
 
     /**
      * Remove a players permission.
@@ -268,9 +268,9 @@ public class Permissions {
      *
      * @return  True if the permission was removed.
      */
-	public static boolean remove(Plugin plugin, Player p, IPermission permission) {
-		return getImplementation().remove(plugin, p, permission.getName());
-	}
+    public static boolean remove(Plugin plugin, Player p, IPermission permission) {
+        return getImplementation().remove(plugin, p, permission.getName());
+    }
 
     /**
      * Remove a players permission in a world.
@@ -285,9 +285,9 @@ public class Permissions {
      *
      * @return  True if the permission was removed.
      */
-	public static boolean remove(Plugin plugin, Player p, World world, String permissionName) {
-		return getImplementation().remove(plugin, p, world, permissionName);
-	}
+    public static boolean remove(Plugin plugin, Player p, World world, String permissionName) {
+        return getImplementation().remove(plugin, p, world, permissionName);
+    }
 
     /**
      * Remove a players permission in a world.
@@ -299,9 +299,9 @@ public class Permissions {
      *
      * @return  True if the permission was removed.
      */
-	public static boolean remove(Plugin plugin, Player p, World world, IPermission permission) {
-		return getImplementation().remove(plugin, p, world, permission.getName());
-	}
+    public static boolean remove(Plugin plugin, Player p, World world, IPermission permission) {
+        return getImplementation().remove(plugin, p, world, permission.getName());
+    }
 
     /**
      * Add a player to a group permission.
@@ -315,9 +315,9 @@ public class Permissions {
      *
      * @return  True if the player was added.
      */
-	public static boolean addGroup(Plugin plugin, Player p, String groupName) {
-		return getImplementation().addGroup(plugin, p, groupName);
-	}
+    public static boolean addGroup(Plugin plugin, Player p, String groupName) {
+        return getImplementation().addGroup(plugin, p, groupName);
+    }
 
     /**
      * Add a player to a group permission in the specified world.
@@ -329,9 +329,9 @@ public class Permissions {
      *
      * @return  True if the player was added.
      */
-	public static boolean addGroup(Plugin plugin, Player p, World world, String groupName) {
-		return getImplementation().addGroup(plugin, p, world, groupName);
-	}
+    public static boolean addGroup(Plugin plugin, Player p, World world, String groupName) {
+        return getImplementation().addGroup(plugin, p, world, groupName);
+    }
 
     /**
      * Remove a player from a group permission.
@@ -342,9 +342,9 @@ public class Permissions {
      *
      * @return  True if the player was removed.
      */
-	public static boolean removeGroup(Plugin plugin, Player p, String groupName) {
-		return getImplementation().removeGroup(plugin, p, groupName);
-	}
+    public static boolean removeGroup(Plugin plugin, Player p, String groupName) {
+        return getImplementation().removeGroup(plugin, p, groupName);
+    }
 
     /**
      * Remove a player from a group permission.
@@ -356,9 +356,9 @@ public class Permissions {
      *
      * @return  True if the player was removed.
      */
-	public static boolean removeGroup(Plugin plugin, Player p, World world, String groupName) {
-		return getImplementation().removeGroup(plugin, p, world, groupName);
-	}
+    public static boolean removeGroup(Plugin plugin, Player p, World world, String groupName) {
+        return getImplementation().removeGroup(plugin, p, world, groupName);
+    }
 
     /**
      * Determine if a player has group permission.
@@ -366,24 +366,24 @@ public class Permissions {
      * @param p          The player to check.
      * @param groupName  The name of the group.
      */
-	public static boolean hasGroup(Player p, String groupName) {
-		String[] groups = getGroups(p);
+    public static boolean hasGroup(Player p, String groupName) {
+        String[] groups = getGroups(p);
 
         for (String group : groups) {
             if (group.equals(groupName))
                 return true;
         }
-		
-		return false;
-	}
+
+        return false;
+    }
 
     /**
      * Get a string array of group permission names.
      */
     @Nullable
-	public static String[] getGroups() {
-		return getImplementation().getGroups();
-	}
+    public static String[] getGroups() {
+        return getImplementation().getGroups();
+    }
 
     /**
      * Get a string array of groups the specified player is in.
@@ -391,9 +391,9 @@ public class Permissions {
      * @param p  The player to check.
      */
     @Nullable
-	public static String[] getGroups(Player p) {
-		return getImplementation().getGroups(p);
-	}
+    public static String[] getGroups(Player p) {
+        return getImplementation().getGroups(p);
+    }
 
     /**
      * Get a string array of groups the specified player is in while
@@ -403,9 +403,9 @@ public class Permissions {
      * @param world  The world.
      */
     @Nullable
-	public static String[] getGroups(Player p, World world) {
-		return getImplementation().getGroups(p, world);
-	}
+    public static String[] getGroups(Player p, World world) {
+        return getImplementation().getGroups(p, world);
+    }
 
     /**
      * Fix permission groups of all players on the server. Ensures
@@ -415,18 +415,18 @@ public class Permissions {
      * @param plugin  The plugin fixing permission groups.
      * @param groups  The groups to fix.
      */
-	public static void fixPermissionGroups(Plugin plugin, Collection<IPermissionGroup> groups) {
+    public static void fixPermissionGroups(Plugin plugin, Collection<IPermissionGroup> groups) {
         PreCon.notNull(plugin);
         PreCon.notNull(groups);
 
-		if (!getImplementation().hasGroupSupport())
-			return;
-		
-		Player[] players = Bukkit.getServer().getOnlinePlayers();
-		for (Player player : players) {
-			Permissions.fixPermissionGroups(plugin, player, groups);			
-		}
-	}
+        if (!getImplementation().hasGroupSupport())
+            return;
+
+        Player[] players = Bukkit.getServer().getOnlinePlayers();
+        for (Player player : players) {
+            Permissions.fixPermissionGroups(plugin, player, groups);
+        }
+    }
 
     /**
      * Fix a specific players groups. Ensures player has the permission groups specified
@@ -436,28 +436,28 @@ public class Permissions {
      * @param p       The player whose group permissions need to be checked.
      * @param groups  The groups to fix.
      */
-	public static void fixPermissionGroups(Plugin plugin, Player p, Collection<IPermissionGroup> groups) {
+    public static void fixPermissionGroups(Plugin plugin, Player p, Collection<IPermissionGroup> groups) {
         PreCon.notNull(plugin);
         PreCon.notNull(p);
         PreCon.notNull(groups);
 
         if (!getImplementation().hasGroupSupport())
-			return;
-		
-		UUID playerId = p.getUniqueId();
-		
-		for (IPermissionGroup group : groups) {
-			boolean canAssign = group.canAssignPermissionGroup(playerId);
-			boolean hasGroup = hasGroup(p, group.getPermissionGroupName());
-			
-			if (!canAssign && hasGroup) {
-				removeGroup(plugin, p, group.getPermissionGroupName());
-			}
-			else if (canAssign && !hasGroup) {
-				addGroup(plugin, p, group.getPermissionGroupName());
-			}
-		}
-	}
+            return;
+
+        UUID playerId = p.getUniqueId();
+
+        for (IPermissionGroup group : groups) {
+            boolean canAssign = group.canAssignPermissionGroup(playerId);
+            boolean hasGroup = hasGroup(p, group.getPermissionGroupName());
+
+            if (!canAssign && hasGroup) {
+                removeGroup(plugin, p, group.getPermissionGroupName());
+            }
+            else if (canAssign && !hasGroup) {
+                addGroup(plugin, p, group.getPermissionGroupName());
+            }
+        }
+    }
 
     /**
      * Get the permissions handler implementation.
@@ -483,5 +483,5 @@ public class Permissions {
 
         _handler = handler;
     }
-   
+
 }

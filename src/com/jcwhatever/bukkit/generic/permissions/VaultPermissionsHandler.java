@@ -35,20 +35,20 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  * Vault interface implementation.
  */
 public class VaultPermissionsHandler extends AbstractPermissionsHandler {
-	
-	private Permission _perms = null;
+
+    private Permission _perms = null;
 
     /**
      * Constructor.
      */
     VaultPermissionsHandler() {
-		RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
+        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
                 .getRegistration(net.milkbowl.vault.permission.Permission.class);
 
         if (permissionProvider != null) {
             _perms = permissionProvider.getProvider();
         }
-	}
+    }
 
     @Override
     public boolean hasGroupSupport() {
@@ -61,78 +61,78 @@ public class VaultPermissionsHandler extends AbstractPermissionsHandler {
     }
 
     @Override
-	public boolean has(Player p, String permissionName) {
-		return _perms.has(p, permissionName);
-	}
-
-	@Override
-	public boolean has(Player p, World world, String permissionName) {
-		return _perms.has(p.getWorld(), p.getName(), permissionName);
-	}
-
-	@Override
-	public boolean addTransient(Plugin plugin, Player p, String permissionName) {
-		return _perms.playerAddTransient(p, permissionName);
-	}
-
-	@Override
-	public boolean removeTransient(Plugin plugin, Player p, String permissionName) {
-		return _perms.playerRemoveTransient(p, permissionName);
-	}
-
-	@Override
-	public boolean add(Plugin plugin, Player p, String permissionName) {
-		return _perms.playerAdd(p, permissionName);
-	}
-
-	@Override
-	public boolean add(Plugin plugin, Player p, World world, String permissionName) {
-		return _perms.playerAdd(world, p.getName(), permissionName);
-	}
-
-	@Override
-	public boolean remove(Plugin plugin, Player p, String permissionName) {
-		return _perms.playerRemove(p, permissionName);
-	}
-
-	@Override
-	public boolean remove(Plugin plugin, Player p, World world,	String permissionName) {
-		return _perms.playerRemove(world, p.getName(), permissionName);
-	}
-
-	@Override
-	public boolean addGroup(Plugin plugin, Player p, String groupName) {
-		return _perms.playerAddGroup(p, groupName);
-	}
-
-	@Override
-	public boolean addGroup(Plugin plugin, Player p, World world, String groupName) {
-		return _perms.playerAddGroup(world, p.getName(), groupName);
-	}
-
-	@Override
-	public boolean removeGroup(Plugin plugin, Player p, String groupName) {
-		return _perms.playerRemoveGroup(p, groupName);
-	}
-
-	@Override
-	public boolean removeGroup(Plugin plugin, Player p, World world, String groupName) {
-		return _perms.playerRemoveGroup(world, p.getName(), groupName);
-	}
+    public boolean has(Player p, String permissionName) {
+        return _perms.has(p, permissionName);
+    }
 
     @Override
-	public String[] getGroups() {
-		return _perms.getGroups();
-	}
+    public boolean has(Player p, World world, String permissionName) {
+        return _perms.has(p.getWorld(), p.getName(), permissionName);
+    }
 
-	@Override
-	public String[] getGroups(Player p) {
-		return _perms.getPlayerGroups(p);
-	}
+    @Override
+    public boolean addTransient(Plugin plugin, Player p, String permissionName) {
+        return _perms.playerAddTransient(p, permissionName);
+    }
 
-	@Override
-	public String[] getGroups(Player p, World world) {
-		return _perms.getPlayerGroups(world, p.getName());
-	}
-	
+    @Override
+    public boolean removeTransient(Plugin plugin, Player p, String permissionName) {
+        return _perms.playerRemoveTransient(p, permissionName);
+    }
+
+    @Override
+    public boolean add(Plugin plugin, Player p, String permissionName) {
+        return _perms.playerAdd(p, permissionName);
+    }
+
+    @Override
+    public boolean add(Plugin plugin, Player p, World world, String permissionName) {
+        return _perms.playerAdd(world, p.getName(), permissionName);
+    }
+
+    @Override
+    public boolean remove(Plugin plugin, Player p, String permissionName) {
+        return _perms.playerRemove(p, permissionName);
+    }
+
+    @Override
+    public boolean remove(Plugin plugin, Player p, World world,	String permissionName) {
+        return _perms.playerRemove(world, p.getName(), permissionName);
+    }
+
+    @Override
+    public boolean addGroup(Plugin plugin, Player p, String groupName) {
+        return _perms.playerAddGroup(p, groupName);
+    }
+
+    @Override
+    public boolean addGroup(Plugin plugin, Player p, World world, String groupName) {
+        return _perms.playerAddGroup(world, p.getName(), groupName);
+    }
+
+    @Override
+    public boolean removeGroup(Plugin plugin, Player p, String groupName) {
+        return _perms.playerRemoveGroup(p, groupName);
+    }
+
+    @Override
+    public boolean removeGroup(Plugin plugin, Player p, World world, String groupName) {
+        return _perms.playerRemoveGroup(world, p.getName(), groupName);
+    }
+
+    @Override
+    public String[] getGroups() {
+        return _perms.getGroups();
+    }
+
+    @Override
+    public String[] getGroups(Player p) {
+        return _perms.getPlayerGroups(p);
+    }
+
+    @Override
+    public String[] getGroups(Player p, World world) {
+        return _perms.getPlayerGroups(world, p.getName());
+    }
+
 }

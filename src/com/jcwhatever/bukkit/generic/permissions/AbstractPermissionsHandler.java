@@ -45,36 +45,36 @@ import java.util.Set;
  */
 public abstract class AbstractPermissionsHandler implements IPermissionsHandler {
 
-	private static final BatchTracker _batch = new BatchTracker();
-	private static Set<Permission> _toRecalculate = new HashSet<>(1000);
-	private static Set<Permission> _dontRecalculate = new HashSet<>(1000);
+    private static final BatchTracker _batch = new BatchTracker();
+    private static Set<Permission> _toRecalculate = new HashSet<>(1000);
+    private static Set<Permission> _dontRecalculate = new HashSet<>(1000);
 
     private PluginManager _pm = Bukkit.getPluginManager();
 
-	// reflection
-	private Object _permissionsMap;
-	private MethodHandle _putMethod;
-	private boolean _canReflect = true;
+    // reflection
+    private Object _permissionsMap;
+    private MethodHandle _putMethod;
+    private boolean _canReflect = true;
 
     @Override
     public IPermission get(String permissionName) {
         return new SuperPermission(_pm.getPermission(permissionName));
     }
 
-	@Override
-	public IPermission register(String permissionName, PermissionDefault value) {
-		Permission perm = _pm.getPermission(permissionName);
-		if (perm != null) 
-			return new SuperPermission(perm);
+    @Override
+    public IPermission register(String permissionName, PermissionDefault value) {
+        Permission perm = _pm.getPermission(permissionName);
+        if (perm != null)
+            return new SuperPermission(perm);
 
-		perm = new Permission(permissionName);
-		perm.setDefault(value);
+        perm = new Permission(permissionName);
+        perm.setDefault(value);
 
-		if (!_batch.isRunning() || !addPermissionFast(perm))
-			_pm.addPermission(perm);
+        if (!_batch.isRunning() || !addPermissionFast(perm))
+            _pm.addPermission(perm);
 
-		return new SuperPermission(perm);
-	}
+        return new SuperPermission(perm);
+    }
 
     @Override
     public void unregister(String permissionName) {
@@ -86,47 +86,47 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
         Bukkit.getPluginManager().removePermission((Permission)permission.getHandle());
     }
 
-	@Override
-	public void addParent(IPermission child, IPermission parent, boolean value) {
-		
-		parent.getChildren().put(child.getName(), value);
+    @Override
+    public void addParent(IPermission child, IPermission parent, boolean value) {
+
+        parent.getChildren().put(child.getName(), value);
 
         Permission parentPerm = (Permission)parent.getHandle();
         Permission childPerm = (Permission)child.getHandle();
 
-		if (_batch.isRunning()) {
+        if (_batch.isRunning()) {
 
-			if (!_dontRecalculate.contains(parentPerm))
-				_toRecalculate.add(parentPerm);
-			
-			_toRecalculate.remove(childPerm);
-			_dontRecalculate.add(childPerm);
-		}
-		
-		recalculatePermissibles(parentPerm);
-	}
+            if (!_dontRecalculate.contains(parentPerm))
+                _toRecalculate.add(parentPerm);
 
-	@Override
-	public void runBatchOperation(boolean recalculate, Runnable operations) {
+            _toRecalculate.remove(childPerm);
+            _dontRecalculate.add(childPerm);
+        }
 
-		_batch.start();
-		operations.run();
+        recalculatePermissibles(parentPerm);
+    }
+
+    @Override
+    public void runBatchOperation(boolean recalculate, Runnable operations) {
+
+        _batch.start();
+        operations.run();
         _batch.end();
 
-		if (_batch.isRunning())
-			return;
+        if (_batch.isRunning())
+            return;
 
-		if (recalculate) {
+        if (recalculate) {
 
-			for (Permission permission : _toRecalculate) {
-				recalculatePermissionDefault(permission);
-				recalculatePermissibles(permission);
-			}
-		}
+            for (Permission permission : _toRecalculate) {
+                recalculatePermissionDefault(permission);
+                recalculatePermissibles(permission);
+            }
+        }
 
-		_toRecalculate.clear();
-		_dontRecalculate.clear();
-	}
+        _toRecalculate.clear();
+        _dontRecalculate.clear();
+    }
 
     /*
      * recalculate Bukkit permission
@@ -142,13 +142,13 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
     /*
      * recalculate Bukkit permission defaults
      */
-	private void recalculatePermissionDefault(Permission permission) {
-		if (!_batch.isRunning())
-			_pm.recalculatePermissionDefaults(permission);
-		else if (!_dontRecalculate.contains(permission)) {
-			_toRecalculate.add(permission);
-		}
-	}
+    private void recalculatePermissionDefault(Permission permission) {
+        if (!_batch.isRunning())
+            _pm.recalculatePermissionDefaults(permission);
+        else if (!_dontRecalculate.contains(permission)) {
+            _toRecalculate.add(permission);
+        }
+    }
 
     /*
      *  Use reflection to add a permission without causing a

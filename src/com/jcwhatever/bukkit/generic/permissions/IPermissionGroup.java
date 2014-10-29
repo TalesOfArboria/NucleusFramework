@@ -34,12 +34,12 @@ public interface IPermissionGroup extends Comparable<IPermissionGroup> {
     /**
      * Get the name of the permissions group.
      */
-	String getPermissionGroupName();
+    String getPermissionGroupName();
 
     /**
      * Determine if the permissions group can be assigned to the specified player.
      *
      * @param playerId  The id of the player.
      */
-	boolean canAssignPermissionGroup(UUID playerId);
+    boolean canAssignPermissionGroup(UUID playerId);
 }
