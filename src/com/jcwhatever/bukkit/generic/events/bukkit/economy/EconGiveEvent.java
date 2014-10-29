@@ -64,7 +64,8 @@ public class EconGiveEvent extends Event {
 		return _player;
 	}
 	
-	public HandlerList getHandlers() {
+	@Override
+    public HandlerList getHandlers() {
 	    return _handlers;
 	}
 	 

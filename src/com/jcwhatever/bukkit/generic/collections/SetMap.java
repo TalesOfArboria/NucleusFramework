@@ -306,7 +306,7 @@ public class SetMap <K, V> implements Map<K, V> {
     @Override
     public Collection<V> values() {
         Collection<Set<V>> values = _map.values();
-        Set<V> results = new HashSet<V>();
+        Set<V> results = new HashSet<V>(values.size());
 
         for (Set<V> set : values) {
             results.addAll(set);

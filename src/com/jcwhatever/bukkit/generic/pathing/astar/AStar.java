@@ -294,6 +294,8 @@ public abstract class AStar<T extends PathNode> {
 
             // get candidate/open node closest to destination
             current = pickCandidate();
+            if (current == null)
+                break;
 
             // search for more candidate nodes
             findCandidates(current);
@@ -367,6 +369,9 @@ public abstract class AStar<T extends PathNode> {
     protected boolean validateCandidate(T candidate, Boolean[][] columns) {
 
         @SuppressWarnings("unchecked") T candidateParent = (T)candidate.getParentNode();
+        if (candidateParent == null)
+            return true; // null parent means start location
+
         int x = candidate.getXParentOffset();
         int y = candidate.getYParentOffset();
         int z = candidate.getZParentOffset();
@@ -430,6 +435,7 @@ public abstract class AStar<T extends PathNode> {
      * Called to pick a candidate from the open nodes collection
      * with the lowest F score.
      */
+    @Nullable
     protected T pickCandidate() {
 
         T candidate = getOpenNodes().remove();

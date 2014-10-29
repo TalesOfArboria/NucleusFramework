@@ -31,6 +31,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
+
 public class AnvilItemRenameEvent extends Event {
 	
 	private static final HandlerList _handlers = new HandlerList();
@@ -44,7 +46,9 @@ public class AnvilItemRenameEvent extends Event {
 	private boolean _isCancelled;
 	
 	
-	AnvilItemRenameEvent(Player player, AnvilInventory anvilInventory, ItemStack item, String newName, String oldName) {
+	AnvilItemRenameEvent(
+            Player player, AnvilInventory anvilInventory, ItemStack item, String newName, @Nullable String oldName) {
+
 		_player = player;
 		_anvilInventory = anvilInventory;
 		_item = item;
@@ -80,7 +84,8 @@ public class AnvilItemRenameEvent extends Event {
 		_isCancelled = isCancelled;
 	}
 	
-	public HandlerList getHandlers() {
+	@Override
+    public HandlerList getHandlers() {
 	    return _handlers;
 	}
 	 
@@ -88,7 +93,8 @@ public class AnvilItemRenameEvent extends Event {
 	    return _handlers;
 	}
 	
-	public static AnvilItemRenameEvent callEvent(Player player, AnvilInventory anvilInventory, ItemStack item, String newName, String oldName) {
+	public static AnvilItemRenameEvent callEvent(
+            Player player, AnvilInventory anvilInventory, ItemStack item, String newName, @Nullable String oldName) {
 		AnvilItemRenameEvent event = new AnvilItemRenameEvent(player, anvilInventory, item, newName, oldName);
 		
 		if (hasListeners()) {

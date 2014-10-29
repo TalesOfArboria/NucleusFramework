@@ -67,7 +67,7 @@ public class EnumUtils {
         PreCon.notNullOrEmpty(constantName);
         PreCon.notNull(enumClass);
 
-        if (constantName != null && !constantName.isEmpty()) {
+        if (!constantName.isEmpty()) {
             T value;
             try {
                 value = Enum.valueOf(enumClass, constantName);
@@ -114,7 +114,7 @@ public class EnumUtils {
         PreCon.notNullOrEmpty(constantName);
         PreCon.notNull(enumClass);
 
-        if (constantName != null && !constantName.isEmpty()) {
+        if (!constantName.isEmpty()) {
 
             T[] constants = enumClass.getEnumConstants();
 
@@ -141,7 +141,7 @@ public class EnumUtils {
         PreCon.notNullOrEmpty(constantName);
         PreCon.notNull(enumClass);
 
-        if (constantName != null && !constantName.isEmpty()) {
+        if (!constantName.isEmpty()) {
 
             Enum<?>[] constants = enumClass.getEnumConstants();
 
@@ -168,7 +168,7 @@ public class EnumUtils {
         PreCon.notNullOrEmpty(constantName);
         PreCon.notNull(enumClass);
 
-        if (constantName != null && !constantName.isEmpty()) {
+        if (!constantName.isEmpty()) {
 
             Enum<?>[] constants = enumClass.getEnumConstants();
 
@@ -196,7 +196,7 @@ public class EnumUtils {
         PreCon.notNull(enumClass);
         PreCon.isValid(enumClass.isEnum(), "enumClass must be an enum class.");
 
-        if (constantName != null && !constantName.isEmpty()) {
+        if (!constantName.isEmpty()) {
 
             for (Object constant : enumClass.getEnumConstants()) {
                 if (constant instanceof Enum) {
@@ -225,7 +225,7 @@ public class EnumUtils {
         PreCon.notNull(enumClass);
         PreCon.isValid(enumClass.isEnum(), "enumClass must be an enum class.");
 
-        if (constantName != null && !constantName.isEmpty()) {
+        if (!constantName.isEmpty()) {
 
             for (Object constant : enumClass.getEnumConstants()) {
                 if (constant instanceof Enum) {

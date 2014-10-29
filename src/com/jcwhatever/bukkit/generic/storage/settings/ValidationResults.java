@@ -30,6 +30,8 @@ import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
+
 /**
  * Object that defines the results of setting a value in a
  * {@code SettingManager}.
@@ -86,6 +88,7 @@ public class ValidationResults {
     /**
      * Get the result message.
      */
+    @Nullable
     public String getMessage() {
         if (!hasMessage())
             return null;

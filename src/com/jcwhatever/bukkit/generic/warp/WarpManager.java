@@ -121,6 +121,9 @@ public class WarpManager {
 
         for (String warpName : warpNames) {
             Location location = _settings.getLocation(warpName);
+            if (location == null)
+                continue;
+
             Warp warp = new Warp(warpName, location, _settings);
             _warpMap.put(warp.getSearchName(), warp);
         }

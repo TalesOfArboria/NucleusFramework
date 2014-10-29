@@ -94,7 +94,7 @@ class EventHandlerCollection {
     boolean add(EventHandler eventHandler,  GenericsEventPriority priority) {
 
         // create handler container and make sure it is not already added.
-        HandlerContainer handler = new HandlerContainer(null, eventHandler, priority);
+        HandlerContainer handler = new HandlerContainer(eventHandler, priority);
         if (_handlers.contains(handler))
             return false;
 
@@ -171,7 +171,7 @@ class EventHandlerCollection {
      * @param eventHandler  The event handler to remove.
      */
     void removeHandler(EventHandler eventHandler) {
-        HandlerContainer handler = new HandlerContainer(null, eventHandler, null);
+        HandlerContainer handler = new HandlerContainer(eventHandler);
         _handlers.remove(handler);
     }
 
@@ -187,9 +187,28 @@ class EventHandlerCollection {
         /**
          * Constructor.
          */
-        public HandlerContainer(GenericsEventListener listener, EventHandler handler, GenericsEventPriority priority) {
+        public HandlerContainer(
+                GenericsEventListener listener, EventHandler handler, GenericsEventPriority priority) {
             _listener = listener;
             _handler = handler;
+            _priority = priority;
+        }
+
+        /**
+         * Private Constructor.
+         */
+        private HandlerContainer(EventHandler handler) {
+            _handler = handler;
+            _listener = null;
+            _priority = null;
+        }
+
+        /**
+         * Private Constructor.
+         */
+        private HandlerContainer(EventHandler handler, GenericsEventPriority priority) {
+            _handler = handler;
+            _listener = null;
             _priority = priority;
         }
 

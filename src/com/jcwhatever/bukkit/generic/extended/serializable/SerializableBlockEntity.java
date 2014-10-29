@@ -180,6 +180,9 @@ public class SerializableBlockEntity implements IGenericsSerializable {
      */
     public void apply() {
 
+        if (getLocation() == null)
+            return;
+
         final BlockState blockState = getLocation().getBlock().getState();
 
         if (blockState.getType() == _material) {
@@ -206,6 +209,9 @@ public class SerializableBlockEntity implements IGenericsSerializable {
 
     @Override
     public void serializeToBytes(GenericsByteWriter writer) throws IOException {
+
+        if (getLocation() == null || getMaterial() == null)
+            throw new RuntimeException("No data to serialize.");
 
         writer.write(getLocation());
         writer.write(getMaterial());

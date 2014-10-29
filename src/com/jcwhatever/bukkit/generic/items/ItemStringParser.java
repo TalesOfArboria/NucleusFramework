@@ -219,7 +219,7 @@ public class ItemStringParser {
         // parse enchantments
         List<String> enchantmentComponents = parseEnchantmentComponents(primary[ENCHANTMENTS]);
 
-        if (enchantmentComponents.size() > 0) {
+        if (enchantmentComponents != null && enchantmentComponents.size() > 0) {
             for (String enchantComp : enchantmentComponents) {
                 EnchantmentWrapper enchantment = parseEnchantment(enchantComp);
                 if (enchantment == null) {

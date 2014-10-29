@@ -25,9 +25,9 @@
 package com.jcwhatever.bukkit.generic.pathing.astar;
 
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
-import javax.annotation.Nullable;
 import org.bukkit.Location;
 
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 
 /**
@@ -90,8 +90,11 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
 
         results.push(destination);
 
-        while(destination.getParentNode() != null) {
-            results.push(destination.getParentNode());
+        destination = destination.getParentNode();
+
+        while(destination != null) {
+
+            results.push(destination);
             destination = destination.getParentNode();
         }
 
@@ -128,7 +131,7 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
 
         int distance = 0;
 
-        while (destination.getParentNode() != null) {
+        while (destination != null) {
             destination = destination.getParentNode();
             distance++;
         }

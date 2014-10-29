@@ -111,6 +111,9 @@ public class PaginatedBankItems  {
         PreCon.lessThanEqual(page, MAX_PAGES);
         
         List<BankItem> bankItems = ItemBankManager.getBankItems(_playerId);
+        if (bankItems == null)
+            return new ArrayList<>(0);
+
         List<BankItemStack> itemStacks = getItemStacks(bankItems);
         
         int total = itemStacks.size();

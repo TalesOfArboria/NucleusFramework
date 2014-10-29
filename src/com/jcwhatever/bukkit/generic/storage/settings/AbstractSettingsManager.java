@@ -209,42 +209,50 @@ public abstract class AbstractSettingsManager implements ISettingsManager {
 
         // BOOLEAN
         if (type.isAssignableFrom(Boolean.class))
-            value = getBoolean(settingName, def.hasDefaultVal() ? (Boolean)def.getDefaultVal() : false);
+            value = getBoolean(settingName, def.hasDefaultVal() && def.getDefaultVal() != null
+                    ? (Boolean)def.getDefaultVal() : false);
 
             // INTEGER
         else if (type.isAssignableFrom(Integer.class))
-            value = getInteger(settingName, def.hasDefaultVal() ? (Integer)def.getDefaultVal() : 0);
+            value = getInteger(settingName, def.hasDefaultVal() && def.getDefaultVal() != null
+                    ? (Integer)def.getDefaultVal() : 0);
 
             // LONG
         else if (type.isAssignableFrom(Long.class))
-            value = getLong(settingName, def.hasDefaultVal() ? (Long)def.getDefaultVal() : 0);
+            value = getLong(settingName, def.hasDefaultVal() && def.getDefaultVal() != null
+                    ? (Long)def.getDefaultVal() : 0);
 
             // DOUBLE
         else if (type.isAssignableFrom(Double.class))
-            value = getDouble(settingName, def.hasDefaultVal() ? (Double)def.getDefaultVal() : 0.0D);
+            value = getDouble(settingName, def.hasDefaultVal() && def.getDefaultVal() != null
+                    ? (Double)def.getDefaultVal() : 0.0D);
 
             // STRING
         else if (type.isAssignableFrom(String.class))
-            value = getString(settingName, def.hasDefaultVal() ? (String)def.getDefaultVal() : null);
+            value = getString(settingName, def.hasDefaultVal() && def.getDefaultVal() != null
+                    ? (String)def.getDefaultVal() : null);
 
             // LOCATION
         else if (type.isAssignableFrom(Location.class))
-            value = getLocation(settingName, def.hasDefaultVal() ? (Location)def.getDefaultVal() : null);
+            value = getLocation(settingName, def.hasDefaultVal() && def.getDefaultVal() != null
+                    ? (Location)def.getDefaultVal() : null);
 
             // ITEMSTACK
         else if (type.isAssignableFrom(ItemStack.class))
-            value = getItemStacks(settingName, def.hasDefaultVal() ? (ItemStack[])def.getDefaultVal() : null);
+            value = getItemStacks(settingName, def.hasDefaultVal() && def.getDefaultVal() != null
+                    ? (ItemStack[])def.getDefaultVal() : null);
 
             // UUID
         else if (type.isAssignableFrom(UUID.class))
-            value = getUUID(settingName, def.hasDefaultVal() ? (UUID)def.getDefaultVal() : null);
+            value = getUUID(settingName, def.hasDefaultVal() && def.getDefaultVal() != null
+                    ? (UUID)def.getDefaultVal() : null);
 
         else if (type.isEnum()) {
 
             @SuppressWarnings("unchecked") Class<Enum<?>> e = (Class<Enum<?>>) type;
 
             value = getGenericEnum(settingName,
-                    (Enum<?>) (def.hasDefaultVal()
+                    (Enum<?>) (def.hasDefaultVal() && def.getDefaultVal() != null
                             ? type.cast(def.getDefaultVal())
                             : null), e);
 
@@ -382,7 +390,8 @@ public abstract class AbstractSettingsManager implements ISettingsManager {
      * @return  Setting value or default value.
      */
     @Nullable
-    protected abstract Enum<?> getGenericEnum(String settingName, Enum<?> defaultValue, @Nullable Class<Enum<?>> type);
+    protected abstract Enum<?> getGenericEnum(
+            String settingName, @Nullable Enum<?> defaultValue, @Nullable Class<Enum<?>> type);
 
     /**
      * Called to get a setting value of any type.

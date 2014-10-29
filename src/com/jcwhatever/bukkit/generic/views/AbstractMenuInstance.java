@@ -24,16 +24,17 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
+import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.Utils;
+import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
+import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
-import com.jcwhatever.bukkit.generic.utils.Utils;
-import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
-import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
+import javax.annotation.Nullable;
 
 /**
  * Abstract implementation of a menu view instance.
@@ -49,7 +50,8 @@ public abstract class AbstractMenuInstance extends ViewInstance {
      * @param sessionMeta   The view session meta.
      * @param instanceMeta  The instance meta.
      */
-    public AbstractMenuInstance(IView view, ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
+    public AbstractMenuInstance(
+            IView view, @Nullable ViewInstance previous, Player p, ViewMeta sessionMeta, ViewMeta instanceMeta) {
         super(view, previous, p, sessionMeta, instanceMeta);
     }
 

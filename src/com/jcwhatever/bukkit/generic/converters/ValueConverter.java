@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.converters;
 
+import javax.annotation.Nullable;
+
 /**
  * Implements IValueConverter and extracts values from Wrapper<?>.
  *
@@ -34,7 +36,8 @@ public abstract class ValueConverter<T, F> {
 
     private ConversionValueContainer _currentContainer;
 
-    public final T convert(Object value) {
+    @Nullable
+    public final T convert(@Nullable Object value) {
 
         if (value instanceof ConversionValueContainer) {
             _currentContainer = (ConversionValueContainer)value;
@@ -56,7 +59,8 @@ public abstract class ValueConverter<T, F> {
         return result;
     }
 
-    public final F unconvert(Object value) {
+    @Nullable
+    public final F unconvert(@Nullable Object value) {
 
         if (value instanceof ConversionValueContainer) {
             _currentContainer = (ConversionValueContainer)value;
@@ -82,14 +86,19 @@ public abstract class ValueConverter<T, F> {
         return new ReversedConverter<F, T>(this);
     }
 
-    protected abstract T onConvert(Object value);
-    protected abstract F onUnconvert(Object value);
+    @Nullable
+    protected abstract T onConvert(@Nullable Object value);
 
+    @Nullable
+    protected abstract F onUnconvert(@Nullable Object value);
+
+    @Nullable
     protected final <V> V callConvert(ValueConverter<V, ?> externalConverter, Object value) {
         ConversionValueContainer container = new ConversionValueContainer(this, value, _currentContainer);
         return externalConverter.convert(container);
     }
 
+    @Nullable
     protected final <V> V callUnconvert(ValueConverter<?, V> externalConverter, Object value) {
         ConversionValueContainer container = new ConversionValueContainer(this, value, _currentContainer);
         return externalConverter.unconvert(container);

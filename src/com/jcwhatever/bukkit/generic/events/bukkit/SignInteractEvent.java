@@ -108,7 +108,8 @@ public class SignInteractEvent extends Event {
 		_parentEvent.setCancelled(isCancelled);
 	}
 	
-	public HandlerList getHandlers() {
+	@Override
+    public HandlerList getHandlers() {
 	    return _handlers;
 	}
 	 

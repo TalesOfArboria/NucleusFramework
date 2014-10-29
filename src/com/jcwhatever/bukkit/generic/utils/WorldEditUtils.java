@@ -24,15 +24,16 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldedit.regions.RegionSelector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.selections.Selection;
-import com.sk89q.worldedit.regions.RegionSelector;
+import javax.annotation.Nullable;
 
 public class WorldEditUtils {
 
@@ -49,6 +50,7 @@ public class WorldEditUtils {
         return _isWorldEditInstalled;
     }
 
+    @Nullable
     public static WorldEditPlugin getWorldEdit() {
         if (!isWorldEditInstalled())
             return null;
@@ -56,7 +58,7 @@ public class WorldEditUtils {
         return (WorldEditPlugin)_wePlugin;
     }
 
-
+    @Nullable
     public static Selection getWorldEditSelection(Player p) {
         // Check that World Edit is installed
         if (!isWorldEditInstalled()) {

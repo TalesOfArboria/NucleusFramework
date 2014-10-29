@@ -105,6 +105,7 @@ public class JailSession {
     /**
      * Get the location the player is released at.
      */
+    @Nullable
     public Location getReleaseLocation() {
         return _jailManager.getReleaseLocation();
     }

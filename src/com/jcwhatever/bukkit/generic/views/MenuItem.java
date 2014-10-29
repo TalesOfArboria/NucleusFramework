@@ -59,10 +59,9 @@ public class MenuItem extends ViewMeta {
      * @param parent    The parent Menu View.
      * @param itemNode  The data node settings should be saved to.
      */
-    public MenuItem(int slot, String name, AbstractMenuView parent, IDataNode itemNode) {
+    public MenuItem(int slot, String name, AbstractMenuView parent, @Nullable IDataNode itemNode) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(parent);
-        PreCon.notNull(itemNode);
 
         _name = name;
         _itemNode = itemNode;

@@ -70,8 +70,11 @@ public class KitManager {
             ItemStack[] items = dataNode.getItemStacks(kitName + ".items");
             ItemStack[] armor = dataNode.getItemStacks(kitName + ".armor");
 
-            kit.addItems(items);
-            kit.addArmor(armor);
+            if (items != null)
+                kit.addItems(items);
+
+            if (armor != null)
+                kit.addArmor(armor);
 
             _kits.put(kit.getSearchName(), kit);
             _kitList.add(kit);

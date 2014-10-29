@@ -269,10 +269,16 @@ public class JailManager {
      * Get the location a player is teleported to when
      * released.
      */
+    @Nullable
     public Location getReleaseLocation() {
+
+        if (_releaseLocation == null && _bounds.getWorld() != null) {
+            return _bounds.getWorld().getSpawnLocation();
+        }
+
         return _releaseLocation != null
                 ? _releaseLocation
-                : _bounds.getWorld().getSpawnLocation();
+                : null;
     }
 
     /**
@@ -281,8 +287,7 @@ public class JailManager {
      *
      * @param location  The release location.
      */
-    public void setReleaseLocation(Location location) {
-        PreCon.notNull(location);
+    public void setReleaseLocation(@Nullable Location location) {
 
         _releaseLocation = location;
 
@@ -409,8 +414,10 @@ public class JailManager {
                     if (releaseMinutes <= 5 || releaseMinutes % 10 == 0) {
                         Player p = PlayerHelper.getPlayer(session.getPlayerId());
 
-                        String message = Lang.get("Release in {0} minutes.", releaseMinutes);
-                        Messenger.tell(p, message);
+                        if (p != null) {
+                            String message = Lang.get("Release in {0} minutes.", releaseMinutes);
+                            Messenger.tell(p, message);
+                        }
                     }
                 }
             }

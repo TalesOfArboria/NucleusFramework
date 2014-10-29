@@ -512,6 +512,7 @@ public class WeakList<T> implements List<T> {
         }
 
         @Override
+        @Nullable
         public T next() {
             while (wIterator.hasNext()) {
                 WeakReference<T> item = wIterator.next();

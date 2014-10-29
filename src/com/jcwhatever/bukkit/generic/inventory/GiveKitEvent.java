@@ -30,6 +30,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -136,19 +137,19 @@ public class GiveKitEvent extends Event {
         return array;
     }
 
-    public void setHelmet(ItemStack helmet) {
+    public void setHelmet(@Nullable ItemStack helmet) {
         _helmet = helmet;
     }
 
-    public void setChestplate(ItemStack chestplate) {
+    public void setChestplate(@Nullable ItemStack chestplate) {
         _chestplate = chestplate;
     }
 
-    public void setLeggings(ItemStack leggings) {
+    public void setLeggings(@Nullable ItemStack leggings) {
         _leggings = leggings;
     }
 
-    public void setBoots(ItemStack boots) {
+    public void setBoots(@Nullable ItemStack boots) {
         _boots = boots;
     }
 
@@ -242,6 +243,7 @@ public class GiveKitEvent extends Event {
         _cancelled = cancel;
     }
 
+    @Override
     public HandlerList getHandlers() {
         return _handlers;
     }

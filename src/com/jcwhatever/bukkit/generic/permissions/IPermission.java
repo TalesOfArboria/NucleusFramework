@@ -82,7 +82,7 @@ public interface IPermission {
      *
      * @param description  The description.
      */
-    void setDescription(String description);
+    void setDescription(@Nullable String description);
 
     /**
      * Get the encapsulated permission handle.

@@ -178,6 +178,7 @@ public abstract class ViewInstance {
     /**
      * Get the meta data associated with this specific instance.
      */
+    @Nullable
     public final ViewMeta getInstanceMeta () {
 
         return _instanceMeta;
@@ -223,7 +224,7 @@ public abstract class ViewInstance {
     }
 
     // Internal. set the next view instance.
-    void setNext (ViewInstance instance) {
+    void setNext (@Nullable ViewInstance instance) {
 
         _next = instance;
     }
@@ -305,7 +306,7 @@ public abstract class ViewInstance {
      * @param sourceBlock   The block used to start the session, if any.
      * @param instanceMeta  Meta data for this instance.
      */
-    public final ViewInstance show (@Nullable final Block sourceBlock, final ViewMeta instanceMeta) {
+    public final ViewInstance show (@Nullable final Block sourceBlock, @Nullable final ViewMeta instanceMeta) {
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(getView().getViewManager().getPlugin(), new Runnable() {
 
@@ -410,7 +411,7 @@ public abstract class ViewInstance {
      * @return Null if the view could not be shown.
      */
     @Nullable
-    protected abstract InventoryView onShow (ViewMeta instanceMeta);
+    protected abstract InventoryView onShow (@Nullable ViewMeta instanceMeta);
 
     /**
      * Called when the view is shown as a previous view.
@@ -428,7 +429,7 @@ public abstract class ViewInstance {
      * @return Null if the view could not be shown.
      */
     @Nullable
-    protected abstract InventoryView onShowAsPrev (ViewMeta instanceMeta, ViewResult result);
+    protected abstract InventoryView onShowAsPrev (@Nullable ViewMeta instanceMeta, @Nullable ViewResult result);
 
     /**
      * Called when the view is closed.
@@ -444,7 +445,7 @@ public abstract class ViewInstance {
      *
      * @return True to allow the item to be placed. False to cancel event.
      */
-    protected abstract boolean onItemsPlaced (InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
+    protected abstract boolean onItemsPlaced (@Nullable InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
 
 
     /**
@@ -454,7 +455,7 @@ public abstract class ViewInstance {
      *
      * @return True to allow the item to be picked up. False to cancel event.
      */
-    protected abstract boolean onItemsPickup (InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
+    protected abstract boolean onItemsPickup (@Nullable InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
 
 
     /**
@@ -464,7 +465,7 @@ public abstract class ViewInstance {
      *
      * @return True to allow the item to be dropped. False to cancel event.
      */
-    protected abstract boolean onItemsDropped (InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
+    protected abstract boolean onItemsDropped (@Nullable InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
 
     /**
      * Called when an item is placed into the lower inventory area.
@@ -473,7 +474,7 @@ public abstract class ViewInstance {
      *
      * @return True to allow the click action. False to cancel event.
      */
-    protected abstract boolean onLowerItemsPlaced(InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
+    protected abstract boolean onLowerItemsPlaced(@Nullable InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
 
     /**
      * Called when an item is picked up from the lower inventory area.
@@ -482,6 +483,6 @@ public abstract class ViewInstance {
      *
      * @return True to allow the click action. False to cancel event.
      */
-    protected abstract boolean onLowerItemsPickup(InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
+    protected abstract boolean onLowerItemsPickup(@Nullable InventoryActionInfo actionInfo, ViewActionOrder actionOrder);
 
 }

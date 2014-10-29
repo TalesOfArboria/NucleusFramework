@@ -55,7 +55,7 @@ public class PreCon {
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void isValid(boolean condition, String message) {
+    public static void isValid(boolean condition, @Nullable String message) {
         if (!condition) {
             if (message != null) {
                 throw new IllegalArgumentException(message);

@@ -84,7 +84,8 @@ public class PlayResourceSoundEvent extends Event {
 		_isCancelled = isCancelled;
 	}
 	 
-	public HandlerList getHandlers() {
+	@Override
+    public HandlerList getHandlers() {
 	    return handlers;
 	}
 	 

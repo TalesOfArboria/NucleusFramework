@@ -51,7 +51,8 @@ public class ClearSoundsEvent extends Event {
 		_isCancelled = isCancelled;
 	}
 	 
-	public HandlerList getHandlers() {
+	@Override
+    public HandlerList getHandlers() {
 	    return handlers;
 	}
 	 

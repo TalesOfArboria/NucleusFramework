@@ -164,6 +164,7 @@ public class GenericsByteReader extends InputStream {
      *
      * @throws IOException
      */
+    @Nullable
     public String getString() throws IOException {
 
         resetBooleanBuffer();
@@ -216,6 +217,10 @@ public class GenericsByteReader extends InputStream {
      */
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
         String constantName = getString();
+        if (constantName == null) {
+            throw new IllegalStateException(
+                    "Could not find an enum: " + enumClass.getName());
+        }
 
         T e = EnumUtils.getEnum(constantName, enumClass);
         if (e == null) {
@@ -269,6 +274,9 @@ public class GenericsByteReader extends InputStream {
 
         for (int i=0; i < enchantSize; i++) {
             String enchantName = getString();
+            if (enchantName == null || enchantName.isEmpty())
+                continue;
+
             int level = getInteger();
 
             ItemStackHelper.addEnchantment(result, enchantName, level);

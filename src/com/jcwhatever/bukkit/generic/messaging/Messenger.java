@@ -284,7 +284,9 @@ public class Messenger {
 
             String message = contextData.getString("message", "");
 
-            tell(plugin, p, message);
+            if (message != null) {
+                tell(plugin, p, message);
+            }
 
             contextData.clear();
             save = true;

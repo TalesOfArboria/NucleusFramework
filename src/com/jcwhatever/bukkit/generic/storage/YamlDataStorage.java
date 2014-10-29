@@ -714,6 +714,9 @@ public class YamlDataStorage implements IDataNode {
     public <T extends Enum<T>> T getEnum(String keyPath, @Nullable T def, Class<T> enumClass) {
 
         String string = getString(keyPath);
+        if (string == null)
+            return def;
+
         return EnumUtils.getEnum(string, enumClass, def);
     }
 
@@ -723,6 +726,9 @@ public class YamlDataStorage implements IDataNode {
     public Enum<?> getEnumGeneric(String keyPath, @Nullable Enum<?> def, Class<? extends Enum<?>> enumClass) {
 
         String string = getString(keyPath);
+        if (string == null)
+            return def;
+
         return EnumUtils.getGenericEnum(string, enumClass, def);
     }
 
@@ -763,7 +769,7 @@ public class YamlDataStorage implements IDataNode {
     }
 
     @Override
-    public boolean set(String keyPath, Object value) {
+    public boolean set(String keyPath, @Nullable Object value) {
 
         synchronized (_sync) {
             if (value instanceof UUID) {

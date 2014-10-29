@@ -355,6 +355,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     }
 
 
+    @Nullable
     private CommandArguments getCommandArguments(CommandSender sender, AbstractCommand command, String[] argArray, boolean showMessages) {
 
         // Parse command arguments
@@ -373,7 +374,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         } catch (InvalidValueException e) {
 
-            if (showMessages) {
+            if (showMessages && e.getMessage() != null) {
                 tellError(sender, e.getMessage());
 
                 if (e.getParameterDescription() != null) {
@@ -386,7 +387,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         } catch (DuplicateParameterException e) {
 
             if (showMessages) {
-                if (e.hasMessage()) {
+                if (e.getMessage() != null) {
                     tellError(sender, e.getMessage());
                 } else {
                     tellError(sender, Lang.get(_DUPLICATE_PARAMETER, e.getParameterName()));
@@ -423,7 +424,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         // catch invalid argument values
         catch (InvalidValueException e) {
 
-            if (showMessages) {
+            if (showMessages && e.getMessage() != null) {
                 tellError(sender, e.getMessage());
 
                 if (e.getParameterDescription() != null) {

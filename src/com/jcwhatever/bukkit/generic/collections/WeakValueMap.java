@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import javax.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -135,6 +136,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
      * @param key  The key to use.
      */
     @Override
+    @Nullable
     public V get(Object key) {
         PreCon.notNull(key);
 
@@ -172,6 +174,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
      * @param value  The value.
      */
     @Override
+    @Nullable
     public V put(K key, V value) {
         PreCon.notNull(key);
         PreCon.notNull(value);
@@ -203,6 +206,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
      * @param key  The key to use.
      */
     @Override
+    @Nullable
     public V remove(Object key) {
         PreCon.notNull(key);
 
@@ -240,7 +244,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
 
     private class WeakValue {
 
-        private WeakReference<V> _reference;
+        private final WeakReference<V> _reference;
         private int _hash;
 
         WeakValue(V value) {
@@ -248,6 +252,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
             _hash = value.hashCode();
         }
 
+        @Nullable
         public V get() {
             return _reference.get();
         }
@@ -261,7 +266,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
         public boolean equals(Object obj) {
             PreCon.notNull(obj);
 
-            return _reference.get() != null && _reference.get().equals(obj);
+            return _reference.get() != null && obj.equals(_reference.get());
         }
     }
 

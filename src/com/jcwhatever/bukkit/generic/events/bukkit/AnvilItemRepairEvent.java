@@ -67,7 +67,8 @@ public class AnvilItemRepairEvent extends Event {
 		_isCancelled = isCancelled;
 	}
 	
-	public HandlerList getHandlers() {
+	@Override
+    public HandlerList getHandlers() {
 	    return _handlers;
 	}
 	 

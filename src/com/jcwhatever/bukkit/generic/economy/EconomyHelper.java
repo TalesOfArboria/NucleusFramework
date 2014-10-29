@@ -36,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
@@ -70,6 +71,7 @@ public class EconomyHelper {
     /**
      * Get the vault Economy wrapper.
      */
+    @Nullable
     public static Economy getEconomy() {
         return hasEconomy() ? (Economy)_econ : null;
     }
@@ -83,9 +85,6 @@ public class EconomyHelper {
         PreCon.notNull(p);
 
         if (!_hasEconomy) return 0;
-
-        if (p == null)
-            return 0;
 
         return getEconomy().getBalance(p.getName());
     }

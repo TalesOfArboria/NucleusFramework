@@ -178,7 +178,8 @@ public class QueueResult {
             });
         }
 
-        Messenger.debug(_plugin, reason);
+        if (reason != null)
+            Messenger.debug(_plugin, reason);
 
         doOnEnd();
     }

@@ -27,9 +27,10 @@ package com.jcwhatever.bukkit.generic.views;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.triggers.IViewTrigger;
-import javax.annotation.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+
+import javax.annotation.Nullable;
 
 /**
  * Represents a type of player view
@@ -43,7 +44,7 @@ public interface IView extends IDisposable {
      * @param viewManager  The view manager responsible for the view.
      * @param dataNode     The data node to save settings to.
      */
-    void init(String name, ViewManager viewManager, IDataNode dataNode);
+    void init(String name, ViewManager viewManager, @Nullable IDataNode dataNode);
 
     /**
      * Get the name of the view
@@ -101,7 +102,8 @@ public interface IView extends IDisposable {
      * @param sessionMeta   The meta used for the session.
      * @param instanceMeta  The meta that applies to the new instance.
      */
-    ViewInstance createInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta);
+    ViewInstance createInstance(
+            Player p, @Nullable ViewInstance previous, ViewMeta sessionMeta, @Nullable ViewMeta instanceMeta);
 
     /**
      * Called internally when the View is removed.

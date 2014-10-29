@@ -135,6 +135,8 @@ public class Kit {
      */
     public ItemStack[] getArmor() {
         List<ItemStack> armorList = getArmorList();
+        if (armorList == null)
+            return new ItemStack[0];
 
         ItemStack[] array = new ItemStack[armorList.size()];
         for (int i = 0; i < armorList.size(); ++i) {

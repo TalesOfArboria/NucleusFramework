@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class EconWithdrawEvent extends Event {
@@ -56,7 +57,8 @@ public class EconWithdrawEvent extends Event {
 	public void setAmount(double amount) {
 		_amount = amount;
 	}
-	
+
+    @Nullable
 	public Player getPlayer() {
 		if (_player == null) {
 			_player = PlayerHelper.getPlayer(_playerId);
@@ -64,7 +66,8 @@ public class EconWithdrawEvent extends Event {
 		return _player;
 	}
 	
-	public HandlerList getHandlers() {
+	@Override
+    public HandlerList getHandlers() {
 	    return _handlers;
 	}
 	 

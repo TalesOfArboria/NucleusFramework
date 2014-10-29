@@ -289,6 +289,7 @@ public class LocationUtils {
     }
 
     // helper to convert a string number to a double.
+    @Nullable
     private static Double parseDouble(String s) {
         s = s.trim();
 
@@ -306,6 +307,7 @@ public class LocationUtils {
     }
 
     // helper to convert a string number to a float.
+    @Nullable
     private static Float parseFloat(String s) {
         try {
             return Float.parseFloat(s.trim());

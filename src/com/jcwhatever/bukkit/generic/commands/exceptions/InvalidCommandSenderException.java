@@ -65,7 +65,7 @@ public class InvalidCommandSenderException extends Exception {
      *
      * @throws InvalidCommandSenderException
      */
-    public static void check(CommandSender sender, CommandSenderType expected, String reason)
+    public static void check(CommandSender sender, CommandSenderType expected, @Nullable String reason)
             throws InvalidCommandSenderException {
 
         switch (expected) {

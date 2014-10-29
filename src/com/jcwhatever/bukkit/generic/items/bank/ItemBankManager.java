@@ -152,6 +152,7 @@ public class ItemBankManager {
      *
      * @throws InsufficientItemsException if there are not enough items in the account to withdraw the quantity
      */
+    @Nullable
     public static ItemStack[] withdraw (Player p, ItemStack itemStack, int qty) throws InsufficientItemsException {
         PreCon.notNull(p);
 
@@ -170,6 +171,7 @@ public class ItemBankManager {
      *
      * @throws InsufficientItemsException if there are not enough items in the account to withdraw the quantity
      */
+    @Nullable
     public static ItemStack[] withdraw (UUID playerId, ItemStack itemStack, int qty) throws InsufficientItemsException {
         PreCon.notNull(playerId);
         PreCon.notNull(itemStack);
@@ -193,6 +195,7 @@ public class ItemBankManager {
      *
      * @throws InsufficientItemsException if there are not enough items in the account to withdraw the quantity
      */
+    @Nullable
     public static ItemStack[] withdraw (Player p, BankItem bankItem, int qty) throws InsufficientItemsException {
         PreCon.notNull(p);
 
@@ -210,6 +213,7 @@ public class ItemBankManager {
      *
      * @throws InsufficientItemsException if there are not enough items in the account to withdraw the quantity
      */
+    @Nullable
     public static ItemStack[] withdraw (UUID playerId, BankItem bankItem, int qty) throws InsufficientItemsException {
         PreCon.notNull(playerId);
         PreCon.notNull(bankItem);
@@ -301,6 +305,7 @@ public class ItemBankManager {
     }
 
     // Internal : ItemBankAccount kept private to prevent memory leaks
+    @Nullable
     private static ItemBankAccount getAccount (UUID playerId) {
 
         if (_accountCache.keyEquals(playerId))
@@ -311,6 +316,9 @@ public class ItemBankManager {
         if (account == null) {
             account = loadAccountFromFile(playerId);
 
+            if (account == null)
+                return null;
+
             _recentAccounts.put(playerId, account, CACHE_DURATION);
         }
 
@@ -319,6 +327,7 @@ public class ItemBankManager {
         return account;
     }
 
+    @Nullable
     private static ItemBankAccount loadAccountFromFile (UUID playerId) {
 
         IDataNode dataNode = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("bank." + playerId));

@@ -51,7 +51,7 @@ public class SettingDefinition implements Comparable<SettingDefinition> {
      * @param converter    The setting converter.
      */
     public SettingDefinition(String settingName, Class<?> type, @Nullable ValueConverter<?, ?> converter) {
-        this(settingName, null, type, "", null, null);
+        this(settingName, null, type, "", converter, null);
     }
 
     /**

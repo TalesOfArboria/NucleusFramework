@@ -189,6 +189,7 @@ public class LanguageManager {
     /*
      *  Get or load language keys from resource file.
      */
+    @Nullable
     private LanguageKeys getLanguageKeys() {
 
         if (_keys != null)

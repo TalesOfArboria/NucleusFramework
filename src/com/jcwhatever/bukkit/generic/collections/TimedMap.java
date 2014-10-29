@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -183,6 +184,7 @@ public class TimedMap<K, V> extends HashMap<K, V> {
     }
 
     @Override
+    @Nullable
     public V remove(Object key) {
         PreCon.notNull(key);
 

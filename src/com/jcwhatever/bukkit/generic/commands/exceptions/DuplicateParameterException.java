@@ -65,13 +65,6 @@ public class DuplicateParameterException extends Exception {
     }
 
     /**
-     * Determine if a message is set.
-     */
-    public boolean hasMessage() {
-        return _message != null;
-    }
-
-    /**
      * Get the custom message describing the exception.
      */
     @Override

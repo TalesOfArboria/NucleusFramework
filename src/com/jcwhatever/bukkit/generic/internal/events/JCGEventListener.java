@@ -163,7 +163,8 @@ public final class JCGEventListener implements Listener {
 					
 					if (newName != null && !newName.equals(originalName)) {
 						
-						AnvilItemRenameEvent renameEvent = AnvilItemRenameEvent.callEvent(p, anvilInventory, resultItem, newName, originalName);
+						AnvilItemRenameEvent renameEvent = AnvilItemRenameEvent.callEvent(
+                                p, anvilInventory, resultItem, newName, originalName);
 						
 						if (renameEvent.isCancelled()) {
 							event.setCancelled(true);

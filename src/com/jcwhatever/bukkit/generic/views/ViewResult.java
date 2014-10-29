@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
+import javax.annotation.Nullable;
+
 /**
  * Meta data specifically for returning a result from a view instance
  * after it is closed.
@@ -55,6 +57,7 @@ public class ViewResult extends ViewMeta {
      * Get instance meta used to initialized the
      * view instance the result is from.
      */
+    @Nullable
     public ViewMeta getInstanceMeta () {
 
         return _viewInstance.getInstanceMeta();

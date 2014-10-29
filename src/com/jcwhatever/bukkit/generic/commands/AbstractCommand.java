@@ -401,7 +401,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      * Set the commands command handler
      * Should only be called by the command handler or parent command
      */
-    final void setCommandHandler(AbstractCommandHandler commandHandler, String masterCommandName) {
+    final void setCommandHandler(AbstractCommandHandler commandHandler, @Nullable String masterCommandName) {
         PreCon.notNull(commandHandler);
 
         if (_commandHandler != null)

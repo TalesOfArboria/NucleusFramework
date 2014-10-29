@@ -160,7 +160,8 @@ public abstract class AbstractView implements IView {
     }
 
     @Override
-    public ViewInstance createInstance(Player p, ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta) {
+    public ViewInstance createInstance(
+            Player p, ViewInstance previous, ViewMeta sessionMeta, @Nullable ViewMeta instanceMeta) {
         return onCreateInstance(p, previous, sessionMeta, instanceMeta);
     }
 
@@ -219,7 +220,7 @@ public abstract class AbstractView implements IView {
      * @return  A new view instance.
      */
     protected abstract ViewInstance onCreateInstance(
-            Player p, @Nullable ViewInstance previous, ViewMeta sessionMeta, ViewMeta instanceMeta);
+            Player p, @Nullable ViewInstance previous, ViewMeta sessionMeta, @Nullable ViewMeta instanceMeta);
 
     /**
      * Called whenever the settings are loaded or reloaded.
