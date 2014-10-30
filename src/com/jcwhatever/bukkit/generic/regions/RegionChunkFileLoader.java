@@ -76,6 +76,13 @@ public final class RegionChunkFileLoader {
     }
 
     /**
+     * Get the region.
+     */
+    public RestorableRegion getRegion() {
+        return _region;
+    }
+
+    /**
      * Determine if the file is in the process
      * of being loaded.
      */

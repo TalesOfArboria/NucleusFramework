@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Rand;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -55,16 +56,13 @@ public abstract class Region {
 
     private final Object _sync = new Object();
 
-    protected String _name;
-    protected String _searchName;
-    protected IDataNode _dataNode;
-    protected Plugin _plugin;
+    private final Plugin _plugin;
+    private final String _name;
+    private final String _searchName;
+    private IDataNode _dataNode;
 
     private Location _p1;
     private Location _p2;
-
-    protected String _p1Path = "p1";
-    protected String _p2Path = "p2";
 
     private Location _lastP1;
     private Location _lastP2;
@@ -107,93 +105,32 @@ public abstract class Region {
     private Map<Plugin, String> _extEntryMessages;
     private Map<Plugin, String> _extExitMessages;
 
-
     private enum MessageType {
         ENTRY,
         EXIT
     }
 
-
-    /**
-     * Empty constructor
-     */
-    protected Region(Plugin plugin) {
-        PreCon.notNull(plugin);
-
-        _plugin = plugin;
+    private enum RegionPoint {
+        P1,
+        P2
     }
-
-
-    /**
-     * Named constructor
-     */
-    protected Region(Plugin plugin, String name) {
-        PreCon.notNull(plugin);
-        PreCon.notNullOrEmpty(name);
-
-        _name = name;
-        _plugin = plugin;
-        _searchName = name.toLowerCase();
-    }
-
 
     /**
      * Constructor
      */
-    public Region(Plugin plugin, String name, final IDataNode settings) {
+    public Region(Plugin plugin, String name, @Nullable IDataNode dataNode) {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
-        PreCon.notNull(settings);
 
         _name = name;
         _plugin = plugin;
         _searchName = name.toLowerCase();
-        _dataNode = settings;
+        _dataNode = dataNode;
 
-        initCoords(settings.getLocation(_p1Path), settings.getLocation(_p2Path));
-
-        _ownerId = settings.getUUID("owner-id");
-        _entryMessage = settings.getString("entry-message");
-        _exitMessage = settings.getString("entry-message");
-
-
-        Set<String> entryPluginNames =settings.getSubNodeNames("ext-entry-messages");
-        if (entryPluginNames != null && !entryPluginNames.isEmpty()) {
-
-            _extEntryMessages = new HashMap<Plugin, String>(entryPluginNames.size());
-
-            for (String pluginName : entryPluginNames) {
-
-                Plugin pl = Bukkit.getPluginManager().getPlugin(pluginName);
-
-                if (pl == null)
-                    continue;
-
-                String msg = settings.getString("ext-entry-messages." + pluginName);
-                if (msg == null)
-                    continue;
-
-                _extEntryMessages.put(pl, msg);
-            }
-
+        if (dataNode != null) {
+            loadSettings(dataNode);
         }
-
-        Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable() {
-
-            @Override
-            public void run () {
-
-                loadExtMessages(settings, MessageType.ENTRY);
-                loadExtMessages(settings, MessageType.EXIT);
-            }
-
-        }, 20);
-
-
-        if (_entryMessage != null || _exitMessage != null)
-            setIsPlayerWatcher(true);
     }
-
 
     /**
      * Get the name of the region.
@@ -214,6 +151,14 @@ public abstract class Region {
      */
     public final Plugin getPlugin() {
         return _plugin;
+    }
+
+    /**
+     * Get the regions data node.
+     */
+    @Nullable
+    public final IDataNode getDataNode() {
+        return _dataNode;
     }
 
     /**
@@ -956,6 +901,55 @@ public abstract class Region {
     }
 
     /**
+     * Initial load of settings from regions data node.
+     *
+     * @param dataNode  The data node to load from
+     */
+    protected void loadSettings(final IDataNode dataNode) {
+
+        initCoords(dataNode.getLocation("p1"), dataNode.getLocation("p2"));
+
+        _ownerId = dataNode.getUUID("owner-id");
+        _entryMessage = dataNode.getString("entry-message");
+        _exitMessage = dataNode.getString("entry-message");
+
+        Set<String> entryPluginNames = dataNode.getSubNodeNames("ext-entry-messages");
+        if (entryPluginNames != null && !entryPluginNames.isEmpty()) {
+
+            _extEntryMessages = new HashMap<Plugin, String>(entryPluginNames.size());
+
+            for (String pluginName : entryPluginNames) {
+
+                Plugin pl = Bukkit.getPluginManager().getPlugin(pluginName);
+
+                if (pl == null)
+                    continue;
+
+                String msg = dataNode.getString("ext-entry-messages." + pluginName);
+                if (msg == null)
+                    continue;
+
+                _extEntryMessages.put(pl, msg);
+            }
+        }
+
+        Scheduler.runTaskLater(GenericsLib.getPlugin(), 20, new Runnable() {
+
+            @Override
+            public void run() {
+
+                loadExtMessages(dataNode, MessageType.ENTRY);
+                loadExtMessages(dataNode, MessageType.EXIT);
+            }
+
+        });
+
+
+        if (_entryMessage != null || _exitMessage != null)
+            setIsPlayerWatcher(true);
+    }
+
+    /**
      * Called when the coordinates for the region are changed
      *
      * <p>Intended for implementation use.</p>
@@ -1219,12 +1213,12 @@ public abstract class Region {
         if (lower != null) {
             _p1 = lower;
             if (_dataNode != null)
-                _dataNode.set(_p1Path, lower);
+                _dataNode.set("p1", lower);
         }
         if (upper != null) {
             _p2 = upper;
             if (_dataNode != null)
-                _dataNode.set(_p2Path, upper);
+                _dataNode.set("p2", upper);
         }
 
     }
@@ -1253,11 +1247,4 @@ public abstract class Region {
             return false;
         }
     }
-
-    static enum RegionPoint {
-        P1,
-        P2
-    }
-
-
 }

@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.Future;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import org.bukkit.Chunk;
 import org.bukkit.plugin.Plugin;
@@ -49,19 +50,21 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      * Constructor.
      *
      * @param plugin  The owning plugin.
+     * @param name    The name of the region.
      */
-    protected MultiSnapshotRegion(Plugin plugin) {
-        super(plugin);
+    public MultiSnapshotRegion(Plugin plugin, String name) {
+        super(plugin, name);
     }
 
     /**
      * Constructor.
      *
-     * @param plugin  The owning plugin.
-     * @param name    The name of the region.
+     * @param plugin    The owning plugin.
+     * @param name      The name of the region.
+     * @param dataNode  The regions data node.
      */
-    public MultiSnapshotRegion(Plugin plugin, String name) {
-        super(plugin, name);
+    public MultiSnapshotRegion(Plugin plugin, String name, IDataNode dataNode) {
+        super(plugin, name, dataNode);
     }
 
     /**

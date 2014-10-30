@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueWorker;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+import com.sun.istack.internal.Nullable;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
@@ -56,20 +57,10 @@ public abstract class BuildableRegion extends Region {
      * Constructor.
      *
      * @param plugin  The owning plugin.
-     */
-    public BuildableRegion(Plugin plugin) {
-        super(plugin);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param plugin  The owning plugin.
      * @param name    The name of the region.
      */
     public BuildableRegion(Plugin plugin, String name) {
-        super(plugin, name);
-        _plugin = plugin;
+        super(plugin, name, null);
     }
 
     /**
@@ -77,11 +68,10 @@ public abstract class BuildableRegion extends Region {
      *
      * @param plugin    The owning plugin.
      * @param name      The name of the region.
-     * @param settings  The regions data node.
+     * @param dataNode  The regions data node.
      */
-    public BuildableRegion(Plugin plugin, String name, IDataNode settings) {
-        super(plugin, name, settings);
-        _plugin = plugin;
+    public BuildableRegion(Plugin plugin, String name, @Nullable IDataNode dataNode) {
+        super(plugin, name, dataNode);
     }
 
     /**
@@ -116,7 +106,7 @@ public abstract class BuildableRegion extends Region {
 
         _isBuilding = true;
 
-        QueueProject project = new QueueProject(_plugin);
+        QueueProject project = new QueueProject(getPlugin());
 
         for (ChunkSnapshot snapshot : snapshots) {
 
@@ -173,7 +163,7 @@ public abstract class BuildableRegion extends Region {
                                    int xStart, int yStart, int zStart,
                                    int xEnd, int yEnd, int zEnd) {
 
-            super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
+            super(region.getPlugin(), TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
             this.snapshot = snapshot;
 
@@ -204,7 +194,7 @@ public abstract class BuildableRegion extends Region {
         protected void onPreComplete() {
 
             // schedule block update
-            Scheduler.runTaskSync(_plugin, 1, new UpdateBlocks());
+            Scheduler.runTaskSync(getPlugin(), 1, new UpdateBlocks());
         }
 
         /**

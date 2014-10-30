@@ -36,6 +36,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueWorker;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.regions.RegionChunkFileLoader.BlockInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.sun.istack.internal.Nullable;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
@@ -67,15 +68,6 @@ public abstract class RestorableRegion extends BuildableRegion {
      * Constructor.
      *
      * @param plugin  The owning plugin.
-     */
-    public RestorableRegion(Plugin plugin) {
-        super(plugin);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param plugin  The owning plugin.
      * @param name    The name of the region.
      */
     public RestorableRegion(Plugin plugin, String name) {
@@ -87,10 +79,10 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @param plugin    The owning plugin.
      * @param name      The name of the region.
-     * @param settings  The regions data node.
+     * @param dataNode  The regions data node.
      */
-    public RestorableRegion(Plugin plugin, String name, IDataNode settings) {
-        super(plugin, name, settings);
+    public RestorableRegion(Plugin plugin, String name, @Nullable IDataNode dataNode) {
+        super(plugin, name, dataNode);
     }
 
     /**
@@ -124,7 +116,7 @@ public abstract class RestorableRegion extends BuildableRegion {
 
         List<Chunk> chunks = this.getChunks();
 
-        QueueProject project = new QueueProject(_plugin);
+        QueueProject project = new QueueProject(getPlugin());
 
         if (chunks.size() == 0) {
             project.cancel("Cannot save region because there are no chunks to save.");
@@ -213,7 +205,7 @@ public abstract class RestorableRegion extends BuildableRegion {
 
         List<Chunk> chunks = getChunks();
 
-        QueueProject restoreProject = new QueueProject(_plugin);
+        QueueProject restoreProject = new QueueProject(getPlugin());
 
         if (chunks.size() == 0) {
             return restoreProject.cancel("Restore cancelled. No chunks to restore.");
@@ -240,7 +232,7 @@ public abstract class RestorableRegion extends BuildableRegion {
         for (Chunk chunk : chunks) {
 
             // create project for chunk
-            QueueProject chunkProject = new QueueProject(_plugin);
+            QueueProject chunkProject = new QueueProject(getPlugin());
 
             // create chunk loader
             RegionChunkFileLoader loader = new RegionChunkFileLoader(this, chunk);
@@ -279,7 +271,7 @@ public abstract class RestorableRegion extends BuildableRegion {
             public void run() {
                 _isRestoring = false;
                 onRestoreComplete();
-                Messenger.info(_plugin, "Restorable Region restoration complete.");
+                Messenger.info(getPlugin(), "Restorable Region restoration complete.");
             }
         });
     }
@@ -321,7 +313,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      * @throws IOException
      */
     protected final File getDataFolder() throws IOException {
-        File folder = new File(_plugin.getDataFolder(), "region-data");
+        File folder = new File(getPlugin().getDataFolder(), "region-data");
         if (!folder.exists() && !folder.mkdirs()) {
             throw new IOException("Failed to create region data folder.");
         }
@@ -456,7 +448,7 @@ public abstract class RestorableRegion extends BuildableRegion {
         private final Chunk chunk;
 
         public RestoreBlocks (RegionChunkFileLoader loader) {
-            super(_plugin, TaskConcurrency.MAIN_THREAD);
+            super(loader.getRegion().getPlugin(), TaskConcurrency.MAIN_THREAD);
 
             this.loader = loader;
             this.chunk = loader.getChunk();

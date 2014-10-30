@@ -40,7 +40,7 @@ public class BasicRegion extends Region {
      * @param name    The name of the region.
      */
     public BasicRegion(Plugin plugin, String name) {
-        super(plugin, name);
+        super(plugin, name, null);
     }
 
     /**
@@ -48,10 +48,10 @@ public class BasicRegion extends Region {
      *
      * @param plugin    The owning plugin.
      * @param name      The name of the region.
-     * @param settings  The regions data storage node.
+     * @param dataNode  The regions data storage node.
      */
-    public BasicRegion(Plugin plugin, String name, IDataNode settings) {
-        super(plugin, name, settings);
+    public BasicRegion(Plugin plugin, String name, IDataNode dataNode) {
+        super(plugin, name, dataNode);
     }
 
 }
