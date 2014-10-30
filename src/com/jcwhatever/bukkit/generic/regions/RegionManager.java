@@ -28,7 +28,6 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.EntryCounter;
 import com.jcwhatever.bukkit.generic.collections.EntryCounter.RemovalPolicy;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.performance.SingleCache;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
@@ -52,23 +51,32 @@ import java.util.UUID;
  */
 public class RegionManager {
 
-    // String key is chunk coordinates
+    // Player watcher regions chunk map. String key is chunk coordinates
     private final Map<String, Set<ReadOnlyRegion>> _listenerRegionsMap = new HashMap<>(500);
+
+    // All regions chunk map. String key is chunk coordinates
     private final Map<String, Set<ReadOnlyRegion>> _allRegionsMap = new HashMap<>(500);
 
-    private final Object _sync = new Object();
+    // worlds that have regions
     private EntryCounter<World> _listenerWorlds = new EntryCounter<>(RemovalPolicy.REMOVE);
-    private Map<UUID, Set<ReadOnlyRegion>> _playerMap;
+
+    // cached regions the player was detected in in last player watcher cycle.
+    private Map<UUID, Set<ReadOnlyRegion>> _playerCacheMap;
+
+    // locations the player was detected in between player watcher cycles.
     private Map<UUID, LinkedList<Location>> _playerLocationCache;
-    private SingleCache<UUID, LinkedList<Location>> _lastLocationCache = new SingleCache<>();
+
+    // hash set of all registered regions
     private Set<ReadOnlyRegion> _regions = new HashSet<>(500);
 
+    // synchronization object
+    private final Object _sync = new Object();
 
     /**
      * Constructor. Used by GenericsLib to initialize RegionEventManager.
      */
     public RegionManager() {
-        _playerMap = new PlayerMap<>();
+        _playerCacheMap = new PlayerMap<>();
         _playerLocationCache = new PlayerMap<>();
         PlayerWatcher _playerWatcher = new PlayerWatcher();
         Scheduler.runTaskRepeat(GenericsLib.getPlugin(),  7, 7, _playerWatcher);
@@ -113,8 +121,6 @@ public class RegionManager {
             if (getRegionCount() == 0)
                 return new HashSet<>(0);
 
-            // TODO: Add Single Cache using chunk as key
-
             String key = getChunkKey(chunk.getWorld(), chunk.getX(), chunk.getZ());
 
             Set<ReadOnlyRegion> regions = _allRegionsMap.get(key);
@@ -134,11 +140,11 @@ public class RegionManager {
     public List<ReadOnlyRegion> getPlayerRegions(Player p) {
         PreCon.notNull(p);
 
-        synchronized(_sync) {
-            if (_playerMap == null)
-                return new ArrayList<ReadOnlyRegion>(0);
+        if (_playerCacheMap == null)
+            return new ArrayList<ReadOnlyRegion>(0);
 
-            Set<ReadOnlyRegion> regions = _playerMap.get(p.getUniqueId());
+        synchronized(_sync) {
+            Set<ReadOnlyRegion> regions = _playerCacheMap.get(p.getUniqueId());
             if (regions == null)
                 return new ArrayList<>(0);
 
@@ -181,11 +187,12 @@ public class RegionManager {
         PreCon.notNull(p);
         PreCon.notNull(region);
 
-        synchronized(_sync) {
-            if (_playerMap == null)
-                return;
+        if (_playerCacheMap == null)
+            return;
 
-            Set<ReadOnlyRegion> regions = _playerMap.get(p.getUniqueId());
+        synchronized(_sync) {
+
+            Set<ReadOnlyRegion> regions = _playerCacheMap.get(p.getUniqueId());
             if (regions == null)
                 return;
 
@@ -237,7 +244,9 @@ public class RegionManager {
         PreCon.notNull(region);
 
         if (!region.isDefined()) {
-            Messenger.debug(GenericsLib.getPlugin(), "Failed to register region '{0}' with RegionManager because it's coords are undefined.", region.getName());
+            Messenger.debug(GenericsLib.getPlugin(),
+                    "Failed to register region '{0}' with RegionManager because " +
+                            "it's coords are undefined.", region.getName());
             return;
         }
 
@@ -327,18 +336,12 @@ public class RegionManager {
       * by the PlayerWatcher task yet.
      */
     private LinkedList<Location> getPlayerLocations(UUID playerId) {
-        if (_lastLocationCache.keyEquals(playerId)) {
-            //noinspection ConstantConditions
-            return _lastLocationCache.getValue();
-        }
 
         LinkedList<Location> locations = _playerLocationCache.get(playerId);
         if (locations == null) {
             locations = new LinkedList<Location>();
             _playerLocationCache.put(playerId, locations);
         }
-
-        _lastLocationCache.set(playerId, locations);
 
         return locations;
     }
@@ -413,26 +416,14 @@ public class RegionManager {
      */
     private final class PlayerWatcher implements Runnable {
 
-        private boolean _isRunning = true;
-
-        public void cancel() {
-            _isRunning = false;
-        }
-
         @Override
         public void run() {
 
-            if (!_isRunning)
-                return;
-
-            List<World> worlds;
-
-            synchronized (_sync) {
-                worlds = new ArrayList<World>(_listenerWorlds.getTypesCounted());
-            }
+            List<World> worlds = new ArrayList<World>(_listenerWorlds.getTypesCounted());
 
             final List<WorldPlayers> worldPlayers = new ArrayList<WorldPlayers>(worlds.size());
 
+            // get players in worlds with regions
             for (World world : worlds) {
 
                 if (world == null)
@@ -446,6 +437,7 @@ public class RegionManager {
                 worldPlayers.add(new WorldPlayers(world, players));
             }
 
+            // end if there are no players in region worlds
             if (worldPlayers.isEmpty())
                 return;
 
@@ -467,11 +459,11 @@ public class RegionManager {
                                 UUID playerId = worldPlayer.player.getUniqueId();
 
                                 // get regions the player is in (cached from previous check)
-                                Set<ReadOnlyRegion> cachedRegions = _playerMap.get(playerId);
+                                Set<ReadOnlyRegion> cachedRegions = _playerCacheMap.get(playerId);
 
                                 if (cachedRegions == null) {
                                     cachedRegions = new HashSet<>(10);
-                                    _playerMap.put(playerId, cachedRegions);
+                                    _playerCacheMap.put(playerId, cachedRegions);
                                 }
 
                                 // iterate cached locations
@@ -556,5 +548,4 @@ public class RegionManager {
             this.locations = locations;
         }
     }
-
 }
