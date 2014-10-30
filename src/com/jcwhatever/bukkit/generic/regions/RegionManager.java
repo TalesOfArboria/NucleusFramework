@@ -54,15 +54,15 @@ import java.util.UUID;
 public class RegionManager {
 
     // String key is chunk coordinates
-    private final Map<String, Set<ReadOnlyRegion>> _listenerRegionsMap = new HashMap<>(100);
-    private final Map<String, Set<ReadOnlyRegion>> _allRegionsMap = new HashMap<>(100);
+    private final Map<String, Set<ReadOnlyRegion>> _listenerRegionsMap = new HashMap<>(500);
+    private final Map<String, Set<ReadOnlyRegion>> _allRegionsMap = new HashMap<>(500);
 
     private final Object _sync = new Object();
     private EntryCounter<World> _listenerWorlds = new EntryCounter<>(RemovalPolicy.REMOVE);
     private Map<UUID, Set<ReadOnlyRegion>> _playerMap;
     private Map<UUID, LinkedList<Location>> _playerLocationCache;
     private SingleCache<UUID, LinkedList<Location>> _lastLocationCache = new SingleCache<>();
-    private Set<ReadOnlyRegion> _regions = new HashSet<>(100);
+    private Set<ReadOnlyRegion> _regions = new HashSet<>(500);
 
 
     /**
@@ -256,6 +256,7 @@ public class RegionManager {
             for (int x= region.getChunkX(); x < xMax; x++) {
                 for (int z= region.getChunkZ(); z < zMax; z++) {
 
+                    //noinspection ConstantConditions
                     String key = getChunkKey(region.getWorld(), x, z);
 
                     if (region.isPlayerWatcher()) {
@@ -270,9 +271,11 @@ public class RegionManager {
             }
 
             if (region.isPlayerWatcher()) {
+                //noinspection ConstantConditions
                 _listenerWorlds.add(region.getWorld());
             }
             else if (hasRegion){
+                //noinspection ConstantConditions
                 _listenerWorlds.subtract(region.getWorld());
             }
 
@@ -303,6 +306,7 @@ public class RegionManager {
             for (int x= region.getChunkX(); x < xMax; x++) {
                 for (int z= region.getChunkZ(); z < zMax; z++) {
 
+                    //noinspection ConstantConditions
                     String key = getChunkKey(region.getWorld(), x, z);
 
                     removeFromMap(_listenerRegionsMap, key, readOnlyRegion);
@@ -311,6 +315,7 @@ public class RegionManager {
             }
 
             if (_regions.remove(readOnlyRegion) && region.isPlayerWatcher()) {
+                //noinspection ConstantConditions
                 _listenerWorlds.subtract(region.getWorld());
             }
 
@@ -323,8 +328,10 @@ public class RegionManager {
       * by the PlayerWatcher task yet.
      */
     private LinkedList<Location> getPlayerLocations(UUID playerId) {
-        if (_lastLocationCache.keyEquals(playerId))
+        if (_lastLocationCache.keyEquals(playerId)) {
+            //noinspection ConstantConditions
             return _lastLocationCache.getValue();
+        }
 
         LinkedList<Location> locations = _playerLocationCache.get(playerId);
         if (locations == null) {
@@ -471,7 +478,7 @@ public class RegionManager {
                                         Location location = worldPlayer.locations.removeFirst();
 
                                         // see which regions a player actually is in
-                                        Set<ReadOnlyRegion> inRegions = getListenerRegions(location); // causing async issues
+                                        Set<ReadOnlyRegion> inRegions = getListenerRegions(location);
 
 
                                         // check for entered regions
@@ -511,11 +518,6 @@ public class RegionManager {
 
                 });
             }
-
-
-            // schedule next check
-            //if (GenericsLib.getInstance().isEnabled())
-            //	Bukkit.getScheduler().runTaskLater(GenericsLib.getInstance(), _instance, 7);
         }
     }
 
