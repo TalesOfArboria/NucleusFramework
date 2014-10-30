@@ -73,6 +73,9 @@ public class PlayerState {
      */
     @Nullable
     public static PlayerState get(Plugin plugin, Player p) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(p);
+
         PlayerMap<PlayerState> states = getStateMap(plugin);
         PlayerState state = states.get(p.getUniqueId());
 
@@ -103,6 +106,9 @@ public class PlayerState {
      * @param p       The player.
      */
     public static PlayerState store(Plugin plugin, Player p) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(p);
+
         PlayerMap<PlayerState> states = getStateMap(plugin);
 
         PlayerState state = states.get(p.getUniqueId());
@@ -228,6 +234,10 @@ public class PlayerState {
                 _player.setFlying(_snapshot.isFlying());
                 _player.setFireTicks(_snapshot.getFireTicks());
                 _player.setFallDistance(0);// prevent player respawn deaths
+
+                // discard snapshot
+                _snapshot = null;
+
             }
         });
 
@@ -238,12 +248,7 @@ public class PlayerState {
         getStateMap(_plugin).remove(_player.getUniqueId());
 
         // get restore location so it can be returned
-        Location location = _snapshot.getLocation();
-
-        // discard snapshot
-        _snapshot = null;
-
-        return location;
+        return _snapshot.getLocation();
     }
 
     /*
