@@ -87,6 +87,9 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
         File folder = getRegionDataFolder();
 
         File[] files = folder.listFiles();
+        if (files == null)
+            return new HashSet<>(0);
+
         Set<String> names = new HashSet<String>(files.length);
 
         for (File file : files) {

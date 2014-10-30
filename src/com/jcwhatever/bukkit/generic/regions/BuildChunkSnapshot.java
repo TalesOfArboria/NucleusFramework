@@ -28,6 +28,8 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
+
 /**
  * A chunk snapshot used for building in a region.
  */
@@ -180,6 +182,7 @@ public class BuildChunkSnapshot implements ChunkSnapshot {
         return false;
     }
 
+    @Nullable
     private ItemStack getItem(int x, int y, int z) {
         x = _xStart + x;
         z = _zStart + z;

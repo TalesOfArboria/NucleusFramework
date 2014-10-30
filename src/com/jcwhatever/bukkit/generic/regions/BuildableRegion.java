@@ -111,6 +111,9 @@ public abstract class BuildableRegion extends Region {
         if (_isBuilding)
             return false;
 
+        if (!isDefined())
+            return false;
+
         _isBuilding = true;
 
         QueueProject project = new QueueProject(_plugin);
@@ -173,6 +176,8 @@ public abstract class BuildableRegion extends Region {
             super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
             this.snapshot = snapshot;
+
+            //noinspection ConstantConditions
             this.chunk = region.getWorld().getChunkAt(snapshot.getX(), snapshot.getZ());
         }
 

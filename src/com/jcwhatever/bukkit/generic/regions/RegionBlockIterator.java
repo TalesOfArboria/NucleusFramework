@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.regions;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 
 /**
@@ -72,7 +73,7 @@ public class RegionBlockIterator implements Iterator<Block> {
      */
     @Override
     public boolean hasNext() {
-        if (_region.getWorld() == null)
+        if (!_region.isDefined())
             return false;
 
         if (_currentY > _region.getYEnd())
@@ -85,11 +86,13 @@ public class RegionBlockIterator implements Iterator<Block> {
      * Get the next block.
      */
     @Override
+    @Nullable
     public Block next() {
 
         if (!hasNext())
             return null;
 
+        //noinspection ConstantConditions
         _current = _region.getWorld().getBlockAt(_currentX, _currentY, _currentZ);
 
         _currentZ++;

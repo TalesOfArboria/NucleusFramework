@@ -29,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 
@@ -41,7 +42,7 @@ public class RegionOwnerChangedEvent extends Event {
     UUID _newId;
     boolean _isCancelled;
     
-    RegionOwnerChangedEvent(ReadOnlyRegion region, UUID oldId, UUID newId) {
+    RegionOwnerChangedEvent(ReadOnlyRegion region, @Nullable UUID oldId, @Nullable UUID newId) {
         _region = region;
         _oldId = oldId;
         _newId = newId;
@@ -76,7 +77,7 @@ public class RegionOwnerChangedEvent extends Event {
         return _handlers;
     }
     
-    public static RegionOwnerChangedEvent callEvent(ReadOnlyRegion region, UUID oldId, UUID newId) {
+    public static RegionOwnerChangedEvent callEvent(ReadOnlyRegion region, @Nullable UUID oldId, @Nullable UUID newId) {
         RegionOwnerChangedEvent event = new RegionOwnerChangedEvent(region, oldId, newId);
         
         if (hasListeners()) {

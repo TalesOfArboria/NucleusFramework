@@ -317,6 +317,7 @@ public class RegionChunkSection {
         _chunkBlockEndX = _chunkBlockX + 15;
         _chunkBlockEndZ = _chunkBlockZ + 15;
 
+        //noinspection ConstantConditions
         int xStart = _regionStartX = Math.min(p1.getBlockX(), p2.getBlockX());
         int xEnd = _regionEndX =  Math.max(p1.getBlockX(), p2.getBlockX());
 

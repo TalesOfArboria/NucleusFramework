@@ -79,6 +79,10 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
      * @param chunkZ  The Y coordinates of the chunk.
      */
     public RegionChunkSnapshot (Region region, int chunkX, int chunkZ) {
+        if (!region.isDefined())
+            throw new RuntimeException("Cannot get a snapshot from an undefined region.");
+
+        //noinspection ConstantConditions
         Chunk chunk = region.getWorld().getChunkAt(chunkX, chunkZ);
         init(region, chunk);
     }

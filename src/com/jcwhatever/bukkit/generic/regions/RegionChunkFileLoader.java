@@ -160,6 +160,7 @@ public final class RegionChunkFileLoader {
 
         @Override
         public int compareTo(BlockInfo o) {
+            //noinspection SuspiciousNameCombination
             return Integer.compare(this.y, o.y);
         }
     }

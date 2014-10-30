@@ -160,15 +160,15 @@ public class MultiValueMap <K, V> {
 
     /**
      * Get a list of values associated with the specified key.
+     *
      * @param key  The key to check.
      */
-    @Nullable
     public List<V> getValues(K key) {
         PreCon.notNull(key);
 
         Set<V> set = _valueMap.get(key);
         if (set == null)
-            return null;
+            return new ArrayList<>(0);
 
         return new ArrayList<V>(set);
     }

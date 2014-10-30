@@ -104,6 +104,7 @@ public class ReadOnlyRegion {
     /**
      * Get the world the region is in.
      */
+    @Nullable
     public World getWorld () {
         return _region.getWorld();
     }
@@ -111,6 +112,7 @@ public class ReadOnlyRegion {
     /**
      * Get the regions first cuboid point location.
      */
+    @Nullable
     public Location getP1 () {
         return _region.getP1();
     }
@@ -118,6 +120,7 @@ public class ReadOnlyRegion {
     /**
      * Get the regions seconds cuboid point location.
      */
+    @Nullable
     public Location getP2 () {
         return _region.getP2();
     }
@@ -126,6 +129,7 @@ public class ReadOnlyRegion {
      * Get the region cuboid point location that
      * is in the lower portion of the region.
      */
+    @Nullable
     public Location getLowerPoint () {
         return _region.getLowerPoint();
     }
@@ -134,6 +138,7 @@ public class ReadOnlyRegion {
      * Get the region cuboid point location that
      * is in the upper portion of the region.
      */
+    @Nullable
     public Location getUpperPoint () {
         return _region.getUpperPoint();
     }
@@ -308,6 +313,7 @@ public class ReadOnlyRegion {
     /**
      * Get the center location of the region.
      */
+    @Nullable
     public Location getCenter () {
         return _region.getCenter();
     }

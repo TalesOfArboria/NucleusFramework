@@ -257,7 +257,7 @@ public abstract class Region {
      *
      * @param ownerId  The id of the new owner.
      */
-    public boolean setOwner(UUID ownerId) {
+    public boolean setOwner(@Nullable UUID ownerId) {
 
         UUID oldId = _ownerId;
 
