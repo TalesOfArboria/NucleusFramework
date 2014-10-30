@@ -289,6 +289,7 @@ public abstract class Region {
     /**
      * Get the cuboid regions first point location.
      */
+    @Nullable
     public final Location getP1() {
         if (_p1 == null)
             return null;
@@ -301,6 +302,7 @@ public abstract class Region {
     /**
      * Get the cuboid regions seconds point location.
      */
+    @Nullable
     public final Location getP2() {
         if (_p2 == null)
             return null;
@@ -313,6 +315,7 @@ public abstract class Region {
     /**
      * Get the cuboid regions lower point location.
      */
+    @Nullable
     public final Location getLowerPoint() {
         return getP1();
     }
@@ -320,6 +323,7 @@ public abstract class Region {
     /**
      * Get the cuboid regions upper point location.
      */
+    @Nullable
     public final Location getUpperPoint() {
         return getP2();
     }
@@ -457,6 +461,7 @@ public abstract class Region {
     /**
      * Get the center location of the region.
      */
+    @Nullable
     public final Location getCenter() {
         if (_center == null)
             return null;
@@ -662,11 +667,10 @@ public abstract class Region {
      */
     public final List<Chunk> getChunks() {
         if (getWorld() == null)
-            return null;
+            return new ArrayList<>(0);
 
         synchronized (_sync) {
             if (_chunks == null) {
-
 
                 if (_p1 == null || _p2 == null) {
                     return new ArrayList<>(0);
@@ -945,7 +949,7 @@ public abstract class Region {
      * @param p1  The first point location.
      * @param p2  The second point location.
      */
-    protected final void initCoords(Location p1, Location p2) {
+    protected final void initCoords(@Nullable Location p1, @Nullable Location p2) {
         _p1 = p1;
         _p2 = p2;
         updateMath();
