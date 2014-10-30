@@ -60,7 +60,8 @@ class EventHandlerCollection {
 
             // skip handler if the even is cancelled and it is not a watcher.
             if (handler.getPriority() != GenericsEventPriority.WATCHER &&
-                    event.isCancelled()) {
+                    !handler.isCancelIgnored() &&
+                         event.isCancelled()) {
                 continue;
             }
 
@@ -93,8 +94,22 @@ class EventHandlerCollection {
      */
     boolean add(EventHandler eventHandler,  GenericsEventPriority priority) {
 
+        return add(eventHandler, priority, false);
+    }
+
+    /**
+     * Add an event handler.
+     *
+     * @param eventHandler     The event handler to add.
+     * @param priority         The handler priority.
+     * @param ignoreCancelled  True to run handler even if event is already cancelled.
+     *
+     * @return  True if the handler was added, False if it's already added.
+     */
+    boolean add(EventHandler eventHandler,  GenericsEventPriority priority, boolean ignoreCancelled) {
+
         // create handler container and make sure it is not already added.
-        HandlerContainer handler = new HandlerContainer(eventHandler, priority);
+        HandlerContainer handler = new HandlerContainer(eventHandler, priority, ignoreCancelled);
         if (_handlers.contains(handler))
             return false;
 
@@ -117,8 +132,8 @@ class EventHandlerCollection {
      *
      * @throws IllegalAccessException
      */
-    void add(final GenericsEventListener listener, final Class<?> eventClass, Method method, GenericsEventHandler annotation)
-            throws IllegalAccessException {
+    void add(final GenericsEventListener listener, final Class<?> eventClass,
+             Method method, GenericsEventHandler annotation) throws IllegalAccessException {
 
         // make the possibly private method accessible
         method.setAccessible(true);
@@ -140,7 +155,7 @@ class EventHandlerCollection {
         };
 
         // add event handler container
-        _handlers.add(new HandlerContainer(listener, handler, annotation.priority()));
+        _handlers.add(new HandlerContainer(listener, handler, annotation.priority(), annotation.ignoreCancelled()));
 
         // sort event handlers by priority
         Collections.sort(_handlers);
@@ -183,33 +198,37 @@ class EventHandlerCollection {
         private final GenericsEventListener _listener;
         private final EventHandler _handler;
         private final GenericsEventPriority _priority;
+        private final boolean _ignoreCancelled;
 
         /**
          * Constructor.
          */
-        public HandlerContainer(
-                GenericsEventListener listener, EventHandler handler, GenericsEventPriority priority) {
+        public HandlerContainer(GenericsEventListener listener, EventHandler handler,
+                                GenericsEventPriority priority, boolean ignoreCancelled) {
             _listener = listener;
             _handler = handler;
             _priority = priority;
+            _ignoreCancelled = ignoreCancelled;
         }
 
         /**
-         * Private Constructor.
+         * Constructor.
+         */
+        public HandlerContainer(EventHandler handler, GenericsEventPriority priority, boolean ignoreCancelled) {
+            _handler = handler;
+            _listener = null;
+            _priority = priority;
+            _ignoreCancelled = ignoreCancelled;
+        }
+
+        /**
+         * Private Constructor. Only used to create a map key.
          */
         private HandlerContainer(EventHandler handler) {
             _handler = handler;
             _listener = null;
             _priority = null;
-        }
-
-        /**
-         * Private Constructor.
-         */
-        private HandlerContainer(EventHandler handler, GenericsEventPriority priority) {
-            _handler = handler;
-            _listener = null;
-            _priority = priority;
+            _ignoreCancelled = false;
         }
 
         /**
@@ -234,6 +253,14 @@ class EventHandlerCollection {
          */
         public GenericsEventPriority getPriority() {
             return _priority;
+        }
+
+        /**
+         * Determine if handler runs even if the
+         * event is already cancelled.
+         */
+        public boolean isCancelIgnored() {
+            return _ignoreCancelled;
         }
 
         /**

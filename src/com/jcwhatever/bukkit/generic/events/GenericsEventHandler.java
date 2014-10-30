@@ -41,4 +41,10 @@ public @interface GenericsEventHandler {
      * The priority/order that the event should be executed in.
      */
     GenericsEventPriority priority() default GenericsEventPriority.NORMAL;
+
+    /**
+     * Determine if the handler should be run even if the
+     * event is already cancelled.
+     */
+    boolean ignoreCancelled() default false;
 }
