@@ -32,7 +32,6 @@ import com.jcwhatever.bukkit.generic.performance.SingleCache;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -450,7 +449,7 @@ public class RegionManager {
             if (worldPlayers.isEmpty())
                 return;
 
-            Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getPlugin(), new Runnable() {
+            Scheduler.runTaskLaterAsync(GenericsLib.getPlugin(), 1, new Runnable() {
 
                 @Override
                 public void run() {
