@@ -435,6 +435,7 @@ public class RegionManager {
             final List<WorldPlayers> worldPlayers = new ArrayList<WorldPlayers>(worlds.size());
 
             for (World world : worlds) {
+
                 if (world == null)
                     continue;
 
@@ -446,78 +447,79 @@ public class RegionManager {
                 worldPlayers.add(new WorldPlayers(world, players));
             }
 
-            if (!worldPlayers.isEmpty()) {
+            if (worldPlayers.isEmpty())
+                return;
 
-                Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getPlugin(), new Runnable() {
+            Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getPlugin(), new Runnable() {
 
-                    @Override
-                    public void run() {
+                @Override
+                public void run() {
 
-                        for (WorldPlayers wp : worldPlayers) {
+                    for (WorldPlayers wp : worldPlayers) {
 
-                            synchronized (_sync) {
+                        synchronized (_sync) {
 
-                                // get players in world
-                                List<WorldPlayer> worldPlayers = wp.players;
+                            // get players in world
+                            List<WorldPlayer> worldPlayers = wp.players;
 
-                                // iterate players
-                                for (WorldPlayer worldPlayer : worldPlayers) {
+                            // iterate players
+                            for (WorldPlayer worldPlayer : worldPlayers) {
 
-                                    UUID playerId = worldPlayer.player.getUniqueId();
+                                UUID playerId = worldPlayer.player.getUniqueId();
 
-                                    // get regions the player is in (cached from previous check)
-                                    Set<ReadOnlyRegion> cachedRegions = _playerMap.get(playerId);
+                                // get regions the player is in (cached from previous check)
+                                Set<ReadOnlyRegion> cachedRegions = _playerMap.get(playerId);
 
-                                    if (cachedRegions == null) {
-                                        cachedRegions = new HashSet<>(10);
-                                        _playerMap.put(playerId, cachedRegions);
-                                    }
+                                if (cachedRegions == null) {
+                                    cachedRegions = new HashSet<>(10);
+                                    _playerMap.put(playerId, cachedRegions);
+                                }
 
-                                    // iterate cached locations
-                                    while (!worldPlayer.locations.isEmpty()) {
-                                        Location location = worldPlayer.locations.removeFirst();
+                                // iterate cached locations
+                                while (!worldPlayer.locations.isEmpty()) {
+                                    Location location = worldPlayer.locations.removeFirst();
 
-                                        // see which regions a player actually is in
-                                        Set<ReadOnlyRegion> inRegions = getListenerRegions(location);
+                                    // see which regions a player actually is in
+                                    Set<ReadOnlyRegion> inRegions = getListenerRegions(location);
 
 
-                                        // check for entered regions
-                                        if (inRegions != null && !inRegions.isEmpty()) {
-                                            for (ReadOnlyRegion region : inRegions) {
-                                                if (!cachedRegions.contains(region)) {
-                                                    onPlayerEnter(region.getHandle(), worldPlayer.player);
-                                                    cachedRegions.add(region);
-                                                }
-                                            }
-                                        }
-
-                                        // check for regions player has left
-                                        if (!cachedRegions.isEmpty()) {
-                                            Iterator<ReadOnlyRegion> iterator = cachedRegions.iterator();
-                                            while(iterator.hasNext()) {
-                                                ReadOnlyRegion region = iterator.next();
-
-                                                if (inRegions == null || !inRegions.contains(region)) {
-                                                    onPlayerLeave(region.getHandle(), worldPlayer.player);
-                                                    iterator.remove();
-                                                }
+                                    // check for entered regions
+                                    if (inRegions != null && !inRegions.isEmpty()) {
+                                        for (ReadOnlyRegion region : inRegions) {
+                                            if (!cachedRegions.contains(region)) {
+                                                onPlayerEnter(region.getHandle(), worldPlayer.player);
+                                                cachedRegions.add(region);
                                             }
                                         }
                                     }
 
+                                    // check for regions player has left
+                                    if (!cachedRegions.isEmpty()) {
+                                        Iterator<ReadOnlyRegion> iterator = cachedRegions.iterator();
+                                        while(iterator.hasNext()) {
+                                            ReadOnlyRegion region = iterator.next();
 
-                                } // END for (Player
+                                            if (inRegions == null || !inRegions.contains(region)) {
+                                                onPlayerLeave(region.getHandle(), worldPlayer.player);
+                                                iterator.remove();
+                                            }
+                                        }
+                                    }
+                                }
 
-                                _sync.notifyAll();
 
-                            } // END synchronized
+                            } // END for (Player
 
-                        } // END for (WorldPlayers
+                            _sync.notifyAll();
 
-                    } // END run()
+                        } // END synchronized
 
-                });
-            }
+                    } // END for (WorldPlayers
+
+                } // END run()
+
+            });
+
         }
     }
 
