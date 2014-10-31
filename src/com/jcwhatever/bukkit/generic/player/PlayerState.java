@@ -123,6 +123,26 @@ public class PlayerState {
     }
 
     /**
+     * Clear the specified players player state from the cache
+     * and disk.
+     *
+     * @param plugin  The owning plugin.
+     * @param p       The player.
+     */
+    public static void clear(Plugin plugin, Player p) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(p);
+
+        PlayerMap<PlayerState> states = getStateMap(plugin);
+
+        PlayerState state = states.remove(p.getUniqueId());
+        if (state == null)
+            return;
+
+        state.deleteFile();
+    }
+
+    /**
      * Specify if the players location should be restored.
      */
     public enum RestoreLocation {
@@ -249,6 +269,18 @@ public class PlayerState {
 
         // get restore location so it can be returned
         return _snapshot.getLocation();
+    }
+
+    /**
+     * Deletes player state file from disk.
+     */
+    public void deleteFile() {
+
+        DataPath dataPath = new DataPath("player-states." + _playerId);
+
+        if (DataStorage.hasTransientStorage(_plugin, dataPath)) {
+            DataStorage.removeTransientStorage(_plugin, dataPath);
+        }
     }
 
     /*
