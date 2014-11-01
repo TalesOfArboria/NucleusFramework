@@ -420,7 +420,7 @@ public class ReadOnlyRegion {
      */
     @Nullable
     public String getEntryMessage (Plugin plugin) {
-        return _region.getEntryMessage();
+        return _region.getEntryMessage(plugin);
     }
 
     /**
