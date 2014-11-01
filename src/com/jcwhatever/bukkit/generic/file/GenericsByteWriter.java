@@ -56,7 +56,12 @@ public class GenericsByteWriter extends OutputStream {
     private final byte[] _booleanFlags = new byte[] { 1, 2, 4, 8, 16, 32, 64 };
 
 
-    public GenericsByteWriter(OutputStream outputStream) throws IOException {
+    /**
+     * Cosntructor.
+     *
+     * @param outputStream  The output stream.
+     */
+    public GenericsByteWriter(OutputStream outputStream) {
         _stream = outputStream;
     }
 
@@ -343,6 +348,11 @@ public class GenericsByteWriter extends OutputStream {
         _stream.close();
     }
 
+    /**
+     * Flush buffers to stream.
+     *
+     * @throws IOException
+     */
     @Override
     public void flush() throws IOException {
 

@@ -55,7 +55,12 @@ public class GenericsByteReader extends InputStream {
     private byte[] _booleanBuffer = new byte[1];
     private final byte[] _booleanFlags = new byte[] { 1, 2, 4, 8, 16, 32, 64 };
 
-    public GenericsByteReader(InputStream stream) throws IOException {
+    /**
+     * Constructor.
+     *
+     * @param stream  The input stream.
+     */
+    public GenericsByteReader(InputStream stream) {
         PreCon.notNull(stream);
 
         _stream = stream;
