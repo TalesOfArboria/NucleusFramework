@@ -28,7 +28,6 @@ import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
-import com.jcwhatever.bukkit.generic.messaging.ChatPaginator.PaginatorTemplate;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatTemplate;
@@ -61,8 +60,7 @@ public class HelpCommand extends AbstractCommand {
     public void showHelp(final CommandSender sender, int page) {
 
         String paginTitle = Lang.get("Commands");
-        final ChatPaginator pagin = new ChatPaginator(_plugin, 6,
-                PaginatorTemplate.HEADER, PaginatorTemplate.FOOTER, paginTitle);
+        final ChatPaginator pagin = new ChatPaginator(_plugin, 6, paginTitle);
 
         final List<AbstractCommand> categories = new ArrayList<AbstractCommand>(_commandHandler.getCommands().size());
 

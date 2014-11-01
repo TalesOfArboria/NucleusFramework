@@ -34,7 +34,6 @@ import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
-import com.jcwhatever.bukkit.generic.messaging.ChatPaginator.PaginatorTemplate;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatTemplate;
 import org.bukkit.command.CommandSender;
 
@@ -49,7 +48,7 @@ import java.util.List;
 
 public class ListTPSubCommand extends AbstractCommand {
 
-    @Localizable static final String _PAGINATOR = "Jail Teleport Locations";
+    @Localizable static final String _PAGINATOR_TITLE = "Jail Teleport Locations";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args)
@@ -61,8 +60,7 @@ public class ListTPSubCommand extends AbstractCommand {
 
         List<INamedLocation> locations = jailManager.getTeleports();
 
-        ChatPaginator pagin = new ChatPaginator(GenericsLib.getPlugin(), 6,
-                PaginatorTemplate.HEADER, PaginatorTemplate.FOOTER, _PAGINATOR);
+        ChatPaginator pagin = new ChatPaginator(GenericsLib.getPlugin(), 6, _PAGINATOR_TITLE);
 
         for (INamedLocation loc : locations) {
             pagin.add(loc.getName());

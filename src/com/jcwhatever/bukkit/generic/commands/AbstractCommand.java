@@ -30,7 +30,6 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.MissingCommandAnnotationException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
-import com.jcwhatever.bukkit.generic.messaging.ChatPaginator.PaginatorTemplate;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.permissions.IPermission;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
@@ -248,7 +247,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         PreCon.positiveNumber(page);
 
         String paginTitle = Lang.get("Commands");
-        final ChatPaginator pagin = new ChatPaginator(getPlugin(), 6, PaginatorTemplate.HEADER, PaginatorTemplate.FOOTER, paginTitle);
+        final ChatPaginator pagin = new ChatPaginator(getPlugin(), 6, paginTitle);
 
         final List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
 

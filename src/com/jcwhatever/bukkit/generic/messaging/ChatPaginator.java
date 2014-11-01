@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.messaging;
 
+import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -38,39 +40,22 @@ import java.util.List;
  */
 public class ChatPaginator {
 
+    @Localizable static final String _HEADER = "----------------------------------------\r{AQUA}{0} {GRAY}(Page {1} of {2})";
+    @Localizable static final String _FOOTER = "----------------------------------------";
+
     private final Plugin _plugin;
     private final List<Object[]> _printList = new ArrayList<>(50);
 
-    protected int _itemsPerPage = 5;
+    protected int _itemsPerPage = 6;
     protected String _headerFormat;
     protected String _footerFormat;
     protected String _title;
 
     /**
-     * A default paginator template that can be used for the paginator
-     * header and footer.
-     */
-    public enum PaginatorTemplate {
-        HEADER  ("----------------------------------------\r{AQUA}{0} {GRAY}(Page {1} of {2})"),
-        FOOTER  ("----------------------------------------");
-
-        private final String _template;
-
-        PaginatorTemplate(String template) {
-            _template = template;
-        }
-
-        @Override
-        public String toString() {
-            return _template;
-        }
-    }
-
-    /**
      * Constructor.
      *
      * <p>
-     *     5 items per page, no header or footer.
+     *     6 items per page, default header and footer.
      * </p>
      *
      * @param plugin  The owning plugin.
@@ -103,7 +88,26 @@ public class ChatPaginator {
      * Constructor.
      *
      * <p>
-     *     5 items per page.
+     *     6 items per page, default header and footer.
+     * </p>
+     *
+     * @param plugin        The owning plugin.
+     * @param itemsPerPage  Number of items to show per page.
+     * @param title         The title to insert into the header.
+     */
+    public ChatPaginator(Plugin plugin, int itemsPerPage, String title) {
+        PreCon.notNull(title);
+
+        _plugin = plugin;
+        _itemsPerPage = itemsPerPage;
+        _title = title;
+    }
+
+    /**
+     * Constructor.
+     *
+     * <p>
+     *     6 items per page.
      * </p>
      * <p>
      *     Header format uses numbers in braces to insert title, current page and total pages:<br>
@@ -241,9 +245,12 @@ public class ChatPaginator {
 
         int totalPages = (int)Math.ceil((double)_printList.size() / _itemsPerPage);
 
-        if (_headerFormat != null) {
-            Messenger.tell(_plugin, sender, _headerFormat, _title, Math.max(1, page), Math.max(1, totalPages));
-        }
+        String header = _headerFormat != null
+                ? Lang.get(_plugin, _headerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
+                : Lang.get(_HEADER, _title, Math.max(1, page), Math.max(1, totalPages));
+
+        if (!header.isEmpty())
+            Messenger.tell(_plugin, sender, header);
 
         if (page < 1 || page > totalPages) {
             if (page == 1) {
@@ -269,9 +276,12 @@ public class ChatPaginator {
             }
         }
 
-        if (_footerFormat != null) {
-            Messenger.tell(_plugin, sender, _footerFormat, _title, Math.max(1, page), Math.max(1, totalPages));
-        }
+        String footer = _footerFormat != null
+                ? Lang.get(_plugin, _footerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
+                : Lang.get(_FOOTER, _title, Math.max(1, page), Math.max(1, totalPages));
+
+        if (!footer.isEmpty())
+            Messenger.tell(_plugin, sender, footer);
     }
 
     /*
