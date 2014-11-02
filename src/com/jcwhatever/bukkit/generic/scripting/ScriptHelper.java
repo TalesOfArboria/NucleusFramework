@@ -126,7 +126,7 @@ public class ScriptHelper {
         PreCon.isValid(scriptFolder.isDirectory());
 
         if (!scriptFolder.exists())
-            return null;
+            return new ArrayList<>(0);
 
         List<File> scriptFiles = FileUtils.getFiles(scriptFolder, traversal);
         List<T> result = new ArrayList<>(scriptFiles.size());
