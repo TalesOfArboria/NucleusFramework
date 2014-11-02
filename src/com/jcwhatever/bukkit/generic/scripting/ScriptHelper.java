@@ -84,7 +84,6 @@ public class ScriptHelper {
 
         api.add(new ScriptApiEconomy(plugin));
         api.add(new ScriptApiBukkitEvents(plugin));
-        api.add(new ScriptApiInclude(plugin, manager));
         api.add(new ScriptApiInventory(plugin));
         api.add(new ScriptApiItemBank(plugin));
         api.add(new ScriptApiJail(plugin));
@@ -92,6 +91,9 @@ public class ScriptHelper {
         api.add(new ScriptApiPermissions(plugin));
         api.add(new ScriptApiSounds(plugin));
         api.add(new ScriptApiLoader(plugin));
+
+        if (manager != null)
+            api.add(new ScriptApiInclude(plugin, manager));
 
         return api;
     }
