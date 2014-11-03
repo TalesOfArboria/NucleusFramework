@@ -28,6 +28,7 @@ import com.jcwhatever.bukkit.generic.scripting.GenericsScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
 import com.jcwhatever.bukkit.generic.scripting.ScriptHelper;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.plugin.Plugin;
@@ -100,6 +101,27 @@ public class ScriptApiInclude extends GenericsScriptApi {
             for (IScript script : scripts) {
                 _script.evaluate(script);
             }
+        }
+
+        /**
+         * Add an api object from the script api repository.
+         *
+         * @param owningPluginName  The name of the api owning plugin.
+         * @param apiName           The variable name of the api.
+         *
+         * @return  True if the api was found and included.
+         */
+        public boolean api(String owningPluginName, String apiName) {
+            PreCon.notNull(owningPluginName);
+            PreCon.notNullOrEmpty(apiName);
+
+            IScriptApi api = ScriptApiRepo.getApi(getPlugin(), owningPluginName, apiName);
+            if (api == null)
+                return false;
+
+            _script.addScriptApi(api);
+
+            return true;
         }
 
         @Override
