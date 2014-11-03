@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.commands.arguments;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import javax.annotation.Nullable;
 
 /**
  * A data storage object that represents
@@ -46,7 +47,7 @@ public class CommandArgument {
      * @param defaultValue  The default value.
      * @param paramType     The parameter type.
      */
-    public CommandArgument (String name, String value, String defaultValue, ParameterType paramType) {
+    public CommandArgument (String name, @Nullable String value, @Nullable String defaultValue, ParameterType paramType) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(paramType);
 
@@ -79,7 +80,7 @@ public class CommandArgument {
      * @param paramType     The parameter type.
      * @param argType       The argument type.
      */
-    public CommandArgument (String name, String value, String defaultValue, 
+    public CommandArgument (String name, @Nullable String value, @Nullable String defaultValue,
                             ParameterType paramType, ArgumentType argType) {
         
         PreCon.notNullOrEmpty(name);
@@ -117,6 +118,7 @@ public class CommandArgument {
     /**
      * Get the supplied value.
      */
+    @Nullable
     public String getValue() {
         return _value;
     }
@@ -124,6 +126,7 @@ public class CommandArgument {
     /**
      * Get the default value for the parameter, if any.
      */
+    @Nullable
     public String getDefaultValue() {
         return _defaultValue;
     }

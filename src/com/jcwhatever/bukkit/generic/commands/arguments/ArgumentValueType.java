@@ -42,17 +42,15 @@ public class ArgumentValueType {
 
     @Localizable static final String _UNKNOWN = "Unspecified. Consult documentation, if any.";
     @Localizable static final String _NAME = "Name. The name must be alphanumeric characters only, must not start with a number, " +
-            "no spaces, underscores are allowed. Should not be more than 16 characters unless otherwise specified.";
-    @Localizable static final String _NAME_CUSTOM = "Name. The name must be alphanumeric characters only, must not start with a number, " +
             "no spaces, underscores are allowed. Should not be more than {0} characters.";
     @Localizable static final String _STRING = "Text";
     @Localizable static final String _CHARACTER = "Single character";
-    @Localizable static final String _BYTE = "Whole number no larger than " + Byte.MAX_VALUE + '.';
-    @Localizable static final String _SHORT = "Whole number no larger than " + Short.MAX_VALUE + '.';
-    @Localizable static final String _INTEGER = "Whole number no larger than " + Integer.MAX_VALUE + '.';
-    @Localizable static final String _LONG = "Whole number no larger than " + Long.MAX_VALUE + '.';
-    @Localizable static final String _FLOAT = "Number with or without a decimal point.";
-    @Localizable static final String _DOUBLE = "Number with or without a decimal point.";
+    @Localizable static final String _BYTE = "Whole number no smaller than {0} and no larger than {1}.";
+    @Localizable static final String _SHORT = "Whole number no smaller than {0} and no larger than {1}.";
+    @Localizable static final String _INTEGER = "Whole number no smaller than {0} and no larger than {1}.";
+    @Localizable static final String _LONG = "Whole number no smaller than {0} and no larger than {1}.";
+    @Localizable static final String _FLOAT = "Number with or without a decimal point. Must be no smaller than {0} and no larger than {1}.";
+    @Localizable static final String _DOUBLE = "Number with or without a decimal point. Must be no smaller than {0} and no larger than {1}.";
     @Localizable static final String _BOOLEAN = "Boolean. i.e. true, false, yes, no, on, off";
     @Localizable static final String _PERCENT = "Percentage. i.e 32.2%";
     @Localizable static final String _ITEMSTACK = "Item stack. Use 'inhand' for the item in your hand. " +
@@ -109,16 +107,17 @@ public class ArgumentValueType {
      * @param argumentValueType  The argument value type.
      */
     @Localized
-    public static String getDescription(@Nullable String parameterName, ArgumentValueType argumentValueType) {
+    public static String getDescription(
+            @Nullable String parameterName, ArgumentValueType argumentValueType, Object... params) {
 
         if (argumentValueType == CHARACTER || argumentValueType == STRING) {
             if (parameterName != null && parameterName.contains("|")) {
 
                 String values = TextUtils.concat(TextUtils.PATTERN_PIPE.split(parameterName), ", ");
-                return Lang.get("Use one of the following values: {0}", values);
+                return Lang.get(_USE_ONE_OF, values);
             }
             else {
-                return Lang.get(argumentValueType._description);
+                return Lang.get(argumentValueType._description, params);
             }
         }
         else if (argumentValueType == ENUM) {
@@ -126,11 +125,11 @@ public class ArgumentValueType {
                 return argumentValueType._description;
             else {
                 String values = TextUtils.concat(TextUtils.PATTERN_PIPE.split(parameterName), ", ");
-                return Lang.get("Use one of the following values: ", values);
+                return Lang.get(_USE_ONE_OF, values);
             }
         }
         else {
-            return Lang.get(argumentValueType._description);
+            return Lang.get(argumentValueType._description, params);
         }
     }
 
@@ -169,15 +168,5 @@ public class ArgumentValueType {
     public static <T extends Enum<T>> String getEnumDescription(Collection<T> validValues) {
         String values = TextUtils.concat(validValues, ", ");
         return Lang.get(_USE_ONE_OF, values);
-    }
-
-    /**
-     * Get a name value type description.
-     *
-     * @param maxLen  The max length of the name.
-     */
-    @Localized
-    public static String getNameDescription(int maxLen) {
-        return Lang.get(_NAME_CUSTOM, maxLen);
     }
 }

@@ -214,8 +214,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             @Override
             public CommandArgument next () {
+                if (!hasNext())
+                    throw new IndexOutOfBoundsException("No more elements.");
+
                 CommandArgument arg = get(index);
                 index++;
+                //noinspection ConstantConditions
                 return arg;
             }
 
@@ -259,12 +263,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
         PreCon.greaterThanZero(maxLen);
 
         // get the raw argument
-        String arg = getRawArgument(parameterName);
+        String arg = getString(parameterName);
 
         // make sure the argument is a valid name
         if (!TextUtils.isValidName(arg, maxLen)) {
             throw new InvalidValueException(parameterName,
-                    _paramDescriptions.get(parameterName, maxLen));
+                    _paramDescriptions.get(parameterName, ArgumentValueType.NAME, maxLen));
         }
 
         return arg;
@@ -351,89 +355,176 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @throws InvalidValueException  If the argument is not parsable into a byte value.
      */
     public byte getByte(String parameterName) throws InvalidValueException {
+        return getByte(parameterName, Byte.MIN_VALUE, Byte.MAX_VALUE);
+    }
+
+    /**
+     * Gets an argument as a byte.
+     *
+     * @param parameterName  The name of the arguments parameter
+     * @param minRange       The minimum value.
+     * @param maxRange       The maximum value.
+     *
+     * @throws InvalidValueException
+     */
+    public byte getByte(String parameterName, byte minRange, byte maxRange) throws InvalidValueException {
         PreCon.notNullOrEmpty(parameterName);
+
+        byte result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
         // parse argument to byte
         try {
-            return Byte.parseByte(arg);
+            result = Byte.parseByte(arg);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.BYTE));
+                    _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
         }
 
+        if (result < minRange || result > maxRange) {
+            throw new InvalidValueException(parameterName,
+                    _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
+        }
+
+        return result;
     }
 
     /**
      * Gets an argument as a short.
      *
-     * @param parameterName  The name of the arguments parameter
+     * @param parameterName  The name of the arguments parameter.
      *
      * @throws InvalidValueException  If the argument is not parsable into a short value.
      */
     public short getShort(String parameterName) throws InvalidValueException {
+        return getShort(parameterName, Short.MIN_VALUE, Short.MAX_VALUE);
+    }
+
+    /**
+     * Gets an argument as a short.
+     *
+     * @param parameterName  The name of the arguments parameter.
+     * @param minRange       The minimum value.
+     * @param maxRange       The maximum value.
+     *
+     * @throws InvalidValueException  If the argument is not parsable into a short value or does not meet range specs.
+     */
+    public short getShort(String parameterName, short minRange, short maxRange) throws InvalidValueException {
         PreCon.notNullOrEmpty(parameterName);
+
+        short result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
         // parse argument to short
         try {
-            return Short.parseShort(arg);
+            result = Short.parseShort(arg);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.SHORT));
+                    _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
         }
+
+        if (result < minRange || result > maxRange) {
+            throw new InvalidValueException(parameterName,
+                    _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
+        }
+
+        return result;
     }
 
     /**
      * Gets an argument as an integer.
      *
-     * @param parameterName  The name of the arguments parameter 
+     * @param parameterName  The name of the arguments parameter.
      *
      * @throws InvalidValueException  If the argument is not parsable into an integer.
      */
     public int getInt(String parameterName) throws InvalidValueException {
+        return getInt(parameterName, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Gets an argument as an integer.
+     *
+     * @param parameterName  The name of the arguments parameter.
+     * @param minRange       The minimum value.
+     * @param maxRange       The maximum value.
+     *
+     * @throws InvalidValueException  If the argument is not parsable into an integer or does not meet range specs.
+     */
+    public int getInt(String parameterName, int minRange, int maxRange) throws InvalidValueException {
         PreCon.notNullOrEmpty(parameterName);
+
+        int result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
         // parse argument to integer
         try {
-            return Integer.parseInt(arg);
+            result = Integer.parseInt(arg);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER));
+                    _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
         }
+
+        if (result < minRange || result > maxRange) {
+            throw new InvalidValueException(parameterName,
+                    _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
+        }
+
+        return result;
     }
 
     /**
      * Gets an argument as a 64 bit number.
      *
-     * @param parameterName  The name of the arguments parameter 
+     * @param parameterName  The name of the arguments parameter.
      *
      * @throws InvalidValueException  If the argument is not parsable into a long value.
      */
     public long getLong(String parameterName) throws InvalidValueException {
+        return getLong(parameterName, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    /**
+     * Gets an argument as a 64 bit number.
+     *
+     * @param parameterName  The name of the arguments parameter.
+     * @param minRange       The minimum value.
+     * @param maxRange       The maximum value.
+     *
+     * @throws InvalidValueException  If the argument is not parsable into a long value or does not meet range specs.
+     */
+    public long getLong(String parameterName, long minRange, long maxRange) throws InvalidValueException {
         PreCon.notNullOrEmpty(parameterName);
+
+        long result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
         // parse argument to long
         try {
-            return Long.parseLong(arg);
+            result = Long.parseLong(arg);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.LONG));
+                    _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
         }
+
+        if (result < minRange || result > maxRange) {
+            throw new InvalidValueException(parameterName,
+                    _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
+        }
+
+        return result;
     }
 
     /**
@@ -444,42 +535,86 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @throws InvalidValueException  If the argument is not parsable into a float value.
      */
     public float getFloat(String parameterName) throws InvalidValueException {
+        return getFloat(parameterName, Float.MIN_VALUE, Float.MAX_VALUE);
+    }
+
+    /**
+     * Gets an argument as a float.
+     *
+     * @param parameterName  The name of the arguments parameter.
+     * @param minRange       The minimum value.
+     * @param maxRange       The maximum value.
+     *
+     * @throws InvalidValueException  If the argument is not parsable into a float or does not meet range specs.
+     */
+    public float getFloat(String parameterName, float minRange, float maxRange) throws InvalidValueException {
         PreCon.notNullOrEmpty(parameterName);
+
+        float result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
         // parse argument into float
         try {
-            return Float.parseFloat(arg);
+            result = Float.parseFloat(arg);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT));
+                    _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
         }
+
+        if (result < minRange || result > maxRange) {
+            throw new InvalidValueException(parameterName,
+                    _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
+        }
+
+        return result;
     }
 
     /**
      * Gets an argument as a double.
      *
-     * @param parameterName  The name of the arguments parameter
+     * @param parameterName  The name of the arguments parameter.
      *
      * @throws InvalidValueException  If the argument is not parsable into a double value.
      */
     public double getDouble(String parameterName) throws InvalidValueException {
+        return getDouble(parameterName, Double.MIN_VALUE, Double.MAX_VALUE);
+    }
+
+    /**
+     * Gets an argument as a double.
+     *
+     * @param parameterName  The name of the arguments parameter.
+     * @param minRange       The minimum value.
+     * @param maxRange       The maximum value.
+     *
+     * @throws InvalidValueException  If the argument is not parsable into a double value or does not meet range specs.
+     */
+    public double getDouble(String parameterName, double minRange, double maxRange) throws InvalidValueException {
         PreCon.notNullOrEmpty(parameterName);
+
+        double result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
         // parse argument into double
         try {
-            return Double.parseDouble(arg);
+            result = Double.parseDouble(arg);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE));
+                    _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
         }
+
+        if (result < minRange || result > maxRange) {
+            throw new InvalidValueException(parameterName,
+                    _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
+        }
+
+        return result;
     }
 
     /**
@@ -593,8 +728,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @throws InvalidValueException If the argument is not a recognized keyword and cannot be parsed to an {@code ItemStack}.
      */
-    public ItemStack[] getItemStack(CommandSender sender, String parameterName) throws InvalidValueException {
-        PreCon.notNull(sender);
+    public ItemStack[] getItemStack(@Nullable CommandSender sender, String parameterName) throws InvalidValueException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument
@@ -736,7 +870,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(locationHandler);
 
-        String arg = getRawArgument(parameterName);
+        String arg = getString(parameterName);
 
         // command sender must be a player
         if (!(sender instanceof Player)) {
@@ -817,7 +951,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         PreCon.notNull(validValues);
 
         // get raw argument
-        String arg = getRawArgument(parameterName);
+        String arg = getString(parameterName);
 
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
@@ -858,7 +992,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         PreCon.notNull(validValues);
 
         // get the raw argument
-        String arg = getRawArgument(parameterName);
+        String arg = getString(parameterName);
 
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
@@ -1110,6 +1244,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
      * @throws InvalidValueException
      */
+    @Nullable
     private String getRawArgument(String parameterName) throws InvalidValueException {
 
         CommandArgument param = _argMap.get(parameterName);

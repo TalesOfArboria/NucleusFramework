@@ -85,7 +85,7 @@ public class ParameterDescriptions {
      * @param valueType      The expected value type of the parameter.
      */
     @Localized
-    public String get(String parameterName, ArgumentValueType valueType) {
+    public String get(String parameterName, ArgumentValueType valueType, Object... params) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(valueType);
 
@@ -93,25 +93,7 @@ public class ParameterDescriptions {
         if (description != null)
             return description;
 
-        return ArgumentValueType.getDescription(parameterName, valueType);
-    }
-
-    /**
-     * Get a description by parameter name.
-     *
-     * @param parameterName  The name of the parameter.
-     * @param maxNameLength  The max length of the argument as a name.
-     */
-    @Localized
-    public String get(String parameterName, int maxNameLength) {
-        PreCon.notNullOrEmpty(parameterName);
-        PreCon.positiveNumber(maxNameLength);
-
-        String description = get(parameterName);
-        if (description != null)
-            return description;
-
-        return ArgumentValueType.getNameDescription(maxNameLength);
+        return ArgumentValueType.getDescription(parameterName, valueType, params);
     }
 
     /**
