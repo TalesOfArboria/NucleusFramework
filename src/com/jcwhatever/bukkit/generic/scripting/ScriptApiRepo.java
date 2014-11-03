@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.scripting;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiBukkitEvents;
+import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiDepends;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiEconomy;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiInventory;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiItemBank;
@@ -64,6 +65,7 @@ public class ScriptApiRepo {
         registerApiType(GenericsLib.getPlugin(), ScriptApiMsg.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiPermissions.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiSounds.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiDepends.class);
     }
 
     /**

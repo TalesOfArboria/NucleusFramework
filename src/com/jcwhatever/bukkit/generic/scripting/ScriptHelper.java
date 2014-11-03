@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiBukkitEvents;
+import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiDepends;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiEconomy;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiInclude;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiInventory;
@@ -89,6 +90,7 @@ public class ScriptHelper {
         api.add(new ScriptApiMsg(plugin));
         api.add(new ScriptApiPermissions(plugin));
         api.add(new ScriptApiSounds(plugin));
+        api.add(new ScriptApiDepends(plugin));
 
         if (manager != null)
             api.add(new ScriptApiInclude(plugin, manager));
