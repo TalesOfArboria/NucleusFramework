@@ -31,7 +31,6 @@ import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiEconomy;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiInventory;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiItemBank;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiJail;
-import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiLoader;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiMsg;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiPermissions;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiSounds;
@@ -62,7 +61,6 @@ public class ScriptApiRepo {
         registerApiType(GenericsLib.getPlugin(), ScriptApiInventory.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiItemBank.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiJail.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiLoader.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiMsg.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiPermissions.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiSounds.class);
