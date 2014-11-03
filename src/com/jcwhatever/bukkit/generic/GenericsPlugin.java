@@ -71,6 +71,13 @@ public abstract class GenericsPlugin extends JavaPlugin {
     }
 
     /**
+     * Determine if the plugin is finished loading.
+     */
+    public boolean isLoaded() {
+        return isEnabled();
+    }
+
+    /**
      * Get the plugins chat message prefix.
      */
     public abstract String getChatPrefix();

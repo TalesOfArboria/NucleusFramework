@@ -36,7 +36,6 @@ public class GenericsLib extends GenericsPlugin {
 
     private static GenericsLib _instance;
 
-
     private JailManager _jailManager;
     private RegionManager _regionManager;
 
