@@ -814,6 +814,7 @@ public class YamlDataStorage implements IDataNode {
             else if (value instanceof Enum<?>) {
                 Enum<?> e = (Enum<?>) value;
                 value = e.name();
+                _strings.put(keyPath, e.name());
             }
 
             if (value == null) {
