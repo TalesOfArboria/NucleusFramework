@@ -717,7 +717,7 @@ public class YamlDataStorage implements IDataNode {
         if (string == null)
             return def;
 
-        return EnumUtils.getEnum(string, enumClass, def);
+        return EnumUtils.searchEnum(string, enumClass, def);
     }
 
 
@@ -729,7 +729,7 @@ public class YamlDataStorage implements IDataNode {
         if (string == null)
             return def;
 
-        return EnumUtils.getGenericEnum(string, enumClass, def);
+        return EnumUtils.searchGenericEnum(string, enumClass, def);
     }
 
 
