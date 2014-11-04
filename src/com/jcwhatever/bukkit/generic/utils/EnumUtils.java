@@ -45,7 +45,7 @@ public class EnumUtils {
      */
     @Nullable
     public static <T extends Enum<T>> T getEnum(String constantName, Class<T> enumClass) {
-        PreCon.notNullOrEmpty(constantName);
+        PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
 
         return getEnum(constantName, enumClass, null);
@@ -64,7 +64,7 @@ public class EnumUtils {
      */
     @Nullable
     public static <T extends Enum<T>> T getEnum(String constantName, Class<T> enumClass, @Nullable T def) {
-        PreCon.notNullOrEmpty(constantName);
+        PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
 
         if (!constantName.isEmpty()) {
@@ -92,7 +92,7 @@ public class EnumUtils {
      */
     @Nullable
     public static <T extends Enum<T>> T searchEnum(String constantName, Class<T> enumClass) {
-        PreCon.notNullOrEmpty(constantName);
+        PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
 
         return searchEnum(constantName, enumClass, null);
@@ -111,7 +111,7 @@ public class EnumUtils {
      */
     @Nullable
     public static <T extends Enum<T>> T searchEnum(String constantName, Class<T> enumClass, @Nullable T def) {
-        PreCon.notNullOrEmpty(constantName);
+        PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
 
         if (!constantName.isEmpty()) {
@@ -138,7 +138,7 @@ public class EnumUtils {
     @Nullable
     public static Enum<?> getGenericEnum(
             String constantName, Class<? extends Enum<?>> enumClass, @Nullable Enum<?> def) {
-        PreCon.notNullOrEmpty(constantName);
+        PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
 
         if (!constantName.isEmpty()) {
@@ -165,7 +165,7 @@ public class EnumUtils {
     @Nullable
     public static Enum<?> searchGenericEnum(
             String constantName, Class<? extends Enum<?>> enumClass, @Nullable Enum<?> def) {
-        PreCon.notNullOrEmpty(constantName);
+        PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
 
         if (!constantName.isEmpty()) {
@@ -192,7 +192,7 @@ public class EnumUtils {
     @Nullable
     @SuppressWarnings("rawtypes")
     public static Enum getRawEnum(String constantName, Class enumClass, @Nullable Enum def) {
-        PreCon.notNullOrEmpty(constantName);
+        PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
         PreCon.isValid(enumClass.isEnum(), "enumClass must be an enum class.");
 
@@ -221,7 +221,7 @@ public class EnumUtils {
     @Nullable
     @SuppressWarnings("rawtypes")
     public static Enum searchRawEnum(String constantName, Class enumClass, @Nullable Enum def) {
-        PreCon.notNullOrEmpty(constantName);
+        PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
         PreCon.isValid(enumClass.isEnum(), "enumClass must be an enum class.");
 
