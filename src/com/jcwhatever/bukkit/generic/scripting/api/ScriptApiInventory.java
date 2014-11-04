@@ -89,7 +89,6 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param contents   The inventory contents.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
-         * @return
          */
         public int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
             return InventoryHelper.getMax(contents, itemStack, comparer);
@@ -117,7 +116,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param comparer  The {@code ItemStackComparer} to use.
          * @param qty       The amount of space needed.
          */
-        public boolean hasRoom(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        public boolean hasRoomForQty(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
             return InventoryHelper.hasRoom(contents, itemStack, comparer, qty);
         }
 
@@ -153,7 +152,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param comparer   The {@code ItemStackComparer} to use.
          * @param qty        The quantity.
          */
-        public boolean has(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        public boolean hasQty(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
             return InventoryHelper.has(contents, itemStack, comparer, qty);
         }
 
