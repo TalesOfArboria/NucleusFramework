@@ -134,6 +134,7 @@ public class ScriptApiSounds extends GenericsScriptApi {
          * @param player     The player.
          * @param soundName  The name of the resource sound.
          * @param location   The location to play at.
+         * @param volume     The volume.
          */
         public boolean playLocation(Object player, String soundName, Location location, double volume) {
             PreCon.notNull(player);
