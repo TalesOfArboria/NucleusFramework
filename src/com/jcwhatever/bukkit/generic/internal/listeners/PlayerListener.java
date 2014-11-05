@@ -32,10 +32,8 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerChannelEvent;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -102,12 +100,6 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    private void onPlayerBucket(PlayerBucketEvent event) {
-
-        GenericsEventManager.getGlobal().call(event);
-    }
-
-    @EventHandler
     private void onPlayerBucketFill(PlayerBucketFillEvent event) {
 
         GenericsEventManager.getGlobal().call(event);
@@ -115,12 +107,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     private void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-
-        GenericsEventManager.getGlobal().call(event);
-    }
-
-    @EventHandler
-    private void onPlayerChannelEvent(PlayerChannelEvent event) {
 
         GenericsEventManager.getGlobal().call(event);
     }
