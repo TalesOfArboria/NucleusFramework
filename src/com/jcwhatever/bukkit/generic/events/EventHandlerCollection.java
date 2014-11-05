@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.events;
 
+import com.jcwhatever.bukkit.generic.mixins.ICancellable;
+
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -53,16 +55,20 @@ class EventHandlerCollection {
      * @param event  The event instance.
      * @param <T>    The event type which extends {@code AbstractGenericsEvent}.
      */
-    <T extends AbstractGenericsEvent> T call(T event) {
+    <T> T call(T event) {
+
+        ICancellable cancellable = event instanceof ICancellable ? (ICancellable)event : null;
 
         // iterate handlers and call them
         for (HandlerContainer handler : _handlers) {
 
             // skip handler if the even is cancelled and it is not a watcher.
             if (handler.getPriority() != GenericsEventPriority.WATCHER &&
-                    !handler.isCancelIgnored() &&
-                         event.isCancelled()) {
-                continue;
+                    !handler.isCancelIgnored()) {
+
+                if (cancellable != null && cancellable.isCancelled()) {
+                    continue;
+                }
             }
 
             // call the handler
@@ -144,7 +150,7 @@ class EventHandlerCollection {
         // create an event handler that can be used to call the method.
         EventHandler handler = new EventHandler() {
             @Override
-            public void call(AbstractGenericsEvent event) {
+            public void call(Object event) {
                 try {
                     methodHandle.invoke(listener, eventClass.cast(event));
                     //methodHandle.invoke();

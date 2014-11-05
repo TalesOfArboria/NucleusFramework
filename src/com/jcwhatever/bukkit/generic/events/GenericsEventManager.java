@@ -95,7 +95,7 @@ public class GenericsEventManager implements IDisposable {
      * @param priority    The event priority.
      * @param handler     The event handler.
      */
-    public void register(Class<? extends AbstractGenericsEvent> eventClass,
+    public void register(Class<?> eventClass,
                          GenericsEventPriority priority, EventHandler handler) {
         PreCon.notNull(eventClass);
         PreCon.notNull(priority);
@@ -159,8 +159,6 @@ public class GenericsEventManager implements IDisposable {
 
             // event handler parameter must be a type that extends AbstractGenericsEvent
             Class<?> eventClass = paramTypes[0];
-            if (!AbstractGenericsEvent.class.isAssignableFrom(eventClass))
-                continue;
 
             // get the event handler collection for the event
             EventHandlerCollection handlers = _handlerMap.get(eventClass);
@@ -211,7 +209,7 @@ public class GenericsEventManager implements IDisposable {
      * @param eventClass  The event class.
      * @param handler     The event handler to unregister.
      */
-    public void unregister(Class<? extends AbstractGenericsEvent> eventClass, EventHandler handler) {
+    public void unregister(Class<?> eventClass, EventHandler handler) {
         PreCon.notNull(eventClass);
         PreCon.notNull(handler);
 
@@ -235,7 +233,7 @@ public class GenericsEventManager implements IDisposable {
      * @param event  The event to call.
      * @param <T>    The event type which must extend {@code AbstractGenericsEvent}
      */
-    public <T extends AbstractGenericsEvent> T call(T event) {
+    public <T> T call(T event) {
         PreCon.notNull(event);
 
         // cannot use a disposed event manager

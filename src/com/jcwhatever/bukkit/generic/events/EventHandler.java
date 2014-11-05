@@ -29,5 +29,5 @@ package com.jcwhatever.bukkit.generic.events;
  */
 public interface EventHandler {
 
-    void call(AbstractGenericsEvent event);
+    void call(Object event);
 }
