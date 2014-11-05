@@ -46,6 +46,11 @@ public class GenericsEventManager implements IDisposable {
 
     /**
      * Get the global event manager.
+     *
+     * <p>
+     *     Note: Bukkit events called in child event managers are
+     *     not passed to the global event manager.
+     * </p>
      */
     public static GenericsEventManager getGlobal() {
         if (_globalInstance == null)
@@ -240,8 +245,10 @@ public class GenericsEventManager implements IDisposable {
         if (_isDisposed)
             throw new EventManagerDisposedException();
 
-        // call event on parent first.
-        if (_parent != null) {
+        // call event on parent first unless the parent is the global
+        // event manager and the event is a bukkit event. (to prevent inter-plugin conflicts)
+        if (_parent != null && !(_parent._isGlobal && event instanceof org.bukkit.event.Event)) {
+
             _parent.call(event);
         }
 

@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.events;
 
 import com.jcwhatever.bukkit.generic.mixins.ICancellable;
+import org.bukkit.event.Cancellable;
 
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
@@ -57,18 +58,24 @@ class EventHandlerCollection {
      */
     <T> T call(T event) {
 
-        ICancellable cancellable = event instanceof ICancellable ? (ICancellable)event : null;
+        ICancellable cancellable = event instanceof ICancellable
+                ? (ICancellable)event
+                : null;
+
+        Cancellable bukkitCancellable = event instanceof Cancellable
+                ? (Cancellable)event
+                : null;
 
         // iterate handlers and call them
         for (HandlerContainer handler : _handlers) {
 
-            // skip handler if the even is cancelled and it is not a watcher.
-            if (handler.getPriority() != GenericsEventPriority.WATCHER &&
-                    !handler.isCancelIgnored()) {
+            boolean isCancelled = (cancellable != null && cancellable.isCancelled()) ||
+                    (bukkitCancellable != null && bukkitCancellable.isCancelled());
 
-                if (cancellable != null && cancellable.isCancelled()) {
-                    continue;
-                }
+            // skip handler if the even is cancelled and it is not a watcher.
+            if (isCancelled && handler.getPriority() != GenericsEventPriority.WATCHER &&
+                    !handler.isCancelIgnored()) {
+                continue;
             }
 
             // call the handler
