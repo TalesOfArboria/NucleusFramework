@@ -54,7 +54,7 @@ class EventHandlerCollection {
      * Call all event handlers and pass in the provided event instance.
      *
      * @param event  The event instance.
-     * @param <T>    The event type which extends {@code AbstractGenericsEvent}.
+     * @param <T>    The event type.
      */
     <T> T call(T event) {
 
