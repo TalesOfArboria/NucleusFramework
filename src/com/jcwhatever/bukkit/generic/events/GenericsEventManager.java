@@ -265,6 +265,16 @@ public class GenericsEventManager implements IDisposable {
     }
 
     /**
+     * Determine if there are event handlers registered
+     * for the specified event.
+     *
+     * @param event  The event class.
+     */
+    public boolean hasHandlers(Class<?> event) {
+        return _handlerMap.containsKey(event);
+    }
+
+    /**
      * Call an event.
      *
      * @param event  The event to call.
