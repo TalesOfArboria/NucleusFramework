@@ -38,6 +38,7 @@ import com.jcwhatever.bukkit.generic.internal.listeners.VehicleListener;
 import com.jcwhatever.bukkit.generic.internal.listeners.WeatherListener;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
@@ -106,14 +107,21 @@ public class GenericsEventManager implements IDisposable {
         _isGlobal = isGlobal;
 
         if (_isGlobal) {
-            Bukkit.getPluginManager().registerEvents(new BlockListener(), GenericsLib.getPlugin());
-            Bukkit.getPluginManager().registerEvents(new EnchantmentListener(), GenericsLib.getPlugin());
-            Bukkit.getPluginManager().registerEvents(new EntityListener(), GenericsLib.getPlugin());
-            Bukkit.getPluginManager().registerEvents(new HangingListener(), GenericsLib.getPlugin());
-            Bukkit.getPluginManager().registerEvents(new InventoryListener(), GenericsLib.getPlugin());
-            Bukkit.getPluginManager().registerEvents(new PlayerListener(), GenericsLib.getPlugin());
-            Bukkit.getPluginManager().registerEvents(new VehicleListener(), GenericsLib.getPlugin());
-            Bukkit.getPluginManager().registerEvents(new WeatherListener(), GenericsLib.getPlugin());
+
+            Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+
+                    Bukkit.getPluginManager().registerEvents(new BlockListener(), GenericsLib.getPlugin());
+                    Bukkit.getPluginManager().registerEvents(new EnchantmentListener(), GenericsLib.getPlugin());
+                    Bukkit.getPluginManager().registerEvents(new EntityListener(), GenericsLib.getPlugin());
+                    Bukkit.getPluginManager().registerEvents(new HangingListener(), GenericsLib.getPlugin());
+                    Bukkit.getPluginManager().registerEvents(new InventoryListener(), GenericsLib.getPlugin());
+                    Bukkit.getPluginManager().registerEvents(new PlayerListener(), GenericsLib.getPlugin());
+                    Bukkit.getPluginManager().registerEvents(new VehicleListener(), GenericsLib.getPlugin());
+                    Bukkit.getPluginManager().registerEvents(new WeatherListener(), GenericsLib.getPlugin());
+                }
+            });
         }
     }
 
