@@ -32,8 +32,10 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,6 +63,7 @@ public class GenericsEventManager implements IDisposable {
 
     private final Map<Class<?>, EventHandlerCollection> _handlerMap = new HashMap<>(100);
     private final Map<GenericsEventListener, ListenerContainer> _listeners = new HashMap<>(100);
+    private final List<EventHandler> _callHandlers = new ArrayList<>(10);
     private final GenericsEventManager _parent;
     private final boolean _isGlobal;
     private boolean _isDisposed;
@@ -254,13 +257,41 @@ public class GenericsEventManager implements IDisposable {
 
         // get event handler collection
         EventHandlerCollection handlers = _handlerMap.get(event.getClass());
-        if (handlers == null)
-            return event;
+        if (handlers != null) {
+            // call event on handlers.
+            handlers.call(event);
+        }
 
-        // call event on handlers.
-        handlers.call(event);
+        // run call handlers
+        for (EventHandler handler : _callHandlers) {
+            handler.call(event);
+        }
 
         return event;
+    }
+
+    /**
+     * Adds a handler that is called whenever an event is called
+     * in the local event manager instance.
+     *
+     * @param handler  The handler to add.
+     */
+    public void addCallHandler(EventHandler handler) {
+        PreCon.notNull(handler);
+
+        _callHandlers.add(handler);
+    }
+
+    /**
+     * Removes a handler that is called whenever an event is
+     * called in the local event manager instance.
+     *
+     * @param handler  The handler to remove.
+     */
+    public void removeCallHandler(EventHandler handler) {
+        PreCon.notNull(handler);
+
+        _callHandlers.remove(handler);
     }
 
     /**
