@@ -40,7 +40,6 @@ import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -127,12 +126,6 @@ public class BlockListener implements Listener{
 
     @EventHandler
     private void onBlockPhysics(BlockPhysicsEvent event) {
-
-        GenericsEventManager.getGlobal().call(event);
-    }
-
-    @EventHandler
-    private void onBlockPiston(BlockPistonEvent event) {
 
         GenericsEventManager.getGlobal().call(event);
     }
