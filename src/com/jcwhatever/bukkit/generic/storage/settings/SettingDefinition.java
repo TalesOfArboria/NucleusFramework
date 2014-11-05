@@ -1,4 +1,5 @@
-/* This file is part of GenericsLib for Bukkit, licensed under the MIT License (MIT).
+/*
+ * This file is part of GenericsLib for Bukkit, licensed under the MIT License (MIT).
  *
  * Copyright (c) JCThePants (www.jcwhatever.com)
  *
