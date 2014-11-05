@@ -27,7 +27,6 @@ package com.jcwhatever.bukkit.generic.internal.listeners;
 import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.vehicle.VehicleCollisionEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -38,18 +37,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.vehicle.VehicleUpdateEvent;
 
 public class VehicleListener implements Listener {
-
-    @EventHandler
-    private void onVehicleBlockCollision(VehicleCollisionEvent event) {
-
-        GenericsEventManager.getGlobal().call(event);
-    }
-
-    @EventHandler
-    private void onVehicleCollision(VehicleCollisionEvent event) {
-
-        GenericsEventManager.getGlobal().call(event);
-    }
 
     @EventHandler
     private void onVehicleCreate(VehicleCreateEvent event) {
