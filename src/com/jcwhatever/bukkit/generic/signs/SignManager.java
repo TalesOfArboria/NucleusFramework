@@ -33,6 +33,7 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -45,7 +46,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +55,7 @@ import java.util.Stack;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * Manages handled signs.
@@ -280,19 +281,19 @@ public class SignManager {
 
         IDataNode signNode = handlerNode.getNode(signName);
 
-        Location loc = signNode.getLocation("location");
+        final Location loc = signNode.getLocation("location");
         if (loc == null) {
             Messenger.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
             return false;
         }
 
-        Material type = signNode.getEnum("type", null, Material.class);
+        final Material type = signNode.getEnum("type", null, Material.class);
         if (type == null) {
             Messenger.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
             return false;
         }
 
-        BlockFace facing = signNode.getEnum("direction", null, BlockFace.class);
+        final BlockFace facing = signNode.getEnum("direction", null, BlockFace.class);
         if (facing == null) {
             Messenger.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
             return false;
@@ -303,15 +304,16 @@ public class SignManager {
         final String line2 = signNode.getString("line2");
         final String line3 = signNode.getString("line3");
 
-        final BlockState blockState = loc.getBlock().getState();
-        blockState.setType(type);
-        blockState.setData(SignHelper.createSignData(type, facing));
-        blockState.update(true);
+        loc.getBlock().setType(type);
 
         Scheduler.runTaskLater(_plugin, 1, new Runnable() {
 
             @Override
             public void run() {
+
+                final BlockState blockState = loc.getBlock().getState();
+                blockState.setType(type);
+                blockState.setData(SignHelper.createSignData(type, facing));
 
                 Sign sign = (Sign) blockState;
 
