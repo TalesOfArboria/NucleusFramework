@@ -22,7 +22,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.internal.events;
+package com.jcwhatever.bukkit.generic.internal.listeners;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.response.CommandRequests;

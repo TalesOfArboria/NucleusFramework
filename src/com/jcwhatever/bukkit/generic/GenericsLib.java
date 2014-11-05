@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
-import com.jcwhatever.bukkit.generic.internal.events.JCGEventListener;
+import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
 
