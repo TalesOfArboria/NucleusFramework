@@ -25,7 +25,6 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,6 +34,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import javax.annotation.Nullable;
 
 /**
  * File handling utilities.
@@ -47,6 +47,11 @@ public class FileUtils {
      * UTF-8 character set string
      */
     public static final String CHARSET_UTF8 = "UTF-8";
+
+    /**
+     * UTF-16 character set string
+     */
+    public static final String CHARSET_UTF16 = "UTF-16";
 
     /**
      * Specifies how sub directories are traversed when
