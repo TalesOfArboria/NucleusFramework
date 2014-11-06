@@ -575,7 +575,7 @@ public abstract class Region {
      *
      * @param material  The material to search for.
      */
-    public final List<Location> find(Material material) {
+    public final LinkedList<Location> find(Material material) {
 
         synchronized (_sync) {
             LinkedList<Location> results = new LinkedList<>();

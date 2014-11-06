@@ -31,6 +31,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -243,7 +244,7 @@ public class ReadOnlyRegion {
      *
      * @param material  The material to find.
      */
-    public List<Location> find (Material material) {
+    public LinkedList<Location> find (Material material) {
         return _region.find(material);
     }
 
