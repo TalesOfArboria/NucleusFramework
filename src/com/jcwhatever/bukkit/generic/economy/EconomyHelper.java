@@ -29,16 +29,18 @@ import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconGiveEvent;
 import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconWithdrawEvent;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import net.milkbowl.vault.Vault;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import javax.annotation.Nullable;
+import net.milkbowl.vault.Vault;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Provides static functions to interface with the installed economy
@@ -52,7 +54,8 @@ public class EconomyHelper {
         init();
     }
 
-    private EconomyHelper() {}
+    private EconomyHelper() {
+    }
 
     /**
      * Specifies how a currency name is used.
@@ -74,36 +77,42 @@ public class EconomyHelper {
      */
     @Nullable
     public static Economy getEconomy() {
-        return hasEconomy() ? (Economy)_econ : null;
+        return hasEconomy()
+                ? (Economy) _econ
+                : null;
     }
 
     /**
      * Get a players balance.
      *
-     * @param p  The player.
+     * @param p The player.
      */
     public static double getBalance(Player p) {
         PreCon.notNull(p);
 
-        if (!_hasEconomy) return 0;
+        if (!_hasEconomy)
+            return 0;
 
+        //noinspection ConstantConditions
         return getEconomy().getBalance(p.getName());
     }
 
     /**
      * Get a players balance.
      *
-     * @param playerId  The id of the player.
+     * @param playerId The id of the player.
      */
     public static double getBalance(UUID playerId) {
         PreCon.notNull(playerId);
 
-        if (!_hasEconomy) return 0;
+        if (!_hasEconomy)
+            return 0;
 
         String playerName = PlayerHelper.getPlayerName(playerId);
         if (playerName == null || playerName.equals("[unknown]"))
             return 0;
 
+        //noinspection ConstantConditions
         return getEconomy().getBalance(playerName);
     }
 
@@ -111,47 +120,66 @@ public class EconomyHelper {
     /**
      * Get a players balance as a formatted string.
      *
-     * @param p  The player.
+     * @param p The player.
      */
     public static String getBalanceText(Player p) {
-        if (!_hasEconomy) return "0";
+        PreCon.notNull(p);
+
+        if (!_hasEconomy)
+            return "0";
+
+        //noinspection ConstantConditions
         return getEconomy().format(getBalance(p));
     }
 
     /**
      * Get a players balance as a formatted string.
      *
-     * @param playerId  The id of the player.
+     * @param playerId The id of the player.
      * @return
      */
     public static String getBalanceText(UUID playerId) {
-        if (!_hasEconomy) return "0";
+        PreCon.notNull(playerId);
 
+        if (!_hasEconomy)
+            return "0";
+
+        //noinspection ConstantConditions
         return getEconomy().format(getBalance(playerId));
     }
 
     /**
      * Format an amount into a string using the economy settings.
      *
-     * @param amount  The amount to format.
+     * @param amount The amount to format.
      */
     public static String formatAmount(double amount) {
-        if (!_hasEconomy) return "";
+
+        if (!_hasEconomy)
+            return "";
+
+        //noinspection ConstantConditions
         return getEconomy().format(amount);
     }
 
     /**
      * Get the currency name.
      *
-     * @param noun  The type of noun to return.
+     * @param noun The type of noun to return.
      */
     public static String getCurrencyName(CurrencyNoun noun) {
-        if (!_hasEconomy) return "";
+        PreCon.notNull(noun);
+
+        if (!_hasEconomy)
+            return "";
 
         switch (noun) {
             case SINGULAR:
+                //noinspection ConstantConditions
                 return getEconomy().currencyNameSingular();
+
             case PLURAL:
+                //noinspection ConstantConditions
                 return getEconomy().currencyNamePlural();
         }
 
@@ -161,13 +189,16 @@ public class EconomyHelper {
     /**
      * Transfer money between two players.
      *
-     * @param giverPlayerId     The id of the player who is giving money
-     * @param receiverPlayerId  The id of the player who is receiving money
-     * @param amount            The amount of money to transfer.
-     *
-     * @return  True if the operation completed successfully.
+     * @param giverPlayerId    The id of the player who is giving money
+     * @param receiverPlayerId The id of the player who is receiving money
+     * @param amount           The amount of money to transfer.
+     * @return True if the operation completed successfully.
      */
     public static boolean transferMoney(UUID giverPlayerId, UUID receiverPlayerId, double amount) {
+        PreCon.notNull(giverPlayerId);
+        PreCon.notNull(receiverPlayerId);
+        PreCon.positiveNumber(amount);
+
         String giverName = PlayerHelper.getPlayerName(giverPlayerId);
         if (giverName == null || giverName.equals("[unknown]")) {
             return false;
@@ -199,10 +230,9 @@ public class EconomyHelper {
     /**
      * Give money to a player. Take money by providing a negative number.
      *
-     * @param p           The player to give money to.
-     * @param amount      The amount to give the player.
-     *
-     * @return  True if the operation is successful.
+     * @param p      The player to give money to.
+     * @param amount The amount to give the player.
+     * @return True if the operation is successful.
      */
     public static boolean giveMoney(Player p, double amount) {
         return giveMoney(p.getName(), p.getUniqueId(), amount);
@@ -211,12 +241,13 @@ public class EconomyHelper {
     /**
      * Give money to a player. Take money by providing a negative number.
      *
-     * @param playerId  The id of the player to give money to.
-     * @param amount    The amount to give the player.
-     *
-     * @return  True if the operation is successful.
+     * @param playerId The id of the player to give money to.
+     * @param amount   The amount to give the player.
+     * @return True if the operation is successful.
      */
     public static boolean giveMoney(UUID playerId, double amount) {
+        PreCon.notNull(playerId);
+
         String playerName = PlayerHelper.getPlayerName(playerId);
         return !(playerName == null || playerName.equals("[unknown]")) && giveMoney(playerName, playerId, amount);
     }
@@ -234,14 +265,14 @@ public class EconomyHelper {
         if (amount > 0) {
             EconGiveEvent event = EconGiveEvent.callEvent(playerId, amount);
 
+            //noinspection ConstantConditions
             r = econ.depositPlayer(playerName, event.getAmount());
-        }
-        else {
+        } else {
             EconWithdrawEvent event = EconWithdrawEvent.callEvent(playerId, amount);
 
+            //noinspection ConstantConditions
             r = econ.withdrawPlayer(playerName, Math.abs(event.getAmount()));
         }
-
 
         if (!r.transactionSuccess()) {
             return false;
@@ -270,6 +301,4 @@ public class EconomyHelper {
         _econ = econ;
         _hasEconomy = true;
     }
-
-
 }
