@@ -37,7 +37,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueWorker;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.regions.RegionChunkFileLoader.BlockInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import javax.annotation.Nullable;
+
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
@@ -55,6 +55,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Abstract implementation for a region that
@@ -138,6 +139,8 @@ public abstract class RestorableRegion extends BuildableRegion {
             RegionChunkSnapshot snapshot = new RegionChunkSnapshot(this, chunk);
             snapshot.saveData(getChunkFile(snapshot, version, true), project);
         }
+
+        QueueWorker.get().addTask(project);
 
         return project.getResult()
                 .onEnd(new Runnable() {
