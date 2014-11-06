@@ -32,6 +32,7 @@ import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatTemplate;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -63,14 +64,14 @@ public class HelpCommand extends AbstractCommand {
         String paginTitle = Lang.get("Commands");
         final ChatPaginator pagin = new ChatPaginator(_plugin, 6, paginTitle);
 
-        final List<AbstractCommand> categories = new ArrayList<AbstractCommand>(_commandHandler.getCommands().size());
+        final List<AbstractCommand> categories = new ArrayList<AbstractCommand>(getCommandHandler().getCommands().size());
 
         Permissions.runBatchOperation(true, new Runnable() {
 
             @Override
             public void run () {
 
-                for (AbstractCommand cmd : _commandHandler.getCommands()) {
+                for (AbstractCommand cmd : getCommandHandler().getCommands()) {
 
                     if (cmd.getSubCommands().size() > 0) {
                         categories.add(cmd);
