@@ -31,10 +31,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * A container for a region that prevents setter operations with
@@ -244,7 +243,7 @@ public class ReadOnlyRegion {
      *
      * @param material  The material to find.
      */
-    public Set<Location> find (Material material) {
+    public List<Location> find (Material material) {
         return _region.find(material);
     }
 
