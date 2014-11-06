@@ -40,6 +40,7 @@ import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect.PlayerBlockSelectH
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +52,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,6 +63,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+import javax.annotation.Nullable;
 
 /**
  * Processes command arguments.
@@ -445,8 +446,8 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @throws InvalidValueException  If the argument is not parsable into an integer.
      */
-    public int getInt(String parameterName) throws InvalidValueException {
-        return getInt(parameterName, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    public int getInteger(String parameterName) throws InvalidValueException {
+        return getInteger(parameterName, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     /**
@@ -458,7 +459,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @throws InvalidValueException  If the argument is not parsable into an integer or does not meet range specs.
      */
-    public int getInt(String parameterName, int minRange, int maxRange) throws InvalidValueException {
+    public int getInteger(String parameterName, int minRange, int maxRange) throws InvalidValueException {
         PreCon.notNullOrEmpty(parameterName);
 
         int result;
@@ -1087,7 +1088,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         PreCon.notNullOrEmpty(parameterName);
 
         try {
-            getInt(parameterName);
+            getInteger(parameterName);
         }
         catch (InvalidValueException ive) {
             return false;

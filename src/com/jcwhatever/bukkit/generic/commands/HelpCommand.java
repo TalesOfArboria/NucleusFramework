@@ -52,7 +52,7 @@ public class HelpCommand extends AbstractCommand {
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 
-        int page = args.getInt("page");
+        int page = args.getInteger("page");
 
         showHelp(sender, page);
     }

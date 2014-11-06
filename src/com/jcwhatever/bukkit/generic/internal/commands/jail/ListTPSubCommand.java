@@ -55,7 +55,7 @@ public class ListTPSubCommand extends AbstractCommand {
     public void execute(CommandSender sender, CommandArguments args)
             throws InvalidValueException, InvalidCommandSenderException {
 
-        int page = args.getInt("page");
+        int page = args.getInteger("page");
 
         JailManager jailManager = JailManager.getDefault();
 

@@ -55,7 +55,7 @@ public class SendSubCommand extends AbstractCommand {
     public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
         
         String playerName = args.getName("playerName");
-        int minutes = args.getInt("minutes");
+        int minutes = args.getInteger("minutes");
         
         Player player = PlayerHelper.getPlayer(playerName);
         if (player == null) {
