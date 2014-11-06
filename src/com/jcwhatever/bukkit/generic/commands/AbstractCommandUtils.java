@@ -25,22 +25,14 @@
 
 package com.jcwhatever.bukkit.generic.commands;
 
-import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.regions.RegionSelection;
-import org.apache.commons.lang.ArrayUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.arguments.LocationResponse;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.regions.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
 import com.jcwhatever.bukkit.generic.storage.settings.SettingDefinitions;
 import com.jcwhatever.bukkit.generic.storage.settings.ValidationResults;
@@ -49,9 +41,17 @@ import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.WorldEditUtils;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
-import javax.annotation.Nullable;
+import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * Utilities used by inheriting implementations to reduce redundant code
@@ -238,7 +238,8 @@ public abstract class AbstractCommandUtils {
      *
      * @throws InvalidValueException
      */
-    protected void clearSetting(CommandSender sender, final ISettingsManager settings, CommandArguments args, String propertyArgName) throws InvalidValueException {
+    protected void clearSetting(CommandSender sender, final ISettingsManager settings,
+                                CommandArguments args, String propertyArgName) throws InvalidValueException {
 
         final String settingName = args.getString(propertyArgName);
 
@@ -300,7 +301,8 @@ public abstract class AbstractCommandUtils {
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,
-                              CommandArguments args, String propertyArgName, String valueArgName, @Nullable final Runnable onSuccess)
+                              CommandArguments args, String propertyArgName,
+                              String valueArgName, @Nullable final Runnable onSuccess)
             throws InvalidValueException, InvalidCommandSenderException {
         PreCon.notNull(sender);
         PreCon.notNull(settings);
