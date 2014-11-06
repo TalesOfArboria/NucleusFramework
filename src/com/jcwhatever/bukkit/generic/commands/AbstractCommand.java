@@ -37,11 +37,10 @@ import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatTemplate;
-import org.bukkit.command.CommandExecutor;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import javax.annotation.Nullable;
 
 /**
  * Base implementation of a command
@@ -59,10 +59,12 @@ import java.util.Stack;
  */
 public abstract class AbstractCommand extends AbstractCommandUtils implements Comparable<AbstractCommand> {
 
-    protected final Map<String, AbstractCommand> _subCommands = new HashMap<String, AbstractCommand>(20);
+    private static final String _USAGE = "{GOLD}/{plugin-command} {GREEN}";
 
-    protected CommandInfoContainer _info;
-    protected AbstractCommandHandler _commandHandler;
+    private final Map<String, AbstractCommand> _subCommands = new HashMap<String, AbstractCommand>(20);
+
+    private CommandInfoContainer _info;
+    private AbstractCommandHandler _commandHandler;
 
     private Set<Class<? extends AbstractCommand>> _subCommandQueue = new HashSet<Class<? extends AbstractCommand>>(20);
     private AbstractCommand _parent;
@@ -117,7 +119,8 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
          * Safety check. Make sure the parent specified by the command is this command
          */
         if (!commandInfo.parent().isEmpty() && !isCommandMatch(commandInfo.parent(), _info.getCommandNames())) {
-            Messenger.debug(getPlugin(), "Failed to register sub command. Registered with incorrect parent: " + this.getClass().getName());
+            Messenger.debug(getPlugin(), "Failed to register sub command. Registered with incorrect parent: "
+                    + this.getClass().getName());
             return;
         }
 
@@ -177,7 +180,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     /**
      * Get the command handler
      */
-    public final CommandExecutor getCommandHandler() {
+    public final AbstractCommandHandler getCommandHandler() {
         return _commandHandler;
     }
 
@@ -231,7 +234,8 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
 
             Collections.reverse(permissions);
 
-            String permissionName = getPlugin().getName().toLowerCase() + ".commands." + TextUtils.concat(permissions, ".");
+            String permissionName = getPlugin().getName().toLowerCase() + ".commands." +
+                    TextUtils.concat(permissions, ".");
 
             _permission = Permissions.register(permissionName, getInfo().getPermissionDefault());
             _permission.setDescription(getInfo().getDescription());
@@ -453,7 +457,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         }
 
         StringBuilder usage = new StringBuilder(32 * 3);
-        usage.append("{GOLD}/{plugin-command} {GREEN}");
+        usage.append(Lang.get(_USAGE));
 
         while(!commands.isEmpty()) {
             usage.append(commands.pop()._info.getCommandName());
