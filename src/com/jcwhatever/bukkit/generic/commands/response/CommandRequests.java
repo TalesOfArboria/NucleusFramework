@@ -26,16 +26,19 @@
 package com.jcwhatever.bukkit.generic.commands.response;
 
 import com.jcwhatever.bukkit.generic.collections.SetMap;
+import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Command helper used to request a one time response from a player.
@@ -43,6 +46,9 @@ import java.util.Set;
 public class CommandRequests {
 
     private CommandRequests() {}
+
+    @Localizable private static final String _MULTIPLE_REQUESTS = "{YELLOW}Multiple requests for response found. " +
+            "Please be more specific:";
 
     private static SetMap<CommandSender, ResponseRequest> _requests = new SetMap<>(25);
 
@@ -169,7 +175,7 @@ public class CommandRequests {
     }
 
     private static void tellMultipleRequests(CommandSender sender, ResponseType type, Collection<ResponseRequest> requests) {
-        Messenger.tell(sender, "{YELLOW}Multiple requests for response found. Please be more specific:");
+        Messenger.tell(sender, Lang.get(_MULTIPLE_REQUESTS));
 
         for (ResponseRequest request : requests) {
             Messenger.tell(sender, '/' + type.getCommandName() + ' ' + request.getContext());
