@@ -281,7 +281,8 @@ public class Scheduler {
          */
         void setTask(ScheduledTask task) {
             if (_task != null)
-                throw new RuntimeException("A TaskHandler cannot be scheduled more than once.");
+                throw new RuntimeException("A TaskHandler cannot be in more than 1 scheduled task at a time. " +
+                        "Use a Runnable instance instead.");
 
             _task = task;
 
@@ -318,7 +319,8 @@ public class Scheduler {
             if (runnable instanceof TaskHandler) {
                 TaskHandler handler = (TaskHandler)runnable;
                 if (handler.getTask() != null)
-                    throw new RuntimeException("A TaskHandler cannot be scheduled more than once. Use a Runnable instance instead.");
+                    throw new RuntimeException("A TaskHandler cannot be in more than 1 scheduled task at a time. " +
+                            "Use a Runnable instance instead.");
 
                 ((TaskHandler) runnable).setTask(this);
             }
