@@ -75,8 +75,14 @@ public class RegionManager {
 
     /**
      * Constructor. Used by GenericsLib to initialize RegionEventManager.
+     *
+     * <p>Not meant for public instantiation. For internal use only.</p>
      */
     public RegionManager() {
+
+        if (GenericsLib.getRegionManager() != null)
+            throw new RuntimeException("RegionManager is for GenericsLib internal use only.");
+
         _playerCacheMap = new PlayerMap<>();
         _playerLocationCache = new PlayerMap<>();
         PlayerWatcher _playerWatcher = new PlayerWatcher();

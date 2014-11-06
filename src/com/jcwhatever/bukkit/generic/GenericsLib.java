@@ -97,6 +97,6 @@ public class GenericsLib extends GenericsPlugin {
 
     @Override
     protected void onDisablePlugin() {
-
+        _regionManager = null; // null to prevent exception if re-enabled
     }
 }
