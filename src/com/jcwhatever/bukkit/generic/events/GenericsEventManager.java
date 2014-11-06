@@ -40,9 +40,9 @@ import com.jcwhatever.bukkit.generic.internal.listeners.WeatherListener;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.Bukkit;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Generics event manager.
@@ -195,7 +196,6 @@ public class GenericsEventManager implements IDisposable {
             if (paramTypes == null || paramTypes.length != 1)
                 continue;
 
-            // event handler parameter must be a type that extends AbstractGenericsEvent
             Class<?> eventClass = paramTypes[0];
 
             // get the event handler collection for the event
@@ -279,7 +279,8 @@ public class GenericsEventManager implements IDisposable {
      * Call an event.
      *
      * @param event  The event to call.
-     * @param <T>    The event type which must extend {@code AbstractGenericsEvent}
+     *
+     * @param <T>  The event type.
      */
     public <T> T call(T event) {
         PreCon.notNull(event);
