@@ -67,7 +67,7 @@ public abstract class AbstractScoreboard implements IScoreboard {
 
         ScoreboardInfo typeInfo = this.getClass().getAnnotation(ScoreboardInfo.class);
         if (typeInfo == null)
-            throw new IllegalStateException("Scoreboard class is missing its ITypeInfo annotation.");
+            throw new IllegalStateException("Scoreboard class is missing its ScoreboardInfo annotation.");
 
         _plugin = plugin;
         _typeInfo = typeInfo;
