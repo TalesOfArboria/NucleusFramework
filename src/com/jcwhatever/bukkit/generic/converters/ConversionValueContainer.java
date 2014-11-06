@@ -27,9 +27,9 @@ package com.jcwhatever.bukkit.generic.converters;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Contains a value to be converted.
@@ -62,7 +62,8 @@ public class ConversionValueContainer {
      * @param value            The value.
      * @param container        The parent container.
      */
-    public ConversionValueContainer(ValueConverter<?, ?> parentConverter, @Nullable Object value, @Nullable ConversionValueContainer container) {
+    public ConversionValueContainer(ValueConverter<?, ?> parentConverter, @Nullable Object value,
+                                    @Nullable ConversionValueContainer container) {
         PreCon.notNull(parentConverter);
 
         _parentContainer = container;
