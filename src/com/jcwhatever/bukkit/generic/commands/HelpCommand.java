@@ -110,9 +110,5 @@ public class HelpCommand extends AbstractCommand {
 
         pagin.show(sender, page, FormatTemplate.DEFINITION);
     }
-
-
-
-
 }
 
