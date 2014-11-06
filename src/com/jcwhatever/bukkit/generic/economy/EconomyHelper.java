@@ -109,7 +109,7 @@ public class EconomyHelper {
             return 0;
 
         String playerName = PlayerHelper.getPlayerName(playerId);
-        if (playerName == null || playerName.equals("[unknown]"))
+        if (playerName == null)
             return 0;
 
         //noinspection ConstantConditions
@@ -200,14 +200,12 @@ public class EconomyHelper {
         PreCon.positiveNumber(amount);
 
         String giverName = PlayerHelper.getPlayerName(giverPlayerId);
-        if (giverName == null || giverName.equals("[unknown]")) {
+        if (giverName == null)
             return false;
-        }
 
         String receiverName = PlayerHelper.getPlayerName(receiverPlayerId);
-        if (receiverName == null || receiverName.equals("[unknown]")) {
+        if (receiverName == null)
             return false;
-        }
 
         // check givers balance
         if (getBalance(giverPlayerId) < amount) {
@@ -249,7 +247,7 @@ public class EconomyHelper {
         PreCon.notNull(playerId);
 
         String playerName = PlayerHelper.getPlayerName(playerId);
-        return !(playerName == null || playerName.equals("[unknown]")) && giveMoney(playerName, playerId, amount);
+        return playerName != null && giveMoney(playerName, playerId, amount);
     }
 
     private static boolean giveMoney(String playerName, UUID playerId, double amount) {
