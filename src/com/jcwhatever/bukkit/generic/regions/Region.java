@@ -32,6 +32,7 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Rand;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -42,16 +43,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 public abstract class Region {
 
@@ -211,7 +212,6 @@ public abstract class Region {
 
         if (event.isCancelled())
             return false;
-
 
         _ownerId = ownerId;
 
@@ -510,9 +510,9 @@ public abstract class Region {
             return false;
 
         synchronized (_sync) {
-            if (!isDefined() || !loc.getWorld().getName().equals(getWorld().getName())) {
+
+            if (!isDefined() || !loc.getWorld().getName().equals(getWorld().getName()))
                 return false;
-            }
 
             int x = loc.getBlockX();
             int y = loc.getBlockY();
@@ -541,9 +541,9 @@ public abstract class Region {
             return false;
 
         synchronized (_sync) {
-            if (!isDefined() || !loc.getWorld().getName().equals(getWorld().getName())) {
+
+            if (!isDefined() || !loc.getWorld().getName().equals(getWorld().getName()))
                 return false;
-            }
 
             if (cx) {
                 int x = loc.getBlockX();
@@ -575,10 +575,10 @@ public abstract class Region {
      *
      * @param material  The material to search for.
      */
-    public final Set<Location> find(Material material) {
+    public final List<Location> find(Material material) {
 
         synchronized (_sync) {
-            HashSet<Location> results = new HashSet<Location>(100);
+            LinkedList<Location> results = new LinkedList<>();
 
             if (getWorld() == null)
                 return results;
@@ -661,7 +661,6 @@ public abstract class Region {
         for (Chunk chunk : chunks) {
             world.refreshChunk(chunk.getX(), chunk.getZ());
         }
-
     }
 
     /**
