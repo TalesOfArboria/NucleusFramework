@@ -31,9 +31,9 @@ import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 public class ResponseType {
 
@@ -62,8 +62,6 @@ public class ResponseType {
     public static int totalTypes() {
         return 9;
     }
-
-
 
     private String _commandName;
 
