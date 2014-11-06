@@ -103,7 +103,6 @@ public class FileUtils {
      * Get the extension of a file, not including a dot.
      *
      * @param file  The file to check.
-     * @return
      */
     public static String getFileExtension(File file) {
         PreCon.notNull(file);
@@ -115,7 +114,6 @@ public class FileUtils {
      * Get the extension of a file name, not including a dot.
      *
      * @param fileName  The file name to check.
-     * @return
      */
     public static String getFileExtension(String fileName) {
         PreCon.notNull(fileName);
