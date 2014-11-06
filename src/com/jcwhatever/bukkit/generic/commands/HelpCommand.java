@@ -28,9 +28,9 @@ package com.jcwhatever.bukkit.generic.commands;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatTemplate;
 
 import org.bukkit.command.CommandSender;
@@ -50,6 +50,9 @@ import java.util.List;
 
 public class HelpCommand extends AbstractCommand {
 
+    @Localizable static final String _PAGINATOR_TITLE = "Commands";
+    @Localizable static final String _USAGE = "{GOLD}/{plugin-command} {GREEN}{0} {GOLD}?";
+
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 
@@ -61,8 +64,7 @@ public class HelpCommand extends AbstractCommand {
     @Override
     public void showHelp(final CommandSender sender, int page) {
 
-        String paginTitle = Lang.get("Commands");
-        final ChatPaginator pagin = new ChatPaginator(_plugin, 6, paginTitle);
+        final ChatPaginator pagin = new ChatPaginator(_plugin, 6, Lang.get(_PAGINATOR_TITLE));
 
         final List<AbstractCommand> categories = new ArrayList<AbstractCommand>(getCommandHandler().getCommands().size());
 
@@ -99,14 +101,7 @@ public class HelpCommand extends AbstractCommand {
                     if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
                         continue;
 
-                    // format colors and command name
-                    String helpText = TextUtils.format(
-                            "{GOLD}/{plugin-command} {GREEN}{0} {GOLD}?", info.getCommandName());
-
-                    // format plugin info
-                    helpText = TextUtils.formatPluginInfo(_plugin, helpText);
-
-                    pagin.add(helpText, info.getDescription());
+                    pagin.add(Lang.get(_plugin, _USAGE, info.getCommandName()), info.getDescription());
                 }
 
             }
