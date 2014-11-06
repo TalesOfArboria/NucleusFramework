@@ -34,7 +34,7 @@ import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.StorageLoadHandler;
 import com.jcwhatever.bukkit.generic.storage.StorageLoadResult;
-import com.jcwhatever.bukkit.generic.utils.ItemValidator;
+import com.jcwhatever.bukkit.generic.utils.EntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -263,7 +263,7 @@ public class PlayerHelper {
      * @param chunkRadius  The chunk radius to check in.
      * @param validator    A validator used to validate if a player is a candidate to return.
      */
-    public static List<Player> getClosestPlayers(Location loc, int chunkRadius, @Nullable ItemValidator<Player> validator) {
+    public static List<Player> getClosestPlayers(Location loc, int chunkRadius, @Nullable EntryValidator<Player> validator) {
         PreCon.notNull(loc);
         PreCon.greaterThanZero(chunkRadius);
 
@@ -312,7 +312,7 @@ public class PlayerHelper {
      * @param validator  The validator used to determine if a location is a candidate.
      */
     public static Location getClosestLocation(Player p, Collection<Location> locations,
-                                              @Nullable ItemValidator<Location> validator) {
+                                              @Nullable EntryValidator<Location> validator) {
         PreCon.notNull(p);
         PreCon.notNull(locations);
 
@@ -352,7 +352,7 @@ public class PlayerHelper {
      * @param validator  The validator used to determine if an entity is a candidate.
      */
     @Nullable
-    public static Entity getClosestEntity(Player p, double range, @Nullable ItemValidator<Entity> validator) {
+    public static Entity getClosestEntity(Player p, double range, @Nullable EntryValidator<Entity> validator) {
         return getClosestEntity(p, range, range, range, validator);
     }
 
@@ -379,7 +379,7 @@ public class PlayerHelper {
      */
     @Nullable
     public static Entity getClosestEntity(Player p, double rangeX, double rangeY, double rangeZ,
-                                          @Nullable ItemValidator<Entity> validator) {
+                                          @Nullable EntryValidator<Entity> validator) {
         PreCon.notNull(p);
         PreCon.positiveNumber(rangeX);
         PreCon.positiveNumber(rangeY);
@@ -424,7 +424,7 @@ public class PlayerHelper {
      */
     @Nullable
     public static LivingEntity getClosestLivingEntity(Player p, double range,
-                                                      @Nullable ItemValidator<LivingEntity> validator) {
+                                                      @Nullable EntryValidator<LivingEntity> validator) {
         return getClosestLivingEntity(p, range, range, range, validator);
     }
 
@@ -452,7 +452,7 @@ public class PlayerHelper {
      */
     @Nullable
     public static LivingEntity getClosestLivingEntity(Player p, double rangeX, double rangeY, double rangeZ,
-                                                      @Nullable ItemValidator<LivingEntity> validator) {
+                                                      @Nullable EntryValidator<LivingEntity> validator) {
         PreCon.notNull(p);
 
         List<Entity> entities = p.getNearbyEntities(rangeX, rangeY, rangeZ);

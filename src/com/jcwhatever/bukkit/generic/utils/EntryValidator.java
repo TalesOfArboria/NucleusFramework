@@ -31,12 +31,12 @@ package com.jcwhatever.bukkit.generic.utils;
  *
  * @param <T>  The type being validated
  */
-public abstract class ItemValidator<T> {
+public abstract class EntryValidator<T> {
 
     /**
-     * Called to validate an item.
+     * Called to validate an entry.
      *
-     * @param item  The item to be validated.
+     * @param entry  The entry to be validated.
      */
-    public abstract boolean isValid(T item);
+    public abstract boolean isValid(T entry);
 }
