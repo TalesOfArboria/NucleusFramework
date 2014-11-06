@@ -25,7 +25,10 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
-public interface IJarModule {
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 
+public interface IJarModule extends IDisposable {
+
+    @Override
     void dispose();
 }
