@@ -36,6 +36,7 @@ import com.jcwhatever.bukkit.generic.storage.StorageLoadHandler;
 import com.jcwhatever.bukkit.generic.storage.StorageLoadResult;
 import com.jcwhatever.bukkit.generic.utils.EntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
@@ -47,12 +48,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Provides {@code Player} related utilities.
@@ -69,6 +70,8 @@ public class PlayerHelper {
      * @param p  The player to check.
      */
     public static boolean isOnline(Player p) {
+        PreCon.notNull(p);
+
         Player[] players = Bukkit.getServer().getOnlinePlayers();
         for (Player plyr : players) {
             if (plyr.getUniqueId().equals(p.getUniqueId()))
@@ -141,8 +144,10 @@ public class PlayerHelper {
      * <p>
      *    Avoid usage due to low performance.
      * </p>
+     *
      * @param playerName  The name of the player
      */
+    @Nullable
     public static UUID getPlayerId(String playerName) {
         PreCon.notNull(playerName);
 
@@ -177,17 +182,15 @@ public class PlayerHelper {
      *
      * @param playerId  The id of the player.
      *
-     * @return  Returns the string "[unknown]" if a record was not found.
+     * @return  Null if a record was not found.
      */
+    @Nullable
     public static String getPlayerName(UUID playerId) {
+        PreCon.notNull(playerId);
 
         IDataNode nameData = getNameData();
 
-        String name = nameData.getString(playerId.toString());
-        if (name == null)
-            return "[unknown]";
-
-        return name;
+        return nameData.getString(playerId.toString());
     }
 
     /**
@@ -197,11 +200,14 @@ public class PlayerHelper {
      * @param name      The new player name.
      */
     public static void setPlayerName(UUID playerId, String name) {
+        PreCon.notNull(playerId);
+        PreCon.notNullOrEmpty(name);
+
         IDataNode nameData = getNameData();
 
         String currentName = getPlayerName(playerId);
 
-        if (currentName.equals(name))
+        if (name.equals(currentName))
             return;
 
         synchronized (_sync) {
@@ -228,6 +234,8 @@ public class PlayerHelper {
      * @param p  The player.
      */
     public static void resetPlayer(Player p) {
+        PreCon.notNull(p);
+
         InventoryHelper.clearAll(p.getInventory());
 
         p.setGameMode(GameMode.SURVIVAL);
@@ -300,6 +308,7 @@ public class PlayerHelper {
      * @param p          The player.
      * @param locations  The location candidates.
      */
+    @Nullable
     public static Location getClosestLocation(Player p, Collection<Location> locations) {
         return getClosestLocation(p, locations, null);
     }
@@ -311,6 +320,7 @@ public class PlayerHelper {
      * @param locations  The location candidates.
      * @param validator  The validator used to determine if a location is a candidate.
      */
+    @Nullable
     public static Location getClosestLocation(Player p, Collection<Location> locations,
                                               @Nullable EntryValidator<Location> validator) {
         PreCon.notNull(p);
@@ -454,6 +464,9 @@ public class PlayerHelper {
     public static LivingEntity getClosestLivingEntity(Player p, double rangeX, double rangeY, double rangeZ,
                                                       @Nullable EntryValidator<LivingEntity> validator) {
         PreCon.notNull(p);
+        PreCon.positiveNumber(rangeX);
+        PreCon.positiveNumber(rangeY);
+        PreCon.positiveNumber(rangeZ);
 
         List<Entity> entities = p.getNearbyEntities(rangeX, rangeY, rangeZ);
 
@@ -489,6 +502,9 @@ public class PlayerHelper {
      */
     @Nullable
     public static Block getTargetBlock(Player p, int maxDistance) {
+        PreCon.notNull(p);
+        PreCon.positiveNumber(maxDistance);
+
         BlockIterator bit = new BlockIterator(p, maxDistance);
         Block next;
         while(bit.hasNext())
