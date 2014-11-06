@@ -200,13 +200,16 @@ public class Scheduler {
         public TaskHandler() {}
 
         /**
-         * Add TaskHandler as a child when using a task handler
-         * instance as a wrapper for another.
+         * Constructor.
+         *
+         * <p>Adds TaskHandler as a child.</p>
          *
          * <p>You must still call the child task handlers run method manually.</p>
          *
-         * <p>Calling cancelTask method on wrapper also calls cancelTask on the child
+         * <p>Calling cancelTask method also calls cancelTask on the child
          * method if it's a {@code TaskHandler} instance.</p>
+         *
+         * <p>Calling cancelTask method on the child also calls cancelTask method.</p>
          *
          * @param child  The child task handler.
          */
