@@ -245,7 +245,7 @@ public final class RegionChunkFileLoader {
          * Iterate block items from file
          */
         @Override
-        protected void onIterateItem(final int x, final int y, final int z) {
+        protected void onIterateItem(int x, int y, int z) {
 
             Material chunkType = Material.getMaterial(snapshot.getBlockTypeId(x, y, z));
             int chunkData = snapshot.getBlockData(x, y, z);
