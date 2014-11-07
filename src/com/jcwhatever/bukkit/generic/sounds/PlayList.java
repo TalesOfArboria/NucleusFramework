@@ -26,11 +26,11 @@
 package com.jcwhatever.bukkit.generic.sounds;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import javax.annotation.Nullable;
 
 /**
  * A collection of resource sounds that can be played
@@ -352,7 +353,8 @@ public class PlayList {
         @Override
         public void run() {
 
-            if (_player.get() == null)
+            Player p = _player.get();
+            if (p == null)
                 return;
 
             PlayerSoundQueue queue = _playerQueues.get(_player.get());
@@ -368,7 +370,7 @@ public class PlayList {
             if (sound == null)
                 return;
 
-            SoundManager.playSound(_plugin, _player.get(), sound, _location, _volume, null).onFinish(this);
+            SoundManager.playSound(_plugin, p, sound, _location, _volume, null).onFinish(this);
         }
     }
 
