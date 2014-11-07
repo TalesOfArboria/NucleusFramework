@@ -28,10 +28,10 @@ package com.jcwhatever.bukkit.generic.converters;
 import javax.annotation.Nullable;
 
 /**
- * Implements IValueConverter and extracts values from Wrapper<?>.
+ * Abstract implementation of a value converter.
  *
- * @param <T>
- * @param <F>
+ * @param <T>  The convert to value type.
+ * @param <F>  The convert from value type.
  */
 public abstract class ValueConverter<T, F> {
 
