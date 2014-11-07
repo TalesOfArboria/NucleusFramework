@@ -144,7 +144,7 @@ public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
     /**
      * Call to remove references that prevent
      * the garbage collector from collecting
-     * the instance after it is not longer needed.
+     * the instance after it is no longer needed.
      */
     @Override
     public void dispose() {
