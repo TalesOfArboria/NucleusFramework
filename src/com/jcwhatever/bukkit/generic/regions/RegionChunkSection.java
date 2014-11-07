@@ -198,6 +198,22 @@ public class RegionChunkSection {
     }
 
     /**
+     * Get the sections ending chunk X coordinate
+     * as a block coordinate.
+     */
+    public int getChunkBlockEndX() {
+        return _chunkBlockEndX;
+    }
+
+    /**
+     * Get the sections ending chunk Z coordinate
+     * as a block coordinate.
+     */
+    public int getChunkBlockEndZ() {
+        return _chunkBlockEndZ;
+    }
+
+    /**
      * Get the coordinates relative to the chunk
      * where the section begins on the X axis.
      */
