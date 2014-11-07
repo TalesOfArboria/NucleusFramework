@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.signs;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -33,9 +34,9 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.material.MaterialData;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Sign utilities
@@ -122,6 +123,7 @@ public class SignHelper {
      *
      * @return  Null if the block is not a sign.
      */
+    @Nullable
     public static BlockFace getSignAttachedFace(Block block) {
         PreCon.notNull(block);
 
