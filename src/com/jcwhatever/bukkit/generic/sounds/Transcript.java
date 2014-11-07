@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.sounds;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.messaging.Messenger.LineWrapping;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * Represents a voice transcript for a resource sound
@@ -162,7 +164,7 @@ public class Transcript {
          * @param text       The paragraph text.
          * @param timeStamp  The raw timestamp for the paragraph.
          */
-        Paragraph (String text, String timeStamp) {
+        Paragraph (String text, @Nullable String timeStamp) {
             _text = text.trim();
 
             Messenger.debug(null, text);
