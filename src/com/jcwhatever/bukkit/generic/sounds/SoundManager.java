@@ -35,12 +35,12 @@ import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Utils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Manages resource sounds globally.
@@ -231,7 +232,10 @@ public class SoundManager {
                 transcriptViewers != null &&
                 !transcriptViewers.isEmpty()) {
 
-            ((VoiceSound) sound).getTranscript().tell(plugin, transcriptViewers);
+            Transcript transcript = ((VoiceSound) sound).getTranscript();
+            if (transcript != null) {
+                transcript.tell(plugin, transcriptViewers);
+            }
         }
 
         return playing.getFuture();
