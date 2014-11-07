@@ -26,12 +26,12 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatPattern.FormatEntry;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * Static methods to aid in string related tasks
@@ -322,6 +323,7 @@ public class TextUtils {
      * @param separator   The string to insert between elements
      */
     public static String concat(Collection<?> collection, String separator) {
+        //noinspection ConstantConditions
         return concat(collection, separator, "");
     }
 
@@ -360,6 +362,7 @@ public class TextUtils {
      * @param separator  The string to insert between elements
      */
     public static <T> String concat(T[] strArray, @Nullable String separator) {
+        //noinspection ConstantConditions
         return concat(0, strArray.length, strArray, separator, "");
     }
 
@@ -385,6 +388,7 @@ public class TextUtils {
      * @param separator   The separator to insert between elements
      */
     public static <T> String concat(int startIndex, T[] strArray, @Nullable String separator) {
+        //noinspection ConstantConditions
         return concat(startIndex, strArray.length, strArray, separator, "");
     }
 
@@ -412,6 +416,7 @@ public class TextUtils {
      * @param strArray    The array to concatenate
      */
     public static <T> String concat(int startIndex, int endIndex, T[] strArray) {
+        //noinspection ConstantConditions
         return concat(startIndex, endIndex, strArray, null, "");
     }
 
@@ -426,6 +431,7 @@ public class TextUtils {
      * @param separator   The separator to insert between elements
      */
     public static <T> String concat(int startIndex, int endIndex, T[] strArray, @Nullable String separator) {
+        //noinspection ConstantConditions
         return concat(startIndex, endIndex, strArray, separator, "");
     }
 
@@ -438,8 +444,12 @@ public class TextUtils {
      * @param endIndex    The index to stop concatenating at
      * @param strArray    The array to concatenate
      */
-    public static <T> String concat(int startIndex, int endIndex, T[] strArray, String separator, String emptyValue) {
-        if (strArray == null || strArray.length == 0 || startIndex == endIndex)
+    @Nullable
+    public static <T> String concat(int startIndex, int endIndex, T[] strArray,
+                                    @Nullable String separator, @Nullable String emptyValue) {
+        PreCon.notNull(strArray);
+
+        if (strArray.length == 0 || startIndex == endIndex)
             return emptyValue;
 
         if (separator == null)
@@ -485,7 +495,8 @@ public class TextUtils {
      * @param maxLineLen            The max length of a line
      * @param excludeColorsFromLen  True to exclude color characters from length calculations
      */
-    public static List<String> paginateString(String str, String linePrefix, int maxLineLen, boolean excludeColorsFromLen) {
+    public static List<String> paginateString(String str, @Nullable String linePrefix,
+                                              int maxLineLen, boolean excludeColorsFromLen) {
 
         if (linePrefix != null)
             str = str.replace(linePrefix, "");
@@ -602,7 +613,7 @@ public class TextUtils {
         List<String> items = new ArrayList<String>(array.length);
 
         for (T item : array) {
-            if (item == null && nullValue != null) {
+            if (item == null) {
                 items.add(String.valueOf(nullValue));
             }
 
@@ -627,6 +638,7 @@ public class TextUtils {
             return "null";
 
         DecimalFormat format = new DecimalFormat("###.##");
+        //noinspection IfMayBeConditional
         if (addColor) {
             return ChatColor.LIGHT_PURPLE + "X:" + ChatColor.YELLOW + format.format(loc.getX()) +
                     ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "Y:" + ChatColor.YELLOW + format.format(loc.getY()) +
