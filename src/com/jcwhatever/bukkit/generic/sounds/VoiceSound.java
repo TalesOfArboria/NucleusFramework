@@ -37,6 +37,7 @@ public class VoiceSound extends ResourceSound {
 
         String transcript = dataNode.getString("transcript", "");
 
+        //noinspection ConstantConditions
         _transcript = new Transcript(transcript);
     }
 
