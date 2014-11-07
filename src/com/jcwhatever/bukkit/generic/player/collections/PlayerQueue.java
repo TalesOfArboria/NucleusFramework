@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import javax.annotation.Nullable;
 
 /**
  * A Queue of {@code Player} objects.
@@ -139,7 +140,8 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 
 	@Override
 	public synchronized <T> T[] toArray(T[] array) {
-		return _queue.toArray(array);
+        //noinspection SuspiciousToArrayCall
+        return _queue.toArray(array);
 	}
 
 	@Override
@@ -171,6 +173,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	}
 
 	@Override
+    @Nullable
 	public synchronized Player poll() {
 		Player p = _queue.poll();
         if (p != null && !_queue.contains(p)) {
@@ -180,6 +183,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	}
 
 	@Override
+    @Nullable
 	public synchronized Player remove() {
         Player p = _queue.remove();
         if (p != null && !_queue.contains(p)) {
@@ -231,8 +235,6 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
             if (_current != null && !_queue.contains(_current)) {
                 _listener.removePlayer(_current, _parent);
             }
-
-
 		}
 		
 	}
