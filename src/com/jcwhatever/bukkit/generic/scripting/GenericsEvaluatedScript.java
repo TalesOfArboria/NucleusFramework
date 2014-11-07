@@ -28,15 +28,15 @@ package com.jcwhatever.bukkit.generic.scripting;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import javax.annotation.Nullable;
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 
 /**
  * Generics default {@code IEvaluatedScript} implementation.
@@ -119,6 +119,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
      * @return
      */
     @Override
+    @Nullable
     public Object invokeFunction(String functionName, Object... parameters) {
 
         Invocable inv = (Invocable)_engine;
@@ -141,6 +142,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
      * @param script  The script to evaluated.
      */
     @Override
+    @Nullable
     public Object evaluate(IScript script) {
 
         try {
