@@ -300,6 +300,7 @@ public class FloatingItem implements IDisposable {
 
     @Override
     public void dispose() {
+        despawn();
         _listener.unregister(this);
         _isDisposed = true;
     }
