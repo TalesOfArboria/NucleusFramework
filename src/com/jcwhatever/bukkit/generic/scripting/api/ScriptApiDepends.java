@@ -32,6 +32,8 @@ import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.utils.Scheduler.ScheduledTask;
 import com.jcwhatever.bukkit.generic.utils.Scheduler.TaskHandler;
+import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -90,7 +92,7 @@ public class ScriptApiDepends extends GenericsScriptApi {
          * Provide a runnable function to be run once the specified
          * plugin is loaded.
          *
-         * @param pluginName  The name of the plugin.
+         * @param pluginName  The name of the plugin or multiple comma delimited names.
          * @param runnable    The function to run.
          */
         public void on(String pluginName, Runnable runnable) {
@@ -107,17 +109,21 @@ public class ScriptApiDepends extends GenericsScriptApi {
         /*
          * Attempt to run runnable if dependency plugin is loaded.
          */
-        private boolean runDepends(String pluginName, Runnable runnable) {
+        private boolean runDepends(String pluginNames, Runnable runnable) {
 
-            Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
-            if (plugin == null)
-                return false;
+            String[] names = TextUtils.PATTERN_COMMA.split(pluginNames);
 
-            if (!plugin.isEnabled())
-                return false;
+            for (String pluginName : names) {
+                Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName.trim());
+                if (plugin == null)
+                    return false;
 
-            if (plugin instanceof GenericsPlugin && !((GenericsPlugin) plugin).isLoaded())
-                return false;
+                if (!plugin.isEnabled())
+                    return false;
+
+                if (plugin instanceof GenericsPlugin && !((GenericsPlugin) plugin).isLoaded())
+                    return false;
+            }
 
             runnable.run();
             return true;
