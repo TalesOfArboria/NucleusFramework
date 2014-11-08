@@ -188,7 +188,7 @@ public class Rand {
         if (sides == 1)
             return true;
 
-        int chance = 100 / 2;
+        int chance = 100 / sides;
 
         return chance(chance);
     }
