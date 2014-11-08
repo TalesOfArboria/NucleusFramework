@@ -32,12 +32,13 @@ import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 @IScriptApiInfo(
         variableName = "floating",
@@ -190,7 +191,7 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
     }
 
     public interface PickupCallback {
-        void onPickup(Object player, Object isCancelled);
+        void onPickup(Object player, Object item, Object isCancelled);
     }
 
     private static class PickupWrapper implements PickupHandler {
@@ -208,8 +209,8 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
         }
 
         @Override
-        public void onPickup(Player p, boolean isCancelled) {
-            _callback.onPickup(p, isCancelled);
+        public void onPickup(Player p, FloatingItem item, boolean isCancelled) {
+            _callback.onPickup(p, item, isCancelled);
         }
     }
 
