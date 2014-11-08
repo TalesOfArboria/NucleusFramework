@@ -33,6 +33,7 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.EntityUtils;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -42,10 +43,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Represents a controlled item stack entity.
@@ -280,6 +281,17 @@ public class FloatingItem implements IDisposable {
     }
 
     /**
+     * Give a copy of the item to a player.
+     *
+     * @param p  The player.
+     */
+    public void give(Player p) {
+        PreCon.notNull(p);
+
+        p.getInventory().addItem(_item.clone());
+    }
+
+    /**
      * Determine if the floating item has been disposed.
      */
     public boolean isDisposed() {
@@ -381,7 +393,7 @@ public class FloatingItem implements IDisposable {
             return;
 
         for (PickupHandler handler : _pickupHandlers)
-            handler.onPickup(p, isCancelled);
+            handler.onPickup(p, this, isCancelled);
     }
 
     private void loadSettings() {
@@ -409,7 +421,7 @@ public class FloatingItem implements IDisposable {
     }
 
     public static interface PickupHandler {
-        void onPickup(Player p, boolean isCancelled);
+        void onPickup(Player p, FloatingItem item, boolean isCancelled);
     }
 
 }
