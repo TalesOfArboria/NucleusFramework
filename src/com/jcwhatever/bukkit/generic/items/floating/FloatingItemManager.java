@@ -28,16 +28,17 @@ package com.jcwhatever.bukkit.generic.items.floating;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 public class FloatingItemManager {
 
@@ -60,14 +61,20 @@ public class FloatingItemManager {
         return _plugin;
     }
 
+    @Nullable
     public FloatingItem add(String name, Location location, ItemStack itemStack) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(location);
         PreCon.notNull(itemStack);
 
+        FloatingItem item = _itemMap.get(name.toLowerCase());
+        if (item != null) {
+            return null;
+        }
+
         IDataNode node = _dataNode.getNode(name);
 
-        FloatingItem item = new FloatingItem(name, location, itemStack, node);
+        item = new FloatingItem(name, location, itemStack, node);
 
         node.set("location", location);
         node.set("item", itemStack);
