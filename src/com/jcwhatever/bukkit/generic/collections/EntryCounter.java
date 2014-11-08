@@ -215,7 +215,7 @@ public class EntryCounter<T> implements Iterable<T> {
     /**
      * Get the number of types that are counted.
      */
-    public int getTypeSize() {
+    public int getEntrySize() {
         return _countMap.keySet().size();
     }
 
