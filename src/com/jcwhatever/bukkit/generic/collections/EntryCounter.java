@@ -213,6 +213,13 @@ public class EntryCounter<T> implements Iterable<T> {
     }
 
     /**
+     * Get the number of types that are counted.
+     */
+    public int getTypeSize() {
+        return _countMap.keySet().size();
+    }
+
+    /**
      * Determine if an item is in the counter.
      *
      * @param item  The item to check.
