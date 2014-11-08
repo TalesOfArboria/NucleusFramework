@@ -426,7 +426,7 @@ public class RegionManager {
         @Override
         public void run() {
 
-            List<World> worlds = new ArrayList<World>(_listenerWorlds.getTypesCounted());
+            List<World> worlds = new ArrayList<World>(_listenerWorlds.getEntries());
 
             final List<WorldPlayers> worldPlayers = new ArrayList<WorldPlayers>(worlds.size());
 

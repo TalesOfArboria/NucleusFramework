@@ -234,7 +234,7 @@ public class EntryCounter<T> implements Iterable<T> {
     /**
      * Get a new hash set containing the items that were counted.
      */
-    public Set<T> getTypesCounted() {
+    public Set<T> getEntries() {
 
         return new HashSet<T>(_countMap.keySet());
     }
