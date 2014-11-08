@@ -518,21 +518,6 @@ public class InventoryHelper {
             playerInventory.setLeggings(null);
             playerInventory.setBoots(null);
             playerInventory.setItemInHand(null);
-
-            /*
-            InventoryView view = _player.getOpenInventory();
-
-            if (view == null)
-                return;
-
-            view.setCursor(null);
-            Inventory i = view.getTopInventory();
-
-            if (i == null)
-                return;
-
-            i.clear();
-            */
         }
     }
 
