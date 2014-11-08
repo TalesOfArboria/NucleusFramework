@@ -35,16 +35,15 @@ import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiItemBank;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiJail;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiMsg;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiPermissions;
+import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiRand;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiSounds;
 import com.jcwhatever.bukkit.generic.utils.FileUtils;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -53,6 +52,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 /**
  * Script utilities.
@@ -92,6 +94,7 @@ public class ScriptHelper {
         api.add(new ScriptApiPermissions(plugin));
         api.add(new ScriptApiSounds(plugin));
         api.add(new ScriptApiDepends(plugin));
+        api.add(new ScriptApiRand(plugin));
 
         if (manager != null)
             api.add(new ScriptApiInclude(plugin, manager));

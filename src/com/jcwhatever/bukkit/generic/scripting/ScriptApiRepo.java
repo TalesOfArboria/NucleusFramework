@@ -35,15 +35,17 @@ import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiItemBank;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiJail;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiMsg;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiPermissions;
+import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiRand;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiSounds;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Global repository of script API's that can be used
@@ -67,6 +69,7 @@ public class ScriptApiRepo {
         registerApiType(GenericsLib.getPlugin(), ScriptApiPermissions.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiSounds.class);
         registerApiType(GenericsLib.getPlugin(), ScriptApiDepends.class);
+        registerApiType(GenericsLib.getPlugin(), ScriptApiRand.class);
     }
 
     /**
