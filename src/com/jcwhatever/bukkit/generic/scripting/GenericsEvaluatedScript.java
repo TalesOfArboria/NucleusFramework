@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
+import com.jcwhatever.bukkit.generic.scripting.api.IScriptApiObject;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     private final IScript _parentScript;
     private final ScriptEngine _engine;
     private final Map<String, IScriptApi> _scriptApis;
+    private final List<IScriptApiObject> _apiObjects = new ArrayList<>(25);
 
     /**
      * Constructor.
@@ -107,7 +109,10 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
 
         _scriptApis.put(scriptApi.getVariableName(), scriptApi);
 
-        _engine.put(scriptApi.getVariableName(), scriptApi.getApiObject(this));
+        IScriptApiObject apiObject = scriptApi.getApiObject(this);
+
+        _engine.put(scriptApi.getVariableName(), apiObject);
+        _apiObjects.add(apiObject);
     }
 
     /**
@@ -158,10 +163,8 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
      */
     @Override
     public void resetApi() {
-        if (_scriptApis == null)
-            return;
 
-        for (IScriptApi api : _scriptApis.values()) {
+        for (IScriptApiObject api : _apiObjects) {
             api.reset();
         }
     }
