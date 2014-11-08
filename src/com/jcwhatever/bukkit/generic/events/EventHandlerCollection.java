@@ -26,16 +26,18 @@
 package com.jcwhatever.bukkit.generic.events;
 
 import com.jcwhatever.bukkit.generic.mixins.ICancellable;
+
 import org.bukkit.event.Cancellable;
 
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * A collection of event handlers for a specific event.
@@ -67,25 +69,45 @@ class EventHandlerCollection {
                 ? (Cancellable)event
                 : null;
 
+        LinkedList<HandlerContainer> skipped = new LinkedList<>();
+
         // iterate handlers and call them
         for (HandlerContainer handler : _handlers) {
 
-            boolean isCancelled = (cancellable != null && cancellable.isCancelled()) ||
+            boolean isPreCancelled = (cancellable != null && cancellable.isCancelled()) ||
                     (bukkitCancellable != null && bukkitCancellable.isCancelled());
 
             // skip handler if the even is cancelled and it is not a watcher.
-            if (isCancelled && handler.getPriority() != GenericsEventPriority.WATCHER &&
+            if (isPreCancelled && handler.getPriority() != GenericsEventPriority.WATCHER &&
                     !handler.isCancelIgnored()) {
+
+                skipped.add(handler);
                 continue;
             }
 
             // call the handler
-            try {
-                handler.getHandler().call(event);
+            if (!tryCall(handler, event))
+                continue;
 
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
+
+            // # Run skipped handlers if the event is uncancelled.
+
+            // check if the event is cancelled
+            boolean isPostCancelled = (cancellable != null && cancellable.isCancelled()) ||
+                    (bukkitCancellable != null && bukkitCancellable.isCancelled());
+
+            // determine if the event was cancelled during the last handler call.
+            if (isPreCancelled && !isPostCancelled) {
+
+                // run handlers that were skipped
+                while (!skipped.isEmpty()) {
+                    HandlerContainer skippedHandler = skipped.remove();
+
+                    tryCall(skippedHandler, event);
+                }
+
             }
+
         }
 
         return event;
@@ -202,6 +224,20 @@ class EventHandlerCollection {
     void removeHandler(EventHandler eventHandler) {
         HandlerContainer handler = new HandlerContainer(eventHandler);
         _handlers.remove(handler);
+    }
+
+    /*
+     * Call an event on an event handler
+     */
+    private <T> boolean tryCall(HandlerContainer handler, T event) {
+        try {
+            handler.getHandler().call(event);
+            return true;
+
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return false;
+        }
     }
 
     /**
