@@ -26,22 +26,17 @@ package com.jcwhatever.bukkit.generic.items.serializer.metahandlers;
 
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Handles {@code ItemStack} lore meta.
  */
 public class LoreHandler implements MetaHandler {
-
-    private static final Pattern PATTERN_ESCAPED_PIPE = Pattern.compile("\\|");
 
     @Override
     public String getMetaName() {
@@ -64,16 +59,21 @@ public class LoreHandler implements MetaHandler {
         if (!meta.getName().equals(getMetaName()))
             return false;
 
-        String[] lineArray = TextUtils.PATTERN_PIPE.split(meta.getRawData());
+        List<String> currentLore = ItemStackHelper.getLore(itemStack);
 
-        List<String> lines = new ArrayList<>(lineArray.length);
+        List<String> newLore = currentLore == null
+                ? new ArrayList<String>(5)
+                : new ArrayList<String>(currentLore.size() + 1);
 
-        for (String line : lineArray) {
-            Matcher matcher = PATTERN_ESCAPED_PIPE.matcher(line);
-            lines.add(matcher.replaceAll("|"));
+        if (currentLore != null) {
+            for (String line : currentLore) {
+                newLore.add(line);
+            }
         }
 
-        ItemStackHelper.setLore(itemStack, lines);
+        newLore.add(meta.getRawData());
+
+        ItemStackHelper.setLore(itemStack, newLore);
 
         return true;
     }
@@ -92,23 +92,9 @@ public class LoreHandler implements MetaHandler {
 
         List<ItemMetaObject> result = new ArrayList<>(1);
 
-        StringBuilder buffy = new StringBuilder(lore.size() * 35);
-
-        for (int i=0, last = lore.size() - 1; i < lore.size(); i++) {
-
-            String line = lore.get(i);
-            if (line == null)
-                continue;
-
-            Matcher matcher = TextUtils.PATTERN_PIPE.matcher(line);
-            buffy.append(matcher.replaceAll("\\|"));
-
-            if (i < last) {
-                buffy.append('|');
-            }
+        for (String line : lore) {
+            result.add(new ItemMetaObject(getMetaName(), line));
         }
-
-        result.add(new ItemMetaObject(getMetaName(), buffy.toString()));
 
         return result;
     }
