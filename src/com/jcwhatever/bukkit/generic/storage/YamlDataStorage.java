@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.storage;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
-import com.jcwhatever.bukkit.generic.items.ItemStackSerializer.SerializerOutputType;
+import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.utils.BatchTracker;
@@ -35,6 +35,7 @@ import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -42,7 +43,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 public class YamlDataStorage implements IDataNode {
 

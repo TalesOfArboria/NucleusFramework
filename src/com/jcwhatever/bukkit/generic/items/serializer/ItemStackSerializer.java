@@ -22,22 +22,21 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.items.serializer;
 
-package com.jcwhatever.bukkit.generic.items;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandler;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandlerManager;
+import com.jcwhatever.bukkit.generic.utils.TextUtils;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper.DisplayNameResult;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Serializes {@code ItemStack}'s into a string.
@@ -51,8 +50,6 @@ import java.util.regex.Pattern;
  */
 public class ItemStackSerializer {
 
-    private static final Pattern PATTERN_TEXT_FILTER = Pattern.compile("[,:;]");
-    private static final Pattern PATTERN_APPEND_LORE = Pattern.compile("[,\\|]");
     private StringBuilder _buffy;
     private int _itemsAppended = 0;
     private SerializerOutputType _outputType = SerializerOutputType.RAW;
@@ -122,7 +119,7 @@ public class ItemStackSerializer {
      *
      * @return Self
      */
-    public ItemStackSerializer append(ItemStack stack) {
+    public <T extends ItemStack> ItemStackSerializer append(T stack) {
         if (_itemsAppended > 0)
             _buffy.append(", ");
 
@@ -178,13 +175,14 @@ public class ItemStackSerializer {
         return _buffy.toString();
     }
 
-
+    /*
+     * Serialize an item stack to a string and append to buffer.
+     */
     private static void appendItemStackString(StringBuilder buffy, ItemStack stack, SerializerOutputType outputType) {
 
         if (stack == null) {
             stack = new ItemStack(Material.AIR, -1);
         }
-
 
         // material name
         if (outputType == SerializerOutputType.COLOR)
@@ -212,8 +210,9 @@ public class ItemStackSerializer {
 
         // quantity
 
-        buffy.append(';');
+
         if (stack.getAmount() != 1) {
+            buffy.append(';');
 
             if (outputType == SerializerOutputType.COLOR)
                 buffy.append(ChatColor.AQUA);
@@ -221,102 +220,39 @@ public class ItemStackSerializer {
             buffy.append(stack.getAmount());
         }
 
-        // enchantments
-        buffy.append(';');
-        appendEnchantments(buffy, stack);
+        List<MetaHandler> handlers = MetaHandlerManager.getHandlers();
 
-        // displayname
-        buffy.append(';');
-        appendDisplayName(buffy, stack);
+        List<ItemMetaObject> metaObjects = new ArrayList<>(10);
 
-        // color
-        buffy.append(';');
-        appendColor(buffy, stack);
-
-        buffy.append(';');
-        appendLore(buffy, stack);
-
-        while (buffy.length() > 0 && buffy.charAt(buffy.length() - 1) == ';') {
-            buffy.setLength(buffy.length() - 1);
+        for (MetaHandler handler : handlers) {
+            metaObjects.addAll(handler.getMeta(stack));
         }
-    }
 
+        if (!metaObjects.isEmpty()) {
+            buffy.append('{');
 
-    private static void appendEnchantments(StringBuilder buffy, ItemStack stack) {
-        Set<Enchantment> enchantments = stack.getEnchantments().keySet();
-        if (enchantments.size() == 0)
-            return;
+            for (int i=0, last = metaObjects.size() - 1; i < metaObjects.size(); i++) {
 
-        int i=0;
-        int last = enchantments.size() - 1;
-        for (Enchantment enchant: enchantments) {
-            int level = stack.getEnchantmentLevel(enchant);
+                ItemMetaObject meta = metaObjects.get(i);
 
-            appendEnchantment(buffy, enchant, level);
-            if (i < last) {
+                buffy.append(meta.getName());
+
                 buffy.append(':');
+                buffy.append('"');
+
+                Matcher matcher = TextUtils.PATTERN_DOUBLE_QUOTE.matcher(meta.getRawData());
+                buffy.append(matcher.replaceAll("\\\""));
+
+                buffy.append('"');
+
+                if (i < last) {
+                    buffy.append(',');
+                }
             }
 
-            i++;
+            buffy.append('}');
         }
     }
 
-
-    private static void appendEnchantment(StringBuilder buffy, Enchantment enchant, int level) {
-        buffy.append(enchant.getName());
-        buffy.append('-');
-        buffy.append(level);
-    }
-
-    private static void appendDisplayName(StringBuilder buffy, ItemStack stack) {
-
-        String stackDisplayName = ItemStackHelper.getDisplayName(stack, DisplayNameResult.OPTIONAL);
-        if (stackDisplayName == null)
-            return;
-
-        Matcher matcher = PATTERN_TEXT_FILTER.matcher(stackDisplayName);
-        stackDisplayName = matcher.replaceAll("");
-
-        ItemStack checkStack = new ItemStack(stack.getType());
-
-        if (stackDisplayName.equals(ItemStackHelper.getDisplayName(checkStack, DisplayNameResult.OPTIONAL)))
-            return;
-
-        buffy.append(stackDisplayName);
-    }
-
-
-    private static void appendColor(StringBuilder buffy, ItemStack stack) {
-        Color color = ItemStackHelper.getColor(stack);
-        if (color == null)
-            return;
-
-        buffy.append(Integer.toHexString(color.asRGB()));
-    }
-
-    private static void appendLore(StringBuilder buffy, ItemStack stack) {
-        ItemMeta meta = stack.getItemMeta();
-        if (meta == null)
-            return;
-
-        List<String> lore = meta.getLore();
-        if (lore == null)
-            return;
-
-
-        for (int i=0, last = lore.size() - 1; i < lore.size(); i++) {
-
-            String line = lore.get(i);
-            if (line == null)
-                continue;
-
-            Matcher matcher = PATTERN_APPEND_LORE.matcher(line);
-            buffy.append(matcher.replaceAll(""));
-
-            if (i < last) {
-                buffy.append('|');
-            }
-        }
-    }
 
 }

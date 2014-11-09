@@ -25,12 +25,14 @@
 
 package com.jcwhatever.bukkit.generic.items;
 
-import com.jcwhatever.bukkit.generic.converters.ValueConverters;
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
-import com.jcwhatever.bukkit.generic.items.ItemStackSerializer.SerializerOutputType;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.bukkit.generic.items.serializer.ItemStackDeserializer;
+import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer;
+import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -41,12 +43,11 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.MaterialData;
-import org.bukkit.potion.Potion;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Item stack utilities
@@ -489,23 +490,16 @@ public class ItemStackHelper {
         if (itemString == null || itemString.length() == 0)
             return new ItemStack[0];
 
-        String[] items = TextUtils.PATTERN_COMMA.split(itemString);
+        ItemStackDeserializer parser;
 
-        //Messenger.debug(null, "ItemStackHelper: parse: parsing " + items.length + " possible ItemStacks from string: " + itemString);
-
-        Collection<ItemStack> wrappers = new ArrayList<ItemStack>(items.length);
-
-        for (String item : items) {
-            ItemStack stack = parseItemString(item);
-            if (stack == null) {
-                Messenger.debug(null, "ItemStackHelper: parse: Failed to parse item string item.");
-                return null;
-            }
-            wrappers.add(stack);
+        try {
+            parser = new ItemStackDeserializer(itemString);
+        } catch (InvalidItemStackStringException e) {
+            e.printStackTrace();
+            return null;
         }
 
-        //Messenger.debug(null, "ItemStackExt: parse: Successfully parsed " + items.length + " items.");
-        return wrappers.toArray(new ItemStack[wrappers.size()]);
+        return parser.getResultArray();
     }
 
     /**
@@ -544,70 +538,4 @@ public class ItemStackHelper {
         return new ItemStackSerializer(40, outputType).append(stack).toString();
     }
 
-    /*
-     * Parses a serialized item string into an item stack.
-     */
-    @Nullable
-    private static ItemStack parseItemString(String itemString) {
-        ItemStringParser parser = new ItemStringParser(itemString);
-
-        if (!parser.isValid()) {
-            Messenger.debug(null,
-                    "ItemStackHelper: parseItemString: Attempted to parse invalid item string: {0}", itemString);
-            return null;
-        }
-
-        int qty = parser.getQuantity();
-        Color color = parser.getColor();
-        MaterialData data = parser.getMaterialData();
-        List<String> lore = parser.getLore();
-        String displayName = parser.getDisplayName();
-
-        if (data == null)
-            return null;
-
-        List<EnchantmentWrapper> enchants = parser.getEnchantments();
-        Material material = data.getItemType();
-
-        // create stack
-        ItemStack stack;
-        Potion potion;
-
-        // handle special cases
-        if (material == Material.POTION && (potion = ValueConverters.POTION_ID.convert(parser.getData())) != null) {
-            stack = potion.toItemStack(qty);
-        }
-        else if (material == Material.WOOL) {
-            stack = new ItemStack(material, qty);
-            stack.setData(data);
-            stack.setDurability(parser.getData());
-        }
-        else {
-            // set stack data
-            stack = new ItemStack(material, qty);
-            stack.setData(data);
-            stack.setDurability(parser.getData());
-        }
-
-        // set enchantments
-        if (enchants.size() > 0) {
-            addEnchantments(stack, enchants);
-        }
-
-        // set display name
-        if (displayName.length() != 0)
-            setDisplayName(stack, displayName);
-
-        // set display
-        if (color != null) {
-            setColor(stack, color);
-        }
-
-        //set lore
-        if (lore != null) {
-            setLore(stack, lore);
-        }
-
-        return stack;
-    }
 }

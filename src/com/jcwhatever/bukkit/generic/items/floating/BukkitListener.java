@@ -29,7 +29,9 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.floatingitems.FloatingItemPickUpEvent;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -57,9 +59,12 @@ class BukkitListener implements Listener {
 
     void unregister(FloatingItem item) {
         PreCon.notNull(item);
-        PreCon.notNull(item.getEntity());
 
-        _floatingItems.remove(item.getEntity().getUniqueId());
+        Entity entity = item.getEntity();
+
+        if (entity != null) {
+            _floatingItems.remove(entity.getUniqueId());
+        }
     }
 
 
