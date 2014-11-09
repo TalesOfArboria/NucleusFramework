@@ -65,6 +65,8 @@ public class TextUtils {
     public static final Pattern PATTERN_FORMAT_PARAM = Pattern.compile("(?<=(\\{[0-9]}))");
     public static final Pattern PATTERN_FILEPATH_SLASH = Pattern.compile("[\\/\\\\]");
     public static final Pattern PATTERN_UNDERSCORE = Pattern.compile("_");
+    public static final Pattern PATTERN_DOUBLE_QUOTE = Pattern.compile("\"");
+    public static final Pattern PATTERN_SINGLE_QUOTE = Pattern.compile("'");
 
     private static Pattern PATTERN_PLUGIN_CHECK     = Pattern.compile("\\{plugin-");
     private static Pattern PATTERN_PLUGIN_VERSION   = Pattern.compile("\\{plugin-version}");
