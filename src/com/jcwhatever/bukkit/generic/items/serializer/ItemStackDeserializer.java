@@ -55,7 +55,7 @@ public class ItemStackDeserializer {
     /**
      * Constructor.
      *
-     * @param itemString  The string to parse. The string must represent a single {@code ItemStack}
+     * @param itemString  The string to parse. The string must represent a one or more {@code ItemStack}'s
      *
      * @throws InvalidItemStackStringException
      */
