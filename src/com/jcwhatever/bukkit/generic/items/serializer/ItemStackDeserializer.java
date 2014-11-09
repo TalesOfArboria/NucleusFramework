@@ -41,8 +41,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Parses a string representing a single {@code ItemStacks} serialized
- * by {@code ItemStackSerializer}.
+ * Parses a string representing a single or multiple {@code ItemStacks}
+ * serialized by {@code ItemStackSerializer}.
  */
 public class ItemStackDeserializer {
 
