@@ -41,8 +41,11 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Parses a string representing a single or multiple {@code ItemStacks}
+ * Parses a string representing a single or multiple {@code ItemStack}'s
  * serialized by {@code ItemStackSerializer}.
+ * <p>
+ *     Format: MaterialName[:ByteData][;Amount][{ metaName1: "metaValue1", metaName2: "metaValue2" }]
+ * </p>
  */
 public class ItemStackDeserializer {
 

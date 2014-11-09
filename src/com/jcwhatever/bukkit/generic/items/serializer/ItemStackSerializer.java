@@ -47,6 +47,10 @@ import java.util.regex.Matcher;
  *     can be appended to a {@code StringBuilder} provided in the
  *     constructor.
  * </p>
+ * <p>
+ *     Output Format:
+ *     MaterialName1[:ByteData][;Amount][{ metaName1: "metaValue1", metaName2: "metaValue2" }], MaterialName2...
+ * </p>
  */
 public class ItemStackSerializer {
 
