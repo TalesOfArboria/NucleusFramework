@@ -31,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -66,9 +67,7 @@ public class LoreHandler implements MetaHandler {
                 : new ArrayList<String>(currentLore.size() + 1);
 
         if (currentLore != null) {
-            for (String line : currentLore) {
-                newLore.add(line);
-            }
+            Collections.copy(newLore, currentLore);
         }
 
         newLore.add(meta.getRawData());
