@@ -150,12 +150,18 @@ public class GenericsLib extends GenericsPlugin {
         _regionManager = null; // null to prevent exception if re-enabled
     }
 
+    /*
+     * Register GenericsPlugin instance.
+     */
     void registerPlugin(GenericsPlugin plugin) {
 
         _pluginNameMap.put(plugin.getName().toLowerCase(), plugin);
         _pluginClassMap.put(plugin.getClass(), plugin);
     }
 
+    /*
+     * Unregister GenericsPlugin instance.
+     */
     void unregisterPlugin(GenericsPlugin plugin) {
 
         _pluginNameMap.remove(plugin.getName().toLowerCase());
