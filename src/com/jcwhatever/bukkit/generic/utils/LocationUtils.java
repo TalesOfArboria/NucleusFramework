@@ -93,7 +93,7 @@ public class LocationUtils {
     }
 
     /**
-     * Add noise to a location. Changes tho another point within the specified radius of the original
+     * Add noise to a location. Changes to another point within the specified radius of the original
      * location randomly.
      *
      * @param location  The location.
@@ -152,10 +152,10 @@ public class LocationUtils {
      *     Format of string : x,y,z
      * </p>
      *
-     * @param world   The world the location is for.
+     * @param world        The world the location is for.
      * @param coordinates  The string coordinates.
      *
-     * @return  null if a location could not be parsed.
+     * @return  Null if a location could not be parsed.
      */
     @Nullable
     public static Location parseSimpleLocation(World world, String coordinates) {
@@ -163,9 +163,8 @@ public class LocationUtils {
         PreCon.notNull(coordinates);
 
         String[] parts = TextUtils.PATTERN_COMMA.split(coordinates);
-        if (parts.length != 3) {
-            throw new IllegalArgumentException("Input string must contain only x, y, and z");
-        }
+        if (parts.length != 3)
+            return null;
 
         Double x = parseDouble(parts[0]);
         Double y = parseDouble(parts[1]);
@@ -185,7 +184,7 @@ public class LocationUtils {
      *
      * @param coordinates  The string coordinates.
      *
-     * @return  null if the string could not be parsed.
+     * @return  Null if the string could not be parsed.
      */
     @Nullable
     public static Location parseLocation(String coordinates) {
