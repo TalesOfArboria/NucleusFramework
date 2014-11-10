@@ -45,7 +45,7 @@ public class Rand {
      *
      * @param items  The list to get a random item from.
      *
-     * @param <T>    The list generics type.
+     * @param <T>  The list generics type.
      */
     public static <T> T get(List<T> items) {
         PreCon.notNull(items);
@@ -62,7 +62,7 @@ public class Rand {
      *
      * @param items  The array of items.
      *
-     * @param <T>    The array item type.
+     * @param <T>  The array item type.
      */
     public static <T> T get(T[] items) {
         PreCon.notNull(items);
