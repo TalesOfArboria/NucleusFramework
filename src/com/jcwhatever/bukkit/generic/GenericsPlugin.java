@@ -147,7 +147,7 @@ public abstract class GenericsPlugin extends JavaPlugin {
 
     /**
      * Register all commands defined in the plugin.yml
-     * file to the specified command handler.
+     * file to the specified command executor.
      *
      * @param handler  The handler to register.
      */
