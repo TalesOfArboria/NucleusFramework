@@ -126,7 +126,7 @@ public class TimedMap<K, V> extends HashMap<K, V> {
             current.cancel();
         }
 
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable() {
+        BukkitTask task = Bukkit.getScheduler().runTaskLater(GenericsLib.getLib(), new Runnable() {
 
             @Override
             public void run() {

@@ -64,13 +64,13 @@ public class BukkitPermissionsHandler extends AbstractPermissionsHandler {
     BukkitPermissionsHandler() {
 
         // get permissions data node
-        _dataNode = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("bukkit-permissions"));
+        _dataNode = DataStorage.getStorage(GenericsLib.getLib(), new DataPath("bukkit-permissions"));
         _dataNode.load();
 
         // initialize bukkit listener if its not already initialized
         if (_bukkitListener == null) {
             _bukkitListener = new PermissionListener();
-            Bukkit.getPluginManager().registerEvents(_bukkitListener, GenericsLib.getPlugin());
+            Bukkit.getPluginManager().registerEvents(_bukkitListener, GenericsLib.getLib());
         }
     }
 

@@ -75,7 +75,7 @@ public class BlockUtils {
         location.getBlock().setType(Material.AIR);
 
         // schedule task so the block has a chance to turn into air
-        Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
+        Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
 
             @Override
             public void run() {
@@ -85,7 +85,7 @@ public class BlockUtils {
                         location, startBlock.getType(), startBlock.getData().getData());
 
                 // schedule the removal of the block
-                Scheduler.runTaskLater(GenericsLib.getPlugin(), removeDelayTicks, new Runnable () {
+                Scheduler.runTaskLater(GenericsLib.getLib(), removeDelayTicks, new Runnable () {
 
                     @Override
                     public void run() {

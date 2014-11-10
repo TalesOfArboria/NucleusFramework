@@ -64,7 +64,7 @@ public class PlayerBlockSelect implements Listener {
         if (_listener == null) {
             _listener = new PlayerBlockSelect();
 
-            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getPlugin());
+            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getLib());
         }
 
         // place handler into map

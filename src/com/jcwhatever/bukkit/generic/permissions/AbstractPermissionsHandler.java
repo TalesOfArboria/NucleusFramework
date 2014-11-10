@@ -178,7 +178,7 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
 
                 e.printStackTrace();
                 _canReflect = false;
-                Messenger.warning(GenericsLib.getPlugin(), "Failed to use reflection to add permission. " +
+                Messenger.warning(GenericsLib.getLib(), "Failed to use reflection to add permission. " +
                         "Permissions will be added using Bukkit API which may take longer.");
                 return false;
             }
@@ -194,7 +194,7 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
             e.printStackTrace();
 
             _canReflect = false;
-            Messenger.warning(GenericsLib.getPlugin(), "Failed to use reflection to add permission. " +
+            Messenger.warning(GenericsLib.getLib(), "Failed to use reflection to add permission. " +
                     "Permissions will be added using Bukkit API which may take longer.");
             return false;
         }
@@ -202,7 +202,7 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
             throwable.printStackTrace();
 
             _canReflect = false;
-            Messenger.warning(GenericsLib.getPlugin(), "Failed to use reflection to add permission. " +
+            Messenger.warning(GenericsLib.getLib(), "Failed to use reflection to add permission. " +
                     "Permissions will be added using Bukkit API which may take longer.");
             return false;
         }

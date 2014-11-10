@@ -133,7 +133,7 @@ public abstract class RestorableRegion extends BuildableRegion {
         _isSaving = true;
         onSave();
 
-        Messenger.debug(GenericsLib.getPlugin(), "RestorableRegion: saving data");
+        Messenger.debug(GenericsLib.getLib(), "RestorableRegion: saving data");
 
         for (Chunk chunk : chunks) {
             RegionChunkSnapshot snapshot = new RegionChunkSnapshot(this, chunk);
@@ -148,7 +148,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                     public void run() {
                         _isSaving = false;
                         onSaveComplete();
-                        Messenger.info(GenericsLib.getPlugin(), "Restorable Region save complete.");
+                        Messenger.info(GenericsLib.getLib(), "Restorable Region save complete.");
                     }
                 });
 

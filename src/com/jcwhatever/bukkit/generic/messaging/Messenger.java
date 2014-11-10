@@ -443,7 +443,7 @@ public class Messenger {
     private static IDataNode getImportantData() {
         if (_importantData == null) {
 
-            _importantData = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("important-messages"));
+            _importantData = DataStorage.getStorage(GenericsLib.getLib(), new DataPath("important-messages"));
             _importantData.loadAsync();
         }
 

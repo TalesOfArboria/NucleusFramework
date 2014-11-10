@@ -102,7 +102,7 @@ public class FloatingItem implements IDisposable {
         if (_listener == null) {
             _listener = new BukkitListener();
 
-            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getPlugin());
+            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getLib());
         }
 
         loadSettings();

@@ -933,7 +933,7 @@ public abstract class Region {
             }
         }
 
-        Scheduler.runTaskLater(GenericsLib.getPlugin(), 20, new Runnable() {
+        Scheduler.runTaskLater(GenericsLib.getLib(), 20, new Runnable() {
 
             @Override
             public void run() {

@@ -110,18 +110,18 @@ public class GenericsEventManager implements IDisposable {
 
         if (_isGlobal) {
 
-            Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
+            Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
                 @Override
                 public void run() {
 
-                    Bukkit.getPluginManager().registerEvents(new BlockListener(), GenericsLib.getPlugin());
-                    Bukkit.getPluginManager().registerEvents(new EnchantmentListener(), GenericsLib.getPlugin());
-                    Bukkit.getPluginManager().registerEvents(new EntityListener(), GenericsLib.getPlugin());
-                    Bukkit.getPluginManager().registerEvents(new HangingListener(), GenericsLib.getPlugin());
-                    Bukkit.getPluginManager().registerEvents(new InventoryListener(), GenericsLib.getPlugin());
-                    Bukkit.getPluginManager().registerEvents(new PlayerListener(), GenericsLib.getPlugin());
-                    Bukkit.getPluginManager().registerEvents(new VehicleListener(), GenericsLib.getPlugin());
-                    Bukkit.getPluginManager().registerEvents(new WeatherListener(), GenericsLib.getPlugin());
+                    Bukkit.getPluginManager().registerEvents(new BlockListener(), GenericsLib.getLib());
+                    Bukkit.getPluginManager().registerEvents(new EnchantmentListener(), GenericsLib.getLib());
+                    Bukkit.getPluginManager().registerEvents(new EntityListener(), GenericsLib.getLib());
+                    Bukkit.getPluginManager().registerEvents(new HangingListener(), GenericsLib.getLib());
+                    Bukkit.getPluginManager().registerEvents(new InventoryListener(), GenericsLib.getLib());
+                    Bukkit.getPluginManager().registerEvents(new PlayerListener(), GenericsLib.getLib());
+                    Bukkit.getPluginManager().registerEvents(new VehicleListener(), GenericsLib.getLib());
+                    Bukkit.getPluginManager().registerEvents(new WeatherListener(), GenericsLib.getLib());
                 }
             });
         }

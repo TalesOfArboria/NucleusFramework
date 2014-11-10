@@ -60,16 +60,16 @@ public class ScriptApiRepo {
     private static Map<String, ApiPackage>  _scriptApis = new HashMap<>(50);
 
     static {
-        registerApiType(GenericsLib.getPlugin(), ScriptApiBukkitEvents.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiEconomy.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiInventory.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiItemBank.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiJail.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiMsg.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiPermissions.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiSounds.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiDepends.class);
-        registerApiType(GenericsLib.getPlugin(), ScriptApiRand.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiBukkitEvents.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiEconomy.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiInventory.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiItemBank.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiJail.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiMsg.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiPermissions.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiSounds.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiDepends.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiRand.class);
     }
 
     /**

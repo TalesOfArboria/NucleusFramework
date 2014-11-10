@@ -51,7 +51,7 @@ public class GenericsLib extends GenericsPlugin {
     /**
      * Get the {@code GenericsLib} plugin instance.
      */
-    public static GenericsLib getPlugin() {
+    public static GenericsLib getLib() {
         return _instance;
     }
 

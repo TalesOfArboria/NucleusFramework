@@ -287,7 +287,7 @@ public class TimedSet<T> extends HashSet<T> {
             task.cancel();
         }
 
-        task = Bukkit.getScheduler().runTaskLater(GenericsLib.getPlugin(), new Runnable() {
+        task = Bukkit.getScheduler().runTaskLater(GenericsLib.getLib(), new Runnable() {
 
             @Override
             public void run() {

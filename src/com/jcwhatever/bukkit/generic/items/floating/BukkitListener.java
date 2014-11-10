@@ -108,7 +108,7 @@ class BukkitListener implements Listener {
         }
 
         // schedule respawn
-        Scheduler.runTaskLater(GenericsLib.getPlugin(), item.getRespawnTimeSeconds() * 20, new Runnable() {
+        Scheduler.runTaskLater(GenericsLib.getLib(), item.getRespawnTimeSeconds() * 20, new Runnable() {
             @Override
             public void run() {
                 if (item.isDisposed())
