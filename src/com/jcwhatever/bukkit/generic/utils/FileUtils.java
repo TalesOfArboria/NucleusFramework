@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -42,16 +43,6 @@ import javax.annotation.Nullable;
 public class FileUtils {
 
     private FileUtils() {}
-
-    /**
-     * UTF-8 character set string
-     */
-    public static final String CHARSET_UTF8 = "UTF-8";
-
-    /**
-     * UTF-16 character set string
-     */
-    public static final String CHARSET_UTF16 = "UTF-16";
 
     /**
      * Specifies how sub directories are traversed when
@@ -180,10 +171,10 @@ public class FileUtils {
      * @throws java.lang.IllegalArgumentException
      */
     @Nullable
-    public static String scanTextFile(Class<?> cls, String resourcePath, String charSet) {
+    public static String scanTextFile(Class<?> cls, String resourcePath, Charset charSet) {
         PreCon.notNull(cls);
         PreCon.notNullOrEmpty(resourcePath);
-        PreCon.notNullOrEmpty(charSet);
+        PreCon.notNull(charSet);
 
         InputStream input = cls.getResourceAsStream(resourcePath);
         if (input == null)
@@ -191,7 +182,7 @@ public class FileUtils {
 
         StringBuilder result = new StringBuilder(250);
 
-        Scanner scanner = new Scanner(input, charSet);
+        Scanner scanner = new Scanner(input, charSet.name());
 
         while (scanner.hasNextLine()) {
             result.append(scanner.nextLine());
@@ -217,9 +208,9 @@ public class FileUtils {
      * @throws java.lang.IllegalArgumentException
      */
     @Nullable
-    public static String scanTextFile(File file, String charSet) {
+    public static String scanTextFile(File file, Charset charSet) {
         PreCon.notNull(file);
-        PreCon.notNullOrEmpty(charSet);
+        PreCon.notNull(charSet);
 
         InputStream input = null;
 
@@ -234,7 +225,7 @@ public class FileUtils {
 
         StringBuilder result = new StringBuilder((int)file.length());
 
-        Scanner scanner = new Scanner(input, charSet);
+        Scanner scanner = new Scanner(input, charSet.name());
 
         while (scanner.hasNextLine()) {
             result.append(scanner.nextLine());
