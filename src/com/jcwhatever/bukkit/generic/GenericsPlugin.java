@@ -116,6 +116,8 @@ public abstract class GenericsPlugin extends JavaPlugin {
 
     @Override
     public final void onDisable() {
+
+        GenericsLib.getLib().unregisterPlugin(this);
         onDisablePlugin();
     }
 

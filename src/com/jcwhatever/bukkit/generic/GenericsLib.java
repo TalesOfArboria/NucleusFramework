@@ -131,4 +131,9 @@ public class GenericsLib extends GenericsPlugin {
 
         _plugins.put(plugin.getName().toLowerCase(), plugin);
     }
+
+    void unregisterPlugin(GenericsPlugin plugin) {
+
+        _plugins.remove(plugin.getName().toLowerCase());
+    }
 }
