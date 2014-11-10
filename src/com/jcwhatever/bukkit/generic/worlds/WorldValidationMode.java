@@ -26,12 +26,12 @@
 package com.jcwhatever.bukkit.generic.worlds;
 
 /**
- * Specify how the world manager validates world.
+ * Specify how the world manager validates a world.
  */
 public enum WorldValidationMode {
 
     /**
-     * Worlds are blacklisted/
+     * Worlds are blacklisted.
      */
     BLACKLIST,
 
