@@ -44,7 +44,7 @@ import java.util.Set;
 public abstract class GenericsPlugin extends JavaPlugin {
 
     private LanguageManager _languageManager;
-    private IDataNode _settings;
+    private IDataNode _dataNode;
     private boolean _isDebugging;
 
     /**
@@ -88,11 +88,26 @@ public abstract class GenericsPlugin extends JavaPlugin {
      */
     public abstract String getConsolePrefix();
 
+    /**
+     * Get the plugins data node.
+     */
+    public IDataNode getDataNode() {
+
+        return _dataNode;
+    }
+
+    /**
+     * Get the plugins language manager.
+     */
+    public LanguageManager getLanguageManager() {
+        return _languageManager;
+    }
+
     @Override
     public final void onEnable() {
         onPreEnable();
 
-        loadConfigFile();
+        loadDataNode();
         _languageManager = new LanguageManager(this);
 
         onEnablePlugin();
@@ -128,21 +143,6 @@ public abstract class GenericsPlugin extends JavaPlugin {
     protected abstract void onDisablePlugin();
 
     /**
-     * Get the plugins data node.
-     */
-    public IDataNode getDataNode() {
-
-        return _settings;
-    }
-
-    /**
-     * Get the plugins language manager.
-     */
-    public LanguageManager getLanguageManager() {
-        return _languageManager;
-    }
-
-    /**
      * Register all commands defined in the plugin.yml
      * file to the specified command handler.
      *
@@ -168,20 +168,20 @@ public abstract class GenericsPlugin extends JavaPlugin {
     }
 
     /*
-     * Load the plugins config file.
+     * Load the plugins data node.
      */
-    private void loadConfigFile() {
+    private void loadDataNode() {
         File dir = getDataFolder();
         if (!dir.exists() && !dir.mkdirs()) {
-            throw new RuntimeException("Failed to crate data folders.");
+            throw new RuntimeException("Failed to create data folders.");
         }
 
-        _settings = DataStorage.getStorage(this, new DataPath("config"));
-        if (!_settings.load()) {
+        _dataNode = DataStorage.getStorage(this, new DataPath("config"));
+        if (!_dataNode.load()) {
             getServer().getPluginManager().disablePlugin(this);
-            throw new RuntimeException("The config-file could not be loaded!");
+            throw new RuntimeException("The plugins data node (config) could not be loaded!");
         }
 
-        _isDebugging = _settings.getBoolean("debug");
+        _isDebugging = _dataNode.getBoolean("debug");
     }
 }
