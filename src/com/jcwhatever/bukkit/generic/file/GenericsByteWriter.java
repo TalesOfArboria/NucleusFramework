@@ -229,7 +229,7 @@ public class GenericsByteWriter extends OutputStream {
      *
      * @param enumConstant  The enum constant.
      *
-     * @param <T>           The enum type.
+     * @param <T>  The enum type.
      *
      * @throws IOException
      */
