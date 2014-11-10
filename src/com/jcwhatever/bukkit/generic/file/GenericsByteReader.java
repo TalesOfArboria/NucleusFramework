@@ -28,19 +28,20 @@ package com.jcwhatever.bukkit.generic.file;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Read bytes from a stream. Bytes from the stream need to have been
@@ -201,6 +202,9 @@ public class GenericsByteReader extends InputStream {
      */
     public float getFloat() throws IOException {
         String str = getString();
+        if (str == null || str.isEmpty())
+            throw new RuntimeException("Failed to read float value.");
+
         return Float.parseFloat(str);
     }
 
@@ -211,6 +215,9 @@ public class GenericsByteReader extends InputStream {
      */
     public double getDouble() throws IOException {
         String str = getString();
+        if (str == null || str.isEmpty())
+            throw new RuntimeException("Failed to read double value.");
+
         return Double.parseDouble(str);
     }
 
@@ -224,7 +231,7 @@ public class GenericsByteReader extends InputStream {
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
         String constantName = getString();
         if (constantName == null) {
-            throw new IllegalStateException(
+            throw new RuntimeException(
                     "Could not find an enum: " + enumClass.getName());
         }
 
