@@ -25,14 +25,13 @@
 
 package com.jcwhatever.bukkit.generic.file;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandler;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandlerManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -40,9 +39,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import javax.annotation.Nullable;
 
 /**
@@ -274,43 +272,22 @@ public class GenericsByteWriter extends OutputStream {
 
         // write basic data
         write(itemStack.getType());
-        write(itemStack.getData().getData());
-        write(itemStack.getAmount());
         write((int)itemStack.getDurability());
+        write(itemStack.getAmount());
 
-        Map<Enchantment, Integer> enchantMap = itemStack.getEnchantments();
+        List<MetaHandler> handlers = MetaHandlerManager.getHandlers();
 
-        // write enchantments
-        write(enchantMap.size());
-        for (Entry<Enchantment, Integer> enchantmentIntegerEntry : enchantMap.entrySet()) {
-            Integer level = enchantmentIntegerEntry.getValue();
+        List<ItemMetaObject> metaObjects = new ArrayList<>(10);
 
-            write(enchantmentIntegerEntry.getKey().getName(), StandardCharsets.UTF_8);
-            write(level);
+        for (MetaHandler handler : handlers) {
+            metaObjects.addAll(handler.getMeta(itemStack));
         }
 
-        ItemMeta meta = itemStack.getItemMeta();
+        write(metaObjects.size());
 
-        // write display name
-        write(meta.getDisplayName(), StandardCharsets.UTF_16);
-
-        // write lore
-        List<String> lore = meta.getLore();
-        if (lore == null) {
-            write(0);
-        }
-        else {
-            write(lore.size());
-
-            for (String line : lore) {
-                write(line, StandardCharsets.UTF_16);
-            }
-        }
-
-        Color color = ItemStackHelper.getColor(itemStack);
-        write(color != null);
-        if (color != null) {
-            write(color.asRGB());
+        for (ItemMetaObject metaObject : metaObjects) {
+            write(metaObject.getName(), StandardCharsets.UTF_8);
+            write(metaObject.getRawData(), StandardCharsets.UTF_16);
         }
     }
 

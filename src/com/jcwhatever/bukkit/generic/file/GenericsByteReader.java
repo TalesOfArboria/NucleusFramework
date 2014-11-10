@@ -25,7 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.file;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandler;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandlerManager;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -33,7 +35,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,8 +42,6 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -290,6 +289,8 @@ public class GenericsByteReader extends InputStream {
      * Get the next group of bytes as an item stack.
      *
      * @throws IOException
+     *
+     * @throws RuntimeException If fail to read meta
      */
     @Nullable
     public ItemStack getItemStack() throws IOException {
@@ -300,49 +301,30 @@ public class GenericsByteReader extends InputStream {
 
         // read basic data
         Material type = getEnum(Material.class);
-        byte data = getByte();
-        int amount = getInteger();
         short durabality = (short)getInteger();
+        int amount = getInteger();
 
-        ItemStack result = new ItemStack(type, amount, durabality, data);
+        ItemStack result = new ItemStack(type, amount, durabality);
 
-        // read enchantments
-        int enchantSize = getInteger();
+        int totalMeta = getInteger();
 
-        for (int i=0; i < enchantSize; i++) {
-            String enchantName = getString(StandardCharsets.UTF_8);
-            if (enchantName == null || enchantName.isEmpty())
+        for (int i=0; i < totalMeta; i++) {
+
+            String metaName = getString(StandardCharsets.UTF_8);
+            if (metaName == null)
+                throw new RuntimeException("Failed to read meta name of entry #" + i);
+
+            String metaData = getString(StandardCharsets.UTF_16);
+            if (metaData == null)
+                throw new RuntimeException("Failed to read meta data of entry #" + i);
+
+            MetaHandler handler = MetaHandlerManager.getHandler(metaName);
+            if (handler == null)
                 continue;
 
-            int level = getInteger();
+            ItemMetaObject meta = new ItemMetaObject(metaName, metaData);
 
-            ItemStackHelper.addEnchantment(result, enchantName, level);
-        }
-
-        ItemMeta meta = result.getItemMeta();
-
-        // read display name
-        String displayName = getString(StandardCharsets.UTF_16);
-        if (displayName != null) {
-            meta.setDisplayName(displayName);
-        }
-
-        // read lore
-        int loreSize = getInteger();
-        if (loreSize > 0) {
-            List<String> lore = new ArrayList<>(loreSize);
-
-            for (int i = 0; i < loreSize; i++) {
-                lore.add(getString(StandardCharsets.UTF_16));
-            }
-
-            meta.setLore(lore);
-        }
-
-        // read color
-        boolean hasColor = getBoolean();
-        if (hasColor) {
-            ItemStackHelper.setColor(result, getInteger());
+            handler.apply(result, meta);
         }
 
         return result;
