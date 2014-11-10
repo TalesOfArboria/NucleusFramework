@@ -30,12 +30,12 @@ import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * GenericsLib Bukkit plugin.
@@ -43,7 +43,8 @@ import java.util.Map;
 public class GenericsLib extends GenericsPlugin {
 
     private static GenericsLib _instance;
-    private static Map<String, GenericsPlugin> _plugins = new HashMap<>(25);
+    private static Map<String, GenericsPlugin> _pluginNameMap = new HashMap<>(25);
+    private static Map<Class<? extends GenericsPlugin>, GenericsPlugin> _pluginClassMap = new HashMap<>(25);
 
     private JailManager _jailManager;
     private RegionManager _regionManager;
@@ -59,19 +60,41 @@ public class GenericsLib extends GenericsPlugin {
      * Get a Bukkit plugin that implements {@code GenericsPlugin} by name.
      *
      * @param name  The name of the plugin.
+     *
+     * @return  Null if not found.
      */
     @Nullable
-    public static GenericsPlugin getPlugin(String name) {
+    public static GenericsPlugin getGenericsPlugin(String name) {
         PreCon.notNullOrEmpty(name);
 
-        return _plugins.get(name.toLowerCase());
+        return _pluginNameMap.get(name.toLowerCase());
+    }
+
+    /**
+     * Get a Bukkit plugin that implements {@code GenericsPlugin}.
+     *
+     * @param pluginClass  The plugin class.
+     *
+     * @param <T>  The plugin type.
+     *
+     * @return  Null if not found.
+     */
+    @Nullable
+    public static <T extends GenericsPlugin> T getGenericsPlugin(Class<T> pluginClass) {
+        PreCon.notNull(pluginClass);
+
+        GenericsPlugin plugin = _pluginClassMap.get(pluginClass);
+        if (plugin == null)
+            return null;
+
+        return pluginClass.cast(plugin);
     }
 
     /**
      * Get all Bukkit plugins that implement {@code GenericsPlugin}.
      */
-    public static List<GenericsPlugin> getPlugins() {
-        return new ArrayList<>(_plugins.values());
+    public static List<GenericsPlugin> getGenericsPlugins() {
+        return new ArrayList<>(_pluginNameMap.values());
     }
 
     /**
@@ -129,11 +152,13 @@ public class GenericsLib extends GenericsPlugin {
 
     void registerPlugin(GenericsPlugin plugin) {
 
-        _plugins.put(plugin.getName().toLowerCase(), plugin);
+        _pluginNameMap.put(plugin.getName().toLowerCase(), plugin);
+        _pluginClassMap.put(plugin.getClass(), plugin);
     }
 
     void unregisterPlugin(GenericsPlugin plugin) {
 
-        _plugins.remove(plugin.getName().toLowerCase());
+        _pluginNameMap.remove(plugin.getName().toLowerCase());
+        _pluginClassMap.remove(plugin.getClass());
     }
 }
