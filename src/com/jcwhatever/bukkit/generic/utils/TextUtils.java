@@ -121,8 +121,8 @@ public class TextUtils {
      * The string must begin with a letter and use only
      * alphanumeric characters and underscores.
      *
-     * The string must also be more than 1 character in length
-     * and be no more than 16 characters long.
+     * <p>The string must also be at least 1 character in length
+     * and be no more than 16 characters long.</p>
      *
      * @param name  The name to check
      */
@@ -135,7 +135,7 @@ public class TextUtils {
      * The string must begin with a letter and use only
      * alphanumeric characters and underscores.
      *
-     * The string must also be more than 1 character in length.
+     * <p>The string must also be at least 1 character in length.</p>
      *
      * @param name    The name to check
      * @param maxLen  The max length of the name
@@ -197,6 +197,7 @@ public class TextUtils {
 
     /**
      * Pad left side of specified string with spaces
+     *
      * @param s       The string to pad
      * @param length  The number of spaces to pad with
      */
@@ -205,32 +206,11 @@ public class TextUtils {
     }
 
     /**
-     * Pad the left side of string created from the specified number
-     * with spaces
-     *
-     * @param s       The number to convert to string and pad
-     * @param length  The number of spaces to pad with
-     */
-    public static String padLeft(int s, int length) {
-        return TextUtils.padLeft(Integer.toString(s), length, ' ');
-    }
-
-    /**
-     * Pad the left side of string created from the specified number
-     * with spaces
-     *
-     * @param s       The number to convert to string and pad
-     * @param length  The number of spaces to pad with
-     */
-    public static String padLeft(double s, int length) {
-        return TextUtils.padLeft(Double.toString(s), length, ' ');
-    }
-
-    /**
      * Reduce the number of characters in a string by removing
      * characters from the end.
-     * Returns input string if input string length is
-     * less than or equal to 16 characters.
+     *
+     * <p>Returns input string if input string length is
+     * less than or equal to 16 characters.</p>
      *
      * @param s       The string to truncate
      * @param length  The new length of the string.
@@ -251,7 +231,7 @@ public class TextUtils {
      * Returns input string if input string length is
      * less than or equal to 16 characters.
      *
-     * @param s       The string to truncate
+     * @param s  The string to truncate
      */
     public static String truncate(String s) {
         return TextUtils.truncate(s, 15);
@@ -353,8 +333,6 @@ public class TextUtils {
         }
         return buffy.substring(separator.length());
     }
-
-
 
     /**
      * Concatenates an array in a single string using the
@@ -658,7 +636,6 @@ public class TextUtils {
      * Determine if specified character is an english vowel.
      *
      * @param ch  The character to check
-     * @return
      */
     public static boolean isVowel(char ch) {
         return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' ||
@@ -689,8 +666,8 @@ public class TextUtils {
      * Format text string by replacing placeholders with the information
      * specified.
      *
-     * @param msg     The message to format plugin info into.
-     * @param formats Formatting information.
+     * @param msg      The message to format plugin info into.
+     * @param formats  Formatting information.
      */
     public static String formatCustom(String msg, FormatEntry... formats) {
         PreCon.notNull(msg);
@@ -776,7 +753,7 @@ public class TextUtils {
      *
      * <p>Placeholders can only be indexed to 0-9</p>
      *
-     * <p>Color can be specified using {@code ChatColor} color names in curly brackets.
+     * <p>Color can be specified using {@link TextColor} enum names in curly brackets.
      * (i.e. {GREEN})</p>
      *
      * @param template  An object whose toString method yields the message template.
@@ -795,13 +772,15 @@ public class TextUtils {
      *
      * <p>Placeholders can only be indexed from 0-9</p>
      *
-     * <p>Color can be specified using {@link TextColor} color names in curly brackets.
+     * <p>Color can be specified using {@link TextColor} names in curly brackets.
      * (i.e. {GREEN})</p>
      *
      * @param msg     The message to format.
      * @param params  The object to format into the message.
      */
     public static String format(String msg, Object... params) {
+        PreCon.notNull(msg);
+        PreCon.notNull(params);
 
         if (msg.indexOf('{') == -1)
             return msg; // finished
@@ -814,9 +793,8 @@ public class TextUtils {
             }
         }
 
-        if (params == null || params.length == 0)
+        if (params.length == 0)
             return msg; // finished
-
 
         boolean hasSplitForColoredParams = false;
 
