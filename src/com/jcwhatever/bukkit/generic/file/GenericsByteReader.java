@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -167,12 +169,24 @@ public class GenericsByteReader extends InputStream {
     }
 
     /**
-     * Get the next group of bytes as a string.
+     * Get the next group of bytes as a UTF-16 string.
      *
      * @throws IOException
      */
     @Nullable
     public String getString() throws IOException {
+        return getString(StandardCharsets.UTF_16);
+    }
+
+    /**
+     * Get the next group of bytes as a string.
+     *
+     * @param charset  The character set encoding to use.
+     *
+     * @throws IOException
+     */
+    @Nullable
+    public String getString(Charset charset) throws IOException {
 
         resetBooleanBuffer();
 
@@ -186,13 +200,12 @@ public class GenericsByteReader extends InputStream {
         if (len >= _buffer.length) {
             byte[] buffer = new byte[len];
             _bytesRead += (long) _stream.read(buffer, 0, len);
-            return new String(buffer, 0, len, "UTF-8");
+            return new String(buffer, 0, len, charset);
         }
         else {
             _bytesRead += (long) _stream.read(_buffer, 0, len);
-            return new String(_buffer, 0, len, "UTF-8");
+            return new String(_buffer, 0, len, charset);
         }
-
     }
 
     /**
@@ -204,7 +217,7 @@ public class GenericsByteReader extends InputStream {
      * @throws NumberFormatException If the value from the stream cannot be parsed to a float.
      */
     public float getFloat() throws IOException {
-        String str = getString();
+        String str = getString(StandardCharsets.UTF_8);
         if (str == null || str.isEmpty())
             throw new RuntimeException("Failed to read float value.");
 
@@ -220,7 +233,7 @@ public class GenericsByteReader extends InputStream {
      * @throws NumberFormatException If the value from the stream cannot be parsed to a double.
      */
     public double getDouble() throws IOException {
-        String str = getString();
+        String str = getString(StandardCharsets.UTF_8);
         if (str == null || str.isEmpty())
             throw new RuntimeException("Failed to read double value.");
 
@@ -240,7 +253,7 @@ public class GenericsByteReader extends InputStream {
      * @throws IllegalStateException If the enum value is not valid for the specified enum type.
      */
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
-        String constantName = getString();
+        String constantName = getString(StandardCharsets.UTF_8);
         if (constantName == null) {
             throw new RuntimeException(
                     "Could not find an enum: " + enumClass.getName());
@@ -263,7 +276,7 @@ public class GenericsByteReader extends InputStream {
      */
     public Location getLocation() throws IOException {
 
-        String worldName = getString();
+        String worldName = getString(StandardCharsets.UTF_8);
         double x = getDouble();
         double y = getDouble();
         double z = getDouble();
@@ -297,7 +310,7 @@ public class GenericsByteReader extends InputStream {
         int enchantSize = getInteger();
 
         for (int i=0; i < enchantSize; i++) {
-            String enchantName = getString();
+            String enchantName = getString(StandardCharsets.UTF_8);
             if (enchantName == null || enchantName.isEmpty())
                 continue;
 
@@ -309,7 +322,7 @@ public class GenericsByteReader extends InputStream {
         ItemMeta meta = result.getItemMeta();
 
         // read display name
-        String displayName = getString();
+        String displayName = getString(StandardCharsets.UTF_16);
         if (displayName != null) {
             meta.setDisplayName(displayName);
         }
@@ -320,7 +333,7 @@ public class GenericsByteReader extends InputStream {
             List<String> lore = new ArrayList<>(loreSize);
 
             for (int i = 0; i < loreSize; i++) {
-                lore.add(getString());
+                lore.add(getString(StandardCharsets.UTF_16));
             }
 
             meta.setLore(lore);
@@ -339,7 +352,8 @@ public class GenericsByteReader extends InputStream {
      * Get an {@code IGenericsSerializable} object.
      *
      * @param objectClass  The object class.
-     * @param <T>          The object type.
+     *
+     * @param <T>  The object type.
      *
      * @throws IllegalAccessException
      * @throws InstantiationException
@@ -366,7 +380,8 @@ public class GenericsByteReader extends InputStream {
      * Deserialize an object from the next set of bytes.
      *
      * @param objectClass  The object class.
-     * @param <T>          The object type.
+     *
+     * @param <T>  The object type.
      *
      * @return The deserialized object or null if the object was written as null.
      *

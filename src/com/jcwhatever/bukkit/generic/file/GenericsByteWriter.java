@@ -27,20 +27,23 @@ package com.jcwhatever.bukkit.generic.file;
 
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.annotation.Nullable;
 
 /**
  * Write bytes to a stream. In order to read the stream
@@ -58,7 +61,7 @@ public class GenericsByteWriter extends OutputStream {
 
 
     /**
-     * Cosntructor.
+     * Constructor.
      *
      * @param outputStream  The output stream.
      */
@@ -162,7 +165,7 @@ public class GenericsByteWriter extends OutputStream {
      * @throws IOException
      */
     public void write(float floatValue) throws IOException {
-        write(String.valueOf(floatValue));
+        write(String.valueOf(floatValue), StandardCharsets.UTF_8);
     }
 
     /**
@@ -173,17 +176,29 @@ public class GenericsByteWriter extends OutputStream {
      * @throws IOException
      */
     public void write(double doubleValue) throws IOException {
-        write(String.valueOf(doubleValue));
+        write(String.valueOf(doubleValue), StandardCharsets.UTF_8);
     }
 
     /**
-     * Write a text string.
+     * Write a text string using UTF-16 encoding.
      *
      * @param text  The text to write. Can be null.
      *
      * @throws IOException
      */
     public void write(@Nullable String text) throws IOException {
+        write(text, StandardCharsets.UTF_16);
+    }
+
+    /**
+     * Write a text string.
+     *
+     * @param text     The text to write. Can be null.
+     * @param charset  The charset encoding to use.
+     *
+     * @throws IOException
+     */
+    public void write(@Nullable String text, Charset charset) throws IOException {
 
         // write buffered booleans
         writeBooleans();
@@ -199,7 +214,7 @@ public class GenericsByteWriter extends OutputStream {
             return;
         }
 
-        byte[] bytes = text.getBytes("UTF-8");
+        byte[] bytes = text.getBytes(charset);
 
         // write string byte length
         write(bytes.length);
@@ -223,7 +238,7 @@ public class GenericsByteWriter extends OutputStream {
     public <T extends Enum<T>> void write(T enumConstant) throws IOException {
         PreCon.notNull(enumConstant);
 
-        write(enumConstant.name());
+        write(enumConstant.name(), StandardCharsets.UTF_8);
     }
 
     /**
@@ -236,7 +251,7 @@ public class GenericsByteWriter extends OutputStream {
     public void write(Location location) throws IOException {
         PreCon.notNull(location);
 
-        write(location.getWorld().getName());
+        write(location.getWorld().getName(), StandardCharsets.UTF_8);
         write(location.getX());
         write(location.getY());
         write(location.getZ());
@@ -270,14 +285,14 @@ public class GenericsByteWriter extends OutputStream {
         for (Entry<Enchantment, Integer> enchantmentIntegerEntry : enchantMap.entrySet()) {
             Integer level = enchantmentIntegerEntry.getValue();
 
-            write(enchantmentIntegerEntry.getKey().getName());
+            write(enchantmentIntegerEntry.getKey().getName(), StandardCharsets.UTF_8);
             write(level);
         }
 
         ItemMeta meta = itemStack.getItemMeta();
 
         // write display name
-        write(meta.getDisplayName());
+        write(meta.getDisplayName(), StandardCharsets.UTF_16);
 
         // write lore
         List<String> lore = meta.getLore();
@@ -288,7 +303,7 @@ public class GenericsByteWriter extends OutputStream {
             write(lore.size());
 
             for (String line : lore) {
-                write(line);
+                write(line, StandardCharsets.UTF_16);
             }
         }
 
@@ -303,7 +318,8 @@ public class GenericsByteWriter extends OutputStream {
      * Serialize an {@code IGenericsSerializable} object.
      *
      * @param object  The object to serialize.
-     * @param <T>     The object type.
+     *
+     * @param <T>  The object type.
      *
      * @throws IOException
      */
