@@ -191,7 +191,6 @@ public class EnumUtils {
      * @return  The default value if the constant name is not found.
      */
     @Nullable
-    @SuppressWarnings("rawtypes")
     public static Enum getRawEnum(String constantName, Class enumClass, @Nullable Enum def) {
         PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
@@ -220,7 +219,6 @@ public class EnumUtils {
      * @return  The default value if the constant name is not found.
      */
     @Nullable
-    @SuppressWarnings("rawtypes")
     public static Enum searchRawEnum(String constantName, Class enumClass, @Nullable Enum def) {
         PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
