@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.file;
 
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandler;
-import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandlerManager;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Location;
@@ -275,7 +275,7 @@ public class GenericsByteWriter extends OutputStream {
         write((int)itemStack.getDurability());
         write(itemStack.getAmount());
 
-        List<MetaHandler> handlers = MetaHandlerManager.getHandlers();
+        List<MetaHandler> handlers = ItemMetaHandlerManager.getHandlers();
 
         List<ItemMetaObject> metaObjects = new ArrayList<>(10);
 

@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Manages {@code ItemStack} meta data handlers.
  */
-public class MetaHandlerManager {
+public class ItemMetaHandlerManager {
 
     private static final Map<String, MetaHandler> _handlers = new HashMap<>(20);
 

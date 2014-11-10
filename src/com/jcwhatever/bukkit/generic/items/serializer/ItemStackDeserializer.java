@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.items.serializer;
 import com.jcwhatever.bukkit.generic.converters.ValueConverters;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandler;
-import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandlerManager;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Material;
@@ -155,7 +155,7 @@ public class ItemStackDeserializer {
 
         for (ItemMetaObject meta : metaObjects) {
 
-            MetaHandler handler = MetaHandlerManager.getHandler(meta.getName());
+            MetaHandler handler = ItemMetaHandlerManager.getHandler(meta.getName());
             if (handler == null)
                 continue;
 

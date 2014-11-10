@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.file;
 
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandler;
-import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandlerManager;
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -301,10 +301,10 @@ public class GenericsByteReader extends InputStream {
 
         // read basic data
         Material type = getEnum(Material.class);
-        short durabality = (short)getInteger();
+        short durability = (short)getInteger();
         int amount = getInteger();
 
-        ItemStack result = new ItemStack(type, amount, durabality);
+        ItemStack result = new ItemStack(type, amount, durability);
 
         int totalMeta = getInteger();
 
@@ -318,7 +318,7 @@ public class GenericsByteReader extends InputStream {
             if (metaData == null)
                 throw new RuntimeException("Failed to read meta data of entry #" + i);
 
-            MetaHandler handler = MetaHandlerManager.getHandler(metaName);
+            MetaHandler handler = ItemMetaHandlerManager.getHandler(metaName);
             if (handler == null)
                 continue;
 
