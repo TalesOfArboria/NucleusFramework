@@ -199,6 +199,9 @@ public class GenericsByteReader extends InputStream {
      * Get the next group of bytes as a float value.
      *
      * @throws IOException
+     *
+     * @throws RuntimeException If the string value from the stream is null or empty.
+     * @throws NumberFormatException If the value from the stream cannot be parsed to a float.
      */
     public float getFloat() throws IOException {
         String str = getString();
@@ -212,6 +215,9 @@ public class GenericsByteReader extends InputStream {
      * Get the next group of bytes as a double value.
      *
      * @throws IOException
+     *
+     * @throws RuntimeException If the double value from the stream is null or empty.
+     * @throws NumberFormatException If the value from the stream cannot be parsed to a double.
      */
     public double getDouble() throws IOException {
         String str = getString();
@@ -226,7 +232,12 @@ public class GenericsByteReader extends InputStream {
      *
      * @param enumClass  The enum class.
      *
-     * @param <T>        The enum type.
+     * @param <T>  The enum type.
+     *
+     * @throws IOException
+     *
+     * @throws RuntimeException If the enum value from the stream is null.
+     * @throws IllegalStateException If the enum value is not valid for the specified enum type.
      */
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
         String constantName = getString();
@@ -333,6 +344,7 @@ public class GenericsByteReader extends InputStream {
      * @throws IllegalAccessException
      * @throws InstantiationException
      * @throws IOException
+     * @throws ClassNotFoundException
      */
     @Nullable
     public <T extends IGenericsSerializable> T getGenerics(Class<T> objectClass)
@@ -359,6 +371,7 @@ public class GenericsByteReader extends InputStream {
      * @return The deserialized object or null if the object was written as null.
      *
      * @throws IOException
+     * @throws ClassNotFoundException
      */
     @Nullable
     public <T extends Serializable> T getObject(Class<T> objectClass) throws IOException, ClassNotFoundException {
