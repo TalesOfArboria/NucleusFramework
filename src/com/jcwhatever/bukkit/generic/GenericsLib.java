@@ -29,6 +29,13 @@ import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.sun.istack.internal.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * GenericsLib Bukkit plugin.
@@ -36,6 +43,7 @@ import com.jcwhatever.bukkit.generic.regions.RegionManager;
 public class GenericsLib extends GenericsPlugin {
 
     private static GenericsLib _instance;
+    private static Map<String, GenericsPlugin> _plugins = new HashMap<>(25);
 
     private JailManager _jailManager;
     private RegionManager _regionManager;
@@ -45,6 +53,25 @@ public class GenericsLib extends GenericsPlugin {
      */
     public static GenericsLib getPlugin() {
         return _instance;
+    }
+
+    /**
+     * Get a Bukkit plugin that implements {@code GenericsPlugin} by name.
+     *
+     * @param name  The name of the plugin.
+     */
+    @Nullable
+    public static GenericsPlugin getPlugin(String name) {
+        PreCon.notNullOrEmpty(name);
+
+        return _plugins.get(name.toLowerCase());
+    }
+
+    /**
+     * Get all Bukkit plugins that implement {@code GenericsPlugin}.
+     */
+    public static List<GenericsPlugin> getPlugins() {
+        return new ArrayList<>(_plugins.values());
     }
 
     /**
@@ -98,5 +125,10 @@ public class GenericsLib extends GenericsPlugin {
     @Override
     protected void onDisablePlugin() {
         _regionManager = null; // null to prevent exception if re-enabled
+    }
+
+    void registerPlugin(GenericsPlugin plugin) {
+
+        _plugins.put(plugin.getName().toLowerCase(), plugin);
     }
 }

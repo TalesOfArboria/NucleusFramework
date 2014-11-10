@@ -109,6 +109,7 @@ public abstract class GenericsPlugin extends JavaPlugin {
 
         loadDataNode();
         _languageManager = new LanguageManager(this);
+        GenericsLib.getPlugin().registerPlugin(this);
 
         onEnablePlugin();
     }
