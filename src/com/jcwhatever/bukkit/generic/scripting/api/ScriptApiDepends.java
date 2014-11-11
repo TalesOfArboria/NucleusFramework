@@ -145,7 +145,7 @@ public class ScriptApiDepends extends GenericsScriptApi {
 
                     DependsWrapper wrapper = iterator.next();
 
-                    if (wrapper.getTotalChecks() > 15 ||
+                    if (wrapper.getTotalChecks() > 60 ||
                             runDepends(wrapper.getPluginName(), wrapper.getRunnable())) {
 
                         iterator.remove();
