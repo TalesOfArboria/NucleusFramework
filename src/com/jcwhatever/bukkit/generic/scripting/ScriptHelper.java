@@ -36,6 +36,7 @@ import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiJail;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiMsg;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiPermissions;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiRand;
+import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiScheduler;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiSounds;
 import com.jcwhatever.bukkit.generic.utils.FileUtils;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
@@ -95,6 +96,7 @@ public class ScriptHelper {
         api.add(new ScriptApiSounds(plugin));
         api.add(new ScriptApiDepends(plugin));
         api.add(new ScriptApiRand(plugin));
+        api.add(new ScriptApiScheduler(plugin));
 
         if (manager != null)
             api.add(new ScriptApiInclude(plugin, manager));

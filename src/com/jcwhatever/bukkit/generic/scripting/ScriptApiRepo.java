@@ -36,6 +36,7 @@ import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiJail;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiMsg;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiPermissions;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiRand;
+import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiScheduler;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiSounds;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -70,6 +71,7 @@ public class ScriptApiRepo {
         registerApiType(GenericsLib.getLib(), ScriptApiSounds.class);
         registerApiType(GenericsLib.getLib(), ScriptApiDepends.class);
         registerApiType(GenericsLib.getLib(), ScriptApiRand.class);
+        registerApiType(GenericsLib.getLib(), ScriptApiScheduler.class);
     }
 
     /**
