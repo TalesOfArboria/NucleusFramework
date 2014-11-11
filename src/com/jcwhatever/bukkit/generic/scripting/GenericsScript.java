@@ -28,10 +28,10 @@ package com.jcwhatever.bukkit.generic.scripting;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import java.util.Collection;
 import javax.annotation.Nullable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.util.Collection;
 
 /**
  * Generics default {@code IScript} implementation
@@ -100,13 +100,6 @@ public class GenericsScript implements IScript {
             return null;
 
         GenericsEvaluatedScript script = new GenericsEvaluatedScript(this, engine, apiCollection);
-
-        // evaluate api
-        if (apiCollection != null) {
-            for (IScriptApi api : apiCollection) {
-                engine.put(api.getVariableName(), api.getApiObject(script));
-            }
-        }
 
         try {
             // evaluate script

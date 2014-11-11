@@ -70,7 +70,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
 
         if (scriptApis != null) {
             for (IScriptApi api : scriptApis) {
-                _scriptApis.put(api.getVariableName(), api);
+                addScriptApi(api);
             }
         }
     }
@@ -96,9 +96,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
      */
     @Override
     public List<IScriptApi> getScriptApi() {
-        return _scriptApis == null
-                ? new ArrayList<IScriptApi>(0)
-                : new ArrayList<>(_scriptApis.values());
+        return new ArrayList<>(_scriptApis.values());
     }
 
     @Override
