@@ -229,9 +229,8 @@ public class LocationUtils {
     public static String locationToString(Location location) {
         PreCon.notNull(location);
 
-        return String.valueOf(location.getBlockX()) + ',' +
-                location.getBlockY() + ',' + location.getBlockZ() + ',' + location.getYaw() + ',' +
-                location.getPitch() + ',' + location.getWorld().getName();
+        return String.valueOf(location.getX()) + ',' + location.getY() + ',' + location.getZ() +
+                ',' + location.getYaw() + ',' + location.getPitch() + ',' + location.getWorld().getName();
     }
 
     /**
