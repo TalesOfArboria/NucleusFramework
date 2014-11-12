@@ -162,6 +162,8 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     @Override
     public void resetApi() {
 
+        invokeFunction("onScriptReset");
+
         for (IScriptApiObject api : _apiObjects) {
             api.reset();
         }
