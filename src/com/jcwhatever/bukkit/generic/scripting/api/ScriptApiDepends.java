@@ -46,8 +46,6 @@ import java.util.List;
         description = "Handle script plugin dependencies.")
 public class ScriptApiDepends extends GenericsScriptApi {
 
-    private static ApiObject _api;
-
     /**
      * Constructor.
      *
@@ -59,18 +57,7 @@ public class ScriptApiDepends extends GenericsScriptApi {
 
     @Override
     public IScriptApiObject getApiObject(IEvaluatedScript script) {
-        if (_api == null)
-            _api = new ApiObject();
-
-        return _api;
-    }
-
-    public void reset() {
-
-        if (_api == null)
-            return;
-
-        _api.reset();
+        return new ApiObject();
     }
 
     public static class ApiObject implements IScriptApiObject {
