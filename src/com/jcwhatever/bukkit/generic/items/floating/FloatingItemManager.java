@@ -62,9 +62,13 @@ public class FloatingItemManager {
     }
 
     @Nullable
-    public FloatingItem add(String name, Location location, ItemStack itemStack) {
+    public FloatingItem add(String name, ItemStack itemStack) {
+        return add(name, itemStack, null);
+    }
+
+    @Nullable
+    public FloatingItem add(String name, ItemStack itemStack, @Nullable Location location) {
         PreCon.notNullOrEmpty(name);
-        PreCon.notNull(location);
         PreCon.notNull(itemStack);
 
         FloatingItem item = _itemMap.get(name.toLowerCase());
@@ -74,7 +78,7 @@ public class FloatingItemManager {
 
         IDataNode node = _dataNode.getNode(name);
 
-        item = new FloatingItem(name, location, itemStack, node);
+        item = new FloatingItem(name, itemStack, location, node);
 
         node.set("location", location);
         node.set("item", itemStack);
@@ -135,7 +139,7 @@ public class FloatingItemManager {
                 continue;
             }
 
-            FloatingItem item = new FloatingItem(name, location, itemStacks[0], node);
+            FloatingItem item = new FloatingItem(name, itemStacks[0], location, node);
 
             _itemMap.put(name.toLowerCase(), item);
 

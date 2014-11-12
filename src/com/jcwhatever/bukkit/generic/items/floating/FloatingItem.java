@@ -56,7 +56,6 @@ public class FloatingItem implements IDisposable {
     private static BukkitListener _listener;
 
     private final String _name;
-    private final Location _location;
     private final ItemStack _item;
     private final IDataNode _dataNode;
 
@@ -65,6 +64,7 @@ public class FloatingItem implements IDisposable {
     private boolean _isSpawned;
     private Entity _entity;
     private boolean _isDisposed;
+    private Location _currentLocation;
 
     private List<PickupHandler> _pickupHandlers;
     private List<Runnable> _spawnHandlers;
@@ -74,29 +74,40 @@ public class FloatingItem implements IDisposable {
      * Constructor.
      *
      * @param name      The unique name of the item.
-     * @param location  The location of the item.
      * @param item      The item.
      */
-    public FloatingItem(String name, Location location, ItemStack item) {
-        this(name, location, item, null);
+    public FloatingItem(String name, ItemStack item) {
+        this(name, item, null, null);
     }
 
     /**
      * Constructor.
      *
-     * @param name      The unique name of the item.
-     * @param location  The location of the item.
-     * @param item      The item.
-     * @param dataNode  Optional data node to store item settings in.
+     * @param name             The unique name of the item.
+     * @param item             The item.
+     * @param initialLocation  Optional initial location of the item.
      */
-    public FloatingItem(String name, Location location, ItemStack item, @Nullable IDataNode dataNode) {
+    public FloatingItem(String name, ItemStack item, @Nullable Location initialLocation) {
+        this(name, item, initialLocation, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param name             The unique name of the item.
+     * @param item             The item.
+     * @param initialLocation  Optional initial location of the item.
+     * @param dataNode         Optional data node to store item settings in.
+     */
+    public FloatingItem(String name, ItemStack item, @Nullable Location initialLocation,
+                        @Nullable IDataNode dataNode) {
+
         PreCon.notNullOrEmpty(name);
-        PreCon.notNull(location);
         PreCon.notNull(item);
 
         _name = name;
-        _location = location;
         _item = item;
+        _currentLocation = initialLocation;
         _dataNode = dataNode;
 
         if (_listener == null) {
@@ -113,13 +124,6 @@ public class FloatingItem implements IDisposable {
      */
     public String getName() {
         return _name;
-    }
-
-    /**
-     * Get the floating items location.
-     */
-    public Location getLocation() {
-        return _location;
     }
 
     /**
@@ -152,6 +156,16 @@ public class FloatingItem implements IDisposable {
      */
     public boolean isSpawned() {
         return _isSpawned;
+    }
+
+    /**
+     * Get the location of the floating item.
+     *
+     * @return  Null if no location is set yet.
+     */
+    @Nullable
+    public Location getLocation() {
+        return _currentLocation;
     }
 
     /**
@@ -201,7 +215,26 @@ public class FloatingItem implements IDisposable {
     /**
      * Spawn the floating item entity.
      */
+    public boolean spawn(Location location) {
+        PreCon.notNull(location);
+
+        _currentLocation = location;
+
+        if (_dataNode != null) {
+            _dataNode.set("location", location);
+            // data node save in spawn method
+        }
+
+        return spawn();
+    }
+
+    /**
+     * Spawn the floating item entity.
+     */
     public boolean spawn() {
+
+        if (_currentLocation == null)
+            return false;
 
         FloatingItemSpawnEvent event = new FloatingItemSpawnEvent(this);
 
@@ -217,10 +250,10 @@ public class FloatingItem implements IDisposable {
 
         // get corrected location
         final Location spawnLocation = LocationUtils.getCenteredLocation(
-                LocationUtils.getBlockLocation(_location)).add(0, 0.5, 0);
+                LocationUtils.getBlockLocation(_currentLocation)).add(0, 0.5, 0);
 
         // spawn item entity
-        _entity = _location.getWorld().dropItem(spawnLocation, _item.clone());
+        _entity = _currentLocation.getWorld().dropItem(spawnLocation, _item.clone());
         _entity.setVelocity(new Vector(0, 0, 0));
 
         // register entity
@@ -404,19 +437,20 @@ public class FloatingItem implements IDisposable {
         _canPickup = _dataNode.getBoolean("can-pickup", _canPickup);
         _respawnTimeSeconds = _dataNode.getInteger("respawn-time-seconds", _respawnTimeSeconds);
         _isSpawned = _dataNode.getBoolean("is-spawned", _isSpawned);
+        _currentLocation = _dataNode.getLocation("location", _currentLocation);
 
-        UUID entityId = _dataNode.getUUID("entity-id");
-        if (entityId != null) {
+        if (_currentLocation != null) {
+            UUID entityId = _dataNode.getUUID("entity-id");
+            if (entityId != null) {
 
-            _entity = EntityUtils.getEntityByUUID(_location.getChunk(), entityId);
-            if (_entity != null && !_isSpawned) {
-                despawn();
-            }
-            else if (_entity == null && _isSpawned) {
-                spawn();
-            }
-            else if (_entity != null) {
-                _listener.register(this);
+                _entity = EntityUtils.getEntityByUUID(_currentLocation.getChunk(), entityId);
+                if (_entity != null && !_isSpawned) {
+                    despawn();
+                } else if (_entity == null && _isSpawned) {
+                    spawn(_currentLocation);
+                } else if (_entity != null) {
+                    _listener.register(this);
+                }
             }
         }
     }
@@ -424,5 +458,4 @@ public class FloatingItem implements IDisposable {
     public static interface PickupHandler {
         void onPickup(Player p, FloatingItem item, boolean isCancelled);
     }
-
 }

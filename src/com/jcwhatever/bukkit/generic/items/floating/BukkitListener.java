@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -107,16 +108,20 @@ class BukkitListener implements Listener {
             return;
         }
 
-        // schedule respawn
-        Scheduler.runTaskLater(GenericsLib.getLib(), item.getRespawnTimeSeconds() * 20, new Runnable() {
-            @Override
-            public void run() {
-                if (item.isDisposed())
-                    return;
+        final Location location = item.getLocation();
 
-                item.spawn();
-            }
-        });
+        if (location != null) {
+            // schedule respawn
+            Scheduler.runTaskLater(GenericsLib.getLib(), item.getRespawnTimeSeconds() * 20, new Runnable() {
+                @Override
+                public void run() {
+                    if (item.isDisposed())
+                        return;
+
+                    item.spawn(location);
+                }
+            });
+        }
     }
 
     @EventHandler
