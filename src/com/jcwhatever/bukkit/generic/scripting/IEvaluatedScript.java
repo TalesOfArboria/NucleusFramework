@@ -27,8 +27,8 @@ package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 
-import javax.script.ScriptEngine;
 import java.util.List;
+import javax.script.ScriptEngine;
 
 /**
  * A script that has been evaluated by a script engine.
@@ -53,7 +53,7 @@ public interface IEvaluatedScript {
     /**
      * Add a script api.
      */
-    void addScriptApi(IScriptApi scriptApi);
+    void addScriptApi(IScriptApi scriptApi, String variableName);
 
     /**
      * Invoke a function in the script.
@@ -63,7 +63,7 @@ public interface IEvaluatedScript {
      *
      * @return  Object returned by the function.
      */
-    Object invokeFunction(String functionName, Object... parameters);
+    Object invokeFunction(String functionName, Object... parameters) throws NoSuchMethodException;
 
     /**
      * Evaluate a script into the evaluated script.

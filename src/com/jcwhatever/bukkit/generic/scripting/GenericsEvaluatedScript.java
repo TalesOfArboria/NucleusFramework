@@ -32,8 +32,10 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -49,6 +51,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     private final IScript _parentScript;
     private final ScriptEngine _engine;
     private final Map<String, IScriptApi> _scriptApis;
+    private final Set<Class<? extends IScriptApi>> _included;
     private final List<IScriptApiObject> _apiObjects = new ArrayList<>(25);
 
     /**
@@ -66,11 +69,12 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
 
         _parentScript = parentScript;
         _engine = engine;
-        _scriptApis = new HashMap<>(scriptApis == null ? 10 : scriptApis.size());
+        _scriptApis = new HashMap<>(scriptApis == null ? 10 : scriptApis.size() + 10);
+        _included = new HashSet<>(scriptApis == null ? 10 : scriptApis.size() + 10);
 
         if (scriptApis != null) {
             for (IScriptApi api : scriptApis) {
-                addScriptApi(api);
+                addScriptApi(api, api.getVariableName());
             }
         }
     }
@@ -100,16 +104,22 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     }
 
     @Override
-    public void addScriptApi(IScriptApi scriptApi) {
+    public void addScriptApi(IScriptApi scriptApi, String variableName) {
+        PreCon.notNull(scriptApi);
+        PreCon.notNullOrEmpty(variableName);
 
-        if (_scriptApis.containsKey(scriptApi.getVariableName()))
+        if (_included.contains(scriptApi.getClass()))
+            return;
+
+        if (_scriptApis.containsKey(variableName))
             return;
 
         _scriptApis.put(scriptApi.getVariableName(), scriptApi);
+        _included.add(scriptApi.getClass());
 
         IScriptApiObject apiObject = scriptApi.getApiObject(this);
 
-        _engine.put(scriptApi.getVariableName(), apiObject);
+        _engine.put(variableName, apiObject);
         _apiObjects.add(apiObject);
     }
 
@@ -123,15 +133,13 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
      */
     @Override
     @Nullable
-    public Object invokeFunction(String functionName, Object... parameters) {
+    public Object invokeFunction(String functionName, Object... parameters)
+            throws NoSuchMethodException {
 
         Invocable inv = (Invocable)_engine;
 
         try {
             return inv.invokeFunction(functionName, parameters);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return null;
         }
         catch (ScriptException e) {
             e.printStackTrace();
@@ -162,7 +170,11 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     @Override
     public void resetApi() {
 
-        invokeFunction("onScriptReset");
+        try {
+            invokeFunction("onScriptReset");
+        } catch (NoSuchMethodException ignore) {
+            // do nothing
+        }
 
         for (IScriptApiObject api : _apiObjects) {
             api.reset();

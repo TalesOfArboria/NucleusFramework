@@ -32,11 +32,13 @@ import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
 import com.jcwhatever.bukkit.generic.scripting.ScriptHelper;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Provide scripts with ability to include other scripts.
@@ -104,18 +106,22 @@ public class ScriptApiInclude extends GenericsScriptApi {
          *
          * @param owningPluginName  The name of the api owning plugin.
          * @param apiName           The variable name of the api.
+         * @param variableName      The variable name to use in the script.
          *
          * @return  True if the api was found and included.
          */
-        public boolean api(String owningPluginName, String apiName) {
+        public boolean api(String owningPluginName, String apiName, @Nullable String variableName) {
             PreCon.notNull(owningPluginName);
             PreCon.notNullOrEmpty(apiName);
+
+            if (variableName == null)
+                variableName = apiName;
 
             IScriptApi api = ScriptApiRepo.getApi(getPlugin(), owningPluginName, apiName);
             if (api == null)
                 return false;
 
-            _script.addScriptApi(api);
+            _script.addScriptApi(api, variableName);
 
             return true;
         }
