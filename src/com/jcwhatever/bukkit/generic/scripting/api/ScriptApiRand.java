@@ -59,11 +59,6 @@ public class ScriptApiRand extends GenericsScriptApi {
         return _api;
     }
 
-    @Override
-    public void reset() {
-        // do nothing
-    }
-
     public static class ApiObject implements IScriptApiObject {
 
         @Override

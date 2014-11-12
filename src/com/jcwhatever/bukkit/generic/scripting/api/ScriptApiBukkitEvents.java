@@ -67,7 +67,6 @@ public class ScriptApiBukkitEvents extends GenericsScriptApi {
         return _api;
     }
 
-    @Override
     public void reset() {
         if (_api != null)
             _api.reset();

@@ -60,12 +60,6 @@ public class ScriptApiPermissions extends GenericsScriptApi {
         return _api;
     }
 
-    @Override
-    public void reset() {
-        if (_api != null)
-            _api.reset();
-    }
-
     public static class ApiObject implements IScriptApiObject {
 
         ApiObject() {}

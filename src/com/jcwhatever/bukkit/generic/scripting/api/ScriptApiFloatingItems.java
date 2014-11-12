@@ -76,7 +76,6 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
         return _api;
     }
 
-    @Override
     public void reset() {
         _api.reset();
     }

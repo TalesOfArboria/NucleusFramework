@@ -60,7 +60,6 @@ public class ScriptApiEconomy extends GenericsScriptApi {
         return _api;
     }
 
-    @Override
     public void reset() {
         if (_api != null)
             _api.reset();

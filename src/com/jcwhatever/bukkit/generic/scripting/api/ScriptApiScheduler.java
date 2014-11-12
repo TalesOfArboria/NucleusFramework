@@ -59,7 +59,6 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
         return _api;
     }
 
-    @Override
     public void reset() {
         _api.reset();
     }

@@ -66,11 +66,6 @@ public class ScriptApiInclude extends GenericsScriptApi {
         return new ApiObject(script);
     }
 
-    @Override
-    public void reset() {
-        // do nothing
-    }
-
     public class ApiObject implements IScriptApiObject {
 
         private final IEvaluatedScript _script;

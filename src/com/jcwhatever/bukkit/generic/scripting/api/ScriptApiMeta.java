@@ -65,11 +65,6 @@ public class ScriptApiMeta extends GenericsScriptApi {
         return _api;
     }
 
-    @Override
-    public void reset() {
-        // do nothing
-    }
-
     public static class ApiObject implements IScriptApiObject {
 
         private final IDataNode _dataNode;

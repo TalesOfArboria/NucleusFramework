@@ -60,12 +60,6 @@ public class ScriptApiSounds extends GenericsScriptApi {
         return _api;
     }
 
-    @Override
-    public void reset() {
-        if (_api != null)
-            _api.reset();
-    }
-
     public static class ApiObject implements IScriptApiObject {
 
         private final Plugin _plugin;

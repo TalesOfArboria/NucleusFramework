@@ -31,7 +31,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Represents an api object dispatcher.
  */
-public interface IScriptApi extends IScriptApiObject {
+public interface IScriptApi {
 
     /**
      * The owning plugin.
