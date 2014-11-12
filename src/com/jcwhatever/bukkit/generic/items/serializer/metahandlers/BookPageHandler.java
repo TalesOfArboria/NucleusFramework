@@ -31,7 +31,6 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,10 +67,13 @@ public class BookPageHandler implements MetaHandler {
 
         List<String> newPages = pages == null
                 ? new ArrayList<String>(5)
-                : new ArrayList<String>(pages.size());
+                : new ArrayList<String>(pages.size() + 1);
 
-        if (pages != null)
-            Collections.copy(newPages, pages);
+        if (pages != null) {
+            for (String page : pages) {
+                newPages.add(page);
+            }
+        }
 
         newPages.add(meta.getRawData());
 
