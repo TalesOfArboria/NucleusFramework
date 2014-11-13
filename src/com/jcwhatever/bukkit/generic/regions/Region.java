@@ -30,7 +30,6 @@ import com.jcwhatever.bukkit.generic.events.bukkit.regions.RegionOwnerChangedEve
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.Rand;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.Bukkit;
@@ -159,7 +158,7 @@ public abstract class Region {
      * Get the regions data node.
      */
     @Nullable
-    public final IDataNode getDataNode() {
+    public IDataNode getDataNode() {
         return _dataNode;
     }
 
@@ -215,9 +214,10 @@ public abstract class Region {
 
         _ownerId = ownerId;
 
-        if (_dataNode != null) {
-            _dataNode.set("owner-id", ownerId);
-            _dataNode.saveAsync(null);
+        IDataNode dataNode = getDataNode();
+        if (dataNode != null) {
+            dataNode.set("owner-id", ownerId);
+            dataNode.saveAsync(null);
         }
 
         onOwnerChanged(oldId, ownerId);
@@ -294,8 +294,9 @@ public abstract class Region {
         _chunks = null;
         updateMath();
 
-        if (_dataNode != null)
-            _dataNode.saveAsync(null);
+        IDataNode dataNode = getDataNode();
+        if (dataNode != null)
+            dataNode.saveAsync(null);
 
         try {
             onCoordsChanged(_p1, _p2);
@@ -739,9 +740,10 @@ public abstract class Region {
     public void setEntryMessage(@Nullable String message) {
         _entryMessage = message;
 
-        if (_dataNode != null) {
-            _dataNode.set("entry-message", message);
-            _dataNode.saveAsync(null);
+        IDataNode dataNode = getDataNode();
+        if (dataNode != null) {
+            dataNode.set("entry-message", message);
+            dataNode.saveAsync(null);
         }
 
         if (message != null)
@@ -764,9 +766,10 @@ public abstract class Region {
     public void setExitMessage(@Nullable String message) {
         _exitMessage = message;
 
-        if (_dataNode != null) {
-            _dataNode.set("exit-message", message);
-            _dataNode.saveAsync(null);
+        IDataNode dataNode = getDataNode();
+        if (dataNode != null) {
+            dataNode.set("exit-message", message);
+            dataNode.saveAsync(null);
         }
 
         if (message != null)
@@ -811,9 +814,10 @@ public abstract class Region {
             _extEntryMessages.remove(plugin);
         }
 
-        if (_dataNode != null) {
-            _dataNode.set("ext-entry-messages." + plugin.getName(), message);
-            _dataNode.saveAsync(null);
+        IDataNode dataNode = getDataNode();
+        if (dataNode != null) {
+            dataNode.set("ext-entry-messages." + plugin.getName(), message);
+            dataNode.saveAsync(null);
         }
     }
 
@@ -850,9 +854,10 @@ public abstract class Region {
             _extExitMessages.remove(plugin);
         }
 
-        if (_dataNode != null) {
-            _dataNode.set("ext-exit-messages." + plugin.getName(), message);
-            _dataNode.saveAsync(null);
+        IDataNode dataNode = getDataNode();
+        if (dataNode != null) {
+            dataNode.set("ext-exit-messages." + plugin.getName(), message);
+            dataNode.saveAsync(null);
         }
     }
 
@@ -1021,7 +1026,8 @@ public abstract class Region {
      * @param oldOwnerId  The id of the previous owner of the region.
      * @param newOwnerId  The id of the new owner of the region.
      */
-    protected void onOwnerChanged(@Nullable UUID oldOwnerId, @Nullable UUID newOwnerId) {
+    protected void onOwnerChanged(@SuppressWarnings("unused") @Nullable UUID oldOwnerId,
+                                  @SuppressWarnings("unused") @Nullable UUID newOwnerId) {
         // do nothing
     }
 
@@ -1210,27 +1216,25 @@ public abstract class Region {
                 upper.setZ(tmp);
             }
         }
+
+        IDataNode dataNode = getDataNode();
+
         if (lower != null) {
             _p1 = lower;
-            if (_dataNode != null)
-                _dataNode.set("p1", lower);
+            if (dataNode != null)
+                dataNode.set("p1", lower);
         }
         if (upper != null) {
             _p2 = upper;
-            if (_dataNode != null)
-                _dataNode.set("p2", upper);
+            if (dataNode != null)
+                dataNode.set("p2", upper);
         }
 
     }
 
     @Override
     public int hashCode() {
-        if (_hash == -1) {
-            _hash = _name != null
-                    ? _name.hashCode() ^ super.hashCode()
-                    : Rand.getInt() ^ super.hashCode();
-        }
-        return _hash;
+        return _name.hashCode();
     }
 
 
