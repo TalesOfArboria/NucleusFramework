@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.storage;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
@@ -183,13 +184,11 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     public void loadAsync() {
 
         loadAsync(null);
     }
-
 
     @Override
     public void loadAsync(@Nullable final StorageLoadHandler loadHandler) {
@@ -211,22 +210,19 @@ public class YamlDataStorage implements IDataNode {
                         StorageLoadResult result = new StorageLoadResult(loaded, loadHandler);
 
                         loadHandler.onFinish(result);
-
                     }
                 }
-
             }
-
         });
-
     }
-
 
     public void reloadMaps() {
 
         synchronized (_sync) {
 
-            for (String key : _yaml.getKeys(true)) {
+            Set<String> nodes = _yaml.getKeys(true);
+
+            for (String key : nodes) {
                 Object value = _yaml.get(key);
 
                 if (value instanceof Boolean) {
@@ -256,7 +252,11 @@ public class YamlDataStorage implements IDataNode {
 
                 if (str.indexOf("%ItemStack[]% ") == 0) {
                     str = str.substring(14);
-                    _items.put(key, ItemStackHelper.parse(str));
+                    try {
+                        _items.put(key, ItemStackHelper.parse(str));
+                    } catch (InvalidItemStackStringException e) {
+                        e.printStackTrace();
+                    }
                     continue;
                 }
 
@@ -264,7 +264,6 @@ public class YamlDataStorage implements IDataNode {
             }
         }
     }
-
 
     @Override
     public boolean save() {
@@ -318,7 +317,6 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     public void saveAsync(@Nullable final StorageSaveHandler saveHandler) {
 
@@ -353,16 +351,11 @@ public class YamlDataStorage implements IDataNode {
 
                             saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
                         }
-
                     });
                 }
-
             }
-
         });
-
     }
-
 
     @Override
     public boolean save(File destination) {
@@ -377,7 +370,6 @@ public class YamlDataStorage implements IDataNode {
 
         return true;
     }
-
 
     @Override
     public void saveAsync(final File destination, @Nullable final StorageSaveHandler saveHandler) {
@@ -414,13 +406,11 @@ public class YamlDataStorage implements IDataNode {
         });
     }
 
-
     @Override
     public void runBatchOperation(BatchOperation batch) {
 
         runBatchOperation(batch, this);
     }
-
 
     void runBatchOperation(final BatchOperation batch, IDataNode dataNode) {
 
@@ -442,13 +432,11 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     public void preventSave(BatchOperation batch) {
 
         preventSave(batch, this);
     }
-
 
     void preventSave(BatchOperation batch, IDataNode dataNode) {
 
@@ -459,14 +447,12 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     public String getHeader() {
 
         synchronized (_sync) {
             return _yaml.options().header();
         }
     }
-
 
     public void setHeader(String header) {
 
@@ -475,14 +461,12 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     public YamlConfiguration getYamlConfiguration() {
 
         synchronized (_sync) {
             return _yaml;
         }
     }
-
 
     @Override
     public Object get(String keyPath) {
@@ -523,13 +507,11 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     public boolean getBoolean(String keyPath) {
 
         return getBoolean(keyPath, false);
     }
-
 
     @Override
     public boolean getBoolean(String keyPath, boolean def) {
@@ -542,13 +524,11 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     public int getInteger(String keyPath) {
 
         return getInteger(keyPath, 0);
     }
-
 
     @Override
     public int getInteger(String keyPath, int def) {
@@ -561,13 +541,11 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     public long getLong(String keyPath) {
 
         return getLong(keyPath, 0);
     }
-
 
     @Override
     public long getLong(String keyPath, long def) {
@@ -580,13 +558,11 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     public double getDouble(String keyPath) {
 
         return getDouble(keyPath, 0.0);
     }
-
 
     @Override
     public double getDouble(String keyPath, double def) {
@@ -599,14 +575,12 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     @Nullable
     public String getString(String keyPath) {
 
         return getString(keyPath, null);
     }
-
 
     @Override
     @Nullable
@@ -620,14 +594,12 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     @Nullable
     public UUID getUUID(String keyPath) {
 
         return getUUID(keyPath, null);
     }
-
 
     @Override
     @Nullable
@@ -645,7 +617,6 @@ public class YamlDataStorage implements IDataNode {
             }
         }
     }
-
 
     @Override
     @Nullable
@@ -671,14 +642,12 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     @Nullable
     public ItemStack[] getItemStacks(String keyPath) {
 
         return getItemStacks(keyPath, (ItemStack[]) null);
     }
-
 
     @Override
     @Nullable
@@ -688,7 +657,6 @@ public class YamlDataStorage implements IDataNode {
                 def
         });
     }
-
 
     @Override
     @Nullable
@@ -702,14 +670,12 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     @Nullable
     public <T extends Enum<T>> T getEnum(String keyPath, Class<T> enumClass) {
 
         return getEnum(keyPath, null, enumClass);
     }
-
 
     @Override
     @Nullable
@@ -722,7 +688,6 @@ public class YamlDataStorage implements IDataNode {
         return EnumUtils.searchEnum(string, enumClass, def);
     }
 
-
     @Override
     @Nullable
     public Enum<?> getEnumGeneric(String keyPath, @Nullable Enum<?> def, Class<? extends Enum<?>> enumClass) {
@@ -734,13 +699,11 @@ public class YamlDataStorage implements IDataNode {
         return EnumUtils.searchGenericEnum(string, enumClass, def);
     }
 
-
     @Override
     public Set<String> getSubNodeNames() {
 
         return getSubNodeNames("");
     }
-
 
     @Override
     public Set<String> getSubNodeNames(String nodePath) {
@@ -756,7 +719,6 @@ public class YamlDataStorage implements IDataNode {
                     : new HashSet<String>(0);
         }
     }
-
 
     @Override
     @Nullable
@@ -821,11 +783,30 @@ public class YamlDataStorage implements IDataNode {
 
             if (value == null) {
 
+                // clear cached values
                 _booleans.remove(keyPath);
                 _numbers.remove(keyPath);
                 _doubles.remove(keyPath);
                 _strings.remove(keyPath);
                 _items.remove(keyPath);
+
+                ConfigurationSection section = _yaml.getConfigurationSection(keyPath);
+
+                if (section != null) {
+                    Set<String> nodes = section.getKeys(true);
+
+                    if (nodes != null) {
+                        for (String node : nodes) {
+                            if (node.startsWith(keyPath)) {
+                                _booleans.remove(node);
+                                _numbers.remove(node);
+                                _doubles.remove(node);
+                                _strings.remove(node);
+                                _items.remove(node);
+                            }
+                        }
+                    }
+                }
             }
 
             _yaml.set(keyPath, value);
@@ -845,19 +826,16 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     @Override
     public void remove(String nodePath) {
 
         set(nodePath, null);
     }
 
-
     public void clear(String path) {
 
         set(path, null);
     }
-
 
     @Override
     public String getNodeName() {
@@ -865,12 +843,10 @@ public class YamlDataStorage implements IDataNode {
         return null;
     }
 
-
     @Override
     public YamlDataStorage getRoot() {
         return this;
     }
-
 
     @Override
     public boolean hasNode(String nodePath) {
@@ -894,12 +870,10 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-
     public void assertNodes(File defaultConfig) {
 
         assertNodes(defaultConfig, "");
     }
-
 
     void assertNodes(File defaultConfig, final String destNode) {
 
@@ -934,5 +908,4 @@ public class YamlDataStorage implements IDataNode {
 
         }
     }
-
 }
