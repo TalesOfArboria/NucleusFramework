@@ -34,6 +34,7 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.items.ItemWrapper;
+import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect.PlayerBlockSelectHandler;
@@ -379,9 +380,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // parse argument to byte
         try {
+            //noinspection ConstantConditions
             result = Byte.parseByte(arg);
         }
-        catch (NumberFormatException nfe) {
+        catch (NullPointerException | NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
                     _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
         }
@@ -424,9 +426,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // parse argument to short
         try {
+            //noinspection ConstantConditions
             result = Short.parseShort(arg);
         }
-        catch (NumberFormatException nfe) {
+        catch (NullPointerException | NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
                     _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
         }
@@ -469,9 +472,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // parse argument to integer
         try {
+            //noinspection ConstantConditions
             result = Integer.parseInt(arg);
         }
-        catch (NumberFormatException nfe) {
+        catch (NullPointerException | NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
                     _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
         }
@@ -514,9 +518,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // parse argument to long
         try {
+            //noinspection ConstantConditions
             result = Long.parseLong(arg);
         }
-        catch (NumberFormatException nfe) {
+        catch (NullPointerException | NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
                     _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
         }
@@ -559,9 +564,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // parse argument into float
         try {
+            //noinspection ConstantConditions
             result = Float.parseFloat(arg);
         }
-        catch (NumberFormatException nfe) {
+        catch (NullPointerException | NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
                     _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
         }
@@ -604,9 +610,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // parse argument into double
         try {
+            //noinspection ConstantConditions
             result = Double.parseDouble(arg);
         }
-        catch (NumberFormatException nfe) {
+        catch (NullPointerException | NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
                     _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
         }
@@ -837,7 +844,14 @@ public class CommandArguments implements Iterable<CommandArgument> {
         }
 
         // no keywords used, attempt to parse the argument into an {@code ItemStack} array.
-        ItemStack[] stacks = ItemStackHelper.parse(arg);
+        ItemStack[] stacks = null;
+
+        try {
+            stacks = ItemStackHelper.parse(arg);
+        } catch (InvalidItemStackStringException ignore) {
+            // do nothing
+        }
+
         if (stacks == null)
             throw new InvalidValueException(parameterName,
                     _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
