@@ -482,22 +482,19 @@ public class ItemStackHelper {
      *
      * @param itemString  The item stack string.
      *
+     * @throws InvalidItemStackStringException
+     *
      * @return  Null if the string could not be parsed.
      */
     @Nullable
-    public static ItemStack[] parse(String itemString) {
+    public static ItemStack[] parse(String itemString) throws InvalidItemStackStringException {
 
         if (itemString == null || itemString.length() == 0)
             return new ItemStack[0];
 
         ItemStackDeserializer parser;
 
-        try {
-            parser = new ItemStackDeserializer(itemString);
-        } catch (InvalidItemStackStringException e) {
-            e.printStackTrace();
-            return null;
-        }
+        parser = new ItemStackDeserializer(itemString);
 
         return parser.getResultArray();
     }
