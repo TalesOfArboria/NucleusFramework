@@ -27,15 +27,17 @@ package com.jcwhatever.bukkit.generic.storage.settings;
 
 import com.jcwhatever.bukkit.generic.converters.ValueConverter;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Abstract implementation of {@code ISettingsManager}.
@@ -140,7 +142,12 @@ public abstract class AbstractSettingsManager implements ISettingsManager {
                 value = new ItemStack[] { (ItemStack)value };
             }
             else if (value instanceof String) {
-                value = ItemStackHelper.parse((String)value);
+                try {
+                    value = ItemStackHelper.parse((String)value);
+                } catch (InvalidItemStackStringException e) {
+                    e.printStackTrace();
+                    value = null;
+                }
                 if (value == null)
                     return ValidationResults.FALSE;
             }
