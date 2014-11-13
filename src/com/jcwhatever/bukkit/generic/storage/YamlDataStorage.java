@@ -25,7 +25,6 @@
 
 package com.jcwhatever.bukkit.generic.storage;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
@@ -36,6 +35,7 @@ import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+import com.jcwhatever.bukkit.generic.utils.Scheduler.ScheduledTask;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -196,7 +196,7 @@ public class YamlDataStorage implements IDataNode {
         if (loadHandler != null && loadHandler._dataNode == null)
             loadHandler._dataNode = this;
 
-        Bukkit.getScheduler().runTaskAsynchronously(GenericsLib.getLib(), new Runnable() {
+        Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable() {
 
             @Override
             public void run() {
@@ -299,7 +299,7 @@ public class YamlDataStorage implements IDataNode {
             final boolean saveResult = isSaved;
 
             // return results on main thread
-            Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
+            Scheduler.runTaskLater(_plugin, new Runnable() {
 
                 @Override
                 public void run() {
@@ -316,6 +316,8 @@ public class YamlDataStorage implements IDataNode {
             return isSaved;
         }
     }
+
+    private ScheduledTask _saveTask;
 
     @Override
     public void saveAsync(@Nullable final StorageSaveHandler saveHandler) {
@@ -334,25 +336,38 @@ public class YamlDataStorage implements IDataNode {
             return;
         }
 
-        // save data node on alternate thread
-        Scheduler.runTaskLaterAsync(GenericsLib.getLib(), 1, new Runnable() {
+        // check if save operation already scheduled.
+        if (_saveTask != null) {
+            return;
+        }
 
+        _saveTask = Scheduler.runTaskLater(_plugin, 5, new Runnable() {
             @Override
             public void run() {
 
-                final boolean isSaved = save();
+                _saveTask = null;
 
-                if (saveHandler != null) {
-                    // return results on main thread
-                    Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
+                // save data node on alternate thread
+                Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
 
-                        @Override
-                        public void run() {
+                    @Override
+                    public void run() {
 
-                            saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
+                        final boolean isSaved = save();
+
+                        if (saveHandler != null) {
+                            // return results on main thread
+                            Scheduler.runTaskSync(_plugin, new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
+                                }
+                            });
                         }
-                    });
-                }
+                    }
+                });
             }
         });
     }
@@ -379,7 +394,7 @@ public class YamlDataStorage implements IDataNode {
             saveHandler._dataNode = this;
 
         // save on alternate thread
-        Scheduler.runTaskLaterAsync(GenericsLib.getLib(), 1, new Runnable() {
+        Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
 
             @Override
             public void run() {
@@ -389,7 +404,7 @@ public class YamlDataStorage implements IDataNode {
                 if (saveHandler != null) {
 
                     // return results on main thread
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(GenericsLib.getLib(), new Runnable() {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(_plugin, new Runnable() {
 
                         @Override
                         public void run() {
@@ -797,13 +812,12 @@ public class YamlDataStorage implements IDataNode {
 
                     if (nodes != null) {
                         for (String node : nodes) {
-                            if (node.startsWith(keyPath)) {
-                                _booleans.remove(node);
-                                _numbers.remove(node);
-                                _doubles.remove(node);
-                                _strings.remove(node);
-                                _items.remove(node);
-                            }
+                            String fullPath = keyPath + '.' + node;
+                            _booleans.remove(fullPath);
+                            _numbers.remove(fullPath);
+                            _doubles.remove(fullPath);
+                            _strings.remove(fullPath);
+                            _items.remove(fullPath);
                         }
                     }
                 }
