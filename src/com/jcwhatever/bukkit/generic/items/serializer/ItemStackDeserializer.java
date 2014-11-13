@@ -121,8 +121,13 @@ public class ItemStackDeserializer {
             return null;
 
         material = ValueConverters.ITEM_NAME_MATERIAL.convert(rawMaterial);
-        if (material == null)
+        if (material == null) {
+            material = ValueConverters.ITEM_MATERIAL_ID.unconvert(rawMaterial);
+        }
+
+        if (material == null) {
             throw new InvalidItemStackStringException(_itemString);
+        }
 
         if (current() == ':') {
             next();
@@ -142,10 +147,6 @@ public class ItemStackDeserializer {
         // handle special cases
         if (material == Material.POTION && (potion = ValueConverters.POTION_ID.convert(data)) != null) {
             stack = potion.toItemStack(amount);
-        }
-        else if (material == Material.WOOL) {
-            stack = new ItemStack(material, amount);
-            stack.setDurability(data);
         }
         else {
             // set stack data
