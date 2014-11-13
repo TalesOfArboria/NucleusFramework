@@ -354,7 +354,7 @@ public abstract class AbstractCommandUtils {
         else {
 
             value = valueType.isAssignableFrom(ItemStack.class)  // Special case: ItemStack
-                    ? args.getItemStack(sender, propertyArgName)
+                    ? args.getItemStack(sender, valueArgName)
                     : args.getString(valueArgName);
         }
 
