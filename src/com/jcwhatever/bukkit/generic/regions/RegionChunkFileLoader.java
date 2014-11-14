@@ -57,7 +57,7 @@ public final class RegionChunkFileLoader {
     private RestorableRegion _region;
     private Chunk _chunk;
     private boolean _isLoading;
-    private final LinkedList<BlockInfo> _blockInfo = new LinkedList<>();
+    private final LinkedList<ChunkBlockInfo> _blockInfo = new LinkedList<>();
     private final LinkedList<SerializableBlockEntity> _blockEntities = new LinkedList<>();
     private final LinkedList<SerializableFurnitureEntity> _entities = new LinkedList<>();
 
@@ -114,7 +114,7 @@ public final class RegionChunkFileLoader {
      *
      * <p>Do not access while loading from file.</p>
      */
-    public LinkedList<BlockInfo> getBlockInfo() {
+    public LinkedList<ChunkBlockInfo> getBlockInfo() {
         if (_isLoading)
             throw new IllegalAccessError("Cannot access block info while data is being loaded from file.");
 
@@ -201,6 +201,8 @@ public final class RegionChunkFileLoader {
                         callback.onFinish(true);
                     }
                 });
+
+        project.run();
     }
 
     /**
@@ -208,28 +210,6 @@ public final class RegionChunkFileLoader {
      */
     public interface LoadFileCallback {
         void onFinish(boolean isLoadSuccess);
-    }
-
-    /**
-     * Data object to hold information about a single block
-     */
-    public static final class BlockInfo implements Comparable<BlockInfo> {
-        public final int data, x, y, z;
-        public final Material material;
-
-        public BlockInfo (Material material, int data, int x, int y, int z) {
-            this.material = material;
-            this.data = data;
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        @Override
-        public int compareTo(BlockInfo o) {
-            //noinspection SuspiciousNameCombination
-            return Integer.compare(this.y, o.y);
-        }
     }
 
     /**
@@ -325,7 +305,7 @@ public final class RegionChunkFileLoader {
             }
 
             if (loadType == LoadType.ALL_BLOCKS || chunkType != type || chunkData != data) {
-                _blockInfo.add(new BlockInfo(type, data, x, y, z));
+                _blockInfo.add(new ChunkBlockInfo(type, data, x, y, z));
             }
         }
 

@@ -35,7 +35,6 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.Future;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueTask;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueWorker;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
-import com.jcwhatever.bukkit.generic.regions.RegionChunkFileLoader.BlockInfo;
 import com.jcwhatever.bukkit.generic.regions.RegionChunkFileLoader.LoadType;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 
@@ -462,15 +461,15 @@ public abstract class RestorableRegion extends BuildableRegion {
         @Override
         protected void onRun() {
 
-            LinkedList<BlockInfo> blockInfo = loader.getBlockInfo();
-            LinkedList<BlockInfo> doors = new LinkedList<>();
+            LinkedList<ChunkBlockInfo> blockInfo = loader.getBlockInfo();
+            LinkedList<ChunkBlockInfo> doors = new LinkedList<>();
 
             while (!blockInfo.isEmpty()) {
-                BlockInfo info = blockInfo.remove();
+                ChunkBlockInfo info = blockInfo.remove();
 
                 // skip doors and restore later
-                if (info.material == Material.IRON_DOOR_BLOCK ||
-                        info.material == Material.WOODEN_DOOR) {
+                if (info.getMaterial() == Material.IRON_DOOR_BLOCK ||
+                        info.getMaterial() == Material.WOODEN_DOOR) {
                     doors.add(info);
                     continue;
                 }
@@ -480,39 +479,43 @@ public abstract class RestorableRegion extends BuildableRegion {
 
             // Restore door block Pairs
             // keyed to block x, y z value as a string
-            MultiValueMap<String, BlockInfo> _placedDoorBlocks = new MultiValueMap<>(doors.size());
+            MultiValueMap<String, ChunkBlockInfo> _placedDoorBlocks = new MultiValueMap<>(doors.size());
 
             // Get door block pairs
             while (!doors.isEmpty()) {
-                BlockInfo info = doors.remove();
+                ChunkBlockInfo info = doors.remove();
 
-                String lowerKey = getKey(info.x, info.y - 1, info.z);
-                List<BlockInfo> lowerDoor = _placedDoorBlocks.getValues(lowerKey);
+                int x = info.getChunkBlockX();
+                int y = info.getY();
+                int z = info.getChunkBlockZ();
+
+                String lowerKey = getKey(x, y - 1, z);
+                List<ChunkBlockInfo> lowerDoor = _placedDoorBlocks.getValues(lowerKey);
 
                 if (lowerDoor != null) {
                     _placedDoorBlocks.put(lowerKey, info);
                     continue;
                 }
 
-                String upperKey = getKey(info.x, info.y + 1, info.z);
-                List<BlockInfo> upperDoor = _placedDoorBlocks.getValues(upperKey);
+                String upperKey = getKey(x, y + 1, z);
+                List<ChunkBlockInfo> upperDoor = _placedDoorBlocks.getValues(upperKey);
                 if (upperDoor != null) {
                     _placedDoorBlocks.put(upperKey, info);
                     continue;
                 }
 
-                _placedDoorBlocks.put(getKey(info.x, info.y, info.z), info);
+                _placedDoorBlocks.put(getKey(x, y, z), info);
             }
 
             // Restore pairs
             Set<String> keys = _placedDoorBlocks.keySet();
 
             for (String key : keys) {
-                List<BlockInfo> doorPair = _placedDoorBlocks.getValues(key);
+                List<ChunkBlockInfo> doorPair = _placedDoorBlocks.getValues(key);
 
                 Collections.sort(doorPair);
 
-                for (BlockInfo info : doorPair) {
+                for (ChunkBlockInfo info : doorPair) {
                     restoreBlock(info);
                 }
             }
@@ -533,13 +536,17 @@ public abstract class RestorableRegion extends BuildableRegion {
         /*
          * Restore a block
          */
-        private void restoreBlock(BlockInfo info) {
+        private void restoreBlock(ChunkBlockInfo info) {
 
-            Block block = chunk.getBlock(info.x, info.y, info.z);
+            int x = info.getChunkBlockX();
+            int y = info.getY();
+            int z = info.getChunkBlockZ();
+
+            Block block = chunk.getBlock(x, y, z);
             BlockState state = block.getState();
 
-            state.setType(info.material);
-            state.setRawData((byte) info.data);
+            state.setType(info.getMaterial());
+            state.setRawData((byte) info.getData());
 
             state.update(true);
         }
