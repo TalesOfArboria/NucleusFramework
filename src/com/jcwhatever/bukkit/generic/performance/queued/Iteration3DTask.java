@@ -238,6 +238,9 @@ public abstract class Iteration3DTask extends QueueTask {
         @Override
         public void run() {
 
+            if (isEnded())
+                return;
+
             synchronized (_sync) {
 
                 boolean isStart = true;
