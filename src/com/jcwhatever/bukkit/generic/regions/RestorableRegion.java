@@ -36,6 +36,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueTask;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueWorker;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.regions.RegionChunkFileLoader.BlockInfo;
+import com.jcwhatever.bukkit.generic.regions.RegionChunkFileLoader.LoadType;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 
 import org.bukkit.Chunk;
@@ -242,7 +243,7 @@ public abstract class RestorableRegion extends BuildableRegion {
             RegionChunkFileLoader loader = new RegionChunkFileLoader(this, chunk);
 
             // add load task to chunk project
-            loader.loadInProject(getChunkFile(chunk, version, false), chunkProject);
+            loader.loadInProject(getChunkFile(chunk, version, false), chunkProject, LoadType.MISMATCHED);
 
             // add restore blocks to chunk project
             chunkProject.addTask(new RestoreBlocks(loader));
