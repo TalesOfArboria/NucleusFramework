@@ -507,17 +507,32 @@ public abstract class Region {
      * @param loc  The location to check.
      */
     public final boolean contains(Location loc) {
-        if (getWorld() == null)
-            return false;
+        int x = loc.getBlockX();
+        int y = loc.getBlockY();
+        int z = loc.getBlockZ();
 
+        return contains(loc.getWorld(), x, y, z);
+    }
+
+    /**
+     * Determine if the region contains the specified coordinates.
+     *
+     * @param world  The world the coordinates are from.
+     * @param x      The location X coordinates.
+     * @param y      The location Y coordinates.
+     * @param z      The location Z coordinates.
+     */
+    public final boolean contains(World world, int x, int y, int z) {
         synchronized (_sync) {
 
-            if (!isDefined() || !loc.getWorld().getName().equals(getWorld().getName()))
+            if (getWorld() == null)
                 return false;
 
-            int x = loc.getBlockX();
-            int y = loc.getBlockY();
-            int z = loc.getBlockZ();
+            if (!world.equals(getWorld()))
+                return false;
+
+            if (!isDefined())
+                return false;
 
             _sync.notifyAll();
 
