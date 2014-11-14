@@ -865,8 +865,10 @@ public abstract class Region {
      * Dispose the region by releasing resources and
      * unregistering it from the central region manager.
      */
-    public void dispose() {
+    public final void dispose() {
         GenericsLib.getRegionManager().unregister(this);
+
+        onDispose();
     }
 
     /**
@@ -1029,6 +1031,13 @@ public abstract class Region {
     protected void onOwnerChanged(@SuppressWarnings("unused") @Nullable UUID oldOwnerId,
                                   @SuppressWarnings("unused") @Nullable UUID newOwnerId) {
         // do nothing
+    }
+
+    /**
+     * Called when the region is disposed.
+     */
+    protected void onDispose() {
+        // do nothings
     }
 
     /**
