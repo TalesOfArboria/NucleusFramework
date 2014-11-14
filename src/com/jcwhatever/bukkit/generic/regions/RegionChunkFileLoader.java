@@ -257,17 +257,17 @@ public final class RegionChunkFileLoader {
                     return;
                 }
 
-                // get name of arena associated with the restore file
+                // get name of the region associated with the restore file
                 reader.getString();
 
-                // get the name of the world the restore file is in
+                // get the name of the world the region was saved from.
                 reader.getString();
 
-                // get the coordinates of the region the file chunk is part of
+                // get the coordinates of the region.
                 reader.getLocation();
                 reader.getLocation();
 
-                // get the volume of the file data
+                // get the volume of the region
                 long volume = reader.getLong();
 
                 // Make sure the volume matches expected volume
