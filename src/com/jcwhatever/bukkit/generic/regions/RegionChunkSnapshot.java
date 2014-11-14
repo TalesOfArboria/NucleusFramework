@@ -28,12 +28,12 @@ package com.jcwhatever.bukkit.generic.regions;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableFurnitureEntity;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.performance.queued.Iteration3DTask;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueProject;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.Future;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
@@ -44,11 +44,11 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
+import javax.annotation.Nullable;
 
 /**
  * Takes a snapshot of a section of a chunk which
@@ -127,7 +127,7 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
     /**
      * Save the chunk section snapshot to a file.
      *
-     * <p>Runs task immediately if not {@code QueueProject} is provided.</p>
+     * <p>Runs task immediately if no {@code QueueProject} is provided.</p>
      *
      * @param file     The file to save to.
      * @param project  The optional project to add tasks to.
@@ -299,11 +299,9 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
                 writer.write(getVolume());
             }
             catch (IOException io) {
-
                 io.printStackTrace();
 
-                Messenger.debug(_plugin, "IOException while writing region data.");
-                fail("IOException while writing region data.");
+                fail("IOException while writing region header.");
                 _isSaving = false;
             }
         }
@@ -323,10 +321,8 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
                 writer.write(data);
             }
             catch (IOException ioe) {
-
                 ioe.printStackTrace();
 
-                Messenger.debug(_plugin, "IOException while writing region data.");
                 fail("IOException while writing region data.");
                 _isSaving = false;
             }
@@ -378,7 +374,6 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
                 catch (IOException io) {
                     io.printStackTrace();
 
-                    Messenger.debug(_plugin, "IOException while closing file input stream.");
                     fail("IOException while closing file input stream.");
                 }
             }
