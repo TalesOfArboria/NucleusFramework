@@ -307,7 +307,11 @@ public abstract class RestorableRegion extends BuildableRegion {
     }
 
     /**
-     * Get the save file prefix.
+     * Called to get the save file prefix.
+     *
+     * <p>The prefix is used to distinguish the file from
+     * other regions that might contain the same chunk(s). The prefix should
+     * have a unique identifier for the region such as the region name.</p>
      */
     protected abstract String getFilePrefix();
 
@@ -446,7 +450,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      * Restore blocks from blockInfo stack on
      * the main thread.
      */
-    private final class RestoreBlocks extends QueueTask {
+    private static final class RestoreBlocks extends QueueTask {
 
         private final RegionChunkFileLoader loader;
         private final Chunk chunk;
