@@ -54,7 +54,7 @@ import javax.annotation.Nullable;
  */
 public final class RegionChunkFileLoader {
 
-    public static final int RESTORE_FILE_VERSION = 1;
+    public static final int RESTORE_FILE_VERSION = 2;
     private Plugin _plugin;
     private RestorableRegion _region;
     private Chunk _chunk;
@@ -295,10 +295,14 @@ public final class RegionChunkFileLoader {
 
             Material type;
             int data;
+            int light;
+            int skylight;
 
             try {
                 type = reader.getEnum(Material.class);
-                data = reader.getInteger();
+                data = reader.getShort();
+                light = reader.getByte();
+                skylight = reader.getByte();
             }
             catch (IOException io) {
                 io.printStackTrace();
@@ -307,7 +311,7 @@ public final class RegionChunkFileLoader {
             }
 
             if (loadType == LoadType.ALL_BLOCKS || chunkType != type || chunkData != data) {
-                _blockInfo.add(new ChunkBlockInfo(type, data, x, y, z));
+                _blockInfo.add(new ChunkBlockInfo(x, y, z, type, data, light, skylight));
             }
         }
 

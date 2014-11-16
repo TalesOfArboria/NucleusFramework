@@ -30,11 +30,14 @@ import org.bukkit.Material;
  * Data object to hold information about a single block
  */
 public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo> {
-    private final int _data;
+
     private final int _x;
     private final int _y;
     private final int _z;
     private final Material _material;
+    private final int _data;
+    private final int _light;
+    private final int _skylight;
 
     /**
      * Constructor.
@@ -45,12 +48,14 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo> {
      * @param y            The blocks Y coordinates.
      * @param chunkBlockZ  The blocks Z coordinates relative to its chunk,
      */
-    public ChunkBlockInfo(Material material, int data, int chunkBlockX, int y, int chunkBlockZ) {
-        _material = material;
-        _data = data;
+    public ChunkBlockInfo(int chunkBlockX, int y, int chunkBlockZ, Material material, int data, int light, int skylight) {
         _x = chunkBlockX;
         _y = y;
         _z = chunkBlockZ;
+        _material = material;
+        _data = data;
+        _light = light;
+        _skylight = skylight;
     }
 
     /**
@@ -65,6 +70,20 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo> {
      */
     public int getData() {
         return _data;
+    }
+
+    /**
+     * Get the blocks emitted light.
+     */
+    public int getEmittedLight() {
+        return _light;
+    }
+
+    /**
+     * Get the amount of skylight on the block.
+     */
+    public int getSkylight() {
+        return _skylight;
     }
 
     /**
