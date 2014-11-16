@@ -556,12 +556,12 @@ public abstract class Region {
      */
     public final boolean contains(Location loc, boolean cx, boolean cy, boolean cz) {
 
-        if (getWorld() == null)
+        if (!isDefined())
             return false;
 
         synchronized (_sync) {
 
-            if (!isDefined() || !loc.getWorld().getName().equals(getWorld().getName()))
+            if (!loc.getWorld().equals(getWorld()))
                 return false;
 
             if (cx) {
@@ -625,6 +625,31 @@ public abstract class Region {
 
             return results;
         }
+    }
+
+    /**
+     * Determine if the region intersects with the chunk specified.
+     *
+     * @param chunk  The chunk.
+     */
+    public final boolean intersects(Chunk chunk) {
+        PreCon.notNull(chunk);
+
+        return isDefined() &&
+               chunk.getWorld().equals(getWorld()) &&
+               intersects(chunk.getX(), chunk.getZ());
+    }
+
+    /**
+     * Determine if the region intersects with the chunk specified.
+     *
+     * @param chunkX  The chunk X coordinates.
+     * @param chunkZ  The chunk Z coordinates.
+     */
+    public final boolean intersects(int chunkX, int chunkZ) {
+
+        return _chunkX <= chunkX && (_chunkX + _chunkXWidth - 1) >= chunkX &&
+               _chunkZ <= chunkZ && (_chunkZ + _chunkZWidth - 1) >= chunkZ;
     }
 
     /**
