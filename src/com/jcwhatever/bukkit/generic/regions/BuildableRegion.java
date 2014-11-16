@@ -32,7 +32,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueWorker;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
-import javax.annotation.Nullable;
+
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
@@ -44,6 +44,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 
 /**
@@ -154,7 +155,7 @@ public abstract class BuildableRegion extends Region {
      * Iteration worker for restoring a region area within the
      * specified chunk.
      */
-    private final class BuildChunkIterator extends Iteration3DTask {
+    private static final class BuildChunkIterator extends Iteration3DTask {
 
         private final ChunkSnapshot snapshot;
         private final Chunk chunk;
