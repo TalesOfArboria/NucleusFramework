@@ -264,6 +264,41 @@ public class GenericsByteReader extends InputStream {
     }
 
     /**
+     * Get the next group of bytes as a UTF-8 string that is expected to be
+     * no more than 255 bytes in length.
+     *
+     * <p>The first byte read indicates the length of the string in bytes.
+     * The number of bytes indicated is the number of bytes encoded into the
+     * returned string.</p>
+     *
+     * <p>If the original string written was null, then null is returned.</p>
+     *
+     * @throws IOException
+     */
+    @Nullable
+    public String getSmallString() throws IOException {
+
+        resetBooleanBuffer();
+
+        int len = getByte();
+        if (len == -1)
+            return null;
+
+        if (len == 0)
+            return "";
+
+        if (len >= _buffer.length) {
+            byte[] buffer = new byte[len];
+            _bytesRead += (long) _stream.read(buffer, 0, len);
+            return new String(buffer, 0, len, StandardCharsets.UTF_8);
+        }
+        else {
+            _bytesRead += (long) _stream.read(_buffer, 0, len);
+            return new String(_buffer, 0, len, StandardCharsets.UTF_8);
+        }
+    }
+
+    /**
      * Get the next group of bytes as a float value.
      *
      * <p>Float values are read as a UTF-8 string byte array preceded with 1 byte
@@ -275,7 +310,7 @@ public class GenericsByteReader extends InputStream {
      * @throws NumberFormatException If the value from the stream cannot be parsed to a float.
      */
     public float getFloat() throws IOException {
-        String str = getByteString();
+        String str = getSmallString();
         if (str == null || str.isEmpty())
             throw new RuntimeException("Failed to read float value.");
 
@@ -294,7 +329,7 @@ public class GenericsByteReader extends InputStream {
      * @throws NumberFormatException If the value from the stream cannot be parsed to a double.
      */
     public double getDouble() throws IOException {
-        String str = getByteString();
+        String str = getSmallString();
         if (str == null || str.isEmpty())
             throw new RuntimeException("Failed to read double value.");
 
@@ -318,7 +353,7 @@ public class GenericsByteReader extends InputStream {
      * @throws IllegalStateException If the enum value is not valid for the specified enum type.
      */
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
-        String constantName = getByteString();
+        String constantName = getSmallString();
         if (constantName == null) {
             throw new RuntimeException(
                     "Could not find an enum: " + enumClass.getName());
@@ -352,7 +387,7 @@ public class GenericsByteReader extends InputStream {
      */
     public Location getLocation() throws IOException {
 
-        String worldName = getByteString();
+        String worldName = getSmallString();
         double x = getDouble();
         double y = getDouble();
         double z = getDouble();
@@ -403,7 +438,7 @@ public class GenericsByteReader extends InputStream {
 
         for (int i=0; i < totalMeta; i++) {
 
-            String metaName = getByteString();
+            String metaName = getSmallString();
             if (metaName == null)
                 throw new RuntimeException("Failed to read meta name of entry #" + i);
 
@@ -507,29 +542,5 @@ public class GenericsByteReader extends InputStream {
     private void resetBooleanBuffer() {
         _booleanReadCount = 7;
         _booleanBuffer[0] = 0;
-    }
-
-    // read a UTF-8 string using only a byte to indicate length
-    @Nullable
-    public String getByteString() throws IOException {
-
-        resetBooleanBuffer();
-
-        int len = getByte();
-        if (len == -1)
-            return null;
-
-        if (len == 0)
-            return "";
-
-        if (len >= _buffer.length) {
-            byte[] buffer = new byte[len];
-            _bytesRead += (long) _stream.read(buffer, 0, len);
-            return new String(buffer, 0, len, StandardCharsets.UTF_8);
-        }
-        else {
-            _bytesRead += (long) _stream.read(_buffer, 0, len);
-            return new String(_buffer, 0, len, StandardCharsets.UTF_8);
-        }
     }
 }

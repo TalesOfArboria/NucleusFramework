@@ -219,7 +219,7 @@ public class GenericsByteWriter extends OutputStream {
      * @throws IOException
      */
     public void write(float floatValue) throws IOException {
-        writeByteString(String.valueOf(floatValue));
+        writeSmallString(String.valueOf(floatValue));
     }
 
     /**
@@ -233,7 +233,7 @@ public class GenericsByteWriter extends OutputStream {
      * @throws IOException
      */
     public void write(double doubleValue) throws IOException {
-        writeByteString(String.valueOf(doubleValue));
+        writeSmallString(String.valueOf(doubleValue));
     }
 
     /**
@@ -302,6 +302,50 @@ public class GenericsByteWriter extends OutputStream {
     }
 
     /**
+     * Write a text string that is expected to be no more than 255 bytes in length
+     * using UTF-8 encoding.
+     *
+     * <p>The first byte written indicate the length of the string in bytes.</p>
+     *
+     * <p>If the string is null then the byte -1 is written
+     * and no array bytes are written.</p>
+     *
+     * <p>If the string is empty then the byte 0 is written
+     * and no array bytes are written.</p>
+     *
+     * @param text     The text to write. Can be null.
+     *
+     * @throws IOException
+     */
+    public void writeSmallString(String text) throws IOException {
+
+        // write buffered booleans
+        writeBooleans();
+
+        // handle null text
+        if (text == null) {
+            write((byte)-1);
+            return;
+        }
+        // handle empty text
+        else if (text.length() == 0) {
+            write((byte)0);
+            return;
+        }
+
+        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+
+        // write string byte length
+        write((byte)bytes.length);
+
+        // write string bytes
+        _stream.write(bytes);
+
+        // record bytes written
+        _bytesWritten+=bytes.length;
+    }
+
+    /**
      * Write an enum.
      *
      * <p>Enum values are written using a UTF-8 byte array preceded with 1 byte
@@ -317,7 +361,7 @@ public class GenericsByteWriter extends OutputStream {
     public <T extends Enum<T>> void write(T enumConstant) throws IOException {
         PreCon.notNull(enumConstant);
 
-        writeByteString(enumConstant.name());
+        writeSmallString(enumConstant.name());
     }
 
     /**
@@ -341,7 +385,7 @@ public class GenericsByteWriter extends OutputStream {
     public void write(Location location) throws IOException {
         PreCon.notNull(location);
 
-        writeByteString(location.getWorld().getName());
+        writeSmallString(location.getWorld().getName());
         write(location.getX());
         write(location.getY());
         write(location.getZ());
@@ -394,7 +438,7 @@ public class GenericsByteWriter extends OutputStream {
         write(metaObjects.size());
 
         for (ItemMetaObject metaObject : metaObjects) {
-            writeByteString(metaObject.getName());
+            writeSmallString(metaObject.getName());
             write(metaObject.getRawData(), StandardCharsets.UTF_16);
         }
     }
@@ -479,34 +523,6 @@ public class GenericsByteWriter extends OutputStream {
             _bytesWritten++;
             _booleanCount = 0;
         }
-    }
-
-    // write a UTF-8 string using only a byte to indicate length
-    private void writeByteString(String text) throws IOException {
-        // write buffered booleans
-        writeBooleans();
-
-        // handle null text
-        if (text == null) {
-            write((byte)-1);
-            return;
-        }
-        // handle empty text
-        else if (text.length() == 0) {
-            write((byte)0);
-            return;
-        }
-
-        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
-
-        // write string byte length
-        write((byte)bytes.length);
-
-        // write string bytes
-        _stream.write(bytes);
-
-        // record bytes written
-        _bytesWritten+=bytes.length;
     }
 
 }
