@@ -132,6 +132,25 @@ public class GenericsByteReader extends InputStream {
     }
 
     /**
+     * Get the next byte array.
+     *
+     * @throws IOException
+     */
+    public byte[] getBytes() throws IOException {
+
+        int size = getInteger();
+
+        if (size == 0)
+            return new byte[0];
+
+        byte[] bytes = new byte[size];
+
+        _bytesRead += _stream.read(bytes);
+
+        return bytes;
+    }
+
+    /**
      * Get the next group of bytes as an integer.
      *
      * @throws IOException

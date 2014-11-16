@@ -111,6 +111,29 @@ public class GenericsByteWriter extends OutputStream {
     }
 
     /**
+     * Write a byte array.
+     *
+     * @param byteArray  The byte array.
+     *
+     * @throws IOException
+     */
+    @Override
+    public void write(@Nullable byte[] byteArray) throws IOException {
+
+        // write buffered booleans
+        writeBooleans();
+
+        if (byteArray == null || byteArray.length == 0) {
+            write(0);
+            return;
+        }
+
+        write(byteArray.length);
+        _stream.write(byteArray, 0, byteArray.length);
+        _bytesWritten += byteArray.length;
+    }
+
+    /**
      * Write a 32-bit number.
      *
      * @param integerValue  The integer.
