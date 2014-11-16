@@ -25,8 +25,13 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
+import com.jcwhatever.bukkit.generic.events.EventHandler;
+import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.events.GenericsEventPriority;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
@@ -44,9 +49,9 @@ import java.util.List;
  * Provide scripts with an event registration API
  */
 @IScriptApiInfo(
-        variableName = "bukkitEvents",
+        variableName = "events",
         description = "Provide scripts with a Bukkit event registration API.")
-public class ScriptApiBukkitEvents extends GenericsScriptApi {
+public class ScriptApiEvents extends GenericsScriptApi {
 
     private ApiObject _api;
 
@@ -55,7 +60,7 @@ public class ScriptApiBukkitEvents extends GenericsScriptApi {
      *
      * @param plugin The owning plugin
      */
-    public ScriptApiBukkitEvents(Plugin plugin) {
+    public ScriptApiEvents(Plugin plugin) {
         super(plugin);
     }
 
@@ -75,8 +80,9 @@ public class ScriptApiBukkitEvents extends GenericsScriptApi {
     public static class ApiObject implements IScriptApiObject {
 
         private final Plugin _plugin;
-        private final List<Registered> _registered = new ArrayList<Registered>(15);
-        private Listener _dummyListener = new Listener() {};
+        private final List<RegisteredBukkitEvent> _registeredBukkit = new ArrayList<>(15);
+        private final List<RegisteredGenericsEvent> _registeredGenerics = new ArrayList<>(15);
+        private Listener _dummyBukkitListener = new Listener() {};
 
         ApiObject(Plugin plugin) {
             _plugin = plugin;
@@ -84,25 +90,87 @@ public class ScriptApiBukkitEvents extends GenericsScriptApi {
 
         @Override
         public void reset() {
-            for (Registered registered : _registered) {
+
+            // unregister Bukkit event handlers
+            for (RegisteredBukkitEvent registered : _registeredBukkit) {
                 registered._handlerList.unregister(registered._registeredListener);
             }
-            _registered.clear();
-            _dummyListener = new Listener() {};
+            _registeredBukkit.clear();
+            _dummyBukkitListener = new Listener() {};
+
+            // unregister Generics event handlers
+            for (RegisteredGenericsEvent registered : _registeredGenerics) {
+                GenericsEventManager.getGlobal().unregister(registered._eventClass, registered._handler);
+            }
+            _registeredGenerics.clear();
         }
 
         /**
          * Registers an event handler.
          *
-         * @param event     The event class.
-         * @param priority  The event priority as a string.
-         * @param handler   The event handler.
+         * @param eventName  The event class name.
+         * @param priority   The event priority as a string.
+         * @param handler    The event handler.
          *
          * @return True if successfully registered.
          */
-        public boolean on(Class<? extends Event> event, String priority, final IScriptEventHandler handler) {
+        public boolean on(String eventName, String priority, final IScriptEventHandler handler) {
+            PreCon.notNullOrEmpty(eventName);
+            PreCon.notNullOrEmpty(priority);
+            PreCon.notNull(handler);
 
+            Class<?> eventClass;
 
+            try {
+                eventClass = Class.forName(eventName);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            // check for and register bukkit events
+            if (Event.class.isAssignableFrom(eventClass)) {
+                Class<? extends Event> bukkitEventClass = eventClass.asSubclass(Event.class);
+                return registerBukkitEvent(bukkitEventClass, priority, handler);
+            }
+            else {
+                return registerGenericsEvent(eventClass, priority, handler);
+            }
+        }
+
+        /*
+         * Register Generics event.
+         */
+        private boolean registerGenericsEvent(Class<?> event, String priority,
+                                              final IScriptEventHandler handler) {
+
+            GenericsEventPriority eventPriority = GenericsEventPriority.NORMAL;
+
+            try {
+                eventPriority = GenericsEventPriority.valueOf(priority.toUpperCase());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            EventHandler eventHandler = new EventHandler() {
+                @Override
+                public void call(Object event) {
+                    handler.onEvent(event);
+                }
+            };
+
+            GenericsEventManager.getGlobal().register(event, eventPriority, eventHandler);
+
+            _registeredGenerics.add(new RegisteredGenericsEvent(event, eventHandler));
+
+            return true;
+        }
+
+        /*
+         * Register Bukkit event
+         */
+        private boolean registerBukkitEvent(Class<? extends Event> event, String priority,
+                                            final IScriptEventHandler handler) {
             EventPriority eventPriority = EventPriority.NORMAL;
 
             try {
@@ -132,28 +200,39 @@ public class ScriptApiBukkitEvents extends GenericsScriptApi {
                 }
             };
 
-            RegisteredListener registeredListener = new RegisteredListener(_dummyListener,
+            RegisteredListener registeredListener = new RegisteredListener(_dummyBukkitListener,
                     eventExecutor, eventPriority, _plugin, true);
 
             handlerList.register(registeredListener);
 
-            _registered.add(new Registered(handlerList, registeredListener));
+            _registeredBukkit.add(new RegisteredBukkitEvent(handlerList, registeredListener));
 
             return true;
         }
+
     }
 
     public static interface IScriptEventHandler {
         public void onEvent(Object event);
     }
 
-    private static class Registered {
+    private static class RegisteredBukkitEvent {
         HandlerList _handlerList;
         RegisteredListener _registeredListener;
 
-        Registered (HandlerList handlerList, RegisteredListener listener) {
+        RegisteredBukkitEvent(HandlerList handlerList, RegisteredListener listener) {
             _handlerList = handlerList;
             _registeredListener = listener;
+        }
+    }
+
+    private static class RegisteredGenericsEvent {
+        Class<?> _eventClass;
+        EventHandler _handler;
+
+        RegisteredGenericsEvent(Class<?> eventClass, EventHandler handler) {
+            _eventClass = eventClass;
+            _handler = handler;
         }
     }
 }
