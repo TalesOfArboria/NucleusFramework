@@ -161,6 +161,21 @@ public class GenericsByteReader extends InputStream {
     }
 
     /**
+     * Read the next 2 bytes and return them as a short.
+     *
+     * @throws IOException
+     */
+    public short getShort() throws IOException {
+
+        resetBooleanBuffer();
+
+        _bytesRead += (long)_stream.read(_buffer, 0, 2);
+
+        return (short)(((_buffer[0] & 255) << 8)
+                    + (_buffer[1] & 255));
+    }
+
+    /**
      * Read the next 4 bytes and return them as an integer.
      *
      * @throws IOException
@@ -199,7 +214,9 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next group of bytes as a UTF-16 string.
      *
-     * <p>The first 4 bytes (integer) of the string indicate the length of the string in bytes.</p>
+     * <p>The first 2 bytes (short) read indicate the length of the string in bytes.
+     * The number of bytes indicated is the number of bytes encoded into the
+     * returned string.</p>
      *
      * <p>If the original string written was null, then null is returned.</p>
      *
@@ -213,7 +230,9 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next group of bytes as a string.
      *
-     * <p>The first 4 bytes (integer) of the string indicate the length of the string in bytes.</p>
+     * <p>The first 2 bytes (short) read indicate the length of the string in bytes.
+     * The number of bytes indicated is the number of bytes encoded into the
+     * returned string.</p>
      *
      * <p>If the original string written was null, then null is returned.</p>
      *
@@ -226,7 +245,7 @@ public class GenericsByteReader extends InputStream {
 
         resetBooleanBuffer();
 
-        int len = getInteger();
+        int len = getShort();
         if (len == -1)
             return null;
 
@@ -247,8 +266,8 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next group of bytes as a float value.
      *
-     * <p>Float values are read as a UTF-8 byte array preceded with a 4 byte
-     * integer to indicate the number of bytes in the array.</p>
+     * <p>Float values are read as a UTF-8 string byte array preceded with 1 byte
+     * to indicate the number of bytes in the array.</p>
      *
      * @throws IOException
      *
@@ -256,7 +275,7 @@ public class GenericsByteReader extends InputStream {
      * @throws NumberFormatException If the value from the stream cannot be parsed to a float.
      */
     public float getFloat() throws IOException {
-        String str = getString(StandardCharsets.UTF_8);
+        String str = getByteString();
         if (str == null || str.isEmpty())
             throw new RuntimeException("Failed to read float value.");
 
@@ -266,8 +285,8 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next group of bytes as a double value.
      *
-     * <p>Double values are read as a UTF-8 byte array preceded with a 4 byte
-     * integer to indicate the number of bytes in the array.</p>
+     * <p>Double values are read as a UTF-8 string byte array preceded with 1 byte
+     * to indicate the number of bytes in the array.</p>
      *
      * @throws IOException
      *
@@ -275,7 +294,7 @@ public class GenericsByteReader extends InputStream {
      * @throws NumberFormatException If the value from the stream cannot be parsed to a double.
      */
     public double getDouble() throws IOException {
-        String str = getString(StandardCharsets.UTF_8);
+        String str = getByteString();
         if (str == null || str.isEmpty())
             throw new RuntimeException("Failed to read double value.");
 
@@ -285,9 +304,9 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next group of bytes as an enum.
      *
-     * <p>Enum values are stored using a UTF-8 byte array preceded with a 4 byte
-     * integer to indicate the number of bytes in the array. The UTF-8 byte array
-     * is the string value of the enum constants name.</p>
+     * <p>Enum values are stored using a UTF-8 byte array preceded with 1 byte
+     * to indicate the number of UTF-8 bytes. The UTF-8 byte array is the string
+     * value of the enum constants name.</p>
      *
      * @param enumClass  The enum class.
      *
@@ -299,7 +318,7 @@ public class GenericsByteReader extends InputStream {
      * @throws IllegalStateException If the enum value is not valid for the specified enum type.
      */
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
-        String constantName = getString(StandardCharsets.UTF_8);
+        String constantName = getByteString();
         if (constantName == null) {
             throw new RuntimeException(
                     "Could not find an enum: " + enumClass.getName());
@@ -320,7 +339,7 @@ public class GenericsByteReader extends InputStream {
      * <p>The location is read as follows:</p>
      *
      * <ul>
-     *     <li>The world name - UTF-8 String (See {@code getString})</li>
+     *     <li>The world name - UTF-8 byte array preceded with a byte to indicate length.</li>
      *     <li>The X value - Double (See {@code getDouble})</li>
      *     <li>The Y value - Double (See {@code getDouble})</li>
      *     <li>The Z value - Double (See {@code getDouble})</li>
@@ -333,7 +352,7 @@ public class GenericsByteReader extends InputStream {
      */
     public Location getLocation() throws IOException {
 
-        String worldName = getString(StandardCharsets.UTF_8);
+        String worldName = getByteString();
         double x = getDouble();
         double y = getDouble();
         double z = getDouble();
@@ -349,7 +368,7 @@ public class GenericsByteReader extends InputStream {
      * <p>Reads the item stack as follows:</p>
      * <ul>
      *     <li>Boolean (bit or byte depending on the data structure) indicating
-     *         if the item stack is null. 1 = null. (See {@code getBoolean})</li>
+     *         if the item stack is null. 0 = null. (See {@code getBoolean})</li>
      *     <li>Material - Enum (See {@code getEnum})</li>
      *     <li>Durability - Integer (See {@code getInteger})</li>
      *     <li>Meta count - Integer (See {@code getInteger})</li>
@@ -358,7 +377,7 @@ public class GenericsByteReader extends InputStream {
      *
      * <p>Meta is read as follows:</p>
      * <ul>
-     *     <li>Meta Name - UTF-8 String (See {@code getString})</li>
+     *     <li>Meta Name - UTF-8 String byte array preceded with a byte to indicate length.</li>
      *     <li>Meta Data - UTF-16 String (See {@code getString})</li>
      * </ul>
      *
@@ -369,7 +388,7 @@ public class GenericsByteReader extends InputStream {
     @Nullable
     public ItemStack getItemStack() throws IOException {
 
-        boolean isNull = getBoolean();
+        boolean isNull = !getBoolean();
         if (isNull)
             return null;
 
@@ -384,7 +403,7 @@ public class GenericsByteReader extends InputStream {
 
         for (int i=0; i < totalMeta; i++) {
 
-            String metaName = getString(StandardCharsets.UTF_8);
+            String metaName = getByteString();
             if (metaName == null)
                 throw new RuntimeException("Failed to read meta name of entry #" + i);
 
@@ -407,7 +426,10 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get an {@code IGenericsSerializable} object.
      *
-     * <p>Data read depends on the how the object reads the stream internally.</p>
+     * <p>A boolean is read (See {@code getBoolean} to indicate if the object
+     * is null (0 = null) and if not null a new object is instantiate via empty
+     * constructor and is responsible for deserializing data from the stream
+     * into itself.</p>
      *
      * @param objectClass  The object class.
      *
@@ -423,7 +445,7 @@ public class GenericsByteReader extends InputStream {
             throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException {
         PreCon.notNull(objectClass);
 
-        boolean isNull = getBoolean();
+        boolean isNull = !getBoolean();
         if (isNull)
             return null;
 
@@ -436,6 +458,10 @@ public class GenericsByteReader extends InputStream {
 
     /**
      * Deserialize an object from the next set of bytes.
+     *
+     * <p>A boolean is read (See {@code getBoolean} indicating if the object
+     * is null (0 = null) and if not null the object is deserialized using an
+     * {@code ObjectInputStream}.</p>
      *
      * @param objectClass  The object class.
      *
@@ -450,7 +476,7 @@ public class GenericsByteReader extends InputStream {
     public <T extends Serializable> T getObject(Class<T> objectClass) throws IOException, ClassNotFoundException {
         PreCon.notNull(objectClass);
 
-        boolean isNull = getBoolean();
+        boolean isNull = !getBoolean();
 
         if (isNull)
             return null;
@@ -481,5 +507,29 @@ public class GenericsByteReader extends InputStream {
     private void resetBooleanBuffer() {
         _booleanReadCount = 7;
         _booleanBuffer[0] = 0;
+    }
+
+    // read a UTF-8 string using only a byte to indicate length
+    @Nullable
+    public String getByteString() throws IOException {
+
+        resetBooleanBuffer();
+
+        int len = getByte();
+        if (len == -1)
+            return null;
+
+        if (len == 0)
+            return "";
+
+        if (len >= _buffer.length) {
+            byte[] buffer = new byte[len];
+            _bytesRead += (long) _stream.read(buffer, 0, len);
+            return new String(buffer, 0, len, StandardCharsets.UTF_8);
+        }
+        else {
+            _bytesRead += (long) _stream.read(_buffer, 0, len);
+            return new String(_buffer, 0, len, StandardCharsets.UTF_8);
+        }
     }
 }

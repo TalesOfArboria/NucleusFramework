@@ -145,6 +145,25 @@ public class GenericsByteWriter extends OutputStream {
     }
 
     /**
+     * Write a 16-bit number (2 bytes).
+     *
+     * @param shortValue  The short.
+     *
+     * @throws IOException
+     */
+    public void write(short shortValue) throws IOException {
+
+        // write buffered booleans
+        writeBooleans();
+
+        _buffer[0] = (byte)(shortValue >> 8 & 255);
+        _buffer[1] = (byte)(shortValue & 255);
+
+        _stream.write(_buffer, 0, 2);
+        _bytesWritten += 2;
+    }
+
+    /**
      * Write a 32-bit number (4 bytes).
      *
      * @param integerValue  The integer.
@@ -192,41 +211,41 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Write a floating point number.
      *
-     * <p>Float values are written as a UTF-8 byte array preceded with a 4 byte
-     * integer to indicate the number of bytes in the array.</p>
+     * <p>Float values are written as a UTF-8 byte array preceded with 1 byte
+     * to indicate the number of bytes in the array.</p>
      *
      * @param floatValue  The floating point value.
      *
      * @throws IOException
      */
     public void write(float floatValue) throws IOException {
-        write(String.valueOf(floatValue), StandardCharsets.UTF_8);
+        writeByteString(String.valueOf(floatValue));
     }
 
     /**
      * Write a double number.
      *
-     * <p>Double values are written using a UTF-8 byte array preceded with a 4 byte
-     * integer to indicate the number of bytes in the array.</p>
+     * <p>Double values are written using a UTF-8 byte array preceded with 1 byte
+     * to indicate the number of bytes in the array.</p>
      *
      * @param doubleValue  The floating point double.
      *
      * @throws IOException
      */
     public void write(double doubleValue) throws IOException {
-        write(String.valueOf(doubleValue), StandardCharsets.UTF_8);
+        writeByteString(String.valueOf(doubleValue));
     }
 
     /**
      * Write a text string using UTF-16 encoding.
      *
-     * <p>The first 4 bytes (integer) of the string indicate the length
+     * <p>The first 2 bytes (short) written indicate the length
      * of the string in bytes.</p>
      *
-     * <p>If the string is null then the integer -1 (4 bytes) is written
+     * <p>If the string is null then the short -1 (2 bytes) is written
      * and no array bytes are written.</p>
      *
-     * <p>If the string is empty then the integer 0 (4 bytes) is written
+     * <p>If the string is empty then the short 0 (2 bytes) is written
      * and no array bytes are written.</p>
      *
      * @param text  The text to write. Can be null.
@@ -240,13 +259,13 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Write a text string.
      *
-     * <p>The first 4 bytes (integer) of the string indicate the length
+     * <p>The first 2 bytes (short) written indicate the length
      * of the string in bytes.</p>
      *
-     * <p>If the string is null then the integer -1 (4 bytes) is written
+     * <p>If the string is null then the short -1 (2 bytes) is written
      * and no array bytes are written.</p>
      *
-     * <p>If the string is empty then the integer 0 (4 bytes) is written
+     * <p>If the string is empty then the short 0 (2 bytes) is written
      * and no array bytes are written.</p>
      *
      * @param text     The text to write. Can be null.
@@ -273,7 +292,7 @@ public class GenericsByteWriter extends OutputStream {
         byte[] bytes = text.getBytes(charset);
 
         // write string byte length
-        write(bytes.length);
+        write((short)bytes.length);
 
         // write string bytes
         _stream.write(bytes);
@@ -285,8 +304,8 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Write an enum.
      *
-     * <p>Enum values are written using a UTF-8 byte array preceded with a 4 byte
-     * integer to indicate the number of bytes in the array. The UTF-8 byte array
+     * <p>Enum values are written using a UTF-8 byte array preceded with 1 byte
+     * to indicate the number of bytes in the array. The UTF-8 byte array
      * is the string value of the enum constants name.</p>
      *
      * @param enumConstant  The enum constant.
@@ -298,7 +317,7 @@ public class GenericsByteWriter extends OutputStream {
     public <T extends Enum<T>> void write(T enumConstant) throws IOException {
         PreCon.notNull(enumConstant);
 
-        write(enumConstant.name(), StandardCharsets.UTF_8);
+        writeByteString(enumConstant.name());
     }
 
     /**
@@ -307,12 +326,12 @@ public class GenericsByteWriter extends OutputStream {
      * <p>The location is written as follows:</p>
      *
      * <ul>
-     *     <li>The world name - UTF-8 String (See {@code getString})</li>
-     *     <li>The X value - Double (See {@code getDouble})</li>
-     *     <li>The Y value - Double (See {@code getDouble})</li>
-     *     <li>The Z value - Double (See {@code getDouble})</li>
-     *     <li>The Yaw value - Double (See {@code getDouble})</li>
-     *     <li>The Pitch value - Double (See {@code getDouble})</li>
+     *     <li>The world name - UTF-8 String preceded with a single byte to indicate length.</li>
+     *     <li>The X value - Double (See {@code write(double)})</li>
+     *     <li>The Y value - Double (See {@code write(double)})</li>
+     *     <li>The Z value - Double (See {@code write(double)})</li>
+     *     <li>The Yaw value - Double (See {@code write(double)})</li>
+     *     <li>The Pitch value - Double (See {@code write(double)})</li>
      * </ul>
      *
      * @param location  The location.
@@ -322,7 +341,7 @@ public class GenericsByteWriter extends OutputStream {
     public void write(Location location) throws IOException {
         PreCon.notNull(location);
 
-        write(location.getWorld().getName(), StandardCharsets.UTF_8);
+        writeByteString(location.getWorld().getName());
         write(location.getX());
         write(location.getY());
         write(location.getZ());
@@ -336,17 +355,17 @@ public class GenericsByteWriter extends OutputStream {
      * <p>Writes the item stack as follows:</p>
      * <ul>
      *     <li>Boolean (bit or byte depending on the data structure) indicating
-     *         if the item stack is null. 1 = null. (See {@code getBoolean})</li>
-     *     <li>Material - Enum (See {@code getEnum})</li>
-     *     <li>Durability - Integer (See {@code getInteger})</li>
-     *     <li>Meta count - Integer (See {@code getInteger})</li>
+     *         if the item stack is null. 0 = null. (See {@code getBoolean})</li>
+     *     <li>Material - Enum (See {@code write(Enum)})</li>
+     *     <li>Durability - Short (See {@code write(int)})</li>
+     *     <li>Meta count - Integer (See {@code write(int)})</li>
      *     <li>Meta collection</li>
      * </ul>
      *
      * <p>Meta is written as follows:</p>
      * <ul>
-     *     <li>Meta Name - UTF-8 String (See {@code getString})</li>
-     *     <li>Meta Data - UTF-16 String (See {@code getString})</li>
+     *     <li>Meta Name - UTF-8 String preceded with a byte to indicate length.</li>
+     *     <li>Meta Data - UTF-16 String (See {@code write(String)})</li>
      * </ul>
      *
      * @param itemStack  The item stack.
@@ -355,7 +374,7 @@ public class GenericsByteWriter extends OutputStream {
      */
     public void write(@Nullable ItemStack itemStack) throws IOException {
 
-        write(itemStack == null);
+        write(itemStack != null);
         if (itemStack == null)
             return;
 
@@ -375,7 +394,7 @@ public class GenericsByteWriter extends OutputStream {
         write(metaObjects.size());
 
         for (ItemMetaObject metaObject : metaObjects) {
-            write(metaObject.getName(), StandardCharsets.UTF_8);
+            writeByteString(metaObject.getName());
             write(metaObject.getRawData(), StandardCharsets.UTF_16);
         }
     }
@@ -383,7 +402,8 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Serialize an {@code IGenericsSerializable} object.
      *
-     * <p>Data written depends on the how the object writes to the stream internally.</p>
+     * <p>A boolean is written (See {@code write(bool)} to indicate if the object
+     * is null (0 = null) and if not null the object serializes itself into the stream.</p>
      *
      * @param object  The object to serialize.
      *
@@ -392,7 +412,7 @@ public class GenericsByteWriter extends OutputStream {
      * @throws IOException
      */
     public <T extends IGenericsSerializable> void write(@Nullable T object) throws IOException {
-        write(object == null);
+        write(object != null);
         if (object == null)
             return;
 
@@ -402,6 +422,10 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Serialize an object.
      *
+     * <p>A boolean is written (See {@code write(bool)} indicating if the object
+     * is null (0 = null) and if not null the object is serialized using an
+     * {@code ObjectOutputStream}.</p>
+     *
      * @param object  The object to serialize. Can be null.
      *
      * @throws IOException
@@ -409,7 +433,7 @@ public class GenericsByteWriter extends OutputStream {
     public <T extends Serializable> void write(@Nullable T object) throws IOException {
 
         // write null flag
-        write(object == null);
+        write(object != null);
         if (object == null)
             return;
 
@@ -456,4 +480,33 @@ public class GenericsByteWriter extends OutputStream {
             _booleanCount = 0;
         }
     }
+
+    // write a UTF-8 string using only a byte to indicate length
+    private void writeByteString(String text) throws IOException {
+        // write buffered booleans
+        writeBooleans();
+
+        // handle null text
+        if (text == null) {
+            write((byte)-1);
+            return;
+        }
+        // handle empty text
+        else if (text.length() == 0) {
+            write((byte)0);
+            return;
+        }
+
+        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+
+        // write string byte length
+        write((byte)bytes.length);
+
+        // write string bytes
+        _stream.write(bytes);
+
+        // record bytes written
+        _bytesWritten+=bytes.length;
+    }
+
 }
