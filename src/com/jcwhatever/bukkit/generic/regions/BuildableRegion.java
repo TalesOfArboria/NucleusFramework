@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueProject;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueTask;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueWorker;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
+import com.jcwhatever.bukkit.generic.regions.data.RegionChunkSection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 

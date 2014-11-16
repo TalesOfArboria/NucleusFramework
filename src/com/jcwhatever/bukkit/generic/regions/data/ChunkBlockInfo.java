@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.regions;
+package com.jcwhatever.bukkit.generic.regions.data;
 
 import org.bukkit.Material;
 

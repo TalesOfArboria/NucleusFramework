@@ -23,7 +23,9 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.regions;
+package com.jcwhatever.bukkit.generic.regions.data;
+
+import com.jcwhatever.bukkit.generic.regions.Region;
 
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;

@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.regions;
+package com.jcwhatever.bukkit.generic.regions.data;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Location;
