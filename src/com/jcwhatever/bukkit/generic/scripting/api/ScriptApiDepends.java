@@ -111,7 +111,13 @@ public class ScriptApiDepends extends GenericsScriptApi {
                     return false;
             }
 
-            runnable.run();
+            try {
+                runnable.run();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
             return true;
         }
 
