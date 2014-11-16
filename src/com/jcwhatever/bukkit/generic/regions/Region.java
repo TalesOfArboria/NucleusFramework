@@ -94,8 +94,6 @@ public abstract class Region {
 
     private boolean _isPlayerWatcher = false;
 
-    private int _hash = -1;
-
     private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
 
     private UUID _ownerId;
