@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableBlockEntity;
@@ -40,7 +39,6 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
@@ -51,24 +49,18 @@ import java.io.IOException;
 import java.util.LinkedList;
 import javax.annotation.Nullable;
 
-/**
- * Takes a snapshot of a section of a chunk which
- * represents the portion of a region that is
- * contained within the chunk.
- *
- * <p>Used to save region chunk section to disk.</p>
- *
- * <p>Use in conjunction with {@code RegionChunkFileLoader}.</p>
+/*
+ * Writes a regions chunk section to file.
  */
-public final class RegionChunkSnapshot implements ChunkSnapshot {
+public class RegionChunkFileWriter {
 
     public static final int SAVE_FILE_VERSION = 3;
 
-    private Plugin _plugin;
-    private Region _region;
-    private World _world;
-    private ChunkSnapshot _snapshot;
-    private RegionChunkSection _section;
+    private final Plugin _plugin;
+    private final Region _region;
+    private final World _world;
+    private final ChunkSnapshot _snapshot;
+    private final RegionChunkSection _section;
 
     private final LinkedList<SerializableBlockEntity> _tileEntities = new LinkedList<>();
     private final LinkedList<SerializableFurnitureEntity> _entities = new LinkedList<>();
@@ -79,26 +71,60 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
      * Constructor.
      *
      * @param region  The region the snapshot is for.
-     * @param chunkX  The X coordinates of the chunk.
-     * @param chunkZ  The Y coordinates of the chunk.
+     * @param chunk   The chunk to snapshot.
      */
-    public RegionChunkSnapshot (Region region, int chunkX, int chunkZ) {
-        if (!region.isDefined())
-            throw new RuntimeException("Cannot get a snapshot from an undefined region.");
-
-        //noinspection ConstantConditions
-        Chunk chunk = region.getWorld().getChunkAt(chunkX, chunkZ);
-        init(region, chunk);
+    public RegionChunkFileWriter (Region region, Chunk chunk) {
+        this(region, chunk.getX(), chunk.getZ());
     }
 
     /**
      * Constructor.
      *
      * @param region  The region the snapshot is for.
-     * @param chunk   The chunk to snapshot.
+     * @param chunkX  The X coordinates of the chunk.
+     * @param chunkZ  The Y coordinates of the chunk.
      */
-    public RegionChunkSnapshot (Region region, Chunk chunk) {
-        init(region, chunk);
+    public RegionChunkFileWriter (Region region, int chunkX, int chunkZ) {
+        if (!region.isDefined())
+            throw new RuntimeException("Cannot get a snapshot from an undefined region.");
+
+        //noinspection ConstantConditions
+        Chunk chunk = region.getWorld().getChunkAt(chunkX, chunkZ);
+        _plugin = region.getPlugin();
+        _region = region;
+        _world = region.getWorld();
+        _snapshot = chunk.getChunkSnapshot();
+        _section = new RegionChunkSection(region, _snapshot);
+
+        // get tile entities from chunk
+        BlockState[] tileEntities = chunk.getTileEntities();
+
+        for (BlockState tile : tileEntities) {
+
+            // make sure the tile entity is contained within the section
+            if (_section.containsBlockCoords(tile.getX(), tile.getY(), tile.getZ()))
+                _tileEntities.add(new SerializableBlockEntity(tile));
+        }
+
+        // get entities from chunk
+        Entity[] entities = chunk.getEntities();
+
+        for (Entity entity : entities) {
+
+            if (!entity.isValid())
+                continue;
+
+            if (!SerializableFurnitureEntity.isFurnitureEntity(entity))
+                continue;
+
+            Location entityLoc = entity.getLocation();
+
+            // make sure the entity is contained within the section
+            if (!_section.containsBlockCoords(entityLoc.getBlockX(), entityLoc.getBlockY(), entityLoc.getBlockZ()))
+                continue;
+
+            _entities.add(new SerializableFurnitureEntity(entity));
+        }
     }
 
     /**
@@ -166,109 +192,6 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
         });
     }
 
-    @Override
-    public Biome getBiome(int x, int z) {
-        return _snapshot.getBiome(x, z);
-    }
-
-    @Override
-    public int getBlockData(int x, int y, int z) {
-        return _snapshot.getBlockData(x, y, z);
-    }
-
-    @Override
-    public int getBlockEmittedLight(int x, int y, int z) {
-        return _snapshot.getBlockEmittedLight(x, y, z);
-    }
-
-    @Override
-    public int getBlockSkyLight(int x, int y, int z) {
-        return _snapshot.getBlockSkyLight(x, y, z);
-    }
-
-    @Override
-    public int getBlockTypeId(int x, int y, int z) {
-        return _snapshot.getBlockTypeId(x, y, z);
-    }
-
-    @Override
-    public long getCaptureFullTime() {
-        return _snapshot.getCaptureFullTime();
-    }
-
-    @Override
-    public int getHighestBlockYAt(int x, int z) {
-        return _snapshot.getHighestBlockYAt(x, z);
-    }
-
-    @Override
-    public double getRawBiomeRainfall(int x, int z) {
-        return _snapshot.getRawBiomeRainfall(x, z);
-    }
-
-    @Override
-    public double getRawBiomeTemperature(int x, int z) {
-        return _snapshot.getRawBiomeTemperature(x, z);
-    }
-
-    @Override
-    public String getWorldName() {
-        return _snapshot.getWorldName();
-    }
-
-    @Override
-    public int getX() {
-        return _snapshot.getX();
-    }
-
-    @Override
-    public int getZ() {
-        return _snapshot.getZ();
-    }
-
-    @Override
-    public boolean isSectionEmpty(int arg0) {
-        return _snapshot.isSectionEmpty(arg0);
-    }
-
-    private void init(Region region, Chunk chunk) {
-        _plugin = region.getPlugin();
-        _region = region;
-        _world = region.getWorld();
-        _snapshot = chunk.getChunkSnapshot();
-        _section = new RegionChunkSection(region, _snapshot);
-
-        // get tile entities from chunk
-        BlockState[] tileEntities = chunk.getTileEntities();
-
-        for (BlockState tile : tileEntities) {
-
-            // make sure the tile entity is contained within the section
-            if (_section.containsBlockCoords(tile.getX(), tile.getY(), tile.getZ()))
-                _tileEntities.add(new SerializableBlockEntity(tile));
-        }
-
-        // get entities from chunk
-        Entity[] entities = chunk.getEntities();
-
-        for (Entity entity : entities) {
-
-            if (!entity.isValid())
-                continue;
-
-            if (!SerializableFurnitureEntity.isFurnitureEntity(entity))
-                continue;
-
-            Location entityLoc = entity.getLocation();
-
-            // make sure the entity is contained within the section
-            if (!_section.containsBlockCoords(entityLoc.getBlockX(), entityLoc.getBlockY(), entityLoc.getBlockZ()))
-                continue;
-
-            _entities.add(new SerializableFurnitureEntity(entity));
-        }
-    }
-
     /**
      * Iteration worker for saving a region area within a specified
      * chunk to a file.
@@ -297,7 +220,9 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
                 writer.write(SAVE_FILE_VERSION);
                 writer.write(_region.getName());
                 writer.write(_world.getName());
+                //noinspection ConstantConditions
                 writer.write(_region.getP1()); // Location
+                //noinspection ConstantConditions
                 writer.write(_region.getP2()); // Location
                 writer.write(getVolume());
             }
@@ -388,5 +313,7 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
         }
 
     }
+
+
 
 }

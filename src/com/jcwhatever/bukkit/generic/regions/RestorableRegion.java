@@ -115,7 +115,7 @@ public abstract class RestorableRegion extends BuildableRegion {
     /*
      * Save region data to disk
      */
-    protected Future saveData(String version) throws IOException {
+    protected Future saveData(String snapshotName) throws IOException {
 
         List<Chunk> chunks = this.getChunks();
 
@@ -137,8 +137,8 @@ public abstract class RestorableRegion extends BuildableRegion {
         Messenger.debug(GenericsLib.getLib(), "RestorableRegion: saving data");
 
         for (Chunk chunk : chunks) {
-            RegionChunkSnapshot snapshot = new RegionChunkSnapshot(this, chunk);
-            snapshot.saveData(getChunkFile(snapshot, version, true), project);
+            RegionChunkFileWriter writer = new RegionChunkFileWriter(this, chunk);
+            writer.saveData(getChunkFile(chunk, snapshotName, true), project);
         }
 
         QueueWorker.get().addTask(project);
@@ -376,19 +376,6 @@ public abstract class RestorableRegion extends BuildableRegion {
 
         String prefix = getFilePrefix();
         return (prefix != null ? prefix : "") + ".chunk." + chunkX + '.' + chunkZ + version + ".bin";
-    }
-
-    /**
-     * Get the file used to store data for the specified chunk.
-     *
-     * @param chunk             The chunk snapshot.
-     * @param version           The name of the restore version.
-     * @param doDeleteExisting  True to delete existing file.
-     *
-     * @throws IOException
-     */
-    public final File getChunkFile(ChunkSnapshot chunk, String version, boolean doDeleteExisting) throws IOException {
-        return getChunkFile(chunk.getX(), chunk.getZ(), version, doDeleteExisting);
     }
 
     /**
