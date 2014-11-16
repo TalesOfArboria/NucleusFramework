@@ -102,6 +102,11 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get a boolean.
      *
+     * <p>Booleans read sequentially are read as bits from the current byte. When the byte runs out of bits,
+     * the next bit is read from the next byte.</p>
+     *
+     * <p>Bytes that store boolean values do not share bits with other data types.</p>
+     *
      * @throws IOException
      */
     public boolean getBoolean() throws IOException {
@@ -134,6 +139,11 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next byte array.
      *
+     * <p>Gets an array by first reading an integer (4 bytes) which
+     * indicates the length of the array, then reads the number of bytes indicated.</p>
+     *
+     * <p>If the number of bytes indicated is 0, then an empty byte array is returned.</p>
+     *
      * @throws IOException
      */
     public byte[] getBytes() throws IOException {
@@ -151,7 +161,7 @@ public class GenericsByteReader extends InputStream {
     }
 
     /**
-     * Get the next group of bytes as an integer.
+     * Read the next 4 bytes and return them as an integer.
      *
      * @throws IOException
      */
@@ -167,7 +177,7 @@ public class GenericsByteReader extends InputStream {
     }
 
     /**
-     * Get the next group of bytes as long value.
+     * Read the next 8 bytes an return them as a long value.
      *
      * @throws IOException
      */
@@ -176,18 +186,22 @@ public class GenericsByteReader extends InputStream {
         resetBooleanBuffer();
 
         _bytesRead+=(long)_stream.read(_buffer, 0, 8);
-        return ((_buffer[0] & 255) << 56)
-                + ((_buffer[1] & 255) << 48)
-                + ((_buffer[2] & 255) << 40)
-                + ((_buffer[3] & 255) << 32)
-                + ((_buffer[4] & 255) << 24)
-                + ((_buffer[5] & 255) << 16)
-                + ((_buffer[6] & 255) << 8)
-                + (_buffer[7] & 255);
+        return ((_buffer[0] & 255L) << 56)
+                + ((_buffer[1] & 255L) << 48)
+                + ((_buffer[2] & 255L) << 40)
+                + ((_buffer[3] & 255L) << 32)
+                + ((_buffer[4] & 255L) << 24)
+                + ((_buffer[5] & 255L) << 16)
+                + ((_buffer[6] & 255L) << 8)
+                + (_buffer[7] & 255L);
     }
 
     /**
      * Get the next group of bytes as a UTF-16 string.
+     *
+     * <p>The first 4 bytes (integer) of the string indicate the length of the string in bytes.</p>
+     *
+     * <p>If the original string written was null, then null is returned.</p>
      *
      * @throws IOException
      */
@@ -198,6 +212,10 @@ public class GenericsByteReader extends InputStream {
 
     /**
      * Get the next group of bytes as a string.
+     *
+     * <p>The first 4 bytes (integer) of the string indicate the length of the string in bytes.</p>
+     *
+     * <p>If the original string written was null, then null is returned.</p>
      *
      * @param charset  The character set encoding to use.
      *
@@ -229,6 +247,9 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next group of bytes as a float value.
      *
+     * <p>Float values are read as a UTF-8 byte array preceded with a 4 byte
+     * integer to indicate the number of bytes in the array.</p>
+     *
      * @throws IOException
      *
      * @throws RuntimeException If the string value from the stream is null or empty.
@@ -245,6 +266,9 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next group of bytes as a double value.
      *
+     * <p>Double values are read as a UTF-8 byte array preceded with a 4 byte
+     * integer to indicate the number of bytes in the array.</p>
+     *
      * @throws IOException
      *
      * @throws RuntimeException If the double value from the stream is null or empty.
@@ -260,6 +284,10 @@ public class GenericsByteReader extends InputStream {
 
     /**
      * Get the next group of bytes as an enum.
+     *
+     * <p>Enum values are stored using a UTF-8 byte array preceded with a 4 byte
+     * integer to indicate the number of bytes in the array. The UTF-8 byte array
+     * is the string value of the enum constants name.</p>
      *
      * @param enumClass  The enum class.
      *
@@ -289,6 +317,17 @@ public class GenericsByteReader extends InputStream {
     /**
      * Get the next group of bytes as a location.
      *
+     * <p>The location is read as follows:</p>
+     *
+     * <ul>
+     *     <li>The world name - UTF-8 String (See {@code getString})</li>
+     *     <li>The X value - Double (See {@code getDouble})</li>
+     *     <li>The Y value - Double (See {@code getDouble})</li>
+     *     <li>The Z value - Double (See {@code getDouble})</li>
+     *     <li>The Yaw value - Double (See {@code getDouble})</li>
+     *     <li>The Pitch value - Double (See {@code getDouble})</li>
+     * </ul>
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -306,6 +345,22 @@ public class GenericsByteReader extends InputStream {
 
     /**
      * Get the next group of bytes as an item stack.
+     *
+     * <p>Reads the item stack as follows:</p>
+     * <ul>
+     *     <li>Boolean (bit or byte depending on the data structure) indicating
+     *         if the item stack is null. 1 = null. (See {@code getBoolean})</li>
+     *     <li>Material - Enum (See {@code getEnum})</li>
+     *     <li>Durability - Integer (See {@code getInteger})</li>
+     *     <li>Meta count - Integer (See {@code getInteger})</li>
+     *     <li>Meta collection</li>
+     * </ul>
+     *
+     * <p>Meta is read as follows:</p>
+     * <ul>
+     *     <li>Meta Name - UTF-8 String (See {@code getString})</li>
+     *     <li>Meta Data - UTF-16 String (See {@code getString})</li>
+     * </ul>
      *
      * @throws IOException
      *
@@ -351,6 +406,8 @@ public class GenericsByteReader extends InputStream {
 
     /**
      * Get an {@code IGenericsSerializable} object.
+     *
+     * <p>Data read depends on the how the object reads the stream internally.</p>
      *
      * @param objectClass  The object class.
      *

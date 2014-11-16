@@ -77,7 +77,12 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Write a boolean value.
      *
-     * @param booleanValue  The boolean value
+     * <p>Booleans written sequentially are written as bits into the current byte. When the byte runs out of bits,
+     * the next bit is written to the next byte.</p>
+     *
+     * <p>Bytes that store the boolean values do not share their bits with other data types.</p>
+     *
+     * @param booleanValue  The boolean value.
      *
      * @throws IOException
      */
@@ -113,6 +118,12 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Write a byte array.
      *
+     * <p>Writes an array by first writing an integer (4 bytes) which
+     * indicates the length of the array, then writes the entire byte array.</p>
+     *
+     * <p>If the array is null or empty then the integer 0 (4 bytes) is
+     * written and no array bytes are added.</p>
+     *
      * @param byteArray  The byte array.
      *
      * @throws IOException
@@ -134,7 +145,7 @@ public class GenericsByteWriter extends OutputStream {
     }
 
     /**
-     * Write a 32-bit number.
+     * Write a 32-bit number (4 bytes).
      *
      * @param integerValue  The integer.
      *
@@ -155,7 +166,7 @@ public class GenericsByteWriter extends OutputStream {
     }
 
     /**
-     * Write a 64 bit number.
+     * Write a 64 bit number (8 bytes).
      *
      * @param longValue  The long.
      *
@@ -181,6 +192,9 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Write a floating point number.
      *
+     * <p>Float values are written as a UTF-8 byte array preceded with a 4 byte
+     * integer to indicate the number of bytes in the array.</p>
+     *
      * @param floatValue  The floating point value.
      *
      * @throws IOException
@@ -190,7 +204,10 @@ public class GenericsByteWriter extends OutputStream {
     }
 
     /**
-     * Write a floating point double.
+     * Write a double number.
+     *
+     * <p>Double values are written using a UTF-8 byte array preceded with a 4 byte
+     * integer to indicate the number of bytes in the array.</p>
      *
      * @param doubleValue  The floating point double.
      *
@@ -203,6 +220,15 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Write a text string using UTF-16 encoding.
      *
+     * <p>The first 4 bytes (integer) of the string indicate the length
+     * of the string in bytes.</p>
+     *
+     * <p>If the string is null then the integer -1 (4 bytes) is written
+     * and no array bytes are written.</p>
+     *
+     * <p>If the string is empty then the integer 0 (4 bytes) is written
+     * and no array bytes are written.</p>
+     *
      * @param text  The text to write. Can be null.
      *
      * @throws IOException
@@ -213,6 +239,15 @@ public class GenericsByteWriter extends OutputStream {
 
     /**
      * Write a text string.
+     *
+     * <p>The first 4 bytes (integer) of the string indicate the length
+     * of the string in bytes.</p>
+     *
+     * <p>If the string is null then the integer -1 (4 bytes) is written
+     * and no array bytes are written.</p>
+     *
+     * <p>If the string is empty then the integer 0 (4 bytes) is written
+     * and no array bytes are written.</p>
      *
      * @param text     The text to write. Can be null.
      * @param charset  The charset encoding to use.
@@ -250,6 +285,10 @@ public class GenericsByteWriter extends OutputStream {
     /**
      * Write an enum.
      *
+     * <p>Enum values are written using a UTF-8 byte array preceded with a 4 byte
+     * integer to indicate the number of bytes in the array. The UTF-8 byte array
+     * is the string value of the enum constants name.</p>
+     *
      * @param enumConstant  The enum constant.
      *
      * @param <T>  The enum type.
@@ -264,6 +303,17 @@ public class GenericsByteWriter extends OutputStream {
 
     /**
      * Write a {@code Location}.
+     *
+     * <p>The location is written as follows:</p>
+     *
+     * <ul>
+     *     <li>The world name - UTF-8 String (See {@code getString})</li>
+     *     <li>The X value - Double (See {@code getDouble})</li>
+     *     <li>The Y value - Double (See {@code getDouble})</li>
+     *     <li>The Z value - Double (See {@code getDouble})</li>
+     *     <li>The Yaw value - Double (See {@code getDouble})</li>
+     *     <li>The Pitch value - Double (See {@code getDouble})</li>
+     * </ul>
      *
      * @param location  The location.
      *
@@ -282,6 +332,22 @@ public class GenericsByteWriter extends OutputStream {
 
     /**
      * Write an {@code ItemStack}.
+     *
+     * <p>Writes the item stack as follows:</p>
+     * <ul>
+     *     <li>Boolean (bit or byte depending on the data structure) indicating
+     *         if the item stack is null. 1 = null. (See {@code getBoolean})</li>
+     *     <li>Material - Enum (See {@code getEnum})</li>
+     *     <li>Durability - Integer (See {@code getInteger})</li>
+     *     <li>Meta count - Integer (See {@code getInteger})</li>
+     *     <li>Meta collection</li>
+     * </ul>
+     *
+     * <p>Meta is written as follows:</p>
+     * <ul>
+     *     <li>Meta Name - UTF-8 String (See {@code getString})</li>
+     *     <li>Meta Data - UTF-16 String (See {@code getString})</li>
+     * </ul>
      *
      * @param itemStack  The item stack.
      *
@@ -316,6 +382,8 @@ public class GenericsByteWriter extends OutputStream {
 
     /**
      * Serialize an {@code IGenericsSerializable} object.
+     *
+     * <p>Data written depends on the how the object writes to the stream internally.</p>
      *
      * @param object  The object to serialize.
      *
