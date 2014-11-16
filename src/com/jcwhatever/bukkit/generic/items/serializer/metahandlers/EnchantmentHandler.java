@@ -73,7 +73,7 @@ public class EnchantmentHandler implements MetaHandler {
             }
         }
 
-        itemStack.addEnchantment(enchantment, level);
+        itemStack.addUnsafeEnchantment(enchantment, level);
         return true;
     }
 
