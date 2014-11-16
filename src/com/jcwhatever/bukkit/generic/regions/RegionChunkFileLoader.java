@@ -36,6 +36,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.Future;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.regions.data.ChunkBlockInfo;
 import com.jcwhatever.bukkit.generic.regions.data.RegionChunkSection;
+import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -54,7 +55,7 @@ import javax.annotation.Nullable;
  */
 public final class RegionChunkFileLoader {
 
-    public static final int RESTORE_FILE_VERSION = 2;
+    public static final int RESTORE_FILE_VERSION = 3;
     private Plugin _plugin;
     private RestorableRegion _region;
     private Chunk _chunk;
@@ -299,10 +300,25 @@ public final class RegionChunkFileLoader {
             int skylight;
 
             try {
-                type = reader.getEnum(Material.class);
+
+                String typeName = reader.getSmallString();
+                if (typeName == null) {
+                    fail("Failed to read from file. Found a null block type in file.");
+                    return;
+                }
+
+                type = EnumUtils.getEnum(typeName, Material.class);
+                if (type == null) {
+                    fail("Failed to read from file. Found a block type in file that is not a valid type: " + typeName);
+                    return;
+                }
+
                 data = reader.getShort();
-                light = reader.getByte();
-                skylight = reader.getByte();
+
+                int ls = reader.getByte();
+
+                light = ls >> 4;
+                skylight = (ls & 0x0F);
             }
             catch (IOException io) {
                 io.printStackTrace();

@@ -60,7 +60,7 @@ import javax.annotation.Nullable;
  */
 public final class RegionChunkSnapshot implements ChunkSnapshot {
 
-    public static final int SAVE_FILE_VERSION = 2;
+    public static final int SAVE_FILE_VERSION = 3;
 
     private Plugin _plugin;
     private Region _region;
@@ -319,11 +319,12 @@ public final class RegionChunkSnapshot implements ChunkSnapshot {
             int light = _snapshot.getBlockEmittedLight(x, y, z);
             int skylight = _snapshot.getBlockSkyLight(x, y, z);
 
+            int ls = (light << 4) | skylight;
+
             try {
-                writer.write(type);
+                writer.writeSmallString(type.name());
                 writer.write((short)data);
-                writer.write((byte)light);
-                writer.write((byte)skylight);
+                writer.write((byte)ls);
             }
             catch (IOException ioe) {
                 ioe.printStackTrace();
