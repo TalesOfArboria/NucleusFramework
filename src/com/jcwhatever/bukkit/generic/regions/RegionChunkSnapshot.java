@@ -56,6 +56,8 @@ import javax.annotation.Nullable;
  * represents the portion of a region that is
  * contained within the chunk.
  *
+ * <p>Used to save region chunk section to disk.</p>
+ *
  * <p>Use in conjunction with {@code RegionChunkFileLoader}.</p>
  */
 public final class RegionChunkSnapshot implements ChunkSnapshot {
