@@ -771,7 +771,7 @@ public class YamlDataStorage implements IDataNode {
                 _strings.put(keyPath, (String) value);
             }
             else if (value instanceof Location) {
-                value = LocationUtils.locationToString((Location) value);
+                value = LocationUtils.locationToString((Location) value, 3);
                 _strings.put(keyPath, value.toString());
             }
             else if (value instanceof ItemStack) {

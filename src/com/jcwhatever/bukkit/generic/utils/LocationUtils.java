@@ -34,6 +34,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import javax.annotation.Nullable;
 
 /**
@@ -231,6 +233,35 @@ public class LocationUtils {
 
         return String.valueOf(location.getX()) + ',' + location.getY() + ',' + location.getZ() +
                 ',' + location.getYaw() + ',' + location.getPitch() + ',' + location.getWorld().getName();
+    }
+
+    /**
+     * Convert a location to a parsable string.
+     *
+     * @param location             The location to convert.
+     * @param floatingPointPlaces  The number of places in the floating point values.
+     */
+    public static String locationToString(Location location, int floatingPointPlaces) {
+        PreCon.notNull(location);
+        PreCon.positiveNumber(floatingPointPlaces);
+
+        BigDecimal x = new BigDecimal(floatingPointPlaces == 0 ? location.getBlockX() : location.getX())
+                .setScale(floatingPointPlaces, RoundingMode.HALF_UP);
+
+        BigDecimal y = new BigDecimal(floatingPointPlaces == 0 ? location.getBlockY() : location.getY())
+                .setScale(floatingPointPlaces, RoundingMode.HALF_UP);
+
+        BigDecimal z = new BigDecimal(floatingPointPlaces == 0 ? location.getBlockZ() : location.getZ())
+                .setScale(floatingPointPlaces, RoundingMode.HALF_UP);
+
+        BigDecimal yaw = new BigDecimal(location.getYaw())
+                .setScale(floatingPointPlaces, RoundingMode.HALF_UP);
+
+        BigDecimal pitch = new BigDecimal(location.getPitch())
+                .setScale(floatingPointPlaces, RoundingMode.HALF_UP);
+
+        return String.valueOf(x) + ',' + y + ',' + z +
+                ',' + yaw + ',' + pitch + ',' + location.getWorld().getName();
     }
 
     /**
