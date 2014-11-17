@@ -25,9 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.file;
 
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandler;
-import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Location;
@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -234,6 +236,34 @@ public class GenericsByteWriter extends OutputStream {
      */
     public void write(double doubleValue) throws IOException {
         writeSmallString(String.valueOf(doubleValue));
+    }
+
+    /**
+     * Write a {@code BigDecimal} number.
+     *
+     * <p>Serializes number using {@code ObjectOutputStream}.
+     * (See {@code write(Serializable)}).</p>
+     *
+     * @param decimal  The big decimal.
+     *
+     * @throws IOException
+     */
+    public void write(@Nullable BigDecimal decimal) throws IOException {
+        write((Serializable) decimal);
+    }
+
+    /**
+     * Write a {@code BigInteger} number.
+     *
+     * <p>Serializes number using {@code ObjectOutputStream}.
+     * (See {@code write(Serializable)}).</p>
+     *
+     * @param integer  The big integer.
+     *
+     * @throws IOException
+     */
+    public void write(@Nullable BigInteger integer) throws IOException {
+        write((Serializable) integer);
     }
 
     /**

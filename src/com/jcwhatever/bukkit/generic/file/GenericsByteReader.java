@@ -25,9 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.file;
 
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.MetaHandler;
-import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -40,6 +40,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.Nullable;
@@ -209,6 +211,48 @@ public class GenericsByteReader extends InputStream {
                 + ((_buffer[5] & 255L) << 16)
                 + ((_buffer[6] & 255L) << 8)
                 + (_buffer[7] & 255L);
+    }
+
+    /**
+     * Read the next group of bytes as a {@code BigDecimal}.
+     *
+     * <p>The data is deserialized using an {@code ObjectInputStream}.
+     * (See {@code getObject(Serializable)})</p>
+     *
+     * <p>If the {@code BigDecimal} that was written was null, then
+     * null is returned.</p>
+     *
+     * @throws IOException
+     */
+    @Nullable
+    public BigDecimal getBigDecimal() throws IOException {
+        try {
+            return getObject(BigDecimal.class);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new AssertionError();
+        }
+    }
+
+    /**
+     * Read the next group of bytes as a {@code BigInteger}.
+     *
+     * <p>The data is deserialized using an {@code ObjectInputStream}.
+     * (See {@code getObject(Serializable)})</p>
+     *
+     * <p>If the {@code BigInteger} that was written was null, then
+     * null is returned.</p>
+     *
+     * @throws IOException
+     */
+    @Nullable
+    public BigInteger getBigInteger() throws IOException {
+        try {
+            return getObject(BigInteger.class);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new AssertionError();
+        }
     }
 
     /**
