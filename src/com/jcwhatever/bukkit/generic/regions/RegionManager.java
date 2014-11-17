@@ -32,10 +32,12 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,15 +80,16 @@ public class RegionManager {
      *
      * <p>Not meant for public instantiation. For internal use only.</p>
      */
-    public RegionManager() {
+    public RegionManager(Plugin plugin) {
 
-        if (GenericsLib.getRegionManager() != null)
+        if (!(plugin instanceof GenericsLib)) {
             throw new RuntimeException("RegionManager is for GenericsLib internal use only.");
+        }
 
-        _playerCacheMap = new PlayerMap<>();
-        _playerLocationCache = new PlayerMap<>();
+        _playerCacheMap = new PlayerMap<>(plugin);
+        _playerLocationCache = new PlayerMap<>(plugin);
         PlayerWatcher _playerWatcher = new PlayerWatcher();
-        Scheduler.runTaskRepeat(GenericsLib.getLib(),  7, 7, _playerWatcher);
+        Scheduler.runTaskRepeat(plugin,  7, 7, _playerWatcher);
     }
 
     /**

@@ -32,17 +32,18 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import javax.annotation.Nullable;
 
 /**
  * Saves and restores snapshots of a players state.
@@ -291,7 +292,7 @@ public class PlayerState {
     private static PlayerMap<PlayerState> getStateMap(Plugin plugin) {
         PlayerMap<PlayerState> state = _statesByPlugin.get(plugin);
         if (state == null) {
-            state = new PlayerMap<PlayerState>();
+            state = new PlayerMap<PlayerState>(plugin);
             _statesByPlugin.put(plugin, state);
         }
         return state;

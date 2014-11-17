@@ -26,7 +26,9 @@
 package com.jcwhatever.bukkit.generic.player.collections;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Collection that contains player references that must be
@@ -37,6 +39,11 @@ import org.bukkit.entity.Player;
  * </p>
  */
 public interface IPlayerCollection extends IDisposable {
+
+    /**
+     * Get the collections owning plugin.
+     */
+    Plugin getPlugin();
 
     /**
      * Called to remove the specified player

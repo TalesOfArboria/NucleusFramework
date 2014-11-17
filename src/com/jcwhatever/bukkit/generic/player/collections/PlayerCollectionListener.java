@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.player.collections;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.MultiValueMap;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,10 +36,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 /**
  * Collections that implement {@code IPlayerCollection} register
@@ -47,11 +51,7 @@ import java.util.UUID;
  */
 final class PlayerCollectionListener implements Listener {
 
-    // keyed to player id, a map of collections a player is contained in
-    private static MultiValueMap<UUID, IPlayerCollection> _collectionMap = new MultiValueMap<>(100, 25);
-
-    // singleton collection listener
-    private static PlayerCollectionListener _listener;
+    private static Map<Plugin, PlayerCollectionListener> _listeners = new WeakHashMap<>(30);
 
     // synchronization object
     private static final Object _sync = new Object();
@@ -59,22 +59,47 @@ final class PlayerCollectionListener implements Listener {
     /**
      * Get the singleton instance of the player collection listener
      */
-    static PlayerCollectionListener get() {
-        if (_listener == null) {
+    static PlayerCollectionListener get(Plugin plugin) {
+
+        PlayerCollectionListener listener = _listeners.get(plugin);
+
+        if (listener == null) {
             synchronized (_sync) {
-                if (_listener == null) {
-                    _listener = new PlayerCollectionListener();
+                //noinspection ConstantConditions
+                if (listener == null) { // check again in case previous thread already instantiated
+                    listener = new PlayerCollectionListener(plugin);
 
                     PluginManager pm = GenericsLib.getLib().getServer().getPluginManager();
-                    pm.registerEvents(_listener, GenericsLib.getLib());
+                    pm.registerEvents(listener, GenericsLib.getLib());
+
+                    _listeners.put(plugin, listener);
                 }
             }
         }
 
-        return _listener;
+        return listener;
     }
 
-    private PlayerCollectionListener() {}
+    private final Plugin _plugin;
+
+    // keyed to player id, a map of collections a player is contained in
+    private final MultiValueMap<UUID, IPlayerCollection> _collectionMap = new MultiValueMap<>(100, 25);
+
+    /**
+     * Private Constructor.
+     *
+     * @param plugin  The owning plugin.
+     */
+    private PlayerCollectionListener(Plugin plugin) {
+        _plugin = plugin;
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    public Plugin getPlugin() {
+        return _plugin;
+    }
 
     /**
      * Register a collection as containing the specified player.
@@ -142,10 +167,9 @@ final class PlayerCollectionListener implements Listener {
     }
 
     // clear collections if generics plugin is disabled
-    // Note: disabling Generics plugin may break other plugins.
     @EventHandler
     private void onGenericsDisable(PluginDisableEvent event) {
-        if (event.getPlugin() instanceof GenericsLib) {
+        if (event.getPlugin() == _plugin) {
             _collectionMap.clear();
         }
     }

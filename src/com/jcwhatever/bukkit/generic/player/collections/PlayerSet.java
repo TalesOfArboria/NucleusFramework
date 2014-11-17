@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.player.collections;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,9 +49,8 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
     /**
      * Constructor.
      */
-    public PlayerSet() {
-        _players = new HashSet<Player>(10);
-        _listener = PlayerCollectionListener.get();
+    public PlayerSet(Plugin plugin) {
+        this(plugin, 10);
     }
 
     /**
@@ -58,9 +58,14 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
      *
      * @param size  The initial capacity.
      */
-    public PlayerSet(int size) {
+    public PlayerSet(Plugin plugin, int size) {
         _players = new HashSet<Player>(size);
-        _listener = PlayerCollectionListener.get();
+        _listener = PlayerCollectionListener.get(plugin);
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _listener.getPlugin();
     }
 
     @Override
@@ -140,6 +145,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
     public synchronized boolean retainAll(Collection<?> c) {
 
         Set<Player> temp = new HashSet<>(_players);
+        //noinspection SuspiciousMethodCalls
         temp.removeAll(c);
 
         for (Player p : temp) {

@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scoreboards;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Bukkit;
@@ -51,7 +52,7 @@ public abstract class AbstractScoreboard implements IScoreboard {
     // stores scoreboard instances applied to a player, auto removes player entries
     // when the player logs out. Use to reapply previous scoreboards when the most recent
     // scoreboard is removed.
-    private static Map<UUID, LinkedList<IScoreboard>> _stackMap = new PlayerMap<>();
+    private static Map<UUID, LinkedList<IScoreboard>> _stackMap = new PlayerMap<>(GenericsLib.getLib());
 
     private final Plugin _plugin;
     private final ScoreboardInfo _typeInfo;

@@ -25,8 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.messaging;
 
-import com.jcwhatever.bukkit.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.generic.collections.TimedSet;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
@@ -35,6 +35,7 @@ import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -42,7 +43,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +50,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * Provide chat and console message utilities.
@@ -63,7 +64,7 @@ public class Messenger {
     private static final int _maxLineLen = 60;
     private static IDataNode _importantData;
     private static Pattern returnPattern = Pattern.compile("\r");
-    private static Map<UUID, TimedSet<String>> _noSpamCache = new PlayerMap<TimedSet<String>>();
+    private static Map<UUID, TimedSet<String>> _noSpamCache = new PlayerMap<TimedSet<String>>(GenericsLib.getLib());
 
     /**
      * Specify if line wrapping is enabled.

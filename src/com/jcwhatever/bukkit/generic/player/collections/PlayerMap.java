@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.player.collections;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,14 +46,27 @@ import java.util.UUID;
  */
 public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 
-	private final Map<UUID, V> _map = new HashMap<UUID, V>(50);
+	private final Map<UUID, V> _map;
 	private final PlayerCollectionListener _listener;
 
 	/**
 	 * Constructor.
 	 */
-	public PlayerMap() {
-		_listener = PlayerCollectionListener.get();
+	public PlayerMap(Plugin plugin) {
+		this(plugin, 50);
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public PlayerMap(Plugin plugin, int size) {
+		_map = new HashMap<UUID, V>(size);
+		_listener = PlayerCollectionListener.get(plugin);
+	}
+
+	@Override
+	public Plugin getPlugin() {
+		return _listener.getPlugin();
 	}
 
 	@Override

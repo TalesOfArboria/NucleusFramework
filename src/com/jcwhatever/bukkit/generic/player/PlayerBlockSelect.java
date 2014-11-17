@@ -47,7 +47,9 @@ public class PlayerBlockSelect implements Listener {
 
     private PlayerBlockSelect() {}
 
-    private static Map<UUID, PlayerBlockSelectHandler> _handlers = new PlayerMap<PlayerBlockSelectHandler>();
+    private static Map<UUID, PlayerBlockSelectHandler> _handlers
+            = new PlayerMap<PlayerBlockSelectHandler>(GenericsLib.getLib());
+
     private static PlayerBlockSelect _listener;
 
     /**

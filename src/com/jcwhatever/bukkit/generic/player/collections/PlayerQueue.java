@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.player.collections;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -46,8 +47,13 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	/**
 	 * Constructor.
 	 */
-	public PlayerQueue() {
-		_listener = PlayerCollectionListener.get();
+	public PlayerQueue(Plugin plugin) {
+		_listener = PlayerCollectionListener.get(plugin);
+	}
+
+	@Override
+	public Plugin getPlugin() {
+		return _listener.getPlugin();
 	}
 
 	@Override

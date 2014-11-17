@@ -25,20 +25,22 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Manage player views.
@@ -54,7 +56,7 @@ import java.util.UUID;
 public class ViewManager {
 
     // player to ViewInstance map. View instance is the first view instance in a string of instances.
-    private static final Map<UUID, ViewInstance> _playerInstanceMap = new PlayerMap<ViewInstance>();
+    private static final Map<UUID, ViewInstance> _playerInstanceMap = new PlayerMap<ViewInstance>(GenericsLib.getLib());
 
     private final Plugin _plugin;
     private final IDataNode _viewNode;

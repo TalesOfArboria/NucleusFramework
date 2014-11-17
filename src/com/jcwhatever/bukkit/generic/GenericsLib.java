@@ -138,7 +138,7 @@ public class GenericsLib extends GenericsPlugin {
 
     @Override
     protected void onEnablePlugin() {
-        _regionManager = new RegionManager();
+        _regionManager = new RegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
 
         registerEventListeners(new JCGEventListener());
@@ -147,7 +147,8 @@ public class GenericsLib extends GenericsPlugin {
 
     @Override
     protected void onDisablePlugin() {
-        _regionManager = null; // null to prevent exception if re-enabled
+        // do nothing
+        // Note: Disabling GenericsLib can break plugins.
     }
 
     /*

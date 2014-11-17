@@ -53,7 +53,7 @@ import java.util.UUID;
  */
 public class BukkitPermissionsHandler extends AbstractPermissionsHandler {
 
-    private static Map<UUID, PermissionAttachment> _transient = new PlayerMap<PermissionAttachment>();
+    private static Map<UUID, PermissionAttachment> _transient = new PlayerMap<PermissionAttachment>(GenericsLib.getLib());
     private static Listener _bukkitListener;
 
     private IDataNode _dataNode;
