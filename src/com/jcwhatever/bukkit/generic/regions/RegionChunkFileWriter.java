@@ -158,6 +158,8 @@ public class RegionChunkFileWriter {
      *
      * <p>Runs task immediately if no {@code QueueProject} is provided.</p>
      *
+     * <p>If a {@code QueueProject} is provided, the task is not run.</p>
+     *
      * @param file     The file to save to.
      * @param project  The optional project to add tasks to.
      */
@@ -218,12 +220,22 @@ public class RegionChunkFileWriter {
             try {
                 writer = new GenericsByteWriter(new FileOutputStream(file));
                 writer.write(SAVE_FILE_VERSION);
+
+                // write region name
                 writer.write(_region.getName());
+
+                // write world name
                 writer.write(_world.getName());
-                //noinspection ConstantConditions
+
+                // write region point 1
+                // noinspection ConstantConditions
                 writer.write(_region.getP1()); // Location
+
+                // write region point 2
                 //noinspection ConstantConditions
                 writer.write(_region.getP2()); // Location
+
+                // write chunk volume
                 writer.write(getVolume());
             }
             catch (IOException io) {
@@ -313,7 +325,4 @@ public class RegionChunkFileWriter {
         }
 
     }
-
-
-
 }

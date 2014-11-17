@@ -119,7 +119,8 @@ public final class RegionChunkFileLoader {
      */
     public LinkedList<ChunkBlockInfo> getBlockInfo() {
         if (_isLoading)
-            throw new IllegalAccessError("Cannot access block info while data is being loaded from file.");
+            throw new IllegalAccessError("Cannot access block info while data " +
+                    "is being loaded from file.");
 
         return _blockInfo;
     }
@@ -131,7 +132,8 @@ public final class RegionChunkFileLoader {
      */
     public LinkedList<SerializableBlockEntity> getBlockEntityInfo() {
         if (_isLoading)
-            throw new IllegalAccessError("Cannot access block entity info while data is being loaded from file.");
+            throw new IllegalAccessError("Cannot access block entity info while " +
+                    "data is being loaded from file.");
 
         return _blockEntities;
     }
@@ -143,7 +145,8 @@ public final class RegionChunkFileLoader {
      */
     public LinkedList<SerializableFurnitureEntity> getFurnitureEntityInfo() {
         if (_isLoading)
-            throw new IllegalAccessError("Cannot access furniture entity info while data is being loaded from file.");
+            throw new IllegalAccessError("Cannot access furniture entity " +
+                    "info while data is being loaded from file.");
 
         return _entities;
     }
@@ -165,8 +168,9 @@ public final class RegionChunkFileLoader {
         _isLoading = true;
 
         RegionChunkSection section = new RegionChunkSection(_region, _chunk);
-        LoadChunkIterator iterator = new LoadChunkIterator(file, loadType, 8192, section.getStartChunkX(), section.getStartY(),
-                section.getStartChunkZ(), section.getEndChunkX(), section.getEndY(), section.getEndChunkZ());
+        LoadChunkIterator iterator = new LoadChunkIterator(file, loadType, 8192,
+                section.getStartChunkX(), section.getStartY(), section.getStartChunkZ(),
+                section.getEndChunkX(), section.getEndY(), section.getEndChunkZ());
 
         project.addTask(iterator);
 
@@ -291,9 +295,6 @@ public final class RegionChunkFileLoader {
         @Override
         protected void onIterateItem(int x, int y, int z) {
 
-            Material chunkType = Material.getMaterial(snapshot.getBlockTypeId(x, y, z));
-            int chunkData = snapshot.getBlockData(x, y, z);
-
             Material type;
             int data;
             int light;
@@ -326,14 +327,14 @@ public final class RegionChunkFileLoader {
                 return;
             }
 
-            if (loadType == LoadType.ALL_BLOCKS || chunkType != type || chunkData != data) {
+            if (loadType == LoadType.ALL_BLOCKS || !isBlockMatch(x, y, z, type, data)) {
                 _blockInfo.add(new ChunkBlockInfo(x, y, z, type, data, light, skylight));
             }
         }
 
         /**
          * Read block entities and entities from file on
-         * successful completion of loading blocks
+         * successful completion of loading blocks.
          */
         @Override
         protected void onPreComplete() {
@@ -378,11 +379,6 @@ public final class RegionChunkFileLoader {
 
         @Override
         protected void onEnd() {
-            cleanup();
-        }
-
-        private void cleanup() {
-
             if (reader != null) {
                 try {
                     // close the file
@@ -395,6 +391,17 @@ public final class RegionChunkFileLoader {
             }
 
             _isLoading = false;
+        }
+
+        /*
+         * Determine if the block at the specified coordinates of the chunk snapshot
+         * matches the specified material type and data.
+         */
+        private boolean isBlockMatch(int x, int y, int z, Material type, int data) {
+            Material chunkType = Material.getMaterial(snapshot.getBlockTypeId(x, y, z));
+            int chunkData = snapshot.getBlockData(x, y, z);
+
+            return chunkType == type && chunkData == data;
         }
 
     }
