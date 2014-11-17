@@ -34,6 +34,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.List;
@@ -138,6 +139,15 @@ final class PlayerCollectionListener implements Listener {
     @EventHandler(priority=EventPriority.NORMAL)
     private void onPlayerQuit(PlayerKickEvent event) {
         removePlayer(event.getPlayer());
+    }
+
+    // clear collections if generics plugin is disabled
+    // Note: disabling Generics plugin may break other plugins.
+    @EventHandler
+    private void onGenericsDisable(PluginDisableEvent event) {
+        if (event.getPlugin() instanceof GenericsLib) {
+            _collectionMap.clear();
+        }
     }
 
     // Asynchronous removal of player from collections
