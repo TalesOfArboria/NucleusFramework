@@ -44,6 +44,6 @@ public interface IPlayerCollection extends IDisposable {
      *
      * @param p  The player to remove.
      */
-	void removePlayer(Player p);
-	
+    void removePlayer(Player p);
+
 }

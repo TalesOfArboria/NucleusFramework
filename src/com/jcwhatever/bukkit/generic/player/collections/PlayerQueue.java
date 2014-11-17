@@ -41,21 +41,21 @@ import javax.annotation.Nullable;
 public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 
 	private final Queue<Player> _queue = new LinkedList<Player>();
-    private final PlayerCollectionListener _listener;
+	private final PlayerCollectionListener _listener;
 
-    /**
-     * Constructor.
-     */
+	/**
+	 * Constructor.
+	 */
 	public PlayerQueue() {
 		_listener = PlayerCollectionListener.get();
 	}
-		
+
 	@Override
 	public synchronized boolean addAll(Collection<? extends Player> players) {
 
-        for (Player p : players) {
-            _listener.addPlayer(p, this);
-        }
+		for (Player p : players) {
+			_listener.addPlayer(p, this);
+		}
 
 		return _queue.addAll(players);
 	}
@@ -63,11 +63,11 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	@Override
 	public synchronized void clear() {
 
-        while (!_queue.isEmpty()) {
-            Player p = _queue.remove();
+		while (!_queue.isEmpty()) {
+			Player p = _queue.remove();
 
-            _listener.removePlayer(p, this);
-        }
+			_listener.removePlayer(p, this);
+		}
 
 		_queue.clear();
 	}
@@ -96,34 +96,34 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	public synchronized boolean remove(Object item) {
 
 		if (_queue.remove(item)) {
-            if (item instanceof Player && !_queue.contains(item)) {
-                _listener.removePlayer((Player) item, this);
-            }
-            return true;
-        }
+			if (item instanceof Player && !_queue.contains(item)) {
+				_listener.removePlayer((Player) item, this);
+			}
+			return true;
+		}
 
-        return false;
+		return false;
 	}
 
 	@Override
 	public synchronized boolean removeAll(Collection<?> items) {
-        for (Object obj : items) {
-            if (obj instanceof Player) {
-                _listener.removePlayer((Player) obj, this);
-            }
-        }
+		for (Object obj : items) {
+			if (obj instanceof Player) {
+				_listener.removePlayer((Player) obj, this);
+			}
+		}
 		return _queue.removeAll(items);
 	}
 
 	@Override
 	public synchronized boolean retainAll(Collection<?> items) {
 
-        LinkedList<Player> temp = new LinkedList<>(_queue);
-        if (temp.removeAll(items)) {
-            while (!temp.isEmpty()) {
-                _listener.removePlayer(temp.remove(), this);
-            }
-        }
+		LinkedList<Player> temp = new LinkedList<>(_queue);
+		if (temp.removeAll(items)) {
+			while (!temp.isEmpty()) {
+				_listener.removePlayer(temp.remove(), this);
+			}
+		}
 
 		return _queue.retainAll(items);
 	}
@@ -140,17 +140,17 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 
 	@Override
 	public synchronized <T> T[] toArray(T[] array) {
-        //noinspection SuspiciousToArrayCall
-        return _queue.toArray(array);
+		//noinspection SuspiciousToArrayCall
+		return _queue.toArray(array);
 	}
 
 	@Override
 	public synchronized boolean add(Player p) {
 		if (_queue.add(p)) {
-            _listener.addPlayer(p, this);
-            return true;
-        }
-        return false;
+			_listener.addPlayer(p, this);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -161,10 +161,10 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	@Override
 	public synchronized boolean offer(Player p) {
 		if (_queue.offer(p)) {
-            _listener.addPlayer(p, this);
-            return true;
-        }
-        return false;
+			_listener.addPlayer(p, this);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -173,51 +173,51 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	}
 
 	@Override
-    @Nullable
+	@Nullable
 	public synchronized Player poll() {
 		Player p = _queue.poll();
-        if (p != null && !_queue.contains(p)) {
-            _listener.removePlayer(p, this);
-        }
-        return p;
+		if (p != null && !_queue.contains(p)) {
+			_listener.removePlayer(p, this);
+		}
+		return p;
 	}
 
 	@Override
-    @Nullable
+	@Nullable
 	public synchronized Player remove() {
-        Player p = _queue.remove();
-        if (p != null && !_queue.contains(p)) {
-            _listener.removePlayer(p, this);
-        }
-        return p;
+		Player p = _queue.remove();
+		if (p != null && !_queue.contains(p)) {
+			_listener.removePlayer(p, this);
+		}
+		return p;
 	}
-	
+
 	@Override
 	public synchronized void removePlayer(Player p) {
 		_queue.remove(p);
 	}
 
-    /**
-     * Call to remove references that prevent
-     * the garbage collector from collecting
-     * the instance after it is not longer needed.
-     */
-    @Override
-    public void dispose() {
-        clear();
-    }
+	/**
+	 * Call to remove references that prevent
+	 * the garbage collector from collecting
+	 * the instance after it is not longer needed.
+	 */
+	@Override
+	public void dispose() {
+		clear();
+	}
 
-    private final class Iter implements Iterator<Player> {
-		
+	private final class Iter implements Iterator<Player> {
+
 		Iterator<Player> _iterator;
-        Player _current = null;
-        PlayerQueue _parent;
-		 
+		Player _current = null;
+		PlayerQueue _parent;
+
 		public Iter(PlayerQueue parent) {
 			_iterator = new LinkedList<Player>(_queue).iterator();
-            _parent = parent;
+			_parent = parent;
 		}
-		
+
 		@Override
 		public boolean hasNext() {
 			return _iterator.hasNext();
@@ -226,17 +226,17 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 		@Override
 		public Player next() {
 			_current = _iterator.next();
-            return _current;
+			return _current;
 		}
 
 		@Override
 		public void remove() {
 			_iterator.remove();
-            if (_current != null && !_queue.contains(_current)) {
-                _listener.removePlayer(_current, _parent);
-            }
+			if (_current != null && !_queue.contains(_current)) {
+				_listener.removePlayer(_current, _parent);
+			}
 		}
-		
+
 	}
 
 }

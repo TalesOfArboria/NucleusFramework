@@ -46,21 +46,21 @@ import java.util.UUID;
 public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 
 	private final Map<UUID, V> _map = new HashMap<UUID, V>(50);
-    private final PlayerCollectionListener _listener;
+	private final PlayerCollectionListener _listener;
 
-    /**
-     * Constructor.
-     */
+	/**
+	 * Constructor.
+	 */
 	public PlayerMap() {
 		_listener = PlayerCollectionListener.get();
 	}
-	
+
 	@Override
 	public synchronized void clear() {
 
-        for (UUID playerId : _map.keySet()) {
-            _listener.removePlayer(playerId, this);
-        }
+		for (UUID playerId : _map.keySet()) {
+			_listener.removePlayer(playerId, this);
+		}
 
 		_map.clear();
 	}
@@ -84,7 +84,7 @@ public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 	public synchronized V get(Object key) {
 		return _map.get(key);
 	}
-	
+
 	public synchronized V get(Player p) {
 		return _map.get(p.getUniqueId());
 	}
@@ -102,15 +102,15 @@ public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 	@Override
 	public synchronized V put(UUID key, V value) {
 
-        _listener.addPlayer(key, this);
-        return _map.put(key, value);
+		_listener.addPlayer(key, this);
+		return _map.put(key, value);
 	}
 
 	@Override
 	public synchronized void putAll(Map<? extends UUID, ? extends V> pairs) {
-        for (UUID playerId : pairs.keySet()) {
-            _listener.addPlayer(playerId, this);
-        }
+		for (UUID playerId : pairs.keySet()) {
+			_listener.addPlayer(playerId, this);
+		}
 		_map.putAll(pairs);
 	}
 
@@ -118,11 +118,11 @@ public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 	public synchronized V remove(Object key) {
 		V item = _map.remove(key);
 
-        if (key instanceof UUID) {
-            _listener.removePlayer((UUID)key, this);
-        }
+		if (key instanceof UUID) {
+			_listener.removePlayer((UUID)key, this);
+		}
 
-        return item;
+		return item;
 	}
 
 	@Override
@@ -141,13 +141,13 @@ public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 	}
 
 
-    /**
-     * Call to remove references that prevent
-     * the garbage collector from collecting
-     * the instance after it is no longer needed.
-     */
-    @Override
-    public void dispose() {
-        clear();
-    }
+	/**
+	 * Call to remove references that prevent
+	 * the garbage collector from collecting
+	 * the instance after it is no longer needed.
+	 */
+	@Override
+	public void dispose() {
+		clear();
+	}
 }

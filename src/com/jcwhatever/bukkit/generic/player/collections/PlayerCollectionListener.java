@@ -50,15 +50,15 @@ final class PlayerCollectionListener implements Listener {
     private static MultiValueMap<UUID, IPlayerCollection> _collectionMap = new MultiValueMap<>(100, 25);
 
     // singleton collection listener
-	private static PlayerCollectionListener _listener;
+    private static PlayerCollectionListener _listener;
 
     // synchronization object
-	private static final Object _sync = new Object();
+    private static final Object _sync = new Object();
 
     /**
      * Get the singleton instance of the player collection listener
      */
-	static PlayerCollectionListener get() {
+    static PlayerCollectionListener get() {
         if (_listener == null) {
             synchronized (_sync) {
                 if (_listener == null) {
@@ -70,10 +70,10 @@ final class PlayerCollectionListener implements Listener {
             }
         }
 
-		return _listener;
-	}
+        return _listener;
+    }
 
-	private PlayerCollectionListener() {}
+    private PlayerCollectionListener() {}
 
     /**
      * Register a collection as containing the specified player.
@@ -120,13 +120,13 @@ final class PlayerCollectionListener implements Listener {
     }
 
     // remove a player from all collections
-	private void removePlayer(Player p) {
+    private void removePlayer(Player p) {
         List<IPlayerCollection> collections = _collectionMap.getValues(p.getUniqueId());
         if (collections == null || collections.isEmpty())
             return;
 
         Scheduler.runTaskLaterAsync(GenericsLib.getLib(), 1, new RemovePlayer(p, collections));
-	}
+    }
 
     // event handler, Remove player from all collections when logged out
     @EventHandler(priority=EventPriority.NORMAL)
@@ -141,25 +141,25 @@ final class PlayerCollectionListener implements Listener {
     }
 
     // Asynchronous removal of player from collections
-	static class RemovePlayer implements Runnable {
-		private Player p;
+    static class RemovePlayer implements Runnable {
+        private Player p;
         private List<IPlayerCollection> collections;
 
-		public RemovePlayer(Player p, List<IPlayerCollection> collections) {
-			this.p = p;
+        public RemovePlayer(Player p, List<IPlayerCollection> collections) {
+            this.p = p;
             this.collections = collections;
-		}
+        }
 
-		@Override
-		public void run() {
-			synchronized (_sync) {
-				for (IPlayerCollection collection : collections) {
-					collection.removePlayer(p);
-				}				
-			}
-		}
+        @Override
+        public void run() {
+            synchronized (_sync) {
+                for (IPlayerCollection collection : collections) {
+                    collection.removePlayer(p);
+                }
+            }
+        }
 
-	}
+    }
 
 
 
