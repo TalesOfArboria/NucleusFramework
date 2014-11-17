@@ -173,8 +173,8 @@ public class GenericsByteReader extends InputStream {
 
         _bytesRead += (long)_stream.read(_buffer, 0, 2);
 
-        return (short)(((_buffer[0] & 255) << 8)
-                    + (_buffer[1] & 255));
+        return (short)(((_buffer[0] & 0xFF) << 8)
+                    + (_buffer[1] & 0xFF));
     }
 
     /**
@@ -187,10 +187,10 @@ public class GenericsByteReader extends InputStream {
         resetBooleanBuffer();
 
         _bytesRead += (long)_stream.read(_buffer, 0, 4);
-        return ((_buffer[0] & 255) << 24)
-                + ((_buffer[1] & 255) << 16)
-                + ((_buffer[2] & 255) << 8)
-                + (_buffer[3] & 255);
+        return ((_buffer[0] & 0xFF) << 24)
+                + ((_buffer[1] & 0xFF) << 16)
+                + ((_buffer[2] & 0xFF) << 8)
+                + (_buffer[3] & 0xFF);
     }
 
     /**
@@ -203,14 +203,14 @@ public class GenericsByteReader extends InputStream {
         resetBooleanBuffer();
 
         _bytesRead+=(long)_stream.read(_buffer, 0, 8);
-        return ((_buffer[0] & 255L) << 56)
-                + ((_buffer[1] & 255L) << 48)
-                + ((_buffer[2] & 255L) << 40)
-                + ((_buffer[3] & 255L) << 32)
-                + ((_buffer[4] & 255L) << 24)
-                + ((_buffer[5] & 255L) << 16)
-                + ((_buffer[6] & 255L) << 8)
-                + (_buffer[7] & 255L);
+        return ((_buffer[0] & 0xFFL) << 56)
+                + ((_buffer[1] & 0xFFL) << 48)
+                + ((_buffer[2] & 0xFFL) << 40)
+                + ((_buffer[3] & 0xFFL) << 32)
+                + ((_buffer[4] & 0xFFL) << 24)
+                + ((_buffer[5] & 0xFFL) << 16)
+                + ((_buffer[6] & 0xFFL) << 8)
+                + (_buffer[7] & 0xFFL);
     }
 
     /**

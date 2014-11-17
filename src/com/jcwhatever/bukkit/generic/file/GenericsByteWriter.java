@@ -158,8 +158,8 @@ public class GenericsByteWriter extends OutputStream {
         // write buffered booleans
         writeBooleans();
 
-        _buffer[0] = (byte)(shortValue >> 8 & 255);
-        _buffer[1] = (byte)(shortValue & 255);
+        _buffer[0] = (byte)(shortValue >> 8 & 0xFF);
+        _buffer[1] = (byte)(shortValue & 0xFF);
 
         _stream.write(_buffer, 0, 2);
         _bytesWritten += 2;
@@ -178,10 +178,10 @@ public class GenericsByteWriter extends OutputStream {
         // write buffered booleans
         writeBooleans();
 
-        _buffer[0] = (byte)(integerValue >> 24 & 255);
-        _buffer[1] = (byte)(integerValue >> 16 & 255);
-        _buffer[2] = (byte)(integerValue >> 8 & 255);
-        _buffer[3] = (byte)(integerValue & 255);
+        _buffer[0] = (byte)(integerValue >> 24 & 0xFF);
+        _buffer[1] = (byte)(integerValue >> 16 & 0xFF);
+        _buffer[2] = (byte)(integerValue >> 8 & 0xFF);
+        _buffer[3] = (byte)(integerValue & 0xFF);
         _stream.write(_buffer, 0, 4);
         _bytesWritten+=4;
     }
@@ -198,14 +198,14 @@ public class GenericsByteWriter extends OutputStream {
         // write buffered booleans
         writeBooleans();
 
-        _buffer[0] = (byte)(longValue >> 56 & 255);
-        _buffer[1] = (byte)(longValue >> 48 & 255);
-        _buffer[2] = (byte)(longValue >> 40 & 255);
-        _buffer[3] = (byte)(longValue >> 32 & 255);
-        _buffer[4] = (byte)(longValue >> 24 & 255);
-        _buffer[5] = (byte)(longValue >> 16 & 255);
-        _buffer[6] = (byte)(longValue >> 8 & 255);
-        _buffer[7] = (byte)(longValue & 255);
+        _buffer[0] = (byte)(longValue >> 56 & 0xFF);
+        _buffer[1] = (byte)(longValue >> 48 & 0xFF);
+        _buffer[2] = (byte)(longValue >> 40 & 0xFF);
+        _buffer[3] = (byte)(longValue >> 32 & 0xFF);
+        _buffer[4] = (byte)(longValue >> 24 & 0xFF);
+        _buffer[5] = (byte)(longValue >> 16 & 0xFF);
+        _buffer[6] = (byte)(longValue >> 8 & 0xFF);
+        _buffer[7] = (byte)(longValue & 0xFF);
         _stream.write(_buffer, 0, 8);
         _bytesWritten+=8;
     }
