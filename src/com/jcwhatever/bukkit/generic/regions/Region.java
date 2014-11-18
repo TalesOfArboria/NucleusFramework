@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.regions;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.regions.RegionOwnerChangedEvent;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
@@ -40,6 +41,10 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
@@ -51,9 +56,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
-public abstract class Region {
+public abstract class Region implements IDisposable {
+
+    private static final Map<Region, Void> _instances = new WeakHashMap<>(100);
+    private static BukkitListener _bukkitListener;
 
     protected final Object _sync = new Object();
 
@@ -64,6 +73,7 @@ public abstract class Region {
 
     private Location _p1;
     private Location _p2;
+    private String _worldName;
 
     private Location _lastP1;
     private Location _lastP2;
@@ -129,6 +139,13 @@ public abstract class Region {
         if (dataNode != null) {
             loadSettings(dataNode);
         }
+
+        _instances.put(this, null);
+
+        if (_bukkitListener == null) {
+            _bukkitListener = new BukkitListener();
+            Bukkit.getPluginManager().registerEvents(_bukkitListener, GenericsLib.getLib());
+        }
     }
 
     /**
@@ -167,15 +184,36 @@ public abstract class Region {
     public final World getWorld() {
 
         synchronized (_sync) {
-            if (_p1 != null)
+            if (_p1 != null && _p2 != null)
                 return _p1.getWorld();
-
-            if (_p2 != null)
-                return _p2.getWorld();
 
             return null;
         }
     }
+
+    /**
+     * Get the name of the world the region is in.
+     */
+    @Nullable
+    public final String getWorldName() {
+        return _worldName;
+    }
+
+    /**
+     * Determine if the world the region is in is loaded.
+     */
+    public final boolean isWorldLoaded() {
+        if (!isDefined())
+            return false;
+
+        if (getWorld() == null)
+            return false;
+
+        World world = Bukkit.getWorld(getWorld().getName());
+
+        return getWorld().equals(world);
+    }
+
 
     /**
      * Used to determine if the region subscribes to player events.
@@ -234,22 +272,10 @@ public abstract class Region {
     }
 
     /**
-     * Determine if the world the region is in is loaded.
-     */
-    public final boolean isWorldLoaded() {
-        if (!isDefined())
-            return false;
-
-        if (getWorld() == null)
-            return false;
-
-        World world = Bukkit.getWorld(getWorld().getName());
-
-        return getWorld().equals(world);
-    }
-
-    /**
      * Get the cuboid regions first point location.
+     *
+     * <p>Note: If the location is set but the world it's for is not
+     * loaded, the World value of location may be null.</p>
      */
     @Nullable
     public final Location getP1() {
@@ -263,6 +289,9 @@ public abstract class Region {
 
     /**
      * Get the cuboid regions seconds point location.
+     *
+     * <p>Note: If the location is set but the world it's for is not
+     * loaded, the World value of location may be null.</p>
      */
     @Nullable
     public final Location getP2() {
@@ -308,6 +337,7 @@ public abstract class Region {
         setPoint(RegionPoint.P2, p2);
 
         _chunks = null;
+        updateWorld();
         updateMath();
 
         IDataNode dataNode = getDataNode();
@@ -919,10 +949,12 @@ public abstract class Region {
 
     /**
      * Dispose the region by releasing resources and
-     * unregistering it from the central region manager.
+     * un-registering it from the central region manager.
      */
+    @Override
     public final void dispose() {
         GenericsLib.getRegionManager().unregister(this);
+        _instances.remove(this);
 
         onDispose();
     }
@@ -960,6 +992,8 @@ public abstract class Region {
     protected final void initCoords(@Nullable Location p1, @Nullable Location p2) {
         _p1 = p1;
         _p2 = p2;
+
+        updateWorld();
         updateMath();
     }
 
@@ -970,7 +1004,10 @@ public abstract class Region {
      */
     protected void loadSettings(final IDataNode dataNode) {
 
-        initCoords(dataNode.getLocation("p1"), dataNode.getLocation("p2"));
+        Location p1 = dataNode.getLocation("p1");
+        Location p2 = dataNode.getLocation("p2");
+
+        initCoords(p1, p2);
 
         _ownerId = dataNode.getUUID("owner-id");
         _entryMessage = dataNode.getString("entry-message");
@@ -1191,6 +1228,38 @@ public abstract class Region {
         GenericsLib.getRegionManager().register(this);
     }
 
+    /*
+     * Update world name if possible
+     */
+    private void updateWorld() {
+        if (_p1 == null || _p2 == null) {
+            _worldName = null;
+            return;
+        }
+
+        World p1World = _p1.getWorld();
+        World p2World = _p2.getWorld();
+
+
+        boolean isWorldsMismatched = p1World != null && !p1World.equals(p2World) ||
+                p2World != null && !p2World.equals(p1World);
+
+        if (isWorldsMismatched) {
+            throw new IllegalArgumentException("Both region points must be from the same world.");
+        }
+
+        if (p1World != null) {
+            _worldName = p1World.getName();
+        }
+        else {
+
+            IDataNode dataNode = getDataNode();
+
+            if (dataNode != null) {
+                _worldName = dataNode.getLocationWorldName("p1");
+            }
+        }
+    }
 
     /*
      * Load external messages set by other plugins.
@@ -1314,6 +1383,39 @@ public abstract class Region {
 
             _sync.notifyAll();
             return false;
+        }
+    }
+
+    /*
+     * Listens for world unload and load events and handles
+     * regions in the world appropriately.
+     */
+    private static class BukkitListener implements Listener {
+
+        @EventHandler
+        private void onWorldLoad(WorldLoadEvent event) {
+
+            String worldName = event.getWorld().getName();
+            for (Region region : _instances.keySet()) {
+                if (region.isDefined() && worldName.equals(region.getWorldName())) {
+                    // fix locations
+                    region._p1.setWorld(event.getWorld());
+                    region._p2.setWorld(event.getWorld());
+                }
+            }
+        }
+
+        @EventHandler
+        private void onWorldUnload(WorldUnloadEvent event) {
+
+            String worldName = event.getWorld().getName();
+            for (Region region : _instances.keySet()) {
+                if (region.isDefined() && worldName.equals(region.getWorldName())) {
+                    // remove world from locations, helps garbage collector
+                    region._p1.setWorld(null);
+                    region._p2.setWorld(null);
+                }
+            }
         }
     }
 }
