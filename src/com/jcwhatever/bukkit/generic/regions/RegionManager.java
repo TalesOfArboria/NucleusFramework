@@ -483,7 +483,6 @@ public class RegionManager {
                                     // see which regions a player actually is in
                                     Set<ReadOnlyRegion> inRegions = getListenerRegions(location);
 
-
                                     // check for entered regions
                                     if (inRegions != null && !inRegions.isEmpty()) {
                                         for (ReadOnlyRegion region : inRegions) {
@@ -524,7 +523,9 @@ public class RegionManager {
         }
     }
 
-
+    /*
+     * Stores a collection of players that are in a world.
+     */
     private class WorldPlayers {
         public final World world;
         public final List<WorldPlayer> players;
@@ -549,6 +550,10 @@ public class RegionManager {
         }
     }
 
+    /**
+     * Represents a player and the locations they have been
+     * since the last player watcher update.
+     */
     private static class WorldPlayer {
         public final Player player;
         public final LinkedList<Location> locations;
