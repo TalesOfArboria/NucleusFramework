@@ -35,6 +35,8 @@ import com.jcwhatever.bukkit.generic.items.ItemStackHelper.DisplayNameResult;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -72,13 +74,20 @@ public final class JCGEventListener implements Listener {
 	@EventHandler(priority=EventPriority.LOW)
 	private void onPlayerJoin(PlayerJoinEvent event) {
 
-		Player p = event.getPlayer();
+		final Player p = event.getPlayer();
 
 		// update player name in id lookup
 		PlayerHelper.setPlayerName(p.getUniqueId(), p.getName());
 
 		// tell player missed important messages
 		Messenger.tellImportant(p);
+
+		Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
+			@Override
+			public void run() {
+				GenericsLib.getRegionManager().updatePlayerLocation(p, p.getLocation());
+			}
+		});
 	}
 
 	@EventHandler(priority=EventPriority.LOW)
@@ -104,6 +113,8 @@ public final class JCGEventListener implements Listener {
 
             PlayList.clearQueue(event.getPlayer());
 		}
+
+		GenericsLib.getRegionManager().updatePlayerLocation(event.getPlayer(), event.getTo());
 	}
 
 	@EventHandler(priority=EventPriority.NORMAL)
