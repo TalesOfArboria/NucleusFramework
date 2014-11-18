@@ -234,6 +234,21 @@ public abstract class Region {
     }
 
     /**
+     * Determine if the world the region is in is loaded.
+     */
+    public final boolean isWorldLoaded() {
+        if (!isDefined())
+            return false;
+
+        if (getWorld() == null)
+            return false;
+
+        World world = Bukkit.getWorld(getWorld().getName());
+
+        return getWorld().equals(world);
+    }
+
+    /**
      * Get the cuboid regions first point location.
      */
     @Nullable
