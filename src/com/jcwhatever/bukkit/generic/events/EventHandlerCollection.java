@@ -318,7 +318,7 @@ class EventHandlerCollection {
          */
         @Override
         public int compareTo(HandlerContainer o) {
-            return Integer.compare(o.getPriority().getSortOrder(), _priority.getSortOrder());
+            return Integer.compare(_priority.getSortOrder(), o.getPriority().getSortOrder());
         }
 
         @Override
