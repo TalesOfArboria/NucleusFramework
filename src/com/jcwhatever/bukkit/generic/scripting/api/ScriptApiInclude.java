@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
+import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
@@ -93,6 +94,9 @@ public class ScriptApiInclude extends GenericsScriptApi {
 
                     if (script != null)
                         scripts.add(script);
+                }
+                else {
+                    Messenger.warning(getPlugin(), "Failed to include script named '{0}'. File not found.", file.getName());
                 }
             }
 
