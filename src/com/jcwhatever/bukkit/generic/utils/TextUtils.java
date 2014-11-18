@@ -491,15 +491,22 @@ public class TextUtils {
         StringBuilder line = new StringBuilder(maxLineLen);
         line.append(linePrefix);
 
+        int prefixSize = linePrefix.length();
+
         boolean wordAddedToLine = false;
 
         for (int i=0; i < words.length; i++) {
 
-            int lineLength = excludeColorsFromLen ? ChatColor.stripColor(line.toString()).length() : line.length();
-            int wordLength = excludeColorsFromLen ? ChatColor.stripColor(words[i]).length() : words[i].length();
+            int lineLength = excludeColorsFromLen
+                    ? TextColor.remove(line.toString()).length()
+                    : line.length();
 
-            if (lineLength + wordLength + 1 < maxLineLen ||
-                    wordLength > maxLineLen) {
+            int wordLength = excludeColorsFromLen
+                    ? TextColor.remove(words[i]).length()
+                    : words[i].length();
+
+            if (lineLength + wordLength + 1 <= maxLineLen ||
+                    prefixSize + wordLength >= maxLineLen) { // append to current line
 
                 if (wordAddedToLine)
                     line.append(' ');
@@ -507,8 +514,11 @@ public class TextUtils {
                 line.append(words[i]);
                 wordAddedToLine = true;
             }
-            else {
-                i = (i == 0) ? i : i - 1;
+            else { // create new line
+
+                if (i != 0) {
+                    i = i - 1;
+                }
 
                 String finishedLine = line.toString();
                 format = ChatColor.getLastColors(finishedLine);
@@ -905,6 +915,27 @@ public class TextUtils {
         @Override
         public String toString() {
             return _colorCode;
+        }
+
+        public static String remove(String input) {
+
+            StringBuilder sb = new StringBuilder(input.length());
+            char[] chars = input.toCharArray();
+
+            for (int i = 0, last = chars.length - 1; i < chars.length; i++) {
+                char ch = chars[i];
+                if (ch == FORMAT_CHAR && i != last) {
+                    char next = chars[i + 1];
+                    if (_characterMap.containsKey(next)) {
+                          i += 1;
+                        continue;
+                    }
+                }
+
+                sb.append(ch);
+            }
+
+            return sb.toString();
         }
 
         public static String getEndColor(String input) {
