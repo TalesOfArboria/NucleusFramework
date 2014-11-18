@@ -27,11 +27,10 @@ package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.regions.RegionOwnerChangedEvent;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+import com.jcwhatever.bukkit.generic.regions.data.RegionMath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -53,76 +52,26 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
-public abstract class Region implements IDisposable {
+public abstract class Region extends RegionMath implements IDisposable {
 
     private static final Map<Region, Void> _instances = new WeakHashMap<>(100);
     private static BukkitListener _bukkitListener;
-
-    protected final Object _sync = new Object();
 
     private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
     private IDataNode _dataNode;
 
-    private Location _p1;
-    private Location _p2;
-    private String _worldName;
-
-    private Location _lastP1;
-    private Location _lastP2;
-
-    private int _startX;
-    private int _startY;
-    private int _startZ;
-
-    private int _endX;
-    private int _endY;
-    private int _endZ;
-
-    private int _xWidth;
-    private int _zWidth;
-    private int _yHeight;
-    private int _xBlockWidth;
-    private int _zBlockWidth;
-    private int _yBlockHeight;
-    private long _volume;
-
-    private List<Chunk> _chunks;
-
-    private Location _center;
-    private int _chunkX;
-    private int _chunkZ;
-    private int _chunkXWidth;
-    private int _chunkZWidth;
-
     private boolean _isPlayerWatcher = false;
-
-    private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
-
+    private String _worldName;
     private UUID _ownerId;
-
-    private String _entryMessage = null;
-    private String _exitMessage = null;
-
-    private Map<Plugin, String> _extEntryMessages;
-    private Map<Plugin, String> _extExitMessages;
-
-    private enum MessageType {
-        ENTRY,
-        EXIT
-    }
-
-    private enum RegionPoint {
-        P1,
-        P2
-    }
+    private List<Chunk> _chunks;
+    private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
+    private List<RegionEventHandler> _eventHandlers = new ArrayList<>(10);
 
     /**
      * Constructor
@@ -178,20 +127,6 @@ public abstract class Region implements IDisposable {
     }
 
     /**
-     * Get the world the region is in.
-     */
-    @Nullable
-    public final World getWorld() {
-
-        synchronized (_sync) {
-            if (_p1 != null && _p2 != null)
-                return _p1.getWorld();
-
-            return null;
-        }
-    }
-
-    /**
      * Get the name of the world the region is in.
      */
     @Nullable
@@ -219,7 +154,7 @@ public abstract class Region implements IDisposable {
      * Used to determine if the region subscribes to player events.
      */
     public final boolean isPlayerWatcher() {
-        return _isPlayerWatcher;
+        return _isPlayerWatcher || !_eventHandlers.isEmpty();
     }
 
     /**
@@ -265,61 +200,6 @@ public abstract class Region implements IDisposable {
     }
 
     /**
-     * Determine if the regions cuboid points have been set.
-     */
-    public final boolean isDefined() {
-        return _p1 != null && _p2 != null;
-    }
-
-    /**
-     * Get the cuboid regions first point location.
-     *
-     * <p>Note: If the location is set but the world it's for is not
-     * loaded, the World value of location may be null.</p>
-     */
-    @Nullable
-    public final Location getP1() {
-        if (_p1 == null)
-            return null;
-
-        synchronized (_sync) {
-            return _p1.clone();
-        }
-    }
-
-    /**
-     * Get the cuboid regions seconds point location.
-     *
-     * <p>Note: If the location is set but the world it's for is not
-     * loaded, the World value of location may be null.</p>
-     */
-    @Nullable
-    public final Location getP2() {
-        if (_p2 == null)
-            return null;
-
-        synchronized (_sync) {
-            return _p2.clone();
-        }
-    }
-
-    /**
-     * Get the cuboid regions lower point location.
-     */
-    @Nullable
-    public final Location getLowerPoint() {
-        return getP1();
-    }
-
-    /**
-     * Get the cuboid regions upper point location.
-     */
-    @Nullable
-    public final Location getUpperPoint() {
-        return getP2();
-    }
-
-    /**
      * Set the regions cuboid point coordinates.
      *
      * <p>Saves to the regions data node if it has one.</p>
@@ -327,187 +207,70 @@ public abstract class Region implements IDisposable {
      * @param p1  The first point location.
      * @param p2  The second point location.
      */
+    @Override
     public final void setCoords(Location p1, Location p2) {
         PreCon.notNull(p1);
         PreCon.notNull(p2);
 
+        // unregister while math is updated,
+        // is re-registered after math update (see UpdateMath)
         GenericsLib.getRegionManager().unregister(this);
 
-        setPoint(RegionPoint.P1, p1);
-        setPoint(RegionPoint.P2, p2);
-
-        _chunks = null;
+        super.setCoords(p1, p2);
         updateWorld();
-        updateMath();
+        _chunks = null;
 
         IDataNode dataNode = getDataNode();
-        if (dataNode != null)
-            dataNode.saveAsync(null);
+        if (dataNode != null) {
 
-        try {
-            onCoordsChanged(_p1, _p2);
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (getP1() != null) {
+               dataNode.set("p1", getP1());
+            }
+            if (getP2() != null) {
+               dataNode.set("p2", getP2());
+            }
         }
+
+        onCoordsChanged(getP1(), getP2());
     }
 
     /**
-     * Get the smallest X axis coordinates
-     * of the region.
+     * Add a transient region event handler.
+     *
+     * @param handler  The handler to add.
      */
-    public final int getXStart() {
-        return _startX;
+    public boolean addEventHandler(RegionEventHandler handler) {
+        PreCon.notNull(handler);
+
+        boolean isFirstHandler = _eventHandlers.isEmpty();
+
+        if (_eventHandlers.add(handler)) {
+            if (isFirstHandler) {
+                // update registration
+                GenericsLib.getRegionManager().register(this);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Get the smallest Y axis coordinates
-     * of the region.
+     * Remove a transient event handler.
+     *
+     * @param handler  The handler to remove.
      */
-    public final int getYStart() {
-        return _startY;
-    }
+    public boolean removeEventHandler(RegionEventHandler handler) {
+        PreCon.notNull(handler);
 
-    /**
-     * Get the smallest Z axis coordinates
-     * of the region.
-     */
-    public final int getZStart() {
-        return _startZ;
-    }
+        if (_eventHandlers.remove(handler)) {
 
-    /**
-     * Get the largest X axis coordinates
-     * of the region.
-     */
-    public final int getXEnd() {
-        return _endX;
-    }
-
-    /**
-     * Get the largest Y axis coordinates
-     * of the region.
-     */
-    public final int getYEnd() {
-        return _endY;
-    }
-
-    /**
-     * Get the largest Z axis coordinates
-     * of the region.
-     */
-    public final int getZEnd() {
-        return _endZ;
-    }
-
-    /**
-     * Get the X axis width of the region.
-     */
-    public final int getXWidth() {
-        return _xWidth;
-    }
-
-    /**
-     * Get the Z axis width of the region.
-     */
-    public final int getZWidth() {
-        return _zWidth;
-    }
-
-    /**
-     * Get the Y axis height of the region.
-     */
-    public final int getYHeight() {
-        return _yHeight;
-    }
-
-    /**
-     * Get the number of blocks that make up the width of the
-     * region on the X axis.
-     */
-    public final int getXBlockWidth() {
-        return _xBlockWidth;
-    }
-
-    /**
-     * Get the number of blocks that make up the width of the
-     * region on the Z axis.
-     */
-    public final int getZBlockWidth() {
-        return _zBlockWidth;
-    }
-
-    /**
-     * Get the number of blocks that make up the height of the
-     * region on the Y axis.
-     */
-    public final int getYBlockHeight() {
-        return _yBlockHeight;
-    }
-
-    /**
-     * Get the total volume of the region.
-     */
-    public final long getVolume() {
-        return _volume;
-    }
-
-    /**
-     * Get the center location of the region.
-     */
-    @Nullable
-    public final Location getCenter() {
-        if (_center == null)
-            return null;
-        return _center.clone();
-    }
-
-    /**
-     * Get the smallest X axis coordinates from the chunks
-     * the region intersects with.
-     */
-    public final int getChunkX() {
-        return _chunkX;
-    }
-
-    /**
-     * Get the smallest Z axis coordinates from the chunks
-     * the region intersects with.
-     */
-    public final int getChunkZ() {
-        return _chunkZ;
-    }
-
-    /**
-     * Get the number of chunks that comprise the chunk width
-     * on the X axis of the region.
-     */
-    public final int getChunkXWidth() {
-        return _chunkXWidth;
-    }
-
-    /**
-     * Get the number of chunks that comprise the chunk width
-     * on the Z axis of the region.
-     */
-    public int getChunkZWidth() {
-        return _chunkZWidth;
-    }
-
-
-    /**
-     * Determine if the region is 1 block tall.
-     */
-    public boolean isFlatHorizontal() {
-        return getYBlockHeight() == 1;
-    }
-
-    /**
-     * Determine if the region is 1 block wide on the
-     * X or Z axis and is not 1 block tall.
-     */
-    public boolean isFlatVertical() {
-        return !isFlatHorizontal() &&
-                (getZBlockWidth() == 1 || getXBlockWidth() == 1);
+            if (_eventHandlers.isEmpty()) {
+                // update registration
+                GenericsLib.getRegionManager().register(this);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -522,15 +285,15 @@ public abstract class Region implements IDisposable {
             if (getWorld() == null)
                 return false;
 
-            int xlen = _endX;
-            int ylen = _endY;
-            int zlen = _endZ;
+            int xlen = getXEnd();
+            int ylen = getYEnd();
+            int zlen = getZEnd();
 
-            for (int x = _startX; x <= xlen; x++) {
+            for (int x = getXStart(); x <= xlen; x++) {
 
-                for (int y = _startY; y <= ylen; y++) {
+                for (int y = getYStart(); y <= ylen; y++) {
 
-                    for (int z = _startZ; z <= zlen; z++) {
+                    for (int z = getZStart(); z <= zlen; z++) {
 
                         Block block = getWorld().getBlockAt(x, y, z);
                         if (block.getType() != material)
@@ -582,9 +345,9 @@ public abstract class Region implements IDisposable {
 
             _sync.notifyAll();
 
-            return x >= _startX && x <= _endX &&
-                    y >= _startY && y <= _endY &&
-                    z >= _startZ && z <= _endZ;
+            return x >= getXStart() && x <= getXEnd() &&
+                    y >= getYStart() && y <= getYEnd() &&
+                    z >= getZStart() && z <= getZEnd();
         }
     }
 
@@ -609,19 +372,19 @@ public abstract class Region implements IDisposable {
 
             if (cx) {
                 int x = loc.getBlockX();
-                if (x < _startX || x > _endX)
+                if (x < getXStart() || x > getXEnd())
                     return false;
             }
 
             if (cy) {
                 int y = loc.getBlockY();
-                if (y < _startY || y > _endY)
+                if (y < getYStart() || y > getYEnd())
                     return false;
             }
 
             if (cz) {
                 int z = loc.getBlockZ();
-                if (z < _startZ || z > _endZ)
+                if (z < getZStart() || z > getZEnd())
                     return false;
             }
 
@@ -645,15 +408,15 @@ public abstract class Region implements IDisposable {
             if (getWorld() == null)
                 return results;
 
-            int xlen = _endX;
-            int ylen = _endY;
-            int zlen = _endZ;
+            int xlen = getXEnd();
+            int ylen = getYEnd();
+            int zlen = getZEnd();
 
-            for (int x = _startX; x <= xlen; x++) {
+            for (int x = getXStart(); x <= xlen; x++) {
 
-                for (int y = _startY; y <= ylen; y++) {
+                for (int y = getYStart(); y <= ylen; y++) {
 
-                    for (int z = _startZ; z <= zlen; z++) {
+                    for (int z = getZStart(); z <= zlen; z++) {
 
                         Block block = getWorld().getBlockAt(x, y, z);
                         if (block.getType() != material)
@@ -691,8 +454,8 @@ public abstract class Region implements IDisposable {
      */
     public final boolean intersects(int chunkX, int chunkZ) {
 
-        return _chunkX <= chunkX && (_chunkX + _chunkXWidth - 1) >= chunkX &&
-               _chunkZ <= chunkZ && (_chunkZ + _chunkZWidth - 1) >= chunkZ;
+        return getChunkX() <= chunkX && (getChunkX() + getChunkXWidth() - 1) >= chunkX &&
+               getChunkZ() <= chunkZ && (getChunkZ() + getChunkZWidth() - 1) >= chunkZ;
     }
 
     /**
@@ -705,12 +468,12 @@ public abstract class Region implements IDisposable {
         synchronized (_sync) {
             if (_chunks == null) {
 
-                if (_p1 == null || _p2 == null) {
+                if (!isDefined()) {
                     return new ArrayList<>(0);
                 }
 
-                Chunk c1 = getWorld().getChunkAt(_p1);
-                Chunk c2 = getWorld().getChunkAt(_p2);
+                Chunk c1 = getWorld().getChunkAt(getP1());
+                Chunk c2 = getWorld().getChunkAt(getP2());
 
                 int startX = Math.min(c1.getX(), c2.getX());
                 int endX = Math.max(c1.getX(), c2.getX());
@@ -799,152 +562,13 @@ public abstract class Region implements IDisposable {
      * @param key    The meta key.
      * @param value  The meta value.
      */
-    public void setMeta(Object key, Object value) {
+    public void setMeta(Object key, @Nullable Object value) {
         if (value == null) {
             _meta.remove(key);
             return;
         }
 
         _meta.put(key, value);
-    }
-
-    /**
-     * Get the message displayed to players when they
-     * enter the region.
-     */
-    @Nullable
-    public String getEntryMessage() {
-        return _entryMessage;
-    }
-
-    /**
-     * Set the message displayed to players when they enter
-     * the region.
-     *
-     * @param message  The message to display.
-     */
-    public void setEntryMessage(@Nullable String message) {
-        _entryMessage = message;
-
-        IDataNode dataNode = getDataNode();
-        if (dataNode != null) {
-            dataNode.set("entry-message", message);
-            dataNode.saveAsync(null);
-        }
-
-        if (message != null)
-            setIsPlayerWatcher(true);
-    }
-
-    /**
-     * Get the message displayed to players when they leave the region.
-     */
-    @Nullable
-    public String getExitMessage() {
-        return _exitMessage;
-    }
-
-    /**
-     * Set the message displayed to players when they leave the region.
-     *
-     * @param message  The message to display.
-     */
-    public void setExitMessage(@Nullable String message) {
-        _exitMessage = message;
-
-        IDataNode dataNode = getDataNode();
-        if (dataNode != null) {
-            dataNode.set("exit-message", message);
-            dataNode.saveAsync(null);
-        }
-
-        if (message != null)
-            setIsPlayerWatcher(true);
-    }
-
-    /**
-     * Get the message displayed to players on behalf of another plugin
-     * when they enter the region.
-     *
-     * @param plugin  The plugin.
-     */
-    @Nullable
-    public String getEntryMessage(Plugin plugin) {
-        PreCon.notNull(plugin);
-
-        if (_extEntryMessages == null)
-            return null;
-
-        return _extEntryMessages.get(plugin);
-
-    }
-
-    /**
-     * Set the message displayed to players on behalf of another plugin
-     * when they enter the region.
-     *
-     * @param plugin   The plugin.
-     * @param message  The message to display.
-     */
-    public void setEntryMessage(Plugin plugin, @Nullable String message) {
-        PreCon.notNull(plugin);
-
-        if (_extEntryMessages == null)
-            _extEntryMessages = new HashMap<Plugin, String>(10);
-
-        if (message != null) {
-            _extEntryMessages.put(plugin, message);
-            setIsPlayerWatcher(true);
-        }
-        else {
-            _extEntryMessages.remove(plugin);
-        }
-
-        IDataNode dataNode = getDataNode();
-        if (dataNode != null) {
-            dataNode.set("ext-entry-messages." + plugin.getName(), message);
-            dataNode.saveAsync(null);
-        }
-    }
-
-    /**
-     * Get the message displayed on behalf of another plugin
-     * when a player leaves the region.
-     *
-     * @param plugin  The plugin.
-     */
-    @Nullable
-    public String getExitMessage(Plugin plugin) {
-        if (_extExitMessages == null)
-            return null;
-
-        return _extExitMessages.get(plugin);
-    }
-
-    /**
-     * Set the message displayed on behalf of another plugin
-     * when a player enters the region.
-     *
-     * @param plugin   The plugin.
-     * @param message  The message to display.
-     */
-    public void setExitMessage(Plugin plugin, @Nullable String message) {
-        if (_extExitMessages == null)
-            _extExitMessages = new HashMap<Plugin, String>(10);
-
-        if (message != null) {
-            _extExitMessages.put(plugin, message);
-            setIsPlayerWatcher(true);
-        }
-        else {
-            _extExitMessages.remove(plugin);
-        }
-
-        IDataNode dataNode = getDataNode();
-        if (dataNode != null) {
-            dataNode.set("ext-exit-messages." + plugin.getName(), message);
-            dataNode.saveAsync(null);
-        }
     }
 
     /**
@@ -990,8 +614,8 @@ public abstract class Region implements IDisposable {
      * @param p2  The second point location.
      */
     protected final void initCoords(@Nullable Location p1, @Nullable Location p2) {
-        _p1 = p1;
-        _p2 = p2;
+        setPoint(RegionPoint.P1, p1);
+        setPoint(RegionPoint.P2, p2);
 
         updateWorld();
         updateMath();
@@ -1010,43 +634,17 @@ public abstract class Region implements IDisposable {
         initCoords(p1, p2);
 
         _ownerId = dataNode.getUUID("owner-id");
-        _entryMessage = dataNode.getString("entry-message");
-        _exitMessage = dataNode.getString("entry-message");
+    }
 
-        Set<String> entryPluginNames = dataNode.getSubNodeNames("ext-entry-messages");
-        if (entryPluginNames != null && !entryPluginNames.isEmpty()) {
+    /*
+    * Update region math variables
+    */
+    @Override
+    protected void updateMath() {
 
-            _extEntryMessages = new HashMap<Plugin, String>(entryPluginNames.size());
+        super.updateMath();
 
-            for (String pluginName : entryPluginNames) {
-
-                Plugin pl = Bukkit.getPluginManager().getPlugin(pluginName);
-
-                if (pl == null)
-                    continue;
-
-                String msg = dataNode.getString("ext-entry-messages." + pluginName);
-                if (msg == null)
-                    continue;
-
-                _extEntryMessages.put(pl, msg);
-            }
-        }
-
-        Scheduler.runTaskLater(GenericsLib.getLib(), 20, new Runnable() {
-
-            @Override
-            public void run() {
-
-                loadExtMessages(dataNode, MessageType.ENTRY);
-                loadExtMessages(dataNode, MessageType.EXIT);
-            }
-
-        });
-
-
-        if (_entryMessage != null || _exitMessage != null)
-            setIsPlayerWatcher(true);
+        GenericsLib.getRegionManager().register(this);
     }
 
     /**
@@ -1059,7 +657,7 @@ public abstract class Region implements IDisposable {
      *
      * @throws IOException
      */
-    protected void onCoordsChanged(Location p1, Location p2) throws IOException {
+    protected void onCoordsChanged(@Nullable Location p1, @Nullable Location p2) {
         // do nothing
     }
 
@@ -1137,109 +735,47 @@ public abstract class Region implements IDisposable {
      * Used by RegionEventManager to execute onPlayerEnter event.
      */
     void doPlayerEnter (Player p) {
-        if (_entryMessage != null) {
-            Messenger.tell(_plugin, p, _entryMessage);
-        }
-
-        if (_extEntryMessages != null) {
-
-            for (Entry<Plugin, String> pluginStringEntry : _extEntryMessages.entrySet()) {
-
-                String message = pluginStringEntry.getValue();
-
-                Messenger.tell(pluginStringEntry.getKey(), p, message);
-            }
-        }
 
         if (canDoPlayerEnter(p))
             onPlayerEnter(p);
+
+        for (RegionEventHandler handler : _eventHandlers) {
+            if (handler.canDoPlayerEnter(p)) {
+                handler.onPlayerEnter(p);
+            }
+        }
     }
 
     /**
      * Used by RegionEventManager to execute onPlayerLeave event.
      */
     void doPlayerLeave (Player p) {
-        if (_exitMessage != null) {
-            Messenger.tell(_plugin, p, _exitMessage);
-        }
-
-        if (_extExitMessages != null) {
-
-            for (Entry<Plugin, String> pluginStringEntry : _extExitMessages.entrySet()) {
-
-                String message = pluginStringEntry.getValue();
-
-                Messenger.tell(pluginStringEntry.getKey(), p, message);
-            }
-        }
 
         if (canDoPlayerLeave(p))
             onPlayerLeave(p);
-    }
 
-    /*
-     * Update region math variables
-     */
-    private void updateMath() {
-
-        if (_p1 == null || _p2 == null)
-            return;
-
-        synchronized (_sync) {
-
-            _startX = Math.min(_p1.getBlockX(), _p2.getBlockX());
-            _startY = Math.min(_p1.getBlockY(), _p2.getBlockY());
-            _startZ = Math.min(_p1.getBlockZ(), _p2.getBlockZ());
-
-            _endX = Math.max(_p1.getBlockX(), _p2.getBlockX());
-            _endY = Math.max(_p1.getBlockY(), _p2.getBlockY());
-            _endZ = Math.max(_p1.getBlockZ(), _p2.getBlockZ());
-
-            _xWidth = _p1 == null || _p2 == null ? 0 : (int)Math.abs(_p1.getX() - _p2.getX());
-            _zWidth = _p1 == null || _p2 == null ? 0 : (int)Math.abs(_p1.getZ() - _p2.getZ());
-            _yHeight = _p1 == null || _p2 == null ? 0 : (int)Math.abs(_p1.getY() - _p2.getY());
-
-            _xBlockWidth = _p1 == null || _p2 == null ? 0 : Math.abs(_p1.getBlockX() - _p2.getBlockX()) + 1;
-            _zBlockWidth = _p1 == null || _p2 == null ? 0 : Math.abs(_p1.getBlockZ() - _p2.getBlockZ()) + 1;
-            _yBlockHeight = _p1 == null || _p2 == null ? 0 : Math.abs(_p1.getBlockY() - _p2.getBlockY()) + 1;
-
-            _volume = _xWidth * _zWidth * _yHeight;
-
-            if (getWorld() != null) {
-                double xCenter = _startX + (_xBlockWidth / 2);
-                double yCenter = _startY + (_yBlockHeight / 2);
-                double zCenter = _startZ + (_zBlockWidth / 2);
-
-                _center = new Location(getWorld(), xCenter, yCenter, zCenter);
+        for (RegionEventHandler handler : _eventHandlers) {
+            if (handler.canDoPlayerLeave(p)) {
+                handler.onPlayerLeave(p);
             }
-
-            _chunkX = Math.min(_p1.getBlockX(), _p2.getBlockX()) == _p1.getBlockX() ? _p1.getChunk().getX() : _p2.getChunk().getX();
-            _chunkZ = Math.min(_p1.getBlockZ(), _p2.getBlockZ()) == _p1.getBlockZ() ? _p1.getChunk().getZ() : _p2.getChunk().getZ();
-
-            int chunkEndX = Math.max(_p1.getBlockX(), _p2.getBlockX()) == _p1.getBlockX() ? _p1.getChunk().getX() : _p2.getChunk().getX();
-            int chunkEndZ = Math.max(_p1.getBlockZ(), _p2.getBlockZ()) == _p1.getBlockZ() ? _p1.getChunk().getZ() : _p2.getChunk().getZ();
-
-            _chunkXWidth = chunkEndX - _chunkX + 1;
-            _chunkZWidth = chunkEndZ - _chunkZ + 1;
-
-            _sync.notifyAll();
         }
-
-        GenericsLib.getRegionManager().register(this);
     }
 
     /*
      * Update world name if possible
      */
     private void updateWorld() {
-        if (_p1 == null || _p2 == null) {
+
+        Location p1 = getP1();
+        Location p2 = getP2();
+
+        if (p1 == null || p2 == null) {
             _worldName = null;
             return;
         }
 
-        World p1World = _p1.getWorld();
-        World p2World = _p2.getWorld();
-
+        World p1World = p1.getWorld();
+        World p2World = p2.getWorld();
 
         boolean isWorldsMismatched = p1World != null && !p1World.equals(p2World) ||
                 p2World != null && !p2World.equals(p1World);
@@ -1259,111 +795,6 @@ public abstract class Region implements IDisposable {
                 _worldName = dataNode.getLocationWorldName("p1");
             }
         }
-    }
-
-    /*
-     * Load external messages set by other plugins.
-     */
-    private void loadExtMessages(IDataNode settings, MessageType type) {
-
-        String msgNodeName = type == MessageType.ENTRY
-                ? "ext-entry-messages"
-                : "ext-exit-messages";
-
-        Set<String> pluginNames = settings.getSubNodeNames(msgNodeName);
-        if (pluginNames != null && !pluginNames.isEmpty()) {
-
-            Map<Plugin, String> map = new HashMap<Plugin, String>(10);
-            setIsPlayerWatcher(true);
-
-            for (String pluginName : pluginNames) {
-
-                Plugin pl = Bukkit.getPluginManager().getPlugin(pluginName);
-
-                if (pl == null)
-                    continue;
-
-                String msg = settings.getString(msgNodeName + '.' + pluginName);
-                if (msg == null)
-                    continue;
-
-                map.put(pl, msg);
-            }
-
-            switch (type) {
-                case ENTRY:
-                    _extEntryMessages = map;
-                    break;
-                case EXIT:
-                    _extExitMessages = map;
-                    break;
-            }
-
-        }
-
-    }
-
-    /*
-     * Set one of the region points.
-     */
-    private void setPoint(RegionPoint point, Location l) {
-        Location lower;
-        Location upper;
-
-        switch (point) {
-            case P1: {
-                _lastP1 = l.clone();
-                lower = _lastP1.clone();
-                upper = _lastP2 != null
-                        ? _lastP2.clone()
-                        : _p2;
-                break;
-            }
-            case P2: {
-                _lastP2 = l.clone();
-                lower = _lastP1 != null
-                        ? _lastP1.clone()
-                        : _p1;
-                upper = _lastP2.clone();
-                break;
-            }
-            default: {
-                upper = null;
-                lower = null;
-            }
-        }
-        if (lower != null && upper != null) {
-            double tmp;
-            if (lower.getX() > upper.getX()) {
-                tmp = lower.getX();
-                lower.setX(upper.getX());
-                upper.setX(tmp);
-            }
-            if (lower.getY() > upper.getY()) {
-                tmp = lower.getY();
-                lower.setY(upper.getY());
-                upper.setY(tmp);
-            }
-            if (lower.getZ() > upper.getZ()) {
-                tmp = lower.getZ();
-                lower.setZ(upper.getZ());
-                upper.setZ(tmp);
-            }
-        }
-
-        IDataNode dataNode = getDataNode();
-
-        if (lower != null) {
-            _p1 = lower;
-            if (dataNode != null)
-                dataNode.set("p1", lower);
-        }
-        if (upper != null) {
-            _p2 = upper;
-            if (dataNode != null)
-                dataNode.set("p2", upper);
-        }
-
     }
 
     @Override
@@ -1399,8 +830,12 @@ public abstract class Region implements IDisposable {
             for (Region region : _instances.keySet()) {
                 if (region.isDefined() && worldName.equals(region.getWorldName())) {
                     // fix locations
-                    region._p1.setWorld(event.getWorld());
-                    region._p2.setWorld(event.getWorld());
+
+                    //noinspection ConstantConditions
+                    region.getP1().setWorld(event.getWorld());
+
+                    //noinspection ConstantConditions
+                    region.getP2().setWorld(event.getWorld());
                 }
             }
         }
@@ -1412,8 +847,14 @@ public abstract class Region implements IDisposable {
             for (Region region : _instances.keySet()) {
                 if (region.isDefined() && worldName.equals(region.getWorldName())) {
                     // remove world from locations, helps garbage collector
-                    region._p1.setWorld(null);
-                    region._p2.setWorld(null);
+
+                    //noinspection ConstantConditions
+                    region.getP1().setWorld(null);
+
+                    //noinspection ConstantConditions
+                    region.getP2().setWorld(null);
+
+                    region._chunks = null;
                 }
             }
         }

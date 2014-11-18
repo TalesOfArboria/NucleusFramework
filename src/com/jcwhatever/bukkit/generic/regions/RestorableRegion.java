@@ -298,12 +298,16 @@ public abstract class RestorableRegion extends BuildableRegion {
      * @throws IOException
      */
     @Override
-    protected void onCoordsChanged(Location p1, Location p2) throws IOException {
+    protected void onCoordsChanged(Location p1, Location p2) {
         super.onCoordsChanged(p1, p2);
 
         if (this.canRestore()) {
-            deleteData();
-            saveData();
+            try {
+                deleteData();
+                saveData();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -25,9 +25,11 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
+
 import org.bukkit.plugin.Plugin;
 
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import javax.annotation.Nullable;
 
 /**
  * A basic implementation of a region.
@@ -51,7 +53,7 @@ public class BasicRegion extends Region {
      * @param name      The name of the region.
      * @param dataNode  The regions data storage node.
      */
-    public BasicRegion(Plugin plugin, String name, IDataNode dataNode) {
+    public BasicRegion(Plugin plugin, String name, @Nullable IDataNode dataNode) {
         super(plugin, name, dataNode);
     }
 

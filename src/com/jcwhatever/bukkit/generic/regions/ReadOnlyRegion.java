@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 
 /**
  * A container for a region that prevents setter operations with
- * a few exceptions. The owner of the region, entry and exit messages,
+ * a few exceptions. The owner of the region, transient event handlers
  * as well as meta can still be modified.
  *
  * <p>Allows other plugins to retrieve region info without giving full access
@@ -383,7 +383,7 @@ public class ReadOnlyRegion {
      * @param key    The meta value key.
      * @param value  The meta value type.
      */
-    public void setMeta (Object key, Object value) {
+    public void setMeta (Object key, @Nullable Object value) {
         _region.setMeta(key, value);
     }
 
@@ -396,71 +396,21 @@ public class ReadOnlyRegion {
     }
 
     /**
-     * Get the regions owning plugin message to
-     * players that enter the region.
-     */
-    @Nullable
-    public String getEntryMessage () {
-        return _region.getEntryMessage();
-    }
-
-    /**
-     * Get the regions owning plugin message to
-     * players that leave the region.
-     */
-    @Nullable
-    public String getExitMessage () {
-        return _region.getExitMessage();
-    }
-
-    /**
-     * Get the regions message to players who enter
-     * from the specified plugin.
+     * Add a transient event handler to the region.
      *
-     * @param plugin  The plugin.
+     * @param handler  The handler to add.
      */
-    @Nullable
-    public String getEntryMessage (Plugin plugin) {
-        return _region.getEntryMessage(plugin);
+    public boolean addEventHandler(RegionEventHandler handler) {
+        return _region.addEventHandler(handler);
     }
 
     /**
-     * Set a message to players who enter the region
-     * displayed on behalf of the specified plugin.
+     * Remove a transient event handler from the region.
      *
-     * @param plugin   The plugin.
-     * @param message  The message to display.
+     * @param handler  The handler to add.
      */
-    public void setEntryMessage (Plugin plugin, String message) {
-        if (plugin == _region.getPlugin())
-            _region.setEntryMessage(message);
-
-        _region.setEntryMessage(plugin, message);
-    }
-
-    /**
-     * Get the message displayed to players who leave
-     * the region from the specified plugin.
-     *
-     * @param plugin  The plugin.
-     */
-    @Nullable
-    public String getExitMessage (Plugin plugin) {
-        return _region.getExitMessage(plugin);
-    }
-
-    /**
-     * Set a message to players who enter the region
-     * displayed on behalf of the specified plugin.
-     *
-     * @param plugin   The plugin.
-     * @param message  The message to display.
-     */
-    public void setExitMessage (Plugin plugin, String message) {
-        if (plugin == _region.getPlugin())
-            _region.setExitMessage(message);
-
-        _region.setExitMessage(plugin, message);
+    public boolean removeEventHandler(RegionEventHandler handler) {
+        return _region.removeEventHandler(handler);
     }
 
     /**
