@@ -29,11 +29,11 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Represents a key/value data storage node
@@ -329,6 +329,20 @@ public interface IDataNode {
      */
     @Nullable
     Location getLocation(String keyPath, @Nullable Location def);
+
+    /**
+     * Get the name of the world in a {@code Location} value of a node key.
+     *
+     * <p>Useful for getting the name of the world for a location if the
+     * world is not loaded and a World object can't be included with
+     * the location.</p>
+     *
+     * @param keyPath  The name or relative path and name of the key.
+     *
+     * @return  World name value or null.
+     */
+    @Nullable
+    String getLocationWorldName(String keyPath);
 
     /**
      * Get the {@code ItemStack[]} value of a node key.

@@ -29,12 +29,12 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * A child Yaml data node of a Yaml data storage.
@@ -290,6 +290,12 @@ public class YamlDataNode implements IDataNode {
     public Location getLocation(String keyPath, Location def) {
 
         return _storage.getLocation(_path + keyPath, def);
+    }
+
+    @Nullable
+    @Override
+    public String getLocationWorldName(String keyPath) {
+        return _storage.getLocationWorldName(_path + keyPath);
     }
 
     @Override

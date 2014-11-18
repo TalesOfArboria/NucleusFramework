@@ -647,13 +647,21 @@ public class YamlDataStorage implements IDataNode {
         synchronized (_sync) {
             String coords = getString(keyPath);
             if (coords != null) {
-                try {
-                    return LocationUtils.parseLocation(coords);
-                } catch (IllegalArgumentException unused) {
-                    return def;
-                }
+                return LocationUtils.parseLocation(coords);
             }
             return def;
+        }
+    }
+
+    @Nullable
+    @Override
+    public String getLocationWorldName(String keyPath) {
+        synchronized (_sync) {
+            String coords = getString(keyPath);
+            if (coords != null) {
+                return LocationUtils.parseLocationWorldName(coords);
+            }
+            return null;
         }
     }
 
