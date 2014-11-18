@@ -224,6 +224,29 @@ public class LocationUtils {
     }
 
     /**
+     * Parse the world name from a from a location formatted string.
+     * <p>
+     *     Format of string: x,y,z,yawF,pitchF,worldName
+     * </p>
+     * <p>Useful when the world the location is for is not loaded and
+     * the name is needed.</p>
+     *
+     * @param coordinates  The string coordinates.
+     *
+     * @return  Null if the string could not be parsed.
+     */
+    @Nullable
+    public static String parseLocationWorldName(String coordinates) {
+        PreCon.notNull(coordinates);
+
+        String[] parts =  TextUtils.PATTERN_COMMA.split(coordinates);
+        if (parts.length != 6)
+            return null;
+
+        return parts[5];
+    }
+
+    /**
      * Convert a location to a parsable string.
      *
      * @param location  The location to convert.
