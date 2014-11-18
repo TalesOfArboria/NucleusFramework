@@ -51,6 +51,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
@@ -83,6 +84,11 @@ public final class JCGEventListener implements Listener {
 	@EventHandler(priority=EventPriority.LOW)
 	private void onPlayerMove(PlayerMoveEvent event) {
 		GenericsLib.getRegionManager().updatePlayerLocation(event.getPlayer(), event.getTo());
+	}
+
+	@EventHandler(priority=EventPriority.LOW)
+	private void onPlayerRespawn(PlayerRespawnEvent event) {
+		GenericsLib.getRegionManager().updatePlayerLocation(event.getPlayer(), event.getRespawnLocation());
 	}
 
 	@EventHandler(priority=EventPriority.NORMAL)
