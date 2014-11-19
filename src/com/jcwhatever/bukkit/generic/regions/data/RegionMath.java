@@ -31,8 +31,9 @@ import org.bukkit.World;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Contains pre-calculated variables regarding a cuboid region
+ * of space as defined by two region locations.
  */
 public class RegionMath {
 
