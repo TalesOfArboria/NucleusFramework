@@ -224,10 +224,10 @@ public abstract class Region extends RegionMath implements IDisposable {
         if (dataNode != null) {
 
             if (getP1() != null) {
-               dataNode.set("p1", getP1());
+                dataNode.set("p1", getP1());
             }
             if (getP2() != null) {
-               dataNode.set("p2", getP2());
+                dataNode.set("p2", getP2());
             }
         }
 
@@ -442,8 +442,8 @@ public abstract class Region extends RegionMath implements IDisposable {
         PreCon.notNull(chunk);
 
         return isDefined() &&
-               chunk.getWorld().equals(getWorld()) &&
-               intersects(chunk.getX(), chunk.getZ());
+                chunk.getWorld().equals(getWorld()) &&
+                intersects(chunk.getX(), chunk.getZ());
     }
 
     /**
@@ -455,7 +455,7 @@ public abstract class Region extends RegionMath implements IDisposable {
     public final boolean intersects(int chunkX, int chunkZ) {
 
         return getChunkX() <= chunkX && (getChunkX() + getChunkXWidth() - 1) >= chunkX &&
-               getChunkZ() <= chunkZ && (getChunkZ() + getChunkZWidth() - 1) >= chunkZ;
+                getChunkZ() <= chunkZ && (getChunkZ() + getChunkZWidth() - 1) >= chunkZ;
     }
 
     /**
