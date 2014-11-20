@@ -26,16 +26,40 @@ package com.jcwhatever.bukkit.generic.regions;
 
 import org.bukkit.entity.Player;
 
-/*
- * 
+/**
+ * Represents a callback that handles region events.
  */
 public interface RegionEventHandler {
 
+    /**
+     * Determine if the handler can handle player enter
+     * event for the specified player.
+     *
+     * @param player  The player who is entering the region.
+     */
     boolean canDoPlayerEnter(Player player);
 
+    /**
+     * Determine if the handler can handle player leave
+     * event for the specified player.
+     *
+     * @param player  The player who is leaving the region.
+     */
     boolean canDoPlayerLeave(Player player);
 
+    /**
+     * Called when a player enters the region and
+     * the {@code canDoPlayerEnter} method returned true.
+     *
+     * @param player  The player entering the region.
+     */
     void onPlayerEnter(Player player);
 
+    /**
+     * Called when a player leaves the region and
+     * the {@code canDoPlayerLeave} method returned true.
+     *
+     * @param player  The player leaving the region.
+     */
     void onPlayerLeave(Player player);
 }
