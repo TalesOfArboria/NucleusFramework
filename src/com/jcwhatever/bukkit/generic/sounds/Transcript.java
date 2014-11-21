@@ -44,10 +44,28 @@ import javax.annotation.Nullable;
 /**
  * Represents a voice transcript for a resource sound
  * which can be played to players.
+ *
+ * <p>
+ *     Transcript format: <br />
+ *     Paragraph1 text{p:seconds}Paragraph2 text
+ * </p>
+ * <p>
+ *     The transcript is divided into paragraphs. Each paragraph is displayed to
+ *     a user after a number of seconds has elapsed after the time the transcript is called
+ *     to be displayed. Paragraphs are divided by using the letter "p" followed by a colon
+ *     and the integer number of seconds, all wrapped in curly braces.
+ * </p>
+ * <p>
+ *     The initial paragraph by default displays immediately, however, a paragraph tag can
+ *     be added at the beginning to delay the first paragraph.
+ * </p>
+ * <p>
+ *     Paragraph tag example: {p:10}
+ * </p>
  */
 public class Transcript {
 
-    private static Pattern _splitPattern = Pattern.compile("\\{p\\:[0-9]+\\}");
+    private static Pattern _splitPattern = Pattern.compile("\\{p:[0-9]+}");
 
     private List<Paragraph> _paragraphs = new ArrayList<Paragraph>(10);
 
