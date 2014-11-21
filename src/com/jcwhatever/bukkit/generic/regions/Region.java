@@ -222,13 +222,9 @@ public abstract class Region extends RegionMath implements IDisposable {
 
         IDataNode dataNode = getDataNode();
         if (dataNode != null) {
-
-            if (getP1() != null) {
-                dataNode.set("p1", getP1());
-            }
-            if (getP2() != null) {
-                dataNode.set("p2", getP2());
-            }
+            dataNode.set("p1", getP1());
+            dataNode.set("p2", getP2());
+            dataNode.saveAsync(null);
         }
 
         onCoordsChanged(getP1(), getP2());
