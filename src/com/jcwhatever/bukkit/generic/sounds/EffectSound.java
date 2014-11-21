@@ -37,7 +37,7 @@ public class EffectSound extends ResourceSound {
      *
      * @param dataNode  The sound effect data node.
      */
-    EffectSound(IDataNode dataNode) {
+    public EffectSound(IDataNode dataNode) {
         super(dataNode);
     }
 }

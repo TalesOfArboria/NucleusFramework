@@ -32,7 +32,7 @@ public class VoiceSound extends ResourceSound {
 
     private final Transcript _transcript;
 
-    VoiceSound(IDataNode dataNode) {
+    public VoiceSound(IDataNode dataNode) {
         super(dataNode);
 
         String transcript = dataNode.getString("transcript", "");

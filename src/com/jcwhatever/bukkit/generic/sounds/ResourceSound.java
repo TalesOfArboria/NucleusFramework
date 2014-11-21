@@ -44,7 +44,7 @@ public abstract class ResourceSound {
      *
      * @param dataNode  The resource sound data node.
      */
-    ResourceSound (IDataNode dataNode) {
+    public ResourceSound (IDataNode dataNode) {
         PreCon.notNull(dataNode);
 
         // get the required sound name

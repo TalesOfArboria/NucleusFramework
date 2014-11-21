@@ -37,7 +37,7 @@ public class MusicSound extends ResourceSound {
      *
      * @param dataNode  The music sounds data node.
      */
-    MusicSound(IDataNode dataNode) {
+    public MusicSound(IDataNode dataNode) {
         super(dataNode);
     }
 }
