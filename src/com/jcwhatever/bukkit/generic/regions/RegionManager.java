@@ -89,7 +89,7 @@ public class RegionManager {
         _playerCacheMap = new PlayerMap<>(plugin);
         _playerLocationCache = new PlayerMap<>(plugin);
         PlayerWatcher _playerWatcher = new PlayerWatcher();
-        Scheduler.runTaskRepeat(plugin,  7, 7, _playerWatcher);
+        Scheduler.runTaskRepeat(plugin,  3, 3, _playerWatcher);
     }
 
     /**
