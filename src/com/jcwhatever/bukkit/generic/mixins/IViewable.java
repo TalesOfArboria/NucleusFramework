@@ -53,7 +53,7 @@ public interface IViewable {
      *
      * @param player  The player to check.
      */
-    boolean has(Player player);
+    boolean hasViewer(Player player);
 
     /**
      * Add a player to the collection
@@ -61,7 +61,7 @@ public interface IViewable {
      *
      * @param player  The player to add.
      */
-    void add(Player player);
+    void addViewer(Player player);
 
     /**
      * Remove a player from the collection
@@ -69,13 +69,13 @@ public interface IViewable {
      *
      * @param player  The player to remove.
      */
-    void remove(Player player);
+    void removeViewer(Player player);
 
     /**
      * Clear all players from the collection of
      * viewers.
      */
-    void clear();
+    void clearViewers();
 
     /**
      * Get all players in the view collection.
