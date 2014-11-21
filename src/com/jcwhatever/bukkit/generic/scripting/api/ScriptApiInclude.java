@@ -96,7 +96,8 @@ public class ScriptApiInclude extends GenericsScriptApi {
                         scripts.add(script);
                 }
                 else {
-                    Messenger.warning(getPlugin(), "Failed to include script named '{0}'. File not found.", file.getName());
+                    Messenger.warning(getPlugin(), "Failed to include script named '{0}'. " +
+                            "File not found.", file.getName());
                 }
             }
 
@@ -122,8 +123,11 @@ public class ScriptApiInclude extends GenericsScriptApi {
                 variableName = apiName;
 
             IScriptApi api = ScriptApiRepo.getApi(getPlugin(), owningPluginName, apiName);
-            if (api == null)
+            if (api == null) {
+                Messenger.warning(getPlugin(), "Failed to include script api named '{0}' from plugin '{1}'. " +
+                        "Api not found.", apiName, owningPluginName);
                 return false;
+            }
 
             _script.addScriptApi(api, variableName);
 
