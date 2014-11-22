@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.events.GenericsEventPriority;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.TextUtils;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -119,6 +120,16 @@ public class ScriptApiEvents extends GenericsScriptApi {
             PreCon.notNullOrEmpty(priority);
             PreCon.notNull(handler);
 
+            String[] priorityComp = TextUtils.PATTERN_COLON.split(priority);
+            boolean ignoreCancelled = false;
+
+            if (priorityComp.length == 2) {
+                if (priorityComp[1].equalsIgnoreCase("ignoreCancelled")) {
+                    ignoreCancelled = true;
+                    priority = priorityComp[0];
+                }
+            }
+
             Class<?> eventClass;
 
             try {
@@ -131,17 +142,17 @@ public class ScriptApiEvents extends GenericsScriptApi {
             // check for and register bukkit events
             if (Event.class.isAssignableFrom(eventClass)) {
                 Class<? extends Event> bukkitEventClass = eventClass.asSubclass(Event.class);
-                return registerBukkitEvent(bukkitEventClass, priority, handler);
+                return registerBukkitEvent(bukkitEventClass, priority, ignoreCancelled, handler);
             }
             else {
-                return registerGenericsEvent(eventClass, priority, handler);
+                return registerGenericsEvent(eventClass, priority, ignoreCancelled, handler);
             }
         }
 
         /*
          * Register Generics event.
          */
-        private boolean registerGenericsEvent(Class<?> event, String priority,
+        private boolean registerGenericsEvent(Class<?> event, String priority, boolean ignoreCancelled,
                                               final IScriptEventHandler handler) {
 
             GenericsEventPriority eventPriority = GenericsEventPriority.NORMAL;
@@ -159,7 +170,7 @@ public class ScriptApiEvents extends GenericsScriptApi {
                 }
             };
 
-            GenericsEventManager.getGlobal().register(event, eventPriority, eventHandler);
+            GenericsEventManager.getGlobal().register(event, eventPriority, ignoreCancelled, eventHandler);
 
             _registeredGenerics.add(new RegisteredGenericsEvent(event, eventHandler));
 
@@ -170,6 +181,7 @@ public class ScriptApiEvents extends GenericsScriptApi {
          * Register Bukkit event
          */
         private boolean registerBukkitEvent(Class<? extends Event> event, String priority,
+                                            boolean ignoreCancelled,
                                             final IScriptEventHandler handler) {
             EventPriority eventPriority = EventPriority.NORMAL;
 
@@ -201,7 +213,7 @@ public class ScriptApiEvents extends GenericsScriptApi {
             };
 
             RegisteredListener registeredListener = new RegisteredListener(_dummyBukkitListener,
-                    eventExecutor, eventPriority, _plugin, true);
+                    eventExecutor, eventPriority, _plugin, ignoreCancelled);
 
             handlerList.register(registeredListener);
 
