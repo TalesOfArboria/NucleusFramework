@@ -36,8 +36,8 @@ import java.util.LinkedList;
  */
 public class AStarPathFinder extends AStar<AStarPathNode> {
 
-    private final NodeCollection<AStarPathNode> _closedNodes = new AStarNodes();
-    private final NodeCollection<AStarPathNode> _openNodes = new AStarNodes();
+    private final INodeCollection<AStarPathNode> _closedNodes = new AStarNodes();
+    private final INodeCollection<AStarPathNode> _openNodes = new AStarNodes();
 
     private Location _start;
     private Location _end;
@@ -126,7 +126,7 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
         _start = start;
         _end = end;
 
-        PathNode destination = searchDestination(start, end);
+        IPathNode destination = searchDestination(start, end);
         if (destination == null)
             return -1;
 
@@ -141,12 +141,12 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
     }
 
     @Override
-    protected NodeCollection<AStarPathNode> getOpenNodes() {
+    protected INodeCollection<AStarPathNode> getOpenNodes() {
         return _openNodes;
     }
 
     @Override
-    protected NodeCollection<AStarPathNode> getClosedNodes() {
+    protected INodeCollection<AStarPathNode> getClosedNodes() {
         return _closedNodes;
     }
 

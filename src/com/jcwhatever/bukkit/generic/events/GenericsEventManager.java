@@ -75,8 +75,8 @@ public class GenericsEventManager implements IDisposable {
     }
 
     private final Map<Class<?>, EventHandlerCollection> _handlerMap = new HashMap<>(100);
-    private final Map<GenericsEventListener, ListenerContainer> _listeners = new HashMap<>(100);
-    private final List<EventHandler> _callHandlers = new ArrayList<>(10);
+    private final Map<IGenericsEventListener, ListenerContainer> _listeners = new HashMap<>(100);
+    private final List<IEventHandler> _callHandlers = new ArrayList<>(10);
     private final GenericsEventManager _parent;
     private final boolean _isGlobal;
     private boolean _isDisposed;
@@ -135,7 +135,7 @@ public class GenericsEventManager implements IDisposable {
      * @param handler     The event handler.
      */
     public void register(Class<?> eventClass,
-                         GenericsEventPriority priority, EventHandler handler) {
+                         GenericsEventPriority priority, IEventHandler handler) {
         register(eventClass, priority, false, handler);
     }
 
@@ -148,7 +148,7 @@ public class GenericsEventManager implements IDisposable {
      * @param handler          The event handler.
      */
     public void register(Class<?> eventClass, GenericsEventPriority priority,
-                         boolean ignoreCancelled, EventHandler handler) {
+                         boolean ignoreCancelled, IEventHandler handler) {
         PreCon.notNull(eventClass);
         PreCon.notNull(priority);
         PreCon.notNull(handler);
@@ -177,7 +177,7 @@ public class GenericsEventManager implements IDisposable {
      *
      * @param eventListener  The event listener.
      */
-    public void register(GenericsEventListener eventListener) {
+    public void register(IGenericsEventListener eventListener) {
         PreCon.notNull(eventListener);
 
         // cannot use a disposed event manager
@@ -238,7 +238,7 @@ public class GenericsEventManager implements IDisposable {
      *
      * @param eventListener  The event listener to unregister.
      */
-    public void unregister(GenericsEventListener eventListener) {
+    public void unregister(IGenericsEventListener eventListener) {
         PreCon.notNull(eventListener);
 
         // cannot use a disposed event manager.
@@ -260,7 +260,7 @@ public class GenericsEventManager implements IDisposable {
      * @param eventClass  The event class.
      * @param handler     The event handler to unregister.
      */
-    public void unregister(Class<?> eventClass, EventHandler handler) {
+    public void unregister(Class<?> eventClass, IEventHandler handler) {
         PreCon.notNull(eventClass);
         PreCon.notNull(handler);
 
@@ -317,7 +317,7 @@ public class GenericsEventManager implements IDisposable {
         }
 
         // run call handlers
-        for (EventHandler handler : _callHandlers) {
+        for (IEventHandler handler : _callHandlers) {
             handler.call(event);
         }
 
@@ -330,7 +330,7 @@ public class GenericsEventManager implements IDisposable {
      *
      * @param handler  The handler to add.
      */
-    public void addCallHandler(EventHandler handler) {
+    public void addCallHandler(IEventHandler handler) {
         PreCon.notNull(handler);
 
         _callHandlers.add(handler);
@@ -342,7 +342,7 @@ public class GenericsEventManager implements IDisposable {
      *
      * @param handler  The handler to remove.
      */
-    public void removeCallHandler(EventHandler handler) {
+    public void removeCallHandler(IEventHandler handler) {
         PreCon.notNull(handler);
 
         _callHandlers.remove(handler);
@@ -381,7 +381,7 @@ public class GenericsEventManager implements IDisposable {
      */
     private static class ListenerContainer {
 
-        private GenericsEventListener _listener;
+        private IGenericsEventListener _listener;
         private Set<EventHandlerCollection> _handlers = new HashSet<>(50);
 
         /**
@@ -389,7 +389,7 @@ public class GenericsEventManager implements IDisposable {
          *
          * @param listener  The listener to encapsulate.
          */
-        ListenerContainer(GenericsEventListener listener) {
+        ListenerContainer(IGenericsEventListener listener) {
             _listener = listener;
         }
 

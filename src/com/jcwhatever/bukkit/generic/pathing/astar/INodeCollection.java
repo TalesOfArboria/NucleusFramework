@@ -35,7 +35,7 @@ import java.util.Iterator;
  *
  * @param <T>  Path node type.
  */
-public interface NodeCollection<T extends PathNode> {
+public interface INodeCollection<T extends IPathNode> {
 
     /**
      * Get the number of nodes in the collection.

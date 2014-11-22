@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  * {@code AStarPathNode} implementation of the
  * {@code PathNode} interface.
  */
-public class AStarPathNode implements PathNode {
+public class AStarPathNode implements IPathNode {
 
     private final Location _start;
     private final Location _end;
@@ -272,7 +272,7 @@ public class AStarPathNode implements PathNode {
     }
 
     @Override
-    public int compareTo(PathNode other) {
+    public int compareTo(IPathNode other) {
         if (other.getFScore() < getFScore())
             return 1;
         if (other.getFScore() > getFScore())

@@ -37,7 +37,7 @@ import java.util.List;
  * Handles a books page meta. Each page reference is a single page.
  * (i.e 3 pages require 3 "bookPage" parameters)
  */
-public class BookPageHandler implements MetaHandler {
+public class BookPageHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

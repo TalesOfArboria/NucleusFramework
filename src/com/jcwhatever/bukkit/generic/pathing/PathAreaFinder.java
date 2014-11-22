@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.extended.MaterialExt;
 import com.jcwhatever.bukkit.generic.pathing.astar.AStar;
 import com.jcwhatever.bukkit.generic.pathing.astar.AStar.LocationAdjustment;
 import com.jcwhatever.bukkit.generic.pathing.astar.AStarUtils;
-import com.jcwhatever.bukkit.generic.pathing.astar.PathNode;
+import com.jcwhatever.bukkit.generic.pathing.astar.IPathNode;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Location;
@@ -49,7 +49,7 @@ import java.util.Set;
  *     of destinations.
  * </p>
  */
-public class PathAreaFinder<T extends PathNode> {
+public class PathAreaFinder<T extends IPathNode> {
 
     private final AStar<T> _pathValidator;
 

@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
 import com.jcwhatever.bukkit.generic.scripting.ScriptHelper;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 /**
  * Provide scripts with ability to include other scripts.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "include",
         description = "Provide script with ability to include other scripts.")
 public class ScriptApiInclude extends GenericsScriptApi {

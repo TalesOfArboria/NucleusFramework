@@ -71,7 +71,7 @@ public abstract class Region extends RegionMath implements IDisposable {
     private UUID _ownerId;
     private List<Chunk> _chunks;
     private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
-    private List<RegionEventHandler> _eventHandlers = new ArrayList<>(10);
+    private List<IRegionEventHandler> _eventHandlers = new ArrayList<>(10);
 
     /**
      * Constructor
@@ -235,7 +235,7 @@ public abstract class Region extends RegionMath implements IDisposable {
      *
      * @param handler  The handler to add.
      */
-    public boolean addEventHandler(RegionEventHandler handler) {
+    public boolean addEventHandler(IRegionEventHandler handler) {
         PreCon.notNull(handler);
 
         boolean isFirstHandler = _eventHandlers.isEmpty();
@@ -255,7 +255,7 @@ public abstract class Region extends RegionMath implements IDisposable {
      *
      * @param handler  The handler to remove.
      */
-    public boolean removeEventHandler(RegionEventHandler handler) {
+    public boolean removeEventHandler(IRegionEventHandler handler) {
         PreCon.notNull(handler);
 
         if (_eventHandlers.remove(handler)) {
@@ -735,7 +735,7 @@ public abstract class Region extends RegionMath implements IDisposable {
         if (canDoPlayerEnter(p))
             onPlayerEnter(p);
 
-        for (RegionEventHandler handler : _eventHandlers) {
+        for (IRegionEventHandler handler : _eventHandlers) {
             if (handler.canDoPlayerEnter(p)) {
                 handler.onPlayerEnter(p);
             }
@@ -750,7 +750,7 @@ public abstract class Region extends RegionMath implements IDisposable {
         if (canDoPlayerLeave(p))
             onPlayerLeave(p);
 
-        for (RegionEventHandler handler : _eventHandlers) {
+        for (IRegionEventHandler handler : _eventHandlers) {
             if (handler.canDoPlayerLeave(p)) {
                 handler.onPlayerLeave(p);
             }

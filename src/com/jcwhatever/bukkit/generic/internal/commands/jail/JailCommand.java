@@ -26,10 +26,10 @@
 package com.jcwhatever.bukkit.generic.internal.commands.jail;
 
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.ICommandInfo;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 
 
-@ICommandInfo(
+@CommandInfo(
         command="jail", 
         description="Manage default jail.")
 

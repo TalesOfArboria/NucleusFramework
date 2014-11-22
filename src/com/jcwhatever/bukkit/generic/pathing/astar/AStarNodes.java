@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * Collection to store {@code AStarPathNode}'s
  */
-public class AStarNodes implements NodeCollection<AStarPathNode> {
+public class AStarNodes implements INodeCollection<AStarPathNode> {
 
     private PriorityQueue<AStarPathNode> _queue = new PriorityQueue<>(50);
     private Set<AStarPathNode> _pathNodeSet = new HashSet<AStarPathNode>(50);

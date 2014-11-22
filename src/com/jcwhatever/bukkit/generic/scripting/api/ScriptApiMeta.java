@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * Provide scripts with meta data storage for general and player specific use.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "meta",
         description = "Provide scripts meta data storage for general and player specific use.")
 public class ScriptApiMeta extends GenericsScriptApi {

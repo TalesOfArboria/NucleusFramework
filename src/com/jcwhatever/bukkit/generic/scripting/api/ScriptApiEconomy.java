@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 import com.jcwhatever.bukkit.generic.economy.EconomyHelper;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -36,7 +36,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Provides script with Economy API
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "economy",
         description = "Provide scripts with Economy API.")
 public class ScriptApiEconomy extends GenericsScriptApi {

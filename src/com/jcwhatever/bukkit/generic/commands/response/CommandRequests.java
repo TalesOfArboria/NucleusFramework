@@ -87,7 +87,7 @@ public class CommandRequests {
      *
      * @return  {@code ResponseRequest} object.
      */
-    public static ResponseRequest request(Plugin plugin, String context, CommandSender sender, ResponseHandler handler, ResponseType... responseType) {
+    public static ResponseRequest request(Plugin plugin, String context, CommandSender sender, IResponseHandler handler, ResponseType... responseType) {
         ResponseRequest request = new ResponseRequest(plugin, context, sender, handler, responseType);
         _requests.put(request.getCommandSender(), request);
 

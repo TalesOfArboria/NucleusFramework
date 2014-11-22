@@ -22,44 +22,49 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.regions;
+package com.jcwhatever.bukkit.generic.items.serializer.metahandlers;
 
-import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
- * Represents a callback that handles region events.
+ * Interface for an implementation that can apply and retrieve
+ * specific meta from an {@code ItemStack} for use by a
+ * serializer/deserializer.
  */
-public interface RegionEventHandler {
+public interface IMetaHandler {
 
     /**
-     * Determine if the handler can handle player enter
-     * event for the specified player.
-     *
-     * @param player  The player who is entering the region.
+     * Get the name of the meta that is handled.
      */
-    boolean canDoPlayerEnter(Player player);
+    public String getMetaName();
 
     /**
-     * Determine if the handler can handle player leave
-     * event for the specified player.
+     * Determine if the meta handler can get meta from the
+     * item stack.
      *
-     * @param player  The player who is leaving the region.
+     * @param itemStack  The item stack to check.
      */
-    boolean canDoPlayerLeave(Player player);
+    public boolean canHandle(ItemStack itemStack);
 
     /**
-     * Called when a player enters the region and
-     * the {@code canDoPlayerEnter} method returned true.
+     * Apply the meta to the item stack. The name of the meta must
+     * match the handler meta name.
      *
-     * @param player  The player entering the region.
+     * @param itemStack  The item stack to apply meta to.
+     * @param meta       The meta to apply.
+     *
+     * @return  True if successful.
      */
-    void onPlayerEnter(Player player);
+    public boolean apply(ItemStack itemStack, ItemMetaObject meta);
 
     /**
-     * Called when a player leaves the region and
-     * the {@code canDoPlayerLeave} method returned true.
+     * Get the item meta object for the item stack.
      *
-     * @param player  The player leaving the region.
+     * @param itemStack  The item stack to get meta from.
+     *
+     * @return  empty if unable to retrieve meta.
      */
-    void onPlayerLeave(Player player);
+    public List<ItemMetaObject> getMeta(ItemStack itemStack);
 }

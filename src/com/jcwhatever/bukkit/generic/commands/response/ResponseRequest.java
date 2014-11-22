@@ -42,7 +42,7 @@ public class ResponseRequest {
     private CommandSender _sender;
     private Plugin _plugin;
     private String _context;
-    private ResponseHandler _responseHandler;
+    private IResponseHandler _responseHandler;
     private Set<ResponseType> _responseTypes = new HashSet<>(ResponseType.totalTypes());
 
     /**
@@ -54,7 +54,7 @@ public class ResponseRequest {
      * @param handler       The {@code ResponseHandler} that handles the players response.
      * @param responseType  The requested responses.
      */
-    public ResponseRequest(Plugin plugin, String context, CommandSender sender, ResponseHandler handler, ResponseType... responseType) {
+    public ResponseRequest(Plugin plugin, String context, CommandSender sender, IResponseHandler handler, ResponseType... responseType) {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(context);
         PreCon.notNull(sender);
@@ -93,7 +93,7 @@ public class ResponseRequest {
     /**
      * Get the response handler.
      */
-    public ResponseHandler getHandler() {
+    public IResponseHandler getHandler() {
         return _responseHandler;
     }
 

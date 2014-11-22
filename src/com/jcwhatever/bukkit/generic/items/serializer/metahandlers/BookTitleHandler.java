@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * Handles a book items title meta.
  */
-public class BookTitleHandler implements MetaHandler {
+public class BookTitleHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

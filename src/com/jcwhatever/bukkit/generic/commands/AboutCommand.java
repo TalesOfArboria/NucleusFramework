@@ -33,7 +33,7 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
-@ICommandInfo(
+@CommandInfo(
         command={"about"},
         usage="/{command} about",
         description="Get information about the plugin.",

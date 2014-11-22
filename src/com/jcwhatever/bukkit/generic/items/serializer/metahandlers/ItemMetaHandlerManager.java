@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
  */
 public class ItemMetaHandlerManager {
 
-    private static final Map<String, MetaHandler> _handlers = new HashMap<>(20);
+    private static final Map<String, IMetaHandler> _handlers = new HashMap<>(20);
 
     static {
         register(new ColorHandler());
@@ -58,7 +58,7 @@ public class ItemMetaHandlerManager {
      *
      * @param handler  The handler to register.
      */
-    public static void register(MetaHandler handler) {
+    public static void register(IMetaHandler handler) {
         PreCon.notNull(handler);
 
         _handlers.put(handler.getMetaName(), handler);
@@ -72,14 +72,14 @@ public class ItemMetaHandlerManager {
      * @return  Null if not found.
      */
     @Nullable
-    public static MetaHandler getHandler(String metaName) {
+    public static IMetaHandler getHandler(String metaName) {
         return _handlers.get(metaName);
     }
 
     /**
      * Get all registered meta handlers.
      */
-    public static List<MetaHandler> getHandlers() {
+    public static List<IMetaHandler> getHandlers() {
         return new ArrayList<>(_handlers.values());
     }
 }

@@ -40,7 +40,7 @@ import org.bukkit.permissions.PermissionDefault;
 import java.util.ArrayList;
 import java.util.List;
 
-@ICommandInfo(
+@CommandInfo(
         command={"help", "?"},
         staticParams={"page=1"},
         usage="/{command} help [page]",

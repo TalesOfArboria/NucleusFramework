@@ -111,7 +111,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         }
 
         // make sure sub command has required ICommandInfo annotation
-        ICommandInfo commandInfo = subCommandClass.getAnnotation(ICommandInfo.class);
+        CommandInfo commandInfo = subCommandClass.getAnnotation(CommandInfo.class);
         if (commandInfo == null)
             throw new MissingCommandAnnotationException(subCommandClass);
 
@@ -160,7 +160,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      */
     public final boolean unregisterSubCommand(Class<? extends AbstractCommand> commandClass) {
 
-        ICommandInfo commandInfo = commandClass.getAnnotation(ICommandInfo.class);
+        CommandInfo commandInfo = commandClass.getAnnotation(CommandInfo.class);
         if (commandInfo == null)
             throw new MissingCommandAnnotationException(commandClass);
 
@@ -414,7 +414,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         _commandHandler = commandHandler;
         _plugin = commandHandler.getPlugin();
 
-        ICommandInfo info = this.getClass().getAnnotation(ICommandInfo.class);
+        CommandInfo info = this.getClass().getAnnotation(CommandInfo.class);
         _info = new CommandInfoContainer(_plugin, info, masterCommandName);
 
         // register queued sub commands

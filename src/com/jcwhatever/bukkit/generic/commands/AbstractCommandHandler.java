@@ -265,7 +265,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     public final boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
         PreCon.notNull(commandClass);
 
-        ICommandInfo commandInfo = commandClass.getAnnotation(ICommandInfo.class);
+        CommandInfo commandInfo = commandClass.getAnnotation(CommandInfo.class);
         if (commandInfo == null)
             throw new MissingCommandAnnotationException(commandClass);
 
@@ -452,7 +452,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     private boolean registerCommand(Class<? extends AbstractCommand> commandClass, boolean isBaseCommand) {
 
         // make sure command has required command info annotation
-        ICommandInfo info = commandClass.getAnnotation(ICommandInfo.class);
+        CommandInfo info = commandClass.getAnnotation(CommandInfo.class);
         if (info == null) {
             throw new MissingCommandAnnotationException(commandClass);
         }

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.events.exceptions;
 
-import com.jcwhatever.bukkit.generic.events.GenericsEventListener;
+import com.jcwhatever.bukkit.generic.events.IGenericsEventListener;
 
 /**
  * Thrown when an event listener that is already registered with a {@code GenericsEventManager}
@@ -35,7 +35,7 @@ public class ListenerAlreadyRegisteredException extends RuntimeException {
 
     private String _msg;
 
-    public ListenerAlreadyRegisteredException(GenericsEventListener listener) {
+    public ListenerAlreadyRegisteredException(IGenericsEventListener listener) {
         _msg = "Event listener is already registered: " + listener.getClass().getName();
     }
 

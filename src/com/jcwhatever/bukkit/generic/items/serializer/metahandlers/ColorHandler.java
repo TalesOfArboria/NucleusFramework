@@ -39,7 +39,7 @@ import java.util.List;
  * Handles item color meta, as a byte number [0-15], the name of the color,
  * or in the case of leather, the RGB hex value.
  */
-public class ColorHandler implements MetaHandler {
+public class ColorHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

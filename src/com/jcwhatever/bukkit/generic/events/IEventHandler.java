@@ -23,18 +23,12 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.commands.response;
+package com.jcwhatever.bukkit.generic.events;
 
 /**
- * Interface for a response request handler
+ * Event handler interface
  */
-public interface ResponseHandler {
+public interface IEventHandler {
 
-    /**
-     * Executed when the player responds.
-     *
-     * @param response  The response.
-     */
-    void onResponse(ResponseType response);
-
+    void call(Object event);
 }

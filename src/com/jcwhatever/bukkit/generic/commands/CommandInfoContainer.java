@@ -43,7 +43,7 @@ public class CommandInfoContainer {
 
     private static final FormatPattern PATTERN_COMMAND = new FormatPattern("\\{command}");
 
-    private final ICommandInfo _commandInfo;
+    private final CommandInfo _commandInfo;
     private final String _masterCommandName;
     private final Plugin _plugin;
     private final String _usage;
@@ -55,7 +55,7 @@ public class CommandInfoContainer {
      * @param commandInfo        The command info annotation.
      * @param masterCommandName  The name of the top level command in the commands hierarchy.
      */
-    public CommandInfoContainer(Plugin plugin, ICommandInfo commandInfo, @Nullable String masterCommandName) {
+    public CommandInfoContainer(Plugin plugin, CommandInfo commandInfo, @Nullable String masterCommandName) {
         PreCon.notNull(plugin);
         PreCon.notNull(commandInfo);
 

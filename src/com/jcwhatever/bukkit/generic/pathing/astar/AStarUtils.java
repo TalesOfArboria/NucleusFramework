@@ -113,12 +113,12 @@ public class AStarUtils {
      *
      * @param node  The node to check.
      */
-    public static int getGScore(PathNode node) {
+    public static int getGScore(IPathNode node) {
         PreCon.notNull(node);
 
         int g = 0;
-        PathNode parent;
-        PathNode current = node;
+        IPathNode parent;
+        IPathNode current = node;
 
         while ((parent = current.getParentNode()) != null) {
 
@@ -146,7 +146,7 @@ public class AStarUtils {
      *
      * @param node  The node to check.
      */
-    public static int getHScore(PathNode node) {
+    public static int getHScore(IPathNode node) {
 
         Location start = node.getStartLocation();
         Location end = node.getEndLocation();

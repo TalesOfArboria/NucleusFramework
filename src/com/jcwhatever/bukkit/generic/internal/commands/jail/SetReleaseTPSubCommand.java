@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.internal.commands.jail;
 
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.ICommandInfo;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
@@ -39,7 +39,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
-@ICommandInfo(
+@CommandInfo(
         parent="jail",
         command="setreleasetp",
         usage="/{plugin-command} jail setreleasetp",

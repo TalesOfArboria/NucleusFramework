@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Rand;
 
@@ -36,7 +36,7 @@ import java.util.List;
 /*
  * Provide scripts with access to randomizing utilities.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "rand",
         description = "Provides randomizing utilities.")
 public class ScriptApiRand extends GenericsScriptApi {

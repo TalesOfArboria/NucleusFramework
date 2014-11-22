@@ -22,49 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.items.serializer.metahandlers;
 
-import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
+package com.jcwhatever.bukkit.generic.events;
 
 /**
- * Interface for an implementation that can apply and retrieve
- * specific meta from an {@code ItemStack} for use by a
- * serializer/deserializer.
+ * An interface flag that indicates a class has
+ * generics event handlers.
  */
-public interface MetaHandler {
-
-    /**
-     * Get the name of the meta that is handled.
-     */
-    public String getMetaName();
-
-    /**
-     * Determine if the meta handler can get meta from the
-     * item stack.
-     *
-     * @param itemStack  The item stack to check.
-     */
-    public boolean canHandle(ItemStack itemStack);
-
-    /**
-     * Apply the meta to the item stack. The name of the meta must
-     * match the handler meta name.
-     *
-     * @param itemStack  The item stack to apply meta to.
-     * @param meta       The meta to apply.
-     *
-     * @return  True if successful.
-     */
-    public boolean apply(ItemStack itemStack, ItemMetaObject meta);
-
-    /**
-     * Get the item meta object for the item stack.
-     *
-     * @param itemStack  The item stack to get meta from.
-     *
-     * @return  empty if unable to retrieve meta.
-     */
-    public List<ItemMetaObject> getMeta(ItemStack itemStack);
-}
+public interface IGenericsEventListener {}

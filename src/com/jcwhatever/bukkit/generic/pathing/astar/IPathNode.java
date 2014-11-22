@@ -32,13 +32,13 @@ import org.bukkit.Material;
 /**
  * Stores information about a path node location.
  */
-public interface PathNode extends Comparable<PathNode> {
+public interface IPathNode extends Comparable<IPathNode> {
 
     /**
      * Get the parent node.
      */
     @Nullable
-    public PathNode getParentNode();
+    public IPathNode getParentNode();
 
     /**
      * Get the X axis offset from the parent location X axis.

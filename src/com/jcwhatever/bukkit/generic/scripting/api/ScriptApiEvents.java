@@ -25,11 +25,11 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.events.EventHandler;
+import com.jcwhatever.bukkit.generic.events.IEventHandler;
 import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.events.GenericsEventPriority;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 
@@ -49,7 +49,7 @@ import java.util.List;
 /**
  * Provide scripts with an event registration API
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "events",
         description = "Provide scripts with a Bukkit event registration API.")
 public class ScriptApiEvents extends GenericsScriptApi {
@@ -163,7 +163,7 @@ public class ScriptApiEvents extends GenericsScriptApi {
                 e.printStackTrace();
             }
 
-            EventHandler eventHandler = new EventHandler() {
+            IEventHandler eventHandler = new IEventHandler() {
                 @Override
                 public void call(Object event) {
                     handler.onEvent(event);
@@ -240,9 +240,9 @@ public class ScriptApiEvents extends GenericsScriptApi {
 
     private static class RegisteredGenericsEvent {
         Class<?> _eventClass;
-        EventHandler _handler;
+        IEventHandler _handler;
 
-        RegisteredGenericsEvent(Class<?> eventClass, EventHandler handler) {
+        RegisteredGenericsEvent(Class<?> eventClass, IEventHandler handler) {
             _eventClass = eventClass;
             _handler = handler;
         }

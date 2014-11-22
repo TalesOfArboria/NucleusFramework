@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.internal.commands.jail;
 
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.ICommandInfo;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
@@ -37,7 +37,7 @@ import com.jcwhatever.bukkit.generic.language.Localizable;
 import org.bukkit.command.CommandSender;
 
 
-@ICommandInfo(
+@CommandInfo(
         parent="jail",
         command="clearreleasetp",
         usage="/{plugin-command} jail clearreleasetp",

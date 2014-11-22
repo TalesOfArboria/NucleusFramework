@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.jail.JailSession;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -37,7 +37,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Provide scripts with API access to default jail.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "jail",
         description = "Provide scripts with API access to the default jail.")
 public class ScriptApiJail extends GenericsScriptApi {

@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.sounds.ResourceSound;
 import com.jcwhatever.bukkit.generic.sounds.SoundManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -36,7 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "sounds",
         description = "Provide scripts with API access to resource sounds.")
 public class ScriptApiSounds extends GenericsScriptApi {

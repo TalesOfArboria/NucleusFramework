@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.utils.Scheduler.ScheduledTask;
 import com.jcwhatever.bukkit.generic.utils.Scheduler.TaskHandler;
@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "depends",
         description = "Handle script plugin dependencies.")
 public class ScriptApiDepends extends GenericsScriptApi {

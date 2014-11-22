@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -34,7 +34,7 @@ import org.bukkit.plugin.Plugin;
 public abstract class GenericsScriptApi implements IScriptApi {
 
     private final Plugin _plugin;
-    private final IScriptApiInfo _info;
+    private final ScriptApiInfo _info;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public abstract class GenericsScriptApi implements IScriptApi {
     public GenericsScriptApi(Plugin plugin) {
         _plugin = plugin;
 
-        IScriptApiInfo info = getClass().getAnnotation(IScriptApiInfo.class);
+        ScriptApiInfo info = getClass().getAnnotation(ScriptApiInfo.class);
         if (info == null)
             throw new RuntimeException("Script api missing its IScriptApiInfo annotation.");
 

@@ -37,7 +37,7 @@ import java.util.Set;
 /**
  * Handles item enchantment meta.
  */
-public class EnchantmentHandler implements MetaHandler {
+public class EnchantmentHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

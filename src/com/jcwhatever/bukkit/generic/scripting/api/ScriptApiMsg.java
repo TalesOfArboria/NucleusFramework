@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.messaging.Messenger.LineWrapping;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -37,7 +37,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Provide scripts with api access to generics messenger.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "msg",
         description = "Provide scripts with API access to chat messenger.")
 public class ScriptApiMsg extends GenericsScriptApi {

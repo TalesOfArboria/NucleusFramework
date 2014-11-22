@@ -30,7 +30,7 @@ import com.jcwhatever.bukkit.generic.items.bank.InsufficientItemsException;
 import com.jcwhatever.bukkit.generic.items.bank.ItemBankManager;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Provide scripts with API access to Item Bank.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "itemBank",
         description = "Provide scripts with API access to Item Bank.")
 public class ScriptApiItemBank extends GenericsScriptApi {

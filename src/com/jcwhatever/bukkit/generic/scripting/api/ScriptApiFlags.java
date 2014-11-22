@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Provide scripts with API for setting flags on players.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "flags",
         description = "Provide scripts with API for setting data node stored flags on players.")
 public class ScriptApiFlags extends GenericsScriptApi {

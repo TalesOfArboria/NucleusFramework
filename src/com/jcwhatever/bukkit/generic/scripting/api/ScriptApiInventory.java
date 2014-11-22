@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 import com.jcwhatever.bukkit.generic.inventory.InventoryHelper;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Provide scripts with API access to inventory helper functions.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "inventory",
         description = "Provide scripts with API access to inventory helper functions.")
 public class ScriptApiInventory extends GenericsScriptApi {

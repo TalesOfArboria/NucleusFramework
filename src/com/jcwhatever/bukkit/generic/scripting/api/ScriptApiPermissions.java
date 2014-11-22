@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -36,7 +36,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Provide scripts with api access to resource sounds.
  */
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "permissions",
         description = "Provide scripts with API access to player permissions.")
 public class ScriptApiPermissions extends GenericsScriptApi {

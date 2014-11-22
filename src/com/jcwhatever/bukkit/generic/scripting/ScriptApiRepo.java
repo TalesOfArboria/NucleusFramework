@@ -84,7 +84,7 @@ public class ScriptApiRepo {
     public static boolean registerApiType(Plugin plugin, Class<? extends IScriptApi> apiClass) {
         PreCon.notNull(apiClass);
 
-        IScriptApiInfo info = apiClass.getAnnotation(IScriptApiInfo.class);
+        ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
         if (info == null)
             throw new RuntimeException("Cannot register scripting api because it has no IScriptApiInfo annotation.");
 
@@ -122,7 +122,7 @@ public class ScriptApiRepo {
     public static boolean unregisterApiType(Plugin plugin, Class<? extends IScriptApi> apiClass) {
         PreCon.notNull(apiClass);
 
-        IScriptApiInfo info = apiClass.getAnnotation(IScriptApiInfo.class);
+        ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
         if (info == null)
             throw new RuntimeException("Cannot unregister scripting api because it has no IScriptApiInfo annotation.");
 
@@ -191,7 +191,7 @@ public class ScriptApiRepo {
         Class<? extends IScriptApi> apiClass = apiPackage.apiClass;
         Constructor<? extends IScriptApi> constructor = apiPackage.constructor;
 
-        IScriptApiInfo info = apiClass.getAnnotation(IScriptApiInfo.class);
+        ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
         if (info == null)
             throw new RuntimeException("Registered script api class does not have required IScriptApiInfo annotation.");
 

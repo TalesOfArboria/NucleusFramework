@@ -400,7 +400,7 @@ public class ReadOnlyRegion {
      *
      * @param handler  The handler to add.
      */
-    public boolean addEventHandler(RegionEventHandler handler) {
+    public boolean addEventHandler(IRegionEventHandler handler) {
         return _region.addEventHandler(handler);
     }
 
@@ -409,7 +409,7 @@ public class ReadOnlyRegion {
      *
      * @param handler  The handler to add.
      */
-    public boolean removeEventHandler(RegionEventHandler handler) {
+    public boolean removeEventHandler(IRegionEventHandler handler) {
         return _region.removeEventHandler(handler);
     }
 

@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.items.floating.FloatingItem;
 import com.jcwhatever.bukkit.generic.items.floating.FloatingItem.PickupHandler;
 import com.jcwhatever.bukkit.generic.items.floating.FloatingItemManager;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -40,7 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nullable;
 
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "floating",
         description = "Get floating items.")
 public class ScriptApiFloatingItems extends GenericsScriptApi {

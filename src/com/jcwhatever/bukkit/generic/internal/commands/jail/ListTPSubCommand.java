@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.internal.commands.jail;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.ICommandInfo;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
@@ -40,7 +40,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-@ICommandInfo(
+@CommandInfo(
         parent="jail",
         command="listtp",
         staticParams = { "page=1" },

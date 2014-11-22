@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
-import com.jcwhatever.bukkit.generic.scripting.IScriptApiInfo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.utils.Scheduler.ScheduledTask;
@@ -36,7 +36,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashSet;
 import java.util.Set;
 
-@IScriptApiInfo(
+@ScriptApiInfo(
         variableName = "scheduler",
         description = "Add task scheduling support to scripts.")
 public class ScriptApiScheduler extends GenericsScriptApi  {

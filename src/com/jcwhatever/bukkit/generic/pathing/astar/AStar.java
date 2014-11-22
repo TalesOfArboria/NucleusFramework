@@ -41,7 +41,7 @@ import java.util.LinkedList;
  *
  * @param <T>  The {@code PathNode} type.
  */
-public abstract class AStar<T extends PathNode> {
+public abstract class AStar<T extends IPathNode> {
 
     private int _maxTravelDistance = -1;
     private int _maxRange = 20;
@@ -229,12 +229,12 @@ public abstract class AStar<T extends PathNode> {
     /**
      * Called to get the open nodes collection.
      */
-    protected abstract NodeCollection<T> getOpenNodes();
+    protected abstract INodeCollection<T> getOpenNodes();
 
     /**
      * Called to get the closed nodes collection.
      */
-    protected abstract NodeCollection<T> getClosedNodes();
+    protected abstract INodeCollection<T> getClosedNodes();
 
     /**
      * Called to add a node candidate to the open nodes collection.
