@@ -136,6 +136,19 @@ public class GenericsEventManager implements IDisposable {
      */
     public void register(Class<?> eventClass,
                          GenericsEventPriority priority, EventHandler handler) {
+        register(eventClass, priority, false, handler);
+    }
+
+    /**
+     * Register an event handler for the specified event.
+     *
+     * @param eventClass       The event class.
+     * @param priority         The event priority.
+     * @param ignoreCancelled  True to run the handler event if the event is cancelled.
+     * @param handler          The event handler.
+     */
+    public void register(Class<?> eventClass, GenericsEventPriority priority,
+                         boolean ignoreCancelled, EventHandler handler) {
         PreCon.notNull(eventClass);
         PreCon.notNull(priority);
         PreCon.notNull(handler);
@@ -154,7 +167,7 @@ public class GenericsEventManager implements IDisposable {
         }
 
         // add the handler to the handler collection
-        if (!handlers.add(handler, priority)) {
+        if (!handlers.add(handler, priority, ignoreCancelled)) {
             throw new HandlerAlreadyRegisteredException(handler);
         }
     }
