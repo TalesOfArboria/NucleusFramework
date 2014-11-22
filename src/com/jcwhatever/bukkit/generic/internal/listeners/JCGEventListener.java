@@ -34,6 +34,7 @@ import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper.DisplayNameResult;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.regions.RegionManager;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
@@ -103,6 +104,8 @@ public final class JCGEventListener implements Listener {
 	@EventHandler(priority=EventPriority.NORMAL)
 	private void onPlayerQuit(PlayerQuitEvent event) {
         PlayList.clearQueue(event.getPlayer());
+
+		GenericsLib.getRegionManager().updatePlayerLocation(event.getPlayer(), RegionManager.PLAYER_QUIT_LOCATION);
 	}
 
 	@EventHandler(priority=EventPriority.NORMAL)

@@ -55,6 +55,8 @@ import java.util.UUID;
  */
 public class RegionManager {
 
+    public static final Location PLAYER_QUIT_LOCATION = new Location(null, 0, -1, 0);
+
     // Player watcher regions chunk map. String key is chunk coordinates
     private final Map<String, Set<ReadOnlyRegion>> _listenerRegionsMap = new HashMap<>(500);
 
@@ -175,6 +177,12 @@ public class RegionManager {
         PreCon.notNull(p);
         PreCon.notNull(location);
 
+        if (location.equals(PLAYER_QUIT_LOCATION)) {
+            onPlayerQuit(p);
+            return;
+        }
+
+        // null world used to indicate player is not present
         if (!_listenerWorlds.contains(location.getWorld()))
             return;
 
@@ -389,6 +397,24 @@ public class RegionManager {
      */
     private String getChunkKey(World world, int x, int z) {
         return world.getName() + '.' + String.valueOf(x) + '.' + String.valueOf(z);
+    }
+
+    /*
+     * Calls onPlayerLeave in regions the player was in.
+     */
+    private void onPlayerQuit(Player p) {
+        synchronized(_sync) {
+
+            Set<ReadOnlyRegion> regions = _playerCacheMap.remove(p.getUniqueId());
+            if (regions == null)
+                return;
+
+            for (ReadOnlyRegion region : regions) {
+                region.getHandle().doPlayerLeave(p);
+            }
+
+            _sync.notifyAll();
+        }
     }
 
     /*
