@@ -29,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.concurrent.Callable;
 import javax.annotation.Nullable;
 
 /**
@@ -81,7 +82,7 @@ public class Scheduler {
     }
 
     /**
-     * Run a task on an asynchronous thread after a specified number
+     * Run a task on a new asynchronous thread after a specified number
      * of ticks have elapsed.
      *
      * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
@@ -129,7 +130,7 @@ public class Scheduler {
     }
 
     /**
-     * Run a task on an asynchronous repeating schedule after a specified number
+     * Run a task on a new asynchronous repeating schedule after a specified number
      * of ticks have elapsed and repeating after the specified repeat ticks have
      * elapsed.
      *
@@ -160,11 +161,11 @@ public class Scheduler {
      * @param plugin    The owning plugin.
      * @param runnable  The {@code Runnable} to run later.
      */
-    public static void runTaskSync(Plugin plugin, Runnable runnable) {
+    public static void runTaskSync(Plugin plugin, final Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, runnable);
+        Bukkit.getScheduler().callSyncMethod(plugin, new SyncTask(runnable));
     }
 
     /**
@@ -180,9 +181,8 @@ public class Scheduler {
         PreCon.positiveNumber(ticks);
         PreCon.notNull(runnable);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, runnable, ticks);
+        Bukkit.getScheduler().runTaskLater(plugin, new DelayedSyncTask(plugin, runnable), ticks);
     }
-
 
     /**
      * A task handler {@code Runnable} with the ability to cancel itself
@@ -372,6 +372,37 @@ public class Scheduler {
             if (_runnable instanceof TaskHandler) {
                 ((TaskHandler) _runnable).setCancelled();
             }
+        }
+    }
+
+    private static class DelayedSyncTask implements Runnable {
+
+        private final Plugin _plugin;
+        private final Runnable _task;
+
+        DelayedSyncTask (Plugin plugin, Runnable task) {
+            _plugin = plugin;
+            _task = task;
+        }
+
+        @Override
+        public void run() {
+            Bukkit.getScheduler().callSyncMethod(_plugin, new SyncTask(_task));
+        }
+    }
+
+    private static class SyncTask implements Callable<Void> {
+
+        private final Runnable _task;
+
+        SyncTask(Runnable task) {
+            _task = task;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            _task.run();
+            return null;
         }
     }
 
