@@ -24,8 +24,6 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
-
 import org.bukkit.Location;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
@@ -122,10 +120,13 @@ public class ProjectileUtils {
                                            double elevation, double velocity, double gravity) {
         PreCon.notNull(source);
         PreCon.notNull(target);
-        PreCon.positiveNumber(elevation);
         PreCon.positiveNumber(velocity);
 
         if (!Objects.equals(source.getWorld(), target.getWorld())) {
+            return null;
+        }
+
+        if (source.distanceSquared(target) <= 2.0D) {
             return null;
         }
 
@@ -228,7 +229,6 @@ public class ProjectileUtils {
 
         Double launchAngle = getBallisticAngle(source, target, vector.getY(), velocity, gravity);
         if (launchAngle == null) {
-            Messenger.debug(null, "Failed to get launch angle");
             launchAngle = 0.0D;
         }
 
