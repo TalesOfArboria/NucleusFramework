@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -36,6 +37,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
@@ -339,6 +341,47 @@ public class LocationUtils {
             }
         }
         return searchLoc;
+    }
+
+    /**
+     * Get the location closest to the specified player.
+     *
+     * @param sourceLocation  The location source to search from.
+     * @param locations       The location candidates.
+     */
+    @Nullable
+    public static Location getClosestLocation(Location sourceLocation, Collection<Location> locations) {
+        return getClosestLocation(sourceLocation, locations, null);
+    }
+
+    /**
+     * Get the location closest to the specified player.
+     *
+     * @param sourceLocation  The location source to search from.
+     * @param locations       The location candidates.
+     * @param validator       The validator used to determine if a location is a candidate.
+     */
+    @Nullable
+    public static Location getClosestLocation(Location sourceLocation, Collection<Location> locations,
+                                              @Nullable EntryValidator<Location> validator) {
+        PreCon.notNull(sourceLocation);
+        PreCon.notNull(locations);
+
+        Location closest = null;
+        double closestDist = 0.0D;
+
+        for (Location loc : locations) {
+            if (validator != null && !validator.isValid(loc))
+                continue;
+
+            double dist = 0.0D;
+            if (closest == null || (dist = sourceLocation.distanceSquared(loc)) < closestDist) {
+                closest = loc;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
     }
 
     // helper to convert a string number to a double.

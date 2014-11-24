@@ -44,12 +44,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -250,7 +248,6 @@ public class PlayerHelper {
         p.setFallDistance(0);
     }
 
-
     /**
      * Get a list of players that are near the specified location.
      *
@@ -271,7 +268,8 @@ public class PlayerHelper {
      * @param chunkRadius  The chunk radius to check in.
      * @param validator    A validator used to validate if a player is a candidate to return.
      */
-    public static List<Player> getClosestPlayers(Location loc, int chunkRadius, @Nullable EntryValidator<Player> validator) {
+    public static List<Player> getClosestPlayers(Location loc, int chunkRadius,
+                                                 @Nullable EntryValidator<Player> validator) {
         PreCon.notNull(loc);
         PreCon.greaterThanZero(chunkRadius);
 
@@ -300,196 +298,6 @@ public class PlayerHelper {
         }
 
         return players;
-    }
-
-    /**
-     * Get the location closest to the specified player.
-     *
-     * @param p          The player.
-     * @param locations  The location candidates.
-     */
-    @Nullable
-    public static Location getClosestLocation(Player p, Collection<Location> locations) {
-        return getClosestLocation(p, locations, null);
-    }
-
-    /**
-     * Get the location closest to the specified player.
-     *
-     * @param p          The player.
-     * @param locations  The location candidates.
-     * @param validator  The validator used to determine if a location is a candidate.
-     */
-    @Nullable
-    public static Location getClosestLocation(Player p, Collection<Location> locations,
-                                              @Nullable EntryValidator<Location> validator) {
-        PreCon.notNull(p);
-        PreCon.notNull(locations);
-
-        Location closest = null;
-        double closestDist = 0.0D;
-
-        for (Location loc : locations) {
-            if (validator != null && !validator.isValid(loc))
-                continue;
-
-            double dist = 0.0D;
-            if (closest == null || (dist = p.getLocation().distanceSquared(loc)) < closestDist) {
-                closest = loc;
-                closestDist = dist;
-            }
-        }
-
-        return closest;
-    }
-
-    /**
-     * Get the closest entity to a player.
-     *
-     * @param p      The player.
-     * @param range  The search range.
-     */
-    @Nullable
-    public static Entity getClosestEntity(Player p, double range) {
-        return getClosestEntity(p, range, range, range, null);
-    }
-
-    /**
-     * Get the closest entity to a player.
-     *
-     * @param p          The player.
-     * @param range      The search range.
-     * @param validator  The validator used to determine if an entity is a candidate.
-     */
-    @Nullable
-    public static Entity getClosestEntity(Player p, double range, @Nullable EntryValidator<Entity> validator) {
-        return getClosestEntity(p, range, range, range, validator);
-    }
-
-    /**
-     * Get the closest entity to a player.
-     *
-     * @param p       The player.
-     * @param rangeX  The search range on the X axis.
-     * @param rangeY  The search range on the Y axis.
-     * @param rangeZ  The search range on the Z axis.
-     */
-    @Nullable
-    public static Entity getClosestEntity(Player p, double rangeX, double rangeY, double rangeZ) {
-        return getClosestEntity(p, rangeX, rangeY, rangeZ, null);
-    }
-
-    /**
-     *
-     * @param p          The player.
-     * @param rangeX     The search range on the X axis.
-     * @param rangeY     The search range on the Y axis.
-     * @param rangeZ     The search range on the Z axis.
-     * @param validator  The validator used to determine if an entity is a candidate.
-     */
-    @Nullable
-    public static Entity getClosestEntity(Player p, double rangeX, double rangeY, double rangeZ,
-                                          @Nullable EntryValidator<Entity> validator) {
-        PreCon.notNull(p);
-        PreCon.positiveNumber(rangeX);
-        PreCon.positiveNumber(rangeY);
-        PreCon.positiveNumber(rangeZ);
-
-        List<Entity> entities = p.getNearbyEntities(rangeX, rangeY, rangeZ);
-
-        Entity closest = null;
-        double closestDist = 0.0D;
-
-        for (Entity entity : entities) {
-            if (validator != null && !validator.isValid(entity))
-                continue;
-
-            double dist = 0.0D;
-            if (closest == null || (dist = p.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
-                closest = entity;
-                closestDist = dist;
-            }
-        }
-
-        return closest;
-    }
-
-    /**
-     * Get the closest living entity to a player.
-     *
-     * @param p      The player.
-     * @param range  The search range.
-     */
-    @Nullable
-    public static LivingEntity getClosestLivingEntity(Player p, double range) {
-        return getClosestLivingEntity(p, range, range, range, null);
-    }
-
-    /**
-     * Get the closest living entity to a player.
-     *
-     * @param p          The player.
-     * @param range      The search range.
-     * @param validator  The validator used to determine if a living entity is a candidate.
-     */
-    @Nullable
-    public static LivingEntity getClosestLivingEntity(Player p, double range,
-                                                      @Nullable EntryValidator<LivingEntity> validator) {
-        return getClosestLivingEntity(p, range, range, range, validator);
-    }
-
-    /**
-     * Get the closest living entity to a player.
-     *
-     * @param p       The player.
-     * @param rangeX  The search range on the X axis.
-     * @param rangeY  The search range on the Y axis.
-     * @param rangeZ  The search range on the Z axis.
-     */
-    @Nullable
-    public static LivingEntity getClosestLivingEntity(Player p, double rangeX, double rangeY, double rangeZ) {
-        return getClosestLivingEntity(p, rangeX, rangeY, rangeZ, null);
-    }
-
-    /**
-     * Get the closest living entity to a player.
-     *
-     * @param p          The player.
-     * @param rangeX     The search range on the X axis.
-     * @param rangeY     The search range on the Y axis.
-     * @param rangeZ     The search range on the Z axis.
-     * @param validator  The validator used to determine if a living entity is a candidate.
-     */
-    @Nullable
-    public static LivingEntity getClosestLivingEntity(Player p, double rangeX, double rangeY, double rangeZ,
-                                                      @Nullable EntryValidator<LivingEntity> validator) {
-        PreCon.notNull(p);
-        PreCon.positiveNumber(rangeX);
-        PreCon.positiveNumber(rangeY);
-        PreCon.positiveNumber(rangeZ);
-
-        List<Entity> entities = p.getNearbyEntities(rangeX, rangeY, rangeZ);
-
-        LivingEntity closest = null;
-        double closestDist = 0.0D;
-
-        for (Entity entity : entities) {
-            if (!(entity instanceof LivingEntity))
-                continue;
-
-            LivingEntity livingEntity = (LivingEntity)entity;
-
-            if (validator != null && !validator.isValid(livingEntity))
-                continue;
-
-            double dist = 0.0D;
-            if (closest == null || (dist = p.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
-                closest = livingEntity;
-                closestDist = dist;
-            }
-        }
-
-        return closest;
     }
 
     /**

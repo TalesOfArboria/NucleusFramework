@@ -28,10 +28,11 @@ package com.jcwhatever.bukkit.generic.utils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Entity helper utilities
@@ -130,5 +131,158 @@ public class EntityUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Get the closest entity to a player.
+     *
+     * @param sourceEntity  The entity source to search from.
+     * @param range         The search range.
+     */
+    @Nullable
+    public static Entity getClosestEntity(Entity sourceEntity, double range) {
+        return getClosestEntity(sourceEntity, range, range, range, null);
+    }
+
+    /**
+     * Get the closest entity to a player.
+     *
+     * @param sourceEntity  The entity source to search from.
+     * @param range         The search range.
+     * @param validator     The validator used to determine if an entity is a candidate.
+     */
+    @Nullable
+    public static Entity getClosestEntity(Entity sourceEntity, double range,
+                                          @Nullable EntryValidator<Entity> validator) {
+        return getClosestEntity(sourceEntity, range, range, range, validator);
+    }
+
+    /**
+     * Get the closest entity to a player.
+     *
+     * @param sourceEntity  The entity source to search from.
+     * @param rangeX        The search range on the X axis.
+     * @param rangeY        The search range on the Y axis.
+     * @param rangeZ        The search range on the Z axis.
+     */
+    @Nullable
+    public static Entity getClosestEntity(Entity sourceEntity, double rangeX, double rangeY, double rangeZ) {
+        return getClosestEntity(sourceEntity, rangeX, rangeY, rangeZ, null);
+    }
+
+    /**
+     * Find the entity closest to the specified entity.
+     *
+     * @param sourceEntity  The entity source to search from.
+     * @param rangeX        The search range on the X axis.
+     * @param rangeY        The search range on the Y axis.
+     * @param rangeZ        The search range on the Z axis.
+     * @param validator     The validator used to determine if an entity is a candidate.
+     */
+    @Nullable
+    public static Entity getClosestEntity(Entity sourceEntity, double rangeX, double rangeY, double rangeZ,
+                                          @Nullable EntryValidator<Entity> validator) {
+        PreCon.notNull(sourceEntity);
+        PreCon.positiveNumber(rangeX);
+        PreCon.positiveNumber(rangeY);
+        PreCon.positiveNumber(rangeZ);
+
+        List<Entity> entities = sourceEntity.getNearbyEntities(rangeX, rangeY, rangeZ);
+
+        Entity closest = null;
+        double closestDist = 0.0D;
+
+        for (Entity entity : entities) {
+            if (validator != null && !validator.isValid(entity))
+                continue;
+
+            double dist = 0.0D;
+            if (closest == null || (dist = sourceEntity.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
+                closest = entity;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
+
+    /**
+     * Get the closest living entity to a player.
+     *
+     * @param sourceEntity  The entity source to search from.
+     * @param range         The search range.
+     */
+    @Nullable
+    public static LivingEntity getClosestLivingEntity(Entity sourceEntity, double range) {
+        return getClosestLivingEntity(sourceEntity, range, range, range, null);
+    }
+
+    /**
+     * Get the closest living entity to a player.
+     *
+     * @param sourceEntity  The entity source to search from.
+     * @param range         The search range.
+     * @param validator     The validator used to determine if a living entity is a candidate.
+     */
+    @Nullable
+    public static LivingEntity getClosestLivingEntity(Entity sourceEntity, double range,
+                                                      @Nullable EntryValidator<LivingEntity> validator) {
+        return getClosestLivingEntity(sourceEntity, range, range, range, validator);
+    }
+
+    /**
+     * Get the closest living entity to a player.
+     *
+     * @param sourceEntity  The entity source to search from.
+     * @param rangeX        The search range on the X axis.
+     * @param rangeY        The search range on the Y axis.
+     * @param rangeZ        The search range on the Z axis.
+     */
+    @Nullable
+    public static LivingEntity getClosestLivingEntity(Entity sourceEntity,
+                                                      double rangeX, double rangeY, double rangeZ) {
+        return getClosestLivingEntity(sourceEntity, rangeX, rangeY, rangeZ, null);
+    }
+
+    /**
+     * Get the closest living entity to a player.
+     *
+     * @param sourceEntity  The entity source to search from.
+     * @param rangeX        The search range on the X axis.
+     * @param rangeY        The search range on the Y axis.
+     * @param rangeZ        The search range on the Z axis.
+     * @param validator     The validator used to determine if a living entity is a candidate.
+     */
+    @Nullable
+    public static LivingEntity getClosestLivingEntity(Entity sourceEntity,
+                                                      double rangeX, double rangeY, double rangeZ,
+                                                      @Nullable EntryValidator<LivingEntity> validator) {
+        PreCon.notNull(sourceEntity);
+        PreCon.positiveNumber(rangeX);
+        PreCon.positiveNumber(rangeY);
+        PreCon.positiveNumber(rangeZ);
+
+        List<Entity> entities = sourceEntity.getNearbyEntities(rangeX, rangeY, rangeZ);
+
+        LivingEntity closest = null;
+        double closestDist = 0.0D;
+
+        for (Entity entity : entities) {
+            if (!(entity instanceof LivingEntity))
+                continue;
+
+            LivingEntity livingEntity = (LivingEntity)entity;
+
+            if (validator != null && !validator.isValid(livingEntity))
+                continue;
+
+            double dist = 0.0D;
+            if (closest == null || (dist = sourceEntity.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
+                closest = livingEntity;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
     }
 }
