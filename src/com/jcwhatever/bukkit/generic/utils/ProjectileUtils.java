@@ -43,7 +43,7 @@ public class ProjectileUtils {
     /**
      * Default gravity for ballistics
      */
-    private static final double GRAVITY = 20.0D;
+    public static final double GRAVITY = 20.0D;
 
     /**
      * Get projectile shooting source location for a living entity.
@@ -198,8 +198,28 @@ public class ProjectileUtils {
     public static <T extends Projectile> T shootBallistic(LivingEntity source, Location target,
                                                           double velocity, double gravity,
                                                           Class<T> projectileClass) {
+        return shootBallistic(source, target, 1.0D, velocity, gravity, projectileClass);
+    }
 
-        T projectile = shootBallistic(getEntitySource(source, target), target, velocity, gravity, projectileClass);
+    /**
+     * Shoot a ballistic projectile at the specified target.
+     *
+     * @param source           The projectile source entity.
+     * @param target           The projectile target.
+     * @param sourceRadius     The radius of the source entity.
+     * @param velocity         The projectile velocity.
+     * @param gravity          The projectile gravity.
+     * @param projectileClass  The projectile class.
+     *
+     * @param <T>  The projectile type.
+     */
+    public static <T extends Projectile> T shootBallistic(LivingEntity source, Location target,
+                                                          double sourceRadius, double velocity, double gravity,
+                                                          Class<T> projectileClass) {
+
+        T projectile = shootBallistic(getEntitySource(source, target),
+                target, sourceRadius, velocity, gravity, projectileClass);
+
         projectile.setShooter(source);
 
         return projectile;
@@ -219,6 +239,25 @@ public class ProjectileUtils {
     public static <T extends Projectile> T shootBallistic(Location source, Location target,
                                                           double velocity, double gravity,
                                                           Class<T> projectileClass) {
+        return shootBallistic(source, target, 1.0D, velocity, gravity, projectileClass);
+    }
+
+
+        /**
+         * Shoot a ballistic projectile at the specified target.
+         *
+         * @param source           The projectile source location.
+         * @param target           The projectile target.
+         * @param sourceRadius     The radius of the source.
+         * @param velocity         The projectile velocity.
+         * @param gravity          The projectile gravity.
+         * @param projectileClass  The projectile class.
+         *
+         * @param <T>  The projectile type.
+         */
+    public static <T extends Projectile> T shootBallistic(Location source, Location target,
+                                                          double sourceRadius, double velocity, double gravity,
+                                                          Class<T> projectileClass) {
         PreCon.notNull(source);
         PreCon.notNull(target);
         PreCon.positiveNumber(velocity);
@@ -226,6 +265,21 @@ public class ProjectileUtils {
 
         Vector vector = target.clone().subtract(source).toVector();
         Double distance = source.distance(target);
+
+        Vector radiusVector = vector.clone();
+
+        double magnitude = Math.sqrt(
+                (radiusVector.getX() * radiusVector.getX()) +
+                (radiusVector.getY() * radiusVector.getY()) +
+                (radiusVector.getZ() * radiusVector.getZ()));
+
+        magnitude -= sourceRadius;
+        magnitude = Math.max(0, magnitude);
+
+        if (magnitude != 0)
+            radiusVector = radiusVector.multiply(1 / magnitude);
+
+        source = source.add(radiusVector);
 
         Double launchAngle = getBallisticAngle(source, target, vector.getY(), velocity, gravity);
         if (launchAngle == null) {
