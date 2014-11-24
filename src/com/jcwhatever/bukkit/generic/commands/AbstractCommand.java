@@ -81,6 +81,13 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     }
 
     /**
+     * Determine if the command can be executed.
+     */
+    public boolean canExecute() {
+        return _subCommands.size() == 0 || getInfo().getStaticParams().length > 0 || !getInfo().getUsage().isEmpty();
+    }
+
+    /**
      * Execute the command.
      * Intended to be overridden by implementation if needed.
      */
@@ -261,6 +268,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         if (!usage.isEmpty())
             pagin.add(usage, _info.getDescription());
 
+        final AbstractCommand self = this;
 
         // batch operation to prevent each registered permission
         // from causing a permission recalculation
@@ -276,7 +284,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                     // Determine if the command has its own own sub commands 
                     // and put aside so it can be displayed at the end of the 
                     // help list
-                    if (cmd.getSubCommands().size() > 0) {
+                    if (cmd.getSubCommands().size() > 0 && (!cmd.equals(self) && cmd.canExecute())) {
                         subCommands.add(cmd);
                         continue;
                     }

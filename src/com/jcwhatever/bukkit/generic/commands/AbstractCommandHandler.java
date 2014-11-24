@@ -38,13 +38,13 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Command Executor to handle commands
@@ -191,7 +192,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         }
 
         // Determine if the command can execute or if it requires sub commands
-        boolean canExecute = command.getInfo().getStaticParams().length > 0 || !command.getInfo().getUsage().isEmpty();
+        boolean canExecute = command.canExecute();
 
         if (!canExecute) {
             tellError(sender, Lang.get(_COMMAND_INCOMPLETE, baseCommandName));
