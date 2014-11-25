@@ -86,11 +86,13 @@ public class HorseEquipper implements IEntityEquipper {
         ItemStack saddle = inventory.getSaddle();
         if (saddle != null) {
             result.add(saddle);
+            inventory.setSaddle(null);
         }
 
         ItemStack armor = inventory.getArmor();
         if (armor != null) {
             result.add(armor);
+            inventory.setArmor(null);
         }
 
         return result;

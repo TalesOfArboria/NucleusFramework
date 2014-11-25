@@ -98,14 +98,21 @@ public class DefaultEquipper implements IEntityEquipper {
             List<ItemStack> result = new ArrayList<>(5);
 
             addItemToList(result, equipment.getItemInHand());
+            equipment.setItemInHand(null);
 
             if (entity instanceof HumanEntity) {
 
                 addItemToList(result, equipment.getHelmet());
-                addItemToList(result, equipment.getChestplate());
-                addItemToList(result, equipment.getLeggings());
-                addItemToList(result, equipment.getBoots());
+                equipment.setHelmet(null);
 
+                addItemToList(result, equipment.getChestplate());
+                equipment.setChestplate(null);
+
+                addItemToList(result, equipment.getLeggings());
+                equipment.setLeggings(null);
+
+                addItemToList(result, equipment.getBoots());
+                equipment.setBoots(null);
             }
 
             return result;
