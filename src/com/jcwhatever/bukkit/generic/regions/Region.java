@@ -74,6 +74,88 @@ public abstract class Region extends RegionMath implements IDisposable {
     private List<IRegionEventHandler> _eventHandlers = new ArrayList<>(10);
 
     /**
+     * Reasons a player enters a region.
+     */
+    public enum EnterRegionReason {
+        /**
+         * The player moved into the region.
+         */
+        MOVE,
+        /**
+         * The player teleported into the region.
+         */
+        TELEPORT,
+        /**
+         * The player respawned into the region.
+         */
+        RESPAWN,
+        /**
+         * The player joined the server and
+         * spawned into the region.
+         */
+        JOIN_SERVER
+    }
+
+    /**
+     * Reasons a player leaves a region.
+     */
+    public enum LeaveRegionReason {
+        /**
+         * The player moved out of the region.
+         */
+        MOVE,
+        /**
+         * The player teleported out of the region.
+         */
+        TELEPORT,
+        /**
+         * The player died in the region.
+         */
+        DEAD,
+        /**
+         * The player left the server while
+         * in the region.
+         */
+        QUIT_SERVER
+    }
+
+    /**
+     * For internal use.
+     */
+    public enum RegionReason {
+        MOVE        (EnterRegionReason.MOVE,        LeaveRegionReason.MOVE),
+        DEAD        (null,                          LeaveRegionReason.DEAD),
+        TELEPORT    (EnterRegionReason.TELEPORT,    LeaveRegionReason.TELEPORT),
+        RESPAWN     (EnterRegionReason.RESPAWN,     LeaveRegionReason.DEAD),
+        JOIN_SERVER (EnterRegionReason.JOIN_SERVER, null),
+        QUIT_SERVER (null,                          LeaveRegionReason.QUIT_SERVER);
+
+        private final EnterRegionReason _enter;
+        private final LeaveRegionReason _leave;
+
+        RegionReason(EnterRegionReason enter, LeaveRegionReason leave) {
+            _enter = enter;
+            _leave = leave;
+        }
+
+        /**
+         * Get the enter reason equivalent.
+         */
+        @Nullable
+        public EnterRegionReason getEnterReason() {
+            return _enter;
+        }
+
+        /**
+         * Get the leave reason equivalent.
+         */
+        @Nullable
+        public LeaveRegionReason getLeaveReason() {
+            return _leave;
+        }
+    }
+
+    /**
      * Constructor
      */
     public Region(Plugin plugin, String name, @Nullable IDataNode dataNode) {
@@ -666,7 +748,8 @@ public abstract class Region extends RegionMath implements IDisposable {
      *
      * @param p  the player entering the region.
      */
-    protected void onPlayerEnter (Player p) {
+    protected void onPlayerEnter (@SuppressWarnings("unused") Player p,
+                                  @SuppressWarnings("unused") EnterRegionReason reason) {
         // do nothing
     }
 
@@ -679,7 +762,8 @@ public abstract class Region extends RegionMath implements IDisposable {
      *
      * @param p  the player leaving the region.
      */
-    protected void onPlayerLeave (Player p) {
+    protected void onPlayerLeave (@SuppressWarnings("unused") Player p,
+                                  @SuppressWarnings("unused") LeaveRegionReason reason) {
         // do nothing
     }
 
@@ -691,7 +775,8 @@ public abstract class Region extends RegionMath implements IDisposable {
      *
      * @param p  The player entering the region.
      */
-    protected boolean canDoPlayerEnter(Player p) {
+    protected boolean canDoPlayerEnter(@SuppressWarnings("unused") Player p,
+                                       @SuppressWarnings("unused") EnterRegionReason reason) {
         return true;
     }
 
@@ -703,7 +788,8 @@ public abstract class Region extends RegionMath implements IDisposable {
      *
      * @param p  The player leaving the region.
      */
-    protected boolean canDoPlayerLeave(Player p) {
+    protected boolean canDoPlayerLeave(@SuppressWarnings("unused") Player p,
+                                       @SuppressWarnings("unused") LeaveRegionReason reason) {
         return true;
     }
 
@@ -730,14 +816,14 @@ public abstract class Region extends RegionMath implements IDisposable {
     /**
      * Used by RegionEventManager to execute onPlayerEnter event.
      */
-    void doPlayerEnter (Player p) {
+    void doPlayerEnter (Player p, EnterRegionReason reason) {
 
-        if (canDoPlayerEnter(p))
-            onPlayerEnter(p);
+        if (canDoPlayerEnter(p, reason))
+            onPlayerEnter(p, reason);
 
         for (IRegionEventHandler handler : _eventHandlers) {
-            if (handler.canDoPlayerEnter(p)) {
-                handler.onPlayerEnter(p);
+            if (handler.canDoPlayerEnter(p, reason)) {
+                handler.onPlayerEnter(p, reason);
             }
         }
     }
@@ -745,14 +831,14 @@ public abstract class Region extends RegionMath implements IDisposable {
     /**
      * Used by RegionEventManager to execute onPlayerLeave event.
      */
-    void doPlayerLeave (Player p) {
+    void doPlayerLeave (Player p, LeaveRegionReason reason) {
 
-        if (canDoPlayerLeave(p))
-            onPlayerLeave(p);
+        if (canDoPlayerLeave(p, reason))
+            onPlayerLeave(p, reason);
 
         for (IRegionEventHandler handler : _eventHandlers) {
-            if (handler.canDoPlayerLeave(p)) {
-                handler.onPlayerLeave(p);
+            if (handler.canDoPlayerLeave(p, reason)) {
+                handler.onPlayerLeave(p, reason);
             }
         }
     }

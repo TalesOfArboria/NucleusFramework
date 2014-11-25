@@ -30,6 +30,9 @@ import com.jcwhatever.bukkit.generic.collections.EntryCounter;
 import com.jcwhatever.bukkit.generic.collections.EntryCounter.RemovalPolicy;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
+import com.jcwhatever.bukkit.generic.regions.Region.EnterRegionReason;
+import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
+import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
@@ -55,8 +58,6 @@ import java.util.UUID;
  */
 public class RegionManager {
 
-    public static final Location PLAYER_QUIT_LOCATION = new Location(null, 0, -1, 0);
-
     // Player watcher regions chunk map. String key is chunk coordinates
     private final Map<String, Set<ReadOnlyRegion>> _listenerRegionsMap = new HashMap<>(500);
 
@@ -70,7 +71,7 @@ public class RegionManager {
     private Map<UUID, Set<ReadOnlyRegion>> _playerCacheMap;
 
     // locations the player was detected in between player watcher cycles.
-    private Map<UUID, LinkedList<Location>> _playerLocationCache;
+    private Map<UUID, LinkedList<CachedLocation>> _playerLocationCache;
 
     // hash set of all registered regions
     private Set<ReadOnlyRegion> _regions = new HashSet<>(500);
@@ -172,15 +173,12 @@ public class RegionManager {
      *
      * @param p         The player.
      * @param location  The location to cache.
+     * @param reason    The reason that will be used if the player enters a region.
      */
-    public void updatePlayerLocation(Player p, Location location) {
+    public void updatePlayerLocation(Player p, Location location, RegionReason reason) {
         PreCon.notNull(p);
         PreCon.notNull(location);
-
-        if (location.equals(PLAYER_QUIT_LOCATION)) {
-            onPlayerQuit(p);
-            return;
-        }
+        PreCon.notNull(reason);
 
         // null world used to indicate player is not present
         if (!_listenerWorlds.contains(location.getWorld()))
@@ -190,8 +188,37 @@ public class RegionManager {
         if (p.hasMetadata("NPC"))
             return;
 
-        LinkedList<Location> locations = getPlayerLocations(p.getUniqueId());
-        locations.add(location);
+        LinkedList<CachedLocation> locations = getPlayerLocations(p.getUniqueId());
+        locations.add(new CachedLocation(location, reason));
+    }
+
+    private static class CachedLocation extends Location {
+
+        private final RegionReason _reason;
+
+        public CachedLocation(Location location, RegionReason reason) {
+            super(location.getWorld(),
+                    location.getX(), location.getY(), location.getZ(),
+                    location.getYaw(), location.getPitch());
+
+            _reason = reason;
+        }
+
+        public RegionReason getReason() {
+            return _reason;
+        }
+    }
+
+    /**
+     * Update player location when the player does not have a location.
+     *
+     * <p>Declares the player as leaving all current regions.</p>
+     *
+     * @param p       The player.
+     * @param reason  The reason the player is leaving the regions.
+     */
+    public void updatePlayerLocation(Player p, LeaveRegionReason reason) {
+        onPlayerLeave(p, reason);
     }
 
     /**
@@ -353,11 +380,11 @@ public class RegionManager {
      * Get the cached movement locations of a player that have not been processed
       * by the PlayerWatcher task yet.
      */
-    private LinkedList<Location> getPlayerLocations(UUID playerId) {
+    private LinkedList<CachedLocation> getPlayerLocations(UUID playerId) {
 
-        LinkedList<Location> locations = _playerLocationCache.get(playerId);
+        LinkedList<CachedLocation> locations = _playerLocationCache.get(playerId);
         if (locations == null) {
-            locations = new LinkedList<Location>();
+            locations = new LinkedList<CachedLocation>();
             _playerLocationCache.put(playerId, locations);
         }
 
@@ -368,7 +395,7 @@ public class RegionManager {
      * Clear cached movement locations of a player
      */
     private void clearPlayerLocations(UUID playerId) {
-        LinkedList<Location> locations = getPlayerLocations(playerId);
+        LinkedList<CachedLocation> locations = getPlayerLocations(playerId);
         locations.clear();
     }
 
@@ -402,7 +429,7 @@ public class RegionManager {
     /*
      * Calls onPlayerLeave in regions the player was in.
      */
-    private void onPlayerQuit(Player p) {
+    private void onPlayerLeave(Player p, LeaveRegionReason reason) {
         synchronized(_sync) {
 
             Set<ReadOnlyRegion> regions = _playerCacheMap.remove(p.getUniqueId());
@@ -410,7 +437,7 @@ public class RegionManager {
                 return;
 
             for (ReadOnlyRegion region : regions) {
-                region.getHandle().doPlayerLeave(p);
+                region.getHandle().doPlayerLeave(p, reason);
             }
 
             _sync.notifyAll();
@@ -499,7 +526,7 @@ public class RegionManager {
 
                         // iterate cached locations
                         while (!worldPlayer.locations.isEmpty()) {
-                            Location location = worldPlayer.locations.removeFirst();
+                            CachedLocation location = worldPlayer.locations.removeFirst();
 
                             // see which regions a player actually is in
                             Set<ReadOnlyRegion> inRegions = _manager.getListenerRegions(location);
@@ -507,8 +534,12 @@ public class RegionManager {
                             // check for entered regions
                             if (inRegions != null && !inRegions.isEmpty()) {
                                 for (ReadOnlyRegion region : inRegions) {
+
                                     if (!cachedRegions.contains(region)) {
-                                        onPlayerEnter(region.getHandle(), worldPlayer.player);
+
+                                        onPlayerEnter(region.getHandle(), worldPlayer.player,
+                                                location.getReason());
+
                                         cachedRegions.add(region);
                                     }
                                 }
@@ -521,7 +552,8 @@ public class RegionManager {
                                     ReadOnlyRegion region = iterator.next();
 
                                     if (inRegions == null || !inRegions.contains(region)) {
-                                        onPlayerLeave(region.getHandle(), worldPlayer.player);
+                                        onPlayerLeave(region.getHandle(), worldPlayer.player,
+                                                location.getReason());
                                         iterator.remove();
                                     }
                                 }
@@ -540,30 +572,38 @@ public class RegionManager {
         } // END run()
 
         /*
-     * Executes doPlayerLeave method in the specified region on the main thread.
-     */
-        private void onPlayerLeave(final Region region, final Player p) {
+         * Executes doPlayerEnter method in the specified region on the main thread.
+         */
+        private void onPlayerEnter(final Region region, final Player p, RegionReason reason) {
+
+            final EnterRegionReason enterReason = reason.getEnterReason();
+            if (enterReason == null)
+                throw new AssertionError();
 
             Scheduler.runTaskSync(GenericsLib.getLib(), new Runnable() {
 
                 @Override
                 public void run() {
-                    region.doPlayerLeave(p);
+                    region.doPlayerEnter(p, enterReason);
                 }
 
             });
         }
 
         /*
-         * Executes doPlayerEnter method in the specified region on the main thread.
+         * Executes doPlayerLeave method in the specified region on the main thread.
          */
-        private void onPlayerEnter(final Region region, final Player p) {
+        private void onPlayerLeave(final Region region, final Player p, RegionReason reason) {
+
+            final LeaveRegionReason leaveReason = reason.getLeaveReason();
+            if (leaveReason == null)
+                throw new AssertionError();
 
             Scheduler.runTaskSync(GenericsLib.getLib(), new Runnable() {
 
                 @Override
                 public void run() {
-                    region.doPlayerEnter(p);
+                    region.doPlayerLeave(p, leaveReason);
                 }
 
             });
@@ -584,11 +624,11 @@ public class RegionManager {
             List<WorldPlayer> worldPlayers = new ArrayList<WorldPlayer>(players.size());
             for (Player p : players) {
 
-                LinkedList<Location> locations = manager.getPlayerLocations(p.getUniqueId());
+                LinkedList<CachedLocation> locations = manager.getPlayerLocations(p.getUniqueId());
                 if (locations.isEmpty())
                     continue;
 
-                WorldPlayer worldPlayer = new WorldPlayer(p, new LinkedList<Location>(locations));
+                WorldPlayer worldPlayer = new WorldPlayer(p, new LinkedList<CachedLocation>(locations));
                 worldPlayers.add(worldPlayer);
 
                 manager.clearPlayerLocations(p.getUniqueId());
@@ -604,9 +644,9 @@ public class RegionManager {
      */
     private static class WorldPlayer {
         public final Player player;
-        public final LinkedList<Location> locations;
+        public final LinkedList<CachedLocation> locations;
 
-        public WorldPlayer(Player p, LinkedList<Location> locations) {
+        public WorldPlayer(Player p, LinkedList<CachedLocation> locations) {
             this.player = p;
             this.locations = locations;
         }

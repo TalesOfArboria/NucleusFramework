@@ -70,9 +70,9 @@ class EventHandlerCollection {
                 : null;
 
         LinkedList<HandlerContainer> skipped = new LinkedList<>();
-
+        List<HandlerContainer> handlers = new ArrayList<>(_handlers);
         // iterate handlers and call them
-        for (HandlerContainer handler : _handlers) {
+        for (HandlerContainer handler : handlers) {
 
             boolean isPreCancelled = (cancellable != null && cancellable.isCancelled()) ||
                     (bukkitCancellable != null && bukkitCancellable.isCancelled());

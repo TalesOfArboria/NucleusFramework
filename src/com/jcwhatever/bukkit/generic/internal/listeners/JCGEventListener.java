@@ -34,7 +34,8 @@ import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper.DisplayNameResult;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.player.PlayerHelper;
-import com.jcwhatever.bukkit.generic.regions.RegionManager;
+import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
+import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
@@ -48,6 +49,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -86,29 +88,42 @@ public final class JCGEventListener implements Listener {
 		Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
 			@Override
 			public void run() {
-				GenericsLib.getRegionManager().updatePlayerLocation(p, p.getLocation());
+				GenericsLib.getRegionManager().updatePlayerLocation(p, p.getLocation(), RegionReason.JOIN_SERVER);
 			}
 		});
 	}
 
 	@EventHandler(priority=EventPriority.LOW)
 	private void onPlayerMove(PlayerMoveEvent event) {
-		GenericsLib.getRegionManager().updatePlayerLocation(event.getPlayer(), event.getTo());
+		GenericsLib.getRegionManager()
+				.updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.MOVE);
 	}
 
-	@EventHandler(priority=EventPriority.LOW)
+	@EventHandler(priority=EventPriority.MONITOR)
+	private void onPlayerDeath(PlayerDeathEvent event) {
+
+		if (event.getEntity().getHealth() > 0)
+			return;
+
+		GenericsLib.getRegionManager()
+				.updatePlayerLocation(event.getEntity(), LeaveRegionReason.DEAD);
+	}
+
+	@EventHandler(priority=EventPriority.MONITOR)
 	private void onPlayerRespawn(PlayerRespawnEvent event) {
-		GenericsLib.getRegionManager().updatePlayerLocation(event.getPlayer(), event.getRespawnLocation());
+		GenericsLib.getRegionManager()
+				.updatePlayerLocation(event.getPlayer(), event.getRespawnLocation(), RegionReason.RESPAWN);
 	}
 
-	@EventHandler(priority=EventPriority.NORMAL)
+	@EventHandler(priority=EventPriority.MONITOR)
 	private void onPlayerQuit(PlayerQuitEvent event) {
         PlayList.clearQueue(event.getPlayer());
 
-		GenericsLib.getRegionManager().updatePlayerLocation(event.getPlayer(), RegionManager.PLAYER_QUIT_LOCATION);
+		GenericsLib.getRegionManager()
+				.updatePlayerLocation(event.getPlayer(), LeaveRegionReason.QUIT_SERVER);
 	}
 
-	@EventHandler(priority=EventPriority.NORMAL)
+	@EventHandler(priority=EventPriority.MONITOR)
 	private void onPlayerTeleport(PlayerTeleportEvent event) {
 
         // player teleporting to a different world
@@ -117,7 +132,8 @@ public final class JCGEventListener implements Listener {
             PlayList.clearQueue(event.getPlayer());
 		}
 
-		GenericsLib.getRegionManager().updatePlayerLocation(event.getPlayer(), event.getTo());
+		GenericsLib.getRegionManager()
+				.updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.TELEPORT);
 	}
 
 	@EventHandler(priority=EventPriority.NORMAL)
