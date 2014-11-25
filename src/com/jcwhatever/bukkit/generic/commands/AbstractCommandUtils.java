@@ -75,9 +75,9 @@ public abstract class AbstractCommandUtils {
 
     private static final Pattern FORMAT_ENABLE = Pattern.compile("\\{e}");
 
-    Plugin _plugin;
+    protected Plugin _plugin;
 
-    AbstractCommandUtils() {}
+    protected AbstractCommandUtils() {}
 
     /**
      * Constructor.

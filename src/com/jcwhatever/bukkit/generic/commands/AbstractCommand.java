@@ -60,6 +60,7 @@ import javax.annotation.Nullable;
 public abstract class AbstractCommand extends AbstractCommandUtils implements Comparable<AbstractCommand> {
 
     private static final String _USAGE = "{GOLD}/{plugin-command} {GREEN}";
+    private static final String _COMMAND_PAGINATOR_TITLE = "Commands";
 
     private final Map<String, AbstractCommand> _subCommands = new HashMap<String, AbstractCommand>(20);
 
@@ -70,6 +71,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     private AbstractCommand _parent;
     private IPermission _permission;
     private List<AbstractCommand> _sortedSubCommands;
+    private boolean _canExecute;
 
     /**
      * Constructor.
@@ -84,7 +86,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      * Determine if the command can be executed.
      */
     public boolean canExecute() {
-        return _subCommands.size() == 0 || getInfo().getStaticParams().length > 0 || !getInfo().getUsage().isEmpty();
+        return _canExecute;
     }
 
     /**
@@ -252,52 +254,48 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     }
 
     /**
-     * Display the commands help info the the specified {@code CommandSender}
+     * Display the commands help info to the specified {@code CommandSender}
      */
-    public void showHelp(final CommandSender sender, int page) {
+    public void showHelp(final CommandSender sender, final int page) {
         PreCon.notNull(sender);
         PreCon.positiveNumber(page);
 
-        String paginTitle = Lang.get("Commands");
-        final ChatPaginator pagin = new ChatPaginator(getPlugin(), 6, paginTitle);
-
-        final List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
-
-        String usage = _info.getUsage();
-
-        if (!usage.isEmpty())
-            pagin.add(usage, _info.getDescription());
-
-        final AbstractCommand self = this;
+        if (!isHelpVisible(sender)) {
+            return;
+        }
 
         // batch operation to prevent each registered permission
         // from causing a permission recalculation
         Permissions.runBatchOperation(true, new Runnable() {
 
-
             @Override
             public void run () {
 
+                final ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
+                        Lang.get(_plugin, _COMMAND_PAGINATOR_TITLE));
+
+                if (canExecute()) {
+                    // add command to paginator
+                    pagin.add(_info.getUsage(), _info.getDescription());
+                }
+
+                List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
 
                 for (AbstractCommand cmd : getSubCommands()) {
 
                     // Determine if the command has its own own sub commands 
                     // and put aside so it can be displayed at the end of the 
                     // help list
-                    if (cmd.getSubCommands().size() > 0 && (!cmd.equals(self) && cmd.canExecute())) {
+                    if (cmd.getSubCommands().size() > 0) {
                         subCommands.add(cmd);
                         continue;
                     }
 
+                    if (!cmd.isHelpVisible(sender)) {
+                        continue;
+                    }
+
                     CommandInfoContainer info = cmd.getInfo();
-
-                    // determine if the command is visible in help
-                    if (!info.isHelpVisible())
-                        continue;
-
-                    // determine if the CommandSender has permission to use the command
-                    if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
-                        continue;
 
                     // add command to paginator
                     pagin.add(info.getUsage(), info.getDescription());
@@ -307,25 +305,21 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                 // and render differently
                 for (AbstractCommand cmd : subCommands) {
 
+                    if (!cmd.isHelpVisible(sender)) {
+                        continue;
+                    }
+
                     CommandInfoContainer info = cmd.getInfo();
-
-                    // determine if the commands is visible in help
-                    if (!info.isHelpVisible())
-                        continue;
-
-                    // determine if the CommandSender has permission to use the command
-                    if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
-                        continue;
 
                     // add info to get sub commands help to paginator
                     pagin.add(constructHelpUsage(cmd), info.getDescription());
                 }
+
+                // show paginator to CommandSender
+                pagin.show(sender, page, FormatTemplate.DEFINITION);
             }
 
         });
-
-        // show paginator to CommandSender
-        pagin.show(sender, page, FormatTemplate.DEFINITION);
     }
 
     /**
@@ -440,6 +434,14 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             }
         }
 
+        // determine if the command is executable
+        try {
+            this.getClass().getDeclaredMethod("execute", CommandSender.class, CommandArguments.class);
+            _canExecute = true;
+        } catch (NoSuchMethodException e) {
+            _canExecute = false;
+        }
+
         // register permission
         getPermission();
 
@@ -452,7 +454,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      * a user should type to get help with the specified
      * command.
      */
-    final String constructHelpUsage(AbstractCommand command) {
+    static String constructHelpUsage(AbstractCommand command) {
         PreCon.notNull(command);
 
         Stack<AbstractCommand> commands = new Stack<AbstractCommand>();
@@ -465,7 +467,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         }
 
         StringBuilder usage = new StringBuilder(32 * 3);
-        usage.append(Lang.get(_USAGE));
+        usage.append(Lang.get(command.getPlugin(), _USAGE));
 
         while(!commands.isEmpty()) {
             usage.append(commands.pop()._info.getCommandName());
@@ -475,11 +477,26 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         usage.append('?');
 
         // format plugin info into usage
-        String result = TextUtils.formatPluginInfo(_plugin, usage.toString());
+        String result = TextUtils.formatPluginInfo(command.getPlugin(), usage.toString());
 
         // format colors and return
         return TextUtils.format(result);
     }
 
+    /**
+     * Determine if a command sender can see the command in help.
+     */
+    final boolean isHelpVisible(CommandSender sender) {
 
+        // determine if the commands is visible in help
+        if (!getInfo().isHelpVisible())
+            return false;
+
+        // determine if the CommandSender has permission to use the command
+        if (sender instanceof Player &&
+                !Permissions.has((Player)sender, getPermission().getName()))
+            return false;
+
+        return true;
+    }
 }
