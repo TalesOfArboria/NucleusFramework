@@ -29,16 +29,17 @@ import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * A kit of items that can be given to a player.
@@ -289,6 +290,11 @@ public class Kit {
 
             case BOOTS:
                 setBoots(item);
+                break;
+
+            case HORSE_ARMOR:
+                _items.add(item.clone());
+                break;
         }
     }
 
