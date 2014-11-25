@@ -27,9 +27,13 @@ package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
+import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
+import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
+import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +52,7 @@ public class GenericsLib extends GenericsPlugin {
 
     private JailManager _jailManager;
     private RegionManager _regionManager;
+    private EntityEquipperManager _equipperManager;
 
     /**
      * Get the {@code GenericsLib} plugin instance.
@@ -112,6 +117,23 @@ public class GenericsLib extends GenericsPlugin {
     }
 
     /**
+     * Get the default entity equipper manager.
+     */
+    public static EntityEquipperManager getEquipperManager() {
+        return _instance._equipperManager;
+    }
+
+    /**
+     * Get an entity equipper from the default entity equipper manager
+     * for the specified entity type.
+     *
+     * @param entityType  The entity type
+     */
+    public static IEntityEquipper getEquipper(EntityType entityType) {
+        return _instance._equipperManager.getEquipper(entityType);
+    }
+
+    /**
      * Constructor.
      */
     public GenericsLib() {
@@ -140,6 +162,7 @@ public class GenericsLib extends GenericsPlugin {
     protected void onEnablePlugin() {
         _regionManager = new RegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
+        _equipperManager = new EntityEquipperManager();
 
         registerEventListeners(new JCGEventListener());
         registerCommands(new CommandHandler());
