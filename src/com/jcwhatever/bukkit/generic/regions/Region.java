@@ -56,6 +56,16 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
+/**
+ * Abstract implementation of a region.
+ *
+ * <p>The region is registered with GenericsLib {@link RegionManager} as soon
+ * as it is defined (P1 and P2 coordinates set) via the regions settings or by
+ * calling {@code setCoords} method.</p>
+ *
+ * <p>The regions protected methods {@code onPlayerEnter} and {@code onPlayerLeave}
+ * are only called if the implementing type calls {@code setIsPlayerWatcher(true)}.</p>
+ */
 public abstract class Region extends RegionMath implements IRegion, IDisposable {
 
     private static final Map<Region, Void> _instances = new WeakHashMap<>(100);
