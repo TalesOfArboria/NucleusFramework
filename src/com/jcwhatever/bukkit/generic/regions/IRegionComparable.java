@@ -34,7 +34,9 @@ public interface IRegionComparable {
 
     /**
      * Get the regions priority when handling player
-     * entering region.
+     * entering or leaving region.
+     *
+     * @param priorityType  The priority type.
      */
     RegionPriority getPriority(PriorityType priorityType);
 }
