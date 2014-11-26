@@ -523,31 +523,6 @@ public abstract class Region extends RegionSelection implements IRegion, IDispos
     }
 
     /**
-     * Determine if the region intersects with the chunk specified.
-     *
-     * @param chunk  The chunk.
-     */
-    public final boolean intersects(Chunk chunk) {
-        PreCon.notNull(chunk);
-
-        return isDefined() &&
-                chunk.getWorld().equals(getWorld()) &&
-                intersects(chunk.getX(), chunk.getZ());
-    }
-
-    /**
-     * Determine if the region intersects with the chunk specified.
-     *
-     * @param chunkX  The chunk X coordinates.
-     * @param chunkZ  The chunk Z coordinates.
-     */
-    public final boolean intersects(int chunkX, int chunkZ) {
-
-        return getChunkX() <= chunkX && (getChunkX() + getChunkXWidth() - 1) >= chunkX &&
-                getChunkZ() <= chunkZ && (getChunkZ() + getChunkZWidth() - 1) >= chunkZ;
-    }
-
-    /**
      * Get all chunks that contain at least a portion of the region.
      */
     @Override

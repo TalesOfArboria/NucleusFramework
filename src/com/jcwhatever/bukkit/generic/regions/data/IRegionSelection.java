@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.regions.data;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -212,5 +213,20 @@ public interface IRegionSelection {
      * @param cz   True to check if the point is inside the region on the Z axis.
      */
     boolean contains(Location loc, boolean cx, boolean cy, boolean cz);
+
+    /**
+     * Determine if the region intersects with the chunk specified.
+     *
+     * @param chunk  The chunk.
+     */
+    boolean intersects(Chunk chunk);
+
+    /**
+     * Determine if the region intersects with the chunk specified.
+     *
+     * @param chunkX  The chunk X coordinates.
+     * @param chunkZ  The chunk Z coordinates.
+     */
+    boolean intersects(int chunkX, int chunkZ);
 
 }

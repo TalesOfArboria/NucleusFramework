@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.regions.data;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -432,6 +433,33 @@ public class RegionSelection implements IRegionSelection {
 
             return true;
         }
+    }
+
+    /**
+     * Determine if the region intersects with the chunk specified.
+     *
+     * @param chunk  The chunk.
+     */
+    @Override
+    public final boolean intersects(Chunk chunk) {
+        PreCon.notNull(chunk);
+
+        return isDefined() &&
+                chunk.getWorld().equals(getWorld()) &&
+                intersects(chunk.getX(), chunk.getZ());
+    }
+
+    /**
+     * Determine if the region intersects with the chunk specified.
+     *
+     * @param chunkX  The chunk X coordinates.
+     * @param chunkZ  The chunk Z coordinates.
+     */
+    @Override
+    public final boolean intersects(int chunkX, int chunkZ) {
+
+        return getChunkX() <= chunkX && (getChunkX() + getChunkXWidth() - 1) >= chunkX &&
+                getChunkZ() <= chunkZ && (getChunkZ() + getChunkZWidth() - 1) >= chunkZ;
     }
 
     /**

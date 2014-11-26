@@ -358,6 +358,27 @@ public final class ReadOnlyRegion implements IRegion {
     }
 
     /**
+     * Determine if the region intersects with the chunk specified.
+     *
+     * @param chunk  The chunk.
+     */
+    @Override
+    public boolean intersects(Chunk chunk) {
+        return _region.intersects(chunk);
+    }
+
+    /**
+     * Determine if the region intersects with the chunk specified.
+     *
+     * @param chunkX  The chunk X coordinates.
+     * @param chunkZ  The chunk Z coordinates.
+     */
+    @Override
+    public boolean intersects(int chunkX, int chunkZ) {
+        return _region.intersects(chunkX, chunkZ);
+    }
+
+    /**
      * Remove all specified entity types from the region.
      *
      * @param itemTypes  The entity types to remove.
