@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 /**
  * A basic implementation of a region.
  */
-public class BasicRegion extends Region {
+public final class BasicRegion extends Region {
 
     /**
      * Constructor.
