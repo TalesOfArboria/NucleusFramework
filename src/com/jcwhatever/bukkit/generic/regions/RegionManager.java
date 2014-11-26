@@ -64,8 +64,8 @@ import java.util.UUID;
  */
 public class RegionManager {
 
-    // Player watcher regions chunk map. String key is chunk coordinates. Set<> value is OrderedRegions<> instance.
-    private final Map<String, Set<IRegion>> _listenerRegionsMap = new HashMap<>(500);
+    // Player watcher regions chunk map. String key is chunk coordinates.
+    private final Map<String, OrderedRegions<IRegion>> _listenerRegionsMap = new HashMap<>(500);
 
     // All regions chunk map. String key is chunk coordinates
     private final Map<String, Set<IRegion>> _allRegionsMap = new HashMap<>(500);
@@ -73,8 +73,8 @@ public class RegionManager {
     // worlds that have regions
     private EntryCounter<World> _listenerWorlds = new EntryCounter<>(RemovalPolicy.REMOVE);
 
-    // cached regions the player was detected in in last player watcher cycle. Set<> value is OrderedRegions<> instance.
-    private Map<UUID, Set<IRegion>> _playerCacheMap;
+    // cached regions the player was detected in in last player watcher cycle.
+    private Map<UUID, OrderedRegions<IRegion>> _playerCacheMap;
 
     // locations the player was detected in between player watcher cycles.
     private Map<UUID, LinkedList<CachedLocation>> _playerLocationCache;
@@ -220,8 +220,7 @@ public class RegionManager {
 
         synchronized (_sync) {
 
-            OrderedRegions<IRegion> regions =
-                    (OrderedRegions<IRegion>) _playerCacheMap.remove(p.getUniqueId());
+            OrderedRegions<IRegion> regions = _playerCacheMap.remove(p.getUniqueId());
 
             if (regions == null)
                 return;
@@ -267,8 +266,9 @@ public class RegionManager {
      * Get all regions contained in the specified location using
      * the supplied region map.
      */
-    private List<IRegion> getRegion(Location location, PriorityType priorityType,
-                                           Map<String, Set<IRegion>> map) {
+    private <T extends Set<IRegion>> List<IRegion> getRegion(Location location,
+                                                             PriorityType priorityType,
+                                                             Map<String, T> map) {
         synchronized(_sync) {
 
             List<IRegion> results = new ArrayList<>(10);
@@ -289,18 +289,13 @@ public class RegionManager {
 
             Iterator<IRegion> iterator;
 
-            if (regions instanceof OrderedRegions) {
-                OrderedRegions<IRegion> orderedRegions =
-                        (OrderedRegions<IRegion>)regions;
-
-                iterator = orderedRegions.iterator(priorityType);
-            }
-            else {
-                iterator = regions.iterator();
-            }
+            iterator = regions instanceof OrderedRegions
+                    ? ((OrderedRegions<IRegion>) regions).iterator(priorityType)
+                    : regions.iterator();
 
             while (iterator.hasNext()) {
                 IRegion region = iterator.next();
+
                 if (region.contains(location))
                     results.add(region);
             }
@@ -344,13 +339,26 @@ public class RegionManager {
                     String key = getChunkKey(region.getWorld(), x, z);
 
                     if (region.isPlayerWatcher()) {
-                        addToMap(_listenerRegionsMap, key, readOnlyRegion);
+
+                        // add to listener regions map
+                        OrderedRegions<IRegion> regions = _listenerRegionsMap.get(key);
+                        if (regions == null) {
+                            regions = new OrderedRegions<IRegion>(5);
+                            _listenerRegionsMap.put(key, regions);
+                        }
+                        regions.add(readOnlyRegion);
                     }
                     else {
                         hasRegion = removeFromMap(_listenerRegionsMap, key, readOnlyRegion);
                     }
 
-                    addToMap(_allRegionsMap, key, readOnlyRegion);
+                    // add to all regions map
+                    Set<IRegion> regions = _allRegionsMap.get(key);
+                    if (regions == null) {
+                        regions = new HashSet<IRegion>(5);
+                        _allRegionsMap.put(key, regions);
+                    }
+                    regions.add(readOnlyRegion);
                 }
             }
 
@@ -431,21 +439,9 @@ public class RegionManager {
     }
 
     /*
-     * Add a region to a region map.
-     */
-    private void addToMap(Map<String, Set<IRegion>> map, String key, ReadOnlyRegion region) {
-        Set<IRegion> regions = map.get(key);
-        if (regions == null) {
-            regions = new OrderedRegions<>(5);
-            map.put(key, regions);
-        }
-        regions.add(region);
-    }
-
-    /*
      * Remove a region from a region map.
      */
-    private boolean removeFromMap(Map<String, Set<IRegion>> map, String key, ReadOnlyRegion region) {
+    private <T extends Set<IRegion>> boolean removeFromMap(Map<String, T> map, String key, ReadOnlyRegion region) {
         Set<IRegion> regions = map.get(key);
         return regions != null && regions.remove(region);
     }
@@ -504,7 +500,7 @@ public class RegionManager {
 
         private final Object _sync;
         private final Collection<WorldPlayers> _worldPlayers;
-        private final Map<UUID, Set<IRegion>> _playerCacheMap;
+        private final Map<UUID, OrderedRegions<IRegion>> _playerCacheMap;
         private final RegionManager _manager;
 
         PlayerWatcherAsync(RegionManager manager, Collection<WorldPlayers> worldPlayers) {
@@ -530,8 +526,7 @@ public class RegionManager {
                         UUID playerId = worldPlayer.player.getUniqueId();
 
                         // get regions the player is in (cached from previous check)
-                        OrderedRegions<IRegion> cachedRegions =
-                                (OrderedRegions<IRegion>)_playerCacheMap.get(playerId);
+                        OrderedRegions<IRegion> cachedRegions = _playerCacheMap.get(playerId);
 
                         if (cachedRegions == null) {
                             cachedRegions = new OrderedRegions<>(7);

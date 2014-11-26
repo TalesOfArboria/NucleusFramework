@@ -43,6 +43,9 @@ import java.util.Set;
  *
  * <p>Allows retrieving regions sorted by priority while maintaining
  * {@code HashSet} {@code contains} method performance.</p>
+ *
+ * <p>If only the {@code Set} implemented methods are used, the collection
+ * performance should remain nearly the same as a {@code HashSet}.</p>
  */
 public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
 
@@ -86,7 +89,7 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return iterator(PriorityType.ENTER);
+        return _hashSet.iterator();
     }
 
     /**
@@ -146,7 +149,7 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
 
     @Override
     public Object[] toArray() {
-        return toArray(PriorityType.ENTER);
+        return _hashSet.toArray();
     }
 
     /**
@@ -165,7 +168,8 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
 
     @Override
     public <T> T[] toArray(T[] array) {
-        return toArray(PriorityType.ENTER, array);
+        //noinspection SuspiciousToArrayCall
+        return _hashSet.toArray(array);
     }
 
     /**
@@ -289,7 +293,7 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
     }
 
     /**
-     * Sort the enter collection.
+     * Sort the collection.
      *
      * <p>Will not sort if the collection does not need to be sorted.</p>
      */
