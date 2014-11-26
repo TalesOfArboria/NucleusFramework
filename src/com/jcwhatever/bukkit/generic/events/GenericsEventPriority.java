@@ -32,37 +32,37 @@ package com.jcwhatever.bukkit.generic.events;
 public enum GenericsEventPriority {
 
     /**
-     * The last handler to be called.
-     */
-    LAST    (5),
-
-    /**
-     * Low priority. Called second to last.
-     */
-    LOW     (4),
-
-    /**
-     * Normal priority.
-     */
-    NORMAL  (3),
-
-    /**
-     * High priority. Called second.
-     */
-    HIGH    (2),
-
-    /**
-     * Highest priority. Called first.
-     */
-    FIRST   (1),
-
-    /**
      * Watcher. Only watches to see if the event
      * is called but does not effect the outcome
      * of the event. Is always called even if the
      * event is cancelled.
      */
-    WATCHER (0);
+    WATCHER (5),
+
+    /**
+     * The last handler to be called.
+     */
+    LAST    (4),
+
+    /**
+     * Low priority. Called second to last.
+     */
+    LOW     (3),
+
+    /**
+     * Normal priority.
+     */
+    NORMAL  (2),
+
+    /**
+     * High priority. Called second.
+     */
+    HIGH    (1),
+
+    /**
+     * Highest priority. Called first.
+     */
+    FIRST   (0);
 
     private final int _order;
 
