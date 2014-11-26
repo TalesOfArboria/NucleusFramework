@@ -96,6 +96,12 @@ class EventHandlerCollection {
             boolean isPostCancelled = (cancellable != null && cancellable.isCancelled()) ||
                     (bukkitCancellable != null && bukkitCancellable.isCancelled());
 
+            if (handler._priority == GenericsEventPriority.WATCHER &&
+                    isPreCancelled != isPostCancelled) {
+                throw new RuntimeException("You cannot change the state of an event using an " +
+                                           "event handler with WATCHER priority.");
+            }
+
             // determine if the event was cancelled during the last handler call.
             if (isPreCancelled && !isPostCancelled) {
 
