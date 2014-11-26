@@ -736,7 +736,8 @@ public abstract class Region extends RegionSelection implements IRegion, IDispos
      *
      * @throws IOException
      */
-    protected void onCoordsChanged(@Nullable Location p1, @Nullable Location p2) {
+    protected void onCoordsChanged(@SuppressWarnings("unused") @Nullable Location p1,
+                                   @SuppressWarnings("unused") @Nullable Location p2) {
         // do nothing
     }
 
@@ -815,7 +816,7 @@ public abstract class Region extends RegionSelection implements IRegion, IDispos
     }
 
     /**
-     * Used by RegionEventManager to execute onPlayerEnter event.
+     * Used by {@code RegionManager} to execute onPlayerEnter event.
      */
     void doPlayerEnter (Player p, EnterRegionReason reason) {
 
@@ -830,7 +831,7 @@ public abstract class Region extends RegionSelection implements IRegion, IDispos
     }
 
     /**
-     * Used by RegionEventManager to execute onPlayerLeave event.
+     * Used by {@code RegionManager} to execute onPlayerLeave event.
      */
     void doPlayerLeave (Player p, LeaveRegionReason reason) {
 
