@@ -155,13 +155,13 @@ final class PlayerCollectionListener implements Listener {
     }
 
     // event handler, Remove player from all collections when logged out
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.MONITOR) // last
     private void onPlayerQuit(PlayerQuitEvent event) {
         removePlayer(event.getPlayer());
     }
 
     // event handler, Remove player from all collections when kicked
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.MONITOR) // last
     private void onPlayerQuit(PlayerKickEvent event) {
         removePlayer(event.getPlayer());
     }
