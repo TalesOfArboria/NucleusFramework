@@ -184,4 +184,33 @@ public interface IRegionMath {
      * X or Z axis and is not 1 block tall.
      */
     boolean isFlatVertical();
+
+    /**
+     * Determine if the region contains the specified location.
+     *
+     * @param loc  The location to check.
+     */
+    boolean contains(Location loc);
+
+    /**
+     * Determine if the region contains the specified
+     * coordinates.
+     *
+     * @param x  The location X coordinates.
+     * @param y  The location Y coordinates.
+     * @param z  The location Z coordinates.
+     */
+    boolean contains(int x, int y, int z);
+
+    /**
+     * Determine if the region contains the the specified location
+     * on the specified axis.
+     *
+     * @param loc  The location to check.
+     * @param cx   True to check if the point is inside the region on the X axis.
+     * @param cy   True to check if the point is inside the region on the Y axis.
+     * @param cz   True to check if the point is inside the region on the Z axis.
+     */
+    boolean contains(Location loc, boolean cx, boolean cy, boolean cz);
+
 }

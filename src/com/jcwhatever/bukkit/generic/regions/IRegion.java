@@ -108,34 +108,6 @@ public interface IRegion extends IRegionMath, IRegionComparable {
     boolean contains(Material material);
 
     /**
-     * Determine if the region contains a location.
-     *
-     * @param loc  The location to check.
-     */
-    boolean contains(Location loc);
-
-    /**
-     * Determine if a region contains a location on
-     * specific axis.
-     *
-     * @param loc  The location to check.
-     * @param x    True to check the X axis.
-     * @param y    True to check the Y axis.
-     * @param z    True to check the Z axis.
-     */
-    boolean contains (Location loc, boolean x, boolean y, boolean z);
-
-    /**
-     * Determine if the region contains the specified
-     * coordinates.
-     *
-     * @param x  The location X coordinates.
-     * @param y  The location Y coordinates.
-     * @param z  The location Z coordinates.
-     */
-    boolean contains(int x, int y, int z);
-
-    /**
      * Remove all specified entity types from the region.
      *
      * @param itemTypes  The entity types to remove.
