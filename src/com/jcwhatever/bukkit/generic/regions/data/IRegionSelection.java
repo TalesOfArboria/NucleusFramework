@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 /**
  * Represents basic math for a region
  */
-public interface IRegionMath {
+public interface IRegionSelection {
 
     /**
      * Determine if the regions cuboid points have been set.

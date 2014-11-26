@@ -83,7 +83,7 @@ public class RegionChunkSection {
      * @param chunkX  The X coordinates of the chunk.
      * @param chunkZ  The Y coordinates of the chunk.
      */
-    public RegionChunkSection (IRegionMath region, int chunkX, int chunkZ) {
+    public RegionChunkSection (IRegionSelection region, int chunkX, int chunkZ) {
         _chunkX = chunkX;
         _chunkZ = chunkZ;
         init(region);
@@ -95,7 +95,7 @@ public class RegionChunkSection {
      * @param region  The region.
      * @param chunk   The chunk to get chunk coordinates from.
      */
-    public RegionChunkSection (IRegionMath region, Chunk chunk) {
+    public RegionChunkSection (IRegionSelection region, Chunk chunk) {
         _chunkX = chunk.getX();
         _chunkZ = chunk.getZ();
         init(region);
@@ -107,7 +107,7 @@ public class RegionChunkSection {
      * @param region  The region.
      * @param chunk   The chunk snapshot to get chunk coordinates from.
      */
-    public RegionChunkSection (IRegionMath region, ChunkSnapshot chunk) {
+    public RegionChunkSection (IRegionSelection region, ChunkSnapshot chunk) {
         _chunkX = chunk.getX();
         _chunkZ = chunk.getZ();
         init(region);
@@ -325,7 +325,7 @@ public class RegionChunkSection {
 
 
     // initialize all variables
-    private void init(IRegionMath region) {
+    private void init(IRegionSelection region) {
 
         Location p1 = region.getP1();
         Location p2 = region.getP2();

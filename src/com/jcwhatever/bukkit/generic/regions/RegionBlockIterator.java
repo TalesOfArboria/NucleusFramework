@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
-import com.jcwhatever.bukkit.generic.regions.data.IRegionMath;
+import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Material;
@@ -44,14 +44,14 @@ public class RegionBlockIterator implements Iterator<Block> {
     private int _currentZ;
     private Block _current;
 
-    private IRegionMath _region;
+    private IRegionSelection _region;
 
     /**
      * Constructor.
      *
      * @param region  The region to iterate.
      */
-    public RegionBlockIterator (IRegionMath region) {
+    public RegionBlockIterator (IRegionSelection region) {
         PreCon.notNull(region);
 
         _region = region;

@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.regions;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.regions.RegionOwnerChangedEvent;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
-import com.jcwhatever.bukkit.generic.regions.data.RegionMath;
+import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -66,7 +66,7 @@ import javax.annotation.Nullable;
  * <p>The regions protected methods {@code onPlayerEnter} and {@code onPlayerLeave}
  * are only called if the implementing type calls {@code setIsPlayerWatcher(true)}.</p>
  */
-public abstract class Region extends RegionMath implements IRegion, IDisposable {
+public abstract class Region extends RegionSelection implements IRegion, IDisposable {
 
     private static final Map<Region, Void> _instances = new WeakHashMap<>(100);
     private static BukkitListener _bukkitListener;

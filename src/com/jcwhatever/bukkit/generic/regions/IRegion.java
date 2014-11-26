@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
-import com.jcwhatever.bukkit.generic.regions.data.IRegionMath;
+import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
  * <p>For nearly all cases, the abstract class {@link Region} should be extended
  * or use one of the other abstract implementations that extend {@link Region}.</p>
  */
-public interface IRegion extends IRegionMath, IRegionComparable {
+public interface IRegion extends IRegionSelection, IRegionComparable {
 
     /**
      * Get the owning plugin.
