@@ -25,12 +25,12 @@
 
 package com.jcwhatever.bukkit.generic.regions.data;
 
-import com.jcwhatever.bukkit.generic.regions.Region;
-
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
+import org.bukkit.World;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,7 +83,7 @@ public class RegionChunkSection {
      * @param chunkX  The X coordinates of the chunk.
      * @param chunkZ  The Y coordinates of the chunk.
      */
-    public RegionChunkSection (Region region, int chunkX, int chunkZ) {
+    public RegionChunkSection (IRegionMath region, int chunkX, int chunkZ) {
         _chunkX = chunkX;
         _chunkZ = chunkZ;
         init(region);
@@ -95,7 +95,7 @@ public class RegionChunkSection {
      * @param region  The region.
      * @param chunk   The chunk to get chunk coordinates from.
      */
-    public RegionChunkSection (Region region, Chunk chunk) {
+    public RegionChunkSection (IRegionMath region, Chunk chunk) {
         _chunkX = chunk.getX();
         _chunkZ = chunk.getZ();
         init(region);
@@ -107,7 +107,7 @@ public class RegionChunkSection {
      * @param region  The region.
      * @param chunk   The chunk snapshot to get chunk coordinates from.
      */
-    public RegionChunkSection (Region region, ChunkSnapshot chunk) {
+    public RegionChunkSection (IRegionMath region, ChunkSnapshot chunk) {
         _chunkX = chunk.getX();
         _chunkZ = chunk.getZ();
         init(region);
@@ -325,7 +325,7 @@ public class RegionChunkSection {
 
 
     // initialize all variables
-    private void init(Region region) {
+    private void init(IRegionMath region) {
 
         Location p1 = region.getP1();
         Location p2 = region.getP2();
@@ -365,12 +365,32 @@ public class RegionChunkSection {
         _firstChunkX = _chunkX;
         _firstChunkZ = _chunkZ;
 
-        List<Chunk> chunks = region.getChunks();
+        List<Chunk> chunks = getChunks(_p1.getWorld());
         for (Chunk chunk : chunks) {
             _firstChunkX = Math.min(chunk.getX(), _firstChunkX);
             _firstChunkZ = Math.min(chunk.getZ(), _firstChunkZ);
         }
     }
 
+    private List<Chunk> getChunks(World world) {
 
+        Chunk c1 = world.getChunkAt(getP1());
+        Chunk c2 = world.getChunkAt(getP2());
+
+        int startX = Math.min(c1.getX(), c2.getX());
+        int endX = Math.max(c1.getX(), c2.getX());
+
+        int startZ = Math.min(c1.getZ(), c2.getZ());
+        int endZ = Math.max(c1.getZ(), c2.getZ());
+
+        ArrayList<Chunk> result = new ArrayList<Chunk>((endX - startX) * (endZ - startZ));
+
+        for (int x = startX; x <= endX; x++) {
+            for (int z = startZ; z <= endZ; z++) {
+                result.add(world.getChunkAt(x, z));
+            }
+        }
+
+        return result;
+    }
 }

@@ -57,7 +57,7 @@ public class RegionChunkFileWriter {
     public static final int SAVE_FILE_VERSION = 3;
 
     private final Plugin _plugin;
-    private final Region _region;
+    private final IRegion _region;
     private final World _world;
     private final ChunkSnapshot _snapshot;
     private final RegionChunkSection _section;
@@ -73,7 +73,7 @@ public class RegionChunkFileWriter {
      * @param region  The region the snapshot is for.
      * @param chunk   The chunk to snapshot.
      */
-    public RegionChunkFileWriter (Region region, Chunk chunk) {
+    public RegionChunkFileWriter (IRegion region, Chunk chunk) {
         this(region, chunk.getX(), chunk.getZ());
     }
 
@@ -84,7 +84,7 @@ public class RegionChunkFileWriter {
      * @param chunkX  The X coordinates of the chunk.
      * @param chunkZ  The Y coordinates of the chunk.
      */
-    public RegionChunkFileWriter (Region region, int chunkX, int chunkZ) {
+    public RegionChunkFileWriter (IRegion region, int chunkX, int chunkZ) {
         if (!region.isDefined())
             throw new RuntimeException("Cannot get a snapshot from an undefined region.");
 
@@ -130,7 +130,7 @@ public class RegionChunkFileWriter {
     /**
      * Get the region the snapshot is for.
      */
-    public Region getRegion() {
+    public IRegion getRegion() {
         return _region;
     }
 

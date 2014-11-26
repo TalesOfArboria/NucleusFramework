@@ -50,14 +50,14 @@ import javax.annotation.Nullable;
  */
 public class ReadOnlyRegion implements IRegion {
 
-    private Region _region;
+    private IRegion _region;
 
     /**
      * Constructor.
      *
      * @param region The region to encapsulate.
      */
-    public ReadOnlyRegion(Region region) {
+    public ReadOnlyRegion(IRegion region) {
         PreCon.notNull(region);
 
         _region = region;
@@ -482,13 +482,13 @@ public class ReadOnlyRegion implements IRegion {
      */
     @Override
     public boolean equals(Object obj) {
-        Region region;
+        IRegion region;
 
         if (obj instanceof ReadOnlyRegion) {
             region = ((ReadOnlyRegion) obj)._region;
         }
-        else if (obj instanceof Region) {
-            region = (Region)obj;
+        else if (obj instanceof IRegion) {
+            region = (IRegion)obj;
         }
         else {
             return false;
@@ -511,7 +511,11 @@ public class ReadOnlyRegion implements IRegion {
      * <p>For internal use.</p>
      */
     Region getHandle() {
-        return _region;
+        if (!(_region instanceof Region)) {
+            throw new AssertionError();
+        }
+
+        return (Region)_region;
     }
 
 }

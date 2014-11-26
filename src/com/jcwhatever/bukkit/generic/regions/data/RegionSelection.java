@@ -70,7 +70,7 @@ public class RegionSelection {
     /**
      * Get region math.
      */
-    public RegionMath getMath() {
+    public IRegionMath getMath() {
         return _regionMath;
     }
 

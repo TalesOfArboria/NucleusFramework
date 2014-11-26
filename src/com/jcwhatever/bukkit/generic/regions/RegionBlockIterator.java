@@ -25,11 +25,14 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
+import com.jcwhatever.bukkit.generic.regions.data.IRegionMath;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import javax.annotation.Nullable;
 import java.util.Iterator;
+import javax.annotation.Nullable;
 
 /**
  * Iterates through all blocks in a region.
@@ -41,28 +44,17 @@ public class RegionBlockIterator implements Iterator<Block> {
     private int _currentZ;
     private Block _current;
 
-    private Region _region;
+    private IRegionMath _region;
 
     /**
      * Constructor.
      *
      * @param region  The region to iterate.
      */
-    public RegionBlockIterator (Region region) {
+    public RegionBlockIterator (IRegionMath region) {
+        PreCon.notNull(region);
+
         _region = region;
-
-        _currentY = region.getYStart();
-        _currentX = region.getXStart();
-        _currentZ = region.getZStart();
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param region  The region to iterate.
-     */
-    public RegionBlockIterator (ReadOnlyRegion region) {
-        _region = region.getHandle();
 
         _currentY = region.getYStart();
         _currentX = region.getXStart();

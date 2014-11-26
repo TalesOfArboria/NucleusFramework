@@ -57,7 +57,7 @@ public final class RegionChunkFileLoader {
 
     public static final int RESTORE_FILE_VERSION = 3;
     private Plugin _plugin;
-    private RestorableRegion _region;
+    private IRegion _region;
     private Chunk _chunk;
     private boolean _isLoading;
     private final LinkedList<ChunkBlockInfo> _blockInfo = new LinkedList<>();
@@ -84,7 +84,7 @@ public final class RegionChunkFileLoader {
      * @param region  The region to load a chunk file for.
      * @param chunk   The region chunk that the file was created from.
      */
-    public RegionChunkFileLoader (RestorableRegion region, Chunk chunk) {
+    public RegionChunkFileLoader (IRegion region, Chunk chunk) {
         _region = region;
         _chunk = chunk;
         _plugin = region.getPlugin();
@@ -100,7 +100,7 @@ public final class RegionChunkFileLoader {
     /**
      * Get the region.
      */
-    public RestorableRegion getRegion() {
+    public IRegion getRegion() {
         return _region;
     }
 
