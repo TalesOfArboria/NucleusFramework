@@ -345,6 +345,19 @@ public class ReadOnlyRegion implements IRegion {
     }
 
     /**
+     * Determine if the region contains the specified
+     * coordinates.
+     *
+     * @param x  The location X coordinates.
+     * @param y  The location Y coordinates.
+     * @param z  The location Z coordinates.
+     */
+    @Override
+    public boolean contains(int x, int y, int z) {
+        return _region.contains(x, y, z);
+    }
+
+    /**
      * Remove all specified entity types from the region.
      *
      * @param itemTypes  The entity types to remove.

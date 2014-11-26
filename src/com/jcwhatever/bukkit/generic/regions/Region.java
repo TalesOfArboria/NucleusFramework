@@ -497,12 +497,14 @@ public abstract class Region extends RegionMath implements IRegion, IDisposable 
     }
 
     /**
-     * Determine if the region contains the specified coordinates.
+     * Determine if the region contains the specified
+     * coordinates.
      *
-     * @param x      The location X coordinates.
-     * @param y      The location Y coordinates.
-     * @param z      The location Z coordinates.
+     * @param x  The location X coordinates.
+     * @param y  The location Y coordinates.
+     * @param z  The location Z coordinates.
      */
+    @Override
     public final boolean contains(int x, int y, int z) {
         synchronized (_sync) {
 

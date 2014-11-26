@@ -126,6 +126,16 @@ public interface IRegion extends IRegionMath, IRegionComparable {
     boolean contains (Location loc, boolean x, boolean y, boolean z);
 
     /**
+     * Determine if the region contains the specified
+     * coordinates.
+     *
+     * @param x  The location X coordinates.
+     * @param y  The location Y coordinates.
+     * @param z  The location Z coordinates.
+     */
+    boolean contains(int x, int y, int z);
+
+    /**
      * Remove all specified entity types from the region.
      *
      * @param itemTypes  The entity types to remove.
@@ -169,7 +179,7 @@ public interface IRegion extends IRegionMath, IRegionComparable {
     boolean removeEventHandler(IRegionEventHandler handler);
 
     /**
-     * Mainly the same as calling {@code getClass} method except
+     * The same as calling {@code getClass} method except
      * in cases where the actual region is not represented by the
      * implementer (wrappers), in which case the encapsulated
      * regions class is returned.
