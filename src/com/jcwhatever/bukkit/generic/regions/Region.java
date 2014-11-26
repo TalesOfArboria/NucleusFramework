@@ -56,7 +56,7 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
-public abstract class Region extends RegionMath implements IDisposable {
+public abstract class Region extends RegionMath implements IDisposable, IRegionComparable {
 
     private static final Map<Region, Void> _instances = new WeakHashMap<>(100);
     private static BukkitListener _bukkitListener;
@@ -65,6 +65,8 @@ public abstract class Region extends RegionMath implements IDisposable {
     private final String _name;
     private final String _searchName;
     private IDataNode _dataNode;
+    private RegionPriority _enterPriority = RegionPriority.DEFAULT;
+    private RegionPriority _leavePriority = RegionPriority.DEFAULT;
 
     private boolean _isPlayerWatcher = false;
     private String _worldName;
@@ -72,6 +74,54 @@ public abstract class Region extends RegionMath implements IDisposable {
     private List<Chunk> _chunks;
     private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
     private List<IRegionEventHandler> _eventHandlers = new ArrayList<>(10);
+
+    /**
+     * The priority/order the region is handled by the
+     * region manager in relation to other regions.
+     */
+    public enum RegionPriority {
+        /**
+         * The last to be handled.
+         */
+        LAST      (4),
+        /**
+         * Low priority. Handled second to last.
+         */
+        LOW       (3),
+        /**
+         * Normal priority.
+         */
+        DEFAULT   (2),
+        /**
+         * High priority. Handled second.
+         */
+        HIGH      (1),
+        /**
+         * Highest priority. Handled first.
+         */
+        FIRST     (0);
+
+        private final int _order;
+
+        RegionPriority(int order) {
+            _order = order;
+        }
+
+        /**
+         * Get a sort order index number.
+         */
+        public int getSortOrder() {
+            return _order;
+        }
+    }
+
+    /**
+     * Type of region priority.
+     */
+    public enum PriorityType {
+        ENTER,
+        LEAVE
+    }
 
     /**
      * Reasons a player enters a region.
@@ -167,6 +217,12 @@ public abstract class Region extends RegionMath implements IDisposable {
         _searchName = name.toLowerCase();
         _dataNode = dataNode;
 
+        RegionPriorityInfo info = this.getClass().getAnnotation(RegionPriorityInfo.class);
+        if (info != null) {
+            _enterPriority = info.enter();
+            _leavePriority = info.leave();
+        }
+
         if (dataNode != null) {
             loadSettings(dataNode);
         }
@@ -206,6 +262,24 @@ public abstract class Region extends RegionMath implements IDisposable {
     @Nullable
     public IDataNode getDataNode() {
         return _dataNode;
+    }
+
+    /**
+     * Get the regions priority when handling player
+     * entering region.
+     */
+    @Override
+    public RegionPriority getPriority(PriorityType priorityType) {
+        PreCon.notNull(priorityType);
+
+        switch (priorityType) {
+            case ENTER:
+                return _enterPriority;
+            case LEAVE:
+                return _leavePriority;
+            default:
+                throw new AssertionError();
+        }
     }
 
     /**
@@ -712,6 +786,8 @@ public abstract class Region extends RegionMath implements IDisposable {
         initCoords(p1, p2);
 
         _ownerId = dataNode.getUUID("owner-id");
+        _enterPriority = dataNode.getEnum("region-enter-priority", _enterPriority, RegionPriority.class);
+        _leavePriority = dataNode.getEnum("region-leave-priority", _leavePriority, RegionPriority.class);
     }
 
     /*

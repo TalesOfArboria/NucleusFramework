@@ -25,6 +25,10 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
+import com.jcwhatever.bukkit.generic.regions.Region.PriorityType;
+import com.jcwhatever.bukkit.generic.regions.Region.RegionPriority;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +48,7 @@ import javax.annotation.Nullable;
  * <p>Allows other plugins to retrieve region info without giving full access
  * to a region, which could cause issues with the regions owning plugin.</p>
  */
-public class ReadOnlyRegion {
+public class ReadOnlyRegion implements IRegionComparable{
 
     private Region _region;
 
@@ -54,7 +58,14 @@ public class ReadOnlyRegion {
      * @param region The region to encapsulate.
      */
     public ReadOnlyRegion(Region region) {
+        PreCon.notNull(region);
+
         _region = region;
+    }
+
+    @Override
+    public RegionPriority getPriority(PriorityType priorityType) {
+        return _region.getPriority(priorityType);
     }
 
     /**
@@ -458,6 +469,5 @@ public class ReadOnlyRegion {
     Region getHandle() {
         return _region;
     }
-
 
 }

@@ -85,10 +85,11 @@ public final class JCGEventListener implements Listener {
 		// tell player missed important messages
 		Messenger.tellImportant(p);
 
-		Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
+		Scheduler.runTaskLater(GenericsLib.getLib(), 5, new Runnable() {
 			@Override
 			public void run() {
-				GenericsLib.getRegionManager().updatePlayerLocation(p, p.getLocation(), RegionReason.JOIN_SERVER);
+				GenericsLib.getRegionManager()
+						.updatePlayerLocation(p, p.getLocation(), RegionReason.JOIN_SERVER);
 			}
 		});
 	}
@@ -115,7 +116,7 @@ public final class JCGEventListener implements Listener {
 				.updatePlayerLocation(event.getPlayer(), event.getRespawnLocation(), RegionReason.RESPAWN);
 	}
 
-	@EventHandler(priority=EventPriority.MONITOR)
+	@EventHandler(priority=EventPriority.LOWEST) // first priority
 	private void onPlayerQuit(PlayerQuitEvent event) {
         PlayList.clearQueue(event.getPlayer());
 
