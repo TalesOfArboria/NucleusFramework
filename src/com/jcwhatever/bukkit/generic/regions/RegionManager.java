@@ -56,7 +56,11 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Global Region Manager
+ * Global Region Manager.
+ *
+ * <p>Tracks instances of {@link Region} and provides methods to determine which regions
+ * a player is in as well as track players to determine when they enter and leave
+ * player watcher regions.</p>
  */
 public class RegionManager {
 

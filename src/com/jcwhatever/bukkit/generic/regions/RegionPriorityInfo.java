@@ -33,13 +33,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Optional info for a region type.
+ * Optional priority info for a region type.
  */
 @Documented
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RegionPriorityInfo {
 
+    /**
+     * The priority of the region when a player enters.
+     *
+     * <p>Determines the order that the region is handled when a
+     * player enters more than 1 region at the same time.</p>
+     */
     RegionPriority enter() default RegionPriority.DEFAULT;
+
+    /**
+     * The priority of the region when a player leaves.
+     *
+     * <p>Determines the order that the region is handled when a
+     * player leaves more than 1 region at the same time.</p>
+     */
     RegionPriority leave() default RegionPriority.DEFAULT;
 }
