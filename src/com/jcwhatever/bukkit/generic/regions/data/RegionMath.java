@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * Contains pre-calculated variables regarding a cuboid region
  * of space as defined by two region locations.
  */
-public class RegionMath {
+public class RegionMath implements IRegionMath {
 
     protected final Object _sync = new Object();
 
@@ -93,6 +93,7 @@ public class RegionMath {
     /**
      * Determine if the regions cuboid points have been set.
      */
+    @Override
     public final boolean isDefined() {
         return _p1 != null && _p2 != null;
     }
@@ -100,6 +101,7 @@ public class RegionMath {
     /**
      * Get the world the region is in.
      */
+    @Override
     @Nullable
     public final World getWorld() {
 
@@ -119,6 +121,7 @@ public class RegionMath {
      * <p>Note: If the location is set but the world it's for is not
      * loaded, the World value of location may be null.</p>
      */
+    @Override
     @Nullable
     public final Location getP1() {
         if (_p1 == null)
@@ -135,6 +138,7 @@ public class RegionMath {
      * <p>Note: If the location is set but the world it's for is not
      * loaded, the World value of location may be null.</p>
      */
+    @Override
     @Nullable
     public final Location getP2() {
         if (_p2 == null)
@@ -148,6 +152,7 @@ public class RegionMath {
     /**
      * Get the cuboid regions lower point location.
      */
+    @Override
     @Nullable
     public final Location getLowerPoint() {
         return getP1();
@@ -156,6 +161,7 @@ public class RegionMath {
     /**
      * Get the cuboid regions upper point location.
      */
+    @Override
     @Nullable
     public final Location getUpperPoint() {
         return getP2();
@@ -165,6 +171,7 @@ public class RegionMath {
      * Get the smallest X axis coordinates
      * of the region.
      */
+    @Override
     public final int getXStart() {
         return _startX;
     }
@@ -173,6 +180,7 @@ public class RegionMath {
      * Get the smallest Y axis coordinates
      * of the region.
      */
+    @Override
     public final int getYStart() {
         return _startY;
     }
@@ -181,6 +189,7 @@ public class RegionMath {
      * Get the smallest Z axis coordinates
      * of the region.
      */
+    @Override
     public final int getZStart() {
         return _startZ;
     }
@@ -189,6 +198,7 @@ public class RegionMath {
      * Get the largest X axis coordinates
      * of the region.
      */
+    @Override
     public final int getXEnd() {
         return _endX;
     }
@@ -197,6 +207,7 @@ public class RegionMath {
      * Get the largest Y axis coordinates
      * of the region.
      */
+    @Override
     public final int getYEnd() {
         return _endY;
     }
@@ -205,6 +216,7 @@ public class RegionMath {
      * Get the largest Z axis coordinates
      * of the region.
      */
+    @Override
     public final int getZEnd() {
         return _endZ;
     }
@@ -212,6 +224,7 @@ public class RegionMath {
     /**
      * Get the X axis width of the region.
      */
+    @Override
     public final int getXWidth() {
         return _xWidth;
     }
@@ -219,6 +232,7 @@ public class RegionMath {
     /**
      * Get the Z axis width of the region.
      */
+    @Override
     public final int getZWidth() {
         return _zWidth;
     }
@@ -226,6 +240,7 @@ public class RegionMath {
     /**
      * Get the Y axis height of the region.
      */
+    @Override
     public final int getYHeight() {
         return _yHeight;
     }
@@ -234,6 +249,7 @@ public class RegionMath {
      * Get the number of blocks that make up the width of the
      * region on the X axis.
      */
+    @Override
     public final int getXBlockWidth() {
         return _xBlockWidth;
     }
@@ -242,6 +258,7 @@ public class RegionMath {
      * Get the number of blocks that make up the width of the
      * region on the Z axis.
      */
+    @Override
     public final int getZBlockWidth() {
         return _zBlockWidth;
     }
@@ -250,6 +267,7 @@ public class RegionMath {
      * Get the number of blocks that make up the height of the
      * region on the Y axis.
      */
+    @Override
     public final int getYBlockHeight() {
         return _yBlockHeight;
     }
@@ -257,6 +275,7 @@ public class RegionMath {
     /**
      * Get the total volume of the region.
      */
+    @Override
     public final long getVolume() {
         return _volume;
     }
@@ -264,6 +283,7 @@ public class RegionMath {
     /**
      * Get the center location of the region.
      */
+    @Override
     @Nullable
     public final Location getCenter() {
         if (_center == null)
@@ -275,6 +295,7 @@ public class RegionMath {
      * Get the smallest X axis coordinates from the chunks
      * the region intersects with.
      */
+    @Override
     public final int getChunkX() {
         return _chunkX;
     }
@@ -283,6 +304,7 @@ public class RegionMath {
      * Get the smallest Z axis coordinates from the chunks
      * the region intersects with.
      */
+    @Override
     public final int getChunkZ() {
         return _chunkZ;
     }
@@ -291,6 +313,7 @@ public class RegionMath {
      * Get the number of chunks that comprise the chunk width
      * on the X axis of the region.
      */
+    @Override
     public final int getChunkXWidth() {
         return _chunkXWidth;
     }
@@ -299,6 +322,7 @@ public class RegionMath {
      * Get the number of chunks that comprise the chunk width
      * on the Z axis of the region.
      */
+    @Override
     public final int getChunkZWidth() {
         return _chunkZWidth;
     }
@@ -307,6 +331,7 @@ public class RegionMath {
     /**
      * Determine if the region is 1 block tall.
      */
+    @Override
     public final boolean isFlatHorizontal() {
         return getYBlockHeight() == 1;
     }
@@ -315,6 +340,7 @@ public class RegionMath {
      * Determine if the region is 1 block wide on the
      * X or Z axis and is not 1 block tall.
      */
+    @Override
     public final boolean isFlatVertical() {
         return !isFlatHorizontal() &&
                 (getZBlockWidth() == 1 || getXBlockWidth() == 1);

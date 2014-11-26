@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.regions.Region.PriorityType;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionPriority;
+import com.jcwhatever.bukkit.generic.regions.data.IRegionMath;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -48,7 +49,7 @@ import javax.annotation.Nullable;
  * <p>Allows other plugins to retrieve region info without giving full access
  * to a region, which could cause issues with the regions owning plugin.</p>
  */
-public class ReadOnlyRegion implements IRegionComparable{
+public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
 
     private Region _region;
 
@@ -116,6 +117,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the world the region is in.
      */
+    @Override
     @Nullable
     public World getWorld () {
         return _region.getWorld();
@@ -124,6 +126,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions first cuboid point location.
      */
+    @Override
     @Nullable
     public Location getP1 () {
         return _region.getP1();
@@ -132,6 +135,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions seconds cuboid point location.
      */
+    @Override
     @Nullable
     public Location getP2 () {
         return _region.getP2();
@@ -141,6 +145,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the region cuboid point location that
      * is in the lower portion of the region.
      */
+    @Override
     @Nullable
     public Location getLowerPoint () {
         return _region.getLowerPoint();
@@ -150,6 +155,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the region cuboid point location that
      * is in the upper portion of the region.
      */
+    @Override
     @Nullable
     public Location getUpperPoint () {
         return _region.getUpperPoint();
@@ -158,6 +164,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions X coordinates with the smallest value.
      */
+    @Override
     public int getXStart () {
         return _region.getXStart();
     }
@@ -165,6 +172,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions Y coordinates with the smallest value.
      */
+    @Override
     public int getYStart () {
         return _region.getYStart();
     }
@@ -172,6 +180,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions Z coordinates with the smallest value.
      */
+    @Override
     public int getZStart () {
         return _region.getZStart();
     }
@@ -179,6 +188,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions X coordinates with the largest value.
      */
+    @Override
     public int getXEnd () {
         return _region.getXEnd();
     }
@@ -186,6 +196,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions Y coordinates with the largest value.
      */
+    @Override
     public int getYEnd () {
         return _region.getYEnd();
     }
@@ -193,6 +204,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions Z coordinates with the largest value.
      */
+    @Override
     public int getZEnd () {
         return _region.getZEnd();
     }
@@ -200,6 +212,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions X axis width.
      */
+    @Override
     public int getXWidth () {
         return _region.getXWidth();
     }
@@ -207,6 +220,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions Z axis width.
      */
+    @Override
     public int getZWidth () {
         return _region.getZWidth();
     }
@@ -214,6 +228,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the regions Y axis height.
      */
+    @Override
     public int getYHeight () {
         return _region.getYHeight();
     }
@@ -222,6 +237,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the number of blocks that comprise
      * the X axis width.
      */
+    @Override
     public int getXBlockWidth () {
         return _region.getXBlockWidth();
     }
@@ -230,6 +246,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the number of blocks that comprise
      * the Z axis width.
      */
+    @Override
     public int getZBlockWidth () {
         return _region.getZBlockWidth();
     }
@@ -238,6 +255,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the number of blocks that comprise
      * the Y axis height.
      */
+    @Override
     public int getYBlockHeight () {
         return _region.getYBlockHeight();
     }
@@ -245,6 +263,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the total volume of the region.
      */
+    @Override
     public long getVolume () {
         return _region.getVolume();
     }
@@ -277,6 +296,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Determine if the region has both its
      * cuboid points set.
      */
+    @Override
     public boolean isDefined () {
         return _region.isDefined();
     }
@@ -325,6 +345,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Get the center location of the region.
      */
+    @Override
     @Nullable
     public Location getCenter () {
         return _region.getCenter();
@@ -334,6 +355,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the X coordinates of the chunk
      * with the smallest X value.
      */
+    @Override
     public int getChunkX () {
         return _region.getChunkX();
     }
@@ -342,6 +364,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the Z coordinates of the chunk
      * with the smallest Z value.
      */
+    @Override
     public int getChunkZ () {
         return _region.getChunkZ();
     }
@@ -350,6 +373,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the number of chunks that comprise
      * the chunk width on the X axis.
      */
+    @Override
     public int getChunkXWidth () {
         return _region.getChunkXWidth();
     }
@@ -358,6 +382,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * Get the number of chunks that comprise
      * the chunk width on the Z axis.
      */
+    @Override
     public int getChunkZWidth () {
         return _region.getChunkZWidth();
     }
@@ -365,6 +390,7 @@ public class ReadOnlyRegion implements IRegionComparable{
     /**
      * Determine if the region is 1 block tall.
      */
+    @Override
     public boolean isFlatHorizontal () {
         return _region.isFlatHorizontal();
     }
@@ -374,6 +400,7 @@ public class ReadOnlyRegion implements IRegionComparable{
      * either the X axis or Z axis and is
      * not 1 block tall.
      */
+    @Override
     public boolean isFlatVertical () {
         return _region.isFlatVertical();
     }
