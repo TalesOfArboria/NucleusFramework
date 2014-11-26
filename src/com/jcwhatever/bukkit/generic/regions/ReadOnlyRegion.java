@@ -27,7 +27,6 @@ package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.regions.Region.PriorityType;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionPriority;
-import com.jcwhatever.bukkit.generic.regions.data.IRegionMath;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -49,7 +48,7 @@ import javax.annotation.Nullable;
  * <p>Allows other plugins to retrieve region info without giving full access
  * to a region, which could cause issues with the regions owning plugin.</p>
  */
-public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
+public class ReadOnlyRegion implements IRegion {
 
     private Region _region;
 
@@ -72,6 +71,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin () {
         return _region.getPlugin();
     }
@@ -79,6 +79,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
     /**
      * Get the name of the region.
      */
+    @Override
     public String getName () {
         return _region.getName();
     }
@@ -86,6 +87,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
     /**
      * Get the name of the region in lower case.
      */
+    @Override
     public String getSearchName () {
         return _region.getSearchName();
     }
@@ -93,6 +95,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
     /**
      * Get the id of the region player owner.
      */
+    @Override
     @Nullable
     public UUID getOwnerId () {
         return _region.getOwnerId();
@@ -101,6 +104,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
     /**
      * Determine if the region has a player owner.
      */
+    @Override
     public boolean hasOwner () {
         return _region.hasOwner();
     }
@@ -110,8 +114,9 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      *
      * @param ownerId  The id of the player owner.
      */
-    public void setOwner(@Nullable UUID ownerId) {
-        _region.setOwner(ownerId);
+    @Override
+    public boolean setOwner(@Nullable UUID ownerId) {
+        return _region.setOwner(ownerId);
     }
 
     /**
@@ -274,6 +279,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      *
      * @param material  The material to find.
      */
+    @Override
     public LinkedList<Location> find (Material material) {
         return _region.find(material);
     }
@@ -281,6 +287,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
     /**
      * Get all chunks the region intersects with.
      */
+    @Override
     public List<Chunk> getChunks () {
         return _region.getChunks();
     }
@@ -288,6 +295,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
     /**
      * Refresh all chunks the region intersects with.
      */
+    @Override
     public void refreshChunks () {
         _region.refreshChunks();
     }
@@ -307,6 +315,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      *
      * @param material  The material to find.
      */
+    @Override
     public boolean contains (Material material) {
         return _region.contains(material);
     }
@@ -316,6 +325,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      *
      * @param loc  The location to check.
      */
+    @Override
     public boolean contains (Location loc) {
         return _region.contains(loc);
     }
@@ -329,6 +339,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      * @param y    True to check the Y axis.
      * @param z    True to check the Z axis.
      */
+    @Override
     public boolean contains (Location loc, boolean x, boolean y, boolean z) {
         return _region.contains(loc, x, y, z);
     }
@@ -338,6 +349,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      *
      * @param itemTypes  The entity types to remove.
      */
+    @Override
     public void removeEntities (Class<?>... itemTypes) {
         _region.removeEntities(itemTypes);
     }
@@ -411,6 +423,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      * @param key  The meta value key.
      * @param <T>  The meta value type.
      */
+    @Override
     public <T> T getMeta (Object key) {
         return _region.getMeta(key);
     }
@@ -421,6 +434,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      * @param key    The meta value key.
      * @param value  The meta value type.
      */
+    @Override
     public void setMeta (Object key, @Nullable Object value) {
         _region.setMeta(key, value);
     }
@@ -429,6 +443,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      * Determine if the region watches players to see
      * if they enter or leave.
      */
+    @Override
     public boolean isPlayerWatcher () {
         return _region.isPlayerWatcher();
     }
@@ -438,6 +453,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      *
      * @param handler  The handler to add.
      */
+    @Override
     public boolean addEventHandler(IRegionEventHandler handler) {
         return _region.addEventHandler(handler);
     }
@@ -447,6 +463,7 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
      *
      * @param handler  The handler to add.
      */
+    @Override
     public boolean removeEventHandler(IRegionEventHandler handler) {
         return _region.removeEventHandler(handler);
     }
@@ -482,10 +499,10 @@ public class ReadOnlyRegion implements IRegionComparable, IRegionMath {
 
     /**
      * Get the class of the region.
-     * @return
      */
-    public Class<? extends Region> getHandleClass() {
-        return _region.getClass();
+    @Override
+    public Class<? extends IRegion> getRegionClass() {
+        return _region.getRegionClass();
     }
 
     /**

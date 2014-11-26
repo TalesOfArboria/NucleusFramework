@@ -61,22 +61,22 @@ import java.util.UUID;
 public class RegionManager {
 
     // Player watcher regions chunk map. String key is chunk coordinates. Set<> value is OrderedRegions<> instance.
-    private final Map<String, Set<ReadOnlyRegion>> _listenerRegionsMap = new HashMap<>(500);
+    private final Map<String, Set<IRegion>> _listenerRegionsMap = new HashMap<>(500);
 
     // All regions chunk map. String key is chunk coordinates
-    private final Map<String, Set<ReadOnlyRegion>> _allRegionsMap = new HashMap<>(500);
+    private final Map<String, Set<IRegion>> _allRegionsMap = new HashMap<>(500);
 
     // worlds that have regions
     private EntryCounter<World> _listenerWorlds = new EntryCounter<>(RemovalPolicy.REMOVE);
 
     // cached regions the player was detected in in last player watcher cycle. Set<> value is OrderedRegions<> instance.
-    private Map<UUID, Set<ReadOnlyRegion>> _playerCacheMap;
+    private Map<UUID, Set<IRegion>> _playerCacheMap;
 
     // locations the player was detected in between player watcher cycles.
     private Map<UUID, LinkedList<CachedLocation>> _playerLocationCache;
 
     // hash set of all registered regions
-    private Set<ReadOnlyRegion> _regions = new HashSet<>(500);
+    private Set<IRegion> _regions = new HashSet<>(500);
 
     // synchronization object
     private final Object _sync = new Object();
@@ -109,7 +109,7 @@ public class RegionManager {
      *
      * @param location  The location to check.
      */
-    public List<ReadOnlyRegion> getRegions(Location location) {
+    public List<IRegion> getRegions(Location location) {
         PreCon.notNull(location);
 
         return getRegion(location, PriorityType.ENTER, _allRegionsMap);
@@ -121,7 +121,7 @@ public class RegionManager {
      *
      * @param location  The location to check.
      */
-    public List<ReadOnlyRegion> getListenerRegions(Location location) {
+    public List<IRegion> getListenerRegions(Location location) {
         return getRegion(location, PriorityType.ENTER, _listenerRegionsMap);
     }
 
@@ -132,7 +132,7 @@ public class RegionManager {
      * @param location      The location to check.
      * @param priorityType  The priority sorting type of the returned list.
      */
-    public List<ReadOnlyRegion> getListenerRegions(Location location, PriorityType priorityType) {
+    public List<IRegion> getListenerRegions(Location location, PriorityType priorityType) {
         return getRegion(location, priorityType, _listenerRegionsMap);
     }
 
@@ -141,7 +141,7 @@ public class RegionManager {
      *
      * @param chunk  The chunk to check.
      */
-    public Set<ReadOnlyRegion> getRegionsInChunk(Chunk chunk) {
+    public Set<IRegion> getRegionsInChunk(Chunk chunk) {
         synchronized(_sync) {
 
             if (getRegionCount() == 0)
@@ -149,7 +149,7 @@ public class RegionManager {
 
             String key = getChunkKey(chunk.getWorld(), chunk.getX(), chunk.getZ());
 
-            Set<ReadOnlyRegion> regions = _allRegionsMap.get(key);
+            Set<IRegion> regions = _allRegionsMap.get(key);
             if (regions == null)
                 return new HashSet<>(0);
 
@@ -163,14 +163,14 @@ public class RegionManager {
      *
      * @param p  The player to check.
      */
-    public List<ReadOnlyRegion> getPlayerRegions(Player p) {
+    public List<IRegion> getPlayerRegions(Player p) {
         PreCon.notNull(p);
 
         if (_playerCacheMap == null)
-            return new ArrayList<ReadOnlyRegion>(0);
+            return new ArrayList<>(0);
 
         synchronized(_sync) {
-            Set<ReadOnlyRegion> regions = _playerCacheMap.get(p.getUniqueId());
+            Set<IRegion> regions = _playerCacheMap.get(p.getUniqueId());
             if (regions == null)
                 return new ArrayList<>(0);
 
@@ -216,17 +216,17 @@ public class RegionManager {
 
         synchronized (_sync) {
 
-            OrderedRegions<ReadOnlyRegion> regions =
-                    (OrderedRegions<ReadOnlyRegion>) _playerCacheMap.remove(p.getUniqueId());
+            OrderedRegions<IRegion> regions =
+                    (OrderedRegions<IRegion>) _playerCacheMap.remove(p.getUniqueId());
 
             if (regions == null)
                 return;
 
-            Iterator<ReadOnlyRegion> iterator = regions.iterator(PriorityType.LEAVE);
+            Iterator<IRegion> iterator = regions.iterator(PriorityType.LEAVE);
             while (iterator.hasNext()) {
-                ReadOnlyRegion region = iterator.next();
+                IRegion region = iterator.next();
 
-                region.getHandle().doPlayerLeave(p, reason);
+                ((ReadOnlyRegion)region).getHandle().doPlayerLeave(p, reason);
             }
 
             clearPlayerLocations(p.getUniqueId());
@@ -250,7 +250,7 @@ public class RegionManager {
 
         synchronized(_sync) {
 
-            Set<ReadOnlyRegion> regions = _playerCacheMap.get(p.getUniqueId());
+            Set<IRegion> regions = _playerCacheMap.get(p.getUniqueId());
             if (regions == null)
                 return;
 
@@ -263,11 +263,11 @@ public class RegionManager {
      * Get all regions contained in the specified location using
      * the supplied region map.
      */
-    private List<ReadOnlyRegion> getRegion(Location location, PriorityType priorityType,
-                                           Map<String, Set<ReadOnlyRegion>> map) {
+    private List<IRegion> getRegion(Location location, PriorityType priorityType,
+                                           Map<String, Set<IRegion>> map) {
         synchronized(_sync) {
 
-            List<ReadOnlyRegion> results = new ArrayList<>(10);
+            List<IRegion> results = new ArrayList<>(10);
 
             if (getRegionCount() == 0)
                 return results;
@@ -279,15 +279,15 @@ public class RegionManager {
 
             String key = getChunkKey(location.getWorld(), chunkX, chunkZ);
 
-            Set<ReadOnlyRegion> regions = map.get(key);
+            Set<IRegion> regions = map.get(key);
             if (regions == null)
                 return results;
 
-            Iterator<ReadOnlyRegion> iterator;
+            Iterator<IRegion> iterator;
 
             if (regions instanceof OrderedRegions) {
-                OrderedRegions<ReadOnlyRegion> orderedRegions =
-                        (OrderedRegions<ReadOnlyRegion>)regions;
+                OrderedRegions<IRegion> orderedRegions =
+                        (OrderedRegions<IRegion>)regions;
 
                 iterator = orderedRegions.iterator(priorityType);
             }
@@ -296,7 +296,7 @@ public class RegionManager {
             }
 
             while (iterator.hasNext()) {
-                ReadOnlyRegion region = iterator.next();
+                IRegion region = iterator.next();
                 if (region.contains(location))
                     results.add(region);
             }
@@ -429,8 +429,8 @@ public class RegionManager {
     /*
      * Add a region to a region map.
      */
-    private void addToMap(Map<String, Set<ReadOnlyRegion>> map, String key, ReadOnlyRegion region) {
-        Set<ReadOnlyRegion> regions = map.get(key);
+    private void addToMap(Map<String, Set<IRegion>> map, String key, ReadOnlyRegion region) {
+        Set<IRegion> regions = map.get(key);
         if (regions == null) {
             regions = new OrderedRegions<>(5);
             map.put(key, regions);
@@ -441,8 +441,8 @@ public class RegionManager {
     /*
      * Remove a region from a region map.
      */
-    private boolean removeFromMap(Map<String, Set<ReadOnlyRegion>> map, String key, ReadOnlyRegion region) {
-        Set<ReadOnlyRegion> regions = map.get(key);
+    private boolean removeFromMap(Map<String, Set<IRegion>> map, String key, ReadOnlyRegion region) {
+        Set<IRegion> regions = map.get(key);
         return regions != null && regions.remove(region);
     }
 
@@ -500,7 +500,7 @@ public class RegionManager {
 
         private final Object _sync;
         private final Collection<WorldPlayers> _worldPlayers;
-        private final Map<UUID, Set<ReadOnlyRegion>> _playerCacheMap;
+        private final Map<UUID, Set<IRegion>> _playerCacheMap;
         private final RegionManager _manager;
 
         PlayerWatcherAsync(RegionManager manager, Collection<WorldPlayers> worldPlayers) {
@@ -526,8 +526,8 @@ public class RegionManager {
                         UUID playerId = worldPlayer.player.getUniqueId();
 
                         // get regions the player is in (cached from previous check)
-                        OrderedRegions<ReadOnlyRegion> cachedRegions =
-                                (OrderedRegions<ReadOnlyRegion>)_playerCacheMap.get(playerId);
+                        OrderedRegions<IRegion> cachedRegions =
+                                (OrderedRegions<IRegion>)_playerCacheMap.get(playerId);
 
                         if (cachedRegions == null) {
                             cachedRegions = new OrderedRegions<>(7);
@@ -539,16 +539,16 @@ public class RegionManager {
                             CachedLocation location = worldPlayer.locations.removeFirst();
 
                             // see which regions a player actually is in
-                            List<ReadOnlyRegion> inRegions = _manager.getListenerRegions(location, PriorityType.ENTER);
+                            List<IRegion> inRegions = _manager.getListenerRegions(location, PriorityType.ENTER);
 
                             // check for entered regions
                             if (inRegions != null && !inRegions.isEmpty()) {
-                                for (ReadOnlyRegion region : inRegions) {
+                                for (IRegion region : inRegions) {
 
                                     // check if player was not previously in region
                                     if (!cachedRegions.contains(region)) {
 
-                                        onPlayerEnter(region.getHandle(), worldPlayer.player,
+                                        onPlayerEnter(region, worldPlayer.player,
                                                 location.getReason());
 
                                         cachedRegions.add(region);
@@ -558,14 +558,14 @@ public class RegionManager {
 
                             // check for regions player has left
                             if (!cachedRegions.isEmpty()) {
-                                Iterator<ReadOnlyRegion> iterator = cachedRegions.iterator(PriorityType.LEAVE);
+                                Iterator<IRegion> iterator = cachedRegions.iterator(PriorityType.LEAVE);
                                 while(iterator.hasNext()) {
-                                    ReadOnlyRegion region = iterator.next();
+                                    IRegion region = iterator.next();
 
                                     // check if player was previously in region
                                     if (inRegions == null || !inRegions.contains(region)) {
 
-                                        onPlayerLeave(region.getHandle(), worldPlayer.player,
+                                        onPlayerLeave(region, worldPlayer.player,
                                                 location.getReason());
 
                                         iterator.remove();
@@ -588,7 +588,7 @@ public class RegionManager {
         /*
          * Executes doPlayerEnter method in the specified region on the main thread.
          */
-        private void onPlayerEnter(final Region region, final Player p, RegionReason reason) {
+        private void onPlayerEnter(final IRegion region, final Player p, RegionReason reason) {
 
             final EnterRegionReason enterReason = reason.getEnterReason();
             if (enterReason == null)
@@ -598,7 +598,7 @@ public class RegionManager {
 
                 @Override
                 public void run() {
-                    region.doPlayerEnter(p, enterReason);
+                    ((ReadOnlyRegion)region).getHandle().doPlayerEnter(p, enterReason);
                 }
 
             });
@@ -607,7 +607,7 @@ public class RegionManager {
         /*
          * Executes doPlayerLeave method in the specified region on the main thread.
          */
-        private void onPlayerLeave(final Region region, final Player p, RegionReason reason) {
+        private void onPlayerLeave(final IRegion region, final Player p, RegionReason reason) {
 
             final LeaveRegionReason leaveReason = reason.getLeaveReason();
             if (leaveReason == null)
@@ -617,7 +617,7 @@ public class RegionManager {
 
                 @Override
                 public void run() {
-                    region.doPlayerLeave(p, leaveReason);
+                    ((ReadOnlyRegion)region).getHandle().doPlayerLeave(p, leaveReason);
                 }
 
             });

@@ -56,7 +56,7 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
-public abstract class Region extends RegionMath implements IDisposable, IRegionComparable {
+public abstract class Region extends RegionMath implements IRegion, IDisposable {
 
     private static final Map<Region, Void> _instances = new WeakHashMap<>(100);
     private static BukkitListener _bukkitListener;
@@ -238,6 +238,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
     /**
      * Get the name of the region.
      */
+    @Override
     public final String getName() {
         return _name;
     }
@@ -245,6 +246,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
     /**
      * Get the name of the region in lower case.
      */
+    @Override
     public final String getSearchName() {
         return _searchName;
     }
@@ -252,6 +254,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
     /**
      * Get the owning plugin.
      */
+    @Override
     public final Plugin getPlugin() {
         return _plugin;
     }
@@ -309,6 +312,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
     /**
      * Used to determine if the region subscribes to player events.
      */
+    @Override
     public final boolean isPlayerWatcher() {
         return _isPlayerWatcher || !_eventHandlers.isEmpty();
     }
@@ -316,6 +320,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
     /**
      * Get the id of the region owner.
      */
+    @Override
     @Nullable
     public UUID getOwnerId() {
         return _ownerId;
@@ -324,6 +329,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
     /**
      * Determine if the region has an owner.
      */
+    @Override
     public boolean hasOwner() {
         return _ownerId != null;
     }
@@ -333,6 +339,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      *
      * @param ownerId  The id of the new owner.
      */
+    @Override
     public boolean setOwner(@Nullable UUID ownerId) {
 
         UUID oldId = _ownerId;
@@ -391,6 +398,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      *
      * @param handler  The handler to add.
      */
+    @Override
     public boolean addEventHandler(IRegionEventHandler handler) {
         PreCon.notNull(handler);
 
@@ -411,6 +419,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      *
      * @param handler  The handler to remove.
      */
+    @Override
     public boolean removeEventHandler(IRegionEventHandler handler) {
         PreCon.notNull(handler);
 
@@ -430,6 +439,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      *
      * @param material  The material to search for.
      */
+    @Override
     public final boolean contains(Material material) {
 
         synchronized (_sync) {
@@ -467,6 +477,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      *
      * @param loc  The location to check.
      */
+    @Override
     public final boolean contains(Location loc) {
 
         if (!isDefined())
@@ -512,6 +523,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      * @param cy   True to check if the point is inside the region on the Y axis.
      * @param cz   True to check if the point is inside the region on the Z axis.
      */
+    @Override
     public final boolean contains(Location loc, boolean cx, boolean cy, boolean cz) {
 
         if (!isDefined())
@@ -552,6 +564,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      *
      * @param material  The material to search for.
      */
+    @Override
     public final LinkedList<Location> find(Material material) {
 
         synchronized (_sync) {
@@ -613,6 +626,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
     /**
      * Get all chunks that contain at least a portion of the region.
      */
+    @Override
     public final List<Chunk> getChunks() {
         if (getWorld() == null)
             return new ArrayList<>(0);
@@ -652,6 +666,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
     /**
      * Refresh all chunks the region is in.
      */
+    @Override
     public final void refreshChunks() {
         World world = getWorld();
 
@@ -670,6 +685,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      *
      * @param entityTypes  The entity types to remove.
      */
+    @Override
     public final void removeEntities(Class<?>... entityTypes) {
 
         synchronized (_sync) {
@@ -703,6 +719,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      *
      * @param <T>  The object type.
      */
+    @Override
     public <T> T getMeta(Object key) {
         @SuppressWarnings("unchecked") T item = (T)_meta.get(key);
         return item;
@@ -714,6 +731,7 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
      * @param key    The meta key.
      * @param value  The meta value.
      */
+    @Override
     public void setMeta(Object key, @Nullable Object value) {
         if (value == null) {
             _meta.remove(key);
@@ -721,6 +739,14 @@ public abstract class Region extends RegionMath implements IDisposable, IRegionC
         }
 
         _meta.put(key, value);
+    }
+
+    /**
+     * Get the class of the region.
+     */
+    @Override
+    public Class<? extends IRegion> getRegionClass() {
+        return getClass();
     }
 
     /**
