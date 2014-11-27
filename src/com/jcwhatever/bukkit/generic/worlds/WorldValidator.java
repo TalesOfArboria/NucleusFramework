@@ -41,7 +41,7 @@ import java.util.Set;
 public class WorldValidator {
 
     private IDataNode _worldNode;
-    private WorldValidationMode _worldMode = WorldValidationMode.BLACKLIST;
+    private WorldValidationPolicy _validationPolicy = WorldValidationPolicy.BLACKLIST;
     private Set<String> _worlds = new HashSet<String>(10);
 
     /**
@@ -67,10 +67,10 @@ public class WorldValidator {
 
         boolean result = false;
 
-        if (_worldMode == WorldValidationMode.BLACKLIST)
+        if (_validationPolicy == WorldValidationPolicy.BLACKLIST)
             result = !_worlds.contains(world.getName());
 
-        else if (_worldMode == WorldValidationMode.WHITELIST)
+        else if (_validationPolicy == WorldValidationPolicy.WHITELIST)
             result = _worlds.contains(world.getName());
 
         return result;
@@ -87,21 +87,21 @@ public class WorldValidator {
      * Get the mode used to determine how worlds in the collection
      * are used for validation.
      */
-    public WorldValidationMode getMode() {
-        return _worldMode;
+    public WorldValidationPolicy getPolicy() {
+        return _validationPolicy;
     }
 
     /**
      * Set the mode used to determine how worlds in the collection
      * are used for validation.
      *
-     * @param validationMode  The world validation mode.
+     * @param validationPolicy  The world validation mode.
      */
-    public void setMode(WorldValidationMode validationMode) {
-        PreCon.notNull(validationMode);
+    public void setMode(WorldValidationPolicy validationPolicy) {
+        PreCon.notNull(validationPolicy);
 
-        _worldMode = validationMode;
-        _worldNode.set("mode", validationMode);
+        _validationPolicy = validationPolicy;
+        _worldNode.set("mode", validationPolicy);
         _worldNode.saveAsync(null);
     }
 
@@ -156,7 +156,7 @@ public class WorldValidator {
 
     // initial load of settings
     private void loadSettings() {
-        _worldMode = _worldNode.getEnum("mode", _worldMode, WorldValidationMode.class);
+        _validationPolicy = _worldNode.getEnum("policy", _validationPolicy, WorldValidationPolicy.class);
 
         _worlds.clear();
         List<String> worldNames = _worldNode.getStringList("worlds", null);
