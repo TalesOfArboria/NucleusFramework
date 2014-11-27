@@ -38,14 +38,22 @@ public interface IViewable {
     /**
      * Get the view mode.
      */
-    ViewMode getViewMode();
+    ViewPolicy getViewPolicy();
 
     /**
      * Set the view mode.
      *
      * @param viewMode  The view mode.
      */
-    void setViewMode(ViewMode viewMode);
+    void setViewMode(ViewPolicy viewMode);
+
+    /**
+     * Determine if the player can see the
+     * object.
+     *
+     * @param player The player to check.
+     */
+    boolean canSee(Player player);
 
     /**
      * Determine if the specified player
@@ -60,16 +68,20 @@ public interface IViewable {
      * of viewers.
      *
      * @param player  The player to add.
+     *
+     * @return True if the player was added.
      */
-    void addViewer(Player player);
+    boolean addViewer(Player player);
 
     /**
      * Remove a player from the collection
      * of viewers.
      *
      * @param player  The player to remove.
+     *
+     * @return True if the player was removed.
      */
-    void removeViewer(Player player);
+    boolean removeViewer(Player player);
 
     /**
      * Clear all players from the collection of
@@ -85,7 +97,7 @@ public interface IViewable {
     /**
      * Define how the viewer collection is treated.
      */
-    public enum ViewMode {
+    public enum ViewPolicy {
         /**
          * All viewers in the collection cannot
          * see the object in the world.
