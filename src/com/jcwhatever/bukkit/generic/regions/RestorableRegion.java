@@ -547,7 +547,7 @@ public abstract class RestorableRegion extends BuildableRegion {
             state.update(true);
         }
 
-    } // END RestoreBlocks
+    }
 
 
     /**
@@ -570,7 +570,7 @@ public abstract class RestorableRegion extends BuildableRegion {
             }
         }
 
-    } // END RestoreTileEntities
+    }
 
     /**
      * Restore entities from file.
@@ -595,7 +595,7 @@ public abstract class RestorableRegion extends BuildableRegion {
             }
         }
 
-    } // END RestoreEntities
+    }
 }
 
 
