@@ -213,19 +213,19 @@ public abstract class RestorableRegion extends BuildableRegion {
         QueueProject restoreProject = new QueueProject(getPlugin());
 
         if (chunks.size() == 0) {
-            return restoreProject.cancel("Restore cancelled. No chunks to restore.");
+            return restoreProject.cancel("No chunks to restore.");
         }
 
         if (isSaving()) {
-            return restoreProject.cancel("Restore cancelled: Region is still saving.");
+            return restoreProject.cancel("Region is still saving.");
         }
 
         if (isRestoring()) {
-            return restoreProject.cancel("Restore cancelled: Region is still restoring.");
+            return restoreProject.cancel("Region is still restoring.");
         }
 
         if (!canRestore()) {
-            return restoreProject.cancel("Restore cancelled: Region cannot restore without restore files.");
+            return restoreProject.cancel("Region cannot restore without restore files.");
         }
 
         _isRestoring = true;
