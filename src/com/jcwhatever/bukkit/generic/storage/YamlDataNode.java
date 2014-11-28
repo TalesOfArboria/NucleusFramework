@@ -89,6 +89,11 @@ public class YamlDataNode implements IDataNode {
     }
 
     @Override
+    public String getNodePath() {
+        return _rawPath;
+    }
+
+    @Override
     public YamlDataStorage getRoot() {
 
         return _storage;

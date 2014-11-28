@@ -59,6 +59,11 @@ public interface IDataNode {
     String getNodeName();
 
     /**
+     * Get the path of the node.
+     */
+    String getNodePath();
+
+    /**
      * Get the root node.
      */
     IDataNode getRoot();

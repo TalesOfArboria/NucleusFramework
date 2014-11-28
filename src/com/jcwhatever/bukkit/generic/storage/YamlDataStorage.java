@@ -866,6 +866,11 @@ public class YamlDataStorage implements IDataNode {
     }
 
     @Override
+    public String getNodePath() {
+        return "";
+    }
+
+    @Override
     public YamlDataStorage getRoot() {
         return this;
     }
