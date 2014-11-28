@@ -30,7 +30,7 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
 import com.jcwhatever.bukkit.generic.mixins.implemented.NamedLocation;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.DateUtils.TimeRound;
@@ -399,7 +399,7 @@ public class JailManager {
 
                     Location releaseLoc = session.getReleaseLocation();
 
-                    Player p = PlayerHelper.getPlayer(session.getPlayerId());
+                    Player p = PlayerUtils.getPlayer(session.getPlayerId());
                     if (p != null) {
                         p.teleport(releaseLoc);
                     }
@@ -413,7 +413,7 @@ public class JailManager {
                     long releaseMinutes = DateUtils.getDeltaMinutes(now, session.getExpiration(), TimeRound.ROUND_UP);
 
                     if (releaseMinutes <= 5 || releaseMinutes % 10 == 0) {
-                        Player p = PlayerHelper.getPlayer(session.getPlayerId());
+                        Player p = PlayerUtils.getPlayer(session.getPlayerId());
 
                         if (p != null) {
                             String message = Lang.get("Release in {0} minutes.", releaseMinutes);

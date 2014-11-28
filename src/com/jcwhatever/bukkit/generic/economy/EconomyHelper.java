@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.economy;
 
 import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconGiveEvent;
 import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconWithdrawEvent;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -108,7 +108,7 @@ public class EconomyHelper {
         if (!_hasEconomy)
             return 0;
 
-        String playerName = PlayerHelper.getPlayerName(playerId);
+        String playerName = PlayerUtils.getPlayerName(playerId);
         if (playerName == null)
             return 0;
 
@@ -199,11 +199,11 @@ public class EconomyHelper {
         PreCon.notNull(receiverPlayerId);
         PreCon.positiveNumber(amount);
 
-        String giverName = PlayerHelper.getPlayerName(giverPlayerId);
+        String giverName = PlayerUtils.getPlayerName(giverPlayerId);
         if (giverName == null)
             return false;
 
-        String receiverName = PlayerHelper.getPlayerName(receiverPlayerId);
+        String receiverName = PlayerUtils.getPlayerName(receiverPlayerId);
         if (receiverName == null)
             return false;
 
@@ -246,7 +246,7 @@ public class EconomyHelper {
     public static boolean giveMoney(UUID playerId, double amount) {
         PreCon.notNull(playerId);
 
-        String playerName = PlayerHelper.getPlayerName(playerId);
+        String playerName = PlayerUtils.getPlayerName(playerId);
         return playerName != null && giveMoney(playerName, playerId, amount);
     }
 

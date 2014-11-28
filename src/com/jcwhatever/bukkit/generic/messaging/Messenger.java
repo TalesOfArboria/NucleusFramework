@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.messaging;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.generic.collections.TimedSet;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
@@ -241,7 +241,7 @@ public class Messenger {
         if (!TextUtils.isValidName(context, 64))
             throw new IllegalArgumentException("illegal characters in context argument or argument is too long.");
 
-        Player p = PlayerHelper.getPlayer(playerId);
+        Player p = PlayerUtils.getPlayer(playerId);
         if (p != null && p.isOnline()) {
             tell(plugin, p, message, params);
             return;

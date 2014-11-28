@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.sounds.ResourceSound;
@@ -83,7 +83,7 @@ public class ScriptApiSounds extends GenericsScriptApi {
             PreCon.notNull(player);
             PreCon.notNullOrEmpty(soundName);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             ResourceSound sound = SoundManager.getSound(soundName);
@@ -109,7 +109,7 @@ public class ScriptApiSounds extends GenericsScriptApi {
             PreCon.notNull(player);
             PreCon.notNullOrEmpty(soundName);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             Location location = new Location(p.getWorld(), x, y, z);
@@ -136,7 +136,7 @@ public class ScriptApiSounds extends GenericsScriptApi {
             PreCon.notNullOrEmpty(soundName);
             PreCon.notNull(location);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             ResourceSound sound = SoundManager.getSound(soundName);

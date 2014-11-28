@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.economy.EconomyHelper;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -82,7 +82,7 @@ public class ScriptApiEconomy extends GenericsScriptApi {
         public double getBalance(Object player) {
             PreCon.notNull(player);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             return EconomyHelper.getBalance(p);
@@ -98,7 +98,7 @@ public class ScriptApiEconomy extends GenericsScriptApi {
         public boolean give(Object player, double amount) {
             PreCon.notNull(player);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             return EconomyHelper.giveMoney(p, amount);

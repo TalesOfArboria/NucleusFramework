@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.player;
+package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.inventory.InventoryHelper;
@@ -34,8 +34,6 @@ import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.StorageLoadHandler;
 import com.jcwhatever.bukkit.generic.storage.StorageLoadResult;
-import com.jcwhatever.bukkit.generic.utils.EntryValidator;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -56,7 +54,7 @@ import javax.annotation.Nullable;
 /**
  * Provides {@code Player} related utilities.
  */
-public class PlayerHelper {
+public class PlayerUtils {
 
     private static final Object _sync = new Object();
 

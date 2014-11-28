@@ -33,7 +33,7 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.jail.JailSession;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
 import java.util.UUID;
@@ -57,7 +57,7 @@ public class ReleaseSubCommand extends AbstractCommand {
 
         String playerName = args.getName("playerName");
         
-        UUID playerId = PlayerHelper.getPlayerId(playerName);
+        UUID playerId = PlayerUtils.getPlayerId(playerName);
         if (playerId == null) {
             tellError(sender, Lang.get(_PLAYER_NOT_FOUND, playerName));
             return; // finish

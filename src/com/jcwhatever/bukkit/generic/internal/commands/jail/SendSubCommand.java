@@ -33,7 +33,7 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.jail.JailSession;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -57,7 +57,7 @@ public class SendSubCommand extends AbstractCommand {
         String playerName = args.getName("playerName");
         int minutes = args.getInteger("minutes");
         
-        Player player = PlayerHelper.getPlayer(playerName);
+        Player player = PlayerUtils.getPlayer(playerName);
         if (player == null) {
             tellError(sender, Lang.get(_PLAYER_NOT_FOUND, playerName));
             return; // finish

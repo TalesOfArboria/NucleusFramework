@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.messaging.Messenger.LineWrapping;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -85,7 +85,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             PreCon.notNull(player);
             PreCon.notNull(message);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             Messenger.tell(LineWrapping.DISABLED, _plugin, p, message, params);
@@ -102,7 +102,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             PreCon.notNull(player);
             PreCon.notNull(message);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             Messenger.tell(p, message, params);
@@ -121,7 +121,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             PreCon.greaterThanZero(timeout);
             PreCon.notNull(message);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             Messenger.tellNoSpam(_plugin, p, timeout, message, params);
@@ -141,7 +141,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             PreCon.greaterThanZero(timeout);
             PreCon.notNull(message);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             Messenger.tellNoSpam(null, p, timeout, message, params);

@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 import com.jcwhatever.bukkit.generic.items.bank.BankItem;
 import com.jcwhatever.bukkit.generic.items.bank.InsufficientItemsException;
 import com.jcwhatever.bukkit.generic.items.bank.ItemBankManager;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -91,7 +91,7 @@ public class ScriptApiItemBank extends GenericsScriptApi {
             PreCon.notNull(item);
             PreCon.greaterThanZero(qty);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             return ItemBankManager.deposit(p, item, qty) != null;
@@ -110,7 +110,7 @@ public class ScriptApiItemBank extends GenericsScriptApi {
             PreCon.notNull(item);
             PreCon.greaterThanZero(qty);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             try {
@@ -130,7 +130,7 @@ public class ScriptApiItemBank extends GenericsScriptApi {
         public BankItem[] getBankItems(Object player) {
             PreCon.notNull(player);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             List<BankItem> items = ItemBankManager.getBankItems(p);
@@ -161,7 +161,7 @@ public class ScriptApiItemBank extends GenericsScriptApi {
             PreCon.notNull(item);
             PreCon.greaterThanZero(qty);
 
-            Player p = PlayerHelper.getPlayer(qty);
+            Player p = PlayerUtils.getPlayer(qty);
             PreCon.notNull(p);
 
             BankItem bankItem = ItemBankManager.getBankItem(p, item);
@@ -179,7 +179,7 @@ public class ScriptApiItemBank extends GenericsScriptApi {
             PreCon.notNull(player);
             PreCon.notNull(item);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
             
             BankItem bankItem = ItemBankManager.getBankItem(p, item);

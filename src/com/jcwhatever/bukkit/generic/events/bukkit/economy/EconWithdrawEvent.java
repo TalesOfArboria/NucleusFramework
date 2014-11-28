@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.events.bukkit.economy;
 
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -62,7 +62,7 @@ public class EconWithdrawEvent extends Event {
     @Nullable
 	public Player getPlayer() {
 		if (_player == null) {
-			_player = PlayerHelper.getPlayer(_playerId);
+			_player = PlayerUtils.getPlayer(_playerId);
 		}
 		return _player;
 	}

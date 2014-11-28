@@ -33,7 +33,7 @@ import com.jcwhatever.bukkit.generic.events.bukkit.SignInteractEvent;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
 import com.jcwhatever.bukkit.generic.items.ItemStackHelper.DisplayNameResult;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
@@ -80,7 +80,7 @@ public final class JCGEventListener implements Listener {
 		final Player p = event.getPlayer();
 
 		// update player name in id lookup
-		PlayerHelper.setPlayerName(p.getUniqueId(), p.getName());
+		PlayerUtils.setPlayerName(p.getUniqueId(), p.getName());
 
 		// tell player missed important messages
 		Messenger.tellImportant(p);

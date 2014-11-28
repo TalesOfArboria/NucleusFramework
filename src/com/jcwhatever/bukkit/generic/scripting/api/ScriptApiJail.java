@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.jail.JailSession;
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -83,7 +83,7 @@ public class ScriptApiJail extends GenericsScriptApi {
             PreCon.notNull(player);
             PreCon.greaterThanZero(minutes);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             return JailManager.getDefault().imprison(p, minutes) != null;
@@ -99,7 +99,7 @@ public class ScriptApiJail extends GenericsScriptApi {
         public boolean release(Object player) {
             PreCon.notNull(player);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             JailSession session = JailManager.getDefault().getJailSession(p.getUniqueId());
@@ -118,7 +118,7 @@ public class ScriptApiJail extends GenericsScriptApi {
         public boolean isImprisoned(Object player) {
             PreCon.notNull(player);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             JailSession session = JailManager.getDefault().getJailSession(p.getUniqueId());

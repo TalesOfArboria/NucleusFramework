@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.player.PlayerHelper;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -91,7 +91,7 @@ public class ScriptApiMeta extends GenericsScriptApi {
             PreCon.notNull(player);
             PreCon.notNullOrEmpty(key);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             return _dataNode.get(p.getUniqueId().toString() + '.' + key);
@@ -108,7 +108,7 @@ public class ScriptApiMeta extends GenericsScriptApi {
             PreCon.notNull(player);
             PreCon.notNull(key);
 
-            Player p = PlayerHelper.getPlayer(player);
+            Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
             _dataNode.set(p.getUniqueId().toString() + '.' + key, value);
