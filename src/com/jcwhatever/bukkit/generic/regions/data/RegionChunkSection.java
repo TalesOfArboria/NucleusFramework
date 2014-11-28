@@ -25,11 +25,17 @@
 
 package com.jcwhatever.bukkit.generic.regions.data;
 
+import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
+import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
+import com.jcwhatever.bukkit.generic.file.IGenericsSerializable;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +43,10 @@ import java.util.List;
  * Provides variables representing a section of a region
  * contained within a chunk.
  */
-public class RegionChunkSection {
+public class RegionChunkSection implements IGenericsSerializable {
 
-    private final int _chunkX;
-    private final int _chunkZ;
+    private int _chunkX;
+    private int _chunkZ;
 
     private int _chunkBlockX;
     private int _chunkBlockZ;
@@ -78,6 +84,11 @@ public class RegionChunkSection {
 
     /**
      * Constructor.
+     */
+    protected RegionChunkSection () {}
+
+    /**
+     * Constructor.
      *
      * @param region  The region.
      * @param chunkX  The X coordinates of the chunk.
@@ -86,7 +97,7 @@ public class RegionChunkSection {
     public RegionChunkSection (IRegionSelection region, int chunkX, int chunkZ) {
         _chunkX = chunkX;
         _chunkZ = chunkZ;
-        init(region);
+        init(region.getP1(), region.getP2());
     }
 
     /**
@@ -98,7 +109,7 @@ public class RegionChunkSection {
     public RegionChunkSection (IRegionSelection region, Chunk chunk) {
         _chunkX = chunk.getX();
         _chunkZ = chunk.getZ();
-        init(region);
+        init(region.getP1(), region.getP2());
     }
 
     /**
@@ -110,7 +121,7 @@ public class RegionChunkSection {
     public RegionChunkSection (IRegionSelection region, ChunkSnapshot chunk) {
         _chunkX = chunk.getX();
         _chunkZ = chunk.getZ();
-        init(region);
+        init(region.getP1(), region.getP2());
     }
 
     /**
@@ -325,10 +336,7 @@ public class RegionChunkSection {
 
 
     // initialize all variables
-    private void init(IRegionSelection region) {
-
-        Location p1 = region.getP1();
-        Location p2 = region.getP2();
+    private void init(Location p1, Location p2) {
 
         _chunkBlockX = _chunkX * 16;
         _chunkBlockZ = _chunkZ * 16;
@@ -358,8 +366,8 @@ public class RegionChunkSection {
         _startBlockZ = _chunkBlockZ + _startChunkZ;
         _endBlockZ = _startBlockZ + _endChunkZ;
 
-        _p1 = new Location(region.getWorld(), _startBlockX, _yStart, _startBlockZ);
-        _p2 = new Location(region.getWorld(), _endBlockX, _yEnd, _endBlockZ);
+        _p1 = new Location(p1.getWorld(), _startBlockX, _yStart, _startBlockZ);
+        _p2 = new Location(p2.getWorld(), _endBlockX, _yEnd, _endBlockZ);
 
 
         _firstChunkX = _chunkX;
@@ -392,5 +400,29 @@ public class RegionChunkSection {
         }
 
         return result;
+    }
+
+    @Override
+    public void serializeToBytes(GenericsByteWriter writer) throws IOException {
+        PreCon.notNull(writer);
+
+        writer.write(_p1);
+        writer.write(_p2);
+
+        writer.write(_chunkX);
+        writer.write(_chunkZ);
+    }
+
+    @Override
+    public void deserializeFromBytes(GenericsByteReader reader) throws IOException, InstantiationException {
+        PreCon.notNull(reader);
+
+        Location p1 = reader.getLocation();
+        Location p2 = reader.getLocation();
+
+        _chunkX = reader.getInteger();
+        _chunkZ = reader.getInteger();
+
+        init(p1, p2);
     }
 }
