@@ -26,10 +26,10 @@
 package com.jcwhatever.bukkit.generic.performance.queued;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
+import com.jcwhatever.bukkit.generic.scheduler.TaskHandler;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
-import com.jcwhatever.bukkit.generic.utils.Scheduler.ScheduledTask;
-import com.jcwhatever.bukkit.generic.utils.Scheduler.TaskHandler;
 
 import java.util.Collection;
 import java.util.LinkedList;

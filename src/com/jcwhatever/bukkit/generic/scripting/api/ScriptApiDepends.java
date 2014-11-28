@@ -27,11 +27,11 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
+import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
+import com.jcwhatever.bukkit.generic.scheduler.TaskHandler;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
-import com.jcwhatever.bukkit.generic.utils.Scheduler.ScheduledTask;
-import com.jcwhatever.bukkit.generic.utils.Scheduler.TaskHandler;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 
 import org.bukkit.Bukkit;
