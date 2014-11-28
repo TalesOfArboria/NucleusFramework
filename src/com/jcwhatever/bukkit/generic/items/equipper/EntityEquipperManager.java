@@ -25,12 +25,12 @@
 package com.jcwhatever.bukkit.generic.items.equipper;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.entity.EntityType;
 
 import java.util.EnumMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Manages Equipper implementations.
