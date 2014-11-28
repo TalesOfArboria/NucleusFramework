@@ -29,10 +29,10 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * A collection of ItemStacks that can be used for validation/filtering of ItemStacks.
@@ -52,14 +53,14 @@ public class ItemFilterManager {
     private Plugin _plugin;
     private IDataNode _dataNode;
 
-    private FilterMode _filter = FilterMode.WHITELIST;
+    private FilterPolicy _filter = FilterPolicy.WHITELIST;
     private ItemStackComparer _comparer;
     private final Map<ItemWrapper, ItemWrapper> _filterItems = new HashMap<ItemWrapper, ItemWrapper>(6 * 9);
 
     /**
      * Validation filtering mode
      */
-    public enum FilterMode {
+    public enum FilterPolicy {
         WHITELIST,
         BLACKLIST;
 
@@ -141,16 +142,16 @@ public class ItemFilterManager {
     /**
      * Get the filter mode used for validating items.
      */
-    public FilterMode getMode() {
+    public FilterPolicy getFilterPolicy() {
         return _filter;
     }
 
     /**
-     * Set the filter mode used for validation items.
+     * Set the filter policy used for validation items.
      *
-     * @param filter  The filter mode.
+     * @param filter  The filter policy.
      */
-    public void setMode(FilterMode filter) {
+    public void setMode(FilterPolicy filter) {
         PreCon.notNull(filter);
 
         _filter = filter;
@@ -188,9 +189,9 @@ public class ItemFilterManager {
 
         ItemWrapper wrapper = _filterItems.get(new ItemWrapper(item, _comparer));
         if (wrapper == null)
-            return _filter == FilterMode.BLACKLIST;
+            return _filter == FilterPolicy.BLACKLIST;
 
-        return _filter == FilterMode.WHITELIST;
+        return _filter == FilterPolicy.WHITELIST;
     }
 
     /**
@@ -300,7 +301,7 @@ public class ItemFilterManager {
         if (_dataNode == null)
             return;
 
-        _filter = _dataNode.getEnum("mode", _filter, FilterMode.class);
+        _filter = _dataNode.getEnum("policy", _filter, FilterPolicy.class);
 
         ItemStack[] craftItems = _dataNode.getItemStacks("items");
 
