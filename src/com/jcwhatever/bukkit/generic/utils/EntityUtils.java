@@ -29,6 +29,8 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.List;
 import java.util.UUID;
@@ -131,6 +133,25 @@ public class EntityUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Get the damaging entity. Returns the entityDamager unless it's a
+     * projectile, in which case the projectile source is returned. If the
+     * projectile does not have a source then the projectile is returned.
+     *
+     * @param entityDamager  The entity that has caused direct damage.
+     */
+    public static Entity getDamager(Entity entityDamager) {
+
+        if (entityDamager instanceof Projectile) {
+            ProjectileSource source = ((Projectile) entityDamager).getShooter();
+            if (source instanceof Entity) {
+                return (Entity)source;
+            }
+        }
+
+        return entityDamager;
     }
 
     /**
