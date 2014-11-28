@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import java.util.Collection;
 import javax.annotation.Nullable;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 /**
@@ -46,12 +47,26 @@ public class GenericsScript implements IScript {
     /**
      * Constructor.
      *
+     * <p>Is evaluated with the global engine manager.</p>
+     *
      * @param name    The name of the script.
      * @param type    The script type.
      * @param script  The script source.
      */
-    public GenericsScript(GenericsScriptManager manager, String name, String type, String script) {
-        PreCon.notNull(manager);
+    public GenericsScript(String name, String type, String script) {
+        this(null, name, type, script);
+    }
+
+
+    /**
+     * Constructor.
+     *
+     * @param manager  The scripts owning manager. Script engine from manager is used.
+     * @param name     The name of the script.
+     * @param type     The script type.
+     * @param script   The script source.
+     */
+    public GenericsScript(@Nullable GenericsScriptManager manager, String name, String type, String script) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNullOrEmpty(type);
         PreCon.notNull(script);
@@ -95,21 +110,62 @@ public class GenericsScript implements IScript {
     @Nullable
     public IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection) {
 
-        ScriptEngine engine = _manager.getEngineManager().getEngineByExtension(getType());
-        if (engine == null)
+        ScriptEngine engine = getScriptEngine();
+        if (engine == null) {
             return null;
+        }
 
-        GenericsEvaluatedScript script = new GenericsEvaluatedScript(this, engine, apiCollection);
+        IEvaluatedScript script = instantiateEvaluatedScript(engine, apiCollection);
 
+        if (!eval(engine)) {
+            return null;
+        }
+
+        return script;
+    }
+
+    /**
+     * Get a script engine for the script.
+     *
+     * @return  Null if an engine could not be found.
+     */
+    @Nullable
+    protected ScriptEngine getScriptEngine() {
+        ScriptEngineManager engineManager = _manager != null
+                ? _manager.getEngineManager()
+                : ScriptHelper.getGlobalEngineManager();
+
+        return engineManager.getEngineByExtension(getType());
+    }
+
+    /**
+     * Called to instantiate a new evaluated script.
+     *
+     * @param engine         The scripts engine.
+     * @param apiCollection  Optional initial api collection.
+     */
+    protected IEvaluatedScript instantiateEvaluatedScript(ScriptEngine engine,
+                                                          @Nullable Collection<? extends IScriptApi> apiCollection) {
+        return new GenericsEvaluatedScript(this, engine, apiCollection);
+    }
+
+    /**
+     * Called to evaluate the script into the specified engine.
+     *
+     * @param engine  The engine to evaluate the script into.
+     *
+     * @return Null if evaluation failed.
+     */
+    protected boolean eval(ScriptEngine engine) {
         try {
             // evaluate script
             engine.eval(getScript());
 
-            return script;
+            return true;
 
         } catch (ScriptException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
