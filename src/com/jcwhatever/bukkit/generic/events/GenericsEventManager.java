@@ -278,6 +278,28 @@ public class GenericsEventManager implements IDisposable {
         handlers.removeHandler(handler);
     }
 
+    public void unregisterAll() {
+
+        if (_isDisposed)
+            return;
+
+        // The global manager cannot unregister all.
+        if (_isGlobal)
+            throw new RuntimeException("Cannot unregister all handlers at once from the global event manager.");
+
+        // clear event handlers on all handler collections
+        for (EventHandlerCollection handlers : _handlerMap.values()) {
+            handlers.clear();
+        }
+        _handlerMap.clear();
+
+        // unregister all listeners
+        for (ListenerContainer listener : _listeners.values()) {
+            listener.unregister();
+        }
+        _listeners.clear();
+    }
+
     /**
      * Determine if there are event handlers registered
      * for the specified event.
@@ -358,19 +380,9 @@ public class GenericsEventManager implements IDisposable {
         if (_isGlobal)
             throw new RuntimeException("Cannot dispose the global event manager.");
 
+        unregisterAll();
+
         _isDisposed = true;
-
-        // clear event handlers on all handler collections
-        for (EventHandlerCollection handlers : _handlerMap.values()) {
-            handlers.clear();
-        }
-        _handlerMap.clear();
-
-        // unregister all listeners
-        for (ListenerContainer listener : _listeners.values()) {
-            listener.unregister();
-        }
-        _listeners.clear();
     }
 
 
