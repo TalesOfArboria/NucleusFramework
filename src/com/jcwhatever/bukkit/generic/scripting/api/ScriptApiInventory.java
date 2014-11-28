@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.inventory.InventoryHelper;
+import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
@@ -91,7 +91,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param comparer   The {@code ItemStackComparer} to use.
          */
         public int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryHelper.getMax(contents, itemStack, comparer);
+            return InventoryUtils.getMax(contents, itemStack, comparer);
         }
 
         /**
@@ -103,7 +103,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param comparer  The {@code ItemStackComparer} to use.
          */
         public boolean hasRoom(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryHelper.hasRoom(contents, itemStack, comparer, itemStack.getAmount());
+            return InventoryUtils.hasRoom(contents, itemStack, comparer, itemStack.getAmount());
         }
 
         /**
@@ -117,7 +117,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param qty       The amount of space needed.
          */
         public boolean hasRoomForQty(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-            return InventoryHelper.hasRoom(contents, itemStack, comparer, qty);
+            return InventoryUtils.hasRoom(contents, itemStack, comparer, qty);
         }
 
         /**
@@ -129,7 +129,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param comparer   The {@code ItemStackComparer} to use.
          */
         public int count(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryHelper.count(contents, itemStack, comparer);
+            return InventoryUtils.count(contents, itemStack, comparer);
         }
 
         /**
@@ -140,7 +140,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param comparer   The {@code ItemStackComparer} to use.
          */
         public boolean has(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryHelper.has(contents, itemStack, comparer);
+            return InventoryUtils.has(contents, itemStack, comparer);
         }
 
         /**
@@ -153,7 +153,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param qty        The quantity.
          */
         public boolean hasQty(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-            return InventoryHelper.has(contents, itemStack, comparer, qty);
+            return InventoryUtils.has(contents, itemStack, comparer, qty);
         }
 
         /**
@@ -165,7 +165,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @param comparer   The {@code ItemStackComparer} to use.
          */
         public ItemStack[] getAll(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryHelper.getAll(contents, itemStack, comparer);
+            return InventoryUtils.getAll(contents, itemStack, comparer);
         }
 
         /**
@@ -179,7 +179,7 @@ public class ScriptApiInventory extends GenericsScriptApi {
          * @return
          */
         public List<ItemStack> remove(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-            return InventoryHelper.remove(contents, itemStack, comparer, qty);
+            return InventoryUtils.remove(contents, itemStack, comparer, qty);
         }
     }
 

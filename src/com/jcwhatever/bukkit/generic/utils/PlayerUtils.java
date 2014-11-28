@@ -26,7 +26,6 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.inventory.InventoryHelper;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.mixins.IPlayerWrapper;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
@@ -232,7 +231,7 @@ public class PlayerUtils {
     public static void resetPlayer(Player p) {
         PreCon.notNull(p);
 
-        InventoryHelper.clearAll(p.getInventory());
+        InventoryUtils.clearAll(p.getInventory());
 
         p.setGameMode(GameMode.SURVIVAL);
         p.getActivePotionEffects().clear();

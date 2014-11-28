@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.inventory;
 
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
+import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
@@ -384,13 +385,13 @@ public class Kit {
 
         // check player has all required items
         for (ItemStack item : itemsToTake) {
-            if (!InventoryHelper.has(p.getInventory(), item, comparer, qty))
+            if (!InventoryUtils.has(p.getInventory(), item, comparer, qty))
                 return false;
         }
 
         // take items
         for (ItemStack item : itemsToTake) {
-            InventoryHelper.remove(p.getInventory(), item, comparer, qty);
+            InventoryUtils.remove(p.getInventory(), item, comparer, qty);
         }
 
         return true;
