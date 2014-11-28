@@ -38,7 +38,8 @@ import java.io.IOException;
  *     an empty instance of itself using the {@code GenericsByteReader}.
  * </p>
  * <p>
- *     For de-serialization, the implementer is required to have an empty public constructor.
+ *     For de-serialization, the implementer is required to have an empty constructor.
+ *     The constructor does not have to be public.
  * </p>
  */
 public interface IGenericsSerializable {
@@ -56,5 +57,6 @@ public interface IGenericsSerializable {
      *
      * @param reader  The reader.
      */
-    public void deserializeFromBytes(GenericsByteReader reader) throws IOException, ClassNotFoundException;
+    public void deserializeFromBytes(GenericsByteReader reader)
+            throws IOException, ClassNotFoundException, InstantiationException;
 }

@@ -25,9 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.file;
 
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
-import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -40,6 +40,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -174,7 +176,7 @@ public class GenericsByteReader extends InputStream {
         _bytesRead += (long)_stream.read(_buffer, 0, 2);
 
         return (short)(((_buffer[0] & 0xFF) << 8)
-                    + (_buffer[1] & 0xFF));
+                + (_buffer[1] & 0xFF));
     }
 
     /**
@@ -514,23 +516,33 @@ public class GenericsByteReader extends InputStream {
      *
      * @param <T>  The object type.
      *
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws Exception
      */
     @Nullable
-    public <T extends IGenericsSerializable> T getGenerics(Class<T> objectClass)
-            throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException {
+    public <T extends IGenericsSerializable> T getGenerics(Class<T> objectClass) throws IOException,
+            InstantiationException {
+
         PreCon.notNull(objectClass);
 
         boolean isNull = !getBoolean();
         if (isNull)
             return null;
 
-        T object = objectClass.newInstance();
+        T object;
 
-        object.deserializeFromBytes(this);
+        try {
+            Constructor<T> constructor = objectClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+
+            object = constructor.newInstance();
+            object.deserializeFromBytes(this);
+
+        } catch (NoSuchMethodException | IllegalAccessException | ClassNotFoundException |
+                InvocationTargetException | InstantiationException e) {
+            e.printStackTrace();
+            throw new InstantiationException("Failed to instantiate IGenericsSerializable: "
+                    + objectClass.getName());
+        }
 
         return object;
     }
