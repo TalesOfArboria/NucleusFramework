@@ -32,6 +32,7 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+import com.jcwhatever.bukkit.generic.utils.SignUtils;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 
 import org.bukkit.Bukkit;
@@ -313,7 +314,7 @@ public class SignManager {
 
                 final BlockState blockState = loc.getBlock().getState();
                 blockState.setType(type);
-                blockState.setData(SignHelper.createSignData(type, facing));
+                blockState.setData(SignUtils.createSignData(type, facing));
 
                 Sign sign = (Sign) blockState;
 
@@ -379,7 +380,7 @@ public class SignManager {
 
             BlockState blockState = loc.getBlock().getState();
             blockState.setType(type);
-            blockState.setData(SignHelper.createSignData(type, facing));
+            blockState.setData(SignUtils.createSignData(type, facing));
             blockState.update(true);
 
             signInfo.push(new SignInfo(loc, line0, line1, line2, line3));
@@ -396,7 +397,7 @@ public class SignManager {
                     BlockState state = s.getLocation().getBlock().getState();
                     Sign sign = (Sign) state;
 
-                    SignHelper.setLines(sign, s.getLines());
+                    SignUtils.setLines(sign, s.getLines());
                     sign.update(true);
                 }
             }
@@ -444,7 +445,7 @@ public class SignManager {
             signNode.set("line2", event.getLine(2));
             signNode.set("line3", event.getLine(3));
             signNode.set("type", sign.getType().name());
-            signNode.set("direction", SignHelper.getSignFacing(sign).name());
+            signNode.set("direction", SignUtils.getSignFacing(sign).name());
             signNode.saveAsync(null);
         }
 
@@ -524,7 +525,7 @@ public class SignManager {
             if (location == null)
                 continue;
 
-            Sign sign = SignHelper.getSign(location.getBlock());
+            Sign sign = SignUtils.getSign(location.getBlock());
             if (sign == null)
                 continue;
 

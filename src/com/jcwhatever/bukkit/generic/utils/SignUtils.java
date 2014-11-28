@@ -23,9 +23,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.signs;
-
-import com.jcwhatever.bukkit.generic.utils.PreCon;
+package com.jcwhatever.bukkit.generic.utils;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -41,9 +39,9 @@ import javax.annotation.Nullable;
 /**
  * Sign utilities
  */
-public class SignHelper {
+public class SignUtils {
 
-    private SignHelper() {}
+    private SignUtils() {}
 
     /**
      * Get the facing direction of a sign.

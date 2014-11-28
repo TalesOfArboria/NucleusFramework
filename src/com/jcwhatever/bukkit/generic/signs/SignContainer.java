@@ -28,6 +28,8 @@ package com.jcwhatever.bukkit.generic.signs;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+import com.jcwhatever.bukkit.generic.utils.SignUtils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -63,7 +65,7 @@ public class SignContainer {
 
         _plugin = plugin;
         _signLocation = signLocation;
-        _sign = SignHelper.getSign(signLocation.getBlock());
+        _sign = SignUtils.getSign(signLocation.getBlock());
         _signNode = null;
     }
 
@@ -81,7 +83,7 @@ public class SignContainer {
 
         _plugin = plugin;
         _signLocation = signLocation;
-        _sign = SignHelper.getSign(signLocation.getBlock());
+        _sign = SignUtils.getSign(signLocation.getBlock());
         _signNode = signNode;
     }
 
@@ -101,7 +103,7 @@ public class SignContainer {
 
         _plugin = plugin;
         _signLocation = signLocation;
-        _sign = SignHelper.getSign(signLocation.getBlock());
+        _sign = SignUtils.getSign(signLocation.getBlock());
         _signNode = signNode;
         _changeEvent = event;
     }
