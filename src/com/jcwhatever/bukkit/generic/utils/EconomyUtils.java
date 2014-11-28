@@ -23,12 +23,10 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.economy;
+package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconGiveEvent;
 import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconWithdrawEvent;
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -46,7 +44,7 @@ import javax.annotation.Nullable;
  * Provides static functions to interface with the installed economy
  * via Vault plugin.
  */
-public class EconomyHelper {
+public class EconomyUtils {
     private static boolean _hasEconomy = false;
     private static Object _econ;
 
@@ -54,7 +52,7 @@ public class EconomyHelper {
         init();
     }
 
-    private EconomyHelper() {
+    private EconomyUtils() {
     }
 
     /**
