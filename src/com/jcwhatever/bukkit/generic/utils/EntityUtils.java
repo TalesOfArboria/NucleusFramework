@@ -43,7 +43,6 @@ public class EntityUtils {
 
     private EntityUtils() {}
 
-
     /**
      * Find an entity in a world by its integer ID.
      *
@@ -110,7 +109,6 @@ public class EntityUtils {
 
         return null;
     }
-
 
     /**
      * Find an entity in a world by its unique ID.
