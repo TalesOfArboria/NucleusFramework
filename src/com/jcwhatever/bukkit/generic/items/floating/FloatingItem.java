@@ -422,6 +422,15 @@ public class FloatingItem implements IDisposable {
         _pickupHandlers.remove(handler);
     }
 
+    /**
+     * Called after the items data node settings are loaded
+     *
+     * @param dataNode  The items data node.
+     */
+    protected void onLoadSettings(@SuppressWarnings("unused") IDataNode dataNode) {
+        // do nothing
+    }
+
     void onPickup(Player p, boolean isCancelled) {
         if (_pickupHandlers == null)
             return;
@@ -453,7 +462,10 @@ public class FloatingItem implements IDisposable {
                 }
             }
         }
+
+        onLoadSettings(_dataNode);
     }
+
 
     public static interface PickupHandler {
         void onPickup(Player p, FloatingItem item, boolean isCancelled);

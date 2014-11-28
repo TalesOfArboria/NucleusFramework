@@ -25,126 +25,23 @@
 
 package com.jcwhatever.bukkit.generic.items.floating;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
-public class FloatingItemManager {
-
-    private final Plugin _plugin;
-    private final IDataNode _dataNode;
-
-    private Map<String, FloatingItem> _itemMap = new HashMap<>(50);
+public final class FloatingItemManager extends AbstractFloatingItemManager<FloatingItem> {
 
     public FloatingItemManager(Plugin plugin, IDataNode dataNode) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(dataNode);
-
-        _plugin = plugin;
-        _dataNode = dataNode;
-
-        loadSettings();
+        super(plugin, dataNode);
     }
 
-    public Plugin getPlugin() {
-        return _plugin;
+    @Override
+    protected FloatingItem createFloatingItem(String name, ItemStack item,
+                                              @Nullable Location location, IDataNode dataNode) {
+        return new FloatingItem(name, item, location, dataNode);
     }
-
-    @Nullable
-    public FloatingItem add(String name, ItemStack itemStack) {
-        return add(name, itemStack, null);
-    }
-
-    @Nullable
-    public FloatingItem add(String name, ItemStack itemStack, @Nullable Location location) {
-        PreCon.notNullOrEmpty(name);
-        PreCon.notNull(itemStack);
-
-        FloatingItem item = _itemMap.get(name.toLowerCase());
-        if (item != null) {
-            return null;
-        }
-
-        IDataNode node = _dataNode.getNode(name);
-
-        item = new FloatingItem(name, itemStack, location, node);
-
-        node.set("location", location);
-        node.set("item", itemStack);
-        node.saveAsync(null);
-
-        _itemMap.put(name.toLowerCase(), item);
-
-        return item;
-    }
-
-    public boolean remove(String name) {
-        PreCon.notNullOrEmpty(name);
-
-        FloatingItem item = _itemMap.remove(name.toLowerCase());
-        if (item == null)
-            return false;
-
-        item.dispose();
-
-        IDataNode node = item.getDataNode();
-        if (node != null) {
-            node.remove();
-            node.saveAsync(null);
-        }
-
-        return true;
-    }
-
-    public List<FloatingItem> getItems() {
-        return new ArrayList<>(_itemMap.values());
-    }
-
-    @Nullable
-    public FloatingItem getItem(String name) {
-        PreCon.notNullOrEmpty(name);
-
-        return _itemMap.get(name.toLowerCase());
-    }
-
-    private void loadSettings() {
-
-        Set<String> itemNames = _dataNode.getSubNodeNames();
-
-        for (String name : itemNames) {
-
-            IDataNode node = _dataNode.getNode(name);
-
-            Location location = node.getLocation("location");
-            if (location == null) {
-                Messenger.debug(_plugin, "Location not found for floating item in data node.");
-                continue;
-            }
-
-            ItemStack[] itemStacks = node.getItemStacks("item");
-
-            if (itemStacks == null || itemStacks.length == 0) {
-                Messenger.debug(_plugin, "Item stack not found for floating item in data node.");
-                continue;
-            }
-
-            FloatingItem item = new FloatingItem(name, itemStacks[0], location, node);
-
-            _itemMap.put(name.toLowerCase(), item);
-
-        }
-
-    }
-
 }
