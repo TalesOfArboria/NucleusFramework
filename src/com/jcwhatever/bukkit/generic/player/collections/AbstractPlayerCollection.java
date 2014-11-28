@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.bukkit.generic.player.collections;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
@@ -30,20 +29,42 @@ import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.UUID;
+
 /**
  * Collection that contains player references that must be
  * removed when a player logs out.
  * <p>
- *     The implementation is responsible for registering
- *     with {@code PlayerCollectionListener}.
+ *     The implementation is responsible for calling {@code notifyPlayerRemoved}
+ *     method when a player is removed from the collection and {@code notifyPlayerAdded}
+ *     when a player is added to the collection.
+ * </p>
+ * <p>
+ *     The abstract method {@code removePlayer} should not call {@code notifyPlayerRemoved}
+ *     or {@code notifyPlayerAdded} because it's used to remove the player when
+ *     the player logs out.
+ * </p>
+ * <p>
+ *     The collection should by synchronized since the {@code removePlayer} method
+ *     may be called from an asynchronous thread.
  * </p>
  */
-public interface IPlayerCollection extends IDisposable {
+public abstract class AbstractPlayerCollection implements IDisposable {
+
+    private final Plugin _plugin;
+    private final PlayerCollectionListener _listener;
+
+    protected AbstractPlayerCollection(Plugin plugin) {
+        _plugin = plugin;
+        _listener = PlayerCollectionListener.get(plugin);
+    }
 
     /**
      * Get the collections owning plugin.
      */
-    Plugin getPlugin();
+    public Plugin getPlugin() {
+        return _plugin;
+    }
 
     /**
      * Called to remove the specified player
@@ -51,6 +72,25 @@ public interface IPlayerCollection extends IDisposable {
      *
      * @param p  The player to remove.
      */
-    void removePlayer(Player p);
+    public abstract void removePlayer(Player p);
 
+    /**
+     * Call to notify player listener that the player is
+     * no longer in the collection.
+     *
+     * @param playerId  The player id.
+     */
+    protected final void notifyPlayerRemoved(UUID playerId) {
+        _listener.removePlayer(playerId, this);
+    }
+
+    /**
+     * Call to notify the player listener that the player
+     * has been added to the collection.
+     *
+     * @param playerId  The player Id.
+     */
+    protected final void notifyPlayerAdded(UUID playerId) {
+        _listener.addPlayer(playerId, this);
+    }
 }

@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.player.collections;
 
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -44,10 +46,9 @@ import java.util.UUID;
  *
  * @param <V>  The value type
  */
-public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
+public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, V> {
 
 	private final Map<UUID, V> _map;
-	private final PlayerCollectionListener _listener;
 
 	/**
 	 * Constructor.
@@ -60,20 +61,15 @@ public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 	 * Constructor.
 	 */
 	public PlayerMap(Plugin plugin, int size) {
+		super(plugin);
 		_map = new HashMap<UUID, V>(size);
-		_listener = PlayerCollectionListener.get(plugin);
-	}
-
-	@Override
-	public Plugin getPlugin() {
-		return _listener.getPlugin();
 	}
 
 	@Override
 	public synchronized void clear() {
 
 		for (UUID playerId : _map.keySet()) {
-			_listener.removePlayer(playerId, this);
+			notifyPlayerRemoved(playerId);
 		}
 
 		_map.clear();
@@ -115,25 +111,30 @@ public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 
 	@Override
 	public synchronized V put(UUID key, V value) {
+		PreCon.notNull(key);
 
-		_listener.addPlayer(key, this);
+		notifyPlayerAdded(key);
 		return _map.put(key, value);
 	}
 
 	@Override
 	public synchronized void putAll(Map<? extends UUID, ? extends V> pairs) {
+		PreCon.notNull(pairs);
+
 		for (UUID playerId : pairs.keySet()) {
-			_listener.addPlayer(playerId, this);
+			notifyPlayerAdded(playerId);
 		}
 		_map.putAll(pairs);
 	}
 
 	@Override
 	public synchronized V remove(Object key) {
+		PreCon.notNull(key);
+
 		V item = _map.remove(key);
 
 		if (key instanceof UUID) {
-			_listener.removePlayer((UUID)key, this);
+			notifyPlayerRemoved((UUID)key);
 		}
 
 		return item;
@@ -153,7 +154,6 @@ public class PlayerMap<V> implements Map<UUID, V>, IPlayerCollection {
 	public synchronized void removePlayer(Player p) {
 		_map.remove(p.getUniqueId());
 	}
-
 
 	/**
 	 * Call to remove references that prevent

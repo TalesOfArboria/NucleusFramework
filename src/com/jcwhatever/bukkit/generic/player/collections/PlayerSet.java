@@ -41,10 +41,9 @@ import java.util.Set;
  *     {@code Player} object is automatically removed when the player logs out.
  * </p>
  */
-public class PlayerSet implements Set<Player>, IPlayerCollection {
+public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
     private final Set<Player> _players;
-    private final PlayerCollectionListener _listener;
 
     /**
      * Constructor.
@@ -59,19 +58,14 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
      * @param size  The initial capacity.
      */
     public PlayerSet(Plugin plugin, int size) {
+        super(plugin);
         _players = new HashSet<Player>(size);
-        _listener = PlayerCollectionListener.get(plugin);
-    }
-
-    @Override
-    public Plugin getPlugin() {
-        return _listener.getPlugin();
     }
 
     @Override
     public synchronized boolean add(Player p) {
         if (_players.add(p)) {
-            _listener.addPlayer(p, this);
+            notifyPlayerAdded(p.getUniqueId());
             return true;
         }
 
@@ -82,7 +76,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
     public synchronized boolean addAll(Collection<? extends Player> c) {
 
         for (Player p : c) {
-            _listener.addPlayer(p, this);
+            notifyPlayerAdded(p.getUniqueId());
         }
 
         return _players.addAll(c);
@@ -92,7 +86,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
     public synchronized void clear() {
 
         for (Player p : _players) {
-            _listener.removePlayer(p, this);
+            notifyPlayerRemoved(p.getUniqueId());
         }
 
         _players.clear();
@@ -115,14 +109,14 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
 
     @Override
     public synchronized Iterator<Player> iterator() {
-        return new Iter(this);
+        return new PlayerIterator();
     }
 
     @Override
     public synchronized boolean remove(Object o) {
         if (_players.remove(o)) {
             if (o instanceof Player) {
-                _listener.removePlayer((Player) o, this);
+                notifyPlayerRemoved(((Player)o).getUniqueId());
             }
             return true;
         }
@@ -134,7 +128,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
 
         for (Object obj : c) {
             if (obj instanceof Player) {
-                _listener.removePlayer((Player) obj, this);
+                notifyPlayerRemoved(((Player)obj).getUniqueId());
             }
         }
 
@@ -149,7 +143,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
         temp.removeAll(c);
 
         for (Player p : temp) {
-            _listener.removePlayer(p, this);
+            notifyPlayerRemoved(p.getUniqueId());
         }
 
         return _players.retainAll(c);
@@ -186,15 +180,13 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
         clear();
     }
 
-    private final class Iter implements Iterator<Player> {
+    private final class PlayerIterator implements Iterator<Player> {
 
         private final Iterator<Player> _iterator;
-        private final PlayerSet _parent;
         private Player _current;
 
-        public Iter(PlayerSet parent) {
+        public PlayerIterator() {
             _iterator = new ArrayList<Player>(_players).iterator();
-            _parent = parent;
         }
 
         @Override
@@ -211,9 +203,7 @@ public class PlayerSet implements Set<Player>, IPlayerCollection {
         @Override
         public void remove() {
             _iterator.remove();
-            _listener.removePlayer(_current, _parent);
+            notifyPlayerRemoved(_current.getUniqueId());
         }
-
     }
-
 }

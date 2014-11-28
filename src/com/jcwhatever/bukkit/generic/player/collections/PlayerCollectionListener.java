@@ -83,7 +83,7 @@ final class PlayerCollectionListener implements Listener {
     private final Plugin _plugin;
 
     // keyed to player id, a map of collections a player is contained in
-    private final MultiValueMap<UUID, IPlayerCollection> _collectionMap = new MultiValueMap<>(100, 25);
+    private final MultiValueMap<UUID, AbstractPlayerCollection> _collectionMap = new MultiValueMap<>(100, 25);
 
     /**
      * Private Constructor.
@@ -107,7 +107,7 @@ final class PlayerCollectionListener implements Listener {
      * @param p           The player.
      * @param collection  The collection.
      */
-    public void addPlayer(Player p, IPlayerCollection collection) {
+    public void addPlayer(Player p, AbstractPlayerCollection collection) {
         addPlayer(p.getUniqueId(), collection);
     }
 
@@ -117,7 +117,7 @@ final class PlayerCollectionListener implements Listener {
      * @param playerId    The player Id.
      * @param collection  The collection.
      */
-    public void addPlayer(UUID playerId, IPlayerCollection collection) {
+    public void addPlayer(UUID playerId, AbstractPlayerCollection collection) {
         synchronized (_sync) {
             _collectionMap.put(playerId, collection);
         }
@@ -129,7 +129,7 @@ final class PlayerCollectionListener implements Listener {
      * @param p           The player.
      * @param collection  The collection.
      */
-    public void removePlayer(Player p, IPlayerCollection collection) {
+    public void removePlayer(Player p, AbstractPlayerCollection collection) {
         removePlayer(p.getUniqueId(), collection);
     }
 
@@ -139,7 +139,7 @@ final class PlayerCollectionListener implements Listener {
      * @param playerId    The id of the player.
      * @param collection  The collection.
      */
-    public void removePlayer(UUID playerId, IPlayerCollection collection) {
+    public void removePlayer(UUID playerId, AbstractPlayerCollection collection) {
         synchronized (_sync) {
             _collectionMap.removeValue(playerId, collection);
         }
@@ -147,7 +147,7 @@ final class PlayerCollectionListener implements Listener {
 
     // remove a player from all collections
     private void removePlayer(Player p) {
-        List<IPlayerCollection> collections = _collectionMap.getValues(p.getUniqueId());
+        List<AbstractPlayerCollection> collections = _collectionMap.getValues(p.getUniqueId());
         if (collections == null || collections.isEmpty())
             return;
 
@@ -177,9 +177,9 @@ final class PlayerCollectionListener implements Listener {
     // Asynchronous removal of player from collections
     static class RemovePlayer implements Runnable {
         private Player p;
-        private List<IPlayerCollection> collections;
+        private List<AbstractPlayerCollection> collections;
 
-        public RemovePlayer(Player p, List<IPlayerCollection> collections) {
+        public RemovePlayer(Player p, List<AbstractPlayerCollection> collections) {
             this.p = p;
             this.collections = collections;
         }
@@ -187,14 +187,11 @@ final class PlayerCollectionListener implements Listener {
         @Override
         public void run() {
             synchronized (_sync) {
-                for (IPlayerCollection collection : collections) {
+                for (AbstractPlayerCollection collection : collections) {
                     collection.removePlayer(p);
                 }
             }
         }
 
     }
-
-
-
 }

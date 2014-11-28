@@ -39,28 +39,22 @@ import javax.annotation.Nullable;
  *
  * <p>{@code Player} objects are automatically removed if the player logs out.</p>
  */
-public class PlayerQueue implements Queue<Player>, IPlayerCollection {
+public class PlayerQueue extends AbstractPlayerCollection implements Queue<Player> {
 
 	private final Queue<Player> _queue = new LinkedList<Player>();
-	private final PlayerCollectionListener _listener;
 
 	/**
 	 * Constructor.
 	 */
 	public PlayerQueue(Plugin plugin) {
-		_listener = PlayerCollectionListener.get(plugin);
-	}
-
-	@Override
-	public Plugin getPlugin() {
-		return _listener.getPlugin();
+		super(plugin);
 	}
 
 	@Override
 	public synchronized boolean addAll(Collection<? extends Player> players) {
 
 		for (Player p : players) {
-			_listener.addPlayer(p, this);
+			notifyPlayerAdded(p.getUniqueId());
 		}
 
 		return _queue.addAll(players);
@@ -72,7 +66,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 		while (!_queue.isEmpty()) {
 			Player p = _queue.remove();
 
-			_listener.removePlayer(p, this);
+			notifyPlayerRemoved(p.getUniqueId());
 		}
 
 		_queue.clear();
@@ -95,7 +89,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 
 	@Override
 	public synchronized Iterator<Player> iterator() {
-		return new Iter(this);
+		return new PlayerIterator(this);
 	}
 
 	@Override
@@ -103,7 +97,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 
 		if (_queue.remove(item)) {
 			if (item instanceof Player && !_queue.contains(item)) {
-				_listener.removePlayer((Player) item, this);
+				notifyPlayerRemoved(((Player)item).getUniqueId());
 			}
 			return true;
 		}
@@ -115,7 +109,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	public synchronized boolean removeAll(Collection<?> items) {
 		for (Object obj : items) {
 			if (obj instanceof Player) {
-				_listener.removePlayer((Player) obj, this);
+				notifyPlayerRemoved(((Player) obj).getUniqueId());
 			}
 		}
 		return _queue.removeAll(items);
@@ -127,7 +121,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 		LinkedList<Player> temp = new LinkedList<>(_queue);
 		if (temp.removeAll(items)) {
 			while (!temp.isEmpty()) {
-				_listener.removePlayer(temp.remove(), this);
+				notifyPlayerRemoved(temp.remove().getUniqueId());
 			}
 		}
 
@@ -153,7 +147,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	@Override
 	public synchronized boolean add(Player p) {
 		if (_queue.add(p)) {
-			_listener.addPlayer(p, this);
+			notifyPlayerAdded(p.getUniqueId());
 			return true;
 		}
 		return false;
@@ -167,7 +161,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	@Override
 	public synchronized boolean offer(Player p) {
 		if (_queue.offer(p)) {
-			_listener.addPlayer(p, this);
+			notifyPlayerAdded(p.getUniqueId());
 			return true;
 		}
 		return false;
@@ -183,7 +177,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	public synchronized Player poll() {
 		Player p = _queue.poll();
 		if (p != null && !_queue.contains(p)) {
-			_listener.removePlayer(p, this);
+			notifyPlayerRemoved(p.getUniqueId());
 		}
 		return p;
 	}
@@ -193,7 +187,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 	public synchronized Player remove() {
 		Player p = _queue.remove();
 		if (p != null && !_queue.contains(p)) {
-			_listener.removePlayer(p, this);
+			notifyPlayerRemoved(p.getUniqueId());
 		}
 		return p;
 	}
@@ -213,13 +207,13 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 		clear();
 	}
 
-	private final class Iter implements Iterator<Player> {
+	private final class PlayerIterator implements Iterator<Player> {
 
 		Iterator<Player> _iterator;
 		Player _current = null;
 		PlayerQueue _parent;
 
-		public Iter(PlayerQueue parent) {
+		public PlayerIterator(PlayerQueue parent) {
 			_iterator = new LinkedList<Player>(_queue).iterator();
 			_parent = parent;
 		}
@@ -239,7 +233,7 @@ public class PlayerQueue implements Queue<Player>, IPlayerCollection {
 		public void remove() {
 			_iterator.remove();
 			if (_current != null && !_queue.contains(_current)) {
-				_listener.removePlayer(_current, _parent);
+				notifyPlayerRemoved(_current.getUniqueId());
 			}
 		}
 
