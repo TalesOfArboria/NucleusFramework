@@ -55,7 +55,8 @@ import javax.annotation.Nullable;
  */
 public final class RegionChunkFileLoader {
 
-    public static final int RESTORE_FILE_VERSION = 3;
+    public static final int COMPATIBLE_FILE_VERSION = 3;
+    public static final int RESTORE_FILE_VERSION = 4;
     private Plugin _plugin;
     private IRegion _region;
     private Chunk _chunk;
@@ -258,7 +259,8 @@ public final class RegionChunkFileLoader {
                 int restoreFileVersion = reader.getInteger();
 
                 // make sure the file version is correct
-                if (restoreFileVersion != RESTORE_FILE_VERSION) {
+                if (restoreFileVersion != RESTORE_FILE_VERSION &&
+                        restoreFileVersion != COMPATIBLE_FILE_VERSION) {
                     cancel("Invalid region file. File is an old version and is no longer valid.");
                     _isLoading = false;
                     return;
@@ -270,9 +272,16 @@ public final class RegionChunkFileLoader {
                 // get the name of the world the region was saved from.
                 reader.getString();
 
-                // get the coordinates of the region.
-                reader.getLocation();
-                reader.getLocation();
+
+                if (restoreFileVersion == COMPATIBLE_FILE_VERSION) {
+                    // get the coordinates of the region.
+                    reader.getLocation();
+                    reader.getLocation();
+                }
+                else {
+                    // get the chunk section info
+                    reader.getGenerics(RegionChunkSection.class);
+                }
 
                 // get the volume of the region
                 long volume = reader.getLong();
@@ -283,7 +292,7 @@ public final class RegionChunkFileLoader {
                     _isLoading =  false;
                 }
             }
-            catch (IOException e) {
+            catch (IOException | InstantiationException e) {
                 e.printStackTrace();
                 fail("Failed to read file header.");
             }
@@ -351,8 +360,7 @@ public final class RegionChunkFileLoader {
                     _blockEntities.push(state);
                 }
             }
-            catch (IOException | IllegalArgumentException | InstantiationException |
-                    IllegalAccessException | ClassNotFoundException e) {
+            catch (IOException | IllegalArgumentException | InstantiationException e) {
                 e.printStackTrace();
                 fail("Failed to read Block Entities from file.");
             }
@@ -370,8 +378,7 @@ public final class RegionChunkFileLoader {
                     _entities.push(state);
                 }
             }
-            catch (IOException | IllegalArgumentException | InstantiationException |
-                    IllegalAccessException | ClassNotFoundException e) {
+            catch (IOException | IllegalArgumentException | InstantiationException e) {
                 e.printStackTrace();
                 fail("Failed to read Entities from file.");
             }

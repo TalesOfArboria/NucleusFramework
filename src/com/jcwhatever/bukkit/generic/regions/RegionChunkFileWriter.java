@@ -54,7 +54,7 @@ import javax.annotation.Nullable;
  */
 public class RegionChunkFileWriter {
 
-    public static final int SAVE_FILE_VERSION = 3;
+    public static final int SAVE_FILE_VERSION = 4;
 
     private final Plugin _plugin;
     private final IRegion _region;
@@ -204,9 +204,9 @@ public class RegionChunkFileWriter {
         private final File file;
 
         public SaveChunkIterator (File file, long segmentSize,
-                                  int xStart, int yStart, int zStart,
+                                  int chunkXStart, int yStart, int chunkZStart,
                                   int xEnd, int yEnd, int zEnd) {
-            super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
+            super(_plugin, TaskConcurrency.ASYNC, segmentSize, chunkXStart, yStart, chunkZStart, xEnd, yEnd, zEnd);
 
             this.file = file;
         }
@@ -227,13 +227,8 @@ public class RegionChunkFileWriter {
                 // write world name
                 writer.write(_world.getName());
 
-                // write region point 1
-                // noinspection ConstantConditions
-                writer.write(_region.getP1()); // Location
-
-                // write region point 2
-                //noinspection ConstantConditions
-                writer.write(_region.getP2()); // Location
+                // write section info
+                writer.write(_section);
 
                 // write chunk volume
                 writer.write(getVolume());
