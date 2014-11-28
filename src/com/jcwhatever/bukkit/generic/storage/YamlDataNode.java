@@ -31,6 +31,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -199,6 +200,11 @@ public class YamlDataNode implements IDataNode {
     public boolean set(String keyPath, Object value) {
 
         return _storage.set(_path + keyPath, value);
+    }
+
+    @Override
+    public Map<String, Object> getAllValues() {
+        return _storage.getAllValues(_path);
     }
 
     @Override

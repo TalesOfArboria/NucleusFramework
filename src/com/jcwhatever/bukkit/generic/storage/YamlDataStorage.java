@@ -46,6 +46,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -836,6 +837,22 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
+    @Override
+    public Map<String, Object> getAllValues() {
+        return getAllValues("");
+    }
+
+    public Map<String, Object> getAllValues(String nodePath) {
+        ConfigurationSection subSection = _yaml.getConfigurationSection(nodePath);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> result = (Map<String, Object>)
+                (subSection == null
+                        ? Collections.emptyMap()
+                        : subSection.getValues(true));
+
+        return result;
+    }
 
     @Override
     public void remove() {

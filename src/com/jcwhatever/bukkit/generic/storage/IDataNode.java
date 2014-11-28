@@ -31,6 +31,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -174,6 +175,12 @@ public interface IDataNode {
      * @return  True if the value was successfully set.
      */
     boolean set(String keyPath, @Nullable Object value);
+
+    /**
+     * Get all node key values in the node including
+     * sub node key values.
+     */
+    Map<String, Object> getAllValues();
 
     /**
      * Get the value of a node key.
