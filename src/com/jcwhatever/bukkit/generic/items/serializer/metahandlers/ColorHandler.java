@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.items.serializer.metahandlers;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Color;
@@ -84,7 +84,7 @@ public class ColorHandler implements IMetaHandler {
                 return false;
             }
 
-            ItemStackHelper.setColor(itemStack, Color.fromRGB(intColor));
+            ItemStackUtils.setColor(itemStack, Color.fromRGB(intColor));
 
             return true; // finished
         }
@@ -129,7 +129,7 @@ public class ColorHandler implements IMetaHandler {
 
         if (itemStack.getItemMeta() instanceof LeatherArmorMeta) {
 
-            Color color = ItemStackHelper.getColor(itemStack);
+            Color color = ItemStackUtils.getColor(itemStack);
             if (color == null)
                 throw new AssertionError();
 

@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
@@ -125,7 +125,7 @@ public class WorkbenchView extends AbstractView {
                     InventoryView invView = instance.getInventoryView();
                     if (invView != null) {
                         ItemStack stack = result.clone();
-                        ItemStackHelper.setLore(stack, ChatColor.RED + "Not craftable here.");
+                        ItemStackUtils.setLore(stack, ChatColor.RED + "Not craftable here.");
                         invView.setItem(0, stack);
                     }
                 }

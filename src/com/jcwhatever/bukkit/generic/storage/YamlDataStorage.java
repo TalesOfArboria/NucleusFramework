@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.storage;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
@@ -254,7 +254,7 @@ public class YamlDataStorage implements IDataNode {
                 if (str.indexOf("%ItemStack[]% ") == 0) {
                     str = str.substring(14);
                     try {
-                        _items.put(key, ItemStackHelper.parse(str));
+                        _items.put(key, ItemStackUtils.parse(str));
                     } catch (InvalidItemStackStringException e) {
                         e.printStackTrace();
                     }
@@ -787,7 +787,7 @@ public class YamlDataStorage implements IDataNode {
                 _items.put(keyPath, new ItemStack[]{
                         ((ItemStack) value).clone()
                 });
-                value = "%ItemStack[]% " + ItemStackHelper.serializeToString((ItemStack) value, SerializerOutputType.RAW);
+                value = "%ItemStack[]% " + ItemStackUtils.serializeToString((ItemStack) value, SerializerOutputType.RAW);
             }
             else if (value instanceof ItemStack[]) {
                 ItemStack[] stored = ((ItemStack[]) value).clone();
@@ -797,7 +797,7 @@ public class YamlDataStorage implements IDataNode {
                     }
                 }
                 _items.put(keyPath, stored);
-                value = "%ItemStack[]% " + ItemStackHelper.serializeToString((ItemStack[]) value, SerializerOutputType.RAW);
+                value = "%ItemStack[]% " + ItemStackUtils.serializeToString((ItemStack[]) value, SerializerOutputType.RAW);
             }
             else if (value instanceof Enum<?>) {
                 Enum<?> e = (Enum<?>) value;

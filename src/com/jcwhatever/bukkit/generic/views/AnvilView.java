@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.views;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRenameEvent;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
@@ -214,7 +214,7 @@ public class AnvilView extends AbstractView {
                     InventoryView invView = current.getInventoryView();
                     if (invView != null) {
                         ItemStack stack = result.clone();
-                        ItemStackHelper.setLore(stack, ChatColor.RED + "Not repairable here.");
+                        ItemStackUtils.setLore(stack, ChatColor.RED + "Not repairable here.");
                         invView.setItem(0, stack);
                     }
                 }

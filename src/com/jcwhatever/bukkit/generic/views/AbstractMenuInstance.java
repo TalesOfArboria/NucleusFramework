@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.Utils;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
@@ -180,7 +180,7 @@ public abstract class AbstractMenuInstance extends ViewInstance {
             inventory.setItem(slot, menuItem.getItemStack());
         }
         else if (!visible && !isEmpty) {
-            inventory.setItem(slot, ItemStackHelper.AIR);
+            inventory.setItem(slot, ItemStackUtils.AIR);
         }
         else {
             return false;

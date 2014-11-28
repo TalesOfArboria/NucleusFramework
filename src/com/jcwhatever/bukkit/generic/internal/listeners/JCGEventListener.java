@@ -30,8 +30,8 @@ import com.jcwhatever.bukkit.generic.commands.response.CommandRequests;
 import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRenameEvent;
 import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRepairEvent;
 import com.jcwhatever.bukkit.generic.events.bukkit.SignInteractEvent;
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper.DisplayNameResult;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils.DisplayNameResult;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
@@ -194,10 +194,10 @@ public final class JCGEventListener implements Listener {
 					
 					// check for rename
 					String originalName = slot1 != null
-                            ? ItemStackHelper.getDisplayName(slot1, DisplayNameResult.OPTIONAL)
+                            ? ItemStackUtils.getDisplayName(slot1, DisplayNameResult.OPTIONAL)
                             : null;
 
-					String newName = ItemStackHelper.getDisplayName(resultItem, DisplayNameResult.OPTIONAL);
+					String newName = ItemStackUtils.getDisplayName(resultItem, DisplayNameResult.OPTIONAL);
 					
 					if (newName != null && !newName.equals(originalName)) {
 						

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
@@ -286,10 +286,10 @@ public class MenuItem extends ViewMeta {
             loreString = TextUtils.format(loreString);
 
             List<String> lore = TextUtils.paginateString(loreString, 32, false);
-            ItemStackHelper.setLore(_itemStack, lore);
+            ItemStackUtils.setLore(_itemStack, lore);
         }
         else {
-            ItemStackHelper.setLore(_itemStack, new ArrayList<String>(0));
+            ItemStackUtils.setLore(_itemStack, new ArrayList<String>(0));
         }
 
     }
@@ -305,7 +305,7 @@ public class MenuItem extends ViewMeta {
         if (title != null)
             title = TextUtils.format(title);
 
-        ItemStackHelper.setDisplayName(_itemStack, title);
+        ItemStackUtils.setDisplayName(_itemStack, title);
     }
 
 }

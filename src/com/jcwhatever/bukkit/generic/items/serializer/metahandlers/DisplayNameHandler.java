@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.items.serializer.metahandlers;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.inventory.ItemStack;
@@ -59,7 +59,7 @@ public class DisplayNameHandler implements IMetaHandler {
         if (!meta.getName().equals(getMetaName()))
             return false;
 
-        ItemStackHelper.setDisplayName(itemStack, meta.getRawData());
+        ItemStackUtils.setDisplayName(itemStack, meta.getRawData());
 
         return true;
     }

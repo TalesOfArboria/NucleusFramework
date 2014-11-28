@@ -23,15 +23,14 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.items;
+package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
+import com.jcwhatever.bukkit.generic.items.EnchantmentWrapper;
 import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackDeserializer;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -52,9 +51,9 @@ import javax.annotation.Nullable;
 /**
  * Item stack utilities
  */
-public class ItemStackHelper {
+public class ItemStackUtils {
 
-    private ItemStackHelper() {}
+    private ItemStackUtils() {}
 
     public static final ItemStack AIR = new ItemStack(Material.AIR);
 

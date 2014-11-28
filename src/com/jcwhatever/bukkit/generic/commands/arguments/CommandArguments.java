@@ -32,7 +32,7 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.items.ItemWrapper;
 import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
@@ -847,7 +847,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         ItemStack[] stacks = null;
 
         try {
-            stacks = ItemStackHelper.parse(arg);
+            stacks = ItemStackUtils.parse(arg);
         } catch (InvalidItemStackStringException ignore) {
             // do nothing
         }

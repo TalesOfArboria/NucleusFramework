@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.inventory;
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -406,7 +406,7 @@ public class InventoryHelper {
                     clone.setAmount(item.getAmount());
                     results.add(clone);
 
-                    contents[i] = ItemStackHelper.AIR;
+                    contents[i] = ItemStackUtils.AIR;
                 }
             }
         }
@@ -491,7 +491,7 @@ public class InventoryHelper {
                     clone.setAmount(item.getAmount());
                     results.add(clone);
 
-                    contents[i] = ItemStackHelper.AIR;
+                    contents[i] = ItemStackUtils.AIR;
                 }
             }
         }
@@ -551,7 +551,7 @@ public class InventoryHelper {
         PreCon.notNull(contents);
 
         for (ItemStack stack : contents) {
-            if (stack == null || !ItemStackHelper.isRepairable(stack))
+            if (stack == null || !ItemStackUtils.isRepairable(stack))
                 continue;
 
             stack.setDurability((short) -32768);

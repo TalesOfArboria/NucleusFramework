@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.items.serializer.metahandlers;
 
-import com.jcwhatever.bukkit.generic.items.ItemStackHelper;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.inventory.ItemStack;
@@ -59,7 +59,7 @@ public class LoreHandler implements IMetaHandler {
         if (!meta.getName().equals(getMetaName()))
             return false;
 
-        List<String> currentLore = ItemStackHelper.getLore(itemStack);
+        List<String> currentLore = ItemStackUtils.getLore(itemStack);
 
         List<String> newLore = currentLore == null
                 ? new ArrayList<String>(5)
@@ -73,7 +73,7 @@ public class LoreHandler implements IMetaHandler {
 
         newLore.add(meta.getRawData());
 
-        ItemStackHelper.setLore(itemStack, newLore);
+        ItemStackUtils.setLore(itemStack, newLore);
 
         return true;
     }
