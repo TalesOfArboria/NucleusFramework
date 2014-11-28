@@ -31,6 +31,8 @@ import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
+import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
+import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.entity.EntityType;
@@ -53,6 +55,7 @@ public class GenericsLib extends GenericsPlugin {
     private JailManager _jailManager;
     private RegionManager _regionManager;
     private EntityEquipperManager _equipperManager;
+    private ITaskScheduler _scheduler;
 
     /**
      * Get the {@code GenericsLib} plugin instance.
@@ -100,6 +103,13 @@ public class GenericsLib extends GenericsPlugin {
      */
     public static List<GenericsPlugin> getGenericsPlugins() {
         return new ArrayList<>(_pluginNameMap.values());
+    }
+
+    /**
+     * Get the default task scheduler.
+     */
+    public static ITaskScheduler getScheduler() {
+        return _instance._scheduler;
     }
 
     /**
@@ -160,6 +170,8 @@ public class GenericsLib extends GenericsPlugin {
 
     @Override
     protected void onEnablePlugin() {
+
+        _scheduler = new BukkitTaskScheduler();
         _regionManager = new RegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
         _equipperManager = new EntityEquipperManager();

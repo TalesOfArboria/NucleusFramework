@@ -22,21 +22,14 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.bukkit.generic.utils;
-
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
+package com.jcwhatever.bukkit.generic.scheduler;
 
 import org.bukkit.plugin.Plugin;
 
 /**
- * Utility to reduce the amount of code needed to use
- * the GenericsLib task scheduler.
+ * Represents a task scheduler.
  */
-public class Scheduler {
-
-    private Scheduler() {}
+public interface ITaskScheduler {
 
     /**
      * Run a task later.
@@ -50,9 +43,7 @@ public class Scheduler {
      *
      * @return  A {@code ScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskLater(Plugin plugin, Runnable runnable) {
-        return GenericsLib.getScheduler().runTaskLater(plugin, runnable);
-    }
+    ScheduledTask runTaskLater(Plugin plugin, Runnable runnable);
 
     /**
      * Run a task after a specified number of ticks have elapsed.
@@ -67,9 +58,7 @@ public class Scheduler {
      *
      * @return  A {@code ScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable) {
-        return GenericsLib.getScheduler().runTaskLater(plugin, ticks, runnable);
-    }
+    ScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable);
 
     /**
      * Run a task on a new asynchronous thread after a specified number
@@ -85,9 +74,7 @@ public class Scheduler {
      *
      * @return  A {@code ScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable) {
-        return GenericsLib.getScheduler().runTaskLaterAsync(plugin, ticks, runnable);
-    }
+    ScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable);
 
     /**
      * Run a task on a repeating schedule after a specified number of ticks
@@ -104,9 +91,7 @@ public class Scheduler {
      *
      * @return  A {@code ScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
-        return GenericsLib.getScheduler().runTaskRepeat(plugin, startTicks, repeatTicks, runnable);
-    }
+    ScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
 
     /**
      * Run a task on a new asynchronous repeating schedule after a specified number
@@ -124,29 +109,31 @@ public class Scheduler {
      *
      * @return  A {@code ScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
-        return GenericsLib.getScheduler().runTaskRepeatAsync(plugin, startTicks, repeatTicks, runnable);
-    }
+    ScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
 
     /**
      * Run a task on the main thread at the next available chance.
      *
+     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * add the ability to cancel the task from within the task handler and to run
+     * optional code if the task is cancelled.</p>
+     *
      * @param plugin    The owning plugin.
      * @param runnable  The {@code Runnable} to run later.
      */
-    public static void runTaskSync(Plugin plugin, Runnable runnable) {
-        GenericsLib.getScheduler().runTaskSync(plugin, runnable);
-    }
+    void runTaskSync(Plugin plugin, final Runnable runnable);
 
     /**
      * Run a task on the main thread after the specified number of ticks have
      * elapsed.
      *
+     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * add the ability to cancel the task from within the task handler and to run
+     * optional code if the task is cancelled.</p>
+     *
      * @param plugin    The owning plugin.
      * @param ticks     The number of ticks to wait before running the task.
      * @param runnable  The {@code Runnable} to run later.
      */
-    public static void runTaskSync(Plugin plugin, int ticks, Runnable runnable) {
-        GenericsLib.getScheduler().runTaskSync(plugin, ticks, runnable);
-    }
+    void runTaskSync(Plugin plugin, int ticks, Runnable runnable);
 }
