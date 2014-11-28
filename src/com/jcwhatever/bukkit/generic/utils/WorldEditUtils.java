@@ -86,7 +86,6 @@ public class WorldEditUtils {
         return sel;
     }
 
-
     public static boolean setWorldEditSelection(Player p, Location p1, Location p2) {
         PreCon.notNull(p);
         PreCon.notNull(p1);
@@ -111,5 +110,4 @@ public class WorldEditUtils {
 
         return true;
     }
-
 }

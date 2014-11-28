@@ -309,7 +309,5 @@ public class FileUtils {
         String[] components = TextUtils.PATTERN_FILEPATH_SLASH.split(resource);
         return components[components.length - 1];
     }
-
-
 }
 

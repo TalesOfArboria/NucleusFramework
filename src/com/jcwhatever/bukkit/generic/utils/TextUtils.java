@@ -115,7 +115,6 @@ public class TextUtils {
         }
     }
 
-
     /**
      * Determine if a string is valid for use as a name.
      * The string must begin with a letter and use only
@@ -560,7 +559,6 @@ public class TextUtils {
         }
 
         return items.toArray(new String[items.size()]);
-
     }
 
     /**
@@ -585,7 +583,6 @@ public class TextUtils {
         }
 
         return items.toArray(new String[items.size()]);
-
     }
 
 
@@ -614,7 +611,6 @@ public class TextUtils {
         }
 
         return items.toArray(new String[items.size()]);
-
     }
 
     /**
@@ -849,8 +845,6 @@ public class TextUtils {
         return msg;
     }
 
-
-
     public enum TextColor {
         AQUA           (true,  'b', "\\{AQUA}"),
         BLACK          (true,  '0', "\\{BLACK}"),
@@ -967,7 +961,6 @@ public class TextUtils {
 
     }
 
-
     /**
      * Used to hold custom text formatting information
      */
@@ -1009,9 +1002,5 @@ public class TextUtils {
             }
         }
     }
-
-
-
-
 }
 

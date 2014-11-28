@@ -130,7 +130,6 @@ public class LocationUtils {
         return location.add(noiseX, noiseY, noiseZ);
     }
 
-
     /**
      * Determine if 2 locations can be considered the same using the specified
      * precision. The precision is used as: location1 is about the same as location2 +/- precision.
@@ -412,7 +411,4 @@ public class LocationUtils {
             return null;
         }
     }
-
-
-
 }

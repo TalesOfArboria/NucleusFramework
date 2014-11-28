@@ -298,6 +298,4 @@ public class SignUtils {
 
         return (state instanceof Sign) ? (Sign)state : null;
     }
-
-
 }

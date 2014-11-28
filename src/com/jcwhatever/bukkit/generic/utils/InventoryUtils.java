@@ -595,8 +595,6 @@ public class InventoryUtils {
         return true;
     }
 
-
-
     private static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int totalRequired) {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
@@ -625,7 +623,6 @@ public class InventoryUtils {
         return totalSpace;
     }
 
-
     private static int count (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
 
         int count = 0;
@@ -643,7 +640,6 @@ public class InventoryUtils {
 
         return count;
     }
-
 
     private static int count (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
 
@@ -671,6 +667,4 @@ public class InventoryUtils {
 
         return count;
     }
-
-
 }
