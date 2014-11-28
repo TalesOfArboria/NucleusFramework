@@ -23,9 +23,11 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.inventory;
+package com.jcwhatever.bukkit.generic.events.bukkit.kits;
 
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
+import com.jcwhatever.bukkit.generic.inventory.Kit;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

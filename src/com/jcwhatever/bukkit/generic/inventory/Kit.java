@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.inventory;
 
+import com.jcwhatever.bukkit.generic.events.bukkit.kits.GiveKitEvent;
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
