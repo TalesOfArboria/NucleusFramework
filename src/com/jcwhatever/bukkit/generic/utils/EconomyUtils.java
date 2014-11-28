@@ -45,14 +45,14 @@ import javax.annotation.Nullable;
  * via Vault plugin.
  */
 public class EconomyUtils {
+
+    private EconomyUtils() {}
+
     private static boolean _hasEconomy = false;
     private static Object _econ;
 
     static {
         init();
-    }
-
-    private EconomyUtils() {
     }
 
     /**
@@ -113,7 +113,6 @@ public class EconomyUtils {
         //noinspection ConstantConditions
         return getEconomy().getBalance(playerName);
     }
-
 
     /**
      * Get a players balance as a formatted string.
