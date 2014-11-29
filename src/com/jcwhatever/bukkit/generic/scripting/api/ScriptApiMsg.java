@@ -105,7 +105,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tell(p, message, params);
+            Messenger.tell(LineWrapping.DISABLED, null, p, message, params);
         }
 
         /**
@@ -124,7 +124,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tellNoSpam(_plugin, p, timeout, message, params);
+            Messenger.tellNoSpam(LineWrapping.DISABLED, _plugin, p, timeout, message, params);
         }
 
         /**
@@ -144,7 +144,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tellNoSpam(null, p, timeout, message, params);
+            Messenger.tellNoSpam(LineWrapping.DISABLED, null, p, timeout, message, params);
         }
 
         /**
