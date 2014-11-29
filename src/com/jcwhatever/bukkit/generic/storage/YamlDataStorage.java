@@ -269,10 +269,10 @@ public class YamlDataStorage implements IDataNode {
     @Override
     public boolean save() {
 
-        if (_batch.isRunning())
-            return false;
-
         synchronized (_sync) {
+
+            if (_batch.isRunning())
+                return false;
 
             boolean isSaved;
             try {
@@ -342,35 +342,44 @@ public class YamlDataStorage implements IDataNode {
             return;
         }
 
-        _saveTask = Scheduler.runTaskLater(_plugin, 5, new Runnable() {
-            @Override
-            public void run() {
+        if (_plugin.isEnabled()) {
 
-                _saveTask = null;
+            _saveTask = Scheduler.runTaskLater(_plugin, 5, new Runnable() {
+                @Override
+                public void run() {
 
-                // save data node on alternate thread
-                Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
+                    _saveTask = null;
 
-                    @Override
-                    public void run() {
+                    // save data node on alternate thread
+                    Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
 
-                        final boolean isSaved = save();
+                        @Override
+                        public void run() {
 
-                        if (saveHandler != null) {
-                            // return results on main thread
-                            Scheduler.runTaskSync(_plugin, new Runnable() {
+                            final boolean isSaved = save();
 
-                                @Override
-                                public void run() {
+                            if (saveHandler != null) {
+                                // return results on main thread
+                                Scheduler.runTaskSync(_plugin, new Runnable() {
 
-                                    saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
-                                }
-                            });
+                                    @Override
+                                    public void run() {
+
+                                        saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
+                                    }
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                }
+            });
+        }
+        else {
+            boolean isSaved = save();
+            if (saveHandler != null) {
+                saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
             }
-        });
+        }
     }
 
     @Override
