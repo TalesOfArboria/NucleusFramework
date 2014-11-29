@@ -154,11 +154,14 @@ public class YamlDataNode implements IDataNode {
     @Override
     public boolean hasNode(String nodePath) {
 
-        return _storage.hasNode(_path + nodePath);
+        return _storage.hasNode(getFullPath(nodePath));
     }
 
     @Override
     public IDataNode getNode(String nodePath) {
+
+        if (nodePath.isEmpty())
+            return this;
 
         return new YamlDataNode(_storage, _path + nodePath);
     }
@@ -172,7 +175,7 @@ public class YamlDataNode implements IDataNode {
     @Override
     public Set<String> getSubNodeNames(String nodePath) {
 
-        return _storage.getSubNodeNames(_path + nodePath);
+        return _storage.getSubNodeNames(getFullPath(nodePath));
     }
 
     @Override
@@ -193,13 +196,13 @@ public class YamlDataNode implements IDataNode {
     @Override
     public void remove(String nodePath) {
 
-        _storage.remove(_path + nodePath);
+        _storage.remove(getFullPath(nodePath));
     }
 
     @Override
     public boolean set(String keyPath, Object value) {
 
-        return _storage.set(_path + keyPath, value);
+        return _storage.set(getFullPath(keyPath), value);
     }
 
     @Override
@@ -210,145 +213,145 @@ public class YamlDataNode implements IDataNode {
     @Override
     public Object get(String keyPath) {
 
-        return _storage.get(_path + keyPath);
+        return _storage.get(getFullPath(keyPath));
     }
 
     @Nullable
     @Override
     public Object get(String keyPath, DataType type) {
-        return _storage.get(_path + keyPath, type);
+        return _storage.get(getFullPath(keyPath), type);
     }
 
     @Override
     public int getInteger(String keyPath) {
 
-        return _storage.getInteger(_path + keyPath);
+        return _storage.getInteger(getFullPath(keyPath));
     }
 
     @Override
     public int getInteger(String keyPath, int def) {
 
-        return _storage.getInteger(_path + keyPath, def);
+        return _storage.getInteger(getFullPath(keyPath), def);
     }
 
     @Override
     public long getLong(String keyPath) {
 
-        return _storage.getLong(_path + keyPath);
+        return _storage.getLong(getFullPath(keyPath));
     }
 
     @Override
     public long getLong(String keyPath, long def) {
 
-        return _storage.getLong(_path + keyPath, def);
+        return _storage.getLong(getFullPath(keyPath), def);
     }
 
     @Override
     public double getDouble(String keyPath) {
 
-        return _storage.getDouble(_path + keyPath);
+        return _storage.getDouble(getFullPath(keyPath));
     }
 
     @Override
     public double getDouble(String keyPath, double def) {
 
-        return _storage.getDouble(_path + keyPath, def);
+        return _storage.getDouble(getFullPath(keyPath), def);
     }
 
     @Override
     public boolean getBoolean(String keyPath) {
 
-        return _storage.getBoolean(_path + keyPath);
+        return _storage.getBoolean(getFullPath(keyPath));
     }
 
     @Override
     public boolean getBoolean(String keyPath, boolean def) {
 
-        return _storage.getBoolean(_path + keyPath, def);
+        return _storage.getBoolean(getFullPath(keyPath), def);
     }
 
     @Override
     public String getString(String keyPath) {
 
-        return _storage.getString(_path + keyPath);
+        return _storage.getString(getFullPath(keyPath));
     }
 
     @Override
     public String getString(String keyPath, String def) {
 
-        return _storage.getString(_path + keyPath, def);
+        return _storage.getString(getFullPath(keyPath), def);
     }
 
     @Override
     public UUID getUUID(String keyPath) {
 
-        return _storage.getUUID(_path + keyPath, null);
+        return _storage.getUUID(getFullPath(keyPath), null);
     }
 
     @Override
     public UUID getUUID(String keyPath, UUID def) {
 
-        return _storage.getUUID(_path + keyPath, def);
+        return _storage.getUUID(getFullPath(keyPath), def);
     }
 
     @Override
     public Location getLocation(String keyPath) {
 
-        return _storage.getLocation(_path + keyPath);
+        return _storage.getLocation(getFullPath(keyPath));
     }
 
     @Override
     public Location getLocation(String keyPath, Location def) {
 
-        return _storage.getLocation(_path + keyPath, def);
+        return _storage.getLocation(getFullPath(keyPath), def);
     }
 
     @Nullable
     @Override
     public String getLocationWorldName(String keyPath) {
-        return _storage.getLocationWorldName(_path + keyPath);
+        return _storage.getLocationWorldName(getFullPath(keyPath));
     }
 
     @Override
     public ItemStack[] getItemStacks(String keyPath) {
 
-        return _storage.getItemStacks(_path + keyPath);
+        return _storage.getItemStacks(getFullPath(keyPath));
     }
 
     @Override
     public ItemStack[] getItemStacks(String keyPath, ItemStack def) {
 
-        return _storage.getItemStacks(_path + keyPath, def);
+        return _storage.getItemStacks(getFullPath(keyPath), def);
     }
 
     @Override
     public ItemStack[] getItemStacks(String keyPath, ItemStack[] def) {
 
-        return _storage.getItemStacks(_path + keyPath, def);
+        return _storage.getItemStacks(getFullPath(keyPath), def);
     }
 
     @Override
     public <T extends Enum<T>> T getEnum(String keyPath, Class<T> enumClass) {
 
-        return _storage.getEnum(_path + keyPath, null, enumClass);
+        return _storage.getEnum(getFullPath(keyPath), null, enumClass);
     }
 
     @Override
     public <T extends Enum<T>> T getEnum(String keyPath, T def, Class<T> enumClass) {
 
-        return _storage.getEnum(_path + keyPath, def, enumClass);
+        return _storage.getEnum(getFullPath(keyPath), def, enumClass);
     }
 
     @Override
     public Enum<?> getEnumGeneric(String keyPath, Enum<?> def, Class<? extends Enum<?>> enumClass) {
 
-        return _storage.getEnumGeneric(_path + keyPath, def, enumClass);
+        return _storage.getEnumGeneric(getFullPath(keyPath), def, enumClass);
     }
 
     @Override
     public List<String> getStringList(String keyPath, List<String> def) {
 
-        return _storage.getStringList(_path + keyPath, def);
+        return _storage.getStringList(getFullPath(keyPath), def);
     }
 
     @Override
@@ -366,6 +369,13 @@ public class YamlDataNode implements IDataNode {
     public void assertNodes(File defaultConfig) {
 
         _storage.assertNodes(defaultConfig, _path);
+    }
+
+    private String getFullPath(String relativePath) {
+        if (relativePath.isEmpty())
+            return _rawPath;
+
+        return _path + relativePath;
     }
 
 }
