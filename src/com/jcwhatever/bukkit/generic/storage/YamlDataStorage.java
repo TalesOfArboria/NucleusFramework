@@ -300,7 +300,7 @@ public class YamlDataStorage implements IDataNode {
             final boolean saveResult = isSaved;
 
             // return results on main thread
-            Scheduler.runTaskLater(_plugin, new Runnable() {
+            Scheduler.runTaskSync(_plugin, new Runnable() {
 
                 @Override
                 public void run() {
