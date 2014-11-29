@@ -32,7 +32,6 @@ import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -53,19 +52,14 @@ class BukkitListener implements Listener {
 
     void register(FloatingItem item) {
         PreCon.notNull(item);
-        PreCon.notNull(item.getEntity());
 
-        _floatingItems.put(item.getEntity().getUniqueId(), item);
+        _floatingItems.put(item.getUniqueId(), item);
     }
 
     void unregister(FloatingItem item) {
         PreCon.notNull(item);
 
-        Entity entity = item.getEntity();
-
-        if (entity != null) {
-            _floatingItems.remove(entity.getUniqueId());
-        }
+        _floatingItems.remove(item.getUniqueId());
     }
 
 

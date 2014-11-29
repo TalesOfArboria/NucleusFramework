@@ -30,9 +30,10 @@ import com.jcwhatever.bukkit.generic.events.bukkit.floatingitems.FloatingItemDes
 import com.jcwhatever.bukkit.generic.events.bukkit.floatingitems.FloatingItemSpawnEvent;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.jcwhatever.bukkit.generic.utils.EntityUtils;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.entity.EntityUtils;
+import com.jcwhatever.bukkit.generic.utils.entity.TrackedEntity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,10 +60,13 @@ public class FloatingItem implements IDisposable {
     private final ItemStack _item;
     private final IDataNode _dataNode;
 
+
+    private UUID _entityId;
+    private TrackedEntity _trackedEntity;
     private boolean _canPickup;
     private int _respawnTimeSeconds = 20;
     private boolean _isSpawned;
-    private Entity _entity;
+
     private boolean _isDisposed;
     private Location _currentLocation;
 
@@ -134,13 +138,20 @@ public class FloatingItem implements IDisposable {
     }
 
     /**
+     * Get the entities unique id.
+     */
+    public UUID getUniqueId() {
+        return _entityId;
+    }
+
+    /**
      * Get the current item entity.
      *
      * @return  Null if not spawned.
      */
     @Nullable
     public Entity getEntity() {
-        return _entity;
+        return _trackedEntity.getEntity();
     }
 
     /**
@@ -253,20 +264,23 @@ public class FloatingItem implements IDisposable {
                 LocationUtils.getBlockLocation(_currentLocation)).add(0, 0.5, 0);
 
         // spawn item entity
-        _entity = _currentLocation.getWorld().dropItem(spawnLocation, _item.clone());
-        _entity.setVelocity(new Vector(0, 0, 0));
+        Entity entity = _currentLocation.getWorld().dropItem(spawnLocation, _item.clone());
+        _trackedEntity = EntityUtils.trackEntity(entity);
+        _entityId = entity.getUniqueId();
+        entity.setVelocity(new Vector(0, 0, 0));
 
         // register entity
         _listener.register(this);
 
         // prevent stack merging
-        ItemMeta meta = ((Item)_entity).getItemStack().getItemMeta();
-        meta.setDisplayName(UUID.randomUUID().toString());
-        ((Item)_entity).getItemStack().setItemMeta(meta);
+        Item item = (Item)entity;
+        ItemMeta meta = item.getItemStack().getItemMeta();
+        meta.setDisplayName(_entityId.toString());
+        item.getItemStack().setItemMeta(meta);
 
         if (_dataNode != null) {
             _dataNode.set("is-spawned", true);
-            _dataNode.set("entity-id", _entity.getUniqueId());
+            _dataNode.set("entity-id", _entityId);
             _dataNode.saveAsync(null);
         }
 
@@ -282,8 +296,11 @@ public class FloatingItem implements IDisposable {
      * Despawn the floating item entity.
      */
     public boolean despawn() {
-        if (_entity == null)
+
+        if (_trackedEntity == null)
             return true;
+
+        Entity entity = _trackedEntity.getEntity();
 
         FloatingItemDespawnEvent event = new FloatingItemDespawnEvent(this);
 
@@ -296,8 +313,10 @@ public class FloatingItem implements IDisposable {
 
         _isSpawned = false;
 
-        _entity.remove();
-        _entity = null;
+        entity.remove();
+        _trackedEntity.dispose();
+        _trackedEntity = null;
+        _entityId = null;
 
         if (_dataNode != null) {
             _dataNode.set("is-spawned", false);
@@ -449,15 +468,20 @@ public class FloatingItem implements IDisposable {
         _currentLocation = _dataNode.getLocation("location", _currentLocation);
 
         if (_currentLocation != null) {
-            UUID entityId = _dataNode.getUUID("entity-id");
-            if (entityId != null) {
+            _entityId = _dataNode.getUUID("entity-id");
+            if (_entityId != null) {
 
-                _entity = EntityUtils.getEntityByUUID(_currentLocation.getChunk(), entityId);
-                if (_entity != null && !_isSpawned) {
+                Entity entity = EntityUtils.getEntityByUUID(_currentLocation.getChunk(), _entityId);
+
+                if (entity != null) {
+                    _trackedEntity = EntityUtils.trackEntity(entity);
+                }
+
+                if (entity != null && !_isSpawned) {
                     despawn();
-                } else if (_entity == null && _isSpawned) {
+                } else if (entity == null && _isSpawned) {
                     spawn(_currentLocation);
-                } else if (_entity != null) {
+                } else if (entity != null) {
                     _listener.register(this);
                 }
             }
@@ -466,8 +490,13 @@ public class FloatingItem implements IDisposable {
         onLoadSettings(_dataNode);
     }
 
+    private void setTrackedEntity(Entity entity) {
+        _trackedEntity = EntityUtils.trackEntity(entity);
+    }
 
     public static interface PickupHandler {
         void onPickup(Player p, FloatingItem item, boolean isCancelled);
     }
+
+
 }

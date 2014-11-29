@@ -23,7 +23,10 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.utils;
+package com.jcwhatever.bukkit.generic.utils.entity;
+
+import com.jcwhatever.bukkit.generic.utils.EntryValidator;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -42,6 +45,8 @@ import javax.annotation.Nullable;
 public class EntityUtils {
 
     private EntityUtils() {}
+
+    static EntityTracker _entityTracker;
 
     /**
      * Find an entity in a world by its integer ID.
@@ -303,5 +308,26 @@ public class EntityUtils {
         }
 
         return closest;
+    }
+
+    /**
+     * Returns a {@code TrackedEntity} object that automatically updates the encapsulated entity.
+     *
+     * <p>This is used when an entity reference needs to be kept. Entity references are changed
+     * whenever the entity is in a chunk that loads/unloads. The entity id can change and references
+     * become outdated and no longer represent the intended entity.</p>
+     *
+     * <p>The {@code TrackedEntity} object ensures you have the latest instance of an entity.</p>
+     *
+     * @param entity  The entity to track.
+     */
+    public static TrackedEntity trackEntity(Entity entity) {
+        PreCon.notNull(entity);
+
+        if (_entityTracker == null) {
+            _entityTracker = new EntityTracker();
+        }
+
+        return _entityTracker.trackEntity(entity);
     }
 }
