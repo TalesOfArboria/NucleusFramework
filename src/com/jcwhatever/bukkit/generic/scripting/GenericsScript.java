@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -32,7 +33,6 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 /**
@@ -40,7 +40,6 @@ import javax.script.ScriptException;
  */
 public class GenericsScript implements IScript {
 
-    private final GenericsScriptManager _manager;
     private final String _name;
     private final String _filename;
     private final String _type;
@@ -49,33 +48,16 @@ public class GenericsScript implements IScript {
     /**
      * Constructor.
      *
-     * <p>Is evaluated with the global engine manager.</p>
-     *
-     * @param name    The name of the script.
-     * @param type    The script type.
-     * @param script  The script source.
-     */
-    public GenericsScript(String name, @Nullable String filename, String type, String script) {
-        this(null, name, filename, type, script);
-    }
-
-
-    /**
-     * Constructor.
-     *
-     * @param manager   The scripts owning manager. Script engine from manager is used.
      * @param name      The name of the script.
      * @param filename  The name of the file the script is from.
      * @param type      The script type.
      * @param script    The script source.
      */
-    public GenericsScript(@Nullable GenericsScriptManager manager,
-                          String name, @Nullable String filename, String type, String script) {
+    public GenericsScript(String name, @Nullable String filename, String type, String script) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNullOrEmpty(type);
         PreCon.notNull(script);
 
-        _manager = manager;
         _name = name;
         _filename = filename;
         _type = type;
@@ -142,11 +124,7 @@ public class GenericsScript implements IScript {
      */
     @Nullable
     protected ScriptEngine getScriptEngine() {
-        ScriptEngineManager engineManager = _manager != null
-                ? _manager.getEngineManager()
-                : ScriptHelper.getGlobalEngineManager();
-
-        return engineManager.getEngineByExtension(getType());
+        return GenericsLib.getScriptEngineManager().getEngineByExtension(getType());
     }
 
     /**

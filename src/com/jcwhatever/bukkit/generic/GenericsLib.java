@@ -27,12 +27,13 @@ package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
-import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
+import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.regions.RegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
+import com.jcwhatever.bukkit.generic.scripting.GenericsScriptEngineManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.entity.EntityType;
@@ -42,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
+import javax.script.ScriptEngineManager;
 
 /**
  * GenericsLib Bukkit plugin.
@@ -56,6 +58,7 @@ public class GenericsLib extends GenericsPlugin {
     private RegionManager _regionManager;
     private EntityEquipperManager _equipperManager;
     private ITaskScheduler _scheduler;
+    private ScriptEngineManager _scriptEngineManager;
 
     /**
      * Get the {@code GenericsLib} plugin instance.
@@ -134,6 +137,13 @@ public class GenericsLib extends GenericsPlugin {
     }
 
     /**
+     * Get the default script engine manager.
+     */
+    public static ScriptEngineManager getScriptEngineManager() {
+        return _instance._scriptEngineManager;
+    }
+
+    /**
      * Get an entity equipper from the default entity equipper manager
      * for the specified entity type.
      *
@@ -172,6 +182,7 @@ public class GenericsLib extends GenericsPlugin {
     protected void onEnablePlugin() {
 
         _scheduler = new BukkitTaskScheduler();
+        _scriptEngineManager = new GenericsScriptEngineManager();
         _regionManager = new RegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
         _equipperManager = new EntityEquipperManager();

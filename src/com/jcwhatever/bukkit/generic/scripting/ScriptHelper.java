@@ -26,9 +26,9 @@
 package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
-import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiEvents;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiDepends;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiEconomy;
+import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiEvents;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiInclude;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiInventory;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiItemBank;
@@ -54,7 +54,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 /**
@@ -65,18 +64,6 @@ public class ScriptHelper {
     private ScriptHelper() {}
 
     private static final Pattern PATTERN_LEADING_DOT = Pattern.compile("^\\.");
-
-    private static ScriptEngineManager _globalScriptEngineManager;
-
-    /**
-     * Get the global script engine manager.
-     */
-    public static ScriptEngineManager getGlobalEngineManager() {
-        if (_globalScriptEngineManager == null)
-            _globalScriptEngineManager = new ScriptEngineManager();
-
-        return _globalScriptEngineManager;
-    }
 
     /**
      * Get new instances of the default Generics API
@@ -103,18 +90,6 @@ public class ScriptHelper {
             api.add(new ScriptApiInclude(plugin, manager));
 
         return api;
-    }
-
-    /**
-     * Get a script engine for the script.
-     *
-     * @param script  The script to get a script engine for.
-     *
-     * @return  Null if a script engine could not be found for the script type.
-     */
-    @Nullable
-    public static ScriptEngine getNewScriptEngine(IScript script) {
-        return getGlobalEngineManager().getEngineByExtension(script.getType());
     }
 
     /**

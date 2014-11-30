@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.scripting.ScriptHelper.ScriptConstructor;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -49,7 +50,6 @@ public class GenericsScriptManager {
     // i.e. dir1.dir2.scriptName
     private final Map<String, IScript> _scripts = new HashMap<>(25);
     private final Plugin _plugin;
-    private final ScriptEngineManager _engineManager;
     private ScriptConstructor<IScript> _scriptConstructor;
 
     /**
@@ -57,9 +57,8 @@ public class GenericsScriptManager {
      *
      * @param plugin  The owning plugin.
      */
-    public GenericsScriptManager(Plugin plugin, ScriptEngineManager engineManager) {
+    public GenericsScriptManager(Plugin plugin) {
         _plugin = plugin;
-        _engineManager = engineManager;
     }
 
     /**
@@ -73,7 +72,7 @@ public class GenericsScriptManager {
      * Get the script engine manager.
      */
     public ScriptEngineManager getEngineManager() {
-        return _engineManager;
+        return GenericsLib.getScriptEngineManager();
     }
 
     /**
@@ -89,7 +88,7 @@ public class GenericsScriptManager {
             return new ArrayList<>(0);
 
         List<IScript> scripts = ScriptHelper.loadScripts(getPlugin(),
-                _engineManager, scriptFolder, traversal, getScriptConstructor());
+                getEngineManager(), scriptFolder, traversal, getScriptConstructor());
 
         for (IScript script : scripts) {
             addScript(script);
@@ -159,11 +158,10 @@ public class GenericsScriptManager {
     public ScriptConstructor<IScript> getScriptConstructor() {
 
         if (_scriptConstructor == null) {
-            final GenericsScriptManager manager = this;
             _scriptConstructor = new ScriptConstructor<IScript>() {
                 @Override
                 public IScript construct(String name, @Nullable String filename, String type, String script) {
-                    return new GenericsScript(manager, name, filename, type, script);
+                    return new GenericsScript(name, filename, type, script);
                 }
             };
         }

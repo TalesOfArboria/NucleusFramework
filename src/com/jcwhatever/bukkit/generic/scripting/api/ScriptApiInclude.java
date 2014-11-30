@@ -90,7 +90,7 @@ public class ScriptApiInclude extends GenericsScriptApi {
                 File file = new File(libsDir, fileName);
                 if (file.exists()) {
 
-                    IScript script = ScriptHelper.loadScript(scriptsDir, file, _manager.getScriptConstructor());
+                    IScript script = ScriptHelper.loadScript(getPlugin(), scriptsDir, file, _manager.getScriptConstructor());
 
                     if (script != null)
                         scripts.add(script);
