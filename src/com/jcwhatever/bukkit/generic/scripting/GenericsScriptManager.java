@@ -28,15 +28,16 @@ package com.jcwhatever.bukkit.generic.scripting;
 import com.jcwhatever.bukkit.generic.scripting.ScriptHelper.ScriptConstructor;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
-import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
+import javax.script.ScriptEngineManager;
 
 /**
  * Manages scripts.
@@ -87,7 +88,7 @@ public class GenericsScriptManager {
         if (!scriptFolder.exists())
             return new ArrayList<>(0);
 
-        List<IScript> scripts = ScriptHelper.loadScripts(
+        List<IScript> scripts = ScriptHelper.loadScripts(getPlugin(),
                 _engineManager, scriptFolder, traversal, getScriptConstructor());
 
         for (IScript script : scripts) {
@@ -161,8 +162,8 @@ public class GenericsScriptManager {
             final GenericsScriptManager manager = this;
             _scriptConstructor = new ScriptConstructor<IScript>() {
                 @Override
-                public IScript construct(String name, String type, String script) {
-                    return new GenericsScript(manager, name, type, script);
+                public IScript construct(String name, @Nullable String filename, String type, String script) {
+                    return new GenericsScript(manager, name, filename, type, script);
                 }
             };
         }

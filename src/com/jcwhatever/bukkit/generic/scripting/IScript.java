@@ -27,8 +27,8 @@ package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
+import javax.annotation.Nullable;
 
 /**
  * A data object that holds information and source for a script.
@@ -39,6 +39,14 @@ public interface IScript {
      * Get the name of the script.
      */
     String getName();
+
+    /**
+     * Get the name of the script file.
+     *
+     * @return Null if script is not from a file.
+     */
+    @Nullable
+    String getFilename();
 
     /**
      * Get the script source.

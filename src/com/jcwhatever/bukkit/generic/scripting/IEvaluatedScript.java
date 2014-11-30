@@ -26,8 +26,10 @@
 package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
+import com.sun.istack.internal.Nullable;
 
 import java.util.List;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 /**
@@ -51,6 +53,11 @@ public interface IEvaluatedScript {
     List<IScriptApi> getScriptApi();
 
     /**
+     * Get the script context.
+     */
+    ScriptContext getContext();
+
+    /**
      * Add a script api.
      */
     void addScriptApi(IScriptApi scriptApi, String variableName);
@@ -63,14 +70,28 @@ public interface IEvaluatedScript {
      *
      * @return  Object returned by the function.
      */
+    @Nullable
     Object invokeFunction(String functionName, Object... parameters) throws NoSuchMethodException;
 
     /**
      * Evaluate a script into the evaluated script.
      *
+     * <p>Uses the engine context.</p>
+     *
      * @param script  The script to evaluated.
      */
+    @Nullable
     Object evaluate(IScript script);
+
+    /**
+     * Evaluate a script into the evaluated script
+     * using a custom context.
+     *
+     * @param script   The script to evaluated.
+     * @param context  The context to use.
+     */
+    @Nullable
+    Object evaluate(IScript script, ScriptContext context);
 
     /**
      * Reset all API's.

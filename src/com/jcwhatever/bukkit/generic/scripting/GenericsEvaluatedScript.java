@@ -38,8 +38,10 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.script.Invocable;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 
 /**
  * Generics default {@code IEvaluatedScript} implementation.
@@ -50,6 +52,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
 
     private final IScript _parentScript;
     private final ScriptEngine _engine;
+    private ScriptContext _context;
     private final Map<String, IScriptApi> _scriptApis;
     private final Set<Class<? extends IScriptApi>> _included;
     private final List<IScriptApiObject> _apiObjects = new ArrayList<>(25);
@@ -104,6 +107,14 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     }
 
     @Override
+    public ScriptContext getContext() {
+        if (_context == null) {
+            _context = createContext();
+        }
+        return _context;
+    }
+
+    @Override
     public void addScriptApi(IScriptApi scriptApi, String variableName) {
         PreCon.notNull(scriptApi);
         PreCon.notNullOrEmpty(variableName);
@@ -118,8 +129,8 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         _included.add(scriptApi.getClass());
 
         IScriptApiObject apiObject = scriptApi.getApiObject(this);
-
-        _engine.put(variableName, apiObject);
+        getContext().setAttribute(variableName, apiObject, ScriptContext.ENGINE_SCOPE);
+        //_engine.put(variableName, apiObject);
         _apiObjects.add(apiObject);
     }
 
@@ -155,9 +166,26 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     @Override
     @Nullable
     public Object evaluate(IScript script) {
+        return evaluate(script, getContext());
+    }
+
+    /**
+     * Evaluate another script into the scripts engine
+     * using a custom context.
+     *
+     * @param script   The script to evaluated.
+     * @param context  The context to use.
+     */
+    @Override
+    @Nullable
+    public Object evaluate(IScript script, ScriptContext context) {
+
+        if (script.getFilename() != null) {
+            _engine.put(ScriptEngine.FILENAME, script.getFilename());
+        }
 
         try {
-            return _engine.eval(script.getScript());
+            return _engine.eval(script.getScript(), context);
         } catch (ScriptException e) {
             e.printStackTrace();
             return null;
@@ -179,5 +207,12 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         for (IScriptApiObject api : _apiObjects) {
             api.reset();
         }
+    }
+
+    /**
+     * Called to get a context for the script.
+     */
+    protected ScriptContext createContext() {
+        return new SimpleScriptContext();
     }
 }

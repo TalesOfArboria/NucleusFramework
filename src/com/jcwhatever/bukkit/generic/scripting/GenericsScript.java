@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.util.Collection;
 import javax.annotation.Nullable;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -41,6 +42,7 @@ public class GenericsScript implements IScript {
 
     private final GenericsScriptManager _manager;
     private final String _name;
+    private final String _filename;
     private final String _type;
     private final String _script;
 
@@ -53,26 +55,29 @@ public class GenericsScript implements IScript {
      * @param type    The script type.
      * @param script  The script source.
      */
-    public GenericsScript(String name, String type, String script) {
-        this(null, name, type, script);
+    public GenericsScript(String name, @Nullable String filename, String type, String script) {
+        this(null, name, filename, type, script);
     }
 
 
     /**
      * Constructor.
      *
-     * @param manager  The scripts owning manager. Script engine from manager is used.
-     * @param name     The name of the script.
-     * @param type     The script type.
-     * @param script   The script source.
+     * @param manager   The scripts owning manager. Script engine from manager is used.
+     * @param name      The name of the script.
+     * @param filename  The name of the file the script is from.
+     * @param type      The script type.
+     * @param script    The script source.
      */
-    public GenericsScript(@Nullable GenericsScriptManager manager, String name, String type, String script) {
+    public GenericsScript(@Nullable GenericsScriptManager manager,
+                          String name, @Nullable String filename, String type, String script) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNullOrEmpty(type);
         PreCon.notNull(script);
 
         _manager = manager;
         _name = name;
+        _filename = filename;
         _type = type;
         _script = script;
     }
@@ -83,6 +88,12 @@ public class GenericsScript implements IScript {
     @Override
     public String getName() {
         return _name;
+    }
+
+    @Nullable
+    @Override
+    public String getFilename() {
+        return _filename;
     }
 
     /**
@@ -117,7 +128,7 @@ public class GenericsScript implements IScript {
 
         IEvaluatedScript script = instantiateEvaluatedScript(engine, apiCollection);
 
-        if (!eval(engine)) {
+        if (!eval(engine, script.getContext())) {
             return null;
         }
 
@@ -152,14 +163,19 @@ public class GenericsScript implements IScript {
     /**
      * Called to evaluate the script into the specified engine.
      *
-     * @param engine  The engine to evaluate the script into.
+     * @param engine   The engine to evaluate the script into.
+     * @param context  The script context.
      *
      * @return Null if evaluation failed.
      */
-    protected boolean eval(ScriptEngine engine) {
+    protected boolean eval(ScriptEngine engine, ScriptContext context) {
+
+        if (_filename != null)
+            engine.put(ScriptEngine.FILENAME, _filename);
+
         try {
             // evaluate script
-            engine.eval(getScript());
+            engine.eval(getScript(), context);
 
             return true;
 
