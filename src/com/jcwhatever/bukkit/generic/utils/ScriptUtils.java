@@ -23,8 +23,10 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.scripting;
+package com.jcwhatever.bukkit.generic.utils;
 
+import com.jcwhatever.bukkit.generic.scripting.GenericsScriptManager;
+import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiDepends;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiEconomy;
@@ -38,10 +40,7 @@ import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiPermissions;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiRand;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiScheduler;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiSounds;
-import com.jcwhatever.bukkit.generic.utils.FileUtils;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
 
 import org.bukkit.plugin.Plugin;
 
@@ -59,9 +58,9 @@ import javax.script.ScriptEngineManager;
 /**
  * Script utilities.
  */
-public class ScriptHelper {
+public class ScriptUtils {
 
-    private ScriptHelper() {}
+    private ScriptUtils() {}
 
     private static final Pattern PATTERN_LEADING_DOT = Pattern.compile("^\\.");
 

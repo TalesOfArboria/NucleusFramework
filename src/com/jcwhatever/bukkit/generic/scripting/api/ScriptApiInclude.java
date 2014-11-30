@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
-import com.jcwhatever.bukkit.generic.scripting.ScriptHelper;
+import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
@@ -90,7 +90,7 @@ public class ScriptApiInclude extends GenericsScriptApi {
                 File file = new File(libsDir, fileName);
                 if (file.exists()) {
 
-                    IScript script = ScriptHelper.loadScript(getPlugin(), scriptsDir, file, _manager.getScriptConstructor());
+                    IScript script = ScriptUtils.loadScript(getPlugin(), scriptsDir, file, _manager.getScriptConstructor());
 
                     if (script != null)
                         scripts.add(script);

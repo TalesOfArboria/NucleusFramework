@@ -26,7 +26,8 @@
 package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.scripting.ScriptHelper.ScriptConstructor;
+import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
+import com.jcwhatever.bukkit.generic.utils.ScriptUtils.ScriptConstructor;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -87,7 +88,7 @@ public class GenericsScriptManager {
         if (!scriptFolder.exists())
             return new ArrayList<>(0);
 
-        List<IScript> scripts = ScriptHelper.loadScripts(getPlugin(),
+        List<IScript> scripts = ScriptUtils.loadScripts(getPlugin(),
                 getEngineManager(), scriptFolder, traversal, getScriptConstructor());
 
         for (IScript script : scripts) {
