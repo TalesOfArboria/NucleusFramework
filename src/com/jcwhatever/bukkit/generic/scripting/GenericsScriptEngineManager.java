@@ -61,8 +61,6 @@ public class GenericsScriptEngineManager extends ScriptEngineManager {
         return engine;
     }
 
-
-
     @Override
     @Nullable
     public ScriptEngine getEngineByExtension(String extension) {

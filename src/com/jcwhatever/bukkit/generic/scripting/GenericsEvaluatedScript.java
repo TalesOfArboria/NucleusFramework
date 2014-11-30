@@ -130,7 +130,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
 
         IScriptApiObject apiObject = scriptApi.getApiObject(this);
         getContext().setAttribute(variableName, apiObject, ScriptContext.ENGINE_SCOPE);
-        //_engine.put(variableName, apiObject);
+
         _apiObjects.add(apiObject);
     }
 
