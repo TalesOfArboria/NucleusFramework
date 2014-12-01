@@ -27,9 +27,11 @@ package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -241,7 +243,10 @@ public class HashSetMap<K, V> implements Map<K, V> {
     /**
      * Remove a value from the set associated with the key.
      *
-     * @param key  The key.
+     * @param key    The key.
+     * @param value  The value.
+     *
+     * @return  True if the collection is modified.
      */
     public boolean removeValue(Object key, V value) {
         PreCon.notNull(key);
@@ -254,11 +259,36 @@ public class HashSetMap<K, V> implements Map<K, V> {
         }
 
         if (set.isEmpty()) {
+            //noinspection SuspiciousMethodCalls
             _map.remove(key);
             return false;
         }
 
         return set.remove(value);
+    }
+
+    /**
+     * Remove a value from all sets.
+     *
+     * @param value  The value.
+     *
+     * @return  True if the collection is modified.
+     */
+    public boolean removeValue(V value) {
+        PreCon.notNull(value);
+
+        boolean isModified = false;
+
+        List<Entry<K, Set<V>>> entries = new ArrayList<>(_map.entrySet());
+
+        for (Entry<K, Set<V>> entry : entries) {
+            isModified = isModified || entry.getValue().remove(value);
+            if (entry.getValue().isEmpty()) {
+                _map.remove(entry.getKey());
+            }
+        }
+
+        return isModified;
     }
 
     /**
