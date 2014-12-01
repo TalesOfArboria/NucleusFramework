@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.items.bank;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.TimedMap;
+import com.jcwhatever.bukkit.generic.collections.TimedHashMap;
 import com.jcwhatever.bukkit.generic.performance.SingleCache;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
@@ -45,7 +45,7 @@ import java.util.UUID;
 public class ItemBankManager {
 
     private static final int CACHE_DURATION = 20 * 60 * 5; // 5 minutes
-    private static TimedMap<UUID, ItemBankAccount> _recentAccounts = new TimedMap<UUID, ItemBankAccount>();
+    private static TimedHashMap<UUID, ItemBankAccount> _recentAccounts = new TimedHashMap<UUID, ItemBankAccount>();
     private static SingleCache<UUID, ItemBankAccount> _accountCache = new SingleCache<UUID, ItemBankAccount>();
 
     private ItemBankManager() {}

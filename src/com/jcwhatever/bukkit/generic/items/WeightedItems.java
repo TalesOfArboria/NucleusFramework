@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.items;
 
-import com.jcwhatever.bukkit.generic.collections.WeightedList;
+import com.jcwhatever.bukkit.generic.collections.WeightedArrayList;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -39,7 +39,7 @@ import java.util.Map;
  * is used to affect the outcome of randomly choosing from the list
  * using the {@code getRandom} method.
  */
-public class WeightedItems extends WeightedList<ItemStack> {
+public class WeightedItems extends WeightedArrayList<ItemStack> {
 
     private static final Map<Material, Integer> _defaultWeightMap;
 

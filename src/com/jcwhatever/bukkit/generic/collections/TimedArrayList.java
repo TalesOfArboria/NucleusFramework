@@ -44,20 +44,21 @@ import java.util.Map;
  *
  * <p>Items can be added using the default lifespan time or a lifespan can be specified per item.</p>
  */
-public class TimedList<T> extends ArrayList<T>{
+public class TimedArrayList<E> extends ArrayList<E>
+        implements ITimedList<E>, ITimedCallbacks<E, TimedArrayList<E>> {
 
     private static final long serialVersionUID = 6625205971219435341L;
 
     private final int _defaultTime;
-    private final TimedList<T> _instance;
+    private final TimedArrayList<E> _instance;
     private Map<Object, BukkitTask> _tasks;
-    private List<LifespanEndAction<T>> _onLifespanEnd = new ArrayList<>(5);
-    private List<CollectionEmptyAction<TimedList<T>>> _onEmpty = new ArrayList<>(5);
+    private List<LifespanEndAction<E>> _onLifespanEnd = new ArrayList<>(5);
+    private List<CollectionEmptyAction<TimedArrayList<E>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default item lifespan is 1 second.
      */
-    public TimedList() {
+    public TimedArrayList() {
         super(20);
         _defaultTime = 20;
         _instance = this;
@@ -69,7 +70,7 @@ public class TimedList<T> extends ArrayList<T>{
      *
      * @param size  The initial capacity of the list.
      */
-    public TimedList(int size) {
+    public TimedArrayList(int size) {
         super(size);
         _defaultTime = 20;
         _instance = this;
@@ -82,7 +83,7 @@ public class TimedList<T> extends ArrayList<T>{
      * @param size         The initial capacity of the list.
      * @param defaultTime  The default lifespan of items.
      */
-    public TimedList(int size, int defaultTime) {
+    public TimedArrayList(int size, int defaultTime) {
         super(size);
         PreCon.positiveNumber(defaultTime);
 
@@ -97,7 +98,8 @@ public class TimedList<T> extends ArrayList<T>{
      * @param item      The item to add.
      * @param lifespan  The amount of time in ticks it will stay in the list.
      */
-    public boolean add(final T item, int lifespan) {
+    @Override
+    public boolean add(final E item, int lifespan) {
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
@@ -111,10 +113,9 @@ public class TimedList<T> extends ArrayList<T>{
      * Add an item to the list using the default lifetime.
      *
      * @param item  The item to add.
-     * @return
      */
     @Override
-    public boolean add(T item) {
+    public boolean add(E item) {
         return add(item, _defaultTime);
     }
 
@@ -126,7 +127,8 @@ public class TimedList<T> extends ArrayList<T>{
      * @param item      The item to insert.
      * @param lifespan  The amount of time in ticks the item will stay in the list.
      */
-    public void add(int index, T item, int lifespan) {
+    @Override
+    public void add(int index, E item, int lifespan) {
         PreCon.positiveNumber(index);
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
@@ -144,7 +146,7 @@ public class TimedList<T> extends ArrayList<T>{
      * @param item   The item to insert.
      */
     @Override
-    public void add(int index, T item) {
+    public void add(int index, E item) {
         PreCon.positiveNumber(index);
         PreCon.notNull(item);
 
@@ -156,13 +158,13 @@ public class TimedList<T> extends ArrayList<T>{
      *
      * @param collection  The collection to add.
      * @param lifespan    The amount of time in ticks it will stay in the list.
-     * @return
      */
-    public boolean addAll(Collection<? extends T> collection, int lifespan) {
+    @Override
+    public boolean addAll(Collection<? extends E> collection, int lifespan) {
         PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
-        for (T item : collection) {
+        for (E item : collection) {
             scheduleRemoval(item, lifespan);
         }
         return super.addAll(collection);
@@ -174,7 +176,7 @@ public class TimedList<T> extends ArrayList<T>{
      * @param collection  The collection to add.
      */
     @Override
-    public boolean addAll(Collection<? extends T> collection) {
+    public boolean addAll(Collection<? extends E> collection) {
         PreCon.notNull(collection);
 
         return addAll(collection, _defaultTime);
@@ -188,12 +190,13 @@ public class TimedList<T> extends ArrayList<T>{
      * @param collection  The collection to add.
      * @param lifespan    The amount of time in ticks it will stay in the list.
      */
-    public boolean addAll(int index, Collection<? extends T> collection, int lifespan) {
+    @Override
+    public boolean addAll(int index, Collection<? extends E> collection, int lifespan) {
         PreCon.positiveNumber(index);
         PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
-        for (T item : collection) {
+        for (E item : collection) {
             scheduleRemoval(item, lifespan);
         }
         return super.addAll(index, collection);
@@ -207,7 +210,7 @@ public class TimedList<T> extends ArrayList<T>{
      * @param collection  The collection to add.
      */
     @Override
-    public boolean addAll(int index, Collection<? extends T> collection) {
+    public boolean addAll(int index, Collection<? extends E> collection) {
         PreCon.positiveNumber(index);
         PreCon.notNull(collection);
 
@@ -241,10 +244,10 @@ public class TimedList<T> extends ArrayList<T>{
     }
 
     @Override
-    public T remove(int index) {
+    public E remove(int index) {
         PreCon.positiveNumber(index);
 
-        T item = super.remove(index);
+        E item = super.remove(index);
         BukkitTask task = _tasks.remove(item);
 
         if (task != null)
@@ -277,63 +280,67 @@ public class TimedList<T> extends ArrayList<T>{
     /**
      * Add a handler to be called whenever an items lifespan ends.
      *
-     * @param action  The handler to call.
+     * @param callback  The handler to call.
      */
-    public void addOnLifespanEnd(LifespanEndAction<T> action) {
-        PreCon.notNull(action);
+    @Override
+    public void addOnLifespanEnd(LifespanEndAction<E> callback) {
+        PreCon.notNull(callback);
 
-        _onLifespanEnd.add(action);
+        _onLifespanEnd.add(callback);
     }
 
     /**
      * Remove a handler.
      *
-     * @param action  The handler to remove.
+     * @param callback  The handler to remove.
      */
-    public void removeOnLifespanEnd(LifespanEndAction<T> action) {
-        PreCon.notNull(action);
+    @Override
+    public void removeOnLifespanEnd(LifespanEndAction<E> callback) {
+        PreCon.notNull(callback);
 
-        _onLifespanEnd.remove(action);
+        _onLifespanEnd.remove(callback);
     }
 
     /**
      * Add a handler to be called whenever the collection becomes empty.
      *
-     * @param action  The handler to call
+     * @param callback  The handler to call
      */
-    public void addOnCollectionEmpty(CollectionEmptyAction<TimedList<T>> action) {
-        PreCon.notNull(action);
+    @Override
+    public void addOnCollectionEmpty(CollectionEmptyAction<TimedArrayList<E>> callback) {
+        PreCon.notNull(callback);
 
-        _onEmpty.add(action);
+        _onEmpty.add(callback);
     }
 
     /**
      * Remove a handler.
      *
-     * @param action  The handler to remove.
+     * @param callback  The handler to remove.
      */
-    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedList<T>> action) {
-        PreCon.notNull(action);
+    @Override
+    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedArrayList<E>> callback) {
+        PreCon.notNull(callback);
 
-        _onEmpty.remove(action);
+        _onEmpty.remove(callback);
     }
 
     private void onEmpty() {
         if (!isEmpty() || _onEmpty.isEmpty())
             return;
 
-        for (CollectionEmptyAction<TimedList<T>> action : _onEmpty) {
+        for (CollectionEmptyAction<TimedArrayList<E>> action : _onEmpty) {
             action.onEmpty(this);
         }
     }
 
-    private void onLifespanEnd(T item) {
-        for (LifespanEndAction<T> action : _onLifespanEnd) {
+    private void onLifespanEnd(E item) {
+        for (LifespanEndAction<E> action : _onLifespanEnd) {
             action.onEnd(item);
         }
     }
 
-    protected void scheduleRemoval(final T item, int lifespan) {
+    protected void scheduleRemoval(final E item, int lifespan) {
         if (lifespan < 1)
             return;
 
@@ -354,5 +361,4 @@ public class TimedList<T> extends ArrayList<T>{
 
         _tasks.put(item, task);
     }
-
 }

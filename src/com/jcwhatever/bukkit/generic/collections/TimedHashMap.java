@@ -27,14 +27,15 @@ package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * An hash map where each key value has an individual lifespan that when reached, causes the item
@@ -44,20 +45,20 @@ import java.util.Map;
  *
  * <p>Items can be added using the default lifespan time or a lifespan can be specified per item.</p>
  */
-public class TimedMap<K, V> extends HashMap<K, V> {
+public class TimedHashMap<K, V> extends HashMap<K, V> implements ITimedMap<K, V>, ITimedCallbacks<K, TimedHashMap<K, V>> {
 
     private static final long serialVersionUID = 1945035628724130125L;
 
     private final int _defaultTime;
-    private final TimedMap<K, V> _instance;
+    private final TimedHashMap<K, V> _instance;
     private Map<Object, BukkitTask> _tasks;
     private List<LifespanEndAction<K>> _onLifespanEnd = new ArrayList<>(5);
-    private List<CollectionEmptyAction<TimedMap<K, V>>> _onEmpty = new ArrayList<>(5);
+    private List<CollectionEmptyAction<TimedHashMap<K, V>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default lifespan is 1 second.
      */
-    public TimedMap() {
+    public TimedHashMap() {
         super();
         _defaultTime = 20;
         _instance = this;
@@ -69,7 +70,7 @@ public class TimedMap<K, V> extends HashMap<K, V> {
      *
      * @param size  The initial capacity of the map.
      */
-    public TimedMap(int size) {
+    public TimedHashMap(int size) {
         super(size);
         _defaultTime = 20;
         _instance = this;
@@ -82,7 +83,7 @@ public class TimedMap<K, V> extends HashMap<K, V> {
      * @param size             The initial capacity of the map.
      * @param defaultLifespan  The default lifespan of items in ticks.
      */
-    public TimedMap(int size, int defaultLifespan) {
+    public TimedHashMap(int size, int defaultLifespan) {
         super();
         PreCon.positiveNumber(defaultLifespan);
 
@@ -107,17 +108,18 @@ public class TimedMap<K, V> extends HashMap<K, V> {
      *
      * @param key       The item key.
      * @param value     The item to add.
-     * @param lifespan  The items lifespan in ticks.
+     * @param lifespanTicks  The items lifespan in ticks.
      */
-    public V put(final K key, final V value, int lifespan) {
+    @Override
+    public V put(final K key, final V value, int lifespanTicks) {
         PreCon.notNull(key);
         PreCon.notNull(value);
-        PreCon.positiveNumber(lifespan);
+        PreCon.positiveNumber(lifespanTicks);
 
-        if (lifespan == 0)
+        if (lifespanTicks == 0)
             return value;
 
-        if (lifespan < 0) {
+        if (lifespanTicks < 0) {
             return super.put(key, value);
         }
 
@@ -135,7 +137,7 @@ public class TimedMap<K, V> extends HashMap<K, V> {
                 onLifespanEnd(key);
             }
 
-        }, lifespan);
+        }, lifespanTicks);
 
         _tasks.put(key, task);
         return super.put(key, value);
@@ -160,14 +162,15 @@ public class TimedMap<K, V> extends HashMap<K, V> {
      * Put a map of items into the map using the specified lifespan.
      *
      * @param entries   The map to add.
-     * @param lifespan  The lifespan of the added items in ticks.
+     * @param lifespanTicks  The lifespan of the added items in ticks.
      */
-    public void putAll(Map<? extends K, ? extends V> entries, int lifespan) {
+    @Override
+    public void putAll(Map<? extends K, ? extends V> entries, int lifespanTicks) {
         PreCon.notNull(entries);
-        PreCon.positiveNumber(lifespan);
+        PreCon.positiveNumber(lifespanTicks);
 
         for (Map.Entry<? extends K, ? extends V> entry : entries.entrySet()) {
-            put(entry.getKey(), entry.getValue(), lifespan);
+            put(entry.getKey(), entry.getValue(), lifespanTicks);
         }
 
     }
@@ -205,52 +208,56 @@ public class TimedMap<K, V> extends HashMap<K, V> {
     /**
      * Add a handler to be called whenever an items lifespan ends.
      *
-     * @param action  The handler to call.
+     * @param callback  The handler to call.
      */
-    public void addOnLifetimeEnd(LifespanEndAction<K> action) {
-        PreCon.notNull(action);
+    @Override
+    public void addOnLifespanEnd(LifespanEndAction<K> callback) {
+        PreCon.notNull(callback);
 
-        _onLifespanEnd.add(action);
+        _onLifespanEnd.add(callback);
     }
 
     /**
      * Remove a handler.
      *
-     * @param action  The handler to remove.
+     * @param callback  The handler to remove.
      */
-    public void removeOnLifespanEnd(LifespanEndAction<K> action) {
-        PreCon.notNull(action);
+    @Override
+    public void removeOnLifespanEnd(LifespanEndAction<K> callback) {
+        PreCon.notNull(callback);
 
-        _onLifespanEnd.remove(action);
+        _onLifespanEnd.remove(callback);
     }
 
     /**
      * Add a handler to be called whenever the collection becomes empty.
      *
-     * @param action  The handler to call
+     * @param callback  The handler to call
      */
-    public void addOnCollectionEmpty(CollectionEmptyAction<TimedMap<K, V>> action) {
-        PreCon.notNull(action);
+    @Override
+    public void addOnCollectionEmpty(CollectionEmptyAction<TimedHashMap<K, V>> callback) {
+        PreCon.notNull(callback);
 
-        _onEmpty.add(action);
+        _onEmpty.add(callback);
     }
 
     /**
      * Remove a handler.
      *
-     * @param action  The handler to remove.
+     * @param callback  The handler to remove.
      */
-    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedMap<K, V>> action) {
-        PreCon.notNull(action);
+    @Override
+    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedHashMap<K, V>> callback) {
+        PreCon.notNull(callback);
 
-        _onEmpty.remove(action);
+        _onEmpty.remove(callback);
     }
 
     private void onEmpty() {
         if (!isEmpty() || _onEmpty.isEmpty())
             return;
 
-        for (CollectionEmptyAction<TimedMap<K, V>> action : _onEmpty) {
+        for (CollectionEmptyAction<TimedHashMap<K, V>> action : _onEmpty) {
             action.onEmpty(this);
         }
     }
@@ -260,5 +267,4 @@ public class TimedMap<K, V> extends HashMap<K, V> {
             action.onEnd(key);
         }
     }
-
 }

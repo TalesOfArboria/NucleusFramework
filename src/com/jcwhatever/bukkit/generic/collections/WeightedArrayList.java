@@ -45,17 +45,17 @@ import java.util.ListIterator;
  *
  * @param <T>  The item type.
  */
-public class WeightedList<T> implements List<T> {
+public class WeightedArrayList<T> implements List<T> {
 
     private int _sumOfWeight = 0;
     private List<Weighted<T>> _weightedItems;
 
 
-    public WeightedList() {
+    public WeightedArrayList() {
         _weightedItems = new ArrayList<>(20);
     }
 
-    public WeightedList(int size) {
+    public WeightedArrayList(int size) {
         PreCon.positiveNumber(size);
 
         _weightedItems = new ArrayList<>(size);

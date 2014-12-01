@@ -26,7 +26,6 @@
 package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import javax.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * A hash map that holds weak references to the values. Key/Value pairs
@@ -44,14 +44,14 @@ import java.util.Set;
  * @param <K> The key type
  * @param <V> The value type
  */
-public class WeakValueMap<K, V> implements Map<K, V> {
+public class WeakValueHashMap<K, V> implements Map<K, V> {
 
     private Map<K, WeakValue> _map;
 
     /**
      * Constructor.
      */
-    public WeakValueMap() {
+    public WeakValueHashMap() {
         _map = new HashMap<K, WeakValue>(20);
     }
 
@@ -60,7 +60,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
      *
      * @param size  The initial capacity
      */
-    public WeakValueMap(int size) {
+    public WeakValueHashMap(int size) {
         PreCon.positiveNumber(size);
 
         _map = new HashMap<K, WeakValue>(size);

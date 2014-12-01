@@ -27,13 +27,13 @@ package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import javax.annotation.Nullable;
 
 /**
  * An array list with weak references to its items.
@@ -46,14 +46,14 @@ import java.util.ListIterator;
  *
  * @param <T> List element type
  */
-public class WeakList<T> implements List<T> {
+public class WeakArrayList<T> implements List<T> {
 
     private List<WeakReference<T>> _references;
 
     /**
      * Constructor.
      */
-    public WeakList() {
+    public WeakArrayList() {
         _references = new ArrayList<WeakReference<T>>(10);
     }
 
@@ -62,7 +62,7 @@ public class WeakList<T> implements List<T> {
      *
      * @param size  The initial capacity.
      */
-    public WeakList(int size) {
+    public WeakArrayList(int size) {
         PreCon.positiveNumber(size);
 
         _references = new ArrayList<WeakReference<T>>(size);

@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.messaging;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
-import com.jcwhatever.bukkit.generic.collections.TimedSet;
+import com.jcwhatever.bukkit.generic.collections.TimedHashSet;
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
@@ -64,7 +64,7 @@ public class Messenger {
     private static final int _maxLineLen = 60;
     private static IDataNode _importantData;
     private static Pattern returnPattern = Pattern.compile("\r");
-    private static Map<UUID, TimedSet<String>> _noSpamCache = new PlayerMap<TimedSet<String>>(GenericsLib.getLib());
+    private static Map<UUID, TimedHashSet<String>> _noSpamCache = new PlayerMap<TimedHashSet<String>>(GenericsLib.getLib());
 
     /**
      * Specify if line wrapping is enabled.
@@ -160,9 +160,9 @@ public class Messenger {
 
         String msg = TextUtils.format(message, params);
 
-        TimedSet<String> recent = _noSpamCache.get(p.getUniqueId());
+        TimedHashSet<String> recent = _noSpamCache.get(p.getUniqueId());
         if (recent == null) {
-            recent = new TimedSet<String>(20, 140);
+            recent = new TimedHashSet<String>(20, 140);
             _noSpamCache.put(p.getUniqueId(), recent);
         }
 

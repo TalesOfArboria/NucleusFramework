@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.sounds;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.LifespanEndAction;
-import com.jcwhatever.bukkit.generic.collections.TimedList;
+import com.jcwhatever.bukkit.generic.collections.TimedArrayList;
 import com.jcwhatever.bukkit.generic.events.bukkit.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.bukkit.generic.sounds.Playing.Future;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
@@ -58,7 +58,7 @@ public class SoundManager {
 
     private SoundManager() {}
 
-    private static Map<UUID, TimedList<Playing>> _playing = new HashMap<>(100);
+    private static Map<UUID, TimedArrayList<Playing>> _playing = new HashMap<>(100);
     private static Map<String, ResourceSound> _sounds;
 
     static {
@@ -207,12 +207,12 @@ public class SoundManager {
         Utils.executeAsConsole(cmd);
 
         // get timed list to store playing object in.
-        TimedList<Playing> currentPlaying = _playing.get(p.getUniqueId());
+        TimedArrayList<Playing> currentPlaying = _playing.get(p.getUniqueId());
 
         if (currentPlaying == null) {
             // create timed list for player and add callback to set a
             // Playing item as finished when the items time expires.
-            currentPlaying = new TimedList<>(3);
+            currentPlaying = new TimedArrayList<>(3);
             currentPlaying.addOnLifespanEnd(new LifespanEndAction<Playing>() {
                 @Override
                 public void onEnd(Playing item) {

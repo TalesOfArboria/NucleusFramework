@@ -47,15 +47,15 @@ import javax.annotation.Nullable;
  * @param <K>  Key type
  * @param <V>  Value type
  */
-public class TimedSetMap<K, V> extends HashSetMap<K, V> {
+public class TimedHashSetMap<K, V> extends HashSetMap<K, V> implements ITimedMap<K, V> {
 
     private int _defaultLifespan = 20;
-    private List<CollectionEmptyAction<TimedSetMap<K, V>>> _onEmpty = new ArrayList<>(5);
+    private List<CollectionEmptyAction<TimedHashSetMap<K, V>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default lifespan is 1 second.
      */
-    public TimedSetMap() {
+    public TimedHashSetMap() {
         super();
     }
 
@@ -64,7 +64,7 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
      *
      * @param size  The initial size.
      */
-    public TimedSetMap(int size) {
+    public TimedHashSetMap(int size) {
         super(size);
     }
 
@@ -74,7 +74,7 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
      * @param size             The initial size.
      * @param defaultLifespan  The default lifespan of a value in ticks.
      */
-    public TimedSetMap(int size, int defaultLifespan) {
+    public TimedHashSetMap(int size, int defaultLifespan) {
         super(size);
         PreCon.positiveNumber(defaultLifespan);
 
@@ -110,6 +110,7 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
      * @param value     The value to add.
      * @param lifespan  The lifespan of the value in ticks.
      */
+    @Override
     public V put(K key, V value, int lifespan) {
         PreCon.notNull(key);
         PreCon.notNull(value);
@@ -121,17 +122,23 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
             _map.put(key, set);
         }
 
-        ((TimedSet<V>)set).add(value, lifespan);
+        ((TimedHashSet<V>)set).add(value, lifespan);
 
         return value;
     }
 
-    /**
-     * Unsupported.
-     */
     @Override
-    public void putAll(Map<? extends K, ? extends V> map) {
-        throw new UnsupportedOperationException();
+    public void putAll(Map<? extends K, ? extends V> entries, int lifespanTicks) {
+        for (Entry<? extends K, ? extends V> entry : entries.entrySet()) {
+            put(entry.getKey(), entry.getValue(), lifespanTicks);
+        }
+    }
+
+    @Override
+    public void putAll(Map<? extends K, ? extends V> entries) {
+        for (Entry<? extends K, ? extends V> entry : entries.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
     }
 
     /**
@@ -147,6 +154,7 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
     public V remove(Object key) {
         PreCon.notNull(key);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.get(key);
         if (set == null) {
             return null;
@@ -174,12 +182,14 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.get(key);
         if (set == null) {
             return false;
         }
 
         if (set.isEmpty()) {
+            //noinspection SuspiciousMethodCalls
             _map.remove(key);
             onEmpty();
             return false;
@@ -200,6 +210,7 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
     public Set<V> removeAll(Object key) {
         PreCon.notNull(key);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.remove(key);
         if (set == null) {
             return null;
@@ -229,6 +240,7 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
     public int keySize(Object key) {
         PreCon.notNull(key);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.get(key);
         if (set == null || set.isEmpty()) {
             return 0;
@@ -257,7 +269,7 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
      *
      * @param action  The handler to call
      */
-    public void addOnCollectionEmpty(CollectionEmptyAction<TimedSetMap<K, V>> action) {
+    public void addOnCollectionEmpty(CollectionEmptyAction<TimedHashSetMap<K, V>> action) {
         PreCon.notNull(action);
 
         _onEmpty.add(action);
@@ -268,7 +280,7 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
      *
      * @param action  The handler to remove.
      */
-    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedSetMap<K, V>> action) {
+    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedHashSetMap<K, V>> action) {
         PreCon.notNull(action);
 
         _onEmpty.remove(action);
@@ -278,17 +290,17 @@ public class TimedSetMap<K, V> extends HashSetMap<K, V> {
         if (!isEmpty() || _onEmpty.isEmpty())
             return;
 
-        for (CollectionEmptyAction<TimedSetMap<K, V>> action : _onEmpty) {
+        for (CollectionEmptyAction<TimedHashSetMap<K, V>> action : _onEmpty) {
             action.onEmpty(this);
         }
     }
 
-    private TimedSet<V> newTimedSet(final K key) {
-        TimedSet<V> set = new TimedSet<>(15, _defaultLifespan);
-        set.addOnCollectionEmpty(new CollectionEmptyAction<TimedSet<V>>() {
+    private TimedHashSet<V> newTimedSet(final K key) {
+        TimedHashSet<V> set = new TimedHashSet<>(15, _defaultLifespan);
+        set.addOnCollectionEmpty(new CollectionEmptyAction<TimedHashSet<V>>() {
 
             @Override
-            public void onEmpty(TimedSet<V> emptyCollection) {
+            public void onEmpty(TimedHashSet<V> emptyCollection) {
                 remove(key);
             }
         });

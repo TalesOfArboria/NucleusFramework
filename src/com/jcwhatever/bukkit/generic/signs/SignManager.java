@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.signs;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.TimedMap;
+import com.jcwhatever.bukkit.generic.collections.TimedHashMap;
 import com.jcwhatever.bukkit.generic.events.bukkit.SignInteractEvent;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -91,7 +91,7 @@ public class SignManager {
     private final Plugin _plugin;
     private final IDataNode _dataNode;
     private final Map<String, SignHandler> _localHandlerMap = new HashMap<>(10);
-    private final Map<Location, IDataNode> _signNodes = new TimedMap<>(30, 20 * 60);
+    private final Map<Location, IDataNode> _signNodes = new TimedHashMap<>(30, 20 * 60);
 
     /**
      * Constructor.
