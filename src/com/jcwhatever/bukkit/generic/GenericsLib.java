@@ -36,6 +36,7 @@ import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScriptEngineManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
 
 import org.bukkit.entity.EntityType;
 
@@ -235,12 +236,13 @@ public class GenericsLib extends GenericsPlugin {
 
     private void loadScriptManager() {
 
-        File scriptFolder = new File(getDataFolder(), "script");
+        File scriptFolder = new File(getDataFolder(), "scripts");
         if (!scriptFolder.exists() && !scriptFolder.mkdirs()) {
             throw new RuntimeException("Failed to create script folder.");
         }
 
         _scriptManager = new ScriptManager(this, scriptFolder);
+        _scriptManager.addScriptApi(ScriptUtils.getDefaultApi(this, _scriptManager));
         _scriptManager.reload();
     }
 }
