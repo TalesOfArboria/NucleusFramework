@@ -125,8 +125,6 @@ public class ScriptUtils {
 
             String name = getScriptName(scriptFolder, file);
 
-            String filename = getScriptFilename(plugin, scriptFolder, file);
-
             try {
 
                 BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -141,7 +139,7 @@ public class ScriptUtils {
 
                 reader.close();
 
-                T script = scriptConstructor.construct(name, filename, type, buffer.toString());
+                T script = scriptConstructor.construct(name, file, type, buffer.toString());
                 if (script != null)
                     result.add(script);
 
@@ -193,11 +191,9 @@ public class ScriptUtils {
 
             String scriptName = getScriptName(scriptFolder, scriptFile);
 
-            String filename = getScriptFilename(plugin, scriptFolder, scriptFile);
-
             String scriptType = getScriptType(scriptFile);
 
-            return scriptConstructor.construct(scriptName, filename, scriptType, buffer.toString());
+            return scriptConstructor.construct(scriptName, scriptFile, scriptType, buffer.toString());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -229,23 +225,6 @@ public class ScriptUtils {
     }
 
     /**
-     * Get a filename to use in script engine context. This is
-     * used to show the source file in the console when an
-     * error is thrown in a script.
-     *
-     * @param scriptFolder  The base folder where scripts are kept.
-     * @param file          The script file.
-     */
-    public static String getScriptFilename(Plugin plugin, File scriptFolder, File file) {
-        PreCon.notNull(scriptFolder);
-        PreCon.isValid(scriptFolder.isDirectory());
-        PreCon.notNull(file);
-        PreCon.isValid(!file.isDirectory());
-
-        return '[' + plugin.getName() + "] " + FileUtils.getRelative(scriptFolder, file);
-    }
-
-    /**
      * Get the script type from a file.
      *
      * <p>Returns the file extension.</p>
@@ -270,11 +249,11 @@ public class ScriptUtils {
          * Called to get a new {@code IScript} instance.
          *
          * @param name      The name of the script.
-         * @param filename  Optional filename of the script.
+         * @param file      Optional file of the script.
          * @param type      The script type. (script file extension)
          * @param script    The script.
          */
-        public T construct(String name, @Nullable String filename, String type, String script);
+        public T construct(String name, @Nullable File file, String type, String script);
     }
 
 }

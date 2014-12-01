@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 
+import java.io.File;
 import java.util.Collection;
 import javax.annotation.Nullable;
 
@@ -41,12 +42,12 @@ public interface IScript {
     String getName();
 
     /**
-     * Get the name of the script file.
+     * Get the file the script is from.
      *
      * @return Null if script is not from a file.
      */
     @Nullable
-    String getFilename();
+    File getFile();
 
     /**
      * Get the script source.

@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import java.io.File;
 import java.util.Collection;
 import javax.annotation.Nullable;
 import javax.script.ScriptContext;
@@ -41,7 +42,7 @@ import javax.script.ScriptException;
 public class GenericsScript implements IScript {
 
     private final String _name;
-    private final String _filename;
+    private final File _file;
     private final String _type;
     private final String _script;
 
@@ -49,17 +50,17 @@ public class GenericsScript implements IScript {
      * Constructor.
      *
      * @param name      The name of the script.
-     * @param filename  The name of the file the script is from.
+     * @param file  The name of the file the script is from.
      * @param type      The script type.
      * @param script    The script source.
      */
-    public GenericsScript(String name, @Nullable String filename, String type, String script) {
+    public GenericsScript(String name, @Nullable File file, String type, String script) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNullOrEmpty(type);
         PreCon.notNull(script);
 
         _name = name;
-        _filename = filename;
+        _file = file;
         _type = type;
         _script = script;
     }
@@ -73,15 +74,14 @@ public class GenericsScript implements IScript {
     }
 
     /**
-     * Get the filename displayed in errors.
+     * Get the file the script is from.
      *
-     * @return Null if the script did not come from a
-     * file or no filename is provided.
+     * @return Null if the script did not come from a file.
      */
     @Nullable
     @Override
-    public String getFilename() {
-        return _filename;
+    public File getFile() {
+        return _file;
     }
 
     /**
@@ -154,8 +154,8 @@ public class GenericsScript implements IScript {
      */
     protected boolean eval(ScriptEngine engine, ScriptContext context) {
 
-        if (_filename != null)
-            engine.put(ScriptEngine.FILENAME, _filename);
+        if (_file != null)
+            engine.put(ScriptEngine.FILENAME, _file.getName() + " (" + _name + ')');
 
         try {
             // evaluate script
