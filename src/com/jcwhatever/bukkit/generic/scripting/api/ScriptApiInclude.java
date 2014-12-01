@@ -91,11 +91,11 @@ public class ScriptApiInclude extends GenericsScriptApi {
         }
 
         /**
-         * Include library script from scripts/libs folder within the plugin data folder.
+         * Include script from plugins script include folder.
          *
-         * @param fileNames  The names of the scripts to include
+         * @param fileNames  The relative paths of the scripts to include.
          */
-        public void lib(String... fileNames) {
+        public void script(String... fileNames) {
             List<IScript> scripts = new ArrayList<>(fileNames.length);
             for (String fileName : fileNames) {
 
