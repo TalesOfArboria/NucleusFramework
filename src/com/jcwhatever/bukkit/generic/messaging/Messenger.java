@@ -191,7 +191,6 @@ public class Messenger {
     public static boolean tell(LineWrapping lineWrapping, @Nullable Object source,
                                CommandSender sender, Object message, Object...params) {
         PreCon.notNull(lineWrapping);
-        PreCon.notNull(source);
 
         return tell(lineWrapping == LineWrapping.ENABLED, source, sender, TextUtils.format(message, params));
     }
@@ -212,7 +211,8 @@ public class Messenger {
     }
 
     /**
-     * Tell a message to the specified {@code CommandSender}.
+     * Tell a message to the specified {@code CommandSender}
+     * without a source prefix.
      *
      * @param sender   The sender to display the message to.
      * @param message  The message to display.
