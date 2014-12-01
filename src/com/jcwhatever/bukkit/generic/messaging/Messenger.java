@@ -412,8 +412,8 @@ public class Messenger {
      *  Get the chat prefix of a plugin.
      */
     private static String getChatPrefix(@Nullable Object source) {
-        if (source instanceof GenericsPlugin) {
-            return ((GenericsPlugin) source).getChatPrefix();
+        if (source instanceof IChatPrefixed) {
+            return ((IChatPrefixed) source).getChatPrefix();
         }
         else if (source instanceof Plugin) {
             return '[' + ((Plugin)source).getName() + ']';
@@ -434,8 +434,8 @@ public class Messenger {
      * Get the console prefix of a plugin.
      */
     private static String getConsolePrefix(@Nullable Object source) {
-        return source instanceof GenericsPlugin
-                ? ((GenericsPlugin) source).getConsolePrefix()
+        return source instanceof IChatPrefixed
+                ? ((IChatPrefixed) source).getConsolePrefix()
                 : getChatPrefix(source);
     }
 

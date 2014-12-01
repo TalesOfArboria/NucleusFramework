@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.language.LanguageManager;
+import com.jcwhatever.bukkit.generic.messaging.IChatPrefixed;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -41,7 +42,7 @@ import java.util.Set;
  * An abstract implementation of a Bukkit plugin with
  * GenericsLib specific features.
  */
-public abstract class GenericsPlugin extends JavaPlugin {
+public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed {
 
     private LanguageManager _languageManager;
     private IDataNode _dataNode;
@@ -81,11 +82,13 @@ public abstract class GenericsPlugin extends JavaPlugin {
     /**
      * Get the plugins chat message prefix.
      */
+    @Override
     public abstract String getChatPrefix();
 
     /**
      * Get the plugins console message prefix.
      */
+    @Override
     public abstract String getConsolePrefix();
 
     /**
