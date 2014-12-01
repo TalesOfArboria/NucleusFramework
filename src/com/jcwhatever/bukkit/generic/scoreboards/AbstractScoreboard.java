@@ -57,6 +57,7 @@ public abstract class AbstractScoreboard implements IScoreboard {
     private final Plugin _plugin;
     private final ScoreboardInfo _typeInfo;
     private final Scoreboard _scoreboard;
+    private boolean _isDisposed;
 
     /**
      * Constructor.
@@ -177,6 +178,11 @@ public abstract class AbstractScoreboard implements IScoreboard {
         onRemove(p);
     }
 
+    @Override
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
     /**
      * Dispose the scoreboard.
      */
@@ -186,6 +192,8 @@ public abstract class AbstractScoreboard implements IScoreboard {
         for (Objective objective : objectives) {
             objective.unregister();
         }
+
+        _isDisposed = true;
     }
 
 
