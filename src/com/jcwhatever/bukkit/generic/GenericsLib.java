@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic;
 
+import com.jcwhatever.bukkit.generic.internal.ScriptManager;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
@@ -38,6 +39,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.entity.EntityType;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +61,7 @@ public class GenericsLib extends GenericsPlugin {
     private EntityEquipperManager _equipperManager;
     private ITaskScheduler _scheduler;
     private ScriptEngineManager _scriptEngineManager;
+    private ScriptManager _scriptManager;
 
     /**
      * Get the {@code GenericsLib} plugin instance.
@@ -149,6 +152,13 @@ public class GenericsLib extends GenericsPlugin {
     }
 
     /**
+     * Get the default script manager.
+     */
+    public static ScriptManager getScriptManager() {
+        return _instance._scriptManager;
+    }
+
+    /**
      * Get an entity equipper from the default entity equipper manager
      * for the specified entity type.
      *
@@ -188,6 +198,9 @@ public class GenericsLib extends GenericsPlugin {
 
         _scheduler = new BukkitTaskScheduler();
         _scriptEngineManager = new GenericsScriptEngineManager();
+
+        loadScriptManager();
+
         _regionManager = new RegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
         _equipperManager = new EntityEquipperManager();
@@ -218,5 +231,16 @@ public class GenericsLib extends GenericsPlugin {
 
         _pluginNameMap.remove(plugin.getName().toLowerCase());
         _pluginClassMap.remove(plugin.getClass());
+    }
+
+    private void loadScriptManager() {
+
+        File scriptFolder = new File(getDataFolder(), "script");
+        if (!scriptFolder.exists() && !scriptFolder.mkdirs()) {
+            throw new RuntimeException("Failed to create script folder.");
+        }
+
+        _scriptManager = new ScriptManager(this, scriptFolder);
+        _scriptManager.reload();
     }
 }

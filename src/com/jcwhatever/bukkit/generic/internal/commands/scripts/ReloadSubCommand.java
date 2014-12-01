@@ -22,23 +22,29 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.bukkit.generic.internal.commands;
+package com.jcwhatever.bukkit.generic.internal.commands.scripts;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.commands.AbstractCommandHandler;
-import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.scripts.ScriptsCommand;
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
+import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 
-public class CommandHandler extends AbstractCommandHandler {
+import org.bukkit.command.CommandSender;
 
-    public CommandHandler() {
-        super(GenericsLib.getLib());
-    }
+@CommandInfo(
+        parent="scripts",
+        command = "reload",
+        usage = "/{plugin-command} scripts reload",
+        description = "Reload scripts.")
+
+public class ReloadSubCommand extends AbstractCommand {
 
     @Override
-    protected void registerCommands () {
-        registerCommand(JailCommand.class);
-        registerCommand(ScriptsCommand.class);
+    public void execute (CommandSender sender, CommandArguments args) throws InvalidValueException {
+
+        GenericsLib.getScriptManager().reload();
+
+        tellSuccess(sender, "Scripts reloaded.");
     }
 }

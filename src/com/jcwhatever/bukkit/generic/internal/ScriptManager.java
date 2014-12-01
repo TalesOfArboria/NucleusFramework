@@ -22,23 +22,38 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.internal;
 
-package com.jcwhatever.bukkit.generic.internal.commands;
+import com.jcwhatever.bukkit.generic.scripting.AbstractScriptManager;
+import com.jcwhatever.bukkit.generic.scripting.GenericsScript;
+import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
+import com.jcwhatever.bukkit.generic.scripting.IScript;
+import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
+import com.jcwhatever.bukkit.generic.utils.ScriptUtils.ScriptConstructor;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.commands.AbstractCommandHandler;
-import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.scripts.ScriptsCommand;
+import org.bukkit.plugin.Plugin;
 
-public class CommandHandler extends AbstractCommandHandler {
+import java.io.File;
+import javax.annotation.Nullable;
 
-    public CommandHandler() {
-        super(GenericsLib.getLib());
+/**
+ * GenericsLib default ScriptManager.
+ */
+public class ScriptManager extends AbstractScriptManager<IScript, IEvaluatedScript> {
+
+    private static ScriptConstructor<IScript> _scriptConstructor = new ScriptConstructor<IScript>() {
+        @Override
+        public IScript construct(String name, @Nullable File file, String type, String script) {
+            return new GenericsScript(name, file, type, script);
+        }
+    };
+
+    public ScriptManager(Plugin plugin, File scriptFolder) {
+        super(plugin, scriptFolder, DirectoryTraversal.RECURSIVE);
     }
 
     @Override
-    protected void registerCommands () {
-        registerCommand(JailCommand.class);
-        registerCommand(ScriptsCommand.class);
+    public ScriptConstructor<IScript> getScriptConstructor() {
+        return _scriptConstructor;
     }
 }
