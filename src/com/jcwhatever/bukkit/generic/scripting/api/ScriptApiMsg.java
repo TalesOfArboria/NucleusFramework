@@ -70,7 +70,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
         }
 
         @Override
-        public void reset() {
+        public void dispose() {
             // do nothing
         }
 

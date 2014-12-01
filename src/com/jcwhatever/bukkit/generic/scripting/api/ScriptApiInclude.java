@@ -149,7 +149,7 @@ public class ScriptApiInclude extends GenericsScriptApi {
         }
 
         @Override
-        public void reset() {
+        public void dispose() {
             // do nothing
         }
     }

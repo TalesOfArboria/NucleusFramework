@@ -223,7 +223,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         }
 
         for (IScriptApiObject api : _apiObjects) {
-            api.reset();
+            api.dispose();
         }
     }
 

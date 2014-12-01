@@ -65,7 +65,7 @@ public class ScriptApiPermissions extends GenericsScriptApi {
         ApiObject() {}
 
         @Override
-        public void reset() {
+        public void dispose() {
             // do nothing
         }
 

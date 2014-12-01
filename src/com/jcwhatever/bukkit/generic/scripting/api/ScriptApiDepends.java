@@ -66,7 +66,7 @@ public class ScriptApiDepends extends GenericsScriptApi {
         private ScheduledTask _task;
 
         @Override
-        public void reset() {
+        public void dispose() {
 
             if (_task != null)
                 _task.cancel();

@@ -69,7 +69,7 @@ public class ScriptApiSounds extends GenericsScriptApi {
         }
 
         @Override
-        public void reset() {
+        public void dispose() {
             // do nothing
         }
 

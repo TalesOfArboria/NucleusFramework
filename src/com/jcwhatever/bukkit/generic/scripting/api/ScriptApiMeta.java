@@ -74,7 +74,7 @@ public class ScriptApiMeta extends GenericsScriptApi {
         }
 
         @Override
-        public void reset() {
+        public void dispose() {
             // data node
         }
 

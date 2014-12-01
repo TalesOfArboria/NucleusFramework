@@ -77,7 +77,7 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
     }
 
     public void reset() {
-        _api.reset();
+        _api.dispose();
     }
 
     public static class ApiObject implements IScriptApiObject {
@@ -92,7 +92,7 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
         }
 
         @Override
-        public void reset() {
+        public void dispose() {
 
             while (!_pickupCallbacks.isEmpty()) {
                 PickupWrapper wrapper = _pickupCallbacks.remove();

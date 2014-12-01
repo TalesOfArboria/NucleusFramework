@@ -60,7 +60,7 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
     }
 
     public void reset() {
-        _api.reset();
+        _api.dispose();
     }
 
     public static class ApiObject implements IScriptApiObject {
@@ -73,7 +73,7 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
         }
 
         @Override
-        public void reset() {
+        public void dispose() {
 
             for (ScheduledTask task : _repeatingTasks) {
                 task.cancel();
