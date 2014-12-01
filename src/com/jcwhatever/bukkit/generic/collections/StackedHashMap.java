@@ -27,31 +27,32 @@ package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
+import javax.annotation.Nullable;
 
 /**
- * Can add multiple values per key except values are placed in a {@Code Stack}.
- * Removing a value by key pops an item off the stack associated with the
- * provided key.
+ * Can add multiple values per key except values are placed in a {@Code LinkedList}.
+ * Removing a value removes the last item added to the linked list.
+ *
+ * <p>The {@code LinkedList}'s that store the values are used as stack's.</p>
  *
  * @param <K>  Key type
  * @param <V>  Value type
  */
-public class StackedMap <K, V> implements Map<K, V> {
+public class StackedHashMap<K, V> implements Map<K, V> {
 
-    Map<K, Stack<V>> _map;
+    Map<K, LinkedList<V>> _map;
 
     /**
      * Constructor.
      */
-    public StackedMap() {
-        _map = new HashMap<K, Stack<V>>(10);
+    public StackedHashMap() {
+        this(10);
     }
 
     /**
@@ -59,10 +60,10 @@ public class StackedMap <K, V> implements Map<K, V> {
      *
      * @param size  The initial size.
      */
-    public StackedMap(int size) {
+    public StackedHashMap(int size) {
         PreCon.positiveNumber(size);
 
-        _map = new HashMap<K, Stack<V>>(size);
+        _map = new HashMap<K, LinkedList<V>>(size);
     }
 
     /**
@@ -102,7 +103,8 @@ public class StackedMap <K, V> implements Map<K, V> {
     public boolean containsValue(Object value) {
         PreCon.notNull(value);
 
-        for (Stack<V> stack : _map.values()) {
+        for (LinkedList<V> stack : _map.values()) {
+            //noinspection SuspiciousMethodCalls
             if (stack.contains(value))
                 return true;
         }
@@ -119,6 +121,7 @@ public class StackedMap <K, V> implements Map<K, V> {
 
     /**
      * Get a value using the specified key.
+     *
      * <p>The value returned is peeked from the stack, if one is found.</p>
      *
      * @param key  The key to check.
@@ -128,9 +131,9 @@ public class StackedMap <K, V> implements Map<K, V> {
     public V get(Object key) {
         PreCon.notNull(key);
 
-        Stack<V> stack = _map.get(key);
+        LinkedList<V> stack = _map.get(key);
         if (stack != null && !stack.isEmpty())
-            return stack.peek();
+            return stack.peekLast();
 
         return null;
     }
@@ -155,9 +158,9 @@ public class StackedMap <K, V> implements Map<K, V> {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
-        Stack<V> stack = _map.get(key);
+        LinkedList<V> stack = _map.get(key);
         if (stack == null) {
-            stack = new Stack<V>();
+            stack = new LinkedList<>();
             _map.put(key, stack);
         }
 
@@ -187,7 +190,8 @@ public class StackedMap <K, V> implements Map<K, V> {
     public V remove(Object key) {
         PreCon.notNull(key);
 
-        Stack<V> stack = _map.get(key);
+        //noinspection SuspiciousMethodCalls
+        LinkedList<V> stack = _map.get(key);
         if (stack == null) {
             return null;
         }
@@ -200,8 +204,7 @@ public class StackedMap <K, V> implements Map<K, V> {
 
     /**
      * Get the number of entries in the map.
-     * Or in other terms the number of keys, or
-     * the number of stacks.
+     * Or in other words, the number of keys.
      */
     @Override
     public int size() {
@@ -217,7 +220,8 @@ public class StackedMap <K, V> implements Map<K, V> {
     public int keySize(Object key) {
         PreCon.notNull(key);
 
-        Stack<V> stack = _map.get(key);
+        //noinspection SuspiciousMethodCalls
+        LinkedList<V> stack = _map.get(key);
         if (stack == null || stack.isEmpty()) {
             return 0;
         }
@@ -227,14 +231,16 @@ public class StackedMap <K, V> implements Map<K, V> {
 
     /**
      * Get all values in the map.
+     *
+     * <p>No duplicate values are in the returned collection.</p>
      */
     @Override
     public Collection<V> values() {
 
-        Collection<Stack<V>> values = _map.values();
+        Collection<LinkedList<V>> values = _map.values();
         Set<V> results = new HashSet<V>(values.size());
 
-        for (Stack<V> stack : values) {
+        for (LinkedList<V> stack : values) {
             results.addAll(stack);
         }
 
