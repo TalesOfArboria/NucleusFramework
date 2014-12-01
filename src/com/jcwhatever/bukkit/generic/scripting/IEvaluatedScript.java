@@ -27,9 +27,9 @@ package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
-import com.sun.istack.internal.Nullable;
 
 import java.util.List;
+import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
