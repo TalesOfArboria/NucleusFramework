@@ -107,6 +107,29 @@ public class ScriptUtils {
                                                           File scriptFolder,
                                                           DirectoryTraversal traversal,
                                                           ScriptConstructor<T> scriptConstructor) {
+
+        return loadScripts(plugin, engineManager, scriptFolder, null, traversal, scriptConstructor);
+
+    }
+
+    /**
+     * Load scripts from a script folder.
+     *
+     * @param plugin             The scripts owning plugin.
+     * @param engineManager      The engine manager used to determine if a file type is a script.
+     * @param scriptFolder       The folder to find scripts in.
+     * @param exclude            Optional file or folder to exclude.
+     * @param traversal          The type of directory traversal used to find script files.
+     * @param scriptConstructor  A script constructor to create new script instances.
+     *
+     * @param <T>  Script instance type.
+     */
+    public static <T extends IScript> List<T> loadScripts(Plugin plugin,
+                                                          ScriptEngineManager engineManager,
+                                                          File scriptFolder,
+                                                          @Nullable File exclude,
+                                                          DirectoryTraversal traversal,
+                                                          ScriptConstructor<T> scriptConstructor) {
         PreCon.notNull(plugin);
         PreCon.notNull(scriptFolder);
         PreCon.isValid(scriptFolder.isDirectory());
@@ -118,6 +141,10 @@ public class ScriptUtils {
         List<T> result = new ArrayList<>(scriptFiles.size());
 
         for (File file : scriptFiles) {
+
+            if (exclude != null && file.getAbsolutePath().startsWith(exclude.getAbsolutePath())) {
+                continue;
+            }
 
             String type = getScriptType(file);
             if (engineManager.getEngineByExtension(FileUtils.getFileExtension(file)) == null)
