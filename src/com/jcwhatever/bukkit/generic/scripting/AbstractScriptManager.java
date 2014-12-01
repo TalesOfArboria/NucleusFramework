@@ -50,6 +50,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
 
     private final Plugin _plugin;
     private final File _scriptFolder;
+    private final File _includeFolder;
     private final DirectoryTraversal _directoryTraversal;
 
     // key is script name
@@ -64,6 +65,9 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
     /**
      * Constructor.
      *
+     * <p>Scripts will not be able to load from a folder and
+     * must be added to the manager manually..</p>
+     *
      * @param plugin  The owning plugin.
      */
     public AbstractScriptManager(Plugin plugin) {
@@ -71,13 +75,22 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
 
         _plugin = plugin;
         _scriptFolder = null;
+        _includeFolder = null;
         _directoryTraversal = null;
     }
 
     /**
      * Constructor.
      *
-     * @param plugin  The owning plugin.
+     * <p>Scripts can be loaded from the scripts directory by
+     * calling the {@code loadScripts} method.</p>
+     *
+     * <p>Include folder is set as a sub folder of the specified
+     * script folder and is named "includes".</p>
+     *
+     * @param plugin              The owning plugin.
+     * @param scriptFolder        The folder to load scripts from.
+     * @param directoryTraversal  Specify how directories are handles while searching from scripts.
      */
     public AbstractScriptManager(Plugin plugin, File scriptFolder, DirectoryTraversal directoryTraversal) {
         PreCon.notNull(plugin);
@@ -87,6 +100,38 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
 
         _plugin = plugin;
         _scriptFolder = scriptFolder;
+        _directoryTraversal = directoryTraversal;
+        _includeFolder = new File(scriptFolder, "includes");
+
+        if (!_includeFolder.exists() && !_includeFolder.mkdirs()) {
+            throw new RuntimeException("Failed to create script includes folder.");
+        }
+    }
+
+    /**
+     * Constructor.
+     *
+     * <p>Scripts can be loaded from the scripts directory by
+     * calling the {@code loadScripts} method.</p>
+     *
+     * @param plugin              The owning plugin.
+     * @param scriptFolder        The folder to load scripts from.
+     * @param includeFolder       The folder where include files are kept. These are not evaluated.
+     * @param directoryTraversal  Specify how directories are handles while searching from scripts.
+     */
+    public AbstractScriptManager(Plugin plugin,
+                                 File scriptFolder, File includeFolder,
+                                 DirectoryTraversal directoryTraversal) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(scriptFolder);
+        PreCon.notNull(includeFolder);
+        PreCon.notNull(directoryTraversal);
+        PreCon.isValid(scriptFolder.isDirectory(), "Script folder must be a folder.");
+        PreCon.isValid(includeFolder.isDirectory(), "Include folder must be a folder.");
+
+        _plugin = plugin;
+        _scriptFolder = scriptFolder;
+        _includeFolder = includeFolder;
         _directoryTraversal = directoryTraversal;
     }
 
@@ -105,6 +150,16 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
     @Nullable
     public File getScriptFolder() {
         return _scriptFolder;
+    }
+
+    /**
+     * Get the folder where include scripts are kept.
+     *
+     * <p>Include scripts are not evaluated by the script manager.</p>
+     */
+    @Nullable
+    public File getIncludeFolder() {
+        return _includeFolder;
     }
 
     /**
@@ -141,7 +196,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
             return;
 
         List<S> scripts = ScriptUtils.loadScripts(getPlugin(),
-                getEngineManager(), _scriptFolder, _directoryTraversal, getScriptConstructor());
+                getEngineManager(), _scriptFolder, _includeFolder, _directoryTraversal, getScriptConstructor());
 
         for (S script : scripts) {
             addScript(script);

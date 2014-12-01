@@ -50,6 +50,7 @@ import javax.annotation.Nullable;
 public class ScriptApiInclude extends GenericsScriptApi {
 
     private final AbstractScriptManager _manager;
+    private final File _includeFolder;
 
     /**
      * Constructor. Automatically adds variable to script.
@@ -62,19 +63,31 @@ public class ScriptApiInclude extends GenericsScriptApi {
         PreCon.notNull(manager);
 
         _manager = manager;
+
+        File includeFolder = _manager.getIncludeFolder();
+
+        if (includeFolder == null) {
+
+            File scriptsDir = new File(getPlugin().getDataFolder(), "scripts");
+            includeFolder = new File(scriptsDir, "includes");
+        }
+
+        _includeFolder = includeFolder;
     }
 
     @Override
     public IScriptApiObject getApiObject(IEvaluatedScript script) {
-        return new ApiObject(script);
+        return new ApiObject(script, _includeFolder);
     }
 
     public class ApiObject implements IScriptApiObject {
 
         private final IEvaluatedScript _script;
+        private final File _includeFolder;
 
-        ApiObject(IEvaluatedScript script) {
+        ApiObject(IEvaluatedScript script, File includeFolder) {
             _script = script;
+            _includeFolder = includeFolder;
         }
 
         /**
@@ -85,12 +98,13 @@ public class ScriptApiInclude extends GenericsScriptApi {
         public void lib(String... fileNames) {
             List<IScript> scripts = new ArrayList<>(fileNames.length);
             for (String fileName : fileNames) {
-                File scriptsDir = new File(getPlugin().getDataFolder(), "scripts");
-                File libsDir = new File(scriptsDir, "libs");
-                File file = new File(libsDir, fileName);
+
+                File file = new File(_includeFolder, fileName);
+
                 if (file.exists()) {
 
-                    IScript script = ScriptUtils.loadScript(getPlugin(), scriptsDir, file, _manager.getScriptConstructor());
+                    IScript script = ScriptUtils.loadScript(getPlugin(),
+                            _includeFolder, file, _manager.getScriptConstructor());
 
                     if (script != null)
                         scripts.add(script);
