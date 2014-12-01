@@ -25,16 +25,17 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
-import javax.annotation.Nullable;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
+import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
-import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
+import javax.annotation.Nullable;
 
 /**
  * Represents a Chest inventory GUI view.
@@ -65,6 +66,11 @@ public class ChestView extends AbstractView {
     @Override
     public ViewType getViewType() {
         return ViewType.INVENTORY;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return false;
     }
 
     @Override

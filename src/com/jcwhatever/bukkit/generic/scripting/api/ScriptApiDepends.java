@@ -64,6 +64,12 @@ public class ScriptApiDepends extends GenericsScriptApi {
 
         private List<DependsWrapper> _wrappers = new ArrayList<>(10);
         private ScheduledTask _task;
+        private boolean _isDisposed;
+
+        @Override
+        public boolean isDisposed() {
+            return _isDisposed;
+        }
 
         @Override
         public void dispose() {
@@ -72,6 +78,8 @@ public class ScriptApiDepends extends GenericsScriptApi {
                 _task.cancel();
 
             _wrappers.clear();
+
+            _isDisposed = true;
         }
 
         /**

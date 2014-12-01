@@ -67,9 +67,15 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
 
         private final Plugin _plugin;
         private Set<ScheduledTask> _repeatingTasks = new HashSet<>(25);
+        private boolean _isDisposed;
 
         ApiObject(Plugin plugin) {
             _plugin = plugin;
+        }
+
+        @Override
+        public boolean isDisposed() {
+            return _isDisposed;
         }
 
         @Override
@@ -80,6 +86,8 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
             }
 
             _repeatingTasks.clear();
+
+            _isDisposed = true;
         }
 
         /**

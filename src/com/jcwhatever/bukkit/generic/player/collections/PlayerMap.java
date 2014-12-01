@@ -49,6 +49,7 @@ import java.util.UUID;
 public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, V> {
 
 	private final Map<UUID, V> _map;
+	private boolean _isDisposed;
 
 	/**
 	 * Constructor.
@@ -155,6 +156,11 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 		_map.remove(p.getUniqueId());
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return _isDisposed;
+	}
+
 	/**
 	 * Call to remove references that prevent
 	 * the garbage collector from collecting
@@ -163,5 +169,6 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 	@Override
 	public void dispose() {
 		clear();
+		_isDisposed = true;
 	}
 }

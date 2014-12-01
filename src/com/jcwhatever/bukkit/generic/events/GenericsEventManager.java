@@ -371,6 +371,14 @@ public class GenericsEventManager implements IDisposable {
     }
 
     /**
+     * Determine if the manager is disposed.
+     */
+    @Override
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    /**
      * Dispose the event manager.
      */
     @Override

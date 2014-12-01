@@ -35,6 +35,11 @@ package com.jcwhatever.bukkit.generic.mixins;
 public interface IDisposable {
 
     /**
+     * Determine if the object is disposed.
+     */
+    boolean isDisposed();
+
+    /**
      * Release resources used by the instance.
      */
     void dispose();

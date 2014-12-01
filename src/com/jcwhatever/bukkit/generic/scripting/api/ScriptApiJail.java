@@ -69,6 +69,11 @@ public class ScriptApiJail extends GenericsScriptApi {
     public static class ApiObject implements IScriptApiObject {
 
         @Override
+        public boolean isDisposed() {
+            return false;
+        }
+
+        @Override
         public void dispose() {
             // do nothing
         }

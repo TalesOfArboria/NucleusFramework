@@ -33,6 +33,8 @@ import org.bukkit.event.inventory.InventoryType;
  */
 public abstract class AbstractMenuView extends AbstractView {
 
+    private boolean _isDisposed;
+
     @Override
     protected final void onInit(String name, IDataNode dataNode, ViewManager viewManager) {
         // menu view does not store a name, data node, or view manager
@@ -50,8 +52,15 @@ public abstract class AbstractMenuView extends AbstractView {
     }
 
     @Override
+    public final boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    @Override
     public final void dispose() {
         onDispose();
+
+        _isDisposed = true;
     }
 
     /**

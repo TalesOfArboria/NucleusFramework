@@ -69,6 +69,11 @@ public class ScriptApiSounds extends GenericsScriptApi {
         }
 
         @Override
+        public boolean isDisposed() {
+            return false;
+        }
+
+        @Override
         public void dispose() {
             // do nothing
         }

@@ -64,6 +64,7 @@ public class BlockTypeTrigger extends AbstractViewTrigger {
 
     private MaterialData _blockTypeData;
     private MaterialExt _material;
+    private boolean _isDisposed;
 
     @Override
     protected void onInit(IView view, ViewManager viewManager, IDataNode dataNode) {
@@ -73,6 +74,11 @@ public class BlockTypeTrigger extends AbstractViewTrigger {
             _eventListener = new EventListener();
             Bukkit.getPluginManager().registerEvents(_eventListener, getViewManager().getPlugin());
         }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return _isDisposed;
     }
 
     @Override

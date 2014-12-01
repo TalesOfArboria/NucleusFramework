@@ -149,6 +149,11 @@ public class ScriptApiInclude extends GenericsScriptApi {
         }
 
         @Override
+        public boolean isDisposed() {
+            return false;
+        }
+
+        @Override
         public void dispose() {
             // do nothing
         }

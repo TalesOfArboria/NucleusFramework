@@ -74,8 +74,13 @@ public class ScriptApiMeta extends GenericsScriptApi {
         }
 
         @Override
+        public boolean isDisposed() {
+            return false;
+        }
+
+        @Override
         public void dispose() {
-            // data node
+            // do nothing
         }
 
         /**

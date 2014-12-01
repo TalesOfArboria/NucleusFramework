@@ -78,7 +78,8 @@ public abstract class Region extends RegionSelection implements IRegion, IDispos
     private RegionPriority _enterPriority = RegionPriority.DEFAULT;
     private RegionPriority _leavePriority = RegionPriority.DEFAULT;
 
-    private boolean _isPlayerWatcher = false;
+    private boolean _isPlayerWatcher;
+    private boolean _isDisposed;
     private String _worldName;
     private UUID _ownerId;
     private List<Chunk> _chunks;
@@ -649,6 +650,14 @@ public abstract class Region extends RegionSelection implements IRegion, IDispos
     }
 
     /**
+     * Determine if the region has been disposed.
+     */
+    @Override
+    public final boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    /**
      * Dispose the region by releasing resources and
      * un-registering it from the central region manager.
      */
@@ -658,6 +667,8 @@ public abstract class Region extends RegionSelection implements IRegion, IDispos
         _instances.remove(this);
 
         onDispose();
+
+        _isDisposed = true;
     }
 
     /**

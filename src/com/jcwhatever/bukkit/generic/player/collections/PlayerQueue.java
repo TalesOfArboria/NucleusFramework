@@ -42,6 +42,7 @@ import javax.annotation.Nullable;
 public class PlayerQueue extends AbstractPlayerCollection implements Queue<Player> {
 
 	private final Queue<Player> _queue = new LinkedList<Player>();
+	private boolean _isDisposed;
 
 	/**
 	 * Constructor.
@@ -119,6 +120,7 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	public synchronized boolean retainAll(Collection<?> items) {
 
 		LinkedList<Player> temp = new LinkedList<>(_queue);
+		//noinspection SuspiciousMethodCalls
 		if (temp.removeAll(items)) {
 			while (!temp.isEmpty()) {
 				notifyPlayerRemoved(temp.remove().getUniqueId());
@@ -197,6 +199,11 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 		_queue.remove(p);
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return _isDisposed;
+	}
+
 	/**
 	 * Call to remove references that prevent
 	 * the garbage collector from collecting
@@ -205,6 +212,7 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	@Override
 	public void dispose() {
 		clear();
+		_isDisposed = true;
 	}
 
 	private final class PlayerIterator implements Iterator<Player> {

@@ -28,10 +28,11 @@ package com.jcwhatever.bukkit.generic.views;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRenameEvent;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
-import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -43,9 +44,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import javax.annotation.Nullable;
 
 /**
  * Represents an Anvil GUI view.
@@ -78,6 +79,11 @@ public class AnvilView extends AbstractView {
     }
 
     @Override
+    public boolean isDisposed() {
+        return false;
+    }
+
+    @Override
     public void dispose() {
         // do nothing
     }
@@ -104,7 +110,7 @@ public class AnvilView extends AbstractView {
     /**
      * Instance of an anvil GUI view shown to a player.
      */
-    public class AnvilInstance extends ViewInstance {
+    public static class AnvilInstance extends ViewInstance {
 
         /**
          * Constructor.

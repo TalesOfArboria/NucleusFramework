@@ -65,6 +65,11 @@ public class ScriptApiPermissions extends GenericsScriptApi {
         ApiObject() {}
 
         @Override
+        public boolean isDisposed() {
+            return false;
+        }
+
+        @Override
         public void dispose() {
             // do nothing
         }

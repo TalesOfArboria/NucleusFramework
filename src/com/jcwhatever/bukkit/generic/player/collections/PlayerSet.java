@@ -44,6 +44,7 @@ import java.util.Set;
 public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
     private final Set<Player> _players;
+    private boolean _isDisposed;
 
     /**
      * Constructor.
@@ -170,6 +171,11 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
         remove(p);
     }
 
+    @Override
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
     /**
      * Call to remove references that prevent
      * the garbage collector from collecting
@@ -178,6 +184,7 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
     @Override
     public void dispose() {
         clear();
+        _isDisposed = true;
     }
 
     private final class PlayerIterator implements Iterator<Player> {

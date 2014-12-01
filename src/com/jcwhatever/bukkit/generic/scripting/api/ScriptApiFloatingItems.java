@@ -86,9 +86,15 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
         private LinkedList<CallbackWrapper> _spawnCallbacks = new LinkedList<>();
         private LinkedList<CallbackWrapper> _despawnCallbacks = new LinkedList<>();
         private final FloatingItemManager _manager;
+        private boolean _isDisposed;
 
         ApiObject(FloatingItemManager manager) {
             _manager = manager;
+        }
+
+        @Override
+        public boolean isDisposed() {
+            return _isDisposed;
         }
 
         @Override
@@ -111,6 +117,8 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
 
                 wrapper.getItem().removeOnDespawn(wrapper);
             }
+
+            _isDisposed = true;
         }
 
         /**

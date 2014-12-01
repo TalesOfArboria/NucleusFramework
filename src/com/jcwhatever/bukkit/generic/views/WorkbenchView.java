@@ -27,12 +27,12 @@ package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
-import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
-import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
@@ -47,6 +47,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Represents a crafting workbench GUI view.
@@ -76,6 +77,11 @@ public class WorkbenchView extends AbstractView {
     @Override
     public ViewType getViewType() {
         return ViewType.WORKBENCH;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return false;
     }
 
     @Override

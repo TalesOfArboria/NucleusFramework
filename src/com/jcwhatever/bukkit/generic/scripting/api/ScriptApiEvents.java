@@ -84,9 +84,15 @@ public class ScriptApiEvents extends GenericsScriptApi {
         private final List<RegisteredBukkitEvent> _registeredBukkit = new ArrayList<>(15);
         private final List<RegisteredGenericsEvent> _registeredGenerics = new ArrayList<>(15);
         private Listener _dummyBukkitListener = new Listener() {};
+        private boolean _isDisposed;
 
         ApiObject(Plugin plugin) {
             _plugin = plugin;
+        }
+
+        @Override
+        public boolean isDisposed() {
+            return _isDisposed;
         }
 
         @Override
@@ -104,6 +110,8 @@ public class ScriptApiEvents extends GenericsScriptApi {
                 GenericsEventManager.getGlobal().unregister(registered._eventClass, registered._handler);
             }
             _registeredGenerics.clear();
+
+            _isDisposed = true;
         }
 
         /**
