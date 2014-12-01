@@ -50,7 +50,7 @@ public class GenericsScript implements IScript {
      * Constructor.
      *
      * @param name      The name of the script.
-     * @param file  The name of the file the script is from.
+     * @param file      The name of the file the script is from.
      * @param type      The script type.
      * @param script    The script source.
      */
