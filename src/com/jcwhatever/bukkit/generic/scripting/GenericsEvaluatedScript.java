@@ -187,7 +187,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     public Object evaluate(IScript script, ScriptContext context) {
 
         if (script.getFile() != null) {
-            _engine.put(ScriptEngine.FILENAME, script.getFile());
+            _engine.put(ScriptEngine.FILENAME, script.getFile().getName());
         }
 
         try {
