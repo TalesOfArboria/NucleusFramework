@@ -70,7 +70,10 @@ public class ScriptUtils {
      * @param plugin   The owning plugin.
      * @param manager  The requesting {@code GenericsScriptManager}.
      */
-    public static List<IScriptApi> getDefaultApi(Plugin plugin, @Nullable AbstractScriptManager manager) {
+    public static List<IScriptApi> getDefaultApi(Plugin plugin, AbstractScriptManager manager) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(manager);
+
         List<IScriptApi> api = new ArrayList<>(15);
 
         api.add(new ScriptApiEconomy(plugin));
@@ -84,9 +87,7 @@ public class ScriptUtils {
         api.add(new ScriptApiDepends(plugin));
         api.add(new ScriptApiRand(plugin));
         api.add(new ScriptApiScheduler(plugin));
-
-        if (manager != null)
-            api.add(new ScriptApiInclude(plugin, manager));
+        api.add(new ScriptApiInclude(plugin, manager));
 
         return api;
     }
