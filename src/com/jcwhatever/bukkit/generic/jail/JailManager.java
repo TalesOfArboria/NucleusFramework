@@ -27,18 +27,20 @@ package com.jcwhatever.bukkit.generic.jail;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
 import com.jcwhatever.bukkit.generic.mixins.implemented.NamedLocation;
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.DateUtils.TimeRound;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Rand;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.utils.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.Utils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -52,7 +54,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -61,11 +62,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Manages a player jail
  */
 public class JailManager {
+
+    @Localizable static final String _RELEASE_TIME = "Release in {0} minutes.";
 
     /**
      * Get the global default jail instance.
@@ -398,6 +402,8 @@ public class JailManager {
                     session.release(false);
 
                     Location releaseLoc = session.getReleaseLocation();
+                    if (releaseLoc == null)
+                        throw new AssertionError();
 
                     Player p = PlayerUtils.getPlayer(session.getPlayerId());
                     if (p != null) {
@@ -416,8 +422,7 @@ public class JailManager {
                         Player p = PlayerUtils.getPlayer(session.getPlayerId());
 
                         if (p != null) {
-                            String message = Lang.get("Release in {0} minutes.", releaseMinutes);
-                            Messenger.tell(p, message);
+                            Messenger.tellAnon(p, Lang.get(_RELEASE_TIME, releaseMinutes));
                         }
                     }
                 }
@@ -473,6 +478,9 @@ public class JailManager {
                     Location loc = getRandomTeleport();
                     if (loc == null)
                         loc = _bounds.getCenter();
+
+                    if (loc == null)
+                        throw new AssertionError();
 
                     event.setRespawnLocation(loc);
                 }

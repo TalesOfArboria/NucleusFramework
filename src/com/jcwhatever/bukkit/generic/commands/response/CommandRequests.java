@@ -175,10 +175,10 @@ public class CommandRequests {
     }
 
     private static void tellMultipleRequests(CommandSender sender, ResponseType type, Collection<ResponseRequest> requests) {
-        Messenger.tell(sender, Lang.get(_MULTIPLE_REQUESTS));
+        Messenger.tellAnon(sender, Lang.get(_MULTIPLE_REQUESTS));
 
         for (ResponseRequest request : requests) {
-            Messenger.tell(sender, '/' + type.getCommandName() + ' ' + request.getContext());
+            Messenger.tellAnon(sender, '/' + type.getCommandName() + ' ' + request.getContext());
         }
     }
 
