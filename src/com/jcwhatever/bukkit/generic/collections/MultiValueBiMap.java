@@ -44,7 +44,7 @@ import java.util.Set;
  * @param <K> Key type
  * @param <V> Value type
  */
-public class MultiValueMap <K, V> {
+public class MultiValueBiMap<K, V> {
 
     // keyed to key type
     Map<K, Set<V>> _valueMap;
@@ -58,7 +58,7 @@ public class MultiValueMap <K, V> {
     /**
      * Constructor.
      */
-    public MultiValueMap() {
+    public MultiValueBiMap() {
         _valueMap = new HashMap<>(20);
         _keyMap = new HashMap<>(20);
     }
@@ -68,7 +68,7 @@ public class MultiValueMap <K, V> {
      *
      * @param size  The initial capacity of the map.
      */
-    public MultiValueMap(int size) {
+    public MultiValueBiMap(int size) {
         PreCon.positiveNumber(size);
 
         _valueMap = new HashMap<>(size);
@@ -81,7 +81,7 @@ public class MultiValueMap <K, V> {
      * @param size       The initial capacity of the map.
      * @param entrySize  The initial capacity of the internal collections for each key.
      */
-    public MultiValueMap(int size, int entrySize) {
+    public MultiValueBiMap(int size, int entrySize) {
         PreCon.positiveNumber(size);
         PreCon.positiveNumber(entrySize);
 
@@ -233,7 +233,7 @@ public class MultiValueMap <K, V> {
      *
      * @return self
      */
-    public MultiValueMap<K, V> put(K key, V value) {
+    public MultiValueBiMap<K, V> put(K key, V value) {
         PreCon.notNull(key);
         PreCon.notNull(value);
 

@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.MultiValueMap;
+import com.jcwhatever.bukkit.generic.collections.MultiValueBiMap;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableFurnitureEntity;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
@@ -475,7 +475,7 @@ public abstract class RestorableRegion extends BuildableRegion {
 
             // Restore door block Pairs
             // keyed to block x, y z value as a string
-            MultiValueMap<String, ChunkBlockInfo> _placedDoorBlocks = new MultiValueMap<>(doors.size());
+            MultiValueBiMap<String, ChunkBlockInfo> _placedDoorBlocks = new MultiValueBiMap<>(doors.size());
 
             // Get door block pairs
             while (!doors.isEmpty()) {

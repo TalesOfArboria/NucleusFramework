@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.extended;
 
-import com.jcwhatever.bukkit.generic.collections.MultiValueMap;
+import com.jcwhatever.bukkit.generic.collections.MultiValueBiMap;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
@@ -39,7 +39,7 @@ public class NamedMaterialData {
 
     private NamedMaterialData(){}
 
-    private static MultiValueMap<String, MaterialData> _alternateNames = new MultiValueMap<String, MaterialData>();
+    private static MultiValueBiMap<String, MaterialData> _alternateNames = new MultiValueBiMap<String, MaterialData>();
 
     static {
         _alternateNames

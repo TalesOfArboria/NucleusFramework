@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.player.collections;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.MultiValueMap;
+import com.jcwhatever.bukkit.generic.collections.MultiValueBiMap;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.entity.Player;
@@ -83,7 +83,7 @@ final class PlayerCollectionListener implements Listener {
     private final Plugin _plugin;
 
     // keyed to player id, a map of collections a player is contained in
-    private final MultiValueMap<UUID, AbstractPlayerCollection> _collectionMap = new MultiValueMap<>(100, 25);
+    private final MultiValueBiMap<UUID, AbstractPlayerCollection> _collectionMap = new MultiValueBiMap<>(100, 25);
 
     /**
      * Private Constructor.
