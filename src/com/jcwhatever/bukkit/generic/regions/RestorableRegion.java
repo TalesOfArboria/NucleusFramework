@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.MultiValueBiMap;
+import com.jcwhatever.bukkit.generic.collections.HashSetMap;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableFurnitureEntity;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
@@ -52,6 +52,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -475,7 +476,7 @@ public abstract class RestorableRegion extends BuildableRegion {
 
             // Restore door block Pairs
             // keyed to block x, y z value as a string
-            MultiValueBiMap<String, ChunkBlockInfo> _placedDoorBlocks = new MultiValueBiMap<>(doors.size());
+            HashSetMap<String, ChunkBlockInfo> _placedDoorBlocks = new HashSetMap<>(doors.size());
 
             // Get door block pairs
             while (!doors.isEmpty()) {
@@ -486,7 +487,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                 int z = info.getChunkBlockZ();
 
                 String lowerKey = getKey(x, y - 1, z);
-                List<ChunkBlockInfo> lowerDoor = _placedDoorBlocks.getValues(lowerKey);
+                Set<ChunkBlockInfo> lowerDoor = _placedDoorBlocks.getAll(lowerKey);
 
                 if (lowerDoor != null) {
                     _placedDoorBlocks.put(lowerKey, info);
@@ -494,7 +495,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                 }
 
                 String upperKey = getKey(x, y + 1, z);
-                List<ChunkBlockInfo> upperDoor = _placedDoorBlocks.getValues(upperKey);
+                Set<ChunkBlockInfo> upperDoor = _placedDoorBlocks.getAll(upperKey);
                 if (upperDoor != null) {
                     _placedDoorBlocks.put(upperKey, info);
                     continue;
@@ -507,7 +508,12 @@ public abstract class RestorableRegion extends BuildableRegion {
             Set<String> keys = _placedDoorBlocks.keySet();
 
             for (String key : keys) {
-                List<ChunkBlockInfo> doorPair = _placedDoorBlocks.getValues(key);
+
+                Set<ChunkBlockInfo> doorPairSet = _placedDoorBlocks.getAll(key);
+                if (doorPairSet == null)
+                    continue;
+
+                List<ChunkBlockInfo> doorPair = new ArrayList<>(doorPairSet);
 
                 Collections.sort(doorPair);
 
