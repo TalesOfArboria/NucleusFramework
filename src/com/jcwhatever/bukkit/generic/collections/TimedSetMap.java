@@ -27,13 +27,13 @@ package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * A hash map that uses timed hash sets to store values.
@@ -47,7 +47,7 @@ import java.util.Set;
  * @param <K>  Key type
  * @param <V>  Value type
  */
-public class TimedSetMap<K, V> extends SetMap<K, V> {
+public class TimedSetMap<K, V> extends HashSetMap<K, V> {
 
     private int _defaultLifespan = 20;
     private List<CollectionEmptyAction<TimedSetMap<K, V>>> _onEmpty = new ArrayList<>(5);

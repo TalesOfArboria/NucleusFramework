@@ -27,12 +27,12 @@ package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * A hash map that uses hash sets to store values.
@@ -40,14 +40,14 @@ import java.util.Set;
  * @param <K>  Key type
  * @param <V>  Value type
  */
-public class SetMap <K, V> implements Map<K, V> {
+public class HashSetMap<K, V> implements Map<K, V> {
 
     protected Map<K, Set<V>> _map;
 
     /**
      * Constructor.
      */
-    public SetMap() {
+    public HashSetMap() {
         _map = new HashMap<>(10);
     }
 
@@ -56,7 +56,7 @@ public class SetMap <K, V> implements Map<K, V> {
      *
      * @param size  The initial size.
      */
-    public SetMap(int size) {
+    public HashSetMap(int size) {
         PreCon.positiveNumber(size);
 
         _map = new HashMap<>(size);
@@ -100,6 +100,8 @@ public class SetMap <K, V> implements Map<K, V> {
         PreCon.notNull(value);
 
         for (Set<V> stack : _map.values()) {
+
+            //noinspection SuspiciousMethodCalls
             if (stack.contains(value))
                 return true;
         }
@@ -116,6 +118,7 @@ public class SetMap <K, V> implements Map<K, V> {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.get(key);
         return set != null && set.contains(value);
     }
@@ -157,6 +160,7 @@ public class SetMap <K, V> implements Map<K, V> {
     public Set<V> getAll(Object key) {
         PreCon.notNull(key);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.get(key);
         if (set == null) {
             return null;
@@ -217,6 +221,7 @@ public class SetMap <K, V> implements Map<K, V> {
     public V remove(Object key) {
         PreCon.notNull(key);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.get(key);
         if (set == null) {
             return null;
@@ -242,6 +247,7 @@ public class SetMap <K, V> implements Map<K, V> {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.get(key);
         if (set == null) {
             return false;
@@ -266,6 +272,7 @@ public class SetMap <K, V> implements Map<K, V> {
     public Set<V> removeAll(Object key) {
         PreCon.notNull(key);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.remove(key);
         if (set == null) {
             return null;
@@ -293,6 +300,7 @@ public class SetMap <K, V> implements Map<K, V> {
     public int keySize(Object key) {
         PreCon.notNull(key);
 
+        //noinspection SuspiciousMethodCalls
         Set<V> set = _map.get(key);
         if (set == null || set.isEmpty()) {
             return 0;

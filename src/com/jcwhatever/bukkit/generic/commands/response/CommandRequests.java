@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.commands.response;
 
-import com.jcwhatever.bukkit.generic.collections.SetMap;
+import com.jcwhatever.bukkit.generic.collections.HashSetMap;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
@@ -50,7 +50,7 @@ public class CommandRequests {
     @Localizable private static final String _MULTIPLE_REQUESTS = "{YELLOW}Multiple requests for response found. " +
             "Please be more specific:";
 
-    private static SetMap<CommandSender, ResponseRequest> _requests = new SetMap<>(25);
+    private static HashSetMap<CommandSender, ResponseRequest> _requests = new HashSetMap<>(25);
 
     /**
      * Get a list of response requests for the specified command sender.
