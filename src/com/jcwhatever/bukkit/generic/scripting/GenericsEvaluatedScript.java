@@ -57,6 +57,8 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     private final Set<Class<? extends IScriptApi>> _included;
     private final List<IScriptApiObject> _apiObjects = new ArrayList<>(25);
 
+    private boolean _isDisposed;
+
     /**
      * Constructor.
      *
@@ -106,6 +108,9 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         return new ArrayList<>(_scriptApis.values());
     }
 
+    /**
+     * Get the script context.
+     */
     @Override
     public ScriptContext getContext() {
         if (_context == null) {
@@ -114,6 +119,9 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         return _context;
     }
 
+    /**
+     * Add a script api.
+     */
     @Override
     public void addScriptApi(IScriptApi scriptApi, String variableName) {
         PreCon.notNull(scriptApi);
@@ -139,8 +147,6 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
      *
      * @param functionName  The name of the function.
      * @param parameters    Function parameters.
-     *
-     * @return
      */
     @Override
     @Nullable
@@ -192,6 +198,18 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         }
     }
 
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    @Override
+    public void dispose() {
+        resetApi();
+
+        _isDisposed = true;
+        _scriptApis.clear();
+    }
+
     /**
      * Reset the included api.
      */
@@ -215,4 +233,5 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     protected ScriptContext createContext() {
         return new SimpleScriptContext();
     }
+
 }

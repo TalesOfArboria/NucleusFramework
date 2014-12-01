@@ -65,5 +65,4 @@ public interface IScript {
      */
     @Nullable
     IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection);
-
 }

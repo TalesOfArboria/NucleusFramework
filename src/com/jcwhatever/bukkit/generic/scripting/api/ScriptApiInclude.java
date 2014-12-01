@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.scripting.GenericsScriptManager;
+import com.jcwhatever.bukkit.generic.scripting.AbstractScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
@@ -49,14 +49,14 @@ import javax.annotation.Nullable;
         description = "Provide script with ability to include other scripts.")
 public class ScriptApiInclude extends GenericsScriptApi {
 
-    private final GenericsScriptManager _manager;
+    private final AbstractScriptManager _manager;
 
     /**
      * Constructor. Automatically adds variable to script.
      *
      * @param plugin The owning plugin
      */
-    public ScriptApiInclude(Plugin plugin, GenericsScriptManager manager) {
+    public ScriptApiInclude(Plugin plugin, AbstractScriptManager manager) {
         super(plugin);
 
         PreCon.notNull(manager);

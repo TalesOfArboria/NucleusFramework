@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
-import com.jcwhatever.bukkit.generic.scripting.GenericsScriptManager;
+import com.jcwhatever.bukkit.generic.scripting.AbstractScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiDepends;
@@ -70,7 +70,7 @@ public class ScriptUtils {
      * @param plugin   The owning plugin.
      * @param manager  The requesting {@code GenericsScriptManager}.
      */
-    public static List<IScriptApi> getDefaultApi(Plugin plugin, @Nullable GenericsScriptManager manager) {
+    public static List<IScriptApi> getDefaultApi(Plugin plugin, @Nullable AbstractScriptManager manager) {
         List<IScriptApi> api = new ArrayList<>(15);
 
         api.add(new ScriptApiEconomy(plugin));

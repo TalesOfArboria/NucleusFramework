@@ -72,6 +72,12 @@ public class GenericsScript implements IScript {
         return _name;
     }
 
+    /**
+     * Get the filename displayed in errors.
+     *
+     * @return Null if the script did not come from a
+     * file or no filename is provided.
+     */
     @Nullable
     @Override
     public String getFilename() {

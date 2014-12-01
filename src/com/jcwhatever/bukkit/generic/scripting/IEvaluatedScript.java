@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting;
 
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.sun.istack.internal.Nullable;
 
@@ -35,7 +36,7 @@ import javax.script.ScriptEngine;
 /**
  * A script that has been evaluated by a script engine.
  */
-public interface IEvaluatedScript {
+public interface IEvaluatedScript extends IDisposable {
 
     /**
      * Get the script that was evaluated.
