@@ -27,10 +27,12 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.messaging.Messenger.LineWrapping;
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.sun.istack.internal.Nullable;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -41,8 +43,6 @@ import org.bukkit.plugin.Plugin;
         variableName = "msg",
         description = "Provide scripts with API access to chat messenger.")
 public class ScriptApiMsg extends GenericsScriptApi {
-
-    private ApiObject _api;
 
     /**
      * Constructor. Automatically adds variable to script.
@@ -55,28 +55,32 @@ public class ScriptApiMsg extends GenericsScriptApi {
 
     @Override
     public IScriptApiObject getApiObject(IEvaluatedScript script) {
-        if (_api == null)
-            _api = new ApiObject(getPlugin());
-
-        return _api;
+        return new ApiObject();
     }
 
     public static class ApiObject implements IScriptApiObject {
 
-        private final Plugin _plugin;
-
-        ApiObject(Plugin plugin) {
-            _plugin = plugin;
-        }
+        private Object _chatPrefix;
+        private boolean _isDisposed;
 
         @Override
         public boolean isDisposed() {
-            return false;
+            return _isDisposed;
         }
 
         @Override
         public void dispose() {
-            // do nothing
+            _chatPrefix = null;
+            _isDisposed = true;
+        }
+
+        /**
+         * Set the chat prefix to use.
+         *
+         * @param prefix  The prefix.
+         */
+        public void setChatPrefix(@Nullable Object prefix) {
+            _chatPrefix = prefix;
         }
 
         /**
@@ -93,7 +97,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tell(LineWrapping.DISABLED, _plugin, p, message, params);
+            Messenger.tell(LineWrapping.DISABLED, _chatPrefix, p, message, params);
         }
 
         /**
@@ -129,7 +133,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tellNoSpam(LineWrapping.DISABLED, _plugin, p, timeout, message, params);
+            Messenger.tellNoSpam(LineWrapping.DISABLED, _chatPrefix, p, timeout, message, params);
         }
 
         /**
@@ -161,7 +165,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
         public void debug(String message, Object... params) {
             PreCon.notNull(message);
 
-            Messenger.warning(_plugin, "[SCRIPT DEBUG] " + message, params);
+            Messenger.warning(_chatPrefix, " [SCRIPT DEBUG] " + message, params);
         }
     }
 }
