@@ -138,6 +138,11 @@ public class GenericsLib extends GenericsPlugin {
 
     /**
      * Get the default script engine manager.
+     *
+     * <p>Returns an instance of {@code GenericsScriptEngineManager}.</p>
+     *
+     * <p>Engines returned from the script engine manager are singleton
+     * instances that are used globally.</p>
      */
     public static ScriptEngineManager getScriptEngineManager() {
         return _instance._scriptEngineManager;
