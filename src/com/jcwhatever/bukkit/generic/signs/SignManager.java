@@ -550,6 +550,7 @@ public class SignManager {
 
     // Get the sign handler name from the
     // first line of a sign.
+    @Nullable
     private String getSignHandlerName(String line0) {
 
         String header = ChatColor.stripColor(line0);
