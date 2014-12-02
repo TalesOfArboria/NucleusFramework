@@ -25,6 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
+import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
+import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatPattern.FormatEntry;
 
 import org.bukkit.ChatColor;
@@ -49,6 +52,13 @@ import javax.annotation.Nullable;
 public class TextUtils {
 
     private TextUtils() {}
+
+    @Localizable static final String _FORMAT_TEMPLATE_RAW = "{0}";
+    @Localizable static final String _FORMAT_TEMPLATE_HEADER = "{AQUA}{0}";
+    @Localizable static final String _FORMAT_TEMPLATE_SUB_HEADER = "{LIGHT_PURPLE}{ITALIC}{0}:";
+    @Localizable static final String _FORMAT_TEMPLATE_ITEM = "{YELLOW}{0}";
+    @Localizable static final String _FORMAT_TEMPLATE_DEFINITION = "{GOLD}{0}{AQUA} - {GRAY}{1}";
+    @Localizable static final String _FORMAT_TEMPLATE_ITEM_DESCRIPTION = "{YELLOW}{0}{AQUA} - {GRAY}{1}";
 
     public static final Pattern PATTERN_DOT = Pattern.compile("\\.");
     public static final Pattern PATTERN_COMMA = Pattern.compile(",");
@@ -89,29 +99,23 @@ public class TextUtils {
     };
 
     public enum FormatTemplate {
-        RAW               ("{0}", "No formatting. Raw Text."),
-        HEADER            ("{AQUA}{0}", "Header title"),
-        SUB_HEADER        ("{LIGHT_PURPLE}{ITALIC}{0}:", "Sub header title"),
-        ITEM              ("{YELLOW}{0}", "Name"),
-        DEFINITION        ("{GOLD}{0}{AQUA} - {GRAY}{1}", "definition", "description"),
-        ITEM_DESCRIPTION  ("{YELLOW}{0}{AQUA} - {GRAY}{1}", "list item", "description")
-        ;
+        RAW               (_FORMAT_TEMPLATE_RAW),
+        HEADER            (_FORMAT_TEMPLATE_HEADER),
+        SUB_HEADER        (_FORMAT_TEMPLATE_SUB_HEADER),
+        ITEM              (_FORMAT_TEMPLATE_ITEM),
+        DEFINITION        (_FORMAT_TEMPLATE_DEFINITION),
+        ITEM_DESCRIPTION  (_FORMAT_TEMPLATE_ITEM_DESCRIPTION);
 
         private final String _template;
-        private final String[] _paramDescriptions;
 
-        FormatTemplate(String template, String... paramDescription) {
+        FormatTemplate(String template) {
             _template = template;
-            _paramDescriptions = paramDescription;
-        }
-
-        public String[] getParamDescriptions() {
-            return _paramDescriptions;
         }
 
         @Override
+        @Localized
         public String toString() {
-            return _template;
+            return Lang.get(_template);
         }
     }
 
