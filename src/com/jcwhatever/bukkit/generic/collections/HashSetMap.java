@@ -211,6 +211,29 @@ public class HashSetMap<K, V> implements Map<K, V> {
     }
 
     /**
+     * All all values in a collection to the specified
+     * key.
+     *
+     * @param key     The key to use.
+     * @param values  The values to add.
+     */
+    public void putAll(K key, Collection<V> values) {
+        PreCon.notNull(key);
+        PreCon.notNull(values);
+
+        if (values.isEmpty())
+            return;
+
+        Set<V> set = _map.get(key);
+        if (set == null) {
+            set = new HashSet<>(10);
+            _map.put(key, set);
+        }
+
+        set.addAll(values);
+    }
+
+    /**
      * Remove value by key. Removes a value from the internal set
      * represented by the key.
      *
