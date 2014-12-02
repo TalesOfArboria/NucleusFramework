@@ -65,6 +65,7 @@ public class GenericsLib extends GenericsPlugin {
     private ScriptEngineManager _scriptEngineManager;
     private ScriptManager _scriptManager;
     private KitManager _kitManager;
+    private CommandHandler _commandHandler;
 
     /**
      * Get the {@code GenericsLib} plugin instance.
@@ -179,6 +180,13 @@ public class GenericsLib extends GenericsPlugin {
     }
 
     /**
+     * Get GenericsLib's internal command handler.
+     */
+    public CommandHandler getCommandHandler() {
+        return _commandHandler;
+    }
+
+    /**
      * Constructor.
      */
     public GenericsLib() {
@@ -206,6 +214,7 @@ public class GenericsLib extends GenericsPlugin {
     @Override
     protected void onEnablePlugin() {
 
+        _commandHandler = new CommandHandler();
         _scheduler = new BukkitTaskScheduler();
         _scriptEngineManager = new GenericsScriptEngineManager();
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
@@ -215,7 +224,7 @@ public class GenericsLib extends GenericsPlugin {
         _equipperManager = new EntityEquipperManager();
 
         registerEventListeners(new JCGEventListener());
-        registerCommands(new CommandHandler());
+        registerCommands(_commandHandler);
 
         loadScriptManager();
     }
