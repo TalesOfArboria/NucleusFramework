@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
+import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
 
 import org.bukkit.Chunk;
@@ -44,7 +45,7 @@ import javax.annotation.Nullable;
  * <p>For nearly all cases, the abstract class {@link Region} should be extended
  * or use one of the other abstract implementations that extend {@link Region}.</p>
  */
-public interface IRegion extends IRegionSelection, IRegionComparable {
+public interface IRegion extends IRegionSelection, INamedInsensitive, IRegionComparable {
 
     /**
      * Get the owning plugin.
@@ -54,11 +55,13 @@ public interface IRegion extends IRegionSelection, IRegionComparable {
     /**
      * Get the name of the region.
      */
+    @Override
     String getName();
 
     /**
      * Get the name of the region in lower case.
      */
+    @Override
     String getSearchName();
 
     /**

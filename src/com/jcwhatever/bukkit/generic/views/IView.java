@@ -26,8 +26,10 @@
 package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+import com.jcwhatever.bukkit.generic.mixins.INamed;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.triggers.IViewTrigger;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 
@@ -36,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a type of player view
  */
-public interface IView extends IDisposable {
+public interface IView extends INamed, IDisposable {
 
     /**
      * Called only once. Used internally after instantiating view.
@@ -50,6 +52,7 @@ public interface IView extends IDisposable {
     /**
      * Get the name of the view
      */
+    @Override
     String getName();
 
     /**

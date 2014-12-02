@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.inventory;
 import com.jcwhatever.bukkit.generic.events.bukkit.kits.GiveKitEvent;
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
+import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
@@ -46,7 +47,7 @@ import javax.annotation.Nullable;
 /**
  * A kit of items that can be given to a player.
  */
-public class Kit {
+public class Kit implements INamedInsensitive {
 
     private final Plugin _plugin;
     private final String _name;
@@ -78,6 +79,7 @@ public class Kit {
     /**
      * Get the name of the kit.
      */
+    @Override
     public String getName() {
         return _name;
     }
@@ -85,6 +87,7 @@ public class Kit {
     /**
      * Get the name of the kit in lowercase.
      */
+    @Override
     public String getSearchName() {
         return _searchName;
     }

@@ -25,13 +25,14 @@
 
 package com.jcwhatever.bukkit.generic.sounds;
 
+import com.jcwhatever.bukkit.generic.mixins.INamed;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 /**
  * Abstract implementation of a resource sound.
  */
-public abstract class ResourceSound {
+public abstract class ResourceSound implements INamed {
 
     private final String _soundName;
     private final String _displayName;
@@ -63,6 +64,7 @@ public abstract class ResourceSound {
     /**
      * Get the name of the sound.
      */
+    @Override
     public final String getName() {
         return _soundName;
     }

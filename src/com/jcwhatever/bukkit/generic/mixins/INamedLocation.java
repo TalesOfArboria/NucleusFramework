@@ -31,17 +31,19 @@ import org.bukkit.Location;
  * Mixin that defines an implementation as a {@code Location} wrapper that provides a name
  * to the encapsulated location.
  */
-public interface INamedLocation {
+public interface INamedLocation extends INamedInsensitive{
 
     /**
      * Get the name of the location.
      */
+    @Override
     String getName();
 
     /**
      * Get the name of the location in
      * lowercase.
      */
+    @Override
     String getSearchName();
 
     /**

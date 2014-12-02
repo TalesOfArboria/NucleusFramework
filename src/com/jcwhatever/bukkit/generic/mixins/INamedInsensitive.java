@@ -22,50 +22,16 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.bukkit.generic.scripting;
-
-import com.jcwhatever.bukkit.generic.mixins.INamed;
-import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
-
-import java.io.File;
-import java.util.Collection;
-import javax.annotation.Nullable;
+package com.jcwhatever.bukkit.generic.mixins;
 
 /**
- * A data object that holds information and source for a script.
+ * Represents a named object whose name is not
+ * case sensitive in look ups.
  */
-public interface IScript extends INamed {
+public interface INamedInsensitive extends INamed {
 
     /**
-     * Get the name of the script.
+     * Get the name in lowercase.
      */
-    @Override
-    String getName();
-
-    /**
-     * Get the file the script is from.
-     *
-     * @return Null if script is not from a file.
-     */
-    @Nullable
-    File getFile();
-
-    /**
-     * Get the script source.
-     */
-    String getScript();
-
-    /**
-     * Get the script type.
-     */
-    String getType();
-
-    /**
-     * Evaluate the script.
-     *
-     * @param apiCollection  The api to include.
-     */
-    @Nullable
-    IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection);
+    String getSearchName();
 }

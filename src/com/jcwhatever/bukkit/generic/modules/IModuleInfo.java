@@ -24,18 +24,22 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
+import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
+
 /**
  * Interface for module instance information.
  */
-public interface IModuleInfo {
+public interface IModuleInfo extends INamedInsensitive {
 
     /**
      * Get the name of the module.
      */
+    @Override
     String getName();
 
     /**
      * Get the name of the module in lowercase.
      */
+    @Override
     String getSearchName();
 }
