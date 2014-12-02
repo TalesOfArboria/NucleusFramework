@@ -23,24 +23,24 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.internal.commands;
+package com.jcwhatever.bukkit.generic.internal.commands.kits.items;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.commands.AbstractCommandHandler;
-import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.kits.KitsCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.scripts.ScriptsCommand;
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 
-public class CommandHandler extends AbstractCommandHandler {
+@CommandInfo(
+        parent="kits",
+        command="items",
+        description="Manage inventory kit items.")
 
-    public CommandHandler() {
-        super(GenericsLib.getLib());
-    }
+public class ItemsCommand extends AbstractCommand {
 
-    @Override
-    protected void registerCommands () {
-        registerCommand(JailCommand.class);
-        registerCommand(KitsCommand.class);
-        registerCommand(ScriptsCommand.class);
+    public ItemsCommand() {
+        super();
+
+        registerSubCommand(AddSubCommand.class);
+        registerSubCommand(DelSubCommand.class);
+        registerSubCommand(ListSubCommand.class);
+
     }
 }

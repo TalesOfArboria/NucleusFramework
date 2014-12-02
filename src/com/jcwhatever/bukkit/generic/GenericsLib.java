@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic;
 import com.jcwhatever.bukkit.generic.internal.ScriptManager;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
+import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
@@ -63,6 +64,7 @@ public class GenericsLib extends GenericsPlugin {
     private ITaskScheduler _scheduler;
     private ScriptEngineManager _scriptEngineManager;
     private ScriptManager _scriptManager;
+    private KitManager _kitManager;
 
     /**
      * Get the {@code GenericsLib} plugin instance.
@@ -170,6 +172,13 @@ public class GenericsLib extends GenericsPlugin {
     }
 
     /**
+     * Get the default kit manager.
+     */
+    public static KitManager getKitManager() {
+        return _instance._kitManager;
+    }
+
+    /**
      * Constructor.
      */
     public GenericsLib() {
@@ -199,8 +208,7 @@ public class GenericsLib extends GenericsPlugin {
 
         _scheduler = new BukkitTaskScheduler();
         _scriptEngineManager = new GenericsScriptEngineManager();
-
-        loadScriptManager();
+        _kitManager = new KitManager(this, getDataNode().getNode("kits"));
 
         _regionManager = new RegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
@@ -208,6 +216,8 @@ public class GenericsLib extends GenericsPlugin {
 
         registerEventListeners(new JCGEventListener());
         registerCommands(new CommandHandler());
+
+        loadScriptManager();
     }
 
     @Override
