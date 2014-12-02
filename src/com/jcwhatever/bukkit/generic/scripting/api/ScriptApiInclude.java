@@ -31,14 +31,12 @@ import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
-import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
 
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -93,31 +91,29 @@ public class ScriptApiInclude extends GenericsScriptApi {
         /**
          * Include script from plugins script include folder.
          *
-         * @param fileNames  The relative paths of the scripts to include.
+         * @param fileName  The relative path of the script to include.
          */
-        public void script(String... fileNames) {
-            List<IScript> scripts = new ArrayList<>(fileNames.length);
-            for (String fileName : fileNames) {
+        @Nullable
+        public Object script(String fileName) {
 
-                File file = new File(_includeFolder, fileName);
+            File file = new File(_includeFolder, fileName);
 
-                if (file.exists()) {
+            if (file.exists()) {
 
-                    IScript script = ScriptUtils.loadScript(getPlugin(),
-                            _includeFolder, file, _manager.getScriptConstructor());
+                IScript script = ScriptUtils.loadScript(getPlugin(),
+                        _includeFolder, file, _manager.getScriptFactory());
 
-                    if (script != null)
-                        scripts.add(script);
-                }
-                else {
-                    Messenger.warning(getPlugin(), "Failed to include script named '{0}'. " +
-                            "File not found.", file.getName());
-                }
+                if (script == null)
+                    return null;
+
+                return _script.evaluate(script);
+            }
+            else {
+                Messenger.warning(getPlugin(), "Failed to include script named '{0}'. " +
+                        "File not found.", file.getName());
             }
 
-            for (IScript script : scripts) {
-                _script.evaluate(script);
-            }
+            return null;
         }
 
         /**
@@ -146,6 +142,29 @@ public class ScriptApiInclude extends GenericsScriptApi {
             _script.addScriptApi(api, variableName);
 
             return true;
+        }
+
+        /**
+         * Get and return a new api object from the script api repository.
+         *
+         * @param owningPluginName  The name of the api owning plugin.
+         * @param apiName           The variable name of the api.
+         *
+         * @return  The api object or null if not found.
+         */
+        @Nullable
+        public IScriptApiObject apiLocal(String owningPluginName, String apiName) {
+            PreCon.notNull(owningPluginName);
+            PreCon.notNullOrEmpty(apiName);
+
+            IScriptApi api = ScriptApiRepo.getApi(getPlugin(), owningPluginName, apiName);
+            if (api == null) {
+                Messenger.warning(getPlugin(), "Failed to find script api named '{0}' from plugin '{1}'. " +
+                        "Api not found.", apiName, owningPluginName);
+                return null;
+            }
+
+            return api.getApiObject(_script);
         }
 
         @Override
