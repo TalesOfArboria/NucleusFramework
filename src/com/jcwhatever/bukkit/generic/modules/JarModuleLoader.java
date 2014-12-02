@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
+import com.jcwhatever.bukkit.generic.utils.EntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.io.File;
@@ -46,8 +47,125 @@ import java.util.jar.JarFile;
  */
 public class JarModuleLoader<T> {
 
+    private ModuleFactory<T> _moduleFactory;
+    private EntryValidator<Class<T>> _typeValidator;
+    private EntryValidator<JarFile> _jarValidator;
+
     private Set<String> _loadedClasses = new HashSet<>(1000);
     private Map<String, List<Class<T>>> _moduleMap = new HashMap<>(100);
+
+    /**
+     * Constructor.
+     *
+     * <p>Initializes using default type and jar validator.</p>
+     *
+     * <p>Initializes using default module factory.</p>
+     */
+    public JarModuleLoader() {
+
+        _moduleFactory = getDefaultModuleFactory();
+        _typeValidator = getDefaultTypeValidator();
+        _jarValidator = getDefaultJarValidator();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param moduleFactory  The module factory used to instantiate module instances.
+     */
+    public JarModuleLoader(ModuleFactory<T> moduleFactory) {
+        PreCon.notNull(moduleFactory);
+
+        _moduleFactory = moduleFactory;
+        _typeValidator = getDefaultTypeValidator();
+        _jarValidator = getDefaultJarValidator();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param jarValidator   The jar file validator to use.
+     * @param typeValidator  The type validator to use.
+     */
+    public JarModuleLoader(EntryValidator<JarFile> jarValidator, EntryValidator<Class<T>> typeValidator) {
+        PreCon.notNull(jarValidator);
+        PreCon.notNull(typeValidator);
+
+        _moduleFactory = getDefaultModuleFactory();
+        _jarValidator = jarValidator;
+        _typeValidator = typeValidator;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param moduleFactory  The module factory used to instantiate module instances.
+     * @param jarValidator   The jar file validator to use.
+     * @param typeValidator  The type validator to use.
+     */
+    public JarModuleLoader(ModuleFactory<T> moduleFactory,
+                           EntryValidator<JarFile> jarValidator, EntryValidator<Class<T>> typeValidator) {
+        PreCon.notNull(moduleFactory);
+        PreCon.notNull(jarValidator);
+        PreCon.notNull(typeValidator);
+
+        _moduleFactory = getDefaultModuleFactory();
+        _jarValidator = jarValidator;
+        _typeValidator = typeValidator;
+    }
+
+    /**
+     * Get the module factory used to instantiate
+     * module instances.
+     */
+    public ModuleFactory<T> getModuleFactory() {
+        return _moduleFactory;
+    }
+
+    /**
+     * Set the module factory used to instantiate
+     * module instances.
+     *
+     * @param moduleFactory  The module factory to use.
+     */
+    public void setModuleFactory(ModuleFactory<T> moduleFactory) {
+        _moduleFactory = moduleFactory;
+    }
+
+    /**
+     * Get the jar validator being used to validate
+     * jar files.
+     */
+    public EntryValidator<JarFile> getJarValidator() {
+        return _jarValidator;
+    }
+
+    /**
+     * Set the jar validator used to validate jar files.
+     *
+     * @param validator  The jar validator.
+     */
+    public void setJarValidator(EntryValidator<JarFile> validator) {
+        _jarValidator = validator;
+    }
+
+    /**
+     * Get the type validator being used to validate
+     * a class type.
+     */
+    public EntryValidator<Class<T>> getTypeValidator() {
+        return _typeValidator;
+    }
+
+    /**
+     * Set the type validator used to validate the
+     * jar type.
+     *
+     * @param validator  The type validator.
+     */
+    public void setTypeValidator(EntryValidator<Class<T>> validator) {
+        _typeValidator = validator;
+    }
 
     /**
      * Get all {@code IJarModule} classes from jar files
@@ -61,7 +179,6 @@ public class JarModuleLoader<T> {
         PreCon.isValid(directory.exists(), "directory argument points to a location that does not exist.");
         PreCon.isValid(directory.isDirectory(), "directory argument must be a directory, not a file.");
 
-
         List<Class<T>> results = new ArrayList<>(30);
         File[] files = directory.listFiles();
         if (files == null)
@@ -69,11 +186,13 @@ public class JarModuleLoader<T> {
 
         for (File file : files) {
 
+            // make sure file is a jar file
             if (file.isDirectory() || !file.getName().endsWith(".jar"))
                 continue;
 
             List<Class<T>> modules;
 
+            // get module classes from jar file
             try {
                 modules = getModule(moduleClass, file);
             } catch (IOException e) {
@@ -81,9 +200,7 @@ public class JarModuleLoader<T> {
                 continue;
             }
 
-            if (modules != null) {
-                results.addAll(modules);
-            }
+            results.addAll(modules);
         }
 
         return results;
@@ -99,7 +216,6 @@ public class JarModuleLoader<T> {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    @SuppressWarnings("unchecked")
     public List<Class<T>> getModule(Class<T> moduleClass, File file) throws IOException {
         PreCon.notNull(file);
         PreCon.isValid(!file.isDirectory(), "file argument must be a file, not a directory.");
@@ -108,26 +224,35 @@ public class JarModuleLoader<T> {
         List<Class<T>> moduleClasses = _moduleMap.get(file.getAbsolutePath());
         if (moduleClasses == null) {
 
-            moduleClasses = new ArrayList<>(50);
-
             JarFile jarFile = new JarFile(file);
+
+            if (!_jarValidator.isValid(jarFile))
+                return new ArrayList<>(0);
 
             Enumeration<JarEntry> entries = jarFile.entries();
 
             URL[] urls = { new URL("jar:file:" + file + "!/") };
 
             URLClassLoader classLoader = URLClassLoader.newInstance(urls, getClass().getClassLoader());
-            Set<String> classNames = new HashSet<>(50);
+
+            // set to cache class names, if a module is found
+            // these are added to _loadedClasses set.
+            Set<String> classNames = new HashSet<>(10);
+
+            moduleClasses = new ArrayList<>(10);
 
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
 
+                // make sure entry is a class file
                 if (entry.isDirectory() || !entry.getName().endsWith(".class"))
                     continue;
 
+                // get the class name
                 String className = entry.getName().substring(0,  entry.getName().length() - 6);
                 className = className.replace('/', '.');
 
+                // check if the class has already been loaded
                 if (_loadedClasses.contains(className))
                     continue;
 
@@ -141,13 +266,20 @@ public class JarModuleLoader<T> {
 
                 classNames.add(className);
 
+                // check if type is a module
                 if (moduleClass.isAssignableFrom(c)) {
-                    moduleClasses.add((Class<T>)c);
+
+                    @SuppressWarnings("unchecked")
+                    Class<T> clazz = (Class<T>)c;
+
+                    // validate type
+                    if (_typeValidator.isValid(clazz)) {
+                        moduleClasses.add(clazz);
+                    }
                 }
             }
 
             jarFile.close();
-
 
             // module class not found
             if (moduleClasses.isEmpty()) {
@@ -157,7 +289,7 @@ public class JarModuleLoader<T> {
             // cache module class
             _moduleMap.put(file.getAbsolutePath(), moduleClasses);
 
-            // cache class names
+            // add class names to prevent reloading
             _loadedClasses.addAll(classNames);
         }
 
@@ -198,14 +330,11 @@ public class JarModuleLoader<T> {
                 continue;
             }
 
-            if (modules != null) {
-                results.addAll(modules);
-            }
+            results.addAll(modules);
         }
 
         return results;
     }
-
 
     /**
      * Get an {@code IJarModule} class from the
@@ -236,20 +365,71 @@ public class JarModuleLoader<T> {
             T instance;
 
             try {
-                instance = clazz.newInstance();
+                instance = _moduleFactory.create(clazz);
             } catch (InstantiationException e) {
                 e.printStackTrace();
                 continue;
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
                 continue;
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+                continue;
             }
 
             result.add(instance);
-
         }
 
         return result;
+    }
+
+    /**
+     * Get a new instance of the default type validator.
+     */
+    public EntryValidator<Class<T>> getDefaultTypeValidator() {
+
+        return new EntryValidator<Class<T>>() {
+            @Override
+            public boolean isValid(Class<T> entry) {
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Get a new instance of the default jar validator.
+     */
+    public EntryValidator<JarFile> getDefaultJarValidator() {
+
+        return new EntryValidator<JarFile>() {
+            @Override
+            public boolean isValid(JarFile entry) {
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Get a new instance of the default module factory.
+     */
+    public ModuleFactory<T> getDefaultModuleFactory() {
+        return new ModuleFactory<T>() {
+            @Override
+            public <M extends T> M create(Class<M> clazz)
+                    throws IllegalAccessException, InstantiationException {
+                return clazz.newInstance();
+            }
+        };
+    }
+
+    /**
+     * Module factory interface.
+     *
+     * @param <T>  Module type.
+     */
+    public interface ModuleFactory<T> {
+        <M extends T> M create(Class<M> clazz)
+                throws InstantiationException, IllegalAccessException, NoSuchMethodException;
     }
 
 }
