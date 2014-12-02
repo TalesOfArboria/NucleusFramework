@@ -93,7 +93,7 @@ public class RegionManager {
     public RegionManager(Plugin plugin) {
 
         if (!(plugin instanceof GenericsLib)) {
-            throw new RuntimeException("RegionManager is for GenericsLib internal use only.");
+            throw new RuntimeException("RegionManager must be instantiated by GenericsLib.");
         }
 
         _playerCacheMap = new PlayerMap<>(plugin);
