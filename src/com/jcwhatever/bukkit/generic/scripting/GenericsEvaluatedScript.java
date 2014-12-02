@@ -198,6 +198,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         }
     }
 
+    @Override
     public boolean isDisposed() {
         return _isDisposed;
     }
