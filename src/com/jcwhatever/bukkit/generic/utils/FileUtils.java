@@ -66,9 +66,22 @@ public class FileUtils {
      * @param traversal  The directory traversal of the search.
      */
     public static List<File> getFiles(File folder, DirectoryTraversal traversal) {
+        return getFiles(folder, traversal, null);
+    }
+
+    /**
+     * Get all non-directory files in a folder.
+     *
+     * @param folder         The folder to search for files in.
+     * @param traversal      The directory traversal of the search.
+     * @param fileValidator  The validator used to validate files.
+     */
+    public static List<File> getFiles(File folder,
+                                      DirectoryTraversal traversal,
+                                      @Nullable EntryValidator<File> fileValidator) {
         PreCon.notNull(folder);
+        PreCon.isValid(folder.isDirectory(), "folder argument must be a folder.");
         PreCon.notNull(traversal);
-        PreCon.isValid(folder.isDirectory());
 
         File[] files = folder.listFiles();
         if (files == null)
@@ -79,10 +92,15 @@ public class FileUtils {
         for (File file : files) {
 
             if (file.isDirectory() && traversal == DirectoryTraversal.RECURSIVE) {
-                List<File> traversed = getFiles(file, DirectoryTraversal.RECURSIVE);
+
+                List<File> traversed = getFiles(file, DirectoryTraversal.RECURSIVE, fileValidator);
                 results.addAll(traversed);
             }
             else if (!file.isDirectory()) {
+
+                if (fileValidator != null && !fileValidator.isValid(file))
+                    continue;
+
                 results.add(file);
             }
         }
