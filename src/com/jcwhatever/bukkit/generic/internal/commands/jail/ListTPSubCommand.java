@@ -67,7 +67,7 @@ public class ListTPSubCommand extends AbstractCommand {
             pagin.add(loc.getName());
         }
 
-        pagin.show(sender, page, FormatTemplate.ITEM);
+        pagin.show(sender, page, FormatTemplate.LIST_ITEM);
     }
 
 }

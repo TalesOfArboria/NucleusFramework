@@ -99,12 +99,32 @@ public class TextUtils {
     };
 
     public enum FormatTemplate {
-        RAW               (_FORMAT_TEMPLATE_RAW),
-        HEADER            (_FORMAT_TEMPLATE_HEADER),
-        SUB_HEADER        (_FORMAT_TEMPLATE_SUB_HEADER),
-        ITEM              (_FORMAT_TEMPLATE_ITEM),
-        DEFINITION        (_FORMAT_TEMPLATE_DEFINITION),
-        ITEM_DESCRIPTION  (_FORMAT_TEMPLATE_ITEM_DESCRIPTION);
+        /**
+         * No formatting.
+         */
+        RAW                   (_FORMAT_TEMPLATE_RAW),
+        /**
+         * A header in a list of items.
+         */
+        HEADER                (_FORMAT_TEMPLATE_HEADER),
+        /**
+         * A sub header in a list of items.
+         */
+        SUB_HEADER            (_FORMAT_TEMPLATE_SUB_HEADER),
+        /**
+         * A single item in a list.
+         */
+        LIST_ITEM             (_FORMAT_TEMPLATE_ITEM),
+        /**
+         * A single item in a list with a description.
+         */
+        LIST_ITEM_DESCRIPTION (_FORMAT_TEMPLATE_ITEM_DESCRIPTION),
+
+        /**
+         * A definition for an item that
+         * generally does not change (i.e commands)
+         */
+        CONSTANT_DEFINITION   (_FORMAT_TEMPLATE_DEFINITION);
 
         private final String _template;
 

@@ -63,6 +63,6 @@ public class ListSubCommand extends AbstractCommand {
             pagin.add(script.getName());
         }
 
-        pagin.show(sender, page, FormatTemplate.ITEM);
+        pagin.show(sender, page, FormatTemplate.LIST_ITEM);
     }
 }

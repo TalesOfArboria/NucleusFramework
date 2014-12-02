@@ -316,7 +316,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                 }
 
                 // show paginator to CommandSender
-                pagin.show(sender, page, FormatTemplate.DEFINITION);
+                pagin.show(sender, page, FormatTemplate.CONSTANT_DEFINITION);
             }
 
         });
