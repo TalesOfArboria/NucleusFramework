@@ -99,7 +99,7 @@ public class ScriptUtils {
      * @param engineManager      The engine manager used to determine if a file type is a script.
      * @param scriptFolder       The folder to find scripts in.
      * @param traversal          The type of directory traversal used to find script files.
-     * @param scriptConstructor  A script constructor to create new script instances.
+     * @param scriptFactory  A script constructor to create new script instances.
      *
      * @param <T>  Script instance type.
      */
@@ -107,9 +107,9 @@ public class ScriptUtils {
                                                           ScriptEngineManager engineManager,
                                                           File scriptFolder,
                                                           DirectoryTraversal traversal,
-                                                          ScriptConstructor<T> scriptConstructor) {
+                                                          IScriptFactory<T> scriptFactory) {
 
-        return loadScripts(plugin, engineManager, scriptFolder, null, traversal, scriptConstructor);
+        return loadScripts(plugin, engineManager, scriptFolder, null, traversal, scriptFactory);
 
     }
 
@@ -121,7 +121,7 @@ public class ScriptUtils {
      * @param scriptFolder       The folder to find scripts in.
      * @param exclude            Optional file or folder to exclude.
      * @param traversal          The type of directory traversal used to find script files.
-     * @param scriptConstructor  A script constructor to create new script instances.
+     * @param scriptFactory  A script constructor to create new script instances.
      *
      * @param <T>  Script instance type.
      */
@@ -130,7 +130,7 @@ public class ScriptUtils {
                                                           File scriptFolder,
                                                           @Nullable File exclude,
                                                           DirectoryTraversal traversal,
-                                                          ScriptConstructor<T> scriptConstructor) {
+                                                          IScriptFactory<T> scriptFactory) {
         PreCon.notNull(plugin);
         PreCon.notNull(scriptFolder);
         PreCon.isValid(scriptFolder.isDirectory());
@@ -167,7 +167,7 @@ public class ScriptUtils {
 
                 reader.close();
 
-                T script = scriptConstructor.construct(name, file, type, buffer.toString());
+                T script = scriptFactory.construct(name, file, type, buffer.toString());
                 if (script != null)
                     result.add(script);
 
@@ -185,7 +185,7 @@ public class ScriptUtils {
      * @param plugin             The scripts owning plugin.
      * @param scriptFolder       The folder to find scripts in.
      * @param scriptFile         The script file.
-     * @param scriptConstructor  A script constructor used to create new script instances.
+     * @param scriptFactory  A script constructor used to create new script instances.
      *
      * @param <T>  Script instance type.
      *
@@ -195,7 +195,7 @@ public class ScriptUtils {
     public static <T extends IScript> T loadScript(Plugin plugin,
                                                    File scriptFolder,
                                                    File scriptFile,
-                                                   ScriptConstructor<T> scriptConstructor) {
+                                                   IScriptFactory<T> scriptFactory) {
         PreCon.notNull(plugin);
         PreCon.notNull(scriptFolder);
         PreCon.notNull(scriptFile);
@@ -221,7 +221,7 @@ public class ScriptUtils {
 
             String scriptType = getScriptType(scriptFile);
 
-            return scriptConstructor.construct(scriptName, scriptFile, scriptType, buffer.toString());
+            return scriptFactory.construct(scriptName, scriptFile, scriptType, buffer.toString());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -267,11 +267,11 @@ public class ScriptUtils {
     }
 
     /**
-     * Interface for a script instance constructor.
+     * Script factory to create a new {@code IScript} instance.
      *
-     * @param <T>  The type of {@code IScript} that is constructed.
+     * @param <T>  The instance type.
      */
-    public static interface ScriptConstructor<T extends IScript> {
+    public static interface IScriptFactory<T extends IScript> {
 
         /**
          * Called to get a new {@code IScript} instance.

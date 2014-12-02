@@ -30,7 +30,7 @@ import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
-import com.jcwhatever.bukkit.generic.utils.ScriptUtils.ScriptConstructor;
+import com.jcwhatever.bukkit.generic.utils.ScriptUtils.IScriptFactory;
 
 import org.bukkit.plugin.Plugin;
 
@@ -405,7 +405,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
     /*
      * Called to get the script constructor.
      */
-    public abstract ScriptConstructor<S> getScriptConstructor();
+    public abstract IScriptFactory<S> getScriptConstructor();
 
 
     /**

@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.scripting.GenericsScript;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
-import com.jcwhatever.bukkit.generic.utils.ScriptUtils.ScriptConstructor;
+import com.jcwhatever.bukkit.generic.utils.ScriptUtils.IScriptFactory;
 
 import org.bukkit.plugin.Plugin;
 
@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  */
 public class ScriptManager extends AbstractScriptManager<IScript, IEvaluatedScript> {
 
-    private static ScriptConstructor<IScript> _scriptConstructor = new ScriptConstructor<IScript>() {
+    private static IScriptFactory<IScript> _scriptFactory = new IScriptFactory<IScript>() {
         @Override
         public IScript construct(String name, @Nullable File file, String type, String script) {
             return new GenericsScript(name, file, type, script);
@@ -53,7 +53,7 @@ public class ScriptManager extends AbstractScriptManager<IScript, IEvaluatedScri
     }
 
     @Override
-    public ScriptConstructor<IScript> getScriptConstructor() {
-        return _scriptConstructor;
+    public IScriptFactory<IScript> getScriptConstructor() {
+        return _scriptFactory;
     }
 }
