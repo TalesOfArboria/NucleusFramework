@@ -44,7 +44,7 @@ import java.util.jar.JarFile;
 /**
  * Aids in loading jar file classes that implement {@code IJarModule}.
  */
-public class JarModuleLoader<T extends IJarModule> {
+public class JarModuleLoader<T> {
 
     private Set<String> _loadedClasses = new HashSet<>(1000);
     private Map<String, List<Class<T>>> _moduleMap = new HashMap<>(100);
