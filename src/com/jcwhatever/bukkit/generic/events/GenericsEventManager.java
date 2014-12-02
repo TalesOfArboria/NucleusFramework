@@ -54,6 +54,25 @@ import javax.annotation.Nullable;
 
 /**
  * Generics event manager.
+ *
+ * <p>Generics events are primarily intended for use in a mostly self contained
+ * system with many contexts that benefit from each having their own event manager. This
+ * can reduce code and the number of checks by guaranteeing events for a specific event
+ * manager are only called in response to a specific context. In can also potentially improve
+ * performance by reducing the number of event handlers called to the ones that are subscribed
+ * to the specific context of the event manager.</p>
+ *
+ * <p>The Generics event manager can take any type as an event including Bukkit events.
+ * It can also have a parent manager that receives calls made to the child manager.
+ * By default, the global Generics event manager is the parent manager, however
+ * a different parent manager or none at all can be set.</p>
+ *
+ * <p>The global Generics event manager also receives certain Bukkit events so event handlers
+ * can be used that subscribe to those Bukkit events. Bukkit events can also be called on
+ * child managers and the event will bubble up to parent managers. However, to prevent problems,
+ * the global Generics event manager does not receive Bukkit events that bubble up from its
+ * child managers.</p>
+ *
  */
 public class GenericsEventManager implements IDisposable {
 
