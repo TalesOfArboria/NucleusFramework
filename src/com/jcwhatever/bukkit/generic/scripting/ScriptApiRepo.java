@@ -54,8 +54,6 @@ import javax.annotation.Nullable;
  */
 public class ScriptApiRepo {
 
-    // TODO instance caching per plugin
-
     private ScriptApiRepo() {}
 
     private static Map<String, ApiPackage>  _scriptApis = new HashMap<>(50);
@@ -212,5 +210,4 @@ public class ScriptApiRepo {
             this.constructor = constructor;
         }
     }
-
 }
