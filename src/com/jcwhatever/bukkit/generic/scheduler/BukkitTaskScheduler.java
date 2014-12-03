@@ -116,7 +116,12 @@ public class BukkitTaskScheduler implements ITaskScheduler{
 
         @Override
         public Void call() throws Exception {
-            _task.run();
+            try {
+                _task.run();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
             return null;
         }
     }
