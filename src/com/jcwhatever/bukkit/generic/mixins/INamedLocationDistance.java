@@ -29,7 +29,8 @@ import com.jcwhatever.bukkit.generic.mixins.implemented.NamedLocationDistance;
 import org.bukkit.Location;
 
 /**
- * Defines an implementation that represents a distance to a named location.
+ * Defines an implementation that represents a distance to a named location
+ * that can be sorted.
  */
 public interface INamedLocationDistance extends Comparable<NamedLocationDistance>{
 

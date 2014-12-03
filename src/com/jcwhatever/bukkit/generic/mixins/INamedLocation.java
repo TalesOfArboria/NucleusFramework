@@ -28,8 +28,8 @@ package com.jcwhatever.bukkit.generic.mixins;
 import org.bukkit.Location;
 
 /**
- * Mixin that defines an implementation as a {@code Location} wrapper that provides a name
- * to the encapsulated location.
+ * Mixin that defines an implementation as a {@code Location} wrapper
+ * that provides a name to the encapsulated location.
  */
 public interface INamedLocation extends INamedInsensitive{
 

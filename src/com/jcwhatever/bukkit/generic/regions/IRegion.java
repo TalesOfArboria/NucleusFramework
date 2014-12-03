@@ -104,7 +104,7 @@ public interface IRegion extends IRegionSelection, INamedInsensitive, IRegionCom
 
     /**
      * Determine if the region contains a block
-     * of the specified {@code Material}
+     * of the specified {@code Material}.
      *
      * @param material  The material to find.
      */

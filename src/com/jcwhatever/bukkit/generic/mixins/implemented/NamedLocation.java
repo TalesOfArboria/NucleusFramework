@@ -25,14 +25,14 @@
 
 package com.jcwhatever.bukkit.generic.mixins.implemented;
 
-import com.jcwhatever.bukkit.generic.mixins.INamedLocationDistance;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
-import org.bukkit.Location;
-
+import com.jcwhatever.bukkit.generic.mixins.INamedLocationDistance;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import org.bukkit.Location;
+
 /**
- * A basic named location implementation..
+ * A basic named location implementation.
  */
 public class NamedLocation implements INamedLocation {
 

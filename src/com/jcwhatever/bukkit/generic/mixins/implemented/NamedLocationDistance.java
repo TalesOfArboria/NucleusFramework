@@ -25,11 +25,11 @@
 
 package com.jcwhatever.bukkit.generic.mixins.implemented;
 
-import com.jcwhatever.bukkit.generic.mixins.INamedLocationDistance;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
-import org.bukkit.Location;
-
+import com.jcwhatever.bukkit.generic.mixins.INamedLocationDistance;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
+import org.bukkit.Location;
 
 /**
  * A basic {@code INamedLocationDistance} implementation.
@@ -39,7 +39,13 @@ public class NamedLocationDistance implements INamedLocationDistance {
 	private Location _target;
 	private Double _distance;
 	private Double _distanceSquared;
-	
+
+	/**
+	 * Constructor.
+	 *
+	 * @param namedLocation  The named location source.
+	 * @param target         The target.
+	 */
 	public NamedLocationDistance (INamedLocation namedLocation, Location target) {
 		PreCon.notNull(namedLocation);
 		PreCon.notNull(target);

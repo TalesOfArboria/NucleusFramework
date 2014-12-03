@@ -103,7 +103,7 @@ public abstract class ResourceSound implements INamed {
     }
 
     /*
-     *  load the name of the resource sound
+     *  load the name of the resource sound.
      */
     protected String loadName(IDataNode dataNode) {
         String soundName = dataNode.getString("name");

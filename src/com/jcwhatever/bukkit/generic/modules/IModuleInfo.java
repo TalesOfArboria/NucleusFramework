@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.modules;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 
 /**
- * Interface for module instance information.
+ * Interface for an object that holds module information.
  */
 public interface IModuleInfo extends INamedInsensitive {
 

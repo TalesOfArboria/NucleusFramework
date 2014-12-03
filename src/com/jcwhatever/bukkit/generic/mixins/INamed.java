@@ -25,7 +25,8 @@
 package com.jcwhatever.bukkit.generic.mixins;
 
 /**
- * Represents an object that has a name.
+ * Mixin interface that represents an object
+ * that has a name.
  */
 public interface INamed {
 

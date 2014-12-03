@@ -26,7 +26,8 @@ package com.jcwhatever.bukkit.generic.mixins;
 
 /**
  * Represents a named object whose name is not
- * case sensitive in look ups.
+ * case sensitive in look ups. A search name
+ * is provided in lowercase letters.
  */
 public interface INamedInsensitive extends INamed {
 

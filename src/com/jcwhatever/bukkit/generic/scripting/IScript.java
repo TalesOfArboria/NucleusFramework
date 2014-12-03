@@ -33,7 +33,8 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * A data object that holds information and source for a script.
+ * A data object that holds information and source for a script
+ * which can be evaluated.
  */
 public interface IScript extends INamed {
 

@@ -36,7 +36,7 @@ import org.bukkit.event.inventory.InventoryType;
 import javax.annotation.Nullable;
 
 /**
- * Represents a type of player view
+ * Represents a type of player view.
  */
 public interface IView extends INamed, IDisposable {
 
