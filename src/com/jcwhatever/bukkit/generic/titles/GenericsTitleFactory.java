@@ -24,20 +24,19 @@
 
 package com.jcwhatever.bukkit.generic.titles;
 
-import com.jcwhatever.bukkit.generic.utils.text.TextComponent;
+import com.jcwhatever.bukkit.generic.utils.text.TextComponents;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * GenericsLib implementation of an {@link ITitleFactory}.
+ * GenericsLib implementation of an {@link INamedTitleFactory}.
  */
-public class GenericsTitleFactory implements ITitleFactory<GenericsTitle> {
+public class GenericsTitleFactory implements INamedTitleFactory<INamedTitle> {
 
     @Override
-    public GenericsTitle create(List<TextComponent> title, @Nullable List<TextComponent> subTitle,
+    public INamedTitle create(String name, TextComponents title, @Nullable TextComponents subTitle,
                                 int fadeInTime, int stayTime, int fadeOutTime) {
 
-        return new GenericsTitle(title, subTitle, fadeInTime, stayTime, fadeOutTime);
+        return new GenericsTitle(name, title, subTitle, fadeInTime, stayTime, fadeOutTime);
     }
 }

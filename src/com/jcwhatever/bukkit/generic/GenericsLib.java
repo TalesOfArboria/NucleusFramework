@@ -25,7 +25,8 @@
 
 package com.jcwhatever.bukkit.generic;
 
-import com.jcwhatever.bukkit.generic.internal.ScriptManager;
+import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
+import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
@@ -36,6 +37,9 @@ import com.jcwhatever.bukkit.generic.regions.RegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScriptEngineManager;
+import com.jcwhatever.bukkit.generic.titles.GenericsTitleFactory;
+import com.jcwhatever.bukkit.generic.titles.TitleManager;
+import com.jcwhatever.bukkit.generic.titles.INamedTitle;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
 
@@ -58,12 +62,13 @@ public class GenericsLib extends GenericsPlugin {
     private static Map<String, GenericsPlugin> _pluginNameMap = new HashMap<>(25);
     private static Map<Class<? extends GenericsPlugin>, GenericsPlugin> _pluginClassMap = new HashMap<>(25);
 
+    private InternalTitleManager _titleManager;
     private JailManager _jailManager;
     private RegionManager _regionManager;
     private EntityEquipperManager _equipperManager;
     private ITaskScheduler _scheduler;
     private ScriptEngineManager _scriptEngineManager;
-    private ScriptManager _scriptManager;
+    private InternalScriptManager _scriptManager;
     private KitManager _kitManager;
     private CommandHandler _commandHandler;
 
@@ -158,7 +163,7 @@ public class GenericsLib extends GenericsPlugin {
     /**
      * Get the default script manager.
      */
-    public static ScriptManager getScriptManager() {
+    public static InternalScriptManager getScriptManager() {
         return _instance._scriptManager;
     }
 
@@ -177,6 +182,13 @@ public class GenericsLib extends GenericsPlugin {
      */
     public static KitManager getKitManager() {
         return _instance._kitManager;
+    }
+
+    /**
+     * Get the default title manager.
+     */
+    public static TitleManager<INamedTitle> getTitleManager() {
+        return _instance._titleManager;
     }
 
     /**
@@ -218,6 +230,7 @@ public class GenericsLib extends GenericsPlugin {
         _scheduler = new BukkitTaskScheduler();
         _scriptEngineManager = new GenericsScriptEngineManager();
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
+        _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsTitleFactory());
 
         _regionManager = new RegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
@@ -260,7 +273,7 @@ public class GenericsLib extends GenericsPlugin {
             throw new RuntimeException("Failed to create script folder.");
         }
 
-        _scriptManager = new ScriptManager(this, scriptFolder);
+        _scriptManager = new InternalScriptManager(this, scriptFolder);
         _scriptManager.addScriptApi(ScriptUtils.getDefaultApi(this, _scriptManager));
         _scriptManager.reload();
     }

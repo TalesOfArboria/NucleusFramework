@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * GenericsLib default ScriptManager.
  */
-public class ScriptManager extends AbstractScriptManager<IScript, IEvaluatedScript> {
+public class InternalScriptManager extends AbstractScriptManager<IScript, IEvaluatedScript> {
 
     private static IScriptFactory<IScript> _scriptFactory = new IScriptFactory<IScript>() {
         @Override
@@ -48,7 +48,7 @@ public class ScriptManager extends AbstractScriptManager<IScript, IEvaluatedScri
         }
     };
 
-    public ScriptManager(Plugin plugin, File scriptFolder) {
+    public InternalScriptManager(Plugin plugin, File scriptFolder) {
         super(plugin, scriptFolder, DirectoryTraversal.RECURSIVE);
     }
 

@@ -22,53 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.titles;
+package com.jcwhatever.bukkit.generic.internal;
 
-import com.jcwhatever.bukkit.generic.utils.text.TextComponents;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.titles.TitleManager;
+import com.jcwhatever.bukkit.generic.titles.INamedTitle;
+import com.jcwhatever.bukkit.generic.titles.INamedTitleFactory;
 
-import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
- * Interface for an object that represents a
- * Minecraft title.
+ * GenericsLib's default title manager.
  */
-public interface ITitle {
+public class InternalTitleManager extends TitleManager<INamedTitle> {
 
-    /**
-     * Get the time spent fading in.
-     *
-     * @return -1 if the default is used.
-     */
-    int getFadeInTime();
-
-    /**
-     * Get the time spent being displayed.
-     *
-     * @return -1 if the default is used.
-     */
-    int getStayTime();
-
-    /**
-     * Get the time spent fading out.
-     *
-     * @return  -1 if the default is used.
-     */
-    int getFadeOutTime();
-
-    /**
-     * Get the title components.
-     */
-    TextComponents getTitleComponents();
-
-    /**
-     * Get the sub-title components.
-     */
-    TextComponents getSubTitleComponents();
-
-    /**
-     * Show the title to the specified player.
-     *
-     * @param p  The player to show the title to.
-     */
-    void showTo(Player p);
+    public InternalTitleManager(Plugin plugin, IDataNode dataNode, INamedTitleFactory<INamedTitle> factory) {
+        super(plugin, dataNode, factory);
+    }
 }

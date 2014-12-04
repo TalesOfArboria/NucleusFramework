@@ -24,46 +24,79 @@
 
 package com.jcwhatever.bukkit.generic.titles;
 
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Utils;
 import com.jcwhatever.bukkit.generic.utils.text.TextComponent;
+import com.jcwhatever.bukkit.generic.utils.text.TextComponents;
 
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * GenericsLib implementation of {@link ITitle}
+ * GenericsLib implementation of {@link INamedTitle}
  */
-public class GenericsTitle implements ITitle {
+public class GenericsTitle implements INamedTitle {
 
-    private final List<TextComponent> _titleComponents;
-    private final List<TextComponent> _subTitleComponents;
+    private final String _name;
+    private final String _searchName;
+    private final TextComponents _titleComponents;
+    private final TextComponents _subTitleComponents;
     private final int _fadeInTime;
     private final int _stayTime;
     private final int _fadeOutTime;
 
-    public GenericsTitle(List<TextComponent> titleComponents,
-                         @Nullable List<TextComponent> subTitleComponents) {
-        this(titleComponents, subTitleComponents, -1, -1, -1);
+    /**
+     * Constructor.
+     *
+     * <p>Uses default times.</p>
+     *
+     * @param name                The name of the title.
+     * @param titleComponents     The title text components.
+     * @param subTitleComponents  The sub title text components.
+     */
+    public GenericsTitle(String name, TextComponents titleComponents,
+                         @Nullable TextComponents subTitleComponents) {
+
+        this(name, titleComponents, subTitleComponents, -1, -1, -1);
     }
 
-    public GenericsTitle(List<TextComponent> titleComponents,
-                         @Nullable List<TextComponent> subTitleComponents,
+    /**
+     * Constructor.
+     *
+     * @param name                The name of the title.
+     * @param titleComponents     The title text components.
+     * @param subTitleComponents  The sub title text components.
+     * @param fadeInTime          The time spent fading in.
+     * @param stayTime            The time spent being displayed.
+     * @param fadeOutTime         The time spent fading out.
+     */
+    public GenericsTitle(String name, TextComponents titleComponents,
+                         @Nullable TextComponents subTitleComponents,
                          int fadeInTime, int stayTime, int fadeOutTime) {
+        PreCon.notNull(name);
+        PreCon.notNull(titleComponents);
 
-        _titleComponents = Collections.unmodifiableList(titleComponents);
+        _name = name;
+        _searchName = name.toLowerCase();
 
-        _subTitleComponents = subTitleComponents != null
-                ? Collections.unmodifiableList(subTitleComponents)
-                : null;
+        _titleComponents = titleComponents;
+        _subTitleComponents = subTitleComponents;
 
         _fadeInTime = fadeInTime;
         _stayTime = stayTime;
         _fadeOutTime = fadeOutTime;
 
+    }
+
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    @Override
+    public String getSearchName() {
+        return _searchName;
     }
 
     /**
@@ -100,7 +133,7 @@ public class GenericsTitle implements ITitle {
      * Get the title components.
      */
     @Override
-    public List<TextComponent> getTitleComponents() {
+    public TextComponents getTitleComponents() {
         return _titleComponents;
     }
 
@@ -108,10 +141,8 @@ public class GenericsTitle implements ITitle {
      * Get the sub-title components.
      */
     @Override
-    public List<TextComponent> getSubTitleComponents() {
-        if (_subTitleComponents == null)
-            return new ArrayList<>(0);
-
+    @Nullable
+    public TextComponents getSubTitleComponents() {
         return _subTitleComponents;
     }
 
@@ -161,6 +192,7 @@ public class GenericsTitle implements ITitle {
                 getJson(buffer, _titleComponents);
                 break;
             case SUBTITLE:
+                //noinspection ConstantConditions
                 getJson(buffer, _subTitleComponents);
                 break;
             case TIMES:
@@ -196,7 +228,7 @@ public class GenericsTitle implements ITitle {
         return time;
     }
 
-    private void getJson(StringBuilder buffer, List<TextComponent> segments) {
+    private void getJson(StringBuilder buffer, TextComponents segments) {
 
         buffer.append('{');
         getJsonSegment(buffer, segments.get(0));
