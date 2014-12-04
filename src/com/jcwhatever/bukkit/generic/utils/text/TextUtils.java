@@ -39,6 +39,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -897,7 +898,7 @@ public class TextUtils {
         StringBuilder buffer = new StringBuilder(text.length());
         StringBuilder colorBuffer = new StringBuilder(20);
 
-        List<TextComponent> result = new ArrayList<TextComponent>(5);
+        LinkedList<TextComponent> result = new LinkedList<>();
 
         for (int i=text.length() - 1; i >= 0; i--) {
 
@@ -913,7 +914,7 @@ public class TextUtils {
                 TextComponent textComponent = new TextComponent(color, buffer.reverse().toString());
                 buffer.setLength(0);
 
-                result.add(textComponent);
+                result.addFirst(textComponent);
 
                 i -= color.name().length() + 1;
             }
@@ -924,10 +925,10 @@ public class TextUtils {
 
         if (buffer.length() > 0) {
             TextComponent textComponent = new TextComponent(null, buffer.reverse().toString());
-            result.add(textComponent);
+            result.addFirst(textComponent);
         }
 
-        return result;
+        return new ArrayList<>(result);
     }
 
     /*
