@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.HashSetMap;
+import com.jcwhatever.bukkit.generic.extended.MaterialExt;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableFurnitureEntity;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
@@ -42,7 +43,6 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Animals;
@@ -459,65 +459,65 @@ public abstract class RestorableRegion extends BuildableRegion {
         protected void onRun() {
 
             LinkedList<ChunkBlockInfo> blockInfo = loader.getBlockInfo();
-            LinkedList<ChunkBlockInfo> doors = new LinkedList<>();
+            LinkedList<ChunkBlockInfo> multiBlocks = new LinkedList<>();
 
             while (!blockInfo.isEmpty()) {
                 ChunkBlockInfo info = blockInfo.remove();
 
-                // skip doors and restore later
-                if (info.getMaterial() == Material.IRON_DOOR_BLOCK ||
-                        info.getMaterial() == Material.WOODEN_DOOR) {
-                    doors.add(info);
+                // skip multi-blocks and restore afterwards
+                MaterialExt ext = MaterialExt.from(info.getMaterial());
+                if (ext.isMultiBlock()) {
+                    multiBlocks.add(info);
                     continue;
                 }
 
                 restoreBlock(info);
             }
 
-            // Restore door block Pairs
+            // Restore block Pairs
             // keyed to block x, y z value as a string
-            HashSetMap<String, ChunkBlockInfo> _placedDoorBlocks = new HashSetMap<>(doors.size());
+            HashSetMap<String, ChunkBlockInfo> _placedMultiBlocks = new HashSetMap<>(multiBlocks.size());
 
-            // Get door block pairs
-            while (!doors.isEmpty()) {
-                ChunkBlockInfo info = doors.remove();
+            // Get block pairs
+            while (!multiBlocks.isEmpty()) {
+                ChunkBlockInfo info = multiBlocks.remove();
 
                 int x = info.getChunkBlockX();
                 int y = info.getY();
                 int z = info.getChunkBlockZ();
 
                 String lowerKey = getKey(x, y - 1, z);
-                Set<ChunkBlockInfo> lowerDoor = _placedDoorBlocks.getAll(lowerKey);
+                Set<ChunkBlockInfo> lowerBlock = _placedMultiBlocks.getAll(lowerKey);
 
-                if (lowerDoor != null) {
-                    _placedDoorBlocks.put(lowerKey, info);
+                if (lowerBlock != null) {
+                    _placedMultiBlocks.put(lowerKey, info);
                     continue;
                 }
 
                 String upperKey = getKey(x, y + 1, z);
-                Set<ChunkBlockInfo> upperDoor = _placedDoorBlocks.getAll(upperKey);
-                if (upperDoor != null) {
-                    _placedDoorBlocks.put(upperKey, info);
+                Set<ChunkBlockInfo> upperBlock = _placedMultiBlocks.getAll(upperKey);
+                if (upperBlock != null) {
+                    _placedMultiBlocks.put(upperKey, info);
                     continue;
                 }
 
-                _placedDoorBlocks.put(getKey(x, y, z), info);
+                _placedMultiBlocks.put(getKey(x, y, z), info);
             }
 
             // Restore pairs
-            Set<String> keys = _placedDoorBlocks.keySet();
+            Set<String> keys = _placedMultiBlocks.keySet();
 
             for (String key : keys) {
 
-                Set<ChunkBlockInfo> doorPairSet = _placedDoorBlocks.getAll(key);
-                if (doorPairSet == null)
+                Set<ChunkBlockInfo> multiBlockSetSet = _placedMultiBlocks.getAll(key);
+                if (multiBlockSetSet == null)
                     continue;
 
-                List<ChunkBlockInfo> doorPair = new ArrayList<>(doorPairSet);
+                List<ChunkBlockInfo> multiBlockSet = new ArrayList<>(multiBlockSetSet);
 
-                Collections.sort(doorPair);
+                Collections.sort(multiBlockSet);
 
-                for (ChunkBlockInfo info : doorPair) {
+                for (ChunkBlockInfo info : multiBlockSet) {
                     restoreBlock(info);
                 }
             }
