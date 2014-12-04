@@ -32,10 +32,8 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 import javax.script.Invocable;
 import javax.script.ScriptContext;
@@ -54,7 +52,6 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     private final ScriptEngine _engine;
     private ScriptContext _context;
     private final Map<String, IScriptApi> _scriptApis;
-    private final Set<Class<? extends IScriptApi>> _included;
     private final List<IScriptApiObject> _apiObjects = new ArrayList<>(25);
 
     private boolean _isDisposed;
@@ -75,7 +72,6 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         _parentScript = parentScript;
         _engine = engine;
         _scriptApis = new HashMap<>(scriptApis == null ? 10 : scriptApis.size() + 10);
-        _included = new HashSet<>(scriptApis == null ? 10 : scriptApis.size() + 10);
 
         if (scriptApis != null) {
             for (IScriptApi api : scriptApis) {
@@ -127,16 +123,10 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         PreCon.notNull(scriptApi);
         PreCon.notNullOrEmpty(variableName);
 
-        if (_included.contains(scriptApi.getClass()))
-            return;
-
-        if (_scriptApis.containsKey(variableName))
-            return;
-
         _scriptApis.put(scriptApi.getVariableName(), scriptApi);
-        _included.add(scriptApi.getClass());
 
         IScriptApiObject apiObject = scriptApi.getApiObject(this);
+        //_engine.put(variableName, apiObject);
         getContext().setAttribute(variableName, apiObject, ScriptContext.ENGINE_SCOPE);
 
         _apiObjects.add(apiObject);
@@ -205,20 +195,8 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
 
     @Override
     public void dispose() {
-        resetApi();
-
-        _isDisposed = true;
-        _scriptApis.clear();
-    }
-
-    /**
-     * Reset the included api.
-     */
-    @Override
-    public void resetApi() {
-
         try {
-            invokeFunction("onScriptReset");
+            invokeFunction("onScriptDispose");
         } catch (NoSuchMethodException ignore) {
             // do nothing
         }
@@ -226,6 +204,9 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
         for (IScriptApiObject api : _apiObjects) {
             api.dispose();
         }
+
+        _isDisposed = true;
+        _scriptApis.clear();
     }
 
     /**

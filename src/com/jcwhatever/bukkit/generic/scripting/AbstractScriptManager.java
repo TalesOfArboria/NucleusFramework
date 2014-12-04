@@ -196,7 +196,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
             return;
 
         List<S> scripts = ScriptUtils.loadScripts(getPlugin(),
-                getEngineManager(), _scriptFolder, _includeFolder, _directoryTraversal, getScriptConstructor());
+                getEngineManager(), _scriptFolder, _includeFolder, _directoryTraversal, getScriptFactory());
 
         for (S script : scripts) {
             addScript(script);
@@ -261,7 +261,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
 
             IEvaluatedScript evaluated = _evaluated.remove(scriptName.toLowerCase());
             if (evaluated != null) {
-                evaluated.resetApi();
+                evaluated.dispose();
             }
             return true;
         }
@@ -405,7 +405,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
     /*
      * Called to get the script constructor.
      */
-    public abstract IScriptFactory<S> getScriptConstructor();
+    public abstract IScriptFactory<S> getScriptFactory();
 
 
     /**
@@ -426,7 +426,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
      */
     private void clearEvaluated() {
         for (IEvaluatedScript evaluated : _evaluated.values()) {
-            evaluated.resetApi();
+            evaluated.dispose();
         }
 
         _evaluated.clear();

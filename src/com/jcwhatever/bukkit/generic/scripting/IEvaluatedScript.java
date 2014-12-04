@@ -93,9 +93,4 @@ public interface IEvaluatedScript extends IDisposable {
      */
     @Nullable
     Object evaluate(IScript script, ScriptContext context);
-
-    /**
-     * Reset all API's.
-     */
-    void resetApi();
 }
