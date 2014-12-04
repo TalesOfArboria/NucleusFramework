@@ -868,5 +868,93 @@ public class TextUtils {
 
         return msg;
     }
+
+    /**
+     * Combine a collection of text components into a formatted {@code String}.
+     *
+     * @param textComponents  The collection of {@code TextComponents} to combine.
+     */
+    public static String combineTextComponents(Collection<TextComponent> textComponents) {
+        PreCon.notNull(textComponents);
+
+        StringBuilder buffer = new StringBuilder(textComponents.size() * 15);
+
+        for (TextComponent component : textComponents) {
+            buffer.append(component.getFormatted());
+        }
+
+        return buffer.toString();
+    }
+
+    /**
+     * Parse the given text into a list of {@code TextComponents}.
+     *
+     * @param text  The text to parse.
+     */
+    public static List<TextComponent> getTextComponents(String text) {
+        PreCon.notNull(text);
+
+        StringBuilder buffer = new StringBuilder(text.length());
+        StringBuilder colorBuffer = new StringBuilder(20);
+
+        List<TextComponent> result = new ArrayList<TextComponent>(5);
+
+        for (int i=text.length() - 1; i >= 0; i--) {
+
+            char ch = text.charAt(i);
+
+            if (ch == '}') {
+                TextColor color = getColor(colorBuffer, text, i);
+                if (color == null) {
+                    buffer.append(ch);
+                    continue;
+                }
+
+                TextComponent textComponent = new TextComponent(color, buffer.reverse().toString());
+                buffer.setLength(0);
+
+                result.add(textComponent);
+
+                i -= color.name().length() + 1;
+            }
+            else {
+                buffer.append(ch);
+            }
+        }
+
+        if (buffer.length() > 0) {
+            TextComponent textComponent = new TextComponent(null, buffer.reverse().toString());
+            result.add(textComponent);
+        }
+
+        return result;
+    }
+
+    /*
+     * Parse the TextColor for the text components parser.
+     */
+    @Nullable
+    private static TextColor getColor(StringBuilder colorBuffer, String rawText, int index) {
+
+        colorBuffer.setLength(0);
+
+        for (int i=index - 1; i >= 0; i--) {
+            char ch = rawText.charAt(i);
+
+            if (ch == '{') {
+                break;
+            }
+            else {
+                colorBuffer.append(ch);
+            }
+
+            if (colorBuffer.length() > 15)
+                return null;
+        }
+
+        String colorTag = colorBuffer.reverse().toString();
+
+        return TextColor.fromName(colorTag);
+    }
 }
 
