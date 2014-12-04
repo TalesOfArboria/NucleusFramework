@@ -53,7 +53,7 @@ public class ScriptManager extends AbstractScriptManager<IScript, IEvaluatedScri
     }
 
     @Override
-    public IScriptFactory<IScript> getScriptConstructor() {
+    public IScriptFactory<IScript> getScriptFactory() {
         return _scriptFactory;
     }
 }
