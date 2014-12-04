@@ -31,12 +31,12 @@ import javax.annotation.Nullable;
 /**
  * GenericsLib implementation of an {@link INamedTitleFactory}.
  */
-public class GenericsTitleFactory implements INamedTitleFactory<INamedTitle> {
+public class GenericsNamedTitleFactory implements INamedTitleFactory<INamedTitle> {
 
     @Override
     public INamedTitle create(String name, TextComponents title, @Nullable TextComponents subTitle,
                                 int fadeInTime, int stayTime, int fadeOutTime) {
 
-        return new GenericsTitle(name, title, subTitle, fadeInTime, stayTime, fadeOutTime);
+        return new GenericsNamedTitle(name, title, subTitle, fadeInTime, stayTime, fadeOutTime);
     }
 }

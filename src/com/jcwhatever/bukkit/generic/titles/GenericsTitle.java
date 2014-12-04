@@ -34,12 +34,10 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nullable;
 
 /**
- * GenericsLib implementation of {@link INamedTitle}
+ * GenericsLib implementation of {@link ITitle}
  */
-public class GenericsTitle implements INamedTitle {
+public class GenericsTitle implements ITitle {
 
-    private final String _name;
-    private final String _searchName;
     private final TextComponents _titleComponents;
     private final TextComponents _subTitleComponents;
     private final int _fadeInTime;
@@ -51,34 +49,28 @@ public class GenericsTitle implements INamedTitle {
      *
      * <p>Uses default times.</p>
      *
-     * @param name                The name of the title.
      * @param titleComponents     The title text components.
      * @param subTitleComponents  The sub title text components.
      */
-    public GenericsTitle(String name, TextComponents titleComponents,
+    public GenericsTitle(TextComponents titleComponents,
                          @Nullable TextComponents subTitleComponents) {
 
-        this(name, titleComponents, subTitleComponents, -1, -1, -1);
+        this(titleComponents, subTitleComponents, -1, -1, -1);
     }
 
     /**
      * Constructor.
      *
-     * @param name                The name of the title.
      * @param titleComponents     The title text components.
      * @param subTitleComponents  The sub title text components.
      * @param fadeInTime          The time spent fading in.
      * @param stayTime            The time spent being displayed.
      * @param fadeOutTime         The time spent fading out.
      */
-    public GenericsTitle(String name, TextComponents titleComponents,
-                         @Nullable TextComponents subTitleComponents,
-                         int fadeInTime, int stayTime, int fadeOutTime) {
-        PreCon.notNull(name);
+    public GenericsTitle(TextComponents titleComponents,
+                              @Nullable TextComponents subTitleComponents,
+                              int fadeInTime, int stayTime, int fadeOutTime) {
         PreCon.notNull(titleComponents);
-
-        _name = name;
-        _searchName = name.toLowerCase();
 
         _titleComponents = titleComponents;
         _subTitleComponents = subTitleComponents;
@@ -87,16 +79,6 @@ public class GenericsTitle implements INamedTitle {
         _stayTime = stayTime;
         _fadeOutTime = fadeOutTime;
 
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    @Override
-    public String getSearchName() {
-        return _searchName;
     }
 
     /**
@@ -153,17 +135,17 @@ public class GenericsTitle implements INamedTitle {
      */
     @Override
     public void showTo(Player p) {
-        String titleCommand = getCommand(p, TitleType.TITLE);
+        String titleCommand = getCommand(p, TitleCommandType.TITLE);
         String subTitleCommand = null;
         String timesCommand = null;
 
         if (_subTitleComponents != null) {
-            subTitleCommand = getCommand(p, TitleType.SUBTITLE);
+            subTitleCommand = getCommand(p, TitleCommandType.SUBTITLE);
         }
 
         // if one time is -1 then all times are -1
         if (getTime(_fadeInTime) != -1) {
-            timesCommand = getCommand(p, TitleType.TIMES);
+            timesCommand = getCommand(p, TitleCommandType.TIMES);
         }
 
         if (timesCommand != null) {
@@ -177,7 +159,7 @@ public class GenericsTitle implements INamedTitle {
         Utils.executeAsConsole(titleCommand);
     }
 
-    private String getCommand(Player p, TitleType type) {
+    private String getCommand(Player p, TitleCommandType type) {
         StringBuilder buffer = new StringBuilder(100);
 
         buffer.append("title ");
@@ -211,14 +193,6 @@ public class GenericsTitle implements INamedTitle {
         }
 
         return buffer.toString();
-    }
-
-    private enum TitleType {
-        TITLE,
-        SUBTITLE,
-        TIMES,
-        CLEAR,
-        RESET
     }
 
     private int getTime(int time) {
@@ -264,4 +238,11 @@ public class GenericsTitle implements INamedTitle {
         }
     }
 
+    protected enum TitleCommandType {
+        TITLE,
+        SUBTITLE,
+        TIMES,
+        CLEAR,
+        RESET
+    }
 }

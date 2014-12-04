@@ -107,7 +107,7 @@ public class ScriptApiTitles extends GenericsScriptApi {
                     ? new TextComponents(subTitle)
                     : null;
 
-            return new GenericsTitle("", titleComponents, subTitleComponents,
+            return new GenericsTitle(titleComponents, subTitleComponents,
                     fadeInTicks, stayTicks, fadeOutTicks);
         }
     }

@@ -37,7 +37,7 @@ import com.jcwhatever.bukkit.generic.regions.RegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScriptEngineManager;
-import com.jcwhatever.bukkit.generic.titles.GenericsTitleFactory;
+import com.jcwhatever.bukkit.generic.titles.GenericsNamedTitleFactory;
 import com.jcwhatever.bukkit.generic.titles.TitleManager;
 import com.jcwhatever.bukkit.generic.titles.INamedTitle;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -230,7 +230,7 @@ public class GenericsLib extends GenericsPlugin {
         _scheduler = new BukkitTaskScheduler();
         _scriptEngineManager = new GenericsScriptEngineManager();
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
-        _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsTitleFactory());
+        _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsNamedTitleFactory());
 
         _regionManager = new RegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
