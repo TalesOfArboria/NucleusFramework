@@ -80,11 +80,13 @@ public class WeakValueHashMap<K, V> implements Map<K, V> {
     public boolean containsKey(Object key) {
         PreCon.notNull(key);
 
+        //noinspection SuspiciousMethodCalls
         WeakValue item = _map.get(key);
         if (item == null)
             return false;
 
         if (item.get() == null) {
+            //noinspection SuspiciousMethodCalls
             _map.remove(key);
             return false;
         }
@@ -109,6 +111,10 @@ public class WeakValueHashMap<K, V> implements Map<K, V> {
         Set<Map.Entry<K, V>> entrySet = new HashSet<Map.Entry<K, V>>(_map.entrySet().size());
 
         for (final Map.Entry<K, WeakValue> set : _map.entrySet()) {
+
+            if (set.getValue().get() == null)
+                continue;
+
             entrySet.add(new Map.Entry<K, V>() {
 
                 @Override
@@ -117,11 +123,13 @@ public class WeakValueHashMap<K, V> implements Map<K, V> {
                 }
 
                 @Override
+                @Nullable
                 public V getValue() {
                     return set.getValue().get();
                 }
 
                 @Override
+                @Nullable
                 public V setValue(V value) {
                     return set.setValue(new WeakValue(value)).get();
                 }
@@ -146,6 +154,7 @@ public class WeakValueHashMap<K, V> implements Map<K, V> {
             return null;
 
         if (item.get() == null) {
+            //noinspection SuspiciousMethodCalls
             _map.remove(key);
             return null;
         }
@@ -265,9 +274,8 @@ public class WeakValueHashMap<K, V> implements Map<K, V> {
 
         @Override
         public boolean equals(Object obj) {
-            PreCon.notNull(obj);
-
-            return _reference.get() != null && obj.equals(_reference.get());
+            return _reference.get() != null &&
+                    obj.equals(_reference.get());
         }
     }
 
