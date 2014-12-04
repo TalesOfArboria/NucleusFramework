@@ -204,6 +204,19 @@ public interface IDataNode {
     Object get(String keyPath, DataType type); // must return null if node not found
 
     /**
+     * Deserialize an {@code IDataNodeSerializable} object from the specified node path.
+     *
+     * @param nodePath   The node path.
+     * @param typeClass  The object class.
+     *
+     * @param <T>  The object type.
+     *
+     * @return Null if failed to deserialize or data not present.
+     */
+    @Nullable
+    <T extends IDataNodeSerializable> T getSerializable(String nodePath, Class<T> typeClass);
+
+    /**
      * Get the integer value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key.

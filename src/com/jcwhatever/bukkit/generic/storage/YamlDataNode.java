@@ -222,6 +222,12 @@ public class YamlDataNode implements IDataNode {
         return _storage.get(getFullPath(keyPath), type);
     }
 
+    @Nullable
+    @Override
+    public <T extends IDataNodeSerializable> T getSerializable(String nodePath, Class<T> typeClass) {
+        return _storage.getSerializable(getFullPath(nodePath), typeClass);
+    }
+
     @Override
     public int getInteger(String keyPath) {
 

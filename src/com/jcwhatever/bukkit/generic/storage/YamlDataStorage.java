@@ -46,6 +46,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -532,6 +534,38 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
+    @Nullable
+    @Override
+    public <T extends IDataNodeSerializable> T getSerializable(String nodePath, Class<T> typeClass) {
+        PreCon.notNull(nodePath);
+        PreCon.notNull(typeClass);
+
+        if (!hasNode(nodePath))
+            return null;
+
+        T instance;
+
+        try {
+            Constructor<T> constructor = typeClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            instance = constructor.newInstance();
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+
+            throw new RuntimeException("Failed to instantiate IDataNodeSerializable object. " +
+                    "Make sure it has an empty constructor.");
+        }
+
+        IDataNode dataNode = getNode(nodePath);
+        try {
+            instance.deserializeFromDataNode(dataNode);
+        } catch (UnableToDeserializeException ignore) {
+            return null;
+        }
+
+        return instance;
+    }
+
     @Override
     public boolean getBoolean(String keyPath) {
 
@@ -812,6 +846,14 @@ public class YamlDataStorage implements IDataNode {
                 Enum<?> e = (Enum<?>) value;
                 value = e.name();
                 _strings.put(keyPath, e.name());
+            }
+            else if (value instanceof IDataNodeSerializable) {
+
+                IDataNodeSerializable serializable = (IDataNodeSerializable)value;
+
+                serializable.serializeToDataNode(getNode(keyPath));
+
+                return true;
             }
 
             if (value == null) {
