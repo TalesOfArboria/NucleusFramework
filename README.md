@@ -1,6 +1,4 @@
-Bukkit-GenericsLib
+GenericsLib for Spigot 1.8
 ==================
 
-GenericsLib plugin for Bukkit
-
-A rapid plugin development library for Bukkit. Currently under development, expect large changes.
+A rapid plugin development library for Bukkit/Spigot. Currently under development, expect breaking changes.
