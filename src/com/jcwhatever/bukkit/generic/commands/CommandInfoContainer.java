@@ -25,14 +25,14 @@
 
 package com.jcwhatever.bukkit.generic.commands;
 
-import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatPattern;
-import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.Plugin;
-
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.FormatPattern;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
+
+import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 

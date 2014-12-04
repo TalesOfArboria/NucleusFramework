@@ -41,6 +41,7 @@ import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiRand;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiScheduler;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiSounds;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
 

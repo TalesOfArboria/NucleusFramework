@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.items.serializer;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

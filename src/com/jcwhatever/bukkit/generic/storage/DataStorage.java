@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.storage;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;

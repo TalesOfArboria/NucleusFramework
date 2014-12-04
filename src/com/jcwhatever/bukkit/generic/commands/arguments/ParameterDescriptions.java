@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.commands.CommandInfoContainer;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterDescriptionException;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

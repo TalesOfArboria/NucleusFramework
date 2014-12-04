@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.views;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;

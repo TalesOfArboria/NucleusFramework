@@ -22,38 +22,49 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.utils.text;
 
-package com.jcwhatever.bukkit.generic.commands.exceptions;
-
-import com.jcwhatever.bukkit.generic.commands.CommandInfoContainer;
-import com.jcwhatever.bukkit.generic.language.Localized;
-import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
+import java.util.regex.Pattern;
 
 /**
- * Thrown when a parameter description parsed from a commands annotation
- * is invalid.
+ * Used to hold custom text formatting information
  */
-public class InvalidParameterDescriptionException extends RuntimeException {
+public class FormatPattern {
+    private final String _key;
+    private final Pattern _pattern;
 
-    private static final long serialVersionUID = 1L;
-
-    private String _message;
-
-    /**
-     * Constructor.
-     *
-     * @param commandInfo    The command info container.
-     * @param parameterName  The parameter name.
-     */
-    public InvalidParameterDescriptionException(CommandInfoContainer commandInfo, String parameterName) {
-        _message = TextUtils.format("Invalid description for parameter '{0}' in command '{1}'",
-                parameterName, commandInfo.getCommandName());
+    public FormatPattern (String regex) {
+        _key = regex;
+        _pattern = Pattern.compile(regex);
     }
 
-    @Override
-    @Localized
-    public String getMessage() {
-        return _message;
+    public String getReplaceKey() {
+        return _key;
     }
 
+    public Pattern getPattern() {
+        return _pattern;
+    }
+
+    public FormatEntry getEntry(String replaceValue) {
+        return new FormatEntry(replaceValue);
+    }
+
+    public class FormatEntry {
+
+        private final String _replaceValue;
+
+        FormatEntry(String replaceValue) {
+            _replaceValue = replaceValue;
+        }
+
+        public Pattern getPattern() {
+            return _pattern;
+        }
+
+        public String getReplaceValue() {
+            return _replaceValue;
+        }
+    }
 }
+

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.language;
 
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import javax.annotation.Nullable;
 
 import java.io.IOException;

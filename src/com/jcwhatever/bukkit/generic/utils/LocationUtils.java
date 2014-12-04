@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

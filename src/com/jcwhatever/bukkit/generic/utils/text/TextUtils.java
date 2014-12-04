@@ -23,12 +23,13 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.utils;
+package com.jcwhatever.bukkit.generic.utils.text;
 
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
-import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatPattern.FormatEntry;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.text.FormatPattern.FormatEntry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -38,7 +39,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -867,164 +867,6 @@ public class TextUtils {
         }
 
         return msg;
-    }
-
-    public enum TextColor {
-        AQUA           (true,  'b', "\\{AQUA}"),
-        BLACK          (true,  '0', "\\{BLACK}"),
-        BLUE           (true,  '9', "\\{BLUE}"),
-        BOLD           (false, 'l', "\\{BOLD}"),
-        DARK_AQUA      (true,  '3', "\\{DARK_AQUA}"),
-        DARK_BLUE      (true,  '1', "\\{DARK_BLUE}"),
-        DARK_GRAY      (true,  '8', "\\{DARK_GRAY}"),
-        DARK_GREEN     (true,  '2', "\\{DARK_GREEN}"),
-        DARK_PURPLE    (true,  '5', "\\{DARK_PURPLE}"),
-        DARK_RED       (true,  '4', "\\{DARK_RED}"),
-        GOLD           (true,  '6', "\\{GOLD}"),
-        GRAY           (true,  '7', "\\{GRAY}"),
-        GREEN          (true,  'a', "\\{GREEN}"),
-        ITALIC         (false, 'o', "\\{ITALIC}"),
-        LIGHT_PURPLE   (true,  'd', "\\{LIGHT_PURPLE}"),
-        MAGIC          (false, 'k', "\\{MAGIC}"),
-        RED            (true,  'c', "\\{RED}"),
-        RESET          (false, 'r', "\\{RESET}"),
-        STRIKETHROUGH  (false, 'm', "\\{STRIKETHROUGH}"),
-        UNDERLINE      (false, 'n', "\\{UNDERLINE}"),
-        WHITE          (true,  'f', "\\{WHITE}"),
-        YELLOW         (true,  'e', "\\{YELLOW}");
-
-        private static final char FORMAT_CHAR = '\u00A7';
-        private static final Map<Character, TextColor> _characterMap = new HashMap<>(20);
-
-        static {
-            for (TextColor color : values()) {
-                _characterMap.put(color.getColorChar(), color);
-            }
-        }
-
-        private final Pattern _pattern;
-        private final char _colorChar;
-        private final String _colorCode;
-        private final boolean _isColor;
-
-        TextColor (boolean isColor, char colorChar, String tagPattern) {
-            _pattern = Pattern.compile(tagPattern);
-            _colorChar = colorChar;
-            _colorCode = String.valueOf(FORMAT_CHAR) + colorChar;
-            _isColor = isColor;
-        }
-
-        public Pattern getPattern() {
-            return _pattern;
-        }
-
-        public char getColorChar() {
-            return _colorChar;
-        }
-
-        public String getColorCode() {
-            return _colorCode;
-        }
-
-        public boolean isColor() {
-            return _isColor;
-        }
-
-        @Override
-        public String toString() {
-            return _colorCode;
-        }
-
-        public static String remove(String input) {
-
-            StringBuilder sb = new StringBuilder(input.length());
-            char[] chars = input.toCharArray();
-
-            for (int i = 0, last = chars.length - 1; i < chars.length; i++) {
-                char ch = chars[i];
-                if (ch == FORMAT_CHAR && i != last) {
-                    char next = chars[i + 1];
-                    if (_characterMap.containsKey(next)) {
-                          i += 1;
-                        continue;
-                    }
-                }
-
-                sb.append(ch);
-            }
-
-            return sb.toString();
-        }
-
-        public static String getEndColor(String input) {
-
-            StringBuilder sb = new StringBuilder(15);
-            char[] chars = input.toCharArray();
-
-            for (int i = chars.length - 1; i > -1; i--) {
-
-                char current = chars[i];
-                if (current != FORMAT_CHAR || i >= chars.length - 1)
-                    continue; // finish block
-
-                char next = chars[i + 1];
-
-                TextColor color =  _characterMap.get(next);
-                if (color == null)
-                    continue; // finish block
-
-                sb.insert(0, color.getColorCode());
-
-                if (color.isColor() || color == TextColor.RESET) {
-                    break;
-                }
-
-            }
-            return sb.toString();
-        }
-
-    }
-
-    /**
-     * Used to hold custom text formatting information
-     */
-    public static class FormatPattern {
-        private final String _key;
-        private final Pattern _pattern;
-
-        public FormatPattern (String regex) {
-            _key = regex;
-            _pattern = Pattern.compile(regex);
-        }
-
-        public String getReplaceKey() {
-            return _key;
-        }
-
-        public Pattern getPattern() {
-            return _pattern;
-        }
-
-        public FormatEntry getEntry(String replaceValue) {
-            return new FormatEntry(replaceValue);
-        }
-
-        public class FormatEntry {
-
-            private final String _replaceValue;
-
-            FormatEntry(String replaceValue) {
-                _replaceValue = replaceValue;
-            }
-
-            public Pattern getPattern() {
-                return _pattern;
-            }
-
-            public String getReplaceValue() {
-                return _replaceValue;
-            }
-        }
     }
 }
 

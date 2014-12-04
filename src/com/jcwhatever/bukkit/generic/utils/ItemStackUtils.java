@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringExce
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackDeserializer;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.Color;
 import org.bukkit.Material;

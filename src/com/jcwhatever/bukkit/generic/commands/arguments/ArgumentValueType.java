@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.commands.arguments;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

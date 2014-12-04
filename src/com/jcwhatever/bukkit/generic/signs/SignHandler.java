@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.signs;
 
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 

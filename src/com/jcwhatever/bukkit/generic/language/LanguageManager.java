@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.language;
 
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.TextUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
