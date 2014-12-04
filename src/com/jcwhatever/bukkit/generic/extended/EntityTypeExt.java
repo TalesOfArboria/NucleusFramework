@@ -26,14 +26,15 @@
 package com.jcwhatever.bukkit.generic.extended;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.entity.EntityType;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Maps extra properties to Bukkits EntityType enum and
@@ -42,6 +43,7 @@ import java.util.Map;
  */
 public enum EntityTypeExt {
 
+    ARMOR_STAND          (EntityType.ARMOR_STAND),
     ARROW                (EntityType.ARROW,                 EP.PROJECTILE),
     BAT                  (EntityType.BAT,                   EP.FLY),
     BLAZE                (EntityType.BLAZE,                 EP.HOSTILE, EP.FLY, EP.SHOOTS),
@@ -65,6 +67,7 @@ public enum EntityTypeExt {
     FISHING_HOOK         (EntityType.FISHING_HOOK),
     GHAST                (EntityType.GHAST,                 EP.HOSTILE, EP.FLY, EP.SHOOTS),
     GIANT                (EntityType.GIANT,                 EP.HOSTILE, EP.WALKS),
+    GUARDIAN             (EntityType.GUARDIAN,              EP.HOSTILE, EP.SWIMS),
     HORSE                (EntityType.HORSE,                 EP.RIDE, EP.WALKS),
     IRON_GOLEM           (EntityType.IRON_GOLEM,            EP.WALKS),
     ITEM_FRAME           (EntityType.ITEM_FRAME),
@@ -84,6 +87,7 @@ public enum EntityTypeExt {
     PIG_ZOMBIE           (EntityType.PIG_ZOMBIE,            EP.HOSTILE, EP.WALKS),
     PLAYER               (EntityType.PLAYER),
     PRIMED_TNT           (EntityType.PRIMED_TNT,            EP.EXPLODES),
+    RABBIT               (EntityType.RABBIT,                EP.WALKS),
     SHEEP                (EntityType.SHEEP,                 EP.WALKS),
     SILVERFISH           (EntityType.SILVERFISH,            EP.HOSTILE, EP.WALKS),
     SKELETON             (EntityType.SKELETON,              EP.HOSTILE, EP.SHOOTS, EP.WALKS),

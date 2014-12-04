@@ -45,6 +45,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -67,7 +68,7 @@ public class PlayerUtils {
     public static boolean isOnline(Player p) {
         PreCon.notNull(p);
 
-        Player[] players = Bukkit.getServer().getOnlinePlayers();
+        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         for (Player plyr : players) {
             if (plyr.getUniqueId().equals(p.getUniqueId()))
                 return true;

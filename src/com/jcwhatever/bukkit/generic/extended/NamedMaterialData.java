@@ -43,37 +43,53 @@ public class NamedMaterialData {
 
     static {
         _alternateNames
+
                 .put("COBBLE", new MaterialData(Material.COBBLESTONE))
+
                 .put("STONE_BRICK", new MaterialData(Material.SMOOTH_BRICK, (byte) 0))
                 .put("MOSSY_BRICK", new MaterialData(Material.SMOOTH_BRICK, (byte) 1))
                 .put("CRACKED_BRICK", new MaterialData(Material.SMOOTH_BRICK, (byte) 2))
                 .put("CHISELED_BRICK", new MaterialData(Material.SMOOTH_BRICK, (byte) 3))
+
                 .put("GRANITE", new MaterialData(Material.STONE, (byte) 1))
                 .put("POLISHED_GRANITE", new MaterialData(Material.STONE, (byte) 2))
+                .put("SMOOTH_GRANITE", new MaterialData(Material.STONE, (byte)2))
                 .put("DIORITE", new MaterialData(Material.STONE, (byte) 3))
                 .put("POLISHED_DIORITE", new MaterialData(Material.STONE, (byte) 4))
+                .put("SMOOTH_DIORITE", new MaterialData(Material.STONE, (byte) 4))
                 .put("ANDESITE", new MaterialData(Material.STONE, (byte) 5))
                 .put("POLISHED_ANDESITE", new MaterialData(Material.STONE, (byte) 6))
+                .put("SMOOTH_ANDESITE", new MaterialData(Material.STONE, (byte) 6))
+
                 .put("OAK_PLANK", new MaterialData(Material.WOOD, (byte) 0))
                 .put("SPRUCE_PLANK", new MaterialData(Material.WOOD, (byte) 1))
                 .put("BIRCH_PLANK", new MaterialData(Material.WOOD, (byte) 2))
                 .put("JUNGLE_PLANK", new MaterialData(Material.WOOD, (byte) 3))
                 .put("ACACIA_PLANK", new MaterialData(Material.WOOD, (byte) 4))
                 .put("DARK_OAK_PLANK", new MaterialData(Material.WOOD, (byte) 5))
+
                 .put("OAK_SAPPLING", new MaterialData(Material.SAPLING, (byte) 0))
                 .put("SPRUCE_SAPPLING", new MaterialData(Material.SAPLING, (byte) 1))
                 .put("BIRCH_SAPPLING", new MaterialData(Material.SAPLING, (byte) 2))
                 .put("JUNGLE_SAPPLING", new MaterialData(Material.SAPLING, (byte) 3))
                 .put("ACACIA_SAPPLING", new MaterialData(Material.SAPLING, (byte) 4))
                 .put("DARK_OAK_SAPPLING", new MaterialData(Material.SAPLING, (byte) 5))
+
                 .put("OAK_LOG", new MaterialData(Material.LOG, (byte) 0))
                 .put("SPRUCE_LOG", new MaterialData(Material.LOG, (byte) 1))
                 .put("BIRCH_LOG", new MaterialData(Material.LOG, (byte) 2))
                 .put("JUNGLE_LOG", new MaterialData(Material.LOG, (byte) 3))
+
+                .put("ACACIA_LOG", new MaterialData(Material.LOG_2))
+                .put("DARK_OAK_LOG", new MaterialData(Material.LOG_2, (byte)1))
+
                 .put("OAK_LEAVES", new MaterialData(Material.LEAVES, (byte) 0))
                 .put("SPRUCE_LEAVES", new MaterialData(Material.LEAVES, (byte) 1))
                 .put("BIRCH_LEAVES", new MaterialData(Material.LEAVES, (byte) 2))
                 .put("JUNGLE_LEAVES", new MaterialData(Material.LEAVES, (byte) 3))
+
+                .put("ACACIA_LEAVES", new MaterialData(Material.LEAVES_2))
+                .put("DARK_OAK_LEAVES", new MaterialData(Material.LEAVES_2, (byte) 1))
 
                 .put("CHISELED_SANDSTONE", new MaterialData(Material.SANDSTONE, (byte) 1))
                 .put("SMOOTH_SANDSTONE", new MaterialData(Material.LEAVES, (byte) 2))
@@ -145,6 +161,9 @@ public class NamedMaterialData {
         PreCon.notNull(materialName);
 
         String str = materialName.toUpperCase();
+
+        if (str.startsWith("MINECRAFT:"))
+            str = str.substring(10);
 
         // check for standard enum value
         try {

@@ -28,17 +28,20 @@ package com.jcwhatever.bukkit.generic.extended.serializable;
 import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
 import com.jcwhatever.bukkit.generic.file.IGenericsSerializable;
+
 import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Directional;
+import org.bukkit.util.EulerAngle;
 
 import java.io.IOException;
 
@@ -63,7 +66,8 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
      */
     public static boolean isFurnitureEntity(Entity entity) {
         return entity instanceof Painting ||
-                entity instanceof ItemFrame;
+                entity instanceof ItemFrame ||
+                entity instanceof ArmorStand;
     }
 
     /**
@@ -72,7 +76,8 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
     public static Class<?>[] getFurnitureClasses() {
         return new Class<?>[] {
                 Painting.class,
-                ItemFrame.class
+                ItemFrame.class,
+                ArmorStand.class
         };
     }
 
@@ -90,6 +95,28 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
     // ItemFrame
     private ItemStack _frameItem;
     private Rotation _frameRotation;
+
+    // ArmorStand
+    private boolean _hasArmorStand;
+    private ItemStack _itemInHand;
+    private ItemStack _helmet;
+    private ItemStack _chestplate;
+    private ItemStack _leggings;
+    private ItemStack _boots;
+    private EulerAngle _headPose;
+    private EulerAngle _bodyPose;
+    private EulerAngle _leftArmPose;
+    private EulerAngle _rightArmPose;
+    private EulerAngle _leftLegPose;
+    private EulerAngle _rightLegPose;
+    private boolean _hasArmorBasePlate;
+    private boolean _hasArmorGravity;
+    private boolean _isArmorVisible;
+    private boolean _hasArmorArms;
+    private boolean _isArmorSmall;
+
+
+
 
     /**
      * Constructor.
@@ -127,6 +154,28 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
 
             _frameItem = frame.getItem();
             _frameRotation = frame.getRotation();
+        }
+
+        if (entity instanceof ArmorStand) {
+            ArmorStand stand = (ArmorStand)entity;
+
+            _hasArmorStand = true;
+            _itemInHand = stand.getItemInHand();
+            _helmet = stand.getHelmet();
+            _chestplate = stand.getChestplate();
+            _leggings = stand.getLeggings();
+            _boots = stand.getBoots();
+            _headPose = stand.getHeadPose();
+            _bodyPose = stand.getBodyPose();
+            _leftArmPose = stand.getLeftArmPose();
+            _rightArmPose = stand.getRightArmPose();
+            _leftLegPose = stand.getLeftLegPose();
+            _rightLegPose = stand.getRightLegPose();
+            _hasArmorBasePlate = stand.hasBasePlate();
+            _hasArmorGravity = stand.hasGravity();
+            _isArmorVisible = stand.isVisible();
+            _hasArmorArms = stand.hasArms();
+            _isArmorSmall = stand.isSmall();
         }
     }
 
@@ -170,6 +219,27 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
             frame.setItem(_frameItem);
             frame.setRotation(_frameRotation);
         }
+
+        if (entity instanceof ArmorStand && _hasArmorStand) {
+            ArmorStand stand = (ArmorStand)entity;
+
+             stand.setItemInHand(_itemInHand);
+             stand.setHelmet(_helmet);
+             stand.setChestplate(_chestplate);
+             stand.setLeggings(_leggings);
+             stand.setBoots(_boots);
+             stand.setHeadPose(_headPose);
+             stand.setBodyPose(_bodyPose);
+             stand.setLeftArmPose(_leftArmPose);
+             stand.setRightArmPose(_rightArmPose);
+             stand.setLeftLegPose(_leftLegPose);
+             stand.setRightLegPose(_rightLegPose);
+             stand.setBasePlate(_hasArmorBasePlate);
+             stand.setGravity(_hasArmorGravity);
+             stand.setVisible(_isArmorVisible);
+             stand.setArms(_hasArmorArms);
+             stand.setSmall(_isArmorSmall);
+        }
     }
 
     /**
@@ -209,6 +279,7 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
         writer.write(hasDirection);
         writer.write(hasArt);
         writer.write(hasItemFrame);
+        writer.write(_hasArmorStand);
 
         if (hasDirection) {
             writer.write(_facing);
@@ -223,6 +294,25 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
             writer.write(_frameItem);
             writer.write(_frameRotation);
         }
+
+        if (_hasArmorStand) {
+            writer.write(_hasArmorBasePlate);
+            writer.write(_hasArmorGravity);
+            writer.write(_isArmorVisible);
+            writer.write(_hasArmorArms);
+            writer.write(_isArmorSmall);
+            writer.write(_itemInHand);
+            writer.write(_helmet);
+            writer.write(_chestplate);
+            writer.write(_leggings);
+            writer.write(_boots);
+            writer.write(_headPose);
+            writer.write(_bodyPose);
+            writer.write(_leftArmPose);
+            writer.write(_rightArmPose);
+            writer.write(_leftLegPose);
+            writer.write(_rightLegPose);
+        }
     }
 
     @Override
@@ -234,6 +324,7 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
         boolean hasDirection = reader.getBoolean();
         boolean hasArt = reader.getBoolean();
         boolean hasItemFrame = reader.getBoolean();
+        _hasArmorStand = reader.getBoolean();
 
         if (hasDirection) {
             _facing = reader.getEnum(BlockFace.class);
@@ -246,6 +337,25 @@ public class SerializableFurnitureEntity implements IGenericsSerializable {
         if (hasItemFrame) {
             _frameItem = reader.getItemStack();
             _frameRotation = reader.getEnum(Rotation.class);
+        }
+
+        if (_hasArmorStand) {
+            _hasArmorBasePlate = reader.getBoolean();
+            _hasArmorGravity = reader.getBoolean();
+            _isArmorVisible = reader.getBoolean();
+            _hasArmorArms = reader.getBoolean();
+            _isArmorSmall = reader.getBoolean();
+            _itemInHand = reader.getItemStack();
+            _helmet = reader.getItemStack();
+            _chestplate = reader.getItemStack();
+            _leggings = reader.getItemStack();
+            _boots = reader.getItemStack();
+            _headPose = reader.getEulerAngle();
+            _bodyPose = reader.getEulerAngle();
+            _leftArmPose = reader.getEulerAngle();
+            _rightArmPose = reader.getEulerAngle();
+            _leftLegPose = reader.getEulerAngle();
+            _rightLegPose = reader.getEulerAngle();
         }
     }
 }

@@ -26,15 +26,16 @@
 package com.jcwhatever.bukkit.generic.permissions;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Permissions API
@@ -425,7 +426,7 @@ public class Permissions {
         if (!getImplementation().hasGroupSupport())
             return;
 
-        Player[] players = Bukkit.getServer().getOnlinePlayers();
+        Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
         for (Player player : players) {
             Permissions.fixPermissionGroups(plugin, player, groups);
         }
