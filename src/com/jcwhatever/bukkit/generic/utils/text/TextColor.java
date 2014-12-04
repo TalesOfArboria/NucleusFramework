@@ -27,9 +27,10 @@ package com.jcwhatever.bukkit.generic.utils.text;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Represents Minecraft formatting codes.
  */
 public enum TextColor {
     AQUA           (true,  'b', "\\{AQUA}"),
@@ -57,10 +58,12 @@ public enum TextColor {
 
     public static final char FORMAT_CHAR = '\u00A7';
     private static final Map<Character, TextColor> _characterMap = new HashMap<>(20);
+    private static final Map<String, TextColor> _nameMap = new HashMap<>(20);
 
     static {
         for (TextColor color : values()) {
             _characterMap.put(color.getColorChar(), color);
+            _nameMap.put(color.name(), color);
         }
     }
 
@@ -76,18 +79,32 @@ public enum TextColor {
         _isColor = isColor;
     }
 
+    /**
+     * Get the regex pattern used to format
+     * color names into format codes.
+     */
     public Pattern getPattern() {
         return _pattern;
     }
 
+    /**
+     * Get the character used in the format code.
+     */
     public char getColorChar() {
         return _colorChar;
     }
 
+    /**
+     * Get the format code.
+     */
     public String getColorCode() {
         return _colorCode;
     }
 
+    /**
+     * Determine if the {@code TextColor} represents
+     * a color. (As apposed to a format)
+     */
     public boolean isColor() {
         return _isColor;
     }
@@ -97,10 +114,28 @@ public enum TextColor {
         return _colorCode;
     }
 
-    public static String remove(String input) {
+    /**
+     * Get a {@code TextColor} from a case insensitive
+     * constant name.
+     *
+     * @param name  The constant name.
+     *
+     * @return  Null if the name is invalid.
+     */
+    @Nullable
+    public static TextColor fromName(String name) {
+        return _nameMap.get(name.toUpperCase());
+    }
 
-        StringBuilder sb = new StringBuilder(input.length());
-        char[] chars = input.toCharArray();
+    /**
+     * Remove format codes from a string.
+     *
+     * @param text  The text to remove format codes from.
+     */
+    public static String remove(String text) {
+
+        StringBuilder sb = new StringBuilder(text.length());
+        char[] chars = text.toCharArray();
 
         for (int i = 0, last = chars.length - 1; i < chars.length; i++) {
             char ch = chars[i];
@@ -118,10 +153,18 @@ public enum TextColor {
         return sb.toString();
     }
 
-    public static String getEndColor(String input) {
+    /**
+     * Get the color and formats in effect at the
+     * end of a string.
+     *
+     * @param text  The text to get the end color from.
+     *
+     * @return  The format codes.
+     */
+    public static String getEndColor(String text) {
 
         StringBuilder sb = new StringBuilder(15);
-        char[] chars = input.toCharArray();
+        char[] chars = text.toCharArray();
 
         for (int i = chars.length - 1; i > -1; i--) {
 
@@ -144,5 +187,4 @@ public enum TextColor {
         }
         return sb.toString();
     }
-
 }
