@@ -32,6 +32,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -421,6 +422,24 @@ public class GenericsByteWriter extends OutputStream {
         write(location.getZ());
         write(location.getYaw());
         write(location.getPitch());
+    }
+
+    /**
+     * Write an {@code EulerAngle}.
+     *
+     * The angle is written as three doubles representing
+     * x, y and z. (See {@code write(double)}.
+     *
+     * @param angle  The angle.
+     *
+     * @throws IOException
+     */
+    public void write(EulerAngle angle) throws IOException {
+        PreCon.notNull(angle);
+
+        write(angle.getX());
+        write(angle.getY());
+        write(angle.getZ());
     }
 
     /**

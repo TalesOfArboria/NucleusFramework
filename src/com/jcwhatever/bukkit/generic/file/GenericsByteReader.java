@@ -35,6 +35,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -441,6 +442,22 @@ public class GenericsByteReader extends InputStream {
         float pitch = getFloat();
 
         return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
+    }
+
+    /**
+     * Get the next group of bytes as an EulerAngle.
+     *
+     * <p>The angle is read as x, y and z value as doubles.
+     * (See {@code getDouble})</p>
+     *
+     * @throws IOException
+     */
+    public EulerAngle getEulerAngle() throws IOException {
+        double x = getDouble();
+        double y = getDouble();
+        double z = getDouble();
+
+        return new EulerAngle(x, y, z);
     }
 
     /**
