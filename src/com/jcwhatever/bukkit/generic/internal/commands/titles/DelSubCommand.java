@@ -22,27 +22,40 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.bukkit.generic.internal.commands;
+package com.jcwhatever.bukkit.generic.internal.commands.titles;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.commands.AbstractCommandHandler;
-import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.kits.KitsCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.scripts.ScriptsCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.titles.TitlesCommand;
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
+import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 
-public class CommandHandler extends AbstractCommandHandler {
+import org.bukkit.command.CommandSender;
 
-    public CommandHandler() {
-        super(GenericsLib.getLib());
-    }
+@CommandInfo(
+        parent="titles",
+        command="del",
+        staticParams={ "titleName" },
+        usage="/{plugin-command} {command} del <titleName>",
+        description="Remove a title.")
+
+public class DelSubCommand extends AbstractCommand {
+
+    @Localizable static final String _FAILED = "A title named '{0}' was not found.";
+    @Localizable static final String _SUCCESS = "Title named '{0}' removed.";
 
     @Override
-    protected void registerCommands () {
-        registerCommand(JailCommand.class);
-        registerCommand(KitsCommand.class);
-        registerCommand(ScriptsCommand.class);
-        registerCommand(TitlesCommand.class);
+    public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
+
+        String name = args.getName("titleName", 32);
+
+        if (GenericsLib.getTitleManager().removeTitle(name) == null) {
+            tellError(sender, Lang.get(_FAILED, name));
+        }
+
+        tellSuccess(sender, Lang.get(_SUCCESS, name));
     }
 }
+

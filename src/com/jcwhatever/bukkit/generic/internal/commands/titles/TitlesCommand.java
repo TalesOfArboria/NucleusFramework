@@ -22,27 +22,24 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.internal.commands.titles;
 
-package com.jcwhatever.bukkit.generic.internal.commands;
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.commands.AbstractCommandHandler;
-import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.kits.KitsCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.scripts.ScriptsCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.titles.TitlesCommand;
+@CommandInfo(
+        command="titles",
+        description="Manage titles.")
 
-public class CommandHandler extends AbstractCommandHandler {
+public class TitlesCommand extends AbstractCommand {
 
-    public CommandHandler() {
-        super(GenericsLib.getLib());
-    }
+    public TitlesCommand() {
+        super();
 
-    @Override
-    protected void registerCommands () {
-        registerCommand(JailCommand.class);
-        registerCommand(KitsCommand.class);
-        registerCommand(ScriptsCommand.class);
-        registerCommand(TitlesCommand.class);
+        registerSubCommand(AddSubCommand.class);
+        registerSubCommand(DelSubCommand.class);
+        registerSubCommand(ListSubCommand.class);
+        registerSubCommand(ShowSubCommand.class);
     }
 }
+
