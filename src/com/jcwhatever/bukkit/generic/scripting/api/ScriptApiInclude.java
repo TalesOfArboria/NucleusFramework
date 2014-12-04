@@ -91,29 +91,31 @@ public class ScriptApiInclude extends GenericsScriptApi {
         /**
          * Include script from plugins script include folder.
          *
-         * @param fileName  The relative path of the script to include.
+         * @param fileNames  The relative path of the scripts to include.
          */
         @Nullable
-        public Object script(String fileName) {
+        public void script(String... fileNames) {
 
-            File file = new File(_includeFolder, fileName);
+            for (String fileName : fileNames) {
+                File file = new File(_includeFolder, fileName);
 
-            if (file.exists()) {
+                if (file.exists()) {
 
-                IScript script = ScriptUtils.loadScript(getPlugin(),
-                        _includeFolder, file, _manager.getScriptFactory());
+                    IScript script = ScriptUtils.loadScript(getPlugin(),
+                            _includeFolder, file, _manager.getScriptFactory());
 
-                if (script == null)
-                    return null;
+                    if (script == null) {
+                        Messenger.warning(getPlugin(), "Failed to load script named '{0}'.");
+                        continue;
+                    }
 
-                return _script.evaluate(script);
+                    _script.evaluate(script);
+
+                } else {
+                    Messenger.warning(getPlugin(), "Failed to include script named '{0}'. " +
+                            "File not found.", file.getName());
+                }
             }
-            else {
-                Messenger.warning(getPlugin(), "Failed to include script named '{0}'. " +
-                        "File not found.", file.getName());
-            }
-
-            return null;
         }
 
         /**
