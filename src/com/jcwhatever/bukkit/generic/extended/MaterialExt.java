@@ -453,13 +453,13 @@ public enum MaterialExt {
         OPENABLE_BOUNDARY(524288),
         SURFACE(1048576);
 
-        private final int _bit;
+        private final long _bit;
 
-        MaterialProperty(int bit) {
+        MaterialProperty(long bit) {
             _bit = bit;
         }
 
-        public int getBit() {
+        public long getBit() {
             return _bit;
         }
     }
@@ -495,7 +495,7 @@ public enum MaterialExt {
             _bit = bit;
         }
 
-        public long getBits() {
+        public long getBit() {
             return _bit;
         }
     }
@@ -537,16 +537,12 @@ public enum MaterialExt {
         int flags = 0;
 
         for (MP property : properties) {
-            flags |= property.getBits();
+            flags |= property.getBit();
         }
 
         if (material != null) {
             if (material.isBlock()) {
                 flags |= MaterialProperty.BLOCK.getBit();
-
-                if (isSurface(material)) {
-                    flags |= MaterialProperty.SURFACE.getBit();
-                }
             }
 
             if (material.isEdible())
@@ -587,7 +583,6 @@ public enum MaterialExt {
 
     /**
      * Get the maximum stack size of a material.
-     * @return
      */
     public int getMaxStackSize() {
         return _maxStackSize;
@@ -630,7 +625,6 @@ public enum MaterialExt {
      * Determine if the material outputs a redstone
      * signal or performs an action when a redstone
      * current is applied.
-     * @return
      */
     public boolean isRedstoneCompatible() {
         return _isRedstoneCompatible;
@@ -702,7 +696,6 @@ public enum MaterialExt {
     /**
      * Determine if the material has an inventory.
      * (i.e. chest, trapped chests, etc)
-     * @return
      */
     public boolean hasInventory() {
         return _hasInventory;
