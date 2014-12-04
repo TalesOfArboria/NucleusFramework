@@ -40,6 +40,7 @@ import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiPermissions;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiRand;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiScheduler;
 import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiSounds;
+import com.jcwhatever.bukkit.generic.scripting.api.ScriptApiTitles;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
@@ -89,6 +90,7 @@ public class ScriptUtils {
         api.add(new ScriptApiRand(plugin));
         api.add(new ScriptApiScheduler(plugin));
         api.add(new ScriptApiInclude(plugin, manager));
+        api.add(new ScriptApiTitles(plugin));
 
         return api;
     }
