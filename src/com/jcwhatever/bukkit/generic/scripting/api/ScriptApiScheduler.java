@@ -33,7 +33,9 @@ import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @ScriptApiInfo(
@@ -81,7 +83,9 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
         @Override
         public void dispose() {
 
-            for (ScheduledTask task : _taskReferences) {
+            List<ScheduledTask> tasks = new ArrayList<>(_taskReferences);
+
+            for (ScheduledTask task : tasks) {
                 task.cancel();
             }
 
