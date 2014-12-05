@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.commands;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
 
 import org.bukkit.command.CommandSender;
@@ -35,31 +36,38 @@ import org.bukkit.permissions.PermissionDefault;
 
 @CommandInfo(
         command={"about"},
-        usage="/{command} about",
+        usage="/{plugin-command} about",
         description="Get information about the plugin.",
         permissionDefault=PermissionDefault.TRUE,
         isHelpVisible=false)
 public class AboutCommand extends AbstractCommand {
 
-    static final String _PLUGIN_NAME = "{BOLD}{GREEN}{plugin-name} {plugin-version}";
-    static final String _AUTHOR = "Plugin by {plugin-author}";
-    static final String _HELP = "{AQUA}For a list of commands, type '/{plugin-command} ?'";
+    @Localizable static final String _PLUGIN_NAME = "{BOLD}{GREEN}{plugin-name} {plugin-version}";
+    @Localizable static final String _AUTHOR = "Plugin by {plugin-author}";
+    @Localizable static final String _HELP = "{AQUA}For a list of commands, type '/{plugin-command} ?'";
+    @Localizable static final String _HEADER = "----------------------------------------";
+    @Localizable static final String _FOOTER = "----------------------------------------";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 
-        Messenger.tell(_plugin, sender, "----------------------------------------");
+        // show header
+        Messenger.tell(_plugin, sender, Lang.get(_HEADER));
 
+        // show plugin name
         Messenger.tell(_plugin, sender, Lang.get(_plugin, _PLUGIN_NAME));
 
+        // show authors, if any
         if (_plugin.getDescription().getAuthors() != null &&
                 !_plugin.getDescription().getAuthors().isEmpty()) {
 
             Messenger.tell(_plugin, sender, Lang.get(_plugin, _AUTHOR));
         }
 
+        // show help text
         Messenger.tell(_plugin, sender, Lang.get(_plugin, _HELP));
 
-        Messenger.tell(_plugin, sender, "----------------------------------------");
+        // show footer
+        Messenger.tell(_plugin, sender, Lang.get(_FOOTER));
     }
 }

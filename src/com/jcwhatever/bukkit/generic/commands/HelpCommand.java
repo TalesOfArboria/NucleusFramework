@@ -43,7 +43,7 @@ import java.util.List;
 @CommandInfo(
         command={"help", "?"},
         staticParams={"page=1"},
-        usage="/{command} help [page]",
+        usage="/{plugin-command} help [page]",
         description="Show commands.",
         permissionDefault=PermissionDefault.TRUE,
         isHelpVisible=false)
@@ -68,45 +68,36 @@ public class HelpCommand extends AbstractCommand {
 
         final List<AbstractCommand> categories = new ArrayList<AbstractCommand>(getCommandHandler().getCommands().size());
 
-        Permissions.runBatchOperation(true, new Runnable() {
+        for (AbstractCommand cmd : getCommandHandler().getCommands()) {
 
-            @Override
-            public void run () {
-
-                for (AbstractCommand cmd : getCommandHandler().getCommands()) {
-
-                    if (cmd.getSubCommands().size() > 0) {
-                        categories.add(cmd);
-                        continue;
-                    }
-
-                    CommandInfoContainer info = cmd.getInfo();
-
-                    if (!info.isHelpVisible())
-                        continue;
-
-                    if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
-                        continue;
-
-                    pagin.add(info.getUsage(), info.getDescription());
-                }
-
-                for (AbstractCommand cmd : categories) {
-
-                    CommandInfoContainer info = cmd.getInfo();
-
-                    if (!info.isHelpVisible())
-                        continue;
-
-                    if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
-                        continue;
-
-                    pagin.add(Lang.get(_plugin, _USAGE, info.getCommandName()), info.getDescription());
-                }
-
+            if (cmd.getSubCommands().size() > 0) {
+                categories.add(cmd);
+                continue;
             }
 
-        });
+            CommandInfoContainer info = cmd.getInfo();
+
+            if (!info.isHelpVisible())
+                continue;
+
+            if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
+                continue;
+
+            pagin.add(info.getUsage(), info.getDescription());
+        }
+
+        for (AbstractCommand cmd : categories) {
+
+            CommandInfoContainer info = cmd.getInfo();
+
+            if (!info.isHelpVisible())
+                continue;
+
+            if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
+                continue;
+
+            pagin.add(Lang.get(_plugin, _USAGE, info.getCommandName()), info.getDescription());
+        }
 
         pagin.show(sender, page, FormatTemplate.CONSTANT_DEFINITION);
     }
