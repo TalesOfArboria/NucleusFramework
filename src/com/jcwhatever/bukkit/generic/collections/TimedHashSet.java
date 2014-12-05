@@ -26,16 +26,20 @@
 package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
+import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * A hash set where each item has its own lifespan. When an items lifespan ends,
@@ -44,50 +48,94 @@ import java.util.Map;
  * <p>If a duplicate item is added, the items lifespan is reset, in addition to normal
  * hash set operations.</p>
  */
-public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, ITimedCallbacks<E, TimedHashSet<E>> {
+public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallbacks<E, TimedHashSet<E>> {
 
-    private static final long serialVersionUID = -5446406109300331584L;
+    private static Map<TimedHashSet, Void> _instances = new WeakHashMap<>(10);
+    private static ScheduledTask _janitor;
 
     private final int _defaultTime;
-    private final TimedHashSet<E> _instance;
-    private Map<E, BukkitTask> _tasks;
+    private final Map<E, Date> _expireMap;
+    private final int _timeFactor;
+
+    private final Object _sync = new Object();
+
     private List<LifespanEndAction<E>> _onLifespanEnd = new ArrayList<>(5);
     private List<CollectionEmptyAction<TimedHashSet<E>>> _onEmpty = new ArrayList<>(5);
 
     /**
-     * Constructor. Default lifespan is 1 second.
+     * Constructor. Default lifespan is 20 ticks.
      */
     public TimedHashSet() {
-        super();
-        _defaultTime = 20;
-        _instance = this;
-        _tasks = new HashMap<E, BukkitTask>(10);
+        this(10, 20, TimeScale.TICKS);
     }
 
     /**
-     * Constructor. Default lifespan is 1 second.
+     * Constructor. Default lifespan is 20 ticks.
      *
      * @param size  The initial capacity.
      */
     public TimedHashSet(int size) {
-        super(size);
-        _defaultTime = 20;
-        _instance = this;
-        _tasks = new HashMap<E, BukkitTask>(30);
+        this(size, 20, TimeScale.TICKS);
+    }
+
+    /**
+     * Constructor. Default lifespan is 20 ticks.
+     *
+     * @param size             The initial capacity.
+     * @param defaultLifespan  The default lifespan.
+     */
+    public TimedHashSet(int size, int defaultLifespan) {
+        this(size, defaultLifespan, TimeScale.TICKS);
     }
 
     /**
      * Constructor.
+     *
      * @param size             The initial capacity.
-     * @param defaultLifespan  The default lifespan in ticks.
+     * @param defaultLifespan  The default lifespan.
+     * @param timeScale        The lifespan time scale.
      */
-    public TimedHashSet(int size, int defaultLifespan) {
-        super(size);
+    public TimedHashSet(int size, int defaultLifespan, TimeScale timeScale) {
         PreCon.positiveNumber(defaultLifespan);
 
         _defaultTime = defaultLifespan;
-        _instance = this;
-        _tasks = new HashMap<E, BukkitTask>(30);
+        _expireMap = new HashMap<>(size);
+        _instances.put(this, null);
+
+        switch (timeScale) {
+            case MILLISECONDS:
+                _timeFactor = 1;
+                break;
+            case TICKS:
+                _timeFactor = 50;
+                break;
+            case SECONDS:
+                _timeFactor = 1000;
+                break;
+            default:
+                throw new AssertionError();
+        }
+
+        if (_janitor == null) {
+            _janitor = Scheduler.runTaskRepeatAsync(GenericsLib.getLib(), 1, 20, new Runnable() {
+                @Override
+                public void run() {
+
+                    List<TimedHashSet> sets = new ArrayList<TimedHashSet>(_instances.keySet());
+
+                    for (TimedHashSet set : sets) {
+
+                        synchronized (set._sync) {
+                            for (Object entry : set) {
+                                //noinspection unchecked
+                                set.isExpired(entry, true); // removes if expired
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
     }
 
     /**
@@ -104,9 +152,115 @@ public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, 
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
-        scheduleRemoval(item, lifespan);
+        synchronized (_sync) {
+            Date expires = getExpires(lifespan);
 
-        return super.add(item);
+            _expireMap.put(item, expires);
+
+            return true;
+        }
+    }
+
+    @Override
+    public int size() {
+        synchronized (_sync) {
+            return _expireMap.size();
+        }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        synchronized (_sync) {
+            return _expireMap.isEmpty();
+        }
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        synchronized (_sync) {
+            //noinspection SuspiciousMethodCalls
+            Date date = _expireMap.get(o);
+            if (date == null)
+                return false;
+
+            if (isExpired(date)) {
+                //noinspection SuspiciousMethodCalls
+                _expireMap.remove(o);
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        final Iterator<E> iterator;
+
+        synchronized (_sync) {
+            iterator = _expireMap.keySet().iterator();
+        }
+
+        return new Iterator<E>() {
+            E current;
+            E peek;
+
+            @Override
+            public boolean hasNext() {
+
+                synchronized (_sync) {
+
+                    if (!iterator.hasNext())
+                        return false;
+
+                    while (iterator.hasNext()) {
+                        peek = iterator.next();
+                        if (isExpired(peek, false)) {
+                            iterator.remove();
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
+            @Override
+            public E next() {
+                synchronized (_sync) {
+                    if (peek != null) {
+                        E n = peek;
+                        peek = null;
+                        return n;
+                    }
+                    return iterator.next();
+                }
+            }
+
+            @Override
+            public void remove() {
+                synchronized (_sync) {
+                    iterator().remove();
+                }
+            }
+        };
+    }
+
+    @Override
+    public Object[] toArray() {
+        synchronized (_sync) {
+            return _expireMap.entrySet().toArray();
+        }
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        synchronized (_sync) {
+            //noinspection SuspiciousToArrayCall
+            return _expireMap.entrySet().toArray(a);
+        }
     }
 
     /**
@@ -138,10 +292,13 @@ public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, 
         PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
-        for (E item : collection) {
-            scheduleRemoval(item, lifespan);
+        synchronized (_sync) {
+            for (E item : collection) {
+                _expireMap.put(item, getExpires(lifespan));
+            }
         }
-        return super.addAll(collection);
+
+        return true;
     }
 
     /**
@@ -159,16 +316,21 @@ public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, 
         return addAll(collection, _defaultTime);
     }
 
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        synchronized (_sync) {
+            return _expireMap.keySet().retainAll(c);
+        }
+    }
+
     /**
      * Remove all items.
      */
     @Override
     public void clear() {
-        for (BukkitTask task : _tasks.values()) {
-            task.cancel();
+        synchronized (_sync) {
+            _expireMap.clear();
         }
-        _tasks.clear();
-        super.clear();
 
         onEmpty();
     }
@@ -182,17 +344,21 @@ public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, 
     public boolean remove(Object item) {
         PreCon.notNull(item);
 
-        BukkitTask task = _tasks.remove(item);
-        if (task != null) {
-            task.cancel();
+        synchronized (_sync) {
+            Date expires = _expireMap.remove(item);
+            if (expires == null)
+                return false;
         }
 
-        if (super.remove(item)) {
-            onEmpty();
-            return true;
-        }
+        onEmpty();
+        return true;
+    }
 
-        return false;
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        synchronized (_sync) {
+            return _expireMap.keySet().containsAll(c);
+        }
     }
 
     /**
@@ -204,20 +370,23 @@ public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, 
     public boolean removeAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
-        for (Object item : collection) {
-            //noinspection SuspiciousMethodCalls
-            BukkitTask task = _tasks.remove(item);
-            if (task != null) {
-                task.cancel();
+        boolean isChanged = false;
+
+        synchronized (_sync) {
+            for (Object item : collection) {
+                //noinspection SuspiciousMethodCalls
+                Date expires = _expireMap.remove(item);
+                if (expires != null)
+                    isChanged = true;
             }
-        }
 
-        if (super.removeAll(collection)) {
-            onEmpty();
-            return true;
-        }
+            if (isChanged) {
+                onEmpty();
+                return true;
+            }
 
-        return false;
+            return false;
+        }
     }
 
     /**
@@ -231,9 +400,24 @@ public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, 
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
-        scheduleRemoval(item, lifespan);
+        synchronized (_sync) {
+            boolean isExpired = isExpired(item, true);
+            if (isExpired)
+                return false;
 
-        return super.contains(item);
+            Date expires = _expireMap.get(item);
+            if (expires == null)
+                return false;
+
+            if (isExpired(expires)) {
+                _expireMap.remove(item);
+                return false;
+            }
+
+            _expireMap.put(item, getExpires(lifespan));
+
+            return true;
+        }
     }
 
     /**
@@ -284,37 +468,6 @@ public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, 
         _onEmpty.remove(callback);
     }
 
-
-    protected void scheduleRemoval(final E item, int lifespan) {
-        if (lifespan < 1)
-            return;
-
-        BukkitTask task = _tasks.remove(item);
-        if (task != null) {
-            task.cancel();
-        }
-
-        task = Bukkit.getScheduler().runTaskLater(GenericsLib.getLib(), new Runnable() {
-
-            @Override
-            public void run() {
-                BukkitTask task = _tasks.remove(item);
-                if (task != null) {
-                    task.cancel();
-                }
-
-                if (_instance.remove(item)) {
-                    onLifespanEnd(item);
-                }
-
-                onEmpty();
-            }
-
-        }, lifespan);
-
-        _tasks.put(item, task);
-    }
-
     private void onEmpty() {
         if (!isEmpty() || _onEmpty.isEmpty())
             return;
@@ -328,5 +481,28 @@ public class TimedHashSet<E> extends HashSet<E> implements ITimedCollection<E>, 
         for (LifespanEndAction<E> action : _onLifespanEnd) {
             action.onEnd(item);
         }
+    }
+
+    private boolean isExpired(Date date) {
+        return date.compareTo(new Date()) <= 0;
+    }
+
+    private boolean isExpired(E entry, boolean removeIfExpired) {
+        Date expires = _expireMap.get(entry);
+        if (expires == null)
+            return true;
+
+        if (isExpired(expires)) {
+            if (removeIfExpired) {
+                _expireMap.remove(entry);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    private Date getExpires(int lifespan) {
+        return DateUtils.addMilliseconds(new Date(), _timeFactor * lifespan);
     }
 }
