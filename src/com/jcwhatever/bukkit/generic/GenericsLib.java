@@ -221,7 +221,7 @@ public class GenericsLib extends GenericsPlugin {
      */
     @Override
     public String getConsolePrefix() {
-        return getChatPrefix();
+        return "[GenericsLib]";
     }
 
     @Override
