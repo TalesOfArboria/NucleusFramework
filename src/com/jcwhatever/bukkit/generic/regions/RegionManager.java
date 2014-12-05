@@ -86,15 +86,21 @@ public class RegionManager {
     private final Object _sync = new Object();
 
     /**
-     * Constructor. Used by GenericsLib to initialize RegionEventManager.
+     * Constructor.
      *
      * <p>Not meant for public instantiation. For internal use only.</p>
      */
-    public RegionManager(Plugin plugin) {
+    public RegionManager() {
+        checkInstance();
+    }
 
-        if (!(plugin instanceof GenericsLib)) {
-            throw new RuntimeException("RegionManager must be instantiated by GenericsLib.");
-        }
+    /**
+     * Constructor.
+     *
+     * <p>Not meant for public instantiation. For internal use only.</p>
+     */
+    protected RegionManager(Plugin plugin) {
+        checkInstance();
 
         _playerCacheMap = new PlayerMap<>(plugin);
         _playerLocationCache = new PlayerMap<>(plugin);
@@ -686,4 +692,8 @@ public class RegionManager {
         }
     }
 
+    protected void checkInstance() {
+        throw new RuntimeException("RegionManager cannot be instantiated. " +
+                "For GenericsLib internal use only.");
+    }
 }

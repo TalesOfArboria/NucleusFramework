@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalEventManager;
+import com.jcwhatever.bukkit.generic.internal.InternalRegionManager;
 import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
 import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
@@ -67,12 +68,13 @@ public class GenericsLib extends GenericsPlugin {
 
     private InternalEventManager _eventManager;
     private InternalTitleManager _titleManager;
+    private InternalRegionManager _regionManager;
+    private InternalScriptManager _scriptManager;
+
     private JailManager _jailManager;
-    private RegionManager _regionManager;
     private EntityEquipperManager _equipperManager;
     private ITaskScheduler _scheduler;
     private ScriptEngineManager _scriptEngineManager;
-    private InternalScriptManager _scriptManager;
     private KitManager _kitManager;
     private CommandHandler _commandHandler;
 
@@ -245,7 +247,7 @@ public class GenericsLib extends GenericsPlugin {
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
         _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsNamedTitleFactory());
 
-        _regionManager = new RegionManager(this);
+        _regionManager = new InternalRegionManager(this);
         _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
         _equipperManager = new EntityEquipperManager();
 
