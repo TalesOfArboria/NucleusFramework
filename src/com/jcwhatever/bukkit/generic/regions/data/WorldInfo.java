@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Contains information about a World.
  */
-public class WorldInfo implements IDataNodeSerializable, IGenericsSerializable {
+public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IGenericsSerializable {
 
     private UUID _id;
     private String _worldName;
@@ -83,6 +83,7 @@ public class WorldInfo implements IDataNodeSerializable, IGenericsSerializable {
     /**
      * Get the world unique ID.
      */
+    @Override
     public UUID getId() {
         return _id;
     }
@@ -90,6 +91,7 @@ public class WorldInfo implements IDataNodeSerializable, IGenericsSerializable {
     /**
      * Get the world name.
      */
+    @Override
     public String getName() {
         return _worldName;
     }
@@ -97,8 +99,21 @@ public class WorldInfo implements IDataNodeSerializable, IGenericsSerializable {
     /**
      * Get the world environment type.
      */
+    @Override
     public Environment getEnvironment() {
         return _environment;
+    }
+
+    /**
+     * Determine if the world is loaded.
+     */
+    @Override
+    public boolean isLoaded() {
+        World world = getBukkitWorld();
+        if (world == null)
+            return false;
+
+        return true;
     }
 
     /**
@@ -106,17 +121,6 @@ public class WorldInfo implements IDataNodeSerializable, IGenericsSerializable {
      */
     public World getBukkitWorld() {
         return Bukkit.getWorld(_id);
-    }
-
-    /**
-     * Determine if the world is loaded.
-     */
-    public boolean isLoaded() {
-        World world = getBukkitWorld();
-        if (world == null)
-            return false;
-
-        return true;
     }
 
     /**

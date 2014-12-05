@@ -39,7 +39,7 @@ import java.io.IOException;
 /**
  * Contains information about a chunk.
  */
-public class ChunkInfo implements IDataNodeSerializable, IGenericsSerializable {
+public class ChunkInfo implements IChunkInfo, IDataNodeSerializable, IGenericsSerializable {
 
     private WorldInfo _world;
     private int _x;
@@ -84,6 +84,7 @@ public class ChunkInfo implements IDataNodeSerializable, IGenericsSerializable {
     /**
      * Get the world the chunk is in.
      */
+    @Override
     public WorldInfo getWorld() {
         return _world;
     }
@@ -91,6 +92,7 @@ public class ChunkInfo implements IDataNodeSerializable, IGenericsSerializable {
     /**
      * Get the chunk X coordinates.
      */
+    @Override
     public int getX() {
         return _x;
     }
@@ -98,6 +100,7 @@ public class ChunkInfo implements IDataNodeSerializable, IGenericsSerializable {
     /**
      * Get the chunk Z coordinates.
      */
+    @Override
     public int getZ() {
         return _z;
     }

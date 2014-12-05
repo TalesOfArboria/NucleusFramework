@@ -38,7 +38,7 @@ import java.io.IOException;
 /**
  * Data object to hold information about a single block
  */
-public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo>,
+public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBlockInfo>,
         IDataNodeSerializable, IGenericsSerializable {
 
     private int _x;
@@ -73,6 +73,7 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo>,
     /**
      * Get the block material.
      */
+    @Override
     public Material getMaterial() {
         return _material;
     }
@@ -80,6 +81,7 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo>,
     /**
      * Get the blocks meta data.
      */
+    @Override
     public int getData() {
         return _data;
     }
@@ -87,6 +89,7 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo>,
     /**
      * Get the blocks emitted light.
      */
+    @Override
     public int getEmittedLight() {
         return _light;
     }
@@ -94,6 +97,7 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo>,
     /**
      * Get the amount of skylight on the block.
      */
+    @Override
     public int getSkylight() {
         return _skylight;
     }
@@ -101,6 +105,7 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo>,
     /**
      * Get the blocks X coordinates relative to its chunk.
      */
+    @Override
     public int getChunkBlockX() {
         return _x;
     }
@@ -108,6 +113,7 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo>,
     /**
      * Get the blocks Y coordinates.
      */
+    @Override
     public int getY() {
         return _y;
     }
@@ -115,6 +121,7 @@ public final class ChunkBlockInfo implements Comparable<ChunkBlockInfo>,
     /**
      * Get the Blocks Z coordinates relative to its chunk.
      */
+    @Override
     public int getChunkBlockZ() {
         return _z;
     }
