@@ -135,14 +135,13 @@ public abstract class SetMap<K, V> implements Map<K, V> {
      *
      * @param key  The key to check.
      */
-    @Nullable
     public Set<V> getAll(Object key) {
         PreCon.notNull(key);
 
         //noinspection SuspiciousMethodCalls
         Set<V> set = getMap().get(key);
         if (set == null) {
-            return null;
+            return createSet(0);
         }
 
         return set;
@@ -298,14 +297,13 @@ public abstract class SetMap<K, V> implements Map<K, V> {
      *
      * @return Returns the removed set, if any.
      */
-    @Nullable
     public Set<V> removeAll(Object key) {
         PreCon.notNull(key);
 
         //noinspection SuspiciousMethodCalls
         Set<V> set = getMap().remove(key);
         if (set == null) {
-            return null;
+            return createSet(0);
         }
 
         return set;
