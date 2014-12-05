@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
+import com.jcwhatever.bukkit.generic.mixins.IReadOnly;
 import com.jcwhatever.bukkit.generic.regions.Region.PriorityType;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionPriority;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -48,7 +49,7 @@ import javax.annotation.Nullable;
  * <p>Allows other plugins to retrieve region info without giving full access
  * to a region, which could cause issues with the regions owning plugin.</p>
  */
-public final class ReadOnlyRegion implements IRegion {
+public final class ReadOnlyRegion implements IRegion, IReadOnly {
 
     private IRegion _region;
 
@@ -561,5 +562,10 @@ public final class ReadOnlyRegion implements IRegion {
     @Override
     public void dispose() {
         throw new RuntimeException("Cannot dispose a read only region.");
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return true;
     }
 }
