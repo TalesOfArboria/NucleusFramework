@@ -553,4 +553,13 @@ public final class ReadOnlyRegion implements IRegion {
         return (Region)_region;
     }
 
+    @Override
+    public boolean isDisposed() {
+        return false;
+    }
+
+    @Override
+    public void dispose() {
+        throw new RuntimeException("Cannot dispose a read only region.");
+    }
 }

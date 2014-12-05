@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
 
@@ -45,7 +46,7 @@ import javax.annotation.Nullable;
  * <p>For nearly all cases, the abstract class {@link Region} should be extended
  * or use one of the other abstract implementations that extend {@link Region}.</p>
  */
-public interface IRegion extends IRegionSelection, INamedInsensitive, IRegionComparable {
+public interface IRegion extends IRegionSelection, INamedInsensitive, IRegionComparable, IDisposable {
 
     /**
      * Get the owning plugin.
