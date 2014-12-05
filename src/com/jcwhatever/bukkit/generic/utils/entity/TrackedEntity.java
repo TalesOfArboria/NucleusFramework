@@ -24,7 +24,6 @@
 
 package com.jcwhatever.bukkit.generic.utils.entity;
 
-import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.World;
@@ -40,7 +39,7 @@ import java.util.UUID;
  * <p>Entity objects are discarded when the chunk they are in is unloaded
  * making it unacceptable to hold long term references to the entity.</p>
  */
-public class TrackedEntity implements IDisposable {
+public class TrackedEntity {
 
     private final UUID _uuid;
     private Entity _recent;
@@ -125,8 +124,8 @@ public class TrackedEntity implements IDisposable {
         return _isDisposed;
     }
 
-    @Override
-    public void dispose() {
+
+    void dispose() {
         if (_isDisposed)
             return;
 
