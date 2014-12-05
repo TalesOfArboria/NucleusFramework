@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.extended.serializable;
 
 import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
-import com.jcwhatever.bukkit.generic.file.IGenericsSerializable;
+import com.jcwhatever.bukkit.generic.file.IBinarySerializable;
 
 import org.bukkit.Art;
 import org.bukkit.Location;
@@ -57,7 +57,7 @@ import java.io.IOException;
  * <p>{@code Painting}</p>
  * <p>{@code ItemFrame}</p>
  */
-public class SerializableFurnitureEntity implements IGenericsSerializable {
+public class SerializableFurnitureEntity implements IBinarySerializable {
 
     /**
      * Determine if an entity is a furniture entity

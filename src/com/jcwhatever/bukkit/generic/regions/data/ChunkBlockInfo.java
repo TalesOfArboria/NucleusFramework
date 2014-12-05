@@ -26,7 +26,7 @@ package com.jcwhatever.bukkit.generic.regions.data;
 
 import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
-import com.jcwhatever.bukkit.generic.file.IGenericsSerializable;
+import com.jcwhatever.bukkit.generic.file.IBinarySerializable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.IDataNodeSerializable;
 import com.jcwhatever.bukkit.generic.storage.UnableToDeserializeException;
@@ -39,7 +39,7 @@ import java.io.IOException;
  * Data object to hold information about a single block
  */
 public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBlockInfo>,
-        IDataNodeSerializable, IGenericsSerializable {
+        IDataNodeSerializable, IBinarySerializable {
 
     private int _x;
     private int _y;

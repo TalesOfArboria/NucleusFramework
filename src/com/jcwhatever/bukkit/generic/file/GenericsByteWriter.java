@@ -521,7 +521,7 @@ public class GenericsByteWriter extends OutputStream {
      *
      * @throws IOException
      */
-    public <T extends IGenericsSerializable> void write(@Nullable T object) throws IOException {
+    public <T extends IBinarySerializable> void write(@Nullable T object) throws IOException {
         write(object != null);
         if (object == null)
             return;

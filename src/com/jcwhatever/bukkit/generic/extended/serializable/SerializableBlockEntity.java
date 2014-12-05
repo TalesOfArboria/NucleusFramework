@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.extended.serializable;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
-import com.jcwhatever.bukkit.generic.file.IGenericsSerializable;
+import com.jcwhatever.bukkit.generic.file.IBinarySerializable;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -64,7 +64,7 @@ import java.io.IOException;
  * <p>{@code Sign}</p>
  * <p>{@code Skull}</p>
  */
-public class SerializableBlockEntity implements IGenericsSerializable {
+public class SerializableBlockEntity implements IBinarySerializable {
 
     private Location _location;
     private Material _material;

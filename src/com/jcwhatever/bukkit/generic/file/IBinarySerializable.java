@@ -42,7 +42,7 @@ import java.io.IOException;
  *     The constructor does not have to be public.
  * </p>
  */
-public interface IGenericsSerializable {
+public interface IBinarySerializable {
 
     /**
      * Serialize the object into a generics byte writer.

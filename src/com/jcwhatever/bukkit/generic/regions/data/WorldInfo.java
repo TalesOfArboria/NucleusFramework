@@ -26,7 +26,7 @@ package com.jcwhatever.bukkit.generic.regions.data;
 
 import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
-import com.jcwhatever.bukkit.generic.file.IGenericsSerializable;
+import com.jcwhatever.bukkit.generic.file.IBinarySerializable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.IDataNodeSerializable;
 import com.jcwhatever.bukkit.generic.storage.UnableToDeserializeException;
@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Contains information about a World.
  */
-public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IGenericsSerializable {
+public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IBinarySerializable {
 
     private UUID _id;
     private String _worldName;

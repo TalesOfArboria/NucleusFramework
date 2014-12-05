@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.regions.data;
 
 import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
-import com.jcwhatever.bukkit.generic.file.IGenericsSerializable;
+import com.jcwhatever.bukkit.generic.file.IBinarySerializable;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -43,7 +43,7 @@ import java.util.List;
  * Provides variables representing a section of a region
  * contained within a chunk.
  */
-public class RegionChunkSection implements IGenericsSerializable {
+public class RegionChunkSection implements IBinarySerializable {
 
     private int _chunkX;
     private int _chunkZ;

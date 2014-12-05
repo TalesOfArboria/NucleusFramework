@@ -553,7 +553,7 @@ public class GenericsByteReader extends InputStream {
      * @throws Exception
      */
     @Nullable
-    public <T extends IGenericsSerializable> T getGenerics(Class<T> objectClass) throws IOException,
+    public <T extends IBinarySerializable> T getGenerics(Class<T> objectClass) throws IOException,
             InstantiationException {
 
         PreCon.notNull(objectClass);
