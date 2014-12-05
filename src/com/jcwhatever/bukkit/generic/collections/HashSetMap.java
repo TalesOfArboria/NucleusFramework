@@ -25,8 +25,6 @@
 
 package com.jcwhatever.bukkit.generic.collections;
 
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -38,26 +36,42 @@ import java.util.Set;
  * @param <K>  Key type
  * @param <V>  Value type
  */
-public class HashSetMap<K, V> extends AbstractSetMap<K, V> {
+public class HashSetMap<K, V> extends SetMap<K, V> {
 
-    protected Map<K, Set<V>> _map;
+    protected final Map<K, Set<V>> _map;
+    protected int _setSize;
 
     /**
      * Constructor.
+     *
+     * <p>Map capacity starts at 10 elements</p>
+     *
+     * <p>Set capacity starts at 10 elements.</p>
      */
     public HashSetMap() {
-        _map = new HashMap<>(10);
+        this(10, 10);
     }
 
     /**
      * Constructor.
      *
-     * @param size  The initial size.
+     * <p>Set capacity starts at 10 elements.</p>
+     *
+     * @param mapSize  The initial capacity of the map.
      */
-    public HashSetMap(int size) {
-        PreCon.positiveNumber(size);
+    public HashSetMap(int mapSize) {
+        this(mapSize, 10);
+    }
 
-        _map = new HashMap<>(size);
+    /**
+     * Constructor.
+     *
+     * @param mapSize  The initial capacity of the map.
+     * @param setSize  The initial capacity of sets.
+     */
+    public HashSetMap(int mapSize, int setSize) {
+        _map = new HashMap<>(mapSize);
+        _setSize = setSize;
     }
 
     @Override
@@ -67,7 +81,7 @@ public class HashSetMap<K, V> extends AbstractSetMap<K, V> {
 
     @Override
     protected Set<V> createSet() {
-        return createSet(10);
+        return createSet(_setSize);
     }
 
     @Override

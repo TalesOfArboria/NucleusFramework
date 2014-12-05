@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  * @param <K>  Key type
  * @param <V>  Value type
  */
-public abstract class AbstractSetMap<K, V> implements Map<K, V> {
+public abstract class SetMap<K, V> implements Map<K, V> {
 
     /**
      * Determine if the map is empty.

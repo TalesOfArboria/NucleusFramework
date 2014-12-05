@@ -35,10 +35,10 @@ import java.util.WeakHashMap;
  * @param <K>  Key type
  * @param <V>  Value type
  */
-public class WeakHashSetMap<K, V> extends AbstractSetMap<K, V> {
+public class WeakHashSetMap<K, V> extends SetMap<K, V> {
 
     protected final Map<K, Set<V>> _map;
-    protected final int _setSize;
+    protected int _setSize;
 
     /**
      * Constructor.
