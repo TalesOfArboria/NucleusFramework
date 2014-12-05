@@ -26,15 +26,20 @@
 package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
+import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
@@ -45,36 +50,45 @@ import javax.annotation.Nullable;
  *
  * <p>Items can be added using the default lifespan time or a lifespan can be specified per item.</p>
  */
-public class TimedHashMap<K, V> extends HashMap<K, V> implements ITimedMap<K, V>, ITimedCallbacks<K, TimedHashMap<K, V>> {
+public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCallbacks<K, TimedHashMap<K, V>> {
 
-    private static final long serialVersionUID = 1945035628724130125L;
+    private static Map<TimedHashMap, Void> _instances = new WeakHashMap<>(10);
+    private static ScheduledTask _janitor;
 
+    private final Map<K, V> _map;
+    private final Map<K, Date> _expireMap;
+    private final int _timeFactor;
     private final int _defaultTime;
-    private final TimedHashMap<K, V> _instance;
-    private Map<Object, BukkitTask> _tasks;
+    private final Object _sync = new Object();
+
     private List<LifespanEndAction<K>> _onLifespanEnd = new ArrayList<>(5);
     private List<CollectionEmptyAction<TimedHashMap<K, V>>> _onEmpty = new ArrayList<>(5);
 
+
     /**
-     * Constructor. Default lifespan is 1 second.
+     * Constructor. Default lifespan is 20 ticks.
      */
     public TimedHashMap() {
-        super();
-        _defaultTime = 20;
-        _instance = this;
-        _tasks = new HashMap<>(20);
+        this(10, 20, TimeScale.TICKS);
     }
 
     /**
-     * Constructor. Default lifespan is 1 second.
+     * Constructor. Default lifespan is 20 ticks.
      *
      * @param size  The initial capacity of the map.
      */
     public TimedHashMap(int size) {
-        super(size);
-        _defaultTime = 20;
-        _instance = this;
-        _tasks = new HashMap<>(size);
+        this(size, 20, TimeScale.TICKS);
+    }
+
+    /**
+     * Constructor. Time scale is in ticks.
+     *
+     * @param size             The initial capacity of the map.
+     * @param defaultLifespan  The default lifespan of items in ticks.
+     */
+    public TimedHashMap(int size, int defaultLifespan) {
+        this(size, defaultLifespan, TimeScale.TICKS);
     }
 
     /**
@@ -82,25 +96,57 @@ public class TimedHashMap<K, V> extends HashMap<K, V> implements ITimedMap<K, V>
      *
      * @param size             The initial capacity of the map.
      * @param defaultLifespan  The default lifespan of items in ticks.
+     * @param timeScale        The lifespan time scale.
      */
-    public TimedHashMap(int size, int defaultLifespan) {
+    public TimedHashMap(int size, int defaultLifespan, TimeScale timeScale) {
         super();
         PreCon.positiveNumber(defaultLifespan);
 
         _defaultTime = defaultLifespan;
-        _instance = this;
-        _tasks = new HashMap<>(size);
+        _map = new HashMap<>(size);
+        _expireMap = new HashMap<>(size);
+        _instances.put(this, null);
+
+        _timeFactor = timeScale.getTimeFactor();
+
+        if (_janitor == null) {
+            _janitor = Scheduler.runTaskRepeatAsync(GenericsLib.getLib(), 1, 20, new Runnable() {
+                @Override
+                public void run() {
+
+                    List<TimedHashMap> maps = new ArrayList<TimedHashMap>(_instances.keySet());
+
+                    for (TimedHashMap map : maps) {
+                        synchronized (map._sync) {
+                            map.cleanup();
+                        }
+                    }
+                }
+            });
+        }
     }
 
     @Override
     public void clear() {
-        for (BukkitTask task : _tasks.values()) {
-            task.cancel();
-        }
-        _tasks.clear();
-        super.clear();
+        _map.clear();
+        _expireMap.clear();
 
         onEmpty();
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return _map.keySet();
+    }
+
+    @Override
+    public Collection<V> values() {
+        return _map.values();
+    }
+
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+        return _map.entrySet();
     }
 
     /**
@@ -108,40 +154,77 @@ public class TimedHashMap<K, V> extends HashMap<K, V> implements ITimedMap<K, V>
      *
      * @param key       The item key.
      * @param value     The item to add.
-     * @param lifespanTicks  The items lifespan in ticks.
+     * @param lifespan  The items lifespan.
      */
     @Override
-    public V put(final K key, final V value, int lifespanTicks) {
+    @Nullable
+    public V put(final K key, final V value, int lifespan) {
         PreCon.notNull(key);
         PreCon.notNull(value);
-        PreCon.positiveNumber(lifespanTicks);
+        PreCon.positiveNumber(lifespan);
 
-        if (lifespanTicks == 0)
-            return value;
+        if (lifespan == 0)
+            return null;
 
-        if (lifespanTicks < 0) {
-            return super.put(key, value);
-        }
+        synchronized (_sync) {
 
-        BukkitTask current = _tasks.remove(key);
-        if (current != null) {
-            current.cancel();
-        }
-
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(GenericsLib.getLib(), new Runnable() {
-
-            @Override
-            public void run() {
-                _tasks.remove(value);
-                _instance.remove(key);
-                onLifespanEnd(key);
+            if (lifespan < 0) {
+                return _map.put(key, value);
             }
 
-        }, lifespanTicks);
+            V previous = _map.put(key, value);
+            _expireMap.put(key, getExpires(lifespan));
+            return previous;
+        }
+    }
 
-        _tasks.put(key, task);
-        return super.put(key, value);
+    @Override
+    public int size() {
+        synchronized (_sync) {
+            cleanup();
+            return _map.size();
+        }
+    }
 
+    @Override
+    public boolean isEmpty() {
+        synchronized (_sync) {
+            cleanup();
+            return _map.isEmpty();
+        }
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        PreCon.notNull(key);
+
+        synchronized (_sync) {
+            return !isExpired(key, true) &&
+                    _map.containsKey(key);
+        }
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        PreCon.notNull(value);
+
+        synchronized (_sync) {
+            cleanup();
+            return _map.containsValue(value);
+        }
+    }
+
+    @Override
+    @Nullable
+    public V get(Object key) {
+        PreCon.notNull(key);
+
+        synchronized (_sync) {
+            if (isExpired(key, true)) {
+                return null;
+            }
+            return _map.get(key);
+        }
     }
 
     /**
@@ -151,6 +234,7 @@ public class TimedHashMap<K, V> extends HashMap<K, V> implements ITimedMap<K, V>
      * @param value  The item to add.
      */
     @Override
+    @Nullable
     public V put(K key, V value) {
         PreCon.notNull(key);
         PreCon.notNull(value);
@@ -162,17 +246,19 @@ public class TimedHashMap<K, V> extends HashMap<K, V> implements ITimedMap<K, V>
      * Put a map of items into the map using the specified lifespan.
      *
      * @param entries   The map to add.
-     * @param lifespanTicks  The lifespan of the added items in ticks.
+     * @param lifespan  The lifespan of the added items.
      */
     @Override
-    public void putAll(Map<? extends K, ? extends V> entries, int lifespanTicks) {
+    public void putAll(Map<? extends K, ? extends V> entries, int lifespan) {
         PreCon.notNull(entries);
-        PreCon.positiveNumber(lifespanTicks);
+        PreCon.positiveNumber(lifespan);
 
-        for (Map.Entry<? extends K, ? extends V> entry : entries.entrySet()) {
-            put(entry.getKey(), entry.getValue(), lifespanTicks);
+        synchronized (_sync) {
+
+            for (Map.Entry<? extends K, ? extends V> entry : entries.entrySet()) {
+                put(entry.getKey(), entry.getValue(), lifespan);
+            }
         }
-
     }
 
     /**
@@ -192,13 +278,15 @@ public class TimedHashMap<K, V> extends HashMap<K, V> implements ITimedMap<K, V>
     public V remove(Object key) {
         PreCon.notNull(key);
 
-        V value = super.remove(key);
-        if (value == null)
-            return null;
+        V value;
 
-        BukkitTask task = _tasks.remove(key);
-        if (task != null)
-            task.cancel();
+        synchronized (_sync) {
+
+            value = _map.remove(key);
+            if (value != null) {
+                _expireMap.remove(key);
+            }
+        }
 
         onEmpty();
 
@@ -265,6 +353,46 @@ public class TimedHashMap<K, V> extends HashMap<K, V> implements ITimedMap<K, V>
     private void onLifespanEnd(K key) {
         for (LifespanEndAction<K> action : _onLifespanEnd) {
             action.onEnd(key);
+        }
+    }
+
+    private boolean isExpired(Date date) {
+        return date.compareTo(new Date()) <= 0;
+    }
+
+    private boolean isExpired(Object entry, boolean removeIfExpired) {
+        //noinspection SuspiciousMethodCalls
+        Date expires = _expireMap.get(entry);
+        if (expires == null)
+            return true;
+
+        if (isExpired(expires)) {
+            if (removeIfExpired) {
+                //noinspection SuspiciousMethodCalls
+                _map.remove(entry);
+                //noinspection SuspiciousMethodCalls
+                _expireMap.remove(entry);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    private Date getExpires(int lifespan) {
+        return DateUtils.addMilliseconds(new Date(), _timeFactor * lifespan);
+    }
+
+    private void cleanup() {
+
+        Iterator<Entry<K, Date>> iterator = _expireMap.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Entry<K, Date> entry = iterator.next();
+            if (isExpired(entry.getValue())) {
+                iterator.remove();
+                _map.remove(entry.getKey());
+            }
         }
     }
 }

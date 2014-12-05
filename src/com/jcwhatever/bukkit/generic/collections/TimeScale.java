@@ -28,7 +28,17 @@ package com.jcwhatever.bukkit.generic.collections;
  * 
  */
 public enum TimeScale {
-    MILLISECONDS,
-    TICKS,
-    SECONDS
+    MILLISECONDS (1),
+    TICKS        (50),
+    SECONDS      (1000);
+
+    private int _timeFactor;
+
+    TimeScale (int timeFactor) {
+        _timeFactor = timeFactor;
+    }
+
+    public int getTimeFactor() {
+        return _timeFactor;
+    }
 }

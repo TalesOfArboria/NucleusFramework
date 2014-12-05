@@ -26,15 +26,21 @@
 package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
+import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.WeakHashMap;
+import javax.annotation.Nullable;
+
 
 /**
  * An array list where each item has an individual lifespan that when reached, causes the item
@@ -44,52 +50,79 @@ import java.util.Map;
  *
  * <p>Items can be added using the default lifespan time or a lifespan can be specified per item.</p>
  */
-public class TimedArrayList<E> extends ArrayList<E>
-        implements ITimedList<E>, ITimedCallbacks<E, TimedArrayList<E>> {
+public class TimedArrayList<E>
+        implements List<E>, ITimedList<E>, ITimedCallbacks<E, TimedArrayList<E>> {
 
-    private static final long serialVersionUID = 6625205971219435341L;
+    private static Map<TimedArrayList, Void> _instances = new WeakHashMap<>(10);
+    private static ScheduledTask _janitor;
 
+    private final List<Entry<E>> _list;
+    private final int _timeFactor;
     private final int _defaultTime;
-    private final TimedArrayList<E> _instance;
-    private Map<Object, BukkitTask> _tasks;
+    private final Object _sync = new Object();
+
     private List<LifespanEndAction<E>> _onLifespanEnd = new ArrayList<>(5);
     private List<CollectionEmptyAction<TimedArrayList<E>>> _onEmpty = new ArrayList<>(5);
 
     /**
-     * Constructor. Default item lifespan is 1 second.
+     * Constructor. Default item lifespan is 20 ticks.
      */
     public TimedArrayList() {
-        super(20);
-        _defaultTime = 20;
-        _instance = this;
-        _tasks = new HashMap<>(20);
+        this(10, 20, TimeScale.TICKS);
     }
 
     /**
-     * Constructor. Default item lifespan is 1 second.
+     * Constructor. Default item lifespan is 20 ticks.
      *
      * @param size  The initial capacity of the list.
      */
     public TimedArrayList(int size) {
-        super(size);
-        _defaultTime = 20;
-        _instance = this;
-        _tasks = new HashMap<>(size);
+        this(size, 20, TimeScale.TICKS);
     }
 
     /**
-     * Constructor. Specify default item lifespan.
+     * Constructor. Specify default item lifespan in ticks.
      *
      * @param size         The initial capacity of the list.
      * @param defaultTime  The default lifespan of items.
      */
     public TimedArrayList(int size, int defaultTime) {
-        super(size);
+        this(size, defaultTime, TimeScale.TICKS);
+    }
+
+    /**
+     * Constructor. Specify default item lifespan and time scale.
+     *
+     * @param size         The initial capacity of the list.
+     * @param defaultTime  The default lifespan of items.
+     * @param timeScale    The lifespan time scale.
+     */
+    public TimedArrayList(int size, int defaultTime, TimeScale timeScale) {
         PreCon.positiveNumber(defaultTime);
+        PreCon.notNull(timeScale);
 
         _defaultTime = defaultTime;
-        _instance = this;
-        _tasks = new HashMap<>(size);
+        _list = new ArrayList<>(size);
+        _instances.put(this, null);
+
+        _timeFactor = timeScale.getTimeFactor();
+
+        if (_janitor == null) {
+            _janitor = Scheduler.runTaskRepeatAsync(GenericsLib.getLib(), 1, 20, new Runnable() {
+                @Override
+                public void run() {
+
+                    List<TimedArrayList> lists = new ArrayList<TimedArrayList>(_instances.keySet());
+
+                    for (TimedArrayList list : lists) {
+
+                        synchronized (list._sync) {
+                            list.cleanup();
+                        }
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -103,11 +136,135 @@ public class TimedArrayList<E> extends ArrayList<E>
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
-        scheduleRemoval(item, lifespan);
+        Entry<E> entry = new Entry<>(item, getExpires(lifespan));
 
-        return super.add(item);
+        synchronized (_sync) {
+            return _list.add(entry);
+        }
     }
 
+    @Override
+    public int size() {
+        synchronized (_sync) {
+            cleanup();
+            return _list.size();
+        }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        synchronized (_sync) {
+            cleanup();
+            return _list.isEmpty();
+        }
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        synchronized (_sync) {
+            Iterator<Entry<E>> iterator = _list.iterator();
+            while (iterator.hasNext()) {
+                Entry entry = iterator.next();
+
+                if (isExpired(entry.expires)) {
+                    iterator.remove();
+                    continue;
+                }
+
+                if (o.equals(entry.item))
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+
+        final Iterator<Entry<E>> iterator;
+
+        synchronized (_sync) {
+            iterator = _list.iterator();
+        }
+
+        return new Iterator<E>() {
+
+            Entry<E> peek;
+
+            @Override
+            public boolean hasNext() {
+
+                synchronized (_sync) {
+
+                    if (!iterator.hasNext())
+                        return false;
+
+                    while (iterator.hasNext()) {
+                        peek = iterator.next();
+                        if (isExpired(peek.expires)) {
+                            iterator.remove();
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
+            @Override
+            public E next() {
+                synchronized (_sync) {
+                    if (peek != null) {
+                        Entry<E> n = peek;
+                        peek = null;
+                        return n.item;
+                    }
+                    return iterator.next().item;
+                }
+            }
+
+            @Override
+            public void remove() {
+                synchronized (_sync) {
+                    iterator().remove();
+                }
+            }
+        };
+    }
+
+    @Override
+    public Object[] toArray() {
+        synchronized (_sync) {
+            cleanup();
+
+            Object[] array = new Object[_list.size()];
+
+            for (int i = 0; i < array.length; i++) {
+                array[i] = _list.get(i).item;
+            }
+
+            return array;
+        }
+    }
+
+    @Override
+    public <T> T[] toArray(T[] array) {
+        synchronized (_sync) {
+            cleanup();
+
+            for (int i = 0; i < array.length; i++) {
+
+                @SuppressWarnings("unchecked")
+                T item = (T) _list.get(i).item;
+
+                array[i] = item;
+            }
+
+            return array;
+        }
+    }
 
     /**
      * Add an item to the list using the default lifetime.
@@ -133,9 +290,11 @@ public class TimedArrayList<E> extends ArrayList<E>
         PreCon.notNull(item);
         PreCon.positiveNumber(lifespan);
 
-        scheduleRemoval(item, lifespan);
+        Entry<E> entry = new Entry<>(item, getExpires(lifespan));
 
-        super.add(index, item);
+        synchronized (_sync) {
+            _list.add(index, entry);
+        }
     }
 
     /**
@@ -164,10 +323,14 @@ public class TimedArrayList<E> extends ArrayList<E>
         PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
-        for (E item : collection) {
-            scheduleRemoval(item, lifespan);
+        synchronized (_sync) {
+            boolean isChanged = false;
+
+            for (E item : collection) {
+                isChanged = isChanged | add(item, lifespan);
+            }
+            return isChanged;
         }
-        return super.addAll(collection);
     }
 
     /**
@@ -196,10 +359,14 @@ public class TimedArrayList<E> extends ArrayList<E>
         PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
+        List<Entry<E>> list = new ArrayList<>(collection.size());
+
         for (E item : collection) {
-            scheduleRemoval(item, lifespan);
+            list.add(new Entry<E>(item, getExpires(lifespan)));
         }
-        return super.addAll(index, collection);
+        synchronized (_sync) {
+            return _list.addAll(index, list);
+        }
     }
 
     /**
@@ -219,63 +386,175 @@ public class TimedArrayList<E> extends ArrayList<E>
 
     @Override
     public void clear() {
-        for (BukkitTask task : _tasks.values()) {
-            task.cancel();
+        synchronized (_sync) {
+            _list.clear();
         }
 
-        _tasks.clear();
-        super.clear();
-
         onEmpty();
+    }
+
+    @Override
+    public E get(int index) {
+
+        synchronized (_sync) {
+            Entry<E> entry = _list.get(index);
+            return entry.item;
+        }
+    }
+
+    @Override
+    @Nullable
+    public E set(int index, E element) {
+        synchronized (_sync) {
+            Entry<E> previous = _list.set(index, new Entry<E>(element, getExpires(_defaultTime)));
+            if (previous == null)
+                return null;
+
+            return previous.item;
+        }
     }
 
     @Override
     public boolean remove(Object item) {
         PreCon.notNull(item);
 
-        BukkitTask task = _tasks.remove(item);
-
-        if (task != null)
-            task.cancel();
-
-        onEmpty();
-
-        return super.remove(item);
+        synchronized (_sync) {
+            //noinspection unchecked
+            return _list.remove(new Entry(item, new Date()));
+        }
     }
 
     @Override
+    public boolean containsAll(Collection<?> c) {
+        PreCon.notNull(c);
+
+        synchronized (_sync) {
+            for (Object obj : c) {
+                if (!contains(obj))
+                    return false;
+            }
+
+            return true;
+        }
+    }
+
+    @Override
+    @Nullable
     public E remove(int index) {
         PreCon.positiveNumber(index);
 
-        E item = super.remove(index);
-        BukkitTask task = _tasks.remove(item);
+        synchronized (_sync) {
+            Entry<E> previous = _list.remove(index);
+            if (previous == null)
+                return null;
 
-        if (task != null)
-            task.cancel();
+            return previous.item;
+        }
+    }
 
-        onEmpty();
+    @Override
+    public int indexOf(Object o) {
+        PreCon.notNull(o);
 
-        return item;
+        synchronized (_sync) {
+            int i = 0;
+            Iterator<Entry<E>> iterator = _list.iterator();
+            while (iterator.hasNext()) {
+                Entry entry = iterator.next();
+
+                if (isExpired(entry.expires)) {
+                    iterator.remove();
+                    i--;
+                } else if (o.equals(entry.item)) {
+                    return i;
+                }
+
+                i++;
+            }
+            return -1;
+        }
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        PreCon.notNull(o);
+
+        synchronized (_sync) {
+            for (int i = _list.size() - 1; i >= 0; i--) {
+                Entry<E> entry = _list.get(i);
+                if (isExpired(entry.expires))
+                    continue;
+
+                if (entry.item.equals(o))
+                    return i;
+            }
+
+            return -1;
+        }
+    }
+
+    @Override
+    public ListIterator<E> listIterator() {
+        return new TimedListIterator(0);
+    }
+
+    @Override
+    public ListIterator<E> listIterator(int index) {
+        return new TimedListIterator(index);
+    }
+
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+        synchronized (_sync) {
+            List<Entry<E>> sle = _list.subList(fromIndex, toIndex);
+            List<E> result = new ArrayList<>(sle.size());
+            for (Entry<E> entry : sle) {
+                result.add(entry.item);
+            }
+            return result;
+        }
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
-        for (Object item : collection) {
-            BukkitTask task = _tasks.remove(item);
-            if (task != null)
-                task.cancel();
+        boolean isChanged = false;
+
+        synchronized (_sync) {
+            for (Object item : collection) {
+                isChanged = isChanged | remove(item);
+            }
         }
 
-        if (super.removeAll(collection)) {
-            onEmpty();
-            return true;
-        }
+        onEmpty();
 
-        return false;
+        return isChanged;
     }
 
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        PreCon.notNull(c);
+
+        ListIterator<E> iterator = listIterator();
+
+        boolean isChanged = false;
+
+        synchronized (_sync) {
+            while (iterator.hasNext()) {
+                E item = iterator.next();
+
+                if (c.contains(item)) {
+                    iterator.set(item);
+                } else {
+                    iterator.remove();
+                    isChanged = true;
+                }
+            }
+        }
+
+        return isChanged;
+    }
 
     /**
      * Add a handler to be called whenever an items lifespan ends.
@@ -340,25 +619,103 @@ public class TimedArrayList<E> extends ArrayList<E>
         }
     }
 
-    protected void scheduleRemoval(final E item, int lifespan) {
-        if (lifespan < 1)
-            return;
+    private boolean isExpired(Date date) {
+        return date.compareTo(new Date()) <= 0;
+    }
 
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(GenericsLib.getLib(), new Runnable() {
+    private Date getExpires(int lifespan) {
+        return DateUtils.addMilliseconds(new Date(), _timeFactor * lifespan);
+    }
 
-            @Override
-            public void run() {
-                BukkitTask task = _tasks.remove(item);
-                if (task != null)
-                    task.cancel();
+    private void cleanup() {
 
-                if (_instance.remove(item)) {
-                    onLifespanEnd(item);
-                }
+        int size = _list.size();
+
+        // remove backwards to reduce the amount of
+        // element shifting
+        for (int i = size - 1; i >= 0; i--) {
+            Entry<E> entry = _list.get(i);
+            if (isExpired(entry.expires)) {
+                _list.remove(i);
             }
+        }
+    }
 
-        }, lifespan);
+    static class Entry<T> {
+        final T item;
+        final Date expires;
 
-        _tasks.put(item, task);
+        Entry(T item, Date expires) {
+            this.item = item;
+            this.expires = expires;
+        }
+
+        @Override
+        public int hashCode() {
+            return item.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return item.equals(obj);
+        }
+    }
+
+    class TimedListIterator implements ListIterator<E> {
+
+        int index;
+
+        TimedListIterator(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < _list.size();
+        }
+
+        @Override
+        public E next() {
+            Entry<E> entry = _list.get(index);
+            index++;
+
+            return entry.item;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return index >= 0;
+        }
+
+        @Override
+        public E previous() {
+            index--;
+            return _list.get(index).item;
+        }
+
+        @Override
+        public int nextIndex() {
+            return index+1;
+        }
+
+        @Override
+        public int previousIndex() {
+            return index-1;
+        }
+
+        @Override
+        public void remove() {
+            _list.remove(index);
+        }
+
+        @Override
+        public void set(E e) {
+            _list.set(index, new Entry<E>(e, getExpires(_defaultTime)));
+        }
+
+        @Override
+        public void add(E e) {
+            _list.add(new Entry<E>(e, getExpires(_defaultTime)));
+        }
     }
 }

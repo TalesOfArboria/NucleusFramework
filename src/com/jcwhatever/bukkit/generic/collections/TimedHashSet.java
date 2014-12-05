@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -103,19 +104,7 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         _expireMap = new HashMap<>(size);
         _instances.put(this, null);
 
-        switch (timeScale) {
-            case MILLISECONDS:
-                _timeFactor = 1;
-                break;
-            case TICKS:
-                _timeFactor = 50;
-                break;
-            case SECONDS:
-                _timeFactor = 1000;
-                break;
-            default:
-                throw new AssertionError();
-        }
+        _timeFactor = timeScale.getTimeFactor();
 
         if (_janitor == null) {
             _janitor = Scheduler.runTaskRepeatAsync(GenericsLib.getLib(), 1, 20, new Runnable() {
@@ -127,16 +116,12 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
                     for (TimedHashSet set : sets) {
 
                         synchronized (set._sync) {
-                            for (Object entry : set) {
-                                //noinspection unchecked
-                                set.isExpired(entry, true); // removes if expired
-                            }
+                            set.cleanup();
                         }
                     }
                 }
             });
         }
-
     }
 
     /**
@@ -165,6 +150,7 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
     @Override
     public int size() {
         synchronized (_sync) {
+            cleanup();
             return _expireMap.size();
         }
     }
@@ -172,6 +158,7 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
     @Override
     public boolean isEmpty() {
         synchronized (_sync) {
+            cleanup();
             return _expireMap.isEmpty();
         }
     }
@@ -181,6 +168,7 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         PreCon.notNull(o);
 
         synchronized (_sync) {
+
             //noinspection SuspiciousMethodCalls
             Date date = _expireMap.get(o);
             if (date == null)
@@ -196,6 +184,37 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         }
     }
 
+    /**
+     * Determine if the set contains the specified item and
+     * reset the items lifespan.
+     *
+     * @param item       The item to check.
+     * @param lifespan   The new lifespan of the item.
+     */
+    public boolean contains(E item, int lifespan) {
+        PreCon.notNull(item);
+        PreCon.positiveNumber(lifespan);
+
+        synchronized (_sync) {
+            boolean isExpired = isExpired(item, true);
+            if (isExpired)
+                return false;
+
+            Date expires = _expireMap.get(item);
+            if (expires == null)
+                return false;
+
+            if (isExpired(expires)) {
+                _expireMap.remove(item);
+                return false;
+            }
+
+            _expireMap.put(item, getExpires(lifespan));
+
+            return true;
+        }
+    }
+
     @Override
     public Iterator<E> iterator() {
         final Iterator<E> iterator;
@@ -205,7 +224,6 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         }
 
         return new Iterator<E>() {
-            E current;
             E peek;
 
             @Override
@@ -254,6 +272,7 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
     @Override
     public Object[] toArray() {
         synchronized (_sync) {
+            cleanup();
             return _expireMap.entrySet().toArray();
         }
     }
@@ -263,6 +282,7 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         PreCon.notNull(a);
 
         synchronized (_sync) {
+            cleanup();
             //noinspection SuspiciousToArrayCall
             return _expireMap.entrySet().toArray(a);
         }
@@ -399,37 +419,6 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
     }
 
     /**
-     * Determine if the set contains the specified item and
-     * reset the items lifespan.
-     *
-     * @param item       The item to check.
-     * @param lifespan   The new lifespan of the item.
-     */
-    public boolean contains(E item, int lifespan) {
-        PreCon.notNull(item);
-        PreCon.positiveNumber(lifespan);
-
-        synchronized (_sync) {
-            boolean isExpired = isExpired(item, true);
-            if (isExpired)
-                return false;
-
-            Date expires = _expireMap.get(item);
-            if (expires == null)
-                return false;
-
-            if (isExpired(expires)) {
-                _expireMap.remove(item);
-                return false;
-            }
-
-            _expireMap.put(item, getExpires(lifespan));
-
-            return true;
-        }
-    }
-
-    /**
      * Add a handler to be called whenever an items lifespan ends.
      *
      * @param callback  The handler to call.
@@ -513,5 +502,16 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
 
     private Date getExpires(int lifespan) {
         return DateUtils.addMilliseconds(new Date(), _timeFactor * lifespan);
+    }
+
+    private void cleanup() {
+        Iterator<Entry<E, Date>> iterator = _expireMap.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Entry<E, Date> entry = iterator.next();
+            if (isExpired(entry.getValue())) {
+                iterator.remove();
+            }
+        }
     }
 }
