@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
+
 import javax.annotation.Nullable;
 
 /**
@@ -109,11 +111,11 @@ public class PreCon {
     }
 
     /**
-     * Ensures supplied string is not null or empty
+     * Ensures supplied string is not null or empty.
      *
-     * @param value         The string to check
-     * @param nullMessage   The exception message to use if the string is null
-     * @param emptyMessage  The exception message to use if the string is empty
+     * @param value         The string to check.
+     * @param nullMessage   The exception message to use if the string is null.
+     * @param emptyMessage  The exception message to use if the string is empty.
      *
      * @throws java.lang.NullPointerException
      * @throws java.lang.IllegalArgumentException
@@ -124,6 +126,112 @@ public class PreCon {
 
         if (value.isEmpty())
             throw new IllegalArgumentException(emptyMessage);
+    }
+
+    /**
+     * Ensures supplied string is a proper data node name.
+     *
+     * @param nodeName  The name of the node.
+     *
+     * @throws java.lang.NullPointerException
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static void validNodeName(@Nullable String nodeName) {
+        PreCon.notNullOrEmpty(nodeName);
+
+        if (!TextUtils.PATTERN_NODE_NAMES.matcher(nodeName).matches())
+            throw new IllegalArgumentException("Node names must be alphanumeric and " +
+                    "can contain the following symbols: - _");
+    }
+
+    /**
+     * Ensures supplied string is a proper data node name.
+     *
+     * @param nodeName        The name of the node.
+     * @param invalidMessage  The exception message to use.
+     *
+     * @throws java.lang.NullPointerException
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static void validNodeName(@Nullable String nodeName, String invalidMessage) {
+        PreCon.notNullOrEmpty(nodeName, invalidMessage, invalidMessage);
+
+        if (!TextUtils.PATTERN_NODE_NAMES.matcher(nodeName).matches())
+            throw new IllegalArgumentException(invalidMessage);
+    }
+
+    /**
+     * Ensures supplied string is a proper data node name.
+     *
+     * @param nodeName        The name of the node.
+     * @param invalidMessage  The exception message to use if the name contains illegal characters.
+     * @param nullMessage     The exception message to use if the name is null.
+     * @param emptyMessage    The exception message to use if the name is empty.
+     *
+     * @throws java.lang.NullPointerException
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static void validNodeName(@Nullable String nodeName,
+                                     String invalidMessage,
+                                     String nullMessage,
+                                     String emptyMessage) {
+        PreCon.notNullOrEmpty(nodeName, nullMessage, emptyMessage);
+
+        if (!TextUtils.PATTERN_NODE_NAMES.matcher(nodeName).matches())
+            throw new IllegalArgumentException(invalidMessage);
+    }
+
+    /**
+     * Ensures supplied string is a proper data node path.
+     *
+     * @param nodePath  The node path.
+     *
+     * @throws java.lang.NullPointerException
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static void validNodePath(@Nullable String nodePath) {
+        PreCon.notNullOrEmpty(nodePath);
+
+        if (!TextUtils.PATTERN_NODE_PATHS.matcher(nodePath).matches())
+            throw new IllegalArgumentException("Node paths must be alphanumeric and " +
+                    "can contain the following symbols: - . _");
+    }
+
+    /**
+     * Ensures supplied string is a proper data node path.
+     *
+     * @param nodePath        The node path.
+     * @param invalidMessage  The exception message to use.
+     *
+     * @throws java.lang.NullPointerException
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static void validNodePath(@Nullable String nodePath, String invalidMessage) {
+        PreCon.notNullOrEmpty(nodePath, invalidMessage, invalidMessage);
+
+        if (!TextUtils.PATTERN_NODE_PATHS.matcher(nodePath).matches())
+            throw new IllegalArgumentException(invalidMessage);
+    }
+
+    /**
+     * Ensures supplied string is a proper data node name.
+     *
+     * @param nodePath        The node path.
+     * @param invalidMessage  The exception message to use if the path contains illegal characters.
+     * @param nullMessage     The exception message to use if the path is null.
+     * @param emptyMessage    The exception message to use if the path is empty.
+     *
+     * @throws java.lang.NullPointerException
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static void validNodePath(@Nullable String nodePath,
+                                     String invalidMessage,
+                                     String nullMessage,
+                                     String emptyMessage) {
+        PreCon.notNullOrEmpty(nodePath, nullMessage, emptyMessage);
+
+        if (!TextUtils.PATTERN_NODE_PATHS.matcher(nodePath).matches())
+            throw new IllegalArgumentException(invalidMessage);
     }
 
     /**
