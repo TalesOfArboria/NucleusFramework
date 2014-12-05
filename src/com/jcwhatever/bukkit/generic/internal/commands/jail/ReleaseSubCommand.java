@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.internal.commands.jail;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
@@ -63,7 +64,7 @@ public class ReleaseSubCommand extends AbstractCommand {
             return; // finish
         }
         
-        JailManager jailManager = JailManager.getDefault();
+        JailManager jailManager = GenericsLib.getJailManager();
         JailSession jailSession = jailManager.getJailSession(playerId);
         
         if (jailSession == null) {

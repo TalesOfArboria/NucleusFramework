@@ -57,7 +57,7 @@ public class ListTPSubCommand extends AbstractCommand {
 
         int page = args.getInteger("page");
 
-        JailManager jailManager = JailManager.getDefault();
+        JailManager jailManager = GenericsLib.getJailManager();
 
         List<INamedLocation> locations = jailManager.getTeleports();
 

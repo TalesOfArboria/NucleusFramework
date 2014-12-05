@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.internal.commands.jail;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
@@ -53,7 +54,7 @@ public class ClearReleaseTPSubCommand extends AbstractCommand {
         
         InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER, "Console has no location.");
         
-        JailManager jailManager = JailManager.getDefault();
+        JailManager jailManager = GenericsLib.getJailManager();
         jailManager.setReleaseLocation(null);
 
         tellSuccess(sender, Lang.get(_SUCCESS));

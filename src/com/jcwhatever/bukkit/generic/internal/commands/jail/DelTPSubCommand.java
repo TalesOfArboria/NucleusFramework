@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.internal.commands.jail;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
@@ -55,7 +56,7 @@ public class DelTPSubCommand extends AbstractCommand {
 
         String name = args.getName("name");
 
-        JailManager jailManager = JailManager.getDefault();
+        JailManager jailManager = GenericsLib.getJailManager();
 
         INamedLocation current = jailManager.getTeleport(name);
         if (current == null) {

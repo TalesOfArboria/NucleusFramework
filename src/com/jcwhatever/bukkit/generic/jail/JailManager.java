@@ -71,13 +71,6 @@ public class JailManager {
 
     @Localizable static final String _RELEASE_TIME = "Release in {0} minutes.";
 
-    /**
-     * Get the global default jail instance.
-     */
-    public static JailManager getDefault() {
-        return GenericsLib.getJailManager();
-    }
-
     private Plugin _plugin;
     private String _name;
     private IDataNode _dataNode;
@@ -488,7 +481,4 @@ public class JailManager {
         }
 
     }
-
-
-
 }
