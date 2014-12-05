@@ -139,6 +139,43 @@ public class EntityUtils {
     }
 
     /**
+     * Guarantees the removal of an entity even if the
+     * entity instance is outdated or the chunk its in
+     * is not loaded.
+     *
+     * @param entity  The entity to remove.
+     *
+     * @return  True if the entity was found and removed.
+     */
+    public static boolean removeEntity(Entity entity) {
+        PreCon.notNull(entity);
+
+        return removeEntity(entity.getLocation().getChunk(), entity.getUniqueId());
+    }
+
+    /**
+     * Remove an entity from a chunk, even if the chunk
+     * is not loaded.
+     *
+     * @param chunk     The chunk the entity is in.
+     * @param entityId  The entities unique ID.
+     *
+     * @return  True if the entity was found and removed.
+     */
+    public static boolean removeEntity(Chunk chunk, UUID entityId) {
+        PreCon.notNull(chunk);
+        PreCon.notNull(entityId);
+
+        Entity entity = getEntityByUUID(chunk, entityId);
+        if (entity == null)
+            return false;
+
+        entity.remove();
+
+        return true;
+    }
+
+    /**
      * Get the damaging entity. Returns the entityDamager unless it's a
      * projectile, in which case the projectile source is returned. If the
      * projectile does not have a source then the projectile is returned.
