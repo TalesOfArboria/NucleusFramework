@@ -66,7 +66,7 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
     public static class ApiObject implements IScriptApiObject {
 
         private final Plugin _plugin;
-        private Set<ScheduledTask> _repeatingTasks = new HashSet<>(25);
+        private Set<ScheduledTask> _taskReferences = new HashSet<>(25);
         private boolean _isDisposed;
 
         ApiObject(Plugin plugin) {
@@ -81,11 +81,11 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
         @Override
         public void dispose() {
 
-            for (ScheduledTask task : _repeatingTasks) {
+            for (ScheduledTask task : _taskReferences) {
                 task.cancel();
             }
 
-            _repeatingTasks.clear();
+            _taskReferences.clear();
 
             _isDisposed = true;
         }
@@ -102,10 +102,32 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
          *
          * @return  A {@code ScheduledTask} instance to keep track of the task.
          */
-        public ScheduledTask runTaskLater(int delay, Runnable runnable) {
+        public ScheduledTask runTaskLater(int delay, final Runnable runnable) {
             PreCon.notNull(runnable);
 
-            return Scheduler.runTaskLater(_plugin, delay, runnable);
+            TaskHandler handler = new TaskHandler() {
+                @Override
+                public void run() {
+                    runnable.run();
+                }
+
+                @Override
+                protected void onCancel() {
+
+                    // remove task from reference collection if a script
+                    // cancels the task
+                    ScheduledTask task = getTask();
+                    if (task != null)
+                        _taskReferences.remove(task);
+                }
+            };
+
+            ScheduledTask task = Scheduler.runTaskLater(_plugin, delay, handler);
+
+            // add reference so it can be cancelled if api is disposed
+            _taskReferences.add(task);
+
+            return task;
         }
 
         /**
@@ -133,15 +155,19 @@ public class ScriptApiScheduler extends GenericsScriptApi  {
 
                 @Override
                 protected void onCancel() {
+
+                    // remove task from reference collection if a script
+                    // cancels the task
                     ScheduledTask task = getTask();
                     if (task != null)
-                        _repeatingTasks.remove(task);
+                        _taskReferences.remove(task);
                 }
             };
 
             ScheduledTask task = Scheduler.runTaskRepeat(_plugin, initialDelay, repeatDelay, handler);
 
-            _repeatingTasks.add(task);
+            // add reference so it can be cancelled if api is disposed
+            _taskReferences.add(task);
 
             return task;
         }
