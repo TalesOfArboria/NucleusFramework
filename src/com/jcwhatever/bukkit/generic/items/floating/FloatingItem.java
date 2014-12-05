@@ -226,26 +226,15 @@ public class FloatingItem implements IDisposable {
     /**
      * Spawn the floating item entity.
      */
-    public boolean spawn(Location location) {
-        PreCon.notNull(location);
-
-        _currentLocation = location;
-
-        if (_dataNode != null) {
-            _dataNode.set("location", location);
-            // data node save in spawn method
-        }
-
-        return spawn();
+    public boolean spawn() {
+        return _currentLocation != null && spawn(_currentLocation);
     }
 
     /**
      * Spawn the floating item entity.
      */
-    public boolean spawn() {
-
-        if (_currentLocation == null)
-            return false;
+    public boolean spawn(Location location) {
+        PreCon.notNull(location);
 
         FloatingItemSpawnEvent event = new FloatingItemSpawnEvent(this);
 
@@ -264,7 +253,7 @@ public class FloatingItem implements IDisposable {
                 LocationUtils.getBlockLocation(_currentLocation)).add(0, 0.5, 0);
 
         // spawn item entity
-        Entity entity = _currentLocation.getWorld().dropItem(spawnLocation, _item.clone());
+        Entity entity = location.getWorld().dropItem(spawnLocation, _item.clone());
         _trackedEntity = EntityUtils.trackEntity(entity);
         _entityId = entity.getUniqueId();
         entity.setVelocity(new Vector(0, 0, 0));
@@ -279,6 +268,7 @@ public class FloatingItem implements IDisposable {
         item.getItemStack().setItemMeta(meta);
 
         if (_dataNode != null) {
+            _dataNode.set("location", location);
             _dataNode.set("is-spawned", true);
             _dataNode.set("entity-id", _entityId);
             _dataNode.saveAsync(null);
@@ -288,6 +278,8 @@ public class FloatingItem implements IDisposable {
             for (Runnable runnable : _spawnHandlers)
                 runnable.run();
         }
+
+        _currentLocation = location;
 
         return true;
     }
@@ -313,8 +305,8 @@ public class FloatingItem implements IDisposable {
 
         _isSpawned = false;
 
-        entity.remove();
-        _trackedEntity.dispose();
+        EntityUtils.removeEntity(entity);
+
         _trackedEntity = null;
         _entityId = null;
 
@@ -346,6 +338,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Determine if the floating item has been disposed.
      */
+    @Override
     public boolean isDisposed() {
         return _isDisposed;
     }
