@@ -25,7 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.internal.listeners;
 
-import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.GenericsLib;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -37,19 +38,19 @@ public class HangingListener implements Listener {
     @EventHandler
     private void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onHangingBreak(HangingBreakEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onHangingPlace(HangingPlaceEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
 }

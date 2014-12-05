@@ -25,7 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.internal.listeners;
 
-import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.GenericsLib;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.weather.LightningStrikeEvent;
@@ -37,18 +38,18 @@ public class WeatherListener implements Listener {
     @EventHandler
     private void onLightningStrike(LightningStrikeEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onThunderChange(ThunderChangeEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onWeatherChange(WeatherChangeEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 }

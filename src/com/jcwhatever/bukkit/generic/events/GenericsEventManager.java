@@ -31,21 +31,10 @@ import com.jcwhatever.bukkit.generic.collections.TimedHashSet;
 import com.jcwhatever.bukkit.generic.events.exceptions.EventManagerDisposedException;
 import com.jcwhatever.bukkit.generic.events.exceptions.HandlerAlreadyRegisteredException;
 import com.jcwhatever.bukkit.generic.events.exceptions.ListenerAlreadyRegisteredException;
-import com.jcwhatever.bukkit.generic.internal.listeners.BlockListener;
-import com.jcwhatever.bukkit.generic.internal.listeners.EnchantmentListener;
-import com.jcwhatever.bukkit.generic.internal.listeners.EntityListener;
-import com.jcwhatever.bukkit.generic.internal.listeners.HangingListener;
-import com.jcwhatever.bukkit.generic.internal.listeners.InventoryListener;
-import com.jcwhatever.bukkit.generic.internal.listeners.PlayerListener;
-import com.jcwhatever.bukkit.generic.internal.listeners.VehicleListener;
-import com.jcwhatever.bukkit.generic.internal.listeners.WeatherListener;
-import com.jcwhatever.bukkit.generic.internal.listeners.WorldListener;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -91,28 +80,10 @@ import javax.annotation.Nullable;
  */
 public class GenericsEventManager implements IDisposable {
 
-    private static GenericsEventManager _globalInstance;
-
-    /**
-     * Get the global event manager.
-     *
-     * <p>
-     *     Note: Bukkit events called in child event managers are
-     *     not passed to the global event manager.
-     * </p>
-     */
-    public static GenericsEventManager getGlobal() {
-        if (_globalInstance == null)
-            _globalInstance = new GenericsEventManager(true);
-
-        return _globalInstance;
-    }
-
     private final Map<Class<?>, EventHandlerCollection> _handlerMap = new HashMap<>(100);
     private final Map<IGenericsEventListener, ListenerContainer> _listeners = new HashMap<>(100);
     private final List<IEventHandler> _callHandlers = new ArrayList<>(10);
     private final GenericsEventManager _parent;
-    private final boolean _isGlobal;
     private boolean _isDisposed;
 
     private Map<Object, Void> _calledEvents = new WeakHashMap<>(30);
@@ -126,7 +97,7 @@ public class GenericsEventManager implements IDisposable {
      * <p>Create a new event manager using the global event manager as parent.</p>
      */
     public GenericsEventManager() {
-        this(getGlobal());
+        this(GenericsLib.getEventManager());
     }
 
     /**
@@ -137,34 +108,6 @@ public class GenericsEventManager implements IDisposable {
      */
     public GenericsEventManager(@Nullable GenericsEventManager parent) {
         _parent = parent;
-        _isGlobal = false;
-    }
-
-    /**
-     * Private constructor for global event manager.
-     */
-    private GenericsEventManager(boolean isGlobal) {
-        _parent = null;
-        _isGlobal = isGlobal;
-
-        if (_isGlobal) {
-
-            Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
-                @Override
-                public void run() {
-
-                    Bukkit.getPluginManager().registerEvents(new BlockListener(), GenericsLib.getLib());
-                    Bukkit.getPluginManager().registerEvents(new EnchantmentListener(), GenericsLib.getLib());
-                    Bukkit.getPluginManager().registerEvents(new EntityListener(), GenericsLib.getLib());
-                    Bukkit.getPluginManager().registerEvents(new HangingListener(), GenericsLib.getLib());
-                    Bukkit.getPluginManager().registerEvents(new InventoryListener(), GenericsLib.getLib());
-                    Bukkit.getPluginManager().registerEvents(new PlayerListener(), GenericsLib.getLib());
-                    Bukkit.getPluginManager().registerEvents(new VehicleListener(), GenericsLib.getLib());
-                    Bukkit.getPluginManager().registerEvents(new WeatherListener(), GenericsLib.getLib());
-                    Bukkit.getPluginManager().registerEvents(new WorldListener(), GenericsLib.getLib());
-                }
-            });
-        }
     }
 
     /**
@@ -323,10 +266,6 @@ public class GenericsEventManager implements IDisposable {
         if (_isDisposed)
             return;
 
-        // The global manager cannot unregister all.
-        if (_isGlobal)
-            throw new RuntimeException("Cannot unregister all handlers at once from the global event manager.");
-
         // clear event handlers on all handler collections
         for (EventHandlerCollection handlers : _handlerMap.values()) {
             handlers.clear();
@@ -437,10 +376,6 @@ public class GenericsEventManager implements IDisposable {
      */
     @Override
     public void dispose() {
-
-        // The global manager cannot be disposed.
-        if (_isGlobal)
-            throw new RuntimeException("Cannot dispose the global event manager.");
 
         unregisterAll();
 

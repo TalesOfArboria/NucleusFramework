@@ -25,7 +25,10 @@
 
 package com.jcwhatever.bukkit.generic.internal.listeners;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.events.bukkit.EventManager;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
@@ -36,13 +39,13 @@ public class EnchantmentListener implements Listener {
     @EventHandler
     private void onEnchantItem(EnchantItemEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
 }

@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic;
 
+import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.internal.InternalEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
 import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
@@ -63,6 +65,7 @@ public class GenericsLib extends GenericsPlugin {
     private static Map<String, GenericsPlugin> _pluginNameMap = new HashMap<>(25);
     private static Map<Class<? extends GenericsPlugin>, GenericsPlugin> _pluginClassMap = new HashMap<>(25);
 
+    private InternalEventManager _eventManager;
     private InternalTitleManager _titleManager;
     private JailManager _jailManager;
     private RegionManager _regionManager;
@@ -119,6 +122,13 @@ public class GenericsLib extends GenericsPlugin {
      */
     public static List<GenericsPlugin> getGenericsPlugins() {
         return new ArrayList<>(_pluginNameMap.values());
+    }
+
+    /**
+     * Get the global event manager.
+     */
+    public static GenericsEventManager getEventManager() {
+        return _instance._eventManager;
     }
 
     /**
@@ -229,6 +239,8 @@ public class GenericsLib extends GenericsPlugin {
 
         _commandHandler = new CommandHandler();
         _scheduler = new BukkitTaskScheduler();
+
+        _eventManager = new InternalEventManager();
         _scriptEngineManager = new GenericsScriptEngineManager();
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
         _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsNamedTitleFactory());

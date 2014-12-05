@@ -25,7 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.internal.listeners;
 
-import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.GenericsLib;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -56,132 +57,132 @@ public class BlockListener implements Listener{
     @EventHandler
     private void onBlockBreak(BlockBreakEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockBurn(BlockBurnEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockCanBuildEvent(BlockCanBuildEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockDamage(BlockDamageEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockDispense(BlockDispenseEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockExp(BlockExpEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockFade(BlockFadeEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockForm(BlockFormEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockFromTo(BlockFromToEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockGrow(BlockGrowEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockIgnite(BlockIgniteEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockMultiPlace(BlockMultiPlaceEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockPhysics(BlockPhysicsEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockPistonExtend(BlockPistonExtendEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockPistonRetractEvent(BlockPistonRetractEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockPlace(BlockPlaceEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockRedstone(BlockRedstoneEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onBlockSpread(BlockSpreadEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onEntityBlockForm(EntityBlockFormEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onLeavesDecay(LeavesDecayEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onNotePlay(NotePlayEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onSignChange(SignChangeEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 }

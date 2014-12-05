@@ -25,7 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.internal.listeners;
 
-import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.GenericsLib;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.BrewEvent;
@@ -48,85 +49,85 @@ public class InventoryListener implements Listener {
     @EventHandler
     private void onBrew(BrewEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onCraftItem(CraftItemEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onFurnaceBurn(FurnaceBurnEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onFurnaceExtract(FurnaceExtractEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onFurnaceSmelt(FurnaceSmeltEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onInventoryClose(InventoryCloseEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onInventoryCreative(InventoryCreativeEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onInventoryDrag(InventoryDragEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onInventoryInteract(InventoryInteractEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onInventoryMoveItem(InventoryMoveItemEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onInventoryOpen(InventoryOpenEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onInventoryPickupItem(InventoryPickupItemEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
     private void onPrepareItemCraft(PrepareItemCraftEvent event) {
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
 }

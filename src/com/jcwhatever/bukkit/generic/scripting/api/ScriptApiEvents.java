@@ -25,9 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.events.IEventHandler;
-import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.GenericsEventPriority;
+import com.jcwhatever.bukkit.generic.events.IEventHandler;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -107,7 +107,7 @@ public class ScriptApiEvents extends GenericsScriptApi {
 
             // unregister Generics event handlers
             for (RegisteredGenericsEvent registered : _registeredGenerics) {
-                GenericsEventManager.getGlobal().unregister(registered._eventClass, registered._handler);
+                GenericsLib.getEventManager().unregister(registered._eventClass, registered._handler);
             }
             _registeredGenerics.clear();
 
@@ -178,7 +178,7 @@ public class ScriptApiEvents extends GenericsScriptApi {
                 }
             };
 
-            GenericsEventManager.getGlobal().register(event, eventPriority, ignoreCancelled, eventHandler);
+            GenericsLib.getEventManager().register(event, eventPriority, ignoreCancelled, eventHandler);
 
             _registeredGenerics.add(new RegisteredGenericsEvent(event, eventHandler));
 

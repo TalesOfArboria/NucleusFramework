@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.internal.listeners;
 
-import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.GenericsLib;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,7 +46,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -54,7 +54,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -62,7 +62,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -70,7 +70,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -78,7 +78,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -86,7 +86,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -94,7 +94,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -102,7 +102,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -110,7 +110,7 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 
     @EventHandler
@@ -118,6 +118,6 @@ public class WorldListener implements Listener {
         if (event.isAsynchronous())
             return;
 
-        GenericsEventManager.getGlobal().call(event);
+        GenericsLib.getEventManager().call(event);
     }
 }
