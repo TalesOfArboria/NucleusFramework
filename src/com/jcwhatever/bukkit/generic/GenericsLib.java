@@ -38,10 +38,11 @@ import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScriptEngineManager;
 import com.jcwhatever.bukkit.generic.titles.GenericsNamedTitleFactory;
-import com.jcwhatever.bukkit.generic.titles.TitleManager;
 import com.jcwhatever.bukkit.generic.titles.INamedTitle;
+import com.jcwhatever.bukkit.generic.titles.TitleManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextColor;
 
 import org.bukkit.entity.EntityType;
 
@@ -212,7 +213,7 @@ public class GenericsLib extends GenericsPlugin {
      */
     @Override
     public String getChatPrefix() {
-        return "[GenericsLib] ";
+        return TextColor.BLUE + "[" + TextColor.WHITE + "Generics" + TextColor.BLUE + "] " + TextColor.WHITE;
     }
 
     /**
@@ -244,8 +245,11 @@ public class GenericsLib extends GenericsPlugin {
 
     @Override
     protected void onDisablePlugin() {
-        // do nothing
-        // Note: Disabling GenericsLib can break plugins.
+
+        // make sure that evaluated scripts are disposed
+        if (_scriptManager != null) {
+            _scriptManager.clearScripts();
+        }
     }
 
     /*
