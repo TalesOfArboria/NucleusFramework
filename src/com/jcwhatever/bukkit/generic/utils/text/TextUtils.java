@@ -73,6 +73,8 @@ public class TextUtils {
     public static final Pattern PATTERN_NUMBERS = Pattern.compile("\\d+");
     public static final Pattern PATTERN_DECIMAL_NUMBERS = Pattern.compile("\\d+(\\.\\d+)");
     public static final Pattern PATTERN_NAMES = Pattern.compile("^[a-zA-Z][a-zA-Z0-9_]*$");
+    public static final Pattern PATTERN_NODE_NAMES = Pattern.compile("^[a-zA-Z0-9_-]*$");
+    public static final Pattern PATTERN_NODE_PATHS = Pattern.compile("^[a-zA-Z0-9_.-]*$");
     public static final Pattern PATTERN_FORMAT_PARAM = Pattern.compile("(?<=(\\{[0-9]}))");
     public static final Pattern PATTERN_FILEPATH_SLASH = Pattern.compile("[\\/\\\\]");
     public static final Pattern PATTERN_UNDERSCORE = Pattern.compile("_");
