@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 public class GenericsNamedTitleFactory implements INamedTitleFactory<INamedTitle> {
 
     @Override
-    public INamedTitle create(String name, TextComponents title, @Nullable TextComponents subTitle,
+    public INamedTitle create(String name, String title, @Nullable String subTitle,
                                 int fadeInTime, int stayTime, int fadeOutTime) {
 
         return new GenericsNamedTitle(name, title, subTitle, fadeInTime, stayTime, fadeOutTime);

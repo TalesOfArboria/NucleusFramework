@@ -38,42 +38,42 @@ import javax.annotation.Nullable;
  */
 public class GenericsTitle implements ITitle {
 
-    private final TextComponents _titleComponents;
-    private final TextComponents _subTitleComponents;
+    private final String _title;
+    private final String _subTitle;
     private final int _fadeInTime;
     private final int _stayTime;
     private final int _fadeOutTime;
+
+    private TextComponents _titleComponents;
+    private TextComponents _subTitleComponents;
 
     /**
      * Constructor.
      *
      * <p>Uses default times.</p>
      *
-     * @param titleComponents     The title text components.
-     * @param subTitleComponents  The sub title text components.
+     * @param title     The title text.
+     * @param subTitle  The sub title text.
      */
-    public GenericsTitle(TextComponents titleComponents,
-                         @Nullable TextComponents subTitleComponents) {
-
-        this(titleComponents, subTitleComponents, -1, -1, -1);
+    public GenericsTitle(String title, @Nullable String subTitle) {
+        this(title, subTitle, -1, -1, -1);
     }
 
     /**
      * Constructor.
      *
-     * @param titleComponents     The title text components.
-     * @param subTitleComponents  The sub title text components.
-     * @param fadeInTime          The time spent fading in.
-     * @param stayTime            The time spent being displayed.
-     * @param fadeOutTime         The time spent fading out.
+     * @param title        The title text components.
+     * @param subTitle     The sub title text components.
+     * @param fadeInTime   The time spent fading in.
+     * @param stayTime     The time spent being displayed.
+     * @param fadeOutTime  The time spent fading out.
      */
-    public GenericsTitle(TextComponents titleComponents,
-                              @Nullable TextComponents subTitleComponents,
+    public GenericsTitle(String title, @Nullable String subTitle,
                               int fadeInTime, int stayTime, int fadeOutTime) {
-        PreCon.notNull(titleComponents);
+        PreCon.notNull(title);
 
-        _titleComponents = titleComponents;
-        _subTitleComponents = subTitleComponents;
+        _title = title;
+        _subTitle = subTitle;
 
         _fadeInTime = fadeInTime;
         _stayTime = stayTime;
@@ -115,8 +115,8 @@ public class GenericsTitle implements ITitle {
      * Get the title components.
      */
     @Override
-    public TextComponents getTitleComponents() {
-        return _titleComponents;
+    public String getTitle() {
+        return _title;
     }
 
     /**
@@ -124,8 +124,8 @@ public class GenericsTitle implements ITitle {
      */
     @Override
     @Nullable
-    public TextComponents getSubTitleComponents() {
-        return _subTitleComponents;
+    public String getSubTitle() {
+        return _subTitle;
     }
 
     /**
@@ -159,6 +159,23 @@ public class GenericsTitle implements ITitle {
         Utils.executeAsConsole(titleCommand);
     }
 
+    public TextComponents getTitleComponents() {
+        if (_titleComponents == null) {
+            _titleComponents = new TextComponents(_title);
+        }
+
+        return _titleComponents;
+    }
+
+    @Nullable
+    public TextComponents getSubTitleComponents() {
+        if (_subTitle != null && _subTitleComponents == null) {
+            _subTitleComponents = new TextComponents(_subTitle);
+        }
+
+        return _subTitleComponents;
+    }
+
     private String getCommand(Player p, TitleCommandType type) {
         StringBuilder buffer = new StringBuilder(100);
 
@@ -171,11 +188,11 @@ public class GenericsTitle implements ITitle {
 
         switch (type) {
             case TITLE:
-                getJson(buffer, _titleComponents);
+                getJson(buffer, getTitleComponents());
                 break;
             case SUBTITLE:
                 //noinspection ConstantConditions
-                getJson(buffer, _subTitleComponents);
+                getJson(buffer, getSubTitleComponents());
                 break;
             case TIMES:
                 buffer.append(_fadeInTime);

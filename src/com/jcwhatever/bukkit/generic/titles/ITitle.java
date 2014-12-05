@@ -24,8 +24,6 @@
 
 package com.jcwhatever.bukkit.generic.titles;
 
-import com.jcwhatever.bukkit.generic.utils.text.TextComponents;
-
 import org.bukkit.entity.Player;
 
 /**
@@ -58,12 +56,12 @@ public interface ITitle {
     /**
      * Get the title components.
      */
-    TextComponents getTitleComponents();
+    String getTitle();
 
     /**
      * Get the sub-title components.
      */
-    TextComponents getSubTitleComponents();
+    String getSubTitle();
 
     /**
      * Show the title to the specified player.

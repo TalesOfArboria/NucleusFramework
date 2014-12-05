@@ -24,8 +24,6 @@
 
 package com.jcwhatever.bukkit.generic.titles;
 
-import com.jcwhatever.bukkit.generic.utils.text.TextComponents;
-
 import javax.annotation.Nullable;
 
 /**
@@ -41,31 +39,31 @@ public class GenericsNamedTitle extends GenericsTitle implements INamedTitle {
      *
      * <p>Uses default times.</p>
      *
-     * @param name                The name of the title.
-     * @param titleComponents     The title text components.
-     * @param subTitleComponents  The sub title text components.
+     * @param name      The name of the title.
+     * @param title     The title text components.
+     * @param subTitle  The sub title text components.
      */
-    public GenericsNamedTitle(String name, TextComponents titleComponents,
-                              @Nullable TextComponents subTitleComponents) {
+    public GenericsNamedTitle(String name, String title,
+                              @Nullable String subTitle) {
 
-        this(name, titleComponents, subTitleComponents, -1, -1, -1);
+        this(name, title, subTitle, -1, -1, -1);
     }
 
     /**
      * Constructor.
      *
-     * @param name                The name of the title.
-     * @param titleComponents     The title text components.
-     * @param subTitleComponents  The sub title text components.
-     * @param fadeInTime          The time spent fading in.
-     * @param stayTime            The time spent being displayed.
-     * @param fadeOutTime         The time spent fading out.
+     * @param name         The name of the title.
+     * @param title        The title text components.
+     * @param subTitle     The sub title text components.
+     * @param fadeInTime   The time spent fading in.
+     * @param stayTime     The time spent being displayed.
+     * @param fadeOutTime  The time spent fading out.
      */
-    public GenericsNamedTitle(String name, TextComponents titleComponents,
-                              @Nullable TextComponents subTitleComponents,
+    public GenericsNamedTitle(String name, String title,
+                              @Nullable String subTitle,
                               int fadeInTime, int stayTime, int fadeOutTime) {
 
-        super(titleComponents, subTitleComponents, fadeInTime, stayTime, fadeOutTime);
+        super(title, subTitle, fadeInTime, stayTime, fadeOutTime);
 
         _name = name;
         _searchName = name.toLowerCase();

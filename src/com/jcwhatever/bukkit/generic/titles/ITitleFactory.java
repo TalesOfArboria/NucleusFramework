@@ -24,8 +24,6 @@
 
 package com.jcwhatever.bukkit.generic.titles;
 
-import com.jcwhatever.bukkit.generic.utils.text.TextComponents;
-
 import javax.annotation.Nullable;
 
 /**
@@ -42,6 +40,6 @@ public interface ITitleFactory<T extends ITitle> {
      * @param stayTime     The time the text stays visible. -1 for default.
      * @param fadeOutTime  The time spent fading out. -1 for default.
      */
-    T create(TextComponents title, @Nullable TextComponents subTitle,
+    T create(String title, @Nullable String subTitle,
              int fadeInTime, int stayTime, int fadeOutTime);
 }

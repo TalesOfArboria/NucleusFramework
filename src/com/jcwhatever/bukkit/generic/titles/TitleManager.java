@@ -26,7 +26,6 @@ package com.jcwhatever.bukkit.generic.titles;
 
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.text.TextComponents;
 
 import org.bukkit.plugin.Plugin;
 
@@ -144,14 +143,7 @@ public class TitleManager<T extends INamedTitle> {
         PreCon.notNullOrEmpty(name);
         PreCon.notNullOrEmpty(title);
 
-        TextComponents titleComponents = new TextComponents(title);
-        TextComponents subTitleComponents = null;
-
-        if (subTitle != null) {
-            subTitleComponents = new TextComponents(subTitle);
-        }
-
-        T instance = _factory.create(name, titleComponents, subTitleComponents, fadeInTime, stayTime, fadeOutTime);
+        T instance = _factory.create(name, title, subTitle, fadeInTime, stayTime, fadeOutTime);
 
         _titles.put(instance.getSearchName(), instance);
 
@@ -219,13 +211,8 @@ public class TitleManager<T extends INamedTitle> {
 
         IDataNode node = _dataNode.getNode(title.getName());
 
-        String titleText = title.getTitleComponents().getText();
-        String subText = title.getSubTitleComponents() != null
-                ? title.getSubTitleComponents().getText()
-                : null;
-
-        node.set("title", titleText);
-        node.set("subtitle", subText);
+        node.set("title", title.getTitle());
+        node.set("subtitle", title.getSubTitle());
         node.set("fadein", title.getFadeInTime());
         node.set("stay", title.getStayTime());
         node.set("fadeout", title.getFadeOutTime());
@@ -235,20 +222,17 @@ public class TitleManager<T extends INamedTitle> {
     protected T loadFromDataNode(IDataNode dataNode) {
 
         String name = dataNode.getNodeName();
-        String title = dataNode.getString("title", "Config Title Missing.");
+        String title = dataNode.getString("title");
         String subTitle = dataNode.getString("subtitle");
         int fadein = dataNode.getInteger("fadein", -1);
         int stay = dataNode.getInteger("stay", -1);
         int fadeout = dataNode.getInteger("fadeout", -1);
 
+        if (title == null)
+            throw new RuntimeException("Invalid config. title node is missing.");
+
         assert name != null;
-        assert title != null;
 
-        TextComponents titleComp = new TextComponents(title);
-        TextComponents subTitleComp = subTitle != null
-                ? new TextComponents(subTitle)
-                : null;
-
-        return _factory.create(name, titleComp, subTitleComp, fadein, stay, fadeout);
+        return _factory.create(name, title, subTitle, fadein, stay, fadeout);
     }
 }

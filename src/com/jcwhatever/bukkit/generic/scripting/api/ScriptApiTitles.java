@@ -32,7 +32,6 @@ import com.jcwhatever.bukkit.generic.titles.INamedTitle;
 import com.jcwhatever.bukkit.generic.titles.ITitle;
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.text.TextComponents;
 import com.sun.istack.internal.Nullable;
 
 import org.bukkit.entity.Player;
@@ -102,12 +101,7 @@ public class ScriptApiTitles extends GenericsScriptApi {
 
             PreCon.notNullOrEmpty(title);
 
-            TextComponents titleComponents = new TextComponents(title);
-            TextComponents subTitleComponents = subTitle != null
-                    ? new TextComponents(subTitle)
-                    : null;
-
-            return new GenericsTitle(titleComponents, subTitleComponents,
+            return new GenericsTitle(title, subTitle,
                     fadeInTicks, stayTicks, fadeOutTicks);
         }
     }
