@@ -25,9 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.file;
 
+import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.ItemMetaObject;
-import com.jcwhatever.bukkit.generic.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Location;
@@ -44,6 +44,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
@@ -393,6 +394,22 @@ public class GenericsByteWriter extends OutputStream {
         PreCon.notNull(enumConstant);
 
         writeSmallString(enumConstant.name());
+    }
+
+    /**
+     * Write a UUID.
+     *
+     * <p>The UUID is written as 16 bytes, the first 8 bytes are the most
+     * significant bits while the last 8 bytes are the least significant bits.</p>
+     *
+     * @param uuid  The UUID to write.
+     * @throws IOException
+     */
+    public void write(UUID uuid) throws IOException {
+        PreCon.notNull(uuid);
+
+        write(uuid.getMostSignificantBits());
+        write(uuid.getLeastSignificantBits());
     }
 
     /**

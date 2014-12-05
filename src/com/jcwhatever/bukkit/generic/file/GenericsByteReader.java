@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
@@ -57,6 +58,7 @@ public class GenericsByteReader extends InputStream {
 
     private final InputStream _stream;
     private final byte[] _buffer = new byte[1024];
+    private final byte[] _uuidBuffer = new byte[16];
     private long _bytesRead = 0;
 
     private int _booleanReadCount = 7; // resets to 7
@@ -413,6 +415,21 @@ public class GenericsByteReader extends InputStream {
         }
 
         return e;
+    }
+
+    /**
+     * Get the next 16 bytes as a UUID.
+     *
+     * @throws IOException
+     */
+    public UUID getUUID() throws IOException {
+
+        resetBooleanBuffer();
+
+        long most = getLong();
+        long least = getLong();
+
+        return new UUID(most, least);
     }
 
     /**
