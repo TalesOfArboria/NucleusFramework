@@ -24,11 +24,11 @@
 
 package com.jcwhatever.bukkit.generic.internal;
 
-import com.jcwhatever.bukkit.generic.regions.RegionManager;
+import com.jcwhatever.bukkit.generic.regions.GlobalRegionManager;
 
 import org.bukkit.plugin.Plugin;
 
-public final class InternalRegionManager extends RegionManager {
+public final class InternalRegionManager extends GlobalRegionManager {
 
     /**
      * Constructor.

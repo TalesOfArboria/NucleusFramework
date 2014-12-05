@@ -59,7 +59,7 @@ import javax.annotation.Nullable;
 /**
  * Abstract implementation of a region.
  *
- * <p>The region is registered with GenericsLib {@link RegionManager} as soon
+ * <p>The region is registered with GenericsLib {@link GlobalRegionManager} as soon
  * as it is defined (P1 and P2 coordinates set) via the regions settings or by
  * calling {@code setCoords} method.</p>
  *

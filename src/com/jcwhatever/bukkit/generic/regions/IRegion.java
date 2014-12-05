@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a region. Not intended to be implemented externally
  * unless the external implementation is not intended to be used
- * with GenericsLib's {@link RegionManager}.
+ * with GenericsLib's {@link GlobalRegionManager}.
  *
  * <p>For nearly all cases, the abstract class {@link Region} should be extended
  * or use one of the other abstract implementations that extend {@link Region}.</p>

@@ -36,7 +36,7 @@ import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
-import com.jcwhatever.bukkit.generic.regions.RegionManager;
+import com.jcwhatever.bukkit.generic.regions.GlobalRegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScriptEngineManager;
@@ -143,7 +143,7 @@ public class GenericsLib extends GenericsPlugin {
     /**
      * Get the global {@code RegionManager}.
      */
-    public static RegionManager getRegionManager() {
+    public static GlobalRegionManager getRegionManager() {
         return _instance._regionManager;
     }
 

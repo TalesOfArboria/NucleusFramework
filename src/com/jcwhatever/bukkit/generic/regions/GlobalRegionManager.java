@@ -62,7 +62,7 @@ import java.util.UUID;
  * a player is in as well as track players to determine when they enter and leave
  * player watcher regions.</p>
  */
-public class RegionManager {
+public class GlobalRegionManager {
 
     // Player watcher regions chunk map. String key is chunk coordinates.
     private final Map<String, OrderedRegions<IRegion>> _listenerRegionsMap = new HashMap<>(500);
@@ -90,7 +90,7 @@ public class RegionManager {
      *
      * <p>Not meant for public instantiation. For internal use only.</p>
      */
-    public RegionManager() {
+    public GlobalRegionManager() {
         checkInstance();
     }
 
@@ -99,7 +99,7 @@ public class RegionManager {
      *
      * <p>Not meant for public instantiation. For internal use only.</p>
      */
-    protected RegionManager(Plugin plugin) {
+    protected GlobalRegionManager(Plugin plugin) {
         checkInstance();
 
         _playerCacheMap = new PlayerMap<>(plugin);
@@ -464,9 +464,9 @@ public class RegionManager {
      */
     private static final class PlayerWatcher implements Runnable {
 
-        private RegionManager _manager;
+        private GlobalRegionManager _manager;
 
-        PlayerWatcher(RegionManager manager) {
+        PlayerWatcher(GlobalRegionManager manager) {
             _manager = manager;
         }
 
@@ -507,9 +507,9 @@ public class RegionManager {
         private final Object _sync;
         private final Collection<WorldPlayers> _worldPlayers;
         private final Map<UUID, OrderedRegions<IRegion>> _playerCacheMap;
-        private final RegionManager _manager;
+        private final GlobalRegionManager _manager;
 
-        PlayerWatcherAsync(RegionManager manager, Collection<WorldPlayers> worldPlayers) {
+        PlayerWatcherAsync(GlobalRegionManager manager, Collection<WorldPlayers> worldPlayers) {
             _manager = manager;
             _sync = manager._sync;
             _worldPlayers = worldPlayers;
@@ -637,7 +637,7 @@ public class RegionManager {
         public final World world;
         public final List<WorldPlayer> players;
 
-        public WorldPlayers (RegionManager manager, World world, List<Player> players) {
+        public WorldPlayers (GlobalRegionManager manager, World world, List<Player> players) {
             this.world = world;
 
             List<WorldPlayer> worldPlayers = new ArrayList<WorldPlayer>(players.size());
