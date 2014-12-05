@@ -26,6 +26,8 @@
 package com.jcwhatever.bukkit.generic.events;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.collections.TimeScale;
+import com.jcwhatever.bukkit.generic.collections.TimedHashSet;
 import com.jcwhatever.bukkit.generic.events.exceptions.EventManagerDisposedException;
 import com.jcwhatever.bukkit.generic.events.exceptions.HandlerAlreadyRegisteredException;
 import com.jcwhatever.bukkit.generic.events.exceptions.ListenerAlreadyRegisteredException;
@@ -37,19 +39,26 @@ import com.jcwhatever.bukkit.generic.internal.listeners.InventoryListener;
 import com.jcwhatever.bukkit.generic.internal.listeners.PlayerListener;
 import com.jcwhatever.bukkit.generic.internal.listeners.VehicleListener;
 import com.jcwhatever.bukkit.generic.internal.listeners.WeatherListener;
+import com.jcwhatever.bukkit.generic.internal.listeners.WorldListener;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
@@ -68,10 +77,16 @@ import javax.annotation.Nullable;
  * a different parent manager or none at all can be set.</p>
  *
  * <p>The global Generics event manager also receives certain Bukkit events so event handlers
- * can be used that subscribe to those Bukkit events. Bukkit events can also be called on
- * child managers and the event will bubble up to parent managers. However, to prevent problems,
- * the global Generics event manager does not receive Bukkit events that bubble up from its
- * child managers.</p>
+ * can be used that subscribe to those Bukkit events.</p>
+ *
+ * <p>Event managers cannot receive the same event more than once. This is because of the combination of event
+ * forwarding to specific manager contexts and event bubbling. It is possible to forward an event from an event
+ * manager that is higher in the hierarchy to a manager that is lower, which would then bubble to the
+ * manager that forwarded the event in the first place. To prevent this managers will drop calls to event
+ * instances that they have already called.</p>
+ *
+ * <p>In order to prevent undesired dropping of events, the event type should not override the equals method, or
+ * if it does, should compare instances using ==.</p>
  *
  */
 public class GenericsEventManager implements IDisposable {
@@ -99,6 +114,11 @@ public class GenericsEventManager implements IDisposable {
     private final GenericsEventManager _parent;
     private final boolean _isGlobal;
     private boolean _isDisposed;
+
+    private Map<Object, Void> _calledEvents = new WeakHashMap<>(30);
+
+    // BUG WORKAROUND interact event getting called twice - Minecraft/Bukkit/Spigot issue
+    private TimedHashSet<EventWrapper> _recentBukkitEvents = new TimedHashSet<>(20, 3, TimeScale.MILLISECONDS);
 
     /**
      * Constructor.
@@ -141,6 +161,7 @@ public class GenericsEventManager implements IDisposable {
                     Bukkit.getPluginManager().registerEvents(new PlayerListener(), GenericsLib.getLib());
                     Bukkit.getPluginManager().registerEvents(new VehicleListener(), GenericsLib.getLib());
                     Bukkit.getPluginManager().registerEvents(new WeatherListener(), GenericsLib.getLib());
+                    Bukkit.getPluginManager().registerEvents(new WorldListener(), GenericsLib.getLib());
                 }
             });
         }
@@ -343,10 +364,24 @@ public class GenericsEventManager implements IDisposable {
         if (_isDisposed)
             throw new EventManagerDisposedException();
 
-        // call event on parent first unless the parent is the global
-        // event manager and the event is a bukkit event. (to prevent inter-plugin conflicts)
-        if (_parent != null && !(_parent._isGlobal && event instanceof org.bukkit.event.Event)) {
+        // prevent the same instance of an event from being called twice
+        // due to "bubbling" from child event managers.
+        if (_calledEvents.containsKey(event))
+            return event;
 
+        _calledEvents.put(event, null);
+
+        // BUG WORKAROUND interact event getting called twice - Minecraft/Bukkit/Spigot issue
+        if (event instanceof PlayerEvent && !(event instanceof PlayerMoveEvent)) {
+            EventWrapper wrapper = new EventWrapper((PlayerEvent) event);
+            if (_recentBukkitEvents.contains(wrapper)) {
+                return event;
+            }
+            _recentBukkitEvents.add(wrapper);
+        }
+
+        // call event on parent first
+        if (_parent != null) {
             _parent.call(event);
         }
 
@@ -455,4 +490,45 @@ public class GenericsEventManager implements IDisposable {
         }
     }
 
+
+    // BUG WORKAROUND interact event getting called twice - Minecraft/Bukkit/Spigot issue
+    private static class EventWrapper {
+
+        final PlayerEvent event;
+        final Date date;
+
+        EventWrapper(PlayerEvent event) {
+            this.event = event;
+            this.date = new Date();
+        }
+
+        @Override
+        public int hashCode() {
+            return event.getPlayer().getUniqueId().hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+
+            if (obj instanceof EventWrapper) {
+
+                EventWrapper wrapper = (EventWrapper)obj;
+                Date now = new Date();
+                Player player = wrapper.event.getPlayer();
+
+                if (!wrapper.event.getClass().equals(event.getClass()))
+                    return false;
+
+                if (!player.equals(event.getPlayer()))
+                    return false;
+
+                if (DateUtils.getDeltaMilliseconds(wrapper.date, now) > 3) {
+                    return false;
+                }
+
+                return true;
+            }
+            return false;
+        }
+    }
 }
