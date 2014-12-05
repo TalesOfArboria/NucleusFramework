@@ -97,6 +97,7 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
      */
     public TimedHashSet(int size, int defaultLifespan, TimeScale timeScale) {
         PreCon.positiveNumber(defaultLifespan);
+        PreCon.notNull(timeScale);
 
         _defaultTime = defaultLifespan;
         _expireMap = new HashMap<>(size);
@@ -177,6 +178,8 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
 
     @Override
     public boolean contains(Object o) {
+        PreCon.notNull(o);
+
         synchronized (_sync) {
             //noinspection SuspiciousMethodCalls
             Date date = _expireMap.get(o);
@@ -257,6 +260,8 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
 
     @Override
     public <T> T[] toArray(T[] a) {
+        PreCon.notNull(a);
+
         synchronized (_sync) {
             //noinspection SuspiciousToArrayCall
             return _expireMap.entrySet().toArray(a);
@@ -318,6 +323,8 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
 
     @Override
     public boolean retainAll(Collection<?> c) {
+        PreCon.notNull(c);
+
         synchronized (_sync) {
             return _expireMap.keySet().retainAll(c);
         }
@@ -356,6 +363,8 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
 
     @Override
     public boolean containsAll(Collection<?> c) {
+        PreCon.notNull(c);
+
         synchronized (_sync) {
             return _expireMap.keySet().containsAll(c);
         }
