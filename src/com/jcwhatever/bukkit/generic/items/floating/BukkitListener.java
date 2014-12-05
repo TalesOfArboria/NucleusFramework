@@ -26,7 +26,10 @@
 package com.jcwhatever.bukkit.generic.items.floating;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.collections.HashSetMap;
+import com.jcwhatever.bukkit.generic.collections.SetMap;
 import com.jcwhatever.bukkit.generic.events.bukkit.floatingitems.FloatingItemPickUpEvent;
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
@@ -38,17 +41,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 class BukkitListener implements Listener {
 
     private Map<UUID, FloatingItem> _floatingItems = new HashMap<>(100);
-
+    private SetMap<ChunkInfo, FloatingItem> _chunkMap = new HashSetMap<>(100);
 
     void register(FloatingItem item) {
         PreCon.notNull(item);
@@ -62,6 +67,29 @@ class BukkitListener implements Listener {
         _floatingItems.remove(item.getUniqueId());
     }
 
+    void registerPendingSpawn(FloatingItem item) {
+        PreCon.notNull(item);
+        PreCon.notNull(item.getLocation());
+
+        _chunkMap.put(new ChunkInfo(item.getLocation().getChunk()), item);
+    }
+
+    void unregisterPendingSpawn(FloatingItem item) {
+        PreCon.notNull(item);
+
+        _chunkMap.removeValue(item);
+    }
+
+    @EventHandler
+    private void onChunkLoad(ChunkLoadEvent event) {
+
+        Set<FloatingItem> items = _chunkMap.removeAll(new ChunkInfo(event.getChunk()));
+
+        for (FloatingItem item : items) {
+            if (item.getLocation() != null)
+                item.spawn(item.getLocation());
+        }
+    }
 
     @EventHandler
     private void onPlayerPickup(PlayerPickupItemEvent event) {

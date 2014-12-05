@@ -248,9 +248,16 @@ public class FloatingItem implements IDisposable {
 
         _isSpawned = true;
 
+        _currentLocation = location;
+
         // get corrected location
-        final Location spawnLocation = LocationUtils.getCenteredLocation(
-                LocationUtils.getBlockLocation(_currentLocation)).add(0, 0.5, 0);
+        final Location spawnLocation = LocationUtils.getBlockLocation(location)
+                                        .add(0.5, 0.5, 0.5);
+
+        if (!location.getChunk().isLoaded()) {
+            _listener.registerPendingSpawn(this);
+            return true;
+        }
 
         // spawn item entity
         Entity entity = location.getWorld().dropItem(spawnLocation, _item.clone());
@@ -279,8 +286,6 @@ public class FloatingItem implements IDisposable {
                 runnable.run();
         }
 
-        _currentLocation = location;
-
         return true;
     }
 
@@ -305,6 +310,7 @@ public class FloatingItem implements IDisposable {
 
         _isSpawned = false;
 
+        _listener.unregisterPendingSpawn(this);
         EntityUtils.removeEntity(entity);
 
         _trackedEntity = null;
