@@ -85,20 +85,30 @@ public class ScriptApiMsg extends GenericsScriptApi {
         }
 
         /**
+         * Broadcast a message to all players on the server.
+         *
+         * @param message  The message to broadcast.
+         */
+        public void broadcast(String message) {
+            PreCon.notNull(message);
+
+            Messenger.broadcast(null, message);
+        }
+
+        /**
          * Tell a player a message.
          *
          * @param player   The player to tell.
          * @param message  The message to send.
-         * @param params   Optional message formatting parameters.
          */
-        public void tell(Object player, String message, Object... params) {
+        public void tell(Object player, String message) {
             PreCon.notNull(player);
             PreCon.notNull(message);
 
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tell(LineWrapping.DISABLED, _chatPrefix, p, message, params);
+            Messenger.tell(LineWrapping.DISABLED, _chatPrefix, p, message);
         }
 
         /**
@@ -106,16 +116,15 @@ public class ScriptApiMsg extends GenericsScriptApi {
          *
          * @param player   The player to tell.
          * @param message  The message to send.
-         * @param params   Optional message formatting parameters.
          */
-        public void tellAnon(Object player, String message, Object... params) {
+        public void tellAnon(Object player, String message) {
             PreCon.notNull(player);
             PreCon.notNull(message);
 
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tell(LineWrapping.DISABLED, null, p, message, params);
+            Messenger.tell(LineWrapping.DISABLED, (Object)null, p, message);
         }
 
         /**
@@ -124,9 +133,8 @@ public class ScriptApiMsg extends GenericsScriptApi {
          * @param player   The player to tell.
          * @param timeout  The spam timeout, the amount of time to wait before the message can be seen again.
          * @param message  The message to send.
-         * @param params   Optional message formatting parameters.
          */
-        public void tellNoSpam(Object player, int timeout, String message, Object... params) {
+        public void tellNoSpam(Object player, int timeout, String message) {
             PreCon.notNull(player);
             PreCon.greaterThanZero(timeout);
             PreCon.notNull(message);
@@ -134,7 +142,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tellNoSpam(LineWrapping.DISABLED, _chatPrefix, p, timeout, message, params);
+            Messenger.tellNoSpam(LineWrapping.DISABLED, _chatPrefix, p, timeout, message);
         }
 
         /**
@@ -144,9 +152,8 @@ public class ScriptApiMsg extends GenericsScriptApi {
          * @param player        The player to tell.
          * @param timeout  The spam timeout, the amount of time to wait before the message can be seen again.
          * @param message  The message to send.
-         * @param params   Optional message formatting parameters.
          */
-        public void tellNoSpamAnon(Object player, int timeout, String message, Object... params) {
+        public void tellNoSpamAnon(Object player, int timeout, String message) {
             PreCon.notNull(player);
             PreCon.greaterThanZero(timeout);
             PreCon.notNull(message);
@@ -154,19 +161,18 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tellNoSpam(LineWrapping.DISABLED, null, p, timeout, message, params);
+            Messenger.tellNoSpam(LineWrapping.DISABLED, null, p, timeout, message);
         }
 
         /**
          * Send scripting debug message to console.
          *
          * @param message  The message to send.
-         * @param params   Optional message formatting parameters.
          */
-        public void debug(String message, Object... params) {
+        public void debug(String message) {
             PreCon.notNull(message);
 
-            Messenger.warning(_chatPrefix, " [SCRIPT DEBUG] " + message, params);
+            Messenger.warning(_chatPrefix, " [SCRIPT DEBUG] " + message);
         }
     }
 }
