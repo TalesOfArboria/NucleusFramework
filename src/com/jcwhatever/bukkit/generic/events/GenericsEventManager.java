@@ -35,7 +35,9 @@ import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -287,6 +289,20 @@ public class GenericsEventManager implements IDisposable {
      */
     public boolean hasHandlers(Class<?> event) {
         return _handlerMap.containsKey(event);
+    }
+
+    /**
+     * Used to first call a Bukkit event via the Bukkit
+     * plugin manager, then on the generics event manager.
+     *
+     * @param event  The event to call.
+     *
+     * @param <T>  The event type.
+     */
+    public <T extends Event> T callBukkit(T event) {
+        Bukkit.getPluginManager().callEvent(event);
+
+        return call(event);
     }
 
     /**
