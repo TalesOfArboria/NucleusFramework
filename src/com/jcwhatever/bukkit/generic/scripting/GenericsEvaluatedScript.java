@@ -25,10 +25,14 @@
 
 package com.jcwhatever.bukkit.generic.scripting;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApiObject;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -133,7 +137,17 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     }
 
     /**
-     * Invoke a function in the evaluated script.
+     * Determine if the script engine allows script functions
+     * to be invoked via {@code javax.script.Invocable} interface.
+     */
+    @Override
+    public boolean canInvoke() {
+        return _engine instanceof Invocable;
+    }
+
+    /**
+     * Invoke a function in the evaluated script using the
+     * {@code javax.script.Invocable} interface.
      *
      * @param functionName  The name of the function.
      * @param parameters    Function parameters.
@@ -142,6 +156,9 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     @Nullable
     public Object invokeFunction(String functionName, Object... parameters)
             throws NoSuchMethodException {
+
+        if (!(_engine instanceof Invocable))
+            return null;
 
         Invocable inv = (Invocable)_engine;
 
@@ -162,26 +179,12 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
     @Override
     @Nullable
     public Object evaluate(IScript script) {
-        return evaluate(script, getContext());
-    }
-
-    /**
-     * Evaluate another script into the scripts engine
-     * using a custom context.
-     *
-     * @param script   The script to evaluated.
-     * @param context  The context to use.
-     */
-    @Override
-    @Nullable
-    public Object evaluate(IScript script, ScriptContext context) {
-
         if (script.getFile() != null) {
             _engine.put(ScriptEngine.FILENAME, script.getFile().getName());
         }
 
         try {
-            return _engine.eval(script.getScript(), context);
+            return _engine.eval(script.getScript(), getContext());
         } catch (ScriptException e) {
             e.printStackTrace();
             return null;
@@ -213,7 +216,23 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
      * Called to get a context for the script.
      */
     protected ScriptContext createContext() {
-        return new SimpleScriptContext();
+
+        Class<?> contextClazz = getScriptEngine().getContext().getClass();
+        try {
+
+            // some engines require their own script context implementation,
+            // try instantiating a new script context using the type from the engine.
+            Constructor<?> constructor = contextClazz.getDeclaredConstructor();
+            return (ScriptContext)constructor.newInstance();
+
+        } catch (NoSuchMethodException | InvocationTargetException |
+                InstantiationException | IllegalAccessException e) {
+            Messenger.debug(GenericsLib.getLib(), "Failed to create new script context using current context type." +
+                    "Using SimpleScriptContext instead.");
+
+            // if failed, use a SimpleScriptContext
+            return new SimpleScriptContext();
+        }
     }
 
 }

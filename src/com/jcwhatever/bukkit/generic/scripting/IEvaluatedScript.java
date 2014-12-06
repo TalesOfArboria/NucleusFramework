@@ -64,12 +64,21 @@ public interface IEvaluatedScript extends IDisposable {
     void addScriptApi(IScriptApi scriptApi, String variableName);
 
     /**
-     * Invoke a function in the script.
+     * Determine if the script engine allows script functions
+     * to be invoked.
+     */
+    boolean canInvoke();
+
+    /**
+     * Invoke a function in the script using the.
+     *
+     * <p>Returns null if the method {@code canInvoke}
+     * returns false.</p>
      *
      * @param functionName  The name of the function.
      * @param parameters    Function parameters.
      *
-     * @return  Object returned by the function.
+     * @return  Object returned by the function
      */
     @Nullable
     Object invokeFunction(String functionName, Object... parameters) throws NoSuchMethodException;
@@ -83,14 +92,4 @@ public interface IEvaluatedScript extends IDisposable {
      */
     @Nullable
     Object evaluate(IScript script);
-
-    /**
-     * Evaluate a script into the evaluated script
-     * using a custom context.
-     *
-     * @param script   The script to evaluated.
-     * @param context  The context to use.
-     */
-    @Nullable
-    Object evaluate(IScript script, ScriptContext context);
 }

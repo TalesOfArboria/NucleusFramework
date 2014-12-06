@@ -32,6 +32,7 @@ import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
 import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
+import com.jcwhatever.bukkit.generic.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
@@ -79,6 +80,8 @@ public class GenericsLib extends GenericsPlugin {
     private ScriptEngineManager _scriptEngineManager;
     private KitManager _kitManager;
     private CommandHandler _commandHandler;
+
+    private ScriptEngineLoader _scriptEngineLoader;
 
     /**
      * Get the {@code GenericsLib} plugin instance.
@@ -257,7 +260,7 @@ public class GenericsLib extends GenericsPlugin {
      */
     @Override
     public String getConsolePrefix() {
-        return "[GenericsLib]";
+        return "[GenericsLib] ";
     }
 
     @Override
@@ -267,7 +270,11 @@ public class GenericsLib extends GenericsPlugin {
         _scheduler = new BukkitTaskScheduler();
 
         _eventManager = new InternalEventManager();
+
         _scriptEngineManager = new GenericsScriptEngineManager();
+        _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
+        _scriptEngineLoader.loadModules();
+
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
         _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsNamedTitleFactory());
 
