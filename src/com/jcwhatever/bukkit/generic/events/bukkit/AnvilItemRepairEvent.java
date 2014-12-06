@@ -25,7 +25,6 @@
 
 package com.jcwhatever.bukkit.generic.events.bukkit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -42,7 +41,7 @@ public class AnvilItemRepairEvent extends Event {
 	
 	private boolean _isCancelled;
 	
-	AnvilItemRepairEvent(Player player, AnvilInventory anvilInventory, ItemStack item) {
+	public AnvilItemRepairEvent(Player player, AnvilInventory anvilInventory, ItemStack item) {
 		_player = player;
 		_anvilInventory = anvilInventory;
 		_item = item;
@@ -75,19 +74,5 @@ public class AnvilItemRepairEvent extends Event {
 	 
 	public static HandlerList getHandlerList() {
 	    return _handlers;
-	}
-	
-	public static AnvilItemRepairEvent callEvent(Player player, AnvilInventory anvilInventory, ItemStack item) {
-		AnvilItemRepairEvent event = new AnvilItemRepairEvent(player, anvilInventory, item);
-		
-		if (hasListeners()) {
-			Bukkit.getPluginManager().callEvent(event);
-		}
-		
-		return event;
-	}
-
-	public static boolean hasListeners() {
-		return _handlers.getRegisteredListeners().length > 0;
 	}
 }

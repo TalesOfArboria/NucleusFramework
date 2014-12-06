@@ -67,8 +67,12 @@ import javax.annotation.Nullable;
  * By default, the global Generics event manager is the parent manager, however
  * a different parent manager or none at all can be set.</p>
  *
- * <p>The global Generics event manager also receives certain Bukkit events so event handlers
- * can be used that subscribe to those Bukkit events.</p>
+ * <p>The global Generics event manager also receives certain Bukkit events so event generics
+ * handlers can be used for those Bukkit events.</p>
+ *
+ * <p>You are encouraged to use the event managers {@link #callBukkit} method to call your custom
+ * Bukkit events. This will first call the event using Bukkit's event system, then again on the generics
+ * event manager to allow the generics event subscribers to handle the event.</p>
  *
  * <p>Event managers cannot receive the same event more than once. This is because of the combination of event
  * forwarding to specific manager contexts and event bubbling. It is possible to forward an event from an event

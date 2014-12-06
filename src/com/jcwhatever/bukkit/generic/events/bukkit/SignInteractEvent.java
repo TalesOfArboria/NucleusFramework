@@ -25,7 +25,6 @@
 
 package com.jcwhatever.bukkit.generic.events.bukkit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -44,7 +43,7 @@ public class SignInteractEvent extends Event {
 	private PlayerInteractEvent _parentEvent;
 	private Sign _sign;
 	
-	SignInteractEvent(PlayerInteractEvent event, Sign sign) {
+	public SignInteractEvent(PlayerInteractEvent event, Sign sign) {
 		_parentEvent = event;
 		_sign = sign;
 	}
@@ -116,19 +115,5 @@ public class SignInteractEvent extends Event {
 	 
 	public static HandlerList getHandlerList() {
 	    return _handlers;
-	}
-	
-	public static SignInteractEvent callEvent(PlayerInteractEvent parentEvent, Sign sign) {
-		SignInteractEvent event = new SignInteractEvent(parentEvent, sign);
-		
-		if (hasListeners()) {
-			Bukkit.getPluginManager().callEvent(event);
-		}
-		
-		return event;
-	}
-
-	public static boolean hasListeners() {
-		return _handlers.getRegisteredListeners().length > 0;
 	}
 }

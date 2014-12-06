@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconGiveEvent;
 import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconWithdrawEvent;
 
@@ -258,12 +259,17 @@ public class EconomyUtils {
         EconomyResponse r;
 
         if (amount > 0) {
-            EconGiveEvent event = EconGiveEvent.callEvent(playerId, amount);
+            EconGiveEvent event = new EconGiveEvent(playerId, amount);
+
+            GenericsLib.getEventManager().callBukkit(event);
 
             //noinspection ConstantConditions
             r = econ.depositPlayer(playerName, event.getAmount());
         } else {
-            EconWithdrawEvent event = EconWithdrawEvent.callEvent(playerId, amount);
+
+            EconWithdrawEvent event = new EconWithdrawEvent(playerId, amount);
+
+            GenericsLib.getEventManager().callBukkit(event);
 
             //noinspection ConstantConditions
             r = econ.withdrawPlayer(playerName, Math.abs(event.getAmount()));

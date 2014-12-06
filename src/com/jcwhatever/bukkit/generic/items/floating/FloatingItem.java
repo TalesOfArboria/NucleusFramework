@@ -246,7 +246,7 @@ public class FloatingItem implements IDisposable {
 
         FloatingItemSpawnEvent event = new FloatingItemSpawnEvent(this);
 
-        Bukkit.getPluginManager().callEvent(event);
+        GenericsLib.getEventManager().callBukkit(event);
 
         if (event.isCancelled())
             return false;
@@ -309,7 +309,7 @@ public class FloatingItem implements IDisposable {
 
         FloatingItemDespawnEvent event = new FloatingItemDespawnEvent(this);
 
-        Bukkit.getPluginManager().callEvent(event);
+        GenericsLib.getEventManager().callBukkit(event);
 
         if (event.isCancelled())
             return false;

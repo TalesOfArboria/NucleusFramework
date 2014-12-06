@@ -26,13 +26,13 @@
 package com.jcwhatever.bukkit.generic.events.bukkit.economy;
 
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
-import org.bukkit.Bukkit;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 public class EconWithdrawEvent extends Event {
 	
@@ -42,7 +42,7 @@ public class EconWithdrawEvent extends Event {
 	private Player _player;
 	private double _amount;
 	
-	EconWithdrawEvent(UUID playerId, double amount) {
+	public EconWithdrawEvent(UUID playerId, double amount) {
 		_playerId = playerId;
 		_amount = amount;
 	}
@@ -74,19 +74,5 @@ public class EconWithdrawEvent extends Event {
 	 
 	public static HandlerList getHandlerList() {
 	    return _handlers;
-	}
-	
-	public static EconWithdrawEvent callEvent(UUID playerId, double amount) {
-		EconWithdrawEvent event = new EconWithdrawEvent(playerId, amount);
-		
-		if (hasListeners()) {
-			Bukkit.getPluginManager().callEvent(event);
-		}
-		
-		return event;
-	}
-
-	public static boolean hasListeners() {
-		return _handlers.getRegisteredListeners().length > 0;
 	}
 }

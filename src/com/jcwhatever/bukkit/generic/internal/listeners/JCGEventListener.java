@@ -160,9 +160,9 @@ public final class JCGEventListener implements Listener {
 				return;
 
 			Sign sign = (Sign)signState;
-			SignInteractEvent.callEvent(event, sign);
+			SignInteractEvent signInteractEvent = new SignInteractEvent(event, sign);
+			GenericsLib.getEventManager().callBukkit(signInteractEvent);
 		}
-
 	}
 
 	@EventHandler(priority=EventPriority.NORMAL)
@@ -201,8 +201,10 @@ public final class JCGEventListener implements Listener {
 					
 					if (newName != null && !newName.equals(originalName)) {
 						
-						AnvilItemRenameEvent renameEvent = AnvilItemRenameEvent.callEvent(
+						AnvilItemRenameEvent renameEvent = new AnvilItemRenameEvent(
                                 p, anvilInventory, resultItem, newName, originalName);
+
+						GenericsLib.getEventManager().callBukkit(renameEvent);
 						
 						if (renameEvent.isCancelled()) {
 							event.setCancelled(true);
@@ -216,7 +218,10 @@ public final class JCGEventListener implements Listener {
 					short resultDurability = resultItem.getDurability();
 					
 					if (resultDurability > startDurability) {
-						AnvilItemRepairEvent repairEvent = AnvilItemRepairEvent.callEvent(p, anvilInventory, resultItem);
+						AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
+
+						GenericsLib.getEventManager().callBukkit(repairEvent);
+
 						if (repairEvent.isCancelled()) {
 							event.setCancelled(true);
 						}

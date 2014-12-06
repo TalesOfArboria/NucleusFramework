@@ -25,7 +25,6 @@
 
 package com.jcwhatever.bukkit.generic.events.bukkit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -47,8 +46,8 @@ public class AnvilItemRenameEvent extends Event {
 	private boolean _isCancelled;
 	
 	
-	AnvilItemRenameEvent(
-            Player player, AnvilInventory anvilInventory, ItemStack item, String newName, @Nullable String oldName) {
+	public AnvilItemRenameEvent(Player player, AnvilInventory anvilInventory,
+								ItemStack item, String newName, @Nullable String oldName) {
 
 		_player = player;
 		_anvilInventory = anvilInventory;
@@ -92,20 +91,5 @@ public class AnvilItemRenameEvent extends Event {
 	 
 	public static HandlerList getHandlerList() {
 	    return _handlers;
-	}
-	
-	public static AnvilItemRenameEvent callEvent(
-            Player player, AnvilInventory anvilInventory, ItemStack item, String newName, @Nullable String oldName) {
-		AnvilItemRenameEvent event = new AnvilItemRenameEvent(player, anvilInventory, item, newName, oldName);
-		
-		if (hasListeners()) {
-			Bukkit.getPluginManager().callEvent(event);
-		}
-		
-		return event;
-	}
-
-	public static boolean hasListeners() {
-		return _handlers.getRegisteredListeners().length > 0;
 	}
 }

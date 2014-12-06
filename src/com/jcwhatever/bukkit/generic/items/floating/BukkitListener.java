@@ -33,7 +33,6 @@ import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -114,7 +113,7 @@ class BukkitListener implements Listener {
         FloatingItemPickUpEvent fiEvent = new FloatingItemPickUpEvent(item, event.getPlayer());
         fiEvent.setCancelled(event.isCancelled());
 
-        Bukkit.getPluginManager().callEvent(fiEvent);
+        GenericsLib.getEventManager().callBukkit(fiEvent);
 
         event.setCancelled(fiEvent.isCancelled());
 

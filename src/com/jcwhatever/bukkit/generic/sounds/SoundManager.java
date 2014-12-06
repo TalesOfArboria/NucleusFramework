@@ -36,7 +36,6 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -195,7 +194,7 @@ public class SoundManager {
 
         // run event
         PlayResourceSoundEvent event = new PlayResourceSoundEvent(p, sound, location, volume);
-        Bukkit.getPluginManager().callEvent(event);
+        GenericsLib.getEventManager().callBukkit(event);
 
         // see if the event was cancelled
         if (event.isCancelled())

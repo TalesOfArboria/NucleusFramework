@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.inventory;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.kits.GiveKitEvent;
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
@@ -33,7 +34,6 @@ import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -421,7 +421,7 @@ public class Kit implements INamedInsensitive {
                 if (p == null)
                     return;
 
-                Bukkit.getServer().getPluginManager().callEvent(_event);
+                GenericsLib.getEventManager().callBukkit(_event);
 
                 PlayerInventory inv = p.getInventory();
 

@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.events.bukkit.economy;
 
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
-import org.bukkit.Bukkit;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -41,7 +41,7 @@ public class EconGiveEvent extends Event {
 	private Player _player;
 	private double _amount;
 	
-	EconGiveEvent(UUID playerId, double amount) {
+	public EconGiveEvent(UUID playerId, double amount) {
 		_playerId = playerId;
 		_amount = amount;
 	}
@@ -62,6 +62,9 @@ public class EconGiveEvent extends Event {
 		if (_player == null) {
 			_player = PlayerUtils.getPlayer(_playerId);
 		}
+
+		assert _player != null;
+
 		return _player;
 	}
 	
@@ -72,19 +75,5 @@ public class EconGiveEvent extends Event {
 	 
 	public static HandlerList getHandlerList() {
 	    return _handlers;
-	}
-	
-	public static EconGiveEvent callEvent(UUID playerId, double amount) {
-		EconGiveEvent event = new EconGiveEvent(playerId, amount);
-		
-		if (hasListeners()) {
-			Bukkit.getPluginManager().callEvent(event);
-		}
-		
-		return event;
-	}
-
-	public static boolean hasListeners() {
-		return _handlers.getRegisteredListeners().length > 0;
 	}
 }
