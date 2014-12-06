@@ -332,7 +332,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      */
     @Override
     @Nullable
-    public UUID getOwnerId() {
+    public final UUID getOwnerId() {
         return _ownerId;
     }
 
@@ -340,7 +340,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      * Determine if the region has an owner.
      */
     @Override
-    public boolean hasOwner() {
+    public final boolean hasOwner() {
         return _ownerId != null;
     }
 
@@ -350,14 +350,19 @@ public abstract class Region extends RegionSelection implements IRegion {
      * @param ownerId  The id of the new owner.
      */
     @Override
-    public boolean setOwner(@Nullable UUID ownerId) {
+    public final boolean setOwner(@Nullable UUID ownerId) {
 
         UUID oldId = _ownerId;
 
-        RegionOwnerChangedEvent event = RegionOwnerChangedEvent.callEvent(new ReadOnlyRegion(this), oldId, ownerId);
+        RegionOwnerChangedEvent event = new RegionOwnerChangedEvent(new ReadOnlyRegion(this), oldId, ownerId);
+        GenericsLib.getEventManager().callBukkit(event);
 
         if (event.isCancelled())
             return false;
+
+        if (!onOwnerChanged(oldId, ownerId)) {
+            return false;
+        }
 
         _ownerId = ownerId;
 
@@ -366,8 +371,6 @@ public abstract class Region extends RegionSelection implements IRegion {
             dataNode.set("owner-id", ownerId);
             dataNode.saveAsync(null);
         }
-
-        onOwnerChanged(oldId, ownerId);
 
         return true;
     }
@@ -739,7 +742,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     /**
      * Called when the coordinates for the region are changed
      *
-     * <p>Intended for implementation use.</p>
+     * <p>Intended for override if needed.</p>
      *
      * @param p1  The first point location.
      * @param p2  The second point location.
@@ -756,7 +759,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      * but only if the region is a player watcher and 
      * canDoPlayerEnter() returns true.
      *
-     * <p>Intended for implementation use.</p>
+     * <p>Intended for override if needed.</p>
      *
      * @param p  the player entering the region.
      */
@@ -770,7 +773,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      * but only if the region is a player watcher and 
      * canDoPlayerLeave() returns true.
      *
-     * <p>Intended for implementation use.</p>
+     * <p>Intended for override if needed.</p>
      *
      * @param p  the player leaving the region.
      */
@@ -808,18 +811,25 @@ public abstract class Region extends RegionSelection implements IRegion {
     /**
      * Called when the owner of the region is changed.
      *
-     * <p>Intended for implementation use.</p>
+     * <p>Note that other plugins can easily change the region
+     * owner value.</p>
+     *
+     * <p>Intended for override if needed.</p>
      *
      * @param oldOwnerId  The id of the previous owner of the region.
      * @param newOwnerId  The id of the new owner of the region.
+     *
+     * @return True to allow the owner change.
      */
-    protected void onOwnerChanged(@SuppressWarnings("unused") @Nullable UUID oldOwnerId,
-                                  @SuppressWarnings("unused") @Nullable UUID newOwnerId) {
-        // do nothing
+    protected boolean onOwnerChanged(@SuppressWarnings("unused") @Nullable UUID oldOwnerId,
+                                     @SuppressWarnings("unused") @Nullable UUID newOwnerId) {
+        return true;
     }
 
     /**
      * Called when the region is disposed.
+     *
+     * <p>Intended for override if needed.</p>
      */
     protected void onDispose() {
         // do nothings

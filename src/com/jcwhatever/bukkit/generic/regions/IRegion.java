@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
+import com.jcwhatever.bukkit.generic.mixins.IPlayerOwnable;
 import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
 
 import org.bukkit.Chunk;
@@ -46,7 +47,8 @@ import javax.annotation.Nullable;
  * <p>For nearly all cases, the abstract class {@link Region} should be extended
  * or use one of the other abstract implementations that extend {@link Region}.</p>
  */
-public interface IRegion extends IRegionSelection, INamedInsensitive, IRegionComparable, IDisposable {
+public interface IRegion extends IRegionSelection, INamedInsensitive,
+        IPlayerOwnable, IRegionComparable, IDisposable {
 
     /**
      * Get the owning plugin.
@@ -68,12 +70,14 @@ public interface IRegion extends IRegionSelection, INamedInsensitive, IRegionCom
     /**
      * Get the id of the region player owner.
      */
+    @Override
     @Nullable
     UUID getOwnerId();
 
     /**
      * Determine if the region has a player owner.
      */
+    @Override
     boolean hasOwner();
 
     /**
@@ -83,6 +87,7 @@ public interface IRegion extends IRegionSelection, INamedInsensitive, IRegionCom
      *
      * @return True if the owner was set.
      */
+    @Override
     boolean setOwner(@Nullable UUID ownerId);
 
     /**
