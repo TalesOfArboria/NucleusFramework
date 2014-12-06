@@ -32,10 +32,12 @@ import com.jcwhatever.bukkit.generic.titles.INamedTitle;
 import com.jcwhatever.bukkit.generic.titles.ITitle;
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nullable;
+
 
 @ScriptApiInfo(
         variableName = "titles",
