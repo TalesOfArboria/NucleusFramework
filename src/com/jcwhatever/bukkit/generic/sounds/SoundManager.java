@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.LifespanEndAction;
 import com.jcwhatever.bukkit.generic.collections.TimedArrayList;
 import com.jcwhatever.bukkit.generic.events.bukkit.sounds.PlayResourceSoundEvent;
+import com.jcwhatever.bukkit.generic.events.bukkit.sounds.ResourceSoundEndEvent;
 import com.jcwhatever.bukkit.generic.sounds.Playing.Future;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
@@ -181,7 +182,7 @@ public class SoundManager {
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    public static Future playSound(Plugin plugin, final Player p, ResourceSound sound,
+    public static Future playSound(Plugin plugin, Player p, ResourceSound sound,
                                    @Nullable Location location, float volume,
                                    @Nullable Collection<Player> transcriptViewers) {
 
@@ -216,6 +217,11 @@ public class SoundManager {
                 @Override
                 public void onEnd(Playing item) {
                     item.setFinished();
+
+                    ResourceSoundEndEvent event = new ResourceSoundEndEvent(item.getPlayer(),
+                            item.getResourceSound(), item.getLocation(), item.getVolume());
+
+                    GenericsLib.getEventManager().callBukkit(event);
                 }
             });
 
