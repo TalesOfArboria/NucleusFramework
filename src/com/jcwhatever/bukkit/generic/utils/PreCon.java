@@ -44,7 +44,7 @@ public class PreCon {
      *
      * @param condition  The condition to test
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalStateException
      */
     public static void isValid(boolean condition) {
         isValid(condition, null);
@@ -56,15 +56,15 @@ public class PreCon {
      * @param condition  The condition to test
      * @param message    The exception message to use if the condition is false
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalStateException
      */
     public static void isValid(boolean condition, @Nullable String message) {
         if (!condition) {
             if (message != null) {
-                throw new IllegalArgumentException(message);
+                throw new IllegalStateException(message);
             }
             else {
-                throw new IllegalArgumentException();
+                throw new IllegalStateException();
             }
         }
     }
