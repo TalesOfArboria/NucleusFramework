@@ -61,6 +61,10 @@ import java.util.UUID;
  * <p>Tracks instances of {@link Region} and provides methods to determine which regions
  * a player is in as well as track players to determine when they enter and leave
  * player watcher regions.</p>
+ *
+ * <p>In all cases, methods that return region instances are returning
+ * {@link ReadOnlyRegion} instances. This is to prevent inter-plugin conflicts
+ * caused by changes to a region that the region owning plugin is unaware of.</p>
  */
 public class GlobalRegionManager {
 
