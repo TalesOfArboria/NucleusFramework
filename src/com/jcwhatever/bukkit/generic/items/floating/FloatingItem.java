@@ -51,6 +51,11 @@ import javax.annotation.Nullable;
 
 /**
  * Represents a controlled item stack entity.
+ *
+ * <p>Note that a data node to store the entity info to disk is
+ * optional, but recommended even if the the use is only transient.
+ * Without the data node, expect left over items that can be picked
+ * up after server restarts or crashes.</p>
  */
 public class FloatingItem implements IDisposable {
 
@@ -236,6 +241,9 @@ public class FloatingItem implements IDisposable {
     public boolean spawn(Location location) {
         PreCon.notNull(location);
 
+        if (_isDisposed)
+            throw new RuntimeException("Cannot spawn a disposed item.");
+
         FloatingItemSpawnEvent event = new FloatingItemSpawnEvent(this);
 
         Bukkit.getPluginManager().callEvent(event);
@@ -252,7 +260,7 @@ public class FloatingItem implements IDisposable {
 
         // get corrected location
         final Location spawnLocation = LocationUtils.getBlockLocation(location)
-                                        .add(0.5, 0.5, 0.5);
+                .add(0.5, 0.5, 0.5);
 
         if (!location.getChunk().isLoaded()) {
             _listener.registerPendingSpawn(this);
@@ -465,25 +473,25 @@ public class FloatingItem implements IDisposable {
         _respawnTimeSeconds = _dataNode.getInteger("respawn-time-seconds", _respawnTimeSeconds);
         _isSpawned = _dataNode.getBoolean("is-spawned", _isSpawned);
         _currentLocation = _dataNode.getLocation("location", _currentLocation);
+        _entityId = _dataNode.getUUID("entity-id", _entityId);
 
-        if (_currentLocation != null) {
-            _entityId = _dataNode.getUUID("entity-id");
-            if (_entityId != null) {
+        if (_currentLocation != null && _entityId != null) {
 
-                Entity entity = EntityUtils.getEntityByUUID(_currentLocation.getChunk(), _entityId);
+            // Find the entity from the chunk of the stored location
+            Entity entity = EntityUtils.getEntityByUUID(_currentLocation.getChunk(), _entityId);
 
-                if (entity != null) {
-                    _trackedEntity = EntityUtils.trackEntity(entity);
-                }
-
-                if (entity != null && !_isSpawned) {
-                    despawn();
-                } else if (entity == null && _isSpawned) {
-                    spawn(_currentLocation);
-                } else if (entity != null) {
-                    _listener.register(this);
-                }
+            if (entity != null) {
+                _trackedEntity = EntityUtils.trackEntity(entity);
             }
+
+            if (entity != null && !_isSpawned) {
+                despawn();
+            } else if (entity == null && _isSpawned) {
+                spawn(_currentLocation);
+            } else if (entity != null) {
+                _listener.register(this);
+            }
+
         }
 
         onLoadSettings(_dataNode);
