@@ -62,6 +62,8 @@ import javax.script.ScriptEngineManager;
  */
 public class GenericsLib extends GenericsPlugin {
 
+    private static final String ERROR_NOT_ENABLED = "GenericsLib is not enabled yet.";
+
     private static GenericsLib _instance;
     private static Map<String, GenericsPlugin> _pluginNameMap = new HashMap<>(25);
     private static Map<Class<? extends GenericsPlugin>, GenericsPlugin> _pluginClassMap = new HashMap<>(25);
@@ -130,6 +132,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get the global event manager.
      */
     public static GenericsEventManager getEventManager() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._eventManager;
     }
 
@@ -137,6 +141,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get the default task scheduler.
      */
     public static ITaskScheduler getScheduler() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._scheduler;
     }
 
@@ -144,6 +150,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get the global {@code RegionManager}.
      */
     public static GlobalRegionManager getRegionManager() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._regionManager;
     }
 
@@ -151,6 +159,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get the default Jail Manager.
      */
     public static JailManager getJailManager() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._jailManager;
     }
 
@@ -158,6 +168,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get the default entity equipper manager.
      */
     public static EntityEquipperManager getEquipperManager() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._equipperManager;
     }
 
@@ -170,6 +182,8 @@ public class GenericsLib extends GenericsPlugin {
      * instances that are used globally.</p>
      */
     public static ScriptEngineManager getScriptEngineManager() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._scriptEngineManager;
     }
 
@@ -177,6 +191,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get the default script manager.
      */
     public static InternalScriptManager getScriptManager() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._scriptManager;
     }
 
@@ -187,6 +203,8 @@ public class GenericsLib extends GenericsPlugin {
      * @param entityType  The entity type
      */
     public static IEntityEquipper getEquipper(EntityType entityType) {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._equipperManager.getEquipper(entityType);
     }
 
@@ -194,6 +212,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get the default kit manager.
      */
     public static KitManager getKitManager() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._kitManager;
     }
 
@@ -201,6 +221,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get the default title manager.
      */
     public static TitleManager<INamedTitle> getTitleManager() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
         return _instance._titleManager;
     }
 
@@ -208,6 +230,8 @@ public class GenericsLib extends GenericsPlugin {
      * Get GenericsLib's internal command handler.
      */
     public CommandHandler getCommandHandler() {
+        PreCon.isValid(isEnabled(), ERROR_NOT_ENABLED);
+
         return _commandHandler;
     }
 
