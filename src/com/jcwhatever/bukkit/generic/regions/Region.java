@@ -615,16 +615,32 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /**
-     * Get a meta object from the region.
+     * Get a meta data value from the region.
      *
      * @param key  The meta key.
      *
-     * @param <T>  The object type.
+     * @param <T>  The expected value type.
      */
     @Override
     public <T> T getMeta(Object key) {
-        @SuppressWarnings("unchecked") T item = (T)_meta.get(key);
+        PreCon.notNull(key);
+
+        @SuppressWarnings("unchecked")
+        T item = (T)_meta.get(key);
+
         return item;
+    }
+
+    /**
+     * Get a meta object from the region.
+     *
+     * @param key  The meta key.
+     */
+    @Override
+    public Object getMetaObject(Object key) {
+        PreCon.notNull(key);
+
+        return _meta.get(key);
     }
 
     /**

@@ -465,6 +465,17 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     }
 
     /**
+     * Get a meta value from the regions meta data store.
+     *
+     * @param key  The meta key.
+     */
+    @Nullable
+    @Override
+    public Object getMetaObject(Object key) {
+        return _region.getMetaObject(key);
+    }
+
+    /**
      * Set a meta value from the regions meta data store.
      *
      * @param key    The meta value key.

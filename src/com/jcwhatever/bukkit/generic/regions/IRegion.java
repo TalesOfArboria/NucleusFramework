@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+import com.jcwhatever.bukkit.generic.mixins.IMeta;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.mixins.IPlayerOwnable;
 import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
@@ -48,7 +49,7 @@ import javax.annotation.Nullable;
  * or use one of the other abstract implementations that extend {@link Region}.</p>
  */
 public interface IRegion extends IRegionSelection, INamedInsensitive,
-        IPlayerOwnable, IRegionComparable, IDisposable {
+        IPlayerOwnable, IRegionComparable, IMeta, IDisposable {
 
     /**
      * Get the owning plugin.
@@ -122,22 +123,6 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
      * @param itemTypes  The entity types to remove.
      */
     void removeEntities (Class<?>... itemTypes);
-
-    /**
-     * Get a meta value from the regions meta data store.
-     *
-     * @param key  The meta value key.
-     * @param <T>  The meta value type.
-     */
-    <T> T getMeta (Object key);
-
-    /**
-     * Set a meta value from the regions meta data store.
-     *
-     * @param key    The meta value key.
-     * @param value  The meta value type.
-     */
-    void setMeta (Object key, @Nullable Object value);
 
     /**
      * Determine if the region watches players to see
