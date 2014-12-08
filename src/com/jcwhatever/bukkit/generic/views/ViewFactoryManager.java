@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * A basic view factory manager for storing and retrieving view factories.
  */
-public class ViewFactoryManager {
+public class ViewFactoryManager implements IViewFactoryStorage {
 
     private final Plugin _plugin;
     private final Map<String, IViewFactory> _registeredTypes = new HashMap<>(10);
@@ -69,7 +69,7 @@ public class ViewFactoryManager {
      *
      * @param factory  The view type factory.
      */
-    public void registerFactory(IViewFactory factory) {
+    public void registerViewFactory(IViewFactory factory) {
         _registeredTypes.put(factory.getSearchName(), factory);
     }
 
@@ -80,8 +80,9 @@ public class ViewFactoryManager {
      *
      * @return  Null if not found.
      */
+    @Override
     @Nullable
-    public IViewFactory getFactory(String name) {
+    public IViewFactory getViewFactory(String name) {
         PreCon.notNullOrEmpty(name);
 
         return _registeredTypes.get(name.toLowerCase());
@@ -95,7 +96,7 @@ public class ViewFactoryManager {
      * @return  The removed view instance or null.
      */
     @Nullable
-    public boolean removeFactory(String name) {
+    public boolean removeViewFactory(String name) {
         PreCon.notNullOrEmpty(name);
 
         return _registeredTypes.remove(name.toLowerCase()) != null;
@@ -104,7 +105,7 @@ public class ViewFactoryManager {
     /**
      * Get all registered view factories.
      */
-    public List<IViewFactory> getFactories() {
+    public List<IViewFactory> getViewFactories() {
         return new ArrayList<>(_registeredTypes.values());
     }
 
@@ -119,7 +120,7 @@ public class ViewFactoryManager {
      */
     public boolean showView(Player p, String viewName, @Nullable Block sourceBlock) {
 
-        IViewFactory factory = getFactory(viewName);
+        IViewFactory factory = getViewFactory(viewName);
         if (factory == null) {
             Messenger.debug(_plugin, "Failed to find view factory named '{0}'.", viewName);
             return false;

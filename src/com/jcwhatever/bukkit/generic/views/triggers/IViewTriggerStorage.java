@@ -22,17 +22,34 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.views;
-
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+package com.jcwhatever.bukkit.generic.views.triggers;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Represents an object that stores view triggers
+ * and trigger factories.
  */
-public interface IViewSessionFactory {
+public interface IViewTriggerStorage {
 
-    IViewSession create(Player p, @Nullable Block sourceBlock);
+    /**
+     * Get a trigger factory by name.
+     *
+     * @param name  The name of the factory.
+     *
+     * @return  Null if not found.
+     */
+    @Nullable
+    IViewTriggerFactory getTriggerFactory(String name);
+
+    /**
+     * Get a trigger by name.
+     *
+     * @param name  The name of the trigger.
+     *
+     * @return  Null if not found.
+     */
+    @Nullable
+    IViewTrigger getTrigger(String name);
+
 }
