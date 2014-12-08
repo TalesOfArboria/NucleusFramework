@@ -54,28 +54,13 @@ public class MenuItem implements IMeta, ICancellable {
     private ItemStack _menuItemStack;
     private List<Runnable> _onClick;
     private boolean _isCancelled;
-    private MenuView _parentView;
 
     public MenuItem(int slot) {
         _slot = slot;
     }
 
-    void setMenuView(MenuView menuView) {
-        if (_parentView != null && _parentView != menuView)
-            throw new RuntimeException("MenuItems can only be used in one MenuView instance.");
-
-        _parentView = menuView;
-    }
-
     public int getSlot() {
         return _slot;
-    }
-
-    public MenuView getMenuView() {
-        if (_parentView == null)
-            throw new RuntimeException("MenuView not set yet.");
-
-        return _parentView;
     }
 
     @Nullable
@@ -118,11 +103,10 @@ public class MenuItem implements IMeta, ICancellable {
         return this;
     }
 
-    public boolean set() {
-        if (_parentView == null)
-            return false;
+    public boolean set(MenuView menuView) {
+        PreCon.notNull(menuView);
 
-        InventoryView view = _parentView.getInventoryView();
+        InventoryView view = menuView.getInventoryView();
         if (view == null)
             return false;
 
@@ -131,11 +115,10 @@ public class MenuItem implements IMeta, ICancellable {
         return true;
     }
 
-    public boolean isVisible() {
-        if (_parentView == null)
-            return false;
+    public boolean isVisible(MenuView menuView) {
+        PreCon.notNull(menuView);
 
-        InventoryView view = _parentView.getInventoryView();
+        InventoryView view = menuView.getInventoryView();
         if (view == null)
             return false;
 
@@ -144,16 +127,15 @@ public class MenuItem implements IMeta, ICancellable {
         return ItemStackComparer.getDefault().isSame(itemStack, _menuItemStack);
     }
 
-    public void setVisible(boolean isVisible) {
-        if (_parentView == null)
-            return;
+    public void setVisible(MenuView menuView, boolean isVisible) {
+        PreCon.notNull(menuView);
 
-        InventoryView view = _parentView.getInventoryView();
-        if (view == null || isVisible() == isVisible)
+        InventoryView view = menuView.getInventoryView();
+        if (view == null || isVisible(menuView) == isVisible)
             return;
 
         if (isVisible) {
-            set();
+            set(menuView);
         }
         else {
             view.setItem(_slot, null);
@@ -185,10 +167,6 @@ public class MenuItem implements IMeta, ICancellable {
             ItemStackUtils.setLore(_menuItemStack, _description);
 
         return _menuItemStack;
-    }
-
-    private boolean isViewAvailable() {
-        return _parentView != null && _parentView.getInventoryView() != null;
     }
 
     @Nullable

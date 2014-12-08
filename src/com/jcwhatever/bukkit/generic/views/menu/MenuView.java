@@ -57,7 +57,6 @@ public abstract class MenuView extends ChestView {
 
         List<MenuItem> menuItems = createMenuItems();
         for (MenuItem menuItem : menuItems) {
-            menuItem.setMenuView(this);
             _menuItems.put(menuItem.getSlot(), menuItem);
         }
     }
@@ -69,8 +68,6 @@ public abstract class MenuView extends ChestView {
 
     public void setMenuItem(MenuItem menuItem) {
         PreCon.notNull(menuItem);
-
-        menuItem.setMenuView(this);
 
         _menuItems.put(menuItem.getSlot(), menuItem);
 
@@ -131,11 +128,12 @@ public abstract class MenuView extends ChestView {
         if (eventInfo.getInventoryPosition() == InventoryPosition.UPPER) {
 
             MenuItem menuItem = _menuItems.get(eventInfo.getSlot());
-            if (menuItem != null && menuItem.isVisible()) {
+            if (menuItem != null && menuItem.isVisible(this)) {
 
-                Runnable onClick = menuItem.getOnClick();
-                if (onClick != null)
+                List<Runnable> clickCallbacks = menuItem.getOnClick();
+                for (Runnable onClick : clickCallbacks) {
                     onClick.run();
+                }
 
                 if (menuItem.isCancelled()) {
                     menuItem.setCancelled(false);
