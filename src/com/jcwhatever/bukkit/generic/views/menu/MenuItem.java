@@ -36,6 +36,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -51,7 +52,7 @@ public class MenuItem implements IMeta, ICancellable {
     private String _description;
     private ItemStack _baseItemStack;
     private ItemStack _menuItemStack;
-    private Runnable _onClick;
+    private List<Runnable> _onClick;
     private boolean _isCancelled;
     private MenuView _parentView;
 
@@ -159,12 +160,16 @@ public class MenuItem implements IMeta, ICancellable {
         }
     }
 
-    public Runnable getOnClick() {
+    public List<Runnable> getOnClick() {
         return _onClick;
     }
 
-    public void setOnClick(Runnable runnable) {
-        _onClick = runnable;
+    public void onClick(Runnable runnable) {
+        _onClick.add(runnable);
+    }
+
+    public boolean removeOnClick(Runnable runnable) {
+        return _onClick.remove(runnable);
     }
 
     protected ItemStack generateItemStack() {
