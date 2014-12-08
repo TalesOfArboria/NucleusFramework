@@ -118,7 +118,7 @@ public class PaginatorView extends MenuView {
 
     protected MenuItem getPageItem(int slot, int page) {
 
-        MenuItem item = new MenuItem(slot, this);
+        MenuItem item = new MenuItem(slot);
         item.setTitle("Page " + page);
         item.setDescription("Click to view page " + page + '.');
         item.setItemStack(new ItemStack(Material.PAPER));
