@@ -174,7 +174,7 @@ public class BankItem {
 
     /**
      * Get a list of {@code BankItemStack} where each represents
-     * a stack to be placed in an inventory slot.
+     * a stack to be placed in an chest slot.
      */
     public List<BankItemStack> getBankItems() {
         

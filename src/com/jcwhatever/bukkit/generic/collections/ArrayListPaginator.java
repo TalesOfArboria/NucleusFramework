@@ -28,6 +28,7 @@ import com.jcwhatever.bukkit.generic.mixins.IPaginator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -58,6 +59,24 @@ public class ArrayListPaginator<E> extends ArrayList<E> implements IPaginator<E>
      */
     public ArrayListPaginator(PageStartIndex pageStartIndex, int itemsPerPage, int size) {
         super(size);
+
+        PreCon.notNull(pageStartIndex);
+        PreCon.greaterThanZero(itemsPerPage);
+
+        _itemsPerPage = itemsPerPage;
+        _start = pageStartIndex;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pageStartIndex  The index of the first page.
+     * @param itemsPerPage    The number if items per page.
+     * @param collection      The initial collection.
+     */
+    public ArrayListPaginator(PageStartIndex pageStartIndex, int itemsPerPage,
+                              Collection<? extends E> collection) {
+        super(collection);
 
         PreCon.notNull(pageStartIndex);
         PreCon.greaterThanZero(itemsPerPage);

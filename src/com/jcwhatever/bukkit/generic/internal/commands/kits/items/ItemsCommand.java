@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 @CommandInfo(
         parent="kits",
         command="items",
-        description="Manage inventory kit items.")
+        description="Manage chest kit items.")
 
 public class ItemsCommand extends AbstractCommand {
 

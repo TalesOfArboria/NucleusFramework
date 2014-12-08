@@ -42,12 +42,12 @@ import org.bukkit.command.CommandSender;
         command="add",
         staticParams={ "kitName" },
         usage="/{plugin-command} {command} add <kitName>",
-        description="Add a new inventory kit.")
+        description="Add a new chest kit.")
 
 public class AddSubCommand extends AbstractCommand {
 
-    @Localizable static final String _KIT_ALREADY_EXISTS = "An inventory kit named '{0}' already exists.";
-    @Localizable static final String _FAILED = "Failed to create inventory kit.";
+    @Localizable static final String _KIT_ALREADY_EXISTS = "An chest kit named '{0}' already exists.";
+    @Localizable static final String _FAILED = "Failed to create chest kit.";
     @Localizable static final String _SUCCESS = "Inventory kit '{0}' created.";
 
     @Override

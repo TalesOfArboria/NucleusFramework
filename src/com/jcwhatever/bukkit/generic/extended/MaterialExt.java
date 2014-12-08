@@ -694,7 +694,7 @@ public enum MaterialExt {
     }
 
     /**
-     * Determine if the material has an inventory.
+     * Determine if the material has an chest.
      * (i.e. chest, trapped chests, etc)
      */
     public boolean hasInventory() {

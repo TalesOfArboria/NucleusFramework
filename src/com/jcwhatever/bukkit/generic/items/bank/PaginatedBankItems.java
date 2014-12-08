@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Utility to paginate a players item bank account items for use in an inventory view.
+ * Utility to paginate a players item bank account items for use in an chest view.
  */
 public class PaginatedBankItems  {
 
@@ -89,7 +89,7 @@ public class PaginatedBankItems  {
 
     /**
      * Get total number of pages required to display the account items
-     * in a 6 x 9 inventory.
+     * in a 6 x 9 chest.
      */
     public int getTotalPages () {
 

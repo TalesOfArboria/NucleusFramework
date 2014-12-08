@@ -45,7 +45,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * A kit of inventory items that can be given to a player.
+ * A kit of chest items that can be given to a player.
  */
 public class Kit implements INamedInsensitive {
 

@@ -35,11 +35,11 @@ import org.bukkit.plugin.Plugin;
 import java.util.List;
 
 /**
- * Provide scripts with API access to inventory helper functions.
+ * Provide scripts with API access to chest helper functions.
  */
 @ScriptApiInfo(
-        variableName = "inventory",
-        description = "Provide scripts with API access to inventory helper functions.")
+        variableName = "chest",
+        description = "Provide scripts with API access to chest helper functions.")
 public class ScriptApiInventory extends GenericsScriptApi {
 
     private static ApiObject _api;
@@ -89,9 +89,9 @@ public class ScriptApiInventory extends GenericsScriptApi {
 
         /**
          * Get the maximum number of the specified item stack that will fit into
-         * the specified inventory contents.
+         * the specified chest contents.
          *
-         * @param contents   The inventory contents.
+         * @param contents   The chest contents.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          */
@@ -100,10 +100,10 @@ public class ScriptApiInventory extends GenericsScriptApi {
         }
 
         /**
-         * Determine if there is enough room in the specified inventory
+         * Determine if there is enough room in the specified chest
          * for the specified stack.
          *
-         * @param contents  The inventory contents to check.
+         * @param contents  The chest contents to check.
          * @param itemStack The item stack to check.
          * @param comparer  The {@code ItemStackComparer} to use.
          */
@@ -112,11 +112,11 @@ public class ScriptApiInventory extends GenericsScriptApi {
         }
 
         /**
-         * Determine if there is enough room in the specified inventory for
+         * Determine if there is enough room in the specified chest for
          * items of the same type of the specified stack in the amount of
          * the specified quantity.
          *
-         * @param contents  The inventory contents to check.
+         * @param contents  The chest contents to check.
          * @param itemStack The item stack to check .
          * @param comparer  The {@code ItemStackComparer} to use.
          * @param qty       The amount of space needed.
@@ -127,9 +127,9 @@ public class ScriptApiInventory extends GenericsScriptApi {
 
         /**
          * Get the number of items of the specified item stack are in the
-         * specified inventory contents.
+         * specified chest contents.
          *
-         * @param contents   The inventory contents to check.
+         * @param contents   The chest contents to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          */
@@ -138,9 +138,9 @@ public class ScriptApiInventory extends GenericsScriptApi {
         }
 
         /**
-         * Determine if the inventory contents have at least one of the specified item stack.
+         * Determine if the chest contents have at least one of the specified item stack.
          *
-         * @param contents   The inventory contents to check.
+         * @param contents   The chest contents to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          */
@@ -149,10 +149,10 @@ public class ScriptApiInventory extends GenericsScriptApi {
         }
 
         /**
-         * Determine if the inventory contents has at least the specified quantity of
+         * Determine if the chest contents has at least the specified quantity of
          * the specified item stack.
          *
-         * @param contents   The inventory contents to check.
+         * @param contents   The chest contents to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          * @param qty        The quantity.
@@ -163,9 +163,9 @@ public class ScriptApiInventory extends GenericsScriptApi {
 
         /**
          * Get an item stack array representing all stacks of the specified item
-         * from the specified inventory contents.
+         * from the specified chest contents.
          *
-         * @param contents   The inventory contents to check.
+         * @param contents   The chest contents to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          */
@@ -174,10 +174,10 @@ public class ScriptApiInventory extends GenericsScriptApi {
         }
 
         /**
-         * Remove items from the specified inventory contents that match the specified
+         * Remove items from the specified chest contents that match the specified
          * item stack in the specified quantity.
          *
-         * @param contents   The inventory contents to check.
+         * @param contents   The chest contents to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          * @param qty        The quantity to remove.

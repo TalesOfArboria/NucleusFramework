@@ -43,12 +43,12 @@ import org.bukkit.inventory.ItemStack;
         command="del",
         staticParams={ "kitName", "items" },
         usage="/{plugin-command} {command} items del <kitName> <items>",
-        description="Remove items from the specified inventory kit.")
+        description="Remove items from the specified chest kit.")
 
 public class DelSubCommand extends AbstractCommand {
 
-    @Localizable static final String _KIT_NOT_FOUND = "An inventory kit named '{0}' was not found.";
-    @Localizable static final String _SUCCESS = "Removed items from inventory kit '{1}'.";
+    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
+    @Localizable static final String _SUCCESS = "Removed items from chest kit '{1}'.";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {

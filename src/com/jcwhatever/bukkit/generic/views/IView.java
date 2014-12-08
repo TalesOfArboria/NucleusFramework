@@ -22,98 +22,108 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.bukkit.generic.views;
 
-import com.jcwhatever.bukkit.generic.mixins.IDisposable;
-import com.jcwhatever.bukkit.generic.mixins.INamed;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.jcwhatever.bukkit.generic.views.triggers.IViewTrigger;
+import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
+import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
+import com.jcwhatever.bukkit.generic.views.data.ViewResults;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
 /**
- * Represents a type of player view.
+ * Represents an instance of a View created for a specific player
  */
-public interface IView extends INamed, IDisposable {
+public interface IView {
 
     /**
-     * Called only once. Used internally after instantiating view.
+     * Get the views owning plugin.
+     */
+    Plugin getPlugin();
+
+    /**
+     * Get the player this view is for.
+     */
+    Player getPlayer ();
+
+    /**
+     * Get the view title.
      *
-     * @param name         The name of the view.
-     * @param viewManager  The view manager responsible for the view.
-     * @param dataNode     The data node to save settings to.
+     * <p>Not all views can have the title set.</p>
+     *
+     * @return Null if a title was not set.
      */
-    void init(String name, ViewManager viewManager, @Nullable IDataNode dataNode);
+    @Nullable
+    String getTitle ();
 
     /**
-     * Get the name of the view
-     */
-    @Override
-    String getName();
-
-    /**
-     * Get the default title used for a view if one is not set in the instance.
-     */
-    String getDefaultTitle();
-
-    /**
-     * Get the views View Manager.
-     */
-    ViewManager getViewManager();
-
-    /**
-     * Get the Bukkit inventory type of the inventory view.
+     * Get the view chest type.
      */
     InventoryType getInventoryType();
 
     /**
-     * Get the view type
+     * Get the view session.
      */
-    ViewType getViewType();
+    IViewSession getViewSession();
 
     /**
-     * Get the optional trigger used to open the view.
+     * Get the factory that created the view instance.
      */
-    IViewTrigger getViewTrigger();
+    IViewFactory getFactory();
 
     /**
-     * Set the optional view trigger
+     * Get the view instances Bukkit {@code InventoryView}.
      *
-     * @param triggerClass  The trigger class.
-     *
-     * @return True if the trigger was successfully changed.
+     * @return Null if the view has not been shown yet or
+     * does not have an {@code InventoryView}.
      */
-    boolean setViewTrigger(@Nullable Class<? extends IViewTrigger> triggerClass);
+    @Nullable
+    InventoryView getInventoryView();
 
     /**
-     * Create a new instance of the view to display to a player.
+     * Determine if the view is capable of generating an
+     * {@code InventoryView} instance.
      *
-     * @param p            The player the instance is for.
-     * @param previous     The previous instance the player was viewing.
-     * @param sessionMeta  The meta used for the session.
+     * <p>The result is not affected by whether or not the inventory
+     * view has been shown yet.</p>
      */
-    ViewInstance createInstance(Player p, ViewInstance previous, ViewMeta sessionMeta);
+    public boolean isInventoryViewable();
 
     /**
-     * Create a new instance of the view to display to a player.
-     *
-     * @param p             The player the instance is for.
-     * @param previous      The previous instance the player was viewing.
-     * @param sessionMeta   The meta used for the session.
-     * @param instanceMeta  The meta that applies to the new instance.
+     * Get the meta data associated with this specific instance.
      */
-    ViewInstance createInstance(
-            Player p, @Nullable ViewInstance previous, ViewMeta sessionMeta, @Nullable ViewMeta instanceMeta);
+    ViewArguments getArguments();
 
     /**
-     * Called internally when the View is removed.
+     * Get the view results after closing.
+     *
+     * @return Null if the view does not provide results or has
+     * not provided them yet.
      */
-    @Override
-    void dispose();
+    @Nullable
+    ViewResults getResults();
 
+    /**
+     * Close the view.
+     *
+     * @param reason  The reason the view is being closed.
+     *
+     * @return  True if the view was closed.
+     */
+    boolean close(ViewCloseReason reason);
 
+    /**
+     * Get the reason the view was last closed.
+     */
+    ViewCloseReason getCloseReason();
+
+    /**
+     * Called by the view event listener after
+     * handling the inventory close event.
+     */
+    void resetCloseReason();
 }

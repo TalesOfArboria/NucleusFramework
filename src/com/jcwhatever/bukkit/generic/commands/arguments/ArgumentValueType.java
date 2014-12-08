@@ -55,7 +55,7 @@ public class ArgumentValueType {
     @Localizable static final String _BOOLEAN = "Boolean. i.e. true, false, yes, no, on, off";
     @Localizable static final String _PERCENT = "Percentage. i.e 32.2%";
     @Localizable static final String _ITEMSTACK = "Item stack. Use 'inhand' for the item in your hand. " +
-            "'inventory' uses all items in your inventory. " +
+            "'chest' uses all items in your chest. " +
             "'hotbar' uses items in your hotbar. Parsable text " +
             "can also be provided in the following format: " +
             "<materialName>[:<data>][;<quantity>]";

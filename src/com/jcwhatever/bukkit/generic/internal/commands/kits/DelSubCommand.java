@@ -42,12 +42,12 @@ import org.bukkit.command.CommandSender;
         command="del",
         staticParams={ "kitName" },
         usage="/{plugin-command} {command} del <kitName>",
-        description="Remove an inventory kit.")
+        description="Remove an chest kit.")
 
 public class DelSubCommand extends AbstractCommand {
 
-    @Localizable static final String _KIT_NOT_FOUND = "An inventory kit named '{0}' was not found.";
-    @Localizable static final String _FAILED = "Failed to remove inventory kit.";
+    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
+    @Localizable static final String _FAILED = "Failed to remove chest kit.";
     @Localizable static final String _SUCCESS = "Inventory kit '{0}' removed.";
 
     @Override

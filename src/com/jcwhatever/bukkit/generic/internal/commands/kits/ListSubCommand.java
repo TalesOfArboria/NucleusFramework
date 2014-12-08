@@ -44,7 +44,7 @@ import java.util.List;
         command="list",
         staticParams={ "page=1" },
         usage="/{plugin-command} {command} list [page]",
-        description="List inventory kits.")
+        description="List chest kits.")
 
 public class ListSubCommand extends AbstractCommand {
 

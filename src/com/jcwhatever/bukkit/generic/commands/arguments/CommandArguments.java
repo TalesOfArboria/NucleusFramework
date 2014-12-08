@@ -723,13 +723,13 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * <p>The supplied argument can be a parsable string representing an {@code ItemStack}</p>
      *
      * <p>The supplied argument can also be "inhand" for the stack in the players hand,
-     * "inventory" to return all items in the players inventory, or "hotbar" to return
+     * "chest" to return all items in the players chest, or "hotbar" to return
      * all items in the players hotbar. All items returned from the player are cloned objects.</p>
      *
      * <p>Use getString(parameterName) method on the same parameter to determine if the player
-     * typed "inhand", "inventory", or "hotbar" if that information is needed.</p>
+     * typed "inhand", "chest", or "hotbar" if that information is needed.</p>
      *
-     * <p>If the command sender is not a player, and therefore has no inventory, the argument 
+     * <p>If the command sender is not a player, and therefore has no chest, the argument
      * will only be valid if a parsable item stack string was provided.</p>
      *
      * @param sender         The {@code CommandSender} who executed the command
@@ -805,10 +805,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
             return result; // finished
         }
 
-        // Check for "inventory" keyword as argument
-        if (arg.equalsIgnoreCase("inventory")) {
+        // Check for "chest" keyword as argument
+        if (arg.equalsIgnoreCase("chest")) {
 
-            // sender must be player to use "inventory" keyword
+            // sender must be player to use "chest" keyword
             if (!(sender instanceof Player)) {
                 throw new InvalidValueException(parameterName,
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
@@ -821,7 +821,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
             int len = inventory.getContents().length;
             Set<ItemWrapper> wrappers = new HashSet<ItemWrapper>(len);
 
-            // iterate and add players inventory items to wrapper set
+            // iterate and add players chest items to wrapper set
             for (int i=0; i < len; i++) {
                 ItemStack item = inventory.getItem(i);
                 if (item != null && item.getType() != Material.AIR) {

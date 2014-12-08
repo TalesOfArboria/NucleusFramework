@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Takes a snapshot of an inventory.
+ * Takes a snapshot of an chest.
  */
 public class InventorySnapshot {
 
@@ -55,7 +55,7 @@ public class InventorySnapshot {
      *     Uses default {@code ItemStackComparer}
      * </p>
      *
-     * @param inventory  The inventory to snapshot.
+     * @param inventory  The chest to snapshot.
      */
     public InventorySnapshot(Inventory inventory) {
         PreCon.notNull(inventory);
@@ -66,7 +66,7 @@ public class InventorySnapshot {
     /**
      * Constructor.
      *
-     * @param inventory  The inventory to snapshot.
+     * @param inventory  The chest to snapshot.
      * @param comparer   The item stack comparer to use internally.
      */
     public InventorySnapshot(Inventory inventory, ItemStackComparer comparer) {

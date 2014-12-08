@@ -44,7 +44,7 @@ import java.util.UUID;
 /**
  * A snapshot of a players state.
  * <p>
- *     The players state consists of inventory items, armor, applied enchantments,
+ *     The players state consists of chest items, armor, applied enchantments,
  *     game mode, flight, health, food level, exp, fire ticks, fall distance,
  *     and location.
  * </p>
@@ -167,14 +167,14 @@ public class PlayerStateSnapshot {
     }
 
     /**
-     * Get the player inventory items.
+     * Get the player chest items.
      */
     public ItemStack[] getItems() {
         return _items.clone();
     }
 
     /**
-     * Get the player armor inventory.
+     * Get the player armor chest.
      */
     public ItemStack[] getArmor() {
         return _armor.clone();

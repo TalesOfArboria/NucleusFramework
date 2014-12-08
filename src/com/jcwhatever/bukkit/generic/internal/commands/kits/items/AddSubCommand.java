@@ -47,8 +47,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class AddSubCommand extends AbstractCommand {
 
-    @Localizable static final String _KIT_NOT_FOUND = "An inventory kit named '{0}' was not found.";
-    @Localizable static final String _SUCCESS = "Added items to inventory kit '{0}'.";
+    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
+    @Localizable static final String _SUCCESS = "Added items to chest kit '{0}'.";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {

@@ -47,12 +47,12 @@ import org.bukkit.inventory.ItemStack;
         command="list",
         staticParams={ "kitName", "page=1" },
         usage="/{plugin-command} {command} items list <kitName> [page]",
-        description="List items in an inventory kit.")
+        description="List items in an chest kit.")
 
 public class ListSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Kit Items";
-    @Localizable static final String _KIT_NOT_FOUND = "An inventory kit named '{0}' was not found.";
+    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
     @Localizable static final String _LABEL_ARMOR = "ARMOR";
     @Localizable static final String _LABEL_ITEMS = "ITEMS";
     @Localizable static final String _LABEL_NONE = "<none>";

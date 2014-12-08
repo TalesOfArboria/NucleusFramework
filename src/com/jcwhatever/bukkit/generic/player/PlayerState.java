@@ -188,7 +188,7 @@ public class PlayerState {
     }
 
     /**
-     * Records player inventory and saves to disk.
+     * Records player chest and saves to disk.
      * <p>
      *     Overwrites any current saved data.
      * </p>
