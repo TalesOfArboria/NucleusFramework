@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.bukkit.regions.RegionOwnerChangedEvent;
 import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -622,7 +623,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      * @param <T>  The expected value type.
      */
     @Override
-    public <T> T getMeta(Object key) {
+    public <T> T getMeta(MetaKey<T> key) {
         PreCon.notNull(key);
 
         @SuppressWarnings("unchecked")
@@ -650,7 +651,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      * @param value  The meta value.
      */
     @Override
-    public void setMeta(Object key, @Nullable Object value) {
+    public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
         if (value == null) {
             _meta.remove(key);
             return;

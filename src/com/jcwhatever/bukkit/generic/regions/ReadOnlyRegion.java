@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.regions;
 import com.jcwhatever.bukkit.generic.mixins.IReadOnly;
 import com.jcwhatever.bukkit.generic.regions.Region.PriorityType;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionPriority;
+import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -460,7 +461,7 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
      * @param <T>  The meta value type.
      */
     @Override
-    public <T> T getMeta (Object key) {
+    public <T> T getMeta (MetaKey<T> key) {
         return _region.getMeta(key);
     }
 
@@ -482,7 +483,7 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
      * @param value  The meta value type.
      */
     @Override
-    public void setMeta (Object key, @Nullable Object value) {
+    public <T> void setMeta (MetaKey<T> key, @Nullable T value) {
         _region.setMeta(key, value);
     }
 

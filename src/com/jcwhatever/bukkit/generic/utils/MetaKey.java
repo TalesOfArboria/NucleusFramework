@@ -65,6 +65,13 @@ public class MetaKey<V> {
     }
 
     /**
+     * Get the meta value class.
+     */
+    public Class<V> getValueClass() {
+        return _type;
+    }
+
+    /**
      * Get the meta value represented by the key
      * from the specified meta store.
      *

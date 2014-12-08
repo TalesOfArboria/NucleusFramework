@@ -24,38 +24,13 @@
 
 package com.jcwhatever.bukkit.generic.mixins;
 
-import com.jcwhatever.bukkit.generic.utils.MetaKey;
-
-import javax.annotation.Nullable;
-
 /**
- * A mixin to define a type that contains meta data.
+ * Mixin to define a type that has a description.
  */
-public interface IMeta {
+public interface IDescribed {
 
     /**
-     * Get a meta value.
-     *
-     * @param key  The meta key.
-     *
-     * @param <T>  The expected value type.
+     * Get the description.
      */
-    @Nullable
-    <T> T getMeta(MetaKey<T> key);
-
-    /**
-     * Get a meta value as an object.
-     *
-     * @param key  The meta key.
-     */
-    @Nullable
-    Object getMetaObject(Object key);
-
-    /**
-     * Set a meta value.
-     *
-     * @param key    The meta key.
-     * @param value  The meta value.
-     */
-    <T> void setMeta(MetaKey<T> key, @Nullable T value);
+    String getDescription();
 }
