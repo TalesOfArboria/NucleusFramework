@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.views.anvil;
 
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
 import javax.annotation.Nullable;
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  */
 public class FilteredAnvilView extends AnvilView {
 
-    protected FilteredAnvilView(@Nullable String title, IViewSession session,
+    protected FilteredAnvilView(@Nullable String title, ViewSession session,
                                 IViewFactory factory, ViewArguments arguments) {
         super(title, session, factory, arguments);
     }

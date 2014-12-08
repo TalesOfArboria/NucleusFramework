@@ -49,28 +49,27 @@ class ViewEventListener implements IGenericsEventListener {
 
     // TODO: clear _instance when GenericsLib is disabled.
 
-    static void register(SessionRegistration registration) {
+    static void register(ViewSession session) {
         if (_instance == null) {
             _instance = new ViewEventListener();
             GenericsLib.getEventManager().register(_instance);
         }
 
-        _instance._sessions.put(registration.getSession().getPlayer(),
-                registration.getSession());
+        _instance._sessions.put(session.getPlayer(), session);
     }
 
-    static void unregister(SessionRegistration registration) {
+    static void unregister(ViewSession session) {
 
-        _instance._sessions.remove(registration.getSession().getPlayer());
+        _instance._sessions.remove(session.getPlayer());
     }
 
-    private Map<Entity, IViewSession> _sessions = new WeakHashMap<>(25);
+    private Map<Entity, ViewSession> _sessions = new WeakHashMap<>(25);
 
     // Cleanup data related to closed chest
     @GenericsEventHandler
     private void onInventoryClose(InventoryCloseEvent event) {
 
-        IViewSession session = _sessions.get(event.getPlayer());
+        ViewSession session = _sessions.get(event.getPlayer());
         if (session == null)
             return;
 

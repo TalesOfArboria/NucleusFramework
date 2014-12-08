@@ -26,10 +26,12 @@ package com.jcwhatever.bukkit.generic.views.menu;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
 import com.jcwhatever.bukkit.generic.views.ViewFactory;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
+
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
@@ -38,12 +40,12 @@ import javax.annotation.Nullable;
  */
 public class PaginatorViewFactory extends ViewFactory<PaginatorView> {
 
-    public PaginatorViewFactory(String name) {
-        super(name, PaginatorView.class);
+    public PaginatorViewFactory(Plugin plugin, String name) {
+        super(plugin, name, PaginatorView.class);
     }
 
     @Override
-    public IView create(@Nullable String title, IViewSession session, ViewArguments arguments) {
+    public IView create(@Nullable String title, ViewSession session, ViewArguments arguments) {
         PreCon.notNull(session);
         PreCon.notNull(arguments);
 

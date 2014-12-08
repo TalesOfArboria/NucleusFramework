@@ -25,8 +25,8 @@
 package com.jcwhatever.bukkit.generic.views.workbench;
 
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
 import com.jcwhatever.bukkit.generic.views.View;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
 import com.jcwhatever.bukkit.generic.views.data.ViewResults;
@@ -43,7 +43,7 @@ public class WorkbenchView extends View {
 
     private InventoryView _inventoryView;
 
-    public WorkbenchView(IViewSession session, IViewFactory factory, ViewArguments arguments) {
+    public WorkbenchView(ViewSession session, IViewFactory factory, ViewArguments arguments) {
         super(null, session, factory, arguments);
     }
 

@@ -27,24 +27,34 @@ package com.jcwhatever.bukkit.generic.views;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
+import org.bukkit.plugin.Plugin;
+
 /*
  * 
  */
 public abstract class ViewFactory<T extends IView> implements IViewFactory {
 
+    private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
     private final Class<T> _viewClass;
 
     private boolean _isDisposed;
 
-    protected ViewFactory(String name, Class<T> viewClass) {
+    protected ViewFactory(Plugin plugin, String name, Class<T> viewClass) {
+        PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(viewClass);
 
+        _plugin = plugin;
         _name = name;
         _searchName = name.toLowerCase();
         _viewClass = viewClass;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     @Override

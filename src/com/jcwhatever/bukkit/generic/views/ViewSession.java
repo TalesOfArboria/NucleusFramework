@@ -24,6 +24,10 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+import com.jcwhatever.bukkit.generic.mixins.IMeta;
+import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
@@ -32,61 +36,104 @@ import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * A session that tracks and provides session context data
+ * to view instances.
  */
-public class ViewSession implements IViewSession {
+public class ViewSession implements IMeta, Iterable<IView>, IDisposable {
 
-    private final Plugin _plugin;
+    private static final Map<UUID, ViewSession> _sessionMap = new PlayerMap<>(GenericsLib.getLib());
+
+    /**
+     * Get a players current view session.
+     *
+     * @param p  The player to check.
+     *
+     * @return  Null if the player does not have a view session.
+     */
+    @Nullable
+    public static ViewSession getCurrent(Player p) {
+        ViewSession session = _sessionMap.get(p.getUniqueId());
+        if (session == null)
+            return null;
+
+        if (session.isDisposed()) {
+            _sessionMap.remove(p.getUniqueId());
+            return null;
+        }
+
+        return session;
+    }
+
+    /**
+     * Get the players current view session or create a new one.
+     *
+     * @param p             The player.
+     * @param sessionBlock  The session block to use if a new session is created.
+     */
+    public static ViewSession get(Player p, @Nullable Block sessionBlock) {
+        ViewSession session = getCurrent(p);
+        if (session == null) {
+            session = new ViewSession(p, sessionBlock);
+            _sessionMap.put(p.getUniqueId(), session);
+        }
+
+        return session;
+    }
+
     private final Player _player;
     private final Map<Object, Object> _meta = new HashMap<>(10);
-    private final SessionRegistration _session;
     private final Block _sessionBlock;
 
     protected ViewContainer _first;
     protected ViewContainer _current;
     private boolean _isDisposed;
 
-    public ViewSession(Plugin plugin, Player player, @Nullable Block sessionBlock) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(player);
-
-        _plugin = plugin;
+    /**
+     * Constructor.
+     *
+     * @param player        The player to create the session for.
+     * @param sessionBlock  The optional session block, a block that represents the view.
+     */
+    private ViewSession(Player player, @Nullable Block sessionBlock) {
         _player = player;
         _sessionBlock = sessionBlock;
-        _session = new SessionRegistration(this);
+        ViewEventListener.register(this);
+        _sessionMap.put(player.getUniqueId(), this);
     }
 
-    @Override
-    public final Plugin getPlugin() {
-        return _plugin;
-    }
-
-    @Override
+    /**
+     * Get the player the view session is for.
+     */
     public final Player getPlayer() {
         return _player;
     }
 
-    @Override
-    public final SessionRegistration getRegistration() {
-        return _session;
-    }
-
+    /**
+     * Get the block that is the source of the
+     * view session. This is normally the block that
+     * a player clicks in order to open the view.
+     *
+     * @return  Null if a block did not start the session.
+     */
     @Nullable
-    @Override
     public Block getSessionBlock() {
         return _sessionBlock;
     }
 
+    /**
+     * Get the view instance the player is currently looking at.
+     *
+     * @return  Null if the player is not looking at any views in the session.
+     */
     @Nullable
-    @Override
     public IView getCurrentView() {
         if (_current == null)
             return null;
@@ -94,8 +141,12 @@ public class ViewSession implements IViewSession {
         return _current.view;
     }
 
+    /**
+     * Get the previous view, if any.
+     *
+     * @return  Null if the current view is the first view.
+     */
     @Nullable
-    @Override
     public IView getPrevView() {
         if (_current == null || _current.prev == null)
             return null;
@@ -103,8 +154,12 @@ public class ViewSession implements IViewSession {
         return _current.prev.view;
     }
 
+    /**
+     * Get the next view, if any.
+     *
+     * @return  Null if the current view is the last view.
+     */
     @Nullable
-    @Override
     public IView getNextView() {
         if (_current == null || _current.next == null)
             return null;
@@ -112,7 +167,11 @@ public class ViewSession implements IViewSession {
         return _current.next.view;
     }
 
-    @Override
+    /**
+     * Get the first view, if any.
+     *
+     * @return Null if there are no views.
+     */
     @Nullable
     public IView getFirstView() {
 
@@ -128,7 +187,11 @@ public class ViewSession implements IViewSession {
         return current.view;
     }
 
-    @Override
+    /**
+     * Get the last view, if any.
+     *
+     * @return Null if there are no views.
+     */
     @Nullable
     public IView getLastView() {
 
@@ -144,7 +207,13 @@ public class ViewSession implements IViewSession {
         return current.view;
     }
 
-    @Override
+    /**
+     * Close the current view and go to the previous view.
+     *
+     * <p>If there is no previous view, the session is ended.</p>
+     *
+     * @return Null if there is no previous view.
+     */
     @Nullable
     public IView back() {
         if (_current == null)
@@ -157,12 +226,27 @@ public class ViewSession implements IViewSession {
         return _current.view;
     }
 
-    @Override
+    /**
+     * Show the next view.
+     *
+     * @param factory    The factory that will create the next view.
+     * @param arguments  Arguments the previous view can pass to the next view.
+     *
+     * @return The newly created and displayed view.
+     */
     public IView next(IViewFactory factory, ViewArguments arguments) {
         return next(null, factory, arguments);
     }
 
-    @Override
+    /**
+     * Show the next view.
+     *
+     * @param title      Optional view title. Not all views have customizable titles.
+     * @param factory    The factory that will create the next view.
+     * @param arguments  Arguments the previous view can pass to the next view.
+     *
+     * @return The newly created and displayed view.
+     */
     public IView next(@Nullable String title, IViewFactory factory, ViewArguments arguments) {
 
         if (_current == null) {
@@ -197,7 +281,8 @@ public class ViewSession implements IViewSession {
 
     @Override
     public void dispose() {
-        getRegistration().unregister();
+        ViewEventListener.unregister(this);
+        _sessionMap.remove(_player.getUniqueId());
 
         _isDisposed = true;
     }

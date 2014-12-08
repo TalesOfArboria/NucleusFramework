@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.events.GenericsEventHandler;
 import com.jcwhatever.bukkit.generic.events.IGenericsEventListener;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.chest.ChestEventInfo.ItemStackSource;
 
 import org.bukkit.entity.Entity;
@@ -62,7 +62,7 @@ class ChestEventListener implements IGenericsEventListener {
         _instance._chestSessionMap.remove(view.getPlayer());
     }
 
-    private final Map<Entity, IViewSession> _chestSessionMap = new WeakHashMap<>(20);
+    private final Map<Entity, ViewSession> _chestSessionMap = new WeakHashMap<>(20);
 
     /*
      * Inventory Click Event
@@ -70,7 +70,7 @@ class ChestEventListener implements IGenericsEventListener {
     @GenericsEventHandler
     private void onInventoryClick(InventoryClickEvent event) {
 
-        IViewSession session = _chestSessionMap.get(event.getWhoClicked());
+        ViewSession session = _chestSessionMap.get(event.getWhoClicked());
         if (session == null)
             return;
 

@@ -38,14 +38,14 @@ import javax.annotation.Nullable;
  */
 public abstract class View implements IView {
 
-    private final IViewSession _session;
+    private final ViewSession _session;
     private final IViewFactory _factory;
     private final ViewArguments _meta;
     private String _title;
 
     private ViewCloseReason _recentCloseReason = ViewCloseReason.NONE;
 
-    protected View(@Nullable String title, IViewSession session,
+    protected View(@Nullable String title, ViewSession session,
                    IViewFactory factory, ViewArguments arguments) {
         PreCon.notNull(session);
         PreCon.notNull(factory);
@@ -59,7 +59,7 @@ public abstract class View implements IView {
 
     @Override
     public Plugin getPlugin() {
-        return _session.getPlugin();
+        return _factory.getPlugin();
     }
 
     @Override
@@ -74,7 +74,7 @@ public abstract class View implements IView {
     }
 
     @Override
-    public IViewSession getViewSession() {
+    public ViewSession getViewSession() {
         return _session;
     }
 

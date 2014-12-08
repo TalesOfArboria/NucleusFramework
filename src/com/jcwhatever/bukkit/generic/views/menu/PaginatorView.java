@@ -26,7 +26,7 @@ package com.jcwhatever.bukkit.generic.views.menu;
 
 import com.jcwhatever.bukkit.generic.mixins.IPaginator;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArgumentKey;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
@@ -62,7 +62,7 @@ public class PaginatorView extends MenuView {
     private final IViewFactory _nextView;
     private ViewResults _results;
 
-    public PaginatorView(@Nullable String title, IViewSession session, IViewFactory factory, ViewArguments arguments) {
+    public PaginatorView(@Nullable String title, ViewSession session, IViewFactory factory, ViewArguments arguments) {
         super(title, session, factory, arguments);
 
         _paginator = arguments.get(PAGINATOR);

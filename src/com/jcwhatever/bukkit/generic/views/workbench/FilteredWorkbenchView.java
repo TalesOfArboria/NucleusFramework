@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.views.workbench;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
 /*
@@ -37,7 +37,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
 
     private final ItemFilterManager _filter;
 
-    public FilteredWorkbenchView(IViewSession session, IViewFactory factory,
+    public FilteredWorkbenchView(ViewSession session, IViewFactory factory,
                                  ViewArguments arguments, ItemFilterManager filterManager) {
         super(session, factory, arguments);
 

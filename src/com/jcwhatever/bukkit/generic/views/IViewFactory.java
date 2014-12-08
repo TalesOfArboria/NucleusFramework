@@ -29,6 +29,8 @@ import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
+import org.bukkit.plugin.Plugin;
+
 import javax.annotation.Nullable;
 
 /*
@@ -36,7 +38,9 @@ import javax.annotation.Nullable;
  */
 public interface IViewFactory extends INamedInsensitive, IDisposable {
 
-    IView create(@Nullable String title, IViewSession session, ViewArguments arguments);
+    Plugin getPlugin();
+
+    IView create(@Nullable String title, ViewSession session, ViewArguments arguments);
 
     boolean open(ViewOpenReason reason, IView view);
 

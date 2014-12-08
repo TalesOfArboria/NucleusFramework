@@ -25,13 +25,12 @@
 package com.jcwhatever.bukkit.generic.views.menu;
 
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.chest.ChestEventAction;
 import com.jcwhatever.bukkit.generic.views.chest.ChestEventInfo;
 import com.jcwhatever.bukkit.generic.views.chest.ChestView;
 import com.jcwhatever.bukkit.generic.views.chest.InventoryItemAction.InventoryPosition;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
-import com.jcwhatever.bukkit.generic.views.data.ViewResultKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
@@ -49,12 +48,9 @@ public abstract class MenuView extends ChestView {
     public static final int MAX_SLOTS = 6 * 9;
     public static final int ROW_SIZE = 9;
 
-    public static final ViewResultKey<? extends MenuItem>
-            SELECTED_MENU_ITEM = new ViewResultKey<>(MenuItem.class);
-
     private final Map<Integer, MenuItem> _menuItems = new HashMap<>(MAX_SLOTS);
 
-    protected MenuView(@Nullable String title, IViewSession session, IViewFactory factory, ViewArguments arguments) {
+    protected MenuView(@Nullable String title, ViewSession session, IViewFactory factory, ViewArguments arguments) {
         super(title, session, factory, arguments);
 
         List<MenuItem> menuItems = createMenuItems();

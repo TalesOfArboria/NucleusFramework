@@ -34,8 +34,8 @@ import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
 import com.jcwhatever.bukkit.generic.views.ViewFactory;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
@@ -43,6 +43,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -62,8 +63,8 @@ public class FilteredWorkbenchFactory extends ViewFactory<FilteredWorkbenchView>
     private final Map<InventoryView, FilteredWorkbenchView> _viewMap = new WeakHashMap<>(10);
     private final EventListener _eventListener;
 
-    public FilteredWorkbenchFactory(String name, ItemFilterManager filterManager) {
-        super(name, FilteredWorkbenchView.class);
+    public FilteredWorkbenchFactory(Plugin plugin, String name, ItemFilterManager filterManager) {
+        super(plugin, name, FilteredWorkbenchView.class);
 
         PreCon.notNull(filterManager);
 
@@ -91,7 +92,7 @@ public class FilteredWorkbenchFactory extends ViewFactory<FilteredWorkbenchView>
     }
 
     @Override
-    public IView create(@Nullable String title, IViewSession session, ViewArguments arguments) {
+    public IView create(@Nullable String title, ViewSession session, ViewArguments arguments) {
         PreCon.notNull(session);
 
         return new FilteredWorkbenchView(session, this, arguments, _filterManager);

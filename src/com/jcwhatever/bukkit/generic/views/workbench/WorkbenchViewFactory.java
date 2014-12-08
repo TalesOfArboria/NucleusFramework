@@ -25,10 +25,12 @@
 package com.jcwhatever.bukkit.generic.views.workbench;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
 import com.jcwhatever.bukkit.generic.views.ViewFactory;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
+
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
@@ -37,12 +39,12 @@ import javax.annotation.Nullable;
  */
 public class WorkbenchViewFactory extends ViewFactory<WorkbenchView> {
 
-    public WorkbenchViewFactory(String name) {
-        super(name, WorkbenchView.class);
+    public WorkbenchViewFactory(Plugin plugin, String name) {
+        super(plugin, name, WorkbenchView.class);
     }
 
     @Override
-    public WorkbenchView create(@Nullable String title, IViewSession session,
+    public WorkbenchView create(@Nullable String title, ViewSession session,
                                 ViewArguments arguments) {
         PreCon.notNull(session);
         PreCon.notNull(arguments);

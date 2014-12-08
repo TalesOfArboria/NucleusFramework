@@ -35,12 +35,13 @@ import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
-import com.jcwhatever.bukkit.generic.views.IViewSession;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -53,12 +54,12 @@ public class FilteredAnvilViewFactory extends AnvilViewFactory {
     @Localizable static final String _NOT_REPAIRABLE = "{RED}Not repairable here.";
 
     private static EventListener _listener;
-    private static Map<Entity, IViewSession> _anvilMap = new WeakHashMap<>(20);
+    private static Map<Entity, ViewSession> _anvilMap = new WeakHashMap<>(20);
 
     private final ItemFilterManager _filterManager;
 
-    protected FilteredAnvilViewFactory(String name, ItemFilterManager filterManager) {
-        super(name);
+    protected FilteredAnvilViewFactory(Plugin plugin, String name, ItemFilterManager filterManager) {
+        super(plugin, name);
 
         PreCon.notNull(filterManager);
 
@@ -99,7 +100,7 @@ public class FilteredAnvilViewFactory extends AnvilViewFactory {
 
         private void check(Player p, ItemStack repaired) {
 
-            IViewSession session = _anvilMap.get(p);
+            ViewSession session = _anvilMap.get(p);
             if (session == null)
                 return;
 

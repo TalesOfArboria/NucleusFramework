@@ -68,7 +68,7 @@ public interface IView {
     /**
      * Get the view session.
      */
-    IViewSession getViewSession();
+    ViewSession getViewSession();
 
     /**
      * Get the factory that created the view instance.
