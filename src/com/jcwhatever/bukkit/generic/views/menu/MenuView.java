@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.views.menu;
 
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.chest.ChestEventAction;
@@ -34,6 +35,7 @@ import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +57,7 @@ public abstract class MenuView extends ChestView {
 
         List<MenuItem> menuItems = createMenuItems();
         for (MenuItem menuItem : menuItems) {
+            menuItem.setMenuView(this);
             _menuItems.put(menuItem.getSlot(), menuItem);
         }
     }
@@ -62,6 +65,20 @@ public abstract class MenuView extends ChestView {
     @Nullable
     public MenuItem getMenuItem(int slot) {
         return _menuItems.get(slot);
+    }
+
+    public void setMenuItem(MenuItem menuItem) {
+        PreCon.notNull(menuItem);
+
+        menuItem.setMenuView(this);
+
+        _menuItems.put(menuItem.getSlot(), menuItem);
+
+        InventoryView inventoryView = getInventoryView();
+        if (inventoryView == null)
+            return;
+
+        inventoryView.getTopInventory().setItem(menuItem.getSlot(), menuItem.getItemStack());
     }
 
     protected abstract List<MenuItem> createMenuItems();

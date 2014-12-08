@@ -47,17 +47,22 @@ public class MenuItem implements IMeta, ICancellable {
     private Map<Object, Object> _metaMap = new HashMap<Object, Object>(10);
 
     private final int _slot;
-    private final MenuView _parentView;
     private String _title;
     private String _description;
     private ItemStack _baseItemStack;
     private ItemStack _menuItemStack;
     private Runnable _onClick;
     private boolean _isCancelled;
+    private MenuView _parentView;
 
-
-    public MenuItem(int slot, MenuView menuView) {
+    public MenuItem(int slot) {
         _slot = slot;
+    }
+
+    void setMenuView(MenuView menuView) {
+        if (_parentView != null && _parentView != menuView)
+            throw new RuntimeException("MenuItems can only be used in one MenuView instance.");
+
         _parentView = menuView;
     }
 
@@ -66,6 +71,9 @@ public class MenuItem implements IMeta, ICancellable {
     }
 
     public MenuView getMenuView() {
+        if (_parentView == null)
+            throw new RuntimeException("MenuView not set yet.");
+
         return _parentView;
     }
 
@@ -110,6 +118,9 @@ public class MenuItem implements IMeta, ICancellable {
     }
 
     public boolean set() {
+        if (_parentView == null)
+            return false;
+
         InventoryView view = _parentView.getInventoryView();
         if (view == null)
             return false;
@@ -120,6 +131,9 @@ public class MenuItem implements IMeta, ICancellable {
     }
 
     public boolean isVisible() {
+        if (_parentView == null)
+            return false;
+
         InventoryView view = _parentView.getInventoryView();
         if (view == null)
             return false;
@@ -130,6 +144,9 @@ public class MenuItem implements IMeta, ICancellable {
     }
 
     public void setVisible(boolean isVisible) {
+        if (_parentView == null)
+            return;
+
         InventoryView view = _parentView.getInventoryView();
         if (view == null || isVisible() == isVisible)
             return;
@@ -166,7 +183,7 @@ public class MenuItem implements IMeta, ICancellable {
     }
 
     private boolean isViewAvailable() {
-        return _parentView.getInventoryView() != null;
+        return _parentView != null && _parentView.getInventoryView() != null;
     }
 
     @Nullable
