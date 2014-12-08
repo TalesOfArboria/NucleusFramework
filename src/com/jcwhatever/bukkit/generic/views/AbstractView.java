@@ -25,12 +25,12 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.InventoryActionInfo;
 import com.jcwhatever.bukkit.generic.views.InventoryActionInfoHandler.ViewActionOrder;
 import com.jcwhatever.bukkit.generic.views.triggers.IViewTrigger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -332,11 +332,6 @@ public abstract class AbstractView implements IView {
                 event.setCancelled(true);
             }
 
-            Messenger.debug(null, "Cursor: {0}. Current: {1}",
-                    event.getCursor() != null ? event.getCursor().getType() : "null",
-                    event.getCurrentItem() != null ? event.getCurrentItem().getType() : "null");
-
-            Messenger.debug(null, "ACTION: {0}, SLOT: {1}", event.getAction().name(), event.getRawSlot());
         }
 
 

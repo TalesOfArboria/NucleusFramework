@@ -34,7 +34,6 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.MissingCommandAnnotatio
 import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
@@ -483,7 +482,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         }
 
         if (commandName == null && !isBaseCommand) {
-            Messenger.warning(getPlugin(), "Failed to register command '{0}' because another command with the same name " +
+            _msg.warning("Failed to register command '{0}' because another command with the same name " +
                     "is already registered and no alternative command names were provided.", info.command()[0]);
             return false;
         }

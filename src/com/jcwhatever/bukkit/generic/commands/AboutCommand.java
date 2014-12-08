@@ -29,10 +29,11 @@ import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 @CommandInfo(
         command={"about"},
@@ -52,22 +53,24 @@ public class AboutCommand extends AbstractCommand {
     public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 
         // show header
-        Messenger.tell(_plugin, sender, Lang.get(_HEADER));
+        _msg.tell(sender, Lang.get(getPlugin(), _HEADER));
 
         // show plugin name
-        Messenger.tell(_plugin, sender, Lang.get(_plugin, _PLUGIN_NAME));
+        _msg.tell(sender, Lang.get(getPlugin(), _PLUGIN_NAME));
+
+        List<String> authors = getPlugin().getDescription().getAuthors();
 
         // show authors, if any
-        if (_plugin.getDescription().getAuthors() != null &&
-                !_plugin.getDescription().getAuthors().isEmpty()) {
+        if (authors != null &&
+                !authors.isEmpty()) {
 
-            Messenger.tell(_plugin, sender, Lang.get(_plugin, _AUTHOR));
+            _msg.tell(sender, Lang.get(getPlugin(), _AUTHOR));
         }
 
         // show help text
-        Messenger.tell(_plugin, sender, Lang.get(_plugin, _HELP));
+        _msg.tell(sender, Lang.get(getPlugin(), _HELP));
 
         // show footer
-        Messenger.tell(_plugin, sender, Lang.get(_FOOTER));
+        _msg.tell(sender, Lang.get(getPlugin(), _FOOTER));
     }
 }

@@ -25,13 +25,14 @@
 
 package com.jcwhatever.bukkit.generic.performance.queued;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
+
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.LinkedList;
+import javax.annotation.Nullable;
 
 /**
  * Handles the results of a tasks. Provides futures
@@ -180,7 +181,7 @@ public class QueueResult {
         }
 
         if (reason != null)
-            Messenger.debug(_plugin, reason);
+            Msg.debug(_plugin, reason);
 
         doOnEnd();
     }

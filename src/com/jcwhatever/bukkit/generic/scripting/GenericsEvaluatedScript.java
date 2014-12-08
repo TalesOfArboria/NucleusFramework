@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApiObject;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -227,7 +227,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
 
         } catch (NoSuchMethodException | InvocationTargetException |
                 InstantiationException | IllegalAccessException e) {
-            Messenger.debug(GenericsLib.getLib(), "Failed to create new script context using current context type." +
+            Msg.debug(GenericsLib.getLib(), "Failed to create new script context using current context type." +
                     "Using SimpleScriptContext instead.");
 
             // if failed, use a SimpleScriptContext

@@ -31,7 +31,6 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.MissingCommandAnnotationException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.permissions.IPermission;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -128,7 +127,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
          * Safety check. Make sure the parent specified by the command is this command
          */
         if (!commandInfo.parent().isEmpty() && !isCommandMatch(commandInfo.parent(), _info.getCommandNames())) {
-            Messenger.debug(getPlugin(), "Failed to register sub command. Registered with incorrect parent: "
+            _msg.debug("Failed to register sub command. Registered with incorrect parent: "
                     + this.getClass().getName());
             return;
         }
@@ -272,7 +271,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             public void run () {
 
                 final ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
-                        Lang.get(_plugin, _COMMAND_PAGINATOR_TITLE));
+                        Lang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
 
                 if (canExecute()) {
                     // add command to paginator
@@ -414,10 +413,10 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             return;
 
         _commandHandler = commandHandler;
-        _plugin = commandHandler.getPlugin();
+        setPlugin(commandHandler.getPlugin());
 
         CommandInfo info = this.getClass().getAnnotation(CommandInfo.class);
-        _info = new CommandInfoContainer(_plugin, info, masterCommandName);
+        _info = new CommandInfoContainer(getPlugin(), info, masterCommandName);
 
         // register queued sub commands
         for (Class<? extends AbstractCommand> commandClass : _subCommandQueue) {

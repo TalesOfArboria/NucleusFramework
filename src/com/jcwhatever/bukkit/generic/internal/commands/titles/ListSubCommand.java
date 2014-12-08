@@ -55,7 +55,7 @@ public class ListSubCommand extends AbstractCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = new ChatPaginator(_plugin, 5, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(getPlugin(), 5, Lang.get(_PAGINATOR_TITLE));
 
         List<INamedTitle> titles = GenericsLib.getTitleManager().getTitles();
 

@@ -25,12 +25,12 @@
 
 package com.jcwhatever.bukkit.generic.language;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
+
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Manage string language and localization.
@@ -214,7 +215,7 @@ public class LanguageManager {
             return false;
 
         if (!keys.isCompatible(language)) {
-            Messenger.warning(_plugin, "Could not merge language file due to incompatible version.");
+            Msg.warning(_plugin, "Could not merge language file due to incompatible version.");
             return false;
         }
 
@@ -226,7 +227,7 @@ public class LanguageManager {
 
             String key = keys.getText(text.getIndex());
             if (key == null) {
-                Messenger.warning(_plugin, "Failed to find localization key indexed {0}.", text.getIndex());
+                Msg.warning(_plugin, "Failed to find localization key indexed {0}.", text.getIndex());
                 continue;
             }
 

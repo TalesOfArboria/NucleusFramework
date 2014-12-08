@@ -25,9 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.permissions;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.utils.BatchTracker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -178,7 +178,7 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
 
                 e.printStackTrace();
                 _canReflect = false;
-                Messenger.warning(GenericsLib.getLib(), "Failed to use reflection to add permission. " +
+                Msg.warning("Failed to use reflection to add permission. " +
                         "Permissions will be added using Bukkit API which may take longer.");
                 return false;
             }
@@ -194,7 +194,7 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
             e.printStackTrace();
 
             _canReflect = false;
-            Messenger.warning(GenericsLib.getLib(), "Failed to use reflection to add permission. " +
+            Msg.warning("Failed to use reflection to add permission. " +
                     "Permissions will be added using Bukkit API which may take longer.");
             return false;
         }
@@ -202,7 +202,7 @@ public abstract class AbstractPermissionsHandler implements IPermissionsHandler 
             throwable.printStackTrace();
 
             _canReflect = false;
-            Messenger.warning(GenericsLib.getLib(), "Failed to use reflection to add permission. " +
+            Msg.warning("Failed to use reflection to add permission. " +
                     "Permissions will be added using Bukkit API which may take longer.");
             return false;
         }

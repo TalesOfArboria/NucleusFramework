@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.regions;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.EntryCounter;
 import com.jcwhatever.bukkit.generic.collections.EntryCounter.RemovalPolicy;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.regions.Region.EnterRegionReason;
 import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
@@ -325,8 +325,7 @@ public class GlobalRegionManager {
         PreCon.notNull(region);
 
         if (!region.isDefined()) {
-            Messenger.debug(GenericsLib.getLib(),
-                    "Failed to register region '{0}' with RegionManager because " +
+            Msg.debug("Failed to register region '{0}' with RegionManager because " +
                             "it's coords are undefined.", region.getName());
             return;
         }

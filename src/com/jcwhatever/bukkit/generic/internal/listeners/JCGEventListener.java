@@ -30,13 +30,12 @@ import com.jcwhatever.bukkit.generic.commands.response.CommandRequests;
 import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRenameEvent;
 import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRepairEvent;
 import com.jcwhatever.bukkit.generic.events.bukkit.SignInteractEvent;
-import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
-import com.jcwhatever.bukkit.generic.utils.ItemStackUtils.DisplayNameResult;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils.DisplayNameResult;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.Material;
@@ -69,7 +68,6 @@ public final class JCGEventListener implements Listener {
     private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 	    
         if (CommandRequests.onResponse(event.getPlayer(), event.getMessage())) {
-            Messenger.debug(null, "Response Processed");
             event.setCancelled(true);
         }
 	}
@@ -83,7 +81,7 @@ public final class JCGEventListener implements Listener {
 		PlayerUtils.setPlayerName(p.getUniqueId(), p.getName());
 
 		// tell player missed important messages
-		Messenger.tellImportant(p);
+		GenericsLib.getMessengerFactory().tellImportant(p);
 
 		Scheduler.runTaskLater(GenericsLib.getLib(), 5, new Runnable() {
 			@Override
