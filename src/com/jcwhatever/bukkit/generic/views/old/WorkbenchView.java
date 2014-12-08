@@ -27,7 +27,6 @@ package com.jcwhatever.bukkit.generic.views.old;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
@@ -168,13 +167,9 @@ public class WorkbenchView extends AbstractView {
 
         }
 
-
         private void tellNoCraftMessage(Player p, ViewManager viewManager) {
-            Messenger.tellNoSpam(viewManager.getPlugin(), p, "{RED}You can't craft this item here.");
+
         }
-
-
-
     }
 
     @Override

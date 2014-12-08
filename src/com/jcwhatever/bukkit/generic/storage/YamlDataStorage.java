@@ -25,9 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.storage;
 
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.utils.BatchTracker;
@@ -176,7 +176,7 @@ public class YamlDataStorage implements IDataNode {
             } catch (Exception e) {
 
                 if (_file != null)
-                    Messenger.severe(null, "The config-file '{0}' failed to load.", _file.getName());
+                    Msg.severe("The config-file '{0}' failed to load.", _file.getName());
 
                 e.printStackTrace();
                 _isLoaded = false;

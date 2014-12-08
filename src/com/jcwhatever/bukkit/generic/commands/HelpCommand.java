@@ -64,7 +64,7 @@ public class HelpCommand extends AbstractCommand {
     @Override
     public void showHelp(final CommandSender sender, int page) {
 
-        final ChatPaginator pagin = new ChatPaginator(_plugin, 6, Lang.get(_PAGINATOR_TITLE));
+        final ChatPaginator pagin = new ChatPaginator(getPlugin(), 6, Lang.get(_PAGINATOR_TITLE));
 
         final List<AbstractCommand> categories = new ArrayList<AbstractCommand>(getCommandHandler().getCommands().size());
 
@@ -96,7 +96,7 @@ public class HelpCommand extends AbstractCommand {
             if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
                 continue;
 
-            pagin.add(Lang.get(_plugin, _USAGE, info.getCommandName()), info.getDescription());
+            pagin.add(Lang.get(getPlugin(), _USAGE, info.getCommandName()), info.getDescription());
         }
 
         pagin.show(sender, page, FormatTemplate.CONSTANT_DEFINITION);

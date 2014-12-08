@@ -27,8 +27,8 @@ package com.jcwhatever.bukkit.generic.commands.response;
 
 import com.jcwhatever.bukkit.generic.collections.HashSetMap;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.command.CommandSender;
@@ -174,11 +174,13 @@ public class CommandRequests {
         _requests.removeValue(sender, responseRequest);
     }
 
-    private static void tellMultipleRequests(CommandSender sender, ResponseType type, Collection<ResponseRequest> requests) {
-        Messenger.tellAnon(sender, Lang.get(_MULTIPLE_REQUESTS));
+    private static void tellMultipleRequests(CommandSender sender, ResponseType type,
+                                             Collection<ResponseRequest> requests) {
+
+        Msg.tellAnon(sender, Lang.get(_MULTIPLE_REQUESTS));
 
         for (ResponseRequest request : requests) {
-            Messenger.tellAnon(sender, '/' + type.getCommandName() + ' ' + request.getContext());
+            Msg.tellAnon(sender, '/' + type.getCommandName() + ' ' + request.getContext());
         }
     }
 

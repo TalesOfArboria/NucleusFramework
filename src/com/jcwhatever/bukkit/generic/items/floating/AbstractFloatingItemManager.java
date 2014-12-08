@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.items.floating;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -148,14 +148,14 @@ public abstract class AbstractFloatingItemManager<T extends FloatingItem> {
 
             Location location = node.getLocation("location");
             if (location == null) {
-                Messenger.debug(_plugin, "Location not found for floating item in data node.");
+                Msg.debug(_plugin, "Location not found for floating item in data node.");
                 continue;
             }
 
             ItemStack[] itemStacks = node.getItemStacks("item");
 
             if (itemStacks == null || itemStacks.length == 0) {
-                Messenger.debug(_plugin, "Item stack not found for floating item in data node.");
+                Msg.debug(_plugin, "Item stack not found for floating item in data node.");
                 continue;
             }
 

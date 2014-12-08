@@ -31,14 +31,15 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderExc
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger;
+import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
 import com.jcwhatever.bukkit.generic.storage.settings.SettingDefinitions;
 import com.jcwhatever.bukkit.generic.storage.settings.ValidationResults;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.WorldEditUtils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -75,7 +76,8 @@ public abstract class AbstractCommandUtils {
 
     private static final Pattern FORMAT_ENABLE = Pattern.compile("\\{e}");
 
-    protected Plugin _plugin;
+    private Plugin _plugin;
+    protected IMessenger _msg;
 
     protected AbstractCommandUtils() {}
 
@@ -85,7 +87,7 @@ public abstract class AbstractCommandUtils {
      * @param plugin  The owning plugin
      */
     public AbstractCommandUtils (Plugin plugin) {
-        _plugin = plugin;
+        setPlugin(plugin);
     }
 
     /**
@@ -99,7 +101,7 @@ public abstract class AbstractCommandUtils {
      * Tell the {@code CommandSender} a generic message.
      */
     protected void tell(CommandSender sender, String msg, Object... params) {
-        Messenger.tell(_plugin, sender, TextUtils.format(msg, params));
+        _msg.tell(sender, TextUtils.format(msg, params));
     }
 
     /**
@@ -117,21 +119,21 @@ public abstract class AbstractCommandUtils {
 
         params = ArrayUtils.add(params, isEnabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
 
-        Messenger.tell(_plugin, sender, msg, params);
+        _msg.tell(sender, msg, params);
     }
 
     /**
      * Tell the {@code CommandSender} the command executed the request successfully.
      */
     protected void tellSuccess(CommandSender sender, String msg, Object... params) {
-        Messenger.tell(_plugin, sender, ChatColor.GREEN + msg, params);
+        _msg.tell(sender, ChatColor.GREEN + msg, params);
     }
 
     /**
      * Tell the {@code CommandSender} the command failed to perform the requested task.
      */
     protected void tellError(CommandSender sender, String msg, Object... params) {
-        Messenger.tell(_plugin, sender, ChatColor.RED + msg, params);
+        _msg.tell(sender, ChatColor.RED + msg, params);
     }
 
 
@@ -376,4 +378,11 @@ public abstract class AbstractCommandUtils {
             onSuccess.run();
     }
 
+    protected void setPlugin(Plugin plugin) {
+        if (_plugin != null)
+            throw new RuntimeException("Plugin can only be set once.");
+
+        _plugin = plugin;
+        _msg = MessengerFactory.get(plugin);
+    }
 }

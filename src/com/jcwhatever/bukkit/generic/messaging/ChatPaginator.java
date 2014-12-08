@@ -28,13 +28,14 @@ package com.jcwhatever.bukkit.generic.messaging;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Chat list paginator.
@@ -45,6 +46,7 @@ public class ChatPaginator {
     @Localizable static final String _FOOTER = "----------------------------------------";
 
     private final Plugin _plugin;
+    private final IMessenger _msg;
     private final List<Object[]> _printList = new ArrayList<>(50);
 
     protected int _itemsPerPage = 6;
@@ -65,6 +67,7 @@ public class ChatPaginator {
         PreCon.notNull(plugin);
 
         _plugin = plugin;
+        _msg = MessengerFactory.get(plugin);
     }
 
     /**
@@ -82,6 +85,7 @@ public class ChatPaginator {
         PreCon.greaterThanZero(itemsPerPage);
 
         _plugin = plugin;
+        _msg = MessengerFactory.get(plugin);
         _itemsPerPage = itemsPerPage;
     }
 
@@ -100,6 +104,7 @@ public class ChatPaginator {
         PreCon.notNull(title);
 
         _plugin = plugin;
+        _msg = MessengerFactory.get(plugin);
         _itemsPerPage = itemsPerPage;
         _title = title;
     }
@@ -148,6 +153,7 @@ public class ChatPaginator {
         PreCon.notNull(title);
 
         _plugin = plugin;
+        _msg = MessengerFactory.get(plugin);
         _itemsPerPage = itemsPerPage;
         _headerFormat = headerFormat.toString();
         _footerFormat = footerFormat.toString();
@@ -251,14 +257,14 @@ public class ChatPaginator {
                 : Lang.get(_HEADER, _title, Math.max(1, page), Math.max(1, totalPages));
 
         if (!header.isEmpty())
-            Messenger.tell(_plugin, sender, header);
+            _msg.tell(sender, header);
 
         if (page < 1 || page > totalPages) {
             if (page == 1) {
-                Messenger.tell(_plugin, sender, "No items to display.");
+                _msg.tell(sender, "No items to display.");
             }
             else {
-                Messenger.tell(_plugin, sender, "Page " + page + " was not found.");
+                _msg.tell(sender, "Page " + page + " was not found.");
             }
         }
         else {
@@ -270,9 +276,9 @@ public class ChatPaginator {
                 Object[] line = _printList.get(i);
                 if (line.length == 1 && line[0] instanceof PreFormattedLine) {
                     PreFormattedLine preformatted = (PreFormattedLine) line[0];
-                    Messenger.tell(_plugin, sender, preformatted.format, preformatted.parameters);
+                    _msg.tell(sender, preformatted.format, preformatted.parameters);
                 } else {
-                    Messenger.tell(_plugin, sender, format, line);
+                    _msg.tell(sender, format, line);
                 }
             }
         }
@@ -282,7 +288,7 @@ public class ChatPaginator {
                 : Lang.get(_FOOTER, _title, Math.max(1, page), Math.max(1, totalPages));
 
         if (!footer.isEmpty())
-            Messenger.tell(_plugin, sender, footer);
+            _msg.tell(sender, footer);
     }
 
     /*

@@ -25,9 +25,10 @@
 
 package com.jcwhatever.bukkit.generic.storage.settings;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
@@ -109,7 +110,7 @@ public class ValidationResults {
      * @return  True if the message was displayed.
      */
     public boolean tellMessage(Plugin plugin, CommandSender sender) {
-        return hasMessage() && Messenger.tell(plugin, sender, _message, _messageParams);
+        return hasMessage() && Msg.tell(plugin, sender, _message, _messageParams);
     }
 
 }

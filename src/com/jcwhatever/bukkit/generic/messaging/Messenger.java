@@ -28,11 +28,9 @@ package com.jcwhatever.bukkit.generic.messaging;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.generic.collections.TimedHashSet;
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
-import com.jcwhatever.bukkit.generic.storage.DataStorage;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
@@ -46,7 +44,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -55,108 +52,86 @@ import javax.annotation.Nullable;
 /**
  * Provide chat and console message utilities.
  */
-public class Messenger {
+public class Messenger implements IMessenger {
 
-    private Messenger() {}
-
-    private static final Logger _log = Logger.getLogger("Minecraft");
-
-    private static final int _maxLineLen = 60;
-    private static IDataNode _importantData;
     private static Pattern returnPattern = Pattern.compile("\r");
     private static Map<UUID, TimedHashSet<String>> _noSpamCache =
             new PlayerMap<TimedHashSet<String>>(GenericsLib.getLib());
 
-    /**
-     * Specify if line wrapping is enabled.
-     *
-     * <p>
-     *     When line wrapping is enabled, lines are
-     *     forcefully wrapped and the plugin prefix appended
-     *     to the beginning of each new line.
-     * </p>
-     *
-     */
-    public enum LineWrapping {
-        ENABLED,
-        DISABLED
+    private final Plugin _plugin;
+    private final String _chatPrefix;
+    private final String _consolePrefix;
+    private final IDataNode _importantData;
+    private final Logger _logger;
+
+    private int _maxLineLen = 60;
+    private int _spamDelay = 140;
+    private LineWrapping _lineWrap = LineWrapping.ENABLED;
+
+    protected Messenger(Plugin plugin, @Nullable Object prefixSource) {
+        _plugin = plugin;
+        _chatPrefix = MessengerFactory.getChatPrefix(prefixSource);
+        _consolePrefix = MessengerFactory.getConsolePrefix(prefixSource);
+        _logger = GenericsLib.getMessengerFactory().getLogger();
+        _importantData = GenericsLib.getMessengerFactory().getImportantData(plugin);
     }
 
-    /**
-     * Tell a message to an {@code CommandSender} and cache it for 140 ticks.
-     *
-     * <p>
-     *     The message will not be displayed again until the 140 ticks have elapsed.
-     * </p>
-     * <p>
-     *     If the message is displayed before the 140 ticks have elapsed, the time is reset.
-     * </p>
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param sender   The sender to display the message to.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     *
-     * @return  True if the message was displayed.
-     */
-    public static boolean tellNoSpam(@Nullable Object source, CommandSender sender, Object message, Object...params) {
-
-        return tellNoSpam(LineWrapping.ENABLED, source, sender, 140, message, params);
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
-    /**
-     * Tell a message to an {@code CommandSender} and cache it for the specified number of ticks.
-     *
-     * <p>
-     *     The message will not be displayed again until the specified ticks have elapsed.
-     * </p>
-     * <p>
-     *     If the message is displayed before the specified ticks have elapsed, the time is reset.
-     * </p>
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param sender   The sender to display the message to.
-     * @param ticks    The number of ticks before the message can be displayed again.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     *
-     * @return  True if the message was displayed.
-     */
-    public static boolean tellNoSpam(@Nullable Object source, CommandSender sender, int ticks,
-                                     Object message, Object...params) {
-
-        return tellNoSpam(LineWrapping.ENABLED, source, sender, ticks, message, params);
+    @Override
+    public int getLineWrapCount() {
+        return _maxLineLen;
     }
 
-    /**
-     * Tell a message to an {@code CommandSender} and cache it for the specified number of ticks.
-     *
-     * <p>
-     *     The message will not be displayed again until the specified ticks have elapsed.
-     * </p>
-     * <p>
-     *     If the message is displayed before the specified ticks have elapsed, the time is reset.
-     * </p>
-     *
-     * @param lineWrapping  Line wrapping option.
-     * @param source        The plugin or object to get a prefix from.
-     * @param sender        The sender to display the message to.
-     * @param ticks         The number of ticks before the message can be displayed again.
-     * @param message       The message to display.
-     * @param params        Optional formatting parameters.
-     *
-     * @return  True if the message was displayed.
-     */
-    public static boolean tellNoSpam(LineWrapping lineWrapping, @Nullable Object source,
-                                     CommandSender sender, int ticks, Object message, Object...params) {
+    @Override
+    public void setLineWrapCount(int characterCount) {
+        _maxLineLen = characterCount;
+    }
+
+    @Override
+    public LineWrapping getDefaultLineWrap() {
+        return _lineWrap;
+    }
+
+    @Override
+    public void setDefaultLineWrap(LineWrapping lineWrapping) {
+        _lineWrap = lineWrapping;
+    }
+
+    @Override
+    public int getDefaultNoSpamDelay() {
+        return _spamDelay;
+    }
+
+    @Override
+    public void setDefaultNoSpamDelay(int delay) {
+        _spamDelay = delay;
+    }
+
+    @Override
+    public boolean tellNoSpam(CommandSender sender, Object message, Object... params) {
+        return tellNoSpam(sender, _spamDelay, _lineWrap, message, params);
+    }
+
+    @Override
+    public boolean tellNoSpam(CommandSender sender, Integer ticks, Object message, Object... params) {
+        return tellNoSpam(sender, ticks, _lineWrap, message, params);
+    }
+
+    @Override
+    public boolean tellNoSpam(CommandSender sender, Integer ticks, LineWrapping lineWrapping,
+                              Object message, Object... params) {
         PreCon.notNull(sender);
-        PreCon.notNull(lineWrapping);
         PreCon.positiveNumber(ticks);
+        PreCon.notNull(lineWrapping);
         PreCon.notNull(message);
         PreCon.notNull(params);
 
         if (!(sender instanceof Player)) {
-            return tell(source, sender, message, params);
+            return tell(sender, message, params);
         }
 
         Player p = (Player)sender;
@@ -169,304 +144,32 @@ public class Messenger {
             _noSpamCache.put(p.getUniqueId(), recent);
         }
 
-        if (recent.contains(msg, 140))
+        if (recent.contains(msg, ticks))
             return false;
 
         recent.add(msg, ticks);
 
-        return tell(lineWrapping, source, p, msg);
+        return tell(p, lineWrapping, msg);
     }
 
-    /**
-     * Tell a message to the specified {@code CommandSender}.
-     *
-     * @param lineWrapping  Line wrapping option.
-     * @param source        The plugin or object to get a prefix from.
-     * @param sender        The sender to display the message to.
-     * @param message       The message to display.
-     * @param params        Optional formatting parameters.
-     *
-     * @return  True if the message was displayed.
-     */
-    public static boolean tell(LineWrapping lineWrapping, @Nullable Object source,
-                               CommandSender sender, Object message, Object...params) {
-        PreCon.notNull(lineWrapping);
-
-        return tell(lineWrapping == LineWrapping.ENABLED, source, sender, TextUtils.format(message, params));
+    @Override
+    public boolean tell(CommandSender sender, Object message, Object... params) {
+        return tell(sender, _lineWrap, message, params);
     }
 
-    /**
-     * Tell a message to the specified {@code CommandSender}.
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param sender   The sender to display the message to.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     *
-     * @return  True if the message was displayed.
-     */
-    public static boolean tell(@Nullable Object source, CommandSender sender, Object message, Object...params) {
-
-        return tell(true, source, sender, TextUtils.format(message, params));
-    }
-
-    /**
-     * Tell a message to the specified {@code CommandSender}
-     * without a source prefix.
-     *
-     * @param sender   The sender to display the message to.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     *
-     * @return  True if the message was displayed.
-     */
-    public static boolean tellAnon(CommandSender sender, Object message, Object... params) {
-
-        return tell(false, null, sender, TextUtils.format(message, params));
-    }
-
-    /**
-     * Tell an important message to the specified player. If the player is not
-     * online, the message is cached and displayed to the player at the next log in.
-     *
-     * @param source    The plugin or object to get a prefix from.
-     * @param playerId  The id of the player.
-     * @param context   The message context. alphanumerics only.
-     * @param message   The message to display.
-     * @param params    Optional formatting parameters.
-     */
-    public static void tellImportant(@Nullable Object source, UUID playerId, String context,
-                                     Object message, Object...params) {
-        PreCon.notNull(playerId);
-        PreCon.notNullOrEmpty(context);
-        PreCon.notNull(message);
-        PreCon.notNull(params);
-
-        if (!TextUtils.isValidName(context, 64))
-            throw new IllegalArgumentException("illegal characters in context argument or argument is too long.");
-
-        Player p = PlayerUtils.getPlayer(playerId);
-        if (p != null && p.isOnline()) {
-            tell(source, p, message, params);
-            return;
-        }
-
-        IDataNode data = getImportantData();
-
-        data.set(playerId.toString() + '.' + context + ".message", TextUtils.format(message, params));
-        data.set(playerId.toString() + '.' + context + ".prefix", getChatPrefix(source));
-        data.saveAsync(null);
-    }
-
-    /**
-     * Called to display stored important messages for the
-     * specified player to the specified player.
-     *
-     * @param p  The player.
-     */
-    public static void tellImportant(Player p) {
-        PreCon.notNull(p);
-
-        IDataNode data = getImportantData();
-
-        IDataNode playerData = data.getNode(p.getUniqueId().toString());
-
-        Set<String> contexts = playerData.getSubNodeNames();
-        if (contexts == null)
-            return;
-
-        boolean save = false;
-
-        for (String context : contexts) {
-            IDataNode contextData = playerData.getNode(context);
-
-            String prefix = contextData.getString("prefix");
-            if (prefix == null)
-                continue;
-
-            String message = contextData.getString("message", "");
-
-            if (message != null) {
-                tell(prefix, p, message);
-            }
-
-            contextData.clear();
-            save = true;
-        }
-
-        if (save)
-            data.saveAsync(null);
-    }
-
-    /**
-     * Broadcast a message to all players on the server.
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     */
-    public static void broadcast(@Nullable Object source, Object message, Object... params) {
-        PreCon.notNull(message);
-        PreCon.notNull(params);
-
-        String formatted = TextUtils.format(message, params);
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            tell(source, p, formatted);
-        }
-    }
-
-    /**
-     * Broadcast a message to all players on the server, excluding
-     * players from a specified collection of players.
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param message  The message to display.
-     * @param exclude  The players to exclude from the broadcast.
-     * @param params   Optional formatting parameters.
-     */
-    public static void broadcast(@Nullable Object source, Object message,
-                                 Collection<Player> exclude, Object...params) {
-        PreCon.notNull(message);
-        PreCon.notNull(exclude);
-        PreCon.notNull(params);
-
-        String formatted = TextUtils.format(message, params);
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-
-            if (exclude.contains(p))
-                continue;
-
-            tell(source, p, formatted);
-        }
-    }
-
-    /**
-     * Display an information message in the console.
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     */
-    public static void info(@Nullable Object source, Object message, Object... params) {
-        PreCon.notNull(message);
-        PreCon.notNull(params);
-
-        _log.info(getConsolePrefix(source) + TextUtils.format(message, params));
-    }
-
-    /**
-     * Display a debug message in the console.
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     */
-    public static void debug(@Nullable Object source, Object message, Object... params) {
-        PreCon.notNull(message);
-        PreCon.notNull(params);
-
-        if (source instanceof GenericsPlugin && !((GenericsPlugin) source).isDebugging())
-            return;
-
-        ConsoleCommandSender e = Bukkit.getConsoleSender();
-
-        if (e != null) {
-            tell(false, source, e, ChatColor.GOLD + "[debug] " + TextUtils.format(message, params));
-        }
-        else {
-            info(source, "[debug] " + TextUtils.format(message, params));
-        }
-    }
-
-    /**
-     * Display a warning in the console.
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     */
-    public static void warning(@Nullable Object source, Object message, Object... params) {
-        PreCon.notNull(message);
-        PreCon.notNull(params);
-
-        _log.warning(getConsolePrefix(source) + TextUtils.format(message, params));
-    }
-
-    /**
-     * Display a severe error in the console.
-     *
-     * @param source   The plugin or object to get a prefix from.
-     * @param message  The message to display.
-     * @param params   Optional formatting parameters.
-     */
-    public static void severe(@Nullable Object source, Object message, Object... params) {
-        PreCon.notNull(message);
-        PreCon.notNull(params);
-
-        _log.severe(getConsolePrefix(source) + TextUtils.format(message, params));
-    }
-
-    /*
-     *  Get the chat prefix of a plugin.
-     */
-    private static String getChatPrefix(@Nullable Object source) {
-        if (source instanceof IChatPrefixed) {
-            return ((IChatPrefixed) source).getChatPrefix();
-        }
-        else if (source instanceof Plugin) {
-            return '[' + ((Plugin)source).getName() + ']';
-        }
-        else if (source instanceof String) {
-            return '[' + ((String)source) + ']';
-        }
-        else
-        {
-            return source != null
-                    ? '[' + source.toString() + ']'
-                    : "";
-        }
-
-    }
-
-    /*
-     * Get the console prefix of a plugin.
-     */
-    private static String getConsolePrefix(@Nullable Object source) {
-        return source instanceof IChatPrefixed
-                ? ((IChatPrefixed) source).getConsolePrefix()
-                : getChatPrefix(source);
-    }
-
-    /*
-     * Get the data node where important messages are stored.
-     */
-    private static IDataNode getImportantData() {
-        if (_importantData == null) {
-
-            _importantData = DataStorage.getStorage(GenericsLib.getLib(), new DataPath("important-messages"));
-            _importantData.loadAsync();
-        }
-
-        return _importantData;
-    }
-
-
-    /*
-     * Tell a message to the specified {@code CommandSender}
-     */
-    private static boolean tell(boolean cutLines, @Nullable Object source, CommandSender sender, String message) {
+    @Override
+    public boolean tell(CommandSender sender, LineWrapping lineWrapping, Object messageObject, Object... params) {
         PreCon.notNull(sender);
-        PreCon.notNull(message);
+        PreCon.notNull(lineWrapping);
+        PreCon.notNull(messageObject);
+        PreCon.notNull(params);
 
-        String chatPrefix = getChatPrefix(source);
-
-        cutLines = cutLines && source != null;
+        boolean cutLines = lineWrapping == LineWrapping.ENABLED;
+        String message = MessengerFactory.getString(messageObject);
 
         // if lines don't need to be cut, simply send the raw message
         if (!cutLines) {
-            sender.sendMessage(chatPrefix + message);
+            sender.sendMessage(_chatPrefix + message);
             return true;
         }
 
@@ -474,11 +177,11 @@ public class Messenger {
 
         for (String line : lines) {
 
-            line = chatPrefix + line;
+            line = _chatPrefix + line;
             String testLine = ChatColor.stripColor(line);
 
             if (testLine.length() > _maxLineLen) {
-                List<String> moreLines = TextUtils.paginateString(line, chatPrefix, _maxLineLen, true);
+                List<String> moreLines = TextUtils.paginateString(line, _chatPrefix, _maxLineLen, true);
                 for (String mLine : moreLines) {
                     sender.sendMessage(mLine);
                 }
@@ -488,5 +191,116 @@ public class Messenger {
         }
         return true;
     }
+
+    @Override
+    public void tellImportant(Player player, String context, Object message, Object... params) {
+        tellImportant(player.getUniqueId(), context, message, params);
+    }
+
+    @Override
+    public void tellImportant(UUID playerId, String context, Object message, Object... params) {
+        PreCon.notNull(playerId);
+        PreCon.notNullOrEmpty(context);
+        PreCon.notNull(message);
+        PreCon.notNull(params);
+
+        if (!TextUtils.isValidName(context, 64))
+            throw new IllegalArgumentException("Illegal characters in context argument or argument is too long.");
+
+        Player p = PlayerUtils.getPlayer(playerId);
+        if (p != null && p.isOnline()) {
+            tell(p, message, params);
+            return;
+        }
+
+        IDataNode data = _importantData;
+
+        data.set(playerId.toString() + '.' + context + ".message", TextUtils.format(message, params));
+        data.set(playerId.toString() + '.' + context + ".prefix", _chatPrefix);
+        data.saveAsync(null);
+    }
+
+    @Override
+    public void broadcast(Object message, Object... params) {
+        broadcast(_lineWrap, message, params);
+    }
+
+    @Override
+    public void broadcast(Collection<Player> exclude, Object message, Object... params) {
+        broadcast(exclude, _lineWrap, message, params);
+    }
+
+    @Override
+    public void broadcast(LineWrapping lineWrapping, Object message, Object... params) {
+        PreCon.notNull(message);
+        PreCon.notNull(params);
+
+        String formatted = TextUtils.format(message, params);
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            tell(p, lineWrapping, formatted);
+        }
+    }
+
+    @Override
+    public void broadcast(Collection<Player> exclude, LineWrapping lineWrapping, Object message, Object... params) {
+        PreCon.notNull(lineWrapping);
+        PreCon.notNull(exclude);
+        PreCon.notNull(message);
+        PreCon.notNull(params);
+
+        String formatted = TextUtils.format(message, params);
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+
+            if (exclude.contains(p))
+                continue;
+
+            tell(p, lineWrapping, formatted);
+        }
+    }
+
+    @Override
+    public void info(Object message, Object... params) {
+        PreCon.notNull(message);
+        PreCon.notNull(params);
+
+        _logger.info(_consolePrefix + TextUtils.format(message, params));
+    }
+
+    @Override
+    public void debug(Object message, Object... params) {
+        PreCon.notNull(message);
+        PreCon.notNull(params);
+
+        if (_plugin instanceof GenericsPlugin && !((GenericsPlugin) _plugin).isDebugging())
+            return;
+
+        ConsoleCommandSender e = Bukkit.getConsoleSender();
+
+        if (e != null) {
+            tell(e, LineWrapping.DISABLED, ChatColor.GOLD + "[debug] " + TextUtils.format(message, params));
+        }
+        else {
+            info("[debug] " + TextUtils.format(message, params));
+        }
+    }
+
+    @Override
+    public void warning(Object message, Object... params) {
+        PreCon.notNull(message);
+        PreCon.notNull(params);
+
+        _logger.warning(_consolePrefix + TextUtils.format(message, params));
+    }
+
+    @Override
+    public void severe(Object message, Object... params) {
+        PreCon.notNull(message);
+        PreCon.notNull(params);
+
+        _logger.severe(_consolePrefix + TextUtils.format(message, params));
+    }
+
 }
 

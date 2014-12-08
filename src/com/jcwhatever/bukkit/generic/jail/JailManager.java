@@ -27,8 +27,8 @@ package com.jcwhatever.bukkit.generic.jail;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
 import com.jcwhatever.bukkit.generic.mixins.implemented.NamedLocation;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -38,8 +38,8 @@ import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Rand;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
-import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.Utils;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -415,7 +415,7 @@ public class JailManager {
                         Player p = PlayerUtils.getPlayer(session.getPlayerId());
 
                         if (p != null) {
-                            Messenger.tellAnon(p, Lang.get(_RELEASE_TIME, releaseMinutes));
+                            Msg.tellAnon(p, Lang.get(_RELEASE_TIME, releaseMinutes));
                         }
                     }
                 }

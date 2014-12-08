@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.mixins.IPlayerWrapper;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
@@ -337,7 +337,7 @@ public class PlayerUtils {
                     @Override
                     public void onFinish(StorageLoadResult result) {
                         if (!result.isLoaded())
-                            Messenger.warning(GenericsLib.getLib(), "Failed to load player names file.");
+                            Msg.warning("Failed to load player names file.");
 
                     }
 

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.scripting.AbstractScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
@@ -105,14 +105,14 @@ public class ScriptApiInclude extends GenericsScriptApi {
                             _includeFolder, file, _manager.getScriptFactory());
 
                     if (script == null) {
-                        Messenger.warning(getPlugin(), "Failed to load script named '{0}'.");
+                        Msg.warning(getPlugin(), "Failed to load script named '{0}'.");
                         continue;
                     }
 
                     _script.evaluate(script);
 
                 } else {
-                    Messenger.warning(getPlugin(), "Failed to include script named '{0}'. " +
+                    Msg.warning(getPlugin(), "Failed to include script named '{0}'. " +
                             "File not found.", file.getName());
                 }
             }
@@ -136,7 +136,7 @@ public class ScriptApiInclude extends GenericsScriptApi {
 
             IScriptApi api = ScriptApiRepo.getApi(getPlugin(), owningPluginName, apiName);
             if (api == null) {
-                Messenger.warning(getPlugin(), "Failed to include script api named '{0}' from plugin '{1}'. " +
+                Msg.warning(getPlugin(), "Failed to include script api named '{0}' from plugin '{1}'. " +
                         "Api not found.", apiName, owningPluginName);
                 return false;
             }
@@ -161,7 +161,7 @@ public class ScriptApiInclude extends GenericsScriptApi {
 
             IScriptApi api = ScriptApiRepo.getApi(getPlugin(), owningPluginName, apiName);
             if (api == null) {
-                Messenger.warning(getPlugin(), "Failed to find script api named '{0}' from plugin '{1}'. " +
+                Msg.warning(getPlugin(), "Failed to find script api named '{0}' from plugin '{1}'. " +
                         "Api not found.", apiName, owningPluginName);
                 return null;
             }

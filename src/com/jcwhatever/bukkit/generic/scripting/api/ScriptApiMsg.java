@@ -25,8 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.messaging.Messenger.LineWrapping;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger.LineWrapping;
+import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
@@ -45,6 +46,8 @@ import javax.annotation.Nullable;
         description = "Provide scripts with API access to chat messenger.")
 public class ScriptApiMsg extends GenericsScriptApi {
 
+    private final IMessenger _messenger;
+
     /**
      * Constructor. Automatically adds variable to script.
      *
@@ -52,17 +55,26 @@ public class ScriptApiMsg extends GenericsScriptApi {
      */
     public ScriptApiMsg(Plugin plugin) {
         super(plugin);
+
+        _messenger = MessengerFactory.create(plugin, null);
     }
 
     @Override
     public IScriptApiObject getApiObject(IEvaluatedScript script) {
-        return new ApiObject();
+        return new ApiObject(_messenger);
     }
 
     public static class ApiObject implements IScriptApiObject {
 
-        private Object _chatPrefix;
+        private final IMessenger _msg;
+
+        private String _chatPrefix;
         private boolean _isDisposed;
+
+        ApiObject (IMessenger messenger) {
+            _msg = messenger;
+            _msg.setDefaultLineWrap(LineWrapping.DISABLED);
+        }
 
         @Override
         public boolean isDisposed() {
@@ -71,7 +83,6 @@ public class ScriptApiMsg extends GenericsScriptApi {
 
         @Override
         public void dispose() {
-            _chatPrefix = null;
             _isDisposed = true;
         }
 
@@ -81,7 +92,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
          * @param prefix  The prefix.
          */
         public void setChatPrefix(@Nullable Object prefix) {
-            _chatPrefix = prefix;
+            _chatPrefix = MessengerFactory.getChatPrefix(prefix);
         }
 
         /**
@@ -92,7 +103,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
         public void broadcast(String message) {
             PreCon.notNull(message);
 
-            Messenger.broadcast(null, message);
+            _msg.broadcast(_chatPrefix + message);
         }
 
         /**
@@ -108,7 +119,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tell(LineWrapping.DISABLED, _chatPrefix, p, message);
+            _msg.tell(p, _chatPrefix + message);
         }
 
         /**
@@ -124,7 +135,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tell(LineWrapping.DISABLED, (Object)null, p, message);
+            _msg.tell(p, message);
         }
 
         /**
@@ -142,7 +153,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tellNoSpam(LineWrapping.DISABLED, _chatPrefix, p, timeout, message);
+            _msg.tellNoSpam(p, timeout, _chatPrefix + message);
         }
 
         /**
@@ -161,7 +172,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            Messenger.tellNoSpam(LineWrapping.DISABLED, null, p, timeout, message);
+            _msg.tellNoSpam(p, timeout, message);
         }
 
         /**
@@ -172,7 +183,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
         public void debug(String message) {
             PreCon.notNull(message);
 
-            Messenger.warning(_chatPrefix, " [SCRIPT DEBUG] " + message);
+            _msg.warning(_chatPrefix + " [SCRIPT DEBUG] " + message);
         }
     }
 }

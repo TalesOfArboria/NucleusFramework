@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.signs;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.TimedHashMap;
 import com.jcwhatever.bukkit.generic.events.bukkit.SignInteractEvent;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
@@ -139,7 +139,7 @@ public class SignManager {
     public boolean registerSignType(SignHandler signHandler) {
         SignHandler current = _signHandlerMap.get(signHandler.getSearchName());
         if (current != null) {
-            Messenger.warning(_plugin,
+            Msg.warning(_plugin,
                     "Failed to register sign handler. A sign named '{0}' is already registered by plugin '{1}'.",
                     current.getName(), current.getPlugin().getName());
 
@@ -269,7 +269,7 @@ public class SignManager {
 
         SignHandler handler = _localHandlerMap.get(signHandlerName.toLowerCase());
         if (handler == null) {
-            Messenger.warning(_plugin,
+            Msg.warning(_plugin,
                     "Failed to restore sign because a sign handler named '{0}' was not found for it.",
                     signHandlerName);
             return false;
@@ -284,19 +284,19 @@ public class SignManager {
 
         final Location loc = signNode.getLocation("location");
         if (loc == null) {
-            Messenger.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
+            Msg.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
             return false;
         }
 
         final Material type = signNode.getEnum("type", null, Material.class);
         if (type == null) {
-            Messenger.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
+            Msg.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
             return false;
         }
 
         final BlockFace facing = signNode.getEnum("direction", null, BlockFace.class);
         if (facing == null) {
-            Messenger.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
+            Msg.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
             return false;
         }
 
@@ -341,7 +341,7 @@ public class SignManager {
 
         SignHandler handler = _localHandlerMap.get(signHandlerName.toLowerCase());
         if (handler == null) {
-            Messenger.warning(_plugin,
+            Msg.warning(_plugin,
                     "Failed to restore signs because a sign handler named '{0}' was not found.",
                     signHandlerName);
             return false;
@@ -357,19 +357,19 @@ public class SignManager {
 
             Location loc = signNode.getLocation("location");
             if (loc == null) {
-                Messenger.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
+                Msg.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
                 continue;
             }
 
             Material type = signNode.getEnum("type", null, Material.class);
             if (type == null) {
-                Messenger.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
+                Msg.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
                 continue;
             }
 
             BlockFace facing = signNode.getEnum("direction", null, BlockFace.class);
             if (facing == null) {
-                Messenger.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
+                Msg.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
                 continue;
             }
 

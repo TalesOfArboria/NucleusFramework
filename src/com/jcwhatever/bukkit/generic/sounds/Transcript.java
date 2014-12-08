@@ -25,8 +25,9 @@
 
 package com.jcwhatever.bukkit.generic.sounds;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.messaging.Messenger.LineWrapping;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger.LineWrapping;
+import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -142,6 +143,7 @@ public class Transcript {
     public void tell(final Plugin plugin, Collection<Player> players, int maxTimeSeconds) {
 
         final PriorityQueue<Paragraph> paragraphs = new PriorityQueue<Paragraph>(_paragraphs);
+        final IMessenger msg = MessengerFactory.get(plugin);
 
         while (!paragraphs.isEmpty()) {
             final Paragraph paragraph = paragraphs.remove();
@@ -153,14 +155,14 @@ public class Transcript {
 
                 if (paragraph.getStartTimeSeconds() == 0) {
 
-                    Messenger.tell(LineWrapping.DISABLED, plugin, p, paragraph.getText());
+                    msg.tell(p, LineWrapping.DISABLED, paragraph.getText());
                 } else {
 
                     Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 
                         @Override
                         public void run() {
-                            Messenger.tell(LineWrapping.DISABLED, plugin, p, paragraph.getText());
+                            msg.tell(p, LineWrapping.DISABLED, paragraph.getText());
                         }
 
                     }, paragraph.getStartTimeSeconds() * 20);
@@ -184,8 +186,6 @@ public class Transcript {
          */
         Paragraph (String text, @Nullable String timeStamp) {
             _text = text.trim();
-
-            Messenger.debug(null, text);
 
             if (timeStamp != null) {
                 String numbers = timeStamp.replace("{p:", "").replace("}", "");

@@ -27,9 +27,12 @@ package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.language.LanguageManager;
 import com.jcwhatever.bukkit.generic.messaging.IChatPrefixed;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger;
+import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -47,6 +50,8 @@ public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed
     private LanguageManager _languageManager;
     private IDataNode _dataNode;
     private boolean _isDebugging;
+    private IMessenger _messenger;
+    private IMessenger _anonMessenger;
 
     /**
      * Constructor.
@@ -106,11 +111,31 @@ public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed
         return _languageManager;
     }
 
+    /**
+     * Get the plugins chat and console messenger.
+     */
+    public IMessenger getMessenger() {
+        return _messenger;
+    }
+
+    /**
+     * Get the plugins anonymous chat messenger.
+     *
+     * <p>A messenger that has no chat prefix.</p>
+     */
+    public IMessenger getAnonMessenger() {
+        return _anonMessenger;
+    }
+
     @Override
     public final void onEnable() {
         onPreEnable();
 
         loadDataNode();
+
+        _messenger = MessengerFactory.get(this);
+        _anonMessenger = MessengerFactory.getAnon(this);
+
         _languageManager = new LanguageManager(this);
         GenericsLib.getLib().registerPlugin(this);
 

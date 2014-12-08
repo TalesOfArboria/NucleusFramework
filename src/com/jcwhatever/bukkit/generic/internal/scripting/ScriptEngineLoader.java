@@ -24,8 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.internal.scripting;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.modules.JarModuleLoader;
 
 import java.util.List;
@@ -65,7 +64,7 @@ public class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactory> {
                 _engineManager.registerEngineExtension(mime, factory);
             }
 
-            Messenger.info(GenericsLib.getLib(), "Loaded script engine: {0}", factory.getEngineName());
+            Msg.info("Loaded script engine: {0}", factory.getEngineName());
         }
     }
 }

@@ -32,13 +32,14 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
-import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.items.ItemWrapper;
 import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger;
+import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect.PlayerBlockSelectHandler;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
+import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
@@ -77,6 +78,7 @@ import javax.annotation.Nullable;
 public class CommandArguments implements Iterable<CommandArgument> {
 
     private final Plugin _plugin;
+    private final IMessenger _msg;
     private final List<CommandArgument> _staticArgs = new ArrayList<CommandArgument>(10);
     private final List<CommandArgument> _floatingArgs = new ArrayList<CommandArgument>(10);
     private final ParameterDescriptions _paramDescriptions;
@@ -121,6 +123,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         PreCon.notNull(commandInfo);
 
         _plugin = plugin;
+        _msg = MessengerFactory.get(plugin);
         _expectedSize = commandInfo.getStaticParams().length;
         _paramDescriptions = new ParameterDescriptions(commandInfo);
 
@@ -130,6 +133,13 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // parse arguments
         parseArguments(commandInfo.getStaticParams(), commandInfo.getFloatingParams(), args);
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     /**
@@ -904,7 +914,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         // select location
         else if (arg.equalsIgnoreCase("select")) {
 
-            Messenger.tell(_plugin, p, "Click a block to select it's location...");
+            _msg.tell(p, "Click a block to select it's location...");
 
             PlayerBlockSelect.query(p, new PlayerBlockSelectHandler() {
 
@@ -914,7 +924,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                     Location location = selectedBlock.getLocation();
 
                     String message = Lang.get("Location selected: {0} ", TextUtils.formatLocation(location, true));
-                    Messenger.tell(_plugin, p, message);
+                    _msg.tell(p, message);
 
                     locationHandler.onLocationRetrieved(p, location);
 

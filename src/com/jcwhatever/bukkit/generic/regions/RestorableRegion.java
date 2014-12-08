@@ -25,12 +25,11 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.HashSetMap;
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableFurnitureEntity;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueProject;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.Future;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueTask;
@@ -135,7 +134,7 @@ public abstract class RestorableRegion extends BuildableRegion {
         _isSaving = true;
         onSave();
 
-        Messenger.debug(GenericsLib.getLib(), "RestorableRegion: saving data");
+        Msg.debug(getPlugin(), "RestorableRegion: saving data for region '{0}'", getName());
 
         for (Chunk chunk : chunks) {
             RegionChunkFileWriter writer = new RegionChunkFileWriter(this, chunk);
@@ -150,7 +149,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                     public void run() {
                         _isSaving = false;
                         onSaveComplete();
-                        Messenger.info(GenericsLib.getLib(), "Restorable Region save complete.");
+                        Msg.debug(getPlugin(), "Restorable Region '{0}' save complete.", getName());
                     }
                 });
 
@@ -277,7 +276,6 @@ public abstract class RestorableRegion extends BuildableRegion {
             public void run() {
                 _isRestoring = false;
                 onRestoreComplete();
-                Messenger.info(getPlugin(), "Restorable Region restoration complete.");
             }
         });
     }
