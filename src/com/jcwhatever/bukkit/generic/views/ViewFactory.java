@@ -42,7 +42,7 @@ public abstract class ViewFactory<T extends IView> implements IViewFactory {
     private boolean _isDisposed;
 
     protected ViewFactory(Plugin plugin, String name, Class<T> viewClass) {
-        PreCon.notNull(plugin);
+        // PreCon.notNull(plugin) - do not null check plugin yet, allow null so getPlugin() can be overridden.
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(viewClass);
 
@@ -54,6 +54,9 @@ public abstract class ViewFactory<T extends IView> implements IViewFactory {
 
     @Override
     public Plugin getPlugin() {
+        if (_plugin == null)
+            throw new NullPointerException("Plugin cannot be null.");
+
         return _plugin;
     }
 
