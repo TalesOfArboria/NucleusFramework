@@ -28,9 +28,9 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.GenericsEventHandler;
 import com.jcwhatever.bukkit.generic.events.IGenericsEventListener;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
@@ -154,7 +154,7 @@ public class FilteredWorkbenchFactory extends ViewFactory<FilteredWorkbenchView>
         }
 
         private void tellNoCraftMessage(FilteredWorkbenchView view) {
-            Messenger.tellNoSpam(view.getPlugin(), view.getPlayer(),
+            Msg.tellNoSpam(view.getPlugin(), view.getPlayer(),
                     Lang.get(view.getPlugin(), _NOT_CRAFTABLE_CHAT));
         }
     }

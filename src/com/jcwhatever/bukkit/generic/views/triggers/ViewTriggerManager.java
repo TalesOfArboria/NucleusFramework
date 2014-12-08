@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.views.triggers;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
@@ -157,12 +157,12 @@ public class ViewTriggerManager implements IViewTriggerStorage {
 
         IViewTriggerFactory factory = getTriggerFactory(factoryName);
         if (factory == null) {
-            Messenger.debug(getPlugin(), "Failed to find a view trigger factory named '{0}'", factoryName);
+            Msg.debug(getPlugin(), "Failed to find a view trigger factory named '{0}'", factoryName);
             return null;
         }
 
         if (_triggers.containsKey(factoryName.toLowerCase())) {
-            Messenger.debug(getPlugin(), "Failed to add a view trigger because a " +
+            Msg.debug(getPlugin(), "Failed to add a view trigger because a " +
                     "trigger named '{0}' already exists.", triggerName);
 
             return null;
@@ -170,7 +170,7 @@ public class ViewTriggerManager implements IViewTriggerStorage {
 
         IViewFactory target = _viewStorage.getViewFactory(targetName);
         if (target == null) {
-            Messenger.debug(getPlugin(), "Failed to find a view factory named '{0}'", factoryName);
+            Msg.debug(getPlugin(), "Failed to find a view factory named '{0}'", factoryName);
             return null;
         }
 

@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
-import com.jcwhatever.bukkit.generic.messaging.Messenger;
+import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
@@ -122,7 +122,7 @@ public class ViewFactoryManager implements IViewFactoryStorage {
 
         IViewFactory factory = getViewFactory(viewName);
         if (factory == null) {
-            Messenger.debug(_plugin, "Failed to find view factory named '{0}'.", viewName);
+            Msg.debug(_plugin, "Failed to find view factory named '{0}'.", viewName);
             return false;
         }
 

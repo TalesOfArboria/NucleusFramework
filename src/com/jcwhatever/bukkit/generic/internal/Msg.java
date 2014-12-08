@@ -71,6 +71,10 @@ public class Msg {
         return msg().tellNoSpam(sender, message, params);
     }
 
+    public static boolean tellNoSpam(Plugin plugin, CommandSender sender, Object message, Object... params) {
+        return msg(plugin).tellNoSpam(sender, message, params);
+    }
+
     public static boolean tellNoSpam(CommandSender sender, Integer ticks, Object message, Object... params) {
         return msg().tellNoSpam(sender, ticks, message, params);
     }
