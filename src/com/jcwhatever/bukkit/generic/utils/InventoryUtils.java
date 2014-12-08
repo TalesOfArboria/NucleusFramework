@@ -46,9 +46,9 @@ public class InventoryUtils {
 
     /**
      * Gets the number of items of the specified stack that
-     * can be stored in the specified inventory.
+     * can be stored in the specified chest.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static int getMax(Inventory inventory, ItemStack itemStack) {
@@ -57,9 +57,9 @@ public class InventoryUtils {
 
     /**
      * Gets the number of items of the specified stack that
-     * can be stored in the specified inventory.
+     * can be stored in the specified chest.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -71,7 +71,7 @@ public class InventoryUtils {
      * Gets the number of items of the specified stack that
      * can be stored in the specified {@code ItemStack} array.
      *
-     * @param contents   The inventory contents.
+     * @param contents   The chest contents.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -80,9 +80,9 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified inventory
+     * Determine if there is enough room in the specified chest
      * for the specified stack.
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @return
      */
@@ -91,10 +91,10 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified inventory
+     * Determine if there is enough room in the specified chest
      * for the specified stack.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -103,11 +103,11 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified inventory for
+     * Determine if there is enough room in the specified chest for
      * items of the same type as the specified stack in the amount of
      * the specified quantity.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param qty        The amount of space needed.
      */
@@ -116,11 +116,11 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified inventory for
+     * Determine if there is enough room in the specified chest for
      * items of the same type as the specified stack in the amount of the
      * specified quantity.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
@@ -134,7 +134,7 @@ public class InventoryUtils {
      * for items of the same type as the specified stack in the amount of the
      * specified quantity.
      *
-     * @param contents   The inventory contents.
+     * @param contents   The chest contents.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
@@ -145,9 +145,9 @@ public class InventoryUtils {
 
     /**
      * Count the number of items of the same type as the specified item stack
-     * in the specified inventory.
+     * in the specified chest.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static int count (Inventory inventory, ItemStack itemStack) {
@@ -156,9 +156,9 @@ public class InventoryUtils {
 
     /**
      * Count the number of items of the same type as the specified item stack
-     * in the specified inventory.
+     * in the specified chest.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -170,7 +170,7 @@ public class InventoryUtils {
      * Count the number of items of the same type as the specified item stack
      * in the specified {@code ItemStack} array.
      *
-     * @param contents   The inventory contents.
+     * @param contents   The chest contents.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -179,10 +179,10 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if the specified inventory contains an item stack
+     * Determine if the specified chest contains an item stack
      * that matches the specified item stack.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static boolean has(Inventory inventory, ItemStack itemStack) {
@@ -190,10 +190,10 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if the specified inventory contains an item stack
+     * Determine if the specified chest contains an item stack
      * that matches the specified item stack.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -237,7 +237,7 @@ public class InventoryUtils {
      * Determine if the specified {@code ItemStack} array contains an item stack
      * that matches the specified {@code ItemStack}.
      *
-     * @param contents   The inventory contents.
+     * @param contents   The chest contents.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -258,10 +258,10 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if the specified inventory contains the specified quantity
+     * Determine if the specified chest contains the specified quantity
      * of items that match the specified {@code ItemStack}.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param qty        The quantity.
      */
@@ -270,10 +270,10 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if the specified inventory contains the specified quantity
+     * Determine if the specified chest contains the specified quantity
      * of items that match the specified {@code ItemStack}.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
@@ -286,7 +286,7 @@ public class InventoryUtils {
      * Determine if the specified {@code ItemStack} array contains the specified quantity
      * of items that match the specified {@code ItemStack}.
      *
-     * @param contents   The inventory contents.
+     * @param contents   The chest contents.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
@@ -304,9 +304,9 @@ public class InventoryUtils {
 
     /**
      * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
-     * the specified inventory.
+     * the specified chest.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack) {
@@ -315,9 +315,9 @@ public class InventoryUtils {
 
     /**
      * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
-     * the specified inventory.
+     * the specified chest.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -329,7 +329,7 @@ public class InventoryUtils {
      * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
      * the specified {@code ItemStack} array.
      *
-     * @param contents   The inventory contents.
+     * @param contents   The chest contents.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
@@ -353,10 +353,10 @@ public class InventoryUtils {
     }
 
     /**
-     * Remove a specified quantity of {@code ItemStack}'s from the specified inventory
+     * Remove a specified quantity of {@code ItemStack}'s from the specified chest
      * that match the specified {@code ItemStack}.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
@@ -443,7 +443,7 @@ public class InventoryUtils {
      * Remove a specified quantity of {@code ItemStack}'s from the specified
      * {@code ItemStack} array that match the specified {@code ItemStack}.
      *
-     * @param contents   The inventory contents.
+     * @param contents   The chest contents.
      * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
@@ -499,10 +499,10 @@ public class InventoryUtils {
     }
 
     /**
-     * Clear an inventory. If the inventory is a {@code PlayerInventory},
+     * Clear an chest. If the chest is a {@code PlayerInventory},
      * the armor contents are also cleared.
      *
-     * @param inventory  The inventory to clear.
+     * @param inventory  The chest to clear.
      */
     public static void clearAll(Inventory inventory) {
         PreCon.notNull(inventory);
@@ -521,11 +521,11 @@ public class InventoryUtils {
     }
 
     /**
-     * Repair all repairable items in an inventory. If the inventory
+     * Repair all repairable items in an chest. If the chest
      * is a {@code PlayerInventory}, the armor contents are also
      * repaired.
      *
-     * @param inventory  The inventory to repair.
+     * @param inventory  The chest to repair.
      */
     public static void repairAll(Inventory inventory) {
         PreCon.notNull(inventory);
@@ -544,7 +544,7 @@ public class InventoryUtils {
     /**
      * Repair all repairable items in an {@code ItemStack} array.
      *
-     * @param contents  The inventory contents.
+     * @param contents  The chest contents.
      */
     public static void repairAll(ItemStack[] contents) {
         PreCon.notNull(contents);
@@ -558,11 +558,11 @@ public class InventoryUtils {
     }
 
     /**
-     * Determine if an inventory is empty. If the inventory is a
+     * Determine if an chest is empty. If the chest is a
      * {code PlayerInventory}, the armor contents are included
      * in the check.
      *
-     * @param inventory  The inventory to check.
+     * @param inventory  The chest to check.
      */
     public static boolean isEmpty(Inventory inventory) {
         PreCon.notNull(inventory);
@@ -580,7 +580,7 @@ public class InventoryUtils {
     /**
      * Determine if an {code ItemStack} array is empty.
      *
-     * @param contents  The inventory contents.
+     * @param contents  The chest contents.
      */
     public static boolean isEmpty(ItemStack[] contents) {
         PreCon.notNull(contents);
