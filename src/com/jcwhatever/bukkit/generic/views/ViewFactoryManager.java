@@ -25,7 +25,6 @@
 package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.messaging.Messenger;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
@@ -39,35 +38,23 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * A basic view factory manager for storing and retrieving view factories.
  */
-public class ViewManager {
+public class ViewFactoryManager {
 
     private final Plugin _plugin;
-    private final IDataNode _dataNode;
     private final Map<String, IViewFactory> _registeredTypes = new HashMap<>(10);
 
     /**
      * Constructor.
      *
      * @param plugin    The owning plugin.
-     * @param dataNode  The manager data storage node.
      */
-    public ViewManager(Plugin plugin, @Nullable IDataNode dataNode) {
+    public ViewFactoryManager(Plugin plugin) {
         PreCon.notNull(plugin);
 
-        _dataNode = dataNode;
         _plugin = plugin;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param plugin  The owning plugin.
-     */
-    public ViewManager(Plugin plugin) {
-        this(plugin, null);
     }
 
     /**
@@ -82,7 +69,7 @@ public class ViewManager {
      *
      * @param factory  The view type factory.
      */
-    public void registerType(IViewFactory factory) {
+    public void registerFactory(IViewFactory factory) {
         _registeredTypes.put(factory.getSearchName(), factory);
     }
 
@@ -122,7 +109,7 @@ public class ViewManager {
     }
 
     /**
-     * Start a new view session.
+     * Show a view to a player.
      *
      * @param p            The player to show the view to.
      * @param viewName     The name of the view factory.
@@ -142,13 +129,4 @@ public class ViewManager {
 
         return session.next(factory, new ViewArguments()) != null;
     }
-
-    // initial of load settings
-    private void loadSettings() {
-
-        if (_dataNode == null) {
-            return;
-        }
-    }
-
 }
