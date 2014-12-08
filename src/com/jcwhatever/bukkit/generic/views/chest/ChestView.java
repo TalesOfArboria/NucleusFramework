@@ -43,6 +43,9 @@ import javax.annotation.Nullable;
  */
 public abstract class ChestView extends View {
 
+    public static final int MAX_SLOTS = 6 * 9;
+    public static final int ROW_SIZE = 9;
+
     private InventoryView _inventoryView;
 
     protected ChestView(@Nullable String title, ViewSession session, IViewFactory factory, ViewArguments arguments) {

@@ -37,6 +37,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,6 @@ import javax.annotation.Nullable;
  * 
  */
 public abstract class MenuView extends ChestView {
-
-    public static final int MAX_SLOTS = 6 * 9;
-    public static final int ROW_SIZE = 9;
 
     private final Map<Integer, MenuItem> _menuItems = new HashMap<>(MAX_SLOTS);
 
@@ -61,9 +59,21 @@ public abstract class MenuView extends ChestView {
         }
     }
 
+    public List<MenuItem> getMenuItems() {
+        return new ArrayList<>(_menuItems.values());
+    }
+
     @Nullable
     public MenuItem getMenuItem(int slot) {
         return _menuItems.get(slot);
+    }
+
+    public void removeMenuItem(MenuItem menuItem) {
+        MenuItem item = _menuItems.get(menuItem.getSlot());
+        if (menuItem.equals(item))
+            return;
+
+        _menuItems.remove(menuItem.getSlot());
     }
 
     public void setMenuItem(MenuItem menuItem) {
@@ -88,22 +98,11 @@ public abstract class MenuView extends ChestView {
         if (_menuItems.size() > MAX_SLOTS)
             throw new RuntimeException("The number of menu items cannot be more than " + MAX_SLOTS + '.');
 
-        int maxSlot = _menuItems.size();
-
-        for (MenuItem menuItem: _menuItems.values()) {
-
-            if (menuItem.getSlot() > maxSlot) {
-                maxSlot = menuItem.getSlot();
-            }
-        }
-
-
-        int rows = (int) Math.ceil((double)maxSlot / ROW_SIZE);
-        int slots = rows * ROW_SIZE;
+        int maxSlots = getTotalSlots();
 
         Inventory inventory =  getTitle() != null
-                ? Bukkit.createInventory(getPlayer(), slots, getTitle())
-                : Bukkit.createInventory(getPlayer(), slots);
+                ? Bukkit.createInventory(getPlayer(), maxSlots, getTitle())
+                : Bukkit.createInventory(getPlayer(), maxSlots);
 
         for (MenuItem item : _menuItems.values()) {
             inventory.setItem(item.getSlot(), item.getItemStack());
@@ -145,5 +144,19 @@ public abstract class MenuView extends ChestView {
         }
 
         return ChestEventAction.DENY;
+    }
+
+    protected int getTotalSlots() {
+        int maxSlot = _menuItems.size();
+
+        for (MenuItem menuItem: _menuItems.values()) {
+
+            if (menuItem.getSlot() > maxSlot) {
+                maxSlot = menuItem.getSlot();
+            }
+        }
+
+        int rows = (int) Math.ceil((double)maxSlot / ROW_SIZE);
+        return Math.max(rows * ROW_SIZE, ROW_SIZE);
     }
 }
