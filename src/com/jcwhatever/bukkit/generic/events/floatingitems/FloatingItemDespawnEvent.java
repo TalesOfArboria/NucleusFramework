@@ -23,35 +23,33 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit.floatingitems;
+package com.jcwhatever.bukkit.generic.events.floatingitems;
 
 import com.jcwhatever.bukkit.generic.items.floating.FloatingItem;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class FloatingItemPickUpEvent extends Event implements Cancellable {
+/**
+ * Called when a floating item is despawned.
+ */
+public class FloatingItemDespawnEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
     private final FloatingItem _item;
-    private final Player _player;
     private boolean _isCancelled;
 
     /**
      * Constructor.
      *
-     * @param item    The item being despawned.
-     * @param player  The player picking up the item.
+     * @param item  The item being despawned.
      */
-    public FloatingItemPickUpEvent(FloatingItem item, Player player) {
+    public FloatingItemDespawnEvent (FloatingItem item) {
         PreCon.notNull(item);
-        PreCon.notNull(player);
 
         _item = item;
-        _player = player;
     }
 
     /**
@@ -59,13 +57,6 @@ public class FloatingItemPickUpEvent extends Event implements Cancellable {
      */
     public FloatingItem getFloatingItem() {
         return _item;
-    }
-
-    /**
-     * Get the player who is picking up the item.
-     */
-    public Player getPlayer() {
-        return _player;
     }
 
     @Override
@@ -87,4 +78,3 @@ public class FloatingItemPickUpEvent extends Event implements Cancellable {
         _isCancelled = isCancelled;
     }
 }
-

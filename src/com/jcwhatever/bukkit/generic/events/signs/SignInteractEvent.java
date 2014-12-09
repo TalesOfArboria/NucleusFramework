@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit;
+package com.jcwhatever.bukkit.generic.events.signs;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;

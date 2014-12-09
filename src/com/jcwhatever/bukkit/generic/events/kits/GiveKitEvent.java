@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit.kits;
+package com.jcwhatever.bukkit.generic.events.kits;
 
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.inventory.Kit;

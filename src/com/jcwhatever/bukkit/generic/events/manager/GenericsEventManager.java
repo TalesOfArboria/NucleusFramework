@@ -23,14 +23,14 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events;
+package com.jcwhatever.bukkit.generic.events.manager;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.TimeScale;
 import com.jcwhatever.bukkit.generic.collections.TimedHashSet;
-import com.jcwhatever.bukkit.generic.events.exceptions.EventManagerDisposedException;
-import com.jcwhatever.bukkit.generic.events.exceptions.HandlerAlreadyRegisteredException;
-import com.jcwhatever.bukkit.generic.events.exceptions.ListenerAlreadyRegisteredException;
+import com.jcwhatever.bukkit.generic.events.manager.exceptions.EventManagerDisposedException;
+import com.jcwhatever.bukkit.generic.events.manager.exceptions.HandlerAlreadyRegisteredException;
+import com.jcwhatever.bukkit.generic.events.manager.exceptions.ListenerAlreadyRegisteredException;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;

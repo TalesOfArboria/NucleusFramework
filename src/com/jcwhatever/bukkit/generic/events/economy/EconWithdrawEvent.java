@@ -23,58 +23,56 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit.floatingitems;
+package com.jcwhatever.bukkit.generic.events.economy;
 
-import com.jcwhatever.bukkit.generic.items.floating.FloatingItem;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-import org.bukkit.event.Cancellable;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
+
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-/**
- * Called when a floating item is despawned.
- */
-public class FloatingItemDespawnEvent extends Event implements Cancellable {
+import java.util.UUID;
+import javax.annotation.Nullable;
 
-    private static final HandlerList handlers = new HandlerList();
+public class EconWithdrawEvent extends Event {
+	
+	private static final HandlerList _handlers = new HandlerList();
+	
+	private UUID _playerId;
+	private Player _player;
+	private double _amount;
+	
+	public EconWithdrawEvent(UUID playerId, double amount) {
+		_playerId = playerId;
+		_amount = amount;
+	}
+	
+	public UUID getPlayerId() {
+		return _playerId;
+	}
+	
+	public double getAmount() {
+		return _amount;
+	}
+	
+	public void setAmount(double amount) {
+		_amount = amount;
+	}
 
-    private final FloatingItem _item;
-    private boolean _isCancelled;
-
-    /**
-     * Constructor.
-     *
-     * @param item  The item being despawned.
-     */
-    public FloatingItemDespawnEvent (FloatingItem item) {
-        PreCon.notNull(item);
-
-        _item = item;
-    }
-
-    /**
-     * Get the floating item that is being despawned.
-     */
-    public FloatingItem getFloatingItem() {
-        return _item;
-    }
-
-    @Override
+    @Nullable
+	public Player getPlayer() {
+		if (_player == null) {
+			_player = PlayerUtils.getPlayer(_playerId);
+		}
+		return _player;
+	}
+	
+	@Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return _isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean isCancelled) {
-        _isCancelled = isCancelled;
-    }
+	    return _handlers;
+	}
+	 
+	public static HandlerList getHandlerList() {
+	    return _handlers;
+	}
 }

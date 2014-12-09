@@ -23,56 +23,25 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit;
+package com.jcwhatever.bukkit.generic.events.manager.exceptions;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.AnvilInventory;
-import org.bukkit.inventory.ItemStack;
+import com.jcwhatever.bukkit.generic.events.manager.IEventHandler;
 
-public class AnvilItemRepairEvent extends Event {
-	
-	private static final HandlerList _handlers = new HandlerList();
-	
-	private Player _player;
-	private AnvilInventory _anvilInventory;
-	private ItemStack _item;
-	
-	private boolean _isCancelled;
-	
-	public AnvilItemRepairEvent(Player player, AnvilInventory anvilInventory, ItemStack item) {
-		_player = player;
-		_anvilInventory = anvilInventory;
-		_item = item;
-	}
-	
-	public Player getPlayer() {
-		return _player;
-	}
-	
-	public AnvilInventory getAnvilInventory() {
-		return _anvilInventory;
-	}
-	
-	public ItemStack getRepairedItem() {
-		return _item;
-	}
-	
-	public boolean isCancelled() {
-		return _isCancelled;
-	}
-	
-	public void setIsCancelled(boolean isCancelled) {
-		_isCancelled = isCancelled;
-	}
-	
-	@Override
-    public HandlerList getHandlers() {
-	    return _handlers;
-	}
-	 
-	public static HandlerList getHandlerList() {
-	    return _handlers;
-	}
+/**
+ * Thrown when an event handler that is already registered with a {@code GenericsEventManager}
+ * is registered again.
+ */
+public class HandlerAlreadyRegisteredException extends RuntimeException {
+
+    private String _msg;
+
+    public HandlerAlreadyRegisteredException(IEventHandler handler) {
+        _msg = "Event handler is already registered: " + handler.getClass().getName();
+    }
+
+    @Override
+    public String getMessage() {
+        return _msg;
+    }
+
 }

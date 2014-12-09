@@ -25,8 +25,8 @@
 package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.events.GenericsEventHandler;
-import com.jcwhatever.bukkit.generic.events.IGenericsEventListener;
+import com.jcwhatever.bukkit.generic.events.manager.GenericsEventHandler;
+import com.jcwhatever.bukkit.generic.events.manager.IGenericsEventListener;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 

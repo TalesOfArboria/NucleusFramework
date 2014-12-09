@@ -26,8 +26,8 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconGiveEvent;
-import com.jcwhatever.bukkit.generic.events.bukkit.economy.EconWithdrawEvent;
+import com.jcwhatever.bukkit.generic.events.economy.EconGiveEvent;
+import com.jcwhatever.bukkit.generic.events.economy.EconWithdrawEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

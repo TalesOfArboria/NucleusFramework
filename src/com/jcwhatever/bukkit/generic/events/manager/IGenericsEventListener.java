@@ -23,25 +23,10 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.exceptions;
-
-import com.jcwhatever.bukkit.generic.events.IEventHandler;
+package com.jcwhatever.bukkit.generic.events.manager;
 
 /**
- * Thrown when an event handler that is already registered with a {@code GenericsEventManager}
- * is registered again.
+ * An interface flag that indicates a class has
+ * generics event handlers.
  */
-public class HandlerAlreadyRegisteredException extends RuntimeException {
-
-    private String _msg;
-
-    public HandlerAlreadyRegisteredException(IEventHandler handler) {
-        _msg = "Event handler is already registered: " + handler.getClass().getName();
-    }
-
-    @Override
-    public String getMessage() {
-        return _msg;
-    }
-
-}
+public interface IGenericsEventListener {}

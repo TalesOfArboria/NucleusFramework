@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.items.floating;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.HashSetMap;
 import com.jcwhatever.bukkit.generic.collections.SetMap;
-import com.jcwhatever.bukkit.generic.events.bukkit.floatingitems.FloatingItemPickUpEvent;
+import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemPickUpEvent;
 import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;

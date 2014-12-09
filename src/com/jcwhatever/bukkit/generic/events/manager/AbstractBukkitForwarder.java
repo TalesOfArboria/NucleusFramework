@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.events;
+package com.jcwhatever.bukkit.generic.events.manager;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.utils.PreCon;

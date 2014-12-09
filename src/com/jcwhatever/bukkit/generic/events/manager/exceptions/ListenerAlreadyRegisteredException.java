@@ -23,53 +23,25 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit.sounds;
+package com.jcwhatever.bukkit.generic.events.manager.exceptions;
 
-import com.jcwhatever.bukkit.generic.sounds.ResourceSound;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import com.jcwhatever.bukkit.generic.events.manager.IGenericsEventListener;
 
-public class ResourceSoundEndEvent extends Event {
-	
-	private static final HandlerList handlers = new HandlerList();
-	
-	private Player _player;
-	private ResourceSound _sound;
-	private Location _location;
-	private float _volume;
-		
-	public ResourceSoundEndEvent(Player p, ResourceSound sound, Location location, float volume) {
-		_player = p;
-		_sound = sound;
-		_location = location;
-		_volume = volume;
-	}
-	
-	public Player getPlayer() {
-		return _player;
-	}
-	
-	public ResourceSound getResourceSound() {
-		return _sound;
-	}
-	
-	public Location getLocations() {
-		return _location;
-	}
-	
-	public float getVolume() {
-		return _volume;
-	}
-	 
-	@Override
-    public HandlerList getHandlers() {
-	    return handlers;
-	}
-	 
-	public static HandlerList getHandlerList() {
-	    return handlers;
-	}
+/**
+ * Thrown when an event listener that is already registered with a {@code GenericsEventManager}
+ * is registered again.
+ */
+public class ListenerAlreadyRegisteredException extends RuntimeException {
+
+    private String _msg;
+
+    public ListenerAlreadyRegisteredException(IGenericsEventListener listener) {
+        _msg = "Event listener is already registered: " + listener.getClass().getName();
+    }
+
+    @Override
+    public String getMessage() {
+        return _msg;
+    }
+
 }
-

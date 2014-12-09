@@ -23,59 +23,53 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit.regions;
+package com.jcwhatever.bukkit.generic.events.sounds;
 
-import com.jcwhatever.bukkit.generic.regions.ReadOnlyRegion;
-
+import com.jcwhatever.bukkit.generic.sounds.ResourceSound;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.UUID;
-import javax.annotation.Nullable;
-
-
-public class RegionOwnerChangedEvent extends Event {
-    
-    private static final HandlerList _handlers = new HandlerList();
-    
-    ReadOnlyRegion _region;
-    UUID _oldId;
-    UUID _newId;
-    boolean _isCancelled;
-    
-    public RegionOwnerChangedEvent(ReadOnlyRegion region, @Nullable UUID oldId, @Nullable UUID newId) {
-        _region = region;
-        _oldId = oldId;
-        _newId = newId;
-    }
-    
-    public ReadOnlyRegion getRegion() {
-        return _region;
-    }
-    
-    public UUID getOldOwnerId() {
-        return _oldId;
-    }
-    
-    public UUID getNewOwnerId() {
-        return _newId;
-    }
-        
-    public boolean isCancelled() {
-        return _isCancelled;
-    }
-    
-    public void setIsCancelled(boolean isCancelled) {
-        _isCancelled = isCancelled;
-    }
-    
-    @Override
+public class ResourceSoundEndEvent extends Event {
+	
+	private static final HandlerList handlers = new HandlerList();
+	
+	private Player _player;
+	private ResourceSound _sound;
+	private Location _location;
+	private float _volume;
+		
+	public ResourceSoundEndEvent(Player p, ResourceSound sound, Location location, float volume) {
+		_player = p;
+		_sound = sound;
+		_location = location;
+		_volume = volume;
+	}
+	
+	public Player getPlayer() {
+		return _player;
+	}
+	
+	public ResourceSound getResourceSound() {
+		return _sound;
+	}
+	
+	public Location getLocations() {
+		return _location;
+	}
+	
+	public float getVolume() {
+		return _volume;
+	}
+	 
+	@Override
     public HandlerList getHandlers() {
-        return _handlers;
-    }
-     
-    public static HandlerList getHandlerList() {
-        return _handlers;
-    }
+	    return handlers;
+	}
+	 
+	public static HandlerList getHandlerList() {
+	    return handlers;
+	}
 }
 

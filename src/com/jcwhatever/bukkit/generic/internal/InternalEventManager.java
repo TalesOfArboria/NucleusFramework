@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.internal;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.internal.listeners.BlockListener;
 import com.jcwhatever.bukkit.generic.internal.listeners.EnchantmentListener;
 import com.jcwhatever.bukkit.generic.internal.listeners.EntityListener;

@@ -26,8 +26,8 @@
 package com.jcwhatever.bukkit.generic.items.floating;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.events.bukkit.floatingitems.FloatingItemDespawnEvent;
-import com.jcwhatever.bukkit.generic.events.bukkit.floatingitems.FloatingItemSpawnEvent;
+import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemDespawnEvent;
+import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemSpawnEvent;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;

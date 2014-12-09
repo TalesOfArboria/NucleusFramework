@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.signs;
 
-import com.jcwhatever.bukkit.generic.events.bukkit.SignInteractEvent;
+import com.jcwhatever.bukkit.generic.events.signs.SignInteractEvent;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;

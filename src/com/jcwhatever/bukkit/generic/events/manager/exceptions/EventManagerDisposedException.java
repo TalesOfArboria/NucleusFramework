@@ -23,29 +23,15 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.jcwhatever.bukkit.generic.events.manager.exceptions;
 
 /**
- * Annotation used to mark a method in a class that implements
- * {@code GenericsEventListener} as a Generics event handler.
+ * Thrown when attempting to use a {@code GenericsEventManager} that is disposed.
  */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface GenericsEventHandler {
+public class EventManagerDisposedException extends RuntimeException {
 
-    /**
-     * The priority/order that the event should be executed in.
-     */
-    GenericsEventPriority priority() default GenericsEventPriority.NORMAL;
-
-    /**
-     * Determine if the handler should be run even if the
-     * event is already cancelled.
-     */
-    boolean ignoreCancelled() default false;
+    @Override
+    public String getMessage() {
+        return "Cannot use an event manager after it is disposed.";
+    }
 }

@@ -23,57 +23,57 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit.economy;
+package com.jcwhatever.bukkit.generic.events.manager;
 
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
+/**
+ * Defines the order an event handler
+ * executed.
+ */
+public enum GenericsEventPriority {
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+    /**
+     * Watcher. Only watches to see if the event
+     * is called but does not effect the outcome
+     * of the event. Is always called even if the
+     * event is cancelled.
+     */
+    WATCHER (5),
 
-import java.util.UUID;
+    /**
+     * The last handler to be called.
+     */
+    LAST    (4),
 
-public class EconGiveEvent extends Event {
-	
-	private static final HandlerList _handlers = new HandlerList();
-	
-	private UUID _playerId;
-	private Player _player;
-	private double _amount;
-	
-	public EconGiveEvent(UUID playerId, double amount) {
-		_playerId = playerId;
-		_amount = amount;
-	}
-	
-	public UUID getPlayerId() {
-		return _playerId;
-	}
-	
-	public double getAmount() {
-		return _amount;
-	}
-	
-	public void setAmount(double amount) {
-		_amount = amount;
-	}
-	
-	public Player getPlayer() {
-		if (_player == null) {
-			_player = PlayerUtils.getPlayer(_playerId);
-		}
+    /**
+     * Low priority. Called second to last.
+     */
+    LOW     (3),
 
-		assert _player != null;
+    /**
+     * Normal priority.
+     */
+    NORMAL  (2),
 
-		return _player;
-	}
-	
-	@Override
-    public HandlerList getHandlers() {
-	    return _handlers;
-	}
-	 
-	public static HandlerList getHandlerList() {
-	    return _handlers;
-	}
+    /**
+     * High priority. Called second.
+     */
+    HIGH    (1),
+
+    /**
+     * Highest priority. Called first.
+     */
+    FIRST   (0);
+
+    private final int _order;
+
+    GenericsEventPriority(int order) {
+        _order = order;
+    }
+
+    /**
+     * Get a sort order index number.
+     */
+    public int getSortOrder() {
+        return _order;
+    }
 }

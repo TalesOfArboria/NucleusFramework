@@ -23,48 +23,65 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.bukkit.economy;
-
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
+package com.jcwhatever.bukkit.generic.events.anvil;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
 
-public class EconWithdrawEvent extends Event {
+public class AnvilItemRenameEvent extends Event {
 	
 	private static final HandlerList _handlers = new HandlerList();
 	
-	private UUID _playerId;
 	private Player _player;
-	private double _amount;
+	private AnvilInventory _anvilInventory;
+	private ItemStack _item;
+	private String _newName;
+	private String _oldName;
 	
-	public EconWithdrawEvent(UUID playerId, double amount) {
-		_playerId = playerId;
-		_amount = amount;
-	}
+	private boolean _isCancelled;
 	
-	public UUID getPlayerId() {
-		return _playerId;
-	}
 	
-	public double getAmount() {
-		return _amount;
-	}
-	
-	public void setAmount(double amount) {
-		_amount = amount;
-	}
+	public AnvilItemRenameEvent(Player player, AnvilInventory anvilInventory,
+								ItemStack item, String newName, @Nullable String oldName) {
 
-    @Nullable
+		_player = player;
+		_anvilInventory = anvilInventory;
+		_item = item;
+		_newName = newName;
+		_oldName = oldName;
+	}
+	
 	public Player getPlayer() {
-		if (_player == null) {
-			_player = PlayerUtils.getPlayer(_playerId);
-		}
 		return _player;
+	}
+	
+	public AnvilInventory getAnvilInventory() {
+		return _anvilInventory;
+	}
+	
+	public ItemStack getRenamedItem() {
+		return _item;
+	}
+	
+	public String getNewName() {
+		return _newName;
+	}
+	
+	public String getOldName() {
+		return _oldName;
+	}
+	
+	public boolean isCancelled() {
+		return _isCancelled;
+	}
+	
+	public void setIsCancelled(boolean isCancelled) {
+		_isCancelled = isCancelled;
 	}
 	
 	@Override

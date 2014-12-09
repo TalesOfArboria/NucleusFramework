@@ -25,9 +25,9 @@
 package com.jcwhatever.bukkit.generic.views.anvil;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.events.IGenericsEventListener;
-import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRenameEvent;
-import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRepairEvent;
+import com.jcwhatever.bukkit.generic.events.manager.IGenericsEventListener;
+import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRenameEvent;
+import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
 import com.jcwhatever.bukkit.generic.language.Localizable;

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic;
 
-import com.jcwhatever.bukkit.generic.events.GenericsEventManager;
+import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalMessengerFactory;
 import com.jcwhatever.bukkit.generic.internal.InternalRegionManager;

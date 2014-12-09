@@ -27,9 +27,9 @@ package com.jcwhatever.bukkit.generic.internal.listeners;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.response.CommandRequests;
-import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRenameEvent;
-import com.jcwhatever.bukkit.generic.events.bukkit.AnvilItemRepairEvent;
-import com.jcwhatever.bukkit.generic.events.bukkit.SignInteractEvent;
+import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRenameEvent;
+import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRepairEvent;
+import com.jcwhatever.bukkit.generic.events.signs.SignInteractEvent;
 import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
