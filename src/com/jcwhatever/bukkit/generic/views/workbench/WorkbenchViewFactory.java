@@ -28,19 +28,24 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.ViewFactory;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
-import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Factory for creating new {@code WorkbenchView} instances.
  */
-public class WorkbenchViewFactory extends ViewFactory<WorkbenchView> {
+public class WorkbenchViewFactory extends ViewFactory {
 
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     * @param name    The factory's name.
+     */
     public WorkbenchViewFactory(Plugin plugin, String name) {
-        super(plugin, name, WorkbenchView.class);
+        super(plugin, name);
     }
 
     @Override
@@ -50,12 +55,6 @@ public class WorkbenchViewFactory extends ViewFactory<WorkbenchView> {
         PreCon.notNull(arguments);
 
         return new WorkbenchView(session, this, arguments);
-    }
-
-    @Override
-    protected boolean onOpen(ViewOpenReason reason, WorkbenchView view) {
-        view.show();
-        return true;
     }
 
     @Override

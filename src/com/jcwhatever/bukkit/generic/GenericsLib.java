@@ -238,6 +238,9 @@ public class GenericsLib extends GenericsPlugin {
     public static MessengerFactory getMessengerFactory() {
         PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
 
+        if (_instance._messengerFactory == null)
+            _instance._messengerFactory = new InternalMessengerFactory(_instance);
+
         return _instance._messengerFactory;
     }
 
@@ -278,7 +281,6 @@ public class GenericsLib extends GenericsPlugin {
     @Override
     protected void onEnablePlugin() {
 
-        _messengerFactory = new InternalMessengerFactory(this);
         _commandHandler = new CommandHandler();
         _scheduler = new BukkitTaskScheduler();
 

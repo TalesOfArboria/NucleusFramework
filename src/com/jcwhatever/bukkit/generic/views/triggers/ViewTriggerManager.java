@@ -216,6 +216,9 @@ public class ViewTriggerManager implements IViewTriggerStorage {
         return true;
     }
 
+    /**
+     * Load triggers from the data node, if any.
+     */
     public void load() {
         if (_dataNode == null)
             return;

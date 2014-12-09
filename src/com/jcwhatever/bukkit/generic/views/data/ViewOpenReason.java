@@ -24,12 +24,30 @@
 
 package com.jcwhatever.bukkit.generic.views.data;
 
-/* 
- * 
+/**
+ * Specifies the reason a view is opening.
  */
 public enum ViewOpenReason {
+    /**
+     * The view is first in the view session.
+     */
     FIRST,
+
+    /**
+     * The view is the next view being opened.
+     *
+     * <p>This implies that previous views exist.</p>
+     */
     NEXT,
+
+    /**
+     * The view was previously opened but the next view was opened.
+     * The next view was closed and now the view is being re-opened..
+     */
     PREV,
-    RESET
+
+    /**
+     * The view was closed and is being re-opened.
+     */
+    REFRESH
 }

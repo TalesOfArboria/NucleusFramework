@@ -165,7 +165,7 @@ public class Messenger implements IMessenger {
         PreCon.notNull(params);
 
         boolean cutLines = lineWrapping == LineWrapping.ENABLED;
-        String message = MessengerFactory.getString(messageObject);
+        String message = TextUtils.format(messageObject, params);
 
         // if lines don't need to be cut, simply send the raw message
         if (!cutLines) {

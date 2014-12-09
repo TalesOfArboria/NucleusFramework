@@ -26,17 +26,20 @@ package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
+import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 import com.jcwhatever.bukkit.generic.views.data.ViewResults;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
 /**
- * Represents an instance of a View created for a specific player
+ * Represents an instance of a view created for
+ * a specific player.
  */
 public interface IView {
 
@@ -85,6 +88,15 @@ public interface IView {
     InventoryView getInventoryView();
 
     /**
+     * Get the view instances Bukkit {@code Inventory}.
+     *
+     * @return Null if the inventory has been set yet or
+     * the view does not have an inventory.
+     */
+    @Nullable
+    Inventory getInventory();
+
+    /**
      * Determine if the view is capable of generating an
      * {@code InventoryView} instance.
      *
@@ -94,7 +106,8 @@ public interface IView {
     public boolean isInventoryViewable();
 
     /**
-     * Get the meta data associated with this specific instance.
+     * Get the arguments that were passed into the view
+     * when it was created.
      */
     ViewArguments getArguments();
 
@@ -108,22 +121,43 @@ public interface IView {
     ViewResults getResults();
 
     /**
+     * Open the view and show to the view session player.
+     *
+     * <p>Should not be called. Use {@code ViewSession}'s
+     * {@code next} or {@code back} methods.</p>
+     *
+     * @param reason  The reason the view is being opened.
+     *
+     * @return  True if successful.
+     */
+    boolean open(ViewOpenReason reason);
+
+    /**
      * Close the view.
+     *
+     * <p>Should not be called. Use {@code ViewSession}'s
+     * {@code next} or {@code back} methods instead.</p>
      *
      * @param reason  The reason the view is being closed.
      *
-     * @return  True if the view was closed.
+     * @return  True if successful.
      */
     boolean close(ViewCloseReason reason);
 
     /**
-     * Get the reason the view was last closed.
+     * Get the recent reason the view was closed.
+     *
+     * <p>Used by {@code ViewEventListener} to determine how
+     * to handle the {@code InventoryCloseEvent}.</p>
      */
     ViewCloseReason getCloseReason();
 
     /**
-     * Called by the view event listener after
-     * handling the inventory close event.
+     * Reset the close reason back to {@code ESCAPE}.
+     *
+     * <p>Used by {@code ViewEventListener} to reset
+     * the views close reason after handling its
+     * {@code InventoryCloseEvent}.</p>
      */
     void resetCloseReason();
 }

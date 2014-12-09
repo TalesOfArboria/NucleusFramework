@@ -22,56 +22,38 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.views.data;
+package com.jcwhatever.bukkit.generic.views.menu;
 
-import com.jcwhatever.bukkit.generic.mixins.IMeta;
-import com.jcwhatever.bukkit.generic.utils.MetaKey;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.views.IView;
+import com.jcwhatever.bukkit.generic.views.ViewFactory;
+import com.jcwhatever.bukkit.generic.views.ViewSession;
+import com.jcwhatever.bukkit.generic.views.chest.ChestView;
+import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import org.bukkit.plugin.Plugin;
+
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Generates {@link ScriptMenuView} instances.
  */
-public class ViewArgumentGenerator implements IMeta {
+public class ScriptMenuViewFactory extends ViewFactory {
 
-    private Map<Object, Object> _map = new HashMap<>(10);
-
-    @Nullable
-    @Override
-    public <T> T getMeta(MetaKey<T> key) {
-        PreCon.notNull(key);
-
-        @SuppressWarnings("unchecked")
-        T result = (T)_map.get(key);
-
-        return result;
-    }
-
-    @Nullable
-    @Override
-    public Object getMetaObject(Object key) {
-        PreCon.notNull(key);
-
-        return _map.get(key);
+    public ScriptMenuViewFactory(Plugin plugin, String name) {
+        super(plugin, name);
     }
 
     @Override
-    public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
-        PreCon.notNull(key);
+    protected void onDispose() {
 
-        _map.put(key, value);
     }
 
-    public ViewArguments toArguments() {
-        ViewArguments arguments = new ViewArguments();
-        for (Entry<Object, Object> entry : _map.entrySet()) {
-            arguments.setObject(entry.getKey(), entry.getValue());
-        }
+    @Override
+    public IView create(@Nullable String title, ViewSession session, ViewArguments arguments) {
+        return create(title, session, arguments, ChestView.MAX_SLOTS);
+    }
 
-        return arguments;
+    public ScriptMenuView create(@Nullable String title, ViewSession session, ViewArguments arguments, int totalSlots) {
+        return new ScriptMenuView(title, session, this, arguments, totalSlots);
     }
 }

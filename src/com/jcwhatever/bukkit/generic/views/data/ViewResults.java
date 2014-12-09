@@ -26,8 +26,9 @@ package com.jcwhatever.bukkit.generic.views.data;
 
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
 
-/*
- * 
+/**
+ * A meta data container used to distribute the
+ * results of a view instance.
  */
 public class ViewResults extends ViewArguments {
 

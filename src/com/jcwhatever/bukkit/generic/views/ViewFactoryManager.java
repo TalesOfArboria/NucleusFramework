@@ -128,6 +128,8 @@ public class ViewFactoryManager implements IViewFactoryStorage {
 
         ViewSession session = ViewSession.get(p, sourceBlock);
 
-        return session.next(factory, new ViewArguments()) != null;
+        session.next(factory, new ViewArguments());
+
+        return true;
     }
 }

@@ -27,8 +27,8 @@ package com.jcwhatever.bukkit.generic.views.menu;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-/*
- * 
+/**
+ * An implementation of {@link MenuItem} that is named.
  */
 public class NamedMenuItem extends MenuItem implements INamedInsensitive {
 

@@ -24,24 +24,30 @@
 
 package com.jcwhatever.bukkit.generic.views.menu;
 
+import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.ViewFactory;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
-import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Generates {@link PaginatorView} instances.
  */
-public class PaginatorViewFactory extends ViewFactory<PaginatorView> {
+public class PaginatorViewFactory extends ViewFactory {
 
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     * @param name    The name of the factory instance.
+     */
     public PaginatorViewFactory(Plugin plugin, String name) {
-        super(plugin, name, PaginatorView.class);
+        super(plugin, name);
     }
 
     @Override
@@ -49,13 +55,7 @@ public class PaginatorViewFactory extends ViewFactory<PaginatorView> {
         PreCon.notNull(session);
         PreCon.notNull(arguments);
 
-        return new PaginatorView(title, session, this, arguments);
-    }
-
-    @Override
-    protected boolean onOpen(ViewOpenReason reason, PaginatorView view) {
-        view.show(reason);
-        return true;
+        return new PaginatorView(title, session, this, arguments, ItemStackComparer.getDefault());
     }
 
     @Override

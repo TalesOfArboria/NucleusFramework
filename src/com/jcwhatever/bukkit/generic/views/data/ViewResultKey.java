@@ -29,8 +29,8 @@ import com.jcwhatever.bukkit.generic.views.data.ViewResults.ViewResult;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * A meta key that represents a view result value.
  */
 public class ViewResultKey<V> extends ViewArgumentKey<V> {
 

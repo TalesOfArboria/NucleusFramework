@@ -27,21 +27,28 @@ package com.jcwhatever.bukkit.generic.views;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
-import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Generates new view instances of a specific type.
  */
 public interface IViewFactory extends INamedInsensitive, IDisposable {
 
+    /**
+     * Get the factory's owning plugin.
+     */
     Plugin getPlugin();
 
+    /**
+     * Create a new view instance for the specified player
+     * view session.
+     *
+     * @param title      Optional view title.  Not all views can have a title set.
+     * @param session    The players view session.
+     * @param arguments  Meta arguments for the view.
+     */
     IView create(@Nullable String title, ViewSession session, ViewArguments arguments);
-
-    boolean open(ViewOpenReason reason, IView view);
-
 }

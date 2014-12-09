@@ -34,8 +34,9 @@ import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
-import com.jcwhatever.bukkit.generic.views.IViewFactory;
+import com.jcwhatever.bukkit.generic.views.ViewFactory;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
+import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -45,20 +46,29 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.WeakHashMap;
+import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Generates {@link FilteredAnvilView} instances.
  */
-public class FilteredAnvilViewFactory extends AnvilViewFactory {
+public class FilteredAnvilViewFactory extends ViewFactory {
 
     @Localizable static final String _NOT_REPAIRABLE = "{RED}Not repairable here.";
 
-    private static EventListener _listener;
+    private static EventListener _eventListener;
     private static Map<Entity, ViewSession> _anvilMap = new WeakHashMap<>(20);
 
     private final ItemFilterManager _filterManager;
 
-    protected FilteredAnvilViewFactory(Plugin plugin, String name, ItemFilterManager filterManager) {
+    /**
+     * Constructor.
+     *
+     * @param plugin         The owning plugin.
+     * @param name           The factory instance name.
+     * @param filterManager  The default filter manager.
+     */
+    protected FilteredAnvilViewFactory(Plugin plugin, String name,
+                                       @Nullable ItemFilterManager filterManager) {
         super(plugin, name);
 
         PreCon.notNull(filterManager);
@@ -66,28 +76,68 @@ public class FilteredAnvilViewFactory extends AnvilViewFactory {
         _filterManager = filterManager;
     }
 
-    public ItemFilterManager getFilterManager() {
+    /**
+     * Get the default filter manager.
+     */
+    public ItemFilterManager getDefaultFilter() {
         return _filterManager;
     }
 
     @Override
-    protected void onDispose() {
-        super.onDispose();
+    public IView create(@Nullable String title, ViewSession session, ViewArguments arguments) {
+        PreCon.notNull(session);
+        PreCon.notNull(arguments);
+
+        return new FilteredAnvilView(title, session, this, arguments, getDefaultFilter());
     }
 
+    /**
+     * Create a new view instance using the specified filter manager.
+     *
+     * @param title          The view title. (Anvil views can't have titles set)
+     * @param session        The players view session.
+     * @param arguments      The view meta arguments.
+     * @param filterManager  The filter manager.
+     */
+    public FilteredAnvilView create(@Nullable String title, ViewSession session, ViewArguments arguments,
+                        ItemFilterManager filterManager) {
+        PreCon.notNull(session);
+        PreCon.notNull(arguments);
+
+        return new FilteredAnvilView(title, session, this, arguments, filterManager);
+    }
+
+    /**
+     * Register a filtered anvil view instance.
+     *
+     * @param view  The view to register
+     */
     static void register(FilteredAnvilView view) {
-        if (_listener == null) {
-            _listener = new EventListener();
-            GenericsLib.getEventManager().register(_listener);
+        if (_eventListener == null) {
+            _eventListener = new EventListener();
+            GenericsLib.getEventManager().register(_eventListener);
         }
 
         _anvilMap.put(view.getPlayer(), view.getViewSession());
     }
 
+    /**
+     * Unregister a filtered anvil view instance.
+     *
+     * @param view  The view to unregister.
+     */
     static void unregister(FilteredAnvilView view) {
         _anvilMap.remove(view.getPlayer());
     }
 
+    @Override
+    protected void onDispose() {
+        // do nothing
+    }
+
+    /**
+     * Anvil event listener.
+     */
     static class EventListener implements IGenericsEventListener {
 
         private void onAnvilItemRepair(AnvilItemRepairEvent event) {
@@ -108,14 +158,16 @@ public class FilteredAnvilViewFactory extends AnvilViewFactory {
             if (current == null)
                 return;
 
-            IViewFactory currentFactory = current.getFactory();
-
-            if (!(currentFactory instanceof FilteredAnvilViewFactory))
+            if (!(current instanceof FilteredAnvilView))
                 return;
 
-            FilteredAnvilViewFactory factory = (FilteredAnvilViewFactory)currentFactory;
+            FilteredAnvilView view = (FilteredAnvilView)current;
 
-            if (!factory.getFilterManager().isValidItem(repaired)) {
+            ItemFilterManager filter = view.getFilterManager();
+            if (filter == null)
+                return;
+
+            if (!filter.isValidItem(repaired)) {
                 InventoryView invView = current.getInventoryView();
                 if (invView != null) {
                     ItemStack stack = repaired.clone();

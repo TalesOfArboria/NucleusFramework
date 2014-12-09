@@ -29,21 +29,31 @@ import com.jcwhatever.bukkit.generic.views.View;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
+import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 import com.jcwhatever.bukkit.generic.views.data.ViewResults;
 
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * A workbench view.
  */
 public class WorkbenchView extends View {
 
     private InventoryView _inventoryView;
 
-    public WorkbenchView(ViewSession session, IViewFactory factory, ViewArguments arguments) {
+    /**
+     * Constructor.
+     *
+     * @param session    The player view session.
+     * @param factory    The factory that created the view instance.
+     * @param arguments  Meta view arguments for the workbench. (Workbench does not take
+     *                   arguments but overriding implementations might)
+     */
+    protected WorkbenchView(ViewSession session, IViewFactory factory, ViewArguments arguments) {
         super(null, session, factory, arguments);
     }
 
@@ -57,6 +67,12 @@ public class WorkbenchView extends View {
         return _inventoryView;
     }
 
+    @Nullable
+    @Override
+    public Inventory getInventory() {
+        return null;
+    }
+
     @Override
     public boolean isInventoryViewable() {
         return true;
@@ -68,12 +84,14 @@ public class WorkbenchView extends View {
         return null;
     }
 
-    public void show() {
+    @Override
+    protected boolean openView(ViewOpenReason reason) {
         _inventoryView = getPlayer().openWorkbench(getPlayer().getLocation(), true);
+        return true;
     }
 
     @Override
     protected void onClose(ViewCloseReason reason) {
-
+        // do nothing
     }
 }

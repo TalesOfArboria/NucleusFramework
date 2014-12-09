@@ -25,33 +25,40 @@
 package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
 import org.bukkit.plugin.Plugin;
 
-/*
- * 
+/**
+ * Abstract implementation of a view factory that
+ * implements common view factory methods.
  */
-public abstract class ViewFactory<T extends IView> implements IViewFactory {
+public abstract class ViewFactory implements IViewFactory {
 
     private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
-    private final Class<T> _viewClass;
 
     private boolean _isDisposed;
 
-    protected ViewFactory(Plugin plugin, String name, Class<T> viewClass) {
-        // PreCon.notNull(plugin) - do not null check plugin yet, allow null so getPlugin() can be overridden.
-        PreCon.notNullOrEmpty(name);
-        PreCon.notNull(viewClass);
+    /**
+     * Constructor.
+     *
+     * @param plugin  The factories owning plugin.
+     * @param name    The name of the factory.
+     */
+    protected ViewFactory(Plugin plugin, String name) {
+        // PreCon.notNull(plugin) - do not null check plugin yet,
+        // allow null so getPlugin() can be overridden.
+        PreCon.notNull(name);
 
         _plugin = plugin;
         _name = name;
         _searchName = name.toLowerCase();
-        _viewClass = viewClass;
     }
 
+    /**
+     * Get the owning plugin.
+     */
     @Override
     public Plugin getPlugin() {
         if (_plugin == null)
@@ -60,45 +67,50 @@ public abstract class ViewFactory<T extends IView> implements IViewFactory {
         return _plugin;
     }
 
+    /**
+     * Get the name of the view factory.
+     */
     @Override
     public String getName() {
         return _name;
     }
 
+    /**
+     * Get the name of the view factory in lower case.
+     */
     @Override
     public String getSearchName() {
         return _searchName;
     }
 
-    @Override
-    public boolean open(ViewOpenReason reason, IView view) {
-        PreCon.notNull(reason);
-        PreCon.notNull(view);
-
-        if (_viewClass.isAssignableFrom(view.getClass())) {
-
-            onOpen(reason, _viewClass.cast(view));
-
-            return true;
-        }
-
-        return false;
-    }
-
-    protected abstract boolean onOpen(ViewOpenReason reason, T view);
-
+    /**
+     * Determine if the view factory has been disposed.
+     */
     @Override
     public boolean isDisposed() {
         return _isDisposed;
     }
 
+    /**
+     * Dispose the view factory. Should only be called
+     * if the view factory is no longer needed.
+     */
     @Override
     public void dispose() {
+        if (_isDisposed)
+            return;
+
         onDispose();
         _isDisposed = true;
     }
 
+    /**
+     * Called when the factory is disposed.
+     */
     protected abstract void onDispose();
 
-
+    protected void checkDisposed() {
+        if (_isDisposed)
+            throw new RuntimeException("A ViewFactory cannot be used after it has been disposed.");
+    }
 }

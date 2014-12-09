@@ -29,19 +29,24 @@ import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.ViewFactory;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
-import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Generates {@link AnvilView} instances.
  */
-public class AnvilViewFactory extends ViewFactory<AnvilView> {
+public class AnvilViewFactory extends ViewFactory {
 
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     * @param name    The name of the factory instance.
+     */
     public AnvilViewFactory(Plugin plugin, String name) {
-        super(plugin, name, AnvilView.class);
+        super(plugin, name);
     }
 
     @Override
@@ -50,12 +55,6 @@ public class AnvilViewFactory extends ViewFactory<AnvilView> {
         PreCon.notNull(arguments);
 
         return new AnvilView(title, session, this, arguments);
-    }
-
-    @Override
-    protected boolean onOpen(ViewOpenReason reason, AnvilView view) {
-        view.show();
-        return true;
     }
 
     @Override

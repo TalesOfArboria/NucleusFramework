@@ -24,19 +24,30 @@
 
 package com.jcwhatever.bukkit.generic.views.anvil;
 
+import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Represents an anvil that can allow or disallow items.
  */
 public class FilteredAnvilView extends AnvilView {
 
+    private final ItemFilterManager _filterManager;
+
     protected FilteredAnvilView(@Nullable String title, ViewSession session,
-                                IViewFactory factory, ViewArguments arguments) {
+                                IViewFactory factory, ViewArguments arguments,
+                                @Nullable ItemFilterManager filterManager) {
         super(title, session, factory, arguments);
+
+        _filterManager = filterManager;
+    }
+
+    @Nullable
+    public ItemFilterManager getFilterManager() {
+        return _filterManager;
     }
 }

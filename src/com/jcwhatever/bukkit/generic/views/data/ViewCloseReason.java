@@ -24,12 +24,33 @@
 
 package com.jcwhatever.bukkit.generic.views.data;
 
-/* 
- * 
+/**
+ * Specifies the reason a view is closed.
  */
 public enum ViewCloseReason {
-    NONE,
+
+    /**
+     * The player pressed escape and caused the view to close.
+     *
+     * <p>Because this can't be directly detected, this should be
+     * the default value in views.</p>
+     */
+    ESCAPE,
+
+    /**
+     * The view was called upon to close so the previous
+     * view can be shown.
+     */
     PREV,
+
+    /**
+     * The view was called upon to close so the next view
+     * can be shown.
+     */
     NEXT,
+
+    /**
+     * The view was called upon to close so it can re-open.
+     */
     REFRESH
 }

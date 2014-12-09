@@ -24,10 +24,17 @@
 
 package com.jcwhatever.bukkit.generic.views.chest;
 
-/* 
- * 
+/**
+ * Used to allow or deny a chest inventory event.
  */
 public enum ChestEventAction {
+    /**
+     * Allow the event.
+     */
     ALLOW,
+
+    /**
+     * Deny the event.
+     */
     DENY
 }

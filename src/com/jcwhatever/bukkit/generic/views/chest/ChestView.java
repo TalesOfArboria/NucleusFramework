@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.views.chest;
 
+import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
 import com.jcwhatever.bukkit.generic.views.View;
@@ -38,20 +39,43 @@ import org.bukkit.inventory.InventoryView;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * An abstract implementation of a chest inventory view.
  */
 public abstract class ChestView extends View {
 
     public static final int MAX_SLOTS = 6 * 9;
     public static final int ROW_SIZE = 9;
 
+    private Inventory _inventory;
     private InventoryView _inventoryView;
+    private ItemStackComparer _comparer;
 
-    protected ChestView(@Nullable String title, ViewSession session, IViewFactory factory, ViewArguments arguments) {
+    /**
+     * Constructor.
+     *
+     * @param title      The title of the inventory.
+     * @param session    The player view session.
+     * @param factory    The factory that created the view instance.
+     * @param arguments  The view meta arguments.
+     * @param comparer   The item stack comparer.
+     */
+    protected ChestView(@Nullable String title, ViewSession session,
+                        IViewFactory factory, ViewArguments arguments,
+                        @Nullable ItemStackComparer comparer) {
         super(title, session, factory, arguments);
 
-        PreCon.notNull(title);
+        _comparer = comparer;
+
+        if (_comparer == null)
+            _comparer = ItemStackComparer.getDefault();
+    }
+
+    /**
+     * Get the views {@code ItemStackComparer}.
+     */
+    public ItemStackComparer getItemStackComparer() {
+        return _comparer;
     }
 
     @Override
@@ -66,20 +90,31 @@ public abstract class ChestView extends View {
     }
 
     @Override
+    @Nullable
+    public Inventory getInventory() {
+        return _inventory;
+    }
+
+    @Override
     public boolean isInventoryViewable() {
         return true;
     }
 
-    public final void show(ViewOpenReason reason) {
+    @Override
+    protected final boolean openView(ViewOpenReason reason) {
         ChestEventListener.register(this);
 
-        Inventory inventory = createInventory();
-        if (_inventoryView.getType() != getInventoryType())
+        onPreShow(reason);
+
+        _inventory = createInventory();
+        if (_inventory.getType() != getInventoryType())
             throw new RuntimeException("Incorrect inventory type.");
 
-        _inventoryView = getPlayer().openInventory(inventory);
+        _inventoryView = getPlayer().openInventory(_inventory);
 
         onShow(reason);
+
+        return true;
     }
 
     @Override
@@ -87,15 +122,35 @@ public abstract class ChestView extends View {
         PreCon.notNull(reason);
 
         if (super.close(reason)) {
-            ChestEventListener.unregister(this);
+
+            if (reason != ViewCloseReason.REFRESH) {
+                ChestEventListener.unregister(this);
+            }
             return true;
         }
 
         return false;
     }
 
+    /**
+     * Called when the view is being opened but before the inventory
+     * is created.
+     *
+     * @param reason  The reason the view is being opened.
+     */
+    protected void onPreShow(ViewOpenReason reason) {}
+
+    /**
+     * Called after the view is opened.
+     *
+     * @param reason  The view open reason.
+     */
     protected abstract void onShow(ViewOpenReason reason);
 
+    /**
+     * Called to get an {@code Inventory} instance used to
+     * open an inventory view to the player.
+     */
     protected abstract Inventory createInventory();
 
     /**

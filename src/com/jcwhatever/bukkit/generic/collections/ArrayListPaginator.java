@@ -129,6 +129,9 @@ public class ArrayListPaginator<E> extends ArrayList<E> implements IPaginator<E>
     public List<E> getPage(int page) {
         checkPage(page);
 
+        if (size() == 0)
+            return new ArrayList<E>(0);
+
         int start = getStartIndex(page);
         int end = getEndIndex(page);
 
@@ -153,7 +156,7 @@ public class ArrayListPaginator<E> extends ArrayList<E> implements IPaginator<E>
     }
 
     private int getEndIndex(int page) {
-        return getStartIndex(page) + _itemsPerPage - 1;
+        return Math.min(size(), getStartIndex(page) + _itemsPerPage - 1);
     }
 
     private void checkPage(int page) {
@@ -186,7 +189,7 @@ public class ArrayListPaginator<E> extends ArrayList<E> implements IPaginator<E>
 
         @Override
         public boolean hasNext() {
-            return _index <= _endIndex && _index <= size();
+            return size() > 0 && _index <= _endIndex && _index <= size();
         }
 
         @Override

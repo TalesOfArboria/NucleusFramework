@@ -37,10 +37,10 @@ import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.ViewFactory;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
-import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -49,46 +49,46 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Generates {@code FilteredWorkbenchView} instances.
  */
-public class FilteredWorkbenchFactory extends ViewFactory<FilteredWorkbenchView> {
+public class FilteredWorkbenchFactory extends ViewFactory {
 
     @Localizable static final String _NOT_CRAFTABLE_LORE = "{RED}Not craftable here.";
     @Localizable static final String _NOT_CRAFTABLE_CHAT = "{RED}You can't craft this item here.";
 
-    private final String _name;
-    private final String _searchName;
+    private static EventListener _eventListener;
+    private static Map<InventoryView, FilteredWorkbenchView> _viewMap = new WeakHashMap<>(10);
+
     private final ItemFilterManager _filterManager;
-    private final Map<InventoryView, FilteredWorkbenchView> _viewMap = new WeakHashMap<>(10);
-    private final EventListener _eventListener;
 
-    public FilteredWorkbenchFactory(Plugin plugin, String name, ItemFilterManager filterManager) {
-        super(plugin, name, FilteredWorkbenchView.class);
 
-        PreCon.notNull(filterManager);
-
-        _name = name;
-        _searchName = name.toLowerCase();
+    /**
+     * Constructor.
+     *
+     * @param plugin         The owning plugin.
+     * @param name           The name of the instance.
+     * @param filterManager  The default item filter manager.
+     */
+    public FilteredWorkbenchFactory(Plugin plugin, String name,
+                                    @Nullable ItemFilterManager filterManager) {
+        super(plugin, name);
 
         _filterManager = filterManager;
 
-        _eventListener = new EventListener();
-        GenericsLib.getEventManager().register(_eventListener);
+        if (_eventListener == null) {
+            _eventListener = new EventListener();
+            GenericsLib.getEventManager().register(_eventListener);
+        }
     }
 
-    public ItemFilterManager getFilterManager() {
+    /**
+     * Get the default filter manager used when
+     * one is not specified.
+     */
+    @Nullable
+    public ItemFilterManager getDefaultFilter() {
         return _filterManager;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    @Override
-    public String getSearchName() {
-        return _searchName;
     }
 
     @Override
@@ -98,18 +98,34 @@ public class FilteredWorkbenchFactory extends ViewFactory<FilteredWorkbenchView>
         return new FilteredWorkbenchView(session, this, arguments, _filterManager);
     }
 
-    @Override
-    protected boolean onOpen(ViewOpenReason reason, FilteredWorkbenchView view) {
+    /**
+     * Create a new instance.
+     *
+     * @param title          The view title. (Workbench views cannot have their title set)
+     * @param session        The players view session.
+     * @param arguments      The view meta arguments.
+     * @param filterManager  The filter manager to use.
+     */
+    public FilteredWorkbenchView create(@Nullable String title, ViewSession session, ViewArguments arguments,
+                        ItemFilterManager filterManager) {
+        PreCon.notNull(session);
+        PreCon.notNull(arguments);
+        PreCon.notNull(filterManager);
 
-        view.show();
+        return new FilteredWorkbenchView(session, this, arguments, filterManager);
+    }
 
+    /**
+     * Register a view instance.
+     *
+     * @param view  The view to register.
+     */
+    void registerInventory(FilteredWorkbenchView view) {
         InventoryView inventory = view.getInventoryView();
         if (inventory == null)
-            return false;
+            throw new AssertionError();
 
         _viewMap.put(inventory, view);
-
-        return true;
     }
 
     @Override
@@ -117,7 +133,10 @@ public class FilteredWorkbenchFactory extends ViewFactory<FilteredWorkbenchView>
         GenericsLib.getEventManager().unregister(_eventListener);
     }
 
-    private class EventListener implements IGenericsEventListener {
+    /**
+     * Anvil event listener
+     */
+    private static class EventListener implements IGenericsEventListener {
 
         @GenericsEventHandler
         private void onPrepareItemCraft(PrepareItemCraftEvent event) {
@@ -128,7 +147,11 @@ public class FilteredWorkbenchFactory extends ViewFactory<FilteredWorkbenchView>
 
             ItemStack result = event.getRecipe().getResult();
 
-            if (!workbench.getFilterManager().isValidItem(result)) {
+            ItemFilterManager filter = workbench.getFilterManager();
+            if (filter == null)
+                return;
+
+            if (!filter.isValidItem(result)) {
                 InventoryView invView = event.getView();
                 if (invView != null) {
                     ItemStack stack = result.clone();
@@ -145,12 +168,22 @@ public class FilteredWorkbenchFactory extends ViewFactory<FilteredWorkbenchView>
             if (workbench == null)
                 return;
 
+            ItemFilterManager filter = workbench.getFilterManager();
+            if (filter == null)
+                return;
+
             ItemStack result = event.getRecipe().getResult();
 
-            if (!workbench.getFilterManager().isValidItem(result)) {
+            if (!filter.isValidItem(result)) {
                 tellNoCraftMessage(workbench);
                 event.setCancelled(true);
             }
+        }
+
+        @GenericsEventHandler
+        private void onGenericsDisable(PluginDisableEvent event) {
+            if (event.getPlugin() == GenericsLib.getLib())
+                _eventListener = null;
         }
 
         private void tellNoCraftMessage(FilteredWorkbenchView view) {

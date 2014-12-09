@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.mixins.IMeta;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
@@ -215,15 +216,39 @@ public class ViewSession implements IMeta, Iterable<IView>, IDisposable {
      * @return Null if there is no previous view.
      */
     @Nullable
-    public IView back() {
+    public void back() {
         if (_current == null)
-            return null;
+            return;
+
+        Scheduler.runTaskLater(_current.view.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                _current.view.close(ViewCloseReason.PREV);
+
+                _current = _current.prev;
+                if (_current == null) {
+                    dispose();
+                }
+            }
+        });
+    }
+
+    /**
+     * Called to indicate a menu was escaped.
+     * The same as calling back except the view
+     * is not called to close.
+     */
+    @Nullable
+    void escaped() {
+        if (_current == null)
+            return;
+
+        _current.view.close(ViewCloseReason.ESCAPE);
 
         _current = _current.prev;
-        if (_current == null)
-            return null;
-
-        return _current.view;
+        if (_current == null) {
+            dispose();
+        }
     }
 
     /**
@@ -234,8 +259,8 @@ public class ViewSession implements IMeta, Iterable<IView>, IDisposable {
      *
      * @return The newly created and displayed view.
      */
-    public IView next(IViewFactory factory, ViewArguments arguments) {
-        return next(null, factory, arguments);
+    public void next(IViewFactory factory, ViewArguments arguments) {
+        next(null, factory, arguments);
     }
 
     /**
@@ -247,7 +272,7 @@ public class ViewSession implements IMeta, Iterable<IView>, IDisposable {
      *
      * @return The newly created and displayed view.
      */
-    public IView next(@Nullable String title, IViewFactory factory, ViewArguments arguments) {
+    public void next(@Nullable String title, IViewFactory factory, ViewArguments arguments) {
 
         if (_current == null) {
 
@@ -255,23 +280,33 @@ public class ViewSession implements IMeta, Iterable<IView>, IDisposable {
 
             _first = new ViewContainer(view, null, null);
             _current = _first;
+
+            Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    _current.view.open(ViewOpenReason.NEXT);
+                }
+            });
         }
         else {
 
-            ViewContainer prev = _current;
-            IView prevView = _current.view;
+            final ViewContainer prev = _current;
+            //IView prevView = _current.view;
 
             IView currentView = factory.create(title, this, arguments);
-            ViewContainer current = new ViewContainer(currentView, prev, null);
-
-            _current = current;
-
+            final ViewContainer current = new ViewContainer(currentView, prev, null);
             prev.next = current;
-            prev.view.close(ViewCloseReason.NEXT);
-        }
 
-        factory.open(ViewOpenReason.NEXT, _current.view);
-        return _current.view;
+            Scheduler.runTaskLater(currentView.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    prev.view.close(ViewCloseReason.NEXT); // ViewEventListener will open next
+
+                    _current = current;
+                }
+            });
+
+        }
     }
 
     @Override

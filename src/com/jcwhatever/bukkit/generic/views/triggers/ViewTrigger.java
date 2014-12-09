@@ -44,7 +44,6 @@ public abstract class ViewTrigger implements IViewTrigger {
 
     private boolean _isDisposed;
 
-
     /**
      * Constructor.
      *

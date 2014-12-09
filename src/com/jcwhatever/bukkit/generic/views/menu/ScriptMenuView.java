@@ -22,53 +22,66 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.views.workbench;
+package com.jcwhatever.bukkit.generic.views.menu;
 
-import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.views.IViewFactory;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
+import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
+import com.jcwhatever.bukkit.generic.views.data.ViewResults;
+
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * A workbench view that can allow or deny specific items to be crafted.
+ * A menu view used for scripts.
  */
-public class FilteredWorkbenchView extends WorkbenchView {
+public class ScriptMenuView extends MenuView {
 
-    private final FilteredWorkbenchFactory _factory;
-    private final ItemFilterManager _filter;
+    private int _totalSlots;
 
-    /**
-     * Constructor.
-     *
-     * @param session        The player view session.
-     * @param factory        The factory that instantiated the view.
-     * @param arguments      Meta arguments for the view. (FilteredWorkbenchView does not take
-     *                       arguments but overriding implementations might)
-     * @param filterManager  The filter manager used to allow or deny specific items.
-     */
-    public FilteredWorkbenchView(ViewSession session, FilteredWorkbenchFactory factory,
-                                 ViewArguments arguments, ItemFilterManager filterManager) {
-        super(session, factory, arguments);
+    protected ScriptMenuView(@Nullable String title, ViewSession session,
+                             IViewFactory factory, ViewArguments arguments, int totalSlots) {
+        super(title, session, factory, arguments, null);
 
-        _filter = filterManager;
-        _factory = factory;
-    }
+        PreCon.isValid(totalSlots <= MAX_SLOTS, "Total slots cannot be greater than " + MAX_SLOTS);
 
-    /**
-     * Get the views item filter manager.
-     */
-    @Nullable
-    public ItemFilterManager getFilterManager() {
-        return _filter;
+        _totalSlots = totalSlots;
     }
 
     @Override
-    protected boolean openView(ViewOpenReason reason) {
-        if (super.openView(reason)) {
-            _factory.registerInventory(this);
-            return true;
-        }
-        return false;
+    protected List<MenuItem> createMenuItems() {
+        return new ArrayList<>(0);
     }
+
+    @Override
+    protected void onItemSelect(MenuItem menuItem) {
+        // do nothing
+    }
+
+    @Override
+    protected void onShow(ViewOpenReason reason) {
+        // do nothing
+    }
+
+    @Override
+    protected void onClose(ViewCloseReason reason) {
+        // do nothing
+    }
+
+    @Nullable
+    @Override
+    public ViewResults getResults() {
+        return null;
+    }
+
+    @Override
+    protected int getSlotsRequired() {
+        int rows = (int) Math.ceil((double)_totalSlots / ROW_SIZE);
+        return Math.max(rows * ROW_SIZE, ROW_SIZE);
+    }
+
 }

@@ -36,7 +36,17 @@ import org.bukkit.plugin.Plugin;
  */
 public interface IViewTriggerFactory extends INamedInsensitive {
 
+    /**
+     * Get the owning plugin.
+     */
     Plugin getPlugin();
 
+    /**
+     * Create a new view trigger instance.
+     *
+     * @param name           The name of the trigger instance.
+     * @param triggeredView  The view factory that will be triggered.
+     * @param dataNode       Optional data node for storing settings.
+     */
     IViewTrigger create(String name, IViewFactory triggeredView, @Nullable IDataNode dataNode);
 }

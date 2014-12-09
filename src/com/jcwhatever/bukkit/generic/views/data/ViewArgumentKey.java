@@ -29,8 +29,8 @@ import com.jcwhatever.bukkit.generic.views.data.ViewArguments.ViewArgument;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * A meta key that represents a view argument value.
  */
 public class ViewArgumentKey<V> extends MetaKey<V> {
 

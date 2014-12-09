@@ -35,17 +35,21 @@ import com.jcwhatever.bukkit.generic.views.chest.ChestEventInfo.ItemStackSource;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 
 import java.util.Map;
 import java.util.WeakHashMap;
 
-/*
- * 
+/**
+ * Listens to events related to the {@code ChestView}.
  */
 class ChestEventListener implements IGenericsEventListener {
 
     private static ChestEventListener _instance;
 
+    /**
+     * Register a {@code ChestView} instance so its events can be handled.
+     */
     static void register(ChestView view) {
 
         if (_instance == null) {
@@ -56,6 +60,9 @@ class ChestEventListener implements IGenericsEventListener {
         _instance._chestSessionMap.put(view.getPlayer(), view.getViewSession());
     }
 
+    /**
+     * Unregister a {@code ChestView} instance.
+     */
     static void unregister(ChestView view) {
         PreCon.notNull(view);
 
@@ -74,8 +81,8 @@ class ChestEventListener implements IGenericsEventListener {
         if (session == null)
             return;
 
+        // get current chest view instance
         IView current = session.getCurrentView();
-
         if (!(current instanceof ChestView))
             return;
 
@@ -91,34 +98,41 @@ class ChestEventListener implements IGenericsEventListener {
         // convert InventoryAction to InventoryItemAction
         switch (event.getAction()) {
             case PLACE_SOME:
+                // fall through
             case PLACE_ALL:
+                // fall through
             case PLACE_ONE:
+                // fall through
             case SWAP_WITH_CURSOR:
                 action = isUpperInventory
-                        ? InventoryItemAction.PLACED_UPPER
-                        : InventoryItemAction.PLACED_LOWER;
+                        ? InventoryItemAction.PLACED_TOP
+                        : InventoryItemAction.PLACED_BOTTOM;
                 break;
 
             case MOVE_TO_OTHER_INVENTORY:
                 if (isUpperInventory) {
-                    action = InventoryItemAction.PICKUP_UPPER;
-                    secondaryAction = InventoryItemAction.PLACED_LOWER;
+                    action = InventoryItemAction.PICKUP_TOP;
+                    secondaryAction = InventoryItemAction.PLACED_BOTTOM;
                 } else {
-                    action = InventoryItemAction.PICKUP_LOWER;
-                    secondaryAction = InventoryItemAction.PLACED_UPPER;
+                    action = InventoryItemAction.PICKUP_BOTTOM;
+                    secondaryAction = InventoryItemAction.PLACED_TOP;
                 }
                 break;
 
             case PICKUP_ALL:
+                // fall through
             case PICKUP_HALF:
+                // fall through
             case PICKUP_ONE:
+                // fall through
             case PICKUP_SOME:
                 action = isUpperInventory
-                        ? InventoryItemAction.PICKUP_UPPER
-                        : InventoryItemAction.PICKUP_LOWER;
+                        ? InventoryItemAction.PICKUP_TOP
+                        : InventoryItemAction.PICKUP_BOTTOM;
                 break;
 
             case DROP_ALL_CURSOR:
+                // fall through
             case DROP_ONE_CURSOR:
                 action = InventoryItemAction.DROPPED;
                 break;
@@ -129,6 +143,7 @@ class ChestEventListener implements IGenericsEventListener {
 
         ItemStackSource itemStackSource = getRelevantStack(action, event);
 
+        // generate event info object
         ChestEventInfo info = new ChestEventInfo();
         info.setInventoryAction(event.getAction());
         info.setAction(action);
@@ -169,13 +184,22 @@ class ChestEventListener implements IGenericsEventListener {
     }
 
     /*
+     * Reset listener instance if GenericsLib is disabled (i.e Server reset)
+     */
+    @GenericsEventHandler
+    private void onGenericsDisabled(PluginDisableEvent event) {
+        if (event.getPlugin() == GenericsLib.getLib())
+            _instance = null;
+    }
+
+    /*
      * Get the item stack that is relevant to the click event.
      */
     private ItemStackSource getRelevantStack(InventoryItemAction action, InventoryClickEvent event) {
         switch (action) {
-            case PLACED_UPPER:
+            case PLACED_TOP:
                 // fall through
-            case PLACED_LOWER:
+            case PLACED_BOTTOM:
                 // fall through
             case DROPPED:
                 if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
@@ -187,5 +211,4 @@ class ChestEventListener implements IGenericsEventListener {
                 return ItemStackSource.SLOT;
         }
     }
-
 }

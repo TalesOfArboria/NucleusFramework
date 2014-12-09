@@ -31,8 +31,9 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-/*
- * 
+/**
+ * Provides information and objects from a chest
+ * inventory event.
  */
 public class ChestEventInfo {
 
@@ -51,6 +52,9 @@ public class ChestEventInfo {
 
     ChestEventInfo() {}
 
+    /**
+     * Get the inventory action of the event.
+     */
     public InventoryAction getInventoryAction() {
         return _inventoryAction;
     }
@@ -59,6 +63,9 @@ public class ChestEventInfo {
         _inventoryAction = action;
     }
 
+    /**
+     * Get the item action of the event.
+     */
     public InventoryItemAction getAction() {
         return _action;
     }
@@ -67,6 +74,11 @@ public class ChestEventInfo {
         _action = action;
     }
 
+    /**
+     * Get the secondary action. The secondary action
+     * is the action that was taken in order to cause
+     * the event.
+     */
     public InventoryItemAction getSecondaryAction() {
         return _secondaryAction;
     }
@@ -75,14 +87,25 @@ public class ChestEventInfo {
         _secondaryAction = action;
     }
 
+    /**
+     * Get the item action. This is a more generalized
+     * version of an inventory item action.
+     */
     public ItemAction getItemAction() {
         return _action.getItemAction();
     }
 
+    /**
+     * Get the inventory position the event takes place in.
+     * (top or bottom inventory)
+     */
     public InventoryPosition getInventoryPosition() {
         return _action.getInventoryPosition();
     }
 
+    /**
+     * Get the source of the item stack most relevant to the event.
+     */
     public ItemStackSource getItemStackSource() {
         return _source;
     }
@@ -91,6 +114,9 @@ public class ChestEventInfo {
         _source = source;
     }
 
+    /**
+     * Get the item stack most relevant to the event.
+     */
     public ItemStack getItemStack() {
         return _itemStack;
     }
@@ -99,6 +125,9 @@ public class ChestEventInfo {
         _itemStack = itemStack;
     }
 
+    /**
+     * Get the item stack in the players cursor.
+     */
     public ItemStack getCursorStack() {
         return _cursorStack;
     }
@@ -107,6 +136,9 @@ public class ChestEventInfo {
         _cursorStack = cursorStack;
     }
 
+    /**
+     * Get the item stack in from the relevant inventory slot.
+     */
     public ItemStack getSlotStack() {
         return _slotStack;
     }
@@ -115,7 +147,9 @@ public class ChestEventInfo {
         _slotStack = slotStack;
     }
 
-
+    /**
+     * Get the inventory.
+     */
     public Inventory getInventory() {
         return _inventory;
     }
@@ -124,6 +158,9 @@ public class ChestEventInfo {
         _inventory = inventory;
     }
 
+    /**
+     * Get the top inventory.
+     */
     public Inventory getTopInventory() {
         return _topInventory;
     }
@@ -132,6 +169,9 @@ public class ChestEventInfo {
         _topInventory = inventory;
     }
 
+    /**
+     * Get the bottom inventory.
+     */
     public Inventory getBottomInventory() {
         return _bottomInventory;
     }
@@ -140,6 +180,9 @@ public class ChestEventInfo {
         _bottomInventory = inventory;
     }
 
+    /**
+     * Get the raw slot index.
+     */
     public int getRawSlot() {
         return _rawSlot;
     }
@@ -148,6 +191,9 @@ public class ChestEventInfo {
         _rawSlot = rawSlot;
     }
 
+    /**
+     * Get the slot index.
+     */
     public int getSlot() {
         return _slot;
     }
@@ -156,8 +202,19 @@ public class ChestEventInfo {
         _slot = slot;
     }
 
+    /**
+     * Specifies the source of an item stack
+     * from the inventory event.
+     */
     public enum ItemStackSource {
+        /**
+         * The item stack is from the inventory slot.
+         */
         SLOT,
+
+        /**
+         * The item stack is from the players cursor.
+         */
         CURSOR
     }
 }

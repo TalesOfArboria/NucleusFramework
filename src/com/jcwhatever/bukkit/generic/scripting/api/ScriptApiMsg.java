@@ -68,7 +68,7 @@ public class ScriptApiMsg extends GenericsScriptApi {
 
         private final IMessenger _msg;
 
-        private String _chatPrefix;
+        private String _chatPrefix = "";
         private boolean _isDisposed;
 
         ApiObject (IMessenger messenger) {

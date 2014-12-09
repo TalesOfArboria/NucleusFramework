@@ -36,16 +36,28 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * A meta data container used in view instances.
+ * A meta data container used to pass arguments into
+ * view instances.
  */
 public class ViewArguments {
 
     private Map<Object, Object> _argumentMap = new HashMap<Object, Object>(10);
 
+    /**
+     * Constructor.
+     *
+     * @param arguments  View arguments to add.
+     */
     public ViewArguments(ViewArgument ... arguments) {
         this(null, arguments);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param merge      Optional existing view arguments to add.
+     * @param arguments  View arguments to add. Overrides merged values.
+     */
     public ViewArguments(@Nullable ViewArguments merge, ViewArgument ... arguments) {
 
         if (merge != null) {
@@ -103,7 +115,18 @@ public class ViewArguments {
         return _argumentMap.get(key);
     }
 
-    protected <T> void set(MetaKey<T> key, T value) {
+    /**
+     * Called to set a value. Allows extended types to
+     * change values.
+     *
+     * @param key    The meta key.
+     * @param value  The value to set.
+     *
+     * @param <T>  The meta value type.
+     */
+    protected <T> void set(MetaKey<T> key, @Nullable T value) {
+        PreCon.notNull(key);
+
         if (value == null) {
             _argumentMap.remove(key);
         }
@@ -112,19 +135,21 @@ public class ViewArguments {
         }
     }
 
-    void setObject(Object key, Object value) {
-        if (value == null) {
-            _argumentMap.remove(key);
-        }
-        else {
-            _argumentMap.put(key, value);
-        }
-    }
-
+    /**
+     * A single view argument.
+     */
     public static class ViewArgument {
         private final Object _key;
         private final Object _value;
 
+        /**
+         * Constructor.
+         *
+         * @param key    The meta key.
+         * @param value  The meta value.
+         *
+         * @param <T>  The meta value type.
+         */
         public <T> ViewArgument(MetaKey<T> key, T value) {
             PreCon.notNull(key);
             PreCon.notNull(value);
@@ -133,10 +158,16 @@ public class ViewArguments {
             _value = value;
         }
 
+        /**
+         * Get the meta key.
+         */
         public Object getKey() {
             return _key;
         }
 
+        /**
+         * Get the meta value.
+         */
         public Object getValue() {
             return _value;
         }

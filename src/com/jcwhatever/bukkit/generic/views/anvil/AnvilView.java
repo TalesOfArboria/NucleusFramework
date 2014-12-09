@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.views.View;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
+import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 import com.jcwhatever.bukkit.generic.views.data.ViewResults;
 
 import org.bukkit.Location;
@@ -36,52 +37,33 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * An implementation of an anvil view.
  */
 public class AnvilView extends View {
 
+    /**
+     * Constructor.
+     *
+     * @param title      Ignored. Anvil titles can't be set.
+     * @param session    The players view session.
+     * @param factory    The factory that created the view session.
+     * @param arguments  The view meta arguments. (Anvil view does not take arguments)
+     */
     protected AnvilView(@Nullable String title, ViewSession session,
                         IViewFactory factory, ViewArguments arguments) {
         super(title, session, factory, arguments);
     }
 
     @Override
-    protected void onClose(ViewCloseReason reason) {
-        // do nothing
-    }
-
-    @Override
-    public InventoryType getInventoryType() {
-        return InventoryType.ANVIL;
-    }
-
-    @Nullable
-    @Override
-    public InventoryView getInventoryView() {
-        return null;
-    }
-
-    @Override
-    public boolean isInventoryViewable() {
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public ViewResults getResults() {
-        return null;
-    }
-
-    @Nullable
-    public boolean show() {
-
+    protected boolean openView(ViewOpenReason reason) {
         Block block = getViewSession().getSessionBlock();
         if (block == null || block.getType() != Material.ANVIL) {
             throw new RuntimeException("Anvil Views must have an anvil source block.");
@@ -109,5 +91,38 @@ public class AnvilView extends View {
         }
 
         return true;
+    }
+
+    @Override
+    protected void onClose(ViewCloseReason reason) {
+        // do nothing
+    }
+
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.ANVIL;
+    }
+
+    @Nullable
+    @Override
+    public InventoryView getInventoryView() {
+        return null; // no inventory view available
+    }
+
+    @Nullable
+    @Override
+    public Inventory getInventory() {
+        return null; // no inventory available
+    }
+
+    @Override
+    public boolean isInventoryViewable() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public ViewResults getResults() {
+        return null; // no results returned
     }
 }
