@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.performance;
 
+import com.jcwhatever.bukkit.generic.collections.TimeScale;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import javax.annotation.Nullable;
@@ -43,13 +44,30 @@ import javax.annotation.Nullable;
  * @param <K3>  The 3rd key type.
  * @param <V>  The value type.
  */
-public class TripleKeySingleCache <K1, K2, K3, V> {
+public class TripleKeySingleCache <K1, K2, K3, V> extends ExpiringCache {
 
     private K1 _key1;
     private K2 _key2;
     private K3 _key3;
     private V _value;
     private boolean _hasValue = false;
+
+    /**
+     * Constructor.
+     */
+    public TripleKeySingleCache() {
+        this(-1, TimeScale.TICKS);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param lifespan  The cached value lifespan.
+     * @param timeScale The lifespan time scale.
+     */
+    protected TripleKeySingleCache(int lifespan, TimeScale timeScale) {
+        super(lifespan, timeScale);
+    }
 
     /**
      * Determine if the cached keys are equal to the provided keys.
@@ -59,7 +77,7 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
      * @param key3  The third key to check.
      */
     public boolean keyEquals(@Nullable Object key1, @Nullable Object key2, @Nullable Object key3) {
-        return !(_key1 == null || _key2 == null || _key3 == null) &&
+        return !isExpired() && !(_key1 == null || _key2 == null || _key3 == null) &&
                 _key1.equals(key1) &&
                 _key2.equals(key2) &&
                 _key3.equals(key3);
@@ -70,6 +88,9 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
      */
     @Nullable
     public K1 getKey1() {
+        if (isExpired()) {
+            reset();
+        }
         return _key1;
     }
 
@@ -78,6 +99,9 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
      */
     @Nullable
     public K2 getKey2() {
+        if (isExpired()) {
+            reset();
+        }
         return _key2;
     }
 
@@ -86,6 +110,9 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
      */
     @Nullable
     public K3 getKey3() {
+        if (isExpired()) {
+            reset();
+        }
         return _key3;
     }
 
@@ -94,6 +121,9 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
      */
     @Nullable
     public V getValue() {
+        if (isExpired()) {
+            reset();
+        }
         return _value;
     }
 
@@ -115,6 +145,7 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
         _key3 = key3;
         _value = value;
         _hasValue = true;
+        resetExpires();
     }
 
     /**
@@ -127,6 +158,7 @@ public class TripleKeySingleCache <K1, K2, K3, V> {
         _key3 = null;
         _value = null;
         _hasValue = false;
+        expireNow();
     }
 
     /**

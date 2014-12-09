@@ -26,9 +26,7 @@
 package com.jcwhatever.bukkit.generic.performance;
 
 import com.jcwhatever.bukkit.generic.collections.TimeScale;
-import com.jcwhatever.bukkit.generic.utils.DateUtils;
 
-import java.util.Date;
 import javax.annotation.Nullable;
 
 /**
@@ -43,21 +41,20 @@ import javax.annotation.Nullable;
  * @param <K>  The key type.
  * @param <V>  The value type.
  */
-public class SingleCache <K, V> {
+public class SingleCache <K, V> extends ExpiringCache {
 
     private K _key;
     private V _value;
     private boolean _hasValue = false;
-    private int _lifespan;
-    private TimeScale _timeScale;
-    private Date _expires;
 
     /**
      * Constructor.
      *
      * <p>Unlimited cache value lifespan.</p>
      */
-    public SingleCache() {}
+    public SingleCache() {
+        this(-1, TimeScale.TICKS);
+    }
 
     /**
      * Constructor.
@@ -66,23 +63,7 @@ public class SingleCache <K, V> {
      * @param timeScale  The lifespan time scale.
      */
     public SingleCache(int lifespan, TimeScale timeScale) {
-        _lifespan = lifespan;
-        _timeScale = timeScale;
-    }
-
-    /**
-     * Get the lifespan. Values of 0 or less indicate
-     * the cache value does not expire.
-     */
-    public int getLifespan() {
-        return _lifespan;
-    }
-
-    /**
-     * Get the lifespan timescale.
-     */
-    public TimeScale getTimeScale() {
-        return _timeScale;
+        super(lifespan, timeScale);
     }
 
     /**
@@ -100,9 +81,9 @@ public class SingleCache <K, V> {
      */
     @Nullable
     public K getKey() {
-        if (isExpired())
-            _key = null;
-
+        if (isExpired()) {
+            reset();
+        }
         return _key;
     }
 
@@ -111,9 +92,9 @@ public class SingleCache <K, V> {
      */
     @Nullable
     public V getValue() {
-        if (isExpired())
-            _value = null;
-
+        if (isExpired()) {
+            reset();
+        }
         return _value;
     }
 
@@ -127,26 +108,7 @@ public class SingleCache <K, V> {
         _key = key;
         _value = value;
         _hasValue = true;
-
-        if (_lifespan > 0) {
-
-            switch (_timeScale) {
-                case MILLISECONDS:
-                    _expires = DateUtils.addMilliseconds(new Date(), _lifespan);
-                    break;
-
-                case SECONDS:
-                    _expires = DateUtils.addSeconds(new Date(), _lifespan);
-                    break;
-
-                case TICKS:
-                    _expires = DateUtils.addMilliseconds(new Date(), _lifespan * 50);
-                    break;
-
-                default:
-                    throw new AssertionError();
-            }
-        }
+        resetExpires();
     }
 
     /**
@@ -156,7 +118,7 @@ public class SingleCache <K, V> {
         _key = null;
         _value = null;
         _hasValue = false;
-        _expires = null;
+        expireNow();
     }
 
     /**
@@ -164,9 +126,5 @@ public class SingleCache <K, V> {
      */
     public boolean hasValue() {
         return _hasValue;
-    }
-
-    private boolean isExpired() {
-        return _expires != null && _expires.compareTo(new Date()) <= 0;
     }
 }
