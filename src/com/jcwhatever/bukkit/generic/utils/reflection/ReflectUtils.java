@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableMap;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -39,9 +38,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Reflection utilities.
  */
 public class ReflectUtils {
 

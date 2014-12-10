@@ -27,9 +27,10 @@ package com.jcwhatever.bukkit.generic.views.triggers;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nullable;
 
 /**
  * Defines an object as a factory for creating view triggers.

@@ -36,7 +36,6 @@ import com.jcwhatever.bukkit.generic.views.menu.MenuItem;
 import com.jcwhatever.bukkit.generic.views.menu.MenuView;
 import com.jcwhatever.bukkit.generic.views.menu.ScriptMenuView;
 import com.jcwhatever.bukkit.generic.views.menu.ScriptMenuViewFactory;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -45,6 +44,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.WeakHashMap;
+import javax.annotation.Nullable;
 
 /*
  * 
