@@ -156,6 +156,9 @@ public class FloatingItem implements IDisposable {
      */
     @Nullable
     public Entity getEntity() {
+        if (_trackedEntity == null)
+            return null;
+
         return _trackedEntity.getEntity();
     }
 
