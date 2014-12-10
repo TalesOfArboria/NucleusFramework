@@ -157,19 +157,17 @@ public class ArrayListMap<K, V> implements Map<K, V> {
      *
      * @param key  The key to check.
      */
-    @Nullable
     public List<V> getAll(Object key) {
         PreCon.notNull(key);
 
         //noinspection SuspiciousMethodCalls
         List<V> list = _map.get(key);
         if (list == null) {
-            return null;
+            return new ArrayList<>(0);
         }
 
         return list;
     }
-
 
     /**
      * Get the maps keys.
@@ -323,14 +321,13 @@ public class ArrayListMap<K, V> implements Map<K, V> {
      *
      * @return Returns the removed set, if any.
      */
-    @Nullable
     public List<V> removeAll(Object key) {
         PreCon.notNull(key);
 
         //noinspection SuspiciousMethodCalls
         List<V> list = _map.remove(key);
         if (list == null) {
-            return null;
+            return new ArrayList<>(0);
         }
 
         return list;
