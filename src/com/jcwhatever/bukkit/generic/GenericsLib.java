@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.internal.InternalMessengerFactory;
 import com.jcwhatever.bukkit.generic.internal.InternalRegionManager;
 import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
 import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
+import com.jcwhatever.bukkit.generic.internal.PlayerTracker;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
 import com.jcwhatever.bukkit.generic.internal.scripting.ScriptEngineLoader;
@@ -301,6 +302,9 @@ public class GenericsLib extends GenericsPlugin {
         registerCommands(_commandHandler);
 
         loadScriptManager();
+
+        // initialize player tracker
+        PlayerTracker.get();
     }
 
     @Override

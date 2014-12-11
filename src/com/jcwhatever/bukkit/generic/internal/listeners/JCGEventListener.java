@@ -35,7 +35,6 @@ import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils.DisplayNameResult;
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.Material;
@@ -76,9 +75,6 @@ public final class JCGEventListener implements Listener {
 	private void onPlayerJoin(PlayerJoinEvent event) {
 
 		final Player p = event.getPlayer();
-
-		// update player name in id lookup
-		PlayerUtils.setPlayerName(p.getUniqueId(), p.getName());
 
 		// tell player missed important messages
 		GenericsLib.getMessengerFactory().tellImportant(p);

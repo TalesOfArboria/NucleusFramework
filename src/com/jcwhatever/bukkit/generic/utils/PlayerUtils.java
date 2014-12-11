@@ -25,14 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.internal.Msg;
+import com.jcwhatever.bukkit.generic.internal.PlayerTracker;
 import com.jcwhatever.bukkit.generic.mixins.IPlayerWrapper;
-import com.jcwhatever.bukkit.generic.storage.DataStorage;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.jcwhatever.bukkit.generic.storage.StorageLoadHandler;
-import com.jcwhatever.bukkit.generic.storage.StorageLoadResult;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -46,8 +40,8 @@ import org.bukkit.util.BlockIterator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -56,9 +50,7 @@ import javax.annotation.Nullable;
  */
 public class PlayerUtils {
 
-    private static final Object _sync = new Object();
-
-    private static IDataNode _nameData;
+    private PlayerUtils() {}
 
     /**
      * Determine if a player is online.
@@ -74,6 +66,30 @@ public class PlayerUtils {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Get the time the player logged in for the current session.
+     *
+     * @param player  The player to check.
+     *
+     * @return  Null if the player is not logged in.
+     */
+    @Nullable
+    public static Date getLoginDate(Player player) {
+        return PlayerTracker.get().getLoginDate(player);
+    }
+
+    /**
+     * Get the number of milliseconds the player has been on
+     * the server during the current login session.
+     *
+     * @param player  The player to check.
+     *
+     * @return  0 if the player is not online.
+     */
+    public static long getSessionTime(Player player) {
+        return PlayerTracker.get().getSessionTime(player);
     }
 
     /**
@@ -105,7 +121,7 @@ public class PlayerUtils {
     }
 
     /**
-     * Get player object from provided object.
+     * Get player instance from provided object.
      *
      * <p>Attempts to retrieve the player object from one of the following
      * types of objects:</p>
@@ -134,41 +150,19 @@ public class PlayerUtils {
     }
 
     /**
-     * Gets player Id from name using stored id to name map.
-     * Null if not found.
+     * Gets player Id from name using stored id to name map if
+     * the player is not online.
      *
-     * <p>
-     *    Avoid usage due to low performance.
-     * </p>
+     * <p>Will return an id if the player is not online but
+     * has note logged in before.</p>
      *
      * @param playerName  The name of the player
+     *
+     * @return Null if not found
      */
     @Nullable
     public static UUID getPlayerId(String playerName) {
-        PreCon.notNull(playerName);
-
-        IDataNode nameData = getNameData();
-
-        Set<String> ids = nameData.getSubNodeNames();
-        if (ids == null || ids.isEmpty())
-            return null;
-
-        for (String idStr : ids) {
-            String name = nameData.getString(idStr);
-
-            if (name != null && name.equalsIgnoreCase(playerName)) {
-
-                try {
-                    return UUID.fromString(idStr);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        }
-
-        return null;
+        return PlayerTracker.get().getPlayerId(playerName);
     }
 
     /**
@@ -182,35 +176,7 @@ public class PlayerUtils {
      */
     @Nullable
     public static String getPlayerName(UUID playerId) {
-        PreCon.notNull(playerId);
-
-        IDataNode nameData = getNameData();
-
-        return nameData.getString(playerId.toString());
-    }
-
-    /**
-     * Update the GenericsLib player name/player id map.
-     *
-     * @param playerId  The id of the player.
-     * @param name      The new player name.
-     */
-    public static void setPlayerName(UUID playerId, String name) {
-        PreCon.notNull(playerId);
-        PreCon.notNullOrEmpty(name);
-
-        IDataNode nameData = getNameData();
-
-        String currentName = getPlayerName(playerId);
-
-        if (name.equals(currentName))
-            return;
-
-        synchronized (_sync) {
-            nameData.set(playerId.toString(), name);
-        }
-
-        nameData.saveAsync(null);
+        return PlayerTracker.get().getPlayerName(playerId);
     }
 
     /**
@@ -322,30 +288,5 @@ public class PlayerUtils {
         }
 
         return null;
-    }
-
-    // get the node that contains player id/name data.
-    private static IDataNode getNameData() {
-
-        if (_nameData == null) {
-
-            synchronized (_sync) {
-
-                IDataNode data = DataStorage.getStorage(GenericsLib.getLib(), new DataPath("player-names"));
-                data.loadAsync(new StorageLoadHandler() {
-
-                    @Override
-                    public void onFinish(StorageLoadResult result) {
-                        if (!result.isLoaded())
-                            Msg.warning("Failed to load player names file.");
-
-                    }
-
-                });
-
-                _nameData = data;
-            }
-        }
-        return _nameData;
     }
 }
