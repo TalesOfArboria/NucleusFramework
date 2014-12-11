@@ -26,7 +26,7 @@ package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.manager.GenericsEventHandler;
-import com.jcwhatever.bukkit.generic.events.manager.IGenericsEventListener;
+import com.jcwhatever.bukkit.generic.events.manager.GenericsEventListener;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
 
@@ -41,7 +41,7 @@ import java.util.WeakHashMap;
  * Common view event Listener that works in conjunction with
  * {@link ViewSession}.
  */
-class ViewEventListener implements IGenericsEventListener {
+class ViewEventListener extends GenericsEventListener {
 
     private static ViewEventListener _instance;
 
@@ -77,6 +77,7 @@ class ViewEventListener implements IGenericsEventListener {
      * Constructor.
      */
     ViewEventListener() {
+        super(GenericsLib.getLib());
         _instance = this;
     }
 

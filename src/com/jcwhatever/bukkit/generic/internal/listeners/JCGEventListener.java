@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.response.CommandRequests;
 import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRepairEvent;
+import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.events.signs.SignInteractEvent;
 import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
@@ -56,12 +57,20 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 public final class JCGEventListener implements Listener {
+
+	@EventHandler
+	private void onPluginDisable(PluginDisableEvent event) {
+
+		// unregister all event handlers associated with the plugin
+		GenericsEventManager.unregisterPlugin(event.getPlugin());
+	}
 
 	@EventHandler(priority=EventPriority.HIGHEST)
     private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {

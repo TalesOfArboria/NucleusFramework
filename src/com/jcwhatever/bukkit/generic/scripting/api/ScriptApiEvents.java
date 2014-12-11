@@ -107,6 +107,7 @@ public class ScriptApiEvents extends GenericsScriptApi {
 
             // unregister Generics event handlers
             for (RegisteredGenericsEvent registered : _registeredGenerics) {
+                //noinspection unchecked
                 GenericsLib.getEventManager().unregister(registered._eventClass, registered._handler);
             }
             _registeredGenerics.clear();
@@ -173,12 +174,13 @@ public class ScriptApiEvents extends GenericsScriptApi {
 
             IEventHandler eventHandler = new IEventHandler() {
                 @Override
-                public void call(Object event) {
+                public void handle(Object event) {
                     handler.onEvent(event);
                 }
             };
 
-            GenericsLib.getEventManager().register(event, eventPriority, ignoreCancelled, eventHandler);
+            //noinspection unchecked
+            GenericsLib.getEventManager().register(_plugin, event, eventPriority, ignoreCancelled, eventHandler);
 
             _registeredGenerics.add(new RegisteredGenericsEvent(event, eventHandler));
 

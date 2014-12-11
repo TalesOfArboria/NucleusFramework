@@ -26,7 +26,7 @@ package com.jcwhatever.bukkit.generic.views.chest;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.manager.GenericsEventHandler;
-import com.jcwhatever.bukkit.generic.events.manager.IGenericsEventListener;
+import com.jcwhatever.bukkit.generic.events.manager.GenericsEventListener;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IView;
 import com.jcwhatever.bukkit.generic.views.ViewSession;
@@ -36,6 +36,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -43,9 +44,13 @@ import java.util.WeakHashMap;
 /**
  * Listens to events related to the {@code ChestView}.
  */
-class ChestEventListener implements IGenericsEventListener {
+class ChestEventListener extends GenericsEventListener {
 
     private static ChestEventListener _instance;
+
+    public ChestEventListener(Plugin plugin) {
+        super(plugin);
+    }
 
     /**
      * Register a {@code ChestView} instance so its events can be handled.
@@ -53,7 +58,7 @@ class ChestEventListener implements IGenericsEventListener {
     static void register(ChestView view) {
 
         if (_instance == null) {
-            _instance = new ChestEventListener();
+            _instance = new ChestEventListener(GenericsLib.getLib());
             GenericsLib.getEventManager().register(_instance);
         }
 

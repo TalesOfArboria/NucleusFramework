@@ -34,6 +34,7 @@ import org.bukkit.event.hanging.HangingEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.vehicle.VehicleEvent;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Used to forward Bukkit events from a {@link GenericsEventManager} instance.
@@ -63,6 +64,7 @@ import org.bukkit.event.vehicle.VehicleEvent;
  */
 public abstract class AbstractBukkitForwarder implements IDisposable {
 
+    private final Plugin _plugin;
     private final GenericsEventManager _source;
     private final Forwarder _forwarder;
     private boolean _isDisposed;
@@ -72,20 +74,24 @@ public abstract class AbstractBukkitForwarder implements IDisposable {
      *
      * <p>Automatically attaches forwarder to the specified source event manager.</p>
      *
+     * @param plugin  The owning plugin.
      * @param source  The event manager source that Bukkit events are handled from.
      *                Typically this will be the global event manager since it is the
      *                only manager that receives bukkit events as part of its normal
      *                operation.
      */
-    protected AbstractBukkitForwarder(GenericsEventManager source) {
+    protected AbstractBukkitForwarder(Plugin plugin, GenericsEventManager source) {
+        PreCon.notNull(plugin);
         PreCon.notNull(source);
 
+        _plugin = plugin;
         _source = source;
         _forwarder = new Forwarder();
 
         source.addCallHandler(_forwarder);
     }
 
+    @Override
     public boolean isDisposed() {
         return _isDisposed;
     }
@@ -110,10 +116,15 @@ public abstract class AbstractBukkitForwarder implements IDisposable {
 
     protected abstract void onOtherEvent(Event event);
 
-    public class Forwarder implements IEventHandler {
+    public class Forwarder implements IEventCallHandler {
 
         @Override
-        public void call(Object e) {
+        public Plugin getPlugin() {
+            return _plugin;
+        }
+
+        @Override
+        public void onCall(Object e) {
 
             if (!(e instanceof Event))
                 return;

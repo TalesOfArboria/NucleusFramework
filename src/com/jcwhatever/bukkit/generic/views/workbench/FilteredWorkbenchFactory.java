@@ -26,7 +26,7 @@ package com.jcwhatever.bukkit.generic.views.workbench;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.manager.GenericsEventHandler;
-import com.jcwhatever.bukkit.generic.events.manager.IGenericsEventListener;
+import com.jcwhatever.bukkit.generic.events.manager.GenericsEventListener;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
@@ -77,7 +77,7 @@ public class FilteredWorkbenchFactory extends ViewFactory {
         _filterManager = filterManager;
 
         if (_eventListener == null) {
-            _eventListener = new EventListener();
+            _eventListener = new EventListener(GenericsLib.getLib());
             GenericsLib.getEventManager().register(_eventListener);
         }
     }
@@ -136,7 +136,11 @@ public class FilteredWorkbenchFactory extends ViewFactory {
     /**
      * Anvil event listener
      */
-    private static class EventListener implements IGenericsEventListener {
+    private static class EventListener extends GenericsEventListener {
+
+        public EventListener(Plugin plugin) {
+            super(plugin);
+        }
 
         @GenericsEventHandler
         private void onPrepareItemCraft(PrepareItemCraftEvent event) {

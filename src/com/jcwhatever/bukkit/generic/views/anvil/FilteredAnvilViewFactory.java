@@ -25,9 +25,9 @@
 package com.jcwhatever.bukkit.generic.views.anvil;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.events.manager.IGenericsEventListener;
 import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRepairEvent;
+import com.jcwhatever.bukkit.generic.events.manager.GenericsEventListener;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.items.ItemFilterManager;
 import com.jcwhatever.bukkit.generic.language.Localizable;
@@ -114,7 +114,7 @@ public class FilteredAnvilViewFactory extends ViewFactory {
      */
     static void register(FilteredAnvilView view) {
         if (_eventListener == null) {
-            _eventListener = new EventListener();
+            _eventListener = new EventListener(GenericsLib.getLib());
             GenericsLib.getEventManager().register(_eventListener);
         }
 
@@ -138,7 +138,11 @@ public class FilteredAnvilViewFactory extends ViewFactory {
     /**
      * Anvil event listener.
      */
-    static class EventListener implements IGenericsEventListener {
+    static class EventListener extends GenericsEventListener {
+
+        public EventListener(Plugin plugin) {
+            super(plugin);
+        }
 
         private void onAnvilItemRepair(AnvilItemRepairEvent event) {
             check(event.getPlayer(), event.getRepairedItem());

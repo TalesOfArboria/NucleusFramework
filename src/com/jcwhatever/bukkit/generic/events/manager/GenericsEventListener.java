@@ -22,11 +22,23 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.bukkit.generic.events.manager;
 
-/**
- * An interface flag that indicates a class has
- * generics event handlers.
+import org.bukkit.plugin.Plugin;
+
+/*
+ * 
  */
-public interface IGenericsEventListener {}
+public class GenericsEventListener implements IEventListener {
+
+    private Plugin _plugin;
+
+    public GenericsEventListener(Plugin plugin) {
+        _plugin = plugin;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+}

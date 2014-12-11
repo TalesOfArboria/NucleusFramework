@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.events.manager;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.TimeScale;
 import com.jcwhatever.bukkit.generic.collections.TimedHashSet;
+import com.jcwhatever.bukkit.generic.collections.WeakHashSetMap;
 import com.jcwhatever.bukkit.generic.events.manager.exceptions.EventManagerDisposedException;
 import com.jcwhatever.bukkit.generic.events.manager.exceptions.HandlerAlreadyRegisteredException;
 import com.jcwhatever.bukkit.generic.events.manager.exceptions.ListenerAlreadyRegisteredException;
@@ -40,13 +41,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -86,13 +86,66 @@ import javax.annotation.Nullable;
  */
 public class GenericsEventManager implements IDisposable {
 
-    private final Map<Class<?>, EventHandlerCollection> _handlerMap = new HashMap<>(100);
-    private final Map<IGenericsEventListener, ListenerContainer> _listeners = new HashMap<>(100);
-    private final List<IEventHandler> _callHandlers = new ArrayList<>(10);
-    private final GenericsEventManager _parent;
-    private boolean _isDisposed;
+    private static WeakHashSetMap<Plugin, ListenerContainer> _pluginListeners = new WeakHashSetMap<>(100);
+    private static WeakHashSetMap<Plugin, HandlerContainer> _pluginHandlers = new WeakHashSetMap<>(100);
+    private static WeakHashSetMap<Plugin, CallHandlerContainer> _pluginCallHandlers = new WeakHashSetMap<>(100);
 
-    private Map<Object, Void> _calledEvents = new WeakHashMap<>(30);
+    /**
+     * Remove all registered event handlers and listeners from
+     * the specified plugin from all event managers.
+     *
+     * <p>Automatically called when a plugin is disabled.</p>
+     *
+     * @param plugin  The plugin.
+     */
+    public static void unregisterPlugin(Plugin plugin) {
+
+        Set<ListenerContainer> listeners = _pluginListeners.removeAll(plugin);
+        for (ListenerContainer container : listeners) {
+            container.manager.unregister(container.listener);
+
+            if (container.listener instanceof IDisposable) {
+                ((IDisposable) container.listener).dispose();
+            }
+        }
+
+        Set<HandlerContainer> handlers = _pluginHandlers.removeAll(plugin);
+        for (HandlerContainer container : handlers) {
+            container.manager.unregister(container.event, container.handler);
+
+            if (container.handler instanceof IDisposable) {
+                ((IDisposable) container.handler).dispose();
+            }
+        }
+
+        Set<CallHandlerContainer> callHandlers = _pluginCallHandlers.removeAll(plugin);
+        for (CallHandlerContainer container : callHandlers) {
+            container.manager.removeCallHandler(container.handler);
+
+            if (container.handler instanceof IDisposable) {
+                ((IDisposable) container.handler).dispose();
+            }
+        }
+    }
+
+    private final GenericsEventManager _parent;
+
+    // maps event class to the event handlers assigned to it
+    private final Map<Class<?>, EventHandlerCollection> _handlerMap = new HashMap<>(100);
+
+    // maps event listener to its listener container
+    private final Map<IEventListener, ListenerContainer> _listeners = new HashMap<>(100);
+
+    // maps individually registered handlers to its handler  container
+    private final Map<IEventHandler, HandlerContainer> _handlers = new HashMap<>(100);
+
+    // global handlers that are called for every called event
+    private final Map<IEventCallHandler, CallHandlerContainer> _callHandlers = new HashMap<>(10);
+
+    // stores called events to prevent them from being called again due to bubbling
+    private final Map<Object, Void> _calledEvents = new WeakHashMap<>(30);
+
+    private boolean _isDisposed;
 
     // BUG WORKAROUND interact event getting called twice - Minecraft/Bukkit/Spigot issue
     private TimedHashSet<EventWrapper> _recentBukkitEvents = new TimedHashSet<>(20, 3, TimeScale.MILLISECONDS);
@@ -119,25 +172,28 @@ public class GenericsEventManager implements IDisposable {
     /**
      * Register an event handler for the specified event.
      *
+     * @param plugin      The handlers owning plugin.
      * @param eventClass  The event class.
      * @param priority    The event priority.
      * @param handler     The event handler.
      */
-    public void register(Class<?> eventClass,
-                         GenericsEventPriority priority, IEventHandler handler) {
-        register(eventClass, priority, false, handler);
+    public <T> void register(Plugin plugin, Class<T> eventClass,
+                         GenericsEventPriority priority, IEventHandler<T> handler) {
+        register(plugin, eventClass, priority, false, handler);
     }
 
     /**
      * Register an event handler for the specified event.
      *
+     * @param plugin           The handlers owning plugin.
      * @param eventClass       The event class.
      * @param priority         The event priority.
      * @param ignoreCancelled  True to run the handler event if the event is cancelled.
      * @param handler          The event handler.
      */
-    public void register(Class<?> eventClass, GenericsEventPriority priority,
-                         boolean ignoreCancelled, IEventHandler handler) {
+    public <T> void register(Plugin plugin, Class<T> eventClass, GenericsEventPriority priority,
+                         boolean ignoreCancelled, IEventHandler<T> handler) {
+        PreCon.notNull(plugin);
         PreCon.notNull(eventClass);
         PreCon.notNull(priority);
         PreCon.notNull(handler);
@@ -159,6 +215,10 @@ public class GenericsEventManager implements IDisposable {
         if (!handlers.add(handler, priority, ignoreCancelled)) {
             throw new HandlerAlreadyRegisteredException(handler);
         }
+
+        HandlerContainer<T> handlerContainer = new HandlerContainer<T>(plugin, this, eventClass, handler, handlers);
+        _pluginHandlers.put(plugin, handlerContainer);
+        _handlers.put(handler, handlerContainer);
     }
 
     /**
@@ -166,7 +226,7 @@ public class GenericsEventManager implements IDisposable {
      *
      * @param eventListener  The event listener.
      */
-    public void register(IGenericsEventListener eventListener) {
+    public void register(IEventListener eventListener) {
         PreCon.notNull(eventListener);
 
         // cannot use a disposed event manager
@@ -179,7 +239,7 @@ public class GenericsEventManager implements IDisposable {
         }
 
         // create a listener container
-        ListenerContainer listener = new ListenerContainer(eventListener);
+        ListenerContainer listener = new ListenerContainer(this, eventListener);
         _listeners.put(eventListener, listener);
 
         // get all methods from listener so we can filter out the event handlers
@@ -218,7 +278,8 @@ public class GenericsEventManager implements IDisposable {
             }
 
             // add the handler to the listener container
-            listener.addHandlers(handlers);
+            listener.handlers.add(handlers);
+            _pluginListeners.put(eventListener.getPlugin(), listener);
         }
     }
 
@@ -227,7 +288,7 @@ public class GenericsEventManager implements IDisposable {
      *
      * @param eventListener  The event listener to unregister.
      */
-    public void unregister(IGenericsEventListener eventListener) {
+    public void unregister(IEventListener eventListener) {
         PreCon.notNull(eventListener);
 
         // cannot use a disposed event manager.
@@ -241,6 +302,7 @@ public class GenericsEventManager implements IDisposable {
 
         // unregister
         listener.unregister();
+        _pluginListeners.removeValue(eventListener.getPlugin(), listener);
     }
 
     /**
@@ -249,7 +311,7 @@ public class GenericsEventManager implements IDisposable {
      * @param eventClass  The event class.
      * @param handler     The event handler to unregister.
      */
-    public void unregister(Class<?> eventClass, IEventHandler handler) {
+    public <T> void unregister(Class<T> eventClass, IEventHandler<T> handler) {
         PreCon.notNull(eventClass);
         PreCon.notNull(handler);
 
@@ -257,31 +319,34 @@ public class GenericsEventManager implements IDisposable {
         if (_isDisposed)
             return;
 
-        // get the handlers collection for the event
-        EventHandlerCollection handlers =_handlerMap.get(eventClass);
-        if (handlers == null) {
+        HandlerContainer handlerContainer = _handlers.remove(handler);
+        if (handlerContainer == null)
             return;
-        }
 
-        // remove the handler
-        handlers.removeHandler(handler);
+        handlerContainer.collection.removeHandler(handler);
+
+        _pluginHandlers.removeValue(handlerContainer.plugin, handlerContainer);
     }
 
+    /**
+     * Unregister all event handlers.
+     */
     public void unregisterAll() {
 
         if (_isDisposed)
             return;
 
         // clear event handlers on all handler collections
-        for (EventHandlerCollection handlers : _handlerMap.values()) {
-            handlers.clear();
+        for (HandlerContainer handler : _handlers.values()) {
+            _pluginHandlers.removeValue(handler.plugin, handler);
         }
-        _handlerMap.clear();
 
         // unregister all listeners
         for (ListenerContainer listener : _listeners.values()) {
-            listener.unregister();
+            _pluginListeners.removeValue(listener.listener.getPlugin(), listener);
         }
+
+        _handlerMap.clear();
         _listeners.clear();
     }
 
@@ -352,8 +417,8 @@ public class GenericsEventManager implements IDisposable {
         }
 
         // run call handlers
-        for (IEventHandler handler : _callHandlers) {
-            handler.call(event);
+        for (IEventCallHandler handler : _callHandlers.keySet()) {
+            handler.onCall(event);
         }
 
         return event;
@@ -365,10 +430,13 @@ public class GenericsEventManager implements IDisposable {
      *
      * @param handler  The handler to add.
      */
-    public void addCallHandler(IEventHandler handler) {
+    public void addCallHandler(IEventCallHandler handler) {
         PreCon.notNull(handler);
 
-        _callHandlers.add(handler);
+        CallHandlerContainer container = new CallHandlerContainer(this, handler);
+        _callHandlers.put(handler, container);
+        _pluginCallHandlers.put(handler.getPlugin(), container);
+
     }
 
     /**
@@ -377,10 +445,14 @@ public class GenericsEventManager implements IDisposable {
      *
      * @param handler  The handler to remove.
      */
-    public void removeCallHandler(IEventHandler handler) {
+    public void removeCallHandler(IEventCallHandler handler) {
         PreCon.notNull(handler);
 
-        _callHandlers.remove(handler);
+        CallHandlerContainer container = _callHandlers.remove(handler);
+        if (container == null)
+            return;
+
+        _pluginCallHandlers.removeValue(handler.getPlugin(), container);
     }
 
     /**
@@ -402,46 +474,64 @@ public class GenericsEventManager implements IDisposable {
         _isDisposed = true;
     }
 
+    /**
+     * Stores an individually registered handler, the
+     * event handler collection it's in and its owning plugin.
+     */
+    private static class HandlerContainer<T> {
+        final Plugin plugin;
+        final GenericsEventManager manager;
+        final Class<T> event;
+        final IEventHandler handler;
+        final EventHandlerCollection collection;
+
+        HandlerContainer(Plugin plugin, GenericsEventManager manager,
+                         Class<T> event, IEventHandler<T> handler, EventHandlerCollection collection) {
+            this.plugin = plugin;
+            this.manager = manager;
+            this.event = event;
+            this.handler = handler;
+            this.collection = collection;
+        }
+    }
 
     /**
-     * A container for a generics listener that contains the
-     * event handler collections which contain the listeners
-     * event handlers.
+     * Stores an event call handler and the
+     * event manager its registered with.
+     */
+    private static class CallHandlerContainer {
+        final IEventCallHandler handler;
+        final GenericsEventManager manager;
+
+        CallHandlerContainer(GenericsEventManager manager, IEventCallHandler handler) {
+            this.manager = manager;
+            this.handler = handler;
+        }
+    }
+
+    /**
+     * Stores the event handler collections that a listeners
+     * event handlers have been added to.
      */
     private static class ListenerContainer {
 
-        private IGenericsEventListener _listener;
-        private Set<EventHandlerCollection> _handlers = new HashSet<>(50);
+        final GenericsEventManager manager;
+        final IEventListener listener;
+        final Set<EventHandlerCollection> handlers = new HashSet<>(15);
 
-        /**
-         * Constructor.
-         *
-         * @param listener  The listener to encapsulate.
-         */
-        ListenerContainer(IGenericsEventListener listener) {
-            _listener = listener;
-        }
-
-        /**
-         * Add an event handlers collection that one of the
-         * listeners event handlers have been added to so
-         * it will have a means to unregister from the handlers
-         * collection.
-         *
-         * @param handlers  The handler collection to add.
-         */
-        public void addHandlers(EventHandlerCollection handlers) {
-            _handlers.add(handlers);
+        ListenerContainer(GenericsEventManager manager, IEventListener listener) {
+            this.manager = manager;
+            this.listener = listener;
         }
 
         /**
          * Unregister the listener from the handler collections.
          */
         public void unregister() {
-            for (EventHandlerCollection handlers : _handlers) {
-                handlers.removeListener(_listener);
+            for (EventHandlerCollection handlerCollection : handlers) {
+                handlerCollection.removeListener(listener);
             }
-            _handlers.clear();
+            handlers.clear();
         }
     }
 

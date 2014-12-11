@@ -22,26 +22,24 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.events.manager;
 
-package com.jcwhatever.bukkit.generic.events.manager.exceptions;
-
-import com.jcwhatever.bukkit.generic.events.manager.IEventListener;
+import org.bukkit.plugin.Plugin;
 
 /**
- * Thrown when an event listener that is already registered with a {@code GenericsEventManager}
- * is registered again.
+ * Event call handler
  */
-public class ListenerAlreadyRegisteredException extends RuntimeException {
+public interface IEventCallHandler {
 
-    private String _msg;
+    /**
+     * Get the owning plugin.
+     */
+    Plugin getPlugin();
 
-    public ListenerAlreadyRegisteredException(IEventListener listener) {
-        _msg = "Event listener is already registered: " + listener.getClass().getName();
-    }
-
-    @Override
-    public String getMessage() {
-        return _msg;
-    }
-
+    /**
+     * Called when an event is called.
+     *
+     * @param event  The event that was called.
+     */
+    void onCall(Object event);
 }

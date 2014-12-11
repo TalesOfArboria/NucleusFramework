@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.events.manager;
 /**
  * Event handler interface
  */
-public interface IEventHandler {
+public interface IEventHandler<T> {
 
-    void call(Object event);
+    void handle(T event);
 }

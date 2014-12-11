@@ -44,7 +44,7 @@ public class TrackedEntity {
     private final UUID _uuid;
     private Entity _recent;
     private World _world;
-    private boolean _isChunkLoaded;
+    //private boolean _isChunkLoaded;
     private boolean _isDisposed;
 
     private List<ITrackedEntityHandler> _handlers = new ArrayList<>(5);
@@ -61,7 +61,7 @@ public class TrackedEntity {
         _world = entity.getWorld();
         _recent = entity;
 
-        _isChunkLoaded = entity.getLocation().getChunk().isLoaded();
+        //_isChunkLoaded = entity.getLocation().getChunk().isLoaded();
     }
 
     /**
@@ -90,7 +90,7 @@ public class TrackedEntity {
      * is loaded.
      */
     public boolean isChunkLoaded() {
-        return _isChunkLoaded;
+        return _recent.getLocation().getChunk().isLoaded();//ent_isChunkLoaded;
     }
 
     /**
@@ -146,7 +146,7 @@ public class TrackedEntity {
     }
 
     void onChunkLoad() {
-        _isChunkLoaded = true;
+        //_isChunkLoaded = true;
 
         for (ITrackedEntityHandler handler : _handlers) {
             handler.onChanged(this);
@@ -154,7 +154,7 @@ public class TrackedEntity {
     }
 
     void onChunkUnload() {
-        _isChunkLoaded = false;
+        //_isChunkLoaded = false;
 
         for (ITrackedEntityHandler handler : _handlers) {
             handler.onChanged(this);

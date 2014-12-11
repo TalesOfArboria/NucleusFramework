@@ -86,8 +86,8 @@ public class EntityTracker implements Listener {
             if (tracked == null || isDisposed(tracked))
                 continue;
 
-            tracked.onChunkLoad();
             tracked.setEntity(entity);
+            tracked.onChunkLoad();
         }
     }
 

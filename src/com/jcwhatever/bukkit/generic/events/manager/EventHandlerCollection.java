@@ -174,7 +174,7 @@ class EventHandlerCollection {
      *
      * @throws IllegalAccessException
      */
-    void add(final IGenericsEventListener listener, final Class<?> eventClass,
+    void add(final IEventListener listener, final Class<?> eventClass,
              Method method, GenericsEventHandler annotation) throws IllegalAccessException {
 
         // make the possibly private method accessible
@@ -186,7 +186,7 @@ class EventHandlerCollection {
         // create an event handler that can be used to call the method.
         IEventHandler handler = new IEventHandler() {
             @Override
-            public void call(Object event) {
+            public void handle(Object event) {
                 try {
                     methodHandle.invoke(listener, eventClass.cast(event));
                     //methodHandle.invoke();
@@ -208,7 +208,7 @@ class EventHandlerCollection {
      *
      * @param listener  The listener to remove.
      */
-    void removeListener(IGenericsEventListener listener) {
+    void removeListener(IEventListener listener) {
 
         // iterate event handler containers
         Iterator<HandlerContainer> iterator = _handlers.iterator();
@@ -237,7 +237,8 @@ class EventHandlerCollection {
      */
     private <T> boolean tryCall(HandlerContainer handler, T event) {
         try {
-            handler.getHandler().call(event);
+            //noinspection unchecked
+            handler.getHandler().handle(event);
             return true;
 
         } catch (Throwable throwable) {
@@ -251,7 +252,7 @@ class EventHandlerCollection {
      */
     private static class HandlerContainer implements Comparable<HandlerContainer> {
 
-        private final IGenericsEventListener _listener;
+        private final IEventListener _listener;
         private final IEventHandler _handler;
         private final GenericsEventPriority _priority;
         private final boolean _ignoreCancelled;
@@ -259,7 +260,7 @@ class EventHandlerCollection {
         /**
          * Constructor.
          */
-        public HandlerContainer(IGenericsEventListener listener, IEventHandler handler,
+        public HandlerContainer(IEventListener listener, IEventHandler handler,
                                 GenericsEventPriority priority, boolean ignoreCancelled) {
             _listener = listener;
             _handler = handler;
@@ -293,7 +294,7 @@ class EventHandlerCollection {
          * @return  Null if the handler was registered without a listener.
          */
         @Nullable
-        public IGenericsEventListener getListener() {
+        public IEventListener getListener() {
             return _listener;
         }
 

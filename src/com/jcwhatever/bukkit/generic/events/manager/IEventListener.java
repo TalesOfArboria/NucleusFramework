@@ -23,25 +23,18 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.events.manager.exceptions;
+package com.jcwhatever.bukkit.generic.events.manager;
 
-import com.jcwhatever.bukkit.generic.events.manager.IEventListener;
+import org.bukkit.plugin.Plugin;
 
 /**
- * Thrown when an event listener that is already registered with a {@code GenericsEventManager}
- * is registered again.
+ * An interface flag that indicates a class has
+ * generics event handlers.
  */
-public class ListenerAlreadyRegisteredException extends RuntimeException {
+public interface IEventListener {
 
-    private String _msg;
-
-    public ListenerAlreadyRegisteredException(IEventListener listener) {
-        _msg = "Event listener is already registered: " + listener.getClass().getName();
-    }
-
-    @Override
-    public String getMessage() {
-        return _msg;
-    }
-
+    /**
+     * Get the listeners owning plugin.
+     */
+    Plugin getPlugin();
 }
