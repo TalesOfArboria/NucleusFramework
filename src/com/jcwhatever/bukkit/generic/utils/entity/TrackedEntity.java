@@ -147,6 +147,10 @@ public class TrackedEntity {
 
     void onChunkLoad() {
         _isChunkLoaded = true;
+
+        for (ITrackedEntityHandler handler : _handlers) {
+            handler.onChanged(this);
+        }
     }
 
     void onChunkUnload() {
