@@ -98,6 +98,22 @@ public class LocationUtils {
     }
 
     /**
+     * Add values to the locations coordinates without changing the coordinates
+     * in the provided location.
+     *
+     * @param location  The location.
+     * @param x         The value to add to the X coordinates.
+     * @param y         The value to add to the Y coordinates.
+     * @param z         The value to add to the Z coordinates.
+     *
+     * @return  A new {@code Location} instance.
+     */
+    public static Location add(Location location, double x, double y, double z) {
+        location = location.clone();
+        return location.add(x, y, z);
+    }
+
+    /**
      * Add noise to a location. Changes to another point within the specified radius of the original
      * location randomly.
      *
