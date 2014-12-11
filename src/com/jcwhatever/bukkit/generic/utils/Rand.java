@@ -35,10 +35,11 @@ public class Rand {
 
     private Rand() {}
 
-    private static final Random RANDOM = new Random();
     private static final String SAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String UNSAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "01234567890`~!@#$%^&*()_+-=";
+
+    public static final Random RANDOM = new Random();
 
     /**
      * Get a random item from a list.
@@ -82,9 +83,8 @@ public class Rand {
      * @param max  The maximum result.
      */
     public static int getInt(int min, int max) {
-        Random random = new Random(RANDOM.nextInt());
         int range = max - min + 1;
-        int i = random.nextInt() % range;
+        int i = RANDOM.nextInt() % range;
         return  min + i;
     }
 
@@ -95,16 +95,44 @@ public class Rand {
      * @param max  The maximum result.
      */
     public static int getInt(int max) {
-        Random random = new Random(RANDOM.nextInt());
-        return random.nextInt(max);
+        return RANDOM.nextInt(max);
     }
 
     /**
      * Get a random integer.
      */
     public static int getInt() {
-        Random random = new Random(RANDOM.nextInt());
-        return random.nextInt();
+        return RANDOM.nextInt();
+    }
+
+    /**
+     * Get a random double equal to or between
+     * the specified minimum and maximum amount.
+     *
+     * @param min  The minimum result.
+     * @param max  The maximum result.
+     */
+    public static double getDouble(double min, double max) {
+        double range = max - min + 1;
+        double i = RANDOM.nextDouble() % range;
+        return  min + i;
+    }
+
+    /**
+     * Get a random double from 0 up to the
+     * specified maximum number.
+     *
+     * @param max  The maximum result.
+     */
+    public static double getDouble(double max) {
+        return RANDOM.nextDouble() % max;
+    }
+
+    /**
+     * Get a random double.
+     */
+    public static double getDouble() {
+        return RANDOM.nextDouble();
     }
 
     /**
@@ -192,5 +220,4 @@ public class Rand {
 
         return chance(chance);
     }
-
 }
