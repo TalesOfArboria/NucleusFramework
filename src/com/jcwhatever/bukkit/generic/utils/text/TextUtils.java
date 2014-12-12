@@ -29,21 +29,21 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.text.FormatPattern.FormatEntry;
+import com.jcwhatever.bukkit.generic.utils.text.TextFormatter.ITagFormatter;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
+import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
@@ -75,31 +75,15 @@ public class TextUtils {
     public static final Pattern PATTERN_NAMES = Pattern.compile("^[a-zA-Z][a-zA-Z0-9_]*$");
     public static final Pattern PATTERN_NODE_NAMES = Pattern.compile("^[a-zA-Z0-9_-]*$");
     public static final Pattern PATTERN_NODE_PATHS = Pattern.compile("^[a-zA-Z0-9_.-]*$");
-    public static final Pattern PATTERN_FORMAT_PARAM = Pattern.compile("(?<=(\\{[0-9]}))");
     public static final Pattern PATTERN_FILEPATH_SLASH = Pattern.compile("[\\/\\\\]");
     public static final Pattern PATTERN_UNDERSCORE = Pattern.compile("_");
     public static final Pattern PATTERN_DOUBLE_QUOTE = Pattern.compile("\"");
     public static final Pattern PATTERN_SINGLE_QUOTE = Pattern.compile("'");
 
-    private static Pattern PATTERN_PLUGIN_CHECK     = Pattern.compile("\\{plugin-");
-    private static Pattern PATTERN_PLUGIN_VERSION   = Pattern.compile("\\{plugin-version}");
-    private static Pattern PATTERN_PLUGIN_NAME      = Pattern.compile("\\{plugin-name}");
-    private static Pattern PATTERN_PLUGIN_FULL_NAME = Pattern.compile("\\{plugin-full-name}");
-    private static Pattern PATTERN_PLUGIN_AUTHOR    = Pattern.compile("\\{plugin-author}");
-    private static Pattern PATTERN_PLUGIN_COMMAND   = Pattern.compile("\\{plugin-command}");
+    public static final TextFormatter TEXT_FORMATTER = new TextFormatter();
 
-    private static final Pattern[] PATTERNS_FORMAT_PARAM = {
-            Pattern.compile("\\{0}"),
-            Pattern.compile("\\{1}"),
-            Pattern.compile("\\{2}"),
-            Pattern.compile("\\{3}"),
-            Pattern.compile("\\{4}"),
-            Pattern.compile("\\{5}"),
-            Pattern.compile("\\{6}"),
-            Pattern.compile("\\{7}"),
-            Pattern.compile("\\{8}"),
-            Pattern.compile("\\{9}")
-    };
+    private static final Map<Plugin, Map<String, ITagFormatter>> _pluginFormatters = new WeakHashMap<>(50);
+    private static final Object _sync = new Object();
 
     public enum FormatTemplate {
         /**
@@ -697,28 +681,6 @@ public class TextUtils {
 
     /**
      * Format text string by replacing placeholders with the information
-     * specified.
-     *
-     * @param msg      The message to format plugin info into.
-     * @param formats  Formatting information.
-     */
-    public static String formatCustom(String msg, FormatEntry... formats) {
-        PreCon.notNull(msg);
-        PreCon.notNull(formats);
-
-        if (formats.length == 0)
-            return msg;
-
-        for (FormatEntry entry : formats) {
-            Matcher matcher = entry.getPattern().matcher(msg);
-            msg = matcher.replaceAll(entry.getReplaceValue());
-        }
-
-        return msg;
-    }
-
-    /**
-     * Format text string by replacing placeholders with the information
      * about the specified plugin.
      *
      * <p>Placeholders: {plugin-version}, {plugin-name}, {plugin-full-name}, {plugin-author}, {plugin-command}</p>
@@ -728,63 +690,23 @@ public class TextUtils {
      */
     public static String formatPluginInfo(Plugin plugin, String msg) {
 
-        Matcher checkMatcher = PATTERN_PLUGIN_CHECK.matcher(msg);
-        if (!checkMatcher.find())
-            return msg;
-
-        if (plugin != null) {
-
-            Matcher matcher = PATTERN_PLUGIN_VERSION.matcher(msg);
-            if (matcher.find())
-                msg = matcher.replaceAll(plugin.getDescription().getVersion());
-
-            matcher = PATTERN_PLUGIN_NAME.matcher(msg);
-            if (matcher.find())
-                msg = matcher.replaceAll(plugin.getName());
-
-            matcher = PATTERN_PLUGIN_AUTHOR.matcher(msg);
-            if (matcher.find())
-                msg = matcher.replaceAll(TextUtils.concat(plugin.getDescription().getAuthors(), ", "));
-
-            PluginDescriptionFile description = plugin.getDescription();
-            if (description != null) {
-
-                matcher = PATTERN_PLUGIN_FULL_NAME.matcher(msg);
-                if (matcher.find())
-                    msg = matcher.replaceAll(plugin.getDescription().getFullName());
-
-                matcher = PATTERN_PLUGIN_COMMAND.matcher(msg);
-                if (matcher.find()) {
-
-                    Map<String, Map<String, Object>> commands = description.getCommands();
-                    if (commands != null) {
-
-                        Set<String> commandKeys = commands.keySet();
-
-                        // pull any command
-                        for (String cmd : commandKeys) {
-
-                            if (!msg.isEmpty()) {
-                                msg = matcher.replaceAll(cmd);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+        Map<String, ITagFormatter> formatters = _pluginFormatters.get(plugin);
+        if (formatters == null) {
+            formatters = getPluginFormatters(plugin);
+            _pluginFormatters.put(plugin, formatters);
         }
-        return msg;
+
+        synchronized (_sync) {
+            return TEXT_FORMATTER.format(formatters, msg);
+        }
     }
 
-
     /**
-     * Format text string by replacing placeholders (i.e {0})
-     * with the string representation of the objects provided as parameters.
+     * Formats text string by replacing placeholders (i.e {0})
+     * with the string representation of the objects provided.
      *
-     * <p>The index order of the objects as provided is mapped to the number
+     * <p>The index order of the object params as provided is mapped to the number
      * inside the placeholder. </p>
-     *
-     * <p>Placeholders can only be indexed to 0-9</p>
      *
      * <p>Color can be specified using {@link TextColor} enum names in curly brackets.
      * (i.e. {GREEN})</p>
@@ -797,13 +719,11 @@ public class TextUtils {
     }
 
     /**
-     * Format text string by replacing placeholders (i.e {0})
-     * with the string representation of the objects provided as parameters.
+     * Formats text string by replacing placeholders (i.e {0})
+     * with the string representation of the object params provided.
      *
      * <p>The index order of the objects as provided is mapped to the number
      * inside the placeholder. </p>
-     *
-     * <p>Placeholders can only be indexed from 0-9</p>
      *
      * <p>Color can be specified using {@link TextColor} names in curly brackets.
      * (i.e. {GREEN})</p>
@@ -815,61 +735,9 @@ public class TextUtils {
         PreCon.notNull(msg);
         PreCon.notNull(params);
 
-        if (msg.indexOf('{') == -1)
-            return msg; // finished
-
-        // replace color tags
-        for (TextColor color : TextColor.values()) {
-            Matcher matcher = color.getPattern().matcher(msg);
-            if (matcher.find()) {
-                msg = matcher.replaceAll(color.getColorCode());
-            }
+        synchronized (_sync) {
+            return TEXT_FORMATTER.format(msg, params);
         }
-
-        if (params.length == 0)
-            return msg; // finished
-
-        boolean hasSplitForColoredParams = false;
-
-        // Insert format parameters
-        for (int i = 0; i < params.length && i < 10; ++i) {
-
-            Pattern pattern = PATTERNS_FORMAT_PARAM[i];
-            Matcher matcher = pattern.matcher(msg);
-            if (matcher.find()) {
-
-                String replaceWith = params[i] != null ? params[i].toString() : "";
-
-                boolean splitForColors = !hasSplitForColoredParams &&
-                        !replaceWith.isEmpty() &&
-                        replaceWith.indexOf(TextColor.FORMAT_CHAR) != -1;
-
-                // add ending colors after format if parameters
-                // value contains colors
-                if (splitForColors) {
-
-                    String[] components = PATTERN_FORMAT_PARAM.split(msg);
-
-                    String previousColor = "";
-
-                    for (int j = 0; j < components.length; j++) {
-
-                        components[j] = previousColor + components[j];
-
-                        previousColor = TextColor.getEndColor(components[j]);
-                    }
-
-                    matcher = pattern.matcher(TextUtils.concat(components, ""));
-
-                    hasSplitForColoredParams = true;
-                }
-
-                msg = matcher.replaceAll(replaceWith);
-            }
-
-        }
-
-        return msg;
     }
 
     /**
@@ -931,6 +799,91 @@ public class TextUtils {
         }
 
         return new ArrayList<>(result);
+    }
+
+    /**
+     * Get plugin specific tag formatters.
+     */
+    public static Map<String, ITagFormatter> getPluginFormatters(final Plugin plugin) {
+
+        Map<String, ITagFormatter> formatters = new HashMap<>(10);
+
+        // Plugin Version
+        formatters.put("plugin-version", new ITagFormatter() {
+            @Override
+            public String getTag() {
+                return "plugin-version";
+            }
+
+            @Override
+            public void append(StringBuilder sb, String rawTag) {
+                sb.append(plugin.getDescription().getVersion());
+            }
+        });
+
+        // Plugin Name
+        formatters.put("plugin-name", new ITagFormatter() {
+            @Override
+            public String getTag() {
+                return "plugin-name";
+            }
+
+            @Override
+            public void append(StringBuilder sb, String rawTag) {
+                sb.append(plugin.getDescription().getName());
+            }
+        });
+
+        // Plugin Full Name
+        formatters.put("plugin-full-name", new ITagFormatter() {
+            @Override
+            public String getTag() {
+                return "plugin-full-name";
+            }
+
+            @Override
+            public void append(StringBuilder sb, String rawTag) {
+                sb.append(plugin.getDescription().getFullName());
+            }
+        });
+
+        // Plugin Author
+        formatters.put("plugin-author", new ITagFormatter() {
+            @Override
+            public String getTag() {
+                return "plugin-author";
+            }
+
+            @Override
+            public void append(StringBuilder sb, String rawTag) {
+                sb.append(TextUtils.concat(plugin.getDescription().getAuthors(), ", "));
+            }
+        });
+
+        // Plugin Command
+        formatters.put("plugin-command", new ITagFormatter() {
+            @Override
+            public String getTag() {
+                return "plugin-command";
+            }
+
+            @Override
+            public void append(StringBuilder sb, String rawTag) {
+                Map<String, Map<String, Object>> commands = plugin.getDescription().getCommands();
+                if (commands != null) {
+
+                    Set<String> commandKeys = commands.keySet();
+
+                    if (!commandKeys.isEmpty()) {
+                        String cmd = commandKeys.iterator().next();
+
+                        sb.append(cmd);
+                    }
+                }
+            }
+        });
+
+        return formatters;
     }
 
     /*

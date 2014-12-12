@@ -187,4 +187,40 @@ public enum TextColor {
         }
         return sb.toString();
     }
+
+    /**
+     * Get the color and formats in effect at the
+     * end of a string.
+     *
+     * @param stringBuilder  The {@code StringBuilder} to get the end color from.
+     *
+     * @return  The format codes.
+     */
+    public static String getEndColor(StringBuilder stringBuilder) {
+
+        StringBuilder sb = new StringBuilder(15);
+
+        int len = stringBuilder.length();
+
+        for (int i = len - 1; i > -1; i--) {
+
+            char current = stringBuilder.charAt(i);
+            if (current != FORMAT_CHAR || i >= len - 1)
+                continue; // finish block
+
+            char next = stringBuilder.charAt(i + 1);
+
+            TextColor color =  _characterMap.get(next);
+            if (color == null)
+                continue; // finish block
+
+            sb.insert(0, color.getColorCode());
+
+            if (color.isColor() || color == TextColor.RESET) {
+                break;
+            }
+
+        }
+        return sb.toString();
+    }
 }

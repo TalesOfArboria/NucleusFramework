@@ -28,20 +28,19 @@ package com.jcwhatever.bukkit.generic.commands;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.text.FormatPattern;
+import com.jcwhatever.bukkit.generic.utils.text.TextFormatter.ITagFormatter;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
  * Container for a commands {@code ICommandInfo} annotation.
  */
 public class CommandInfoContainer {
-
-    private static final FormatPattern PATTERN_COMMAND = new FormatPattern("\\{command}");
 
     private final CommandInfo _commandInfo;
     private final String _masterCommandName;
@@ -62,8 +61,21 @@ public class CommandInfoContainer {
         _plugin = plugin;
         _commandInfo = commandInfo;
         _masterCommandName = masterCommandName != null ? masterCommandName : commandInfo.command()[0];
-        _usage = TextUtils.formatCustom(TextUtils.formatPluginInfo(plugin, commandInfo.usage()),
-                PATTERN_COMMAND.getEntry(_masterCommandName));
+
+        Map<String, ITagFormatter> formatters = TextUtils.getPluginFormatters(plugin);
+        formatters.put("command", new ITagFormatter() {
+            @Override
+            public String getTag() {
+                return "command";
+            }
+
+            @Override
+            public void append(StringBuilder sb, String rawTag) {
+                sb.append(_masterCommandName);
+            }
+        });
+
+        _usage = TextUtils.TEXT_FORMATTER.format(formatters, commandInfo.usage());
     }
 
     /**
