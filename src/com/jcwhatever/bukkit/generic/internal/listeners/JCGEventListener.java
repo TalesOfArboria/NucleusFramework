@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.events.signs.SignInteractEvent;
+import com.jcwhatever.bukkit.generic.internal.InternalScriptApiRepo;
 import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
@@ -70,6 +71,14 @@ public final class JCGEventListener implements Listener {
 
 		// unregister all event handlers associated with the plugin
 		GenericsEventManager.unregisterPlugin(event.getPlugin());
+
+		if (GenericsLib.getLib().isEnabled()) {
+			InternalScriptApiRepo.get().unregisterPlugin(event.getPlugin());
+		}
+
+		if (event.getPlugin() == GenericsLib.getLib()) {
+			InternalScriptApiRepo.dispose();
+		}
 	}
 
 	@EventHandler(priority=EventPriority.HIGHEST)
