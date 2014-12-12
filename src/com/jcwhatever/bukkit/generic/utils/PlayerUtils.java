@@ -81,6 +81,18 @@ public class PlayerUtils {
     }
 
     /**
+     * Get the time the player last changed worlds in the current session.
+     *
+     * @param player  The player to check.
+     *
+     * @return  Null if the player is not logged in.
+     */
+    @Nullable
+    public static Date getLastWorldChangeDate(Player player) {
+        return PlayerTracker.get().getLastWorldChangeDate(player);
+    }
+
+    /**
      * Get the number of milliseconds the player has been on
      * the server during the current login session.
      *
@@ -90,6 +102,18 @@ public class PlayerUtils {
      */
     public static long getSessionTime(Player player) {
         return PlayerTracker.get().getSessionTime(player);
+    }
+
+    /**
+     * Get the number of milliseconds the player has been in
+     * the world they are currently in.
+     *
+     * @param player  The player to check.
+     *
+     * @return 0 if the player is not online.
+     */
+    public static long getWorldSessionTime(Player player) {
+        return PlayerTracker.get().getWorldSessionTime(player);
     }
 
     /**

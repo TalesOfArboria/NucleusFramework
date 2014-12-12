@@ -41,6 +41,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 
 import java.util.Date;
@@ -68,6 +69,7 @@ public class PlayerTracker {
 
     private IDataNode _nameData;
     private Map<Player, Date> _lastLogins = new WeakHashMap<>(100);
+    private Map<Player, Date> _lastWorldChange = new WeakHashMap<>(100);
 
     /**
      * Private Constructor.
@@ -91,6 +93,20 @@ public class PlayerTracker {
     }
 
     /**
+     * Get the time the player last changed worlds in the current session.
+     *
+     * @param player  The player to check.
+     *
+     * @return  Null if the player is not logged in.
+     */
+    @Nullable
+    public Date getLastWorldChangeDate(Player player) {
+        PreCon.notNull(player);
+
+        return _lastWorldChange.get(player);
+    }
+
+    /**
      * Get the number of milliseconds the player has been on
      * the server during the current login session.
      *
@@ -102,6 +118,24 @@ public class PlayerTracker {
         PreCon.notNull(player);
 
         Date date = getLoginDate(player);
+        if (date == null)
+            return 0;
+
+        return DateUtils.getDeltaMilliseconds(date, new Date());
+    }
+
+    /**
+     * Get the number of milliseconds the player has been in
+     * the world they are currently in.
+     *
+     * @param player  The player to check.
+     *
+     * @return 0 if the player is not online.
+     */
+    public long getWorldSessionTime(Player player) {
+        PreCon.notNull(player);
+
+        Date date = getLastWorldChangeDate(player);
         if (date == null)
             return 0;
 
@@ -228,16 +262,28 @@ public class PlayerTracker {
             setPlayerName(p.getUniqueId(), p.getName());
 
             _lastLogins.put(p, new Date());
+            _lastWorldChange.put(event.getPlayer(), new Date());
         }
 
         @EventHandler
         private void onPlayerLeave(PlayerQuitEvent event) {
             _lastLogins.remove(event.getPlayer());
+            _lastWorldChange.remove(event.getPlayer());
         }
 
         @EventHandler
         private void onPlayerKick(PlayerKickEvent event) {
             _lastLogins.remove(event.getPlayer());
+            _lastWorldChange.remove(event.getPlayer());
+        }
+
+        @EventHandler
+        private void onPlayerTeleport(PlayerTeleportEvent event) {
+
+            if (event.getTo().getWorld().equals(event.getFrom().getWorld()))
+                return;
+
+            _lastWorldChange.put(event.getPlayer(), new Date());
         }
 
         @EventHandler
