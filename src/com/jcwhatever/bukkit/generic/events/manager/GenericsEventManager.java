@@ -271,7 +271,7 @@ public class GenericsEventManager implements IDisposable {
 
             // add the event handler to the handlers collection
             try {
-                handlers.add(eventListener, eventClass, method, annotation);
+                handlers.add(eventListener, method, annotation);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
                 continue;

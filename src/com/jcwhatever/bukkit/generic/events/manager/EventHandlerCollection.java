@@ -29,8 +29,6 @@ import com.jcwhatever.bukkit.generic.mixins.ICancellable;
 
 import org.bukkit.event.Cancellable;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -168,27 +166,23 @@ class EventHandlerCollection {
      * Add an event handler that was retrieved from a {@code GenericsEventListener}.
      *
      * @param listener    The {@code GenericsEventListener} the handler is from.
-     * @param eventClass  The event type the handler is for.
      * @param method      The reflection {@code Method} that points to the handler method.
      * @param annotation  The handler methods {@code GenericsEventHandler} annotation.
      *
      * @throws IllegalAccessException
      */
-    void add(final IEventListener listener, final Class<?> eventClass,
-             Method method, GenericsEventHandler annotation) throws IllegalAccessException {
+    void add(final IEventListener listener,
+             final Method method, GenericsEventHandler annotation) throws IllegalAccessException {
 
         // make the possibly private method accessible
         method.setAccessible(true);
-
-        // get a method handle for faster calls
-        final MethodHandle methodHandle = MethodHandles.lookup().unreflect(method);
 
         // create an event handler that can be used to call the method.
         IEventHandler handler = new IEventHandler() {
             @Override
             public void handle(Object event) {
                 try {
-                    methodHandle.invoke(listener, eventClass.cast(event));
+                    method.invoke(listener, event);
                     //methodHandle.invoke();
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
