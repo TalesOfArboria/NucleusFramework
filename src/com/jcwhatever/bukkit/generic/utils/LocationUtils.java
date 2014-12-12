@@ -114,15 +114,15 @@ public class LocationUtils {
     }
 
     /**
-     * Add noise to a location. Changes to another point within the specified radius of the original
-     * location randomly.
+     * Add noise to a location. Changes to another point within the specified
+     * radius of the original location randomly.
      *
      * @param location  The location.
      * @param radiusX   The max radius on the X axis.
      * @param radiusY   The max radius on the Y axis.
      * @param radiusZ   The max radius on the Z axis.
      */
-    public static Location addNoise(Location location, int radiusX, int radiusY, int radiusZ) {
+    public static Location addNoise(Location location, double radiusX, double radiusY, double radiusZ) {
         PreCon.notNull(location);
         PreCon.positiveNumber(radiusX);
         PreCon.positiveNumber(radiusY);
@@ -130,18 +130,20 @@ public class LocationUtils {
 
         location = location.clone();
 
-        int noiseX = 0, noiseY = 0, noiseZ = 0;
+        double noiseX = 0;
+        double noiseY = 0;
+        double noiseZ = 0;
 
         if (radiusX > 0) {
-            noiseX = Rand.getInt(radiusX * 2) - radiusX;
+            noiseX = Rand.getDouble(radiusX * 2) - radiusX;
         }
 
         if (radiusY > 0) {
-            noiseY = Rand.getInt(radiusY * 2) - radiusY;
+            noiseY = Rand.getDouble(radiusY * 2) - radiusY;
         }
 
         if (radiusZ > 0) {
-            noiseZ = Rand.getInt(radiusZ * 2) - radiusZ;
+            noiseZ = Rand.getDouble(radiusZ * 2) - radiusZ;
         }
 
         return location.add(noiseX, noiseY, noiseZ);
