@@ -86,8 +86,6 @@ public interface IEvaluatedScript extends IDisposable {
     /**
      * Evaluate a script into the evaluated script.
      *
-     * <p>Uses the engine context.</p>
-     *
      * @param script  The script to evaluated.
      */
     @Nullable
