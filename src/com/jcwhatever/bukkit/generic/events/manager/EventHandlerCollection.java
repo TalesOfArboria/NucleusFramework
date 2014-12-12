@@ -87,7 +87,6 @@ class EventHandlerCollection {
             if (!tryCall(handler, event))
                 continue;
 
-
             // # Run skipped handlers if the event is uncancelled.
 
             // check if the event is cancelled
@@ -109,9 +108,7 @@ class EventHandlerCollection {
 
                     tryCall(skippedHandler, event);
                 }
-
             }
-
         }
 
         return event;
@@ -175,6 +172,7 @@ class EventHandlerCollection {
              final Method method, GenericsEventHandler annotation) throws IllegalAccessException {
 
         // make the possibly private method accessible
+        // and turn off accessibility checks
         method.setAccessible(true);
 
         // create an event handler that can be used to call the method.
