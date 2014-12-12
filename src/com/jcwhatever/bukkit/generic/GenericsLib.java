@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalMessengerFactory;
 import com.jcwhatever.bukkit.generic.internal.InternalRegionManager;
+import com.jcwhatever.bukkit.generic.internal.InternalScriptApiRepo;
 import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
 import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
 import com.jcwhatever.bukkit.generic.internal.PlayerTracker;
@@ -44,6 +45,7 @@ import com.jcwhatever.bukkit.generic.regions.GlobalRegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScriptEngineManager;
+import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
 import com.jcwhatever.bukkit.generic.titles.GenericsNamedTitleFactory;
 import com.jcwhatever.bukkit.generic.titles.INamedTitle;
 import com.jcwhatever.bukkit.generic.titles.TitleManager;
@@ -76,6 +78,7 @@ public class GenericsLib extends GenericsPlugin {
     private InternalTitleManager _titleManager;
     private InternalRegionManager _regionManager;
     private InternalScriptManager _scriptManager;
+    private InternalScriptApiRepo _scriptApiRepo;
 
     private JailManager _jailManager;
     private EntityEquipperManager _equipperManager;
@@ -246,6 +249,15 @@ public class GenericsLib extends GenericsPlugin {
     }
 
     /**
+     * Get the Script API Repository.
+     */
+    public static ScriptApiRepo getScriptApiRepo() {
+        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+
+        return _instance._scriptApiRepo;
+    }
+
+    /**
      * Get GenericsLib's internal command handler.
      */
     public CommandHandler getCommandHandler() {
@@ -286,6 +298,8 @@ public class GenericsLib extends GenericsPlugin {
         _scheduler = new BukkitTaskScheduler();
 
         _eventManager = new InternalEventManager();
+
+        _scriptApiRepo = new InternalScriptApiRepo();
 
         _scriptEngineManager = new GenericsScriptEngineManager();
         _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);

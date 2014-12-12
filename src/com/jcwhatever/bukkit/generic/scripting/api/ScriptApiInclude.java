@@ -25,12 +25,12 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.scripting.AbstractScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
-import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
 
@@ -134,7 +134,7 @@ public class ScriptApiInclude extends GenericsScriptApi {
             if (variableName == null)
                 variableName = apiName;
 
-            IScriptApi api = ScriptApiRepo.getApi(getPlugin(), owningPluginName, apiName);
+            IScriptApi api = GenericsLib.getScriptApiRepo().getApi(getPlugin(), owningPluginName, apiName);
             if (api == null) {
                 Msg.warning(getPlugin(), "Failed to include script api named '{0}' from plugin '{1}'. " +
                         "Api not found.", apiName, owningPluginName);
@@ -159,7 +159,7 @@ public class ScriptApiInclude extends GenericsScriptApi {
             PreCon.notNull(owningPluginName);
             PreCon.notNullOrEmpty(apiName);
 
-            IScriptApi api = ScriptApiRepo.getApi(getPlugin(), owningPluginName, apiName);
+            IScriptApi api = GenericsLib.getScriptApiRepo().getApi(getPlugin(), owningPluginName, apiName);
             if (api == null) {
                 Msg.warning(getPlugin(), "Failed to find script api named '{0}' from plugin '{1}'. " +
                         "Api not found.", apiName, owningPluginName);

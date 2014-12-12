@@ -25,20 +25,28 @@
 
 package com.jcwhatever.bukkit.generic.scripting;
 
-import com.jcwhatever.bukkit.generic.internal.InternalScriptApiRepo;
+import com.jcwhatever.bukkit.generic.collections.HashSetMap;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * Global repository of script API's that can be used
- * by any plugins script manager.
+ * Repository of script API's that can be instantiated and retrieved.
  */
 public class ScriptApiRepo {
 
-    private ScriptApiRepo() {}
+    protected ScriptApiRepo() {}
+
+    protected Map<String, ApiPackage> _scriptApis = new HashMap<>(50);
+    protected HashSetMap<Plugin, ApiPackage> _pluginScriptApis = new HashSetMap<>(50);
 
     /**
      * Register a script api with the repository so
@@ -47,18 +55,63 @@ public class ScriptApiRepo {
      * @param plugin    The api owning plugin.
      * @param apiClass  The api type to register.
      */
-    public static boolean registerApiType(Plugin plugin, Class<? extends IScriptApi> apiClass) {
-        return InternalScriptApiRepo.get().registerApiType(plugin, apiClass);
+    public boolean registerApiType(Plugin plugin, Class<? extends IScriptApi> apiClass) {
+        PreCon.notNull(apiClass);
+
+        ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
+        if (info == null)
+            throw new RuntimeException("Cannot register scripting api because it has no ScriptApiInfo annotation.");
+
+
+        String apiKey = getApiKey(plugin, info.variableName());
+
+        if (_scriptApis.containsKey(apiKey))
+            return false;
+
+        Constructor<? extends IScriptApi> constructor;
+        try {
+            constructor = apiClass.getConstructor(Plugin.class);
+        }
+        catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to register a script api because it does not have the correct constructor.");
+        }
+
+        ApiPackage api = new ApiPackage(info.variableName(), apiClass, constructor);
+        _scriptApis.put(apiKey, api);
+        _pluginScriptApis.put(plugin, api);
+
+        return true;
     }
 
     /**
      * Unregister a script api from the repository.
      *
+     * <p>
+     *     Plugins are expected to unregister their API types
+     *     when they are disabled.
+     * </p>
+     *
      * @param plugin    The api owning plugin.
      * @param apiClass  The api type to remove.
      */
-    public static boolean unregisterApiType(Plugin plugin, Class<? extends IScriptApi> apiClass) {
-        return InternalScriptApiRepo.get().unregisterApiType(plugin, apiClass);
+    public boolean unregisterApiType(Plugin plugin, Class<? extends IScriptApi> apiClass) {
+        PreCon.notNull(apiClass);
+
+        ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
+        if (info == null)
+            throw new RuntimeException("Cannot unregister scripting api because it has no ScriptApiInfo annotation.");
+
+        String apiKey = getApiKey(plugin, info.variableName());
+
+        ApiPackage api = _scriptApis.remove(apiKey);
+
+        if (api != null) {
+            _pluginScriptApis.removeValue(plugin, api);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -70,8 +123,18 @@ public class ScriptApiRepo {
      * @param variableName      Case sensitive variable name.
      */
     @Nullable
-    public static IScriptApi getApi(Plugin plugin, String owningPluginName, String variableName) {
-        return InternalScriptApiRepo.get().getApi(plugin, owningPluginName, variableName);
+    public IScriptApi getApi(Plugin plugin, String owningPluginName, String variableName) {
+        PreCon.notNull(plugin);
+        PreCon.notNullOrEmpty(owningPluginName);
+        PreCon.notNullOrEmpty(variableName);
+
+        String apiKey = getApiKey(owningPluginName, variableName);
+
+        ApiPackage apiPackage = _scriptApis.get(apiKey);
+        if (apiPackage == null)
+            return null;
+
+        return instantiate(plugin, apiPackage);
     }
 
     /**
@@ -83,7 +146,76 @@ public class ScriptApiRepo {
      * @param variableName  Case sensitive variable name.
      */
     @Nullable
-    public static IScriptApi getApi(Plugin plugin, String variableName) {
-        return InternalScriptApiRepo.get().getApi(plugin, variableName);
+    public IScriptApi getApi(Plugin plugin, String variableName) {
+        PreCon.notNull(plugin);
+        PreCon.notNullOrEmpty(variableName);
+
+        String apiKey = getApiKey(plugin, variableName);
+
+        ApiPackage apiPackage = _scriptApis.get(apiKey);
+        if (apiPackage == null)
+            return null;
+
+        return instantiate(plugin, apiPackage);
+    }
+
+    /**
+     * Unregister all script API's registered by the
+     * specified plugin.
+     *
+     * @param plugin  The plugin.
+     */
+    public void unregisterPlugin(Plugin plugin) {
+        PreCon.notNull(plugin);
+
+        Set<ApiPackage> apis = _pluginScriptApis.removeAll(plugin);
+
+        for (ApiPackage api : apis) {
+            ApiPackage apiPackage = _scriptApis.remove(api.name);
+
+            // if for some reason this isn't the correct api, put it back.
+            if (apiPackage != api) {
+                _scriptApis.put(api.name, apiPackage);
+            }
+        }
+    }
+
+    // get api key from plugin and api variable name
+    protected String getApiKey(Plugin plugin, String apiName) {
+        return plugin.getName().toLowerCase() + ':' + apiName;
+    }
+
+    // get api key from plugin name and api variable name
+    protected String getApiKey(String pluginName, String apiName) {
+        return pluginName.toLowerCase() + ':' + apiName;
+    }
+
+    protected IScriptApi instantiate(Plugin plugin, ApiPackage apiPackage) {
+
+        Class<? extends IScriptApi> apiClass = apiPackage.apiClass;
+        Constructor<? extends IScriptApi> constructor = apiPackage.constructor;
+
+        ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
+        if (info == null)
+            throw new RuntimeException("Registered script api class does not have required ScriptApiInfo annotation.");
+
+        try {
+            return constructor.newInstance(plugin);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to instantiate a script api.");
+        }
+    }
+
+    protected static class ApiPackage {
+        final String name;
+        final Class<? extends IScriptApi> apiClass;
+        final Constructor<? extends IScriptApi> constructor;
+
+        ApiPackage(String name, Class<? extends IScriptApi> apiClass, Constructor<? extends IScriptApi> constructor) {
+            this.name = name;
+            this.apiClass = apiClass;
+            this.constructor = constructor;
+        }
     }
 }
