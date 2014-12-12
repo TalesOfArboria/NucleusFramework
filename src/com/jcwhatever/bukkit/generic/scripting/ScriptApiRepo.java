@@ -84,7 +84,7 @@ public class ScriptApiRepo {
 
         ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
         if (info == null)
-            throw new RuntimeException("Cannot register scripting api because it has no IScriptApiInfo annotation.");
+            throw new RuntimeException("Cannot register scripting api because it has no ScriptApiInfo annotation.");
 
 
         String apiKey = getApiKey(plugin, info.variableName());
@@ -122,7 +122,7 @@ public class ScriptApiRepo {
 
         ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
         if (info == null)
-            throw new RuntimeException("Cannot unregister scripting api because it has no IScriptApiInfo annotation.");
+            throw new RuntimeException("Cannot unregister scripting api because it has no ScriptApiInfo annotation.");
 
         String apiKey = getApiKey(plugin, info.variableName());
 
@@ -191,7 +191,7 @@ public class ScriptApiRepo {
 
         ScriptApiInfo info = apiClass.getAnnotation(ScriptApiInfo.class);
         if (info == null)
-            throw new RuntimeException("Registered script api class does not have required IScriptApiInfo annotation.");
+            throw new RuntimeException("Registered script api class does not have required ScriptApiInfo annotation.");
 
         try {
             return constructor.newInstance(plugin);
