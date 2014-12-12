@@ -136,7 +136,8 @@ public class TextFormatter {
     public String format(Map<String, ITagFormatter> formatters, String template, Object... params) {
         PreCon.notNull(template);
 
-        if (template.isEmpty())
+        // make sure parsing is required
+        if (template.indexOf('{') == -1)
             return template;
 
         _textBuffer.setLength(0);
@@ -144,19 +145,29 @@ public class TextFormatter {
         for (int i=0; i < template.length(); i++) {
             char ch = template.charAt(i);
 
+            // check for tag opening
             if (ch == '{') {
+
+                // parse tag
                 String tag = parseTag(template, i);
+
+                // update index position
                 i += _tagBuffer.length();
+
+                // template ended before tag was closed
                 if (tag == null) {
+                    _textBuffer.append('{');
                     _textBuffer.append(_tagBuffer);
                 }
+                // tag parsed
                 else {
-                    i++;
+                    i++; // add 1 for closing brace
                     appendReplacement(_textBuffer, tag, params, formatters);
                 }
 
             }
             else {
+                // append next character
                 _textBuffer.append(ch);
             }
         }
@@ -172,6 +183,7 @@ public class TextFormatter {
         _tagBuffer.setLength(0);
 
         for (int i=currentIndex + 1; i < template.length(); i++) {
+
             char ch = template.charAt(i);
 
             if (ch == '}') {
@@ -190,7 +202,6 @@ public class TextFormatter {
      */
     private void appendReplacement(StringBuilder sb, String tag, Object[] params, Map<String, ITagFormatter> formatters) {
 
-
         boolean isNumber = !tag.isEmpty();
 
         _tagBuffer.setLength(0);
@@ -204,9 +215,11 @@ public class TextFormatter {
             if (ch == ':') {
                 break;
             }
+            // append next tag character
             else {
                 _tagBuffer.append(ch);
 
+                // check if the character is a number
                 if (isNumber && !Character.isDigit(ch)) {
                     isNumber = false;
                 }
@@ -218,9 +231,11 @@ public class TextFormatter {
         if (isNumber) {
             int index = Integer.parseInt(parsedTag);
 
+            // make sure number is in the range of the provided parameters.
             if (params.length <= index) {
                 reappendTag(sb, tag);
             }
+            // replace number with parameter argument.
             else {
 
                 String toAppend = String.valueOf(params[index]);
@@ -232,22 +247,30 @@ public class TextFormatter {
                     lastColors = TextColor.getEndColor(sb);
                 }
 
+                // append parameter argument
                 sb.append(params[index]);
 
+                // append template color
                 if (lastColors != null && !lastColors.isEmpty()) {
                     sb.append(lastColors);
                 }
             }
         }
         else {
+
+            // check for custom formatter
             ITagFormatter formatter = formatters.get(parsedTag);
-            if (formatter == null)
+            if (formatter == null) {
+                // check for color formatter
                 formatter = _colors.get(parsedTag);
+            }
 
             if (formatter != null) {
+                // formatter appends replacement text to format buffer
                 formatter.append(sb, tag);
             }
             else {
+                // no formatter, append tag to result buffer
                 reappendTag(sb, tag);
             }
         }
