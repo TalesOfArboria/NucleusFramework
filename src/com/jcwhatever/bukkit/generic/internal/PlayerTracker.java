@@ -277,8 +277,11 @@ public class PlayerTracker {
             _lastWorldChange.remove(event.getPlayer());
         }
 
-        @EventHandler
+        @EventHandler(priority = EventPriority.MONITOR)
         private void onPlayerTeleport(PlayerTeleportEvent event) {
+
+            if (event.isCancelled())
+                return;
 
             if (event.getTo().getWorld().equals(event.getFrom().getWorld()))
                 return;
