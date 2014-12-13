@@ -5,14 +5,7 @@ version: 0.0-beta
 softdepend: [Vault]
 commands:
     g:
-        description: Base command for GenericsLib
-        usage: |
-            ERROR!
-    gen:
-        description: Base command for GenericsLib
-        usage: |
-            ERROR!
-    generics:
+        aliases: [gen, generics]
         description: Base command for GenericsLib
         usage: |
             ERROR!
