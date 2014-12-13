@@ -26,36 +26,23 @@
 package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
-import com.jcwhatever.bukkit.generic.internal.InternalEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalMessengerFactory;
-import com.jcwhatever.bukkit.generic.internal.InternalRegionManager;
-import com.jcwhatever.bukkit.generic.internal.InternalScriptApiRepo;
 import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
-import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
-import com.jcwhatever.bukkit.generic.internal.PlayerTracker;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
-import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
-import com.jcwhatever.bukkit.generic.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.regions.GlobalRegionManager;
-import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
-import com.jcwhatever.bukkit.generic.scripting.GenericsScriptEngineManager;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
-import com.jcwhatever.bukkit.generic.titles.GenericsNamedTitleFactory;
 import com.jcwhatever.bukkit.generic.titles.INamedTitle;
 import com.jcwhatever.bukkit.generic.titles.TitleManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.ScriptUtils;
-import com.jcwhatever.bukkit.generic.utils.text.TextColor;
 
 import org.bukkit.entity.EntityType;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,37 +51,31 @@ import javax.annotation.Nullable;
 import javax.script.ScriptEngineManager;
 
 /**
- * GenericsLib Bukkit plugin.
+ * GenericsLib Services
  */
-public class GenericsLib extends GenericsPlugin {
+public final class GenericsLib {
+
+    private GenericsLib() {}
 
     private static final String ERROR_NOT_ENABLED = "GenericsLib is not enabled yet.";
 
-    private static GenericsLib _instance;
     private static Map<String, GenericsPlugin> _pluginNameMap = new HashMap<>(25);
     private static Map<Class<? extends GenericsPlugin>, GenericsPlugin> _pluginClassMap = new HashMap<>(25);
 
-    private InternalEventManager _eventManager;
-    private InternalTitleManager _titleManager;
-    private InternalRegionManager _regionManager;
-    private InternalScriptManager _scriptManager;
-    private InternalScriptApiRepo _scriptApiRepo;
-
-    private JailManager _jailManager;
-    private EntityEquipperManager _equipperManager;
-    private ITaskScheduler _scheduler;
-    private ScriptEngineManager _scriptEngineManager;
-    private KitManager _kitManager;
-    private CommandHandler _commandHandler;
-    private MessengerFactory _messengerFactory;
-
-    private ScriptEngineLoader _scriptEngineLoader;
+    static BukkitPlugin _plugin;
 
     /**
      * Get the {@code GenericsLib} plugin instance.
      */
-    public static GenericsLib getLib() {
-        return _instance;
+    public static GenericsPlugin getLib() {
+        return _plugin;
+    }
+
+    /**
+     * Determine if GenericsLib is enabled.
+     */
+    public static boolean isEnabled() {
+        return _plugin != null && _plugin.isEnabled();
     }
 
     /**
@@ -142,45 +123,45 @@ public class GenericsLib extends GenericsPlugin {
      * Get the global event manager.
      */
     public static GenericsEventManager getEventManager() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._eventManager;
+        return _plugin._eventManager;
     }
 
     /**
      * Get the default task scheduler.
      */
     public static ITaskScheduler getScheduler() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._scheduler;
+        return _plugin._scheduler;
     }
 
     /**
      * Get the global {@code RegionManager}.
      */
     public static GlobalRegionManager getRegionManager() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._regionManager;
+        return _plugin._regionManager;
     }
 
     /**
      * Get the default Jail Manager.
      */
     public static JailManager getJailManager() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._jailManager;
+        return _plugin._jailManager;
     }
 
     /**
      * Get the default entity equipper manager.
      */
     public static EntityEquipperManager getEquipperManager() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._equipperManager;
+        return _plugin._equipperManager;
     }
 
     /**
@@ -192,18 +173,18 @@ public class GenericsLib extends GenericsPlugin {
      * instances that are used globally.</p>
      */
     public static ScriptEngineManager getScriptEngineManager() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._scriptEngineManager;
+        return _plugin._scriptEngineManager;
     }
 
     /**
      * Get the default script manager.
      */
     public static InternalScriptManager getScriptManager() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._scriptManager;
+        return _plugin._scriptManager;
     }
 
     /**
@@ -213,127 +194,63 @@ public class GenericsLib extends GenericsPlugin {
      * @param entityType  The entity type
      */
     public static IEntityEquipper getEquipper(EntityType entityType) {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._equipperManager.getEquipper(entityType);
+        return _plugin._equipperManager.getEquipper(entityType);
     }
 
     /**
      * Get the default kit manager.
      */
     public static KitManager getKitManager() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._kitManager;
+        return _plugin._kitManager;
     }
 
     /**
      * Get the default title manager.
      */
     public static TitleManager<INamedTitle> getTitleManager() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._titleManager;
+        return _plugin._titleManager;
     }
 
     /**
      * Get GenericsLibs messenger factory instance.
      */
     public static MessengerFactory getMessengerFactory() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        if (_instance._messengerFactory == null)
-            _instance._messengerFactory = new InternalMessengerFactory(_instance);
+        if (_plugin._messengerFactory == null)
+            _plugin._messengerFactory = new InternalMessengerFactory(_plugin);
 
-        return _instance._messengerFactory;
+        return _plugin._messengerFactory;
     }
 
     /**
      * Get the Script API Repository.
      */
     public static ScriptApiRepo getScriptApiRepo() {
-        PreCon.isValid(_instance.isEnabled(), ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin.isEnabled(), ERROR_NOT_ENABLED);
 
-        return _instance._scriptApiRepo;
+        return _plugin._scriptApiRepo;
     }
 
     /**
      * Get GenericsLib's internal command handler.
      */
-    public CommandHandler getCommandHandler() {
-        PreCon.isValid(isEnabled(), ERROR_NOT_ENABLED);
+    public static CommandHandler getCommandHandler() {
+        PreCon.isValid(isEnabled(), GenericsLib.ERROR_NOT_ENABLED);
 
-        return _commandHandler;
-    }
-
-    /**
-     * Constructor.
-     */
-    public GenericsLib() {
-        super();
-
-        _instance = this;
-    }
-
-    /**
-     * Get the chat prefix.
-     */
-    @Override
-    public String getChatPrefix() {
-        return TextColor.BLUE + "[" + TextColor.WHITE + "Generics" + TextColor.BLUE + "] " + TextColor.WHITE;
-    }
-
-    /**
-     * Get the console prefix.
-     */
-    @Override
-    public String getConsolePrefix() {
-        return "[GenericsLib] ";
-    }
-
-    @Override
-    protected void onEnablePlugin() {
-
-        _commandHandler = new CommandHandler();
-        _scheduler = new BukkitTaskScheduler();
-
-        _eventManager = new InternalEventManager();
-
-        _scriptApiRepo = new InternalScriptApiRepo();
-
-        _scriptEngineManager = new GenericsScriptEngineManager();
-        _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
-        _scriptEngineLoader.loadModules();
-
-        _kitManager = new KitManager(this, getDataNode().getNode("kits"));
-        _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsNamedTitleFactory());
-
-        _regionManager = new InternalRegionManager(this);
-        _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
-        _equipperManager = new EntityEquipperManager();
-
-        registerEventListeners(new JCGEventListener());
-        registerCommands(_commandHandler);
-
-        loadScriptManager();
-
-        // initialize player tracker
-        PlayerTracker.get();
-    }
-
-    @Override
-    protected void onDisablePlugin() {
-
-        // make sure that evaluated scripts are disposed
-        if (_scriptManager != null) {
-            _scriptManager.clearScripts();
-        }
+        return _plugin._commandHandler;
     }
 
     /*
      * Register GenericsPlugin instance.
      */
-    void registerPlugin(GenericsPlugin plugin) {
+    static void registerPlugin(GenericsPlugin plugin) {
 
         _pluginNameMap.put(plugin.getName().toLowerCase(), plugin);
         _pluginClassMap.put(plugin.getClass(), plugin);
@@ -342,21 +259,9 @@ public class GenericsLib extends GenericsPlugin {
     /*
      * Unregister GenericsPlugin instance.
      */
-    void unregisterPlugin(GenericsPlugin plugin) {
+    static void unregisterPlugin(GenericsPlugin plugin) {
 
         _pluginNameMap.remove(plugin.getName().toLowerCase());
         _pluginClassMap.remove(plugin.getClass());
-    }
-
-    private void loadScriptManager() {
-
-        File scriptFolder = new File(getDataFolder(), "scripts");
-        if (!scriptFolder.exists() && !scriptFolder.mkdirs()) {
-            throw new RuntimeException("Failed to create script folder.");
-        }
-
-        _scriptManager = new InternalScriptManager(this, scriptFolder);
-        _scriptManager.addScriptApi(ScriptUtils.getDefaultApi(this, _scriptManager));
-        _scriptManager.reload();
     }
 }

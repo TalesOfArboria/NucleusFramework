@@ -137,7 +137,7 @@ public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed
         _anonMessenger = MessengerFactory.getAnon(this);
 
         _languageManager = new LanguageManager(this);
-        GenericsLib.getLib().registerPlugin(this);
+        GenericsLib.registerPlugin(this);
 
         onEnablePlugin();
     }
@@ -145,7 +145,7 @@ public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed
     @Override
     public final void onDisable() {
 
-        GenericsLib.getLib().unregisterPlugin(this);
+        GenericsLib.unregisterPlugin(this);
         onDisablePlugin();
     }
 
