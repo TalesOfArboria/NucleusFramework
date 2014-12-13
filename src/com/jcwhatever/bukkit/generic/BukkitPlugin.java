@@ -70,6 +70,11 @@ public final class BukkitPlugin extends GenericsPlugin {
     }
 
     @Override
+    protected void onPreEnable() {
+        GenericsLib._hasEnabled = true;
+    }
+
+    @Override
     protected void onEnablePlugin() {
 
         _commandHandler = new CommandHandler();
