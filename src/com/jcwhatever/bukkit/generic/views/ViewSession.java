@@ -50,7 +50,7 @@ import javax.annotation.Nullable;
  */
 public class ViewSession implements IMeta, Iterable<IView>, IDisposable {
 
-    private static final Map<UUID, ViewSession> _sessionMap = new PlayerMap<>(GenericsLib.getLib());
+    private static final Map<UUID, ViewSession> _sessionMap = new PlayerMap<>(GenericsLib.getPlugin());
 
     /**
      * Get a players current view session.

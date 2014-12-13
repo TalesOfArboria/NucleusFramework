@@ -36,7 +36,7 @@ public class Lang {
 
     @Localized
     public static String get(String text, Object... params) {
-        return GenericsLib.getLib().getLanguageManager().get(text, params);
+        return GenericsLib.getPlugin().getLanguageManager().get(text, params);
     }
 
     public static String get(Plugin plugin, String text, Object... params) {

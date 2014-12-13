@@ -71,7 +71,7 @@ public final class JCGEventListener implements Listener {
 		// unregister all event handlers associated with the plugin
 		GenericsEventManager.unregisterPlugin(event.getPlugin());
 
-		if (GenericsLib.getLib().isEnabled()) {
+		if (GenericsLib.getPlugin().isEnabled()) {
 			GenericsLib.getScriptApiRepo().unregisterPlugin(event.getPlugin());
 		}
 	}
@@ -92,7 +92,7 @@ public final class JCGEventListener implements Listener {
 		// tell player missed important messages
 		GenericsLib.getMessengerFactory().tellImportant(p);
 
-		Scheduler.runTaskLater(GenericsLib.getLib(), 5, new Runnable() {
+		Scheduler.runTaskLater(GenericsLib.getPlugin(), 5, new Runnable() {
 			@Override
 			public void run() {
 				GenericsLib.getRegionManager()

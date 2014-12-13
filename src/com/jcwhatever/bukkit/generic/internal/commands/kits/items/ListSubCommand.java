@@ -71,7 +71,7 @@ public class ListSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        ChatPaginator pagin = new ChatPaginator(GenericsLib.getLib(), 5, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(GenericsLib.getPlugin(), 5, Lang.get(_PAGINATOR_TITLE));
 
         // Armor
         pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(_LABEL_ARMOR));

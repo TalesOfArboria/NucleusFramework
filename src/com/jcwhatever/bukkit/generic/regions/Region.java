@@ -242,7 +242,7 @@ public abstract class Region extends RegionSelection implements IRegion {
 
         if (_bukkitListener == null) {
             _bukkitListener = new BukkitListener();
-            Bukkit.getPluginManager().registerEvents(_bukkitListener, GenericsLib.getLib());
+            Bukkit.getPluginManager().registerEvents(_bukkitListener, GenericsLib.getPlugin());
         }
     }
 

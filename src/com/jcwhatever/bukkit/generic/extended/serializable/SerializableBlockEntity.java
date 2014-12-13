@@ -198,7 +198,7 @@ public class SerializableBlockEntity implements IBinarySerializable {
             _location.getBlock().setType(getMaterial());
             _location.getBlock().setData(getRawData());
 
-            Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
+            Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
                     applyTile(blockState);

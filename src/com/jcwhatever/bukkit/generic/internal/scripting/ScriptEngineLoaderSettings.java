@@ -39,7 +39,7 @@ public class ScriptEngineLoaderSettings extends JarModuleLoaderSettings<ScriptEn
 
     public ScriptEngineLoaderSettings() {
 
-        File scriptFolder = new File(GenericsLib.getLib().getDataFolder(), "scripts");
+        File scriptFolder = new File(GenericsLib.getPlugin().getDataFolder(), "scripts");
         File engineFolder = new File(scriptFolder, "engines");
 
         if (!engineFolder.exists() && !engineFolder.mkdirs()) {

@@ -58,7 +58,7 @@ class ChestEventListener extends GenericsEventListener {
     static void register(ChestView view) {
 
         if (_instance == null) {
-            _instance = new ChestEventListener(GenericsLib.getLib());
+            _instance = new ChestEventListener(GenericsLib.getPlugin());
             GenericsLib.getEventManager().register(_instance);
         }
 
@@ -193,7 +193,7 @@ class ChestEventListener extends GenericsEventListener {
      */
     @GenericsEventHandler
     private void onGenericsDisabled(PluginDisableEvent event) {
-        if (event.getPlugin() == GenericsLib.getLib())
+        if (event.getPlugin() == GenericsLib.getPlugin())
             _instance = null;
     }
 

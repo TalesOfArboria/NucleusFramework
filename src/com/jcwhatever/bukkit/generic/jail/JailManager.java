@@ -101,7 +101,7 @@ public class JailManager {
         loadSettings();
 
         // check for prisoner release every 1 minute.
-        Scheduler.runTaskRepeat(GenericsLib.getLib(),  20, 1200, _warden);
+        Scheduler.runTaskRepeat(GenericsLib.getPlugin(),  20, 1200, _warden);
 
         BukkitEventListener _eventListener = new BukkitEventListener();
         Bukkit.getPluginManager().registerEvents(_eventListener, plugin);

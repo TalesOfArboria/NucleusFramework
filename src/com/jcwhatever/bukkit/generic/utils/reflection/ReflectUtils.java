@@ -109,7 +109,7 @@ public class ReflectUtils {
 
     static {
 
-        IDataNode dataNode = GenericsLib.getLib().getDataNode();
+        IDataNode dataNode = GenericsLib.getPlugin().getDataNode();
 
         _nmsBasePackage = dataNode.getString("nms-base-package", NMS_BASE_PACKAGE);
         _craftBasePackage = dataNode.getString("craft-base-package", CRAFT_BASE_PACKAGE);
@@ -319,7 +319,7 @@ public class ReflectUtils {
     // load the the craft package version from GenericsLib config
     // or detect the version.
     private static void loadPackageVersion() {
-        _version = GenericsLib.getLib().getDataNode().getString("package-version");
+        _version = GenericsLib.getPlugin().getDataNode().getString("package-version");
         if (_version == null) {
 
             Class<? extends Server> serverClass = Bukkit.getServer().getClass();

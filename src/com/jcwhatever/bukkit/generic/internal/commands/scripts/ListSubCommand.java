@@ -55,7 +55,7 @@ public class ListSubCommand extends AbstractCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = new ChatPaginator(GenericsLib.getLib(), 7, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(GenericsLib.getPlugin(), 7, Lang.get(_PAGINATOR_TITLE));
 
         List<IScript> scripts = GenericsLib.getScriptManager().getScripts();
 

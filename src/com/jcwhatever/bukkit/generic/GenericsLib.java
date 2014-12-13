@@ -67,7 +67,7 @@ public final class GenericsLib {
     /**
      * Get the {@code GenericsLib} plugin instance.
      */
-    public static GenericsPlugin getLib() {
+    public static GenericsPlugin getPlugin() {
         return _plugin;
     }
 

@@ -97,7 +97,7 @@ public class ScriptApiDepends extends GenericsScriptApi {
             _wrappers.add(wrapper);
 
             if (_task == null || _task.isCancelled())
-                _task = Scheduler.runTaskRepeat(GenericsLib.getLib(), 20, 20, new DependsChecker());
+                _task = Scheduler.runTaskRepeat(GenericsLib.getPlugin(), 20, 20, new DependsChecker());
         }
 
         /*

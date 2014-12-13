@@ -48,7 +48,7 @@ public class PlayerBlockSelect implements Listener {
     private PlayerBlockSelect() {}
 
     private static Map<UUID, PlayerBlockSelectHandler> _handlers
-            = new PlayerMap<PlayerBlockSelectHandler>(GenericsLib.getLib());
+            = new PlayerMap<PlayerBlockSelectHandler>(GenericsLib.getPlugin());
 
     private static PlayerBlockSelect _listener;
 
@@ -66,7 +66,7 @@ public class PlayerBlockSelect implements Listener {
         if (_listener == null) {
             _listener = new PlayerBlockSelect();
 
-            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getLib());
+            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getPlugin());
         }
 
         // place handler into map

@@ -35,7 +35,7 @@ import com.jcwhatever.bukkit.generic.internal.commands.titles.TitlesCommand;
 public class CommandHandler extends AbstractCommandHandler {
 
     public CommandHandler() {
-        super(GenericsLib.getLib());
+        super(GenericsLib.getPlugin());
     }
 
     @Override

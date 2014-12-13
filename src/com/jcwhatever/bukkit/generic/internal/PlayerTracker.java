@@ -75,7 +75,7 @@ public class PlayerTracker {
      * Private Constructor.
      */
     private PlayerTracker() {
-        Bukkit.getPluginManager().registerEvents(new EventListener(), GenericsLib.getLib());
+        Bukkit.getPluginManager().registerEvents(new EventListener(), GenericsLib.getPlugin());
     }
 
     /**
@@ -233,7 +233,7 @@ public class PlayerTracker {
 
             synchronized (_sync) {
 
-                IDataNode data = DataStorage.getStorage(GenericsLib.getLib(), new DataPath("player-names"));
+                IDataNode data = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("player-names"));
                 data.loadAsync(new StorageLoadHandler() {
 
                     @Override
@@ -291,7 +291,7 @@ public class PlayerTracker {
 
         @EventHandler
         private void onPluginDisable(PluginDisableEvent event) {
-            if (event.getPlugin() == GenericsLib.getLib()) {
+            if (event.getPlugin() == GenericsLib.getPlugin()) {
                 _instance = null;
             }
         }

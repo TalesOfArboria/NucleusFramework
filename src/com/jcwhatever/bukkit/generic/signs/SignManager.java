@@ -110,7 +110,7 @@ public class SignManager {
 
         if (_listener == null) {
             _listener = new BukkitSignEventListener();
-            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getLib());
+            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getPlugin());
         }
     }
 
@@ -386,7 +386,7 @@ public class SignManager {
             signInfo.push(new SignInfo(loc, line0, line1, line2, line3));
         }
 
-        Scheduler.runTaskLater(GenericsLib.getLib(), new Runnable() {
+        Scheduler.runTaskLater(GenericsLib.getPlugin(), new Runnable() {
 
             @Override
             public void run() {

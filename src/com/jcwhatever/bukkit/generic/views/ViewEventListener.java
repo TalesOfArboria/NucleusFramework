@@ -77,7 +77,7 @@ class ViewEventListener extends GenericsEventListener {
      * Constructor.
      */
     ViewEventListener() {
-        super(GenericsLib.getLib());
+        super(GenericsLib.getPlugin());
         _instance = this;
     }
 
@@ -141,7 +141,7 @@ class ViewEventListener extends GenericsEventListener {
     // reset static instance field if GenericsLib is disabled. (i.e. reload server)
     @GenericsEventHandler
     private void onGenericsDisabled(PluginDisableEvent event) {
-        if (event.getPlugin() == GenericsLib.getLib())
+        if (event.getPlugin() == GenericsLib.getPlugin())
             _instance = null;
     }
 

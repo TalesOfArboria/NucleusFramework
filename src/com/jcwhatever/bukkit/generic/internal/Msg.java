@@ -144,7 +144,7 @@ public class Msg {
     }
 
     private static IMessenger msg() {
-        return GenericsLib.getLib().getMessenger();
+        return GenericsLib.getPlugin().getMessenger();
     }
 
     private static IMessenger msg(Plugin plugin) {
@@ -152,6 +152,6 @@ public class Msg {
     }
 
     private static IMessenger anonMsg() {
-        return GenericsLib.getLib().getAnonMessenger();
+        return GenericsLib.getPlugin().getAnonMessenger();
     }
 }

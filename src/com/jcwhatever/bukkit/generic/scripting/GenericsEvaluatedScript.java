@@ -227,7 +227,7 @@ public class GenericsEvaluatedScript implements IEvaluatedScript {
 
         } catch (NoSuchMethodException | InvocationTargetException |
                 InstantiationException | IllegalAccessException e) {
-            Msg.debug(GenericsLib.getLib(), "Failed to create new script context using current context type." +
+            Msg.debug(GenericsLib.getPlugin(), "Failed to create new script context using current context type." +
                     "Using SimpleScriptContext instead.");
 
             // if failed, use a SimpleScriptContext

@@ -58,7 +58,7 @@ public class ListSubCommand extends AbstractCommand {
 
         List<Kit> kits = GenericsLib.getKitManager().getKits();
 
-        ChatPaginator pagin = new ChatPaginator(GenericsLib.getLib(), 5, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(GenericsLib.getPlugin(), 5, Lang.get(_PAGINATOR_TITLE));
 
         for (Kit kit : kits) {
             pagin.add(kit.getName(), kit.getItems().length, kit.getArmor().length);

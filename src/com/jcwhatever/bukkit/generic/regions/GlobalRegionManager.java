@@ -498,7 +498,7 @@ public class GlobalRegionManager {
             if (worldPlayers.isEmpty())
                 return;
 
-            Scheduler.runTaskLaterAsync(GenericsLib.getLib(), 1, new PlayerWatcherAsync(_manager, worldPlayers));
+            Scheduler.runTaskLaterAsync(GenericsLib.getPlugin(), 1, new PlayerWatcherAsync(_manager, worldPlayers));
         }
     }
 
@@ -602,7 +602,7 @@ public class GlobalRegionManager {
             if (enterReason == null)
                 throw new AssertionError();
 
-            Scheduler.runTaskSync(GenericsLib.getLib(), new Runnable() {
+            Scheduler.runTaskSync(GenericsLib.getPlugin(), new Runnable() {
 
                 @Override
                 public void run() {
@@ -621,7 +621,7 @@ public class GlobalRegionManager {
             if (leaveReason == null)
                 throw new AssertionError();
 
-            Scheduler.runTaskSync(GenericsLib.getLib(), new Runnable() {
+            Scheduler.runTaskSync(GenericsLib.getPlugin(), new Runnable() {
 
                 @Override
                 public void run() {

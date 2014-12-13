@@ -69,8 +69,8 @@ final class PlayerCollectionListener implements Listener {
                 if (listener == null) { // check again in case previous thread already instantiated
                     listener = new PlayerCollectionListener(plugin);
 
-                    PluginManager pm = GenericsLib.getLib().getServer().getPluginManager();
-                    pm.registerEvents(listener, GenericsLib.getLib());
+                    PluginManager pm = GenericsLib.getPlugin().getServer().getPluginManager();
+                    pm.registerEvents(listener, GenericsLib.getPlugin());
 
                     _listeners.put(plugin, listener);
                 }
@@ -151,7 +151,7 @@ final class PlayerCollectionListener implements Listener {
         if (collections == null || collections.isEmpty())
             return;
 
-        Scheduler.runTaskLaterAsync(GenericsLib.getLib(), 1, new RemovePlayer(p, collections));
+        Scheduler.runTaskLaterAsync(GenericsLib.getPlugin(), 1, new RemovePlayer(p, collections));
     }
 
     // event handler, Remove player from all collections when logged out

@@ -107,7 +107,7 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         _timeFactor = timeScale.getTimeFactor();
 
         if (_janitor == null) {
-            _janitor = Scheduler.runTaskRepeatAsync(GenericsLib.getLib(), 1, 20, new Runnable() {
+            _janitor = Scheduler.runTaskRepeatAsync(GenericsLib.getPlugin(), 1, 20, new Runnable() {
                 @Override
                 public void run() {
 

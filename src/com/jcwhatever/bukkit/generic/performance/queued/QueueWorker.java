@@ -98,7 +98,7 @@ public class QueueWorker {
     private void run() {
 
         if (_workerTask == null || _workerTask.isCancelled())
-            _workerTask = Scheduler.runTaskRepeat(GenericsLib.getLib(), 10, 20, _worker);
+            _workerTask = Scheduler.runTaskRepeat(GenericsLib.getPlugin(), 10, 20, _worker);
     }
 
     /**

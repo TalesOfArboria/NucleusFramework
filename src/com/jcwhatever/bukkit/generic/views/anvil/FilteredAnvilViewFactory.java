@@ -114,7 +114,7 @@ public class FilteredAnvilViewFactory extends ViewFactory {
      */
     static void register(FilteredAnvilView view) {
         if (_eventListener == null) {
-            _eventListener = new EventListener(GenericsLib.getLib());
+            _eventListener = new EventListener(GenericsLib.getPlugin());
             GenericsLib.getEventManager().register(_eventListener);
         }
 

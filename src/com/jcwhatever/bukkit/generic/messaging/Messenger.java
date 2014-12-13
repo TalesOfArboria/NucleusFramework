@@ -56,7 +56,7 @@ public class Messenger implements IMessenger {
 
     private static Pattern returnPattern = Pattern.compile("\r");
     private static Map<UUID, TimedHashSet<String>> _noSpamCache =
-            new PlayerMap<TimedHashSet<String>>(GenericsLib.getLib());
+            new PlayerMap<TimedHashSet<String>>(GenericsLib.getPlugin());
 
     private final Plugin _plugin;
     private final String _chatPrefix;

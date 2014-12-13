@@ -49,7 +49,7 @@ import javax.annotation.Nullable;
 public class MessengerFactory {
 
     protected MessengerFactory(Plugin plugin) {
-        if (plugin != GenericsLib.getLib())
+        if (plugin != GenericsLib.getPlugin())
             throw new RuntimeException("MessengerFactory should only be instantiated by GenericsLib.");
     }
 

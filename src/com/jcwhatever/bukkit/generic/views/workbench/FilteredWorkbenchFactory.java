@@ -77,7 +77,7 @@ public class FilteredWorkbenchFactory extends ViewFactory {
         _filterManager = filterManager;
 
         if (_eventListener == null) {
-            _eventListener = new EventListener(GenericsLib.getLib());
+            _eventListener = new EventListener(GenericsLib.getPlugin());
             GenericsLib.getEventManager().register(_eventListener);
         }
     }
@@ -186,7 +186,7 @@ public class FilteredWorkbenchFactory extends ViewFactory {
 
         @GenericsEventHandler
         private void onGenericsDisable(PluginDisableEvent event) {
-            if (event.getPlugin() == GenericsLib.getLib())
+            if (event.getPlugin() == GenericsLib.getPlugin())
                 _eventListener = null;
         }
 

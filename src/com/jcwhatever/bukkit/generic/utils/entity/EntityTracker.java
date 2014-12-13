@@ -49,7 +49,7 @@ public class EntityTracker implements Listener {
     private Map<UUID, TrackedEntity> _entities = new HashMap<>(50);
 
     EntityTracker() {
-        Bukkit.getPluginManager().registerEvents(this, GenericsLib.getLib());
+        Bukkit.getPluginManager().registerEvents(this, GenericsLib.getPlugin());
     }
 
     public TrackedEntity trackEntity(Entity entity) {
