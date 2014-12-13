@@ -69,6 +69,7 @@ public class FloatingItem implements IDisposable {
     private UUID _entityId;
     private TrackedEntity _trackedEntity;
     private boolean _canPickup;
+    private boolean _isCentered = true;
     private int _respawnTimeSeconds = 20;
     private boolean _isSpawned;
 
@@ -122,7 +123,7 @@ public class FloatingItem implements IDisposable {
         if (_listener == null) {
             _listener = new BukkitListener();
 
-            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getLib());
+            Bukkit.getPluginManager().registerEvents(_listener, GenericsLib.getPlugin());
         }
 
         loadSettings();
@@ -209,6 +210,29 @@ public class FloatingItem implements IDisposable {
     }
 
     /**
+     * Determine if the item is spawned centered within
+     * the block at the spawn location.
+     */
+    public boolean isCentered() {
+        return _isCentered;
+    }
+
+    /**
+     * Set item spawned centered within the block
+     * at the spawn location.
+     *
+     * @param isCentered  True to center.
+     */
+    public void setCentered(boolean isCentered) {
+        _isCentered = isCentered;
+
+        if (_dataNode != null) {
+            _dataNode.set("is-centered", isCentered);
+            _dataNode.saveAsync(null);
+        }
+    }
+
+    /**
      * Get the number of seconds before the item is respawned
      * after being picked up.
      */
@@ -247,6 +271,8 @@ public class FloatingItem implements IDisposable {
         if (_isDisposed)
             throw new RuntimeException("Cannot spawn a disposed item.");
 
+        location = location.clone();
+
         FloatingItemSpawnEvent event = new FloatingItemSpawnEvent(this);
 
         GenericsLib.getEventManager().callBukkit(event);
@@ -259,11 +285,12 @@ public class FloatingItem implements IDisposable {
 
         _isSpawned = true;
 
-        _currentLocation = location;
+        _currentLocation = location.clone(); // clone: prevent external changes from affecting the location
 
         // get corrected location
-        final Location spawnLocation = LocationUtils.getBlockLocation(location)
-                .add(0.5, 0.5, 0.5);
+        final Location spawnLocation = _isCentered
+                ? LocationUtils.getCenteredLocation(location).add(0, 0.5, 0) // add y 0.5 to prevent falling through surface block
+                : LocationUtils.add(location, 0, 0.5, 0);
 
         if (!location.getChunk().isLoaded()) {
             _listener.registerPendingSpawn(this);
@@ -312,7 +339,8 @@ public class FloatingItem implements IDisposable {
 
         FloatingItemDespawnEvent event = new FloatingItemDespawnEvent(this);
 
-        GenericsLib.getEventManager().callBukkit(event);
+        if (GenericsLib.getPlugin().isEnabled())
+            GenericsLib.getEventManager().callBukkit(event);
 
         if (event.isCancelled())
             return false;
@@ -473,6 +501,7 @@ public class FloatingItem implements IDisposable {
             return;
 
         _canPickup = _dataNode.getBoolean("can-pickup", _canPickup);
+        _isCentered = _dataNode.getBoolean("is-centered", _isCentered);
         _respawnTimeSeconds = _dataNode.getInteger("respawn-time-seconds", _respawnTimeSeconds);
         _isSpawned = _dataNode.getBoolean("is-spawned", _isSpawned);
         _currentLocation = _dataNode.getLocation("location", _currentLocation);
