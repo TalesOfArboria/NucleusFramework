@@ -126,7 +126,23 @@ public class GlobalRegionManager {
     public List<IRegion> getRegions(Location location) {
         PreCon.notNull(location);
 
-        return getRegion(location, PriorityType.ENTER, _allRegionsMap);
+        return getRegion(location.getWorld(),
+                location.getBlockX(), location.getBlockY(), location.getBlockZ(),
+                PriorityType.ENTER, _allRegionsMap);
+    }
+
+    /**
+     * Get a set of regions that contain the specified location.
+     *
+     * @param world  The world to check.
+     * @param x      The x coordinates.
+     * @param y      The y coordinates.
+     * @param z      The z coordinates.
+     */
+    public List<IRegion> getRegions(World world, int x, int y, int z) {
+        PreCon.notNull(world);
+
+        return getRegion(world, x, y, z, PriorityType.ENTER, _allRegionsMap);
     }
 
     /**
@@ -136,7 +152,22 @@ public class GlobalRegionManager {
      * @param location  The location to check.
      */
     public List<IRegion> getListenerRegions(Location location) {
-        return getRegion(location, PriorityType.ENTER, _listenerRegionsMap);
+        return getRegion(location.getWorld(),
+                location.getBlockX(), location.getBlockY(), location.getBlockZ(),
+                PriorityType.ENTER, _listenerRegionsMap);
+    }
+
+    /**
+     * Get a set of regions that the specified location
+     * is inside of and are player watchers/listeners.
+     *
+     * @param world  The world to check.
+     * @param x      The x coordinates.
+     * @param y      The y coordinates.
+     * @param z      The z coordinates.
+     */
+    public List<IRegion> getListenerRegions(World world, int x, int y, int z) {
+        return getRegion(world, x, y, z, PriorityType.ENTER, _listenerRegionsMap);
     }
 
     /**
@@ -147,7 +178,23 @@ public class GlobalRegionManager {
      * @param priorityType  The priority sorting type of the returned list.
      */
     public List<IRegion> getListenerRegions(Location location, PriorityType priorityType) {
-        return getRegion(location, priorityType, _listenerRegionsMap);
+        return getRegion(location.getWorld(),
+                location.getBlockX(), location.getBlockY(), location.getBlockZ(),
+                priorityType, _listenerRegionsMap);
+    }
+
+    /**
+     * Get a set of regions that the specified location
+     * is inside of and are player watchers/listeners.
+     *
+     * @param world         The world to check.
+     * @param x             The X coordinates.
+     * @param y             The Y coordinates.
+     * @param z             The Z coordinates.
+     * @param priorityType  The priority sorting type of the returned list.
+     */
+    public List<IRegion> getListenerRegions(World world, int x, int y, int z, PriorityType priorityType) {
+        return getRegion(world, x, y, z, priorityType, _listenerRegionsMap);
     }
 
     /**
@@ -156,12 +203,23 @@ public class GlobalRegionManager {
      * @param chunk  The chunk to check.
      */
     public Set<IRegion> getRegionsInChunk(Chunk chunk) {
+        return getRegionsInChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
+    }
+
+    /**
+     * Get all regions that intersect with the specified chunk.
+     *
+     * @param world  The world the chunk is in.
+     * @param x      The chunks X coordinates.
+     * @param z      The chunks Z coordinates.
+     */
+    public Set<IRegion> getRegionsInChunk(World world, int x, int z) {
         synchronized(_sync) {
 
             if (getRegionCount() == 0)
                 return new HashSet<>(0);
 
-            String key = getChunkKey(chunk.getWorld(), chunk.getX(), chunk.getZ());
+            String key = getChunkKey(world, x, z);
 
             Set<IRegion> regions = _allRegionsMap.get(key);
             if (regions == null)
@@ -276,7 +334,7 @@ public class GlobalRegionManager {
      * Get all regions contained in the specified location using
      * the supplied region map.
      */
-    private <T extends Set<IRegion>> List<IRegion> getRegion(Location location,
+    private <T extends Set<IRegion>> List<IRegion> getRegion(World world, int x, int y, int z,
                                                              PriorityType priorityType,
                                                              Map<String, T> map) {
         synchronized(_sync) {
@@ -288,10 +346,10 @@ public class GlobalRegionManager {
 
             // calculate chunk location instead of getting it from chunk
             // to prevent asynchronous issues
-            int chunkX = (int)Math.floor(location.getX() / 16);
-            int chunkZ = (int)Math.floor(location.getZ() / 16);
+            int chunkX = (int)Math.floor(x / 16);
+            int chunkZ = (int)Math.floor(z / 16);
 
-            String key = getChunkKey(location.getWorld(), chunkX, chunkZ);
+            String key = getChunkKey(world, chunkX, chunkZ);
 
             Set<IRegion> regions = map.get(key);
             if (regions == null)
@@ -306,7 +364,7 @@ public class GlobalRegionManager {
             while (iterator.hasNext()) {
                 IRegion region = iterator.next();
 
-                if (region.contains(location))
+                if (region.contains(x, y, z))
                     results.add(region);
             }
 
