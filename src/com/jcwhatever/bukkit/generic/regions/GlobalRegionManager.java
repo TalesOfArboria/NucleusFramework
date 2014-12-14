@@ -346,8 +346,8 @@ public class GlobalRegionManager {
 
             // calculate chunk location instead of getting it from chunk
             // to prevent asynchronous issues
-            int chunkX = (int)Math.floor(x / 16);
-            int chunkZ = (int)Math.floor(z / 16);
+            int chunkX = (int)Math.floor((double)x / 16);
+            int chunkZ = (int)Math.floor((double)z / 16);
 
             String key = getChunkKey(world, chunkX, chunkZ);
 
