@@ -25,7 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.commands.response;
 
-import com.jcwhatever.bukkit.generic.collections.HashSetMap;
+import com.jcwhatever.bukkit.generic.collections.TimeScale;
+import com.jcwhatever.bukkit.generic.collections.TimedHashSetMap;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.language.Localizable;
@@ -50,7 +51,8 @@ public class CommandRequests {
     @Localizable private static final String _MULTIPLE_REQUESTS = "{YELLOW}Multiple requests for response found. " +
             "Please be more specific:";
 
-    private static HashSetMap<CommandSender, ResponseRequest> _requests = new HashSetMap<>(25);
+    private static TimedHashSetMap<CommandSender, ResponseRequest>
+            _requests = new TimedHashSetMap<>(25, 5, 30, TimeScale.SECONDS);
 
     /**
      * Get a list of response requests for the specified command sender.
@@ -89,7 +91,7 @@ public class CommandRequests {
      */
     public static ResponseRequest request(Plugin plugin, String context, CommandSender sender, IResponseHandler handler, ResponseType... responseType) {
         ResponseRequest request = new ResponseRequest(plugin, context, sender, handler, responseType);
-        _requests.put(request.getCommandSender(), request);
+        _requests.put(request.getCommandSender(), request, request.getLifespan());
 
         return request;
     }

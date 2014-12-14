@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.commands.response;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
@@ -44,6 +45,7 @@ public class ResponseRequest {
     private String _context;
     private IResponseHandler _responseHandler;
     private Set<ResponseType> _responseTypes = new HashSet<>(ResponseType.totalTypes());
+    private int _lifespan = 30;
 
     /**
      * Constructor.
@@ -54,7 +56,9 @@ public class ResponseRequest {
      * @param handler       The {@code ResponseHandler} that handles the players response.
      * @param responseType  The requested responses.
      */
-    public ResponseRequest(Plugin plugin, String context, CommandSender sender, IResponseHandler handler, ResponseType... responseType) {
+    public ResponseRequest(Plugin plugin, String context,
+                           CommandSender sender, IResponseHandler handler,
+                           ResponseType... responseType) {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(context);
         PreCon.notNull(sender);
@@ -104,6 +108,21 @@ public class ResponseRequest {
         return new HashSet<>(_responseTypes);
     }
 
+    /**
+     * Get the lifespan of the request in seconds.
+     */
+    public int getLifespan() {
+        return _lifespan;
+    }
+
+    /**
+     * Set the lifespan of the request in seconds.
+     *
+     * @param lifespan  The lifespan.
+     */
+    public void setLifespan(int lifespan) {
+        _lifespan = lifespan;
+    }
 
     @Override
     public  int hashCode() {
