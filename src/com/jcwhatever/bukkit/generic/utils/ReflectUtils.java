@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.utils.reflection;
+package com.jcwhatever.bukkit.generic.utils;
 
 import com.google.common.collect.ImmutableMap;
 import com.jcwhatever.bukkit.generic.GenericsLib;
@@ -133,6 +133,13 @@ public class ReflectUtils {
     }
 
     /**
+     * Get the detected NMS package version.
+     */
+    public static String getNmsVersion() {
+        return _version;
+    }
+
+    /**
      * Get the package name from a class.
      *
      * @param clazz  The class.
@@ -162,6 +169,22 @@ public class ReflectUtils {
      */
     public static boolean isArray(Object object) {
         return object.getClass().getName().indexOf('[') == 0;
+    }
+
+    /**
+     * Determine if one of the provided NMS package versions
+     * is compatible with the current NMS package version.
+     *
+     * @param versions  The versions to check.
+     */
+    public static boolean isVersionCompatible(String... versions) {
+        for (String version : versions) {
+            if (version.equals(getNmsVersion())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
