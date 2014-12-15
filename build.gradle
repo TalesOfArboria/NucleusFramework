@@ -2,7 +2,7 @@ def projectName = 'GenericsLib'
 def majorVersion = '0'
 def buildBy = null
 def providedDepends = [
-        'C:/JavaRepo/bukkit/unmapped-spigot-api-1.8-R0.1-SNAPSHOT.jar',
+        'C:/JavaRepo/bukkit/unmapped-spigot-1.8-R0.1-SNAPSHOT.jar',
         'C:/JavaRepo/bukkit/Vault.jar',
         'C:/JavaRepo/bukkit/WorldEdit.jar',
 ]
