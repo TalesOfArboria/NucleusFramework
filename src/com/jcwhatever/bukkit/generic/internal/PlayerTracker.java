@@ -143,11 +143,11 @@ public class PlayerTracker {
     }
 
     /**
-     * Gets player Id from name using stored id to name map if
-     * the player is not online.
+     * Gets player Id from the players name using stored id to
+     * name map if the player is not online.
      *
-     * <p>Will return an id if the player is not online but
-     * has note logged in before.</p>
+     * <p>Will not return an id if the player is not online and
+     * has not logged in to the server before.</p>
      *
      * @param playerName  The name of the player
      *
