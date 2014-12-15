@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemDespawnEve
 import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemSpawnEvent;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.entity.EntityUtils;
@@ -374,10 +375,14 @@ public class FloatingItem implements IDisposable {
      *
      * @param p  The player.
      */
-    public void give(Player p) {
+    public boolean give(Player p) {
         PreCon.notNull(p);
 
+        if (!InventoryUtils.hasRoom(p.getInventory(), _item))
+            return false;
+
         p.getInventory().addItem(_item.clone());
+        return true;
     }
 
     /**
