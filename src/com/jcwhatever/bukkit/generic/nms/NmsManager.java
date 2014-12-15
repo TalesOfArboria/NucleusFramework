@@ -42,6 +42,8 @@ import javax.annotation.Nullable;
  */
 public class NmsManager {
 
+    private final Plugin _plugin;
+
     // NMS handler classes
     private HashMapMap<String, String, Class<? extends INmsHandler>>
             _nmsHandlerClasses = new HashMapMap<>(10);
@@ -55,12 +57,33 @@ public class NmsManager {
     /**
      * Constructor.
      *
+     * @param plugin  The owning plugin.
+     */
+    public NmsManager(Plugin plugin) {
+        PreCon.notNull(plugin);
+
+        _plugin = plugin;
+
+        _nmsVersion = NmsUtils.getNmsVersion();
+
+        if (plugin instanceof GenericsPlugin) {
+            _nmsVersion = ((GenericsPlugin) plugin).getDataNode()
+                    .getString("nms-version", _nmsVersion);
+        }
+    }
+
+    /**
+     * Constructor. Disables plugin if the current NMS version
+     * is not compatible.
+     *
      * @param plugin              The owning plugin.
      * @param compatibleVersions  Compatible NMS package versions.
      */
     public NmsManager(Plugin plugin, String... compatibleVersions) {
         PreCon.notNull(plugin);
         PreCon.notNull(compatibleVersions);
+
+        _plugin = plugin;
 
         _nmsVersion = NmsUtils.getNmsVersion();
 
@@ -70,6 +93,13 @@ public class NmsManager {
         }
 
         NmsUtils.enforceNmsVersion(plugin, compatibleVersions);
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     /**
