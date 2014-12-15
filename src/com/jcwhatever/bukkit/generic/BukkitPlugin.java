@@ -8,6 +8,7 @@ import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
 import com.jcwhatever.bukkit.generic.internal.PlayerTracker;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
+import com.jcwhatever.bukkit.generic.internal.nms.InternalNmsManager;
 import com.jcwhatever.bukkit.generic.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
@@ -33,6 +34,7 @@ public final class BukkitPlugin extends GenericsPlugin {
     InternalRegionManager _regionManager;
     InternalScriptManager _scriptManager;
     InternalScriptApiRepo _scriptApiRepo;
+    InternalNmsManager _nmsManager;
 
     JailManager _jailManager;
     EntityEquipperManager _equipperManager;
@@ -77,6 +79,7 @@ public final class BukkitPlugin extends GenericsPlugin {
     @Override
     protected void onEnablePlugin() {
 
+        _nmsManager = new InternalNmsManager();
         _commandHandler = new CommandHandler();
         _scheduler = new BukkitTaskScheduler();
 

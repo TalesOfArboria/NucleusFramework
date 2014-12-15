@@ -34,6 +34,7 @@ import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
 import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
+import com.jcwhatever.bukkit.generic.nms.NmsManager;
 import com.jcwhatever.bukkit.generic.regions.GlobalRegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
@@ -251,6 +252,15 @@ public final class GenericsLib {
         return _plugin._commandHandler;
     }
 
+    /**
+     * Get GenericsLib's internal NMS manager.
+     */
+    public static NmsManager getNmsManager() {
+        PreCon.isValid(_hasEnabled, GenericsLib.ERROR_NOT_ENABLED);
+
+        return _plugin._nmsManager;
+    }
+
     /*
      * Register GenericsPlugin instance.
      */
@@ -267,5 +277,9 @@ public final class GenericsLib {
 
         _pluginNameMap.remove(plugin.getName().toLowerCase());
         _pluginClassMap.remove(plugin.getClass());
+    }
+
+    public enum NmsHandlers {
+        TITLES
     }
 }
