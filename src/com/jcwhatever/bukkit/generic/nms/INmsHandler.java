@@ -22,49 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.reflection;
-
-import java.util.HashMap;
-import java.util.Map;
+package com.jcwhatever.bukkit.generic.nms;
 
 /**
- * Encapsulates an object instance and provides reflection
- * utilities.
+ * Interface for a type that uses NMS and CraftBukkit code.
  */
-public class ReflectedInstance<T> extends Instance<T> {
-
-    private final Map<Class<?>, Fields> _fields = new HashMap<>(10);
-
-    /**
-     * Constructor.
-     *
-     * @param type      The reflected type of the instance.
-     * @param instance  The instance to encapsulate.
-     */
-    ReflectedInstance(ReflectedType<T> type, Object instance) {
-        super(type, instance);
-    }
-
-    /**
-     * Get fields from the instance of the specified class
-     * type.
-     *
-     * @param fieldType  The field class type.
-     */
-    public Fields getFields(Class<?> fieldType) {
-        Fields fields = _fields.get(fieldType);
-        if (fields == null) {
-            fields = new Fields(getReflectedType().getFields(fieldType), getHandle());
-            _fields.put(fieldType, fields);
-        }
-
-        return fields;
-    }
-
-    /**
-     * Get all fields from the instance.
-     */
-    public Fields getFields() {
-        return getFields(Object.class);
-    }
+public interface INmsHandler {
 }
