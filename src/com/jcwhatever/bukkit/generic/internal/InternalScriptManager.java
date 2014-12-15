@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.internal;
 
-import com.jcwhatever.bukkit.generic.scripting.AbstractScriptManager;
+import com.jcwhatever.bukkit.generic.scripting.ScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.GenericsScript;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * GenericsLib default ScriptManager.
  */
-public class InternalScriptManager extends AbstractScriptManager<IScript, IEvaluatedScript> {
+public class InternalScriptManager extends ScriptManager<IScript, IEvaluatedScript> {
 
     private static IScriptFactory<IScript> _scriptFactory = new IScriptFactory<IScript>() {
         @Override

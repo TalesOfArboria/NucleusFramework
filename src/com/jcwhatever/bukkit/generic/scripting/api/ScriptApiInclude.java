@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.Msg;
-import com.jcwhatever.bukkit.generic.scripting.AbstractScriptManager;
+import com.jcwhatever.bukkit.generic.scripting.ScriptManager;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
         description = "Provide script with ability to include other scripts.")
 public class ScriptApiInclude extends GenericsScriptApi {
 
-    private final AbstractScriptManager _manager;
+    private final ScriptManager _manager;
     private final File _includeFolder;
 
     /**
@@ -55,7 +55,7 @@ public class ScriptApiInclude extends GenericsScriptApi {
      *
      * @param plugin The owning plugin
      */
-    public ScriptApiInclude(Plugin plugin, AbstractScriptManager manager) {
+    public ScriptApiInclude(Plugin plugin, ScriptManager manager) {
         super(plugin);
 
         PreCon.notNull(manager);

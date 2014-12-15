@@ -46,7 +46,7 @@ import javax.script.ScriptEngineManager;
 /**
  * Manages scripts.
  */
-public abstract class AbstractScriptManager<S extends IScript, E extends IEvaluatedScript> {
+public abstract class ScriptManager<S extends IScript, E extends IEvaluatedScript> {
 
     private final Plugin _plugin;
     private final File _scriptFolder;
@@ -70,7 +70,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
      *
      * @param plugin  The owning plugin.
      */
-    public AbstractScriptManager(Plugin plugin) {
+    public ScriptManager(Plugin plugin) {
         PreCon.notNull(plugin);
 
         _plugin = plugin;
@@ -92,7 +92,7 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
      * @param scriptFolder        The folder to load scripts from.
      * @param directoryTraversal  Specify how directories are handles while searching from scripts.
      */
-    public AbstractScriptManager(Plugin plugin, File scriptFolder, DirectoryTraversal directoryTraversal) {
+    public ScriptManager(Plugin plugin, File scriptFolder, DirectoryTraversal directoryTraversal) {
         PreCon.notNull(plugin);
         PreCon.notNull(scriptFolder);
         PreCon.notNull(directoryTraversal);
@@ -119,9 +119,9 @@ public abstract class AbstractScriptManager<S extends IScript, E extends IEvalua
      * @param includeFolder       The folder where include files are kept. These are not evaluated.
      * @param directoryTraversal  Specify how directories are handles while searching from scripts.
      */
-    public AbstractScriptManager(Plugin plugin,
-                                 File scriptFolder, File includeFolder,
-                                 DirectoryTraversal directoryTraversal) {
+    public ScriptManager(Plugin plugin,
+                         File scriptFolder, File includeFolder,
+                         DirectoryTraversal directoryTraversal) {
         PreCon.notNull(plugin);
         PreCon.notNull(scriptFolder);
         PreCon.notNull(includeFolder);

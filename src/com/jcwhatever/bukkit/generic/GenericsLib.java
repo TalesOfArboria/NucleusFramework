@@ -27,7 +27,6 @@ package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalMessengerFactory;
-import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
@@ -37,7 +36,10 @@ import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.nms.NmsManager;
 import com.jcwhatever.bukkit.generic.regions.GlobalRegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
+import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
+import com.jcwhatever.bukkit.generic.scripting.IScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiRepo;
+import com.jcwhatever.bukkit.generic.scripting.ScriptManager;
 import com.jcwhatever.bukkit.generic.titles.INamedTitle;
 import com.jcwhatever.bukkit.generic.titles.TitleManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -118,7 +120,7 @@ public final class GenericsLib {
     }
 
     /**
-     * Get all Bukkit plugins that implement {@code GenericsPlugin}.
+     * Get all Bukkit plugins that extend {@code GenericsPlugin}.
      */
     public static List<GenericsPlugin> getGenericsPlugins() {
         return new ArrayList<>(_pluginNameMap.values());
@@ -186,7 +188,7 @@ public final class GenericsLib {
     /**
      * Get the default script manager.
      */
-    public static InternalScriptManager getScriptManager() {
+    public static ScriptManager<IScript, IEvaluatedScript> getScriptManager() {
         PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._scriptManager;
