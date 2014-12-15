@@ -24,6 +24,9 @@
 
 package com.jcwhatever.bukkit.generic.titles;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.GenericsLib.NmsHandlers;
+import com.jcwhatever.bukkit.generic.nms.INmsTitleHandler;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Utils;
 import com.jcwhatever.bukkit.generic.utils.text.TextComponent;
@@ -46,6 +49,8 @@ public class GenericsTitle implements ITitle {
 
     private TextComponents _titleComponents;
     private TextComponents _subTitleComponents;
+    private String _formattedTitle;
+    private String _formattedSubTitle;
 
     /**
      * Constructor.
@@ -135,6 +140,31 @@ public class GenericsTitle implements ITitle {
      */
     @Override
     public void showTo(Player p) {
+        PreCon.notNull(p);
+
+        INmsTitleHandler titleHandler = GenericsLib.getNmsManager().getNmsHandler(NmsHandlers.TITLES.name());
+        if (titleHandler != null) {
+
+            StringBuilder buffer = new StringBuilder(50);
+
+            getJson(buffer, getTitleComponents());
+
+            String title = buffer.toString();
+            String subTitle = null;
+
+            if (_subTitle != null) {
+                buffer.setLength(0);
+                getJson(buffer, getSubTitleComponents());
+                subTitle = buffer.toString();
+            }
+
+            titleHandler.send(p, title, subTitle, _fadeInTime, _stayTime, _fadeOutTime);
+
+            return;
+        }
+
+        // use commands as a fallback if there is no NMS title handler
+
         String titleCommand = getCommand(p, TitleCommandType.TITLE);
         String subTitleCommand = null;
         String timesCommand = null;
