@@ -49,8 +49,6 @@ public class GenericsTitle implements ITitle {
 
     private TextComponents _titleComponents;
     private TextComponents _subTitleComponents;
-    private String _formattedTitle;
-    private String _formattedSubTitle;
 
     /**
      * Constructor.
