@@ -40,8 +40,8 @@ import net.minecraft.server.v1_8_R1.PlayerConnection;
 import java.lang.reflect.Field;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Minecraft Title packet sender for NMS version v1_8_R1
  */
 public class NmsTitleHandler_v1_8_R1 implements INmsTitleHandler {
 
