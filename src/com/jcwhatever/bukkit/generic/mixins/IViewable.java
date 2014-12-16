@@ -36,16 +36,16 @@ import java.util.List;
 public interface IViewable {
 
     /**
-     * Get the view mode.
+     * Get the view policy.
      */
     ViewPolicy getViewPolicy();
 
     /**
-     * Set the view mode.
+     * Set the view policy.
      *
-     * @param viewMode  The view mode.
+     * @param viewPolicy  The view policy.
      */
-    void setViewMode(ViewPolicy viewMode);
+    void setViewPolicy(ViewPolicy viewPolicy);
 
     /**
      * Determine if the player can see the
