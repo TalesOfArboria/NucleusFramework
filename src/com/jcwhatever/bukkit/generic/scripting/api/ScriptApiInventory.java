@@ -25,10 +25,12 @@
 
 package com.jcwhatever.bukkit.generic.scripting.api;
 
-import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
+import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
+
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -38,7 +40,7 @@ import java.util.List;
  * Provide scripts with API access to chest helper functions.
  */
 @ScriptApiInfo(
-        variableName = "chest",
+        variableName = "inventory",
         description = "Provide scripts with API access to chest helper functions.")
 public class ScriptApiInventory extends GenericsScriptApi {
 
@@ -88,105 +90,116 @@ public class ScriptApiInventory extends GenericsScriptApi {
         }
 
         /**
+         * Get the default item stack comparer.
+         */
+        public ItemStackComparer getDefaultComparer() {
+            return ItemStackComparer.getDefault();
+        }
+
+        /**
+         * Get the durability/meta/type item stack comparer.
+         */
+        public ItemStackComparer getDurabilityComparer() {
+            return ItemStackComparer.getDefault();
+        }
+
+        /**
          * Get the maximum number of the specified item stack that will fit into
-         * the specified chest contents.
+         * the specified inventory.
          *
-         * @param contents   The chest contents.
+         * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          */
-        public int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryUtils.getMax(contents, itemStack, comparer);
+        public int getMax(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+            return InventoryUtils.getMax(inventory, itemStack, comparer);
         }
 
         /**
-         * Determine if there is enough room in the specified chest
+         * Determine if there is enough room in the specified inventory
          * for the specified stack.
          *
-         * @param contents  The chest contents to check.
-         * @param itemStack The item stack to check.
-         * @param comparer  The {@code ItemStackComparer} to use.
+         * @param inventory  The inventory to check.
+         * @param itemStack  The item stack to check.
+         * @param comparer   The {@code ItemStackComparer} to use.
          */
-        public boolean hasRoom(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryUtils.hasRoom(contents, itemStack, comparer, itemStack.getAmount());
+        public boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+            return InventoryUtils.hasRoom(inventory, itemStack, comparer, itemStack.getAmount());
         }
 
         /**
-         * Determine if there is enough room in the specified chest for
+         * Determine if there is enough room in the specified inventory for
          * items of the same type of the specified stack in the amount of
          * the specified quantity.
          *
-         * @param contents  The chest contents to check.
-         * @param itemStack The item stack to check .
-         * @param comparer  The {@code ItemStackComparer} to use.
-         * @param qty       The amount of space needed.
+         * @param inventory  The inventory to check.
+         * @param itemStack  The item stack to check .
+         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param qty        The amount of space needed.
          */
-        public boolean hasRoomForQty(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-            return InventoryUtils.hasRoom(contents, itemStack, comparer, qty);
+        public boolean hasRoomForQty(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+            return InventoryUtils.hasRoom(inventory, itemStack, comparer, qty);
         }
 
         /**
          * Get the number of items of the specified item stack are in the
-         * specified chest contents.
+         * specified inventory.
          *
-         * @param contents   The chest contents to check.
+         * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          */
-        public int count(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryUtils.count(contents, itemStack, comparer);
+        public int count(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+            return InventoryUtils.count(inventory, itemStack, comparer);
         }
 
         /**
-         * Determine if the chest contents have at least one of the specified item stack.
+         * Determine if the inventory contents have at least one of the specified item stack.
          *
-         * @param contents   The chest contents to check.
+         * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          */
-        public boolean has(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryUtils.has(contents, itemStack, comparer);
+        public boolean has(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+            return InventoryUtils.has(inventory, itemStack, comparer);
         }
 
         /**
-         * Determine if the chest contents has at least the specified quantity of
+         * Determine if the inventory contents has at least the specified quantity of
          * the specified item stack.
          *
-         * @param contents   The chest contents to check.
+         * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          * @param qty        The quantity.
          */
-        public boolean hasQty(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-            return InventoryUtils.has(contents, itemStack, comparer, qty);
+        public boolean hasQty(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+            return InventoryUtils.has(inventory, itemStack, comparer, qty);
         }
 
         /**
          * Get an item stack array representing all stacks of the specified item
-         * from the specified chest contents.
+         * from the specified inventory.
          *
-         * @param contents   The chest contents to check.
+         * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          */
-        public ItemStack[] getAll(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-            return InventoryUtils.getAll(contents, itemStack, comparer);
+        public ItemStack[] getAll(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+            return InventoryUtils.getAll(inventory, itemStack, comparer);
         }
 
         /**
-         * Remove items from the specified chest contents that match the specified
+         * Remove items from the specified inventory that match the specified
          * item stack in the specified quantity.
          *
-         * @param contents   The chest contents to check.
+         * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
          * @param comparer   The {@code ItemStackComparer} to use.
          * @param qty        The quantity to remove.
-         * @return
          */
-        public List<ItemStack> remove(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-            return InventoryUtils.remove(contents, itemStack, comparer, qty);
+        public List<ItemStack> remove(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+            return InventoryUtils.remove(inventory, itemStack, comparer, qty);
         }
     }
-
-
 }
