@@ -575,7 +575,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
         // parse argument into float
         try {
             //noinspection ConstantConditions
-            result = Float.parseFloat(arg);
+            result = arg.indexOf('.') == -1
+                    ? Integer.parseInt(arg)
+                    : Float.parseFloat(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
@@ -621,7 +623,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
         // parse argument into double
         try {
             //noinspection ConstantConditions
-            result = Double.parseDouble(arg);
+            result = arg.indexOf('.') == -1
+                    ? Integer.parseInt(arg)
+                    : Double.parseDouble(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
@@ -702,7 +706,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // parse argument into double
         try {
-            return Double.parseDouble(arg);
+            return arg.indexOf('.') == -1
+                    ? Integer.parseInt(arg)
+                    : Double.parseDouble(arg);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidValueException(parameterName,
