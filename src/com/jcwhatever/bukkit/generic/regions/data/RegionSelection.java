@@ -463,6 +463,35 @@ public class RegionSelection implements IRegionSelection {
     }
 
     /**
+     * Get a specific point location from the
+     * region selection.
+     *
+     * @param point  The point to get.
+     */
+    @Override
+    public Location getPoint(CuboidPoint point) {
+        PreCon.notNull(point);
+
+        return point.getLocation(this);
+    }
+
+    /**
+     * Get a {@code CuboidPoint} that represents the specified
+     * location.
+     *
+     * @param location  The location to check.
+     *
+     * @return  Null if the location is not any of the regions points.
+     */
+    @Nullable
+    @Override
+    public CuboidPoint getPoint(Location location) {
+        PreCon.notNull(location);
+
+        return CuboidPoint.getCuboidPoint(location, this);
+    }
+
+    /**
      * Set the regions cuboid point coordinates.
      *
      * @param p1  The first point location.
@@ -515,9 +544,9 @@ public class RegionSelection implements IRegionSelection {
             _volume = _xWidth * _zWidth * _yHeight;
 
             if (getWorld() != null) {
-                double xCenter = _startX + (_xBlockWidth / 2);
-                double yCenter = _startY + (_yBlockHeight / 2);
-                double zCenter = _startZ + (_zBlockWidth / 2);
+                double xCenter = _startX + (_xBlockWidth / 2.0D);
+                double yCenter = _startY + (_yBlockHeight / 2.0D);
+                double zCenter = _startZ + (_zBlockWidth / 2.0D);
 
                 _center = new Location(getWorld(), xCenter, yCenter, zCenter);
             }

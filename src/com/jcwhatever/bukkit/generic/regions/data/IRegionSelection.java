@@ -229,4 +229,22 @@ public interface IRegionSelection {
      */
     boolean intersects(int chunkX, int chunkZ);
 
+    /**
+     * Get a specific point location from the
+     * region selection.
+     *
+     * @param point  The point to get.
+     */
+    Location getPoint(CuboidPoint point);
+
+    /**
+     * Get a {@code CuboidPoint} that represents the specified
+     * location.
+     *
+     * @param location  The location to check.
+     *
+     * @return  Null if the location is not any of the regions points.
+     */
+    @Nullable
+    CuboidPoint getPoint(Location location);
 }

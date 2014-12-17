@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.regions;
 import com.jcwhatever.bukkit.generic.mixins.IReadOnly;
 import com.jcwhatever.bukkit.generic.regions.Region.PriorityType;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionPriority;
+import com.jcwhatever.bukkit.generic.regions.data.CuboidPoint;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -378,6 +379,31 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     @Override
     public boolean intersects(int chunkX, int chunkZ) {
         return _region.intersects(chunkX, chunkZ);
+    }
+
+    /**
+     * Get a specific point location from the
+     * region selection.
+     *
+     * @param point  The point to get.
+     */
+    @Override
+    public Location getPoint(CuboidPoint point) {
+        return _region.getPoint(point);
+    }
+
+    /**
+     * Get a {@code CuboidPoint} that represents the specified
+     * location.
+     *
+     * @param location  The location to check.
+     *
+     * @return  Null if the location is not any of the regions points.
+     */
+    @Nullable
+    @Override
+    public CuboidPoint getPoint(Location location) {
+        return _region.getPoint(location);
     }
 
     /**
