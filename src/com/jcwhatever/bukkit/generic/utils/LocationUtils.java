@@ -48,6 +48,7 @@ public class LocationUtils {
 
     private LocationUtils () {}
 
+    // array to help convert yaw to block face
     private static final BlockFace[] YAW_FACES = new BlockFace[] {
             BlockFace.SOUTH, BlockFace.SOUTH_SOUTH_WEST, BlockFace.SOUTH_WEST, BlockFace.WEST_SOUTH_WEST,
             BlockFace.WEST,  BlockFace.WEST_NORTH_WEST,  BlockFace.NORTH_WEST, BlockFace.NORTH_NORTH_WEST,
@@ -402,20 +403,71 @@ public class LocationUtils {
         return closest;
     }
 
+    /**
+     * Rotate a location around an axis location.
+     *
+     * @param axis       The axis location.
+     * @param location   The location to move.
+     * @param rotationX  The rotation around the X axis in degrees.
+     * @param rotationY  The rotation around the Y axis in degrees.
+     * @param rotationZ  The rotation around the Z axis in degrees.
+     */
+    public static Location rotate(Location axis, Location location,
+                                  double rotationX, double rotationY, double rotationZ) {
+        PreCon.notNull(axis);
+        PreCon.notNull(location);
+
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+
+        double centerX = axis.getX();
+        double centerY = axis.getY();
+        double centerZ = axis.getZ();
+
+        double translateX = x;
+        double translateY = y;
+        double translateZ = z;
+        double yaw = location.getYaw();
+
+        // rotate on X axis
+        if (Double.compare(rotationX, 0.0D) != 0) {
+            double rotX = Math.toRadians(rotationX);
+            translateY = rotateX(centerY, centerZ, y, z, rotX);
+            translateZ = rotateZ(centerY, centerZ, y, z, rotX);
+        }
+
+        // rotate on Y axis
+        if (Double.compare(rotationY, 0.0D) != 0) {
+            double rotY = Math.toRadians(rotationY);
+            translateX = rotateX(centerX, centerZ, x, z, rotY);
+            translateZ = rotateZ(centerX, centerZ, x, z, rotY);
+            yaw += rotationY;
+        }
+
+        // rotate on Z axis
+        if (Double.compare(rotationZ, 0.0D) != 0) {
+            double rotZ = Math.toRadians(rotationZ);
+            translateX = rotateX(centerX, centerY, x, y, rotZ);
+            translateY = rotateZ(centerX, centerY, x, y, rotZ);
+        }
+
+        return new Location(location.getWorld(),
+                translateX, translateY, translateZ,
+                (float)yaw, location.getPitch());
+    }
+
     // helper to convert a string number to a double.
     @Nullable
     private static Double parseDouble(String s) {
         s = s.trim();
 
         try {
-            return Double.parseDouble(s);
+            return s.indexOf('.') == -1
+                    ? Integer.parseInt(s)
+                    : Double.parseDouble(s);
         }
-        catch (Exception ignore) {}
-
-        try {
-            return (double) Integer.parseInt(s);
-        }
-        catch (Exception e) {
+        catch (NumberFormatException e) {
             return null;
         }
     }
@@ -424,10 +476,20 @@ public class LocationUtils {
     @Nullable
     private static Float parseFloat(String s) {
         try {
-            return Float.parseFloat(s.trim());
+            return s.indexOf('.') == -1
+                    ? Integer.parseInt(s)
+                    : Float.parseFloat(s.trim());
         }
-        catch (Exception e) {
+        catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    private static double rotateX(double centerA, double centerB, double a, double b, double rotation) {
+        return centerA + Math.cos(rotation) * (a - centerA) - Math.sin(rotation) * (b - centerB);
+    }
+
+    private static double rotateZ(double centerA, double centerB, double a, double b, double rotation) {
+        return centerB + Math.sin(rotation) * (a - centerA) + Math.cos(rotation) * (b - centerB);
     }
 }
