@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.player.collections;
 
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -43,7 +45,7 @@ import java.util.Set;
  */
 public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
-    private final Set<Player> _players;
+    private final Set<PlayerEntry> _players;
     private boolean _isDisposed;
 
     /**
@@ -60,12 +62,14 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
      */
     public PlayerSet(Plugin plugin, int size) {
         super(plugin);
-        _players = new HashSet<Player>(size);
+        _players = new HashSet<>(size);
     }
 
     @Override
     public synchronized boolean add(Player p) {
-        if (_players.add(p)) {
+        PreCon.notNull(p);
+
+        if (_players.add(new PlayerEntry(p))) {
             notifyPlayerAdded(p.getUniqueId());
             return true;
         }
@@ -74,19 +78,25 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
     }
 
     @Override
-    public synchronized boolean addAll(Collection<? extends Player> c) {
+    public synchronized boolean addAll(Collection<? extends Player> collection) {
+        PreCon.notNull(collection);
 
-        for (Player p : c) {
-            notifyPlayerAdded(p.getUniqueId());
+        boolean isChanged = false;
+
+        for (Player p : collection) {
+            if (_players.add(new PlayerEntry(p))) {
+                notifyPlayerAdded(p.getUniqueId());
+                isChanged = true;
+            }
         }
 
-        return _players.addAll(c);
+        return isChanged;
     }
 
     @Override
     public synchronized void clear() {
 
-        for (Player p : _players) {
+        for (PlayerEntry p : _players) {
             notifyPlayerRemoved(p.getUniqueId());
         }
 
@@ -95,12 +105,26 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
     @Override
     public synchronized boolean contains(Object o) {
-        return _players.contains(o);
+        PreCon.notNull(o);
+
+        return o instanceof Player
+                ? _players.contains(new PlayerEntry((Player) o))
+                : _players.contains(o);
     }
 
     @Override
-    public synchronized boolean containsAll(Collection<?> c) {
-        return _players.containsAll(c);
+    public synchronized boolean containsAll(Collection<?> collection) {
+        PreCon.notNull(collection);
+
+        if (collection.isEmpty())
+            return false;
+
+        for (Object obj : collection) {
+            if (!contains(obj))
+                return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -115,7 +139,12 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
     @Override
     public synchronized boolean remove(Object o) {
-        if (_players.remove(o)) {
+
+        boolean isRemoved = o instanceof Player
+                ? _players.remove(new PlayerEntry((Player) o))
+                : _players.remove(o);
+
+        if (isRemoved) {
             if (o instanceof Player) {
                 notifyPlayerRemoved(((Player)o).getUniqueId());
             }
@@ -125,29 +154,37 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
     }
 
     @Override
-    public synchronized boolean removeAll(Collection<?> c) {
+    public synchronized boolean removeAll(Collection<?> collection) {
 
-        for (Object obj : c) {
-            if (obj instanceof Player) {
-                notifyPlayerRemoved(((Player)obj).getUniqueId());
-            }
+        boolean isChanged = false;
+
+        for (Object obj : collection) {
+            isChanged = isChanged | remove(obj);
         }
 
-        return _players.removeAll(c);
+        return isChanged;
     }
 
     @Override
-    public synchronized boolean retainAll(Collection<?> c) {
+    public synchronized boolean retainAll(Collection<?> collection) {
 
-        Set<Player> temp = new HashSet<>(_players);
+        Set<PlayerEntry> temp = new HashSet<>(_players);
         //noinspection SuspiciousMethodCalls
-        temp.removeAll(c);
 
-        for (Player p : temp) {
-            notifyPlayerRemoved(p.getUniqueId());
+        for (Object obj : collection) {
+            if (obj instanceof Player) {
+                //noinspection SuspiciousMethodCalls
+                temp.remove(new PlayerEntry((Player) obj));
+            }
         }
 
-        return _players.retainAll(c);
+        boolean isChanged = false;
+
+        for (PlayerEntry p : temp) {
+            isChanged = isChanged | remove(p);
+        }
+
+        return isChanged;
     }
 
     @Override
@@ -189,11 +226,11 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
     private final class PlayerIterator implements Iterator<Player> {
 
-        private final Iterator<Player> _iterator;
+        private final Iterator<PlayerEntry> _iterator;
         private Player _current;
 
         public PlayerIterator() {
-            _iterator = new ArrayList<Player>(_players).iterator();
+            _iterator = new ArrayList<PlayerEntry>(_players).iterator();
         }
 
         @Override
@@ -203,7 +240,7 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
         @Override
         public Player next() {
-            _current = _iterator.next();
+            _current = _iterator.next().getPlayer();
             return _current;
         }
 
