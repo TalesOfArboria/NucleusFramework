@@ -151,7 +151,10 @@ public class ScriptUtils {
             }
 
             String type = getScriptType(file);
-            if (engineManager.getEngineByExtension(FileUtils.getFileExtension(file)) == null)
+            if (type == null || type.isEmpty())
+                continue;
+
+            if (engineManager.getEngineByExtension(type) == null)
                 continue;
 
             String name = getScriptName(scriptFolder, file);
