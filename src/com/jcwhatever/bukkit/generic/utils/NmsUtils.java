@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 /**
  * Reflection utilities.
  */
-public class NmsUtils {
+public final class NmsUtils {
 
     private NmsUtils() {}
 

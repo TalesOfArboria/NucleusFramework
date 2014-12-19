@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
 /**
  * Provides {@code Player} related utilities.
  */
-public class PlayerUtils {
+public final class PlayerUtils {
 
     private PlayerUtils() {}
 

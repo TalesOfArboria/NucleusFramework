@@ -31,7 +31,7 @@ import java.util.Random;
 /**
  * Randomizing utilities
  */
-public class Rand {
+public final class Rand {
 
     private Rand() {}
 

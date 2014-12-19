@@ -37,7 +37,7 @@ import org.bukkit.event.block.SignChangeEvent;
 
 import java.util.List;
 
-public class BukkitSignEventListener implements Listener {
+public final class BukkitSignEventListener implements Listener {
 
     @EventHandler(priority=EventPriority.NORMAL)
     private void onSignChange(SignChangeEvent event) {

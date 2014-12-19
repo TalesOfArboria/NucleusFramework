@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 /**
  * Utilities for projectiles
  */
-public class ProjectileUtils {
+public final class ProjectileUtils {
 
     private ProjectileUtils() {}
 

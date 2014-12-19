@@ -42,7 +42,7 @@ import java.util.Set;
  * A utility class to execute code when a dependant condition is met within
  * a timeout period.
  */
-public class DependencyRunner<T extends IDependantRunnable> {
+public final class DependencyRunner<T extends IDependantRunnable> {
 
     private final Plugin _plugin;
     private final Set<T> _runnables;

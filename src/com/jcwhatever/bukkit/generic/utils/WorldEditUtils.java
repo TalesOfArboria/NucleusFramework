@@ -36,7 +36,7 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-public class WorldEditUtils {
+public final class WorldEditUtils {
 
     private static Boolean _isWorldEditInstalled = null;
     private static Plugin _wePlugin;

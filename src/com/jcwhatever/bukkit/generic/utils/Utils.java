@@ -30,16 +30,16 @@ import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Generic utilities
  */
-public class Utils {
+public final class Utils {
 
     private Utils() {}
 

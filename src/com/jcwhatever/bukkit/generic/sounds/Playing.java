@@ -34,7 +34,7 @@ import java.util.LinkedList;
 /**
  * Represents the currently playing song for a player.
  */
-public class Playing {
+public final class Playing {
 
     private LinkedList<Runnable> _onFinish;
 

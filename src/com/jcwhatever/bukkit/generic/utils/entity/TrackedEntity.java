@@ -39,7 +39,7 @@ import java.util.UUID;
  * <p>Entity objects are discarded when the chunk they are in is unloaded
  * making it unacceptable to hold long term references to the entity.</p>
  */
-public class TrackedEntity {
+public final class TrackedEntity {
 
     private final UUID _uuid;
     private Entity _recent;

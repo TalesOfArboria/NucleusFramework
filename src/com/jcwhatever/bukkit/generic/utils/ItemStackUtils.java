@@ -52,7 +52,7 @@ import javax.annotation.Nullable;
 /**
  * Item stack utilities
  */
-public class ItemStackUtils {
+public final class ItemStackUtils {
 
     private ItemStackUtils() {}
 

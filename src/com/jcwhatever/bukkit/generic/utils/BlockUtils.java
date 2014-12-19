@@ -36,7 +36,7 @@ import org.bukkit.entity.FallingBlock;
 /**
  * {@code Block} utilities.
  */
-public class BlockUtils {
+public final class BlockUtils {
 
     private BlockUtils() {}
 

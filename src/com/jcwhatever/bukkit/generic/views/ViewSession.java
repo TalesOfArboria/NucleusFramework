@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
  * A session that tracks and provides session context data
  * to view instances.
  */
-public class ViewSession implements IMeta, Iterable<IView>, IDisposable {
+public final class ViewSession implements IMeta, Iterable<IView>, IDisposable {
 
     private static final Map<UUID, ViewSession> _sessionMap = new PlayerMap<>(GenericsLib.getPlugin());
 

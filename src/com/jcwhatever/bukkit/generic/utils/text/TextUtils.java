@@ -50,7 +50,7 @@ import javax.annotation.Nullable;
 /**
  * Static methods to aid in string related tasks
  */
-public class TextUtils {
+public final class TextUtils {
 
     private TextUtils() {}
 

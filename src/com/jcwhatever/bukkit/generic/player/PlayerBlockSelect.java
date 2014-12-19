@@ -43,7 +43,7 @@ import java.util.UUID;
 /**
  * Utility to get a block selected by a player
  */
-public class PlayerBlockSelect implements Listener {
+public final class PlayerBlockSelect implements Listener {
 
     private PlayerBlockSelect() {}
 

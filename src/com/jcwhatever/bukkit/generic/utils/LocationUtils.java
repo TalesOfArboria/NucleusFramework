@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 /**
  * Location utilities.
  */
-public class LocationUtils {
+public final class LocationUtils {
 
     private LocationUtils () {}
 

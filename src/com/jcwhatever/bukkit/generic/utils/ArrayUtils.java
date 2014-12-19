@@ -32,7 +32,7 @@ import java.lang.reflect.Array;
 /**
  * Array utilities.
  */
-public class ArrayUtils {
+public final class ArrayUtils {
 
     private ArrayUtils() {}
 

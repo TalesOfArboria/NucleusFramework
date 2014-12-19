@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  *
  * All methods throw an exception if conditions are not met.
  */
-public class PreCon {
+public final class PreCon {
 
     private PreCon() {}
 

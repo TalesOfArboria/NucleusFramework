@@ -60,7 +60,7 @@ import javax.script.ScriptEngineManager;
 /**
  * Script utilities.
  */
-public class ScriptUtils {
+public final class ScriptUtils {
 
     private ScriptUtils() {}
 

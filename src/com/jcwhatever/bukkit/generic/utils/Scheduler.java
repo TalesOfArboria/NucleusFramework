@@ -34,7 +34,7 @@ import org.bukkit.plugin.Plugin;
  * Utility to reduce the amount of code needed to use
  * the GenericsLib task scheduler.
  */
-public class Scheduler {
+public final class Scheduler {
 
     private Scheduler() {}
 

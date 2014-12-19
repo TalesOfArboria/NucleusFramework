@@ -32,7 +32,9 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.util.Collection;
 
-public class DataStorage {
+public final class DataStorage {
+
+    private DataStorage() {}
 
     /**
      * Remove data storage.

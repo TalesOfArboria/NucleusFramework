@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a players session in a jail.
  */
-public class JailSession {
+public final class JailSession {
 
     private final Jail _jail;
     private final UUID _playerId;

@@ -54,7 +54,7 @@ import javax.annotation.Nullable;
 /**
  * Manages resource sounds globally.
  */
-public class SoundManager {
+public final class SoundManager {
 
     private SoundManager() {}
 

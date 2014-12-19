@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Provides static methods to help with inventories of {@code ItemStack}'s.
  */
-public class InventoryUtils {
+public final class InventoryUtils {
 
     private InventoryUtils() {}
 

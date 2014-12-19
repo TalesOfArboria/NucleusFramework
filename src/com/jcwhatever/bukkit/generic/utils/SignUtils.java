@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * Sign utilities
  */
-public class SignUtils {
+public final class SignUtils {
 
     private SignUtils() {}
 

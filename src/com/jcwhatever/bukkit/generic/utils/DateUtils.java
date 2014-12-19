@@ -32,7 +32,7 @@ import java.util.Date;
 /**
  * Static methods to aid with date manipulation.
  */
-public class DateUtils {
+public final class DateUtils {
 
     private DateUtils() {}
 

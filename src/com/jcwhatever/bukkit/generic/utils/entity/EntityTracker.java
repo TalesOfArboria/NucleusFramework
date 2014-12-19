@@ -44,7 +44,7 @@ import java.util.UUID;
 /**
  * Tracks entities and updates {@code TrackedEntity} objects.
  */
-public class EntityTracker implements Listener {
+public final class EntityTracker implements Listener {
 
     private Map<UUID, TrackedEntity> _entities = new HashMap<>(50);
 

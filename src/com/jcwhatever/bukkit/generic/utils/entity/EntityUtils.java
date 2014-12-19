@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 /**
  * Entity helper utilities
  */
-public class EntityUtils {
+public final class EntityUtils {
 
     private EntityUtils() {}
 

@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 /**
  * File handling utilities.
  */
-public class FileUtils {
+public final class FileUtils {
 
     private FileUtils() {}
 

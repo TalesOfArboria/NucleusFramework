@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Get MaterialData based on string name of material or alternate name.
  */
-public class NamedMaterialData {
+public final class NamedMaterialData {
 
     private NamedMaterialData(){}
 

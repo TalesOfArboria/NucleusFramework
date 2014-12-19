@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * Permissions API
  */
-public class Permissions {
+public final class Permissions {
 
     private Permissions() {}
 

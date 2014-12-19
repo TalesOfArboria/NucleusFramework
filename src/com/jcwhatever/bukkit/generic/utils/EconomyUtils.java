@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
  * Provides static functions to interface with the installed economy
  * via Vault plugin.
  */
-public class EconomyUtils {
+public final class EconomyUtils {
 
     private EconomyUtils() {}
 
