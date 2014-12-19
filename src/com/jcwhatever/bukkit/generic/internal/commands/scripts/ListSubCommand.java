@@ -38,6 +38,7 @@ import com.jcwhatever.bukkit.generic.utils.text.TextUtils.FormatTemplate;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import javax.script.ScriptEngine;
 
 @CommandInfo(
         parent="scripts",
@@ -49,6 +50,7 @@ import java.util.List;
 public final class ListSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Scripts";
+    @Localizable static final String _LABEL_NO_ENGINE = "<!no engine!>";
 
     @Override
     public void execute (CommandSender sender, CommandArguments args) throws InvalidValueException {
@@ -60,9 +62,13 @@ public final class ListSubCommand extends AbstractCommand {
         List<IScript> scripts = GenericsLib.getScriptManager().getScripts();
 
         for (IScript script : scripts) {
-            pagin.add(script.getName());
+            ScriptEngine engine = GenericsLib.getScriptEngineManager().getEngineByExtension(script.getType());
+
+            pagin.add(script.getName(), engine != null
+                    ? engine.getFactory().getEngineName() + ", " + engine.getFactory().getEngineVersion()
+                    : Lang.get(_LABEL_NO_ENGINE));
         }
 
-        pagin.show(sender, page, FormatTemplate.LIST_ITEM);
+        pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);
     }
 }
