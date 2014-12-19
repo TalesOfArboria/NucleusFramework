@@ -404,6 +404,319 @@ public class ArrayUtils {
     }
 
     /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @param <T>  The component type.
+     *
+     * @return  A new trimmed array.
+     */
+    public static <T> T[] reduce(int startAmountToRemove, T[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        @SuppressWarnings("unchecked")
+        Class<T> componentClass = (Class<T>) array.getClass().getComponentType();
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return newArray(componentClass, 0);
+
+        T[] newArray = newArray(componentClass, size);
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static byte[] reduce(int startAmountToRemove, byte[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_BYTE_ARRAY;
+
+        byte[] newArray = new byte[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static char[] reduce(int startAmountToRemove, char[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_CHAR_ARRAY;
+
+        char[] newArray = new char[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static short[] reduce(int startAmountToRemove, short[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_SHORT_ARRAY;
+
+        short[] newArray = new short[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static int[] reduce(int startAmountToRemove, int[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_INT_ARRAY;
+
+        int[] newArray = new int[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static long[] reduce(int startAmountToRemove, long[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_LONG_ARRAY;
+
+        long[] newArray = new long[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static float[] reduce(int startAmountToRemove, float[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_FLOAT_ARRAY;
+
+        float[] newArray = new float[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static double[] reduce(int startAmountToRemove, double[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_DOUBLE_ARRAY;
+
+        double[] newArray = new double[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static String[] reduce(int startAmountToRemove, String[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_STRING_ARRAY;
+
+        String[] newArray = new String[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static ItemStack[] reduce(int startAmountToRemove, ItemStack[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_ITEMSTACK_ARRAY;
+
+        ItemStack[] newArray = new ItemStack[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static Entity[] reduce(int startAmountToRemove, Entity[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_ENTITY_ARRAY;
+
+        Entity[] newArray = new Entity[size];
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
      * @param amountToRemove  The number of elements to remove.
