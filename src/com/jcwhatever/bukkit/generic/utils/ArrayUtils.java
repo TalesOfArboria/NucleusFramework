@@ -36,6 +36,7 @@ public class ArrayUtils {
 
     private ArrayUtils() {}
 
+    public static final boolean[] EMPTY_BOOLEAN_ARRAY = new boolean[0];
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     public static final char[] EMPTY_CHAR_ARRAY = new char[0];
     public static final short[] EMPTY_SHORT_ARRAY = new short[0];
@@ -60,6 +61,27 @@ public class ArrayUtils {
      * @return  The destination array.
      */
     public static <T> T[] copyFromStart(T[] source, T[] destination) {
+        PreCon.notNull(source);
+        PreCon.notNull(destination);
+
+        int size = Math.min(source.length, destination.length);
+
+        System.arraycopy(source, 0, destination, 0, size);
+
+        return destination;
+    }
+
+    /**
+     * Copy the source array elements to the destination array starting from the
+     * beginning and ending when either the destination runs out of space or the
+     * source runs out of elements.
+     *
+     * @param source       The source array.
+     * @param destination  The destination array.
+     *
+     * @return  The destination array.
+     */
+    public static boolean[] copyFromStart(boolean[] source, boolean[] destination) {
         PreCon.notNull(source);
         PreCon.notNull(destination);
 
@@ -230,6 +252,29 @@ public class ArrayUtils {
      * @return  The destination array.
      */
     public static <T> T[] copyFromEnd(T[] source, T[] destination) {
+        PreCon.notNull(source);
+        PreCon.notNull(destination);
+
+        int delta = source.length - destination.length;
+        int sourceAdjust = delta < 0 ?  0 : delta;
+        int destAdjust = delta < 0 ? -delta : 0;
+
+        System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);
+
+        return destination;
+    }
+
+    /**
+     * Copy the source array elements to the destination array starting from the end
+     * and finishing when either the destination runs out of space or the source runs
+     * out of elements.
+     *
+     * @param source       The source array.
+     * @param destination  The destination array.
+     *
+     * @return  The destination array.
+     */
+    public static boolean[] copyFromEnd(boolean[] source, boolean[] destination) {
         PreCon.notNull(source);
         PreCon.notNull(destination);
 
@@ -430,6 +475,34 @@ public class ArrayUtils {
             return newArray(componentClass, 0);
 
         T[] newArray = newArray(componentClass, size);
+
+        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+
+        return newArray;
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning and end of the array.
+     *
+     * @param startAmountToRemove  The number of elements to remove from the start of the array.
+     * @param array                The array to trim.
+     * @param endAmountToRemove    The number of elements to remove from the end of the array.
+     *
+     * @return  A new trimmed array.
+     */
+    public static boolean[] reduce(int startAmountToRemove, boolean[] array, int endAmountToRemove) {
+        PreCon.positiveNumber(startAmountToRemove);
+        PreCon.notNull(array);
+        PreCon.positiveNumber(endAmountToRemove);
+        PreCon.isValid(startAmountToRemove + endAmountToRemove <= array.length,
+                "Amount to remove is larger than the array.");
+
+        int size = array.length - (startAmountToRemove + endAmountToRemove);
+
+        if (size == 0)
+            return EMPTY_BOOLEAN_ARRAY;
+
+        boolean[] newArray = new boolean[size];
 
         System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
 
@@ -751,6 +824,26 @@ public class ArrayUtils {
      *
      * @return A new trimmed array.
      */
+    public static boolean[] reduceStart(int amountToRemove, boolean[] array) {
+        PreCon.notNull(array);
+        PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
+
+        if (array.length == amountToRemove)
+            return EMPTY_BOOLEAN_ARRAY;
+
+        int size = array.length - amountToRemove;
+
+        return copyFromEnd(array, new boolean[size]);
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the beginning of the array.
+     *
+     * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
+     *
+     * @return A new trimmed array.
+     */
     public static byte[] reduceStart(int amountToRemove, byte[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
@@ -978,6 +1071,26 @@ public class ArrayUtils {
      *
      * @return  A new trimmed array.
      */
+    public static boolean[] reduceEnd(boolean[] array, int amountToRemove) {
+        PreCon.notNull(array);
+        PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
+
+        if (array.length == amountToRemove)
+            return EMPTY_BOOLEAN_ARRAY;
+
+        int size = array.length - amountToRemove;
+
+        return copyFromStart(array, new boolean[size]);
+    }
+
+    /**
+     * Reduce the size of an array by trimming from the end of the array.
+     *
+     * @param array           The array to trim.
+     * @param amountToRemove  The number of elements to remove.
+     *
+     * @return  A new trimmed array.
+     */
     public static byte[] reduceEnd(byte[] array, int amountToRemove) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
@@ -1177,6 +1290,29 @@ public class ArrayUtils {
      *
      * @return A new primitive array.
      */
+    public static boolean[] toPrimitive(Boolean[] array) {
+        PreCon.notNull(array);
+
+        if (array.length == 0)
+            return EMPTY_BOOLEAN_ARRAY;
+
+        boolean[] newArray = new boolean[array.length];
+
+        for (int i=0; i < array.length; i++) {
+            Boolean element = array[i];
+            newArray[i] = element == null ? false : element;
+        }
+
+        return newArray;
+    }
+
+    /**
+     * Convert a primitive wrapper array to a primitive array.
+     *
+     * @param array  The array to convert.
+     *
+     * @return A new primitive array.
+     */
     public static byte[] toPrimitive(Byte[] array) {
         PreCon.notNull(array);
 
@@ -1338,6 +1474,25 @@ public class ArrayUtils {
      *
      * @return A new primitive wrapper array.
      */
+    public static Boolean[] toWrapper(boolean[] array) {
+        PreCon.notNull(array);
+
+        Boolean[] newArray = new Boolean[array.length];
+
+        for (int i=0; i < array.length; i++) {
+            newArray[i] = array[i];
+        }
+
+        return newArray;
+    }
+
+    /**
+     * Convert a primitive array to a primitive wrapper array.
+     *
+     * @param array  The array to convert.
+     *
+     * @return A new primitive wrapper array.
+     */
     public static Byte[] toWrapper(byte[] array) {
         PreCon.notNull(array);
 
@@ -1486,6 +1641,33 @@ public class ArrayUtils {
      * @param <T>  The array component type.
      */
     public static <T> T last(T[] array, T empty) {
+        PreCon.notNull(array);
+
+        if (array.length == 0)
+            return empty;
+
+        return array[array.length - 1];
+    }
+
+    /**
+     * Get the last element in an array.
+     *
+     * @param array  The array.
+     */
+    public static boolean last(boolean[] array) {
+        PreCon.notNull(array);
+        PreCon.isValid(array.length > 0, "Array has no elements.");
+
+        return array[array.length - 1];
+    }
+
+    /**
+     * Get the last element in an array.
+     *
+     * @param array  The array.
+     * @param empty  The value to return if the array is empty.
+     */
+    public static boolean last(boolean[] array, boolean empty) {
         PreCon.notNull(array);
 
         if (array.length == 0)
