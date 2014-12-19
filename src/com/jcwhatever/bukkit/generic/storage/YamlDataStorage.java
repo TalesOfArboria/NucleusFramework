@@ -433,12 +433,12 @@ public class YamlDataStorage implements IDataNode {
     }
 
     @Override
-    public void runBatchOperation(BatchOperation batch) {
+    public void runBatchOperation(DataBatchOperation batch) {
 
         runBatchOperation(batch, this);
     }
 
-    void runBatchOperation(final BatchOperation batch, IDataNode dataNode) {
+    void runBatchOperation(final DataBatchOperation batch, IDataNode dataNode) {
 
         synchronized (_sync) {
             _batch.start();
@@ -459,12 +459,12 @@ public class YamlDataStorage implements IDataNode {
     }
 
     @Override
-    public void preventSave(BatchOperation batch) {
+    public void preventSave(DataBatchOperation batch) {
 
         preventSave(batch, this);
     }
 
-    void preventSave(BatchOperation batch, IDataNode dataNode) {
+    void preventSave(DataBatchOperation batch, IDataNode dataNode) {
 
         synchronized (_sync) {
             _batch.start();

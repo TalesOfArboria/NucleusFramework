@@ -361,13 +361,13 @@ public class YamlDataNode implements IDataNode {
     }
 
     @Override
-    public void runBatchOperation(BatchOperation batch) {
+    public void runBatchOperation(DataBatchOperation batch) {
 
         _storage.runBatchOperation(batch, this);
     }
 
     @Override
-    public void preventSave(BatchOperation batch) {
+    public void preventSave(DataBatchOperation batch) {
 
         _storage.preventSave(batch, this);
     }

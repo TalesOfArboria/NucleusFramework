@@ -461,7 +461,7 @@ public interface IDataNode {
      *
      * @param batch  The batch operation handler.
      */
-    void runBatchOperation(BatchOperation batch);
+    void runBatchOperation(DataBatchOperation batch);
 
     /**
      * Run a batch operation on the node that prevents
@@ -473,6 +473,6 @@ public interface IDataNode {
      *
      * @param batch  The batch operation handler.
      */
-    void preventSave(BatchOperation batch);
+    void preventSave(DataBatchOperation batch);
 
 }
