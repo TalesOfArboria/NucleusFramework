@@ -26,8 +26,8 @@ package com.jcwhatever.bukkit.generic.messaging;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -233,7 +233,6 @@ public class MessengerFactory {
                 data.saveAsync(null);
         }
     }
-
 
     private static void tellMissed(Player p, String message) {
         p.sendRawMessage(ChatColor.GOLD + "[Missed] " + ChatColor.RESET + message);

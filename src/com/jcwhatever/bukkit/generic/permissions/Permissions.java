@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.permissions;
 
+import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -45,7 +46,7 @@ public final class Permissions {
 
     private Permissions() {}
 
-    private static IPermissionsHandler _handler;
+    private static IPermissionsProvider _provider;
 
     /**
      * Determine if the permissions implementation has group support.
@@ -470,26 +471,25 @@ public final class Permissions {
     /**
      * Get the permissions handler implementation.
      */
-    public static IPermissionsHandler getImplementation() {
+    public static IPermissionsProvider getImplementation() {
 
-        if (_handler == null) {
-            _handler = Bukkit.getPluginManager().getPlugin("Vault") != null
-                    ? new VaultPermissionsHandler()
-                    : new BukkitPermissionsHandler();
+        if (_provider == null) {
+            _provider = Bukkit.getPluginManager().getPlugin("Vault") != null
+                    ? new VaultPermissionsProvider()
+                    : new BukkitPermissionsProvider();
         }
 
-        return _handler;
+        return _provider;
     }
 
     /**
      * Set the permissions handler implementation.
      *
-     * @param handler  The handler to set.
+     * @param provider  The handler to set.
      */
-    public static void setImplementation(IPermissionsHandler handler) {
-        PreCon.notNull(handler);
+    public static void setImplementation(IPermissionsProvider provider) {
+        PreCon.notNull(provider);
 
-        _handler = handler;
+        _provider = provider;
     }
-
 }

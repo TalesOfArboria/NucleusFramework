@@ -22,59 +22,54 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.bukkit.generic.storage;
-
-import com.jcwhatever.bukkit.generic.utils.PreCon;
+package com.jcwhatever.bukkit.generic.providers;
 
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
+/**
+ * Interface for the provider manager.
+ */
+public interface IProviderManager {
 
-public final class DataStorage {
-
-    private DataStorage() {}
-
-    /**
-     * Remove data storage.
-     *
-     * @param plugin  The owning plugin.
-     * @param path    Storage path.
-     *
-     * @return  True if successful.
-     */
-    public static boolean removeStorage(Plugin plugin, DataPath path) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(path);
-
-        File file = YamlDataStorage.convertStoragePathToFile(plugin, path);
-        return file.exists() && file.delete();
-    }
+    IPermissionsProvider getPermissionsProvider();
 
     /**
-     * Get or create data storage.
-     *
-     * @param plugin  The owning plugin.
-     * @param path    Storage path.
+     * Get the default data storage provider.
      */
-    public static IDataNode getStorage(Plugin plugin, DataPath path) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(path);
-
-        return new YamlDataStorage(plugin, path);
-    }
+    IStorageProvider getStorageProvider();
 
     /**
-     * Determine if a data store exists.
+     * Set the default data storage provider.
      *
-     * @param plugin  The owning plugin.
-     * @param path    Storage path.
+     * <p>Can only be set while GenericsLib is loading providers.</p>
+     *
+     * @param storageProvider  The storage provider.
      */
-    public static boolean hasStorage(Plugin plugin, DataPath path) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(path);
+    void setStorageProvider(IStorageProvider storageProvider);
 
-        File file = YamlDataStorage.convertStoragePathToFile(plugin, path);
-        return file.exists();
-    }
+    /**
+     * Get the data storage provider for a plugin.
+     *
+     * @param plugin  The plugin.
+     */
+    IStorageProvider getStorageProvider(Plugin plugin);
+
+    /**
+     * Set the data storage provider for a specific plugin.
+     *
+     * <p>Can only be set while GenericsLib is loading providers.</p>
+     *
+     * @param plugin           The plugin.
+     * @param storageProvider  The storage provider.
+     */
+    void setStorageProvider(Plugin plugin, IStorageProvider storageProvider);
+
+    /**
+     * Register a storage provider.
+     *
+     * <p>Can only register while GenericsLib is loading providers.</p>
+     *
+     * @param storageProvider  The storage provider.
+     */
+    void registerStorageProvider(IStorageProvider storageProvider);
 }

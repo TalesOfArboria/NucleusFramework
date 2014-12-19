@@ -22,47 +22,35 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.providers;
 
-package com.jcwhatever.bukkit.generic.storage;
-
-import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
 
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-
-public final class DataStorage {
-
-    private DataStorage() {}
+/**
+ * Interface for a file based storage provider.
+ */
+public interface IStorageProvider extends IProvider {
 
     /**
-     * Remove data storage.
+     * Remove data store.
      *
      * @param plugin  The owning plugin.
      * @param path    Storage path.
      *
      * @return  True if successful.
      */
-    public static boolean removeStorage(Plugin plugin, DataPath path) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(path);
-
-        File file = YamlDataStorage.convertStoragePathToFile(plugin, path);
-        return file.exists() && file.delete();
-    }
+    boolean removeStorage(Plugin plugin, DataPath path);
 
     /**
-     * Get or create data storage.
+     * Get or create data store.
      *
      * @param plugin  The owning plugin.
      * @param path    Storage path.
      */
-    public static IDataNode getStorage(Plugin plugin, DataPath path) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(path);
-
-        return new YamlDataStorage(plugin, path);
-    }
+    IDataNode getStorage(Plugin plugin, DataPath path);
 
     /**
      * Determine if a data store exists.
@@ -70,11 +58,5 @@ public final class DataStorage {
      * @param plugin  The owning plugin.
      * @param path    Storage path.
      */
-    public static boolean hasStorage(Plugin plugin, DataPath path) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(path);
-
-        File file = YamlDataStorage.convertStoragePathToFile(plugin, path);
-        return file.exists();
-    }
+    boolean hasStorage(Plugin plugin, DataPath path);
 }

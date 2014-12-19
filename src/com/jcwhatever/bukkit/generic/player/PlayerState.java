@@ -26,8 +26,8 @@
 package com.jcwhatever.bukkit.generic.player;
 
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -202,7 +202,7 @@ public class PlayerState {
         if (_plugin == null)
             return false;
 
-        IDataNode dataNode = DataStorage.getTransientStorage(_plugin, new DataPath("player-states." + _playerId));
+        IDataNode dataNode = DataStorage.getStorage(_plugin, new DataPath("player-states." + _playerId));
 
         _snapshot.save(dataNode);
 
@@ -264,7 +264,7 @@ public class PlayerState {
         });
 
         // remove back up state storage
-        DataStorage.removeTransientStorage(_plugin, new DataPath("player-states." + _playerId));
+        DataStorage.removeStorage(_plugin, new DataPath("player-states." + _playerId));
 
         // remove from state map
         getStateMap(_plugin).remove(_player.getUniqueId());
@@ -280,8 +280,8 @@ public class PlayerState {
 
         DataPath dataPath = new DataPath("player-states." + _playerId);
 
-        if (DataStorage.hasTransientStorage(_plugin, dataPath)) {
-            DataStorage.removeTransientStorage(_plugin, dataPath);
+        if (DataStorage.hasStorage(_plugin, dataPath)) {
+            DataStorage.removeStorage(_plugin, dataPath);
         }
     }
 
@@ -304,10 +304,10 @@ public class PlayerState {
      */
     private static boolean loadFromFile(PlayerState state) {
 
-        if (!DataStorage.hasTransientStorage(state._plugin, new DataPath("player-states." + state._playerId)))
+        if (!DataStorage.hasStorage(state._plugin, new DataPath("player-states." + state._playerId)))
             return false;
 
-        IDataNode dataNode = DataStorage.getTransientStorage(state._plugin, new DataPath("player-states." + state._playerId));
+        IDataNode dataNode = DataStorage.getStorage(state._plugin, new DataPath("player-states." + state._playerId));
         if (!dataNode.load())
             return false;
 

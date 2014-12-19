@@ -27,8 +27,8 @@ package com.jcwhatever.bukkit.generic.permissions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -54,7 +54,7 @@ import javax.annotation.Nullable;
 /**
  * Basic Bukkit permissions handler
  */
-public class BukkitPermissionsHandler extends AbstractPermissionsHandler {
+public class BukkitPermissionsProvider extends AbstractPermissionsHandler {
 
     private static Map<UUID, PermissionAttachment> _transient = new PlayerMap<PermissionAttachment>(GenericsLib.getPlugin());
     private static Listener _bukkitListener;
@@ -64,7 +64,7 @@ public class BukkitPermissionsHandler extends AbstractPermissionsHandler {
     /**
      * Constructor.
      */
-    BukkitPermissionsHandler() {
+    BukkitPermissionsProvider() {
 
         // get permissions data node
         _dataNode = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("bukkit-permissions"));
@@ -75,6 +75,21 @@ public class BukkitPermissionsHandler extends AbstractPermissionsHandler {
             _bukkitListener = new PermissionListener();
             Bukkit.getPluginManager().registerEvents(_bukkitListener, GenericsLib.getPlugin());
         }
+    }
+
+    @Override
+    public String getName() {
+        return "Bukkit";
+    }
+
+    @Override
+    public String getVersion() {
+        return GenericsLib.getPlugin().getDescription().getVersion();
+    }
+
+    @Override
+    public int getLogicalVersion() {
+        return 0;
     }
 
     @Override
@@ -277,8 +292,8 @@ public class BukkitPermissionsHandler extends AbstractPermissionsHandler {
             Player p = event.getPlayer();
 
             // give permissions
-            if (Permissions.getImplementation() instanceof BukkitPermissionsHandler) {
-                BukkitPermissionsHandler perms = (BukkitPermissionsHandler)Permissions.getImplementation();
+            if (Permissions.getImplementation() instanceof BukkitPermissionsProvider) {
+                BukkitPermissionsProvider perms = (BukkitPermissionsProvider)Permissions.getImplementation();
 
                 // get players permission data node
                 IDataNode playerNode = perms._dataNode.getNode(p.getUniqueId().toString());

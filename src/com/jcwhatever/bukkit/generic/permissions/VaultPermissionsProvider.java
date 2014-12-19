@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.permissions;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
 
 import org.bukkit.Bukkit;
@@ -41,20 +42,35 @@ import javax.annotation.Nullable;
 /**
  * Vault interface implementation.
  */
-public class VaultPermissionsHandler extends AbstractPermissionsHandler {
+public class VaultPermissionsProvider extends AbstractPermissionsHandler {
 
     private Permission _perms = null;
 
     /**
      * Constructor.
      */
-    VaultPermissionsHandler() {
+    VaultPermissionsProvider() {
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
                 .getRegistration(net.milkbowl.vault.permission.Permission.class);
 
         if (permissionProvider != null) {
             _perms = permissionProvider.getProvider();
         }
+    }
+
+    @Override
+    public String getName() {
+        return "Vault";
+    }
+
+    @Override
+    public String getVersion() {
+        return GenericsLib.getPlugin().getDescription().getVersion();
+    }
+
+    @Override
+    public int getLogicalVersion() {
+        return 0;
     }
 
     @Override
@@ -82,7 +98,6 @@ public class VaultPermissionsHandler extends AbstractPermissionsHandler {
     public boolean addTransient(Plugin plugin, CommandSender sender, String permissionName) {
         Player p = getPlayer(sender);
         return p != null && _perms.playerAddTransient(p, permissionName);
-
     }
 
     @Override
@@ -164,5 +179,4 @@ public class VaultPermissionsHandler extends AbstractPermissionsHandler {
 
         return (Player)sender;
     }
-
 }

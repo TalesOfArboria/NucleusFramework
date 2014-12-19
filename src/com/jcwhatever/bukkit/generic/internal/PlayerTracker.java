@@ -25,8 +25,8 @@
 package com.jcwhatever.bukkit.generic.internal;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.StorageLoadHandler;
 import com.jcwhatever.bukkit.generic.storage.StorageLoadResult;

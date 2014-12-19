@@ -29,7 +29,6 @@ import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.utils.BatchTracker;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;

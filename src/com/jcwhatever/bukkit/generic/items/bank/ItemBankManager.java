@@ -28,16 +28,17 @@ package com.jcwhatever.bukkit.generic.items.bank;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.TimedHashMap;
 import com.jcwhatever.bukkit.generic.performance.SingleCache;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Static methods for managing player Item Bank Accounts.

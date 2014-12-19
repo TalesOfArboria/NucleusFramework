@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.generic.messaging.IChatPrefixed;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
-import com.jcwhatever.bukkit.generic.storage.DataStorage.DataPath;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 
 import org.bukkit.command.CommandExecutor;

@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.providers;
 
-package com.jcwhatever.bukkit.generic.permissions;
+import com.jcwhatever.bukkit.generic.permissions.IPermission;
 
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -33,9 +34,9 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 
 /**
- * Interface for a permissions handler implementation.
+ * Interface for a permissions provider implementation.
  */
-public interface IPermissionsHandler {
+public interface IPermissionsProvider extends IProvider {
 
     /**
      * Determine if the permissions implementation
@@ -270,5 +271,4 @@ public interface IPermissionsHandler {
      */
     @Nullable
     String[] getGroups(CommandSender sender, World world);
-
 }

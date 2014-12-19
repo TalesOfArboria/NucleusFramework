@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.permissions;
 
 import com.jcwhatever.bukkit.generic.internal.Msg;
+import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.utils.BatchTracker;
 
 import org.bukkit.Bukkit;
@@ -42,7 +43,7 @@ import java.util.Set;
 /**
  * Abstract implementation of a permissions handler
  */
-public abstract class AbstractPermissionsHandler implements IPermissionsHandler {
+public abstract class AbstractPermissionsHandler implements IPermissionsProvider {
 
     private static final BatchTracker _batch = new BatchTracker();
     private static Set<Permission> _toRecalculate = new HashSet<>(1000);
