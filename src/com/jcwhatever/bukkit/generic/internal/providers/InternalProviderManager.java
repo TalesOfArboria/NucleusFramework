@@ -24,12 +24,16 @@
 
 package com.jcwhatever.bukkit.generic.internal.providers;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.providers.permissions.BukkitPermissionsProvider;
 import com.jcwhatever.bukkit.generic.internal.providers.permissions.VaultPermissionsProvider;
 import com.jcwhatever.bukkit.generic.internal.providers.storage.YamlStorageProvider;
 import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.providers.IProviderManager;
 import com.jcwhatever.bukkit.generic.providers.IStorageProvider;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.storage.YamlDataStorage;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -46,14 +50,25 @@ import javax.annotation.Nullable;
  */
 public class InternalProviderManager implements IProviderManager {
 
+    private IDataNode _dataNode;
+
     private IPermissionsProvider _defaultPermissions;
 
-    private final YamlStorageProvider _yamlStorage = new YamlStorageProvider();
-    private final Map<Plugin, IStorageProvider> _pluginStorage = new HashMap<>(50);
-    private final Map<String, IStorageProvider> _storageProviders = new HashMap<>(10);
     private IStorageProvider _defaultStorage;
 
+    private final YamlStorageProvider _yamlStorage = new YamlStorageProvider();
+
+    // keyed to plugin name
+    private final Map<String, IStorageProvider> _pluginStorage = new HashMap<>(50);
+
+    // keyed to provider name
+    private final Map<String, IStorageProvider> _storageProviders = new HashMap<>(10);
+
     boolean _isProvidersLoading;
+
+    public InternalProviderManager() {
+        _storageProviders.put(_yamlStorage.getName().toLowerCase(), _yamlStorage);
+    }
 
     @Override
     public IPermissionsProvider getPermissionsProvider() {
@@ -90,7 +105,7 @@ public class InternalProviderManager implements IProviderManager {
     public IStorageProvider getStorageProvider(Plugin plugin) {
         PreCon.notNull(plugin);
 
-        IStorageProvider pluginProvider = _pluginStorage.get(plugin);
+        IStorageProvider pluginProvider = _pluginStorage.get(plugin.getName().toLowerCase());
         return pluginProvider != null ? pluginProvider : getStorageProvider();
     }
 
@@ -98,9 +113,17 @@ public class InternalProviderManager implements IProviderManager {
     public void setStorageProvider(Plugin plugin, IStorageProvider storageProvider) {
         PreCon.notNull(plugin);
         PreCon.notNull(storageProvider);
-        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
 
-        _pluginStorage.put(plugin, storageProvider);
+        IDataNode dataNode = getDataNode().getNode("storage");
+        List<String> pluginNames = dataNode.getStringList(storageProvider.getName(),
+                new ArrayList<String>(5));
+
+        assert pluginNames != null;
+
+        pluginNames.add(plugin.getName());
+
+        dataNode.set(storageProvider.getName(), pluginNames);
+        dataNode.saveAsync(null);
     }
 
     @Nullable
@@ -122,5 +145,21 @@ public class InternalProviderManager implements IProviderManager {
         PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");
 
         _storageProviders.put(storageProvider.getName().toLowerCase(), storageProvider);
+
+        IDataNode dataNode = getDataNode().getNode("storage");
+
+        List<String> pluginNames = dataNode.getStringList(storageProvider.getName(), null);
+        if (pluginNames != null) {
+            for (String pluginName : pluginNames) {
+                _pluginStorage.put(pluginName.toLowerCase(), storageProvider);
+            }
+        }
+    }
+
+    private IDataNode getDataNode() {
+        if (_dataNode == null) {
+            _dataNode = new YamlDataStorage(GenericsLib.getPlugin(), new DataPath("providers"));
+        }
+        return _dataNode;
     }
 }
