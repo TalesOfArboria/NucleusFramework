@@ -77,7 +77,6 @@ public abstract class Region extends RegionSelection implements IRegion {
     private final String _searchName;
     private final IDataNode _dataNode;
     private final IRegionEventListener _eventListener;
-    private final InternalRegionManager _regionManager;
 
     private RegionPriority _enterPriority = RegionPriority.DEFAULT;
     private RegionPriority _leavePriority = RegionPriority.DEFAULT;
@@ -228,7 +227,6 @@ public abstract class Region extends RegionSelection implements IRegion {
 
         setMeta(InternalRegionManager.REGION_HANDLE, this);
         _eventListener = new RegionListener(this);
-        _regionManager = (InternalRegionManager)GenericsLib.getRegionManager();
 
         _name = name;
         _plugin = plugin;
@@ -406,7 +404,7 @@ public abstract class Region extends RegionSelection implements IRegion {
 
         // unregister while math is updated,
         // is re-registered after math update (see UpdateMath)
-        _regionManager.unregister(this);
+        regionManager().unregister(this);
 
         super.setCoords(p1, p2);
         updateWorld();
@@ -435,7 +433,7 @@ public abstract class Region extends RegionSelection implements IRegion {
         if (_eventHandlers.add(handler)) {
             if (isFirstHandler) {
                 // update registration
-                _regionManager.register(this);
+                regionManager().register(this);
             }
             return true;
         }
@@ -455,7 +453,7 @@ public abstract class Region extends RegionSelection implements IRegion {
 
             if (_eventHandlers.isEmpty()) {
                 // update registration
-                _regionManager.register(this);
+                regionManager().register(this);
             }
             return true;
         }
@@ -691,7 +689,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      */
     @Override
     public final void dispose() {
-        _regionManager.unregister(this);
+        regionManager().unregister(this);
         _instances.remove(this);
 
         onDispose();
@@ -709,7 +707,7 @@ public abstract class Region extends RegionSelection implements IRegion {
         if (isEventListener != _isEventListener) {
             _isEventListener = isEventListener;
 
-            _regionManager.register(this);
+            regionManager().register(this);
         }
     }
 
@@ -720,7 +718,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      * @param p  The player to reset.
      */
     protected void resetContainsPlayer(Player p) {
-        _regionManager.resetPlayerRegion(p, this);
+        regionManager().resetPlayerRegion(p, this);
     }
 
     /**
@@ -762,7 +760,7 @@ public abstract class Region extends RegionSelection implements IRegion {
 
         super.updateMath();
 
-        _regionManager.register(this);
+        regionManager().register(this);
     }
 
     /**
@@ -927,6 +925,10 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
     }
 
+    private InternalRegionManager regionManager() {
+        return (InternalRegionManager)GenericsLib.getRegionManager();
+    }
+
     @Override
     public int hashCode() {
         return _name.hashCode();
@@ -936,14 +938,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     @Override
     public boolean equals(Object obj) {
         synchronized (_sync) {
-            if (obj instanceof Region) {
-
-                Region region = (Region)obj;
-                return region == this;
-            }
-
-            _sync.notifyAll();
-            return false;
+            return this == obj;
         }
     }
 
