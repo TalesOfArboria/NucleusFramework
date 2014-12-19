@@ -234,7 +234,7 @@ public class ArrayUtils {
         PreCon.notNull(destination);
 
         int delta = source.length - destination.length;
-        int sourceAdjust = delta < 0 ?  0 : -delta;
+        int sourceAdjust = delta < 0 ?  0 : delta;
         int destAdjust = delta < 0 ? -delta : 0;
 
         System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);
@@ -257,7 +257,7 @@ public class ArrayUtils {
         PreCon.notNull(destination);
 
         int delta = source.length - destination.length;
-        int sourceAdjust = delta < 0 ?  0 : -delta;
+        int sourceAdjust = delta < 0 ?  0 : delta;
         int destAdjust = delta < 0 ? -delta : 0;
 
         System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);
@@ -280,7 +280,7 @@ public class ArrayUtils {
         PreCon.notNull(destination);
 
         int delta = source.length - destination.length;
-        int sourceAdjust = delta < 0 ?  0 : -delta;
+        int sourceAdjust = delta < 0 ?  0 : delta;
         int destAdjust = delta < 0 ? -delta : 0;
 
         System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);
@@ -303,7 +303,7 @@ public class ArrayUtils {
         PreCon.notNull(destination);
 
         int delta = source.length - destination.length;
-        int sourceAdjust = delta < 0 ?  0 : -delta;
+        int sourceAdjust = delta < 0 ?  0 : delta;
         int destAdjust = delta < 0 ? -delta : 0;
 
         System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);
@@ -326,7 +326,7 @@ public class ArrayUtils {
         PreCon.notNull(destination);
 
         int delta = source.length - destination.length;
-        int sourceAdjust = delta < 0 ?  0 : -delta;
+        int sourceAdjust = delta < 0 ?  0 : delta;
         int destAdjust = delta < 0 ? -delta : 0;
 
         System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);
@@ -349,7 +349,7 @@ public class ArrayUtils {
         PreCon.notNull(destination);
 
         int delta = source.length - destination.length;
-        int sourceAdjust = delta < 0 ?  0 : -delta;
+        int sourceAdjust = delta < 0 ?  0 : delta;
         int destAdjust = delta < 0 ? -delta : 0;
 
         System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);
@@ -372,7 +372,7 @@ public class ArrayUtils {
         PreCon.notNull(destination);
 
         int delta = source.length - destination.length;
-        int sourceAdjust = delta < 0 ?  0 : -delta;
+        int sourceAdjust = delta < 0 ?  0 : delta;
         int destAdjust = delta < 0 ? -delta : 0;
 
         System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);
@@ -395,7 +395,7 @@ public class ArrayUtils {
         PreCon.notNull(destination);
 
         int delta = source.length - destination.length;
-        int sourceAdjust = delta < 0 ?  0 : -delta;
+        int sourceAdjust = delta < 0 ?  0 : delta;
         int destAdjust = delta < 0 ? -delta : 0;
 
         System.arraycopy(source, sourceAdjust, destination, destAdjust, destination.length - destAdjust);

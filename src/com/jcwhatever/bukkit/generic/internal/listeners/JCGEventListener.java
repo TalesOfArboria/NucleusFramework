@@ -84,11 +84,11 @@ public final class JCGEventListener implements Listener {
 	}
 
 	@EventHandler(priority=EventPriority.HIGHEST)
-    private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-	    
-        if (CommandRequests.onResponse(event.getPlayer(), event.getMessage())) {
-            event.setCancelled(true);
-        }
+	private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+
+		if (CommandRequests.onResponse(event.getPlayer(), event.getMessage())) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(priority=EventPriority.LOW)
@@ -132,7 +132,7 @@ public final class JCGEventListener implements Listener {
 
 	@EventHandler(priority=EventPriority.LOWEST) // first priority
 	private void onPlayerQuit(PlayerQuitEvent event) {
-        PlayList.clearQueue(event.getPlayer());
+		PlayList.clearQueue(event.getPlayer());
 
 		_regionManager
 				.updatePlayerLocation(event.getPlayer(), LeaveRegionReason.QUIT_SERVER);
@@ -141,10 +141,10 @@ public final class JCGEventListener implements Listener {
 	@EventHandler(priority=EventPriority.MONITOR)
 	private void onPlayerTeleport(PlayerTeleportEvent event) {
 
-        // player teleporting to a different world
+		// player teleporting to a different world
 		if (!event.getFrom().getWorld().equals(event.getTo().getWorld())) {
 
-            PlayList.clearQueue(event.getPlayer());
+			PlayList.clearQueue(event.getPlayer());
 		}
 
 		_regionManager
@@ -161,7 +161,7 @@ public final class JCGEventListener implements Listener {
 		Block clicked = event.getClickedBlock();
 
 		// Signs
-		if (clicked != null && (clicked.getType() == Material.WALL_SIGN 
+		if (clicked != null && (clicked.getType() == Material.WALL_SIGN
 				|| clicked.getType() == Material.SIGN_POST)) {
 
 			Action action = event.getAction();
@@ -190,62 +190,56 @@ public final class JCGEventListener implements Listener {
 			return;
 
 		Player p = (Player)entity;
+
 		Inventory inventory = event.getInventory();
+		if (!(inventory instanceof AnvilInventory))
+			return;
 
+		AnvilInventory anvilInventory = (AnvilInventory)inventory;
+		InventoryView view = event.getView();
+		int rawSlot = event.getRawSlot();
 
-		if (inventory instanceof AnvilInventory) {
-			AnvilInventory anvilInventory = (AnvilInventory)inventory;
-			InventoryView view = event.getView();
-			int rawSlot = event.getRawSlot();
+		if (rawSlot != view.convertSlot(rawSlot) || rawSlot != 2)
+			return;
 
-			if (rawSlot == view.convertSlot(rawSlot) && rawSlot == 2) {
+		ItemStack resultItem = anvilInventory.getItem(2);
+		if (resultItem == null)
+			return;
 
-				ItemStack resultItem = anvilInventory.getItem(2);
+		ItemStack slot1 = anvilInventory.getItem(0);
 
-				if (resultItem != null) {
+		// check for rename
+		String originalName = slot1 != null
+				? ItemStackUtils.getDisplayName(slot1, DisplayNameResult.OPTIONAL)
+				: null;
 
-					ItemStack slot1 = anvilInventory.getItem(0);
-					
-					// check for rename
-					String originalName = slot1 != null
-                            ? ItemStackUtils.getDisplayName(slot1, DisplayNameResult.OPTIONAL)
-                            : null;
+		String newName = ItemStackUtils.getDisplayName(resultItem, DisplayNameResult.OPTIONAL);
 
-					String newName = ItemStackUtils.getDisplayName(resultItem, DisplayNameResult.OPTIONAL);
-					
-					if (newName != null && !newName.equals(originalName)) {
-						
-						AnvilItemRenameEvent renameEvent = new AnvilItemRenameEvent(
-                                p, anvilInventory, resultItem, newName, originalName);
+		if (newName != null && !newName.equals(originalName)) {
 
-						GenericsLib.getEventManager().callBukkit(renameEvent);
-						
-						if (renameEvent.isCancelled()) {
-							event.setCancelled(true);
-							return;
-						}
-					}
-					
-					
-					// check for repair
-					short startDurability = slot1 != null ? slot1.getDurability() : Short.MAX_VALUE;
-					short resultDurability = resultItem.getDurability();
-					
-					if (resultDurability > startDurability) {
-						AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
+			AnvilItemRenameEvent renameEvent = new AnvilItemRenameEvent(
+					p, anvilInventory, resultItem, newName, originalName);
 
-						GenericsLib.getEventManager().callBukkit(repairEvent);
+			GenericsLib.getEventManager().callBukkit(renameEvent);
 
-						if (repairEvent.isCancelled()) {
-							event.setCancelled(true);
-						}
-					}
-				}
-				
+			if (renameEvent.isCancelled()) {
+				event.setCancelled(true);
+				return;
 			}
-
 		}
 
-	}
+		// check for repair
+		short startDurability = slot1 != null ? slot1.getDurability() : Short.MAX_VALUE;
+		short resultDurability = resultItem.getDurability();
 
+		if (resultDurability > startDurability) {
+			AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
+
+			GenericsLib.getEventManager().callBukkit(repairEvent);
+
+			if (repairEvent.isCancelled()) {
+				event.setCancelled(true);
+			}
+		}
+	}
 }
