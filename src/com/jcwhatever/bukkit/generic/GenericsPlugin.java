@@ -60,7 +60,7 @@ public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed
      */
     public GenericsPlugin() {
         super();
-        init();
+        onInit();
     }
 
     /**
@@ -154,7 +154,7 @@ public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed
     /**
      * Called when the plugin is instantiated.
      */
-    protected void init() {
+    protected void onInit() {
         // do nothing
     }
 
