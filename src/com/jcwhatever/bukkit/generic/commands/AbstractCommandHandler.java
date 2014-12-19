@@ -35,21 +35,21 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
+import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,18 +155,19 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
             return true;
         }
 
-        String[] argArray = trimFirstArg(args);
+        // trim the first element from the array
+        String[] argArray = ArrayUtils.reduceStart(1, args);
 
-        // parse parameters and get command and command specific parameters
-        CommandPackage commandPackage = getCommand(command, argArray);
+        // parse arguments and get command and command specific arguments
+        CommandPackage commandPackage = getCommand(command, argArray, 1);
         if (commandPackage != null) {
-            // update command and parameters
+            // update command and arguments
             command = commandPackage.command;
-            argArray = commandPackage.parameters;
+            argArray = commandPackage.arguments;
         }
 
         // Check if the player has permissions to run the command
-        if (sender instanceof Player && !Permissions.has((Player)sender, command.getPermission().getName())) {
+        if (!Permissions.has(sender, command.getPermission().getName())) {
             tellError(sender, Lang.get(_ACCESS_DENIED));
             return true;
         }
@@ -211,6 +212,88 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     }
 
     /**
+     * Called to modify a tab completion list.
+     *
+     * @param sender       The command sender.
+     * @param args         The base command arguments.
+     */
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        PreCon.notNull(sender);
+        PreCon.notNull(args);
+
+        // get the primary command from the first argument
+        AbstractCommand masterCommand = _masterCommands.get(args[0]);
+
+        if (masterCommand == null && !args[0].isEmpty()) {
+            // get possible command matches
+            return searchCommandNames(args[0], _masterCommands.keySet());
+        }
+        // check if the master command is the only argument
+        else if (args.length == 1) {
+            // return all commands
+            return new ArrayList<>(_masterCommands.keySet());
+        }
+
+        // trim the first element from the array (the master command name)
+        String[] argArray = ArrayUtils.reduceStart(1, args);
+
+        List<String> result = new ArrayList<>(10);
+
+        // parse arguments and get command and command specific arguments
+        CommandPackage commandPackage = getCommand(masterCommand, argArray, 1);
+        if (commandPackage != null) {
+
+            AbstractCommand subCommand = commandPackage.command;
+            String[] arguments = commandPackage.arguments;
+
+            // add sub commands to list
+            if (subCommand.getSubCommands().size() > 0 &&
+                    (arguments.length ==0 || !arguments[0].equals("?"))) {
+
+
+                // generate list of sub command names the player has permission to use
+                Collection<String> names = subCommand.getSubCommandNames();
+                Iterator<String> iterator = names.iterator();
+                while (iterator.hasNext()) {
+
+                    String name = iterator.next();
+                    AbstractCommand command = subCommand.getSubCommand(name);
+                    if (command == null)
+                        continue;
+
+                    if (!sender.hasPermission(command.getPermission().getName())) {
+                        iterator.remove();
+                    }
+                }
+
+                if (arguments.length == 1 &&
+                        !arguments[0].isEmpty()) {
+                    // search for command matches
+                    result.addAll(searchCommandNames(arguments[0], names));
+                }
+                else {
+                    // add all commands
+                    result.addAll(names);
+                }
+            }
+
+            // give the command the opportunity to modify the list
+            subCommand.onTabComplete(
+                    sender,
+                    arguments,
+                    result);
+
+            // add the command help
+            if (arguments.length == 0 ||
+                    (arguments.length == 1 && arguments[0].isEmpty())) {
+                result.add("?");
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Get a command instance using a string path. The format of the
      * path is the command names separated by periods.
      * i.e. "command.subcommand1.subcommand2"
@@ -235,12 +318,12 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         if (pathComp.length == 1)
             return masterCommand;
 
-        CommandPackage commandPackage = getCommand(masterCommand, trimFirstArg(pathComp));
+        CommandPackage commandPackage = getCommand(masterCommand, ArrayUtils.reduceStart(1, pathComp), 1);
         if (commandPackage == null)
             return null;
 
         // there shouldn't be any left over command path components
-        if (commandPackage.parameters.length != 0)
+        if (commandPackage.arguments.length != 0)
             return null;
 
         return commandPackage.command;
@@ -322,39 +405,26 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
      * @param parentCommand  The command the supplied arguments are for
      * @param args           The command arguments
      */
-    private CommandPackage getCommand(AbstractCommand parentCommand, @Nullable String[] args) {
+    private CommandPackage getCommand(AbstractCommand parentCommand, @Nullable String[] args, int depth) {
         PreCon.notNull(parentCommand);
 
         if (args == null || args.length == 0)
-            return new CommandPackage(parentCommand, new String[0]);
+            return new CommandPackage(parentCommand, new String[0], depth);
 
         String subCmd = args[0].toLowerCase();
-        String[] params = trimFirstArg(args);
+        String[] params = ArrayUtils.reduceStart(1, args);
 
-        AbstractCommand subCommand = parentCommand.getSubCommand(subCmd);
+        AbstractCommand subCommand = subCmd.isEmpty() ? null : parentCommand.getSubCommand(subCmd);
         if (subCommand == null)
-            return new CommandPackage(parentCommand, args);
+            return new CommandPackage(parentCommand, args, depth);
         else {
-            CommandPackage p = getCommand(subCommand, params);
+            CommandPackage p = getCommand(subCommand, params, depth + 1);
             if (p == null)
-                return new CommandPackage(parentCommand, args);
+                return new CommandPackage(parentCommand, args, depth);
 
             return p;
         }
     }
-
-    /**
-     * Trim the first element of a {@code String[]}
-     */
-    private String[] trimFirstArg(String[] args) {
-        PreCon.notNull(args);
-
-        if (args.length <= 1)
-            return new String[0];
-
-        return Arrays.copyOfRange(args, 1, args.length);
-    }
-
 
     @Nullable
     private CommandArguments getCommandArguments(CommandSender sender, AbstractCommand command, String[] argArray, boolean showMessages) {
@@ -405,7 +475,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
             return null; // finished
         }
 
-        // Make sure the number of provided parameters match the expected amount
+        // Make sure the number of provided arguments match the expected amount
         if (arguments.staticSize() < arguments.expectedSize()) {
 
             if (showMessages)
@@ -447,7 +517,6 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         }
         return true;
     }
-
 
     private boolean registerCommand(Class<? extends AbstractCommand> commandClass, boolean isBaseCommand) {
 
@@ -503,18 +572,36 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         return true;
     }
 
+    private List<String> searchCommandNames(String searchText, Collection<String> commandNames) {
+
+        if (searchText.isEmpty())
+            return new ArrayList<>(0);
+
+        List<String> result = new ArrayList<>(commandNames.size());
+
+        for (String command : commandNames) {
+            if (command.toLowerCase().startsWith(searchText.toLowerCase()))
+                result.add(command);
+        }
+
+        return result;
+    }
+
+
     /**
      * A data object that holds an {@code AbstractCommand} implementation
-     * as well as a {@code String[]} of parameters it should be
+     * as well as a {@code String[]} of arguments it should be
      * executed with.
      */
     private static class CommandPackage {
         AbstractCommand command;
-        String[] parameters;
+        String[] arguments;
+        int depth;
 
-        CommandPackage (AbstractCommand command, String[] parameters) {
+        CommandPackage (AbstractCommand command, String[] parameters, int depth) {
             this.command = command;
-            this.parameters = parameters;
+            this.arguments = parameters;
+            this.depth = depth;
         }
     }
 

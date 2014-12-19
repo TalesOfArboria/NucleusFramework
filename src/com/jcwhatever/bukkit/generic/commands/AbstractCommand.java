@@ -90,10 +90,30 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
 
     /**
      * Execute the command.
-     * Intended to be overridden by implementation if needed.
+     *
+     * <p>Intended to be overridden by implementation if needed.</p>
      */
     public void execute(CommandSender sender, CommandArguments args)
             throws InvalidValueException, InvalidCommandSenderException {
+    }
+
+    /**
+     * Called to get a list of possible tab complete values from the command based
+     * on the current text.
+     *
+     * <p>Intended to be overridden by implementation if needed.</p>
+     *
+     * @param sender      The command sender.
+     * @param arguments   This command arguments currently entered by the command sender.
+     *                    not including the command and command path.
+     * @param completions The list of completions.
+     *
+     * @return A list of possible results. Empty list if no results.
+     */
+    public void onTabComplete(@SuppressWarnings("unused") CommandSender sender,
+                              @SuppressWarnings("unused") String[] arguments,
+                              @SuppressWarnings("unused") Collection<String> completions) {
+        // do nothing
     }
 
     /**
@@ -220,6 +240,13 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             _sortedSubCommands = subCommands;
         }
         return new ArrayList<AbstractCommand>(_sortedSubCommands);
+    }
+
+    /**
+     * Get the sub command names.
+     */
+    public final Collection<String> getSubCommandNames() {
+        return new ArrayList<>(_subCommands.keySet());
     }
 
     /**

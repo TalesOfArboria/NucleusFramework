@@ -55,7 +55,7 @@ public @interface CommandInfo {
     String[] command();
 
     /**
-     * Define static parameters of command.
+     * Define static arguments of command.
      * i.e. /command static1 static2 --floating1 floating1val --floatingFlag
      *
      * <p>format example: { "parameter1Name", "parameter2Name" }</p>
@@ -66,7 +66,7 @@ public @interface CommandInfo {
     String[] staticParams() default {};
 
     /**
-     * Define floating parameters of command.
+     * Define floating arguments of command.
      * i.e. /command static1 static2 --floating1 floating1val --floatingFlag
      *
      * <p>format example: { "parameter1Name", "parameter2Name" }</p>
@@ -75,8 +75,8 @@ public @interface CommandInfo {
     String[] floatingParams() default {};
 
     /**
-     * Define descriptions for parameters. Include descriptions for both static
-     * and floating parameters.
+     * Define descriptions for arguments. Include descriptions for both static
+     * and floating arguments.
      *
      * <p>format example: { "paramName1=description", "paramName2=description" }
      */
