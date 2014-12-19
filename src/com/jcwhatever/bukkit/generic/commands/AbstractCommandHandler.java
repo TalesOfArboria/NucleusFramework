@@ -250,7 +250,6 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
             if (subCommand.getSubCommands().size() > 0 &&
                     (arguments.length ==0 || !arguments[0].equals("?"))) {
 
-
                 // generate list of sub command names the player has permission to use
                 Collection<String> names = subCommand.getSubCommandNames();
                 Iterator<String> iterator = names.iterator();
@@ -261,7 +260,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
                     if (command == null)
                         continue;
 
-                    if (!sender.hasPermission(command.getPermission().getName())) {
+                    if (!command.isHelpVisible(sender)) {
                         iterator.remove();
                     }
                 }
