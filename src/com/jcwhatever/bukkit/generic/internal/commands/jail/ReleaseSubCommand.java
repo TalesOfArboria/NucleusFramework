@@ -31,10 +31,10 @@ import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.jail.JailSession;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
+
 import org.bukkit.command.CommandSender;
 
 import java.util.UUID;
@@ -64,15 +64,14 @@ public class ReleaseSubCommand extends AbstractCommand {
             return; // finish
         }
         
-        JailManager jailManager = GenericsLib.getJailManager();
-        JailSession jailSession = jailManager.getJailSession(playerId);
+        JailSession jailSession = GenericsLib.getJailManager().getSession(playerId);
         
         if (jailSession == null) {
             tellError(sender, Lang.get(_PLAYER_NOT_IMPRISONED, playerName));
             return; // finish
         }
         
-        jailSession.release(true);
+        jailSession.release();
         
         tellSuccess(sender, Lang.get(_SUCCESS, playerName));
     }

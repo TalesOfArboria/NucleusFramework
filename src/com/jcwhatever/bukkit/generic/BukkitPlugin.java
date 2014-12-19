@@ -7,12 +7,12 @@ import com.jcwhatever.bukkit.generic.internal.InternalScriptManager;
 import com.jcwhatever.bukkit.generic.internal.InternalTitleManager;
 import com.jcwhatever.bukkit.generic.internal.PlayerTracker;
 import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
+import com.jcwhatever.bukkit.generic.internal.jail.InternalJailManager;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
 import com.jcwhatever.bukkit.generic.internal.nms.InternalNmsManager;
 import com.jcwhatever.bukkit.generic.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
@@ -36,7 +36,7 @@ public final class BukkitPlugin extends GenericsPlugin {
     InternalScriptApiRepo _scriptApiRepo;
     InternalNmsManager _nmsManager;
 
-    JailManager _jailManager;
+    InternalJailManager _jailManager;
     EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -95,7 +95,7 @@ public final class BukkitPlugin extends GenericsPlugin {
         _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsNamedTitleFactory());
 
         _regionManager = new InternalRegionManager(this);
-        _jailManager = new JailManager(this, "default", getDataNode().getNode("jail"));
+        _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
         _equipperManager = new EntityEquipperManager();
 
         registerEventListeners(new JCGEventListener());

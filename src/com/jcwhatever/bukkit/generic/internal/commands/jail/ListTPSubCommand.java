@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
+import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
@@ -57,7 +57,7 @@ public class ListTPSubCommand extends AbstractCommand {
 
         int page = args.getInteger("page");
 
-        JailManager jailManager = GenericsLib.getJailManager();
+        Jail jailManager = GenericsLib.getDefaultJail();
 
         List<INamedLocation> locations = jailManager.getTeleports();
 

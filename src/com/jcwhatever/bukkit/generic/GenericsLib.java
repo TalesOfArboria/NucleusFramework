@@ -31,7 +31,8 @@ import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
+import com.jcwhatever.bukkit.generic.jail.IJailManager;
+import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.nms.NmsManager;
 import com.jcwhatever.bukkit.generic.regions.GlobalRegionManager;
@@ -154,12 +155,21 @@ public final class GenericsLib {
     }
 
     /**
-     * Get the default Jail Manager.
+     * Get GenericsLib's internal Jail Manager.
      */
-    public static JailManager getJailManager() {
+    public static IJailManager getJailManager() {
         PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._jailManager;
+    }
+
+    /**
+     * Get the default jail.
+     */
+    public static Jail getDefaultJail() {
+        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+
+        return _plugin._jailManager.getJail(GenericsLib.getPlugin(), "default");
     }
 
     /**

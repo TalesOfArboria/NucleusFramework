@@ -38,22 +38,22 @@ import org.bukkit.plugin.Plugin;
  */
 public class JailBounds extends Region {
 
-    private JailManager _jailManager;
+    private Jail _jail;
 
     /**
      * Constructor.
      *
      * @param plugin       The owning plugin.
-     * @param jailManager  The owning jail manager.
+     * @param jail         The owning jail.
      * @param name         The name of the region.
      * @param settings     The region data node.
      */
-    JailBounds(Plugin plugin, JailManager jailManager, String name, IDataNode settings) {
+    JailBounds(Plugin plugin, Jail jail, String name, IDataNode settings) {
         super(plugin, name, settings);
 
-        PreCon.notNull(jailManager);
+        PreCon.notNull(jail);
 
-        _jailManager = jailManager;
+        _jail = jail;
     }
 
     /**
@@ -65,7 +65,7 @@ public class JailBounds extends Region {
     protected boolean canDoPlayerLeave(Player p, LeaveRegionReason reason) {
         PreCon.notNull(p);
 
-        return reason != LeaveRegionReason.QUIT_SERVER && _jailManager.isPrisoner(p);
+        return reason != LeaveRegionReason.QUIT_SERVER && _jail.isPrisoner(p);
     }
 
     /**
@@ -77,14 +77,11 @@ public class JailBounds extends Region {
         PreCon.notNull(p);
 
         // prevent player from leaving jail
-        Location tpLocation = _jailManager.getRandomTeleport();
+        Location tpLocation = _jail.getRandomTeleport();
 
         if (tpLocation == null)
             tpLocation = this.getCenter();
 
         p.teleport(tpLocation);
     }
-
-
-
 }

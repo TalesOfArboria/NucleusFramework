@@ -32,7 +32,7 @@ import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
+import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -59,9 +59,9 @@ public class SetRegionSubCommand extends AbstractCommand {
         if (sel == null)
             return; // finish
         
-        JailManager jailManager = GenericsLib.getJailManager();
+        Jail jail = GenericsLib.getDefaultJail();
 
-        jailManager.getJailBounds().setCoords(sel.getP1(), sel.getP2());
+        jail.getJailBounds().setCoords(sel.getP1(), sel.getP2());
 
         tellSuccess(sender, "Default Jail region set to your current world edit coords.");
     }

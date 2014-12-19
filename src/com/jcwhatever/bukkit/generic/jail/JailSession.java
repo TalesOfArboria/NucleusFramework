@@ -25,20 +25,21 @@
 
 package com.jcwhatever.bukkit.generic.jail;
 
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 
-import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Represents a players session in a jail.
  */
 public class JailSession {
 
-    private final JailManager _jailManager;
+    private final Jail _jail;
     private final UUID _playerId;
     private Date _expires;
 
@@ -51,21 +52,21 @@ public class JailSession {
      * @param playerId         The id of the player.
      * @param expires          The time the jail session will expire.
      */
-    JailSession(JailManager jailManager, UUID playerId, Date expires) {
+    public JailSession(Jail jailManager, UUID playerId, Date expires) {
         PreCon.notNull(jailManager);
         PreCon.notNull(playerId);
         PreCon.notNull(expires);
 
-        _jailManager = jailManager;
+        _jail = jailManager;
         _playerId = playerId;
         _expires = expires;
     }
 
     /**
-     * Get the owning jail manager.
+     * Get the owning jail.
      */
-    public JailManager getJailManager() {
-        return _jailManager;
+    public Jail getJail() {
+        return _jail;
     }
 
     /**
@@ -79,28 +80,31 @@ public class JailSession {
      * Get the session expiration date.
      */
     public Date getExpiration() {
-        return _expires;
+        return _expires != null ? _expires : new Date();
+    }
+
+    /**
+     * Determine if the player has been released
+     * by the warden.
+     */
+    public boolean isReleased () {
+        return _isReleased;
     }
 
     /**
      * Determine if the session is expired.
      */
     public boolean isExpired() {
-        return _expires.compareTo(new Date()) <= 0;
+        return _expires == null || _expires.compareTo(new Date()) <= 0;
     }
 
     /**
-     * Changes the players release flag to True.
-     *
-     * @param forceRelease  True causes the warden to run.
+     * Release the player from jail.
      */
-    public void release(boolean forceRelease) {
+    public void release() {
         _isReleased = true;
-
-        if (forceRelease) {
-            _expires = new Date();
-            _jailManager._warden.run(true);
-        }
+        _expires = null;
+        GenericsLib.getJailManager().release(_playerId);
     }
 
     /**
@@ -108,21 +112,6 @@ public class JailSession {
      */
     @Nullable
     public Location getReleaseLocation() {
-        return _jailManager.getReleaseLocation();
+        return _jail.getReleaseLocation();
     }
-
-    // remove the session from the data node.
-    void expire(@Nullable IDataNode dataNode) {
-        if (dataNode != null) {
-            dataNode.remove();
-            dataNode.saveAsync(null);
-        }
-
-        _expires = new Date();
-    }
-
-    public boolean isReleased () {
-        return _isReleased;
-    }
-
 }

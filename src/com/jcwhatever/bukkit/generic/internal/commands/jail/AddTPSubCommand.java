@@ -33,7 +33,7 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderExc
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
+import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
 import org.bukkit.Location;
@@ -65,15 +65,15 @@ public class AddTPSubCommand extends AbstractCommand {
 
         Location loc = p.getLocation();
 
-        JailManager jailManager = GenericsLib.getJailManager();
+        Jail jail = GenericsLib.getDefaultJail();
 
-        INamedLocation current = jailManager.getTeleport(name);
+        INamedLocation current = jail.getTeleport(name);
         if (current != null) {
             tellError(sender, Lang.get(_DUPLICATE_NAME, name));
             return; // finished
         }
 
-        if (!jailManager.addTeleport(name, loc)) {
+        if (!jail.addTeleport(name, loc)) {
             tellError(sender, Lang.get(_FAILED));
             return; // finished
         }

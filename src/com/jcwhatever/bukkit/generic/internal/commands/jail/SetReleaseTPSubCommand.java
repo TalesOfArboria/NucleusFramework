@@ -33,7 +33,7 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderExc
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
+import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -60,8 +60,8 @@ public class SetReleaseTPSubCommand extends AbstractCommand {
 
         Location loc = p.getLocation();
 
-        JailManager jailManager = GenericsLib.getJailManager();
-        jailManager.setReleaseLocation(loc);
+        Jail jail = GenericsLib.getDefaultJail();
+        jail.setReleaseLocation(loc);
 
         tellSuccess(sender, Lang.get(_SUCCESS));
     }

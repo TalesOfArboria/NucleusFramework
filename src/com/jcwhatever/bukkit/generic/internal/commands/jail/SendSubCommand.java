@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
+import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.jail.JailSession;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
@@ -64,8 +64,8 @@ public class SendSubCommand extends AbstractCommand {
             return; // finish
         }
         
-        JailManager jailManager = GenericsLib.getJailManager();
-        JailSession jailSession = jailManager.imprison(player, minutes);
+        Jail jail = GenericsLib.getDefaultJail();
+        JailSession jailSession = jail.imprison(player, minutes);
         
         if (jailSession == null) {
             tellError(sender, Lang.get(_FAILED));

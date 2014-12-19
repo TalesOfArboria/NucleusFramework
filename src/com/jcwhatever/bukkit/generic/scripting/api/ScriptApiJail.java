@@ -92,7 +92,7 @@ public class ScriptApiJail extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return GenericsLib.getJailManager().imprison(p, minutes) != null;
+            return GenericsLib.getDefaultJail().imprison(p, minutes) != null;
         }
 
         /**
@@ -108,11 +108,11 @@ public class ScriptApiJail extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            JailSession session = GenericsLib.getJailManager().getJailSession(p.getUniqueId());
+            JailSession session = GenericsLib.getJailManager().getSession(p.getUniqueId());
             if (session == null || session.isExpired() || session.isReleased())
                 return false;
 
-            session.release(true);
+            session.release();
 
             return true;
         }
@@ -127,8 +127,7 @@ public class ScriptApiJail extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            JailSession session = GenericsLib.getJailManager().getJailSession(p.getUniqueId());
-            return  session != null && !session.isExpired() && !session.isReleased();
+            return GenericsLib.getJailManager().isPrisoner(p.getUniqueId());
         }
     }
 

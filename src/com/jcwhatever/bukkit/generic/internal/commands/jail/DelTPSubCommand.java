@@ -32,7 +32,7 @@ import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.jail.JailManager;
+import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
 import org.bukkit.command.CommandSender;
@@ -56,15 +56,15 @@ public class DelTPSubCommand extends AbstractCommand {
 
         String name = args.getName("name");
 
-        JailManager jailManager = GenericsLib.getJailManager();
+        Jail jail = GenericsLib.getDefaultJail();
 
-        INamedLocation current = jailManager.getTeleport(name);
+        INamedLocation current = jail.getTeleport(name);
         if (current == null) {
             tellError(sender, Lang.get(_NOT_FOUND, name));
             return; // finished
         }
 
-        if (!jailManager.removeTeleport(name)) {
+        if (!jail.removeTeleport(name)) {
             tellError(sender, Lang.get(_FAILED));
             return; // finished
         }
