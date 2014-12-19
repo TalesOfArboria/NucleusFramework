@@ -27,6 +27,9 @@ package com.jcwhatever.bukkit.generic.collections;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -115,5 +118,19 @@ public class HashMapMap<K1, K2, V> extends HashMap<K1, HashMap<K2, V>> {
             return null;
 
         return map.get(key2);
+    }
+
+    /**
+     * Get all values.
+     */
+    public Set<V> valueSet() {
+
+        HashSet<V> values = new HashSet<>(size() * 5);
+
+        for (Entry<K1, HashMap<K2, V>> entry : entrySet()) {
+            values.addAll(entry.getValue().values());
+        }
+
+        return values;
     }
 }
