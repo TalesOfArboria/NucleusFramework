@@ -406,14 +406,14 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @param <T>  The component type.
      *
      * @return A new trimmed array.
      */
-    public static <T> T[] reduceStart(T[] array, int amountToRemove) {
+    public static <T> T[] reduceStart(int amountToRemove, T[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -433,12 +433,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static byte[] reduceStart(byte[] array, int amountToRemove) {
+    public static byte[] reduceStart(int amountToRemove, byte[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -453,12 +453,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static char[] reduceStart(char[] array, int amountToRemove) {
+    public static char[] reduceStart(int amountToRemove, char[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -473,12 +473,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static short[] reduceStart(short[] array, int amountToRemove) {
+    public static short[] reduceStart(int amountToRemove, short[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -493,12 +493,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static int[] reduceStart(int[] array, int amountToRemove) {
+    public static int[] reduceStart(int amountToRemove, int[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -513,12 +513,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static long[] reduceStart(long[] array, int amountToRemove) {
+    public static long[] reduceStart(int amountToRemove, long[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -533,12 +533,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static float[] reduceStart(float[] array, int amountToRemove) {
+    public static float[] reduceStart(int amountToRemove, float[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -553,12 +553,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static double[] reduceStart(double[] array, int amountToRemove) {
+    public static double[] reduceStart(int amountToRemove, double[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -573,12 +573,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static String[] reduceStart(String[] array, int amountToRemove) {
+    public static String[] reduceStart(int amountToRemove, String[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -593,12 +593,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static ItemStack[] reduceStart(ItemStack[] array, int amountToRemove) {
+    public static ItemStack[] reduceStart(int amountToRemove, ItemStack[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
@@ -613,12 +613,12 @@ public class ArrayUtils {
     /**
      * Reduce the size of an array by trimming from the beginning of the array.
      *
-     * @param array           The array to trim.
      * @param amountToRemove  The number of elements to remove.
+     * @param array           The array to trim.
      *
      * @return A new trimmed array.
      */
-    public static Entity[] reduceStart(Entity[] array, int amountToRemove) {
+    public static Entity[] reduceStart(int amountToRemove, Entity[] array) {
         PreCon.notNull(array);
         PreCon.isValid(amountToRemove <= array.length, "Amount to remove is larger than the array.");
 
