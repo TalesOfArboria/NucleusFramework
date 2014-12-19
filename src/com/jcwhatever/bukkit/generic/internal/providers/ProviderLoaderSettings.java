@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 /*
  * 
  */
-public class ProviderLoaderSettings extends JarModuleLoaderSettings<IProvider> {
+public final class ProviderLoaderSettings extends JarModuleLoaderSettings<IProvider> {
 
     public ProviderLoaderSettings() {
 

@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Loads provider modules from /plugins/GenericsLib/providers folder
  */
-public class ProviderLoader extends JarModuleLoader<IProvider> {
+public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
     private final InternalProviderManager _manager;
 

@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * Container for Bukkits {@code Permission} permission.
  */
-public class SuperPermission implements IPermission {
+public final class SuperPermission implements IPermission {
 
     private Permission _permission;
 

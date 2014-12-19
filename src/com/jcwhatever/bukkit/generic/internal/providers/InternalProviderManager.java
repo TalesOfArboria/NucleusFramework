@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
 /**
  * Internal provider manager implementation.
  */
-public class InternalProviderManager implements IProviderManager {
+public final class InternalProviderManager implements IProviderManager {
 
     private IDataNode _dataNode;
 
