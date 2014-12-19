@@ -26,9 +26,10 @@
 package com.jcwhatever.bukkit.generic.pathing;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
-import com.jcwhatever.bukkit.generic.regions.Region;
+import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -44,7 +45,7 @@ public class InteriorFinder {
     private Set<Location> _validNodes;
 
     private Location _start;
-    private Region _boundaries;
+    private IRegionSelection _boundaries;
 
     /**
      * Search for air blocks within a region without moving
@@ -53,7 +54,7 @@ public class InteriorFinder {
      * @param start       The location to start the search from.
      * @param boundaries  The region boundaries to prevent searching forever.
      */
-    public InteriorResults searchInterior(Location start, Region boundaries) {
+    public InteriorResults searchInterior(Location start, IRegionSelection boundaries) {
         PreCon.notNull(start);
         PreCon.notNull(boundaries);
 
@@ -76,7 +77,7 @@ public class InteriorFinder {
     /*
      *  Initialize hash sets using the volume of the boundaries region.
      */
-    private void init(Region boundaries) {
+    private void init(IRegionSelection boundaries) {
         _validNodes = new HashSet<Location>((int)boundaries.getVolume());
         _invalidNodes = new HashSet<Location>((int)boundaries.getVolume());
     }
@@ -86,10 +87,9 @@ public class InteriorFinder {
      * and add valid and invalid locations to their respective map.
      */
     private void searchAdjacent(Location node) {
-        // set of possible walk to locations adjacent to current tile
 
         // column validations, work from top down, skip columns that are false
-        Boolean[][] columns = new Boolean[][] {
+        boolean[][] columns = new boolean[][] {
                 { true, true,  true },
                 { true, true, true },
                 { true, true,  true }
@@ -120,7 +120,6 @@ public class InteriorFinder {
                     }
 
                     if (!columns[x + 1][z + 1]) {
-                        //_invalidNodes.add(candidate);
                         continue;
                     }
 

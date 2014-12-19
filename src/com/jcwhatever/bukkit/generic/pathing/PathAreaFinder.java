@@ -41,13 +41,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Gets all locations that can be pathed to from
- * the start point within the specified range.
+ * Gets all locations that can be pathed to from the start point within
+ * the specified range.
  *
- * <p>
- *     Uses a provided AStar implementation for final validation
- *     of destinations.
- * </p>
+ * <p>Meant to be used as a means of caching valid mob destination
+ * locations from a fixed path start point to remove the need for using
+ * A-Star pathing in real time for validation purposes.</p>
+ *
+ * <p> Uses a provided AStar implementation for final validation of destinations. </p>
  */
 public class PathAreaFinder<T extends IPathNode> {
 
@@ -109,12 +110,11 @@ public class PathAreaFinder<T extends IPathNode> {
      * Search for valid nodes adjacent to the specified node.
      */
     private void searchAdjacent(Location node) {
-        // set of possible walk to locations adjacent to current tile
 
         byte dropHeight = (byte)(-_pathValidator.getMaxDropHeight());
 
         // column validations, work from top down, skip columns that are false
-        Boolean[][] columns = new Boolean[][] {
+        boolean[][] columns = new boolean[][] {
                 { true, true,  true },
                 { true, false, true },
                 { true, true,  true }
