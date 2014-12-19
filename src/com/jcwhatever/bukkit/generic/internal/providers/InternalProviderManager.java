@@ -53,6 +53,8 @@ public class InternalProviderManager implements IProviderManager {
     private final Map<String, IStorageProvider> _storageProviders = new HashMap<>(10);
     private IStorageProvider _defaultStorage;
 
+    boolean _isProvidersLoading;
+
     @Override
     public IPermissionsProvider getPermissionsProvider() {
         if (_defaultPermissions == null) {
@@ -64,6 +66,14 @@ public class InternalProviderManager implements IProviderManager {
     }
 
     @Override
+    public void setPermissionsProvider(IPermissionsProvider permissionsProvider) {
+        PreCon.notNull(permissionsProvider);
+        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
+
+        _defaultPermissions = permissionsProvider;
+    }
+
+    @Override
     public IStorageProvider getStorageProvider() {
         return _defaultStorage != null ? _defaultStorage : _yamlStorage;
     }
@@ -71,7 +81,7 @@ public class InternalProviderManager implements IProviderManager {
     @Override
     public void setStorageProvider(IStorageProvider storageProvider) {
         PreCon.notNull(storageProvider);
-        PreCon.isValid(canSet());
+        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
 
         _defaultStorage = storageProvider;
     }
@@ -88,7 +98,7 @@ public class InternalProviderManager implements IProviderManager {
     public void setStorageProvider(Plugin plugin, IStorageProvider storageProvider) {
         PreCon.notNull(plugin);
         PreCon.notNull(storageProvider);
-        PreCon.isValid(canSet());
+        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
 
         _pluginStorage.put(plugin, storageProvider);
     }
@@ -109,12 +119,8 @@ public class InternalProviderManager implements IProviderManager {
     @Override
     public void registerStorageProvider(IStorageProvider storageProvider) {
         PreCon.notNull(storageProvider);
-        PreCon.isValid(canSet());
+        PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");
 
         _storageProviders.put(storageProvider.getName().toLowerCase(), storageProvider);
-    }
-
-    private boolean canSet() {
-        return true; // todo
     }
 }

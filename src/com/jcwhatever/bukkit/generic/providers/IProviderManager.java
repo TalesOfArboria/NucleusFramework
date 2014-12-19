@@ -34,7 +34,19 @@ import javax.annotation.Nullable;
  */
 public interface IProviderManager {
 
+    /**
+     * Get the permissions provider.
+     */
     IPermissionsProvider getPermissionsProvider();
+
+    /**
+     * Set the permissions provider.
+     *
+     * <p>Can only be set while GenericsLib is loading providers.</p>
+     *
+     * @param permissionsProvider  The permissions provider.
+     */
+    void setPermissionsProvider(IPermissionsProvider permissionsProvider);
 
     /**
      * Get the default data storage provider.
