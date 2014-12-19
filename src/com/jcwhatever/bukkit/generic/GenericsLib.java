@@ -260,7 +260,7 @@ public final class GenericsLib {
      * Get GenericsLib's internal command handler.
      */
     public static CommandHandler getCommandHandler() {
-        PreCon.isValid(_hasEnabled, GenericsLib.ERROR_NOT_ENABLED);
+        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._commandHandler;
     }
@@ -269,7 +269,7 @@ public final class GenericsLib {
      * Get GenericsLib's internal NMS manager.
      */
     public static NmsManager getNmsManager() {
-        PreCon.isValid(_hasEnabled, GenericsLib.ERROR_NOT_ENABLED);
+        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._nmsManager;
     }
@@ -278,7 +278,7 @@ public final class GenericsLib {
      * Get the provider manager.
      */
     public static IProviderManager getProviderManager() {
-        PreCon.isValid(_hasEnabled, GenericsLib.ERROR_NOT_ENABLED);
+        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._providerManager;
     }
