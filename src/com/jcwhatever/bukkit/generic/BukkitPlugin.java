@@ -95,8 +95,10 @@ public final class BukkitPlugin extends GenericsPlugin {
         _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new GenericsNamedTitleFactory());
 
         _regionManager = new InternalRegionManager(this);
-        _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
         _equipperManager = new EntityEquipperManager();
+
+        _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
+        _jailManager.loadSettings();
 
         registerEventListeners(new JCGEventListener());
         registerCommands(_commandHandler);

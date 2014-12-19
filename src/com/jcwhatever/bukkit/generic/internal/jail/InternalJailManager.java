@@ -63,7 +63,6 @@ public class InternalJailManager implements IJailManager {
     @Localizable static final String _RELEASE_TIME = "Release in {0} minutes.";
 
     private final IDataNode _dataNode;
-    private final Jail _defaultJail;
 
     private Map<UUID, JailSession> _sessionMap = new HashMap<UUID, JailSession>(20);
     private HashMapMap<Plugin, String, Jail> _jails = new HashMapMap<>(5);
@@ -74,15 +73,6 @@ public class InternalJailManager implements IJailManager {
         PreCon.notNull(dataNode);
 
         _dataNode = dataNode;
-        _defaultJail = new Jail(GenericsLib.getPlugin(), "default", _dataNode.getNode("default"));
-
-        loadSettings();
-
-        // check for prisoner release every 1 minute.
-        Scheduler.runTaskRepeat(GenericsLib.getPlugin(), 20, 1200, _warden);
-
-        BukkitEventListener _eventListener = new BukkitEventListener();
-        Bukkit.getPluginManager().registerEvents(_eventListener, GenericsLib.getPlugin());
     }
 
     @Override
@@ -198,7 +188,16 @@ public class InternalJailManager implements IJailManager {
         node.saveAsync(null);
     }
 
-    private void loadSettings() {
+    public void loadSettings() {
+
+        // automatically registers
+        new Jail(GenericsLib.getPlugin(), "default", _dataNode.getNode("default"));
+
+        // check for prisoner release every 1 minute.
+        Scheduler.runTaskRepeat(GenericsLib.getPlugin(), 20, 1200, _warden);
+
+        BukkitEventListener _eventListener = new BukkitEventListener();
+        Bukkit.getPluginManager().registerEvents(_eventListener, GenericsLib.getPlugin());
 
         // load late releases
         IDataNode lateNode = _dataNode.getNode("late-release");
