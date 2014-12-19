@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.permissions;
 
 import org.bukkit.World;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
@@ -107,10 +107,10 @@ public interface IPermissionsHandler {
     /**
      * Determine if the player has permission.
      *
-     * @param p               The player to check.
+     * @param sender               The player to check.
      * @param permissionName  The name of the permission.
      */
-    boolean has(Player p, String permissionName);
+    boolean has(CommandSender sender, String permissionName);
 
     /**
      * Determine if the player has permission in the specified world.
@@ -118,44 +118,44 @@ public interface IPermissionsHandler {
      *     Not all permission implementations will support permissions by world.
      * </p>
      *
-     * @param p               The player to check.
+     * @param sender               The player to check.
      * @param world           The world to check.
      * @param permissionName  The name of the permission.
      */
-    boolean has(Player p, World world, String permissionName);
+    boolean has(CommandSender sender, World world, String permissionName);
 
     /**
      * Add a transient permission to a player.
      *
      * @param plugin          The plugin adding the transient permission.
-     * @param p               The player to add the permission to.
+     * @param sender               The player to add the permission to.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    boolean addTransient(Plugin plugin, Player p, String permissionName);
+    boolean addTransient(Plugin plugin, CommandSender sender, String permissionName);
 
     /**
      * Remove a transient permission from a player.
      *
      * @param plugin          The plugin that added the transient permission.
-     * @param p               The player to remove the permission from.
+     * @param sender               The player to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    boolean removeTransient(Plugin plugin, Player p, String permissionName);
+    boolean removeTransient(Plugin plugin, CommandSender sender, String permissionName);
 
     /**
      * Add a permission to a player.
      *
      * @param plugin          The plugin adding the permission.
-     * @param p               The player to add the permission to.
+     * @param sender               The player to add the permission to.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    boolean add(Plugin plugin, Player p, String permissionName);
+    boolean add(Plugin plugin, CommandSender sender, String permissionName);
 
     /**
      * Add a permission to a player when in a specific world.
@@ -164,24 +164,24 @@ public interface IPermissionsHandler {
      * </p>
      *
      * @param plugin          The plugin adding the permission.
-     * @param p               The player to add the permission to.
+     * @param sender               The player to add the permission to.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    boolean add(Plugin plugin, Player p, World world, String permissionName);
+    boolean add(Plugin plugin, CommandSender sender, World world, String permissionName);
 
     /**
      * Remove a players permission.
      *
      * @param plugin          The plugin removing the permission.
-     * @param p               The player to remove the permission from.
+     * @param sender               The player to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    boolean remove(Plugin plugin, Player p, String permissionName);
+    boolean remove(Plugin plugin, CommandSender sender, String permissionName);
 
     /**
      * Remove a players permission in a world.
@@ -190,13 +190,13 @@ public interface IPermissionsHandler {
      * </p>
      *
      * @param plugin          The plugin removing the permission.
-     * @param p               The player to remove the permission from.
+     * @param sender               The player to remove the permission from.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    boolean remove(Plugin plugin, Player p, World world, String permissionName);
+    boolean remove(Plugin plugin, CommandSender sender, World world, String permissionName);
 
     /**
      * Add a player to a group permission.
@@ -205,47 +205,47 @@ public interface IPermissionsHandler {
      * </p>
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param p          The player to add to the group.
+     * @param sender          The player to add to the group.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
      */
-    boolean addGroup(Plugin plugin, Player p, String groupName);
+    boolean addGroup(Plugin plugin, CommandSender sender, String groupName);
 
     /**
      * Add a player to a group permission in the specified world.
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param p          The player to add to the group.
+     * @param sender          The player to add to the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
      */
-    boolean addGroup(Plugin plugin, Player p, World world, String groupName);
+    boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName);
 
     /**
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param p          The player to remove from the group.
+     * @param sender          The player to remove from the group.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
      */
-    boolean removeGroup(Plugin plugin, Player p, String groupName);
+    boolean removeGroup(Plugin plugin, CommandSender sender, String groupName);
 
     /**
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param p          The player to remove from the group.
+     * @param sender          The player to remove from the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
      */
-    boolean removeGroup(Plugin plugin, Player p, World world, String groupName);
+    boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName);
 
     /**
      * Get a string array of group permission names.
@@ -256,19 +256,19 @@ public interface IPermissionsHandler {
     /**
      * Get a string array of groups the specified player is in.
      *
-     * @param p  The player to check.
+     * @param sender  The player to check.
      */
     @Nullable
-    String[] getGroups(Player p);
+    String[] getGroups(CommandSender sender);
 
     /**
      * Get a string array of groups the specified player is in while
      * in the specified world.
      *
-     * @param p      The player to check.
+     * @param sender      The player to check.
      * @param world  The world.
      */
     @Nullable
-    String[] getGroups(Player p, World world);
+    String[] getGroups(CommandSender sender, World world);
 
 }

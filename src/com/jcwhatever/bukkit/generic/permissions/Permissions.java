@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
@@ -131,21 +132,21 @@ public class Permissions {
     /**
      * Determine if the player has permission.
      *
-     * @param p               The player to check.
+     * @param sender          The {@code CommandSender} to check.
      * @param permissionName  The name of the permission.
      */
-    public static boolean has(Player p, String permissionName) {
-        return getImplementation().has(p, permissionName);
+    public static boolean has(CommandSender sender, String permissionName) {
+        return getImplementation().has(sender, permissionName);
     }
 
     /**
      * Determine if the player has permission.
      *
-     * @param p           The player to check.
+     * @param sender      The {@code CommandSender} to check.
      * @param permission  The permission.
      */
-    public static boolean has(Player p, IPermission permission) {
-        return getImplementation().has(p, permission.getName());
+    public static boolean has(CommandSender sender, IPermission permission) {
+        return getImplementation().has(sender, permission.getName());
     }
 
     /**
@@ -154,64 +155,64 @@ public class Permissions {
      *     Not all permission implementations will support permissions by world.
      * </p>
      *
-     * @param p               The player to check.
+     * @param sender          The {@code CommandSender} to check.
      * @param world           The world to check.
      * @param permissionName  The name of the permission.
      */
-    public static boolean has(Player p, World world, String permissionName) {
-        return getImplementation().has(p, world, permissionName);
+    public static boolean has(CommandSender sender, World world, String permissionName) {
+        return getImplementation().has(sender, world, permissionName);
     }
 
     /**
      * Add a transient permission to a player.
      *
      * @param plugin          The plugin adding the transient permission.
-     * @param p               The player to add the permission to.
+     * @param sender          The {@code CommandSender} to add the permission to..
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    public static boolean addTransient(Plugin plugin, Player p, String permissionName) {
-        return getImplementation().addTransient(plugin, p, permissionName);
+    public static boolean addTransient(Plugin plugin, CommandSender sender, String permissionName) {
+        return getImplementation().addTransient(plugin, sender, permissionName);
     }
 
     /**
      * Remove a transient permission from a player.
      *
      * @param plugin          The plugin that added the transient permission.
-     * @param p               The player to remove the permission from.
+     * @param sender          The {@code CommandSender} to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    public static boolean removeTransient(Plugin plugin, Player p, String permissionName) {
-        return getImplementation().removeTransient(plugin, p, permissionName);
+    public static boolean removeTransient(Plugin plugin, CommandSender sender, String permissionName) {
+        return getImplementation().removeTransient(plugin, sender, permissionName);
     }
 
     /**
      * Add a permission to a player.
      *
      * @param plugin          The plugin adding the permission.
-     * @param p               The player to add the permission to.
+     * @param sender          The {@code CommandSender} to add the permission to.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    public static boolean add(Plugin plugin, Player p, String permissionName) {
-        return getImplementation().add(plugin, p, permissionName);
+    public static boolean add(Plugin plugin, CommandSender sender, String permissionName) {
+        return getImplementation().add(plugin, sender, permissionName);
     }
 
     /**
      * Add a permission to a player.
      *
      * @param plugin      The plugin adding the permission.
-     * @param p           The player to add the permission to.
+     * @param sender      The {@code CommandSender} to add the permission to.
      * @param permission  The permission.
      *
      * @return  True if the permission was added.
      */
-    public static boolean add(Plugin plugin, Player p, IPermission permission) {
-        return getImplementation().add(plugin, p, permission.getName());
+    public static boolean add(Plugin plugin, CommandSender sender, IPermission permission) {
+        return getImplementation().add(plugin, sender, permission.getName());
     }
 
     /**
@@ -221,14 +222,14 @@ public class Permissions {
      * </p>
      *
      * @param plugin          The plugin adding the permission.
-     * @param p               The player to add the permission to.
+     * @param sender          The {@code CommandSender} to add the permission to.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    public static boolean add(Plugin plugin, Player p, World world, String permissionName) {
-        return getImplementation().add(plugin, p, world, permissionName);
+    public static boolean add(Plugin plugin, CommandSender sender, World world, String permissionName) {
+        return getImplementation().add(plugin, sender, world, permissionName);
     }
 
     /**
@@ -238,40 +239,40 @@ public class Permissions {
      * </p>
      *
      * @param plugin      The plugin adding the permission.
-     * @param p           The player to add the permission to.
+     * @param sender      The {@code CommandSender} to check.
      * @param world       The world.
      * @param permission  The permission.
      *
      * @return  True if the permission was added.
      */
-    public static boolean add(Plugin plugin, Player p, World world, IPermission permission) {
-        return getImplementation().add(plugin, p, world, permission.getName());
+    public static boolean add(Plugin plugin, CommandSender sender, World world, IPermission permission) {
+        return getImplementation().add(plugin, sender, world, permission.getName());
     }
 
     /**
      * Remove a players permission.
      *
      * @param plugin          The plugin removing the permission.
-     * @param p               The player to remove the permission from.
+     * @param sender          The {@code CommandSender} to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    public static boolean remove(Plugin plugin, Player p, String permissionName) {
-        return getImplementation().remove(plugin, p, permissionName);
+    public static boolean remove(Plugin plugin, CommandSender sender, String permissionName) {
+        return getImplementation().remove(plugin, sender, permissionName);
     }
 
     /**
      * Remove a players permission.
      *
      * @param plugin      The plugin removing the permission.
-     * @param p           The player to remove the permission from.
+     * @param sender      The {@code CommandSender} to remove the permission from.
      * @param permission  The permission.
      *
      * @return  True if the permission was removed.
      */
-    public static boolean remove(Plugin plugin, Player p, IPermission permission) {
-        return getImplementation().remove(plugin, p, permission.getName());
+    public static boolean remove(Plugin plugin, Player sender, IPermission permission) {
+        return getImplementation().remove(plugin, sender, permission.getName());
     }
 
     /**
@@ -281,28 +282,28 @@ public class Permissions {
      * </p>
      *
      * @param plugin          The plugin removing the permission.
-     * @param p               The player to remove the permission from.
+     * @param sender          The {@code CommandSender} to remove the permission from.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    public static boolean remove(Plugin plugin, Player p, World world, String permissionName) {
-        return getImplementation().remove(plugin, p, world, permissionName);
+    public static boolean remove(Plugin plugin, CommandSender sender, World world, String permissionName) {
+        return getImplementation().remove(plugin, sender, world, permissionName);
     }
 
     /**
      * Remove a players permission in a world.
      *
      * @param plugin      The plugin removing the permission.
-     * @param p           The player to remove the permission from.
+     * @param sender      The {@code CommandSender} to remove the permission from.
      * @param world       The world.
      * @param permission  The permission.
      *
      * @return  True if the permission was removed.
      */
-    public static boolean remove(Plugin plugin, Player p, World world, IPermission permission) {
-        return getImplementation().remove(plugin, p, world, permission.getName());
+    public static boolean remove(Plugin plugin, CommandSender sender, World world, IPermission permission) {
+        return getImplementation().remove(plugin, sender, world, permission.getName());
     }
 
     /**
@@ -312,64 +313,64 @@ public class Permissions {
      * </p>
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param p          The player to add to the group.
+     * @param sender     The {@code CommandSender} to add to the group.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
      */
-    public static boolean addGroup(Plugin plugin, Player p, String groupName) {
-        return getImplementation().addGroup(plugin, p, groupName);
+    public static boolean addGroup(Plugin plugin, CommandSender sender, String groupName) {
+        return getImplementation().addGroup(plugin, sender, groupName);
     }
 
     /**
      * Add a player to a group permission in the specified world.
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param p          The player to add to the group.
+     * @param sender     The {@code CommandSender} to add to the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
      */
-    public static boolean addGroup(Plugin plugin, Player p, World world, String groupName) {
-        return getImplementation().addGroup(plugin, p, world, groupName);
+    public static boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
+        return getImplementation().addGroup(plugin, sender, world, groupName);
     }
 
     /**
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param p          The player to remove from the group.
+     * @param sender     The {@code CommandSender} to remove from the group..
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
      */
-    public static boolean removeGroup(Plugin plugin, Player p, String groupName) {
-        return getImplementation().removeGroup(plugin, p, groupName);
+    public static boolean removeGroup(Plugin plugin, CommandSender sender, String groupName) {
+        return getImplementation().removeGroup(plugin, sender, groupName);
     }
 
     /**
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param p          The player to remove from the group.
+     * @param sender     The {@code CommandSender} to remove from the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
      */
-    public static boolean removeGroup(Plugin plugin, Player p, World world, String groupName) {
-        return getImplementation().removeGroup(plugin, p, world, groupName);
+    public static boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
+        return getImplementation().removeGroup(plugin, sender, world, groupName);
     }
 
     /**
      * Determine if a player has group permission.
      *
-     * @param p          The player to check.
+     * @param sender     The {@code CommandSender} to check.
      * @param groupName  The name of the group.
      */
-    public static boolean hasGroup(Player p, String groupName) {
-        String[] groups = getGroups(p);
+    public static boolean hasGroup(CommandSender sender, String groupName) {
+        String[] groups = getGroups(sender);
         if (groups == null)
             return false;
 
@@ -392,23 +393,23 @@ public class Permissions {
     /**
      * Get a string array of groups the specified player is in.
      *
-     * @param p  The player to check.
+     * @param sender  The {@code CommandSender} to check.
      */
     @Nullable
-    public static String[] getGroups(Player p) {
-        return getImplementation().getGroups(p);
+    public static String[] getGroups(CommandSender sender) {
+        return getImplementation().getGroups(sender);
     }
 
     /**
      * Get a string array of groups the specified player is in while
      * in the specified world.
      *
-     * @param p      The player to check.
-     * @param world  The world.
+     * @param sender  The {@code CommandSender} to check.
+     * @param world   The world.
      */
     @Nullable
-    public static String[] getGroups(Player p, World world) {
-        return getImplementation().getGroups(p, world);
+    public static String[] getGroups(CommandSender sender, World world) {
+        return getImplementation().getGroups(sender, world);
     }
 
     /**
@@ -437,28 +438,31 @@ public class Permissions {
      * if they are able to have them as specified by the permission group instances provided.
      *
      * @param plugin  The plugin fixing permission groups.
-     * @param p       The player whose group permissions need to be checked.
+     * @param sender  The {@code CommandSender} whose group permissions need to be checked.
      * @param groups  The groups to fix.
      */
-    public static void fixPermissionGroups(Plugin plugin, Player p, Collection<IPermissionGroup> groups) {
+    public static void fixPermissionGroups(Plugin plugin, CommandSender sender, Collection<IPermissionGroup> groups) {
         PreCon.notNull(plugin);
-        PreCon.notNull(p);
+        PreCon.notNull(sender);
         PreCon.notNull(groups);
 
         if (!getImplementation().hasGroupSupport())
             return;
 
-        UUID playerId = p.getUniqueId();
+        if (!(sender instanceof Player))
+            return;
+
+        UUID playerId = ((Player)sender).getUniqueId();
 
         for (IPermissionGroup group : groups) {
             boolean canAssign = group.canAssignPermissionGroup(playerId);
-            boolean hasGroup = hasGroup(p, group.getPermissionGroupName());
+            boolean hasGroup = hasGroup(sender, group.getPermissionGroupName());
 
             if (!canAssign && hasGroup) {
-                removeGroup(plugin, p, group.getPermissionGroupName());
+                removeGroup(plugin, sender, group.getPermissionGroupName());
             }
             else if (canAssign && !hasGroup) {
-                addGroup(plugin, p, group.getPermissionGroupName());
+                addGroup(plugin, sender, group.getPermissionGroupName());
             }
         }
     }
