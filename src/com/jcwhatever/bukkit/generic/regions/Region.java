@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.regions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.regions.RegionOwnerChangedEvent;
+import com.jcwhatever.bukkit.generic.internal.InternalRegionManager;
 import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
@@ -59,12 +60,12 @@ import javax.annotation.Nullable;
 /**
  * Abstract implementation of a region.
  *
- * <p>The region is registered with GenericsLib {@link GlobalRegionManager} as soon
+ * <p>The region is registered with GenericsLib {@link com.jcwhatever.bukkit.generic.internal.InternalRegionManager} as soon
  * as it is defined (P1 and P2 coordinates set) via the regions settings or by
  * calling {@code setCoords} method.</p>
  *
  * <p>The regions protected methods {@code onPlayerEnter} and {@code onPlayerLeave}
- * are only called if the implementing type calls {@code setIsPlayerWatcher(true)}.</p>
+ * are only called if the implementing type calls {@code setEventListener(true)}.</p>
  */
 public abstract class Region extends RegionSelection implements IRegion {
 
@@ -74,15 +75,17 @@ public abstract class Region extends RegionSelection implements IRegion {
     private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
-    private IDataNode _dataNode;
+    private final IDataNode _dataNode;
+    private final IRegionEventListener _eventListener;
+    private final InternalRegionManager _regionManager;
+
     private RegionPriority _enterPriority = RegionPriority.DEFAULT;
     private RegionPriority _leavePriority = RegionPriority.DEFAULT;
 
-    private boolean _isPlayerWatcher;
+    private boolean _isEventListener;
     private boolean _isDisposed;
     private String _worldName;
     private UUID _ownerId;
-    private List<Chunk> _chunks;
     private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
     private List<IRegionEventHandler> _eventHandlers = new ArrayList<>(10);
 
@@ -223,6 +226,10 @@ public abstract class Region extends RegionSelection implements IRegion {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
 
+        setMeta(InternalRegionManager.REGION_HANDLE, this);
+        _eventListener = new RegionListener(this);
+        _regionManager = (InternalRegionManager)GenericsLib.getRegionManager();
+
         _name = name;
         _plugin = plugin;
         _searchName = name.toLowerCase();
@@ -324,8 +331,16 @@ public abstract class Region extends RegionSelection implements IRegion {
      * Used to determine if the region subscribes to player events.
      */
     @Override
-    public final boolean isPlayerWatcher() {
-        return _isPlayerWatcher || !_eventHandlers.isEmpty();
+    public final boolean isEventListener() {
+        return _isEventListener || !_eventHandlers.isEmpty();
+    }
+
+    /**
+     * Get the regions event listener.
+     */
+    @Override
+    public final IRegionEventListener getEventListener() {
+        return _eventListener;
     }
 
     /**
@@ -391,11 +406,10 @@ public abstract class Region extends RegionSelection implements IRegion {
 
         // unregister while math is updated,
         // is re-registered after math update (see UpdateMath)
-        GenericsLib.getRegionManager().unregister(this);
+        _regionManager.unregister(this);
 
         super.setCoords(p1, p2);
         updateWorld();
-        _chunks = null;
 
         IDataNode dataNode = getDataNode();
         if (dataNode != null) {
@@ -421,7 +435,7 @@ public abstract class Region extends RegionSelection implements IRegion {
         if (_eventHandlers.add(handler)) {
             if (isFirstHandler) {
                 // update registration
-                GenericsLib.getRegionManager().register(this);
+                _regionManager.register(this);
             }
             return true;
         }
@@ -441,7 +455,7 @@ public abstract class Region extends RegionSelection implements IRegion {
 
             if (_eventHandlers.isEmpty()) {
                 // update registration
-                GenericsLib.getRegionManager().register(this);
+                _regionManager.register(this);
             }
             return true;
         }
@@ -535,34 +549,29 @@ public abstract class Region extends RegionSelection implements IRegion {
             return new ArrayList<>(0);
 
         synchronized (_sync) {
-            if (_chunks == null) {
 
-                if (!isDefined()) {
-                    return new ArrayList<>(0);
-                }
-
-                Chunk c1 = getWorld().getChunkAt(getP1());
-                Chunk c2 = getWorld().getChunkAt(getP2());
-
-                int startX = Math.min(c1.getX(), c2.getX());
-                int endX = Math.max(c1.getX(), c2.getX());
-
-                int startZ = Math.min(c1.getZ(), c2.getZ());
-                int endZ = Math.max(c1.getZ(), c2.getZ());
-
-                ArrayList<Chunk> result = new ArrayList<Chunk>((endX - startX) * (endZ - startZ));
-
-                for (int x = startX; x <= endX; x++) {
-                    for (int z = startZ; z <= endZ; z++) {
-                        result.add(getWorld().getChunkAt(x, z));
-                    }
-                }
-                _chunks = result;
+            if (!isDefined()) {
+                return new ArrayList<>(0);
             }
 
-            _sync.notifyAll();
+            Chunk c1 = getWorld().getChunkAt(getP1());
+            Chunk c2 = getWorld().getChunkAt(getP2());
 
-            return new ArrayList<Chunk>(_chunks);
+            int startX = Math.min(c1.getX(), c2.getX());
+            int endX = Math.max(c1.getX(), c2.getX());
+
+            int startZ = Math.min(c1.getZ(), c2.getZ());
+            int endZ = Math.max(c1.getZ(), c2.getZ());
+
+            ArrayList<Chunk> result = new ArrayList<Chunk>((endX - startX) * (endZ - startZ));
+
+            for (int x = startX; x <= endX; x++) {
+                for (int z = startZ; z <= endZ; z++) {
+                    result.add(getWorld().getChunkAt(x, z));
+                }
+            }
+
+            return result;
         }
     }
 
@@ -682,7 +691,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      */
     @Override
     public final void dispose() {
-        GenericsLib.getRegionManager().unregister(this);
+        _regionManager.unregister(this);
         _instances.remove(this);
 
         onDispose();
@@ -694,13 +703,13 @@ public abstract class Region extends RegionSelection implements IRegion {
      * Set the value of the player watcher flag and update
      * the regions registration with the central region manager.
      *
-     * @param isPlayerWatcher  True to allow player enter and leave events.
+     * @param isEventListener  True to allow player enter and leave events.
      */
-    protected void setIsPlayerWatcher(boolean isPlayerWatcher) {
-        if (isPlayerWatcher != _isPlayerWatcher) {
-            _isPlayerWatcher = isPlayerWatcher;
+    protected void setEventListener(boolean isEventListener) {
+        if (isEventListener != _isEventListener) {
+            _isEventListener = isEventListener;
 
-            GenericsLib.getRegionManager().register(this);
+            _regionManager.register(this);
         }
     }
 
@@ -711,7 +720,7 @@ public abstract class Region extends RegionSelection implements IRegion {
      * @param p  The player to reset.
      */
     protected void resetContainsPlayer(Player p) {
-        GenericsLib.getRegionManager().resetPlayerRegion(p, this);
+        _regionManager.resetPlayerRegion(p, this);
     }
 
     /**
@@ -753,7 +762,7 @@ public abstract class Region extends RegionSelection implements IRegion {
 
         super.updateMath();
 
-        GenericsLib.getRegionManager().register(this);
+        _regionManager.register(this);
     }
 
     /**
@@ -938,6 +947,25 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
     }
 
+    private static class RegionListener implements IRegionEventListener {
+
+        private final Region _region;
+
+        RegionListener(Region region) {
+            _region = region;
+        }
+
+        @Override
+        public void onPlayerEnter(Player p, EnterRegionReason reason) {
+            _region.doPlayerEnter(p, reason);
+        }
+
+        @Override
+        public void onPlayerLeave(Player p, LeaveRegionReason reason) {
+            _region.doPlayerLeave(p, reason);
+        }
+    }
+
     /*
      * Listens for world unload and load events and handles
      * regions in the world appropriately.
@@ -974,8 +1002,6 @@ public abstract class Region extends RegionSelection implements IRegion {
 
                     //noinspection ConstantConditions
                     region.getP2().setWorld(null);
-
-                    region._chunks = null;
                 }
             }
         }

@@ -100,7 +100,7 @@ public final class BukkitPlugin extends GenericsPlugin {
         _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
         _jailManager.loadSettings();
 
-        registerEventListeners(new JCGEventListener());
+        registerEventListeners(new JCGEventListener(_regionManager));
         registerCommands(_commandHandler);
 
         loadScriptManager();

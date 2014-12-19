@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.bukkit.generic.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.events.signs.SignInteractEvent;
+import com.jcwhatever.bukkit.generic.internal.InternalRegionManager;
 import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.sounds.PlayList;
@@ -65,6 +66,12 @@ import org.bukkit.inventory.ItemStack;
 
 public final class JCGEventListener implements Listener {
 
+	private final InternalRegionManager _regionManager;
+
+	public JCGEventListener(InternalRegionManager regionManager) {
+		_regionManager = regionManager;
+	}
+
 	@EventHandler
 	private void onPluginDisable(PluginDisableEvent event) {
 
@@ -95,7 +102,7 @@ public final class JCGEventListener implements Listener {
 		Scheduler.runTaskLater(GenericsLib.getPlugin(), 5, new Runnable() {
 			@Override
 			public void run() {
-				GenericsLib.getRegionManager()
+				_regionManager
 						.updatePlayerLocation(p, p.getLocation(), RegionReason.JOIN_SERVER);
 			}
 		});
@@ -103,7 +110,7 @@ public final class JCGEventListener implements Listener {
 
 	@EventHandler(priority=EventPriority.LOW)
 	private void onPlayerMove(PlayerMoveEvent event) {
-		GenericsLib.getRegionManager()
+		_regionManager
 				.updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.MOVE);
 	}
 
@@ -113,13 +120,13 @@ public final class JCGEventListener implements Listener {
 		if (event.getEntity().getHealth() > 0)
 			return;
 
-		GenericsLib.getRegionManager()
+		_regionManager
 				.updatePlayerLocation(event.getEntity(), LeaveRegionReason.DEAD);
 	}
 
 	@EventHandler(priority=EventPriority.MONITOR)
 	private void onPlayerRespawn(PlayerRespawnEvent event) {
-		GenericsLib.getRegionManager()
+		_regionManager
 				.updatePlayerLocation(event.getPlayer(), event.getRespawnLocation(), RegionReason.RESPAWN);
 	}
 
@@ -127,7 +134,7 @@ public final class JCGEventListener implements Listener {
 	private void onPlayerQuit(PlayerQuitEvent event) {
         PlayList.clearQueue(event.getPlayer());
 
-		GenericsLib.getRegionManager()
+		_regionManager
 				.updatePlayerLocation(event.getPlayer(), LeaveRegionReason.QUIT_SERVER);
 	}
 
@@ -140,7 +147,7 @@ public final class JCGEventListener implements Listener {
             PlayList.clearQueue(event.getPlayer());
 		}
 
-		GenericsLib.getRegionManager()
+		_regionManager
 				.updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.TELEPORT);
 	}
 

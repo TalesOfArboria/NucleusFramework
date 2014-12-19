@@ -518,8 +518,16 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
      * if they enter or leave.
      */
     @Override
-    public boolean isPlayerWatcher () {
-        return _region.isPlayerWatcher();
+    public boolean isEventListener() {
+        return _region.isEventListener();
+    }
+
+    /**
+     * Get the regions event listener.
+     */
+    @Override
+    public IRegionEventListener getEventListener() {
+        return _region.getEventListener();
     }
 
     /**

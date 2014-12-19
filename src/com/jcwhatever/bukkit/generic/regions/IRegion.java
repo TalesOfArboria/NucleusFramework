@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a region. Not intended to be implemented externally
  * unless the external implementation is not intended to be used
- * with GenericsLib's {@link GlobalRegionManager}.
+ * with GenericsLib's {@link com.jcwhatever.bukkit.generic.internal.InternalRegionManager}.
  *
  * <p>For nearly all cases, the abstract class {@link Region} should be extended
  * or use one of the other abstract implementations that extend {@link Region}.</p>
@@ -128,7 +128,12 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
      * Determine if the region watches players to see
      * if they enter or leave.
      */
-    boolean isPlayerWatcher ();
+    boolean isEventListener();
+
+    /**
+     * Get the regions event listener.
+     */
+    IRegionEventListener getEventListener();
 
     /**
      * Add a transient event handler to the region.

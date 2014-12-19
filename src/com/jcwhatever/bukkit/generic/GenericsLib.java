@@ -35,7 +35,7 @@ import com.jcwhatever.bukkit.generic.jail.IJailManager;
 import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.nms.NmsManager;
-import com.jcwhatever.bukkit.generic.regions.GlobalRegionManager;
+import com.jcwhatever.bukkit.generic.regions.IGlobalRegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.IScript;
@@ -148,7 +148,7 @@ public final class GenericsLib {
     /**
      * Get the global {@code RegionManager}.
      */
-    public static GlobalRegionManager getRegionManager() {
+    public static IGlobalRegionManager getRegionManager() {
         PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._regionManager;
