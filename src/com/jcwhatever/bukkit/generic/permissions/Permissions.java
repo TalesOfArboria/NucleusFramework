@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.permissions;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -46,13 +47,11 @@ public final class Permissions {
 
     private Permissions() {}
 
-    private static IPermissionsProvider _provider;
-
     /**
      * Determine if the permissions implementation has group support.
      */
     public static boolean hasGroupSupport() {
-        return getImplementation().hasGroupSupport();
+        return getProvider().hasGroupSupport();
     }
 
     /**
@@ -60,7 +59,7 @@ public final class Permissions {
      * by world support.
      */
     public static boolean hasWorldSupport() {
-        return getImplementation().hasWorldSupport();
+        return getProvider().hasWorldSupport();
     }
 
     /**
@@ -72,7 +71,7 @@ public final class Permissions {
      * @return  The permission.
      */
     public static IPermission register(String permissionName, PermissionDefault value) {
-        return getImplementation().register(permissionName, value);
+        return getProvider().register(permissionName, value);
     }
 
     /**
@@ -81,7 +80,7 @@ public final class Permissions {
      * @param permissionName  The name of the permission.
      */
     public static void unregister(String permissionName) {
-        getImplementation().unregister(permissionName);
+        getProvider().unregister(permissionName);
     }
 
     /**
@@ -90,7 +89,7 @@ public final class Permissions {
      * @param permission  The permission to unregister.
      */
     public static void unregister(IPermission permission) {
-        getImplementation().unregister(permission);
+        getProvider().unregister(permission);
     }
 
     /**
@@ -101,7 +100,7 @@ public final class Permissions {
      * @param value   The permission value.
      */
     public static void addParent(IPermission child, IPermission parent, boolean value) {
-        getImplementation().addParent(child, parent, value);
+        getProvider().addParent(child, parent, value);
     }
 
     /**
@@ -117,7 +116,7 @@ public final class Permissions {
      * @param operations   The runnable that runs the permissions operations.
      */
     public static void runBatchOperation(boolean recalculate, Runnable operations) {
-        getImplementation().runBatchOperation(recalculate, operations);
+        getProvider().runBatchOperation(recalculate, operations);
     }
 
     /**
@@ -127,7 +126,7 @@ public final class Permissions {
      */
     @Nullable
     public static IPermission get(String permissionName) {
-        return getImplementation().get(permissionName);
+        return getProvider().get(permissionName);
     }
 
     /**
@@ -137,7 +136,7 @@ public final class Permissions {
      * @param permissionName  The name of the permission.
      */
     public static boolean has(CommandSender sender, String permissionName) {
-        return getImplementation().has(sender, permissionName);
+        return getProvider().has(sender, permissionName);
     }
 
     /**
@@ -147,7 +146,7 @@ public final class Permissions {
      * @param permission  The permission.
      */
     public static boolean has(CommandSender sender, IPermission permission) {
-        return getImplementation().has(sender, permission.getName());
+        return getProvider().has(sender, permission.getName());
     }
 
     /**
@@ -161,7 +160,7 @@ public final class Permissions {
      * @param permissionName  The name of the permission.
      */
     public static boolean has(CommandSender sender, World world, String permissionName) {
-        return getImplementation().has(sender, world, permissionName);
+        return getProvider().has(sender, world, permissionName);
     }
 
     /**
@@ -174,7 +173,7 @@ public final class Permissions {
      * @return  True if the permission was added.
      */
     public static boolean addTransient(Plugin plugin, CommandSender sender, String permissionName) {
-        return getImplementation().addTransient(plugin, sender, permissionName);
+        return getProvider().addTransient(plugin, sender, permissionName);
     }
 
     /**
@@ -187,7 +186,7 @@ public final class Permissions {
      * @return  True if the permission was removed.
      */
     public static boolean removeTransient(Plugin plugin, CommandSender sender, String permissionName) {
-        return getImplementation().removeTransient(plugin, sender, permissionName);
+        return getProvider().removeTransient(plugin, sender, permissionName);
     }
 
     /**
@@ -200,7 +199,7 @@ public final class Permissions {
      * @return  True if the permission was added.
      */
     public static boolean add(Plugin plugin, CommandSender sender, String permissionName) {
-        return getImplementation().add(plugin, sender, permissionName);
+        return getProvider().add(plugin, sender, permissionName);
     }
 
     /**
@@ -213,7 +212,7 @@ public final class Permissions {
      * @return  True if the permission was added.
      */
     public static boolean add(Plugin plugin, CommandSender sender, IPermission permission) {
-        return getImplementation().add(plugin, sender, permission.getName());
+        return getProvider().add(plugin, sender, permission.getName());
     }
 
     /**
@@ -230,7 +229,7 @@ public final class Permissions {
      * @return  True if the permission was added.
      */
     public static boolean add(Plugin plugin, CommandSender sender, World world, String permissionName) {
-        return getImplementation().add(plugin, sender, world, permissionName);
+        return getProvider().add(plugin, sender, world, permissionName);
     }
 
     /**
@@ -247,7 +246,7 @@ public final class Permissions {
      * @return  True if the permission was added.
      */
     public static boolean add(Plugin plugin, CommandSender sender, World world, IPermission permission) {
-        return getImplementation().add(plugin, sender, world, permission.getName());
+        return getProvider().add(plugin, sender, world, permission.getName());
     }
 
     /**
@@ -260,7 +259,7 @@ public final class Permissions {
      * @return  True if the permission was removed.
      */
     public static boolean remove(Plugin plugin, CommandSender sender, String permissionName) {
-        return getImplementation().remove(plugin, sender, permissionName);
+        return getProvider().remove(plugin, sender, permissionName);
     }
 
     /**
@@ -273,7 +272,7 @@ public final class Permissions {
      * @return  True if the permission was removed.
      */
     public static boolean remove(Plugin plugin, Player sender, IPermission permission) {
-        return getImplementation().remove(plugin, sender, permission.getName());
+        return getProvider().remove(plugin, sender, permission.getName());
     }
 
     /**
@@ -290,7 +289,7 @@ public final class Permissions {
      * @return  True if the permission was removed.
      */
     public static boolean remove(Plugin plugin, CommandSender sender, World world, String permissionName) {
-        return getImplementation().remove(plugin, sender, world, permissionName);
+        return getProvider().remove(plugin, sender, world, permissionName);
     }
 
     /**
@@ -304,7 +303,7 @@ public final class Permissions {
      * @return  True if the permission was removed.
      */
     public static boolean remove(Plugin plugin, CommandSender sender, World world, IPermission permission) {
-        return getImplementation().remove(plugin, sender, world, permission.getName());
+        return getProvider().remove(plugin, sender, world, permission.getName());
     }
 
     /**
@@ -320,7 +319,7 @@ public final class Permissions {
      * @return  True if the player was added.
      */
     public static boolean addGroup(Plugin plugin, CommandSender sender, String groupName) {
-        return getImplementation().addGroup(plugin, sender, groupName);
+        return getProvider().addGroup(plugin, sender, groupName);
     }
 
     /**
@@ -334,7 +333,7 @@ public final class Permissions {
      * @return  True if the player was added.
      */
     public static boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return getImplementation().addGroup(plugin, sender, world, groupName);
+        return getProvider().addGroup(plugin, sender, world, groupName);
     }
 
     /**
@@ -347,7 +346,7 @@ public final class Permissions {
      * @return  True if the player was removed.
      */
     public static boolean removeGroup(Plugin plugin, CommandSender sender, String groupName) {
-        return getImplementation().removeGroup(plugin, sender, groupName);
+        return getProvider().removeGroup(plugin, sender, groupName);
     }
 
     /**
@@ -361,7 +360,7 @@ public final class Permissions {
      * @return  True if the player was removed.
      */
     public static boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return getImplementation().removeGroup(plugin, sender, world, groupName);
+        return getProvider().removeGroup(plugin, sender, world, groupName);
     }
 
     /**
@@ -388,7 +387,7 @@ public final class Permissions {
      */
     @Nullable
     public static String[] getGroups() {
-        return getImplementation().getGroups();
+        return getProvider().getGroups();
     }
 
     /**
@@ -398,7 +397,7 @@ public final class Permissions {
      */
     @Nullable
     public static String[] getGroups(CommandSender sender) {
-        return getImplementation().getGroups(sender);
+        return getProvider().getGroups(sender);
     }
 
     /**
@@ -410,7 +409,7 @@ public final class Permissions {
      */
     @Nullable
     public static String[] getGroups(CommandSender sender, World world) {
-        return getImplementation().getGroups(sender, world);
+        return getProvider().getGroups(sender, world);
     }
 
     /**
@@ -425,7 +424,7 @@ public final class Permissions {
         PreCon.notNull(plugin);
         PreCon.notNull(groups);
 
-        if (!getImplementation().hasGroupSupport())
+        if (!hasGroupSupport())
             return;
 
         Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
@@ -447,7 +446,7 @@ public final class Permissions {
         PreCon.notNull(sender);
         PreCon.notNull(groups);
 
-        if (!getImplementation().hasGroupSupport())
+        if (!hasGroupSupport())
             return;
 
         if (!(sender instanceof Player))
@@ -468,28 +467,7 @@ public final class Permissions {
         }
     }
 
-    /**
-     * Get the permissions handler implementation.
-     */
-    public static IPermissionsProvider getImplementation() {
-
-        if (_provider == null) {
-            _provider = Bukkit.getPluginManager().getPlugin("Vault") != null
-                    ? new VaultPermissionsProvider()
-                    : new BukkitPermissionsProvider();
-        }
-
-        return _provider;
-    }
-
-    /**
-     * Set the permissions handler implementation.
-     *
-     * @param provider  The handler to set.
-     */
-    public static void setImplementation(IPermissionsProvider provider) {
-        PreCon.notNull(provider);
-
-        _provider = provider;
+    private static IPermissionsProvider getProvider() {
+        return GenericsLib.getProviderManager().getPermissionsProvider();
     }
 }

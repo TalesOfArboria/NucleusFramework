@@ -23,9 +23,11 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.permissions;
+package com.jcwhatever.bukkit.generic.internal.providers.permissions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.permissions.IPermission;
+import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
@@ -54,7 +56,7 @@ import javax.annotation.Nullable;
 /**
  * Basic Bukkit permissions handler
  */
-public class BukkitPermissionsProvider extends AbstractPermissionsHandler {
+public final class BukkitPermissionsProvider extends AbstractPermissionsProvider {
 
     private static Map<UUID, PermissionAttachment> _transient = new PlayerMap<PermissionAttachment>(GenericsLib.getPlugin());
     private static Listener _bukkitListener;
@@ -64,7 +66,7 @@ public class BukkitPermissionsProvider extends AbstractPermissionsHandler {
     /**
      * Constructor.
      */
-    BukkitPermissionsProvider() {
+    public BukkitPermissionsProvider() {
 
         // get permissions data node
         _dataNode = DataStorage.getStorage(GenericsLib.getPlugin(), new DataPath("bukkit-permissions"));
@@ -292,36 +294,37 @@ public class BukkitPermissionsProvider extends AbstractPermissionsHandler {
             Player p = event.getPlayer();
 
             // give permissions
-            if (Permissions.getImplementation() instanceof BukkitPermissionsProvider) {
-                BukkitPermissionsProvider perms = (BukkitPermissionsProvider)Permissions.getImplementation();
 
-                // get players permission data node
-                IDataNode playerNode = perms._dataNode.getNode(p.getUniqueId().toString());
+            BukkitPermissionsProvider perms = (BukkitPermissionsProvider)
+                    GenericsLib.getProviderManager().getPermissionsProvider();
 
-                // get the names of the plugins that have set permissions on the player.
-                Set<String> pluginNames = playerNode.getSubNodeNames();
+            // get players permission data node
+            IDataNode playerNode = perms._dataNode.getNode(p.getUniqueId().toString());
 
-                for (String pluginName : pluginNames) {
+            // get the names of the plugins that have set permissions on the player.
+            Set<String> pluginNames = playerNode.getSubNodeNames();
 
-                    // make sure the plugin is loaded.
-                    Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
-                    if (plugin == null)
-                        continue;
+            for (String pluginName : pluginNames) {
 
-                    // get the list of permissions the player has.
-                    List<String> permissions = playerNode.getStringList(pluginName, null);
+                // make sure the plugin is loaded.
+                Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+                if (plugin == null)
+                    continue;
 
-                    if (permissions == null || permissions.isEmpty())
-                        continue;
+                // get the list of permissions the player has.
+                List<String> permissions = playerNode.getStringList(pluginName, null);
 
-                    // add permissions to player
-                    for (String permission : permissions) {
-                        // add permissions as transient to prevent re-saving them
-                        Permissions.addTransient(plugin, p, permission);
-                    }
+                if (permissions == null || permissions.isEmpty())
+                    continue;
+
+                // add permissions to player
+                for (String permission : permissions) {
+                    // add permissions as transient to prevent re-saving them
+                    Permissions.addTransient(plugin, p, permission);
                 }
-
             }
+
+
         }
 
     }

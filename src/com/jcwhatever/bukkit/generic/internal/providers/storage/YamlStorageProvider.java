@@ -22,54 +22,62 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.bukkit.generic.storage;
+package com.jcwhatever.bukkit.generic.internal.providers.storage;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.providers.IStorageProvider;
+import com.jcwhatever.bukkit.generic.storage.DataPath;
+import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.storage.YamlDataStorage;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
+
 /**
- * Utility class to reduce the amount of code needed
- * to get a data storage node.
+ * Yaml file data storage.
  */
-public final class DataStorage {
+public final class YamlStorageProvider implements IStorageProvider {
 
-    private DataStorage() {}
-
-    /**
-     * Remove data storage.
-     *
-     * @param plugin  The owning plugin.
-     * @param path    Storage path.
-     *
-     * @return  True if successful.
-     */
-    public static boolean removeStorage(Plugin plugin, DataPath path) {
-        IStorageProvider provider = GenericsLib.getProviderManager().getStorageProvider(plugin);
-        return provider.removeStorage(plugin, path);
+    @Override
+    public String getName() {
+        return "Yaml";
     }
 
-    /**
-     * Get or create data storage.
-     *
-     * @param plugin  The owning plugin.
-     * @param path    Storage path.
-     */
-    public static IDataNode getStorage(Plugin plugin, DataPath path) {
-        IStorageProvider provider = GenericsLib.getProviderManager().getStorageProvider(plugin);
-        return provider.getStorage(plugin, path);
+    @Override
+    public String getVersion() {
+        return GenericsLib.getPlugin().getDescription().getVersion();
     }
 
-    /**
-     * Determine if a data store exists.
-     *
-     * @param plugin  The owning plugin.
-     * @param path    Storage path.
-     */
-    public static boolean hasStorage(Plugin plugin, DataPath path) {
-        IStorageProvider provider = GenericsLib.getProviderManager().getStorageProvider(plugin);
-        return provider.hasStorage(plugin, path);
+    @Override
+    public int getLogicalVersion() {
+        return 0;
+    }
+
+    @Override
+    public boolean removeStorage(Plugin plugin, DataPath path) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(path);
+
+        File file = YamlDataStorage.convertStoragePathToFile(plugin, path);
+        return file.exists() && file.delete();
+    }
+
+    @Override
+    public IDataNode getStorage(Plugin plugin, DataPath path) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(path);
+
+        return new YamlDataStorage(plugin, path);
+    }
+
+    @Override
+    public boolean hasStorage(Plugin plugin, DataPath path) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(path);
+
+        File file = YamlDataStorage.convertStoragePathToFile(plugin, path);
+        return file.exists();
     }
 }

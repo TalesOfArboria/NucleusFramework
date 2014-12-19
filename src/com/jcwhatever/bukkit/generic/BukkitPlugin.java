@@ -10,6 +10,7 @@ import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
 import com.jcwhatever.bukkit.generic.internal.jail.InternalJailManager;
 import com.jcwhatever.bukkit.generic.internal.listeners.JCGEventListener;
 import com.jcwhatever.bukkit.generic.internal.nms.InternalNmsManager;
+import com.jcwhatever.bukkit.generic.internal.providers.InternalProviderManager;
 import com.jcwhatever.bukkit.generic.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
@@ -29,6 +30,7 @@ import javax.script.ScriptEngineManager;
  */
 public final class BukkitPlugin extends GenericsPlugin {
 
+    InternalProviderManager _providerManager;
     InternalEventManager _eventManager;
     InternalTitleManager _titleManager;
     InternalRegionManager _regionManager;
@@ -74,6 +76,7 @@ public final class BukkitPlugin extends GenericsPlugin {
     @Override
     protected void onPreEnable() {
         GenericsLib._hasEnabled = true;
+        _providerManager = new InternalProviderManager();
     }
 
     @Override

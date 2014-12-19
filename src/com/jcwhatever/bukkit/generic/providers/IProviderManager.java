@@ -26,6 +26,9 @@ package com.jcwhatever.bukkit.generic.providers;
 
 import org.bukkit.plugin.Plugin;
 
+import java.util.List;
+import javax.annotation.Nullable;
+
 /**
  * Interface for the provider manager.
  */
@@ -65,6 +68,21 @@ public interface IProviderManager {
     void setStorageProvider(Plugin plugin, IStorageProvider storageProvider);
 
     /**
+     * Get a storage provider by name.
+     *
+     * @param name  The name of the storage provider.
+     *
+     * @return Null if not found.
+     */
+    @Nullable
+    IStorageProvider getStorageProvider(String name);
+
+    /**
+     * Get all registered storage providers.
+     */
+    List<IStorageProvider> getStorageProviders();
+
+    /**
      * Register a storage provider.
      *
      * <p>Can only register while GenericsLib is loading providers.</p>
@@ -72,4 +90,6 @@ public interface IProviderManager {
      * @param storageProvider  The storage provider.
      */
     void registerStorageProvider(IStorageProvider storageProvider);
+
+
 }

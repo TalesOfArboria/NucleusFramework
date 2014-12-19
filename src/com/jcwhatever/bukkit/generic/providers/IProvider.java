@@ -24,14 +24,17 @@
 
 package com.jcwhatever.bukkit.generic.providers;
 
+import com.jcwhatever.bukkit.generic.mixins.INamed;
+
 /**
  * Basic interface for a GenericsLib service provider.
  */
-public interface IProvider {
+public interface IProvider extends INamed {
 
     /**
      * Get the providers name.
      */
+    @Override
     String getName();
 
     /**

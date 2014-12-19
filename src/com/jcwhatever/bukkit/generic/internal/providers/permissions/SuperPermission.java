@@ -23,7 +23,9 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.permissions;
+package com.jcwhatever.bukkit.generic.internal.providers.permissions;
+
+import com.jcwhatever.bukkit.generic.permissions.IPermission;
 
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;

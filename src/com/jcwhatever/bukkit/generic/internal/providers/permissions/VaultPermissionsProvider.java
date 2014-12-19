@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.permissions;
+package com.jcwhatever.bukkit.generic.internal.providers.permissions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
@@ -42,14 +42,14 @@ import javax.annotation.Nullable;
 /**
  * Vault interface implementation.
  */
-public class VaultPermissionsProvider extends AbstractPermissionsHandler {
+public final class VaultPermissionsProvider extends AbstractPermissionsProvider {
 
     private Permission _perms = null;
 
     /**
      * Constructor.
      */
-    VaultPermissionsProvider() {
+    public VaultPermissionsProvider() {
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
                 .getRegistration(net.milkbowl.vault.permission.Permission.class);
 

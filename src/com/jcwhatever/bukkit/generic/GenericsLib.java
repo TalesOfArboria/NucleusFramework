@@ -35,6 +35,7 @@ import com.jcwhatever.bukkit.generic.jail.IJailManager;
 import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.nms.NmsManager;
+import com.jcwhatever.bukkit.generic.providers.IProviderManager;
 import com.jcwhatever.bukkit.generic.regions.IGlobalRegionManager;
 import com.jcwhatever.bukkit.generic.scheduler.ITaskScheduler;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
@@ -271,6 +272,15 @@ public final class GenericsLib {
         PreCon.isValid(_hasEnabled, GenericsLib.ERROR_NOT_ENABLED);
 
         return _plugin._nmsManager;
+    }
+
+    /**
+     * Get the provider manager.
+     */
+    public static IProviderManager getProviderManager() {
+        PreCon.isValid(_hasEnabled, GenericsLib.ERROR_NOT_ENABLED);
+
+        return _plugin._providerManager;
     }
 
     /*
