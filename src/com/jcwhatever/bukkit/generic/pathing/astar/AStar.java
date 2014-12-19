@@ -27,17 +27,17 @@ package com.jcwhatever.bukkit.generic.pathing.astar;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import javax.annotation.Nullable;
 import java.util.LinkedList;
+import javax.annotation.Nullable;
 
 /**
  * Abstract implementation of the AStar algorithm.
- * <p>
- *     Provides a large portion of the core implementation.
- * </p>
+ *
+ * <p>Provides a large portion of the core implementation.</p>
  *
  * @param <T>  The {@code PathNode} type.
  */
@@ -328,17 +328,14 @@ public abstract class AStar<T extends IPathNode> {
      * open nodes map. These valid nodes are referred to as
      * candidates.
      *
-     * <p>
-     *     Candidates are added to the open nodes collection.
-     * </p>
+     * <p>Candidates are added to the open nodes collection.</p>
      *
      * @param node  The node to search, is parent to candidates
      */
     protected void findCandidates(T node) {
-        // set of possible walk to locations adjacent to current tile
 
         // column validations, work from top down, skip columns that are false
-        Boolean[][] columns = getNewSearchColumns();
+        boolean[][] columns = getNewSearchColumns();
         int dropHeight = -(getMaxDropHeight());
 
         for (byte y = 1; y >= dropHeight; y--) {
@@ -367,7 +364,7 @@ public abstract class AStar<T extends IPathNode> {
      * @param candidate        The candidate node.
      * @param columns          Validation columns.
      */
-    protected boolean validateCandidate(T candidate, Boolean[][] columns) {
+    protected boolean validateCandidate(T candidate, boolean[][] columns) {
 
         @SuppressWarnings("unchecked") T candidateParent = (T)candidate.getParentNode();
         if (candidateParent == null)
@@ -470,8 +467,8 @@ public abstract class AStar<T extends IPathNode> {
     /**
      * Called to get a new search column validation array.
      */
-    protected Boolean[][] getNewSearchColumns() {
-        return new Boolean[][] {
+    protected boolean[][] getNewSearchColumns() {
+        return new boolean[][] {
                 { true, true,  true },
                 { true, false, true },
                 { true, true,  true }
@@ -481,7 +478,7 @@ public abstract class AStar<T extends IPathNode> {
     /*
      * Called to invalidate a search column.
      */
-    protected void invalidateColumn(Boolean[][] columns, int x, int z, Material material) {
+    protected void invalidateColumn(boolean[][] columns, int x, int z, Material material) {
 
         if (MaterialExt.isOpenable(material))
             return;
@@ -498,8 +495,4 @@ public abstract class AStar<T extends IPathNode> {
         return node.isSurface() &&
                 AStarUtils.hasRoomForEntity(node.getLocation(), getEntityHeight(), getDoorPathMode());
     }
-
-
-
-
 }
