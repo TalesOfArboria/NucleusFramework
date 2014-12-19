@@ -47,7 +47,7 @@ import java.util.List;
         usage="/{plugin-command} jail listtp [page]",
         description="List locations where players are teleported within the jail.")
 
-public class ListTPSubCommand extends AbstractCommand {
+public final class ListTPSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Jail Teleport Locations";
 

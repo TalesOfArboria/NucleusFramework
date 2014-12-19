@@ -46,7 +46,7 @@ import java.util.List;
         usage="/{plugin-command} {command} list [page]",
         description="Show a list of titles.")
 
-public class ListSubCommand extends AbstractCommand {
+public final class ListSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Titles";
 

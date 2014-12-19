@@ -41,7 +41,7 @@ import org.bukkit.command.CommandSender;
         usage="/{plugin-command} {command} del <titleName>",
         description="Remove a title.")
 
-public class DelSubCommand extends AbstractCommand {
+public final class DelSubCommand extends AbstractCommand {
 
     @Localizable static final String _FAILED = "A title named '{0}' was not found.";
     @Localizable static final String _SUCCESS = "Title named '{0}' removed.";

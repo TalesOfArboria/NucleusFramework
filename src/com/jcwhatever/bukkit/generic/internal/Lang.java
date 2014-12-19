@@ -30,7 +30,7 @@ import com.jcwhatever.bukkit.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import org.bukkit.plugin.Plugin;
 
-public class Lang {
+public final class Lang {
 
     private Lang() {}
 

@@ -38,7 +38,7 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.vehicle.VehicleUpdateEvent;
 
-public class VehicleListener implements Listener {
+public final class VehicleListener implements Listener {
 
     @EventHandler
     private void onVehicleCreate(VehicleCreateEvent event) {

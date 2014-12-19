@@ -31,7 +31,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Internal messenger factory
  */
-public class InternalMessengerFactory extends MessengerFactory {
+public final class InternalMessengerFactory extends MessengerFactory {
 
     public InternalMessengerFactory(Plugin plugin) {
         super(plugin);

@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.generic.commands.CommandInfo;
         command="titles",
         description="Manage titles.")
 
-public class TitlesCommand extends AbstractCommand {
+public final class TitlesCommand extends AbstractCommand {
 
     public TitlesCommand() {
         super();

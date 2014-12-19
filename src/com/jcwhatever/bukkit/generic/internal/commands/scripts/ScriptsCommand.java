@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.generic.commands.CommandInfo;
         command="scripts",
         description="Manage scripts.")
 
-public class ScriptsCommand extends AbstractCommand {
+public final class ScriptsCommand extends AbstractCommand {
 
     public ScriptsCommand() {
         super();

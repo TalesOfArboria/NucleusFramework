@@ -32,7 +32,7 @@ import com.jcwhatever.bukkit.generic.internal.commands.kits.KitsCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.scripts.ScriptsCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.titles.TitlesCommand;
 
-public class CommandHandler extends AbstractCommandHandler {
+public final class CommandHandler extends AbstractCommandHandler {
 
     public CommandHandler() {
         super(GenericsLib.getPlugin());

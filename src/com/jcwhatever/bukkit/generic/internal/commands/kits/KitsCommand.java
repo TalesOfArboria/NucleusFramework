@@ -33,7 +33,7 @@ import com.jcwhatever.bukkit.generic.internal.commands.kits.items.ItemsCommand;
         command="kits",
         description="Manage chest kits.")
 
-public class KitsCommand extends AbstractCommand {
+public final class KitsCommand extends AbstractCommand {
 
     public KitsCommand() {
         super();

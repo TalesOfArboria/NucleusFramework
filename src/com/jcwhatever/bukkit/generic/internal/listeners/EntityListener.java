@@ -68,7 +68,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 
-public class EntityListener implements Listener {
+public final class EntityListener implements Listener {
 
     @EventHandler
     private void onCreatureSpawn(CreatureSpawnEvent event) {

@@ -58,7 +58,7 @@ import javax.annotation.Nullable;
 /*
  * 
  */
-public class InternalJailManager implements IJailManager {
+public final class InternalJailManager implements IJailManager {
 
     @Localizable static final String _RELEASE_TIME = "Release in {0} minutes.";
 

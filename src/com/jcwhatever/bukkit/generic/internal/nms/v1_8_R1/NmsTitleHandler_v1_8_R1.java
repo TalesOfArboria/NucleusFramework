@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Minecraft Title packet sender for NMS version v1_8_R1
  */
-public class NmsTitleHandler_v1_8_R1 implements INmsTitleHandler {
+public final class NmsTitleHandler_v1_8_R1 implements INmsTitleHandler {
 
     private static Field _footerField;
 

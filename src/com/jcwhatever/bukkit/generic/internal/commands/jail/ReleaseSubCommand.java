@@ -47,7 +47,7 @@ import java.util.UUID;
         usage="/{plugin-command} jail release <playerName>",
         description="Release prisoner from default jail.")
 
-public class ReleaseSubCommand extends AbstractCommand {
+public final class ReleaseSubCommand extends AbstractCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND = "Could not find a player with the name '{0}'.";
     @Localizable static final String _PLAYER_NOT_IMPRISONED = "Player '{0}' is not imprisoned in the Default Jail.";

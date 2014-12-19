@@ -46,7 +46,7 @@ import java.util.List;
         usage="/{plugin-command} {command} list [page]",
         description="List chest kits.")
 
-public class ListSubCommand extends AbstractCommand {
+public final class ListSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Kits";
     @Localizable static final String _FORMAT = "{GOLD}{0} {GRAY}({1} Items, {2} Armor)";

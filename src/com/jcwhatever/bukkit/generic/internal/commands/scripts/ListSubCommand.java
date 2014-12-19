@@ -46,7 +46,7 @@ import java.util.List;
         usage = "/{plugin-command} scripts list [page]",
         description = "List scripts.")
 
-public class ListSubCommand extends AbstractCommand {
+public final class ListSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Scripts";
 

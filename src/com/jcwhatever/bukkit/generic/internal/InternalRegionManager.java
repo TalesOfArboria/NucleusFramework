@@ -70,7 +70,7 @@ import java.util.UUID;
  * {@link com.jcwhatever.bukkit.generic.regions.ReadOnlyRegion} instances. This is to prevent inter-plugin conflicts
  * caused by changes to a region that the region owning plugin is unaware of.</p>
  */
-public class InternalRegionManager implements IGlobalRegionManager {
+public final class InternalRegionManager implements IGlobalRegionManager {
 
     public static final MetaKey<IRegion> REGION_HANDLE = new MetaKey<IRegion>(IRegion.class);
 

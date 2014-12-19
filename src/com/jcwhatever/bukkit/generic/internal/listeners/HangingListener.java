@@ -33,7 +33,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 
-public class HangingListener implements Listener {
+public final class HangingListener implements Listener {
 
     @EventHandler
     private void onHangingBreakByEntity(HangingBreakByEntityEvent event) {

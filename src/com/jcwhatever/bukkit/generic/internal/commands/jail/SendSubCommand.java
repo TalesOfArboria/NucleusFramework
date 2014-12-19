@@ -46,7 +46,7 @@ import org.bukkit.entity.Player;
         usage="/{plugin-command} jail send <playerName> <minutes>",
         description="Imprison player at the default jail.")
 
-public class SendSubCommand extends AbstractCommand {
+public final class SendSubCommand extends AbstractCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND = "Could not find player '{0}'.";
     @Localizable static final String _FAILED = "Failed to send player to Default Jail. Make sure it is setup.";

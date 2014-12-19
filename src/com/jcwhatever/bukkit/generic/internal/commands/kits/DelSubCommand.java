@@ -44,7 +44,7 @@ import org.bukkit.command.CommandSender;
         usage="/{plugin-command} {command} del <kitName>",
         description="Remove an chest kit.")
 
-public class DelSubCommand extends AbstractCommand {
+public final class DelSubCommand extends AbstractCommand {
 
     @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
     @Localizable static final String _FAILED = "Failed to remove chest kit.";

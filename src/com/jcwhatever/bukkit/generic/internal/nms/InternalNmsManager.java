@@ -32,7 +32,7 @@ import com.jcwhatever.bukkit.generic.nms.NmsManager;
 /**
  * GenericsLib's internal NMS manager.
  */
-public class InternalNmsManager extends NmsManager {
+public final class InternalNmsManager extends NmsManager {
 
     public InternalNmsManager() {
         super(GenericsLib.getPlugin());

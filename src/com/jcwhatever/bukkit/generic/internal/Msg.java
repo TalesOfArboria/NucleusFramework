@@ -39,7 +39,7 @@ import java.util.UUID;
 /* 
  * GenericsLib's internal messenger.
  */
-public class Msg {
+public final class Msg {
 
     private Msg() {}
 

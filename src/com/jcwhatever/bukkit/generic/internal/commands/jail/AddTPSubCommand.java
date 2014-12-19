@@ -47,7 +47,7 @@ import org.bukkit.entity.Player;
         usage="/{plugin-command} jail addtp <name>",
         description="Add a location where players are teleported within the jail using your current position.")
 
-public class AddTPSubCommand extends AbstractCommand {
+public final class AddTPSubCommand extends AbstractCommand {
 
     @Localizable static final String _DUPLICATE_NAME = "There is already a location named '{0}'.";
     @Localizable static final String _FAILED = "Failed to add location.";

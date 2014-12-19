@@ -69,7 +69,7 @@ import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 
-public class PlayerListener implements Listener {
+public final class PlayerListener implements Listener {
 
     @EventHandler
     private void onPlayerAchievmentAwarded(PlayerAchievementAwardedEvent event) {

@@ -33,7 +33,7 @@ import com.jcwhatever.bukkit.generic.commands.CommandInfo;
         command="jail", 
         description="Manage default jail.")
 
-public class JailCommand extends AbstractCommand {
+public final class JailCommand extends AbstractCommand {
     
     public JailCommand() {
         super();

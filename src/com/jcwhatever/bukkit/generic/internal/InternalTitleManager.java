@@ -34,7 +34,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * GenericsLib's default title manager.
  */
-public class InternalTitleManager extends TitleManager<INamedTitle> {
+public final class InternalTitleManager extends TitleManager<INamedTitle> {
 
     public InternalTitleManager(Plugin plugin, IDataNode dataNode, INamedTitleFactory<INamedTitle> factory) {
         super(plugin, dataNode, factory);

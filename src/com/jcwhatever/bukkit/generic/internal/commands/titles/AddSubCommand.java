@@ -43,7 +43,7 @@ import org.bukkit.command.CommandSender;
         usage="/{plugin-command} {command} add <name> <title> [subtitle] [--in <time> --out <time> --stay <time>]",
         description="Add a new title.")
 
-public class AddSubCommand extends AbstractCommand {
+public final class AddSubCommand extends AbstractCommand {
 
     @Localizable static final String _ALREADY_EXISTS = "A title named '{0}' already exists.";
     @Localizable static final String _FAILED = "Failed to create title.";

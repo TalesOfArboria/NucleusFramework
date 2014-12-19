@@ -38,7 +38,7 @@ import org.bukkit.command.CommandSender;
         usage = "/{plugin-command} scripts reload",
         description = "Reload scripts.")
 
-public class ReloadSubCommand extends AbstractCommand {
+public final class ReloadSubCommand extends AbstractCommand {
 
     @Override
     public void execute (CommandSender sender, CommandArguments args) throws InvalidValueException {

@@ -46,7 +46,7 @@ import org.bukkit.entity.Player;
         usage="/{plugin-command} {command} show <titleName> [playerName]",
         description="Show a title to yourself or the specified player.")
 
-public class ShowSubCommand extends AbstractCommand {
+public final class ShowSubCommand extends AbstractCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND = "A player named '{0}' was not found.";
     @Localizable static final String _TITLE_NOT_FOUND = "A title named '{0}' was not found.";

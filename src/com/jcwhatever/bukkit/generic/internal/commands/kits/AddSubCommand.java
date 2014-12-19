@@ -44,7 +44,7 @@ import org.bukkit.command.CommandSender;
         usage="/{plugin-command} {command} add <kitName>",
         description="Add a new chest kit.")
 
-public class AddSubCommand extends AbstractCommand {
+public final class AddSubCommand extends AbstractCommand {
 
     @Localizable static final String _KIT_ALREADY_EXISTS = "An chest kit named '{0}' already exists.";
     @Localizable static final String _FAILED = "Failed to create chest kit.";

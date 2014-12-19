@@ -54,7 +54,7 @@ import javax.annotation.Nullable;
 /**
  * Tracks useful information about players.
  */
-public class PlayerTracker {
+public final class PlayerTracker {
 
     private static PlayerTracker _instance;
 

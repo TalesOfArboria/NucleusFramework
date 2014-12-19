@@ -35,7 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.annotation.Nullable;
 import javax.script.ScriptEngineFactory;
 
-public class ScriptEngineLoaderSettings extends JarModuleLoaderSettings<ScriptEngineFactory> {
+public final class ScriptEngineLoaderSettings extends JarModuleLoaderSettings<ScriptEngineFactory> {
 
     public ScriptEngineLoaderSettings() {
 
@@ -51,7 +51,9 @@ public class ScriptEngineLoaderSettings extends JarModuleLoaderSettings<ScriptEn
         setModuleFactory(new IModuleFactory<ScriptEngineFactory>() {
             @Nullable
             @Override
-            public ScriptEngineFactory create(Class<ScriptEngineFactory> clazz) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+            public ScriptEngineFactory create(Class<ScriptEngineFactory> clazz)
+                    throws InstantiationException, IllegalAccessException,
+                    NoSuchMethodException, InvocationTargetException {
 
                 Constructor<ScriptEngineFactory> constructor = clazz.getDeclaredConstructor();
                 return constructor.newInstance();

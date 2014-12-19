@@ -44,7 +44,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 
-public class InventoryListener implements Listener {
+public final class InventoryListener implements Listener {
 
     @EventHandler
     private void onBrew(BrewEvent event) {

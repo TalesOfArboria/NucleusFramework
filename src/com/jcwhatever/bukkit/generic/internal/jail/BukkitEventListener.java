@@ -42,7 +42,7 @@ import java.util.UUID;
 /**
  * Jail event listener
  */
-public class BukkitEventListener  implements Listener {
+public final class BukkitEventListener  implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onCommandPreprocess(PlayerCommandPreprocessEvent event) {

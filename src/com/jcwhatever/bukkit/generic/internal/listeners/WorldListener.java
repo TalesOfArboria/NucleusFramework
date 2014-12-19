@@ -39,7 +39,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
-public class WorldListener implements Listener {
+public final class WorldListener implements Listener {
 
     @EventHandler
     private void onChunkLoad(ChunkLoadEvent event) {

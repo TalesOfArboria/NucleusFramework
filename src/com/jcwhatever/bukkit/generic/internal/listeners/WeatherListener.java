@@ -33,7 +33,7 @@ import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
-public class WeatherListener implements Listener {
+public final class WeatherListener implements Listener {
 
     @EventHandler
     private void onLightningStrike(LightningStrikeEvent event) {

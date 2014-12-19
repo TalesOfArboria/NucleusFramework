@@ -44,7 +44,7 @@ import org.bukkit.command.CommandSender;
         usage="/{plugin-command} jail deltp <name>",
         description="Remove a location where players are teleported within the jail.")
 
-public class DelTPSubCommand extends AbstractCommand {
+public final class DelTPSubCommand extends AbstractCommand {
 
     @Localizable static final String _NOT_FOUND = "A location named '{0}' was not found.";
     @Localizable static final String _FAILED = "Failed to remove location.";

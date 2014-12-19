@@ -52,7 +52,7 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.NotePlayEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
-public class BlockListener implements Listener{
+public final class BlockListener implements Listener{
 
     @EventHandler
     private void onBlockBreak(BlockBreakEvent event) {

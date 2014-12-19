@@ -37,7 +37,7 @@ import java.util.UUID;
 /**
  * Loads jail sessions created by plugins and jails that may not be loaded yet.
  */
-public class JailDependency implements IDependantRunnable {
+public final class JailDependency implements IDependantRunnable {
 
     private final String _pluginName;
     private final String _jailName;

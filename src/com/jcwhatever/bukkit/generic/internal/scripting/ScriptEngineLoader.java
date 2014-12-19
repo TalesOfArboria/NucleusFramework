@@ -31,7 +31,7 @@ import java.util.List;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
-public class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactory> {
+public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactory> {
 
     private final ScriptEngineManager _engineManager;
 
