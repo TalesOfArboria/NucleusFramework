@@ -22,29 +22,21 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.internal.commands.plugins;
 
-package com.jcwhatever.bukkit.generic.internal.commands;
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.commands.AbstractCommandHandler;
-import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.kits.KitsCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.plugins.PluginsCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.scripts.ScriptsCommand;
-import com.jcwhatever.bukkit.generic.internal.commands.titles.TitlesCommand;
+@CommandInfo(
+        command="plugins",
+        description="Manage plugins.")
 
-public final class CommandHandler extends AbstractCommandHandler {
+public final class PluginsCommand extends AbstractCommand {
 
-    public CommandHandler() {
-        super(GenericsLib.getPlugin());
-    }
+    public PluginsCommand() {
+        super();
 
-    @Override
-    protected void registerCommands () {
-        registerCommand(JailCommand.class);
-        registerCommand(KitsCommand.class);
-        registerCommand(PluginsCommand.class);
-        registerCommand(ScriptsCommand.class);
-        registerCommand(TitlesCommand.class);
+        registerSubCommand(ListSubCommand.class);
     }
 }
+
