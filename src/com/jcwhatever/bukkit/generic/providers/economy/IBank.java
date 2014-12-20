@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.providers.economy;
 
 import com.jcwhatever.bukkit.generic.mixins.INamed;
 
+import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -64,6 +65,11 @@ public interface IBank extends INamed {
      */
     @Nullable
     IAccount getAccount(UUID playerId);
+
+    /**
+     * Get all bank accounts.
+     */
+    List<IAccount> getAccounts();
 
     /**
      * Create a bank account.
