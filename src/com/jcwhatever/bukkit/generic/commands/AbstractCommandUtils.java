@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.commands;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.arguments.LocationResponse;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
@@ -33,14 +34,13 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.regions.selection.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
 import com.jcwhatever.bukkit.generic.storage.settings.SettingDefinitions;
 import com.jcwhatever.bukkit.generic.storage.settings.ValidationResults;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.WorldEditUtils;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
-import com.sk89q.worldedit.bukkit.selections.Selection;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
@@ -61,12 +61,10 @@ import javax.annotation.Nullable;
  */
 public abstract class AbstractCommandUtils {
 
-    @Localizable private static final String _INSTALL_WORLD_EDIT = "Please install World Edit plugin.";
     @Localizable private static final String _SAME_WORLD_REGION_SELECT = "You need to be in the same world as the region selection.";
     @Localizable private static final String _INVALID_REGION = "Invalid region. Both points must be in the same world.";
-    @Localizable private static final String _SET_SELECTION_FAILED = "Failed to set world edit selection.";
-    @Localizable private static final String _NO_REGION_SELECTED = "No cuboid region selection found. Use World Edit to select an area.";
-    @Localizable private static final String _REGION_SELECTION_INCOMPLETE = "Area selection incomplete. Please select both points of the cuboid region.";
+    @Localizable private static final String _SET_SELECTION_FAILED = "Failed to set region selection.";
+    @Localizable private static final String _NO_REGION_SELECTED = "No cuboid region selection found. Please select a region first.";
     @Localizable private static final String _UNRECOGNIZED_PROPERTY = "The property '{0}' is not a recognized setting.";
     @Localizable private static final String _CLEAR_PROPERTY_FAILED = "Failed to clear value on property '{0}'.";
     @Localizable private static final String _CLEAR_PROPERTY_SUCCESS = "'{0}' value cleared.";
@@ -136,42 +134,18 @@ public abstract class AbstractCommandUtils {
         _msg.tell(sender, ChatColor.RED + msg, params);
     }
 
-
     /**
-     * Determine if World Edit is installed.
-     * Handles error message if world edit is not installed and
-     * command sender is provided.
-     *
-     * @param sender  The command sender.
-     */
-    protected boolean isWorldEditInstalled(@Nullable CommandSender sender) {
-        // Check that World Edit is installed
-        if (!WorldEditUtils.isWorldEditInstalled()) {
-            if (sender != null) {
-                tellError(sender, Lang.get(_INSTALL_WORLD_EDIT));
-            }
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Set the specified players world edit selection.
+     * Set the specified players region selection.
      * Handles error message if any.
      *
      * @param p   The player
      * @param p1  The first location of the selection.
      * @param p2  The second location of the selection.
      */
-    protected boolean setWorldEditSelection(Player p, Location p1, Location p2) {
+    protected boolean setRegionSelection(Player p, Location p1, Location p2) {
         PreCon.notNull(p);
         PreCon.notNull(p1);
         PreCon.notNull(p2);
-
-        // Check that World Edit is installed
-        if (!isWorldEditInstalled(p)) {
-            return false;
-        }
 
         if (!p.getWorld().equals(p1.getWorld())) {
             tellError(p, Lang.get(_SAME_WORLD_REGION_SELECT));
@@ -183,7 +157,10 @@ public abstract class AbstractCommandUtils {
             return false;
         }
 
-        if (!WorldEditUtils.setWorldEditSelection(p, p1, p2)) {
+        boolean isSuccess = GenericsLib.getProviderManager()
+                .getRegionSelectionProvider().setSelection(p, new RegionSelection(p1, p2));
+
+        if (!isSuccess) {
             tellError(p, Lang.get(_SET_SELECTION_FAILED));
             return false;
         }
@@ -193,7 +170,7 @@ public abstract class AbstractCommandUtils {
     }
 
     /**
-     * Get the specified players current world edit selection.
+     * Get the specified players current region selection.
      * Handles error message if any.
      *
      * @param p  The player
@@ -201,30 +178,18 @@ public abstract class AbstractCommandUtils {
      * @return  {@code AreaSelection} object that defines the selection.
      */
     @Nullable
-    protected RegionSelection getWorldEditSelection(Player p) {
+    protected IRegionSelection getRegionSelection(Player p) {
         PreCon.notNull(p);
 
-        // Check that World Edit is installed
-        if (!isWorldEditInstalled(p)) {
-            return null;
-        }
+        IRegionSelection selection = RegionSelection.get(p);
 
-        Selection sel = WorldEditUtils.getWorldEditSelection(p);
-
-        // Check for World Edit selection
-        if (sel == null) {
+        // Check for region selection
+        if (selection == null) {
             tellError(p, Lang.get(_NO_REGION_SELECTED));
             return null;
         }
 
-        if (sel.getMinimumPoint() == null || sel.getMaximumPoint() == null ||
-                !sel.getMinimumPoint().getWorld().equals(sel.getMaximumPoint().getWorld())) {
-
-            tellError(p, Lang.get(_REGION_SELECTION_INCOMPLETE));
-            return null; // finish
-        }
-
-        return new RegionSelection(sel.getMinimumPoint(), sel.getMaximumPoint());
+        return selection;
     }
 
     /**

@@ -33,7 +33,8 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderExc
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.jail.Jail;
-import com.jcwhatever.bukkit.generic.regions.selection.RegionSelection;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -42,7 +43,7 @@ import org.bukkit.entity.Player;
         parent="jail",
         command="setregion", 
         usage="/{plugin-command} jail setregion",
-        description="Set jail region using your current world edit selection.")
+        description="Set jail region using your current region selection.")
 
 public final class SetRegionSubCommand extends AbstractCommand {
 
@@ -51,11 +52,8 @@ public final class SetRegionSubCommand extends AbstractCommand {
             throws InvalidValueException, InvalidCommandSenderException {
         
         InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER, "Console cannot select a region.");
-        
-        if (!isWorldEditInstalled(sender))
-            return; // finish
-        
-        RegionSelection sel = getWorldEditSelection((Player)sender);
+
+        IRegionSelection sel = getRegionSelection((Player) sender);
         if (sel == null)
             return; // finish
         
@@ -63,7 +61,7 @@ public final class SetRegionSubCommand extends AbstractCommand {
 
         jail.getJailBounds().setCoords(sel.getP1(), sel.getP2());
 
-        tellSuccess(sender, "Default Jail region set to your current world edit coords.");
+        tellSuccess(sender, "Default Jail region set to your current region selection.");
     }
 
 }
