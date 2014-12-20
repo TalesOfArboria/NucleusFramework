@@ -127,6 +127,20 @@ public final class TextUtils {
     }
 
     /**
+     * Specify case sensitivity
+     */
+    public enum CaseSensitivity {
+        /**
+         * Characters must be exact.
+         */
+        EXACT,
+        /**
+         * Ignore case, case insensitive.
+         */
+        IGNORE_CASE
+    }
+
+    /**
      * Determine if a string is valid for use as a name.
      * The string must begin with a letter and use only
      * alphanumeric characters and underscores.
@@ -155,6 +169,150 @@ public final class TextUtils {
 
         return name != null && (maxLen == -1 || name.length() <= maxLen) &&
                 name.length() > 0 && PATTERN_NAMES.matcher(name).matches();
+    }
+
+    /**
+     * Search a collection of strings for candidates that start with
+     * the specified prefix.
+     *
+     * @param prefix            The prefix to search for.
+     * @param searchCandidates  The search candidates.
+     */
+    public static List<String> startsWith(String prefix, Collection<String> searchCandidates) {
+        return startsWith(prefix, searchCandidates, CaseSensitivity.EXACT);
+    }
+
+    /**
+     * Search a collection of strings for candidates that start with
+     * the specified prefix.
+     *
+     * @param prefix            The prefix to search for.
+     * @param searchCandidates  The search candidates.
+     * @param casing            The case sensitivity of the search.
+     */
+    public static List<String> startsWith(String prefix,
+                                          Collection<String> searchCandidates, CaseSensitivity casing) {
+        PreCon.notNull(prefix);
+        PreCon.notNull(searchCandidates);
+        PreCon.notNull(casing);
+
+        if (prefix.isEmpty()) {
+            return new ArrayList<>(searchCandidates);
+        }
+
+        if (casing == CaseSensitivity.IGNORE_CASE) {
+            prefix = prefix.toLowerCase();
+        }
+
+        List<String> result = new ArrayList<>(searchCandidates.size());
+
+        for (String candidate : searchCandidates) {
+
+            if ((casing == CaseSensitivity.IGNORE_CASE &&
+                    candidate.toLowerCase().startsWith(prefix)) ||
+                    candidate.startsWith(prefix)) {
+                result.add(candidate);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Search a collection of strings for candidates that end with
+     * the specified suffix.
+     *
+     * @param suffix            The suffix to search for.
+     * @param searchCandidates  The search candidates.
+     */
+    public static List<String> endsWith(String suffix,
+                                        Collection<String> searchCandidates) {
+        return endsWith(suffix, searchCandidates, CaseSensitivity.EXACT);
+    }
+
+    /**
+     * Search a collection of strings for candidates that end with
+     * the specified suffix.
+     *
+     * @param suffix            The suffix to search for.
+     * @param searchCandidates  The search candidates.
+     * @param casing            The case sensitivity of the search.
+     */
+    public static List<String> endsWith(String suffix,
+                                        Collection<String> searchCandidates, CaseSensitivity casing) {
+        PreCon.notNull(suffix);
+        PreCon.notNull(searchCandidates);
+        PreCon.notNull(casing);
+
+        if (suffix.isEmpty()) {
+            return new ArrayList<>(searchCandidates);
+        }
+
+        if (casing == CaseSensitivity.IGNORE_CASE) {
+            suffix = suffix.toLowerCase();
+        }
+
+        List<String> result = new ArrayList<>(searchCandidates.size());
+
+        for (String candidate : searchCandidates) {
+
+            if ((casing == CaseSensitivity.IGNORE_CASE &&
+                    candidate.toLowerCase().endsWith(suffix)) ||
+                    candidate.endsWith(suffix)) {
+                result.add(candidate);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Search a collection of strings for candidates that contain the
+     * specified search text.
+     *
+     * @param searchText        The text to search for.
+     * @param searchCandidates  The search candidates.
+     */
+    public static List<String> contains(String searchText,
+                                        Collection<String> searchCandidates) {
+        return contains(searchText, searchCandidates, CaseSensitivity.EXACT);
+
+    }
+
+    /**
+     * Search a collection of strings for candidates that contain the
+     * specified search text.
+     *
+     * @param searchText        The text to search for.
+     * @param searchCandidates  The search candidates.
+     * @param casing            The case sensitivity of the search.
+     */
+    public static List<String> contains(String searchText,
+                                        Collection<String> searchCandidates, CaseSensitivity casing) {
+        PreCon.notNull(searchText);
+        PreCon.notNull(searchCandidates);
+        PreCon.notNull(casing);
+
+        if (searchText.isEmpty()) {
+            return new ArrayList<>(searchCandidates);
+        }
+
+        if (casing == CaseSensitivity.IGNORE_CASE) {
+            searchText = searchText.toLowerCase();
+        }
+
+        List<String> result = new ArrayList<>(searchCandidates.size());
+
+        for (String candidate : searchCandidates) {
+
+            if ((casing == CaseSensitivity.IGNORE_CASE &&
+                    candidate.toLowerCase().contains(searchText)) ||
+                    candidate.contains(searchText)) {
+                result.add(candidate);
+            }
+        }
+
+        return result;
     }
 
     /**
