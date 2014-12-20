@@ -66,12 +66,12 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
     @Localizable private static final String _INVALID_REGION = "Invalid region. Both points must be in the same world.";
     @Localizable private static final String _SET_SELECTION_FAILED = "Failed to set region selection.";
     @Localizable private static final String _NO_REGION_SELECTED = "No cuboid region selection found. Please select a region first.";
-    @Localizable private static final String _UNRECOGNIZED_PROPERTY = "The property '{0}' is not a recognized setting.";
-    @Localizable private static final String _CLEAR_PROPERTY_FAILED = "Failed to clear value on property '{0}'.";
-    @Localizable private static final String _CLEAR_PROPERTY_SUCCESS = "'{0}' value cleared.";
-    @Localizable private static final String _INVALID_PROPERTY_VALUE = "'{0}' is not a valid value for the property called '{1}'.";
-    @Localizable private static final String _SET_PROPERTY_FAILED = "Failed to set property '{0}'.";
-    @Localizable private static final String _SET_PROPERTY_SUCCESS = "'{0}' value changed to {1}.";
+    @Localizable private static final String _UNRECOGNIZED_PROPERTY = "The property '{0: property name}' is not a recognized setting.";
+    @Localizable private static final String _CLEAR_PROPERTY_FAILED = "Failed to clear value on property '{0: property name}'.";
+    @Localizable private static final String _CLEAR_PROPERTY_SUCCESS = "'{0: property name}' value cleared.";
+    @Localizable private static final String _INVALID_PROPERTY_VALUE = "'{0: property value}' is not a valid value for the property called '{1: property name}'.";
+    @Localizable private static final String _SET_PROPERTY_FAILED = "Failed to set property '{0: property name}'.";
+    @Localizable private static final String _SET_PROPERTY_SUCCESS = "'{0: property value}' value changed to {1: property name}.";
 
     private static final Pattern FORMAT_ENABLE = Pattern.compile("\\{e}");
 
