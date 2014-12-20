@@ -53,8 +53,7 @@ public final class WorldEditSelectionProvider implements IRegionSelectProvider {
         if (_isWorldEditInstalled == null) {
 
             // Check that World Edit is installed
-            _wePlugin = Bukkit.getPluginManager().getPlugin("WorldEdit");
-            _isWorldEditInstalled = _wePlugin instanceof WorldEditPlugin;
+            _isWorldEditInstalled = (_wePlugin = Bukkit.getPluginManager().getPlugin("WorldEdit")) != null;
         }
 
         return _isWorldEditInstalled;
@@ -101,7 +100,7 @@ public final class WorldEditSelectionProvider implements IRegionSelectProvider {
             return null;
         }
 
-        return new RegionSelection(sel.getMinimumPoint(), sel.getMinimumPoint());
+        return new RegionSelection(sel.getMinimumPoint(), sel.getMaximumPoint());
     }
 
     @Override
