@@ -25,6 +25,8 @@
 package com.jcwhatever.bukkit.generic.internal.providers;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.internal.providers.economy.GenericsEconomyProvider;
+import com.jcwhatever.bukkit.generic.internal.providers.economy.VaultEconomyProvider;
 import com.jcwhatever.bukkit.generic.internal.providers.permissions.BukkitPermissionsProvider;
 import com.jcwhatever.bukkit.generic.internal.providers.permissions.VaultPermissionsProvider;
 import com.jcwhatever.bukkit.generic.internal.providers.selection.GenericsSelectionProvider;
@@ -35,6 +37,7 @@ import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.providers.IProviderManager;
 import com.jcwhatever.bukkit.generic.providers.IRegionSelectProvider;
 import com.jcwhatever.bukkit.generic.providers.IStorageProvider;
+import com.jcwhatever.bukkit.generic.providers.economy.IEconomyProvider;
 import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.YamlDataStorage;
@@ -58,6 +61,7 @@ public final class InternalProviderManager implements IProviderManager {
 
     private IPermissionsProvider _permissions;
     private IRegionSelectProvider _regionSelect;
+    private IEconomyProvider _economy;
 
     private IStorageProvider _defaultStorage;
 
@@ -77,6 +81,10 @@ public final class InternalProviderManager implements IProviderManager {
         _regionSelect = WorldEditSelectionProvider.isWorldEditInstalled()
                 ? new WorldEditSelectionProvider()
                 : new GenericsSelectionProvider();
+
+        _economy = VaultEconomyProvider.hasVaultEconomy()
+                ? new VaultEconomyProvider()
+                : new GenericsEconomyProvider(GenericsLib.getPlugin());
     }
 
     @Override
@@ -111,6 +119,23 @@ public final class InternalProviderManager implements IProviderManager {
         }
 
         _regionSelect = provider;
+    }
+
+    @Override
+    public IEconomyProvider getEconomyProvider() {
+        return _economy;
+    }
+
+    @Override
+    public void setEconomyProvider(IEconomyProvider provider) {
+        PreCon.notNull(provider);
+        PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");
+
+        if (_economy instanceof IDisposable && provider != _economy) {
+            ((IDisposable)_economy).dispose();
+        }
+
+        _economy = provider;
     }
 
     @Override

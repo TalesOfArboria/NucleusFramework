@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.providers;
 
+import com.jcwhatever.bukkit.generic.providers.economy.IEconomyProvider;
+
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -59,6 +61,20 @@ public interface IProviderManager {
      * @param provider  The region selection provider.
      */
     void setRegionSelectionProvider(IRegionSelectProvider provider);
+
+    /**
+     * Get the economy provider.
+     */
+    IEconomyProvider getEconomyProvider();
+
+    /**
+     * Set the economy provider.
+     *
+     * <p>Can only be set while GenericsLib is loading providers.</p>
+     *
+     * @param economyProvider  The storage provider.
+     */
+    void setEconomyProvider(IEconomyProvider economyProvider);
 
     /**
      * Get the default data storage provider.
