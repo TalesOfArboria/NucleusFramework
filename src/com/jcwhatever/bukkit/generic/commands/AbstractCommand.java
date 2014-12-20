@@ -103,8 +103,6 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      * @param arguments   This command arguments currently entered by the command sender.
      *                    not including the command and command path.
      * @param completions The list of completions.
-     *
-     * @return A list of possible results. Empty list if no results.
      */
     public void onTabComplete(@SuppressWarnings("unused") CommandSender sender,
                               @SuppressWarnings("unused") String[] arguments,
