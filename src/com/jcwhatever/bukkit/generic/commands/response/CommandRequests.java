@@ -48,7 +48,8 @@ public class CommandRequests {
 
     private CommandRequests() {}
 
-    @Localizable private static final String _MULTIPLE_REQUESTS = "{YELLOW}Multiple requests for response found. " +
+    @Localizable private static final String _MULTIPLE_REQUESTS =
+            "{YELLOW}Multiple requests for response found. " +
             "Please be more specific:";
 
     private static TimedHashSetMap<CommandSender, ResponseRequest>
@@ -89,7 +90,9 @@ public class CommandRequests {
      *
      * @return  {@code ResponseRequest} object.
      */
-    public static ResponseRequest request(Plugin plugin, String context, CommandSender sender, IResponseHandler handler, ResponseType... responseType) {
+    public static ResponseRequest request(Plugin plugin, String context,
+                                          CommandSender sender, IResponseHandler handler,
+                                          ResponseType... responseType) {
         ResponseRequest request = new ResponseRequest(plugin, context, sender, handler, responseType);
         _requests.put(request.getCommandSender(), request, request.getLifespan());
 
@@ -171,7 +174,9 @@ public class CommandRequests {
         return true;
     }
 
-    private static void handleResponse(CommandSender sender, ResponseRequest responseRequest, ResponseType type) {
+    private static void handleResponse(CommandSender sender,
+                                       ResponseRequest responseRequest,
+                                       ResponseType type) {
         responseRequest.getHandler().onResponse(type);
         _requests.removeValue(sender, responseRequest);
     }
