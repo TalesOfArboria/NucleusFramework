@@ -2,7 +2,7 @@ name: GenericsLib
 author: JCThePants
 main: com.jcwhatever.bukkit.generic.BukkitPlugin
 version: 0.0-beta
-softdepend: [Vault]
+softdepend: [Vault, WorldEdit]
 commands:
     g:
         aliases: [gen, generics]
