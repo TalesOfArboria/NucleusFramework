@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.internal.providers;
 import com.jcwhatever.bukkit.generic.modules.JarModuleLoader;
 import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.providers.IProvider;
+import com.jcwhatever.bukkit.generic.providers.IRegionSelectProvider;
 import com.jcwhatever.bukkit.generic.providers.IStorageProvider;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -69,7 +70,12 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
                 _manager.registerStorageProvider((IStorageProvider)provider);
             }
             else if (provider instanceof IPermissionsProvider) {
-                _manager.setPermissionsProvider((IPermissionsProvider)provider);
+
+                _manager.setPermissionsProvider((IPermissionsProvider) provider);
+            }
+            else if (provider instanceof IRegionSelectProvider) {
+
+                _manager.setRegionSelectionProvider((IRegionSelectProvider)provider);
             }
             else {
                 removeModule(provider.getName());

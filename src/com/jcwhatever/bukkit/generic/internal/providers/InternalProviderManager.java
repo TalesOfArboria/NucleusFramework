@@ -27,9 +27,13 @@ package com.jcwhatever.bukkit.generic.internal.providers;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.providers.permissions.BukkitPermissionsProvider;
 import com.jcwhatever.bukkit.generic.internal.providers.permissions.VaultPermissionsProvider;
+import com.jcwhatever.bukkit.generic.internal.providers.selection.GenericsSelectionProvider;
+import com.jcwhatever.bukkit.generic.internal.providers.selection.WorldEditSelectionProvider;
 import com.jcwhatever.bukkit.generic.internal.providers.storage.YamlStorageProvider;
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.providers.IProviderManager;
+import com.jcwhatever.bukkit.generic.providers.IRegionSelectProvider;
 import com.jcwhatever.bukkit.generic.providers.IStorageProvider;
 import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -52,7 +56,8 @@ public final class InternalProviderManager implements IProviderManager {
 
     private IDataNode _dataNode;
 
-    private IPermissionsProvider _defaultPermissions;
+    private IPermissionsProvider _permissions;
+    private IRegionSelectProvider _regionSelect;
 
     private IStorageProvider _defaultStorage;
 
@@ -72,12 +77,12 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Override
     public IPermissionsProvider getPermissionsProvider() {
-        if (_defaultPermissions == null) {
-            _defaultPermissions = Bukkit.getPluginManager().getPlugin("Vault") != null
+        if (_permissions == null) {
+            _permissions = Bukkit.getPluginManager().getPlugin("Vault") != null
                     ? new VaultPermissionsProvider()
                     : new BukkitPermissionsProvider();
         }
-        return _defaultPermissions;
+        return _permissions;
     }
 
     @Override
@@ -85,7 +90,28 @@ public final class InternalProviderManager implements IProviderManager {
         PreCon.notNull(permissionsProvider);
         PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
 
-        _defaultPermissions = permissionsProvider;
+        _permissions = permissionsProvider;
+    }
+
+    @Override
+    public IRegionSelectProvider getRegionSelectionProvider() {
+        if (_regionSelect == null) {
+            _regionSelect = WorldEditSelectionProvider.isWorldEditInstalled()
+                    ? new WorldEditSelectionProvider()
+                    : new GenericsSelectionProvider();
+        }
+        return _regionSelect;
+    }
+
+    @Override
+    public void setRegionSelectionProvider(IRegionSelectProvider provider) {
+        PreCon.notNull(provider);
+
+        if (_regionSelect instanceof IDisposable && provider != _regionSelect) {
+            ((IDisposable)_regionSelect).dispose();
+        }
+
+        _regionSelect = provider;
     }
 
     @Override
@@ -97,6 +123,10 @@ public final class InternalProviderManager implements IProviderManager {
     public void setStorageProvider(IStorageProvider storageProvider) {
         PreCon.notNull(storageProvider);
         PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
+
+        if (_defaultStorage instanceof IDisposable && storageProvider != _defaultStorage) {
+            ((IDisposable) _defaultStorage).dispose();
+        }
 
         _defaultStorage = storageProvider;
     }
@@ -144,7 +174,10 @@ public final class InternalProviderManager implements IProviderManager {
         PreCon.notNull(storageProvider);
         PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");
 
-        _storageProviders.put(storageProvider.getName().toLowerCase(), storageProvider);
+        IStorageProvider previous = _storageProviders.put(storageProvider.getName().toLowerCase(), storageProvider);
+        if (previous instanceof IDisposable && previous != storageProvider) {
+            ((IDisposable) previous).dispose();
+        }
 
         IDataNode dataNode = getDataNode().getNode("storage");
 

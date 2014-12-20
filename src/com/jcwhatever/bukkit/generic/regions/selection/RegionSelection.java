@@ -24,13 +24,14 @@
 
 package com.jcwhatever.bukkit.generic.regions.selection;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.regions.data.CuboidPoint;
-import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 
@@ -39,6 +40,18 @@ import javax.annotation.Nullable;
  * of space as defined by two region locations.
  */
 public class RegionSelection implements IRegionSelection {
+
+    /**
+     * Get the specified players current region selection.
+     *
+     * @param player  The player to check.
+     *
+     * @return  Null if the player does not have a selected region.
+     */
+    @Nullable
+    public static IRegionSelection get(Player player) {
+        return GenericsLib.getProviderManager().getRegionSelectionProvider().getSelection(player);
+    }
 
     protected final Object _sync = new Object();
 

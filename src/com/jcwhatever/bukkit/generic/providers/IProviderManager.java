@@ -49,6 +49,18 @@ public interface IProviderManager {
     void setPermissionsProvider(IPermissionsProvider permissionsProvider);
 
     /**
+     * Get the region selection provider.
+     */
+    IRegionSelectProvider getRegionSelectionProvider();
+
+    /**
+     * Set the region selection provider.
+     *
+     * @param provider  The region selection provider.
+     */
+    void setRegionSelectionProvider(IRegionSelectProvider provider);
+
+    /**
      * Get the default data storage provider.
      */
     IStorageProvider getStorageProvider();
