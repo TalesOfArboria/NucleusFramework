@@ -25,34 +25,26 @@
 
 package com.jcwhatever.bukkit.generic.commands;
 
+import com.jcwhatever.bukkit.generic.commands.CommandParser.ParsedCommand;
+import com.jcwhatever.bukkit.generic.commands.CommandParser.ParsedTabComplete;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.DuplicateParameterException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.MissingCommandAnnotationException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
-import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -72,10 +64,8 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     @Localizable static final String _REASON = "Reason: {0}";
 
 
-    private final Map<String, AbstractCommand> _masterCommands;
-    private AbstractCommand _baseCommand;
-
-    private List<AbstractCommand> _sortedCommands;
+    private final CommandCollection _masterCommands = new CommandCollection();
+    private final CommandParser _parser = new CommandParser();
 
     /**
      * Constructor
@@ -84,7 +74,6 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
      */
     public AbstractCommandHandler(Plugin plugin) {
         super(plugin);
-        _masterCommands = new HashMap<String, AbstractCommand>(20);
 
         Permissions.runBatchOperation(true, new Runnable() {
 
@@ -102,18 +91,8 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     /**
      * Get a collection of all registered top level commands.
      */
-    public final Collection<AbstractCommand> getCommands() {
-
-        if (_sortedCommands == null) {
-
-            Set<AbstractCommand> commandSet = new HashSet<AbstractCommand>(_masterCommands.values());
-            List<AbstractCommand> commands = new ArrayList<AbstractCommand>(commandSet);
-
-            Collections.sort(commands);
-
-            _sortedCommands = commands;
-        }
-        return new ArrayList<AbstractCommand>(_sortedCommands);
+    public Collection<AbstractCommand> getCommands() {
+        return _masterCommands.getCommands();
     }
 
     /**
@@ -126,45 +105,18 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         PreCon.notNull(baseCommandName);
         PreCon.notNull(args);
 
-        // get the primary command from the first argument
-        AbstractCommand command = null;
+        initBaseCommand();
 
-        if (args.length > 0) {
-            command = _masterCommands.get(args[0]);
-        }
+        ParsedCommand parsed = _parser.parseCommand(_masterCommands, args);
 
-        // command not found
-        if (command == null) {
-
-            // set default base command if none set
-            if (_baseCommand == null) {
-                setBaseCommand(AboutCommand.class);
-            }
-
-            // get arguments for base command
-            CommandArguments baseCommandArgs = getCommandArguments(sender, _baseCommand, args, false);
-            if (baseCommandArgs != null) {
-
-                // execute base command and finish if successful.
-                if (executeCommand(sender, _baseCommand, baseCommandArgs, false))
-                    return true; // finished
-            }
-
+        if (parsed == null) {
             // command not found
             tellError(sender, Lang.get(_COMMAND_NOT_FOUND, baseCommandName));
-            return true;
+            return true; // finish
         }
 
-        // trim the first element from the array
-        String[] argArray = ArrayUtils.reduceStart(1, args);
-
-        // parse arguments and get command and command specific arguments
-        CommandPackage commandPackage = getCommand(command, argArray, 1);
-        if (commandPackage != null) {
-            // update command and arguments
-            command = commandPackage.command;
-            argArray = commandPackage.arguments;
-        }
+        AbstractCommand command = parsed.getCommand();
+        String[] rawArguments = parsed.getArguments();
 
         // Check if the player has permissions to run the command
         if (!Permissions.has(sender, command.getPermission().getName())) {
@@ -173,15 +125,13 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         }
 
         // handle command help, display if the command argument is '?' or 'help'
-        if (argArray.length > 0 &&
-                ((argArray[0].equals("?")) ||
-                        argArray[0].equalsIgnoreCase("help"))) {
+        if (isCommandHelp(rawArguments)) {
 
             int page = 1;
 
-            if (argArray.length == 2) {
+            if (rawArguments.length == 2) {
                 try {
-                    page = Integer.parseInt(argArray[1]);
+                    page = Integer.parseInt(rawArguments[1]);
                 }
                 catch (NumberFormatException ignored) {}
             }
@@ -192,15 +142,13 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         }
 
         // Determine if the command can execute or if it requires sub commands
-        boolean canExecute = command.canExecute();
-
-        if (!canExecute) {
+        if (!command.canExecute()) {
             tellError(sender, Lang.get(_COMMAND_INCOMPLETE, baseCommandName));
             return true; // finished
         }
 
         // get arguments
-        CommandArguments arguments = getCommandArguments(sender, command, argArray, true);
+        CommandArguments arguments = getCommandArguments(sender, command, rawArguments, true);
         if (arguments == null)
             return true; // finished
 
@@ -221,75 +169,29 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         PreCon.notNull(sender);
         PreCon.notNull(args);
 
-        // get the primary command from the first argument
-        AbstractCommand masterCommand = _masterCommands.get(args[0]);
+        ParsedTabComplete parsed = _parser.parseTabComplete(_masterCommands, sender, args);
 
-        if (masterCommand == null && !args[0].isEmpty()) {
-            // get possible command matches
-            return searchCommandNames(args[0], _masterCommands.keySet());
-        }
-        // check if the master command is the only argument
-        else if (args.length == 1) {
-            // return all commands
-            return new ArrayList<>(_masterCommands.keySet());
-        }
+        AbstractCommand command = parsed.getCommand();
+        String[] arguments = parsed.getArguments();
+        List<String> matches = parsed.getMatches();
 
-        // trim the first element from the array (the master command name)
-        String[] argArray = ArrayUtils.reduceStart(1, args);
-
-        List<String> result = new ArrayList<>(10);
-
-        // parse arguments and get command and command specific arguments
-        CommandPackage commandPackage = getCommand(masterCommand, argArray, 1);
-        if (commandPackage != null) {
-
-            AbstractCommand subCommand = commandPackage.command;
-            String[] arguments = commandPackage.arguments;
-
-            // add sub commands to list
-            if (subCommand.getSubCommands().size() > 0 &&
-                    (arguments.length ==0 || !arguments[0].equals("?"))) {
-
-                // generate list of sub command names the player has permission to use
-                Collection<String> names = subCommand.getSubCommandNames();
-                Iterator<String> iterator = names.iterator();
-                while (iterator.hasNext()) {
-
-                    String name = iterator.next();
-                    AbstractCommand command = subCommand.getSubCommand(name);
-                    if (command == null)
-                        continue;
-
-                    if (!command.isHelpVisible(sender)) {
-                        iterator.remove();
-                    }
-                }
-
-                if (arguments.length == 1 &&
-                        !arguments[0].isEmpty()) {
-                    // search for command matches
-                    result.addAll(searchCommandNames(arguments[0], names));
-                }
-                else {
-                    // add all commands
-                    result.addAll(names);
-                }
-            }
+        if (command != null) {
 
             // give the command the opportunity to modify the list
-            subCommand.onTabComplete(
+            command.onTabComplete(
                     sender,
                     arguments,
-                    result);
-
-            // add the command help
-            if (arguments.length == 0 ||
-                    (arguments.length == 1 && arguments[0].isEmpty())) {
-                result.add("?");
-            }
+                    matches);
         }
 
-        return result;
+        // add the command help
+        if (command != null && matches.size() > 1 &&
+                (arguments.length == 0 ||
+                (arguments.length == 1 && arguments[0].isEmpty()))) {
+            parsed.getMatches().add("?");
+        }
+
+        return parsed.getMatches();
     }
 
     /**
@@ -304,28 +206,9 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         PreCon.notNull(commandPath);
 
         if (commandPath.isEmpty())
-            return _baseCommand;
+            return _parser.getBaseCommand();
 
-        String[] pathComp = TextUtils.PATTERN_DOT.split(commandPath);
-
-        // get the master command to search
-        AbstractCommand masterCommand = _masterCommands.get(pathComp[0]);
-        if (masterCommand == null)
-            return null;
-
-        // if only one component, we already have the command
-        if (pathComp.length == 1)
-            return masterCommand;
-
-        CommandPackage commandPackage = getCommand(masterCommand, ArrayUtils.reduceStart(1, pathComp), 1);
-        if (commandPackage == null)
-            return null;
-
-        // there shouldn't be any left over command path components
-        if (commandPackage.arguments.length != 0)
-            return null;
-
-        return commandPackage.command;
+        return _parser.parsePath(_masterCommands, commandPath);
     }
 
     /**
@@ -333,10 +216,32 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
      *
      * @param commandClass  The commands implementation class
      */
-    public final boolean registerCommand(Class<? extends AbstractCommand> commandClass) {
+    @Nullable
+    public final <T extends AbstractCommand> T registerCommand(Class<T> commandClass) {
         PreCon.notNull(commandClass);
 
-        return registerCommand(commandClass, false);
+        String commandName = _masterCommands.add(commandClass);
+
+        if (commandName == null) {
+            _msg.debug("Failed to register command '{0}' possibly because another command with the " +
+                            "same name is already registered and no alternative command names were provided.",
+                    commandClass.getName());
+            return null;
+        }
+
+        AbstractCommand command = _masterCommands.getCommand(commandName);
+        if (command == null)
+            throw new AssertionError();
+
+        // set the commands command handler
+        command.setCommandHandler(this, commandName);
+
+        onMasterCommandInstantiated(command);
+
+        @SuppressWarnings("unchecked")
+        T result = (T)command;
+
+        return result;
     }
 
     /**
@@ -347,14 +252,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     public final boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
         PreCon.notNull(commandClass);
 
-        CommandInfo commandInfo = commandClass.getAnnotation(CommandInfo.class);
-        if (commandInfo == null)
-            throw new MissingCommandAnnotationException(commandClass);
-
-        for (String commandName : commandInfo.command())
-            _masterCommands.remove(commandName.trim().toLowerCase());
-
-        return true;
+        return _masterCommands.removeAll(commandClass);
     }
 
     /**
@@ -392,44 +290,30 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     protected final void setBaseCommand(Class<? extends AbstractCommand> commandClass) {
         PreCon.notNull(commandClass);
 
-        this.registerCommand(commandClass, true);
-    }
+        AbstractCommand command = _masterCommands.getCommand(commandClass);
 
-    /**
-     * Recursively parses a String[] of arguments for the specified
-     * parent command and return a {@code CommandPackage} containing the
-     * {@code AbstractCommand} implementation that should be used to execute the command
-     * as well as the arguments to be used for the returned command.
-     *
-     * @param parentCommand  The command the supplied arguments are for
-     * @param args           The command arguments
-     */
-    private CommandPackage getCommand(AbstractCommand parentCommand, @Nullable String[] args, int depth) {
-        PreCon.notNull(parentCommand);
+        if (command == null) {
+            String name = _masterCommands.add(commandClass);
+            if (name == null) {
+                _msg.debug("Failed to register based command '{0}'.", commandClass.getName());
+                return;
+            }
 
-        if (args == null || args.length == 0)
-            return new CommandPackage(parentCommand, new String[0], depth);
-
-        String subCmd = args[0].toLowerCase();
-        String[] params = ArrayUtils.reduceStart(1, args);
-
-        AbstractCommand subCommand = subCmd.isEmpty() ? null : parentCommand.getSubCommand(subCmd);
-        if (subCommand == null)
-            return new CommandPackage(parentCommand, args, depth);
-        else {
-            CommandPackage p = getCommand(subCommand, params, depth + 1);
-            if (p == null)
-                return new CommandPackage(parentCommand, args, depth);
-
-            return p;
+            command = _masterCommands.getCommand(name);
+            if (command == null)
+                throw new AssertionError();
         }
+
+        _parser.setBaseCommand(command);
     }
+
 
     @Nullable
-    private CommandArguments getCommandArguments(CommandSender sender, AbstractCommand command, String[] argArray, boolean showMessages) {
-
+    private CommandArguments getCommandArguments(CommandSender sender,
+                                                 AbstractCommand command,
+                                                 String[] argArray,
+                                                 boolean showMessages) {
         // Parse command arguments
-
         CommandArguments arguments;
 
         try {
@@ -517,91 +401,21 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         return true;
     }
 
-    private boolean registerCommand(Class<? extends AbstractCommand> commandClass, boolean isBaseCommand) {
+    private void initBaseCommand() {
+        if (_parser.getBaseCommand() != null)
+            return;
 
-        // make sure command has required command info annotation
-        CommandInfo info = commandClass.getAnnotation(CommandInfo.class);
-        if (info == null) {
-            throw new MissingCommandAnnotationException(commandClass);
+        AbstractCommand aboutCommand = _masterCommands.getCommand("about");
+        if (aboutCommand == null && registerCommand(AboutCommand.class) == null) {
+            return;
         }
 
-        // instantiate command
-        AbstractCommand instance;
-
-        try {
-            instance = commandClass.newInstance();
-        }
-        catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        // split commands and add each command
-        String[] commands = info.command();
-        String commandName = null;
-        for (String command : commands) {
-            if (!_masterCommands.containsKey(command)) {
-
-                if (commandName == null) {
-                    commandName = command;
-                }
-                _masterCommands.put(command, instance);
-            }
-        }
-
-        if (commandName == null && !isBaseCommand) {
-            _msg.warning("Failed to register command '{0}' because another command with the same name " +
-                    "is already registered and no alternative command names were provided.", info.command()[0]);
-            return false;
-        }
-
-        // set the commands command handler
-        instance.setCommandHandler(this, commandName);
-
-        onMasterCommandInstantiated(instance);
-
-        if (isBaseCommand) {
-            _baseCommand = instance;
-            return true; // finish
-        }
-
-        // clear sorted commands cache
-        _sortedCommands = null;
-
-        return true;
+        _parser.setBaseCommand(_masterCommands.getCommand("about"));
     }
 
-    private List<String> searchCommandNames(String searchText, Collection<String> commandNames) {
-
-        if (searchText.isEmpty())
-            return new ArrayList<>(0);
-
-        List<String> result = new ArrayList<>(commandNames.size());
-
-        for (String command : commandNames) {
-            if (command.toLowerCase().startsWith(searchText.toLowerCase()))
-                result.add(command);
-        }
-
-        return result;
-    }
-
-
-    /**
-     * A data object that holds an {@code AbstractCommand} implementation
-     * as well as a {@code String[]} of arguments it should be
-     * executed with.
-     */
-    private static class CommandPackage {
-        AbstractCommand command;
-        String[] arguments;
-        int depth;
-
-        CommandPackage (AbstractCommand command, String[] parameters, int depth) {
-            this.command = command;
-            this.arguments = parameters;
-            this.depth = depth;
-        }
+    private boolean isCommandHelp(String[] args) {
+        return args.length > 0 &&
+                ((args[0].equals("?")) || args[0].equalsIgnoreCase("help"));
     }
 
 }

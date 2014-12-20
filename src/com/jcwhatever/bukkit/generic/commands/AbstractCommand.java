@@ -38,15 +38,12 @@ import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils.FormatTemplate;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import javax.annotation.Nullable;
@@ -61,7 +58,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     private static final String _USAGE = "{GOLD}/{plugin-command} {GREEN}";
     private static final String _COMMAND_PAGINATOR_TITLE = "Commands";
 
-    private final Map<String, AbstractCommand> _subCommands = new HashMap<String, AbstractCommand>(20);
+    private final CommandCollection _subCommands = new CommandCollection();
 
     private CommandInfoContainer _info;
     private AbstractCommandHandler _commandHandler;
@@ -69,7 +66,6 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     private Set<Class<? extends AbstractCommand>> _subCommandQueue = new HashSet<Class<? extends AbstractCommand>>(20);
     private AbstractCommand _parent;
     private IPermission _permission;
-    private List<AbstractCommand> _sortedSubCommands;
     private boolean _canExecute;
 
     /**
@@ -138,47 +134,38 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             return;
         }
 
-        // make sure sub command has required ICommandInfo annotation
-        CommandInfo commandInfo = subCommandClass.getAnnotation(CommandInfo.class);
-        if (commandInfo == null)
-            throw new MissingCommandAnnotationException(subCommandClass);
+        String commandName = _subCommands.add(subCommandClass);
+        if (commandName == null) {
+            _msg.debug("Failed to register command '{0}' as a sub command of '{1}' possibly because " +
+                    "another command with the same name is already registered and no alternative " +
+                    "command names were provided.", subCommandClass.getName(), getClass().getName());
+            return;
+        }
+
+        AbstractCommand command = _subCommands.getCommand(commandName);
+        if (command == null)
+            throw new AssertionError();
+
+        // set the instances parent command
+        command._parent = this;
+
+        // set the instances command handler
+        if (_commandHandler != null)
+            command.setCommandHandler(_commandHandler, _info.getMasterCommandName());
 
         /**
          * Safety check. Make sure the parent specified by the command is this command
          */
-        if (!commandInfo.parent().isEmpty() && !isCommandMatch(commandInfo.parent(), _info.getCommandNames())) {
+        if (!command.getInfo().getParentName().isEmpty() &&
+                !isCommandMatch(command.getInfo().getParentName(), _info.getCommandNames())) {
             _msg.debug("Failed to register sub command. Registered with incorrect parent: "
                     + this.getClass().getName());
+
+            _subCommands.removeAll(command);
             return;
         }
 
-        // instantiate command
-        AbstractCommand instance;
-
-        try {
-            instance = subCommandClass.newInstance();
-        }
-        catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        // set the instances parent command
-        instance._parent = this;
-
-        // set the instances command handler
-        if (_commandHandler != null)
-            instance.setCommandHandler(_commandHandler, _info.getMasterCommandName());
-
-        onSubCommandInstantiated(instance);
-
-        // split commands and add each command
-        for (String cmd : commandInfo.command()) {
-            _subCommands.put(cmd.trim().toLowerCase(), instance);
-        }
-
-        // clear sorted sub commands cache
-        _sortedSubCommands = null;
+        onSubCommandInstantiated(command);
     }
 
     /**
@@ -227,26 +214,21 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     public final AbstractCommand getSubCommand(String subCommandName) {
         PreCon.notNullOrEmpty(subCommandName);
 
-        return _subCommands.get(subCommandName.toLowerCase());
+        return _subCommands.getCommand(subCommandName);
     }
 
     /**
      * Get the commands registered sub commands.
      */
     public final Collection<AbstractCommand> getSubCommands() {
-        if (_sortedSubCommands == null) {
-            List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(_subCommands.values());
-            Collections.sort(subCommands);
-            _sortedSubCommands = subCommands;
-        }
-        return new ArrayList<AbstractCommand>(_sortedSubCommands);
+        return _subCommands.getCommands();
     }
 
     /**
      * Get the sub command names.
      */
     public final Collection<String> getSubCommandNames() {
-        return new ArrayList<>(_subCommands.keySet());
+        return _subCommands.getCommandNames();
     }
 
     /**
@@ -519,8 +501,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             return false;
 
         // determine if the CommandSender has permission to use the command
-        if (sender instanceof Player &&
-                !Permissions.has((Player)sender, getPermission().getName()))
+        if (!Permissions.has(sender, getPermission().getName()))
             return false;
 
         return true;
