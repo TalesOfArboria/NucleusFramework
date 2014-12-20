@@ -126,5 +126,28 @@ public final class Utils {
         return results;
     }
 
+    /**
+     * Search a collection for valid candidates using an
+     * {@code EntryValidator} to validate.
+     *
+     * @param searchCandidates  The search candidates.
+     * @param entryValidator    The entry validator.
+     */
+    public static <T> List<T> search(Collection<T> searchCandidates, EntryValidator<T> entryValidator) {
+        PreCon.notNull(searchCandidates);
+        PreCon.notNull(entryValidator);
+
+        List<T> result = new ArrayList<>(searchCandidates.size());
+
+        for (T candidate : searchCandidates) {
+
+            if (entryValidator.isValid(candidate)) {
+                result.add(candidate);
+            }
+        }
+
+        return result;
+    }
+
 }
 

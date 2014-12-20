@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.EntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.Utils;
 import com.jcwhatever.bukkit.generic.utils.text.TextFormatter.ITagFormatter;
 
 import org.bukkit.ChatColor;
@@ -317,26 +318,14 @@ public final class TextUtils {
     }
 
     /**
-     * Search a collection of string for valid candidates using an
+     * Search a collection of strings for valid candidates using an
      * {@code EntryValidator} to validate.
      *
      * @param searchCandidates  The search candidates.
      * @param entryValidator    The entry validator.
      */
     public static List<String> search(Collection<String> searchCandidates, EntryValidator<String> entryValidator) {
-        PreCon.notNull(searchCandidates);
-        PreCon.notNull(entryValidator);
-
-        List<String> result = new ArrayList<>(searchCandidates.size());
-
-        for (String candidate : searchCandidates) {
-
-            if (entryValidator.isValid(candidate)) {
-                result.add(candidate);
-            }
-        }
-
-        return result;
+        return Utils.search(searchCandidates, entryValidator);
     }
 
     /**
