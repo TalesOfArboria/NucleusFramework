@@ -73,6 +73,10 @@ public final class InternalProviderManager implements IProviderManager {
 
     public InternalProviderManager() {
         _storageProviders.put(_yamlStorage.getName().toLowerCase(), _yamlStorage);
+
+        _regionSelect = WorldEditSelectionProvider.isWorldEditInstalled()
+                ? new WorldEditSelectionProvider()
+                : new GenericsSelectionProvider();
     }
 
     @Override
@@ -95,11 +99,6 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Override
     public IRegionSelectProvider getRegionSelectionProvider() {
-        if (_regionSelect == null) {
-            _regionSelect = WorldEditSelectionProvider.isWorldEditInstalled()
-                    ? new WorldEditSelectionProvider()
-                    : new GenericsSelectionProvider();
-        }
         return _regionSelect;
     }
 
