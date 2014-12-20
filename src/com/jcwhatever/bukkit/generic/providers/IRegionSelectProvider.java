@@ -35,8 +35,24 @@ import javax.annotation.Nullable;
  */
 public interface IRegionSelectProvider extends IProvider {
 
+    /**
+     * Get the specified players region selection.
+     *
+     * @param player  The player to check.
+     *
+     * @return  Null if the player doesn't have a region
+     * selected or the selection is incomplete.
+     */
     @Nullable
     IRegionSelection getSelection(Player player);
 
+    /**
+     * Set the specified players region selection.
+     *
+     * @param player     The player.
+     * @param selection  The new selection to set.
+     *
+     * @return  True if the players region selection was set.
+     */
     boolean setSelection(Player player, IRegionSelection selection);
 }
