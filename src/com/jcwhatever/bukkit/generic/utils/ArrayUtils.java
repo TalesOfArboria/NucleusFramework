@@ -28,6 +28,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Array utilities.
@@ -2036,6 +2039,159 @@ public final class ArrayUtils {
             return empty;
 
         return array[array.length - 1];
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     *
+     * @param <T>  The array component type.
+     */
+    public static <T> List<T> asList(T[] array) {
+        PreCon.notNull(array);
+
+        List<T> result = new ArrayList<T>(array.length);
+
+        Collections.addAll(result, array);
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Boolean> asList(boolean[] array) {
+        PreCon.notNull(array);
+
+        List<Boolean> result = new ArrayList<>(array.length);
+
+        for (boolean b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Byte> asList(byte[] array) {
+        PreCon.notNull(array);
+
+        List<Byte> result = new ArrayList<>(array.length);
+
+        for (byte b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Character> asList(char[] array) {
+        PreCon.notNull(array);
+
+        List<Character> result = new ArrayList<>(array.length);
+
+        for (char b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Short> asList(short[] array) {
+        PreCon.notNull(array);
+
+        List<Short> result = new ArrayList<>(array.length);
+
+        for (short b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Integer> asList(int[] array) {
+        PreCon.notNull(array);
+
+        List<Integer> result = new ArrayList<>(array.length);
+
+        for (int b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Long> asList(long[] array) {
+        PreCon.notNull(array);
+
+        List<Long> result = new ArrayList<>(array.length);
+
+        for (long b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Float> asList(float[] array) {
+        PreCon.notNull(array);
+
+        List<Float> result = new ArrayList<>(array.length);
+
+        for (float b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Double> asList(double[] array) {
+        PreCon.notNull(array);
+
+        List<Double> result = new ArrayList<>(array.length);
+
+        for (double b : array) {
+            result.add(b);
+        }
+
+        return result;
     }
 
     private static <T> T[] newArray(Class<T> arrayClass, int size) {
