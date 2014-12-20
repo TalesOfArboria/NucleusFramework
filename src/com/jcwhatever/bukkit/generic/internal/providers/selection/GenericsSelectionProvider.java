@@ -25,7 +25,9 @@
 package com.jcwhatever.bukkit.generic.internal.providers.selection;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.internal.Msg;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.providers.IRegionSelectProvider;
@@ -43,6 +45,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,7 +57,13 @@ import javax.annotation.Nullable;
  * GenericsLib's default selection provider when no other
  * provider is available.
  */
-public class GenericsSelectionProvider implements IRegionSelectProvider, IDisposable{
+public final class GenericsSelectionProvider implements IRegionSelectProvider, IDisposable{
+
+    @Localizable static final String _P1_SELECTED =
+            "{DARK_PURPLE}P1 region point selected:\n{DARK_PURPLE}{0: location}";
+
+    @Localizable static final String _P2_SELECTED =
+            "{DARK_PURPLE}P2 region point selected:\n{DARK_PURPLE}{0: location}";
 
     private final Map<UUID, Location> _p1Selections = new PlayerMap<>(GenericsLib.getPlugin());
     private final Map<UUID, Location> _p2Selections = new PlayerMap<>(GenericsLib.getPlugin());
@@ -125,7 +134,7 @@ public class GenericsSelectionProvider implements IRegionSelectProvider, IDispos
 
     private class BukkitEventListener implements Listener {
 
-        @EventHandler(priority = EventPriority.MONITOR)
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         private void onPlayerInteract(PlayerInteractEvent event) {
             if (!event.hasBlock())
                 return;
@@ -144,20 +153,33 @@ public class GenericsSelectionProvider implements IRegionSelectProvider, IDispos
 
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 Location p1 = event.getClickedBlock().getLocation();
-                _p1Selections.put(player.getUniqueId(), p1);
 
-                Msg.tell(player, "{DARK PURPLE}P1 region point selected:");
-                Msg.tell(player, "{DARK_PURPLE}" + LocationUtils.locationToString(p1, 2));
+                Location previous = _p1Selections.put(player.getUniqueId(), p1);
+
+                if (!p1.equals(previous)) {
+                    Msg.tell(player, Lang.get(_P1_SELECTED, LocationUtils.locationToString(p1, 2)));
+                }
+                event.setCancelled(true);
             }
             else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 Location p2 = event.getClickedBlock().getLocation();
-                _p2Selections.put(player.getUniqueId(), p2);
 
-                Msg.tell(player, "{DARK_PURPLE}P2 region point selected:");
-                Msg.tell(player, "{DARK_PURPLE}" + LocationUtils.locationToString(p2, 2));
+                Location previous = _p2Selections.put(player.getUniqueId(), p2);
+
+                if (!p2.equals(previous)) {
+                    Msg.tell(player, Lang.get(_P2_SELECTED, LocationUtils.locationToString(p2, 2)));
+                }
+                event.setCancelled(true);
             }
         }
 
+        @EventHandler
+        private void onCommand(PlayerCommandPreprocessEvent event) {
+            if (event.getMessage().equals("//wand")) {
+                event.getPlayer().getInventory().addItem(new ItemStack(Material.WOOD_AXE));
+                event.setCancelled(true);
+            }
+        }
     }
 
     private boolean hasPermission(Player player) {
