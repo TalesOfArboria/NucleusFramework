@@ -70,6 +70,31 @@ public final class PreCon {
     }
 
     /**
+     * Ensure an operation is supported.
+     *
+     * @param isSupported  The condition to test.
+     *
+     * @throws java.lang.UnsupportedOperationException
+     */
+    public static void supported(boolean isSupported) {
+        if (!isSupported)
+            throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Ensure an operation is supported.
+     *
+     * @param isSupported  The condition to test.
+     * @param message      The exception message to use if the condition is false.
+     *
+     * @throws java.lang.UnsupportedOperationException
+     */
+    public static void supported(boolean isSupported, String message) {
+        if (!isSupported)
+            throw new UnsupportedOperationException(message);
+    }
+
+    /**
      * Ensure supplied object is not null.
      *
      * @param value  The object to check
