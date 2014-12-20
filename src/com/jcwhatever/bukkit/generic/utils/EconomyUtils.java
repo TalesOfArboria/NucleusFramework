@@ -26,18 +26,12 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.events.economy.EconGiveEvent;
-import com.jcwhatever.bukkit.generic.events.economy.EconWithdrawEvent;
+import com.jcwhatever.bukkit.generic.providers.economy.IAccount;
+import com.jcwhatever.bukkit.generic.providers.economy.IBank;
+import com.jcwhatever.bukkit.generic.providers.economy.IEconomyProvider;
+import com.jcwhatever.bukkit.generic.providers.economy.IEconomyProvider.CurrencyNoun;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
-import net.milkbowl.vault.Vault;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
-
+import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -49,89 +43,34 @@ public final class EconomyUtils {
 
     private EconomyUtils() {}
 
-    private static boolean _hasEconomy = false;
-    private static Object _econ;
-
-    static {
-        init();
-    }
-
     /**
-     * Specifies how a currency name is used.
-     */
-    public enum CurrencyNoun {
-        SINGULAR,
-        PLURAL
-    }
-
-    /**
-     * Determine if the an economy plugin is uninstalled.
-     */
-    public static boolean hasEconomy() {
-        return _hasEconomy;
-    }
-
-    /**
-     * Get the vault Economy wrapper.
-     */
-    @Nullable
-    public static Economy getEconomy() {
-        return hasEconomy()
-                ? (Economy) _econ
-                : null;
-    }
-
-    /**
-     * Get a players balance.
+     * Get a players global account.
      *
-     * @param p The player.
+     * @param playerId  The id of the player.
      */
-    public static double getBalance(Player p) {
-        PreCon.notNull(p);
+    public static IAccount getAccount(UUID playerId) {
+        PreCon.notNull(playerId);
 
-        if (!_hasEconomy)
-            return 0;
-
-        //noinspection ConstantConditions
-        return getEconomy().getBalance(p.getName());
+        return provider().getAccount(playerId);
     }
 
     /**
-     * Get a players balance.
+     * Get a players global account balance.
      *
      * @param playerId The id of the player.
      */
     public static double getBalance(UUID playerId) {
         PreCon.notNull(playerId);
 
-        if (!_hasEconomy)
+        IAccount account = provider().getAccount(playerId);
+        if (account == null)
             return 0;
 
-        String playerName = PlayerUtils.getPlayerName(playerId);
-        if (playerName == null)
-            return 0;
-
-        //noinspection ConstantConditions
-        return getEconomy().getBalance(playerName);
+        return account.getBalance();
     }
 
     /**
-     * Get a players balance as a formatted string.
-     *
-     * @param p The player.
-     */
-    public static String getBalanceText(Player p) {
-        PreCon.notNull(p);
-
-        if (!_hasEconomy)
-            return "0";
-
-        //noinspection ConstantConditions
-        return getEconomy().format(getBalance(p));
-    }
-
-    /**
-     * Get a players balance as a formatted string.
+     * Get a players global account balance as a formatted string.
      *
      * @param playerId The id of the player.
      * @return
@@ -139,25 +78,19 @@ public final class EconomyUtils {
     public static String getBalanceText(UUID playerId) {
         PreCon.notNull(playerId);
 
-        if (!_hasEconomy)
-            return "0";
+        double balance = getBalance(playerId);
 
-        //noinspection ConstantConditions
-        return getEconomy().format(getBalance(playerId));
+        return provider().formatAmount(balance);
     }
 
     /**
-     * Format an amount into a string using the economy settings.
+     * Format an amount into a string using the economy provider.
      *
      * @param amount The amount to format.
      */
     public static String formatAmount(double amount) {
 
-        if (!_hasEconomy)
-            return "";
-
-        //noinspection ConstantConditions
-        return getEconomy().format(amount);
+        return provider().formatAmount(amount);
     }
 
     /**
@@ -168,55 +101,58 @@ public final class EconomyUtils {
     public static String getCurrencyName(CurrencyNoun noun) {
         PreCon.notNull(noun);
 
-        if (!_hasEconomy)
-            return "";
-
-        switch (noun) {
-            case SINGULAR:
-                //noinspection ConstantConditions
-                return getEconomy().currencyNameSingular();
-
-            case PLURAL:
-                //noinspection ConstantConditions
-                return getEconomy().currencyNamePlural();
-        }
-
-        return "";
+        return provider().getCurrencyName(noun);
     }
 
     /**
-     * Transfer money between two players.
+     * Transfer money between two players global accounts.
      *
-     * @param giverPlayerId    The id of the player who is giving money
-     * @param receiverPlayerId The id of the player who is receiving money
-     * @param amount           The amount of money to transfer.
-     * @return True if the operation completed successfully.
+     * @param giverPlayerId     The id of the player who is giving money
+     * @param receiverPlayerId  The id of the player who is receiving money
+     * @param amount            The amount of money to transfer.
+     *
+     * @return  True if the operation completed successfully.
      */
-    public static boolean transferMoney(UUID giverPlayerId, UUID receiverPlayerId, double amount) {
+    public static boolean transfer(UUID giverPlayerId, UUID receiverPlayerId, double amount) {
         PreCon.notNull(giverPlayerId);
         PreCon.notNull(receiverPlayerId);
         PreCon.positiveNumber(amount);
 
-        String giverName = PlayerUtils.getPlayerName(giverPlayerId);
-        if (giverName == null)
+        IAccount fromAccount = provider().getAccount(giverPlayerId);
+        if (fromAccount == null)
             return false;
 
-        String receiverName = PlayerUtils.getPlayerName(receiverPlayerId);
-        if (receiverName == null)
+        IAccount toAccount = provider().getAccount(receiverPlayerId);
+        return toAccount != null && transfer(fromAccount, toAccount, amount);
+    }
+
+    /**
+     * Transfer money between two accounts.
+     *
+     * @param fromAccount  The account to transfer money out of.
+     * @param toAccount    The account to transfer money into.
+     * @param amount       The amount to transfer.
+     *
+     * @return  True if the operation is successful.
+     */
+    public static boolean transfer(IAccount fromAccount, IAccount toAccount, double amount) {
+        PreCon.notNull(fromAccount);
+        PreCon.notNull(toAccount);
+        PreCon.positiveNumber(amount);
+
+        if (Double.compare(amount, 0.0D) == 0)
+            return true;
+
+
+        if (fromAccount.getBalance() < amount)
             return false;
 
-        // check givers balance
-        if (getBalance(giverPlayerId) < amount) {
+        if (!fromAccount.withdraw(amount))
             return false;
-        }
 
-        if (!giveMoney(giverName, giverPlayerId, -amount)) {
-            return false;
-        }
-
-        if (!giveMoney(receiverName, receiverPlayerId, amount)) {
+        if (!toAccount.deposit(amount)) {
             // give money back
-            giveMoney(giverName, giverPlayerId, amount);
+            fromAccount.deposit(amount);
             return false;
         }
 
@@ -224,82 +160,142 @@ public final class EconomyUtils {
     }
 
     /**
-     * Give money to a player. Take money by providing a negative number.
+     * Deposit money into a players global account.
      *
-     * @param p      The player to give money to.
-     * @param amount The amount to give the player.
-     * @return True if the operation is successful.
+     * @param playerId  The id of the player to give money to.
+     * @param amount    The amount to give the player.
+     *
+     * @return  True if the operation is successful.
      */
-    public static boolean giveMoney(Player p, double amount) {
-        return giveMoney(p.getName(), p.getUniqueId(), amount);
+    public static boolean deposit(UUID playerId, double amount) {
+        PreCon.notNull(playerId);
+
+        IAccount account = provider().getAccount(playerId);
+        return account != null && account.deposit(amount);
     }
 
     /**
-     * Give money to a player. Take money by providing a negative number.
+     * Withdraw money from a players global account.
      *
-     * @param playerId The id of the player to give money to.
-     * @param amount   The amount to give the player.
-     * @return True if the operation is successful.
+     * @param playerId  The id of the player to take money from.
+     * @param amount    The amount to take.
+     *
+     * @return  True if the operation is successful.
      */
-    public static boolean giveMoney(UUID playerId, double amount) {
+    public static boolean withdraw(UUID playerId, double amount) {
         PreCon.notNull(playerId);
 
-        String playerName = PlayerUtils.getPlayerName(playerId);
-        return playerName != null && giveMoney(playerName, playerId, amount);
+        IAccount account = provider().getAccount(playerId);
+        return account != null && account.withdraw(amount);
     }
 
-    private static boolean giveMoney(String playerName, UUID playerId, double amount) {
-        PreCon.notNullOrEmpty(playerName);
+    /**
+     * Deposit or withdraw money from a players global account
+     * depending on the value provided.
+     *
+     * <p>Positive values are deposited, negative values are withdrawn.</p>
+     *
+     * @param playerId  The id of the player.
+     * @param amount    The amount to deposit or withdraw.
+     *
+     * @return  True if the operation is successful.
+     */
+    public static boolean depositOrWithdraw(UUID playerId, double amount) {
         PreCon.notNull(playerId);
-
-        if (!hasEconomy())
-            return false;
-
-        Economy econ = getEconomy();
-        EconomyResponse r;
-
-        if (amount > 0) {
-            EconGiveEvent event = new EconGiveEvent(playerId, amount);
-
-            GenericsLib.getEventManager().callBukkit(event);
-
-            //noinspection ConstantConditions
-            r = econ.depositPlayer(playerName, event.getAmount());
-        } else {
-
-            EconWithdrawEvent event = new EconWithdrawEvent(playerId, amount);
-
-            GenericsLib.getEventManager().callBukkit(event);
-
-            //noinspection ConstantConditions
-            r = econ.withdrawPlayer(playerName, Math.abs(event.getAmount()));
-        }
-
-        if (!r.transactionSuccess()) {
-            return false;
-        }
-
-        return true;
+        return Double.compare(amount, 0.0D) == 0 ||
+                (amount < 0 ? withdraw(playerId, amount) : deposit(playerId, amount));
     }
 
-    private static void init() {
-        Plugin _vault = Bukkit.getPluginManager().getPlugin("Vault");
-        if (!(_vault instanceof Vault)) {
-            _hasEconomy = false;
-            return;
-        }
+    /**
+     * Deposit or withdraw money from an account depending on the
+     * value provided.
+     *
+     * <p>Positive values are deposited, negative values are withdrawn.</p>
+     *
+     * @param account  The account.
+     * @param amount   The amount to deposit or withdraw.
+     *
+     * @return  True if the operation is successful.
+     */
+    public static boolean depositOrWithdraw(IAccount account, double amount) {
+        PreCon.notNull(account);
+        return Double.compare(amount, 0.0D) == 0 ||
+                (amount < 0 ? account.withdraw(amount) : account.deposit(amount));
+    }
 
-        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            _hasEconomy = false;
-            return;
-        }
-        Economy econ = rsp.getProvider();
-        if (econ == null) {
-            _hasEconomy = false;
-            return;
-        }
-        _econ = econ;
-        _hasEconomy = true;
+    /**
+     * Determine if the economy provider has bank support.
+     */
+    public static boolean hasBankSupport() {
+        return provider().hasBankSupport();
+    }
+
+    /**
+     * Get a bank by name.
+     *
+     * @param bankName  The name of the bank.
+     *
+     * @return  Null if the bank was not found.
+     *
+     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     */
+    @Nullable
+    public static IBank getBank(String bankName) {
+        return provider().getBank(bankName);
+    }
+
+    /**
+     * Get a list of banks.
+     *
+     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     */
+    public static List<IBank> getBanks() {
+        return provider().getBanks();
+    }
+
+    /**
+     * Create a new bank account.
+     *
+     * @param bankName  The name of the bank.
+     *
+     * @return  Null if the bank was not created.
+     *
+     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     */
+    @Nullable
+    public static IBank createBank(String bankName) {
+        return provider().createBank(bankName);
+    }
+
+    /**
+     * Create a new bank account with the specified player as the owner.
+     *
+     * @param bankName  The name of the bank.
+     * @param ownerId   The ID of the bank owner.
+     *
+     * @return  Null if the bank was not created.
+     *
+     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     */
+    @Nullable
+    public static IBank createBank(String bankName, UUID ownerId) {
+        return provider().createBank(bankName, ownerId);
+    }
+
+    /**
+     * Delete a bank.
+     *
+     * @param bankName  The name of the bank.
+     *
+     * @return  True if the bank was found and deleted.
+     *
+     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     */
+    public static boolean deleteBank(String bankName) {
+        return provider().deleteBank(bankName);
+    }
+
+    private static IEconomyProvider provider() {
+        return GenericsLib.getProviderManager().getEconomyProvider();
     }
 }

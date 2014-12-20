@@ -80,7 +80,7 @@ public class ScriptApiEconomy extends GenericsScriptApi {
         }
 
         /**
-         * Get the balance of a player.
+         * Get the balance of a players global account.
          *
          * @param player  The player.
          */
@@ -90,23 +90,41 @@ public class ScriptApiEconomy extends GenericsScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return EconomyUtils.getBalance(p);
+            return EconomyUtils.getBalance(p.getUniqueId());
         }
 
         /**
-         * Give (or take) money from a player.
+         * Deposit money into a players global account.
+         *
          * @param player  The player.
-         * @param amount  The amount to give (or take if negative)
+         * @param amount  The amount to give.
          *
          * @return  True if successful
          */
-        public boolean give(Object player, double amount) {
+        public boolean deposit(Object player, double amount) {
             PreCon.notNull(player);
 
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return EconomyUtils.giveMoney(p, amount);
+            return EconomyUtils.deposit(p.getUniqueId(), amount);
+        }
+
+        /**
+         * Withdraw money from a players global account.
+         *
+         * @param player  The player.
+         * @param amount  The amount to take.
+         *
+         * @return  True if successful
+         */
+        public boolean withdraw(Object player, double amount) {
+            PreCon.notNull(player);
+
+            Player p = PlayerUtils.getPlayer(player);
+            PreCon.notNull(p);
+
+            return EconomyUtils.withdraw(p.getUniqueId(), amount);
         }
 
         /**
@@ -119,6 +137,4 @@ public class ScriptApiEconomy extends GenericsScriptApi {
             return EconomyUtils.formatAmount(amount);
         }
     }
-
-
 }
