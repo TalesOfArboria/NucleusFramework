@@ -36,8 +36,16 @@ public interface IBank extends INamed {
 
     /**
      * Get the ID of the bank owner.
+     *
+     * @return  Null if the bank has no owner.
      */
+    @Nullable
     UUID getOwnerId();
+
+    /**
+     * Get the bank balance.
+     */
+    double getBalance();
 
     /**
      * Determine if the specified player has

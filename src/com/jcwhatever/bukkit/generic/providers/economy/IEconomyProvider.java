@@ -87,9 +87,8 @@ public interface IEconomyProvider {
     IBank getBank(String bankName);
 
     /**
-     * Create a new bank account with the specified player as the owner.
+     * Create a new bank account.
      *
-     * @param playerId  The ID of the bank owner.
      * @param bankName  The name of the bank.
      *
      * @return  Null if the bank was not created.
@@ -97,7 +96,20 @@ public interface IEconomyProvider {
      * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
      */
     @Nullable
-    IBank createBank(UUID playerId, String bankName);
+    IBank createBank(String bankName);
+
+    /**
+     * Create a new bank account with the specified player as the owner.
+     *
+     * @param bankName  The name of the bank.
+     * @param playerId  The ID of the bank owner.
+     *
+     * @return  Null if the bank was not created.
+     *
+     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     */
+    @Nullable
+    IBank createBank(String bankName, UUID playerId);
 
     /**
      * Delete a bank.
