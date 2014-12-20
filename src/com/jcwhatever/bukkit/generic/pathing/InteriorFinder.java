@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.pathing;
 
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
-import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 

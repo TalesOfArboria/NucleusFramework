@@ -22,8 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.regions.data;
+package com.jcwhatever.bukkit.generic.regions.selection;
 
+import com.jcwhatever.bukkit.generic.regions.data.CuboidPoint;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;

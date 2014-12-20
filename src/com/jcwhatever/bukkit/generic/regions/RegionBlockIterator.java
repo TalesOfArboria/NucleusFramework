@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
-import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Material;

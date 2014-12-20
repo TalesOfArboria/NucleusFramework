@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.regions.data;
 import com.jcwhatever.bukkit.generic.file.GenericsByteReader;
 import com.jcwhatever.bukkit.generic.file.GenericsByteWriter;
 import com.jcwhatever.bukkit.generic.file.IBinarySerializable;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Chunk;

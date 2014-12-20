@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.regions.data;
 
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.sun.istack.internal.Nullable;
 

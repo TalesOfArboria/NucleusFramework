@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
-import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
+import com.jcwhatever.bukkit.generic.regions.selection.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 
 import org.bukkit.plugin.Plugin;

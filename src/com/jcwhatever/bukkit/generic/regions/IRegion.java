@@ -28,7 +28,7 @@ import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.mixins.IMeta;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.mixins.IPlayerOwnable;
-import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
