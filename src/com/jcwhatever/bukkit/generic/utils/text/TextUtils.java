@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.utils.text;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
+import com.jcwhatever.bukkit.generic.utils.EntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextFormatter.ITagFormatter;
 
@@ -308,6 +309,29 @@ public final class TextUtils {
             if ((casing == CaseSensitivity.IGNORE_CASE &&
                     candidate.toLowerCase().contains(searchText)) ||
                     candidate.contains(searchText)) {
+                result.add(candidate);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Search a collection of string for valid candidates using an
+     * {@code EntryValidator} to validate.
+     *
+     * @param searchCandidates  The search candidates.
+     * @param entryValidator    The entry validator.
+     */
+    public static List<String> search(Collection<String> searchCandidates, EntryValidator<String> entryValidator) {
+        PreCon.notNull(searchCandidates);
+        PreCon.notNull(entryValidator);
+
+        List<String> result = new ArrayList<>(searchCandidates.size());
+
+        for (String candidate : searchCandidates) {
+
+            if (entryValidator.isValid(candidate)) {
                 result.add(candidate);
             }
         }
