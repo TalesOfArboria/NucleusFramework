@@ -1620,6 +1620,179 @@ public final class ArrayUtils {
     }
 
     /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @param <T>  The array component type.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static <T> T get(T[] array, int index, T defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static boolean get(boolean[] array, int index, boolean defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static byte get(byte[] array, int index, byte defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static short get(short[] array, int index, short defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static char get(char[] array, int index, char defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static int get(int[] array, int index, int defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static long get(long[] array, int index, long defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static float get(float[] array, int index, float defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
+     * Get the element at the specified index of the array
+     * or return the default value if the array is smaller
+     * than the specified index.
+     *
+     * @param array         The array to get an element from.
+     * @param index         The index of the element to get.
+     * @param defaultValue  The default value if the array isn't large enough.
+     *
+     * @return  The element at the specified index or the default value.
+     */
+    public static double get(double[] array, int index, double defaultValue) {
+        PreCon.notNull(array);
+
+        return (index - 1 > array.length)
+                ? defaultValue
+                : array[index];
+    }
+
+    /**
      * Get the last element in an array.
      *
      * @param array  The array.
