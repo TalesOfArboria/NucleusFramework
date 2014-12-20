@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.player;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;
@@ -51,7 +52,7 @@ import javax.annotation.Nullable;
  *     When a players state is restored, saved state data is removed.
  * </p>
  */
-public class PlayerState {
+public class PlayerState implements IPluginOwned {
 
     // store player states by plugin
     private static Map<Plugin, PlayerMap<PlayerState>> _statesByPlugin;
@@ -168,6 +169,14 @@ public class PlayerState {
         _player = p;
         _playerId = p.getUniqueId();
         _plugin = plugin;
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    @Override
+    public Plugin getPlugin() {
+        return null;
     }
 
     /**

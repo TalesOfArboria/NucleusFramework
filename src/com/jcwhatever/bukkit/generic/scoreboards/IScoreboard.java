@@ -26,6 +26,8 @@
 package com.jcwhatever.bukkit.generic.scoreboards;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
@@ -33,11 +35,12 @@ import org.bukkit.scoreboard.Scoreboard;
 /**
  * Represents a scoreboard wrapper.
  */
-public interface IScoreboard extends IDisposable {
+public interface IScoreboard extends IPluginOwned, IDisposable {
 
     /**
      * Get the scoreboards owning plugin.
      */
+    @Override
     Plugin getPlugin();
 
     /**

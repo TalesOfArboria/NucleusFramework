@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.sounds;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.Location;
@@ -46,7 +47,7 @@ import javax.annotation.Nullable;
  * A collection of resource sounds that can be played
  * to players.
  */
-public class PlayList {
+public class PlayList implements IPluginOwned {
 
     // static references for use by events
     private static Map<Player, Set<PlayList>> _instances = new WeakHashMap<>(100);
@@ -89,6 +90,7 @@ public class PlayList {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

@@ -27,7 +27,9 @@ package com.jcwhatever.bukkit.generic.jail;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+import com.jcwhatever.bukkit.generic.mixins.INamed;
 import com.jcwhatever.bukkit.generic.mixins.INamedLocation;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.mixins.implemented.NamedLocation;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -49,9 +51,9 @@ import javax.annotation.Nullable;
 /**
  * A player jail.
  */
-public class Jail implements IDisposable {
+public class Jail implements IPluginOwned, INamed, IDisposable {
 
-    private Plugin _plugin;
+    private final Plugin _plugin;
     private String _name;
     private IDataNode _dataNode;
     private JailBounds _bounds;
@@ -83,6 +85,7 @@ public class Jail implements IDisposable {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }
@@ -90,6 +93,7 @@ public class Jail implements IDisposable {
     /**
      * Get the name of the jail.
      */
+    @Override
     public String getName() {
         return _name;
     }

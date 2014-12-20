@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.scripting;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -46,7 +47,7 @@ import javax.script.ScriptEngineManager;
 /**
  * Manages scripts.
  */
-public abstract class ScriptManager<S extends IScript, E extends IEvaluatedScript> {
+public abstract class ScriptManager<S extends IScript, E extends IEvaluatedScript> implements IPluginOwned {
 
     private final Plugin _plugin;
     private final File _scriptFolder;
@@ -138,6 +139,7 @@ public abstract class ScriptManager<S extends IScript, E extends IEvaluatedScrip
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

@@ -34,6 +34,7 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.regions.selection.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
@@ -59,7 +60,7 @@ import javax.annotation.Nullable;
  * in commands and provide a central place to modify complex but generic
  * functionality.
  */
-public abstract class AbstractCommandUtils {
+public abstract class AbstractCommandUtils implements IPluginOwned {
 
     @Localizable private static final String _SAME_WORLD_REGION_SELECT = "You need to be in the same world as the region selection.";
     @Localizable private static final String _INVALID_REGION = "Invalid region. Both points must be in the same world.";
@@ -91,6 +92,7 @@ public abstract class AbstractCommandUtils {
     /**
      * Get the owning plugin
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

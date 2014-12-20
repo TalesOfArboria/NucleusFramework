@@ -25,23 +25,25 @@
 
 package com.jcwhatever.bukkit.generic.inventory;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Manages player kits.
  */
-public class KitManager {
+public class KitManager implements IPluginOwned {
 
     private final Map<String, Kit> _kits;
     private final List<Kit> _kitList;
@@ -85,6 +87,7 @@ public class KitManager {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

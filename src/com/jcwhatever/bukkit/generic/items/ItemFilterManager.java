@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.items;
 
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -45,13 +46,13 @@ import javax.annotation.Nullable;
 /**
  * A collection of ItemStacks that can be used for validation/filtering of ItemStacks.
  */
-public class ItemFilterManager {
+public class ItemFilterManager implements IPluginOwned {
 
     @Localizable static final String _WHITELIST = "Whitelist";
     @Localizable static final String _BLACKLIST = "Blacklist";
 
-    private Plugin _plugin;
-    private IDataNode _dataNode;
+    private final Plugin _plugin;
+    private final IDataNode _dataNode;
 
     private FilterPolicy _filter = FilterPolicy.WHITELIST;
     private ItemStackComparer _comparer;
@@ -135,6 +136,7 @@ public class ItemFilterManager {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

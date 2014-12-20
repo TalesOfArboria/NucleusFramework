@@ -22,24 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.views;
+package com.jcwhatever.bukkit.generic.mixins;
 
-import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
-
-import javax.annotation.Nullable;
+import org.bukkit.plugin.Plugin;
 
 /**
- * Represents an object that stores view factories.
+ * Mixin to define a type as owned by a plugin instance.
  */
-public interface IViewFactoryStorage extends IPluginOwned {
+public interface IPluginOwned {
 
     /**
-     * Get a view factory by name.
-     *
-     * @param name  The name of the factory.
-     *
-     * @return  Null if not found.
+     * Get the owning plugin.
      */
-    @Nullable
-    IViewFactory getViewFactory(String name);
+    Plugin getPlugin();
 }

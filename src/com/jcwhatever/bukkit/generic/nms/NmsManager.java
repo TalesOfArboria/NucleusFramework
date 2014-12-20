@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.nms;
 
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.generic.collections.HashMapMap;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.utils.NmsUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -40,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * Manages NMS code.
  */
-public class NmsManager {
+public class NmsManager implements IPluginOwned {
 
     private final Plugin _plugin;
 
@@ -98,6 +99,7 @@ public class NmsManager {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

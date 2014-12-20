@@ -28,6 +28,7 @@ import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.mixins.IMeta;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
 import com.jcwhatever.bukkit.generic.mixins.IPlayerOwnable;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 
 import org.bukkit.Chunk;
@@ -49,11 +50,12 @@ import javax.annotation.Nullable;
  * or use one of the other abstract implementations that extend {@link Region}.</p>
  */
 public interface IRegion extends IRegionSelection, INamedInsensitive,
-        IPlayerOwnable, IRegionComparable, IMeta, IDisposable {
+        IPlayerOwnable, IRegionComparable, IPluginOwned, IMeta, IDisposable {
 
     /**
      * Get the owning plugin.
      */
+    @Override
     Plugin getPlugin();
 
     /**

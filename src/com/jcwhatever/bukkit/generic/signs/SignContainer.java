@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.signs;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
@@ -42,7 +43,7 @@ import javax.annotation.Nullable;
  * Container for a sign. Used to pass signs into
  * sign handler event methods.
  */
-public class SignContainer {
+public class SignContainer implements IPluginOwned {
 
     private final Plugin _plugin;
     private final Sign _sign;
@@ -106,6 +107,15 @@ public class SignContainer {
         _sign = SignUtils.getSign(signLocation.getBlock());
         _signNode = signNode;
         _changeEvent = event;
+    }
+
+
+    /**
+     * Get the owning plugin.
+     */
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     /**
@@ -259,6 +269,4 @@ public class SignContainer {
 
         return true;
     }
-
-
 }

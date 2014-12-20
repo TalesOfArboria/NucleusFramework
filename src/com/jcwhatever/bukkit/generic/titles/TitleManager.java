@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.titles;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -42,7 +43,7 @@ import javax.annotation.Nullable;
  *
  * <p>Optionally can store titles to a data node.</p>
  */
-public class TitleManager<T extends INamedTitle> {
+public class TitleManager<T extends INamedTitle> implements IPluginOwned {
 
     protected final Plugin _plugin;
     protected final INamedTitleFactory<T> _factory;
@@ -82,6 +83,7 @@ public class TitleManager<T extends INamedTitle> {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

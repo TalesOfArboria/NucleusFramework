@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.views;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.mixins.IMeta;
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -48,7 +49,7 @@ import javax.annotation.Nullable;
  * A session that tracks and provides session context data
  * to view instances.
  */
-public final class ViewSession implements IMeta, Iterable<IView>, IDisposable {
+public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReference, IDisposable {
 
     private static final Map<UUID, ViewSession> _sessionMap = new PlayerMap<>(GenericsLib.getPlugin());
 
@@ -113,6 +114,7 @@ public final class ViewSession implements IMeta, Iterable<IView>, IDisposable {
     /**
      * Get the player the view session is for.
      */
+    @Override
     public final Player getPlayer() {
         return _player;
     }

@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.storage;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
+
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -39,11 +41,12 @@ import javax.annotation.Nullable;
 /**
  * Represents a key/value data storage node
  */
-public interface IDataNode {
+public interface IDataNode extends IPluginOwned {
 
     /**
      * The owning plugin.
      */
+    @Override
     Plugin getPlugin();
 
     /**

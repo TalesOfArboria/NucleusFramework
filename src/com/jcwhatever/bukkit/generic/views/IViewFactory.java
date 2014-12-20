@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.views;
 
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 
 import org.bukkit.plugin.Plugin;
@@ -35,11 +36,12 @@ import javax.annotation.Nullable;
 /**
  * Generates new view instances of a specific type.
  */
-public interface IViewFactory extends INamedInsensitive, IDisposable {
+public interface IViewFactory extends INamedInsensitive, IPluginOwned, IDisposable {
 
     /**
      * Get the factory's owning plugin.
      */
+    @Override
     Plugin getPlugin();
 
     /**

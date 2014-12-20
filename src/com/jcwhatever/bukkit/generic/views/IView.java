@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.views;
 
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.views.data.ViewArguments;
 import com.jcwhatever.bukkit.generic.views.data.ViewCloseReason;
 import com.jcwhatever.bukkit.generic.views.data.ViewOpenReason;
@@ -41,16 +43,18 @@ import javax.annotation.Nullable;
  * Represents an instance of a view created for
  * a specific player.
  */
-public interface IView {
+public interface IView extends IPluginOwned, IPlayerReference {
 
     /**
      * Get the views owning plugin.
      */
+    @Override
     Plugin getPlugin();
 
     /**
      * Get the player this view is for.
      */
+    @Override
     Player getPlayer ();
 
     /**

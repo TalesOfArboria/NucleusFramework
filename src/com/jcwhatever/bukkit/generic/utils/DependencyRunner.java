@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
 import com.jcwhatever.bukkit.generic.scheduler.TaskHandler;
 import com.jcwhatever.bukkit.generic.utils.DependencyRunner.IDependantRunnable;
@@ -42,7 +43,7 @@ import java.util.Set;
  * A utility class to execute code when a dependant condition is met within
  * a timeout period.
  */
-public class DependencyRunner<T extends IDependantRunnable> {
+public class DependencyRunner<T extends IDependantRunnable> implements IPluginOwned {
 
     private final Plugin _plugin;
     private final Set<T> _runnables;
@@ -81,6 +82,7 @@ public class DependencyRunner<T extends IDependantRunnable> {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.signs;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -34,7 +35,7 @@ import java.util.regex.Matcher;
 /**
  * Handles actions for a specific sign type.
  */
-public abstract class SignHandler {
+public abstract class SignHandler implements IPluginOwned {
 
     private String _searchName;
     private String _displayName;
@@ -42,6 +43,7 @@ public abstract class SignHandler {
     /**
      * The owning plugin.
      */
+    @Override
     public abstract Plugin getPlugin();
 
     /**

@@ -24,9 +24,10 @@
 
 package com.jcwhatever.bukkit.generic.messaging;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -34,17 +35,12 @@ import java.util.UUID;
 /**
  * Interface for a chat and console messenger.
  */
-public interface IMessenger {
+public interface IMessenger extends IPluginOwned {
 
     public enum LineWrapping {
         ENABLED,
         DISABLED
     }
-
-    /**
-     * Get the messengers owning plugin.
-     */
-    Plugin getPlugin();
 
     /**
      * Get the number of characters allowed in a line

@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.collections.TimedHashMap;
 import com.jcwhatever.bukkit.generic.events.signs.SignInteractEvent;
 import com.jcwhatever.bukkit.generic.internal.Msg;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
@@ -61,7 +62,7 @@ import javax.annotation.Nullable;
 /**
  * Manages handled signs.
  */
-public class SignManager {
+public class SignManager implements IPluginOwned {
 
     private static final Pattern PATTERN_HEADER_STRIPPER = Pattern.compile("[\\[\\]]");
 
@@ -117,6 +118,7 @@ public class SignManager {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

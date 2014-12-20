@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.events.kits.GiveKitEvent;
 import com.jcwhatever.bukkit.generic.extended.ArmorType;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
@@ -47,7 +48,7 @@ import javax.annotation.Nullable;
 /**
  * A kit of chest items that can be given to a player.
  */
-public class Kit implements INamedInsensitive {
+public class Kit implements INamedInsensitive, IPluginOwned {
 
     private final Plugin _plugin;
     private final String _name;
@@ -74,6 +75,14 @@ public class Kit implements INamedInsensitive {
         _name = name;
         _searchName = name.toLowerCase();
         _items = new ArrayList<ItemStack>(15);
+    }
+
+    /**
+     * Get the owning plugin
+     */
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     /**
@@ -446,8 +455,5 @@ public class Kit implements INamedInsensitive {
 
         Scheduler.runTaskLater(_plugin, 1, new TGive(new GiveKitEvent(p, this)));
     }
-
-
-
 }
 

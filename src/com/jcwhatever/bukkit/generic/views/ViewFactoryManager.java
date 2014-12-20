@@ -60,6 +60,7 @@ public class ViewFactoryManager implements IViewFactoryStorage {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

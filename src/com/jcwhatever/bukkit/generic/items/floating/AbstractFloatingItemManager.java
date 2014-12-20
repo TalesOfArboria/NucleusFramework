@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.items.floating;
 
 import com.jcwhatever.bukkit.generic.internal.Msg;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -42,7 +43,7 @@ import javax.annotation.Nullable;
 /*
  * 
  */
-public abstract class AbstractFloatingItemManager<T extends FloatingItem> {
+public abstract class AbstractFloatingItemManager<T extends FloatingItem> implements IPluginOwned {
 
     private final Plugin _plugin;
     private final IDataNode _dataNode;
@@ -59,6 +60,7 @@ public abstract class AbstractFloatingItemManager<T extends FloatingItem> {
         loadSettings();
     }
 
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }

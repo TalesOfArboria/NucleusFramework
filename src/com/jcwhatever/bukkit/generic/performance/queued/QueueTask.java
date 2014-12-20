@@ -25,8 +25,10 @@
 
 package com.jcwhatever.bukkit.generic.performance.queued;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.Future;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
@@ -35,7 +37,7 @@ import javax.annotation.Nullable;
  * Abstract class that worker tasks should extend so
  * that they can be used by {@code QueueWorker}.
  */
-public abstract class QueueTask implements Runnable {
+public abstract class QueueTask implements IPluginOwned, Runnable {
 
     private final Plugin _plugin;
     private final TaskConcurrency _concurrency;
@@ -62,6 +64,7 @@ public abstract class QueueTask implements Runnable {
     /**
      * Get the plugin that owns the task.
      */
+    @Override
     public final Plugin getPlugin() {
         return _plugin;
     }

@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.views.triggers;
 
 import com.jcwhatever.bukkit.generic.mixins.INamedInsensitive;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
 
@@ -35,11 +36,12 @@ import javax.annotation.Nullable;
 /**
  * Defines an object as a factory for creating view triggers.
  */
-public interface IViewTriggerFactory extends INamedInsensitive {
+public interface IViewTriggerFactory extends INamedInsensitive, IPluginOwned {
 
     /**
      * Get the owning plugin.
      */
+    @Override
     Plugin getPlugin();
 
     /**

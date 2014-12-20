@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.views.triggers;
 
 import com.jcwhatever.bukkit.generic.internal.Msg;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.views.IViewFactory;
@@ -42,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Manages view triggers.
  */
-public class ViewTriggerManager implements IViewTriggerStorage {
+public class ViewTriggerManager implements IViewTriggerStorage, IPluginOwned {
 
     private final Plugin _plugin;
     private final IDataNode _dataNode;
@@ -75,6 +76,7 @@ public class ViewTriggerManager implements IViewTriggerStorage {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }
