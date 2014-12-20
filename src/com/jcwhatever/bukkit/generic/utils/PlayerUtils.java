@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.utils;
 
 import com.jcwhatever.bukkit.generic.internal.PlayerTracker;
-import com.jcwhatever.bukkit.generic.mixins.IPlayerWrapper;
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -161,8 +161,8 @@ public final class PlayerUtils {
         if (player instanceof Player)
             return (Player)player;
 
-        if (player instanceof IPlayerWrapper)
-            return ((IPlayerWrapper)player).getHandle();
+        if (player instanceof IPlayerReference)
+            return ((IPlayerReference)player).getPlayer();
 
         if (player instanceof UUID)
             return getPlayer((UUID)player);
