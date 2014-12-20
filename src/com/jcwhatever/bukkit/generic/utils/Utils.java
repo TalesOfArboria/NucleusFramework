@@ -133,7 +133,7 @@ public final class Utils {
      * @param searchCandidates  The search candidates.
      * @param entryValidator    The entry validator.
      */
-    public static <T> List<T> search(Collection<T> searchCandidates, EntryValidator<T> entryValidator) {
+    public static <T> List<T> search(Collection<T> searchCandidates, IEntryValidator<T> entryValidator) {
         PreCon.notNull(searchCandidates);
         PreCon.notNull(entryValidator);
 

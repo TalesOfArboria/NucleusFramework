@@ -28,7 +28,7 @@ package com.jcwhatever.bukkit.generic.utils.text;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
-import com.jcwhatever.bukkit.generic.utils.EntryValidator;
+import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Utils;
 import com.jcwhatever.bukkit.generic.utils.text.TextFormatter.ITagFormatter;
@@ -324,7 +324,7 @@ public final class TextUtils {
      * @param searchCandidates  The search candidates.
      * @param entryValidator    The entry validator.
      */
-    public static List<String> search(Collection<String> searchCandidates, EntryValidator<String> entryValidator) {
+    public static List<String> search(Collection<String> searchCandidates, IEntryValidator<String> entryValidator) {
         return Utils.search(searchCandidates, entryValidator);
     }
 

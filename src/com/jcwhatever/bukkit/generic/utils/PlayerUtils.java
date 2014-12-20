@@ -257,7 +257,7 @@ public final class PlayerUtils {
      * @param validator    A validator used to validate if a player is a candidate to return.
      */
     public static List<Player> getClosestPlayers(Location loc, int chunkRadius,
-                                                 @Nullable EntryValidator<Player> validator) {
+                                                 @Nullable IEntryValidator<Player> validator) {
         PreCon.notNull(loc);
         PreCon.greaterThanZero(chunkRadius);
 

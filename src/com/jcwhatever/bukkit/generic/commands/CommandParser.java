@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.commands;
 
 import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
-import com.jcwhatever.bukkit.generic.utils.EntryValidator;
+import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils.CaseSensitivity;
@@ -175,7 +175,7 @@ public class CommandParser {
         Collection<String> commandNames = parentCommand.getSubCommandNames();
 
         return TextUtils.search(commandNames,
-                new EntryValidator<String>() {
+                new IEntryValidator<String>() {
                     @Override
                     public boolean isValid(String entry) {
                         AbstractCommand subCommand = parentCommand.getSubCommand(entry);

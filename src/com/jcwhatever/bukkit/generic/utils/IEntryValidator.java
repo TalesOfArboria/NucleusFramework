@@ -31,7 +31,7 @@ package com.jcwhatever.bukkit.generic.utils;
  *
  * @param <T>  The type being validated
  */
-public interface EntryValidator<T> {
+public interface IEntryValidator<T> {
 
     /**
      * Called to validate an entry.

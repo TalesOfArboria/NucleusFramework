@@ -382,7 +382,7 @@ public final class LocationUtils {
      */
     @Nullable
     public static Location getClosestLocation(Location sourceLocation, Collection<Location> locations,
-                                              @Nullable EntryValidator<Location> validator) {
+                                              @Nullable IEntryValidator<Location> validator) {
         PreCon.notNull(sourceLocation);
         PreCon.notNull(locations);
 

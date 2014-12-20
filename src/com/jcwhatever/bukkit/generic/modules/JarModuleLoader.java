@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
-import com.jcwhatever.bukkit.generic.utils.EntryValidator;
+import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
 import com.jcwhatever.bukkit.generic.utils.FileUtils;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -57,8 +57,8 @@ public class JarModuleLoader<T> {
 
     private IModuleFactory<T> _moduleFactory;
     private IModuleInfoFactory<T> _moduleInfoFactory;
-    private EntryValidator<Class<T>> _typeValidator;
-    private EntryValidator<JarFile> _jarValidator;
+    private IEntryValidator<Class<T>> _typeValidator;
+    private IEntryValidator<JarFile> _jarValidator;
 
     private Set<String> _loadedClasses = new HashSet<>(1000);
 
@@ -145,7 +145,7 @@ public class JarModuleLoader<T> {
      * Get the jar validator being used to validate
      * jar files.
      */
-    public EntryValidator<JarFile> getJarValidator() {
+    public IEntryValidator<JarFile> getJarValidator() {
         return _jarValidator;
     }
 
@@ -153,7 +153,7 @@ public class JarModuleLoader<T> {
      * Get the type validator being used to validate
      * a class type.
      */
-    public EntryValidator<Class<T>> getTypeValidator() {
+    public IEntryValidator<Class<T>> getTypeValidator() {
         return _typeValidator;
     }
 
@@ -237,9 +237,9 @@ public class JarModuleLoader<T> {
     /**
      * Get a new instance of the default type validator.
      */
-    public EntryValidator<Class<T>> getDefaultTypeValidator() {
+    public IEntryValidator<Class<T>> getDefaultTypeValidator() {
 
-        return new EntryValidator<Class<T>>() {
+        return new IEntryValidator<Class<T>>() {
             @Override
             public boolean isValid(Class<T> entry) {
                 return true;
@@ -250,9 +250,9 @@ public class JarModuleLoader<T> {
     /**
      * Get a new instance of the default jar validator.
      */
-    public EntryValidator<JarFile> getDefaultJarValidator() {
+    public IEntryValidator<JarFile> getDefaultJarValidator() {
 
-        return new EntryValidator<JarFile>() {
+        return new IEntryValidator<JarFile>() {
             @Override
             public boolean isValid(JarFile entry) {
                 return true;
@@ -316,7 +316,7 @@ public class JarModuleLoader<T> {
     protected List<Class<T>> getModuleClasses() {
 
         List<File> files = FileUtils.getFiles(getModuleFolder(), getDirectoryTraversal(),
-                new EntryValidator<File>() {
+                new IEntryValidator<File>() {
 
                     @Override
                     public boolean isValid(File entry) {

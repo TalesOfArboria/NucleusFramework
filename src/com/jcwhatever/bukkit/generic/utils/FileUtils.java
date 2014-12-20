@@ -80,7 +80,7 @@ public final class FileUtils {
      */
     public static List<File> getFiles(File folder,
                                       DirectoryTraversal traversal,
-                                      @Nullable EntryValidator<File> fileValidator) {
+                                      @Nullable IEntryValidator<File> fileValidator) {
         PreCon.notNull(folder);
         PreCon.isValid(folder.isDirectory(), "folder argument must be a folder.");
         PreCon.notNull(traversal);

@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
-import com.jcwhatever.bukkit.generic.utils.EntryValidator;
+import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -44,8 +44,8 @@ public class JarModuleLoaderSettings<T> {
 
     private IModuleInfoFactory<T> _moduleInfoFactory;
     private IModuleFactory<T> _moduleFactory;
-    private EntryValidator<Class<T>> _typeValidator;
-    private EntryValidator<JarFile> _jarValidator;
+    private IEntryValidator<Class<T>> _typeValidator;
+    private IEntryValidator<JarFile> _jarValidator;
 
     private boolean _isSealed;
 
@@ -100,7 +100,7 @@ public class JarModuleLoaderSettings<T> {
      * @return  Null to use the default type validator.
      */
     @Nullable
-    public EntryValidator<Class<T>> getTypeValidator() {
+    public IEntryValidator<Class<T>> getTypeValidator() {
         return _typeValidator;
     }
 
@@ -111,7 +111,7 @@ public class JarModuleLoaderSettings<T> {
      * @return  Null to use the default jar validator.
      */
     @Nullable
-    public EntryValidator<JarFile> getJarValidator() {
+    public IEntryValidator<JarFile> getJarValidator() {
         return _jarValidator;
     }
 
@@ -179,7 +179,7 @@ public class JarModuleLoaderSettings<T> {
      *
      * @param typeValidator  The type validator. Null to use default.
      */
-    public void setTypeValidator(@Nullable EntryValidator<Class<T>> typeValidator) {
+    public void setTypeValidator(@Nullable IEntryValidator<Class<T>> typeValidator) {
         checkSealed();
 
         _typeValidator = typeValidator;
@@ -193,7 +193,7 @@ public class JarModuleLoaderSettings<T> {
      *
      * @param jarValidator  The jar validator. Null to use default.
      */
-    public void setJarValidator(@Nullable EntryValidator<JarFile> jarValidator) {
+    public void setJarValidator(@Nullable IEntryValidator<JarFile> jarValidator) {
         checkSealed();
 
         _jarValidator = jarValidator;
