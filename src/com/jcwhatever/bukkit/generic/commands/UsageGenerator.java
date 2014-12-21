@@ -31,18 +31,19 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import java.util.LinkedList;
 import java.util.List;
 
-/*
- * 
+/**
+ * Generates command usage text.
  */
 public class UsageGenerator {
 
     private static final String _HELP_USAGE = "/{0: root command}{1: command path}{2: command}{3: parameters}";
     private static final String _HELP_USAGE_HAS_SUB_COMMANDS = "{GOLD}/{0: root command}{GREEN}{1: command path}{2: command}?";
 
-    public UsageGenerator() {
-
-    }
-
+    /**
+     * Generate default command usage.
+     *
+     * @param command  The command to generate usage text for.
+     */
     public String generate(AbstractCommand command) {
 
         String rootCommandName = command.getInfo().getRootSessionName();
@@ -55,6 +56,12 @@ public class UsageGenerator {
                 : generate(command, rootCommandName, _HELP_USAGE_HAS_SUB_COMMANDS);
     }
 
+    /**
+     * Generate command usage using the specified root command name.
+     *
+     * @param command          The command to generate usage text for.
+     * @param rootCommandName  The root command name.
+     */
     public String generate(AbstractCommand command, String rootCommandName) {
 
         return command.getCommandCollection().size() == 0
@@ -62,6 +69,24 @@ public class UsageGenerator {
                 : generate(command, rootCommandName, _HELP_USAGE_HAS_SUB_COMMANDS);
     }
 
+    /**
+     * Generate command usage using the specified root command name and
+     * a formatting template that uses the following parameters:
+     *
+     * <ul>
+     *     <li>{0} - root command name</li>
+     *     <li>{1} - command path excluding the root command and the command.</li>
+     *     <li>{2} - the command name</li>
+     *     <li>{3} - command parameters</li>
+     * </ul>
+     *
+     * <p>Note that a space is added after values inserted for the above parameters
+     * except when the parameter value is empty.</p>
+     *
+     * @param command          The command to generate usage text for.
+     * @param rootCommandName  The name of the root command.
+     * @param template         The format template for the generated text.
+     */
     public String generate(AbstractCommand command, String rootCommandName, String template) {
 
         LinkedList<AbstractCommand> parentCommands = new LinkedList<>();
@@ -91,8 +116,8 @@ public class UsageGenerator {
 
             params.append(isRequired ? '<' : '[')
                   .append(parameter.getName())
-                    .append(isRequired ? '>' : ']')
-                    .append(' ');
+                  .append(isRequired ? '>' : ']')
+                  .append(' ');
         }
 
         List<CommandParameter> floatingParams = command.getInfo().getFloatingParams();
@@ -104,7 +129,7 @@ public class UsageGenerator {
                   .append("--")
                   .append(parameter.getName())
                   .append(isRequired ? '>' : ']')
-                    .append(' ');
+                  .append(' ');
         }
 
         List<FlagParameter> flagParams = command.getInfo().getFlagParams();
@@ -112,11 +137,10 @@ public class UsageGenerator {
             params.append('[')
                   .append('-')
                   .append(parameter.getName())
-                    .append("] ");
+                  .append("] ");
         }
 
         return Lang.get(command.getPlugin(),
                 template, rootCommandName + ' ', commandPath, command.getInfo().getName() + ' ', params);
     }
-
 }
