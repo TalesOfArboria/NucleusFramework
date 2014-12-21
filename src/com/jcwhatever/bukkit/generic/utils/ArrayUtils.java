@@ -30,7 +30,8 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 /**
  * Array utilities.
@@ -2048,10 +2049,10 @@ public final class ArrayUtils {
      *
      * @param <T>  The array component type.
      */
-    public static <T> List<T> asList(T[] array) {
+    public static <T> ArrayList<T> asList(T[] array) {
         PreCon.notNull(array);
 
-        List<T> result = new ArrayList<T>(array.length);
+        ArrayList<T> result = new ArrayList<T>(array.length);
 
         Collections.addAll(result, array);
 
@@ -2063,10 +2064,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Boolean> asList(boolean[] array) {
+    public static ArrayList<Boolean> asList(boolean[] array) {
         PreCon.notNull(array);
 
-        List<Boolean> result = new ArrayList<>(array.length);
+        ArrayList<Boolean> result = new ArrayList<>(array.length);
 
         for (boolean b : array) {
             result.add(b);
@@ -2080,10 +2081,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Byte> asList(byte[] array) {
+    public static ArrayList<Byte> asList(byte[] array) {
         PreCon.notNull(array);
 
-        List<Byte> result = new ArrayList<>(array.length);
+        ArrayList<Byte> result = new ArrayList<>(array.length);
 
         for (byte b : array) {
             result.add(b);
@@ -2097,10 +2098,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Character> asList(char[] array) {
+    public static ArrayList<Character> asList(char[] array) {
         PreCon.notNull(array);
 
-        List<Character> result = new ArrayList<>(array.length);
+        ArrayList<Character> result = new ArrayList<>(array.length);
 
         for (char b : array) {
             result.add(b);
@@ -2114,10 +2115,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Short> asList(short[] array) {
+    public static ArrayList<Short> asList(short[] array) {
         PreCon.notNull(array);
 
-        List<Short> result = new ArrayList<>(array.length);
+        ArrayList<Short> result = new ArrayList<>(array.length);
 
         for (short b : array) {
             result.add(b);
@@ -2131,10 +2132,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Integer> asList(int[] array) {
+    public static ArrayList<Integer> asList(int[] array) {
         PreCon.notNull(array);
 
-        List<Integer> result = new ArrayList<>(array.length);
+        ArrayList<Integer> result = new ArrayList<>(array.length);
 
         for (int b : array) {
             result.add(b);
@@ -2148,10 +2149,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Long> asList(long[] array) {
+    public static ArrayList<Long> asList(long[] array) {
         PreCon.notNull(array);
 
-        List<Long> result = new ArrayList<>(array.length);
+        ArrayList<Long> result = new ArrayList<>(array.length);
 
         for (long b : array) {
             result.add(b);
@@ -2165,10 +2166,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Float> asList(float[] array) {
+    public static ArrayList<Float> asList(float[] array) {
         PreCon.notNull(array);
 
-        List<Float> result = new ArrayList<>(array.length);
+        ArrayList<Float> result = new ArrayList<>(array.length);
 
         for (float b : array) {
             result.add(b);
@@ -2182,10 +2183,318 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Double> asList(double[] array) {
+    public static ArrayList<Double> asList(double[] array) {
         PreCon.notNull(array);
 
-        List<Double> result = new ArrayList<>(array.length);
+        ArrayList<Double> result = new ArrayList<>(array.length);
+
+        for (double b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     *
+     * @param <T>  The array component type.
+     */
+    public static <T> LinkedList<T> asLinkedList(T[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<T> result = new LinkedList<>();
+
+        Collections.addAll(result, array);
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     */
+    public static LinkedList<Boolean> asLinkedList(boolean[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<Boolean> result = new LinkedList<>();
+
+        for (boolean b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     */
+    public static LinkedList<Byte> asLinkedList(byte[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<Byte> result = new LinkedList<>();
+
+        for (byte b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     */
+    public static LinkedList<Character> asLinkedList(char[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<Character> result = new LinkedList<>();
+
+        for (char b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     */
+    public static LinkedList<Short> asLinkedList(short[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<Short> result = new LinkedList<>();
+
+        for (short b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     */
+    public static LinkedList<Integer> asLinkedList(int[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<Integer> result = new LinkedList<>();
+
+        for (int b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     */
+    public static LinkedList<Long> asLinkedList(long[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<Long> result = new LinkedList<>();
+
+        for (long b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     */
+    public static LinkedList<Float> asLinkedList(float[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<Float> result = new LinkedList<>();
+
+        for (float b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code LinkedList}.
+     *
+     * @param array  The array to convert.
+     */
+    public static LinkedList<Double> asLinkedList(double[] array) {
+        PreCon.notNull(array);
+
+        LinkedList<Double> result = new LinkedList<>();
+
+        for (double b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     *
+     * @param <T>  The array component type.
+     */
+    public static <T> HashSet<T> asSet(T[] array) {
+        PreCon.notNull(array);
+
+        HashSet<T> result = new HashSet<>(array.length);
+
+        Collections.addAll(result, array);
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     */
+    public static HashSet<Boolean> asSet(boolean[] array) {
+        PreCon.notNull(array);
+
+        HashSet<Boolean> result = new HashSet<>(2);
+
+        for (boolean b : array) {
+            result.add(b);
+            if (result.size() == 2)
+                break;
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     */
+    public static HashSet<Byte> asSet(byte[] array) {
+        PreCon.notNull(array);
+
+        HashSet<Byte> result = new HashSet<>(array.length);
+
+        for (byte b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     */
+    public static HashSet<Character> asSet(char[] array) {
+        PreCon.notNull(array);
+
+        HashSet<Character> result = new HashSet<>(array.length);
+
+        for (char b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     */
+    public static HashSet<Short> asSet(short[] array) {
+        PreCon.notNull(array);
+
+        HashSet<Short> result = new HashSet<>(array.length);
+
+        for (short b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     */
+    public static HashSet<Integer> asSet(int[] array) {
+        PreCon.notNull(array);
+
+        HashSet<Integer> result = new HashSet<>(array.length);
+
+        for (int b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     */
+    public static HashSet<Long> asSet(long[] array) {
+        PreCon.notNull(array);
+
+        HashSet<Long> result = new HashSet<>(array.length);
+
+        for (long b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     */
+    public static HashSet<Float> asSet(float[] array) {
+        PreCon.notNull(array);
+
+        HashSet<Float> result = new HashSet<>(array.length);
+
+        for (float b : array) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code HashSet}.
+     *
+     * @param array  The array to convert.
+     */
+    public static HashSet<Double> asSet(double[] array) {
+        PreCon.notNull(array);
+
+        HashSet<Double> result = new HashSet<>(array.length);
 
         for (double b : array) {
             result.add(b);
