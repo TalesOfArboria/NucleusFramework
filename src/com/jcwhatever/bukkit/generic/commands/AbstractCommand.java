@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.commands;
 
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.MissingCommandAnnotationException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
@@ -90,7 +90,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      * <p>Intended to be overridden by implementation if needed.</p>
      */
     public void execute(CommandSender sender, CommandArguments args)
-            throws InvalidValueException, InvalidCommandSenderException {
+            throws InvalidArgumentException, InvalidCommandSenderException {
     }
 
     /**

@@ -23,18 +23,17 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.commands.arguments;
+package com.jcwhatever.bukkit.generic.commands.parameters;
 
 import com.jcwhatever.bukkit.generic.commands.CommandInfoContainer;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterDescriptionException;
+import com.jcwhatever.bukkit.generic.commands.arguments.ArgumentValueType;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Parses parameter description from a commands info annotation
@@ -43,7 +42,7 @@ import java.util.Map;
 public class ParameterDescriptions {
 
     private CommandInfoContainer _commandInfo;
-    private Map<String, String> _descriptionMap = null;
+    private Map<String, ParameterDescription> _descriptionMap = null;
 
     /**
      * Constructor.
@@ -68,7 +67,7 @@ public class ParameterDescriptions {
      */
     @Nullable
     @Localized
-    public String get(String parameterName) {
+    public ParameterDescription get(String parameterName) {
         PreCon.notNullOrEmpty(parameterName);
 
         parseDescriptions();
@@ -85,16 +84,16 @@ public class ParameterDescriptions {
      * @param parameterName  The name of the parameter.
      * @param valueType      The expected value type of the parameter.
      */
-    @Localized
-    public String get(String parameterName, ArgumentValueType valueType, Object... params) {
+    public ParameterDescription get(String parameterName, ArgumentValueType valueType, Object... params) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(valueType);
 
-        String description = get(parameterName);
+        ParameterDescription description = get(parameterName);
         if (description != null)
             return description;
 
-        return ArgumentValueType.getDescription(parameterName, valueType, params);
+        return new ParameterDescription(parameterName,
+                ArgumentValueType.getDescription(parameterName, valueType, params));
     }
 
     /**
@@ -105,16 +104,34 @@ public class ParameterDescriptions {
      *
      * @param <T>  The enum type.
      */
-    @Localized
-    public <T extends Enum<T>> String get(String parameterName, Class<T> enumClass) {
+    public <T extends Enum<T>> ParameterDescription get(String parameterName, Class<T> enumClass) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(enumClass);
 
-        String description = get(parameterName);
+        ParameterDescription description = get(parameterName);
         if (description != null)
             return description;
 
-        return ArgumentValueType.getEnumDescription(enumClass);
+        return new ParameterDescription(parameterName, ArgumentValueType.getEnumDescription(enumClass));
+    }
+
+    /**
+     * Get a description of an enum type parameter by name.
+     *
+     * @param parameterName    The name of the parameter.
+     * @param validEnumValues  The valid enum values.
+     *
+     * @param <T>  The enum type.
+     */
+    public <T extends Enum<T>> ParameterDescription get(String parameterName, T[] validEnumValues) {
+        PreCon.notNullOrEmpty(parameterName);
+        PreCon.notNull(validEnumValues);
+
+        ParameterDescription description = get(parameterName);
+        if (description != null)
+            return description;
+
+        return new ParameterDescription(parameterName, ArgumentValueType.getEnumDescription(validEnumValues));
     }
 
     /**
@@ -126,35 +143,15 @@ public class ParameterDescriptions {
      * @param <T>  The enum type.
      */
     @Localized
-    public <T extends Enum<T>> String get(String parameterName, T[] validEnumValues) {
+    public <T extends Enum<T>> ParameterDescription get(String parameterName, Collection<T> validEnumValues) {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(validEnumValues);
 
-        String description = get(parameterName);
+        ParameterDescription description = get(parameterName);
         if (description != null)
             return description;
 
-        return ArgumentValueType.getEnumDescription(validEnumValues);
-    }
-
-    /**
-     * Get a description of an enum type parameter by name.
-     *
-     * @param parameterName    The name of the parameter.
-     * @param validEnumValues  The valid enum values.
-     *
-     * @param <T>  The enum type.
-     */
-    @Localized
-    public <T extends Enum<T>> String get(String parameterName, Collection<T> validEnumValues) {
-        PreCon.notNullOrEmpty(parameterName);
-        PreCon.notNull(validEnumValues);
-
-        String description = get(parameterName);
-        if (description != null)
-            return description;
-
-        return ArgumentValueType.getEnumDescription(validEnumValues);
+        return new ParameterDescription(parameterName, ArgumentValueType.getEnumDescription(validEnumValues));
     }
 
 
@@ -162,21 +159,14 @@ public class ParameterDescriptions {
         if (_descriptionMap != null)
             return;
 
-        String[] descriptions = _commandInfo.getParamDescriptions();
-        _descriptionMap = new HashMap<String, String>(descriptions.length);
+        String[] descriptions = _commandInfo.getRawParamDescriptions();
+        _descriptionMap = new HashMap<>(descriptions.length);
 
         for (String desc : descriptions) {
-            String[] descComp =  TextUtils.PATTERN_EQUALS.split(desc, -1);
 
-            String parameterName = descComp[0].trim();
+            ParameterDescription description = new ParameterDescription(_commandInfo, desc);
 
-            if (descComp.length < 2) {
-                throw new InvalidParameterDescriptionException(_commandInfo, descComp[0]);
-            }
-
-            String description = TextUtils.concat(1, descComp, "=");
-
-            _descriptionMap.put(parameterName, description);
+            _descriptionMap.put(description.getParameterName(), description);
         }
     }
 }

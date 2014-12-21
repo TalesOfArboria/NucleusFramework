@@ -31,7 +31,8 @@ import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.DuplicateParameterException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.MissingArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
@@ -307,7 +308,6 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         _parser.setBaseCommand(command);
     }
 
-
     @Nullable
     private CommandArguments getCommandArguments(CommandSender sender,
                                                  AbstractCommand command,
@@ -317,7 +317,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
         CommandArguments arguments;
 
         try {
-            arguments = new CommandArguments(getPlugin(), command.getInfo(), argArray);
+            arguments = new CommandArguments(getPlugin(), command, argArray);
 
         } catch (TooManyArgsException e) {
 
@@ -326,7 +326,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
             return null; // finished
 
-        } catch (InvalidValueException e) {
+        } catch (InvalidArgumentException e) {
 
             if (showMessages && e.getMessage() != null) {
                 tellError(sender, e.getMessage());
@@ -356,15 +356,13 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
                 tellError(sender, Lang.get(_INVALID_PARAMETER, e.getParameterName()));
 
             return null; // finished
-        }
-
-        // Make sure the number of provided arguments match the expected amount
-        if (arguments.staticSize() < arguments.expectedSize()) {
+        } catch (MissingArgumentException e) {
+            e.printStackTrace();
 
             if (showMessages)
                 tellError(sender, Lang.get(_MISSING_ARGS, command.constructHelpUsage()));
 
-            return null; // finished
+            return null;
         }
 
         return arguments;
@@ -376,7 +374,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
             command.execute(sender, parameters);
         }
         // catch invalid argument values
-        catch (InvalidValueException e) {
+        catch (InvalidArgumentException e) {
 
             if (showMessages && e.getMessage() != null) {
                 tellError(sender, e.getMessage());

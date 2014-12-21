@@ -25,11 +25,13 @@
 
 package com.jcwhatever.bukkit.generic.commands.arguments;
 
-import com.jcwhatever.bukkit.generic.commands.CommandInfoContainer;
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.exceptions.DuplicateParameterException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.MissingArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
+import com.jcwhatever.bukkit.generic.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.items.ItemStackComparer;
 import com.jcwhatever.bukkit.generic.items.ItemWrapper;
@@ -43,6 +45,7 @@ import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -54,15 +57,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import javax.annotation.Nullable;
@@ -79,60 +76,58 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
     private final Plugin _plugin;
     private final IMessenger _msg;
-    private final List<CommandArgument> _staticArgs = new ArrayList<CommandArgument>(10);
-    private final List<CommandArgument> _floatingArgs = new ArrayList<CommandArgument>(10);
+    private final ArgumentParseResults _parseResults;
     private final ParameterDescriptions _paramDescriptions;
-
-    private Map<String, CommandArgument> _argMap = new HashMap<String, CommandArgument>(10);
-    private int _expectedSize;
 
     /**
      * Constructor. Validates while assuming no arguments are provided.
      *
      * @param plugin       The owning plugin.
-     * @param commandInfo  The commands info annotation container.
+     * @param command      The commands the arguments are being parsed for.
      *
-     * @throws InvalidValueException        If a value provided is not valid.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException        If a value provided is not valid.
      * @throws DuplicateParameterException  If a parameter is defined in the arguments more than once.
      * @throws InvalidParameterException    If a parameter int the arguments is not found for the command.
      * @throws TooManyArgsException         If the provided arguments are more than is expected.
      */
-    public CommandArguments(Plugin plugin, CommandInfoContainer commandInfo)
-            throws InvalidValueException, DuplicateParameterException, InvalidParameterException, TooManyArgsException {
+    public CommandArguments(Plugin plugin, AbstractCommand command)
+            throws InvalidArgumentException, DuplicateParameterException, InvalidParameterException,
+            TooManyArgsException, MissingArgumentException {
 
-        this(plugin, commandInfo, null);
+        this(plugin, command, null);
     }
 
     /**
      * Constructor. Parses the provided arguments and validates against information provided
      * by the {@code CommandInfoContainer}.
      *
-     * @param plugin       The owning plugin.
-     * @param commandInfo  The commands info annotation container.
-     * @param args         The command arguments.
+     * @param plugin   The owning plugin.
+     * @param command  The commands info annotation container.
+     * @param args     The command arguments.
      *
-     * @throws InvalidValueException        If a value provided is not valid.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException        If a value provided is not valid.
      * @throws DuplicateParameterException  If a parameter is defined in the arguments more than once.
      * @throws InvalidParameterException    If a parameter int the arguments is not found for the command.
      * @throws TooManyArgsException         If the provided arguments are more than is expected.
      */
-    public CommandArguments(Plugin plugin, CommandInfoContainer commandInfo, @Nullable String[] args)
-            throws InvalidValueException, DuplicateParameterException, InvalidParameterException, TooManyArgsException {
+    public CommandArguments(Plugin plugin, AbstractCommand command, @Nullable String[] args)
+            throws InvalidArgumentException, DuplicateParameterException, InvalidParameterException,
+            TooManyArgsException, MissingArgumentException {
 
         PreCon.notNull(plugin);
-        PreCon.notNull(commandInfo);
+        PreCon.notNull(command);
 
         _plugin = plugin;
         _msg = MessengerFactory.get(plugin);
-        _expectedSize = commandInfo.getStaticParams().length;
-        _paramDescriptions = new ParameterDescriptions(commandInfo);
+        _paramDescriptions = command.getInfo().getParamDescriptions();
 
-        // substitute null value to remove the need for null checks while parsing
+
+        // substitute empty string to remove the need for null checks while parsing
         if (args == null)
-            args = new String[0];
+            args = ArrayUtils.EMPTY_STRING_ARRAY;
 
         // parse arguments
-        parseArguments(commandInfo.getStaticParams(), commandInfo.getFloatingParams(), args);
+        _parseResults = new ArgumentParser().parse(command, args);
     }
 
     /**
@@ -143,69 +138,31 @@ public class CommandArguments implements Iterable<CommandArgument> {
     }
 
     /**
-     * The number of arguments in the collection.
+     * The number of static arguments in the collection.
      *
-     * <p>Does not include the number of optional arguments.</p>
-     *
-     * <p>Includes arguments automatically added due to the
-     * parameter having a default value.</p>
+     * <p>Does not include the number of floating arguments.</p>
      */
     public int staticSize() {
-        return _staticArgs.size();
+        return _parseResults.getStaticArgs().size();
     }
 
     /**
-     * The number of optional arguments in the collection.
+     * The number of floating arguments in the collection.
      */
     public int floatingSize () {
-        return _floatingArgs.size();
+        return _parseResults.getFloatingArgs().size();
     }
 
     /**
-     * The number of arguments expected.
-     *
-     * <p>Used by the command handler to quickly determine if the number of 
-     * arguments provided is valid.</p>
-     */
-    public int expectedSize() {
-        return _expectedSize;
-    }
-
-
-    /**
-     * Get an {@code ICommandParameter} by index
-     *
-     * @param index  The index position of the parameter as provided by the command sender
-     */
-    @Nullable
-    public CommandArgument get(int index) {
-        PreCon.positiveNumber(index);
-
-        // check if getting a floating argument
-        if (index >= _staticArgs.size()) {
-
-            int floatingIndex = _staticArgs.size() + index - 1;
-
-            // make sure index is in range
-            if (floatingIndex >= _staticArgs.size() + _floatingArgs.size())
-                return null;
-
-            // return floating argument
-            return _floatingArgs.get(index);
-        }
-
-        // return static argument
-        return _staticArgs.get(index);
-    }
-
-    /**
-     * Get an {@code ICommandParameter} by parameter name
+     * Get a {@code CommandArgument} by parameter name
      *
      * @param parameterName  The name of the parameter
      */
     @Nullable
     public CommandArgument get(String parameterName) {
-        return _argMap.get(parameterName);
+        PreCon.notNullOrEmpty(parameterName);
+
+        return _parseResults.getArgMap().get(parameterName);
     }
 
     /**
@@ -222,7 +179,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             @Override
             public boolean hasNext () {
-                return index < _staticArgs.size() + _floatingArgs.size();
+                return index < staticSize() + floatingSize();
             }
 
             @Override
@@ -230,7 +187,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 if (!hasNext())
                     throw new IndexOutOfBoundsException("No more elements.");
 
-                CommandArgument arg = get(index);
+
+
+                CommandArgument arg = index < staticSize()
+                        ? _parseResults.getStaticArgs().get(index)
+                        : _parseResults.getFloatingArgs().get(index);
+
                 index++;
                 //noinspection ConstantConditions
                 return arg;
@@ -240,7 +202,6 @@ public class CommandArguments implements Iterable<CommandArgument> {
             public void remove () {
                 throw new UnsupportedOperationException();
             }
-
         };
     }
 
@@ -252,9 +213,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the parameter to get
      *
-     * @throws InvalidValueException  If the argument for the parameter is not a valid name.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument for the parameter is not a valid name.
      */
-    public String getName(String parameterName) throws InvalidValueException {
+    public String getName(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         return getName(parameterName, 16);
@@ -269,9 +230,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param parameterName  The name of the arguments parameter
      * @param maxLen         The maximum length of the value
      *
-     * @throws InvalidValueException  If the argument for the parameter is not a valid name.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument for the parameter is not a valid name.
      */
-    public String getName(String parameterName, int maxLen) throws InvalidValueException {
+    public String getName(String parameterName, int maxLen) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.greaterThanZero(maxLen);
 
@@ -280,7 +241,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // make sure the argument is a valid name
         if (!TextUtils.isValidName(arg, maxLen)) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.NAME, maxLen));
         }
 
@@ -292,15 +253,15 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws InvalidValueException  If the argument is not present or is not an expected value.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not present or is not an expected value.
      */
-    public String getString(String parameterName) throws InvalidValueException {
+    public String getString(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument
         String value = getRawArgument(parameterName);
         if (value == null)
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.STRING));
 
         // make sure if pipes are used, that the argument is one of the possible values
@@ -310,7 +271,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 if (value.equalsIgnoreCase(option))
                     return option;
             }
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.STRING));
         }
 
@@ -323,15 +284,15 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws InvalidValueException  If the argument is not present, is not an expected value, or is more than a single character.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not present, is not an expected value, or is more than a single character.
      */
-    public char getChar(String parameterName) throws InvalidValueException {
+    public char getChar(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument
         String value = getRawArgument(parameterName);
         if (value == null)
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
 
         // make sure if pipes are used, that the argument is one of the possible values
@@ -341,20 +302,20 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 if (value.equalsIgnoreCase(option)) {
 
                     if (option.length() != 1) {
-                        throw new InvalidValueException(parameterName,
+                        throw new InvalidArgumentException(
                                 _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
                     }
 
                     return option.charAt(0);
                 }
             }
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
         }
 
         // make sure the length of the value is exactly 1
         if (value.length() != 1)
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
 
         return value.charAt(0);
@@ -365,9 +326,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws InvalidValueException  If the argument is not parsable into a byte value.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a byte value.
      */
-    public byte getByte(String parameterName) throws InvalidValueException {
+    public byte getByte(String parameterName) throws InvalidArgumentException {
         return getByte(parameterName, Byte.MIN_VALUE, Byte.MAX_VALUE);
     }
 
@@ -378,9 +339,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws InvalidValueException
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
      */
-    public byte getByte(String parameterName, byte minRange, byte maxRange) throws InvalidValueException {
+    public byte getByte(String parameterName, byte minRange, byte maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         byte result;
@@ -394,12 +355,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
             result = Byte.parseByte(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
         }
 
@@ -411,9 +372,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter.
      *
-     * @throws InvalidValueException  If the argument is not parsable into a short value.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a short value.
      */
-    public short getShort(String parameterName) throws InvalidValueException {
+    public short getShort(String parameterName) throws InvalidArgumentException {
         return getShort(parameterName, Short.MIN_VALUE, Short.MAX_VALUE);
     }
 
@@ -424,9 +385,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws InvalidValueException  If the argument is not parsable into a short value or does not meet range specs.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a short value or does not meet range specs.
      */
-    public short getShort(String parameterName, short minRange, short maxRange) throws InvalidValueException {
+    public short getShort(String parameterName, short minRange, short maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         short result;
@@ -440,12 +401,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
             result = Short.parseShort(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
         }
 
@@ -457,9 +418,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter.
      *
-     * @throws InvalidValueException  If the argument is not parsable into an integer.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into an integer.
      */
-    public int getInteger(String parameterName) throws InvalidValueException {
+    public int getInteger(String parameterName) throws InvalidArgumentException {
         return getInteger(parameterName, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
@@ -470,9 +431,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws InvalidValueException  If the argument is not parsable into an integer or does not meet range specs.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into an integer or does not meet range specs.
      */
-    public int getInteger(String parameterName, int minRange, int maxRange) throws InvalidValueException {
+    public int getInteger(String parameterName, int minRange, int maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         int result;
@@ -486,12 +447,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
             result = Integer.parseInt(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
         }
 
@@ -503,9 +464,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter.
      *
-     * @throws InvalidValueException  If the argument is not parsable into a long value.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a long value.
      */
-    public long getLong(String parameterName) throws InvalidValueException {
+    public long getLong(String parameterName) throws InvalidArgumentException {
         return getLong(parameterName, Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
@@ -516,9 +477,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws InvalidValueException  If the argument is not parsable into a long value or does not meet range specs.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a long value or does not meet range specs.
      */
-    public long getLong(String parameterName, long minRange, long maxRange) throws InvalidValueException {
+    public long getLong(String parameterName, long minRange, long maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         long result;
@@ -532,12 +493,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
             result = Long.parseLong(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
         }
 
@@ -549,9 +510,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws InvalidValueException  If the argument is not parsable into a float value.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a float value.
      */
-    public float getFloat(String parameterName) throws InvalidValueException {
+    public float getFloat(String parameterName) throws InvalidArgumentException {
         return getFloat(parameterName, Float.MIN_VALUE, Float.MAX_VALUE);
     }
 
@@ -562,9 +523,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws InvalidValueException  If the argument is not parsable into a float or does not meet range specs.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a float or does not meet range specs.
      */
-    public float getFloat(String parameterName, float minRange, float maxRange) throws InvalidValueException {
+    public float getFloat(String parameterName, float minRange, float maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         float result;
@@ -580,12 +541,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
                     : Float.parseFloat(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
         }
 
@@ -597,9 +558,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter.
      *
-     * @throws InvalidValueException  If the argument is not parsable into a double value.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a double value.
      */
-    public double getDouble(String parameterName) throws InvalidValueException {
+    public double getDouble(String parameterName) throws InvalidArgumentException {
         return getDouble(parameterName, Double.MIN_VALUE, Double.MAX_VALUE);
     }
 
@@ -610,9 +571,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws InvalidValueException  If the argument is not parsable into a double value or does not meet range specs.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a double value or does not meet range specs.
      */
-    public double getDouble(String parameterName, double minRange, double maxRange) throws InvalidValueException {
+    public double getDouble(String parameterName, double minRange, double maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         double result;
@@ -628,12 +589,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
                     : Double.parseDouble(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
         }
 
@@ -648,18 +609,27 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws InvalidValueException  If the argument cannot be parsed or recognized as a boolean.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument cannot be parsed or recognized as a boolean.
      */
-    public boolean getBoolean(String parameterName) throws InvalidValueException {
+    public boolean getBoolean(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
         // make sure the argument was provided
-        if (arg == null)
-            throw new InvalidValueException(parameterName,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.BOOLEAN));
+        if (arg == null) {
+
+            Boolean flag = _parseResults.getFlag(parameterName);
+
+            if (flag == null) {
+                throw new InvalidArgumentException(
+                        _paramDescriptions.get(parameterName, ArgumentValueType.BOOLEAN));
+            }
+            else {
+                return flag;
+            }
+        }
 
         // get boolean based on value
         arg = arg.toLowerCase();
@@ -677,7 +647,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
             case "off":
                 return false;
             default:
-                throw new InvalidValueException(parameterName,
+                throw new InvalidArgumentException(
                         _paramDescriptions.get(parameterName, ArgumentValueType.BOOLEAN));
         }
     }
@@ -687,9 +657,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws InvalidValueException  If the argument cannot be parsed or recognizes as a double.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument cannot be parsed or recognizes as a double.
      */
-    public double getPercent(String parameterName) throws InvalidValueException {
+    public double getPercent(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument
@@ -697,7 +667,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // make sure the argument was provided
         if (arg == null)
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.PERCENT));
 
         // remove percent sign
@@ -711,7 +681,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                     : Double.parseDouble(arg);
         }
         catch (NumberFormatException nfe) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.PERCENT));
         }
     }
@@ -722,7 +692,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter
      */
-    public String[] getParams(String parameterName) throws InvalidValueException {
+    public String[] getParams(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument.
@@ -751,9 +721,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param sender         The {@code CommandSender} who executed the command
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws InvalidValueException If the argument is not a recognized keyword and cannot be parsed to an {@code ItemStack}.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException If the argument is not a recognized keyword and cannot be parsed to an {@code ItemStack}.
      */
-    public ItemStack[] getItemStack(@Nullable CommandSender sender, String parameterName) throws InvalidValueException {
+    public ItemStack[] getItemStack(@Nullable CommandSender sender, String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument
@@ -761,7 +731,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // make sure the argument was provided
         if (arg == null)
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
 
         // Check for "inhand" keyword as argument
@@ -769,7 +739,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             // sender must be a player to use "inhand" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidValueException(parameterName,
+                throw new InvalidArgumentException(
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
             }
 
@@ -779,7 +749,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             // sender must have an item in hand
             if (inhand == null || inhand.getType() == Material.AIR) {
-                throw new InvalidValueException(parameterName,
+                throw new InvalidArgumentException(
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
             }
 
@@ -791,7 +761,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             // sender must be a player to use "hotbar" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidValueException(parameterName,
+                throw new InvalidArgumentException(
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
             }
 
@@ -826,7 +796,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             // sender must be player to use "chest" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidValueException(parameterName,
+                throw new InvalidArgumentException(
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
             }
 
@@ -869,7 +839,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         }
 
         if (stacks == null)
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
 
         // return result
@@ -894,10 +864,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param parameterName    The name of the arguments parameter
      * @param locationHandler  The {@code LocationHandler} responsible for dealing with the return location.
      *
-     * @throws InvalidValueException If the sender is not a player, or the argument is not "current" or "select"
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException If the sender is not a player, or the argument is not "current" or "select"
      */
     public void getLocation (final CommandSender sender, String parameterName,
-                             final LocationResponse locationHandler) throws InvalidValueException {
+                             final LocationResponse locationHandler) throws InvalidArgumentException {
         PreCon.notNull(sender);
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(locationHandler);
@@ -906,7 +876,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // command sender must be a player
         if (!(sender instanceof Player)) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.LOCATION));
         }
 
@@ -940,7 +910,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
             });
         }
         else {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, ArgumentValueType.LOCATION));
         }
     }
@@ -953,9 +923,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param parameterName  The name of the arguments parameter
      * @param enumClass      The enums class
      *
-     * @throws InvalidValueException  If the argument is not the name of one of the enums constants.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not the name of one of the enums constants.
      */
-    public <T extends Enum<T>> T getEnum(String parameterName,  Class<T> enumClass) throws InvalidValueException {
+    public <T extends Enum<T>> T getEnum(String parameterName,  Class<T> enumClass) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(enumClass);
 
@@ -975,9 +945,9 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param enumClass      The enums class
      * @param validValues    an array of valid enum constants
      *
-     * @throws InvalidValueException If the argument is not the name of one of the valid enum constants.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException If the argument is not the name of one of the valid enum constants.
      */
-    public <T extends Enum<T>> T getEnum(String parameterName,  Class<T> enumClass, T[] validValues) throws InvalidValueException {
+    public <T extends Enum<T>> T getEnum(String parameterName,  Class<T> enumClass, T[] validValues) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(enumClass);
         PreCon.notNull(validValues);
@@ -988,7 +958,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
         if (evalue == null) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, validValues));
         }
 
@@ -998,7 +968,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 return evalue;
         }
 
-        throw new InvalidValueException(parameterName,
+        throw new InvalidArgumentException(
                 _paramDescriptions.get(parameterName, validValues));
     }
 
@@ -1015,10 +985,10 @@ public class CommandArguments implements Iterable<CommandArgument> {
      * @param enumClass      The enums class
      * @param validValues    A collection of valid enum constants
      *
-     * @throws InvalidValueException  If the argument is not one of the valid enum constants.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not one of the valid enum constants.
      */
     public <T extends Enum<T>> T getEnum(String parameterName, Class<T> enumClass, Collection<T> validValues)
-            throws InvalidValueException {
+            throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(enumClass);
         PreCon.notNull(validValues);
@@ -1029,7 +999,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
         if (evalue == null) {
-            throw new InvalidValueException(parameterName,
+            throw new InvalidArgumentException(
                     _paramDescriptions.get(parameterName, validValues));
         }
 
@@ -1039,7 +1009,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 return evalue;
         }
 
-        throw new InvalidValueException(parameterName,
+        throw new InvalidArgumentException(
                 _paramDescriptions.get(parameterName, validValues));
     }
 
@@ -1055,17 +1025,14 @@ public class CommandArguments implements Iterable<CommandArgument> {
     public boolean hasValue(String parameterName) {
         PreCon.notNullOrEmpty(parameterName);
 
-        CommandArgument argument = _argMap.get(parameterName);
+        CommandArgument argument = _parseResults.getArgMap().get(parameterName);
         if (argument == null)
-            return false;
-
-        if (argument.getArgumentType() == ArgumentType.UNDEFINED)
             return false;
 
         try {
             return getRawArgument(parameterName) != null;
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
     }
@@ -1096,7 +1063,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             value = getRawArgument(parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
 
@@ -1120,7 +1087,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             getInteger(parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
@@ -1137,7 +1104,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             getShort(parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
@@ -1154,7 +1121,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             getByte(parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
@@ -1172,7 +1139,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             getDouble(parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
@@ -1190,7 +1157,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             getFloat(parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
@@ -1208,7 +1175,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             getBoolean(parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
@@ -1225,7 +1192,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             getItemStack(null, parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
@@ -1244,7 +1211,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         try {
             getPercent(parameterName);
         }
-        catch (InvalidValueException ive) {
+        catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
@@ -1262,7 +1229,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         try {
             getEnum(parameterName, enumClass);
-        } catch (InvalidValueException e) {
+        } catch (InvalidArgumentException e) {
             return false;
         }
         return true;
@@ -1274,283 +1241,19 @@ public class CommandArguments implements Iterable<CommandArgument> {
      *
      * @param parameterName  The name of the arguments parameter.
 
-     * @throws InvalidValueException
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
      */
     @Nullable
-    private String getRawArgument(String parameterName) throws InvalidValueException {
+    private String getRawArgument(String parameterName) throws InvalidArgumentException {
 
-        CommandArgument param = _argMap.get(parameterName);
+        CommandArgument param = _parseResults.getArgMap().get(parameterName);
         if (param == null)
             return null;
 
         String value = param.getValue();
         String defaultVal = param.getDefaultValue();
 
-        switch (param.getParameterType()) {
-
-            case FLOATING:
-                if (value == null && defaultVal == null) {
-
-                    if (param.getArgumentType() == ArgumentType.UNDEFINED) {
-                        return "false"; // insert false for flag argument
-                    }
-
-                    return param.getArgumentType() == ArgumentType.DEFINED_PARAM_UNDEFINED_VALUE
-                            ? "true" // insert true for flag argument
-                            : null;
-
-                }
-                // fall through
-
-            case STATIC:
-                return value != null && !value.isEmpty()
-                        ? param.getValue()
-                        : param.getDefaultValue();
-        }
-
-        return null;
+        return value != null ? value : defaultVal;
     }
-
-
-    /**
-     * Parse command arguments
-     *
-     * @param staticParams    Names of required parameters in the order expected  
-     * @param floatingParams  Names of optional parameters
-     * @param args            The provided arguments
-     *
-     * @return left over arguments
-     */
-    private void parseArguments(String[] staticParams, String[] floatingParams, String[] args)
-            throws InvalidValueException, DuplicateParameterException, InvalidParameterException, TooManyArgsException {
-
-        LinkedList<String> staticQueue = new LinkedList<String>();
-        LinkedList<String> argsQueue = new LinkedList<String>();
-
-        Collections.addAll(staticQueue, staticParams);
-        Collections.addAll(argsQueue, args);
-
-        while (!staticQueue.isEmpty()) {
-
-            // split on '=' to get default value
-            String rawParam = staticQueue.removeFirst();
-            String[] paramComp = TextUtils.PATTERN_EQUALS.split(rawParam, -1);
-
-            String paramName = paramComp[0].trim();
-            String defaultValue = paramComp.length > 1 ? paramComp[1].trim() : null;
-            String value = null;
-
-            if (!argsQueue.isEmpty()) {
-                String arg = argsQueue.removeFirst();
-
-                // Should not be any optional before required arguments
-                if (arg.startsWith("--")) {
-
-                    // no default value defined means a discreet value is expected
-                    if (defaultValue == null) {
-                        throw new InvalidValueException(paramName);
-                    }
-                    // re-insert argument
-                    else {
-                        argsQueue.addFirst(arg);
-                    }
-                }
-                else {
-
-                    // get parameter value
-                    value = parseValue(arg, argsQueue);
-                }
-            }
-
-            // add argument
-            if (value != null || defaultValue != null) {
-                addArgument(new CommandArgument(paramName, value, defaultValue, ParameterType.STATIC));
-            }
-
-        }
-
-        // check if there are floating parameters for the command
-        if (floatingParams == null || floatingParams.length == 0) {
-
-            // make sure there are not too many arguments
-            if (!argsQueue.isEmpty()) {
-                throw new TooManyArgsException();
-            }
-
-            // nothing left to do
-            return;
-        }
-
-        // prepare optional parameters for easy lookup and
-        // add defaults
-        for (String floatingParam : floatingParams) {
-
-            OptionalParameter param = new OptionalParameter(floatingParam);
-            CommandArgument argument =
-                    new CommandArgument(param.parameterName, null, param.defaultValue,
-                            ParameterType.FLOATING, ArgumentType.UNDEFINED);
-
-            // make sure the predefined floating parameter does not have
-            // the same name as a static parameter or duplicate floating parameter name.
-            if (_argMap.containsKey(param.parameterName)) {
-                throw new DuplicateParameterException('\'' + param.parameterName + '\'' +
-                        " is the name of a static parameter and is not a valid floating parameter name.");
-            }
-
-            // put the argument in the argument map with default values
-            // in case the command sender does not reference it
-            _argMap.put(argument.getParameterName(), argument);
-        }
-
-        // check for optional arguments
-        while (!argsQueue.isEmpty()) {
-
-            String arg = argsQueue.removeFirst();
-
-            // check for invalid floating argument
-            if (!arg.startsWith("--"))
-                throw new InvalidValueException('\'' + arg + '\'' +
-                        " is not a valid parameter name for this command. The parameter name of a floating " +
-                        "argument should be prefixed with a double dash. i.e. --" + arg);
-
-            // remove double dash
-            String paramName = arg.substring(2, arg.length());
-
-
-            // get value
-            String value = null;
-            ArgumentType argType = ArgumentType.DEFINED_VALUE;
-
-            if (argsQueue.isEmpty()) {
-                argType = ArgumentType.DEFINED_PARAM_UNDEFINED_VALUE;
-            }
-            else {
-                arg = argsQueue.removeFirst();
-
-                // make sure the argument value isn't actually the next floating parameter name.
-                if (arg.startsWith("--")) {
-
-                    argsQueue.addFirst(arg); // put arg back
-                    argType = ArgumentType.DEFINED_PARAM_UNDEFINED_VALUE;
-                } else {
-                    // parse argument value
-                    value = parseValue(arg, argsQueue);
-                }
-            }
-
-
-            // check parameter name is valid
-            CommandArgument commandArg = _argMap.get(paramName);
-            if (commandArg == null)
-                throw new InvalidParameterException('\'' + arg + '\'' +
-                        " is not a valid parameter name for this command.");
-
-            // check attempting to reference a static parameter with a floating argument
-            if (commandArg.getParameterType() == ParameterType.STATIC)
-                throw new DuplicateParameterException('\'' + arg + '\'' +
-                        " is the name of a required parameter and is not a valid optional parameter.");
-
-            // check if the argument value has already has already been set
-            if (commandArg.getValue() != null)
-                throw new DuplicateParameterException(
-                        "Duplicate argument detected for parameter named '" + arg + "'.");
-
-            // reinsert argument into argument map with value
-            addArgument(new CommandArgument(
-                    commandArg.getParameterName(), value, commandArg.getDefaultValue(),
-                    ParameterType.FLOATING, argType));
-        }
-    }
-
-    /**
-     * parses quotes or returns current argument.
-     *
-     * @param currentArg  The current argument
-     * @param argsQueue   The queue of arguments words
-     */
-    private String parseValue(String currentArg, LinkedList<String> argsQueue) {
-
-        // check to see if parsing a literal
-        String quote = null;
-
-        // detect double quote
-        if (currentArg.startsWith("\"")) {
-            quote = "\"";
-        }
-        // detect single quote
-        else if (currentArg.startsWith("'")) {
-            quote = "'";
-        }
-
-        // check for quoted literal
-        if (quote != null) {
-
-
-            String firstWord = currentArg.substring(1); // remove quotation
-
-            // make sure the literal isn't closed on the same word
-            if (firstWord.endsWith(quote)) {
-
-                // remove end quote
-                return firstWord.substring(0, firstWord.length() - 1);
-            }
-            // otherwise parse ahead until end of literal
-            else {
-
-                StringBuilder literal = new StringBuilder(currentArg.length() * argsQueue.size());
-                literal.append(firstWord);
-
-                while (!argsQueue.isEmpty()) {
-                    String nextArg = argsQueue.removeFirst();
-
-                    // check if this is the final word in the literal
-                    if (nextArg.endsWith(quote)) {
-
-                        //remove end quote
-                        nextArg = nextArg.substring(0, nextArg.length() - 1);
-
-                        literal.append(' ');
-                        literal.append(nextArg);
-                        break;
-                    }
-
-                    literal.append(' ');
-                    literal.append(nextArg);
-                }
-                return literal.toString();
-            }
-        }
-        // value is unquoted argument
-        else {
-            return currentArg;
-        }
-    }
-
-    private void addArgument(CommandArgument argument) {
-        switch (argument.getParameterType()) {
-            case STATIC:
-                _staticArgs.add(argument);
-                break;
-            case FLOATING:
-                _floatingArgs.remove(argument); // prevent duplicates
-                _floatingArgs.add(argument);
-                break;
-        }
-        _argMap.put(argument.getParameterName(), argument);
-    }
-
-    private static class OptionalParameter {
-
-        String parameterName;
-        String defaultValue;
-
-        OptionalParameter(String parameter) {
-            String[] paramComp = TextUtils.PATTERN_EQUALS.split(parameter);
-            parameterName = paramComp[0];
-
-            defaultValue = paramComp.length > 1 ? paramComp[1] : null;
-        }
-    }
-
 }
 

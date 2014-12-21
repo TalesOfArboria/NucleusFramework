@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.commands;
 
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 
@@ -50,7 +50,7 @@ public class AboutCommand extends AbstractCommand {
     @Localizable static final String _FOOTER = "----------------------------------------";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
+    public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
 
         // show header
         _msg.tell(sender, Lang.get(getPlugin(), _HEADER));

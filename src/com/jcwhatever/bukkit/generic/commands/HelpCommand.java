@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.commands;
 
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
@@ -54,7 +54,7 @@ public class HelpCommand extends AbstractCommand {
     @Localizable static final String _USAGE = "{GOLD}/{plugin-command} {GREEN}{0} {GOLD}?";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
+    public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
 
         int page = args.getInteger("page");
 
@@ -80,7 +80,7 @@ public class HelpCommand extends AbstractCommand {
             if (!info.isHelpVisible())
                 continue;
 
-            if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
+            if (sender instanceof Player && !Permissions.has(sender, cmd.getPermission().getName()))
                 continue;
 
             pagin.add(info.getUsage(), info.getDescription());
@@ -93,7 +93,7 @@ public class HelpCommand extends AbstractCommand {
             if (!info.isHelpVisible())
                 continue;
 
-            if (sender instanceof Player && !Permissions.has((Player)sender, cmd.getPermission().getName()))
+            if (sender instanceof Player && !Permissions.has(sender, cmd.getPermission().getName()))
                 continue;
 
             pagin.add(Lang.get(getPlugin(), _USAGE, info.getCommandName()), info.getDescription());

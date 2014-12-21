@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.arguments.LocationResponse;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
@@ -205,10 +205,10 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      *
      * @return True if completed successfully.
      *
-     * @throws InvalidValueException
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
      */
     protected void clearSetting(CommandSender sender, final ISettingsManager settings,
-                                CommandArguments args, String propertyArgName) throws InvalidValueException {
+                                CommandArguments args, String propertyArgName) throws InvalidArgumentException {
 
         final String settingName = args.getString(propertyArgName);
 
@@ -244,12 +244,12 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      *
      * @return  True if operation completed successfully.
      *
-     * @throws InvalidValueException          If the value provided by the command sender is not valid.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,
                               CommandArguments args, String propertyArgName, String valueArgName)
-            throws InvalidValueException, InvalidCommandSenderException {
+            throws InvalidArgumentException, InvalidCommandSenderException {
         setSetting(sender, settings, args, propertyArgName, valueArgName, null);
     }
 
@@ -266,13 +266,13 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      *
      * @return  True if operation completed successfully.
      *
-     * @throws InvalidValueException          If the value provided by the command sender is not valid.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,
                               CommandArguments args, String propertyArgName,
                               String valueArgName, @Nullable final Runnable onSuccess)
-            throws InvalidValueException, InvalidCommandSenderException {
+            throws InvalidArgumentException, InvalidCommandSenderException {
         PreCon.notNull(sender);
         PreCon.notNull(settings);
         PreCon.notNull(args);

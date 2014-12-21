@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.commands.exceptions;
 
+import com.jcwhatever.bukkit.generic.commands.parameters.ParameterDescription;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
@@ -35,16 +36,16 @@ import javax.annotation.Nullable;
 /**
  * Thrown when an argument value is not valid.
  */
-public class InvalidValueException extends Exception {
+public class InvalidArgumentException extends Exception {
 
     @Localizable static final String _MESSAGE = "Invalid value provided for parameter '{0}'.";
 
     private static final long serialVersionUID = 1L;
     private final String _parameterName;
-    private final String _parameterDescription;
+    private final ParameterDescription _parameterDescription;
     private final String _message;
 
-    public InvalidValueException(String parameterName) {
+    public InvalidArgumentException(String parameterName) {
         PreCon.notNullOrEmpty(parameterName);
 
         _parameterName = parameterName;
@@ -55,13 +56,12 @@ public class InvalidValueException extends Exception {
     /**
      * Constructor.
      */
-    public InvalidValueException(String parameterName, @Localized String parameterDescription) {
-        PreCon.notNullOrEmpty(parameterName);
+    public InvalidArgumentException(ParameterDescription parameterDescription) {
         PreCon.notNull(parameterDescription);
 
-        _parameterName = parameterName;
+        _parameterName = parameterDescription.getParameterName();
         _parameterDescription = parameterDescription;
-        _message = Lang.get(_MESSAGE, parameterName);
+        _message = Lang.get(_MESSAGE, _parameterName);
     }
 
     /**
@@ -87,8 +87,7 @@ public class InvalidValueException extends Exception {
      * Get the parameter description.
      */
     @Nullable
-    @Localized
-    public String getParameterDescription() {
+    public ParameterDescription getParameterDescription() {
         return _parameterDescription;
     }
 }

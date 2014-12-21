@@ -22,23 +22,54 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.commands.parameters;
 
-package com.jcwhatever.bukkit.generic.commands.arguments;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 /**
- * Specifies the type of command parameter
+ * Represents a command flag parameter.
  */
-public enum ParameterType {
+public class FlagParameter {
+
+    private final String _flagName;
+    private final int _definitionIndex;
+
     /**
-     * Command parameter is static, meaning it's in a predefined
-     * position within the command.
+     * Constructor.
+     *
+     * @param flagName         The parameter name.
+     * @param definitionIndex  The index position of the flag in the annotation flags definition.
      */
-    STATIC,
-    
+    public FlagParameter(String flagName, int definitionIndex) {
+        PreCon.notNullOrEmpty(flagName);
+
+        _flagName = flagName;
+        _definitionIndex = definitionIndex;
+    }
+
     /**
-     * Command parameter is floating, meaning it is not in a predefined 
-     * position and can be placed in any order after all of the static
-     * arguments have been entered.
+     * Get the parameter name.
      */
-    FLOATING
+    public String getFlagName() {
+        return _flagName;
+    }
+
+    /**
+     * Get the index order of the flag in the
+     * annotation flags definition.
+     */
+    public int getDefinitionIndex() {
+        return _definitionIndex;
+    }
+
+    @Override
+    public final int hashCode() {
+        return _flagName.hashCode();
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+        return obj instanceof FlagParameter &&
+                ((FlagParameter) obj)._flagName.equals(_flagName);
+    }
 }

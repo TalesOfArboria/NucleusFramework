@@ -29,7 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.jail.JailSession;
@@ -53,7 +53,7 @@ public final class SendSubCommand extends AbstractCommand {
     @Localizable static final String _SUCCESS = "Player '{0}' sent to Default Jail for {0} minutes.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
+    public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
         
         String playerName = args.getName("playerName");
         int minutes = args.getInteger("minutes");
