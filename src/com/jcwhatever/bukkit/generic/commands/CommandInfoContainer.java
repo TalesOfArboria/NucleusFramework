@@ -256,11 +256,11 @@ public class CommandInfoContainer {
 
             CommandParameter parameter = new CommandParameter(rawParam);
 
-            if (_parameterNames.contains(parameter.getParameterName()))
+            if (_parameterNames.contains(parameter.getName()))
                 throw new RuntimeException("Duplicate parameter '" + rawParam + "' detected in command.");
 
             results.add(parameter);
-            _parameterNames.add(parameter.getParameterName());
+            _parameterNames.add(parameter.getName());
         }
 
         return Collections.unmodifiableList(results);
@@ -274,11 +274,11 @@ public class CommandInfoContainer {
 
             FlagParameter flag = new FlagParameter(parameters[i], i);
 
-            if (_parameterNames.contains(flag.getFlagName()))
-                throw new RuntimeException("Duplicate parameter '" + flag.getFlagName() + "' detected in command.");
+            if (_parameterNames.contains(flag.getName()))
+                throw new RuntimeException("Duplicate parameter '" + flag.getName() + "' detected in command.");
 
             results.add(flag);
-            _parameterNames.add(flag.getFlagName());
+            _parameterNames.add(flag.getName());
         }
 
         return Collections.unmodifiableList(results);

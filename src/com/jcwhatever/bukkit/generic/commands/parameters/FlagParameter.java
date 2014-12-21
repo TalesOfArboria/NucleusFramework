@@ -24,12 +24,13 @@
 
 package com.jcwhatever.bukkit.generic.commands.parameters;
 
+import com.jcwhatever.bukkit.generic.mixins.INamed;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 /**
  * Represents a command flag parameter.
  */
-public class FlagParameter {
+public class FlagParameter implements INamed {
 
     private final String _flagName;
     private final int _definitionIndex;
@@ -50,7 +51,8 @@ public class FlagParameter {
     /**
      * Get the parameter name.
      */
-    public String getFlagName() {
+    @Override
+    public String getName() {
         return _flagName;
     }
 

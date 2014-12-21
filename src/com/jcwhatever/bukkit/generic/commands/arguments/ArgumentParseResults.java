@@ -68,7 +68,7 @@ public class ArgumentParseResults {
         _argMap = new HashMap<String, CommandArgument>(staticSize + floatingSize);
 
         for (FlagParameter flagParam : command.getInfo().getFlagParams()) {
-            _flagMap.put(flagParam.getFlagName(), false);
+            _flagMap.put(flagParam.getName(), false);
         }
     }
 

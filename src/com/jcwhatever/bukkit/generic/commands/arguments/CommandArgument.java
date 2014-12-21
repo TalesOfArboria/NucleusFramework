@@ -55,7 +55,7 @@ public class CommandArgument {
      * Get the predefined name of the parameter.
      */
     public String getParameterName() {
-        return _parameter.getParameterName();
+        return _parameter.getName();
     }
 
     /**

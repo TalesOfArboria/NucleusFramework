@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.commands.parameters;
 
+import com.jcwhatever.bukkit.generic.mixins.INamed;
 import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
@@ -33,7 +34,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a command parameter.
  */
-public class CommandParameter {
+public class CommandParameter implements INamed {
 
     private final String _parameterName;
     private final String _defaultValue;
@@ -69,7 +70,8 @@ public class CommandParameter {
     /**
      * Get the parameter name.
      */
-    public String getParameterName() {
+    @Override
+    public String getName() {
         return _parameterName;
     }
 

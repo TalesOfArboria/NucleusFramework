@@ -116,7 +116,7 @@ public class ArgumentParser {
 
             CommandParameter parameter = parameterList.removeFirst();
 
-            String name = parameter.getParameterName();
+            String name = parameter.getName();
             String value = null;
 
             if (!arguments.isEmpty()) {
@@ -132,13 +132,13 @@ public class ArgumentParser {
                     // If there are still more static parameters, it means this
                     // is not the last parameter and the value is incorrect.
                     if (!parameterList.isEmpty()) {
-                        throw new InvalidArgumentException(parameter.getParameterName());
+                        throw new InvalidArgumentException(parameter.getName());
                     }
 
                     // No default value defined means a discreet value is expected.
                     else if (!parameter.hasDefaultValue()) {
                         throw new MissingArgumentException(
-                                name, Lang.get(_MISSING_REQUIRED_ARGUMENT, parameter.getParameterName()));
+                                name, Lang.get(_MISSING_REQUIRED_ARGUMENT, parameter.getName()));
                     }
 
                     // re-insert floating argument so the other parsers
@@ -231,7 +231,7 @@ public class ArgumentParser {
             for (CommandParameter param : parameters) {
                 if (!param.hasDefaultValue()) {
                     throw new MissingArgumentException(
-                            param.getParameterName(), Lang.get(_MISSING_REQUIRED_ARGUMENT, param.getParameterName()));
+                            param.getName(), Lang.get(_MISSING_REQUIRED_ARGUMENT, param.getName()));
                 }
             }
         }
