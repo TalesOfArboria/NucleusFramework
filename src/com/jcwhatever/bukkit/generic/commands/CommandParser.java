@@ -28,7 +28,6 @@ import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
 import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
-import com.jcwhatever.bukkit.generic.utils.text.TextUtils.CaseSensitivity;
 
 import org.bukkit.command.CommandSender;
 
@@ -109,8 +108,8 @@ public class CommandParser {
      * @param sender       The command sender.
      * @param args         The base command arguments.
      */
-    public ParsedTabComplete parseTabComplete(CommandCollection commandCollection,
-                                              CommandSender sender, String[] args) {
+    public ParsedTabComplete parseTabComplete(final CommandCollection commandCollection,
+                                              final CommandSender sender, String[] args) {
         PreCon.notNull(commandCollection);
         PreCon.notNull(sender);
         PreCon.notNull(args);
@@ -119,22 +118,20 @@ public class CommandParser {
         ParsedCommand parsed = parse(commandCollection, args, true);
         if (parsed == null || args.length == 1) {
 
-            if (!args[0].isEmpty()) {
+            List<String> result;
+
+            if (args[0].isEmpty()) {
+                result = args.length == 1
+                        // get all commands (that can be seen)
+                        ? filterMasterCommandNames(sender, "", commandCollection)
+                        : new ArrayList<String>(5);
+            } else {
 
                 // get possible command matches
-                List<String> result = TextUtils.startsWith(
-                        args[0], commandCollection.getCommandNames(), CaseSensitivity.IGNORE_CASE);
-
-                return new ParsedTabComplete(result, null, ArrayUtils.EMPTY_STRING_ARRAY);
-            }
-            else if (args.length == 1) {
-
-                // return all commands
-                return new ParsedTabComplete(
-                        commandCollection.getCommandNames(), null, ArrayUtils.EMPTY_STRING_ARRAY);
+                result = filterMasterCommandNames(sender, args[0], commandCollection);
             }
 
-            return new ParsedTabComplete(new ArrayList<String>(5), null, ArrayUtils.EMPTY_STRING_ARRAY);
+            return new ParsedTabComplete(result, null, ArrayUtils.EMPTY_STRING_ARRAY);
         }
 
         final AbstractCommand command = parsed.getCommand();
@@ -152,7 +149,7 @@ public class CommandParser {
         else if (arguments.length == 0 && parsed.getCommand().getParent() != null) {
 
             // generate list of command names the player has permission to use
-            List<String> names = filterSubCommandNames(sender, arguments[0], parsed.getCommand().getParent());
+            List<String> names = filterSubCommandNames(sender, "", parsed.getCommand().getParent());
 
             tabComplete = new ParsedTabComplete(names, command, arguments);
 
@@ -164,13 +161,32 @@ public class CommandParser {
         return tabComplete;
     }
 
-    // Filter a commands sub command names based on a suffix and if the
+    // Filter master command names based on a search name  and if the
+    // sub command is help visible.
+    private List<String> filterMasterCommandNames(final CommandSender sender,
+                                                  String searchName,
+                                                  final CommandCollection collection) {
+
+        final String caseSearchName = searchName.toLowerCase();
+
+        return TextUtils.search(collection.getCommandNames(),
+                new IEntryValidator<String>() {
+                    @Override
+                    public boolean isValid(String entry) {
+                        AbstractCommand subCommand = collection.getCommand(entry);
+                        return subCommand != null && subCommand.isHelpVisible(sender) &&
+                                entry.toLowerCase().startsWith(caseSearchName);
+                    }
+                });
+    }
+
+    // Filter a commands sub command names based on a search name and if the
     // sub command is help visible.
     private List<String> filterSubCommandNames(final CommandSender sender,
-                                               String suffix,
+                                               String searchName,
                                                final AbstractCommand parentCommand) {
 
-        final String caseSuffix = suffix.toLowerCase();
+        final String caseSearchName = searchName.toLowerCase();
 
         Collection<String> commandNames = parentCommand.getSubCommandNames();
 
@@ -180,7 +196,7 @@ public class CommandParser {
                     public boolean isValid(String entry) {
                         AbstractCommand subCommand = parentCommand.getSubCommand(entry);
                         return subCommand != null && subCommand.isHelpVisible(sender) &&
-                                entry.toLowerCase().startsWith(caseSuffix);
+                                entry.toLowerCase().startsWith(caseSearchName);
                     }
                 });
     }
