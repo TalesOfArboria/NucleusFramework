@@ -24,8 +24,6 @@
 
 package com.jcwhatever.bukkit.generic.commands.parameters;
 
-import com.jcwhatever.bukkit.generic.commands.CommandInfoContainer;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterDescriptionException;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
@@ -54,17 +52,16 @@ public class ParameterDescription {
     /**
      * Constructor.
      *
-     * @param commandInfo     The command info container owner.
      * @param rawDescription  The raw description to parse.
      */
-    public ParameterDescription(CommandInfoContainer commandInfo, String rawDescription) {
+    public ParameterDescription(String rawDescription) {
 
         String[] descComp = TextUtils.PATTERN_EQUALS.split(rawDescription, -1);
 
         _parameterName = descComp[0].trim();
 
         if (descComp.length < 2) {
-            throw new InvalidParameterDescriptionException(commandInfo, descComp[0]);
+            throw new RuntimeException("Invalid description for parameter '" + _parameterName + '\'');
         }
 
         // re-add equal characters that may have been in the description.

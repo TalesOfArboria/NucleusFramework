@@ -24,7 +24,6 @@
 
 package com.jcwhatever.bukkit.generic.commands;
 
-import com.jcwhatever.bukkit.generic.commands.exceptions.MissingCommandAnnotationException;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.lang.reflect.Constructor;
@@ -184,7 +183,9 @@ public class CommandCollection {
         // make sure command has required command info annotation
         CommandInfo info = command.getClass().getAnnotation(CommandInfo.class);
         if (info == null) {
-            throw new MissingCommandAnnotationException(command.getClass());
+            throw new RuntimeException(
+                    "Could not find required CommandInfo annotation for command class: " +
+                            command.getClass().getName());
         }
 
         String[] commandNames = info.command();

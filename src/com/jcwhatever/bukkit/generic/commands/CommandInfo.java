@@ -134,7 +134,12 @@ public @interface CommandInfo {
     boolean isHelpVisible() default true;
 
     /**
-     * Define the default permission for the command
+     * Define the default permission for the command.
+     *
+     * <p>The permission name is generated using the owning plugins name and
+     * the commands path.</p>
+     *
+     * <p>i.e. mypluginname.commands.mycommand.mysubcommand</p>
      */
     PermissionDefault permissionDefault() default PermissionDefault.OP;
 

@@ -39,8 +39,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -53,9 +55,10 @@ public class CommandInfoContainer {
     private final Plugin _plugin;
     private final String _usage;
 
-    private List<CommandParameter> _staticParameters;
-    private List<CommandParameter> _floatingParameters;
-    private List<FlagParameter> _flags;
+    private final Set<String> _parameterNames;
+    private final List<CommandParameter> _staticParameters;
+    private final List<CommandParameter> _floatingParameters;
+    private final List<FlagParameter> _flags;
 
     private ParameterDescriptions _descriptions;
 
@@ -89,6 +92,9 @@ public class CommandInfoContainer {
 
         _usage = TextUtils.TEXT_FORMATTER.format(formatters, commandInfo.usage());
 
+        _parameterNames = new HashSet<>(
+                getRawStaticParams().length + getRawFloatingParams().length + getRawFlagParams().length);
+
         _staticParameters = toCommandParameters(getRawStaticParams());
         _floatingParameters = toCommandParameters(getRawFloatingParams());
         _flags = toFlagParameters(getRawFlagParams());
@@ -112,6 +118,11 @@ public class CommandInfoContainer {
 
     /**
      * Get the default permission.
+     *
+     * <p>The permission name is generated using the owning plugins
+     * name and the commands path.</p>
+     *
+     * <p>i.e. mypluginname.commands.mycommand.mysubcommand</p>
      */
     public PermissionDefault getPermissionDefault() {
         return _commandInfo.permissionDefault();
@@ -237,22 +248,37 @@ public class CommandInfoContainer {
         return Lang.get(_plugin, _commandInfo.longDescription());
     }
 
-
+    // setup command parameters
     private List<CommandParameter> toCommandParameters(String[] rawParameters) {
 
         List<CommandParameter> results = new ArrayList<>(rawParameters.length);
         for (String rawParam : rawParameters) {
-            results.add(new CommandParameter(rawParam));
+
+            CommandParameter parameter = new CommandParameter(rawParam);
+
+            if (_parameterNames.contains(parameter.getParameterName()))
+                throw new RuntimeException("Duplicate parameter '" + rawParam + "' detected in command.");
+
+            results.add(parameter);
+            _parameterNames.add(parameter.getParameterName());
         }
 
         return Collections.unmodifiableList(results);
     }
 
+    // setup flag parameters
     private List<FlagParameter> toFlagParameters(String[] parameters) {
 
         List<FlagParameter> results = new ArrayList<>(parameters.length);
         for (int i=0; i < parameters.length; i++) {
-            results.add(new FlagParameter(parameters[i], i));
+
+            FlagParameter flag = new FlagParameter(parameters[i], i);
+
+            if (_parameterNames.contains(flag.getFlagName()))
+                throw new RuntimeException("Duplicate parameter '" + flag.getFlagName() + "' detected in command.");
+
+            results.add(flag);
+            _parameterNames.add(flag.getFlagName());
         }
 
         return Collections.unmodifiableList(results);

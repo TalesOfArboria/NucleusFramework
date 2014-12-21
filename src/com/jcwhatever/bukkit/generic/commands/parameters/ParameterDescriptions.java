@@ -164,7 +164,7 @@ public class ParameterDescriptions {
 
         for (String desc : descriptions) {
 
-            ParameterDescription description = new ParameterDescription(_commandInfo, desc);
+            ParameterDescription description = new ParameterDescription(desc);
 
             _descriptionMap.put(description.getParameterName(), description);
         }

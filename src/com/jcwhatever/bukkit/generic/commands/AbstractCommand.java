@@ -26,9 +26,8 @@
 package com.jcwhatever.bukkit.generic.commands;
 
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.MissingCommandAnnotationException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
 import com.jcwhatever.bukkit.generic.permissions.IPermission;
@@ -174,8 +173,10 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     public final boolean unregisterSubCommand(Class<? extends AbstractCommand> commandClass) {
 
         CommandInfo commandInfo = commandClass.getAnnotation(CommandInfo.class);
-        if (commandInfo == null)
-            throw new MissingCommandAnnotationException(commandClass);
+        if (commandInfo == null) {
+            throw new RuntimeException(
+                    "Could not find required CommandInfo annotation for command class: " + commandClass.getName());
+        }
 
         for (String commandName : commandInfo.command())
             _subCommands.remove(commandName.trim().toLowerCase());
