@@ -1639,7 +1639,7 @@ public final class ArrayUtils {
     public static <T> T get(T[] array, int index, T defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
@@ -1658,7 +1658,7 @@ public final class ArrayUtils {
     public static boolean get(boolean[] array, int index, boolean defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
@@ -1677,7 +1677,7 @@ public final class ArrayUtils {
     public static byte get(byte[] array, int index, byte defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
@@ -1696,7 +1696,7 @@ public final class ArrayUtils {
     public static short get(short[] array, int index, short defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
@@ -1715,7 +1715,7 @@ public final class ArrayUtils {
     public static char get(char[] array, int index, char defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
@@ -1734,7 +1734,7 @@ public final class ArrayUtils {
     public static int get(int[] array, int index, int defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
@@ -1753,7 +1753,7 @@ public final class ArrayUtils {
     public static long get(long[] array, int index, long defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
@@ -1772,7 +1772,7 @@ public final class ArrayUtils {
     public static float get(float[] array, int index, float defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
@@ -1791,7 +1791,7 @@ public final class ArrayUtils {
     public static double get(double[] array, int index, double defaultValue) {
         PreCon.notNull(array);
 
-        return (index - 1 > array.length)
+        return (index > array.length - 1)
                 ? defaultValue
                 : array[index];
     }
