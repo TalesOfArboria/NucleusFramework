@@ -39,8 +39,7 @@ import java.util.List;
         command={"about"},
         usage="/{plugin-command} about",
         description="Get information about the plugin.",
-        permissionDefault=PermissionDefault.TRUE,
-        isHelpVisible=false)
+        permissionDefault=PermissionDefault.TRUE)
 public class AboutCommand extends AbstractCommand {
 
     @Localizable static final String _PLUGIN_NAME = "{BOLD}{GREEN}{plugin-name} {plugin-version}";

@@ -22,20 +22,22 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.bukkit.generic.commands;
 
 import com.jcwhatever.bukkit.generic.commands.CommandParser.ParsedCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandParser.ParsedTabComplete;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.DuplicateParameterException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.MissingArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger;
+import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -43,16 +45,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
-/**
- * Command Executor to handle commands
+/*
+ * 
  */
-public abstract class AbstractCommandHandler extends AbstractCommandUtils
-        implements CommandExecutor, ICommandOwner {
+public class CommandDispatcher implements CommandExecutor, ICommandOwner, IPluginOwned {
 
     @Localizable static final String _TO_MANY_ARGS = "Too many arguments. Type '{0}' for help.";
     @Localizable static final String _MISSING_ARGS = "Missing arguments. Type '{0}' for help.";
@@ -65,64 +70,58 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
     @Localizable static final String _PARAMETER_DESCRIPTION = "{WHITE}Parameter description: {GRAY}{0}";
     @Localizable static final String _REASON = "Reason: {0}";
 
+    private final Plugin _plugin;
+    private AboutCommand _defaultRoot;
+    private CommandCollection _rootCommands;
+    private final IMessenger _msg;
+    private final Set<String> _pluginCommands;
+    private final CommandUtils _utils;
+    private final UsageGenerator _usageGenerator;
 
-    private final CommandCollection _masterCommands = new CommandCollection();
-    private final CommandParser _parser = new CommandParser();
+    public CommandDispatcher(Plugin plugin) {
+        PreCon.notNull(plugin);
+        PreCon.isValid(plugin instanceof JavaPlugin);
 
-    /**
-     * Constructor
-     *
-     * @param plugin   The plugin the command handler is for
-     */
-    public AbstractCommandHandler(Plugin plugin) {
-        super(plugin);
+        _plugin = plugin;
 
-        Permissions.runBatchOperation(true, new Runnable() {
+        _rootCommands = new CommandCollection();
+        _msg = MessengerFactory.create(plugin);
+        _utils = new CommandUtils(plugin);
+        _usageGenerator = new UsageGenerator();
 
-            @Override
-            public void run() {
-                registerCommand(AboutCommand.class);
-                registerCommands();
-            }
+        _pluginCommands = new HashSet<>(plugin.getDescription().getCommands().keySet());
 
-        });
+        _defaultRoot = new AboutCommand();
+        _defaultRoot.setDispatcher(this, null);
 
-        registerHelpCommand();
+        registerCommands();
     }
 
-    /**
-     * Get a collection of all registered top level commands.
-     */
     @Override
-    public Collection<AbstractCommand> getCommands() {
-        return _masterCommands.getCommands();
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
-    /**
-     * Get the sub command names.
-     */
-    @Override
-    public Collection<String> getCommandNames() {
-        return _masterCommands.getCommandNames();
+    public CommandUtils getUtils() {
+        return _utils;
     }
 
-    /**
-     * Called by Bukkit to begin processing a player command
-     */
     @Override
-    public boolean onCommand(CommandSender sender, Command bcmd, String baseCommandName, String[] args) {
-        PreCon.notNull(sender);
-        PreCon.notNull(bcmd);
-        PreCon.notNull(baseCommandName);
-        PreCon.notNull(args);
+    public boolean onCommand(CommandSender sender, Command cmd, String rootName, String[] rootArguments) {
 
-        initBaseCommand();
+        AbstractCommand rootCommand = _rootCommands.getCommand(rootName);
+        if (rootCommand == null) {
+            rootCommand = _defaultRoot;
+        }
 
-        ParsedCommand parsed = _parser.parseCommand(_masterCommands, args);
+        rootCommand.getInfo().setSessionRootName(rootName);
+
+        CommandParser parser = new CommandParser(rootCommand);
+        ParsedCommand parsed = parser.parseCommand(rootCommand.getCommandCollection(), rootArguments);
 
         if (parsed == null) {
             // command not found
-            tellError(sender, Lang.get(_COMMAND_NOT_FOUND, baseCommandName));
+            _utils.tellError(sender, Lang.get(_COMMAND_NOT_FOUND, rootName));
             return true; // finish
         }
 
@@ -131,7 +130,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
 
         // Check if the player has permissions to run the command
         if (!Permissions.has(sender, command.getPermission().getName())) {
-            tellError(sender, Lang.get(_ACCESS_DENIED));
+            _utils.tellError(sender, Lang.get(_ACCESS_DENIED));
             return true;
         }
 
@@ -154,7 +153,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
 
         // Determine if the command can execute or if it requires sub commands
         if (!command.canExecute()) {
-            tellError(sender, Lang.get(_COMMAND_INCOMPLETE, baseCommandName));
+            _utils.tellError(sender, Lang.get(_COMMAND_INCOMPLETE, rootName));
             return true; // finished
         }
 
@@ -165,7 +164,6 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
 
         // execute the command
         executeCommand(sender, command, arguments, true);
-
 
         return true;
     }
@@ -180,7 +178,16 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
         PreCon.notNull(sender);
         PreCon.notNull(args);
 
-        ParsedTabComplete parsed = _parser.parseTabComplete(_masterCommands, sender, args);
+        if (args.length == 0)
+            return new ArrayList<>(0);
+
+        AbstractCommand rootCommand = _rootCommands.getCommand(args[0]);
+        if (rootCommand == null) {
+            rootCommand = _defaultRoot;
+        }
+
+        CommandParser _parser = new CommandParser(rootCommand);
+        ParsedTabComplete parsed = _parser.parseTabComplete(rootCommand, sender, args);
 
         AbstractCommand command = parsed.getCommand();
         String[] arguments = parsed.getArguments();
@@ -198,123 +205,86 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
         // add the command help
         if (command != null && matches.size() > 1 &&
                 (arguments.length == 0 ||
-                (arguments.length == 1 && arguments[0].isEmpty()))) {
+                        (arguments.length == 1 && arguments[0].isEmpty()))) {
             parsed.getMatches().add("?");
         }
 
         return parsed.getMatches();
     }
 
-    /**
-     * Get a command instance using a string path. The format of the
-     * path is the command names separated by periods.
-     * i.e. "command.subcommand1.subcommand2"
-     *
-     * @param commandPath  The path of the command.
-     */
-    @Override
-    @Nullable
-    public final AbstractCommand getCommand(String commandPath) {
-        PreCon.notNull(commandPath);
-
-        if (commandPath.isEmpty())
-            return _parser.getBaseCommand();
-
-        return _parser.parsePath(_masterCommands, commandPath);
-    }
-
-    /**
-     * Registers a command with the command handler.
-     *
-     * @param commandClass  The commands implementation class
-     */
     @Override
     public boolean registerCommand(Class<? extends AbstractCommand> commandClass) {
         PreCon.notNull(commandClass);
 
-        String commandName = _masterCommands.add(commandClass);
-
-        if (commandName == null) {
+        String rootName = _rootCommands.addCommand(commandClass);
+        if (rootName == null) {
             _msg.debug("Failed to register command '{0}' possibly because another command with the " +
                             "same name is already registered and no alternative command names were provided.",
                     commandClass.getName());
             return false;
         }
 
-        AbstractCommand command = _masterCommands.getCommand(commandName);
+        AbstractCommand command = _rootCommands.getCommand(rootName);
         if (command == null)
             throw new AssertionError();
 
-        // set the commands command handler
-        command.setCommandHandler(this, commandName);
+        if (!_pluginCommands.contains(rootName)) {
+            _rootCommands.removeAll(command);
+            if (!_defaultRoot.registerCommand(commandClass))
+                return false;
 
-        onMasterCommandInstantiated(command);
+            command = _defaultRoot.getCommandCollection().getCommand(commandClass);
+            if (command == null)
+                throw new AssertionError();
 
+            rootName = null;
+        }
+
+        command.setDispatcher(this, null);
         return true;
     }
 
-    /**
-     * Unregister a command from the command handler.
-     *
-     * @param commandClass  The commands implementation class.
-     */
     @Override
-    public final boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
-        PreCon.notNull(commandClass);
+    public boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
 
-        return _masterCommands.removeAll(commandClass);
+        if (!_rootCommands.unregisterCommand(commandClass) &&
+                !_defaultRoot.unregisterCommand(commandClass)) {
+            return false;
+        }
+        return true;
     }
 
-    /**
-     * Called when the command handler is instantiated.
-     * Implementation should register permanent commands here.
-     *
-     * <p>Called within a permissions batch operation to improve permissions performance.</p>
-     */
-    protected abstract void registerCommands();
+    @Nullable
+    @Override
+    public AbstractCommand getCommand(String commandName) {
 
-    /**
-     * Optional method called after a command is instantiated.
-     *
-     * <p>Provided as an optional implementation override.</p>
-     *
-     * @param instance  The instantiated command
-     */
-    protected void onMasterCommandInstantiated(AbstractCommand instance) {
-        PreCon.notNull(instance);
-    }
-
-    /**
-     * Register the help command
-     */
-    protected void registerHelpCommand() {
-        this.registerCommand(HelpCommand.class);
-    }
-
-    /**
-     * Set the command called when no arguments or sub classes are provided.
-     * If not set, default is used.
-     *
-     * @param commandClass The commands implementation class.
-     */
-    protected final void setBaseCommand(Class<? extends AbstractCommand> commandClass) {
-        PreCon.notNull(commandClass);
-
-        AbstractCommand command = _masterCommands.getCommand(commandClass);
-
-        if (command == null) {
-            String name = _masterCommands.add(commandClass);
-            if (name == null) {
-                _msg.debug("Failed to register based command '{0}'.", commandClass.getName());
-                return;
-            }
-
-            command = _masterCommands.getCommand(name);
-            if (command == null)
-                throw new AssertionError();
+        AbstractCommand result = _rootCommands.getCommand(commandName);
+        if (result == null) {
+            result = _defaultRoot.getCommand(commandName);
         }
 
-        _parser.setBaseCommand(command);
+        return result;
+    }
+
+    @Override
+    public Collection<AbstractCommand> getCommands() {
+        Collection<AbstractCommand> commands = _rootCommands.getCommands();
+        commands.add(_defaultRoot);
+        return commands;
+    }
+
+    @Override
+    public Collection<String> getCommandNames() {
+        return _rootCommands.getCommandNames();
+    }
+
+    private boolean isCommandHelp(String[] args) {
+        return args.length > 0 &&
+                ((args[0].equals("?")) || args[0].equalsIgnoreCase("help"));
+    }
+
+    protected void registerCommands () {
+        // do nothing
     }
 
     @Nullable
@@ -330,18 +300,21 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
 
         } catch (TooManyArgsException e) {
 
-            if (showMessages)
-                tellError(sender, Lang.get(_TO_MANY_ARGS, command.constructHelpUsage()));
+            if (showMessages) {
+
+                _utils.tellError(sender, Lang.get(_TO_MANY_ARGS,
+                        _usageGenerator.generate(command)));
+            }
 
             return null; // finished
 
         } catch (InvalidArgumentException e) {
 
             if (showMessages && e.getMessage() != null) {
-                tellError(sender, e.getMessage());
+                _utils.tellError(sender, e.getMessage());
 
                 if (e.getParameterDescription() != null) {
-                    tell(sender, Lang.get(_PARAMETER_DESCRIPTION, e.getParameterDescription()));
+                    _utils.tell(sender, Lang.get(_PARAMETER_DESCRIPTION, e.getParameterDescription()));
                 }
             }
 
@@ -351,9 +324,9 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
 
             if (showMessages) {
                 if (e.getMessage() != null) {
-                    tellError(sender, e.getMessage());
+                    _utils.tellError(sender, e.getMessage());
                 } else {
-                    tellError(sender, Lang.get(_DUPLICATE_PARAMETER, e.getParameterName()));
+                    _utils.tellError(sender, Lang.get(_DUPLICATE_PARAMETER, e.getParameterName()));
                 }
             }
 
@@ -362,14 +335,15 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
         } catch (InvalidParameterException e) {
 
             if (showMessages)
-                tellError(sender, Lang.get(_INVALID_PARAMETER, e.getParameterName()));
+                _utils.tellError(sender, Lang.get(_INVALID_PARAMETER, e.getParameterName()));
 
             return null; // finished
         } catch (MissingArgumentException e) {
             e.printStackTrace();
 
             if (showMessages)
-                tellError(sender, Lang.get(_MISSING_ARGS, command.constructHelpUsage()));
+                _utils.tellError(sender, Lang.get(_MISSING_ARGS,
+                        _usageGenerator.generate(command)));
 
             return null;
         }
@@ -377,7 +351,8 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
         return arguments;
     }
 
-    private boolean executeCommand(CommandSender sender, AbstractCommand command, CommandArguments parameters, boolean showMessages) {
+    private boolean executeCommand(CommandSender sender, AbstractCommand command,
+                                   CommandArguments parameters, boolean showMessages) {
         // execute the command
         try {
             command.execute(sender, parameters);
@@ -386,10 +361,10 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
         catch (InvalidArgumentException e) {
 
             if (showMessages && e.getMessage() != null) {
-                tellError(sender, e.getMessage());
+                _utils.tellError(sender, e.getMessage());
 
                 if (e.getParameterDescription() != null) {
-                    tell(sender, Lang.get(_PARAMETER_DESCRIPTION, e.getParameterDescription()));
+                    _utils.tell(sender, Lang.get(_PARAMETER_DESCRIPTION, e.getParameterDescription()));
                 }
             }
             return false;
@@ -397,33 +372,14 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils
         // catch invalid command senders
         catch (InvalidCommandSenderException e) {
             if (showMessages) {
-                tellError(sender, Lang.get(_CANT_EXECUTE_AS, e.getSenderType().name()));
+                _utils.tellError(sender, Lang.get(_CANT_EXECUTE_AS, e.getSenderType().name()));
 
                 if (e.getReason() != null) {
-                    tellError(sender, Lang.get(_REASON, e.getReason()));
+                    _utils.tellError(sender, Lang.get(_REASON, e.getReason()));
                 }
             }
             return false;
         }
         return true;
     }
-
-    private void initBaseCommand() {
-        if (_parser.getBaseCommand() != null)
-            return;
-
-        AbstractCommand aboutCommand = _masterCommands.getCommand("about");
-        if (aboutCommand == null && registerCommand(AboutCommand.class)) {
-            return;
-        }
-
-        _parser.setBaseCommand(_masterCommands.getCommand("about"));
-    }
-
-    private boolean isCommandHelp(String[] args) {
-        return args.length > 0 &&
-                ((args[0].equals("?")) || args[0].equalsIgnoreCase("help"));
-    }
-
 }
-

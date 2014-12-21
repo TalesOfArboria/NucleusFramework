@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.internal.commands;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.commands.AbstractCommandHandler;
+import com.jcwhatever.bukkit.generic.commands.CommandDispatcher;
 import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.kits.KitsCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.plugins.PluginsCommand;
@@ -34,9 +34,9 @@ import com.jcwhatever.bukkit.generic.internal.commands.scripts.ScriptsCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.storage.StorageCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.titles.TitlesCommand;
 
-public final class CommandHandler extends AbstractCommandHandler {
+public final class GenericsCommandDispatcher extends CommandDispatcher {
 
-    public CommandHandler() {
+    public GenericsCommandDispatcher() {
         super(GenericsLib.getPlugin());
     }
 

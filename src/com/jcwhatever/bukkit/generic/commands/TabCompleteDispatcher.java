@@ -46,11 +46,11 @@ public class TabCompleteDispatcher implements TabCompleter {
 
         PluginCommand pluginCommand = Bukkit.getPluginCommand(s);
         if (pluginCommand == null ||
-                !(pluginCommand.getExecutor() instanceof AbstractCommandHandler)) {
+                !(pluginCommand.getExecutor() instanceof CommandDispatcher)) {
             return new ArrayList<>(0);
         }
 
-        AbstractCommandHandler handler = (AbstractCommandHandler)pluginCommand.getExecutor();
+        CommandDispatcher handler = (CommandDispatcher)pluginCommand.getExecutor();
 
         return handler.onTabComplete(commandSender, strings);
     }

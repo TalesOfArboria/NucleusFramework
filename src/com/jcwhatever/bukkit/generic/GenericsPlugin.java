@@ -25,16 +25,16 @@
 
 package com.jcwhatever.bukkit.generic;
 
+import com.jcwhatever.bukkit.generic.commands.CommandDispatcher;
 import com.jcwhatever.bukkit.generic.commands.TabCompleteDispatcher;
 import com.jcwhatever.bukkit.generic.language.LanguageManager;
 import com.jcwhatever.bukkit.generic.messaging.IChatPrefixed;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
-import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.DataPath;
+import com.jcwhatever.bukkit.generic.storage.DataStorage;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -177,15 +177,15 @@ public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed
 
     /**
      * Register all commands defined in the plugin.yml
-     * file to the specified command executor.
+     * file to the specified dispatcher.
      *
-     * @param handler  The handler to register.
+     * @param dispatcher  The dispatcher to register.
      */
-    protected void registerCommands(CommandExecutor handler) {
+    protected void registerCommands(CommandDispatcher dispatcher) {
         Set<String> commands = getDescription().getCommands().keySet();
         for (String cmd : commands) {
             PluginCommand command = getCommand(cmd);
-            command.setExecutor(handler);
+            command.setExecutor(dispatcher);
             command.setTabCompleter(new TabCompleteDispatcher());
         }
     }

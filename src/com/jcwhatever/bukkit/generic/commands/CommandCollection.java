@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 /**
  * A collection of commands.
  */
-public class CommandCollection implements ICommandOwner {
+public class CommandCollection implements ICommandOwner, Iterable<AbstractCommand> {
 
     // keyed to command name
     private final Map<String, AbstractCommand> _commandMap;
@@ -56,6 +56,20 @@ public class CommandCollection implements ICommandOwner {
     public CommandCollection() {
         _commandMap = new HashMap<String, AbstractCommand>(20);
         _classMap = new HashMap<Class<? extends AbstractCommand>, AbstractCommand>(20);
+    }
+
+    /**
+     * Get the number of commands.
+     */
+    public int size() {
+        return _classMap.size();
+    }
+
+    /**
+     * Determine if the collection is empty.
+     */
+    public boolean isEmpty() {
+        return _classMap.isEmpty();
     }
 
     /**
@@ -153,7 +167,7 @@ public class CommandCollection implements ICommandOwner {
      * @return  The primary call name of the command or null if the command could not be added.
      */
     @Nullable
-    public String add(Class<? extends AbstractCommand> commandClass) {
+    public String addCommand(Class<? extends AbstractCommand> commandClass) {
 
         // instantiate command
         AbstractCommand instance;
@@ -169,7 +183,7 @@ public class CommandCollection implements ICommandOwner {
             return null;
         }
 
-        return add(instance);
+        return addCommand(instance);
     }
 
     /**
@@ -180,7 +194,12 @@ public class CommandCollection implements ICommandOwner {
      * @return  The primary call name of the command or null if the command could not be added.
      */
     @Nullable
-    public String add(AbstractCommand command) {
+    public String addCommand(AbstractCommand command) {
+        PreCon.notNull(command);
+
+        if (command.getDispatcher() != null) {
+            throw new RuntimeException("The command is already initialized and cannot be added.");
+        }
 
         // make sure command has required command info annotation
         CommandInfo info = command.getClass().getAnnotation(CommandInfo.class);
@@ -330,7 +349,7 @@ public class CommandCollection implements ICommandOwner {
 
     @Override
     public boolean registerCommand(Class<? extends AbstractCommand> commandClass) {
-        return add(commandClass) != null;
+        return addCommand(commandClass) != null;
     }
 
     @Override
@@ -338,4 +357,37 @@ public class CommandCollection implements ICommandOwner {
         return removeAll(commandClass);
     }
 
+    @Override
+    public Iterator<AbstractCommand> iterator() {
+        return new Iterator<AbstractCommand>() {
+
+            Iterator<AbstractCommand> iter = new ArrayList<>(_classMap.values()).iterator();
+            AbstractCommand current;
+
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public AbstractCommand next() {
+                return current = iter.next();
+            }
+
+            @Override
+            public void remove() {
+                iter.remove();
+                CommandCollection.this.removeAll(current);
+            }
+        };
+    }
+
+    public Object[] toArray() {
+        return _classMap.values().toArray();
+    }
+
+    public <T> T[] toArray(T[] a) {
+        //noinspection SuspiciousToArrayCall
+        return _classMap.values().toArray(a);
+    }
 }

@@ -30,13 +30,21 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentExceptio
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
+import com.jcwhatever.bukkit.generic.messaging.IMessenger;
+import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.permissions.IPermission;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
+import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils.FormatTemplate;
 
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +52,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import javax.annotation.Nullable;
 
 /**
@@ -52,21 +59,24 @@ import javax.annotation.Nullable;
  *
  * <p>The command implementation must have an {@code ICommandInfo} annotation.</p>
  */
-public abstract class AbstractCommand extends AbstractCommandUtils
-        implements Comparable<AbstractCommand>, ICommandOwner {
+public abstract class AbstractCommand
+        implements Comparable<AbstractCommand>, ICommandOwner, IPluginOwned {
 
-    private static final String _USAGE = "{GOLD}/{plugin-command} {GREEN}";
+
     private static final String _COMMAND_PAGINATOR_TITLE = "Commands";
 
     private final CommandCollection _subCommands = new CommandCollection();
 
     private CommandInfoContainer _info;
-    private AbstractCommandHandler _commandHandler;
+    private CommandDispatcher _dispatcher;
 
-    private Set<Class<? extends AbstractCommand>> _subCommandQueue = new HashSet<Class<? extends AbstractCommand>>(20);
     private AbstractCommand _parent;
     private IPermission _permission;
     private boolean _canExecute;
+    protected IMessenger _msg;
+
+    private Set<Class<? extends AbstractCommand>> _subCommandQueue =
+            new HashSet<Class<? extends AbstractCommand>>(20);
 
     /**
      * Constructor.
@@ -77,11 +87,41 @@ public abstract class AbstractCommand extends AbstractCommandUtils
         super();
     }
 
+    @Override
+    public Plugin getPlugin() {
+        if (_dispatcher == null)
+            throw new RuntimeException("Command is not initialized.");
+
+        return _dispatcher.getPlugin();
+    }
+
     /**
      * Determine if the command can be executed.
      */
     public boolean canExecute() {
         return _canExecute;
+    }
+
+    /**
+     * Get the commands {@code ICommandInfo} annotation.
+     */
+    public final CommandInfoContainer getInfo() {
+        return _info;
+    }
+
+    /**
+     * Get the command handler
+     */
+    public final CommandDispatcher getDispatcher() {
+        return _dispatcher;
+    }
+
+    /**
+     * Get the commands parent command, if any.
+     */
+    @Nullable
+    public final AbstractCommand getParent() {
+        return _parent;
     }
 
     /**
@@ -111,6 +151,33 @@ public abstract class AbstractCommand extends AbstractCommandUtils
     }
 
     /**
+     * Get a direct sub command by name
+     */
+    @Override
+    @Nullable
+    public final AbstractCommand getCommand(String subCommandName) {
+        PreCon.notNullOrEmpty(subCommandName);
+
+        return _subCommands.getCommand(subCommandName);
+    }
+
+    /**
+     * Get the commands registered sub commands.
+     */
+    @Override
+    public final Collection<AbstractCommand> getCommands() {
+        return _subCommands.getCommands();
+    }
+
+    /**
+     * Get the sub command names.
+     */
+    @Override
+    public final Collection<String> getCommandNames() {
+        return _subCommands.getCommandNames();
+    }
+
+    /**
      * Register a sub command.
      *
      * <p>Prefer registering sub commands in the implementations command constructor
@@ -133,9 +200,9 @@ public abstract class AbstractCommand extends AbstractCommandUtils
             return true;
         }
 
-        String commandName = _subCommands.add(subCommandClass);
+        String commandName = _subCommands.addCommand(subCommandClass);
         if (commandName == null) {
-            _msg.debug("Failed to register command '{0}' as a sub command of '{1}' possibly because " +
+            _dispatcher.getUtils().debug("Failed to register command '{0}' as a sub command of '{1}' possibly because " +
                     "another command with the same name is already registered and no alternative " +
                     "command names were provided.", subCommandClass.getName(), getClass().getName());
             return false;
@@ -145,19 +212,19 @@ public abstract class AbstractCommand extends AbstractCommandUtils
         if (command == null)
             throw new AssertionError();
 
-        // set the instances parent command
+        // set the instance's parent command
         command._parent = this;
 
-        // set the instances command handler
-        if (_commandHandler != null)
-            command.setCommandHandler(_commandHandler, _info.getMasterCommandName());
+        // set the instance's command handler
+        if (_dispatcher != null)
+            command.setDispatcher(_dispatcher, _info.getRoot() != null ? _info.getRoot() : this);
 
         /**
          * Sanity check. Make sure the parent specified by the command is this command
          */
         if (!command.getInfo().getParentName().isEmpty() &&
                 !isCommandMatch(command.getInfo().getParentName(), _info.getCommandNames())) {
-            _msg.debug("Failed to register sub command. Registered with incorrect parent: "
+            _dispatcher.getUtils().debug("Failed to register sub command. Registered with incorrect parent: "
                     + this.getClass().getName());
 
             _subCommands.removeAll(command);
@@ -190,55 +257,6 @@ public abstract class AbstractCommand extends AbstractCommandUtils
     }
 
     /**
-     * Get the commands {@code ICommandInfo} annotation.
-     */
-    public final CommandInfoContainer getInfo() {
-        return _info;
-    }
-
-    /**
-     * Get the command handler
-     */
-    public final AbstractCommandHandler getCommandHandler() {
-        return _commandHandler;
-    }
-
-    /**
-     * Get the commands parent command, if any.
-     */
-    @Nullable
-    public final AbstractCommand getParent() {
-        return _parent;
-    }
-
-    /**
-     * Get a direct sub command by name
-     */
-    @Override
-    @Nullable
-    public final AbstractCommand getCommand(String subCommandName) {
-        PreCon.notNullOrEmpty(subCommandName);
-
-        return _subCommands.getCommand(subCommandName);
-    }
-
-    /**
-     * Get the commands registered sub commands.
-     */
-    @Override
-    public final Collection<AbstractCommand> getCommands() {
-        return _subCommands.getCommands();
-    }
-
-    /**
-     * Get the sub command names.
-     */
-    @Override
-    public final Collection<String> getCommandNames() {
-        return _subCommands.getCommandNames();
-    }
-
-    /**
      * Get the commands permission object.
      */
     public final IPermission getPermission() {
@@ -250,10 +268,10 @@ public abstract class AbstractCommand extends AbstractCommandUtils
 
             AbstractCommand parent = this;
 
-            permissions.add(_info.getCommandName());
+            permissions.add(_info.getName());
 
             while((parent = parent.getParent()) != null) {
-                permissions.add(parent.getInfo().getCommandName());
+                permissions.add(parent.getInfo().getName());
             }
 
             Collections.reverse(permissions);
@@ -279,62 +297,55 @@ public abstract class AbstractCommand extends AbstractCommandUtils
             return;
         }
 
-        // batch operation to prevent each registered permission
-        // from causing a permission recalculation
-        Permissions.runBatchOperation(true, new Runnable() {
+        ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
+                Lang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
 
-            @Override
-            public void run () {
+        UsageGenerator usageGenerator = new UsageGenerator();
 
-                final ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
-                        Lang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
+        if (canExecute()) {
+            // add command to paginator
 
-                if (canExecute()) {
-                    // add command to paginator
-                    pagin.add(_info.getUsage(), _info.getDescription());
-                }
+            pagin.add(usageGenerator.generate(this, getInfo().getRootName(), _info.getDescription()));
+        }
 
-                List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
+        List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
 
-                for (AbstractCommand cmd : getCommands()) {
+        for (AbstractCommand cmd : getCommands()) {
 
-                    // Determine if the command has its own own sub commands 
-                    // and put aside so it can be displayed at the end of the 
-                    // help list
-                    if (cmd.getCommands().size() > 0) {
-                        subCommands.add(cmd);
-                        continue;
-                    }
-
-                    if (!cmd.isHelpVisible(sender)) {
-                        continue;
-                    }
-
-                    CommandInfoContainer info = cmd.getInfo();
-
-                    // add command to paginator
-                    pagin.add(info.getUsage(), info.getDescription());
-                }
-
-                // Add commands that were set aside because they have sub commands
-                // and render differently
-                for (AbstractCommand cmd : subCommands) {
-
-                    if (!cmd.isHelpVisible(sender)) {
-                        continue;
-                    }
-
-                    CommandInfoContainer info = cmd.getInfo();
-
-                    // add info to get sub commands help to paginator
-                    pagin.add(constructHelpUsage(cmd), info.getDescription());
-                }
-
-                // show paginator to CommandSender
-                pagin.show(sender, page, FormatTemplate.CONSTANT_DEFINITION);
+            // Determine if the command has its own own sub commands
+            // and put aside so it can be displayed at the end of the
+            // help list
+            if (cmd.getCommands().size() > 0) {
+                subCommands.add(cmd);
+                continue;
             }
 
-        });
+            if (!cmd.isHelpVisible(sender)) {
+                continue;
+            }
+
+            CommandInfoContainer info = cmd.getInfo();
+
+            // add command to paginator
+            pagin.add(usageGenerator.generate(cmd), info.getDescription());
+        }
+
+        // Add commands that were set aside because they have sub commands
+        // and render differently
+        for (AbstractCommand cmd : subCommands) {
+
+            if (!cmd.isHelpVisible(sender)) {
+                continue;
+            }
+
+            CommandInfoContainer info = cmd.getInfo();
+
+            // add info to get sub commands help to paginator
+            pagin.add(usageGenerator.generate(cmd), info.getDescription());
+        }
+
+        // show paginator to CommandSender
+        pagin.show(sender, page, FormatTemplate.CONSTANT_DEFINITION);
     }
 
     /**
@@ -343,7 +354,18 @@ public abstract class AbstractCommand extends AbstractCommandUtils
      */
     @Override
     public int compareTo(AbstractCommand o) {
-        return _info.getCommandName().compareTo(o._info.getCommandName());
+        return _info.getName().compareTo(o._info.getName());
+    }
+
+    /**
+     * Called after the dispatcher is set.
+     *
+     * <p>Provided as an optional implementation override.</p>
+     *
+     * @param dispatcher  The commands dispatcher.
+     */
+    protected void onInitialized(CommandDispatcher dispatcher) {
+        PreCon.notNull(dispatcher);
     }
 
     /**
@@ -358,14 +380,10 @@ public abstract class AbstractCommand extends AbstractCommandUtils
     }
 
     /**
-     * Called after the command handler is set.
-     *
-     * <p>Provided as an optional implementation override.</p>
-     *
-     * @param commandHandler  The command handler that is set.
+     * Get the command collection.
      */
-    protected void onCommandHandlerSet(AbstractCommandHandler commandHandler) {
-        PreCon.notNull(commandHandler);
+    final CommandCollection getCommandCollection() {
+        return _subCommands;
     }
 
     /**
@@ -410,29 +428,20 @@ public abstract class AbstractCommand extends AbstractCommandUtils
     }
 
     /**
-     * Construct a string representing the command
-     * a user should type to get help with this specific
-     * command.
+     * Set the commands dispatcher
+     * Should only be called by the dispatcher or parent command
      */
-    final String constructHelpUsage() {
-        return constructHelpUsage(this);
-    }
+    final void setDispatcher(CommandDispatcher dispatcher, @Nullable AbstractCommand rootCommand) {
+        PreCon.notNull(dispatcher);
 
-    /**
-     * Set the commands command handler
-     * Should only be called by the command handler or parent command
-     */
-    final void setCommandHandler(AbstractCommandHandler commandHandler, @Nullable String masterCommandName) {
-        PreCon.notNull(commandHandler);
-
-        if (_commandHandler != null)
+        if (_dispatcher != null)
             return;
 
-        _commandHandler = commandHandler;
-        setPlugin(commandHandler.getPlugin());
+        _dispatcher = dispatcher;
+        _msg = MessengerFactory.create(dispatcher.getPlugin());
 
         CommandInfo info = this.getClass().getAnnotation(CommandInfo.class);
-        _info = new CommandInfoContainer(getPlugin(), info, masterCommandName);
+        _info = new CommandInfoContainer(getPlugin(), info, rootCommand);
 
         // register queued sub commands
         for (Class<? extends AbstractCommand> commandClass : _subCommandQueue) {
@@ -444,8 +453,8 @@ public abstract class AbstractCommand extends AbstractCommandUtils
 
         // set command handler in sub commands
         for (AbstractCommand subCommand : getCommands()) {
-            if (subCommand.getCommandHandler() == null) {
-                subCommand.setCommandHandler(_commandHandler, masterCommandName);
+            if (subCommand.getDispatcher() == null) {
+                subCommand.setDispatcher(_dispatcher, rootCommand != null ? rootCommand : this);
             }
         }
 
@@ -460,42 +469,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils
         // register permission
         getPermission();
 
-        onCommandHandlerSet(commandHandler);
-    }
-
-
-    /**
-     * Construct a string representing the command
-     * a user should type to get help with the specified
-     * command.
-     */
-    static String constructHelpUsage(AbstractCommand command) {
-        PreCon.notNull(command);
-
-        Stack<AbstractCommand> commands = new Stack<AbstractCommand>();
-
-        commands.add(command);
-
-        AbstractCommand parent = command;
-        while ((parent = parent.getParent()) != null) {
-            commands.push(parent);
-        }
-
-        StringBuilder usage = new StringBuilder(32 * 3);
-        usage.append(Lang.get(command.getPlugin(), _USAGE));
-
-        while(!commands.isEmpty()) {
-            usage.append(commands.pop()._info.getCommandName());
-            usage.append(' ');
-        }
-
-        usage.append('?');
-
-        // format plugin info into usage
-        String result = TextUtils.formatPluginInfo(command.getPlugin(), usage.toString());
-
-        // format colors and return
-        return TextUtils.format(result);
+        onInitialized(dispatcher);
     }
 
     /**
@@ -512,5 +486,123 @@ public abstract class AbstractCommand extends AbstractCommandUtils
             return false;
 
         return true;
+    }
+
+
+    /**
+     * Tell the {@code CommandSender} a generic message.
+     */
+    protected void tell(CommandSender sender, String msg, Object... params) {
+        _dispatcher.getUtils().tell(sender, msg, params);
+    }
+
+    /**
+     * Tell the {@code CommandSender} that something is enabled or disabled.
+     *
+     * <p>Use format code {e} to specify where to place the word Enabled or Disabled.</p>
+     */
+    protected void tellEnabled(CommandSender sender, String msg, boolean isEnabled, Object...params) {
+        _dispatcher.getUtils().tellEnabled(sender, msg, isEnabled, params);
+    }
+
+    /**
+     * Tell the {@code CommandSender} the command executed the request successfully.
+     */
+    protected void tellSuccess(CommandSender sender, String msg, Object... params) {
+        _dispatcher.getUtils().tellSuccess(sender, msg, params);
+    }
+
+    /**
+     * Tell the {@code CommandSender} the command failed to perform the requested task.
+     */
+    protected void tellError(CommandSender sender, String msg, Object... params) {
+        _dispatcher.getUtils().tellError(sender, msg, params);
+    }
+
+    /**
+     * Set the specified players region selection.
+     * Handles error message if any.
+     *
+     * @param p   The player
+     * @param p1  The first location of the selection.
+     * @param p2  The second location of the selection.
+     */
+    protected boolean setRegionSelection(Player p, Location p1, Location p2) {
+        return _dispatcher.getUtils().setRegionSelection(p, p1, p2);
+    }
+
+    /**
+     * Get the specified players current region selection.
+     * Handles error message if any.
+     *
+     * @param p  The player
+     *
+     * @return  {@code AreaSelection} object that defines the selection.
+     */
+    @Nullable
+    protected IRegionSelection getRegionSelection(Player p) {
+        return _dispatcher.getUtils().getRegionSelection(p);
+    }
+
+    /**
+     * Clear a setting from a settings manager back to it's default value.
+     * Handles error and success messages.
+     *
+     * @param sender           The command sender
+     * @param settings         The settings manager that contains and defines possible settings.
+     * @param args             The command arguments provided by the command sender.
+     * @param propertyArgName  The name of the command argument parameter that contains the property name of the setting.
+     *
+     * @return True if completed successfully.
+     *
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
+     */
+    protected void clearSetting(CommandSender sender, final ISettingsManager settings,
+                                CommandArguments args, String propertyArgName) throws InvalidArgumentException {
+        _dispatcher.getUtils().clearSetting(sender, settings, args, propertyArgName);
+    }
+
+    /**
+     * Set a setting into a settings manager using user command input. Handles error and success
+     * messages to the user.
+     *
+     * @param sender           The command sender
+     * @param settings         The settings manager that contains and defines possible settings.
+     * @param args             The command arguments provided by the command sender.
+     * @param propertyArgName  The name of the command argument parameter that contains the property name of the setting..
+     * @param valueArgName     The name of the command argument parameter that contains the value of the property.
+     *
+     * @return  True if operation completed successfully.
+     *
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
+     * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
+     */
+    protected void setSetting(CommandSender sender, final ISettingsManager settings,
+                              CommandArguments args, String propertyArgName, String valueArgName)
+            throws InvalidArgumentException, InvalidCommandSenderException {
+        setSetting(sender, settings, args, propertyArgName, valueArgName, null);
+    }
+
+    /**
+     * Set a setting into a settings manager using user command input. Handles error and success
+     * messages to the user.
+     *
+     * @param sender           The command sender
+     * @param settings         The settings manager that contains and defines possible settings.
+     * @param args             The command arguments provided by the command sender.
+     * @param propertyArgName  The name of the command argument parameter that contains the property name of the setting..
+     * @param valueArgName     The name of the command argument parameter that contains the value of the property.
+     * @param onSuccess        A runnable to run if the setting is successfully set.
+     *
+     * @return  True if operation completed successfully.
+     *
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
+     * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
+     */
+    protected void setSetting(CommandSender sender, final ISettingsManager settings,
+                              CommandArguments args, String propertyArgName,
+                              String valueArgName, @Nullable final Runnable onSuccess)
+            throws InvalidArgumentException, InvalidCommandSenderException {
+        _dispatcher.getUtils().setSetting(sender, settings, args, propertyArgName, valueArgName, onSuccess);
     }
 }

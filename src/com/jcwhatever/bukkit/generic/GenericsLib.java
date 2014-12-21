@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.bukkit.generic.internal.InternalMessengerFactory;
-import com.jcwhatever.bukkit.generic.internal.commands.CommandHandler;
+import com.jcwhatever.bukkit.generic.internal.commands.GenericsCommandDispatcher;
 import com.jcwhatever.bukkit.generic.inventory.KitManager;
 import com.jcwhatever.bukkit.generic.items.equipper.EntityEquipperManager;
 import com.jcwhatever.bukkit.generic.items.equipper.IEntityEquipper;
@@ -259,7 +259,7 @@ public final class GenericsLib {
     /**
      * Get GenericsLib's internal command handler.
      */
-    public static CommandHandler getCommandHandler() {
+    public static GenericsCommandDispatcher getCommandHandler() {
         PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._commandHandler;

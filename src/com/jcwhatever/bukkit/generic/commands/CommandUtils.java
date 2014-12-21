@@ -22,14 +22,13 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.bukkit.generic.commands;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.arguments.LocationResponse;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
@@ -55,14 +54,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
-/**
- * Utilities used by inheriting implementations to reduce redundant code
- * in commands and provide a central place to modify complex but generic
- * functionality.
+/*
+ * 
  */
-public abstract class AbstractCommandUtils implements IPluginOwned {
+public class CommandUtils implements IPluginOwned {
 
-    @Localizable private static final String _SAME_WORLD_REGION_SELECT = "You need to be in the same world as the region selection.";
+    @Localizable
+    private static final String _SAME_WORLD_REGION_SELECT = "You need to be in the same world as the region selection.";
     @Localizable private static final String _INVALID_REGION = "Invalid region. Both points must be in the same world.";
     @Localizable private static final String _SET_SELECTION_FAILED = "Failed to set region selection.";
     @Localizable private static final String _NO_REGION_SELECTED = "No cuboid region selection found. Please select a region first.";
@@ -75,18 +73,17 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
 
     private static final Pattern FORMAT_ENABLE = Pattern.compile("\\{e}");
 
-    private Plugin _plugin;
+    private final Plugin _plugin;
     protected IMessenger _msg;
-
-    protected AbstractCommandUtils() {}
 
     /**
      * Constructor.
      *
      * @param plugin  The owning plugin
      */
-    public AbstractCommandUtils (Plugin plugin) {
-        setPlugin(plugin);
+    public CommandUtils (Plugin plugin) {
+        _plugin = plugin;
+        _msg = MessengerFactory.create(plugin);
     }
 
     /**
@@ -98,9 +95,19 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
     }
 
     /**
+     * Send a debug message to the console.
+     *
+     * @param msg     The message to send.
+     * @param params  The message format parameters.
+     */
+    public void debug(String msg, Object... params) {
+        _msg.debug(msg, params);
+    }
+
+    /**
      * Tell the {@code CommandSender} a generic message.
      */
-    protected void tell(CommandSender sender, String msg, Object... params) {
+    public void tell(CommandSender sender, String msg, Object... params) {
         _msg.tell(sender, TextUtils.format(msg, params));
     }
 
@@ -109,7 +116,7 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      *
      * <p>Use format code {e} to specify where to place the word Enabled or Disabled.</p>
      */
-    protected void tellEnabled(CommandSender sender, String msg, boolean isEnabled, Object...params) {
+    public void tellEnabled(CommandSender sender, String msg, boolean isEnabled, Object...params) {
         PreCon.notNull(sender);
         PreCon.notNull(msg);
         PreCon.notNull(params);
@@ -125,14 +132,14 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
     /**
      * Tell the {@code CommandSender} the command executed the request successfully.
      */
-    protected void tellSuccess(CommandSender sender, String msg, Object... params) {
+    public void tellSuccess(CommandSender sender, String msg, Object... params) {
         _msg.tell(sender, ChatColor.GREEN + msg, params);
     }
 
     /**
      * Tell the {@code CommandSender} the command failed to perform the requested task.
      */
-    protected void tellError(CommandSender sender, String msg, Object... params) {
+    public void tellError(CommandSender sender, String msg, Object... params) {
         _msg.tell(sender, ChatColor.RED + msg, params);
     }
 
@@ -144,7 +151,7 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      * @param p1  The first location of the selection.
      * @param p2  The second location of the selection.
      */
-    protected boolean setRegionSelection(Player p, Location p1, Location p2) {
+    public boolean setRegionSelection(Player p, Location p1, Location p2) {
         PreCon.notNull(p);
         PreCon.notNull(p1);
         PreCon.notNull(p2);
@@ -180,7 +187,7 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      * @return  {@code AreaSelection} object that defines the selection.
      */
     @Nullable
-    protected IRegionSelection getRegionSelection(Player p) {
+    public IRegionSelection getRegionSelection(Player p) {
         PreCon.notNull(p);
 
         IRegionSelection selection = RegionSelection.get(p);
@@ -207,7 +214,7 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      *
      * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
      */
-    protected void clearSetting(CommandSender sender, final ISettingsManager settings,
+    public void clearSetting(CommandSender sender, final ISettingsManager settings,
                                 CommandArguments args, String propertyArgName) throws InvalidArgumentException {
 
         final String settingName = args.getString(propertyArgName);
@@ -245,9 +252,9 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      * @return  True if operation completed successfully.
      *
      * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
-     * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
+     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
-    protected void setSetting(CommandSender sender, final ISettingsManager settings,
+    public void setSetting(CommandSender sender, final ISettingsManager settings,
                               CommandArguments args, String propertyArgName, String valueArgName)
             throws InvalidArgumentException, InvalidCommandSenderException {
         setSetting(sender, settings, args, propertyArgName, valueArgName, null);
@@ -269,7 +276,7 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
      * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
-    protected void setSetting(CommandSender sender, final ISettingsManager settings,
+    public void setSetting(CommandSender sender, final ISettingsManager settings,
                               CommandArguments args, String propertyArgName,
                               String valueArgName, @Nullable final Runnable onSuccess)
             throws InvalidArgumentException, InvalidCommandSenderException {
@@ -343,13 +350,5 @@ public abstract class AbstractCommandUtils implements IPluginOwned {
 
         if (onSuccess != null)
             onSuccess.run();
-    }
-
-    protected void setPlugin(Plugin plugin) {
-        if (_plugin != null)
-            throw new RuntimeException("Plugin can only be set once.");
-
-        _plugin = plugin;
-        _msg = MessengerFactory.get(plugin);
     }
 }

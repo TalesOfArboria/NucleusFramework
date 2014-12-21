@@ -42,22 +42,17 @@ import javax.annotation.Nullable;
  */
 public class CommandParser {
 
-    private AbstractCommand _baseCommand;
+    private final AbstractCommand _rootCommand;
 
     /**
-     * Get the base command used when no commands found.
+     * Constructor.
+     *
+     * @param rootCommand  The root command.
      */
-    @Nullable
-    public AbstractCommand getBaseCommand() {
-        return _baseCommand;
-    }
+    public CommandParser(AbstractCommand rootCommand) {
+        PreCon.notNull(rootCommand);
 
-    /**
-     * Set the base command used when no commands are found.
-     * @param command
-     */
-    public void setBaseCommand(AbstractCommand command) {
-        _baseCommand = command;
+        _rootCommand = rootCommand;
     }
 
     /**
@@ -108,7 +103,7 @@ public class CommandParser {
      * @param sender       The command sender.
      * @param args         The base command arguments.
      */
-    public ParsedTabComplete parseTabComplete(CommandCollection commandCollection,
+    public ParsedTabComplete parseTabComplete(ICommandOwner commandCollection,
                                               CommandSender sender, String[] args) {
         PreCon.notNull(commandCollection);
         PreCon.notNull(sender);
@@ -183,22 +178,22 @@ public class CommandParser {
     }
 
     // internal command parser
-    private ParsedCommand parse(CommandCollection commandCollection, String[] components, boolean isStrict) {
+    private ParsedCommand parse(ICommandOwner commandCollection, String[] components, boolean isStrict) {
         PreCon.notNull(commandCollection);
         PreCon.notNull(components);
 
         // get the primary command from the first argument
         AbstractCommand command = null;
 
-        if (components.length > 0) {
-            command = commandCollection.fromFirst(components);
+        if (components.length > 0 && !components[0].isEmpty()) {
+            command = commandCollection.getCommand(components[0]);
         }
 
         // primary command not found
         if (command == null) {
 
-            if (_baseCommand != null && !isStrict) {
-                return new ParsedCommand(_baseCommand, components, 0);
+            if (!isStrict) {
+                return new ParsedCommand(_rootCommand, components, 0);
             }
 
             return null;

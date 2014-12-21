@@ -31,8 +31,6 @@ import com.jcwhatever.bukkit.generic.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.jcwhatever.bukkit.generic.utils.text.TextFormatter.ITagFormatter;
-import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
@@ -41,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -51,7 +48,7 @@ import javax.annotation.Nullable;
 public class CommandInfoContainer {
 
     private final CommandInfo _commandInfo;
-    private final String _masterCommandName;
+    private final AbstractCommand _rootCommand;
     private final Plugin _plugin;
     private final String _usage;
 
@@ -61,36 +58,23 @@ public class CommandInfoContainer {
     private final List<FlagParameter> _flags;
 
     private ParameterDescriptions _descriptions;
+    private String _sessionRootName;
 
     /**
      * Constructor.
      *
-     * @param plugin             The commands owning plugin.
-     * @param commandInfo        The command info annotation.
-     * @param masterCommandName  The name of the top level command in the commands hierarchy.
+     * @param plugin       The commands owning plugin.
+     * @param commandInfo  The command info annotation.
+     * @param rootCommand  The commands root command.
      */
-    public CommandInfoContainer(Plugin plugin, CommandInfo commandInfo, @Nullable String masterCommandName) {
+    public CommandInfoContainer(Plugin plugin, CommandInfo commandInfo, @Nullable AbstractCommand rootCommand) {
         PreCon.notNull(plugin);
         PreCon.notNull(commandInfo);
 
         _plugin = plugin;
         _commandInfo = commandInfo;
-        _masterCommandName = masterCommandName != null ? masterCommandName : commandInfo.command()[0];
-
-        Map<String, ITagFormatter> formatters = TextUtils.getPluginFormatters(plugin);
-        formatters.put("command", new ITagFormatter() {
-            @Override
-            public String getTag() {
-                return "command";
-            }
-
-            @Override
-            public void append(StringBuilder sb, String rawTag) {
-                sb.append(_masterCommandName);
-            }
-        });
-
-        _usage = TextUtils.TEXT_FORMATTER.format(formatters, commandInfo.usage());
+        _rootCommand = rootCommand;
+        _usage = commandInfo.usage();
 
         _parameterNames = new HashSet<>(
                 getRawStaticParams().length + getRawFloatingParams().length + getRawFlagParams().length);
@@ -141,17 +125,61 @@ public class CommandInfoContainer {
     }
 
     /**
+     * Get the root command in the commands hierarchy.
+     *
+     * @return  Null if the command is the root.
+     */
+    @Nullable
+    public AbstractCommand getRoot() {
+        return _rootCommand;
+    }
+
+    /**
      * Get the name of the top level command in the commands
      * hierarchy.
      */
-    public String getMasterCommandName() {
-        return _masterCommandName;
+    @Nullable
+    public String getRootName() {
+        if (_rootCommand == null)
+            return null;
+
+        return _rootCommand.getInfo().getName();
+    }
+
+    /**
+     * Get the name of the top level command in the commands
+     * hierarchy.
+     */
+    @Nullable
+    public String getRootSessionName() {
+        if (_rootCommand == null)
+            return null;
+
+        return _rootCommand.getInfo().getSessionName();
+    }
+
+    /**
+     * Get the name of the root command for display purposes in the
+     * current session.
+     */
+    public String getSessionName() {
+        return _sessionRootName;
+    }
+
+    /**
+     * Set the name of the root command for display in the
+     * current session.
+     *
+     * @param rootName  The root command name.
+     */
+    void setSessionRootName(String rootName) {
+        _sessionRootName = rootName;
     }
 
     /**
      * Get the primary command name.
      */
-    public String getCommandName() {
+    public String getName() {
         return _commandInfo.command()[0];
     }
 
