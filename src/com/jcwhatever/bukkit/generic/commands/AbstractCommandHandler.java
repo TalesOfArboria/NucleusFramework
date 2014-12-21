@@ -51,7 +51,8 @@ import javax.annotation.Nullable;
 /**
  * Command Executor to handle commands
  */
-public abstract class AbstractCommandHandler extends AbstractCommandUtils implements CommandExecutor {
+public abstract class AbstractCommandHandler extends AbstractCommandUtils
+        implements CommandExecutor, ICommandOwner {
 
     @Localizable static final String _TO_MANY_ARGS = "Too many arguments. Type '{0}' for help.";
     @Localizable static final String _MISSING_ARGS = "Missing arguments. Type '{0}' for help.";
@@ -92,8 +93,17 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
     /**
      * Get a collection of all registered top level commands.
      */
+    @Override
     public Collection<AbstractCommand> getCommands() {
         return _masterCommands.getCommands();
+    }
+
+    /**
+     * Get the sub command names.
+     */
+    @Override
+    public Collection<String> getCommandNames() {
+        return _masterCommands.getCommandNames();
     }
 
     /**
@@ -202,6 +212,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
      *
      * @param commandPath  The path of the command.
      */
+    @Override
     @Nullable
     public final AbstractCommand getCommand(String commandPath) {
         PreCon.notNull(commandPath);
@@ -217,8 +228,8 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
      *
      * @param commandClass  The commands implementation class
      */
-    @Nullable
-    public final <T extends AbstractCommand> T registerCommand(Class<T> commandClass) {
+    @Override
+    public boolean registerCommand(Class<? extends AbstractCommand> commandClass) {
         PreCon.notNull(commandClass);
 
         String commandName = _masterCommands.add(commandClass);
@@ -227,7 +238,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
             _msg.debug("Failed to register command '{0}' possibly because another command with the " +
                             "same name is already registered and no alternative command names were provided.",
                     commandClass.getName());
-            return null;
+            return false;
         }
 
         AbstractCommand command = _masterCommands.getCommand(commandName);
@@ -239,10 +250,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
 
         onMasterCommandInstantiated(command);
 
-        @SuppressWarnings("unchecked")
-        T result = (T)command;
-
-        return result;
+        return true;
     }
 
     /**
@@ -250,6 +258,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
      *
      * @param commandClass  The commands implementation class.
      */
+    @Override
     public final boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
         PreCon.notNull(commandClass);
 
@@ -404,7 +413,7 @@ public abstract class AbstractCommandHandler extends AbstractCommandUtils implem
             return;
 
         AbstractCommand aboutCommand = _masterCommands.getCommand("about");
-        if (aboutCommand == null && registerCommand(AboutCommand.class) == null) {
+        if (aboutCommand == null && registerCommand(AboutCommand.class)) {
             return;
         }
 

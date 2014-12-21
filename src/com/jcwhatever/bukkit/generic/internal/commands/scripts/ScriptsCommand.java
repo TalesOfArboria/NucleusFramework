@@ -36,7 +36,7 @@ public final class ScriptsCommand extends AbstractCommand {
     public ScriptsCommand() {
         super();
 
-        registerSubCommand(ListSubCommand.class);
-        registerSubCommand(ReloadSubCommand.class);
+        registerCommand(ListSubCommand.class);
+        registerCommand(ReloadSubCommand.class);
     }
 }

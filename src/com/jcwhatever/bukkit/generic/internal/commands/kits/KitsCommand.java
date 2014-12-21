@@ -38,11 +38,11 @@ public final class KitsCommand extends AbstractCommand {
     public KitsCommand() {
         super();
 
-        registerSubCommand(ItemsCommand.class);
+        registerCommand(ItemsCommand.class);
 
-        registerSubCommand(AddSubCommand.class);
-        registerSubCommand(DelSubCommand.class);
-        registerSubCommand(ListSubCommand.class);
+        registerCommand(AddSubCommand.class);
+        registerCommand(DelSubCommand.class);
+        registerCommand(ListSubCommand.class);
     }
 }
 

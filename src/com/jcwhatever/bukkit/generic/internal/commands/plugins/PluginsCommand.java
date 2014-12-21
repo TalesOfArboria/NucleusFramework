@@ -36,7 +36,7 @@ public final class PluginsCommand extends AbstractCommand {
     public PluginsCommand() {
         super();
 
-        registerSubCommand(ListSubCommand.class);
+        registerCommand(ListSubCommand.class);
     }
 }
 

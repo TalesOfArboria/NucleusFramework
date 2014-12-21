@@ -108,8 +108,8 @@ public class CommandParser {
      * @param sender       The command sender.
      * @param args         The base command arguments.
      */
-    public ParsedTabComplete parseTabComplete(final CommandCollection commandCollection,
-                                              final CommandSender sender, String[] args) {
+    public ParsedTabComplete parseTabComplete(CommandCollection commandCollection,
+                                              CommandSender sender, String[] args) {
         PreCon.notNull(commandCollection);
         PreCon.notNull(sender);
         PreCon.notNull(args);
@@ -123,12 +123,12 @@ public class CommandParser {
             if (args[0].isEmpty()) {
                 result = args.length == 1
                         // get all commands (that can be seen)
-                        ? filterMasterCommandNames(sender, "", commandCollection)
+                        ? filterCommandNames(sender, "", commandCollection)
                         : new ArrayList<String>(5);
             } else {
 
                 // get possible command matches
-                result = filterMasterCommandNames(sender, args[0], commandCollection);
+                result = filterCommandNames(sender, args[0], commandCollection);
             }
 
             return new ParsedTabComplete(result, null, ArrayUtils.EMPTY_STRING_ARRAY);
@@ -139,17 +139,17 @@ public class CommandParser {
         ParsedTabComplete tabComplete;
 
         if (arguments.length == 1 &&
-                command.getSubCommands().size() > 0) {
+                command.getCommands().size() > 0) {
 
             // generate list of sub command names the player has permission to use
-            List<String> names = filterSubCommandNames(sender, arguments[0], parsed.getCommand());
+            List<String> names = filterCommandNames(sender, arguments[0], parsed.getCommand());
 
             tabComplete = new ParsedTabComplete(names, command, arguments);
         }
         else if (arguments.length == 0 && parsed.getCommand().getParent() != null) {
 
             // generate list of command names the player has permission to use
-            List<String> names = filterSubCommandNames(sender, "", parsed.getCommand().getParent());
+            List<String> names = filterCommandNames(sender, "", parsed.getCommand().getParent());
 
             tabComplete = new ParsedTabComplete(names, command, arguments);
 
@@ -161,40 +161,21 @@ public class CommandParser {
         return tabComplete;
     }
 
-    // Filter master command names based on a search name  and if the
+    // Filter a command owners command names based on a search name and if the
     // sub command is help visible.
-    private List<String> filterMasterCommandNames(final CommandSender sender,
-                                                  String searchName,
-                                                  final CommandCollection collection) {
+    private List<String> filterCommandNames(final CommandSender sender,
+                                            String searchName,
+                                            final ICommandOwner commandOwner) {
 
         final String caseSearchName = searchName.toLowerCase();
 
-        return TextUtils.search(collection.getCommandNames(),
-                new IEntryValidator<String>() {
-                    @Override
-                    public boolean isValid(String entry) {
-                        AbstractCommand subCommand = collection.getCommand(entry);
-                        return subCommand != null && subCommand.isHelpVisible(sender) &&
-                                entry.toLowerCase().startsWith(caseSearchName);
-                    }
-                });
-    }
-
-    // Filter a commands sub command names based on a search name and if the
-    // sub command is help visible.
-    private List<String> filterSubCommandNames(final CommandSender sender,
-                                               String searchName,
-                                               final AbstractCommand parentCommand) {
-
-        final String caseSearchName = searchName.toLowerCase();
-
-        Collection<String> commandNames = parentCommand.getSubCommandNames();
+        Collection<String> commandNames = commandOwner.getCommandNames();
 
         return TextUtils.search(commandNames,
                 new IEntryValidator<String>() {
                     @Override
                     public boolean isValid(String entry) {
-                        AbstractCommand subCommand = parentCommand.getSubCommand(entry);
+                        AbstractCommand subCommand = commandOwner.getCommand(entry);
                         return subCommand != null && subCommand.isHelpVisible(sender) &&
                                 entry.toLowerCase().startsWith(caseSearchName);
                     }
@@ -245,7 +226,7 @@ public class CommandParser {
         String subCmd = args[0].toLowerCase();
         String[] params = ArrayUtils.reduceStart(1, args);
 
-        AbstractCommand subCommand = subCmd.isEmpty() ? null : parentCommand.getSubCommand(subCmd);
+        AbstractCommand subCommand = subCmd.isEmpty() ? null : parentCommand.getCommand(subCmd);
         if (subCommand == null)
             return new ParsedCommand(parentCommand, args, depth);
         else {

@@ -22,25 +22,43 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.commands;
 
-package com.jcwhatever.bukkit.generic.internal.commands.kits.items;
+import java.util.Collection;
+import javax.annotation.Nullable;
 
-import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.CommandInfo;
+/**
+ * Defines a type as owning a collection of commands.
+ */
+public interface ICommandOwner {
 
-@CommandInfo(
-        parent="kits",
-        command="items",
-        description="Manage chest kit items.")
+    /**
+     * Register a command.
+     *
+     * @param commandClass  The command class to register and instantiate.
+     */
+    boolean registerCommand(Class<? extends AbstractCommand> commandClass);
 
-public final class ItemsCommand extends AbstractCommand {
+    /**
+     * Unregister a sub command.
+     *
+     * @param commandClass  The commands implementation class.
+     */
+    boolean unregisterCommand(Class<? extends AbstractCommand> commandClass);
 
-    public ItemsCommand() {
-        super();
+    /**
+     * Get a command by name
+     */
+    @Nullable
+    AbstractCommand getCommand(String commandName);
 
-        registerCommand(AddSubCommand.class);
-        registerCommand(DelSubCommand.class);
-        registerCommand(ListSubCommand.class);
+    /**
+     * Get all commands.
+     */
+    Collection<AbstractCommand> getCommands();
 
-    }
+    /**
+     * Get the sub command names.
+     */
+    Collection<String> getCommandNames();
 }

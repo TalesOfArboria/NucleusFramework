@@ -38,14 +38,14 @@ public final class JailCommand extends AbstractCommand {
     public JailCommand() {
         super();
 
-        registerSubCommand(AddTPSubCommand.class);
-        registerSubCommand(ClearReleaseTPSubCommand.class);
-        registerSubCommand(DelTPSubCommand.class);
-        registerSubCommand(ListTPSubCommand.class);
-        registerSubCommand(ReleaseSubCommand.class);
-        registerSubCommand(SendSubCommand.class);
-        registerSubCommand(SetRegionSubCommand.class);
-        registerSubCommand(SetReleaseTPSubCommand.class);
+        registerCommand(AddTPSubCommand.class);
+        registerCommand(ClearReleaseTPSubCommand.class);
+        registerCommand(DelTPSubCommand.class);
+        registerCommand(ListTPSubCommand.class);
+        registerCommand(ReleaseSubCommand.class);
+        registerCommand(SendSubCommand.class);
+        registerCommand(SetRegionSubCommand.class);
+        registerCommand(SetReleaseTPSubCommand.class);
         
     }
 

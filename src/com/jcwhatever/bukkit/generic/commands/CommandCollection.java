@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 /**
  * A collection of commands.
  */
-public class CommandCollection {
+public class CommandCollection implements ICommandOwner {
 
     // keyed to command name
     private final Map<String, AbstractCommand> _commandMap;
@@ -90,6 +90,7 @@ public class CommandCollection {
      *
      * @return  Null if not found.
      */
+    @Override
     @Nullable
     public AbstractCommand getCommand(String name) {
         PreCon.notNull(name);
@@ -139,6 +140,7 @@ public class CommandCollection {
      * Get all the call names used by the commands in
      * the collection.
      */
+    @Override
     public List<String> getCommandNames() {
         return new ArrayList<>(_commandMap.keySet());
     }
@@ -315,6 +317,7 @@ public class CommandCollection {
     /**
      * Returns a new array list of the commands in the collection.
      */
+    @Override
     public List<AbstractCommand> getCommands() {
         if (_sortedCommands == null) {
 
@@ -324,4 +327,15 @@ public class CommandCollection {
         }
         return new ArrayList<>(_sortedCommands);
     }
+
+    @Override
+    public boolean registerCommand(Class<? extends AbstractCommand> commandClass) {
+        return add(commandClass) != null;
+    }
+
+    @Override
+    public boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
+        return removeAll(commandClass);
+    }
+
 }

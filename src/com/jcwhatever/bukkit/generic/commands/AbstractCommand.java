@@ -52,7 +52,8 @@ import javax.annotation.Nullable;
  *
  * <p>The command implementation must have an {@code ICommandInfo} annotation.</p>
  */
-public abstract class AbstractCommand extends AbstractCommandUtils implements Comparable<AbstractCommand> {
+public abstract class AbstractCommand extends AbstractCommandUtils
+        implements Comparable<AbstractCommand>, ICommandOwner {
 
     private static final String _USAGE = "{GOLD}/{plugin-command} {GREEN}";
     private static final String _COMMAND_PAGINATOR_TITLE = "Commands";
@@ -118,7 +119,8 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      *
      * @param subCommandClass
      */
-    public final void registerSubCommand(Class<? extends AbstractCommand> subCommandClass) {
+    @Override
+    public final boolean registerCommand(Class<? extends AbstractCommand> subCommandClass) {
         PreCon.notNull(subCommandClass);
 
         if (subCommandClass.equals(getClass())) {
@@ -128,7 +130,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
         // add sub command to registration queue if not ready to register it yet
         if (_info == null) {
             _subCommandQueue.add(subCommandClass);
-            return;
+            return true;
         }
 
         String commandName = _subCommands.add(subCommandClass);
@@ -136,7 +138,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             _msg.debug("Failed to register command '{0}' as a sub command of '{1}' possibly because " +
                     "another command with the same name is already registered and no alternative " +
                     "command names were provided.", subCommandClass.getName(), getClass().getName());
-            return;
+            return false;
         }
 
         AbstractCommand command = _subCommands.getCommand(commandName);
@@ -151,7 +153,7 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
             command.setCommandHandler(_commandHandler, _info.getMasterCommandName());
 
         /**
-         * Safety check. Make sure the parent specified by the command is this command
+         * Sanity check. Make sure the parent specified by the command is this command
          */
         if (!command.getInfo().getParentName().isEmpty() &&
                 !isCommandMatch(command.getInfo().getParentName(), _info.getCommandNames())) {
@@ -159,10 +161,12 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
                     + this.getClass().getName());
 
             _subCommands.removeAll(command);
-            return;
+            return false;
         }
 
         onSubCommandInstantiated(command);
+
+        return true;
     }
 
     /**
@@ -170,7 +174,8 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
      *
      * @param commandClass  The commands implementation class.
      */
-    public final boolean unregisterSubCommand(Class<? extends AbstractCommand> commandClass) {
+    @Override
+    public final boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
 
         CommandInfo commandInfo = commandClass.getAnnotation(CommandInfo.class);
         if (commandInfo == null) {
@@ -209,8 +214,9 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     /**
      * Get a direct sub command by name
      */
+    @Override
     @Nullable
-    public final AbstractCommand getSubCommand(String subCommandName) {
+    public final AbstractCommand getCommand(String subCommandName) {
         PreCon.notNullOrEmpty(subCommandName);
 
         return _subCommands.getCommand(subCommandName);
@@ -219,14 +225,16 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
     /**
      * Get the commands registered sub commands.
      */
-    public final Collection<AbstractCommand> getSubCommands() {
+    @Override
+    public final Collection<AbstractCommand> getCommands() {
         return _subCommands.getCommands();
     }
 
     /**
      * Get the sub command names.
      */
-    public final Collection<String> getSubCommandNames() {
+    @Override
+    public final Collection<String> getCommandNames() {
         return _subCommands.getCommandNames();
     }
 
@@ -288,12 +296,12 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
 
                 List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
 
-                for (AbstractCommand cmd : getSubCommands()) {
+                for (AbstractCommand cmd : getCommands()) {
 
                     // Determine if the command has its own own sub commands 
                     // and put aside so it can be displayed at the end of the 
                     // help list
-                    if (cmd.getSubCommands().size() > 0) {
+                    if (cmd.getCommands().size() > 0) {
                         subCommands.add(cmd);
                         continue;
                     }
@@ -428,14 +436,14 @@ public abstract class AbstractCommand extends AbstractCommandUtils implements Co
 
         // register queued sub commands
         for (Class<? extends AbstractCommand> commandClass : _subCommandQueue) {
-            registerSubCommand(commandClass);
+            registerCommand(commandClass);
         }
 
         // remove queue
         _subCommandQueue = null;
 
         // set command handler in sub commands
-        for (AbstractCommand subCommand : getSubCommands()) {
+        for (AbstractCommand subCommand : getCommands()) {
             if (subCommand.getCommandHandler() == null) {
                 subCommand.setCommandHandler(_commandHandler, masterCommandName);
             }

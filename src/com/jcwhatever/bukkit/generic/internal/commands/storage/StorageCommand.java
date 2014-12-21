@@ -36,7 +36,7 @@ public final class StorageCommand extends AbstractCommand {
     public StorageCommand() {
         super();
 
-        registerSubCommand(ListSubCommand.class);
-        registerSubCommand(SetSubCommand.class);
+        registerCommand(ListSubCommand.class);
+        registerCommand(SetSubCommand.class);
     }
 }

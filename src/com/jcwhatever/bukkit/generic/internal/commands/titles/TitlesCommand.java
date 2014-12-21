@@ -36,10 +36,10 @@ public final class TitlesCommand extends AbstractCommand {
     public TitlesCommand() {
         super();
 
-        registerSubCommand(AddSubCommand.class);
-        registerSubCommand(DelSubCommand.class);
-        registerSubCommand(ListSubCommand.class);
-        registerSubCommand(ShowSubCommand.class);
+        registerCommand(AddSubCommand.class);
+        registerCommand(DelSubCommand.class);
+        registerCommand(ListSubCommand.class);
+        registerCommand(ShowSubCommand.class);
     }
 }
 

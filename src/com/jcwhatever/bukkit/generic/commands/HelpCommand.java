@@ -70,7 +70,7 @@ public class HelpCommand extends AbstractCommand {
 
         for (AbstractCommand cmd : getCommandHandler().getCommands()) {
 
-            if (cmd.getSubCommands().size() > 0) {
+            if (cmd.getCommands().size() > 0) {
                 categories.add(cmd);
                 continue;
             }
