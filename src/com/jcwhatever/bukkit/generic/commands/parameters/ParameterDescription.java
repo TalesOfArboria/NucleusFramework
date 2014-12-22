@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.commands.parameters;
 
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
@@ -128,7 +129,7 @@ public class ParameterDescription implements IPluginOwned {
             PAGE_FORMATTER
     );
 
-    private final Plugin _plugin;
+    private final AbstractCommand _command;
     private final String _parameterName;
     private final String _description;
 
@@ -138,14 +139,14 @@ public class ParameterDescription implements IPluginOwned {
      * @param parameterName  The parameter name.
      * @param description    The parameter description.
      */
-    public ParameterDescription(Plugin plugin, String parameterName, String description) {
-        PreCon.notNull(plugin);
+    public ParameterDescription(AbstractCommand command, String parameterName, String description) {
+        PreCon.notNull(command);
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(description);
 
-        _plugin = plugin;
+        _command = command;
         _parameterName = parameterName;
-        _description = _textFormatter.format(Lang.get(plugin, description));
+        _description = _textFormatter.format(Lang.get(command.getPlugin(), description));
     }
 
     /**
@@ -153,21 +154,23 @@ public class ParameterDescription implements IPluginOwned {
      *
      * @param rawDescription  The raw description to parse.
      */
-    public ParameterDescription(Plugin plugin, String rawDescription) {
-        PreCon.notNull(plugin);
+    public ParameterDescription(AbstractCommand command, String rawDescription) {
+        PreCon.notNull(command);
+        PreCon.notNullOrEmpty(rawDescription);
 
-        _plugin = plugin;
+        _command = command;
 
         String[] descComp = TextUtils.PATTERN_EQUALS.split(rawDescription, -1);
 
         _parameterName = descComp[0].trim();
 
         if (descComp.length < 2) {
-            throw new RuntimeException("Invalid description for parameter '" + _parameterName + '\'');
+            throw new RuntimeException("Invalid description for parameter '"
+                    + _parameterName + "' in command: " + command.getClass().getName());
         }
 
         // re-add equal characters that may have been in the description.
-        _description = _textFormatter.format(Lang.get(plugin, TextUtils.concat(1, descComp, "=")));
+        _description = _textFormatter.format(Lang.get(command.getPlugin(), TextUtils.concat(1, descComp, "=")));
     }
 
     /**
@@ -175,7 +178,7 @@ public class ParameterDescription implements IPluginOwned {
      */
     @Override
     public Plugin getPlugin() {
-        return _plugin;
+        return _command.getPlugin();
     }
 
     /**
@@ -191,5 +194,11 @@ public class ParameterDescription implements IPluginOwned {
     @Localized
     public String getDescription() {
         return _description;
+    }
+
+    @Override
+    @Localized
+    public String toString() {
+        return getDescription();
     }
 }

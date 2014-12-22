@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.commands.parameters;
 
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfoContainer;
 import com.jcwhatever.bukkit.generic.commands.arguments.ArgumentValueType;
 import com.jcwhatever.bukkit.generic.language.Localized;
@@ -44,18 +45,20 @@ import javax.annotation.Nullable;
  */
 public class ParameterDescriptions implements IPluginOwned {
 
-    private final Plugin _plugin;
+    private final AbstractCommand _command;
     private final CommandInfoContainer _commandInfo;
     private Map<String, ParameterDescription> _descriptionMap = null;
 
     /**
      * Constructor.
      *
-     * @param commandInfo  The container for the commands info annotation.
+     * @param command  The command to get parameter descriptions from..
      */
-    public ParameterDescriptions(Plugin plugin, CommandInfoContainer commandInfo) {
-        _plugin = plugin;
-        _commandInfo = commandInfo;
+    public ParameterDescriptions(AbstractCommand command) {
+        PreCon.notNull(command);
+
+        _command = command;
+        _commandInfo = command.getInfo();
 
         parseDescriptions();
     }
@@ -65,7 +68,7 @@ public class ParameterDescriptions implements IPluginOwned {
      */
     @Override
     public Plugin getPlugin() {
-        return _plugin;
+        return _command.getPlugin();
     }
 
     /**
@@ -115,7 +118,7 @@ public class ParameterDescriptions implements IPluginOwned {
         if (description != null)
             return description;
 
-        return new ParameterDescription(_plugin, parameterName,
+        return new ParameterDescription(_command, parameterName,
                 ArgumentValueType.getDescription(parameterName, valueType, params));
     }
 
@@ -135,7 +138,7 @@ public class ParameterDescriptions implements IPluginOwned {
         if (description != null)
             return description;
 
-        return new ParameterDescription(_plugin, parameterName,
+        return new ParameterDescription(_command, parameterName,
                 ArgumentValueType.getEnumDescription(enumClass));
     }
 
@@ -155,7 +158,7 @@ public class ParameterDescriptions implements IPluginOwned {
         if (description != null)
             return description;
 
-        return new ParameterDescription(_plugin, parameterName,
+        return new ParameterDescription(_command, parameterName,
                 ArgumentValueType.getEnumDescription(validEnumValues));
     }
 
@@ -176,7 +179,7 @@ public class ParameterDescriptions implements IPluginOwned {
         if (description != null)
             return description;
 
-        return new ParameterDescription(_plugin, parameterName,
+        return new ParameterDescription(_command, parameterName,
                 ArgumentValueType.getEnumDescription(validEnumValues));
     }
 
@@ -190,7 +193,7 @@ public class ParameterDescriptions implements IPluginOwned {
 
         for (String desc : descriptions) {
 
-            ParameterDescription description = new ParameterDescription(_plugin, desc);
+            ParameterDescription description = new ParameterDescription(_command, desc);
 
             _descriptionMap.put(description.getName(), description);
         }

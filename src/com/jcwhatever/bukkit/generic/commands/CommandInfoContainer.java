@@ -47,6 +47,7 @@ import javax.annotation.Nullable;
  */
 public class CommandInfoContainer {
 
+    private final AbstractCommand _command;
     private final CommandInfo _commandInfo;
     private final AbstractCommand _rootCommand;
     private final Plugin _plugin;
@@ -64,17 +65,18 @@ public class CommandInfoContainer {
      * Constructor.
      *
      * @param plugin       The commands owning plugin.
-     * @param commandInfo  The command info annotation.
+     * @param command      The command to get annotation info from.
      * @param rootCommand  The commands root command.
      */
-    public CommandInfoContainer(Plugin plugin, CommandInfo commandInfo, @Nullable AbstractCommand rootCommand) {
+    public CommandInfoContainer(Plugin plugin, AbstractCommand command, @Nullable AbstractCommand rootCommand) {
         PreCon.notNull(plugin);
-        PreCon.notNull(commandInfo);
+        PreCon.notNull(command);
 
         _plugin = plugin;
-        _commandInfo = commandInfo;
+        _command = command;
+        _commandInfo = command.getClass().getAnnotation(CommandInfo.class);
         _rootCommand = rootCommand;
-        _usage = commandInfo.usage();
+        _usage = _commandInfo.usage();
 
         _parameterNames = new HashSet<>(
                 getRawStaticParams().length + getRawFloatingParams().length + getRawFlagParams().length);
@@ -82,8 +84,6 @@ public class CommandInfoContainer {
         _staticParameters = toCommandParameters(getRawStaticParams());
         _floatingParameters = toCommandParameters(getRawFloatingParams());
         _flags = toFlagParameters(getRawFlagParams());
-
-        _descriptions = new ParameterDescriptions(plugin, this);
     }
 
     /**
@@ -227,6 +227,10 @@ public class CommandInfoContainer {
      * Get parameter descriptions.
      */
     public ParameterDescriptions getParamDescriptions() {
+        if (_descriptions == null) {
+            _descriptions = new ParameterDescriptions(_command);
+        }
+
         return _descriptions;
     }
 
