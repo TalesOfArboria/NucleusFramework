@@ -44,26 +44,26 @@ import org.bukkit.entity.Player;
 public abstract class CommandException extends Exception {
 
     @Localizable static final String _TOO_MANY_ARGS =
-            "Too many arguments. Type '{0: usage}' for help.";
+            "{RED}Too many arguments. Type '{0: usage}' for help.";
 
     @Localizable static final String _INVALID_COMMAND_SENDER =
-            "Cannot execute command as {0: command sender type}.";
+            "{RED}Cannot execute command as {0: command sender type}.";
 
     @Localizable static final String _DUPLICATE_ARGUMENT =
-            "Duplicate argument detected for parameter named '{0: parameter name}'.";
+            "{RED}Duplicate argument detected for parameter named '{0: parameter name}'.";
 
     @Localizable static final String _MISSING_REQUIRED_ARGUMENT =
-            "Parameter '{0: parameter name}' is required. Type '{1: usage}' for help.";
+            "{RED}Parameter '{0: parameter name}' is required. Type '{1: usage}' for help.";
 
     @Localizable static final String _INVALID_PARAMETER =
-            "'{0: parameter name}' is not a valid parameter. Type '{1: usage} for help.";
+            "{RED}'{0: parameter name}' is not a valid parameter. Type '{1: usage} for help.";
 
     @Localizable static final String _INVALID_FLAG =
-            "'{0: flag name}' is not a valid flag. Type '{1: usage}' for help.";
+            "{RED}'{0: flag name}' is not a valid flag. Type '{1: usage}' for help.";
 
     @Localizable static final String _INVALID_ARGUMENT =
-            "Invalid argument for parameter '{0: parameter name}'. " +
-                    "Type '{1: usage} for help.\n{WHITE}Parameter description: {GRAY}{2: description}";
+            "{RED}Invalid argument for parameter '{0: parameter name}'. " +
+                    "Type '{1: usage}' for help.\n{WHITE}Parameter description: {GRAY}{2: description}";
 
     @Localizable static final String _INVALID_ARGUMENT_NO_DESCRIPTION =
             "Invalid argument for parameter '{0: parameter name}'. Type '{1: usage} for help.";

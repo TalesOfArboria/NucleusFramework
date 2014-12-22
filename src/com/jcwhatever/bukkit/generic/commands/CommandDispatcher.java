@@ -60,13 +60,13 @@ import javax.annotation.Nullable;
 public class CommandDispatcher implements
         CommandExecutor, TabCompleter, ICommandOwner, IPluginOwned {
 
-    @Localizable static final String _ACCESS_DENIED = "Access denied.";
+    @Localizable static final String _ACCESS_DENIED = "{RED}Access denied.";
 
     @Localizable static final String _COMMAND_INCOMPLETE =
-            "Command incomplete. Type '{0: usage}' for help.";
+            "{RED}Command incomplete. Type '{0: usage}' for help.";
 
     @Localizable static final String _COMMAND_NOT_FOUND =
-            "Command not found. Type '{0: usage}' for help.";
+            "{RED}Command not found. Type '{0: usage}' for help.";
 
 
     private final Plugin _plugin;
