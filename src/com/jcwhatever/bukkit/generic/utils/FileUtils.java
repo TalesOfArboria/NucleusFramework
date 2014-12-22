@@ -200,22 +200,7 @@ public final class FileUtils {
         if (input == null)
             return null;
 
-        StringBuilder result = new StringBuilder(250);
-
-        Scanner scanner = new Scanner(input, charSet.name());
-
-        while (scanner.hasNextLine()) {
-            result.append(scanner.nextLine());
-            result.append('\n');
-        }
-
-        try {
-            input.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return result.toString();
+        return scanTextFile(input, charSet, 50);
     }
 
 
@@ -243,7 +228,24 @@ public final class FileUtils {
         if (input == null)
             return null;
 
-        StringBuilder result = new StringBuilder((int)file.length());
+        return scanTextFile(input, charSet, (int)file.length());
+    }
+
+    /**
+     * Get text file contents from a stream.
+     *
+     * @param input              The input stream to scan
+     * @param charSet            The encoding type used by the text file.
+     * @param initialBufferSize  The initial size of the buffer.
+     *
+     * @throws java.lang.IllegalArgumentException
+     */
+    @Nullable
+    public static String scanTextFile(InputStream input, Charset charSet, int initialBufferSize) {
+        PreCon.notNull(input);
+        PreCon.notNull(charSet);
+
+        StringBuilder result = new StringBuilder(initialBufferSize);
 
         Scanner scanner = new Scanner(input, charSet.name());
 
