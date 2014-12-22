@@ -25,9 +25,10 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
-import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
+import com.jcwhatever.bukkit.generic.modules.JarModuleLoaderSettings.IClassNameFactory;
 import com.jcwhatever.bukkit.generic.utils.FileUtils;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
+import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.io.File;
@@ -36,6 +37,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,17 +51,19 @@ import javax.annotation.Nullable;
 /**
  * Loads jar file modules.
  */
-public class JarModuleLoader<T> {
+public abstract class JarModuleLoader<T> {
 
     private final File _moduleFolder;
     private final Class<T> _moduleClass;
     private final DirectoryTraversal _directoryTraversal;
 
+    protected ClassLoadMethod _classLoadMethod;
     private IModuleFactory<T> _moduleFactory;
     private IModuleInfoFactory<T> _moduleInfoFactory;
     private IEntryValidator<String> _classValidator;
     private IEntryValidator<Class<T>> _typeValidator;
     private IEntryValidator<JarFile> _jarValidator;
+    private IClassNameFactory<T> _classNameFactory;
 
     private Set<String> _loadedClasses = new HashSet<>(1000);
 
@@ -86,26 +90,14 @@ public class JarModuleLoader<T> {
         _moduleClass = moduleClass;
         _moduleFolder = settings.getModuleFolder();
         _directoryTraversal = settings.getDirectoryTraversal();
+        _classLoadMethod = settings.getClassLoadMethod();
+        _classNameFactory = settings.getClassNameFactory();
 
-        _moduleFactory = settings.getModuleFactory() != null
-                ? settings.getModuleFactory()
-                : getDefaultModuleFactory();
-
-        _moduleInfoFactory = settings.getModuleInfoFactory() != null
-                ? settings.getModuleInfoFactory()
-                : getDefaultModuleInfoFactory();
-
-        _jarValidator = settings.getJarValidator() != null
-                ? settings.getJarValidator()
-                : getDefaultJarValidator();
-
-        _classValidator = settings.getClassValidator() != null
-                ? settings.getClassValidator()
-                : getDefaultClassValidator();
-
-        _typeValidator = settings.getTypeValidator() != null
-                ? settings.getTypeValidator()
-                : getDefaultTypeValidator();
+        _moduleFactory = settings.getModuleFactory();
+        _moduleInfoFactory = settings.getModuleInfoFactory();
+        _jarValidator = settings.getJarValidator();
+        _classValidator = settings.getClassValidator();
+        _typeValidator = settings.getTypeValidator();
     }
 
     /**
@@ -163,6 +155,17 @@ public class JarModuleLoader<T> {
     }
 
     /**
+     * Get the factory used to retrieve a class name to
+     * load for a jar file.
+     *
+     * @return  Null if not set.
+     */
+    @Nullable
+    public IClassNameFactory<T> getClassNameFactory() {
+        return _classNameFactory;
+    }
+
+    /**
      * Get the type validator being used to validate
      * a class type.
      */
@@ -199,7 +202,7 @@ public class JarModuleLoader<T> {
             return null;
 
         @SuppressWarnings("unchecked")
-         I result = (I)_moduleInfo.get(module);
+        I result = (I)_moduleInfo.get(module);
 
         return result;
     }
@@ -210,7 +213,16 @@ public class JarModuleLoader<T> {
      */
     public void loadModules() {
 
-        List<Class<T>> moduleClasses = getModuleClasses();
+        List<File> files = FileUtils.getFiles(getModuleFolder(), getDirectoryTraversal(),
+                new IEntryValidator<File>() {
+
+                    @Override
+                    public boolean isValid(File entry) {
+                        return entry.getName().endsWith(".jar");
+                    }
+                });
+
+        List<Class<T>> moduleClasses = getModuleClasses(files);
 
         if (moduleClasses.isEmpty())
             return;
@@ -221,7 +233,7 @@ public class JarModuleLoader<T> {
             T instance;
 
             try {
-                instance = getModuleFactory().create(clazz);
+                instance = getModuleFactory().create(clazz, this);
             } catch (InstantiationException e) {
                 e.printStackTrace();
                 continue;
@@ -239,78 +251,12 @@ public class JarModuleLoader<T> {
             if (instance == null)
                 continue;
 
-            IModuleInfo moduleInfo = getModuleInfoFactory().create(instance);
+            IModuleInfo moduleInfo = getModuleInfoFactory().create(instance, this);
             if (moduleInfo == null)
                 continue;
 
             addModule(moduleInfo, instance);
         }
-    }
-
-    /**
-     * Get a new instance of the default class validator.
-     */
-    public IEntryValidator<String> getDefaultClassValidator() {
-
-        return new IEntryValidator<String>() {
-            @Override
-            public boolean isValid(String entry) {
-                return true;
-            }
-        };
-    }
-
-    /**
-     * Get a new instance of the default type validator.
-     */
-    public IEntryValidator<Class<T>> getDefaultTypeValidator() {
-
-        return new IEntryValidator<Class<T>>() {
-            @Override
-            public boolean isValid(Class<T> entry) {
-                return true;
-            }
-        };
-    }
-
-    /**
-     * Get a new instance of the default jar validator.
-     */
-    public IEntryValidator<JarFile> getDefaultJarValidator() {
-
-        return new IEntryValidator<JarFile>() {
-            @Override
-            public boolean isValid(JarFile entry) {
-                return true;
-            }
-        };
-    }
-
-    /**
-     * Get a new instance of the default module factory.
-     */
-    public IModuleFactory<T> getDefaultModuleFactory() {
-
-        return new IModuleFactory<T>() {
-            @Override
-            public T create(Class<T> clazz)
-                    throws IllegalAccessException, InstantiationException {
-                return clazz.newInstance();
-            }
-        };
-    }
-
-    /**
-     * Get a new instance of the default module info factory.
-     */
-    public IModuleInfoFactory<T> getDefaultModuleInfoFactory() {
-
-        return new IModuleInfoFactory<T>() {
-            @Override
-            public IModuleInfo create(T module) {
-                return new SimpleModuleInfo(module.getClass().getCanonicalName());
-            }
-        };
     }
 
     /**
@@ -339,16 +285,7 @@ public class JarModuleLoader<T> {
      * Get all module classes from jar files in
      * the modules folder.
      */
-    protected List<Class<T>> getModuleClasses() {
-
-        List<File> files = FileUtils.getFiles(getModuleFolder(), getDirectoryTraversal(),
-                new IEntryValidator<File>() {
-
-                    @Override
-                    public boolean isValid(File entry) {
-                        return entry.getName().endsWith(".jar");
-                    }
-                });
+    protected List<Class<T>> getModuleClasses(Collection<File> files) {
 
         if (files.isEmpty())
             return new ArrayList<>(0);
@@ -357,17 +294,38 @@ public class JarModuleLoader<T> {
 
         for (File file : files) {
 
-            List<Class<T>> modules;
+            switch (_classLoadMethod) {
 
-            // get module classes from jar file
-            try {
-                modules = getModuleClasses(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-                continue;
+                case DIRECT:
+                    Class<T> module;
+                    try {
+                        module = getModuleClass(file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+
+                    if (module != null)
+                        results.add(module);
+
+                    break;
+
+                case SEARCH:
+                    List<Class<T>> modules;
+                    // get module classes from jar file
+                    try {
+                        modules = searchModuleClasses(file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+
+                    results.addAll(modules);
+                    break;
+
+                default:
+                    throw new AssertionError();
             }
-
-            results.addAll(modules);
         }
 
         return results;
@@ -381,7 +339,7 @@ public class JarModuleLoader<T> {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    protected List<Class<T>> getModuleClasses(File file) throws IOException {
+    protected List<Class<T>> searchModuleClasses(File file) throws IOException {
 
         List<Class<T>> moduleClasses = _moduleClassMap.get(file.getAbsolutePath());
         if (moduleClasses != null)
@@ -390,18 +348,19 @@ public class JarModuleLoader<T> {
         JarFile jarFile = new JarFile(file);
 
         // validate jar file
-        if (!_jarValidator.isValid(jarFile))
+        if (!getJarValidator().isValid(jarFile))
             return new ArrayList<>(0);
 
         Enumeration<JarEntry> entries = jarFile.entries();
 
         URL[] urls = { new URL("jar:file:" + file + "!/") };
 
+        // a search loader to be discarded when the search is complete
         URLClassLoader classLoader = URLClassLoader.newInstance(urls, getClass().getClassLoader());
 
         // set to cache class names, if a module is found
         // these are added to _loadedClasses set.
-        Set<String> classNames = new HashSet<>(10);
+        Set<String> searchResults = new HashSet<>(10);
 
         moduleClasses = new ArrayList<>(10);
 
@@ -433,7 +392,7 @@ public class JarModuleLoader<T> {
                 continue;
             }
 
-            classNames.add(className);
+            searchResults.add(className);
 
             // check if type is a module
             if (getModuleClass().isAssignableFrom(c)) {
@@ -459,9 +418,83 @@ public class JarModuleLoader<T> {
         _moduleClassMap.put(file.getAbsolutePath(), moduleClasses);
 
         // add class names to prevent reloading
-        _loadedClasses.addAll(classNames);
+        _loadedClasses.addAll(searchResults);
 
         return moduleClasses;
     }
 
+
+    /**
+     * Find a specific module class in the specified jar file.
+     *
+     * @param file  The jar file to search in.
+     *
+     * @return  Null if class not found.
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    @Nullable
+    protected Class<T> getModuleClass(File file) throws IOException {
+        PreCon.notNull(file);
+        assert getClassNameFactory() != null;
+
+        JarFile jarFile = new JarFile(file);
+
+        // validate jar file
+        if (!getJarValidator().isValid(jarFile))
+            return null;
+
+        String className = getClassNameFactory().getClassName(jarFile, this);
+        if (className == null)
+            return null;
+
+        return getModuleClass(jarFile, className);
+    }
+
+
+    /**
+     * Find a specific module class in the specified jar file.
+     *
+     * @param jarFile    The jar file to search in.
+     * @param className  The module class name.
+     *
+     * @return  Null if class not found.
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    @Nullable
+    protected Class<T> getModuleClass(JarFile jarFile, String className) throws IOException {
+        PreCon.notNull(jarFile);
+
+        // validate the class before loading it
+        if (!getClassValidator().isValid(className))
+            return null;
+
+        URL[] urls = { new URL("jar:file:" + jarFile.getName() + "!/") };
+
+        URLClassLoader classLoader = URLClassLoader.newInstance(urls, getClass().getClassLoader());
+
+        Class<?> c;
+        try {
+            c = classLoader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        // check if type is a module
+        if (!getModuleClass().isAssignableFrom(c)) {
+            return null;
+        }
+
+        // add class names to prevent reloading
+        _loadedClasses.add(className);
+
+        @SuppressWarnings("unchecked")
+        Class<T> result = (Class<T>)c;
+
+        return result;
+    }
 }

@@ -40,13 +40,15 @@ import javax.annotation.Nullable;
 public class JarModuleLoaderSettings<T> {
 
     private File _moduleFolder;
-    private DirectoryTraversal _directoryTraversal;
+    private DirectoryTraversal _directoryTraversal = DirectoryTraversal.NONE;
+    private ClassLoadMethod _classLoadMethod = ClassLoadMethod.SEARCH;
 
     private IModuleInfoFactory<T> _moduleInfoFactory;
     private IModuleFactory<T> _moduleFactory;
     private IEntryValidator<String> _classValidator;
     private IEntryValidator<Class<T>> _typeValidator;
     private IEntryValidator<JarFile> _jarValidator;
+    private IClassNameFactory<T> _classNameFactory;
 
     private boolean _isSealed;
 
@@ -64,65 +66,79 @@ public class JarModuleLoaderSettings<T> {
 
     /**
      * Get the directory traversal used to find jar files.
-     *
-     * <p>Required.</p>
-     *
-     * @return  Null if the value has not been set yet.
      */
-    @Nullable
     public DirectoryTraversal getDirectoryTraversal() {
         return _directoryTraversal;
     }
 
     /**
+     * Get the method used to load classes from jar files.
+     */
+    public ClassLoadMethod getClassLoadMethod() {
+        return _classLoadMethod;
+    }
+
+    /**
+     * Get the factory used to provide the class name to
+     * load from a jar file when the {@code ClassLoadMethod}
+     * is set to {@code DIRECT}.
+     */
+    @Nullable
+    public IClassNameFactory<T> getClassNameFactory() {
+        return _classNameFactory;
+    }
+
+    /**
      * Get the module info factory used to retrieve and
      * instantiate info about the module.
-     *
-     * @return  Null if the value has not been set yet.
      */
     public IModuleInfoFactory<T> getModuleInfoFactory() {
+        if (_moduleInfoFactory == null)
+            _moduleInfoFactory = getDefaultModuleInfoFactory();
+
         return _moduleInfoFactory;
     }
 
     /**
      * Get the module factory used to instantiate the module
      * instances.
-     *
-     * @return  Null to use the default module factory.
      */
-    @Nullable
     public IModuleFactory<T> getModuleFactory() {
+        if (_moduleFactory == null)
+            _moduleFactory = getDefaultModuleFactory();
+
         return _moduleFactory;
     }
 
     /**
      * Get the validator used to validate a class name
      * before it is loaded.
-     *
-     * @return  Null to use the default class validator.
      */
     public IEntryValidator<String> getClassValidator() {
+        if (_classValidator == null)
+            _classValidator = getDefaultClassValidator();
+
         return _classValidator;
     }
 
     /**
      * Get the validator used to validate a module class.
-     *
-     * @return  Null to use the default type validator.
      */
-    @Nullable
     public IEntryValidator<Class<T>> getTypeValidator() {
+        if (_typeValidator == null)
+            _typeValidator = getDefaultTypeValidator();
+
         return _typeValidator;
     }
 
     /**
      * Get the validator used to validate jar files
      * found in the module folder.
-     *
-     * @return  Null to use the default jar validator.
      */
-    @Nullable
     public IEntryValidator<JarFile> getJarValidator() {
+        if (_jarValidator == null)
+            _jarValidator = getDefaultJarValidator();
+
         return _jarValidator;
     }
 
@@ -157,6 +173,36 @@ public class JarModuleLoaderSettings<T> {
         checkSealed();
 
         _directoryTraversal = directoryTraversal;
+    }
+
+    /**
+     * Set how classes are loaded from jar files.
+     *
+     * <p>Required setting.</p>
+     *
+     * @param loadMethod  The method to use.
+     */
+    public void setClassLoadMethod(ClassLoadMethod loadMethod) {
+        PreCon.notNull(loadMethod);
+
+        checkSealed();
+
+        _classLoadMethod = loadMethod;
+    }
+
+    /**
+     * Set the factory that provides the class name to load
+     * from a jar file when the {@code ClassLoadMethod} is set
+     * to {@code DIRECT}.
+     *
+     * @param classNameFactory  The class name factory.
+     */
+    public void setClassNameFactory(IClassNameFactory<T> classNameFactory) {
+        PreCon.notNull(classNameFactory);
+
+        checkSealed();
+
+        _classNameFactory = classNameFactory;
     }
 
     /**
@@ -222,6 +268,73 @@ public class JarModuleLoaderSettings<T> {
         _jarValidator = jarValidator;
     }
 
+
+    /**
+     * Get a new instance of the default class validator.
+     */
+    protected IEntryValidator<String> getDefaultClassValidator() {
+
+        return new IEntryValidator<String>() {
+            @Override
+            public boolean isValid(String entry) {
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Get a new instance of the default type validator.
+     */
+    protected IEntryValidator<Class<T>> getDefaultTypeValidator() {
+
+        return new IEntryValidator<Class<T>>() {
+            @Override
+            public boolean isValid(Class<T> entry) {
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Get a new instance of the default jar validator.
+     */
+    protected IEntryValidator<JarFile> getDefaultJarValidator() {
+
+        return new IEntryValidator<JarFile>() {
+            @Override
+            public boolean isValid(JarFile entry) {
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Get a new instance of the default module factory.
+     */
+    protected IModuleFactory<T> getDefaultModuleFactory() {
+
+        return new IModuleFactory<T>() {
+            @Override
+            public T create(Class<T> clazz, JarModuleLoader<T> loader)
+                    throws IllegalAccessException, InstantiationException {
+                return clazz.newInstance();
+            }
+        };
+    }
+
+    /**
+     * Get a new instance of the default module info factory.
+     */
+    protected IModuleInfoFactory<T> getDefaultModuleInfoFactory() {
+
+        return new IModuleInfoFactory<T>() {
+            @Override
+            public IModuleInfo create(T module, JarModuleLoader<T> loader) {
+                return new SimpleModuleInfo(module.getClass().getCanonicalName());
+            }
+        };
+    }
+
     private void checkSealed() {
         if (_isSealed)
             throw new IllegalStateException("Cannot modify JarModuleLoaderSettings after it has been used.");
@@ -230,11 +343,31 @@ public class JarModuleLoaderSettings<T> {
     void seal() {
         _isSealed = true;
 
-        if (_moduleFolder == null)
+        if (getModuleFolder() == null)
             throw new IllegalStateException("Module folder is required but not set.");
 
-        if (_directoryTraversal == null)
-            throw new IllegalStateException("Directory Traversal is required but not set.");
-
+        if (getClassLoadMethod() == ClassLoadMethod.DIRECT && getClassNameFactory() == null)
+            throw new IllegalStateException("A class name factory is required when the class " +
+                    "load method is set to DIRECT.");
     }
+
+    /**
+     * Represents an object that provides class names based
+     * on a provided jar file.
+     */
+    public static interface IClassNameFactory<T> {
+
+        /**
+         * Get the name of the class that should be loaded
+         * from the specified file.
+         *
+         * @param jarFile  The jar file to get a class name for.
+         * @param loader   The module loader that needs the class name.
+         *
+         * @return  Null to cancel loading of jar file.
+         */
+        @Nullable
+        String getClassName(JarFile jarFile, JarModuleLoader<T> loader);
+    }
+
 }

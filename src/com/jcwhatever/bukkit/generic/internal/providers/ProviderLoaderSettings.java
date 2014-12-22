@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.internal.providers;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.modules.IModuleFactory;
+import com.jcwhatever.bukkit.generic.modules.JarModuleLoader;
 import com.jcwhatever.bukkit.generic.modules.JarModuleLoaderSettings;
 import com.jcwhatever.bukkit.generic.providers.IProvider;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
@@ -52,7 +53,7 @@ public final class ProviderLoaderSettings extends JarModuleLoaderSettings<IProvi
 
                 @Nullable
                 @Override
-                public IProvider create(Class<IProvider> clazz)
+                public IProvider create(Class<IProvider> clazz, JarModuleLoader<IProvider> loader)
                         throws InstantiationException, IllegalAccessException,
                         NoSuchMethodException, InvocationTargetException {
 

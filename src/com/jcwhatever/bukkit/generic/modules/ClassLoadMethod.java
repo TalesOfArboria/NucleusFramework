@@ -24,31 +24,19 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
-import java.lang.reflect.InvocationTargetException;
-import javax.annotation.Nullable;
-
 /**
- * Module factory interface.
- *
- * @param <T>  Module type.
+ * Specifies how classes are loaded from a jar file.
  */
-public interface IModuleFactory<T> {
-
+public enum ClassLoadMethod {
     /**
-     * Create a new instance of a module.
-     *
-     * @param clazz   The module class.
-     * @param loader  The module loader that needs the class instantiated.
-     *
-     * @return  Null if failed or to cancel loading of module.
-     *
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * The class to load is already known and
+     * can be directly loaded.
      */
-    @Nullable
-    T create(Class<T> clazz, JarModuleLoader<T> loader)
-            throws InstantiationException, IllegalAccessException,
-            NoSuchMethodException, InvocationTargetException;
+    DIRECT,
+    /**
+     * The class to load is unknown and must
+     * be searched for in the jar. There may be multiple
+     * results.
+     */
+    SEARCH
 }

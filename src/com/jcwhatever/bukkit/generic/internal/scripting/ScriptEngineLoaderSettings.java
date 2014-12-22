@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.internal.scripting;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.modules.IModuleFactory;
+import com.jcwhatever.bukkit.generic.modules.JarModuleLoader;
 import com.jcwhatever.bukkit.generic.modules.JarModuleLoaderSettings;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 
@@ -51,7 +52,8 @@ public final class ScriptEngineLoaderSettings extends JarModuleLoaderSettings<Sc
         setModuleFactory(new IModuleFactory<ScriptEngineFactory>() {
             @Nullable
             @Override
-            public ScriptEngineFactory create(Class<ScriptEngineFactory> clazz)
+            public ScriptEngineFactory create(Class<ScriptEngineFactory> clazz,
+                                              JarModuleLoader<ScriptEngineFactory> loader)
                     throws InstantiationException, IllegalAccessException,
                     NoSuchMethodException, InvocationTargetException {
 

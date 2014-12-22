@@ -39,9 +39,10 @@ public interface IModuleInfoFactory<T> {
      * module.
      *
      * @param moduleInstance  The module instance.
+     * @param loader          The module loader that needs the module info.
      *
      * @return  Null if failed or to cancel loading the module.
      */
     @Nullable
-    IModuleInfo create(T moduleInstance);
+    IModuleInfo create(T moduleInstance, JarModuleLoader<T> loader);
 }
