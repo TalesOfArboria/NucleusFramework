@@ -38,10 +38,10 @@ import java.util.List;
 public class UsageGenerator {
 
     @Localizable public static final String HELP_USAGE =
-            "/{0: root command}{1: command path}{2: command}{3: parameters}";
+            "{GOLD}/{0: root command}{1: command path}{GREEN}{2: command}{DARK_AQUA}{3: parameters}";
 
     @Localizable public static final String HELP_USAGE_HAS_SUB_COMMANDS =
-            "{GOLD}/{0: root command}{GREEN}{1: command path}{2: command}?";
+            "{GOLD}/{0: root command}{1: command path}{GREEN}{2: command}?";
 
     @Localizable public static final String PARAMETER_HELP =
             "{GRAY}/{0: root command}{1: command path}{2: command}{GOLD}{3: parameters}";
