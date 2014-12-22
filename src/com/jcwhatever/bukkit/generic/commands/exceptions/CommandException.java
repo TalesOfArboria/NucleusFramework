@@ -66,7 +66,7 @@ public abstract class CommandException extends Exception {
                     "Type '{1: usage}' for help.\n{WHITE}Parameter description: {GRAY}{2: description}";
 
     @Localizable static final String _INVALID_ARGUMENT_NO_DESCRIPTION =
-            "Invalid argument for parameter '{0: parameter name}'. Type '{1: usage} for help.";
+            "{RED}Invalid argument for parameter '{0: parameter name}'. Type '{1: usage} for help.";
 
     /**
      * Throw an invalid argument exception.
