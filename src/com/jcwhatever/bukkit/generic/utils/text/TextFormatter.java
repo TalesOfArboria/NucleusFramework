@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.utils.text;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,33 @@ public class TextFormatter {
     private final Map<String, ITagFormatter> _formatters = new HashMap<>(20);
     private final StringBuilder _textBuffer = new StringBuilder(100);
     private final StringBuilder _tagBuffer = new StringBuilder(25);
+
+    /**
+     * Constructor.
+     */
+    public TextFormatter(){}
+
+    /**
+     * Constructor.
+     *
+     * @param formatters  A collection of formatters to include.
+     */
+    public TextFormatter(Collection<? extends ITagFormatter> formatters) {
+        for (ITagFormatter formatter : formatters) {
+            _formatters.put(formatter.getTag(), formatter);
+        }
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param formatters  The formatters to include.
+     */
+    public TextFormatter(ITagFormatter... formatters) {
+        for (ITagFormatter formatter : formatters) {
+            _formatters.put(formatter.getTag(), formatter);
+        }
+    }
 
     /**
      * Get a default tag formatter by case sensitive tag.
