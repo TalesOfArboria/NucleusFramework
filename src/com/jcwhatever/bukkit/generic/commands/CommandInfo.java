@@ -113,8 +113,24 @@ public @interface CommandInfo {
     String[] paramDescriptions() default {};
 
     /**
-     * Give usage instructions for the command
-     * i.e "/pv command <parameter1> [parameter2]"
+     * Optional usage instructions for the command. This is normally
+     * auto generated. You can override the auto-generated usage by providing
+     * a template or hardcoded usage.
+     *
+     * <p>A template has markers that define where to insert text as well
+     * as colors. See {@link com.jcwhatever.bukkit.generic.utils.text.TextUtils#format}.</p>
+     *
+     * <p>The following are the format markers used in a template:</p>
+     *
+     * <ul>
+     *     <li>{0} - root command name</li>
+     *     <li>{1} - command path excluding the root command and the command.</li>
+     *     <li>{2} - the command name</li>
+     *     <li>{3} - command parameters</li>
+     * </ul>
+     *
+     * Hardcode example: "/command subcommand <parameter1> [parameter2] [--floatingParam] [-flag]"
+     * Template example: "{GOLD}/{0}{GREEN}{1}{2}{BLUE}{3}"
      */
     String usage() default "";
 
