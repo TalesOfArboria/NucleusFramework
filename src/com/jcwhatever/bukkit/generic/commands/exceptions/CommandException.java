@@ -43,7 +43,7 @@ import org.bukkit.entity.Player;
  */
 public abstract class CommandException extends Exception {
 
-    @Localizable static final String _TO_MANY_ARGS =
+    @Localizable static final String _TOO_MANY_ARGS =
             "Too many arguments. Type '{0: usage}' for help.";
 
     @Localizable static final String _INVALID_COMMAND_SENDER =
@@ -116,7 +116,7 @@ public abstract class CommandException extends Exception {
         PreCon.notNull(command);
 
         throw new TooManyArgsException(
-                Lang.get(command.getPlugin(), _TO_MANY_ARGS, getInlineUsage(command))
+                Lang.get(command.getPlugin(), _TOO_MANY_ARGS, getInlineUsage(command))
         );
     }
 
