@@ -33,10 +33,11 @@ import java.lang.annotation.Target;
 
 
 /**
- * Indicates a static final {@code String} field is a candidate for localization.
+ * Indicates a static final {@code String} field or an annotation
+ * method that returns {@code String} is a candidate for localization.
  */
 @Documented
-@Target({ElementType.FIELD}) 
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Localizable {
 }

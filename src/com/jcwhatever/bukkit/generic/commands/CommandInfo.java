@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.commands;
 
+import com.jcwhatever.bukkit.generic.language.Localizable;
+
 import org.bukkit.permissions.PermissionDefault;
 
 import java.lang.annotation.ElementType;
@@ -140,11 +142,13 @@ public @interface CommandInfo {
     /**
      * A short description of the commands function
      */
+    @Localizable
     String description();
 
     /**
      * A longer description of the commands function
      */
+    @Localizable
     String longDescription() default "";
 
     /**
