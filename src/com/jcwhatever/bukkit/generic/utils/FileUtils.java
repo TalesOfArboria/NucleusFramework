@@ -184,14 +184,36 @@ public final class FileUtils {
     /**
      * Get a text file from a class resource.
      *
-     * @param cls           The class to get a resource stream from.
-     * @param resourcePath  The path of the file within the class jar file.
-     * @param charSet       The encoding type used by the text file.
+     * @param cls            The class to get a resource stream from.
+     * @param resourcePath   The path of the file within the class jar file.
+     * @param charSet        The encoding type used by the text file.
+     *
+     * @return  Null if resource not found.
      *
      * @throws java.lang.IllegalArgumentException
      */
     @Nullable
     public static String scanTextFile(Class<?> cls, String resourcePath, Charset charSet) {
+        return scanTextFile(cls, resourcePath, charSet, null);
+    }
+
+    /**
+     * Get a text file from a class resource.
+     *
+     * @param cls            The class to get a resource stream from.
+     * @param resourcePath   The path of the file within the class jar file.
+     * @param charSet        The encoding type used by the text file.
+     * @param lineValidator  Optional validator to use for each scanned line.
+     *                       Returning false excludes the line from the result.
+     *
+     * @return  Null if resource not found.
+     *
+     * @throws java.lang.IllegalArgumentException
+     */
+    @Nullable
+    public static String scanTextFile(Class<?> cls, String resourcePath,
+                                      Charset charSet,
+                                      @Nullable IEntryValidator<String> lineValidator) {
         PreCon.notNull(cls);
         PreCon.notNullOrEmpty(resourcePath);
         PreCon.notNull(charSet);
@@ -200,20 +222,42 @@ public final class FileUtils {
         if (input == null)
             return null;
 
-        return scanTextFile(input, charSet, 50);
+        return scanTextFile(input, charSet, 50, lineValidator);
     }
-
 
     /**
      * Get text file contents as a string.
      *
-     * @param file      The file to scan.
-     * @param charSet   The encoding type used by the text file.
+     * @param file           The file to scan.
+     * @param charSet        The encoding type used by the text file.
+     *
+     * @return  Null if file not found.
      *
      * @throws java.lang.IllegalArgumentException
      */
     @Nullable
     public static String scanTextFile(File file, Charset charSet) {
+        PreCon.notNull(file);
+        PreCon.notNull(charSet);
+
+        return scanTextFile(file, charSet, null);
+    }
+
+    /**
+     * Get text file contents as a string.
+     *
+     * @param file           The file to scan.
+     * @param charSet        The encoding type used by the text file.
+     * @param lineValidator  Optional validator to use for each scanned line.
+     *                       Returning false excludes the line from the result.
+     *
+     * @return  Null if file not found.
+     *
+     * @throws java.lang.IllegalArgumentException
+     */
+    @Nullable
+    public static String scanTextFile(File file, Charset charSet,
+                                      @Nullable IEntryValidator<String> lineValidator) {
         PreCon.notNull(file);
         PreCon.notNull(charSet);
 
@@ -228,7 +272,7 @@ public final class FileUtils {
         if (input == null)
             return null;
 
-        return scanTextFile(input, charSet, (int)file.length());
+        return scanTextFile(input, charSet, (int)file.length(), lineValidator);
     }
 
     /**
@@ -240,8 +284,27 @@ public final class FileUtils {
      *
      * @throws java.lang.IllegalArgumentException
      */
-    @Nullable
     public static String scanTextFile(InputStream input, Charset charSet, int initialBufferSize) {
+        PreCon.notNull(input);
+        PreCon.notNull(charSet);
+
+        return scanTextFile(input, charSet, initialBufferSize, null);
+    }
+
+    /**
+     * Get text file contents from a stream.
+     *
+     * @param input              The input stream to scan
+     * @param charSet            The encoding type used by the text file.
+     * @param initialBufferSize  The initial size of the buffer.
+     * @param lineValidator      Optional validator to use for each scanned line.
+     *                           Returning false excludes the line from the result.
+     *
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static String scanTextFile(InputStream input, Charset charSet,
+                                      int initialBufferSize,
+                                      @Nullable IEntryValidator<String> lineValidator) {
         PreCon.notNull(input);
         PreCon.notNull(charSet);
 
@@ -250,7 +313,13 @@ public final class FileUtils {
         Scanner scanner = new Scanner(input, charSet.name());
 
         while (scanner.hasNextLine()) {
-            result.append(scanner.nextLine());
+
+            String line = scanner.nextLine();
+
+            if (lineValidator != null && !lineValidator.isValid(line))
+                continue;
+
+            result.append(line);
             result.append('\n');
         }
 
