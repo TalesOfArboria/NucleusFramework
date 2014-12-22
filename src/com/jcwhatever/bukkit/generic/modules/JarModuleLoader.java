@@ -57,6 +57,7 @@ public class JarModuleLoader<T> {
 
     private IModuleFactory<T> _moduleFactory;
     private IModuleInfoFactory<T> _moduleInfoFactory;
+    private IEntryValidator<String> _classValidator;
     private IEntryValidator<Class<T>> _typeValidator;
     private IEntryValidator<JarFile> _jarValidator;
 
@@ -97,6 +98,10 @@ public class JarModuleLoader<T> {
         _jarValidator = settings.getJarValidator() != null
                 ? settings.getJarValidator()
                 : getDefaultJarValidator();
+
+        _classValidator = settings.getClassValidator() != null
+                ? settings.getClassValidator()
+                : getDefaultClassValidator();
 
         _typeValidator = settings.getTypeValidator() != null
                 ? settings.getTypeValidator()
@@ -147,6 +152,14 @@ public class JarModuleLoader<T> {
      */
     public IEntryValidator<JarFile> getJarValidator() {
         return _jarValidator;
+    }
+
+    /**
+     * Get the class validator being used to validate
+     * class names.
+     */
+    public IEntryValidator<String> getClassValidator() {
+        return _classValidator;
     }
 
     /**
@@ -232,6 +245,19 @@ public class JarModuleLoader<T> {
 
             addModule(moduleInfo, instance);
         }
+    }
+
+    /**
+     * Get a new instance of the default class validator.
+     */
+    public IEntryValidator<String> getDefaultClassValidator() {
+
+        return new IEntryValidator<String>() {
+            @Override
+            public boolean isValid(String entry) {
+                return true;
+            }
+        };
     }
 
     /**
@@ -395,6 +421,10 @@ public class JarModuleLoader<T> {
             if (_loadedClasses.contains(className))
                 continue;
 
+            // validate the class before loading it
+            if (!getClassValidator().isValid(className))
+                continue;
+
             Class<?> c;
             try {
                 c = classLoader.loadClass(className);
@@ -412,7 +442,7 @@ public class JarModuleLoader<T> {
                 Class<T> clazz = (Class<T>)c;
 
                 // validate type
-                if (_typeValidator.isValid(clazz)) {
+                if (getTypeValidator().isValid(clazz)) {
                     moduleClasses.add(clazz);
                 }
             }

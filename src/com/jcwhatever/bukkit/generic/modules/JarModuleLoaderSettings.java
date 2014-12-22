@@ -44,6 +44,7 @@ public class JarModuleLoaderSettings<T> {
 
     private IModuleInfoFactory<T> _moduleInfoFactory;
     private IModuleFactory<T> _moduleFactory;
+    private IEntryValidator<String> _classValidator;
     private IEntryValidator<Class<T>> _typeValidator;
     private IEntryValidator<JarFile> _jarValidator;
 
@@ -92,6 +93,16 @@ public class JarModuleLoaderSettings<T> {
     @Nullable
     public IModuleFactory<T> getModuleFactory() {
         return _moduleFactory;
+    }
+
+    /**
+     * Get the validator used to validate a class name
+     * before it is loaded.
+     *
+     * @return  Null to use the default class validator.
+     */
+    public IEntryValidator<String> getClassValidator() {
+        return _classValidator;
     }
 
     /**
@@ -169,6 +180,18 @@ public class JarModuleLoaderSettings<T> {
         checkSealed();
 
         _moduleFactory = moduleFactory;
+    }
+
+    /**
+     * Set the validator used to validate class names
+     * before they are loaded.
+     *
+     * @param classValidator  The class validator. Null to use default.
+     */
+    public void setClassValidator(@Nullable IEntryValidator<String> classValidator) {
+        checkSealed();
+
+        _classValidator = classValidator;
     }
 
     /**
