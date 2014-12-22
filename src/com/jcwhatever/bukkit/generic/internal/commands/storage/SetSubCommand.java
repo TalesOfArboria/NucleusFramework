@@ -41,8 +41,11 @@ import org.bukkit.plugin.Plugin;
         parent="storage",
         command="set",
         staticParams={ "pluginName", "storageName" },
-        usage="/{plugin-command} {command} set <pluginName> <storageName>",
-        description="Set a plugins data storage provider.")
+        description="Set a plugins data storage provider.",
+
+        paramDescriptions = {
+                "pluginName= The name of the plugin that will have its storage provider changed.",
+                "storageName= The name of the storage provider."})
 
 public final class SetSubCommand extends AbstractCommand {
 

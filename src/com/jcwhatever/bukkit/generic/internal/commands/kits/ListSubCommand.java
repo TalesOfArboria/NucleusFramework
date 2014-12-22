@@ -43,8 +43,10 @@ import java.util.List;
         parent="kits",
         command="list",
         staticParams={ "page=1" },
-        usage="/{plugin-command} {command} list [page]",
-        description="List chest kits.")
+        description="List chest kits.",
+
+        paramDescriptions = {
+                "page= {PAGE}"})
 
 public final class ListSubCommand extends AbstractCommand {
 

@@ -40,8 +40,15 @@ import org.bukkit.command.CommandSender;
         command="add",
         staticParams={ "name", "title", "subtitle=" },
         floatingParams = { "in=-1", "out=-1", "stay=-1" },
-        usage="/{plugin-command} {command} add <name> <title> [subtitle] [--in <time> --out <time> --stay <time>]",
-        description="Add a new title.")
+        description="Add a new title.",
+
+        paramDescriptions = {
+                "name= The name of the title. {NAME}",
+                "title= The title text.",
+                "subtitlle= Optional. The sub-title text.",
+                "in= Optional. The number of ticks spent fading in the title.",
+                "out= Optional. The number of ticks spent fading out the title.",
+                "stay= Optional. The number of ticks the title is displayed for."})
 
 public final class AddSubCommand extends AbstractCommand {
 

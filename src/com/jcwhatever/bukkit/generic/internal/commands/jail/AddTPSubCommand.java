@@ -44,8 +44,9 @@ import org.bukkit.entity.Player;
         parent="jail",
         command="addtp",
         staticParams = { "name" },
-        usage="/{plugin-command} jail addtp <name>",
-        description="Add a location where players are teleported within the jail using your current position.")
+        description="Add a location where players are teleported within the jail using your current position.",
+
+        paramDescriptions = { "name= The name of the tp location. {NAME16}"})
 
 public final class AddTPSubCommand extends AbstractCommand {
 

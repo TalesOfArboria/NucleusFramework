@@ -43,8 +43,12 @@ import org.bukkit.entity.Player;
         parent="titles",
         command="show",
         staticParams={ "titleName", "playerName=$self" },
-        usage="/{plugin-command} {command} show <titleName> [playerName]",
-        description="Show a title to yourself or the specified player.")
+        description="Show a title to yourself or the specified player.",
+
+        paramDescriptions = {
+                "titleName= The name of the title to show.",
+                "playerName= Optional. If not set, the title is sent to the command sender. " +
+                        "Otherwise this is the name of the player who will see the title."})
 
 public final class ShowSubCommand extends AbstractCommand {
 

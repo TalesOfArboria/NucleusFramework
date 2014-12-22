@@ -41,8 +41,9 @@ import org.bukkit.command.CommandSender;
         parent="jail",
         command="deltp",
         staticParams = { "name" },
-        usage="/{plugin-command} jail deltp <name>",
-        description="Remove a location where players are teleported within the jail.")
+        description="Remove a location where players are teleported within the jail.",
+
+        paramDescriptions = { "name= The name of the teleport location. {NAME16}"})
 
 public final class DelTPSubCommand extends AbstractCommand {
 

@@ -42,8 +42,10 @@ import org.bukkit.inventory.ItemStack;
         parent="items",
         command="add",
         staticParams={ "kitName", "items" },
-        usage="/{plugin-command} {command} items add <kitName> <items>",
-        description="Add items to the specified NPC kit.")
+        description="Add items to the specified NPC kit.",
+
+        paramDescriptions = { "kitName= The name of the kit items will be added to. {NAME16}",
+                              "items= The items to add. {ITEM_STACK}"})
 
 public final class AddSubCommand extends AbstractCommand {
 

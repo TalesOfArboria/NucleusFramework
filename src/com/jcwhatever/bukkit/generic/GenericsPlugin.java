@@ -26,7 +26,6 @@
 package com.jcwhatever.bukkit.generic;
 
 import com.jcwhatever.bukkit.generic.commands.CommandDispatcher;
-import com.jcwhatever.bukkit.generic.commands.TabCompleteDispatcher;
 import com.jcwhatever.bukkit.generic.language.LanguageManager;
 import com.jcwhatever.bukkit.generic.messaging.IChatPrefixed;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
@@ -186,7 +185,7 @@ public abstract class GenericsPlugin extends JavaPlugin implements IChatPrefixed
         for (String cmd : commands) {
             PluginCommand command = getCommand(cmd);
             command.setExecutor(dispatcher);
-            command.setTabCompleter(new TabCompleteDispatcher());
+            command.setTabCompleter(dispatcher);
         }
     }
 

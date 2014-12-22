@@ -83,7 +83,7 @@ public class CommandInfoContainer {
         _floatingParameters = toCommandParameters(getRawFloatingParams());
         _flags = toFlagParameters(getRawFlagParams());
 
-        _descriptions = new ParameterDescriptions(this);
+        _descriptions = new ParameterDescriptions(plugin, this);
     }
 
     /**
@@ -138,10 +138,9 @@ public class CommandInfoContainer {
      * Get the name of the top level command in the commands
      * hierarchy.
      */
-    @Nullable
     public String getRootName() {
         if (_rootCommand == null)
-            return null;
+            return getName();
 
         return _rootCommand.getInfo().getName();
     }
@@ -150,10 +149,9 @@ public class CommandInfoContainer {
      * Get the name of the top level command in the commands
      * hierarchy.
      */
-    @Nullable
     public String getRootSessionName() {
         if (_rootCommand == null)
-            return null;
+            return getSessionName();
 
         return _rootCommand.getInfo().getSessionName();
     }

@@ -28,7 +28,10 @@ package com.jcwhatever.bukkit.generic.commands.parameters;
 import com.jcwhatever.bukkit.generic.commands.CommandInfoContainer;
 import com.jcwhatever.bukkit.generic.commands.arguments.ArgumentValueType;
 import com.jcwhatever.bukkit.generic.language.Localized;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
+import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,9 +42,10 @@ import javax.annotation.Nullable;
  * Parses parameter description from a commands info annotation
  * and makes them available.
  */
-public class ParameterDescriptions {
+public class ParameterDescriptions implements IPluginOwned {
 
-    private CommandInfoContainer _commandInfo;
+    private final Plugin _plugin;
+    private final CommandInfoContainer _commandInfo;
     private Map<String, ParameterDescription> _descriptionMap = null;
 
     /**
@@ -49,8 +53,27 @@ public class ParameterDescriptions {
      *
      * @param commandInfo  The container for the commands info annotation.
      */
-    public ParameterDescriptions(CommandInfoContainer commandInfo) {
+    public ParameterDescriptions(Plugin plugin, CommandInfoContainer commandInfo) {
+        _plugin = plugin;
         _commandInfo = commandInfo;
+
+        parseDescriptions();
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+
+    /**
+     * Determine if there are descriptions
+     * available.
+     */
+    public boolean isEmpty() {
+        return _descriptionMap.isEmpty();
     }
 
     /**
@@ -92,7 +115,7 @@ public class ParameterDescriptions {
         if (description != null)
             return description;
 
-        return new ParameterDescription(parameterName,
+        return new ParameterDescription(_plugin, parameterName,
                 ArgumentValueType.getDescription(parameterName, valueType, params));
     }
 
@@ -112,7 +135,8 @@ public class ParameterDescriptions {
         if (description != null)
             return description;
 
-        return new ParameterDescription(parameterName, ArgumentValueType.getEnumDescription(enumClass));
+        return new ParameterDescription(_plugin, parameterName,
+                ArgumentValueType.getEnumDescription(enumClass));
     }
 
     /**
@@ -131,7 +155,8 @@ public class ParameterDescriptions {
         if (description != null)
             return description;
 
-        return new ParameterDescription(parameterName, ArgumentValueType.getEnumDescription(validEnumValues));
+        return new ParameterDescription(_plugin, parameterName,
+                ArgumentValueType.getEnumDescription(validEnumValues));
     }
 
     /**
@@ -151,7 +176,8 @@ public class ParameterDescriptions {
         if (description != null)
             return description;
 
-        return new ParameterDescription(parameterName, ArgumentValueType.getEnumDescription(validEnumValues));
+        return new ParameterDescription(_plugin, parameterName,
+                ArgumentValueType.getEnumDescription(validEnumValues));
     }
 
 
@@ -164,9 +190,9 @@ public class ParameterDescriptions {
 
         for (String desc : descriptions) {
 
-            ParameterDescription description = new ParameterDescription(desc);
+            ParameterDescription description = new ParameterDescription(_plugin, desc);
 
-            _descriptionMap.put(description.getParameterName(), description);
+            _descriptionMap.put(description.getName(), description);
         }
     }
 }

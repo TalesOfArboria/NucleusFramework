@@ -42,8 +42,11 @@ import org.bukkit.inventory.ItemStack;
         parent="items",
         command="del",
         staticParams={ "kitName", "items" },
-        usage="/{plugin-command} {command} items del <kitName> <items>",
-        description="Remove items from the specified chest kit.")
+        description="Remove items from the specified chest kit.",
+
+        paramDescriptions = {
+                "kitName= The name of the kit items will be added to. {NAME16}",
+                "items= The items to remove. {ITEM_STACK}"})
 
 public final class DelSubCommand extends AbstractCommand {
 

@@ -39,23 +39,25 @@ import java.util.List;
         command={"about"},
         usage="/{plugin-command} about",
         description="Get information about the plugin.",
-        permissionDefault=PermissionDefault.TRUE)
+        permissionDefault=PermissionDefault.TRUE,
+        isHelpVisible = false)
 public class AboutCommand extends AbstractCommand {
 
+    @Localizable static final String _HEADER = "----------------------------------------";
     @Localizable static final String _PLUGIN_NAME = "{BOLD}{GREEN}{plugin-name} {plugin-version}";
     @Localizable static final String _AUTHOR = "Plugin by {plugin-author}";
     @Localizable static final String _HELP = "{AQUA}For a list of commands, type '/{plugin-command} ?'";
-    @Localizable static final String _HEADER = "----------------------------------------";
+    @Localizable static final String _HELP2 = "{DARK_AQUA}Add ? after any command to get help. Add ?? after any command to get detailed help.";
     @Localizable static final String _FOOTER = "----------------------------------------";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
 
         // show header
-        _msg.tell(sender, Lang.get(getPlugin(), _HEADER));
+        tell(sender, Lang.get(getPlugin(), _HEADER));
 
         // show plugin name
-        _msg.tell(sender, Lang.get(getPlugin(), _PLUGIN_NAME));
+        tell(sender, Lang.get(getPlugin(), _PLUGIN_NAME));
 
         List<String> authors = getPlugin().getDescription().getAuthors();
 
@@ -63,13 +65,16 @@ public class AboutCommand extends AbstractCommand {
         if (authors != null &&
                 !authors.isEmpty()) {
 
-            _msg.tell(sender, Lang.get(getPlugin(), _AUTHOR));
+            tell(sender, Lang.get(getPlugin(), _AUTHOR));
         }
 
         // show help text
-        _msg.tell(sender, Lang.get(getPlugin(), _HELP));
+        tell(sender, Lang.get(getPlugin(), _HELP));
+
+        // show help text
+        tell(sender, Lang.get(getPlugin(), _HELP2));
 
         // show footer
-        _msg.tell(sender, Lang.get(getPlugin(), _FOOTER));
+        tell(sender, Lang.get(getPlugin(), _FOOTER));
     }
 }

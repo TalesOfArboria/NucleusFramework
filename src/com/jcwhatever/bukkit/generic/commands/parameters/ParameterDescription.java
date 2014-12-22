@@ -24,14 +24,111 @@
 
 package com.jcwhatever.bukkit.generic.commands.parameters;
 
+import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
+import com.jcwhatever.bukkit.generic.language.Localized;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.text.TextFormatter;
+import com.jcwhatever.bukkit.generic.utils.text.TextFormatter.ITagFormatter;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
+
+import org.bukkit.plugin.Plugin;
 
 /**
  * A command parameter description.
  */
-public class ParameterDescription {
+public class ParameterDescription implements IPluginOwned {
 
+    @Localizable public static final String NAME16 =
+            "Must be no more than 16 characters in length and " +
+                    "include only alphanumeric characters. Underscores are allowed.";
+
+    @Localizable public static final String NAME =
+            "Can include only alphanumeric characters. Underscores are allowed.";
+
+    @Localizable public static final String ITEM_STACK =
+            "A parsable ItemStack string can be entered or you can use 'inhand' to use the item in your hand, " +
+                    "'hotbar' to use the items in your hot bar, or 'inventory' to use all the items " +
+                    "in your inventory.";
+
+    @Localizable public static final String LOCATION =
+            "Use 'current' to use your current location or 'select' to select a location " +
+                    "by clicking on a block.";
+
+    @Localizable public static final String PAGE =
+            "Optional page number to specify which page of the results you want to use. " +
+                    "If not specified, page 1 is displayed.";
+
+    private static final ITagFormatter NAME_FORMATTER = new ITagFormatter() {
+        @Override
+        public String getTag() {
+            return "NAME";
+        }
+
+        @Override
+        public void append(StringBuilder sb, String rawTag) {
+            sb.append(Lang.get(NAME));
+        }
+    };
+
+    private static final ITagFormatter NAME16_FORMATTER = new ITagFormatter() {
+        @Override
+        public String getTag() {
+            return "NAME16";
+        }
+
+        @Override
+        public void append(StringBuilder sb, String rawTag) {
+            sb.append(Lang.get(NAME16));
+        }
+    };
+
+    private static final ITagFormatter ITEM_STACK_FORMATTER = new ITagFormatter() {
+        @Override
+        public String getTag() {
+            return "ITEM_STACK";
+        }
+
+        @Override
+        public void append(StringBuilder sb, String rawTag) {
+            sb.append(Lang.get(ITEM_STACK));
+        }
+    };
+
+    private static final ITagFormatter LOCATION_FORMATTER = new ITagFormatter() {
+        @Override
+        public String getTag() {
+            return "LOCATION";
+        }
+
+        @Override
+        public void append(StringBuilder sb, String rawTag) {
+            sb.append(Lang.get(LOCATION));
+        }
+    };
+
+    private static final ITagFormatter PAGE_FORMATTER = new ITagFormatter() {
+        @Override
+        public String getTag() {
+            return "PAGE";
+        }
+
+        @Override
+        public void append(StringBuilder sb, String rawTag) {
+            sb.append(Lang.get(PAGE));
+        }
+    };
+
+    private static final TextFormatter _textFormatter = new TextFormatter(
+            NAME_FORMATTER,
+            NAME16_FORMATTER,
+            ITEM_STACK_FORMATTER,
+            LOCATION_FORMATTER,
+            PAGE_FORMATTER
+    );
+
+    private final Plugin _plugin;
     private final String _parameterName;
     private final String _description;
 
@@ -41,12 +138,14 @@ public class ParameterDescription {
      * @param parameterName  The parameter name.
      * @param description    The parameter description.
      */
-    public ParameterDescription(String parameterName, String description) {
+    public ParameterDescription(Plugin plugin, String parameterName, String description) {
+        PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(description);
 
+        _plugin = plugin;
         _parameterName = parameterName;
-        _description = description;
+        _description = _textFormatter.format(Lang.get(plugin, description));
     }
 
     /**
@@ -54,7 +153,10 @@ public class ParameterDescription {
      *
      * @param rawDescription  The raw description to parse.
      */
-    public ParameterDescription(String rawDescription) {
+    public ParameterDescription(Plugin plugin, String rawDescription) {
+        PreCon.notNull(plugin);
+
+        _plugin = plugin;
 
         String[] descComp = TextUtils.PATTERN_EQUALS.split(rawDescription, -1);
 
@@ -65,19 +167,28 @@ public class ParameterDescription {
         }
 
         // re-add equal characters that may have been in the description.
-        _description = TextUtils.concat(1, descComp, "=");
+        _description = _textFormatter.format(Lang.get(plugin, TextUtils.concat(1, descComp, "=")));
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     /**
      * Get the parameter name.
      */
-    public String getParameterName() {
+    public String getName() {
         return _parameterName;
     }
 
     /**
      * Get the parameter description.
      */
+    @Localized
     public String getDescription() {
         return _description;
     }

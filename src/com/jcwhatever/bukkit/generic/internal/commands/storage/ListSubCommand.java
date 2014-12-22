@@ -46,8 +46,11 @@ import java.util.List;
         command = "list",
         staticParams = { "page=1" },
         floatingParams = { "plugin" },
-        usage = "/{plugin-command} storage list [page] [--plugin <pluginName>]",
-        description = "List available data storage providers or display the provider for a specific plugin.")
+        description = "List available data storage providers or display the provider for a specific plugin.",
+
+        paramDescriptions = {
+                "plugin= Optional name of the the plugin to show the plugins data provider.",
+                "page= {PAGE}"})
 
 public final class ListSubCommand extends AbstractCommand {
 

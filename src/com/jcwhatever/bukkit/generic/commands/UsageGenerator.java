@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.commands;
 import com.jcwhatever.bukkit.generic.commands.parameters.CommandParameter;
 import com.jcwhatever.bukkit.generic.commands.parameters.FlagParameter;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +37,14 @@ import java.util.List;
  */
 public class UsageGenerator {
 
-    private static final String _HELP_USAGE = "/{0: root command}{1: command path}{2: command}{3: parameters}";
-    private static final String _HELP_USAGE_HAS_SUB_COMMANDS = "{GOLD}/{0: root command}{GREEN}{1: command path}{2: command}?";
+    @Localizable static final String _HELP_USAGE =
+            "/{0: root command}{1: command path}{2: command}{3: parameters}";
+
+    @Localizable static final String _HELP_USAGE_HAS_SUB_COMMANDS =
+            "{GOLD}/{0: root command}{GREEN}{1: command path}{2: command}?";
+
+    @Localizable static final String _PARAMETER_HELP =
+            "{GRAY}/{0: root command}{1: command path}{2: command}{GOLD}{3: parameters}";
 
     /**
      * Generate default command usage.
@@ -140,7 +147,10 @@ public class UsageGenerator {
                   .append("] ");
         }
 
+        String commandName = command.getParent() != null
+                ? command.getInfo().getName() + ' '
+                : "";
         return Lang.get(command.getPlugin(),
-                template, rootCommandName + ' ', commandPath, command.getInfo().getName() + ' ', params);
+                template, rootCommandName + ' ', commandPath, commandName, params);
     }
 }

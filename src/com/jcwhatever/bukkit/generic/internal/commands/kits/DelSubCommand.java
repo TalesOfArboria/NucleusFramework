@@ -41,8 +41,10 @@ import org.bukkit.command.CommandSender;
         parent="kits",
         command="del",
         staticParams={ "kitName" },
-        usage="/{plugin-command} {command} del <kitName>",
-        description="Remove an chest kit.")
+        description="Remove an chest kit.",
+
+        paramDescriptions = {
+                "kitName= The name of the kit items will be added to. {NAME16}"})
 
 public final class DelSubCommand extends AbstractCommand {
 

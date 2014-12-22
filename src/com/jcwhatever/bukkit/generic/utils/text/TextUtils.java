@@ -45,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -1055,6 +1056,207 @@ public final class TextUtils {
         });
 
         return formatters;
+    }
+
+    /**
+     * Parse a boolean from a string and include "yes" and "1"
+     * as values that return true.
+     *
+     * @param string  The string to parse.
+     */
+    public static boolean parseBoolean(@Nullable String string) {
+        if (string == null)
+            return false;
+
+        switch (string.toLowerCase()) {
+            case "true":
+            case "yes":
+            case "1":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Parse a byte value from a string and return a default
+     * value if parsing fails.
+     *
+     * @param string      The string to parse.
+     * @param defaultVal  The default value to return if parsing fails.
+     */
+    public static byte parseByte(@Nullable String string, byte defaultVal) {
+        if (string == null)
+            return defaultVal;
+
+        try {
+            return Byte.parseByte(string);
+        }
+        catch (NumberFormatException e) {
+            return defaultVal;
+        }
+    }
+
+    /**
+     * Parse a short value from a string and return a default
+     * value if parsing fails.
+     *
+     * @param string      The string to parse.
+     * @param defaultVal  The default value to return if parsing fails.
+     */
+    public static short parseShort(@Nullable String string, short defaultVal) {
+        if (string == null)
+            return defaultVal;
+
+        try {
+            return Short.parseShort(string);
+        }
+        catch (NumberFormatException e) {
+            return defaultVal;
+        }
+    }
+
+    /**
+     * Parse an integer value from a string and return a default
+     * value if parsing fails.
+     *
+     * @param string      The string to parse.
+     * @param defaultVal  The default value to return if parsing fails.
+     */
+    public static int parseInt(@Nullable String string, int defaultVal) {
+        if (string == null)
+            return defaultVal;
+
+        try {
+            return Integer.parseInt(string);
+        }
+        catch (NumberFormatException e) {
+            return defaultVal;
+        }
+    }
+
+    /**
+     * Parse a long value from a string and return a default
+     * value if parsing fails.
+     *
+     * @param string      The string to parse.
+     * @param defaultVal  The default value to return if parsing fails.
+     */
+    public static long parseLong(@Nullable String string, long defaultVal) {
+        if (string == null)
+            return defaultVal;
+
+        try {
+            return Long.parseLong(string);
+        }
+        catch (NumberFormatException e) {
+            return defaultVal;
+        }
+    }
+
+    /**
+     * Parse a float value from a string and return a default
+     * value if parsing fails.
+     *
+     * @param string      The string to parse.
+     * @param defaultVal  The default value to return if parsing fails.
+     */
+    public static float parseFloat(@Nullable String string, float defaultVal) {
+        if (string == null)
+            return defaultVal;
+
+        try {
+            return Float.parseFloat(string);
+        }
+        catch (NumberFormatException e) {
+            return defaultVal;
+        }
+    }
+
+    /**
+     * Parse a double value from a string and return a default
+     * value if parsing fails.
+     *
+     * @param string      The string to parse.
+     * @param defaultVal  The default value to return if parsing fails.
+     */
+    public static double parseDouble(@Nullable String string, byte defaultVal) {
+        if (string == null)
+            return defaultVal;
+
+        try {
+            return Double.parseDouble(string);
+        }
+        catch (NumberFormatException e) {
+            return defaultVal;
+        }
+    }
+
+    /**
+     * Parse the {@code UUID} from the supplied string.
+     * If parsing fails, null is returned.
+     *
+     * @param string  The string to parse.
+     */
+    @Nullable
+    public static UUID parseUUID(String string) {
+
+        try {
+            return UUID.fromString(string);
+        }
+        catch (IllegalArgumentException iae) {
+            return null;
+        }
+    }
+
+    /**
+     * Parse the {@code UUID}'s from the supplied collection
+     * of strings. If a string cannot be parsed, it is not
+     * included in the results.
+     *
+     * <p>Failure to parse one or more results can be detected by
+     * compare the size of the result with the size of the input
+     * collection.</p>
+     *
+     * @param strings  The string collection to parse.
+     */
+    public static List<UUID> parseUUID(Collection<String> strings) {
+
+        List<UUID> results = new ArrayList<UUID>(strings.size());
+
+        for (String raw : strings) {
+            UUID id = parseUUID(raw);
+            if (id == null)
+                continue;
+
+            results.add(id);
+        }
+        return results;
+    }
+
+    /**
+     * Parse the {@code UUID}'s from the supplied string array.
+     * If a string cannot be parsed, it is not included in the
+     * results..
+     *
+     * <p>Failure to parse one or more results can be detected by
+     * compare the size of the result with the size of the input
+     * collection.</p>
+     *
+     * @param strings  The string array to parse.
+     */
+    public static List<UUID> parseUUID(String[] strings) {
+
+        List<UUID> results = new ArrayList<UUID>(strings.length);
+
+        for (String raw : strings) {
+            UUID id = parseUUID(raw);
+            if (id == null)
+                continue;
+
+            results.add(id);
+        }
+        return results;
     }
 
     /*

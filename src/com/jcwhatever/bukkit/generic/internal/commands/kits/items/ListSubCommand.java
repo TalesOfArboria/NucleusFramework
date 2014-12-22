@@ -46,8 +46,11 @@ import org.bukkit.inventory.ItemStack;
         parent="items",
         command="list",
         staticParams={ "kitName", "page=1" },
-        usage="/{plugin-command} {command} items list <kitName> [page]",
-        description="List items in an chest kit.")
+        description="List items in an chest kit.",
+
+        paramDescriptions = {
+                "kitName= The name of the kit items will be added to. {NAME16}",
+                "page= {PAGE}"})
 
 public final class ListSubCommand extends AbstractCommand {
 

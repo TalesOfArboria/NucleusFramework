@@ -39,11 +39,14 @@ import com.jcwhatever.bukkit.generic.messaging.IMessenger;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
 import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.permissions.Permissions;
+import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -57,7 +60,8 @@ import javax.annotation.Nullable;
 /*
  * 
  */
-public class CommandDispatcher implements CommandExecutor, ICommandOwner, IPluginOwned {
+public class CommandDispatcher implements
+        CommandExecutor, TabCompleter, ICommandOwner, IPluginOwned {
 
     @Localizable static final String _TO_MANY_ARGS = "Too many arguments. Type '{0}' for help.";
     @Localizable static final String _MISSING_ARGS = "Missing arguments. Type '{0}' for help.";
@@ -137,16 +141,20 @@ public class CommandDispatcher implements CommandExecutor, ICommandOwner, IPlugi
         // handle command help, display if the command argument is '?' or 'help'
         if (isCommandHelp(rawArguments)) {
 
-            int page = 1;
-
-            if (rawArguments.length == 2) {
-                try {
-                    page = Integer.parseInt(rawArguments[1]);
-                }
-                catch (NumberFormatException ignored) {}
-            }
+            int page = TextUtils.parseInt(
+                    ArrayUtils.get(rawArguments, 1, null), 1);
 
             command.showHelp(sender, page);
+
+            return true; // finished
+        }
+
+        if (isDetailedHelp(rawArguments)) {
+
+            int page = TextUtils.parseInt(
+                    ArrayUtils.get(rawArguments, 1, null), 1);
+
+            command.showDetailedHelp(sender, page);
 
             return true; // finished
         }
@@ -168,15 +176,8 @@ public class CommandDispatcher implements CommandExecutor, ICommandOwner, IPlugi
         return true;
     }
 
-    /**
-     * Called to modify a tab completion list.
-     *
-     * @param sender       The command sender.
-     * @param args         The base command arguments.
-     */
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
-        PreCon.notNull(sender);
-        PreCon.notNull(args);
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String s, String[] args) {
 
         if (args.length == 0)
             return new ArrayList<>(0);
@@ -236,8 +237,6 @@ public class CommandDispatcher implements CommandExecutor, ICommandOwner, IPlugi
             command = _defaultRoot.getCommandCollection().getCommand(commandClass);
             if (command == null)
                 throw new AssertionError();
-
-            rootName = null;
         }
 
         command.setDispatcher(this, null);
@@ -281,6 +280,11 @@ public class CommandDispatcher implements CommandExecutor, ICommandOwner, IPlugi
     private boolean isCommandHelp(String[] args) {
         return args.length > 0 &&
                 ((args[0].equals("?")) || args[0].equalsIgnoreCase("help"));
+    }
+
+    private boolean isDetailedHelp(String[] args) {
+        return args.length > 0 &&
+                ((args[0].equals("??")));
     }
 
     protected void registerCommands () {

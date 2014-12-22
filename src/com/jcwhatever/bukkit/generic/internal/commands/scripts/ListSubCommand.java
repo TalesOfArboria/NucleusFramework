@@ -44,8 +44,10 @@ import javax.script.ScriptEngine;
         parent="scripts",
         command = "list",
         staticParams = { "page=1" },
-        usage = "/{plugin-command} scripts list [page]",
-        description = "List scripts.")
+        description = "List scripts.",
+
+        paramDescriptions = {
+                "page= {PAGE}"})
 
 public final class ListSubCommand extends AbstractCommand {
 

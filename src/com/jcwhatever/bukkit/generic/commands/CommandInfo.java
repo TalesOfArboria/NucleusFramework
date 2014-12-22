@@ -129,8 +129,11 @@ public @interface CommandInfo {
      *     <li>{3} - command parameters</li>
      * </ul>
      *
-     * Hardcode example: "/command subcommand <parameter1> [parameter2] [--floatingParam] [-flag]"
-     * Template example: "{GOLD}/{0}{GREEN}{1}{2}{BLUE}{3}"
+     * <p>Hardcode example: "/command subcommand <parameter1> [parameter2] [--floatingParam] [-flag]"</p>
+     *
+     * <p>Template example: "{GOLD}/{0}{GREEN}{1}{2}{BLUE}{3}"</p>
+     *
+     * <p>Auto generated is recommended. Templates are preferable to hardcoded usage.</p>
      */
     String usage() default "";
 

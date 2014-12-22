@@ -203,7 +203,6 @@ public class ChatPaginator {
     public void addFormatted(Object format, Object...parameters) {
         PreCon.notNull(format);
         PreCon.notNull(parameters);
-        PreCon.greaterThanZero(parameters.length);
 
         _printList.add(new Object[]{new PreFormattedLine(format.toString(), parameters)});
     }

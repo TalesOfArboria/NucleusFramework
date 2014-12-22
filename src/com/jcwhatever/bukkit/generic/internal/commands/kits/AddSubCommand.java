@@ -41,8 +41,10 @@ import org.bukkit.command.CommandSender;
         parent="kits",
         command="add",
         staticParams={ "kitName" },
-        usage="/{plugin-command} {command} add <kitName>",
-        description="Add a new chest kit.")
+        description="Add a new chest kit.",
+
+        paramDescriptions = {
+                "kitName= The name of the kit items will be added to. {NAME16}"})
 
 public final class AddSubCommand extends AbstractCommand {
 

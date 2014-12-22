@@ -44,8 +44,9 @@ import java.util.UUID;
         parent="jail",
         command="release",
         staticParams={"playerName"},
-        usage="/{plugin-command} jail release <playerName>",
-        description="Release prisoner from default jail.")
+        description="Release prisoner from default jail.",
+
+        paramDescriptions = { "playerName= The name of the player to release." })
 
 public final class ReleaseSubCommand extends AbstractCommand {
 

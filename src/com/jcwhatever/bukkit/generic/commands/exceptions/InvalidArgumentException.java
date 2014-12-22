@@ -59,7 +59,7 @@ public class InvalidArgumentException extends Exception {
     public InvalidArgumentException(ParameterDescription parameterDescription) {
         PreCon.notNull(parameterDescription);
 
-        _parameterName = parameterDescription.getParameterName();
+        _parameterName = parameterDescription.getName();
         _parameterDescription = parameterDescription;
         _message = Lang.get(_MESSAGE, _parameterName);
     }

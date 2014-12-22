@@ -43,8 +43,8 @@ import org.bukkit.entity.Player;
 @CommandInfo(
         parent="jail",
         command="setreleasetp",
-        usage="/{plugin-command} jail setreleasetp",
-        description="Set location where players are teleported when they are released from the default jail.")
+        description="Set location where players are teleported when they are released from the " +
+                "default jail to your current location.")
 
 public final class SetReleaseTPSubCommand extends AbstractCommand {
 
@@ -54,7 +54,7 @@ public final class SetReleaseTPSubCommand extends AbstractCommand {
     public void execute(CommandSender sender, CommandArguments args)
             throws InvalidArgumentException, InvalidCommandSenderException {
         
-        InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER, "Console does not have a locaation.");
+        InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER, "Console does not have a location.");
         
         Player p = (Player)sender;
 
@@ -65,5 +65,4 @@ public final class SetReleaseTPSubCommand extends AbstractCommand {
 
         tellSuccess(sender, Lang.get(_SUCCESS));
     }
-
 }

@@ -44,8 +44,9 @@ import java.util.List;
         parent="jail",
         command="listtp",
         staticParams = { "page=1" },
-        usage="/{plugin-command} jail listtp [page]",
-        description="List locations where players are teleported within the jail.")
+        description="List locations where players are teleported within the jail.",
+
+        paramDescriptions = "page= {PAGE}")
 
 public final class ListTPSubCommand extends AbstractCommand {
 

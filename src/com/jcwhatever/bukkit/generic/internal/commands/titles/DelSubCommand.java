@@ -38,8 +38,10 @@ import org.bukkit.command.CommandSender;
         parent="titles",
         command="del",
         staticParams={ "titleName" },
-        usage="/{plugin-command} {command} del <titleName>",
-        description="Remove a title.")
+        description="Remove a title.",
+
+        paramDescriptions = {
+                "titleName= The name of the title to remove."})
 
 public final class DelSubCommand extends AbstractCommand {
 

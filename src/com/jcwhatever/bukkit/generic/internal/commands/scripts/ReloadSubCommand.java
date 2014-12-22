@@ -35,7 +35,6 @@ import org.bukkit.command.CommandSender;
 @CommandInfo(
         parent="scripts",
         command = "reload",
-        usage = "/{plugin-command} scripts reload",
         description = "Reload scripts.")
 
 public final class ReloadSubCommand extends AbstractCommand {

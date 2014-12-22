@@ -28,7 +28,12 @@ package com.jcwhatever.bukkit.generic.commands;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
+import com.jcwhatever.bukkit.generic.commands.parameters.CommandParameter;
+import com.jcwhatever.bukkit.generic.commands.parameters.FlagParameter;
+import com.jcwhatever.bukkit.generic.commands.parameters.ParameterDescription;
+import com.jcwhatever.bukkit.generic.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.bukkit.generic.internal.Lang;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
@@ -62,10 +67,22 @@ import javax.annotation.Nullable;
 public abstract class AbstractCommand
         implements Comparable<AbstractCommand>, ICommandOwner, IPluginOwned {
 
+    @Localizable static final String _COMMAND_PAGINATOR_TITLE = "Commands";
 
-    private static final String _COMMAND_PAGINATOR_TITLE = "Commands";
+    @Localizable static final String _STATIC_PARAMETER_HEADER = "Static Parameters";
+    @Localizable static final String _STATIC_PARAMETER_ITEM_LINE1 = "{GOLD}<{0: parameter name}>";
+    @Localizable static final String _STATIC_PARAMETER_ITEM_LINE2 = "{GRAY}{0: description}";
+
+    @Localizable static final String _FLOATING_PARAMETER_HEADER = "Floating Parameters";
+    @Localizable static final String _FLOATING_PARAMETER_ITEM_LINE1 = "{GOLD}--{0: parameter name} <value>";
+    @Localizable static final String _FLOATING_PARAMETER_ITEM_LINE2 = "{GRAY}{0: description}";
+
+    @Localizable static final String _FLAG_PARAMETER_HEADER = "Flags";
+    @Localizable static final String _FLAG_PARAMETER_ITEM_LINE1 = "{GOLD}-{0: flag name}";
+    @Localizable static final String _FLAG_PARAMETER_ITEM_LINE2 = "{GRAY}{0: description}";
 
     private final CommandCollection _subCommands = new CommandCollection();
+    private final UsageGenerator _usageGenerator = new UsageGenerator();
 
     private CommandInfoContainer _info;
     private CommandDispatcher _dispatcher;
@@ -286,26 +303,119 @@ public abstract class AbstractCommand
         return _permission;
     }
 
-    /**
-     * Display the commands help info to the specified {@code CommandSender}
-     */
-    public void showHelp(final CommandSender sender, final int page) {
-        PreCon.notNull(sender);
-        PreCon.positiveNumber(page);
 
-        if (!isHelpVisible(sender)) {
-            return;
-        }
+    /**
+     * Show help for a commands parameters.
+     *
+     * @param sender  The command sender to show the help to.
+     * @param page    The help page.
+     */
+    public void showDetailedHelp(CommandSender sender, int page) {
+
+        List<CommandParameter> staticParams = getInfo().getStaticParams();
+        List<CommandParameter> floatingParams = getInfo().getFloatingParams();
+        List<FlagParameter> flagParams = getInfo().getFlagParams();
+        ParameterDescriptions paramDescriptions = getInfo().getParamDescriptions();
 
         ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
                 Lang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
 
-        UsageGenerator usageGenerator = new UsageGenerator();
+        String description = getInfo().getLongDescription().isEmpty()
+                ? getInfo().getDescription()
+                : getInfo().getLongDescription();
 
-        if (canExecute()) {
+        String template = paramDescriptions.isEmpty()
+                ? UsageGenerator._HELP_USAGE
+                : UsageGenerator._PARAMETER_HELP;
+
+        // add usage and description
+        pagin.add(_usageGenerator.generate(this,
+                getInfo().getRootSessionName(), template), description);
+
+        if (!paramDescriptions.isEmpty()) {
+
+            // add static parameter descriptions
+            if (!staticParams.isEmpty()) {
+                pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(getPlugin(), _STATIC_PARAMETER_HEADER));
+
+                for (CommandParameter parameter : staticParams) {
+
+                    ParameterDescription paramDesc = paramDescriptions.get(parameter.getName());
+                    if (paramDesc == null) {
+                        _msg.debug("Missing static parameter description for '{0}' in command '{1}'",
+                                parameter.getName(), getClass().getName());
+                        continue;
+                    }
+
+                    pagin.addFormatted(Lang.get(getPlugin(), _STATIC_PARAMETER_ITEM_LINE1,
+                            paramDesc.getName(), paramDesc.getDescription()));
+
+                    pagin.addFormatted(Lang.get(getPlugin(), _STATIC_PARAMETER_ITEM_LINE2,
+                            paramDesc.getDescription()));
+                }
+            }
+
+            // add floating parameter descriptions
+            if (!floatingParams.isEmpty()) {
+                pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(getPlugin(), _FLOATING_PARAMETER_HEADER));
+
+                for (CommandParameter parameter : floatingParams) {
+
+                    ParameterDescription paramDesc = paramDescriptions.get(parameter.getName());
+                    if (paramDesc == null) {
+                        _msg.debug("Missing floating parameter description for '{0}' in command '{1}'",
+                                parameter.getName(), getClass().getName());
+                        continue;
+                    }
+
+                    pagin.addFormatted(Lang.get(getPlugin(), _FLOATING_PARAMETER_ITEM_LINE1,
+                            paramDesc.getName(), paramDesc.getDescription()));
+
+                    pagin.addFormatted(Lang.get(getPlugin(), _FLOATING_PARAMETER_ITEM_LINE2,
+                            paramDesc.getDescription()));
+                }
+            }
+
+            // add flag parameter descriptions
+            if (!flagParams.isEmpty()) {
+                pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(getPlugin(), _FLAG_PARAMETER_HEADER));
+
+                for (FlagParameter parameter : flagParams) {
+
+                    ParameterDescription paramDesc = paramDescriptions.get(parameter.getName());
+                    if (paramDesc == null) {
+                        _msg.debug("Missing flag description for '{0}' in command '{1}'",
+                                parameter.getName(), getClass().getName());
+                        continue;
+                    }
+
+                    pagin.addFormatted(Lang.get(getPlugin(), _FLAG_PARAMETER_ITEM_LINE1,
+                            paramDesc.getName(), paramDesc.getDescription()));
+
+                    pagin.addFormatted(Lang.get(getPlugin(), _FLAG_PARAMETER_ITEM_LINE2,
+                            paramDesc.getDescription()));
+                }
+            }
+        }
+
+        pagin.show(sender, page, FormatTemplate.CONSTANT_DEFINITION);
+    }
+
+    /**
+     * Display the commands help info in a paginated list that includes
+     * the sub command help to the specified {@code CommandSender}
+     */
+    public void showHelp(CommandSender sender, int page) {
+        PreCon.notNull(sender);
+        PreCon.positiveNumber(page);
+
+        ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
+                Lang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
+
+        if (canExecute() && isHelpVisible(sender)) {
+
             // add command to paginator
-
-            pagin.add(usageGenerator.generate(this, getInfo().getRootName(), _info.getDescription()));
+            pagin.add(_usageGenerator.generate(this), _info.getDescription());
         }
 
         List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
@@ -327,7 +437,7 @@ public abstract class AbstractCommand
             CommandInfoContainer info = cmd.getInfo();
 
             // add command to paginator
-            pagin.add(usageGenerator.generate(cmd), info.getDescription());
+            pagin.add(_usageGenerator.generate(cmd), info.getDescription());
         }
 
         // Add commands that were set aside because they have sub commands
@@ -341,7 +451,7 @@ public abstract class AbstractCommand
             CommandInfoContainer info = cmd.getInfo();
 
             // add info to get sub commands help to paginator
-            pagin.add(usageGenerator.generate(cmd), info.getDescription());
+            pagin.add(_usageGenerator.generate(cmd), info.getDescription());
         }
 
         // show paginator to CommandSender
@@ -477,17 +587,13 @@ public abstract class AbstractCommand
      */
     final boolean isHelpVisible(CommandSender sender) {
 
-        // determine if the commands is visible in help
-        if (!getInfo().isHelpVisible())
-            return false;
-
         // determine if the CommandSender has permission to use the command
         if (!Permissions.has(sender, getPermission().getName()))
             return false;
 
-        return true;
+        // determine if the commands is visible in help
+        return getInfo().isHelpVisible();
     }
-
 
     /**
      * Tell the {@code CommandSender} a generic message.

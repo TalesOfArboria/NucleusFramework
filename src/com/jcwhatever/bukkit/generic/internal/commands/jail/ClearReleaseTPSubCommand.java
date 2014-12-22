@@ -41,7 +41,6 @@ import org.bukkit.command.CommandSender;
 @CommandInfo(
         parent="jail",
         command="clearreleasetp",
-        usage="/{plugin-command} jail clearreleasetp",
         description="Clear location where players are teleported when they are released from the default jail.")
 
 public final class ClearReleaseTPSubCommand extends AbstractCommand {
