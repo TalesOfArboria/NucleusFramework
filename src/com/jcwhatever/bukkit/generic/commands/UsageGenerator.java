@@ -37,14 +37,17 @@ import java.util.List;
  */
 public class UsageGenerator {
 
-    @Localizable static final String _HELP_USAGE =
+    @Localizable public static final String HELP_USAGE =
             "/{0: root command}{1: command path}{2: command}{3: parameters}";
 
-    @Localizable static final String _HELP_USAGE_HAS_SUB_COMMANDS =
+    @Localizable public static final String HELP_USAGE_HAS_SUB_COMMANDS =
             "{GOLD}/{0: root command}{GREEN}{1: command path}{2: command}?";
 
-    @Localizable static final String _PARAMETER_HELP =
+    @Localizable public static final String PARAMETER_HELP =
             "{GRAY}/{0: root command}{1: command path}{2: command}{GOLD}{3: parameters}";
+
+    @Localizable public static final String INLINE_HELP =
+            "{GREEN}/{0: root command}{1: command path}{2: command}??";
 
     /**
      * Generate default command usage.
@@ -59,8 +62,8 @@ public class UsageGenerator {
         }
 
         return command.getCommandCollection().size() == 0
-                ? generate(command, rootCommandName, _HELP_USAGE)
-                : generate(command, rootCommandName, _HELP_USAGE_HAS_SUB_COMMANDS);
+                ? generate(command, rootCommandName, HELP_USAGE)
+                : generate(command, rootCommandName, HELP_USAGE_HAS_SUB_COMMANDS);
     }
 
     /**
@@ -72,8 +75,8 @@ public class UsageGenerator {
     public String generate(AbstractCommand command, String rootCommandName) {
 
         return command.getCommandCollection().size() == 0
-                ? generate(command, rootCommandName, _HELP_USAGE)
-                : generate(command, rootCommandName, _HELP_USAGE_HAS_SUB_COMMANDS);
+                ? generate(command, rootCommandName, HELP_USAGE)
+                : generate(command, rootCommandName, HELP_USAGE_HAS_SUB_COMMANDS);
     }
 
     /**

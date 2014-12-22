@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.commands.exceptions;
 
+import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
+import com.jcwhatever.bukkit.generic.commands.UsageGenerator;
 import com.jcwhatever.bukkit.generic.commands.parameters.ParameterDescription;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
@@ -38,7 +40,8 @@ import javax.annotation.Nullable;
  */
 public class InvalidArgumentException extends Exception {
 
-    @Localizable static final String _MESSAGE = "Invalid value provided for parameter '{0}'.";
+    @Localizable static final String _MESSAGE =
+            "Invalid value provided for parameter '{0: parameter name}'. Type '{1: usage}' for help.";
 
     private static final long serialVersionUID = 1L;
     private final String _parameterName;
@@ -56,12 +59,16 @@ public class InvalidArgumentException extends Exception {
     /**
      * Constructor.
      */
-    public InvalidArgumentException(ParameterDescription parameterDescription) {
+    public InvalidArgumentException(AbstractCommand command, ParameterDescription parameterDescription) {
         PreCon.notNull(parameterDescription);
+
+        UsageGenerator usageGenerator = new UsageGenerator();
 
         _parameterName = parameterDescription.getName();
         _parameterDescription = parameterDescription;
-        _message = Lang.get(_MESSAGE, _parameterName);
+        _message = Lang.get(_MESSAGE, _parameterName,
+                usageGenerator.generate(
+                        command, command.getInfo().getRootSessionName(), UsageGenerator.INLINE_HELP));
     }
 
     /**

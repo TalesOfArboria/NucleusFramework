@@ -38,6 +38,7 @@ import com.jcwhatever.bukkit.generic.items.ItemWrapper;
 import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
 import com.jcwhatever.bukkit.generic.messaging.MessengerFactory;
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect;
 import com.jcwhatever.bukkit.generic.player.PlayerBlockSelect.PlayerBlockSelectHandler;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
@@ -72,9 +73,10 @@ import javax.annotation.Nullable;
  * or required conditions for parsing the object are not met, an {@code InvalidValueException}
  * is thrown and should be caught by the command handler.</p>
  */
-public class CommandArguments implements Iterable<CommandArgument> {
+public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned {
 
     private final Plugin _plugin;
+    private final AbstractCommand _command;
     private final IMessenger _msg;
     private final ArgumentParseResults _parseResults;
     private final ParameterDescriptions _paramDescriptions;
@@ -118,6 +120,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         PreCon.notNull(command);
 
         _plugin = plugin;
+        _command = command;
         _msg = MessengerFactory.get(plugin);
         _paramDescriptions = command.getInfo().getParamDescriptions();
 
@@ -133,6 +136,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }
@@ -241,7 +245,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // make sure the argument is a valid name
         if (!TextUtils.isValidName(arg, maxLen)) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.NAME, maxLen));
         }
 
@@ -261,7 +265,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         // get the raw argument
         String value = getRawArgument(parameterName);
         if (value == null)
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.STRING));
 
         // make sure if pipes are used, that the argument is one of the possible values
@@ -271,7 +275,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 if (value.equalsIgnoreCase(option))
                     return option;
             }
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.STRING));
         }
 
@@ -292,7 +296,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         // get the raw argument
         String value = getRawArgument(parameterName);
         if (value == null)
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
 
         // make sure if pipes are used, that the argument is one of the possible values
@@ -302,20 +306,20 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 if (value.equalsIgnoreCase(option)) {
 
                     if (option.length() != 1) {
-                        throw new InvalidArgumentException(
+                        throw new InvalidArgumentException(_command,
                                 _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
                     }
 
                     return option.charAt(0);
                 }
             }
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
         }
 
         // make sure the length of the value is exactly 1
         if (value.length() != 1)
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
 
         return value.charAt(0);
@@ -355,12 +359,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
             result = Byte.parseByte(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
         }
 
@@ -401,12 +405,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
             result = Short.parseShort(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
         }
 
@@ -447,12 +451,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
             result = Integer.parseInt(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
         }
 
@@ -493,12 +497,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
             result = Long.parseLong(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
         }
 
@@ -541,12 +545,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
                     : Float.parseFloat(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
         }
 
@@ -589,12 +593,12 @@ public class CommandArguments implements Iterable<CommandArgument> {
                     : Double.parseDouble(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
         }
 
@@ -623,7 +627,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
             Boolean flag = _parseResults.getFlag(parameterName);
 
             if (flag == null) {
-                throw new InvalidArgumentException(
+                throw new InvalidArgumentException(_command,
                         _paramDescriptions.get(parameterName, ArgumentValueType.BOOLEAN));
             }
             else {
@@ -647,7 +651,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
             case "off":
                 return false;
             default:
-                throw new InvalidArgumentException(
+                throw new InvalidArgumentException(_command,
                         _paramDescriptions.get(parameterName, ArgumentValueType.BOOLEAN));
         }
     }
@@ -667,7 +671,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // make sure the argument was provided
         if (arg == null)
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.PERCENT));
 
         // remove percent sign
@@ -681,7 +685,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                     : Double.parseDouble(arg);
         }
         catch (NumberFormatException nfe) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.PERCENT));
         }
     }
@@ -731,7 +735,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // make sure the argument was provided
         if (arg == null)
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
 
         // Check for "inhand" keyword as argument
@@ -739,7 +743,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             // sender must be a player to use "inhand" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidArgumentException(
+                throw new InvalidArgumentException(_command,
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
             }
 
@@ -749,7 +753,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             // sender must have an item in hand
             if (inhand == null || inhand.getType() == Material.AIR) {
-                throw new InvalidArgumentException(
+                throw new InvalidArgumentException(_command,
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
             }
 
@@ -761,7 +765,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             // sender must be a player to use "hotbar" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidArgumentException(
+                throw new InvalidArgumentException(_command,
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
             }
 
@@ -796,7 +800,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
             // sender must be player to use "chest" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidArgumentException(
+                throw new InvalidArgumentException(_command,
                         _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
             }
 
@@ -839,7 +843,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         }
 
         if (stacks == null)
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
 
         // return result
@@ -876,7 +880,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
 
         // command sender must be a player
         if (!(sender instanceof Player)) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.LOCATION));
         }
 
@@ -910,7 +914,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
             });
         }
         else {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, ArgumentValueType.LOCATION));
         }
     }
@@ -958,7 +962,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
         if (evalue == null) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, validValues));
         }
 
@@ -968,7 +972,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 return evalue;
         }
 
-        throw new InvalidArgumentException(
+        throw new InvalidArgumentException(_command,
                 _paramDescriptions.get(parameterName, validValues));
     }
 
@@ -999,7 +1003,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
         if (evalue == null) {
-            throw new InvalidArgumentException(
+            throw new InvalidArgumentException(_command,
                     _paramDescriptions.get(parameterName, validValues));
         }
 
@@ -1009,7 +1013,7 @@ public class CommandArguments implements Iterable<CommandArgument> {
                 return evalue;
         }
 
-        throw new InvalidArgumentException(
+        throw new InvalidArgumentException(_command,
                 _paramDescriptions.get(parameterName, validValues));
     }
 

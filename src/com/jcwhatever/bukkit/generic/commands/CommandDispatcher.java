@@ -57,21 +57,40 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Dispatches Bukkit commands to the proper {@link AbstractCommand} for execution.
+ *
+ * <p>Also handles tab completion.</p>
  */
 public class CommandDispatcher implements
         CommandExecutor, TabCompleter, ICommandOwner, IPluginOwned {
 
-    @Localizable static final String _TO_MANY_ARGS = "Too many arguments. Type '{0}' for help.";
-    @Localizable static final String _MISSING_ARGS = "Missing arguments. Type '{0}' for help.";
+    @Localizable static final String _TO_MANY_ARGS =
+            "Too many arguments. Type '{0: usage}' for help.";
+
+    @Localizable static final String _MISSING_ARGS =
+            "Missing arguments. Type '{0: usage}' for help.";
+
     @Localizable static final String _ACCESS_DENIED = "Access denied.";
-    @Localizable static final String _COMMAND_INCOMPLETE = "Command incomplete. Type '/{0} ?' for help.";
-    @Localizable static final String _COMMAND_NOT_FOUND = "Command not found. Type '/{0} ?' for help.";
-    @Localizable static final String _INVALID_PARAMETER = "Invalid parameter detected: {0}";
-    @Localizable static final String _DUPLICATE_PARAMETER = "The parameter named '{0}' has a duplicate.";
-    @Localizable static final String _CANT_EXECUTE_AS = "Cannot execute command as {0}.";
-    @Localizable static final String _PARAMETER_DESCRIPTION = "{WHITE}Parameter description: {GRAY}{0}";
+
+    @Localizable static final String _COMMAND_INCOMPLETE =
+            "Command incomplete. Type '{0: usage}' for help.";
+
+    @Localizable static final String _COMMAND_NOT_FOUND =
+            "Command not found. Type '{0: usage}' for help.";
+
+    @Localizable static final String _INVALID_PARAMETER =
+            "'{0: parameter name}' is not a valid parameter. Type '{0: usage} for help.";
+
+    @Localizable static final String _DUPLICATE_PARAMETER =
+            "The parameter named '{0: parameter name}' has a duplicate.";
+
+    @Localizable static final String _CANT_EXECUTE_AS =
+            "Cannot execute command as {0: command sender type}.";
+
+    @Localizable static final String _PARAMETER_DESCRIPTION =
+            "{WHITE}Parameter description: {GRAY}{0: description}";
+
     @Localizable static final String _REASON = "Reason: {0}";
 
     private final Plugin _plugin;
@@ -82,6 +101,11 @@ public class CommandDispatcher implements
     private final CommandUtils _utils;
     private final UsageGenerator _usageGenerator;
 
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     */
     public CommandDispatcher(Plugin plugin) {
         PreCon.notNull(plugin);
         PreCon.isValid(plugin instanceof JavaPlugin);
@@ -101,15 +125,24 @@ public class CommandDispatcher implements
         registerCommands();
     }
 
+    /**
+     * Get the owning plugin.
+     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
     }
 
+    /**
+     * Get the dispatchers command utils.
+     */
     public CommandUtils getUtils() {
         return _utils;
     }
 
+    /**
+     * Called by Bukkit when a command is executed.
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String rootName, String[] rootArguments) {
 
@@ -161,7 +194,9 @@ public class CommandDispatcher implements
 
         // Determine if the command can execute or if it requires sub commands
         if (!command.canExecute()) {
-            _utils.tellError(sender, Lang.get(_COMMAND_INCOMPLETE, rootName));
+            _utils.tellError(sender,
+                    Lang.get(_COMMAND_INCOMPLETE,
+                            _usageGenerator.generate(command, rootName, UsageGenerator.INLINE_HELP)));
             return true; // finished
         }
 
@@ -176,6 +211,9 @@ public class CommandDispatcher implements
         return true;
     }
 
+    /**
+     * Called by bukkit when a command is tab completed.
+     */
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String s, String[] args) {
 
@@ -213,6 +251,9 @@ public class CommandDispatcher implements
         return parsed.getMatches();
     }
 
+    /**
+     * Register and instantiate a root command.
+     */
     @Override
     public boolean registerCommand(Class<? extends AbstractCommand> commandClass) {
         PreCon.notNull(commandClass);
@@ -243,6 +284,9 @@ public class CommandDispatcher implements
         return true;
     }
 
+    /**
+     * Unregister and remove a root command.
+     */
     @Override
     public boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
 
@@ -253,6 +297,9 @@ public class CommandDispatcher implements
         return true;
     }
 
+    /**
+     * Get a root command by name.
+     */
     @Nullable
     @Override
     public AbstractCommand getCommand(String commandName) {
@@ -265,6 +312,9 @@ public class CommandDispatcher implements
         return result;
     }
 
+    /**
+     * Get all root commands.
+     */
     @Override
     public Collection<AbstractCommand> getCommands() {
         Collection<AbstractCommand> commands = _rootCommands.getCommands();
@@ -272,25 +322,44 @@ public class CommandDispatcher implements
         return commands;
     }
 
+    /**
+     * Get the names of the root commands.
+     */
     @Override
     public Collection<String> getCommandNames() {
         return _rootCommands.getCommandNames();
     }
 
+    /**
+     * Called after initialization when the command dispatcher
+     * is ready to accept command registrations.
+     *
+     * <p>Intended to be overridden by a class that extends
+     * {@code CommandDispatcher}.</p>
+     *
+     * <p>Used for convenience. Commands can still be registered
+     * outside of the dispatcher any time after instantiating it.</p>
+     */
+    protected void registerCommands () {
+        // do nothing
+    }
+
+    // determine if the arguments provided are
+    // to view a commands help.
     private boolean isCommandHelp(String[] args) {
         return args.length > 0 &&
                 ((args[0].equals("?")) || args[0].equalsIgnoreCase("help"));
     }
 
+    // determine if the arguments provided are
+    // to view a commands detailed help.
     private boolean isDetailedHelp(String[] args) {
         return args.length > 0 &&
                 ((args[0].equals("??")));
     }
 
-    protected void registerCommands () {
-        // do nothing
-    }
-
+    // get command arguments collection and handle
+    // argument exceptions.
     @Nullable
     private CommandArguments getCommandArguments(CommandSender sender,
                                                  AbstractCommand command,
@@ -307,7 +376,8 @@ public class CommandDispatcher implements
             if (showMessages) {
 
                 _utils.tellError(sender, Lang.get(_TO_MANY_ARGS,
-                        _usageGenerator.generate(command)));
+                        _usageGenerator.generate(
+                                command, command.getInfo().getRootSessionName(), UsageGenerator.INLINE_HELP)));
             }
 
             return null; // finished
@@ -339,7 +409,9 @@ public class CommandDispatcher implements
         } catch (InvalidParameterException e) {
 
             if (showMessages)
-                _utils.tellError(sender, Lang.get(_INVALID_PARAMETER, e.getParameterName()));
+                _utils.tellError(sender, Lang.get(_INVALID_PARAMETER, e.getParameterName(),
+                        _usageGenerator.generate(
+                            command, command.getInfo().getRootSessionName(), UsageGenerator.INLINE_HELP)));
 
             return null; // finished
         } catch (MissingArgumentException e) {
@@ -347,7 +419,8 @@ public class CommandDispatcher implements
 
             if (showMessages)
                 _utils.tellError(sender, Lang.get(_MISSING_ARGS,
-                        _usageGenerator.generate(command)));
+                        _usageGenerator.generate(
+                                command, command.getInfo().getRootSessionName(), UsageGenerator.INLINE_HELP)));
 
             return null;
         }
@@ -355,6 +428,7 @@ public class CommandDispatcher implements
         return arguments;
     }
 
+    // execute a command and handle argument exceptions.
     private boolean executeCommand(CommandSender sender, AbstractCommand command,
                                    CommandArguments parameters, boolean showMessages) {
         // execute the command

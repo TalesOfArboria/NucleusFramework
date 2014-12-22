@@ -325,8 +325,8 @@ public abstract class AbstractCommand
                 : getInfo().getLongDescription();
 
         String template = paramDescriptions.isEmpty()
-                ? UsageGenerator._HELP_USAGE
-                : UsageGenerator._PARAMETER_HELP;
+                ? UsageGenerator.HELP_USAGE
+                : UsageGenerator.PARAMETER_HELP;
 
         // add usage and description
         pagin.add(_usageGenerator.generate(this,
