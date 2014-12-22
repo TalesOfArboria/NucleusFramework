@@ -28,7 +28,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.providers.IStorageProvider;
@@ -54,7 +54,7 @@ public final class SetSubCommand extends AbstractCommand {
     @Localizable static final String _SUCCESS = "Data storage provider for plugin '{0: plugin name}' set to provider named '{1 : provider name}'. Server restart required to take effect.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
         String pluginName = args.getString("pluginName");
         String storageName = args.getString("storageName");

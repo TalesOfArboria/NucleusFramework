@@ -29,9 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 
@@ -47,10 +45,9 @@ import org.bukkit.entity.Player;
 public final class SetRegionSubCommand extends AbstractCommand {
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args)
-            throws InvalidArgumentException, InvalidCommandSenderException {
-        
-        InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER, "Console cannot select a region.");
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+
+        CommandException.assertNotConsole(this, sender);
 
         IRegionSelection sel = getRegionSelection((Player) sender);
         if (sel == null)

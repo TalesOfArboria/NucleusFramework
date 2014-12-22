@@ -26,10 +26,10 @@
 package com.jcwhatever.bukkit.generic.commands.arguments;
 
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.exceptions.DuplicateParameterException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.DuplicateArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.MissingArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.bukkit.generic.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.bukkit.generic.internal.Lang;
@@ -87,14 +87,13 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param plugin       The owning plugin.
      * @param command      The commands the arguments are being parsed for.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException        If a value provided is not valid.
-     * @throws DuplicateParameterException  If a parameter is defined in the arguments more than once.
-     * @throws InvalidParameterException    If a parameter int the arguments is not found for the command.
-     * @throws TooManyArgsException         If the provided arguments are more than is expected.
+     * @throws InvalidArgumentException    If a value provided is not valid.
+     * @throws DuplicateArgumentException  If a parameter is defined in the arguments more than once.
+     * @throws InvalidParameterException   If a parameter int the arguments is not found for the command.
+     * @throws TooManyArgsException        If the provided arguments are more than is expected.
      */
     public CommandArguments(Plugin plugin, AbstractCommand command)
-            throws InvalidArgumentException, DuplicateParameterException, InvalidParameterException,
-            TooManyArgsException, MissingArgumentException {
+            throws CommandException {
 
         this(plugin, command, null);
     }
@@ -107,14 +106,13 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param command  The commands info annotation container.
      * @param args     The command arguments.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException        If a value provided is not valid.
-     * @throws DuplicateParameterException  If a parameter is defined in the arguments more than once.
-     * @throws InvalidParameterException    If a parameter int the arguments is not found for the command.
-     * @throws TooManyArgsException         If the provided arguments are more than is expected.
+     * @throws InvalidArgumentException    If a value provided is not valid.
+     * @throws DuplicateArgumentException  If a parameter is defined in the arguments more than once.
+     * @throws InvalidParameterException   If a parameter int the arguments is not found for the command.
+     * @throws TooManyArgsException        If the provided arguments are more than is expected.
      */
     public CommandArguments(Plugin plugin, AbstractCommand command, @Nullable String[] args)
-            throws InvalidArgumentException, DuplicateParameterException, InvalidParameterException,
-            TooManyArgsException, MissingArgumentException {
+            throws CommandException {
 
         PreCon.notNull(plugin);
         PreCon.notNull(command);
@@ -217,7 +215,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the parameter to get
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument for the parameter is not a valid name.
+     * @throws InvalidArgumentException  If the argument for the parameter is not a valid name.
      */
     public String getName(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -234,7 +232,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param parameterName  The name of the arguments parameter
      * @param maxLen         The maximum length of the value
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument for the parameter is not a valid name.
+     * @throws InvalidArgumentException  If the argument for the parameter is not a valid name.
      */
     public String getName(String parameterName, int maxLen) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -245,8 +243,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // make sure the argument is a valid name
         if (!TextUtils.isValidName(arg, maxLen)) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.NAME, maxLen));
+            invalidArg(parameterName, ArgumentValueType.NAME, maxLen);
         }
 
         return arg;
@@ -257,16 +254,16 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not present or is not an expected value.
+     * @throws InvalidArgumentException  If the argument is not present or is not an expected value.
      */
     public String getString(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument
         String value = getRawArgument(parameterName);
-        if (value == null)
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.STRING));
+        if (value == null) {
+            invalidArg(parameterName, ArgumentValueType.STRING);
+        }
 
         // make sure if pipes are used, that the argument is one of the possible values
         if (parameterName.indexOf('|') != -1) {
@@ -275,8 +272,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 if (value.equalsIgnoreCase(option))
                     return option;
             }
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.STRING));
+            invalidArg(parameterName, ArgumentValueType.STRING);
         }
 
         return value;
@@ -288,16 +284,17 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not present, is not an expected value, or is more than a single character.
+     * @throws InvalidArgumentException  If the argument is not present, is not an
+     * expected value, or is more than a single character.
      */
     public char getChar(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
         // get the raw argument
         String value = getRawArgument(parameterName);
-        if (value == null)
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
+        if (value == null) {
+            invalidArg(parameterName, ArgumentValueType.CHARACTER);
+        }
 
         // make sure if pipes are used, that the argument is one of the possible values
         if (parameterName.indexOf('|') != -1) {
@@ -306,21 +303,18 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 if (value.equalsIgnoreCase(option)) {
 
                     if (option.length() != 1) {
-                        throw new InvalidArgumentException(_command,
-                                _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
+                        invalidArg(parameterName, ArgumentValueType.CHARACTER);
                     }
 
                     return option.charAt(0);
                 }
             }
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
+            invalidArg(parameterName, ArgumentValueType.CHARACTER);
         }
 
         // make sure the length of the value is exactly 1
         if (value.length() != 1)
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.CHARACTER));
+            invalidArg(parameterName, ArgumentValueType.CHARACTER);
 
         return value.charAt(0);
     }
@@ -330,7 +324,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a byte value.
+     * @throws InvalidArgumentException  If the argument is not parsable into a byte value.
      */
     public byte getByte(String parameterName) throws InvalidArgumentException {
         return getByte(parameterName, Byte.MIN_VALUE, Byte.MAX_VALUE);
@@ -343,12 +337,14 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public byte getByte(String parameterName, byte minRange, byte maxRange) throws InvalidArgumentException {
+    public byte getByte(String parameterName, byte minRange, byte maxRange)
+            throws InvalidArgumentException {
+
         PreCon.notNullOrEmpty(parameterName);
 
-        byte result;
+        byte result = 0;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -359,13 +355,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             result = Byte.parseByte(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.BYTE, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
         }
 
         return result;
@@ -376,7 +370,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a short value.
+     * @throws InvalidArgumentException  If the argument is not parsable into a short value.
      */
     public short getShort(String parameterName) throws InvalidArgumentException {
         return getShort(parameterName, Short.MIN_VALUE, Short.MAX_VALUE);
@@ -389,12 +383,14 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a short value or does not meet range specs.
+     * @throws InvalidArgumentException  If the argument is not parsable into a short value or does not meet range specs.
      */
-    public short getShort(String parameterName, short minRange, short maxRange) throws InvalidArgumentException {
+    public short getShort(String parameterName, short minRange, short maxRange)
+            throws InvalidArgumentException {
+
         PreCon.notNullOrEmpty(parameterName);
 
-        short result;
+        short result = 0;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -405,13 +401,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             result = Short.parseShort(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.SHORT, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.SHORT, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
         }
 
         return result;
@@ -422,7 +416,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into an integer.
+     * @throws InvalidArgumentException  If the argument is not parsable into an integer.
      */
     public int getInteger(String parameterName) throws InvalidArgumentException {
         return getInteger(parameterName, Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -435,12 +429,13 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into an integer or does not meet range specs.
+     * @throws InvalidArgumentException  If the argument is not parsable into an integer or does not
+     * meet range specs.
      */
     public int getInteger(String parameterName, int minRange, int maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
-        int result;
+        int result = 0;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -451,13 +446,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             result = Integer.parseInt(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.INTEGER, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.INTEGER, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.INTEGER, minRange, maxRange);
         }
 
         return result;
@@ -468,7 +461,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a long value.
+     * @throws InvalidArgumentException  If the argument is not parsable into a long value.
      */
     public long getLong(String parameterName) throws InvalidArgumentException {
         return getLong(parameterName, Long.MIN_VALUE, Long.MAX_VALUE);
@@ -481,12 +474,13 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a long value or does not meet range specs.
+     * @throws InvalidArgumentException  If the argument is not parsable into a long value or does
+     * not meet range specs.
      */
     public long getLong(String parameterName, long minRange, long maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
-        long result;
+        long result = 0;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -497,13 +491,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             result = Long.parseLong(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.LONG, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.LONG, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.LONG, minRange, maxRange);
         }
 
         return result;
@@ -514,7 +506,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a float value.
+     * @throws InvalidArgumentException  If the argument is not parsable into a float value.
      */
     public float getFloat(String parameterName) throws InvalidArgumentException {
         return getFloat(parameterName, Float.MIN_VALUE, Float.MAX_VALUE);
@@ -527,12 +519,15 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a float or does not meet range specs.
+     * @throws InvalidArgumentException  If the argument is not parsable into a float or does not
+     * meet range specs.
      */
-    public float getFloat(String parameterName, float minRange, float maxRange) throws InvalidArgumentException {
+    public float getFloat(String parameterName, float minRange, float maxRange)
+            throws InvalidArgumentException {
+
         PreCon.notNullOrEmpty(parameterName);
 
-        float result;
+        float result = 0;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -545,13 +540,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                     : Float.parseFloat(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.FLOAT, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.FLOAT, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.FLOAT, minRange, maxRange);
         }
 
         return result;
@@ -562,7 +555,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a double value.
+     * @throws InvalidArgumentException  If the argument is not parsable into a double value.
      */
     public double getDouble(String parameterName) throws InvalidArgumentException {
         return getDouble(parameterName, Double.MIN_VALUE, Double.MAX_VALUE);
@@ -575,12 +568,12 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param minRange       The minimum value.
      * @param maxRange       The maximum value.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not parsable into a double value or does not meet range specs.
+     * @throws InvalidArgumentException  If the argument is not parsable into a double value or does not meet range specs.
      */
     public double getDouble(String parameterName, double minRange, double maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
-        double result;
+        double result = 0;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -593,13 +586,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                     : Double.parseDouble(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange));
+            invalidArg(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange);
         }
 
         return result;
@@ -613,7 +604,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument cannot be parsed or recognized as a boolean.
+     * @throws InvalidArgumentException  If the argument cannot be parsed or recognized as a boolean.
      */
     public boolean getBoolean(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -627,8 +618,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             Boolean flag = _parseResults.getFlag(parameterName);
 
             if (flag == null) {
-                throw new InvalidArgumentException(_command,
-                        _paramDescriptions.get(parameterName, ArgumentValueType.BOOLEAN));
+                invalidArg(parameterName, ArgumentValueType.BOOLEAN);
             }
             else {
                 return flag;
@@ -651,8 +641,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             case "off":
                 return false;
             default:
-                throw new InvalidArgumentException(_command,
-                        _paramDescriptions.get(parameterName, ArgumentValueType.BOOLEAN));
+                invalidArg(parameterName, ArgumentValueType.BOOLEAN);
+                return false;
         }
     }
 
@@ -661,7 +651,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument cannot be parsed or recognizes as a double.
+     * @throws InvalidArgumentException  If the argument cannot be parsed or recognizes as a double.
      */
     public double getPercent(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -671,8 +661,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // make sure the argument was provided
         if (arg == null)
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.PERCENT));
+            invalidArg(parameterName, ArgumentValueType.PERCENT);
 
         // remove percent sign
         Matcher matcher = TextUtils.PATTERN_PERCENT.matcher(arg);
@@ -685,8 +674,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                     : Double.parseDouble(arg);
         }
         catch (NumberFormatException nfe) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.PERCENT));
+            invalidArg(parameterName, ArgumentValueType.PERCENT);
+            return 0;
         }
     }
 
@@ -725,7 +714,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param sender         The {@code CommandSender} who executed the command
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException If the argument is not a recognized keyword and cannot be parsed to an {@code ItemStack}.
+     * @throws InvalidArgumentException If the argument is not a recognized keyword and cannot be parsed to an {@code ItemStack}.
      */
     public ItemStack[] getItemStack(@Nullable CommandSender sender, String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -735,16 +724,14 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // make sure the argument was provided
         if (arg == null)
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
+            invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
 
         // Check for "inhand" keyword as argument
         if (arg.equalsIgnoreCase("inhand")) {
 
             // sender must be a player to use "inhand" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidArgumentException(_command,
-                        _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
+                invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
             }
 
             Player p = (Player)sender;
@@ -753,8 +740,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
             // sender must have an item in hand
             if (inhand == null || inhand.getType() == Material.AIR) {
-                throw new InvalidArgumentException(_command,
-                        _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
+                invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
             }
 
             return new ItemStack[] { inhand }; // finished
@@ -765,8 +751,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
             // sender must be a player to use "hotbar" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidArgumentException(_command,
-                        _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
+                invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
             }
 
             Player p = (Player)sender;
@@ -800,8 +785,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
             // sender must be player to use "chest" keyword
             if (!(sender instanceof Player)) {
-                throw new InvalidArgumentException(_command,
-                        _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
+                invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
             }
 
             Player p = (Player)sender;
@@ -843,8 +827,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         }
 
         if (stacks == null)
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.ITEMSTACK));
+            invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
 
         // return result
         return stacks;
@@ -868,7 +851,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param parameterName    The name of the arguments parameter
      * @param locationHandler  The {@code LocationHandler} responsible for dealing with the return location.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException If the sender is not a player, or the argument is not "current" or "select"
+     * @throws InvalidArgumentException If the sender is not a player, or the argument is not "current" or "select"
      */
     public void getLocation (final CommandSender sender, String parameterName,
                              final LocationResponse locationHandler) throws InvalidArgumentException {
@@ -880,8 +863,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // command sender must be a player
         if (!(sender instanceof Player)) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.LOCATION));
+            invalidArg(parameterName, ArgumentValueType.LOCATION);
         }
 
         Player p = (Player)sender;
@@ -914,8 +896,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             });
         }
         else {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, ArgumentValueType.LOCATION));
+            invalidArg(parameterName, ArgumentValueType.LOCATION);
         }
     }
 
@@ -927,7 +908,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param parameterName  The name of the arguments parameter
      * @param enumClass      The enums class
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not the name of one of the enums constants.
+     * @throws InvalidArgumentException  If the argument is not the name of one of the enums constants.
      */
     public <T extends Enum<T>> T getEnum(String parameterName,  Class<T> enumClass) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -949,7 +930,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param enumClass      The enums class
      * @param validValues    an array of valid enum constants
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException If the argument is not the name of one of the valid enum constants.
+     * @throws InvalidArgumentException If the argument is not the name of one of the valid enum constants.
      */
     public <T extends Enum<T>> T getEnum(String parameterName,  Class<T> enumClass, T[] validValues) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -962,8 +943,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
         if (evalue == null) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, validValues));
+            invalidArg(parameterName, ArgumentValueType.LOCATION);
+
+            CommandException.invalidArgument(_command,
+                    _paramDescriptions.get(parameterName, validValues)
+            );
         }
 
         // make sure the enum constant is valid
@@ -972,8 +956,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 return evalue;
         }
 
-        throw new InvalidArgumentException(_command,
-                _paramDescriptions.get(parameterName, validValues));
+        CommandException.invalidArgument(_command,
+                _paramDescriptions.get(parameterName, validValues)
+        );
+
+        return null;
     }
 
     /**
@@ -989,7 +976,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param enumClass      The enums class
      * @param validValues    A collection of valid enum constants
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException  If the argument is not one of the valid enum constants.
+     * @throws InvalidArgumentException  If the argument is not one of the valid enum constants.
      */
     public <T extends Enum<T>> T getEnum(String parameterName, Class<T> enumClass, Collection<T> validValues)
             throws InvalidArgumentException {
@@ -1003,8 +990,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
         if (evalue == null) {
-            throw new InvalidArgumentException(_command,
-                    _paramDescriptions.get(parameterName, validValues));
+            CommandException.invalidArgument(_command,
+                    _paramDescriptions.get(parameterName, validValues)
+            );
         }
 
         // make sure the enum constant is valid
@@ -1013,8 +1001,10 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 return evalue;
         }
 
-        throw new InvalidArgumentException(_command,
-                _paramDescriptions.get(parameterName, validValues));
+        CommandException.invalidArgument(_command,
+                _paramDescriptions.get(parameterName, validValues)
+        );
+        return null;
     }
 
     /**
@@ -1245,7 +1235,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the arguments parameter.
 
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     @Nullable
     private String getRawArgument(String parameterName) throws InvalidArgumentException {
@@ -1258,6 +1248,12 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         String defaultVal = param.getDefaultValue();
 
         return value != null ? value : defaultVal;
+    }
+
+    private void invalidArg(String parameterName, ArgumentValueType type, Object... args) throws InvalidArgumentException {
+        CommandException.invalidArgument(_command,
+                _paramDescriptions.get(parameterName, type, args)
+        );
     }
 }
 

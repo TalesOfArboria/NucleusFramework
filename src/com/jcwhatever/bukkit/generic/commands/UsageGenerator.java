@@ -47,7 +47,7 @@ public class UsageGenerator {
             "{GRAY}/{0: root command}{1: command path}{2: command}{GOLD}{3: parameters}";
 
     @Localizable public static final String INLINE_HELP =
-            "{GREEN}/{0: root command}{1: command path}{2: command}??";
+            "{GREEN}/{0: root command}{1: command path}{2: command}?";
 
     /**
      * Generate default command usage.

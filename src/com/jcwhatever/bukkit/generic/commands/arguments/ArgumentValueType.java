@@ -30,8 +30,8 @@ import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.language.Localized;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
+import javax.annotation.Nullable;
 
 /**
  * Used as an enum with localizable value type descriptions.
@@ -54,13 +54,13 @@ public class ArgumentValueType {
     @Localizable static final String _DOUBLE = "Number with or without a decimal point. Must be no smaller than {0} and no larger than {1}.";
     @Localizable static final String _BOOLEAN = "Boolean. i.e. true, false, yes, no, on, off";
     @Localizable static final String _PERCENT = "Percentage. i.e 32.2%";
-    @Localizable static final String _ITEMSTACK = "Item stack. Use 'inhand' for the item in your hand. " +
-            "'chest' uses all items in your chest. " +
-            "'hotbar' uses items in your hotbar. Parsable text " +
+    @Localizable static final String _ITEMSTACK = "Use 'inhand' for the item in your hand. " +
+            "'inventory' for all items in your inventory. " +
+            "'hotbar' for items in your hotbar. Parsable text " +
             "can also be provided in the following format: " +
             "<materialName>[:<data>][;<quantity>]";
     @Localizable static final String _LOCATION = "Use 'current' to provide you current location. 'select' will allow you " +
-            "to click on a block to provide it's location.";
+            "to click on a block to provide its location.";
     @Localizable static final String _ENUM = "Unspecified enumeration constant. Consult documentation, if any.";
     @Localizable static final String _USE_ONE_OF = "Use one of the following values: {0}";
 
@@ -138,7 +138,8 @@ public class ArgumentValueType {
      * Get a value type description for an enum.
      *
      * @param enumClass  The enum.
-     * @param <T>        The enum type.
+     *
+     * @param <T> The enum type.
      */
     @Localized
     public static <T extends Enum<T>> String getEnumDescription(Class<T> enumClass) {
@@ -151,7 +152,8 @@ public class ArgumentValueType {
      * Get a value type description for an enum.
      *
      * @param validValues  Valid enum values.
-     * @param <T>          The enum type.
+     *
+     * @param <T> The enum type.
      */
     @Localized
     public static <T extends Enum<T>> String getEnumDescription(T[] validValues) {
@@ -163,7 +165,8 @@ public class ArgumentValueType {
      * Get a value type description for an enum.
      *
      * @param validValues  Valid enum values.
-     * @param <T>          The enum type.
+     *
+     * @param <T> The enum type.
      */
     @Localized
     public static <T extends Enum<T>> String getEnumDescription(Collection<T> validValues) {

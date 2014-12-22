@@ -25,10 +25,6 @@
 
 package com.jcwhatever.bukkit.generic.commands.exceptions;
 
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-
-import javax.annotation.Nullable;
-
 /**
  * Thrown when two parameters with the same name are detected.
  *
@@ -36,49 +32,9 @@ import javax.annotation.Nullable;
  * or if the command sender uses an optional argument twice or with then name of
  * a required parameter.</p>
  */
-public class DuplicateParameterException extends Exception {
+public class DuplicateArgumentException extends CommandException {
 
-    private static final long serialVersionUID = 1L;
-    private final String _parameterName;
-    public String _message;
-
-    /**
-     * Constructor.
-     *
-     * @param parameterName  The name of the duplicate parameter.
-     */
-    public DuplicateParameterException(String parameterName) {
-        PreCon.notNullOrEmpty(parameterName);
-
-        _parameterName = parameterName;
+    protected DuplicateArgumentException(String message) {
+        super(message);
     }
-    /**
-     * Constructor.
-     *
-     * @param parameterName  The name of the duplicate parameter.
-     * @param message        The message to display to the command sender.
-     */
-    public DuplicateParameterException(String parameterName, String message) {
-        PreCon.notNullOrEmpty(parameterName);
-        PreCon.notNullOrEmpty(message);
-
-        _parameterName = parameterName;
-    }
-
-    /**
-     * Get the custom message describing the exception.
-     */
-    @Override
-    @Nullable
-    public String getMessage() {
-        return _message;
-    }
-
-    /**
-     * Get the name of the duplicate parameter.
-     */
-    public String getParameterName() {
-        return _parameterName;
-    }
-
 }

@@ -24,76 +24,13 @@
 
 package com.jcwhatever.bukkit.generic.commands.exceptions;
 
-import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.language.Localized;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-
-import javax.annotation.Nullable;
-
 /**
  * Thrown when a parameter is missing its argument.
  */
-public class MissingArgumentException  extends Exception {
+public class MissingArgumentException extends CommandException {
 
-    @Localizable static final String _MESSAGE = "Parameter '{0}' does not have an argument.";
-
-    private static final long serialVersionUID = 1L;
-    private final String _parameterName;
-    private final String _parameterDescription;
-    private final String _message;
-
-    /**
-     * Constructor.
-     *
-     * @param parameterName  The name of the parameter with a missing argument.
-     */
-    public MissingArgumentException(String parameterName) {
-        PreCon.notNullOrEmpty(parameterName);
-
-        _parameterName = parameterName;
-        _parameterDescription = null;
-        _message = Lang.get(_MESSAGE, parameterName);
-    }
-
-    /**
-     * Constructor.
-     */
-    public MissingArgumentException(String parameterName, @Localized String parameterDescription) {
-        PreCon.notNullOrEmpty(parameterName);
-        PreCon.notNull(parameterDescription);
-
-        _parameterName = parameterName;
-        _parameterDescription = parameterDescription;
-        _message = Lang.get(_MESSAGE, parameterName);
-    }
-
-    /**
-     * Get the name of the invalid arguments parameter.
-     */
-    @Nullable
-    public String getParameterName() {
-        return _parameterName;
-    }
-
-    /**
-     * Get the message that was set, if any.
-     * If the message is set, it should override auto generated messages.
-     */
-    @Override
-    @Nullable
-    @Localized
-    public String getMessage() {
-        return _message;
-    }
-
-    /**
-     * Get the parameter description.
-     */
-    @Nullable
-    @Localized
-    public String getParameterDescription() {
-        return _parameterDescription;
+    protected MissingArgumentException(String message) {
+        super(message);
     }
 }
 

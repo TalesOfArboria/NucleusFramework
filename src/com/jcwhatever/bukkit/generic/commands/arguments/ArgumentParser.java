@@ -26,15 +26,9 @@ package com.jcwhatever.bukkit.generic.commands.arguments;
 
 import com.jcwhatever.bukkit.generic.collections.RetrievableSet;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.exceptions.DuplicateParameterException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.MissingArgumentException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.commands.parameters.CommandParameter;
 import com.jcwhatever.bukkit.generic.commands.parameters.FlagParameter;
-import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -45,21 +39,6 @@ import java.util.LinkedList;
  */
 public class ArgumentParser {
 
-    @Localizable static final String _DUPLICATE_ARGUMENT =
-            "Duplicate argument detected for parameter named '{0: parameter name}'.";
-
-    @Localizable static final String _INVALID_PARAMETER =
-            "'{0: parameter name}' is not a valid parameter.";
-
-    @Localizable static final String _INVALID_FLAG =
-            "'{0: flag name}' is not a valid flag.";
-
-    @Localizable static final String _MISSING_FLOATING_ARGUMENT =
-            "Parameter '{0: parameter name}' is missing an argument.";
-
-    @Localizable static final String _MISSING_REQUIRED_ARGUMENT =
-            "Parameter '{0: parameter name}' is required.";
-
     /**
      * Parse command arguments
      *
@@ -67,8 +46,7 @@ public class ArgumentParser {
      * @param args     The arguments.
      */
     public ArgumentParseResults parse(AbstractCommand command, String[] args)
-            throws InvalidArgumentException, DuplicateParameterException,
-            InvalidParameterException, TooManyArgsException, MissingArgumentException {
+            throws CommandException {
 
         PreCon.notNull(command);
         PreCon.notNull(args);
@@ -80,7 +58,7 @@ public class ArgumentParser {
                 command.getInfo().getStaticParams());
 
         // parse arguments for static parameters.
-        parseStaticArgs(results, staticParameters, arguments);
+        parseStaticArgs(command, results, staticParameters, arguments);
 
         // check if there are floating parameters for the command.
         if (command.getInfo().getRawFloatingParams().length == 0) {
@@ -88,7 +66,7 @@ public class ArgumentParser {
             // if there are no more parameters but there are still
             // arguments left, then there are too many arguments.
             if (!arguments.isEmpty()) {
-                throw new TooManyArgsException();
+                CommandException.tooManyArgs(command);
             }
 
             // nothing left to do
@@ -100,17 +78,18 @@ public class ArgumentParser {
         RetrievableSet<FlagParameter> flags = new RetrievableSet<>(command.getInfo().getFlagParams());
 
         // parse arguments for non static parameters.
-        parseNonStaticArgs(results, floating, flags, arguments);
+        parseNonStaticArgs(command, results, floating, flags, arguments);
 
         return results;
 
     }
 
     // parse arguments for static parameters
-    private void parseStaticArgs(ArgumentParseResults results,
+    private void parseStaticArgs(AbstractCommand command,
+                                 ArgumentParseResults results,
                                  LinkedList<CommandParameter> parameterList,
                                  LinkedList<String> arguments)
-            throws InvalidArgumentException, DuplicateParameterException, MissingArgumentException {
+            throws CommandException {
 
         while (!parameterList.isEmpty()) {
 
@@ -132,13 +111,12 @@ public class ArgumentParser {
                     // If there are still more static parameters, it means this
                     // is not the last parameter and the value is incorrect.
                     if (!parameterList.isEmpty()) {
-                        throw new InvalidArgumentException(parameter.getName());
+                        CommandException.invalidArgument(command, parameter.getName());
                     }
 
                     // No default value defined means a discreet value is expected.
                     else if (!parameter.hasDefaultValue()) {
-                        throw new MissingArgumentException(
-                                name, Lang.get(_MISSING_REQUIRED_ARGUMENT, parameter.getName()));
+                        CommandException.missingRequiredArg(command, parameter);
                     }
 
                     // re-insert floating argument so the other parsers
@@ -159,8 +137,7 @@ public class ArgumentParser {
                 CommandArgument commandArgument = new CommandArgument(parameter, value);
 
                 if (results.getArgMap().containsKey(name)) {
-                    throw new DuplicateParameterException(
-                            name, Lang.get(_DUPLICATE_ARGUMENT, name));
+                    CommandException.duplicateArg(command, parameter);
                 }
 
                 results.getStaticArgs().add(commandArgument);
@@ -170,19 +147,19 @@ public class ArgumentParser {
     }
 
     // parse arguments for floating parameters and flags
-    private void parseNonStaticArgs(ArgumentParseResults results,
+    private void parseNonStaticArgs(AbstractCommand command,
+                                    ArgumentParseResults results,
                                     RetrievableSet<CommandParameter> parameters,
                                     RetrievableSet<FlagParameter> flags,
                                     LinkedList<String> arguments)
-            throws InvalidArgumentException, InvalidParameterException,
-            MissingArgumentException, DuplicateParameterException {
+            throws CommandException {
 
         while (!arguments.isEmpty()) {
 
             String paramName = arguments.removeFirst();
 
             if (!paramName.startsWith("-"))
-                throw new InvalidArgumentException(paramName);
+                CommandException.invalidArgument(command, paramName);
 
             // check if floating parameter
             if (paramName.startsWith("--")) {
@@ -191,21 +168,18 @@ public class ArgumentParser {
 
                 CommandParameter parameter = parameters.removeRetrieve(new CommandParameter(paramName, null));
                 if (parameter == null) {
-                    throw new InvalidParameterException(
-                            paramName, Lang.get(_INVALID_PARAMETER, paramName));
+                    CommandException.invalidParam(command, paramName);
                 }
 
                 if (arguments.isEmpty()) {
-                    throw new MissingArgumentException(
-                            paramName, Lang.get(_MISSING_FLOATING_ARGUMENT, paramName));
+                    CommandException.missingRequiredArg(command, parameter);
                 }
 
                 String arg = arguments.removeFirst();
                 CommandArgument commandArgument = new CommandArgument(parameter, arg);
 
                 if (results.getArgMap().containsKey(paramName)) {
-                    throw new DuplicateParameterException(
-                            paramName, Lang.get(_DUPLICATE_ARGUMENT, paramName));
+                    CommandException.duplicateArg(command, parameter);
                 }
 
                 results.getFloatingArgs().add(commandArgument);
@@ -218,8 +192,7 @@ public class ArgumentParser {
 
                 FlagParameter parameter = flags.removeRetrieve(new FlagParameter(paramName, -1));
                 if (parameter == null) {
-                    throw new InvalidParameterException(
-                            paramName, Lang.get(_INVALID_FLAG, paramName));
+                    CommandException.invalidFlag(command, paramName);
                 }
 
                 results.setFlag(paramName, true);
@@ -230,8 +203,7 @@ public class ArgumentParser {
 
             for (CommandParameter param : parameters) {
                 if (!param.hasDefaultValue()) {
-                    throw new MissingArgumentException(
-                            param.getName(), Lang.get(_MISSING_REQUIRED_ARGUMENT, param.getName()));
+                    CommandException.missingRequiredArg(command, param);
                 }
             }
         }

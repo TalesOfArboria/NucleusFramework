@@ -27,12 +27,7 @@ package com.jcwhatever.bukkit.generic.commands;
 import com.jcwhatever.bukkit.generic.commands.CommandParser.ParsedCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandParser.ParsedTabComplete;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.DuplicateParameterException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidParameterException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.MissingArgumentException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.TooManyArgsException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.IMessenger;
@@ -65,12 +60,6 @@ import javax.annotation.Nullable;
 public class CommandDispatcher implements
         CommandExecutor, TabCompleter, ICommandOwner, IPluginOwned {
 
-    @Localizable static final String _TO_MANY_ARGS =
-            "Too many arguments. Type '{0: usage}' for help.";
-
-    @Localizable static final String _MISSING_ARGS =
-            "Missing arguments. Type '{0: usage}' for help.";
-
     @Localizable static final String _ACCESS_DENIED = "Access denied.";
 
     @Localizable static final String _COMMAND_INCOMPLETE =
@@ -79,19 +68,6 @@ public class CommandDispatcher implements
     @Localizable static final String _COMMAND_NOT_FOUND =
             "Command not found. Type '{0: usage}' for help.";
 
-    @Localizable static final String _INVALID_PARAMETER =
-            "'{0: parameter name}' is not a valid parameter. Type '{0: usage} for help.";
-
-    @Localizable static final String _DUPLICATE_PARAMETER =
-            "The parameter named '{0: parameter name}' has a duplicate.";
-
-    @Localizable static final String _CANT_EXECUTE_AS =
-            "Cannot execute command as {0: command sender type}.";
-
-    @Localizable static final String _PARAMETER_DESCRIPTION =
-            "{WHITE}Parameter description: {GRAY}{0: description}";
-
-    @Localizable static final String _REASON = "Reason: {0}";
 
     private final Plugin _plugin;
     private AboutCommand _defaultRoot;
@@ -200,13 +176,24 @@ public class CommandDispatcher implements
             return true; // finished
         }
 
-        // get arguments
-        CommandArguments arguments = getCommandArguments(sender, command, rawArguments, true);
-        if (arguments == null)
+        // Parse command arguments
+        CommandArguments arguments;
+
+        try {
+            arguments = new CommandArguments(getPlugin(), command, rawArguments);
+
+        } catch (CommandException e) {
+            _utils.tellError(sender, e.getMessage());
             return true; // finished
+        }
 
         // execute the command
-        executeCommand(sender, command, arguments, true);
+        try {
+            command.execute(sender, arguments);
+        }
+        catch (CommandException e) {
+            _utils.tellError(sender, e.getMessage());
+        }
 
         return true;
     }
@@ -356,108 +343,5 @@ public class CommandDispatcher implements
     private boolean isDetailedHelp(String[] args) {
         return args.length > 0 &&
                 ((args[0].equals("??")));
-    }
-
-    // get command arguments collection and handle
-    // argument exceptions.
-    @Nullable
-    private CommandArguments getCommandArguments(CommandSender sender,
-                                                 AbstractCommand command,
-                                                 String[] argArray,
-                                                 boolean showMessages) {
-        // Parse command arguments
-        CommandArguments arguments;
-
-        try {
-            arguments = new CommandArguments(getPlugin(), command, argArray);
-
-        } catch (TooManyArgsException e) {
-
-            if (showMessages) {
-
-                _utils.tellError(sender, Lang.get(_TO_MANY_ARGS,
-                        _usageGenerator.generate(
-                                command, command.getInfo().getRootSessionName(), UsageGenerator.INLINE_HELP)));
-            }
-
-            return null; // finished
-
-        } catch (InvalidArgumentException e) {
-
-            if (showMessages && e.getMessage() != null) {
-                _utils.tellError(sender, e.getMessage());
-
-                if (e.getParameterDescription() != null) {
-                    _utils.tell(sender, Lang.get(_PARAMETER_DESCRIPTION, e.getParameterDescription()));
-                }
-            }
-
-            return null; // finished
-
-        } catch (DuplicateParameterException e) {
-
-            if (showMessages) {
-                if (e.getMessage() != null) {
-                    _utils.tellError(sender, e.getMessage());
-                } else {
-                    _utils.tellError(sender, Lang.get(_DUPLICATE_PARAMETER, e.getParameterName()));
-                }
-            }
-
-            return null; // finished
-
-        } catch (InvalidParameterException e) {
-
-            if (showMessages)
-                _utils.tellError(sender, Lang.get(_INVALID_PARAMETER, e.getParameterName(),
-                        _usageGenerator.generate(
-                            command, command.getInfo().getRootSessionName(), UsageGenerator.INLINE_HELP)));
-
-            return null; // finished
-        } catch (MissingArgumentException e) {
-            e.printStackTrace();
-
-            if (showMessages)
-                _utils.tellError(sender, Lang.get(_MISSING_ARGS,
-                        _usageGenerator.generate(
-                                command, command.getInfo().getRootSessionName(), UsageGenerator.INLINE_HELP)));
-
-            return null;
-        }
-
-        return arguments;
-    }
-
-    // execute a command and handle argument exceptions.
-    private boolean executeCommand(CommandSender sender, AbstractCommand command,
-                                   CommandArguments parameters, boolean showMessages) {
-        // execute the command
-        try {
-            command.execute(sender, parameters);
-        }
-        // catch invalid argument values
-        catch (InvalidArgumentException e) {
-
-            if (showMessages && e.getMessage() != null) {
-                _utils.tellError(sender, e.getMessage());
-
-                if (e.getParameterDescription() != null) {
-                    _utils.tell(sender, Lang.get(_PARAMETER_DESCRIPTION, e.getParameterDescription()));
-                }
-            }
-            return false;
-        }
-        // catch invalid command senders
-        catch (InvalidCommandSenderException e) {
-            if (showMessages) {
-                _utils.tellError(sender, Lang.get(_CANT_EXECUTE_AS, e.getSenderType().name()));
-
-                if (e.getReason() != null) {
-                    _utils.tellError(sender, Lang.get(_REASON, e.getReason()));
-                }
-            }
-            return false;
-        }
-        return true;
     }
 }

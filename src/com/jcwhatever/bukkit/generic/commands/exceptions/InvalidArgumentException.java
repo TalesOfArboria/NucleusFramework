@@ -25,76 +25,12 @@
 
 package com.jcwhatever.bukkit.generic.commands.exceptions;
 
-import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.UsageGenerator;
-import com.jcwhatever.bukkit.generic.commands.parameters.ParameterDescription;
-import com.jcwhatever.bukkit.generic.internal.Lang;
-import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.language.Localized;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
-
-import javax.annotation.Nullable;
-
 /**
  * Thrown when an argument value is not valid.
  */
-public class InvalidArgumentException extends Exception {
+public class InvalidArgumentException extends CommandException {
 
-    @Localizable static final String _MESSAGE =
-            "Invalid value provided for parameter '{0: parameter name}'. Type '{1: usage}' for help.";
-
-    private static final long serialVersionUID = 1L;
-    private final String _parameterName;
-    private final ParameterDescription _parameterDescription;
-    private final String _message;
-
-    public InvalidArgumentException(String parameterName) {
-        PreCon.notNullOrEmpty(parameterName);
-
-        _parameterName = parameterName;
-        _parameterDescription = null;
-        _message = Lang.get(_MESSAGE, parameterName);
-    }
-
-    /**
-     * Constructor.
-     */
-    public InvalidArgumentException(AbstractCommand command, ParameterDescription parameterDescription) {
-        PreCon.notNull(parameterDescription);
-
-        UsageGenerator usageGenerator = new UsageGenerator();
-
-        _parameterName = parameterDescription.getName();
-        _parameterDescription = parameterDescription;
-        _message = Lang.get(_MESSAGE, _parameterName,
-                usageGenerator.generate(
-                        command, command.getInfo().getRootSessionName(), UsageGenerator.INLINE_HELP));
-    }
-
-    /**
-     * Get the name of the invalid arguments parameter.
-     */
-    @Nullable
-    public String getParameterName() {
-        return _parameterName;
-    }
-
-    /**
-     * Get the message that was set, if any.
-     * If the message is set, it should override auto generated messages.
-     */
-    @Override
-    @Nullable
-    @Localized
-    public String getMessage() {
-        return _message;
-    }
-
-    /**
-     * Get the parameter description.
-     */
-    @Nullable
-    public ParameterDescription getParameterDescription() {
-        return _parameterDescription;
+    protected InvalidArgumentException(String message) {
+        super(message);
     }
 }

@@ -29,12 +29,11 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.jail.Jail;
 import com.jcwhatever.bukkit.generic.language.Localizable;
+
 import org.bukkit.command.CommandSender;
 
 
@@ -48,10 +47,9 @@ public final class ClearReleaseTPSubCommand extends AbstractCommand {
     @Localizable static final String _SUCCESS = "Default Jail release location cleared.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args)
-            throws InvalidArgumentException, InvalidCommandSenderException {
-        
-        InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER, "Console has no location.");
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+
+        CommandException.assertNotConsole(this, sender);
         
         Jail jail = GenericsLib.getDefaultJail();
         jail.setReleaseLocation(null);

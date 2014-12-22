@@ -26,6 +26,7 @@
 package com.jcwhatever.bukkit.generic.commands;
 
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.parameters.CommandParameter;
@@ -147,7 +148,7 @@ public abstract class AbstractCommand
      * <p>Intended to be overridden by implementation if needed.</p>
      */
     public void execute(CommandSender sender, CommandArguments args)
-            throws InvalidArgumentException, InvalidCommandSenderException {
+            throws CommandException {
     }
 
     /**
@@ -660,7 +661,7 @@ public abstract class AbstractCommand
      *
      * @return True if completed successfully.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected void clearSetting(CommandSender sender, final ISettingsManager settings,
                                 CommandArguments args, String propertyArgName) throws InvalidArgumentException {
@@ -679,7 +680,7 @@ public abstract class AbstractCommand
      *
      * @return  True if operation completed successfully.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
+     * @throws InvalidArgumentException       If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,
@@ -701,7 +702,7 @@ public abstract class AbstractCommand
      *
      * @return  True if operation completed successfully.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
+     * @throws InvalidArgumentException       If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,

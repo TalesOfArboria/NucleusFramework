@@ -28,9 +28,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.titles.INamedTitle;
@@ -56,8 +54,7 @@ public final class ShowSubCommand extends AbstractCommand {
     @Localizable static final String _TITLE_NOT_FOUND = "A title named '{0}' was not found.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args)
-            throws InvalidArgumentException, InvalidCommandSenderException {
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
         String name = args.getName("titleName", 32);
         String playerName = args.getString("playerName");
@@ -66,7 +63,7 @@ public final class ShowSubCommand extends AbstractCommand {
 
         if (playerName.equals("$self")) {
 
-            InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER);
+            CommandException.assertNotConsole(this, sender);
 
             player = (Player)sender;
         }

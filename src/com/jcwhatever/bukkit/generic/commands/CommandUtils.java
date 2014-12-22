@@ -212,7 +212,7 @@ public class CommandUtils implements IPluginOwned {
      *
      * @return True if completed successfully.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public void clearSetting(CommandSender sender, final ISettingsManager settings,
                                 CommandArguments args, String propertyArgName) throws InvalidArgumentException {
@@ -251,7 +251,7 @@ public class CommandUtils implements IPluginOwned {
      *
      * @return  True if operation completed successfully.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
+     * @throws InvalidArgumentException          If the value provided by the command sender is not valid.
      * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     public void setSetting(CommandSender sender, final ISettingsManager settings,
@@ -273,7 +273,7 @@ public class CommandUtils implements IPluginOwned {
      *
      * @return  True if operation completed successfully.
      *
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException          If the value provided by the command sender is not valid.
+     * @throws InvalidArgumentException          If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     public void setSetting(CommandSender sender, final ISettingsManager settings,
