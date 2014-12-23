@@ -85,25 +85,23 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     /**
      * Constructor. Validates while assuming no arguments are provided.
      *
-     * @param plugin       The owning plugin.
-     * @param command      The commands the arguments are being parsed for.
+     * @param command      The command the arguments are being parsed for.
      *
      * @throws InvalidArgumentException    If a value provided is not valid.
      * @throws DuplicateArgumentException  If a parameter is defined in the arguments more than once.
      * @throws InvalidParameterException   If a parameter int the arguments is not found for the command.
      * @throws TooManyArgsException        If the provided arguments are more than is expected.
      */
-    public CommandArguments(Plugin plugin, AbstractCommand command)
+    public CommandArguments(AbstractCommand command)
             throws CommandException {
 
-        this(plugin, command, null);
+        this(command, null);
     }
 
     /**
      * Constructor. Parses the provided arguments and validates against information provided
      * by the {@code CommandInfoContainer}.
      *
-     * @param plugin   The owning plugin.
      * @param command  The commands info annotation container.
      * @param args     The command arguments.
      *
@@ -112,15 +110,14 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @throws InvalidParameterException   If a parameter int the arguments is not found for the command.
      * @throws TooManyArgsException        If the provided arguments are more than is expected.
      */
-    public CommandArguments(Plugin plugin, AbstractCommand command, @Nullable String[] args)
+    public CommandArguments(AbstractCommand command, @Nullable String[] args)
             throws CommandException {
 
-        PreCon.notNull(plugin);
         PreCon.notNull(command);
 
-        _plugin = plugin;
+        _plugin = command.getPlugin();
         _command = command;
-        _msg = MessengerFactory.get(plugin);
+        _msg = MessengerFactory.get(_plugin);
         _paramDescriptions = command.getInfo().getParamDescriptions();
 
 

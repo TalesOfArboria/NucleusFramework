@@ -64,15 +64,13 @@ public class CommandInfoContainer {
     /**
      * Constructor.
      *
-     * @param plugin       The commands owning plugin.
      * @param command      The command to get annotation info from.
      * @param rootCommand  The commands root command.
      */
-    public CommandInfoContainer(Plugin plugin, AbstractCommand command, @Nullable AbstractCommand rootCommand) {
-        PreCon.notNull(plugin);
+    public CommandInfoContainer(AbstractCommand command, @Nullable AbstractCommand rootCommand) {
         PreCon.notNull(command);
 
-        _plugin = plugin;
+        _plugin = command.getPlugin();
         _command = command;
         _commandInfo = command.getClass().getAnnotation(CommandInfo.class);
         _rootCommand = rootCommand;

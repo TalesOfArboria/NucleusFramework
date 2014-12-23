@@ -57,7 +57,7 @@ public final class GEconomyCommand extends AbstractCommand {
         // show balance
         BalanceSubCommand command = (BalanceSubCommand) getCommand("balance");
         if (command != null)
-            command.execute(sender, new CommandArguments(getPlugin(), command));
+            command.execute(sender, new CommandArguments(command));
 
         UsageGenerator generator = new UsageGenerator(UsageGenerator.INLINE_HELP);
         tell(sender, "{GRAY}Type '{0: usage}' for more commands.", generator.generate(this));

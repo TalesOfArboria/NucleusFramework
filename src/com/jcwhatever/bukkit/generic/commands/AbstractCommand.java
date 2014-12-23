@@ -551,7 +551,7 @@ public abstract class AbstractCommand
         _dispatcher = dispatcher;
         _msg = MessengerFactory.create(dispatcher.getPlugin());
 
-        _info = new CommandInfoContainer(getPlugin(), this, rootCommand);
+        _info = new CommandInfoContainer(this, rootCommand);
 
         // register queued sub commands
         for (Class<? extends AbstractCommand> commandClass : _subCommandQueue) {

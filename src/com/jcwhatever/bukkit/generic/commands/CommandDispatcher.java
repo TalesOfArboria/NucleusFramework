@@ -180,7 +180,7 @@ public class CommandDispatcher implements
         CommandArguments arguments;
 
         try {
-            arguments = new CommandArguments(getPlugin(), command, rawArguments);
+            arguments = new CommandArguments(command, rawArguments);
 
         } catch (CommandException e) {
             _utils.tellError(sender, e.getMessage());
