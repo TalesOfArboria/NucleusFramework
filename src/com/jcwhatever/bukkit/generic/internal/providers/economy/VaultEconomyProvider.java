@@ -63,7 +63,7 @@ public final class VaultEconomyProvider implements IEconomyProvider {
 
     @Override
     public String formatAmount(double amount) {
-        return _economy.format(amount);
+        return getEconomy().format(amount);
     }
 
     @Override
@@ -90,7 +90,7 @@ public final class VaultEconomyProvider implements IEconomyProvider {
 
         VaultAccount account = _accounts.get(playerId);
         if (account == null) {
-            account = new VaultAccount(playerId, _economy);
+            account = new VaultAccount(playerId, getEconomy());
             _accounts.put(playerId, account);
         }
 
