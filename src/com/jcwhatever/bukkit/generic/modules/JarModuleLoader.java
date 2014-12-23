@@ -512,7 +512,7 @@ public abstract class JarModuleLoader<T> {
      * @throws InvocationTargetException
      */
     @Nullable
-    public abstract T instantiateModule(Class<T> clazz)
+    protected abstract T instantiateModule(Class<T> clazz)
             throws InstantiationException, IllegalAccessException,
             NoSuchMethodException, InvocationTargetException;
 }

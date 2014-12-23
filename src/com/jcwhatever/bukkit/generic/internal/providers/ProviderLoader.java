@@ -138,7 +138,7 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
     @Nullable
     @Override
-    public IProvider instantiateModule(Class<IProvider> clazz)
+    protected IProvider instantiateModule(Class<IProvider> clazz)
             throws InstantiationException, IllegalAccessException,
             NoSuchMethodException, InvocationTargetException {
 

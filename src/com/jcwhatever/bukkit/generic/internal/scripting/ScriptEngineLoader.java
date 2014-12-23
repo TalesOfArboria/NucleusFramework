@@ -127,7 +127,7 @@ public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactor
 
     @Nullable
     @Override
-    public ScriptEngineFactory instantiateModule(Class<ScriptEngineFactory> clazz)
+    protected ScriptEngineFactory instantiateModule(Class<ScriptEngineFactory> clazz)
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
         Constructor<ScriptEngineFactory> constructor = clazz.getDeclaredConstructor();
