@@ -54,7 +54,7 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
      * Constructor.
      */
     public ProviderLoader(InternalProviderManager providerManager) {
-        super(IProvider.class);
+        super(GenericsLib.getPlugin(), IProvider.class);
 
         PreCon.notNull(providerManager);
 

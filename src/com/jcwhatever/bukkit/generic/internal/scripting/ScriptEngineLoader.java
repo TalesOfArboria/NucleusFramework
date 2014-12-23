@@ -49,7 +49,7 @@ public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactor
      * Constructor.
      */
     public ScriptEngineLoader(ScriptEngineManager engineManager) {
-        super(ScriptEngineFactory.class);
+        super(GenericsLib.getPlugin(), ScriptEngineFactory.class);
 
         _engineManager = engineManager;
 

@@ -25,15 +25,20 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
+import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.utils.FileUtils;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
+import com.jcwhatever.bukkit.generic.utils.FileUtils.ITextLineProducer;
 import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -49,8 +54,9 @@ import javax.annotation.Nullable;
 /**
  * Loads jar file modules.
  */
-public abstract class JarModuleLoader<T> {
+public abstract class JarModuleLoader<T> implements IPluginOwned {
 
+    private final Plugin _plugin;
     private final Class<T> _moduleClass;
 
     private Set<String> _loadedClasses = new HashSet<>(1000);
@@ -66,12 +72,23 @@ public abstract class JarModuleLoader<T> {
     /**
      * Constructor.
      *
+     * @param plugin       The owning plugin.
      * @param moduleClass  The super type of a module class.
      */
-    public JarModuleLoader(Class<T> moduleClass) {
+    public JarModuleLoader(Plugin plugin, Class<T> moduleClass) {
+        PreCon.notNull(plugin);
         PreCon.notNull(moduleClass);
 
+        _plugin = plugin;
         _moduleClass = moduleClass;
+    }
+
+    /**
+     * Get the owning plugin.
+     */
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     /**
@@ -206,25 +223,33 @@ public abstract class JarModuleLoader<T> {
 
             switch (method) {
 
+                case DIRECT_OR_SEARCH:
+                    // fall through
+
                 case DIRECT:
+
                     Class<T> module;
                     try {
-                        module = getModuleClass(file);
+                        module = getModuleClass(file, method);
                     } catch (IOException e) {
                         e.printStackTrace();
                         continue;
                     }
 
-                    if (module != null)
+                    if (module != null) {
                         results.add(module);
-
-                    break;
+                        break;
+                    }
+                    else if (method != ClassLoadMethod.DIRECT_OR_SEARCH) {
+                        break;
+                    }
+                    // else fall through
 
                 case SEARCH:
                     List<Class<T>> modules;
                     // get module classes from jar file
                     try {
-                        modules = searchModuleClasses(file);
+                        modules = searchModuleClasses(file, method);
                     } catch (IOException e) {
                         e.printStackTrace();
                         continue;
@@ -249,7 +274,7 @@ public abstract class JarModuleLoader<T> {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    protected List<Class<T>> searchModuleClasses(File file) throws IOException {
+    protected List<Class<T>> searchModuleClasses(File file, ClassLoadMethod loadMethod) throws IOException {
 
         List<Class<T>> moduleClasses = _moduleClassMap.get(file.getAbsolutePath());
         if (moduleClasses != null)
@@ -330,6 +355,12 @@ public abstract class JarModuleLoader<T> {
         // add class names to prevent reloading
         _loadedClasses.addAll(searchResults);
 
+        if (moduleClasses.size() == 1 &&
+                loadMethod == ClassLoadMethod.DIRECT_OR_SEARCH) {
+            // save class name for direct load next time
+            saveClassName(file, moduleClasses.get(0));
+        }
+
         return moduleClasses;
     }
 
@@ -345,7 +376,7 @@ public abstract class JarModuleLoader<T> {
      * @throws ClassNotFoundException
      */
     @Nullable
-    protected Class<T> getModuleClass(File file) throws IOException {
+    protected Class<T> getModuleClass(File file, ClassLoadMethod loadMethod) throws IOException {
         PreCon.notNull(file);
 
         JarFile jarFile = new JarFile(file);
@@ -355,8 +386,16 @@ public abstract class JarModuleLoader<T> {
             return null;
 
         String className = getModuleClassName(jarFile);
-        if (className == null)
-            return null;
+        if (className == null) {
+
+            if (loadMethod == ClassLoadMethod.DIRECT_OR_SEARCH) {
+                // see if a saved class path exists
+                className = getSavedClassName(file);
+            }
+
+            if (className == null)
+                return null;
+        }
 
         return getModuleClass(jarFile, className);
     }
@@ -405,6 +444,51 @@ public abstract class JarModuleLoader<T> {
         Class<T> result = (Class<T>)c;
 
         return result;
+    }
+
+    /**
+     * Get a modules saved class name.
+     *
+     * @param file  The module jar file.
+     *
+     * @return  The class name or null if not found.
+     */
+    @Nullable
+    protected String getSavedClassName(File file) {
+
+        File saveFile = new File(file.getParent(), file.getName() + ".classpath");
+        if (!saveFile.exists())
+            return null;
+
+        return FileUtils.scanTextFile(saveFile, StandardCharsets.UTF_8, new IEntryValidator<String>() {
+
+            int index = 0;
+            @Override
+            public boolean isValid(String entry) {
+                index++;
+                return index == 1;
+            }
+        });
+    }
+
+    /**
+     * Save a modules class name.
+     *
+     * @param file   The module jar file.
+     * @param clazz  The module class.
+     */
+    protected void saveClassName(File file, final Class<? extends T> clazz) {
+
+        File saveFile = new File(file.getParent(), file.getName() + ".classpath");
+
+        FileUtils.writeTextFile(saveFile, StandardCharsets.UTF_8, 1, new ITextLineProducer() {
+
+            @Nullable
+            @Override
+            public String nextLine() {
+                return clazz.getCanonicalName();
+            }
+        });
     }
 
     /**
@@ -458,7 +542,8 @@ public abstract class JarModuleLoader<T> {
     /**
      * Get the name of the module class to load from the jar file.
      *
-     * <p>Only called when the {@code ClassLoadMethod} is {@code DIRECT}.</p>
+     * <p>Only called when the {@code ClassLoadMethod} is {@code DIRECT}
+     * or {@code DIRECT_OR_SEARCH}.</p>
      *
      * @param jarFile  The jar file being loaded.
      *

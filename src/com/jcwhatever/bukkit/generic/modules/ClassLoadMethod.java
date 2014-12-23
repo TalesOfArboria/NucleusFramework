@@ -38,5 +38,11 @@ public enum ClassLoadMethod {
      * be searched for in the jar. There may be multiple
      * results.
      */
-    SEARCH
+    SEARCH,
+    /**
+     * The class to load may be known. If it is not, then
+     * search for it and ensure it can be loaded directly
+     * the next time it is loaded.
+     */
+    DIRECT_OR_SEARCH
 }
