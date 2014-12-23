@@ -104,7 +104,7 @@ public class CommandParameter implements INamed {
     }
 
     protected void parseRawParameter(ParseResult result, String rawParameter) {
-        String[] paramComp = TextUtils.PATTERN_EQUALS.split(rawParameter);
+        String[] paramComp = TextUtils.PATTERN_EQUALS.split(rawParameter, -1);
         result.parameterName = paramComp[0];
 
         result.defaultValue = ArrayUtils.get(paramComp, 1, null);
