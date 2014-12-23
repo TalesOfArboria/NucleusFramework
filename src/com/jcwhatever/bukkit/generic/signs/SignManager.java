@@ -142,34 +142,41 @@ public class SignManager implements IPluginOwned {
         SignHandler current = _signHandlerMap.get(signHandler.getSearchName());
         if (current != null) {
             Msg.warning(_plugin,
-                    "Failed to register sign handler. A sign named '{0}' is already registered by plugin '{1}'.",
+                    "Failed to register sign handler. A sign named '{0}' is already " +
+                            "registered by plugin '{1}'.",
                     current.getName(), current.getPlugin().getName());
 
             return false;
         }
 
         if (signHandler.getName() == null || signHandler.getName().isEmpty()) {
-            throw new RuntimeException("Failed to register sign handler because it has no name.");
+            throw new RuntimeException("Failed to register sign handler because it has " +
+                    "no name.");
         }
 
         if (!TextUtils.isValidName(signHandler.getName())) {
-            throw new RuntimeException("Failed to register sign handler because it has an invalid name: " + signHandler.getName());
+            throw new RuntimeException("Failed to register sign handler because it has " +
+                    "an invalid name: " + signHandler.getName());
         }
 
         if (signHandler.getPlugin() == null) {
-            throw new RuntimeException("Failed to register sign handler because it did not return an owning plugin.");
+            throw new RuntimeException("Failed to register sign handler because it " +
+                    "did not return an owning plugin.");
         }
 
         if (!signHandler.getPlugin().equals(_plugin)) {
-            throw new RuntimeException("Failed to register sign handler because its owning plugin is not the same as the sign manager plugin.");
+            throw new RuntimeException("Failed to register sign handler because its " +
+                    "owning plugin is not the same as the sign manager plugin.");
         }
 
         if (signHandler.getUsage() == null) {
-            throw new RuntimeException("Failed to register sign because it's usage returns null.");
+            throw new RuntimeException("Failed to register sign because it's usage " +
+                    "returns null.");
         }
 
         if (signHandler.getUsage().length != 4) {
-            throw new RuntimeException("Failed to register sign because it's usage array has an incorrect number of elements.");
+            throw new RuntimeException("Failed to register sign because it's usage " +
+                    "array has an incorrect number of elements.");
         }
 
         _signHandlerMap.put(signHandler.getSearchName(), signHandler);
@@ -432,7 +439,9 @@ public class SignManager implements IPluginOwned {
 
         IDataNode signNode = _dataNode.getNode(handler.getName() + '.' + getSignNodeName(sign.getLocation()));
 
-        boolean isValid = handler.signChange(event.getPlayer(), new SignContainer(_plugin, sign.getLocation(), signNode, event));
+        boolean isValid = handler.signChange(
+                event.getPlayer(),
+                new SignContainer(_plugin, sign.getLocation(), signNode, event));
 
         String prefix = isValid ? handler.getHeaderPrefix() : "#" + ChatColor.RED;
         String header = prefix + handler.getDisplayName();
@@ -470,11 +479,13 @@ public class SignManager implements IPluginOwned {
 
         IDataNode signNode = getSignNode(handler, event.getSign().getLocation());
 
-        boolean isValidClick = handler.signClick(event.getPlayer(), new SignContainer(_plugin, event.getSign().getLocation(), signNode));
+        boolean isValidClick = handler.signClick(
+                event.getPlayer(),
+                new SignContainer(_plugin, event.getSign().getLocation(), signNode));
 
         if (isValidClick) {
             event.setUseItemInHand(Event.Result.DENY);
-            event.setIsCancelled(true);
+            event.setCancelled(true);
         }
 
         return true;
@@ -497,7 +508,9 @@ public class SignManager implements IPluginOwned {
 
         IDataNode signNode = getSignNode(handler, sign.getLocation());
 
-        boolean allowBreak = handler.signBreak(event.getPlayer(), new SignContainer(_plugin, sign.getLocation(), signNode));
+        boolean allowBreak = handler.signBreak(
+                event.getPlayer(),
+                new SignContainer(_plugin, sign.getLocation(), signNode));
 
         if (allowBreak) {
             signNode.remove();
