@@ -37,7 +37,6 @@ import java.util.List;
 
 @CommandInfo(
         command={"about"},
-        usage="/{plugin-command} about",
         description="Get information about the plugin.",
         permissionDefault=PermissionDefault.TRUE,
         isHelpVisible = false)
@@ -47,7 +46,8 @@ public class AboutCommand extends AbstractCommand {
     @Localizable static final String _PLUGIN_NAME = "{BOLD}{GREEN}{plugin-name} {plugin-version}";
     @Localizable static final String _AUTHOR = "Plugin by {plugin-author}";
     @Localizable static final String _HELP = "{AQUA}For a list of commands, type '/{plugin-command} ?'";
-    @Localizable static final String _HELP2 = "{DARK_AQUA}Add ? after any command to get help. Add ?? after any command to get detailed help.";
+    @Localizable static final String _HELP2 = "{DARK_AQUA}Add ? after any command to get help. " +
+            "Add ?? after any command to get detailed help.";
     @Localizable static final String _FOOTER = "----------------------------------------";
 
     @Override
