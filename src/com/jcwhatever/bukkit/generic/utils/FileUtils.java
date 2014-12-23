@@ -222,7 +222,15 @@ public final class FileUtils {
         if (input == null)
             return null;
 
-        return scanTextFile(input, charSet, 50, lineValidator);
+        String result = scanTextFile(input, charSet, 50, lineValidator);
+
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     /**
@@ -272,7 +280,15 @@ public final class FileUtils {
         if (input == null)
             return null;
 
-        return scanTextFile(input, charSet, (int)file.length(), lineValidator);
+        String result = scanTextFile(input, charSet, (int)file.length(), lineValidator);
+
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     /**
@@ -321,12 +337,6 @@ public final class FileUtils {
 
             result.append(line);
             result.append('\n');
-        }
-
-        try {
-            input.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         return result.toString();
