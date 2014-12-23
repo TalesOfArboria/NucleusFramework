@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.generic.internal.commands;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.commands.CommandDispatcher;
+import com.jcwhatever.bukkit.generic.internal.commands.economy.GEconomyCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.jail.JailCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.kits.KitsCommand;
 import com.jcwhatever.bukkit.generic.internal.commands.plugins.PluginsCommand;
@@ -42,6 +43,7 @@ public final class GenericsCommandDispatcher extends CommandDispatcher {
 
     @Override
     protected void registerCommands () {
+        registerCommand(GEconomyCommand.class);
         registerCommand(JailCommand.class);
         registerCommand(KitsCommand.class);
         registerCommand(PluginsCommand.class);

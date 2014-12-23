@@ -9,3 +9,8 @@ commands:
         description: Base command for GenericsLib
         usage: |
             ERROR!
+    geconomy:
+        aliases: [gecon, economy, econ, money]
+        description: Economy commands.
+        usage: |
+            ERROR!
