@@ -349,29 +349,56 @@ public final class FileUtils {
      * <p>Intended for writing a single line at a time. The line producer
      * is used to retrieve each line and to know when to stop.</p>
      *
-     * <p>The method finishes when the line producer returns null.</p>
+     * <p>The method finishes when the line producer returns null</p>
      *
      * @param file           The file to write.
      * @param charset        The encoding to use.
      * @param lineProducer   The line producer.
+     *
+     * @return  The number of lines written.
      */
-    public static void writeTextFile(File file, Charset charset, ITextLineProducer lineProducer) {
+    public static int writeTextFile(File file, Charset charset, ITextLineProducer lineProducer) {
+        PreCon.notNull(file);
+        PreCon.notNull(charset);
+
+        return writeTextFile(file, charset, -1, lineProducer);
+    }
+
+    /**
+     * Writes a text file.
+     *
+     * <p>Intended for writing a single line at a time. The line producer
+     * is used to retrieve each line.</p>
+     *
+     * <p>The method finishes when the line producer returns null or the total number
+     * of lines written matches the specified total.</p>
+     *
+     * @param file           The file to write.
+     * @param charset        The encoding to use.
+     * @param totalLines     The total number of lines to write.
+     * @param lineProducer   The line producer.
+     *
+     * @return  The number of lines written.
+     */
+    public static int writeTextFile(File file, Charset charset, int totalLines, ITextLineProducer lineProducer) {
         PreCon.notNull(file);
         PreCon.notNull(charset);
 
         OutputStreamWriter writer = null;
+        int written = 0;
 
         try {
             FileOutputStream fileStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(fileStream, charset.name());
 
-            while (true) {
+            while (written < totalLines || totalLines == -1) {
                 String line = lineProducer.nextLine();
                 if (line == null)
                     break;
 
                 writer.write(line);
                 writer.write('\n');
+                written++;
             }
 
         } catch (IOException e) {
@@ -386,6 +413,7 @@ public final class FileUtils {
                 }
             }
         }
+        return written;
     }
 
     /**
