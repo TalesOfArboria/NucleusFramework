@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.internal.commands.economy;
 
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
+import com.jcwhatever.bukkit.generic.commands.UsageGenerator;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.internal.commands.economy.admin.AdminCommand;
@@ -57,5 +58,8 @@ public final class GEconomyCommand extends AbstractCommand {
         BalanceSubCommand command = (BalanceSubCommand) getCommand("balance");
         if (command != null)
             command.execute(sender, new CommandArguments(getPlugin(), command));
+
+        UsageGenerator generator = new UsageGenerator(UsageGenerator.INLINE_HELP);
+        tell(sender, "{GRAY}Type '{0: usage}' for more commands.", generator.generate(this));
     }
 }
