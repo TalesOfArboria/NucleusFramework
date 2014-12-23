@@ -26,6 +26,7 @@ package com.jcwhatever.bukkit.generic.internal.providers.economy;
 
 import com.jcwhatever.bukkit.generic.providers.economy.IAccount;
 import com.jcwhatever.bukkit.generic.providers.economy.IBank;
+import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import net.milkbowl.vault.economy.Economy;
@@ -40,11 +41,14 @@ import javax.annotation.Nullable;
 public final class VaultAccount implements IAccount {
 
     private final UUID _playerId;
+    private final String _playerName;
     private final Economy _economy;
 
     VaultAccount(UUID ownerId, Economy economy) {
         _playerId = ownerId;
         _economy = economy;
+
+        _playerName = PlayerUtils.getPlayerName(ownerId);
     }
 
     @Override
@@ -60,14 +64,14 @@ public final class VaultAccount implements IAccount {
 
     @Override
     public double getBalance() {
-        return _economy.getBalance(_playerId.toString());
+        return _economy.getBalance(_playerName);
     }
 
     @Override
     public boolean deposit(double amount) {
         PreCon.positiveNumber(amount);
 
-        EconomyResponse response = _economy.depositPlayer(_playerId.toString(), amount);
+        EconomyResponse response = _economy.depositPlayer(_playerName, amount);
 
         return response.transactionSuccess();
     }
@@ -76,7 +80,7 @@ public final class VaultAccount implements IAccount {
     public boolean withdraw(double amount) {
         PreCon.positiveNumber(amount);
 
-        EconomyResponse response = _economy.withdrawPlayer(_playerId.toString(), amount);
+        EconomyResponse response = _economy.withdrawPlayer(_playerName, amount);
 
         return response.transactionSuccess();
     }
