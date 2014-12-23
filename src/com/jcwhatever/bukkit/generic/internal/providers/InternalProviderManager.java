@@ -37,6 +37,7 @@ import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.providers.IProviderManager;
 import com.jcwhatever.bukkit.generic.providers.IRegionSelectProvider;
 import com.jcwhatever.bukkit.generic.providers.IStorageProvider;
+import com.jcwhatever.bukkit.generic.providers.economy.EconomyWrapper;
 import com.jcwhatever.bukkit.generic.providers.economy.IEconomyProvider;
 import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -135,7 +136,16 @@ public final class InternalProviderManager implements IProviderManager {
             ((IDisposable)_economy).dispose();
         }
 
-        _economy = provider;
+        IDisposable disposable = (IDisposable) (provider instanceof EconomyWrapper
+                ? ((EconomyWrapper) provider).getHandle()
+                : provider);
+
+        if (disposable != null)
+            disposable.dispose();
+
+        _economy = provider instanceof EconomyWrapper
+                ? provider
+                : new EconomyWrapper(provider);
     }
 
     @Override
