@@ -122,7 +122,7 @@ public class CommandDispatcher implements
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String rootName, String[] rootArguments) {
 
-        AbstractCommand rootCommand = _rootCommands.getCommand(rootName);
+        AbstractCommand rootCommand = _rootCommands.getCommand(cmd.getName());
         if (rootCommand == null) {
             rootCommand = _defaultRoot;
         }
