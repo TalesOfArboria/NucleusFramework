@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Array utilities.
@@ -2501,6 +2502,41 @@ public final class ArrayUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Create a new array that contains elements from
+     * the provided array but without the null elements.
+     *
+     * <p>The number of null elements can be determined by
+     * the difference in size of the new array.</p>
+     *
+     * @param array  The source array.
+     *
+     * @param <T>  The array component type.
+     *
+     * @return A new, possibly smaller array without null elements.
+     */
+    public static <T> T[] removeNull(T[] array) {
+        PreCon.notNull(array);
+
+        List<T> list = new ArrayList<>(array.length);
+        for (T element : array) {
+            if (element != null) {
+                list.add(element);
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        Class<T> componentClass = (Class<T>) array.getClass().getComponentType();
+
+        T[] newArray = newArray(componentClass, list.size());
+
+        for (int i=0; i < newArray.length; i++) {
+            newArray[i] = list.get(i);
+        }
+
+        return newArray;
     }
 
     private static <T> T[] newArray(Class<T> arrayClass, int size) {

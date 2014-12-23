@@ -25,89 +25,114 @@
 
 package com.jcwhatever.bukkit.generic.events.signs;
 
-import org.bukkit.Material;
+import com.jcwhatever.bukkit.generic.mixins.ICancellable;
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class SignInteractEvent extends Event {
+/**
+ * Called when a player interacts with a sign.
+ */
+public class SignInteractEvent extends Event
+		implements Cancellable, ICancellable, IPlayerReference{
 	
 	private static final HandlerList _handlers = new HandlerList();
 	
-	private PlayerInteractEvent _parentEvent;
-	private Sign _sign;
-	
+	private final PlayerInteractEvent _parentEvent;
+	private final Sign _sign;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param event  The parent event.
+	 * @param sign   The interacted sign.
+	 */
 	public SignInteractEvent(PlayerInteractEvent event, Sign sign) {
+		PreCon.notNull(event);
+		PreCon.notNull(sign);
+
 		_parentEvent = event;
 		_sign = sign;
 	}
-	
+
+	/**
+	 * Get the interacted sign.
+	 */
 	public Sign getSign() {
 		return _sign;
 	}
-	
+
+	/**
+	 * Get the player that interacted with the sign..
+	 */
+	@Override
 	public Player getPlayer() {
 		return _parentEvent.getPlayer();
 	}
-	
+
+	/**
+	 * Get the event action.
+	 */
 	public Action getAction() {
 		return _parentEvent.getAction();
 	}
-	
+
+	/**
+	 * Get the block face.
+	 */
 	public BlockFace getBlockFace() {
 		return _parentEvent.getBlockFace();
 	}
-	
+
+	/**
+	 * Get the clicked sign block.
+	 */
 	public Block getClickedBlock() {
 		return _parentEvent.getClickedBlock();
 	}
-	
+
+	/**
+	 * Get the item in the players hand.
+	 */
 	public ItemStack getItem() {
 		return _parentEvent.getItem();
 	}
-	
-	public Material getMaterial() {
-		return _parentEvent.getMaterial();
-	}
-	
-	public boolean hasBlock() {
-		return _parentEvent.hasBlock();
-	}
-	
-	public Result useInteractedBlock() {
-		return _parentEvent.useInteractedBlock();
-	}
-	
+
+	/**
+	 * Determine if the player will be able to
+	 * use the item in hand.
+	 */
 	public Result useItemInHand() {
 		return _parentEvent.useItemInHand();
 	}
-	
-	public boolean isBlockInHand() {
-		return _parentEvent.isBlockInHand();
-	}
-	
-	public void setUseInteractedBlock(Result useInteractedBlock) {
-		_parentEvent.setUseInteractedBlock(useInteractedBlock);
-	}
-	
+
+	/**
+	 * Set if the player will be able to use the item in hand.
+	 */
 	public void setUseItemInHand(Result useItemInHand) {
 		_parentEvent.setUseItemInHand(useItemInHand);
 	}
 	
+	@Override
 	public boolean isCancelled() {
 		return _parentEvent.isCancelled();
 	}
-	
-	public void setIsCancelled(boolean isCancelled) {
+
+	@Override
+	public void setCancelled(boolean isCancelled) {
 		_parentEvent.setCancelled(isCancelled);
 	}
-	
+
 	@Override
     public HandlerList getHandlers() {
 	    return _handlers;

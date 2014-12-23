@@ -25,54 +25,76 @@
 
 package com.jcwhatever.bukkit.generic.events.economy;
 
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
+import com.jcwhatever.bukkit.generic.providers.economy.IAccount;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.UUID;
-import javax.annotation.Nullable;
-
+/**
+ * Called when money is withdrawn from an account using GenericsLib.
+ */
 public class EconWithdrawEvent extends Event {
-	
+
 	private static final HandlerList _handlers = new HandlerList();
-	
-	private UUID _playerId;
-	private Player _player;
+
+	private final IAccount _account;
+	private final double _originalAmount;
 	private double _amount;
-	
-	public EconWithdrawEvent(UUID playerId, double amount) {
-		_playerId = playerId;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param account  The account being withdrawn from.
+	 * @param amount   The amount being withdrawn.
+	 */
+	public EconWithdrawEvent(IAccount account, double amount) {
+		PreCon.notNull(account);
+
+		_account = account;
+		_originalAmount = amount;
 		_amount = amount;
 	}
-	
-	public UUID getPlayerId() {
-		return _playerId;
+
+	/**
+	 * Get the account that is being withdrawn from.
+	 */
+	public IAccount getAccount() {
+		return _account;
 	}
-	
+
+	/**
+	 * Get the amount being withdrawn when the event
+	 * was first called.
+	 */
+	public double getOriginalAmount() {
+		return _originalAmount;
+	}
+
+	/**
+	 * Get the amount being withdrawn.
+	 */
 	public double getAmount() {
 		return _amount;
 	}
-	
+
+	/**
+	 * Set the amount being withdrawn.
+	 * .
+	 * @param amount  The positive amount.
+	 */
 	public void setAmount(double amount) {
+		PreCon.positiveNumber(amount);
+
 		_amount = amount;
 	}
 
-    @Nullable
-	public Player getPlayer() {
-		if (_player == null) {
-			_player = PlayerUtils.getPlayer(_playerId);
-		}
-		return _player;
-	}
-	
 	@Override
-    public HandlerList getHandlers() {
-	    return _handlers;
+	public HandlerList getHandlers() {
+		return _handlers;
 	}
-	 
+
 	public static HandlerList getHandlerList() {
-	    return _handlers;
+		return _handlers;
 	}
 }

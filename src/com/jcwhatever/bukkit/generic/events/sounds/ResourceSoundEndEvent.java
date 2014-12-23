@@ -25,40 +25,73 @@
 
 package com.jcwhatever.bukkit.generic.events.sounds;
 
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
 import com.jcwhatever.bukkit.generic.sounds.ResourceSound;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class ResourceSoundEndEvent extends Event {
+/**
+ * Called when a resource pack sound that was played
+ * to a player finishes.
+ */
+public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 	
 	private static final HandlerList handlers = new HandlerList();
 	
-	private Player _player;
-	private ResourceSound _sound;
-	private Location _location;
-	private float _volume;
-		
+	private final Player _player;
+	private final ResourceSound _sound;
+	private final Location _location;
+	private final float _volume;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param p         The player the sound was played to.
+	 * @param sound     The sound that ended.
+	 * @param location  The location of the sound.
+	 * @param volume    The volume of the sound.
+	 */
 	public ResourceSoundEndEvent(Player p, ResourceSound sound, Location location, float volume) {
+		PreCon.notNull(p);
+		PreCon.notNull(sound);
+		PreCon.notNull(location);
+		PreCon.notNull(volume);
+
 		_player = p;
 		_sound = sound;
 		_location = location;
 		_volume = volume;
 	}
-	
+
+	/**
+	 * Get the player the sound was played to.
+	 */
+	@Override
 	public Player getPlayer() {
 		return _player;
 	}
-	
+
+	/**
+	 * Get the sound that ended.
+	 */
 	public ResourceSound getResourceSound() {
 		return _sound;
 	}
-	
+
+	/**
+	 * Get the location the sound was played.
+	 */
 	public Location getLocations() {
 		return _location;
 	}
-	
+
+	/**
+	 * Get the volume of the sound.
+	 */
 	public float getVolume() {
 		return _volume;
 	}

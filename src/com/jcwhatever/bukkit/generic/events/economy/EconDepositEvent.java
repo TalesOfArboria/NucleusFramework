@@ -25,49 +25,69 @@
 
 package com.jcwhatever.bukkit.generic.events.economy;
 
-import com.jcwhatever.bukkit.generic.utils.PlayerUtils;
+import com.jcwhatever.bukkit.generic.providers.economy.IAccount;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.UUID;
-
-public class EconGiveEvent extends Event {
+/**
+ * Called when money is deposited into an account using GenericsLib's EconomyUtils
+ */
+public class EconDepositEvent extends Event {
 	
 	private static final HandlerList _handlers = new HandlerList();
 	
-	private UUID _playerId;
-	private Player _player;
+	private final IAccount _account;
+	private final double _originalAmount;
 	private double _amount;
-	
-	public EconGiveEvent(UUID playerId, double amount) {
-		_playerId = playerId;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param account  The account receiving the deposit.
+	 * @param amount   The amount being deposited.
+	 */
+	public EconDepositEvent(IAccount account, double amount) {
+		PreCon.notNull(account);
+
+		_account = account;
+		_originalAmount = amount;
 		_amount = amount;
 	}
-	
-	public UUID getPlayerId() {
-		return _playerId;
+
+	/**
+	 * Get the account that is receiving the deposit.
+	 */
+	public IAccount getAccount() {
+		return _account;
 	}
-	
+
+	/**
+	 * Get the amount being deposited when the event
+	 * was first called.
+	 */
+	public double getOriginalAmount() {
+		return _originalAmount;
+	}
+
+	/**
+	 * Get the amount being deposited.
+	 */
 	public double getAmount() {
 		return _amount;
 	}
-	
+
+	/**
+	 * Set the amount being deposited.
+	 * @param amount
+	 */
 	public void setAmount(double amount) {
+		PreCon.positiveNumber(amount);
+
 		_amount = amount;
 	}
-	
-	public Player getPlayer() {
-		if (_player == null) {
-			_player = PlayerUtils.getPlayer(_playerId);
-		}
 
-		assert _player != null;
-
-		return _player;
-	}
-	
 	@Override
     public HandlerList getHandlers() {
 	    return _handlers;

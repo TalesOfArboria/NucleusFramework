@@ -25,50 +25,76 @@
 
 package com.jcwhatever.bukkit.generic.events.regions;
 
+import com.jcwhatever.bukkit.generic.mixins.ICancellable;
+import com.jcwhatever.bukkit.generic.regions.IRegion;
 import com.jcwhatever.bukkit.generic.regions.ReadOnlyRegion;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-
-public class RegionOwnerChangedEvent extends Event {
+/**
+ * Called when a regions owner is changed.
+ */
+public class RegionOwnerChangedEvent extends Event implements Cancellable, ICancellable {
     
     private static final HandlerList _handlers = new HandlerList();
     
-    ReadOnlyRegion _region;
-    UUID _oldId;
-    UUID _newId;
-    boolean _isCancelled;
+    private final ReadOnlyRegion _region;
+    private final UUID _oldId;
+    private UUID _newId;
+    private boolean _isCancelled;
     
-    public RegionOwnerChangedEvent(ReadOnlyRegion region, @Nullable UUID oldId, @Nullable UUID newId) {
+    public RegionOwnerChangedEvent(ReadOnlyRegion region,
+                                   @Nullable UUID oldId, @Nullable UUID newId) {
+        PreCon.notNull(region);
+
         _region = region;
         _oldId = oldId;
         _newId = newId;
     }
-    
-    public ReadOnlyRegion getRegion() {
+
+    /**
+     * Get the region whose owner is changed.
+     */
+    public IRegion getRegion() {
         return _region;
     }
-    
+
+    /**
+     * Get the Id of the previous region owner.
+     *
+     * @return  Null if there was no previous owner.
+     */
+    @Nullable
     public UUID getOldOwnerId() {
         return _oldId;
     }
-    
+
+    /**
+     * Get the ID of the new region owner.
+     *
+     * @return  Null if the region owner is being cleared.
+     */
+    @Nullable
     public UUID getNewOwnerId() {
         return _newId;
     }
         
+    @Override
     public boolean isCancelled() {
         return _isCancelled;
     }
-    
-    public void setIsCancelled(boolean isCancelled) {
+
+    @Override
+    public void setCancelled(boolean isCancelled) {
         _isCancelled = isCancelled;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return _handlers;

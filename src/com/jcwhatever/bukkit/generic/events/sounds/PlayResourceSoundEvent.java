@@ -26,65 +26,117 @@
 package com.jcwhatever.bukkit.generic.events.sounds;
 
 
+import com.jcwhatever.bukkit.generic.mixins.ICancellable;
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
 import com.jcwhatever.bukkit.generic.sounds.ResourceSound;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PlayResourceSoundEvent extends Event {
+/**
+ * Called when a resource pack sound is played.
+ */
+public class PlayResourceSoundEvent extends Event
+		implements Cancellable, ICancellable, IPlayerReference {
 	
 	private static final HandlerList handlers = new HandlerList();
 	
-	private Player _player;
+	private final Player _player;
+
 	private ResourceSound _sound;
-	private boolean _isCancelled;
 	private Location _location;
 	private float _volume;
-	
+
+	private boolean _isCancelled;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param p         The player the sound is being played to.
+	 * @param sound     The sound being played.
+	 * @param location  The location of the sound.
+	 * @param volume    The volume of the sound.
+	 */
 	public PlayResourceSoundEvent(Player p, ResourceSound sound, Location location, float volume) {
+		PreCon.notNull(p);
+		PreCon.notNull(sound);
+		PreCon.notNull(location);
+		PreCon.notNull(volume);
+
 		_player = p;
 		_sound = sound;
 		_location = location;
 		_volume = volume;
 	}
-	
+
+	/**
+	 * Get the player the sound is being played to.
+	 */
+	@Override
 	public Player getPlayer() {
 		return _player;
 	}
-	
+
+	/**
+	 * Get the resource sound being played.
+	 */
 	public ResourceSound getResourceSound() {
 		return _sound;
 	}
-	
+
+	/**
+	 * Get the location the sound is being played.
+	 */
 	public Location getLocation() {
 		return _location;
 	}
-	
+
+	/**
+	 * Get the volume of the sound.
+	 */
 	public float getVolume() {
 		return _volume;
 	}
-	
+
+	/**
+	 * Set the resource sound to player.
+	 */
 	public void setResourceSound(ResourceSound sound) {
+		PreCon.notNull(sound);
+
 		_sound = sound;
 	}
-	
+
+	/**
+	 * Set the location of the sound.
+	 */
 	public void setLocation(Location location) {
+		PreCon.notNull(location);
+
 		_location = location;
 	}
-	
+
+	/**
+	 * Set the volume of the sound.
+	 */
 	public void setVolume(float volume) {
 		_volume = volume;
 	}
 	
+	@Override
 	public boolean isCancelled() {
 		return _isCancelled;
 	}
-	
-	public void setIsCancelled(boolean isCancelled) {
+
+	@Override
+	public void setCancelled(boolean isCancelled) {
 		_isCancelled = isCancelled;
 	}
-	 
+
 	@Override
     public HandlerList getHandlers() {
 	    return handlers;

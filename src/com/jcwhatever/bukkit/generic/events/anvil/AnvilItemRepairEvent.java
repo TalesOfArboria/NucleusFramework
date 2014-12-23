@@ -25,48 +25,75 @@
 
 package com.jcwhatever.bukkit.generic.events.anvil;
 
+import com.jcwhatever.bukkit.generic.mixins.ICancellable;
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
+
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 
-public class AnvilItemRepairEvent extends Event {
+/**
+ * Called when an item is repaired on an anvil.
+ */
+public class AnvilItemRepairEvent extends Event
+		implements Cancellable, ICancellable, IPlayerReference {
 	
 	private static final HandlerList _handlers = new HandlerList();
 	
-	private Player _player;
-	private AnvilInventory _anvilInventory;
-	private ItemStack _item;
+	private final Player _player;
+	private final AnvilInventory _anvilInventory;
+	private final ItemStack _item;
 	
 	private boolean _isCancelled;
-	
+
+	/**
+	 * Constructor.
+	 *
+	 * @param player          The player
+	 * @param anvilInventory  The anvil inventory.
+	 * @param item            The item being repaired.
+	 */
 	public AnvilItemRepairEvent(Player player, AnvilInventory anvilInventory, ItemStack item) {
 		_player = player;
 		_anvilInventory = anvilInventory;
 		_item = item;
 	}
-	
+
+	/**
+	 * Get the player.
+	 */
+	@Override
 	public Player getPlayer() {
 		return _player;
 	}
-	
+
+	/**
+	 * Get the inventory of the anvil that is repairing the item..
+	 */
 	public AnvilInventory getAnvilInventory() {
 		return _anvilInventory;
 	}
-	
-	public ItemStack getRepairedItem() {
+
+	/**
+	 * Get the item being repaired..
+	 */
+	public ItemStack getItem() {
 		return _item;
 	}
 	
+	@Override
 	public boolean isCancelled() {
 		return _isCancelled;
 	}
-	
-	public void setIsCancelled(boolean isCancelled) {
+
+	@Override
+	public void setCancelled(boolean isCancelled) {
 		_isCancelled = isCancelled;
 	}
-	
+
 	@Override
     public HandlerList getHandlers() {
 	    return _handlers;

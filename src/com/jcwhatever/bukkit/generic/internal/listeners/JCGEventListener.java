@@ -226,6 +226,8 @@ public final class JCGEventListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
+
+			ItemStackUtils.setDisplayName(resultItem, renameEvent.getNewName());
 		}
 
 		// check for repair

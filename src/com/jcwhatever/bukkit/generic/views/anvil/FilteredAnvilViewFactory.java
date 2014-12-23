@@ -145,11 +145,11 @@ public class FilteredAnvilViewFactory extends ViewFactory {
         }
 
         private void onAnvilItemRepair(AnvilItemRepairEvent event) {
-            check(event.getPlayer(), event.getRepairedItem());
+            check(event.getPlayer(), event.getItem());
         }
 
         private void onAnvilItemRename(AnvilItemRenameEvent event) {
-            check(event.getPlayer(), event.getRenamedItem());
+            check(event.getPlayer(), event.getItem());
         }
 
         private void check(Player p, ItemStack repaired) {

@@ -25,7 +25,11 @@
 
 package com.jcwhatever.bukkit.generic.events.anvil;
 
+import com.jcwhatever.bukkit.generic.mixins.ICancellable;
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
+
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.AnvilInventory;
@@ -33,19 +37,32 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class AnvilItemRenameEvent extends Event {
+/**
+ * Called when an item is renamed on an anvil.
+ */
+public class AnvilItemRenameEvent extends Event implements
+		Cancellable, ICancellable, IPlayerReference {
 	
 	private static final HandlerList _handlers = new HandlerList();
 	
-	private Player _player;
-	private AnvilInventory _anvilInventory;
-	private ItemStack _item;
+	private final Player _player;
+	private final AnvilInventory _anvilInventory;
+	private final ItemStack _item;
+	private final String _oldName;
+
 	private String _newName;
-	private String _oldName;
-	
+
 	private boolean _isCancelled;
-	
-	
+
+	/**
+	 * Constructor.
+	 *
+	 * @param player          The player.
+	 * @param anvilInventory  The anvil inventory.
+	 * @param item            The item being renamed.
+	 * @param newName         The new name.
+	 * @param oldName         The old name.
+	 */
 	public AnvilItemRenameEvent(Player player, AnvilInventory anvilInventory,
 								ItemStack item, String newName, @Nullable String oldName) {
 
@@ -55,35 +72,60 @@ public class AnvilItemRenameEvent extends Event {
 		_newName = newName;
 		_oldName = oldName;
 	}
-	
+
+	/**
+	 * Get the player.
+	 */
+	@Override
 	public Player getPlayer() {
 		return _player;
 	}
-	
+
+	/**
+	 * Get the anvil inventory.
+	 */
 	public AnvilInventory getAnvilInventory() {
 		return _anvilInventory;
 	}
-	
-	public ItemStack getRenamedItem() {
+
+	/**
+	 * Get the item that is being renamed..
+	 */
+	public ItemStack getItem() {
 		return _item;
 	}
-	
+
+	/**
+	 * Get the items new name.
+	 */
 	public String getNewName() {
 		return _newName;
 	}
-	
+
+	/**
+	 * Set the items new name.
+	 */
+	public void setNewName(@Nullable String newName) {
+		_newName = newName;
+	}
+
+	/**
+	 * Get the items old name.
+	 */
 	public String getOldName() {
 		return _oldName;
 	}
 	
+	@Override
 	public boolean isCancelled() {
 		return _isCancelled;
 	}
-	
-	public void setIsCancelled(boolean isCancelled) {
+
+	@Override
+	public void setCancelled(boolean isCancelled) {
 		_isCancelled = isCancelled;
 	}
-	
+
 	@Override
     public HandlerList getHandlers() {
 	    return _handlers;
