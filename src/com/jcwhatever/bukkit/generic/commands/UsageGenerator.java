@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.language.Localizable;
 
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Generates command usage text.
@@ -49,6 +50,24 @@ public class UsageGenerator {
     @Localizable public static final String INLINE_HELP =
             "{GREEN}/{0: root command}{1: command path}{2: command}?";
 
+    private final String _defaultTemplate;
+
+    /**
+     * Constructor.
+     */
+    public UsageGenerator() {
+        this(null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param defaultTemplate  The template to use if one is not explicitly specified.
+     */
+    public UsageGenerator(@Nullable String defaultTemplate) {
+        _defaultTemplate = defaultTemplate;
+    }
+
     /**
      * Generate default command usage.
      *
@@ -61,9 +80,7 @@ public class UsageGenerator {
             rootCommandName = command.getInfo().getSessionName();
         }
 
-        return command.getCommandCollection().size() == 0
-                ? generate(command, rootCommandName, HELP_USAGE)
-                : generate(command, rootCommandName, HELP_USAGE_HAS_SUB_COMMANDS);
+        return generate(command, rootCommandName);
     }
 
     /**
@@ -73,6 +90,15 @@ public class UsageGenerator {
      * @param rootCommandName  The root command name.
      */
     public String generate(AbstractCommand command, String rootCommandName) {
+
+        if (_defaultTemplate != null) {
+            return generate(command, rootCommandName, _defaultTemplate);
+        }
+
+        String hardCodeUsage = command.getInfo().getUsage();
+        if (!hardCodeUsage.isEmpty()) {
+            return generate(command, rootCommandName, hardCodeUsage);
+        }
 
         return command.getCommandCollection().size() == 0
                 ? generate(command, rootCommandName, HELP_USAGE)
