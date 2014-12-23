@@ -32,7 +32,6 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -140,7 +139,7 @@ public abstract class JarModuleLoader<T> {
         if (!folder.isDirectory())
             throw new RuntimeException("Module folder must be a folder.");
 
-        List<File> files = FileUtils.getFiles(getModuleFolder(), getDirectoryTraversal(),
+        List<File> files = FileUtils.getFiles(folder, getDirectoryTraversal(),
                 new IEntryValidator<File>() {
 
                     @Override
@@ -151,30 +150,10 @@ public abstract class JarModuleLoader<T> {
 
         List<Class<T>> moduleClasses = getModuleClasses(files);
 
-        if (moduleClasses.isEmpty())
-            return;
-
         for (Class<T> clazz : moduleClasses) {
 
             // create instance of module
-            T instance;
-
-            try {
-                instance = instantiateModule(clazz);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-                continue;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                continue;
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-                continue;
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-                continue;
-            }
-
+            T instance = instantiateModule(clazz);
             if (instance == null)
                 continue;
 
@@ -505,14 +484,7 @@ public abstract class JarModuleLoader<T> {
      * @param clazz   The module class.
      *
      * @return  Null if failed or to cancel loading of module.
-     *
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
      */
     @Nullable
-    protected abstract T instantiateModule(Class<T> clazz)
-            throws InstantiationException, IllegalAccessException,
-            NoSuchMethodException, InvocationTargetException;
+    protected abstract T instantiateModule(Class<T> clazz);
 }
