@@ -78,6 +78,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     private final Plugin _plugin;
     private final AbstractCommand _command;
     private final IMessenger _msg;
+    private final String[] _rawArguments;
     private final ArgumentParseResults _parseResults;
     private final ParameterDescriptions _paramDescriptions;
 
@@ -127,6 +128,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         if (args == null)
             args = ArrayUtils.EMPTY_STRING_ARRAY;
 
+        _rawArguments = args;
+
         // parse arguments
         _parseResults = new ArgumentParser().parse(command, args);
     }
@@ -137,6 +140,14 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     @Override
     public Plugin getPlugin() {
         return _plugin;
+    }
+
+    /**
+     * Get the raw unparsed arguments.
+     */
+    public String[] getRawArguments() {
+        //noinspection ConstantConditions
+        return _rawArguments.clone();
     }
 
     /**
