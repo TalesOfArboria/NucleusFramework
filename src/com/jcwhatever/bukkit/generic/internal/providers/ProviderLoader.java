@@ -24,14 +24,23 @@
 
 package com.jcwhatever.bukkit.generic.internal.providers;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.modules.ClassLoadMethod;
+import com.jcwhatever.bukkit.generic.modules.IModuleInfo;
 import com.jcwhatever.bukkit.generic.modules.JarModuleLoader;
 import com.jcwhatever.bukkit.generic.providers.IPermissionsProvider;
 import com.jcwhatever.bukkit.generic.providers.IProvider;
 import com.jcwhatever.bukkit.generic.providers.IRegionSelectProvider;
 import com.jcwhatever.bukkit.generic.providers.IStorageProvider;
+import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.jar.JarFile;
+import javax.annotation.Nullable;
 
 /**
  * Loads provider modules from /plugins/GenericsLib/providers folder
@@ -39,16 +48,28 @@ import java.util.List;
 public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
     private final InternalProviderManager _manager;
+    private final File _folder;
 
     /**
      * Constructor.
      */
-    public ProviderLoader(InternalProviderManager providerManager, ProviderLoaderSettings settings) {
-        super(IProvider.class, settings);
+    public ProviderLoader(InternalProviderManager providerManager) {
+        super(IProvider.class);
 
         PreCon.notNull(providerManager);
 
         _manager = providerManager;
+        _folder = new File(GenericsLib.getPlugin().getDataFolder(), "providers");
+    }
+
+    @Override
+    public File getModuleFolder() {
+        return _folder;
+    }
+
+    @Override
+    public DirectoryTraversal getDirectoryTraversal() {
+        return DirectoryTraversal.NONE;
     }
 
     @Override
@@ -83,5 +104,45 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
         }
 
         _manager._isProvidersLoading = false;
+    }
+
+    @Override
+    protected ClassLoadMethod getLoadMethod(File file) {
+        return ClassLoadMethod.SEARCH;
+    }
+
+    @Override
+    protected String getModuleClassName(JarFile jarFile) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    protected IModuleInfo createModuleInfo(final IProvider moduleInstance) {
+        return new IModuleInfo() {
+
+            String name = moduleInstance.getName();
+            String searchName = moduleInstance.getName().toLowerCase();
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getSearchName() {
+                return searchName;
+            }
+        };
+    }
+
+    @Nullable
+    @Override
+    public IProvider instantiateModule(Class<IProvider> clazz)
+            throws InstantiationException, IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException {
+
+        Constructor<IProvider> constructor = clazz.getDeclaredConstructor();
+        return constructor.newInstance();
     }
 }

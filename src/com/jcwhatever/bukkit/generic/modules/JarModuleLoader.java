@@ -25,7 +25,6 @@
 
 package com.jcwhatever.bukkit.generic.modules;
 
-import com.jcwhatever.bukkit.generic.modules.JarModuleLoaderSettings.IClassNameFactory;
 import com.jcwhatever.bukkit.generic.utils.FileUtils;
 import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
@@ -53,17 +52,7 @@ import javax.annotation.Nullable;
  */
 public abstract class JarModuleLoader<T> {
 
-    private final File _moduleFolder;
     private final Class<T> _moduleClass;
-    private final DirectoryTraversal _directoryTraversal;
-
-    protected ClassLoadMethod _classLoadMethod;
-    private IModuleFactory<T> _moduleFactory;
-    private IModuleInfoFactory<T> _moduleInfoFactory;
-    private IEntryValidator<String> _classValidator;
-    private IEntryValidator<Class<T>> _typeValidator;
-    private IEntryValidator<JarFile> _jarValidator;
-    private IClassNameFactory<T> _classNameFactory;
 
     private Set<String> _loadedClasses = new HashSet<>(1000);
 
@@ -79,25 +68,11 @@ public abstract class JarModuleLoader<T> {
      * Constructor.
      *
      * @param moduleClass  The super type of a module class.
-     * @param settings     The settings to use.
      */
-    public JarModuleLoader(Class<T> moduleClass, JarModuleLoaderSettings<T> settings) {
+    public JarModuleLoader(Class<T> moduleClass) {
         PreCon.notNull(moduleClass);
-        PreCon.notNull(settings);
-
-        settings.seal();
 
         _moduleClass = moduleClass;
-        _moduleFolder = settings.getModuleFolder();
-        _directoryTraversal = settings.getDirectoryTraversal();
-        _classLoadMethod = settings.getClassLoadMethod();
-        _classNameFactory = settings.getClassNameFactory();
-
-        _moduleFactory = settings.getModuleFactory();
-        _moduleInfoFactory = settings.getModuleInfoFactory();
-        _jarValidator = settings.getJarValidator();
-        _classValidator = settings.getClassValidator();
-        _typeValidator = settings.getTypeValidator();
     }
 
     /**
@@ -110,68 +85,13 @@ public abstract class JarModuleLoader<T> {
     /**
      * Get the module folder.
      */
-    public File getModuleFolder() {
-        return _moduleFolder;
-    }
+    public abstract File getModuleFolder();
 
     /**
      * Get the directory traversal used to
      * find jar files.
      */
-    public DirectoryTraversal getDirectoryTraversal() {
-        return _directoryTraversal;
-    }
-
-    /**
-     * Get the module factory used to instantiate
-     * module instances.
-     */
-    public IModuleFactory<T> getModuleFactory() {
-        return _moduleFactory;
-    }
-
-    /**
-     * Get the module info factory used to instantiate
-     * {@code IModuleInfo} instances.
-     */
-    public IModuleInfoFactory<T> getModuleInfoFactory() {
-        return _moduleInfoFactory;
-    }
-
-    /**
-     * Get the jar validator being used to validate
-     * jar files.
-     */
-    public IEntryValidator<JarFile> getJarValidator() {
-        return _jarValidator;
-    }
-
-    /**
-     * Get the class validator being used to validate
-     * class names.
-     */
-    public IEntryValidator<String> getClassValidator() {
-        return _classValidator;
-    }
-
-    /**
-     * Get the factory used to retrieve a class name to
-     * load for a jar file.
-     *
-     * @return  Null if not set.
-     */
-    @Nullable
-    public IClassNameFactory<T> getClassNameFactory() {
-        return _classNameFactory;
-    }
-
-    /**
-     * Get the type validator being used to validate
-     * a class type.
-     */
-    public IEntryValidator<Class<T>> getTypeValidator() {
-        return _typeValidator;
-    }
+    public abstract DirectoryTraversal getDirectoryTraversal();
 
     /**
      * Get loaded modules.
@@ -213,6 +133,13 @@ public abstract class JarModuleLoader<T> {
      */
     public void loadModules() {
 
+        File folder = getModuleFolder();
+        if (!folder.exists())
+            return;
+
+        if (!folder.isDirectory())
+            throw new RuntimeException("Module folder must be a folder.");
+
         List<File> files = FileUtils.getFiles(getModuleFolder(), getDirectoryTraversal(),
                 new IEntryValidator<File>() {
 
@@ -233,7 +160,7 @@ public abstract class JarModuleLoader<T> {
             T instance;
 
             try {
-                instance = getModuleFactory().create(clazz, this);
+                instance = instantiateModule(clazz);
             } catch (InstantiationException e) {
                 e.printStackTrace();
                 continue;
@@ -251,7 +178,7 @@ public abstract class JarModuleLoader<T> {
             if (instance == null)
                 continue;
 
-            IModuleInfo moduleInfo = getModuleInfoFactory().create(instance, this);
+            IModuleInfo moduleInfo = createModuleInfo(instance);
             if (moduleInfo == null)
                 continue;
 
@@ -294,7 +221,11 @@ public abstract class JarModuleLoader<T> {
 
         for (File file : files) {
 
-            switch (_classLoadMethod) {
+            ClassLoadMethod method = getLoadMethod(file);
+            if (method == null)
+                continue;
+
+            switch (method) {
 
                 case DIRECT:
                     Class<T> module;
@@ -348,7 +279,7 @@ public abstract class JarModuleLoader<T> {
         JarFile jarFile = new JarFile(file);
 
         // validate jar file
-        if (!getJarValidator().isValid(jarFile))
+        if (!isValidJarFile(jarFile))
             return new ArrayList<>(0);
 
         Enumeration<JarEntry> entries = jarFile.entries();
@@ -381,7 +312,7 @@ public abstract class JarModuleLoader<T> {
                 continue;
 
             // validate the class before loading it
-            if (!getClassValidator().isValid(className))
+            if (!isValidClassName(className))
                 continue;
 
             Class<?> c;
@@ -401,7 +332,7 @@ public abstract class JarModuleLoader<T> {
                 Class<T> clazz = (Class<T>)c;
 
                 // validate type
-                if (getTypeValidator().isValid(clazz)) {
+                if (isValidType(clazz)) {
                     moduleClasses.add(clazz);
                 }
             }
@@ -437,15 +368,14 @@ public abstract class JarModuleLoader<T> {
     @Nullable
     protected Class<T> getModuleClass(File file) throws IOException {
         PreCon.notNull(file);
-        assert getClassNameFactory() != null;
 
         JarFile jarFile = new JarFile(file);
 
         // validate jar file
-        if (!getJarValidator().isValid(jarFile))
+        if (!isValidJarFile(jarFile))
             return null;
 
-        String className = getClassNameFactory().getClassName(jarFile, this);
+        String className = getModuleClassName(jarFile);
         if (className == null)
             return null;
 
@@ -469,7 +399,7 @@ public abstract class JarModuleLoader<T> {
         PreCon.notNull(jarFile);
 
         // validate the class before loading it
-        if (!getClassValidator().isValid(className))
+        if (!isValidClassName(className))
             return null;
 
         URL[] urls = { new URL("jar:file:" + jarFile.getName() + "!/") };
@@ -497,4 +427,92 @@ public abstract class JarModuleLoader<T> {
 
         return result;
     }
+
+    /**
+     * Called to validate a jar file.
+     *
+     * <p>Intended to be overridden if needed.</p>
+     *
+     * @param jarFile  The jar file to check.
+     *
+     * @return  True if valid, false to deny.
+     */
+    protected boolean isValidJarFile(@SuppressWarnings("unused") JarFile jarFile) {
+        return true;
+    }
+
+    /**
+     * Called to validate a class name before loading the class.
+     *
+     * <p>Intended to be overridden if needed.</p>
+     *
+     * @param className  The class name to validate.
+     *
+     * @return  True if valid, false to deny.
+     */
+    protected boolean isValidClassName(@SuppressWarnings("unused") String className) {
+        return true;
+    }
+
+    /**
+     * Called to valid a module type before instantiation.
+     *
+     * <p>Intended to be overridden if needed.</p>
+     *
+     * @param type  The type to validate
+     *
+     * @return  True if valid, false to deny.
+     */
+    protected boolean isValidType(@SuppressWarnings("unused") Class<T> type) {
+        return true;
+    }
+
+    /**
+     * Get the class load method to use to load a jar file.
+     *
+     * @param file  The file that will be loaded.
+     *
+     * @return  The load method or null to cancel loading the file.
+     */
+    protected abstract ClassLoadMethod getLoadMethod(File file);
+
+    /**
+     * Get the name of the module class to load from the jar file.
+     *
+     * <p>Only called when the {@code ClassLoadMethod} is {@code DIRECT}.</p>
+     *
+     * @param jarFile  The jar file being loaded.
+     *
+     * @return  The name of the class to load or null to cancel.
+     */
+    protected abstract String getModuleClassName(JarFile jarFile);
+
+    /**
+     * Create a new instance of {@code IModuleInfo}
+     * and fill with information about the specified
+     * module.
+     *
+     * @param moduleInstance  The module instance.
+     *
+     * @return  Null if failed or to cancel loading the module.
+     */
+    @Nullable
+    protected abstract IModuleInfo createModuleInfo(T moduleInstance);
+
+    /**
+     * Create a new instance of a module.
+     *
+     * @param clazz   The module class.
+     *
+     * @return  Null if failed or to cancel loading of module.
+     *
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     */
+    @Nullable
+    public abstract T instantiateModule(Class<T> clazz)
+            throws InstantiationException, IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException;
 }

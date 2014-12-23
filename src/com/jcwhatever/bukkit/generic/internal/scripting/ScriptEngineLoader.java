@@ -24,24 +24,51 @@
 
 package com.jcwhatever.bukkit.generic.internal.scripting;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.Msg;
+import com.jcwhatever.bukkit.generic.modules.ClassLoadMethod;
+import com.jcwhatever.bukkit.generic.modules.IModuleInfo;
 import com.jcwhatever.bukkit.generic.modules.JarModuleLoader;
+import com.jcwhatever.bukkit.generic.utils.FileUtils.DirectoryTraversal;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.jar.JarFile;
+import javax.annotation.Nullable;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
 public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactory> {
 
     private final ScriptEngineManager _engineManager;
+    private final File _engineFolder;
 
     /**
      * Constructor.
      */
     public ScriptEngineLoader(ScriptEngineManager engineManager) {
-        super(ScriptEngineFactory.class, new ScriptEngineLoaderSettings());
+        super(ScriptEngineFactory.class);
 
         _engineManager = engineManager;
+
+        File scriptFolder = new File(GenericsLib.getPlugin().getDataFolder(), "scripts");
+        _engineFolder = new File(scriptFolder, "engines");
+
+        if (!_engineFolder.exists() && !_engineFolder.mkdirs()) {
+            throw new RuntimeException("Failed to create script engine folder.");
+        }
+    }
+
+    @Override
+    public File getModuleFolder() {
+        return _engineFolder;
+    }
+
+    @Override
+    public DirectoryTraversal getDirectoryTraversal() {
+        return DirectoryTraversal.NONE;
     }
 
     @Override
@@ -66,5 +93,44 @@ public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactor
 
             Msg.info("Loaded script engine: {0}", factory.getEngineName());
         }
+    }
+
+    @Override
+    protected ClassLoadMethod getLoadMethod(File file) {
+        return ClassLoadMethod.SEARCH;
+    }
+
+    @Override
+    protected String getModuleClassName(JarFile jarFile) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    protected IModuleInfo createModuleInfo(final ScriptEngineFactory moduleInstance) {
+        return new IModuleInfo() {
+
+            String name = moduleInstance.getEngineName();
+            String searchName = moduleInstance.getEngineName().toLowerCase();
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getSearchName() {
+                return searchName;
+            }
+        };
+    }
+
+    @Nullable
+    @Override
+    public ScriptEngineFactory instantiateModule(Class<ScriptEngineFactory> clazz)
+            throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+
+        Constructor<ScriptEngineFactory> constructor = clazz.getDeclaredConstructor();
+        return constructor.newInstance();
     }
 }
