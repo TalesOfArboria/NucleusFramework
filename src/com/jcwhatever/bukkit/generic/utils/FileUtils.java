@@ -33,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -343,6 +344,51 @@ public final class FileUtils {
     }
 
     /**
+     * Writes a text file.
+     *
+     * <p>Intended for writing a single line at a time. The line producer
+     * is used to retrieve each line and to know when to stop.</p>
+     *
+     * <p>The method finishes when the line producer returns null.</p>
+     *
+     * @param file           The file to write.
+     * @param charset        The encoding to use.
+     * @param lineProducer   The line producer.
+     */
+    public static void writeTextFile(File file, Charset charset, ITextLineProducer lineProducer) {
+        PreCon.notNull(file);
+        PreCon.notNull(charset);
+
+        OutputStreamWriter writer = null;
+
+        try {
+            FileOutputStream fileStream = new FileOutputStream(file);
+            writer = new OutputStreamWriter(fileStream, charset.name());
+
+            while (true) {
+                String line = lineProducer.nextLine();
+                if (line == null)
+                    break;
+
+                writer.write(line);
+                writer.write('\n');
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
      * Extract a class resource into a file.
      *
      * @param cls           The class to get a resource stream from.
@@ -409,6 +455,21 @@ public final class FileUtils {
     private static String getFilename(String resource) {
         String[] components = TextUtils.PATTERN_FILEPATH_SLASH.split(resource);
         return components[components.length - 1];
+    }
+
+    /**
+     * Interface for getting the next line
+     * to write to a text file.
+     */
+    public interface ITextLineProducer {
+
+        /**
+         * Get the next line.
+         *
+         * @return Null to stop writing.
+         */
+        @Nullable
+        String nextLine();
     }
 }
 
