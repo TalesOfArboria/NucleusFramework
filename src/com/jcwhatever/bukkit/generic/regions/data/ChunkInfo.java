@@ -30,12 +30,12 @@ import com.jcwhatever.bukkit.generic.file.IBinarySerializable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.IDataNodeSerializable;
 import com.jcwhatever.bukkit.generic.storage.UnableToDeserializeException;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
 import java.io.IOException;
+import javax.annotation.Nullable;
 
 /**
  * Contains information about a chunk.

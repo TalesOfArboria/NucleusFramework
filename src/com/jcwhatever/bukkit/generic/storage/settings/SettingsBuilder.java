@@ -28,13 +28,13 @@ import com.jcwhatever.bukkit.generic.converters.ValueConverter;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.IEntryValidator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Used to build a {@code PropertyDefinition} map.

@@ -24,9 +24,9 @@
 
 package com.jcwhatever.bukkit.generic.regions.data;
 
-import com.sun.istack.internal.Nullable;
-
 import org.bukkit.Chunk;
+
+import javax.annotation.Nullable;
 
 /**
  * Object that contains info about a chunk.

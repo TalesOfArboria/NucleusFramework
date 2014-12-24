@@ -24,13 +24,12 @@
 
 package com.jcwhatever.bukkit.generic.jail;
 
-import com.sun.istack.internal.Nullable;
-
 import org.bukkit.plugin.Plugin;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Jail manager interface.

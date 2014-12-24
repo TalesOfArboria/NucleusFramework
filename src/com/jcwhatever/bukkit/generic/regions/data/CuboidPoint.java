@@ -26,9 +26,10 @@ package com.jcwhatever.bukkit.generic.regions.data;
 
 import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.Location;
+
+import javax.annotation.Nullable;
 
 /**
  * Specifies one of 8 possible points in a cuboid region.
