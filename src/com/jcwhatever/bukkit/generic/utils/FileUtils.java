@@ -38,6 +38,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import javax.annotation.Nullable;
 
 /**
@@ -282,6 +284,69 @@ public final class FileUtils {
             return null;
 
         String result = scanTextFile(input, charSet, (int)file.length(), lineValidator);
+
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
+     * Get text file contents as a string from a file contained in a
+     * zip file.
+     *
+     * @param zipFile        The zip file that contains the text file.
+     * @param fileName       The name and path of the text file.
+     * @param charSet        The encoding type used by the text file.
+     *
+     * @return  Null if file not found or error reading the file.
+     *
+     * @throws java.lang.IllegalArgumentException
+     */
+    @Nullable
+    public static String scanTextFile(ZipFile zipFile, String fileName, Charset charSet) {
+
+        return scanTextFile(zipFile, fileName, charSet, null);
+    }
+
+    /**
+     * Get text file contents as a string from a file contained in a
+     * zip file.
+     *
+     * @param zipFile        The zip file that contains the text file.
+     * @param fileName       The name and path of the text file.
+     * @param charSet        The encoding type used by the text file.
+     * @param lineValidator  Optional validator to use for each scanned line.
+     *                       Returning false excludes the line from the result.
+     *
+     * @return  Null if file not found or error reading the file.
+     *
+     * @throws java.lang.IllegalArgumentException
+     */
+    @Nullable
+    public static String scanTextFile(ZipFile zipFile, String fileName, Charset charSet,
+                                      @Nullable IEntryValidator<String> lineValidator) {
+        PreCon.notNull(zipFile);
+        PreCon.notNull(fileName);
+        PreCon.notNull(charSet);
+
+        ZipEntry entry = zipFile.getEntry(fileName);
+
+        InputStream input = null;
+
+        try {
+            input = zipFile.getInputStream(entry);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (input == null)
+            return null;
+
+        String result = scanTextFile(input, charSet, (int)entry.getSize(), lineValidator);
 
         try {
             input.close();
