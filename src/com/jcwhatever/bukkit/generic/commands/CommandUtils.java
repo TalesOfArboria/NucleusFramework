@@ -37,8 +37,8 @@ import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.regions.selection.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.settings.ISettingsManager;
-import com.jcwhatever.bukkit.generic.storage.settings.SettingDefinitions;
-import com.jcwhatever.bukkit.generic.storage.settings.ValidationResults;
+import com.jcwhatever.bukkit.generic.storage.settings.PropertyDefinition;
+import com.jcwhatever.bukkit.generic.storage.settings.PropertyValueType;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 
@@ -47,7 +47,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.regex.Matcher;
@@ -60,16 +59,38 @@ import javax.annotation.Nullable;
 public class CommandUtils implements IPluginOwned {
 
     @Localizable
-    private static final String _SAME_WORLD_REGION_SELECT = "You need to be in the same world as the region selection.";
-    @Localizable private static final String _INVALID_REGION = "Invalid region. Both points must be in the same world.";
-    @Localizable private static final String _SET_SELECTION_FAILED = "Failed to set region selection.";
-    @Localizable private static final String _NO_REGION_SELECTED = "No cuboid region selection found. Please select a region first.";
-    @Localizable private static final String _UNRECOGNIZED_PROPERTY = "The property '{0: property name}' is not a recognized setting.";
-    @Localizable private static final String _CLEAR_PROPERTY_FAILED = "Failed to clear value on property '{0: property name}'.";
-    @Localizable private static final String _CLEAR_PROPERTY_SUCCESS = "'{0: property name}' value cleared.";
-    @Localizable private static final String _INVALID_PROPERTY_VALUE = "'{0: property value}' is not a valid value for the property called '{1: property name}'.";
-    @Localizable private static final String _SET_PROPERTY_FAILED = "Failed to set property '{0: property name}'.";
-    @Localizable private static final String _SET_PROPERTY_SUCCESS = "'{0: property value}' value changed to {1: property name}.";
+    private static final String _SAME_WORLD_REGION_SELECT =
+            "You need to be in the same world as the region selection.";
+
+    @Localizable private static final String _INVALID_REGION =
+            "Invalid region. Both points must be in the same world.";
+
+    @Localizable private static final String _SET_SELECTION_FAILED =
+            "Failed to set region selection.";
+
+    @Localizable private static final String _NO_REGION_SELECTED =
+            "No cuboid region selection found. Please select a region first.";
+
+    @Localizable private static final String _UNRECOGNIZED_PROPERTY =
+            "The property '{0: property name}' is not a recognized setting.";
+
+    @Localizable private static final String _CLEAR_PROPERTY_FAILED =
+            "Failed to clear value on property '{0: property name}'.";
+
+    @Localizable private static final String _CLEAR_PROPERTY_SUCCESS =
+            "'{0: property name}' value cleared.";
+
+    @Localizable private static final String _INVALID_PROPERTY_VALUE =
+            "'{0: property value}' is not a valid value for the property called '{1: property name}'.";
+
+    @Localizable private static final String _SET_PROPERTY_FAILED =
+            "Failed to set property '{0: property name}'.";
+
+    @Localizable private static final String _SET_PROPERTY_SUCCESS =
+            "'{0: property value}' value changed to {1: property name}.";
+
+    @Localizable private static final String _PROPERTY_DESCRIPTION =
+            "Description for '{0: property value}':\n{GRAY}{1: description}";
 
     private static final Pattern FORMAT_ENABLE = Pattern.compile("\\{e}");
 
@@ -219,20 +240,14 @@ public class CommandUtils implements IPluginOwned {
 
         final String settingName = args.getString(propertyArgName);
 
-        SettingDefinitions defs = settings.getPossibleSettings();
-        if (!defs.containsKey(settingName)) {
+        PropertyDefinition defs = settings.getDefinitions().get(settingName);
+        if (defs == null) {
             tellError(sender, Lang.get(_UNRECOGNIZED_PROPERTY, settingName));
             return; // finish
         }
 
-        ValidationResults result = settings.set(settingName, null);
-
-        if (!result.isValid()) {
-
-            if (!result.tellMessage(_plugin, sender)) {
-                tellError(sender, Lang.get(_CLEAR_PROPERTY_FAILED, settingName));
-            }
-
+        if (!settings.set(settingName, null)) {
+            tellError(sender, Lang.get(_CLEAR_PROPERTY_FAILED, settingName));
             return; // finish
         }
 
@@ -251,8 +266,8 @@ public class CommandUtils implements IPluginOwned {
      *
      * @return  True if operation completed successfully.
      *
-     * @throws InvalidArgumentException          If the value provided by the command sender is not valid.
-     * @throws com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
+     * @throws InvalidArgumentException       If the value provided by the command sender is not valid.
+     * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     public void setSetting(CommandSender sender, final ISettingsManager settings,
                               CommandArguments args, String propertyArgName, String valueArgName)
@@ -273,7 +288,7 @@ public class CommandUtils implements IPluginOwned {
      *
      * @return  True if operation completed successfully.
      *
-     * @throws InvalidArgumentException          If the value provided by the command sender is not valid.
+     * @throws InvalidArgumentException       If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
      */
     public void setSetting(CommandSender sender, final ISettingsManager settings,
@@ -290,60 +305,59 @@ public class CommandUtils implements IPluginOwned {
         Object value;
 
         // get settings definitions
-        SettingDefinitions defs = settings.getPossibleSettings();
-        if (!defs.containsKey(settingName)) {
+        final PropertyDefinition propertyDefinition = settings.getDefinitions().get(settingName);
+        if (propertyDefinition == null) {
             tellError(sender, Lang.get(_UNRECOGNIZED_PROPERTY, settingName));
-            return; // finished
+            return; // finish
         }
 
-        Class<?> valueType = defs.get(settingName).getValueType();
+        PropertyValueType valueType = propertyDefinition.getValueType();
 
-        // Special case: Location
-        if (valueType.isAssignableFrom(Location.class)) {
+        switch (valueType.getType()) {
 
-            // get location value to use
-            args.getLocation(sender, valueArgName, new LocationResponse() {
+            case LOCATION:
 
-                @Override
-                public void onLocationRetrieved (Player p, Location location) {
+                // get location value to use
+                args.getLocation(sender, valueArgName, new LocationResponse() {
 
-                    ValidationResults result = settings.set(settingName, location);
+                    @Override
+                    public void onLocationRetrieved (Player p, Location location) {
 
-                    if (result.isValid()) {
-                        String successMessage = Lang.get(_SET_PROPERTY_SUCCESS, settingName,
-                                TextUtils.formatLocation(location, true));
+                        if (settings.set(settingName, location)) {
+                            String successMessage = Lang.get(_SET_PROPERTY_SUCCESS, settingName,
+                                    TextUtils.formatLocation(location, true));
 
-                        tellSuccess(p, successMessage);
+                            tellSuccess(p, successMessage);
 
-                        if (onSuccess != null)
-                            onSuccess.run();
+                            if (onSuccess != null)
+                                onSuccess.run();
 
-                    } else if (!result.tellMessage(_plugin, p)) {
+                        } else {
 
-                        tellError(p, Lang.get(_SET_PROPERTY_FAILED, settingName));
+                            tellError(p, Lang.get(_SET_PROPERTY_FAILED, settingName));
+                            tell(p, Lang.get(_PROPERTY_DESCRIPTION,
+                                    propertyDefinition.getName(), propertyDefinition.getDescription()));
+                        }
                     }
-                }
 
-            });
-            return; // finished
+                });
+                return; // finish
+
+            case ITEM_STACK_ARRAY:
+                value = args.getItemStack(sender, valueArgName);
+                break;
+
+            default:
+                value = args.getString(valueArgName);
+                break;
         }
-        else {
-
-            value = valueType.isAssignableFrom(ItemStack.class)  // Special case: ItemStack
-                    ? args.getItemStack(sender, valueArgName)
-                    : args.getString(valueArgName);
-        }
-
-        ValidationResults result = settings.set(settingName, value);
 
         // make sure the result is valid
-        if (!result.isValid()) {
-
-            if (!result.tellMessage(_plugin, sender)) {
-                tellError(sender, Lang.get(_INVALID_PROPERTY_VALUE, value, settingName));
-            }
-
-            return; // finished
+        if (!settings.set(settingName, value)) {
+            tellError(sender, Lang.get(_INVALID_PROPERTY_VALUE, value, settingName));
+            tell(sender, Lang.get(_PROPERTY_DESCRIPTION,
+                    propertyDefinition.getName(), propertyDefinition.getDescription()));
+            return; // finish
         }
 
         tellSuccess(sender, Lang.get(_SET_PROPERTY_SUCCESS, settingName, args.getString(valueArgName)));

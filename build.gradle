@@ -15,13 +15,13 @@ def includeFiles = [
 
 // Set version number
 if (hasProperty("teamcity")) {
-    version = majorVersion + '.' + teamcity["build.number"] + '.git-' + teamcity["build.vcs.number"]
+    version = majorVersion + '.' + teamcity["buildDefinitions.number"] + '.git-' + teamcity["buildDefinitions.vcs.number"]
 
     if (buildBy == null) {
-        buildBy = teamcity["build.triggeredBy.username"]
+        buildBy = teamcity["buildDefinitions.triggeredBy.username"]
 
         if (!buildBy) {
-            buildBy = teamcity["build.triggeredBy"]
+            buildBy = teamcity["buildDefinitions.triggeredBy"]
         }
 
         if (!buildBy) {
