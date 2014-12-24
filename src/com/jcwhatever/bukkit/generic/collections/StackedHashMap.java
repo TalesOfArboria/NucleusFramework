@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +47,9 @@ import javax.annotation.Nullable;
  */
 public class StackedHashMap<K, V> implements Map<K, V> {
 
-    Map<K, LinkedList<V>> _map;
+    private Map<K, LinkedList<V>> _map;
+    private Set<V> _cachedValues;
+    private Set<K> _keySet;
 
     /**
      * Constructor.
@@ -64,6 +67,7 @@ public class StackedHashMap<K, V> implements Map<K, V> {
         PreCon.positiveNumber(size);
 
         _map = new HashMap<K, LinkedList<V>>(size);
+        _keySet = new StackedKeySet();
     }
 
     /**
@@ -80,6 +84,7 @@ public class StackedHashMap<K, V> implements Map<K, V> {
     @Override
     public void clear() {
         _map.clear();
+        resetCache();
     }
 
     /**
@@ -103,19 +108,15 @@ public class StackedHashMap<K, V> implements Map<K, V> {
     public boolean containsValue(Object value) {
         PreCon.notNull(value);
 
-        for (LinkedList<V> stack : _map.values()) {
-            //noinspection SuspiciousMethodCalls
-            if (stack.contains(value))
-                return true;
-        }
-        return false;
+        //noinspection SuspiciousMethodCalls
+        return valueSet().contains(value);
     }
 
     /**
      * Unsupported.
      */
     @Override
-    public Set<java.util.Map.Entry<K, V>> entrySet() {
+    public Set<Map.Entry<K, V>> entrySet() {
         throw new UnsupportedOperationException();
     }
 
@@ -138,13 +139,12 @@ public class StackedHashMap<K, V> implements Map<K, V> {
         return null;
     }
 
-
     /**
      * Get the maps keys.
      */
     @Override
     public Set<K> keySet() {
-        return _map.keySet();
+        return _keySet;
     }
 
     /**
@@ -166,15 +166,21 @@ public class StackedHashMap<K, V> implements Map<K, V> {
 
         stack.push(value);
 
+        resetCache();
+
         return value;
     }
 
     /**
-     * Unsupported.
+     * Put map values.
      */
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        throw new UnsupportedOperationException();
+        PreCon.notNull(map);
+
+        for (Entry<? extends K, ? extends V> set : map.entrySet()) {
+            put(set.getKey(), set.getValue());
+        }
     }
 
     /**
@@ -198,6 +204,8 @@ public class StackedHashMap<K, V> implements Map<K, V> {
 
         if (stack.isEmpty())
             _map.remove(key);
+
+        resetCache();
 
         return stack.pop();
     }
@@ -236,6 +244,12 @@ public class StackedHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public Collection<V> values() {
+        return new HashSet<>(valueSet());
+    }
+
+    private Set<V> valueSet() {
+        if (_cachedValues != null)
+            return _cachedValues;
 
         Collection<LinkedList<V>> values = _map.values();
         Set<V> results = new HashSet<V>(values.size());
@@ -244,7 +258,86 @@ public class StackedHashMap<K, V> implements Map<K, V> {
             results.addAll(stack);
         }
 
+        _cachedValues = results;
+
         return results;
     }
 
+    private void resetCache() {
+        _cachedValues = null;
+    }
+
+    private final class StackedKeySet extends AbstractSetWrapper<K> {
+
+        @Override
+        public Iterator<K> iterator() {
+            return new StackedKeySetIterator();
+        }
+
+        @Override
+        public boolean add(K k) {
+            if (_map.keySet().add(k)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            if (_map.keySet().remove(o)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends K> c) {
+            if (_map.keySet().addAll(c)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            if (_map.keySet().retainAll(c)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            if (_map.keySet().removeAll(c)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected Collection<K> getCollection() {
+            return _map.keySet();
+        }
+
+        private final class StackedKeySetIterator extends AbstractIteratorWrapper<K> {
+
+            Iterator<K> iterator = _map.keySet().iterator();
+
+            @Override
+            public void remove() {
+                iterator.remove();
+                resetCache();
+            }
+
+            @Override
+            protected Iterator<K> getIterator() {
+                return iterator;
+            }
+        }
+    }
 }

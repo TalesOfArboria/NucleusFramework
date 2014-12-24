@@ -28,6 +28,7 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,31 +42,21 @@ import javax.annotation.Nullable;
  */
 public abstract class SetMap<K, V> implements Map<K, V> {
 
-    /**
-     * Determine if the map is empty.
-     */
+    private final Set<K> _keySet = new SetMapKeySet();
+    private Set<V> _cachedValues;
+
+    @Override
+    public int size() {
+        return getMap().size();
+    }
+
     @Override
     public boolean isEmpty() {
         return getMap().isEmpty();
     }
 
-    /**
-     * Clear all items
-     */
-    @Override
-    public void clear() {
-        getMap().clear();
-    }
-
-    /**
-     * Determine if the map contains the specified key.
-     *
-     * @param key  The key to check.
-     */
     @Override
     public boolean containsKey(Object key) {
-        PreCon.notNull(key);
-
         return getMap().containsKey(key);
     }
 
@@ -78,13 +69,8 @@ public abstract class SetMap<K, V> implements Map<K, V> {
     public boolean containsValue(Object value) {
         PreCon.notNull(value);
 
-        for (Set<V> stack : getMap().values()) {
-
-            //noinspection SuspiciousMethodCalls
-            if (stack.contains(value))
-                return true;
-        }
-        return false;
+        //noinspection SuspiciousMethodCalls
+        return valueSet().contains(value);
     }
 
     /**
@@ -147,13 +133,12 @@ public abstract class SetMap<K, V> implements Map<K, V> {
         return set;
     }
 
-
     /**
      * Get the maps keys.
      */
     @Override
     public Set<K> keySet() {
-        return getMap().keySet();
+        return _keySet;
     }
 
     /**
@@ -174,20 +159,48 @@ public abstract class SetMap<K, V> implements Map<K, V> {
         }
 
         set.add(value);
+        resetCache();
 
         return value;
     }
 
     /**
-     * Unsupported.
+     * Put all items from a map.
      */
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        throw new UnsupportedOperationException();
+
+        if (map instanceof SetMap) {
+
+            @SuppressWarnings("unchecked")
+            SetMap<? extends K, ? extends V> setMap = (SetMap<? extends K, ? extends V>)map;
+
+            Set<? extends K> keys = setMap.keySet();
+            for (K key : keys) {
+                Set<? extends V> set = setMap.getAll(key);
+                for (V element : set) {
+                    put(key, element);
+                }
+            }
+        }
+        else {
+
+            for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
+                put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        resetCache();
+    }
+
+    @Override
+    public void clear() {
+        getMap().clear();
+        resetCache();
     }
 
     /**
-     * All all values in a collection to the specified
+     * Add all values in a collection to the specified
      * key.
      *
      * @param key     The key to use.
@@ -205,6 +218,8 @@ public abstract class SetMap<K, V> implements Map<K, V> {
             set = createSet();
             getMap().put(key, set);
         }
+
+        resetCache();
 
         set.addAll(values);
     }
@@ -235,6 +250,7 @@ public abstract class SetMap<K, V> implements Map<K, V> {
 
         V removed = set.iterator().next();
         set.remove(removed);
+        resetCache();
 
         return removed;
     }
@@ -263,7 +279,12 @@ public abstract class SetMap<K, V> implements Map<K, V> {
             return false;
         }
 
-        return set.remove(value);
+        if (set.remove(value)) {
+            resetCache();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -287,6 +308,9 @@ public abstract class SetMap<K, V> implements Map<K, V> {
             }
         }
 
+        if (isModified)
+            resetCache();
+
         return isModified;
     }
 
@@ -306,17 +330,9 @@ public abstract class SetMap<K, V> implements Map<K, V> {
             return createSet(0);
         }
 
-        return set;
-    }
+        resetCache();
 
-    /**
-     * Get the number of entries in the map.
-     * Or in other terms the number of keys, or
-     * the number of stacks.
-     */
-    @Override
-    public int size() {
-        return getMap().size();
+        return set;
     }
 
     /**
@@ -342,14 +358,11 @@ public abstract class SetMap<K, V> implements Map<K, V> {
      */
     @Override
     public Collection<V> values() {
-        Collection<Set<V>> values = getMap().values();
-        Set<V> results = createSet(values.size());
+        return valueSet();
+    }
 
-        for (Set<V> set : values) {
-            results.addAll(set);
-        }
-
-        return results;
+    protected void resetCache() {
+        _cachedValues = null;
     }
 
     protected abstract Map<K, Set<V>> getMap();
@@ -358,4 +371,94 @@ public abstract class SetMap<K, V> implements Map<K, V> {
 
     protected abstract Set<V> createSet(int size);
 
+
+    protected Set<V> valueSet() {
+        if (_cachedValues != null)
+            return _cachedValues;
+
+        Collection<Set<V>> values = getMap().values();
+        Set<V> results = createSet(values.size());
+
+        for (Set<V> set : values) {
+            results.addAll(set);
+        }
+
+        _cachedValues = results;
+
+        return results;
+    }
+
+    private final class SetMapKeySet extends AbstractSetWrapper<K> {
+
+        @Override
+        public Iterator<K> iterator() {
+            return new StackedKeySetIterator();
+        }
+
+        @Override
+        public boolean add(K k) {
+            if (getMap().keySet().add(k)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            if (getMap().keySet().remove(o)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends K> c) {
+            if (getMap().keySet().addAll(c)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            if (getMap().keySet().retainAll(c)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            if (getMap().keySet().removeAll(c)) {
+                resetCache();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected Collection<K> getCollection() {
+            return getMap().keySet();
+        }
+
+        private final class StackedKeySetIterator extends AbstractIteratorWrapper<K> {
+
+            Iterator<K> iterator = getMap().keySet().iterator();
+
+            @Override
+            public void remove() {
+                iterator.remove();
+                resetCache();
+            }
+
+            @Override
+            protected Iterator<K> getIterator() {
+                return iterator;
+            }
+        }
+    }
 }
