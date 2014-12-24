@@ -32,6 +32,7 @@ import com.jcwhatever.bukkit.generic.commands.parameters.FlagParameter;
 import com.jcwhatever.bukkit.generic.utils.ArrayUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import java.util.Deque;
 import java.util.LinkedList;
 
 /**
@@ -53,8 +54,8 @@ public class ArgumentParser {
 
         ArgumentParseResults results = new ArgumentParseResults(command);
 
-        LinkedList<String> arguments = ArrayUtils.asLinkedList(args);
-        LinkedList<CommandParameter> staticParameters = new LinkedList<>(
+        Deque<String> arguments = ArrayUtils.asDeque(args);
+        Deque<CommandParameter> staticParameters = new LinkedList<>(
                 command.getInfo().getStaticParams());
 
         // parse arguments for static parameters.
@@ -87,8 +88,8 @@ public class ArgumentParser {
     // parse arguments for static parameters
     private void parseStaticArgs(AbstractCommand command,
                                  ArgumentParseResults results,
-                                 LinkedList<CommandParameter> parameterList,
-                                 LinkedList<String> arguments)
+                                 Deque<CommandParameter> parameterList,
+                                 Deque<String> arguments)
             throws CommandException {
 
         while (!parameterList.isEmpty()) {
@@ -151,7 +152,7 @@ public class ArgumentParser {
                                     ArgumentParseResults results,
                                     RetrievableSet<CommandParameter> parameters,
                                     RetrievableSet<FlagParameter> flags,
-                                    LinkedList<String> arguments)
+                                    Deque<String> arguments)
             throws CommandException {
 
         while (!arguments.isEmpty()) {
@@ -215,7 +216,7 @@ public class ArgumentParser {
      * @param currentArg  The current argument
      * @param argsQueue   The queue of arguments words
      */
-    private String parseArgValue(String currentArg, LinkedList<String> argsQueue) {
+    private String parseArgValue(String currentArg, Deque<String> argsQueue) {
 
         // check to see if parsing a literal
         String quote = null;

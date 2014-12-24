@@ -24,15 +24,19 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
+import com.jcwhatever.bukkit.generic.collections.WrappedArrayList;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Array utilities.
@@ -2044,20 +2048,16 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to an array list.
+     * Wraps an array into an array list.
      *
-     * @param array  The array to convert.
+     * @param array  The array to wrap.
      *
      * @param <T>  The array component type.
      */
-    public static <T> ArrayList<T> asList(T[] array) {
+    public static <T> List<T> asList(T[] array) {
         PreCon.notNull(array);
 
-        ArrayList<T> result = new ArrayList<T>(array.length);
-
-        Collections.addAll(result, array);
-
-        return result;
+        return new WrappedArrayList<T>(array);
     }
 
     /**
@@ -2065,7 +2065,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static ArrayList<Boolean> asList(boolean[] array) {
+    public static List<Boolean> asList(boolean[] array) {
         PreCon.notNull(array);
 
         ArrayList<Boolean> result = new ArrayList<>(array.length);
@@ -2082,7 +2082,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static ArrayList<Byte> asList(byte[] array) {
+    public static List<Byte> asList(byte[] array) {
         PreCon.notNull(array);
 
         ArrayList<Byte> result = new ArrayList<>(array.length);
@@ -2099,7 +2099,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static ArrayList<Character> asList(char[] array) {
+    public static List<Character> asList(char[] array) {
         PreCon.notNull(array);
 
         ArrayList<Character> result = new ArrayList<>(array.length);
@@ -2116,7 +2116,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static ArrayList<Short> asList(short[] array) {
+    public static List<Short> asList(short[] array) {
         PreCon.notNull(array);
 
         ArrayList<Short> result = new ArrayList<>(array.length);
@@ -2133,7 +2133,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static ArrayList<Integer> asList(int[] array) {
+    public static List<Integer> asList(int[] array) {
         PreCon.notNull(array);
 
         ArrayList<Integer> result = new ArrayList<>(array.length);
@@ -2150,7 +2150,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static ArrayList<Long> asList(long[] array) {
+    public static List<Long> asList(long[] array) {
         PreCon.notNull(array);
 
         ArrayList<Long> result = new ArrayList<>(array.length);
@@ -2167,7 +2167,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static ArrayList<Float> asList(float[] array) {
+    public static List<Float> asList(float[] array) {
         PreCon.notNull(array);
 
         ArrayList<Float> result = new ArrayList<>(array.length);
@@ -2184,7 +2184,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static ArrayList<Double> asList(double[] array) {
+    public static List<Double> asList(double[] array) {
         PreCon.notNull(array);
 
         ArrayList<Double> result = new ArrayList<>(array.length);
@@ -2197,13 +2197,13 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      *
      * @param <T>  The array component type.
      */
-    public static <T> LinkedList<T> asLinkedList(T[] array) {
+    public static <T> Deque<T> asDeque(T[] array) {
         PreCon.notNull(array);
 
         LinkedList<T> result = new LinkedList<>();
@@ -2214,11 +2214,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      */
-    public static LinkedList<Boolean> asLinkedList(boolean[] array) {
+    public static Deque<Boolean> asDeque(boolean[] array) {
         PreCon.notNull(array);
 
         LinkedList<Boolean> result = new LinkedList<>();
@@ -2231,11 +2231,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      */
-    public static LinkedList<Byte> asLinkedList(byte[] array) {
+    public static Deque<Byte> asDeque(byte[] array) {
         PreCon.notNull(array);
 
         LinkedList<Byte> result = new LinkedList<>();
@@ -2248,11 +2248,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      */
-    public static LinkedList<Character> asLinkedList(char[] array) {
+    public static Deque<Character> asDeque(char[] array) {
         PreCon.notNull(array);
 
         LinkedList<Character> result = new LinkedList<>();
@@ -2265,11 +2265,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      */
-    public static LinkedList<Short> asLinkedList(short[] array) {
+    public static Deque<Short> asDeque(short[] array) {
         PreCon.notNull(array);
 
         LinkedList<Short> result = new LinkedList<>();
@@ -2282,11 +2282,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      */
-    public static LinkedList<Integer> asLinkedList(int[] array) {
+    public static Deque<Integer> asDeque(int[] array) {
         PreCon.notNull(array);
 
         LinkedList<Integer> result = new LinkedList<>();
@@ -2299,11 +2299,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      */
-    public static LinkedList<Long> asLinkedList(long[] array) {
+    public static Deque<Long> asDeque(long[] array) {
         PreCon.notNull(array);
 
         LinkedList<Long> result = new LinkedList<>();
@@ -2316,11 +2316,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      */
-    public static LinkedList<Float> asLinkedList(float[] array) {
+    public static Deque<Float> asDeque(float[] array) {
         PreCon.notNull(array);
 
         LinkedList<Float> result = new LinkedList<>();
@@ -2333,11 +2333,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code LinkedList}.
+     * Convert an array to a {@code Deque}.
      *
      * @param array  The array to convert.
      */
-    public static LinkedList<Double> asLinkedList(double[] array) {
+    public static Deque<Double> asDeque(double[] array) {
         PreCon.notNull(array);
 
         LinkedList<Double> result = new LinkedList<>();
@@ -2350,13 +2350,13 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      *
      * @param <T>  The array component type.
      */
-    public static <T> HashSet<T> asSet(T[] array) {
+    public static <T> Set<T> asSet(T[] array) {
         PreCon.notNull(array);
 
         HashSet<T> result = new HashSet<>(array.length);
@@ -2367,11 +2367,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      */
-    public static HashSet<Boolean> asSet(boolean[] array) {
+    public static Set<Boolean> asSet(boolean[] array) {
         PreCon.notNull(array);
 
         HashSet<Boolean> result = new HashSet<>(2);
@@ -2386,11 +2386,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      */
-    public static HashSet<Byte> asSet(byte[] array) {
+    public static Set<Byte> asSet(byte[] array) {
         PreCon.notNull(array);
 
         HashSet<Byte> result = new HashSet<>(array.length);
@@ -2403,11 +2403,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      */
-    public static HashSet<Character> asSet(char[] array) {
+    public static Set<Character> asSet(char[] array) {
         PreCon.notNull(array);
 
         HashSet<Character> result = new HashSet<>(array.length);
@@ -2420,11 +2420,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      */
-    public static HashSet<Short> asSet(short[] array) {
+    public static Set<Short> asSet(short[] array) {
         PreCon.notNull(array);
 
         HashSet<Short> result = new HashSet<>(array.length);
@@ -2437,11 +2437,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      */
-    public static HashSet<Integer> asSet(int[] array) {
+    public static Set<Integer> asSet(int[] array) {
         PreCon.notNull(array);
 
         HashSet<Integer> result = new HashSet<>(array.length);
@@ -2454,11 +2454,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      */
-    public static HashSet<Long> asSet(long[] array) {
+    public static Set<Long> asSet(long[] array) {
         PreCon.notNull(array);
 
         HashSet<Long> result = new HashSet<>(array.length);
@@ -2471,11 +2471,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      */
-    public static HashSet<Float> asSet(float[] array) {
+    public static Set<Float> asSet(float[] array) {
         PreCon.notNull(array);
 
         HashSet<Float> result = new HashSet<>(array.length);
@@ -2488,11 +2488,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code HashSet}.
+     * Convert an array to a {@code Set}.
      *
      * @param array  The array to convert.
      */
-    public static HashSet<Double> asSet(double[] array) {
+    public static Set<Double> asSet(double[] array) {
         PreCon.notNull(array);
 
         HashSet<Double> result = new HashSet<>(array.length);
