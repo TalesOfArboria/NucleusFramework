@@ -38,7 +38,9 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.JarFile;
 import javax.annotation.Nullable;
 
@@ -49,6 +51,9 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
     private final InternalProviderManager _manager;
     private final File _folder;
+
+    // keyed to module class name
+    private final Map<String, ProviderModuleInfo> _moduleInfoMap = new HashMap<>(10);
 
     /**
      * Constructor.
@@ -108,32 +113,25 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
     @Override
     protected ClassLoadMethod getLoadMethod(File file) {
-        return ClassLoadMethod.SEARCH;
+        return ClassLoadMethod.DIRECT;
     }
 
     @Override
     protected String getModuleClassName(JarFile jarFile) {
-        return null;
+
+        ProviderModuleInfo info = new ProviderModuleInfo(jarFile);
+        if (!info.isValid())
+            return null;
+
+        _moduleInfoMap.put(info.getModuleClassName(), info);
+
+        return info.getModuleClassName();
     }
 
     @Nullable
     @Override
     protected IModuleInfo createModuleInfo(final IProvider moduleInstance) {
-        return new IModuleInfo() {
-
-            String name = moduleInstance.getName();
-            String searchName = moduleInstance.getName().toLowerCase();
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public String getSearchName() {
-                return searchName;
-            }
-        };
+        return _moduleInfoMap.get(moduleInstance.getClass().getCanonicalName());
     }
 
     @Nullable
