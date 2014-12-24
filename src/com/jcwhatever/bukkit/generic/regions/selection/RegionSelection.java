@@ -25,6 +25,7 @@
 package com.jcwhatever.bukkit.generic.regions.selection;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.regions.data.CuboidPoint;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -33,6 +34,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -80,6 +84,7 @@ public class RegionSelection implements IRegionSelection {
     private int _chunkZ;
     private int _chunkXWidth;
     private int _chunkZWidth;
+    private List<ChunkInfo> _chunks;
 
     private Location _center;
 
@@ -343,6 +348,38 @@ public class RegionSelection implements IRegionSelection {
         return _chunkZWidth;
     }
 
+    /**
+     * Get all chunks that contain at least a portion of the region.
+     */
+    @Override
+    public final List<ChunkInfo> getChunks() {
+        if (getWorld() == null || !isDefined())
+            return new ArrayList<>(0);
+
+        if (_chunks != null)
+            return _chunks;
+
+        synchronized (_sync) {
+
+            int startX = _chunkX;
+            int endX = _chunkX + _chunkXWidth - 1;
+
+            int startZ = _chunkZ;
+            int endZ = _chunkZ + _chunkZWidth - 1;
+
+            ArrayList<ChunkInfo> result = new ArrayList<ChunkInfo>((endX - startX) * (endZ - startZ));
+
+            for (int x = startX; x <= endX; x++) {
+                for (int z = startZ; z <= endZ; z++) {
+                    result.add(new ChunkInfo(getWorld(), x, z));
+                }
+            }
+
+            _chunks = Collections.unmodifiableList(result);
+
+            return _chunks;
+        }
+    }
 
     /**
      * Determine if the region is 1 block tall.
@@ -584,6 +621,8 @@ public class RegionSelection implements IRegionSelection {
 
             _chunkXWidth = chunkEndX - _chunkX + 1;
             _chunkZWidth = chunkEndZ - _chunkZ + 1;
+
+            _chunks = null;
 
             _sync.notifyAll();
         }

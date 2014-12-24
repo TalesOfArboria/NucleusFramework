@@ -24,6 +24,10 @@
 
 package com.jcwhatever.bukkit.generic.regions.data;
 
+import com.sun.istack.internal.Nullable;
+
+import org.bukkit.Chunk;
+
 /**
  * Object that contains info about a chunk.
  */
@@ -43,4 +47,10 @@ public interface IChunkInfo {
      * Get the chunk Z coordinates.
      */
     int getZ();
+
+    /**
+     * Get the chunk.
+     */
+    @Nullable
+    public Chunk getChunk();
 }

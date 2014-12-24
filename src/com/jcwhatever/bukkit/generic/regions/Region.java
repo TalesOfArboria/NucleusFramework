@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.regions;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.regions.RegionOwnerChangedEvent;
 import com.jcwhatever.bukkit.generic.internal.InternalRegionManager;
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.regions.selection.RegionSelection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
@@ -539,41 +540,6 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /**
-     * Get all chunks that contain at least a portion of the region.
-     */
-    @Override
-    public final List<Chunk> getChunks() {
-        if (getWorld() == null)
-            return new ArrayList<>(0);
-
-        synchronized (_sync) {
-
-            if (!isDefined()) {
-                return new ArrayList<>(0);
-            }
-
-            Chunk c1 = getWorld().getChunkAt(getP1());
-            Chunk c2 = getWorld().getChunkAt(getP2());
-
-            int startX = Math.min(c1.getX(), c2.getX());
-            int endX = Math.max(c1.getX(), c2.getX());
-
-            int startZ = Math.min(c1.getZ(), c2.getZ());
-            int endZ = Math.max(c1.getZ(), c2.getZ());
-
-            ArrayList<Chunk> result = new ArrayList<Chunk>((endX - startX) * (endZ - startZ));
-
-            for (int x = startX; x <= endX; x++) {
-                for (int z = startZ; z <= endZ; z++) {
-                    result.add(getWorld().getChunkAt(x, z));
-                }
-            }
-
-            return result;
-        }
-    }
-
-    /**
      * Refresh all chunks the region is in.
      */
     @Override
@@ -583,9 +549,9 @@ public abstract class Region extends RegionSelection implements IRegion {
         if (world == null)
             return;
 
-        List<Chunk> chunks = getChunks();
+        List<ChunkInfo> chunks = getChunks();
 
-        for (Chunk chunk : chunks) {
+        for (ChunkInfo chunk : chunks) {
             world.refreshChunk(chunk.getX(), chunk.getZ());
         }
     }
@@ -599,8 +565,10 @@ public abstract class Region extends RegionSelection implements IRegion {
     public final void removeEntities(Class<?>... entityTypes) {
 
         synchronized (_sync) {
-            List<Chunk> chunks = getChunks();
-            for (Chunk chunk : chunks) {
+            List<ChunkInfo> chunks = getChunks();
+            for (ChunkInfo chunkInfo : chunks) {
+                Chunk chunk = chunkInfo.getChunk();
+
                 for (Entity entity : chunk.getEntities()) {
                     if (this.contains(entity.getLocation())) {
 

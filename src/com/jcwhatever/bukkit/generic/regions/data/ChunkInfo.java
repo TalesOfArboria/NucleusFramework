@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.file.IBinarySerializable;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.storage.IDataNodeSerializable;
 import com.jcwhatever.bukkit.generic.storage.UnableToDeserializeException;
+import com.sun.istack.internal.Nullable;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -103,6 +104,19 @@ public class ChunkInfo implements IChunkInfo, IDataNodeSerializable, IBinarySeri
     @Override
     public int getZ() {
         return _z;
+    }
+
+    /**
+     * Get the chunk.
+     */
+    @Override
+    @Nullable
+    public Chunk getChunk() {
+        World world = _world.getBukkitWorld();
+        if (world == null)
+            return null;
+
+        return world.getChunkAt(_x, _z);
     }
 
     @Override

@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.Iteration3DTask;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueProject;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.Future;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.regions.data.RegionChunkSection;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -73,7 +74,7 @@ public class RegionChunkFileWriter {
      * @param region  The region the snapshot is for.
      * @param chunk   The chunk to snapshot.
      */
-    public RegionChunkFileWriter (IRegion region, Chunk chunk) {
+    public RegionChunkFileWriter (IRegion region, ChunkInfo chunk) {
         this(region, chunk.getX(), chunk.getZ());
     }
 

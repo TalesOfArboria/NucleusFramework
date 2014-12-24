@@ -37,6 +37,7 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueWorker;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.regions.RegionChunkFileLoader.LoadType;
 import com.jcwhatever.bukkit.generic.regions.data.ChunkBlockInfo;
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 
 import org.bukkit.Chunk;
@@ -117,7 +118,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      */
     protected Future saveData(String snapshotName) throws IOException {
 
-        List<Chunk> chunks = this.getChunks();
+        List<ChunkInfo> chunks = this.getChunks();
 
         QueueProject project = new QueueProject(getPlugin());
 
@@ -136,7 +137,7 @@ public abstract class RestorableRegion extends BuildableRegion {
 
         Msg.debug(getPlugin(), "RestorableRegion: saving data for region '{0}'", getName());
 
-        for (Chunk chunk : chunks) {
+        for (ChunkInfo chunk : chunks) {
             RegionChunkFileWriter writer = new RegionChunkFileWriter(this, chunk);
             writer.saveData(getChunkFile(chunk, snapshotName, true), project);
         }
@@ -170,9 +171,9 @@ public abstract class RestorableRegion extends BuildableRegion {
      * @param version  The name of the restore version.
      */
     protected boolean canRestore(String version) {
-        List<Chunk> chunks = getChunks();
+        List<ChunkInfo> chunks = getChunks();
 
-        for (Chunk chunk : chunks) {
+        for (ChunkInfo chunk : chunks) {
             File file;
 
             try {
@@ -208,7 +209,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      */
     protected Future restoreData(BuildMethod buildMethod, String version) throws IOException {
 
-        List<Chunk> chunks = getChunks();
+        List<ChunkInfo> chunks = getChunks();
 
         QueueProject restoreProject = new QueueProject(getPlugin());
 
@@ -234,7 +235,7 @@ public abstract class RestorableRegion extends BuildableRegion {
         removeEntities(Item.class, Monster.class, Animals.class);
         removeEntities(SerializableFurnitureEntity.getFurnitureClasses());
 
-        for (Chunk chunk : chunks) {
+        for (ChunkInfo chunk : chunks) {
 
             // create project for chunk
             QueueProject chunkProject = new QueueProject(getPlugin());
@@ -390,7 +391,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @throws IOException
      */
-    protected final File getChunkFile(Chunk chunk, String version, boolean doDeleteExisting) throws IOException {
+    protected final File getChunkFile(ChunkInfo chunk, String version, boolean doDeleteExisting) throws IOException {
         return getChunkFile(chunk.getX(), chunk.getZ(), version, doDeleteExisting);
     }
 
@@ -450,7 +451,7 @@ public abstract class RestorableRegion extends BuildableRegion {
             super(loader.getRegion().getPlugin(), TaskConcurrency.MAIN_THREAD);
 
             this.loader = loader;
-            this.chunk = loader.getChunk();
+            this.chunk = loader.getChunk().getChunk();
         }
 
         @Override

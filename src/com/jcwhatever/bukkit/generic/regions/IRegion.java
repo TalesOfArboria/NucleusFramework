@@ -31,13 +31,11 @@ import com.jcwhatever.bukkit.generic.mixins.IPlayerOwnable;
 import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -100,11 +98,6 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
      * @param material  The material to find.
      */
     LinkedList<Location> find(Material material);
-
-    /**
-     * Get all chunks the region intersects with.
-     */
-    List<Chunk> getChunks();
 
     /**
      * Refresh all chunks the region intersects with.

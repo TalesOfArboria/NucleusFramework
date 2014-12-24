@@ -107,7 +107,7 @@ public class RegionChunkSection implements IBinarySerializable {
      * @param region  The region.
      * @param chunk   The chunk to get chunk coordinates from.
      */
-    public RegionChunkSection (IRegionSelection region, Chunk chunk) {
+    public RegionChunkSection (IRegionSelection region, ChunkInfo chunk) {
         _chunkX = chunk.getX();
         _chunkZ = chunk.getZ();
         init(region.getP1(), region.getP2());

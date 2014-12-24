@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.regions;
 import com.jcwhatever.bukkit.generic.mixins.IReadOnly;
 import com.jcwhatever.bukkit.generic.regions.Region.PriorityType;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionPriority;
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.regions.data.CuboidPoint;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -291,7 +292,7 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
      * Get all chunks the region intersects with.
      */
     @Override
-    public List<Chunk> getChunks () {
+    public List<ChunkInfo> getChunks () {
         return _region.getChunks();
     }
 

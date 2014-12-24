@@ -24,12 +24,14 @@
 
 package com.jcwhatever.bukkit.generic.regions.selection;
 
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.regions.data.CuboidPoint;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -176,6 +178,11 @@ public interface IRegionSelection {
      * on the Z axis of the region.
      */
     int getChunkZWidth();
+
+    /**
+     * Get all chunks the region intersects with.
+     */
+    List<ChunkInfo> getChunks();
 
     /**
      * Determine if the region is 1 block tall.

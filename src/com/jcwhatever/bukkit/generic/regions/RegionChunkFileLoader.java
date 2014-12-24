@@ -35,11 +35,11 @@ import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.FailHandler;
 import com.jcwhatever.bukkit.generic.performance.queued.QueueResult.Future;
 import com.jcwhatever.bukkit.generic.performance.queued.TaskConcurrency;
 import com.jcwhatever.bukkit.generic.regions.data.ChunkBlockInfo;
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.regions.data.RegionChunkSection;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
@@ -59,7 +59,7 @@ public final class RegionChunkFileLoader {
     public static final int RESTORE_FILE_VERSION = 4;
     private Plugin _plugin;
     private IRegion _region;
-    private Chunk _chunk;
+    private ChunkInfo _chunk;
     private boolean _isLoading;
     private final LinkedList<ChunkBlockInfo> _blockInfo = new LinkedList<>();
     private final LinkedList<SerializableBlockEntity> _blockEntities = new LinkedList<>();
@@ -85,7 +85,7 @@ public final class RegionChunkFileLoader {
      * @param region  The region to load a chunk file for.
      * @param chunk   The region chunk that the file was created from.
      */
-    public RegionChunkFileLoader (IRegion region, Chunk chunk) {
+    public RegionChunkFileLoader (IRegion region, ChunkInfo chunk) {
         _region = region;
         _chunk = chunk;
         _plugin = region.getPlugin();
@@ -94,7 +94,7 @@ public final class RegionChunkFileLoader {
     /**
      * Get the chunk.
      */
-    public Chunk getChunk() {
+    public ChunkInfo getChunk() {
         return _chunk;
     }
 
@@ -238,7 +238,7 @@ public final class RegionChunkFileLoader {
 
             super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
-            this.snapshot = _chunk.getChunkSnapshot();
+            this.snapshot = _chunk.getChunk().getChunkSnapshot();
             this.file = file;
             this.loadType = loadType;
         }
