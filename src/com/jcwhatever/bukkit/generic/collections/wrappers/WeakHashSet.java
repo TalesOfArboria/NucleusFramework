@@ -24,70 +24,33 @@
 
 package com.jcwhatever.bukkit.generic.collections.wrappers;
 
-import com.jcwhatever.bukkit.generic.collections.SetMap;
-
-import java.util.HashSet;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
- * A {@code WeakHashMap} that uses hash sets to store values.
- *
- * @param <K>  Key type
- * @param <V>  Value type
+ * A hash {@code Set} with weak referenced values.
  */
-public class WeakHashSetMap<K, V> extends SetMap<K, V> {
+public class WeakHashSet<E> extends AbstractSetWrapper<E> {
 
-    protected final transient Map<K, Set<V>> _map;
-    protected transient int _setSize;
+    private final transient Set<E> _set;
 
-    /**
-     * Constructor.
-     *
-     * <p>Map capacity starts at 10 elements</p>
-     *
-     * <p>Set capacity starts at 10 elements.</p>
-     */
-    public WeakHashSetMap(){
-        this(10, 10);
+    public WeakHashSet() {
+        this(10);
     }
 
-    /**
-     * Constructor.
-     *
-     * <p>Set capacity starts at 10 elements.</p>
-     *
-     * @param mapSize  The initial capacity of the map.
-     */
-    public WeakHashSetMap(int mapSize) {
-        this(mapSize, 10);
+    public WeakHashSet(int size) {
+        _set = Collections.newSetFromMap(new WeakHashMap<E, Boolean>(size));
     }
 
-    /**
-     * Constructor.
-     *
-     * @param mapSize  The initial capacity of the map.
-     * @param setSize  The initial capacity of sets.
-     */
-    public WeakHashSetMap(int mapSize, int setSize) {
-        _map = new WeakHashMap<>(mapSize);
-
-        _setSize = setSize;
+    public WeakHashSet(Collection<E> collection) {
+        _set = Collections.newSetFromMap(new WeakHashMap<E, Boolean>(collection.size() + 5));
+        _set.addAll(collection);
     }
 
     @Override
-    protected Map<K, Set<V>> getMap() {
-        return _map;
-    }
-
-    @Override
-    protected Set<V> createSet() {
-        return createSet(_setSize);
-    }
-
-    @Override
-    protected Set<V> createSet(int size) {
-        return new HashSet<>(size);
+    protected Collection<E> getCollection() {
+        return _set;
     }
 }
