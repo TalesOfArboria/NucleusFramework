@@ -369,7 +369,10 @@ public class FloatingItem implements IDisposable {
 
         if (_dataNode != null) {
             _dataNode.set("is-spawned", false);
-            _dataNode.set("entity-id", null);
+
+            if (GenericsLib.getPlugin().isEnabled())
+                _dataNode.set("entity-id", null);
+
             _dataNode.saveAsync(null);
         }
 

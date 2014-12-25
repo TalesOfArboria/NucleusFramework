@@ -24,6 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.items.floating;
 
+import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -104,8 +105,14 @@ public abstract class AbstractFloatingItemManager<T extends FloatingItem> implem
 
         IDataNode node = item.getDataNode();
         if (node != null) {
-            node.remove();
-            node.saveAsync(null);
+            if (GenericsLib.getPlugin().isEnabled()) {
+                node.remove();
+                node.saveAsync(null);
+            }
+            else {
+                node.set("dispose", true);
+                node.save();
+            }
         }
 
         return true;
@@ -154,6 +161,7 @@ public abstract class AbstractFloatingItemManager<T extends FloatingItem> implem
                 continue;
             }
 
+            boolean dispose = node.getBoolean("dispose");
             ItemStack[] itemStacks = node.getItemStacks("item");
 
             if (itemStacks == null || itemStacks.length == 0) {
@@ -162,6 +170,12 @@ public abstract class AbstractFloatingItemManager<T extends FloatingItem> implem
             }
 
             T item = createFloatingItem(name, itemStacks[0], location, node);
+
+            // check if the item is marked for disposal
+            if (dispose) {
+                item.dispose();
+                continue;
+            }
 
             _itemMap.put(name.toLowerCase(), item);
 
