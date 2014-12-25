@@ -25,6 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.commands.response;
 
+import com.jcwhatever.bukkit.generic.utils.CollectionUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.command.CommandSender;
@@ -105,7 +106,7 @@ public class ResponseRequest {
      * Get the requested response types.
      */
     public Set<ResponseType> getResponseTypes() {
-        return new HashSet<>(_responseTypes);
+        return CollectionUtils.unmodifiableSet(_responseTypes);
     }
 
     /**

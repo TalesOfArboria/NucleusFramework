@@ -27,11 +27,13 @@ package com.jcwhatever.bukkit.generic.collections;
 import java.util.Iterator;
 
 /**
- * Abstract implementation of an {@code Iterator} wrapper.
+ * An abstract implementation of an {@code Iterator} that
+ * iterates over a collection of one type but returns a
+ * different type.
  */
-public abstract class AbstractIteratorWrapper<E> implements Iterator<E> {
+public abstract class AbstractConversionIterator<E, T> implements Iterator<E> {
 
-    protected E _current;
+    protected T _current;
 
     @Override
     public boolean hasNext() {
@@ -40,7 +42,8 @@ public abstract class AbstractIteratorWrapper<E> implements Iterator<E> {
 
     @Override
     public E next() {
-        return _current = getIterator().next();
+        _current = getIterator().next();
+        return getElement(_current);
     }
 
     @Override
@@ -48,5 +51,7 @@ public abstract class AbstractIteratorWrapper<E> implements Iterator<E> {
         getIterator().remove();
     }
 
-    protected abstract Iterator<E> getIterator();
+    protected abstract E getElement(T trueElement);
+
+    protected abstract Iterator<T> getIterator();
 }

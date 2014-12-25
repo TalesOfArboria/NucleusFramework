@@ -25,15 +25,18 @@
 
 package com.jcwhatever.bukkit.generic.player.collections;
 
+import com.jcwhatever.bukkit.generic.collections.AbstractIteratorWrapper;
+import com.jcwhatever.bukkit.generic.collections.AbstractSetWrapper;
+import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -48,8 +51,10 @@ import java.util.UUID;
  */
 public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, V> {
 
-	private final Map<UUID, V> _map;
-	private boolean _isDisposed;
+	private final transient Map<UUID, V> _map;
+	private final transient KeySetWrapper _keyset = new KeySetWrapper();
+
+	private transient boolean _isDisposed;
 
 	/**
 	 * Constructor.
@@ -107,7 +112,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 
 	@Override
 	public synchronized Set<UUID> keySet() {
-		return new HashSet<UUID>(_map.keySet());
+		return _keyset;
 	}
 
 	@Override
@@ -148,7 +153,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 
 	@Override
 	public synchronized Collection<V> values() {
-		return new ArrayList<V>(_map.values());
+		return _map.values();
 	}
 
 	@Override
@@ -170,5 +175,112 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 	public void dispose() {
 		clear();
 		_isDisposed = true;
+	}
+
+	private class KeySetWrapper extends AbstractSetWrapper<UUID> {
+
+		@Override
+		public boolean add(UUID e) {
+			if (_map.keySet().add(e)) {
+				notifyPlayerAdded(e);
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			UUID id = null;
+			if (o instanceof UUID) {
+				id = (UUID)o;
+			}
+			else if (o instanceof Player) {
+				id = ((Player)o).getUniqueId();
+			}
+			else if (o instanceof IPlayerReference) {
+				Player player = ((IPlayerReference)o).getPlayer();
+				if (player != null) {
+					id =player.getUniqueId();
+				}
+			}
+
+			if (id == null)
+				return false;
+
+			if (_map.keySet().remove(id)) {
+				notifyPlayerRemoved(id);
+				return true;
+			}
+
+			return false;
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends UUID> c) {
+			boolean isChanged = false;
+			for (UUID id : c) {
+				isChanged = isChanged || add(id);
+			}
+			return isChanged;
+		}
+
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			boolean isChanged = false;
+			for (Object id : c) {
+				isChanged = isChanged || remove(id);
+			}
+			return isChanged;
+		}
+
+		@Override
+		public boolean retainAll(Collection<?> c) {
+
+			Set<?> removed = new HashSet<>(this);
+			for (Object obj : c) {
+				removed.remove(obj);
+			}
+
+			boolean isChanged = false;
+
+			for (Object obj : removed) {
+				isChanged = isChanged || remove(obj);
+			}
+
+			return isChanged;
+		}
+
+		@Override
+		public void clear() {
+			PlayerMap.this.clear();
+		}
+
+		@Override
+		public Iterator<UUID> iterator() {
+			return new KeySetIteratorWrapper();
+		}
+
+		@Override
+		protected Collection<UUID> getCollection() {
+			return _map.keySet();
+		}
+	}
+
+	private class KeySetIteratorWrapper extends AbstractIteratorWrapper<UUID> {
+
+		Iterator<UUID> iterator = _map.keySet().iterator();
+
+		@Override
+		public void remove() {
+
+			notifyPlayerRemoved(_current);
+
+			iterator.remove();
+		}
+
+		@Override
+		protected Iterator<UUID> getIterator() {
+			return iterator;
+		}
 	}
 }

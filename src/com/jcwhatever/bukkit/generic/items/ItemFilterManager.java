@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.CollectionUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +38,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -200,7 +200,7 @@ public class ItemFilterManager implements IPluginOwned {
      * Get a new set of wrapped items from the collection.
      */
     public Set<ItemWrapper> getItems() {
-        return new HashSet<ItemWrapper>(_filterItems.keySet());
+        return CollectionUtils.unmodifiableSet(_filterItems.keySet());
     }
 
     /**

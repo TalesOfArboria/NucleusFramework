@@ -40,6 +40,7 @@ import java.util.Set;
  */
 public class CollectionUtils {
 
+    private CollectionUtils() {}
 
     /**
      * Removes all matching instances of a value from the specified
@@ -89,6 +90,15 @@ public class CollectionUtils {
     }
 
     /**
+     * Get an empty unmodifiable {@code List}.
+     *
+     * @param <E>  The collection element type.
+     */
+    public static <E> List<E> unmodifiableList() {
+        return Collections.unmodifiableList(new ArrayList<E>(0));
+    }
+
+    /**
      * Wrap a {@code Collection} in an unmodifiable {@code Set}. If the
      * collection is already a {@code Set} then it is cast, otherwise
      * its elements are copied into a new {@code Set}.
@@ -101,5 +111,14 @@ public class CollectionUtils {
         return collection instanceof Set
                 ? Collections.unmodifiableSet((Set<E>) collection)
                 : Collections.unmodifiableSet(new HashSet<E>(collection));
+    }
+
+    /**
+     * Get an empty unmodifiable {@code Set}.
+     *
+     * @param <E>  The collection element type.
+     */
+    public static <E> Set<E> unmodifiableSet() {
+        return Collections.unmodifiableSet(new HashSet<E>(0));
     }
 }

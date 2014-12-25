@@ -26,11 +26,11 @@
 
 package com.jcwhatever.bukkit.generic.views.data;
 
+import com.jcwhatever.bukkit.generic.utils.CollectionUtils;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -83,7 +83,7 @@ public class ViewArguments {
      * Get all argument keys that are set.
      */
     public Set<Object> getArgumentKeys() {
-        return new HashSet<>(_argumentMap.keySet());
+        return CollectionUtils.unmodifiableSet(_argumentMap.keySet());
     }
 
     /**

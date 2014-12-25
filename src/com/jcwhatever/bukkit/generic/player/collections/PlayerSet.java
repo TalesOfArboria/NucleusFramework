@@ -25,12 +25,12 @@
 
 package com.jcwhatever.bukkit.generic.player.collections;
 
+import com.jcwhatever.bukkit.generic.collections.AbstractConversionIterator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -224,30 +224,24 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
         _isDisposed = true;
     }
 
-    private final class PlayerIterator implements Iterator<Player> {
+    private final class PlayerIterator extends AbstractConversionIterator<Player, PlayerEntry> {
 
-        private final Iterator<PlayerEntry> _iterator;
-        private Player _current;
-
-        public PlayerIterator() {
-            _iterator = new ArrayList<PlayerEntry>(_players).iterator();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return _iterator.hasNext();
-        }
-
-        @Override
-        public Player next() {
-            _current = _iterator.next().getPlayer();
-            return _current;
-        }
+        Iterator<PlayerEntry> iterator = _players.iterator();
 
         @Override
         public void remove() {
-            _iterator.remove();
             notifyPlayerRemoved(_current.getUniqueId());
+            iterator.remove();
+        }
+
+        @Override
+        protected Player getElement(PlayerEntry trueElement) {
+            return trueElement.getPlayer();
+        }
+
+        @Override
+        protected Iterator<PlayerEntry> getIterator() {
+            return iterator;
         }
     }
 }

@@ -38,6 +38,7 @@ import com.jcwhatever.bukkit.generic.regions.Region.LeaveRegionReason;
 import com.jcwhatever.bukkit.generic.regions.Region.PriorityType;
 import com.jcwhatever.bukkit.generic.regions.Region.RegionReason;
 import com.jcwhatever.bukkit.generic.regions.data.OrderedRegions;
+import com.jcwhatever.bukkit.generic.utils.CollectionUtils;
 import com.jcwhatever.bukkit.generic.utils.MetaKey;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
@@ -227,16 +228,16 @@ public final class InternalRegionManager implements IGlobalRegionManager {
         synchronized(_sync) {
 
             if (getRegionCount() == 0)
-                return new HashSet<>(0);
+                return CollectionUtils.unmodifiableSet();
 
             String key = getChunkKey(world, x, z);
 
             Set<IRegion> regions = _allRegionsMap.get(key);
             if (regions == null)
-                return new HashSet<>(0);
+                return CollectionUtils.unmodifiableSet();
 
             _sync.notifyAll();
-            return new HashSet<>(regions);
+            return CollectionUtils.unmodifiableSet(regions);
         }
     }
 

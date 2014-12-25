@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.items.serializer.InvalidItemStackStringExce
 import com.jcwhatever.bukkit.generic.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
 import com.jcwhatever.bukkit.generic.utils.BatchTracker;
+import com.jcwhatever.bukkit.generic.utils.CollectionUtils;
 import com.jcwhatever.bukkit.generic.utils.EnumUtils;
 import com.jcwhatever.bukkit.generic.utils.ItemStackUtils;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
@@ -47,9 +48,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -778,11 +779,11 @@ public class YamlDataStorage implements IDataNode {
         synchronized (_sync) {
             ConfigurationSection section;
             if (_yaml.get(nodePath) == null) {
-                return new HashSet<>(0);
+                return CollectionUtils.unmodifiableSet();
             }
             return (section = _yaml.getConfigurationSection(nodePath)) != null
-                    ? section.getKeys(false)
-                    : new HashSet<String>(0);
+                    ? CollectionUtils.unmodifiableSet(section.getKeys(false))
+                    : CollectionUtils.unmodifiableSet(new ArrayList<String>(0));
         }
     }
 

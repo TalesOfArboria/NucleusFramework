@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.player.collections;
 
+import com.jcwhatever.bukkit.generic.collections.AbstractIteratorWrapper;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -41,8 +43,9 @@ import javax.annotation.Nullable;
  */
 public class PlayerQueue extends AbstractPlayerCollection implements Queue<Player> {
 
-	private final Queue<Player> _queue = new LinkedList<Player>();
-	private boolean _isDisposed;
+	private final transient Queue<Player> _queue = new LinkedList<Player>();
+
+	private transient boolean _isDisposed;
 
 	/**
 	 * Constructor.
@@ -90,7 +93,7 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 
 	@Override
 	public synchronized Iterator<Player> iterator() {
-		return new PlayerIterator(this);
+		return new PlayerIterator();
 	}
 
 	@Override
@@ -215,36 +218,19 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 		_isDisposed = true;
 	}
 
-	private final class PlayerIterator implements Iterator<Player> {
+	private class PlayerIterator extends AbstractIteratorWrapper<Player> {
 
-		Iterator<Player> _iterator;
-		Player _current = null;
-		PlayerQueue _parent;
-
-		public PlayerIterator(PlayerQueue parent) {
-			_iterator = new LinkedList<Player>(_queue).iterator();
-			_parent = parent;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return _iterator.hasNext();
-		}
-
-		@Override
-		public Player next() {
-			_current = _iterator.next();
-			return _current;
-		}
+		Iterator<Player> iterator = _queue.iterator();
 
 		@Override
 		public void remove() {
-			_iterator.remove();
-			if (_current != null && !_queue.contains(_current)) {
-				notifyPlayerRemoved(_current.getUniqueId());
-			}
+			notifyPlayerRemoved(_current.getUniqueId());
+			iterator.remove();
 		}
 
+		@Override
+		protected Iterator<Player> getIterator() {
+			return iterator;
+		}
 	}
-
 }
