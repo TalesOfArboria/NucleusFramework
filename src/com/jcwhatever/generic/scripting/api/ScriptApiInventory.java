@@ -28,7 +28,7 @@ package com.jcwhatever.generic.scripting.api;
 import com.jcwhatever.generic.utils.items.ItemStackComparer;
 import com.jcwhatever.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.generic.scripting.ScriptApiInfo;
-import com.jcwhatever.generic.utils.InventoryUtils;
+import com.jcwhatever.generic.utils.inventory.InventoryUtils;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;

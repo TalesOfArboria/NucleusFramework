@@ -23,10 +23,11 @@
  */
 
 
-package com.jcwhatever.generic.utils;
+package com.jcwhatever.generic.utils.inventory;
 
 import com.jcwhatever.generic.extended.ArmorType;
 import com.jcwhatever.generic.extended.MaterialExt;
+import com.jcwhatever.generic.utils.PreCon;
 import com.jcwhatever.generic.utils.items.ItemStackComparer;
 import com.jcwhatever.generic.utils.items.ItemStackUtils;
 

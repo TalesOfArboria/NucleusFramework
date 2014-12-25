@@ -28,7 +28,7 @@ package com.jcwhatever.generic;
 import com.jcwhatever.generic.events.manager.GenericsEventManager;
 import com.jcwhatever.generic.internal.InternalMessengerFactory;
 import com.jcwhatever.generic.internal.commands.GenericsCommandDispatcher;
-import com.jcwhatever.generic.inventory.KitManager;
+import com.jcwhatever.generic.kits.KitManager;
 import com.jcwhatever.generic.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.generic.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.generic.jail.IJailManager;

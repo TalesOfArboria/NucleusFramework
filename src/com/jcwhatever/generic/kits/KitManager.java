@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.generic.inventory;
+package com.jcwhatever.generic.kits;
 
 import com.jcwhatever.generic.mixins.IPluginOwned;
 import com.jcwhatever.generic.storage.IDataNode;

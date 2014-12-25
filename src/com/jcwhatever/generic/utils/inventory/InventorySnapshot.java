@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.generic.inventory;
+package com.jcwhatever.generic.utils.inventory;
 
 import com.jcwhatever.generic.utils.items.ItemStackComparer;
 import com.jcwhatever.generic.utils.items.ItemWrapper;

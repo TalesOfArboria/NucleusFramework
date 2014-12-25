@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.generic.inventory;
+package com.jcwhatever.generic.kits;
 
 import com.jcwhatever.generic.GenericsLib;
 import com.jcwhatever.generic.events.kits.GiveKitEvent;
@@ -31,7 +31,7 @@ import com.jcwhatever.generic.extended.ArmorType;
 import com.jcwhatever.generic.utils.items.ItemStackComparer;
 import com.jcwhatever.generic.mixins.INamedInsensitive;
 import com.jcwhatever.generic.mixins.IPluginOwned;
-import com.jcwhatever.generic.utils.InventoryUtils;
+import com.jcwhatever.generic.utils.inventory.InventoryUtils;
 import com.jcwhatever.generic.utils.PreCon;
 import com.jcwhatever.generic.utils.Scheduler;
 

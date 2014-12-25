@@ -28,7 +28,7 @@ package com.jcwhatever.generic.utils.player;
 import com.jcwhatever.generic.internal.PlayerTracker;
 import com.jcwhatever.generic.mixins.IPlayerReference;
 import com.jcwhatever.generic.utils.IEntryValidator;
-import com.jcwhatever.generic.utils.InventoryUtils;
+import com.jcwhatever.generic.utils.inventory.InventoryUtils;
 import com.jcwhatever.generic.utils.PreCon;
 
 import org.bukkit.Bukkit;

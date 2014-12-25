@@ -25,7 +25,7 @@
 
 package com.jcwhatever.generic.events.kits;
 
-import com.jcwhatever.generic.inventory.Kit;
+import com.jcwhatever.generic.kits.Kit;
 import com.jcwhatever.generic.mixins.ICancellable;
 import com.jcwhatever.generic.mixins.IPlayerReference;
 import com.jcwhatever.generic.utils.PreCon;

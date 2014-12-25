@@ -30,7 +30,7 @@ import com.jcwhatever.generic.events.floatingitems.FloatingItemDespawnEvent;
 import com.jcwhatever.generic.events.floatingitems.FloatingItemSpawnEvent;
 import com.jcwhatever.generic.regions.data.ChunkInfo;
 import com.jcwhatever.generic.storage.IDataNode;
-import com.jcwhatever.generic.utils.InventoryUtils;
+import com.jcwhatever.generic.utils.inventory.InventoryUtils;
 import com.jcwhatever.generic.utils.LocationUtils;
 import com.jcwhatever.generic.utils.PreCon;
 import com.jcwhatever.generic.utils.entity.EntityUtils;

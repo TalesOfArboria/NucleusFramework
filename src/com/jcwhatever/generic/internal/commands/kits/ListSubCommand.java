@@ -31,7 +31,7 @@ import com.jcwhatever.generic.commands.CommandInfo;
 import com.jcwhatever.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.generic.commands.exceptions.CommandException;
 import com.jcwhatever.generic.internal.Lang;
-import com.jcwhatever.generic.inventory.Kit;
+import com.jcwhatever.generic.kits.Kit;
 import com.jcwhatever.generic.language.Localizable;
 import com.jcwhatever.generic.messaging.ChatPaginator;
 

@@ -13,7 +13,7 @@ import com.jcwhatever.generic.internal.nms.InternalNmsManager;
 import com.jcwhatever.generic.internal.providers.InternalProviderManager;
 import com.jcwhatever.generic.internal.providers.ProviderLoader;
 import com.jcwhatever.generic.internal.scripting.ScriptEngineLoader;
-import com.jcwhatever.generic.inventory.KitManager;
+import com.jcwhatever.generic.kits.KitManager;
 import com.jcwhatever.generic.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.generic.messaging.MessengerFactory;
 import com.jcwhatever.generic.scheduler.BukkitTaskScheduler;
