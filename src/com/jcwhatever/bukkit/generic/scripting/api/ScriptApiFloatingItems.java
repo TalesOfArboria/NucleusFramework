@@ -28,6 +28,7 @@ package com.jcwhatever.bukkit.generic.scripting.api;
 import com.jcwhatever.bukkit.generic.items.floating.FloatingItem;
 import com.jcwhatever.bukkit.generic.items.floating.FloatingItem.PickupHandler;
 import com.jcwhatever.bukkit.generic.items.floating.FloatingItemManager;
+import com.jcwhatever.bukkit.generic.items.floating.IFloatingItem;
 import com.jcwhatever.bukkit.generic.scripting.IEvaluatedScript;
 import com.jcwhatever.bukkit.generic.scripting.ScriptApiInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -103,19 +104,22 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
             while (!_pickupCallbacks.isEmpty()) {
                 PickupWrapper wrapper = _pickupCallbacks.remove();
 
-                wrapper.getItem().removeOnPickup(wrapper);
+                if (wrapper.getItem() instanceof FloatingItem)
+                    ((FloatingItem) wrapper.getItem()).removeOnPickup(wrapper);
             }
 
             while (!_spawnCallbacks.isEmpty()) {
                 CallbackWrapper wrapper = _spawnCallbacks.remove();
 
-                wrapper.getItem().removeOnSpawn(wrapper);
+                if (wrapper.getItem() instanceof FloatingItem)
+                    ((FloatingItem) wrapper.getItem()).removeOnSpawn(wrapper);
             }
 
             while (!_despawnCallbacks.isEmpty()) {
                 CallbackWrapper wrapper = _despawnCallbacks.remove();
 
-                wrapper.getItem().removeOnDespawn(wrapper);
+                if (wrapper.getItem() instanceof FloatingItem)
+                    ((FloatingItem) wrapper.getItem()).removeOnDespawn(wrapper);
             }
 
             _isDisposed = true;
@@ -124,7 +128,7 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
         /**
          * Get all floating items.
          */
-        public List<FloatingItem> getItems() {
+        public List<IFloatingItem> getItems() {
             return _manager.getItems();
         }
 
@@ -136,7 +140,7 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
          * @return  Null if not found.
          */
         @Nullable
-        public FloatingItem getItem(String name) {
+        public IFloatingItem getItem(String name) {
             PreCon.notNullOrEmpty(name);
 
             return _manager.getItem(name);
@@ -152,11 +156,14 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
-            FloatingItem item = _manager.getItem(name);
+            IFloatingItem item = _manager.getItem(name);
             PreCon.notNull(item);
 
+            if (!(item instanceof FloatingItem))
+                return;
+
             PickupWrapper wrapper = new PickupWrapper(item, callback);
-            item.addOnPickup(wrapper);
+            ((FloatingItem) item).addOnPickup(wrapper);
             _pickupCallbacks.add(wrapper);
         }
 
@@ -170,11 +177,14 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
-            FloatingItem item = _manager.getItem(name);
+            IFloatingItem item = _manager.getItem(name);
             PreCon.notNull(item);
 
+            if (!(item instanceof FloatingItem))
+                return;
+
             CallbackWrapper wrapper = new CallbackWrapper(item, callback);
-            item.addOnSpawn(wrapper);
+            ((FloatingItem) item).addOnSpawn(wrapper);
             _spawnCallbacks.add(wrapper);
         }
 
@@ -188,11 +198,14 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
-            FloatingItem item = _manager.getItem(name);
+            IFloatingItem item = _manager.getItem(name);
             PreCon.notNull(item);
 
+            if (!(item instanceof FloatingItem))
+                return;
+
             CallbackWrapper wrapper = new CallbackWrapper(item, callback);
-            item.addOnDespawn(wrapper);
+            ((FloatingItem) item).addOnDespawn(wrapper);
             _despawnCallbacks.add(wrapper);
         }
     }
@@ -203,15 +216,15 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
 
     private static class PickupWrapper implements PickupHandler {
 
-        private final FloatingItem _item;
+        private final IFloatingItem _item;
         private final PickupCallback _callback;
 
-        PickupWrapper(FloatingItem item, PickupCallback callback) {
+        PickupWrapper(IFloatingItem item, PickupCallback callback) {
             _item = item;
             _callback = callback;
         }
 
-        public FloatingItem getItem() {
+        public IFloatingItem getItem() {
             return _item;
         }
 
@@ -223,15 +236,15 @@ public class ScriptApiFloatingItems extends GenericsScriptApi {
 
     private static class CallbackWrapper implements Runnable {
 
-        private final FloatingItem _item;
+        private final IFloatingItem _item;
         private final Runnable _callback;
 
-        CallbackWrapper(FloatingItem item, Runnable callback) {
+        CallbackWrapper(IFloatingItem item, Runnable callback) {
             _item = item;
             _callback = callback;
         }
 
-        public FloatingItem getItem() {
+        public IFloatingItem getItem() {
             return _item;
         }
 

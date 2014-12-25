@@ -28,7 +28,6 @@ package com.jcwhatever.bukkit.generic.items.floating;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemDespawnEvent;
 import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemSpawnEvent;
-import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
@@ -59,14 +58,13 @@ import javax.annotation.Nullable;
  * Without the data node, expect left over items that can be picked
  * up after server restarts or crashes.</p>
  */
-public class FloatingItem implements IDisposable {
+public class FloatingItem implements IFloatingItem {
 
     private static BukkitListener _listener;
 
     private final String _name;
     private final ItemStack _item;
     private final IDataNode _dataNode;
-
 
     private UUID _entityId;
     private TrackedEntity _trackedEntity;
@@ -134,6 +132,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Get the floating items name.
      */
+    @Override
     public String getName() {
         return _name;
     }
@@ -141,6 +140,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Get the floating item.
      */
+    @Override
     public ItemStack getItem() {
         return _item.clone();
     }
@@ -148,6 +148,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Get the entities unique id.
      */
+    @Override
     public UUID getUniqueId() {
         return _entityId;
     }
@@ -157,6 +158,7 @@ public class FloatingItem implements IDisposable {
      *
      * @return  Null if not spawned.
      */
+    @Override
     @Nullable
     public Entity getEntity() {
         if (_trackedEntity == null)
@@ -168,6 +170,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Get the floating items data node, if any.
      */
+    @Override
     @Nullable
     public IDataNode getDataNode() {
         return _dataNode;
@@ -176,6 +179,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Determine if the item is spawned as an entity.
      */
+    @Override
     public boolean isSpawned() {
         return _isSpawned;
     }
@@ -185,6 +189,7 @@ public class FloatingItem implements IDisposable {
      *
      * @return  Null if no location is set yet.
      */
+    @Override
     @Nullable
     public Location getLocation() {
         return _currentLocation;
@@ -195,6 +200,7 @@ public class FloatingItem implements IDisposable {
      *
      * <p>May not be accurate if the entity moves.</p>
      */
+    @Override
     @Nullable
     public ChunkInfo getLastChunkInfo() {
         return _trackedEntity.getLastChunkInfo();
@@ -203,6 +209,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Determine if the item can be picked up.
      */
+    @Override
     public boolean canPickup() {
         return _canPickup;
     }
@@ -212,6 +219,7 @@ public class FloatingItem implements IDisposable {
      *
      * @param canPickup  True to allow players to pickup the item.
      */
+    @Override
     public void setCanPickup(boolean canPickup) {
         _canPickup = canPickup;
 
@@ -225,6 +233,7 @@ public class FloatingItem implements IDisposable {
      * Determine if the item is spawned centered within
      * the block at the spawn location.
      */
+    @Override
     public boolean isCentered() {
         return _isCentered;
     }
@@ -235,6 +244,7 @@ public class FloatingItem implements IDisposable {
      *
      * @param isCentered  True to center.
      */
+    @Override
     public void setCentered(boolean isCentered) {
         _isCentered = isCentered;
 
@@ -248,6 +258,7 @@ public class FloatingItem implements IDisposable {
      * Get the number of seconds before the item is respawned
      * after being picked up.
      */
+    @Override
     public int getRespawnTimeSeconds() {
         return _respawnTimeSeconds;
     }
@@ -258,6 +269,7 @@ public class FloatingItem implements IDisposable {
      *
      * @param seconds  The number of seconds.
      */
+    @Override
     public void setRespawnTimeSeconds(int seconds) {
         _respawnTimeSeconds = seconds;
 
@@ -270,6 +282,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Spawn the floating item entity.
      */
+    @Override
     public boolean spawn() {
         return _currentLocation != null && spawn(_currentLocation);
     }
@@ -277,6 +290,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Spawn the floating item entity.
      */
+    @Override
     public boolean spawn(Location location) {
         PreCon.notNull(location);
 
@@ -342,6 +356,7 @@ public class FloatingItem implements IDisposable {
     /**
      * Despawn the floating item entity.
      */
+    @Override
     public boolean despawn() {
 
         if (_trackedEntity == null)
@@ -389,6 +404,7 @@ public class FloatingItem implements IDisposable {
      *
      * @param p  The player.
      */
+    @Override
     public boolean give(Player p) {
         PreCon.notNull(p);
 
