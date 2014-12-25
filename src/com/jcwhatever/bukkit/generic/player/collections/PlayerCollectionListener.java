@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.player.collections;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.wrappers.MultiValueBiMap;
+import com.jcwhatever.bukkit.generic.collections.wrappers.MultiBiMap;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.entity.Player;
@@ -39,8 +39,9 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
@@ -83,7 +84,7 @@ final class PlayerCollectionListener implements Listener {
     private final Plugin _plugin;
 
     // keyed to player id, a map of collections a player is contained in
-    private final MultiValueBiMap<UUID, AbstractPlayerCollection> _collectionMap = new MultiValueBiMap<>(100, 25);
+    private final MultiBiMap<UUID, AbstractPlayerCollection> _collectionMap = new MultiBiMap<>(100, 25);
 
     /**
      * Private Constructor.
@@ -147,7 +148,7 @@ final class PlayerCollectionListener implements Listener {
 
     // remove a player from all collections
     private void removePlayer(Player p) {
-        List<AbstractPlayerCollection> collections = _collectionMap.getValues(p.getUniqueId());
+        Set<AbstractPlayerCollection> collections = _collectionMap.get(p.getUniqueId());
         if (collections == null || collections.isEmpty())
             return;
 
@@ -177,9 +178,9 @@ final class PlayerCollectionListener implements Listener {
     // Asynchronous removal of player from collections
     static class RemovePlayer implements Runnable {
         private Player p;
-        private List<AbstractPlayerCollection> collections;
+        private Collection<AbstractPlayerCollection> collections;
 
-        public RemovePlayer(Player p, List<AbstractPlayerCollection> collections) {
+        public RemovePlayer(Player p, Collection<AbstractPlayerCollection> collections) {
             this.p = p;
             this.collections = collections;
         }
