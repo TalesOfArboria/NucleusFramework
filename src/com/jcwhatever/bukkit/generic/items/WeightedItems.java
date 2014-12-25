@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.items;
 
-import com.jcwhatever.bukkit.generic.collections.WeightedArrayList;
+import com.jcwhatever.bukkit.generic.collections.wrappers.WeightedArrayList;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

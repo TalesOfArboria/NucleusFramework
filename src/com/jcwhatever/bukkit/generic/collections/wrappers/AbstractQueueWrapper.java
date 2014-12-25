@@ -22,76 +22,45 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.Queue;
 
 /**
- * Abstract implementation of a {@code Map} wrapper.
+ * Abstract implementation of a {@code Queue} wrapper.
  */
-public abstract class AbstractMapWrapper<K, V> implements Map<K, V> {
+public abstract class AbstractQueueWrapper<E> extends AbstractCollectionWrapper<E> implements Queue<E> {
 
     @Override
-    public int size() {
-        return getMap().size();
+    public boolean offer(E e) {
+        return getQueue().offer(e);
     }
 
     @Override
-    public boolean isEmpty() {
-        return getMap().isEmpty();
+    public E remove() {
+        return getQueue().remove();
     }
 
     @Override
-    public boolean containsKey(Object key) {
-        return getMap().containsKey(key);
+    public E poll() {
+        return getQueue().poll();
     }
 
     @Override
-    public boolean containsValue(Object value) {
-        return getMap().containsValue(value);
+    public E element() {
+        return getQueue().element();
     }
 
     @Override
-    public V get(Object key) {
-        return getMap().get(key);
+    public E peek() {
+        return getQueue().peek();
     }
 
     @Override
-    public V put(K key, V value) {
-        return getMap().put(key, value);
+    protected final Collection<E> getCollection() {
+        return getQueue();
     }
 
-    @Override
-    public V remove(Object key) {
-        return getMap().remove(key);
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        getMap().putAll(m);
-    }
-
-    @Override
-    public void clear() {
-        getMap().clear();
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return getMap().keySet();
-    }
-
-    @Override
-    public Collection<V> values() {
-        return getMap().values();
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return getMap().entrySet();
-    }
-
-    protected abstract Map<K, V> getMap();
+    protected abstract Queue<E> getQueue();
 }

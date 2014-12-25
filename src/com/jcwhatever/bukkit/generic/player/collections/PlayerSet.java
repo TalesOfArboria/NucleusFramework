@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.player.collections;
 
-import com.jcwhatever.bukkit.generic.collections.AbstractConversionIterator;
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractConversionIterator;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import org.bukkit.entity.Player;

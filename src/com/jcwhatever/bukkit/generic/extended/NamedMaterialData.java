@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.extended;
 
-import com.jcwhatever.bukkit.generic.collections.MultiValueBiMap;
+import com.jcwhatever.bukkit.generic.collections.wrappers.MultiValueBiMap;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;

@@ -22,31 +22,33 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
-import java.util.Iterator;
+import java.util.AbstractList;
 
 /**
- * Abstract implementation of an {@code Iterator} wrapper.
+ * Wraps an array with a {@code List} implementation.
  */
-public abstract class AbstractIteratorWrapper<E> implements Iterator<E> {
+public class WrappedArrayList<E> extends AbstractList<E> {
 
-    protected E _current;
+    private final E[] _array;
 
-    @Override
-    public boolean hasNext() {
-        return getIterator().hasNext();
+    /**
+     * Constructor.
+     *
+     * @param array  The array to wrap.
+     */
+    public WrappedArrayList(E[] array) {
+        _array = array;
     }
 
     @Override
-    public E next() {
-        return _current = getIterator().next();
+    public E get(int index) {
+        return _array[index];
     }
 
     @Override
-    public void remove() {
-        getIterator().remove();
+    public int size() {
+        return _array.length;
     }
-
-    protected abstract Iterator<E> getIterator();
 }

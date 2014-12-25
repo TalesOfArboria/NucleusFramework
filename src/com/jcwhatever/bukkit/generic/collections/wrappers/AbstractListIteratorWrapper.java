@@ -22,18 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
-import java.util.Iterator;
+import java.util.ListIterator;
 
 /**
- * An abstract implementation of an {@code Iterator} that
- * iterates over a collection of one type but returns a
- * different type.
+ * Abstract implementation of a {@code ListIterator} wrapper.
  */
-public abstract class AbstractConversionIterator<E, T> implements Iterator<E> {
+public abstract class AbstractListIteratorWrapper<E> implements ListIterator<E> {
 
-    protected T _current;
+    protected E _current;
 
     @Override
     public boolean hasNext() {
@@ -42,8 +40,27 @@ public abstract class AbstractConversionIterator<E, T> implements Iterator<E> {
 
     @Override
     public E next() {
-        _current = getIterator().next();
-        return getElement(_current);
+        return _current = getIterator().next();
+    }
+
+    @Override
+    public boolean hasPrevious() {
+        return getIterator().hasPrevious();
+    }
+
+    @Override
+    public E previous() {
+        return _current = getIterator().previous();
+    }
+
+    @Override
+    public int nextIndex() {
+        return getIterator().nextIndex();
+    }
+
+    @Override
+    public int previousIndex() {
+        return getIterator().previousIndex();
     }
 
     @Override
@@ -51,7 +68,15 @@ public abstract class AbstractConversionIterator<E, T> implements Iterator<E> {
         getIterator().remove();
     }
 
-    protected abstract E getElement(T trueElement);
+    @Override
+    public void set(E e) {
+        getIterator().set(e);
+    }
 
-    protected abstract Iterator<T> getIterator();
+    @Override
+    public void add(E e) {
+        getIterator().add(e);
+    }
+
+    protected abstract ListIterator<E> getIterator();
 }

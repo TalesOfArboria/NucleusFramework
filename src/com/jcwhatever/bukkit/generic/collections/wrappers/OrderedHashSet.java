@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
 import java.util.ArrayList;
 import java.util.Collection;

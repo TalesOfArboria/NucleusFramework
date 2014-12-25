@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.utils;
 
-import com.jcwhatever.bukkit.generic.collections.WrappedArrayList;
+import com.jcwhatever.bukkit.generic.collections.wrappers.WrappedArrayList;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;

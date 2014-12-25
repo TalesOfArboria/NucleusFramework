@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.collections;
 
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractIteratorWrapper;
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractSetWrapper;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
 import java.util.ArrayList;

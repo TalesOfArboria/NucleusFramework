@@ -25,8 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.player.collections;
 
-import com.jcwhatever.bukkit.generic.collections.AbstractIteratorWrapper;
-import com.jcwhatever.bukkit.generic.collections.AbstractSetWrapper;
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractIteratorWrapper;
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractSetWrapper;
 import com.jcwhatever.bukkit.generic.mixins.IPlayerReference;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 

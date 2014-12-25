@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.generic.internal.providers.economy;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.WeakValueHashMap;
+import com.jcwhatever.bukkit.generic.collections.wrappers.WeakValueHashMap;
 import com.jcwhatever.bukkit.generic.providers.economy.IAccount;
 import com.jcwhatever.bukkit.generic.providers.economy.IBank;
 import com.jcwhatever.bukkit.generic.providers.economy.IEconomyProvider;

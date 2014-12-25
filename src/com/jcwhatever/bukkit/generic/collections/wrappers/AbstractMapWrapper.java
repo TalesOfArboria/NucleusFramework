@@ -22,70 +22,76 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 /**
- * A {@code WeakHashMap} that uses hash sets to store values.
- *
- * @param <K>  Key type
- * @param <V>  Value type
+ * Abstract implementation of a {@code Map} wrapper.
  */
-public class WeakHashSetMap<K, V> extends SetMap<K, V> {
+public abstract class AbstractMapWrapper<K, V> implements Map<K, V> {
 
-    protected final Map<K, Set<V>> _map;
-    protected int _setSize;
-
-    /**
-     * Constructor.
-     *
-     * <p>Map capacity starts at 10 elements</p>
-     *
-     * <p>Set capacity starts at 10 elements.</p>
-     */
-    public WeakHashSetMap(){
-        this(10, 10);
-    }
-
-    /**
-     * Constructor.
-     *
-     * <p>Set capacity starts at 10 elements.</p>
-     *
-     * @param mapSize  The initial capacity of the map.
-     */
-    public WeakHashSetMap(int mapSize) {
-        this(mapSize, 10);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param mapSize  The initial capacity of the map.
-     * @param setSize  The initial capacity of sets.
-     */
-    public WeakHashSetMap(int mapSize, int setSize) {
-        _map = new WeakHashMap<>(mapSize);
-
-        _setSize = setSize;
+    @Override
+    public int size() {
+        return getMap().size();
     }
 
     @Override
-    protected Map<K, Set<V>> getMap() {
-        return _map;
+    public boolean isEmpty() {
+        return getMap().isEmpty();
     }
 
     @Override
-    protected Set<V> createSet() {
-        return createSet(_setSize);
+    public boolean containsKey(Object key) {
+        return getMap().containsKey(key);
     }
 
     @Override
-    protected Set<V> createSet(int size) {
-        return new HashSet<>(size);
+    public boolean containsValue(Object value) {
+        return getMap().containsValue(value);
     }
+
+    @Override
+    public V get(Object key) {
+        return getMap().get(key);
+    }
+
+    @Override
+    public V put(K key, V value) {
+        return getMap().put(key, value);
+    }
+
+    @Override
+    public V remove(Object key) {
+        return getMap().remove(key);
+    }
+
+    @Override
+    public void putAll(Map<? extends K, ? extends V> m) {
+        getMap().putAll(m);
+    }
+
+    @Override
+    public void clear() {
+        getMap().clear();
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return getMap().keySet();
+    }
+
+    @Override
+    public Collection<V> values() {
+        return getMap().values();
+    }
+
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+        return getMap().entrySet();
+    }
+
+    protected abstract Map<K, V> getMap();
 }

@@ -22,72 +22,80 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Iterator;
 
-/*
- * 
+/**
+ * Abstract implementation of a collection wrapper.
  */
-public abstract class AbstractListWrapper<E> extends AbstractCollectionWrapper<E> implements List<E> {
+public abstract class AbstractCollectionWrapper<E> implements Collection<E> {
 
     @Override
-    public boolean addAll(int index, Collection<? extends E> c) {
-        return getList().addAll(index, c);
+    public int size() {
+        return getCollection().size();
     }
 
     @Override
-    public E get(int index) {
-        return getList().get(index);
+    public boolean isEmpty() {
+        return getCollection().isEmpty();
     }
 
     @Override
-    public E set(int index, E element) {
-        return getList().set(index, element);
+    public boolean contains(Object o) {
+        return getCollection().contains(o);
     }
 
     @Override
-    public void add(int index, E element) {
-        getList().add(index, element);
+    public Iterator<E> iterator() {
+        return getCollection().iterator();
     }
 
     @Override
-    public E remove(int index) {
-        return getList().remove(index);
+    public Object[] toArray() {
+        return getCollection().toArray();
     }
 
     @Override
-    public int indexOf(Object o) {
-        return getList().indexOf(o);
+    public <T> T[] toArray(T[] a) {
+        return getCollection().toArray(a);
     }
 
     @Override
-    public int lastIndexOf(Object o) {
-        return getList().lastIndexOf(o);
+    public boolean add(E e) {
+        return getCollection().add(e);
     }
 
     @Override
-    public ListIterator<E> listIterator() {
-        return getList().listIterator();
+    public boolean remove(Object o) {
+        return getCollection().remove(o);
     }
 
     @Override
-    public ListIterator<E> listIterator(int index) {
-        return getList().listIterator(index);
+    public boolean containsAll(Collection<?> c) {
+        return getCollection().containsAll(c);
     }
 
     @Override
-    public List<E> subList(int fromIndex, int toIndex) {
-        return getList().subList(fromIndex, toIndex);
+    public boolean addAll(Collection<? extends E> c) {
+        return getCollection().addAll(c);
     }
 
     @Override
-    protected final Collection<E> getCollection() {
-        return getList();
+    public boolean removeAll(Collection<?> c) {
+        return getCollection().removeAll(c);
     }
 
-    protected abstract List<E> getList();
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return getCollection().retainAll(c);
+    }
 
+    @Override
+    public void clear() {
+        getCollection().clear();
+    }
+
+    protected abstract Collection<E> getCollection();
 }

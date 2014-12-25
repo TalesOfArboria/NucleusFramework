@@ -22,12 +22,36 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
-import java.util.Set;
+import java.util.Iterator;
 
 /**
- * Abstract implementation of a {@code Set} wrapper.
+ * An abstract implementation of an {@code Iterator} that
+ * iterates over a collection of one type but returns a
+ * different type.
  */
-public abstract class AbstractSetWrapper<E> extends AbstractCollectionWrapper<E> implements Set<E> {
+public abstract class AbstractConversionIterator<E, T> implements Iterator<E> {
+
+    protected T _current;
+
+    @Override
+    public boolean hasNext() {
+        return getIterator().hasNext();
+    }
+
+    @Override
+    public E next() {
+        _current = getIterator().next();
+        return getElement(_current);
+    }
+
+    @Override
+    public void remove() {
+        getIterator().remove();
+    }
+
+    protected abstract E getElement(T trueElement);
+
+    protected abstract Iterator<T> getIterator();
 }

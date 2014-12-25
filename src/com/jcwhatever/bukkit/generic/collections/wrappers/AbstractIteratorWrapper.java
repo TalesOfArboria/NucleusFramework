@@ -22,18 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
-import java.util.ListIterator;
+import java.util.Iterator;
 
 /**
- * An abstract implementation of a {@code ListIterator} that
- * iterates over a collection of one type but returns a
- * different type.
+ * Abstract implementation of an {@code Iterator} wrapper.
  */
-public abstract class AbstractConversionListIterator<E, T> implements ListIterator<E> {
+public abstract class AbstractIteratorWrapper<E> implements Iterator<E> {
 
-    protected T _current;
+    protected E _current;
 
     @Override
     public boolean hasNext() {
@@ -42,29 +40,7 @@ public abstract class AbstractConversionListIterator<E, T> implements ListIterat
 
     @Override
     public E next() {
-        _current = getIterator().next();
-        return getFalseElement(_current);
-    }
-
-    @Override
-    public boolean hasPrevious() {
-        return getIterator().hasPrevious();
-    }
-
-    @Override
-    public E previous() {
-        _current = getIterator().previous();
-        return getFalseElement(_current);
-    }
-
-    @Override
-    public int nextIndex() {
-        return getIterator().nextIndex();
-    }
-
-    @Override
-    public int previousIndex() {
-        return getIterator().previousIndex();
+        return _current = getIterator().next();
     }
 
     @Override
@@ -72,21 +48,5 @@ public abstract class AbstractConversionListIterator<E, T> implements ListIterat
         getIterator().remove();
     }
 
-    @Override
-    public void set(E e) {
-        _current = getTrueElement(e);
-        getIterator().set(_current);
-    }
-
-    @Override
-    public void add(E e) {
-        T t = getTrueElement(e);
-        getIterator().add(t);
-    }
-
-    protected abstract E getFalseElement(T trueElement);
-
-    protected abstract T getTrueElement(E falseElement);
-
-    protected abstract ListIterator<T> getIterator();
+    protected abstract Iterator<E> getIterator();
 }

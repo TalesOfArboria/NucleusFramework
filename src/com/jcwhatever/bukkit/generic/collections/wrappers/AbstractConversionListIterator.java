@@ -22,45 +22,71 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
-import java.util.Collection;
-import java.util.Queue;
+import java.util.ListIterator;
 
 /**
- * Abstract implementation of a {@code Queue} wrapper.
+ * An abstract implementation of a {@code ListIterator} that
+ * iterates over a collection of one type but returns a
+ * different type.
  */
-public abstract class AbstractQueueWrapper<E> extends AbstractCollectionWrapper<E> implements Queue<E> {
+public abstract class AbstractConversionListIterator<E, T> implements ListIterator<E> {
+
+    protected T _current;
 
     @Override
-    public boolean offer(E e) {
-        return getQueue().offer(e);
+    public boolean hasNext() {
+        return getIterator().hasNext();
     }
 
     @Override
-    public E remove() {
-        return getQueue().remove();
+    public E next() {
+        _current = getIterator().next();
+        return getFalseElement(_current);
     }
 
     @Override
-    public E poll() {
-        return getQueue().poll();
+    public boolean hasPrevious() {
+        return getIterator().hasPrevious();
     }
 
     @Override
-    public E element() {
-        return getQueue().element();
+    public E previous() {
+        _current = getIterator().previous();
+        return getFalseElement(_current);
     }
 
     @Override
-    public E peek() {
-        return getQueue().peek();
+    public int nextIndex() {
+        return getIterator().nextIndex();
     }
 
     @Override
-    protected final Collection<E> getCollection() {
-        return getQueue();
+    public int previousIndex() {
+        return getIterator().previousIndex();
     }
 
-    protected abstract Queue<E> getQueue();
+    @Override
+    public void remove() {
+        getIterator().remove();
+    }
+
+    @Override
+    public void set(E e) {
+        _current = getTrueElement(e);
+        getIterator().set(_current);
+    }
+
+    @Override
+    public void add(E e) {
+        T t = getTrueElement(e);
+        getIterator().add(t);
+    }
+
+    protected abstract E getFalseElement(T trueElement);
+
+    protected abstract T getTrueElement(E falseElement);
+
+    protected abstract ListIterator<T> getIterator();
 }

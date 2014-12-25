@@ -22,33 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.wrappers;
 
-import java.util.AbstractList;
+import java.util.Set;
 
 /**
- * Wraps an array with a {@code List} implementation.
+ * Abstract implementation of a {@code Set} wrapper.
  */
-public class WrappedArrayList<E> extends AbstractList<E> {
-
-    private final E[] _array;
-
-    /**
-     * Constructor.
-     *
-     * @param array  The array to wrap.
-     */
-    public WrappedArrayList(E[] array) {
-        _array = array;
-    }
-
-    @Override
-    public E get(int index) {
-        return _array[index];
-    }
-
-    @Override
-    public int size() {
-        return _array.length;
-    }
+public abstract class AbstractSetWrapper<E> extends AbstractCollectionWrapper<E> implements Set<E> {
 }
