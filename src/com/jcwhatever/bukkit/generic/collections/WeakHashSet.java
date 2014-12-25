@@ -22,7 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections.wrappers;
+package com.jcwhatever.bukkit.generic.collections;
+
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractSetWrapper;
 
 import java.util.Collection;
 import java.util.Collections;

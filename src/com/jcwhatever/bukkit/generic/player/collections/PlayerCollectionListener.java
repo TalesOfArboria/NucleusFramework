@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.player.collections;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.wrappers.MultiBiMap;
+import com.jcwhatever.bukkit.generic.collections.MultiBiMap;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import org.bukkit.entity.Player;

@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.collections.wrappers;
+package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 

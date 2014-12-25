@@ -23,13 +23,17 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.collections.wrappers;
+package com.jcwhatever.bukkit.generic.collections;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractCollectionWrapper;
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractIteratorWrapper;
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractMapWrapper;
+import com.jcwhatever.bukkit.generic.collections.wrappers.AbstractSetWrapper;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.sun.javafx.beans.annotations.NonNull;
 

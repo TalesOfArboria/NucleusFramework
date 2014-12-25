@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections.wrappers;
+package com.jcwhatever.bukkit.generic.collections;
 
 import java.util.Collection;
 import java.util.HashMap;

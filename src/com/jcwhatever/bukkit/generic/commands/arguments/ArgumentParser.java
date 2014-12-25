@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.commands.arguments;
 
-import com.jcwhatever.bukkit.generic.collections.wrappers.RetrievableSet;
+import com.jcwhatever.bukkit.generic.collections.RetrievableSet;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.commands.parameters.CommandParameter;
