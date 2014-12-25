@@ -54,7 +54,7 @@ public class ArgumentParser {
 
         ArgumentParseResults results = new ArgumentParseResults(command);
 
-        Deque<String> arguments = ArrayUtils.asDeque(args);
+        Deque<String> arguments = ArrayUtils.toDeque(args);
         Deque<CommandParameter> staticParameters = new LinkedList<>(
                 command.getInfo().getStaticParams());
 

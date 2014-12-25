@@ -33,6 +33,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -2065,10 +2066,25 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Boolean> asList(boolean... array) {
+    public static <T> List<T> toList(T... array) {
         PreCon.notNull(array);
 
-        ArrayList<Boolean> result = new ArrayList<>(array.length);
+        ArrayList<T> result = new ArrayList<>(array.length + 5);
+
+        Collections.addAll(result, array);
+
+        return result;
+    }
+
+    /**
+     * Convert an array to an array list.
+     *
+     * @param array  The array to convert.
+     */
+    public static List<Boolean> toList(boolean... array) {
+        PreCon.notNull(array);
+
+        ArrayList<Boolean> result = new ArrayList<>(array.length + 5);
 
         for (boolean b : array) {
             result.add(b);
@@ -2082,10 +2098,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Byte> asList(byte... array) {
+    public static List<Byte> toList(byte... array) {
         PreCon.notNull(array);
 
-        ArrayList<Byte> result = new ArrayList<>(array.length);
+        ArrayList<Byte> result = new ArrayList<>(array.length + 5);
 
         for (byte b : array) {
             result.add(b);
@@ -2099,10 +2115,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Character> asList(char... array) {
+    public static List<Character> toList(char... array) {
         PreCon.notNull(array);
 
-        ArrayList<Character> result = new ArrayList<>(array.length);
+        ArrayList<Character> result = new ArrayList<>(array.length + 5);
 
         for (char b : array) {
             result.add(b);
@@ -2116,10 +2132,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Short> asList(short... array) {
+    public static List<Short> toList(short... array) {
         PreCon.notNull(array);
 
-        ArrayList<Short> result = new ArrayList<>(array.length);
+        ArrayList<Short> result = new ArrayList<>(array.length + 5);
 
         for (short b : array) {
             result.add(b);
@@ -2133,10 +2149,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Integer> asList(int... array) {
+    public static List<Integer> toList(int... array) {
         PreCon.notNull(array);
 
-        ArrayList<Integer> result = new ArrayList<>(array.length);
+        ArrayList<Integer> result = new ArrayList<>(array.length + 5);
 
         for (int b : array) {
             result.add(b);
@@ -2150,10 +2166,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Long> asList(long... array) {
+    public static List<Long> toList(long... array) {
         PreCon.notNull(array);
 
-        ArrayList<Long> result = new ArrayList<>(array.length);
+        ArrayList<Long> result = new ArrayList<>(array.length + 5);
 
         for (long b : array) {
             result.add(b);
@@ -2167,10 +2183,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Float> asList(float... array) {
+    public static List<Float> toList(float... array) {
         PreCon.notNull(array);
 
-        ArrayList<Float> result = new ArrayList<>(array.length);
+        ArrayList<Float> result = new ArrayList<>(array.length + 5);
 
         for (float b : array) {
             result.add(b);
@@ -2184,10 +2200,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static List<Double> asList(double... array) {
+    public static List<Double> toList(double... array) {
         PreCon.notNull(array);
 
-        ArrayList<Double> result = new ArrayList<>(array.length);
+        ArrayList<Double> result = new ArrayList<>(array.length + 5);
 
         for (double b : array) {
             result.add(b);
@@ -2203,7 +2219,7 @@ public final class ArrayUtils {
      *
      * @param <T>  The array component type.
      */
-    public static <T> Deque<T> asDeque(T... array) {
+    public static <T> Deque<T> toDeque(T... array) {
         PreCon.notNull(array);
 
         LinkedList<T> result = new LinkedList<>();
@@ -2218,7 +2234,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Deque<Boolean> asDeque(boolean... array) {
+    public static Deque<Boolean> toDeque(boolean... array) {
         PreCon.notNull(array);
 
         LinkedList<Boolean> result = new LinkedList<>();
@@ -2235,7 +2251,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Deque<Byte> asDeque(byte... array) {
+    public static Deque<Byte> toDeque(byte... array) {
         PreCon.notNull(array);
 
         LinkedList<Byte> result = new LinkedList<>();
@@ -2252,7 +2268,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Deque<Character> asDeque(char... array) {
+    public static Deque<Character> toDeque(char... array) {
         PreCon.notNull(array);
 
         LinkedList<Character> result = new LinkedList<>();
@@ -2269,7 +2285,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Deque<Short> asDeque(short... array) {
+    public static Deque<Short> toDeque(short... array) {
         PreCon.notNull(array);
 
         LinkedList<Short> result = new LinkedList<>();
@@ -2286,7 +2302,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Deque<Integer> asDeque(int... array) {
+    public static Deque<Integer> toDeque(int... array) {
         PreCon.notNull(array);
 
         LinkedList<Integer> result = new LinkedList<>();
@@ -2303,7 +2319,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Deque<Long> asDeque(long... array) {
+    public static Deque<Long> toDeque(long... array) {
         PreCon.notNull(array);
 
         LinkedList<Long> result = new LinkedList<>();
@@ -2320,7 +2336,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Deque<Float> asDeque(float... array) {
+    public static Deque<Float> toDeque(float... array) {
         PreCon.notNull(array);
 
         LinkedList<Float> result = new LinkedList<>();
@@ -2337,7 +2353,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Deque<Double> asDeque(double... array) {
+    public static Deque<Double> toDeque(double... array) {
         PreCon.notNull(array);
 
         LinkedList<Double> result = new LinkedList<>();
@@ -2356,10 +2372,28 @@ public final class ArrayUtils {
      *
      * @param <T>  The array component type.
      */
-    public static <T> Set<T> asSet(T... array) {
+    public static <T> Set<T> toSet(T... array) {
         PreCon.notNull(array);
 
-        HashSet<T> result = new HashSet<>(array.length);
+        Set<T> result = new HashSet<>(array.length + 5);
+        Collections.addAll(result, array);
+
+        return result;
+    }
+
+    /**
+     * Convert an array to a {@code Set}.
+     *
+     * @param array  The array to convert.
+     *
+     * @param <T>  The array component type.
+     */
+    public static <T extends Enum<T>> Set<T> toSet(T... array) {
+        PreCon.notNull(array);
+
+        @SuppressWarnings("unchecked")
+        Set<T> result = EnumSet.noneOf(
+                (Class<T>)array.getClass().getComponentType());
 
         Collections.addAll(result, array);
 
@@ -2371,7 +2405,7 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Set<Boolean> asSet(boolean... array) {
+    public static Set<Boolean> toSet(boolean... array) {
         PreCon.notNull(array);
 
         HashSet<Boolean> result = new HashSet<>(2);
@@ -2390,10 +2424,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Set<Byte> asSet(byte... array) {
+    public static Set<Byte> toSet(byte... array) {
         PreCon.notNull(array);
 
-        HashSet<Byte> result = new HashSet<>(array.length);
+        HashSet<Byte> result = new HashSet<>(array.length + 5);
 
         for (byte b : array) {
             result.add(b);
@@ -2407,10 +2441,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Set<Character> asSet(char... array) {
+    public static Set<Character> toSet(char... array) {
         PreCon.notNull(array);
 
-        HashSet<Character> result = new HashSet<>(array.length);
+        HashSet<Character> result = new HashSet<>(array.length + 5);
 
         for (char b : array) {
             result.add(b);
@@ -2424,10 +2458,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Set<Short> asSet(short... array) {
+    public static Set<Short> toSet(short... array) {
         PreCon.notNull(array);
 
-        HashSet<Short> result = new HashSet<>(array.length);
+        HashSet<Short> result = new HashSet<>(array.length + 5);
 
         for (short b : array) {
             result.add(b);
@@ -2441,10 +2475,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Set<Integer> asSet(int... array) {
+    public static Set<Integer> toSet(int... array) {
         PreCon.notNull(array);
 
-        HashSet<Integer> result = new HashSet<>(array.length);
+        HashSet<Integer> result = new HashSet<>(array.length + 5);
 
         for (int b : array) {
             result.add(b);
@@ -2458,10 +2492,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Set<Long> asSet(long... array) {
+    public static Set<Long> toSet(long... array) {
         PreCon.notNull(array);
 
-        HashSet<Long> result = new HashSet<>(array.length);
+        HashSet<Long> result = new HashSet<>(array.length + 5);
 
         for (long b : array) {
             result.add(b);
@@ -2475,10 +2509,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Set<Float> asSet(float... array) {
+    public static Set<Float> toSet(float... array) {
         PreCon.notNull(array);
 
-        HashSet<Float> result = new HashSet<>(array.length);
+        HashSet<Float> result = new HashSet<>(array.length + 5);
 
         for (float b : array) {
             result.add(b);
@@ -2492,10 +2526,10 @@ public final class ArrayUtils {
      *
      * @param array  The array to convert.
      */
-    public static Set<Double> asSet(double... array) {
+    public static Set<Double> toSet(double... array) {
         PreCon.notNull(array);
 
-        HashSet<Double> result = new HashSet<>(array.length);
+        HashSet<Double> result = new HashSet<>(array.length + 5);
 
         for (double b : array) {
             result.add(b);
