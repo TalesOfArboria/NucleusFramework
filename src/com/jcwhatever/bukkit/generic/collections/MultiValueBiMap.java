@@ -27,7 +27,6 @@ package com.jcwhatever.bukkit.generic.collections;
 
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Allows adding multiple values per key.
@@ -47,10 +47,10 @@ import java.util.Set;
 public class MultiValueBiMap<K, V> {
 
     // keyed to key type
-    Map<K, Set<V>> _valueMap;
+    private Map<K, Set<V>> _valueMap;
 
     // keyed to value type
-    Map<V, Set<K>> _keyMap;
+    private Map<V, Set<K>> _keyMap;
 
     private int _initialSetSize = 10;
 

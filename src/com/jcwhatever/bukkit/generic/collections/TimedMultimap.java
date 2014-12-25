@@ -24,6 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.collections;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
 import com.jcwhatever.bukkit.generic.utils.DateUtils;
@@ -31,11 +33,13 @@ import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
@@ -47,55 +51,38 @@ import javax.annotation.Nullable;
  *
  * <p>Items can be added using the default lifespan time or a lifespan can be specified per item.</p>
  */
-public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
-        implements ITimedMap<K, V>, ITimedCallbacks<K, TimedHashSetMap<K, V>> {
+public class TimedMultimap<K, V> implements Multimap<K, V>, ITimedMap<K, V>,  ITimedCallbacks<K, TimedMultimap<K, V>> {
 
-    private static Map<TimedHashSetMap, Void> _instances = new WeakHashMap<>(10);
+    private static Map<TimedMultimap, Void> _instances = new WeakHashMap<>(10);
     private static ScheduledTask _janitor;
 
+    private final Multimap<K, V> _multiMap;
     private final Map<K, Date> _expireMap;
     private final int _timeFactor;
     private final int _defaultTime;
-    private final Object _sync = new Object();
+    private transient final Object _sync = new Object();
 
-    private List<LifespanEndAction<K>> _onLifespanEnd = new ArrayList<>(5);
-    private List<CollectionEmptyAction<TimedHashSetMap<K, V>>> _onEmpty = new ArrayList<>(5);
-
-    /**
-     * Constructor. Default lifespan is 20 ticks.
-     *
-     * <p>Map capacity starts at 10 elements</p>
-     *
-     * <p>Set capacity starts at 10 elements.</p>
-     */
-    public TimedHashSetMap() {
-        this(10, 10, 20, TimeScale.TICKS);
-    }
+    private transient List<LifespanEndAction<K>> _onLifespanEnd = new ArrayList<>(5);
+    private transient List<CollectionEmptyAction<TimedMultimap<K, V>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default lifespan is 20 ticks.
-     *
-     * <p>Set capacity starts at 10 elements.</p>
-     *
-     * @param mapSize  The initial capacity of the map.
      */
-    public TimedHashSetMap(int mapSize) {
-        this(mapSize, 10, 20, TimeScale.TICKS);
+    public TimedMultimap(Multimap<K, V> multiMap) {
+        this(multiMap, 20, TimeScale.TICKS);
     }
 
     /**
      * Constructor.
      *
-     * @param mapSize          The initial capacity of the map.
-     * @param setSize          The initial capacity of sets.
      * @param defaultLifespan  The lifespan used when one is not specified.
      * @param timeScale        The lifespan timescale.
      */
-    public TimedHashSetMap(int mapSize, int setSize, int defaultLifespan, TimeScale timeScale) {
-        super(mapSize, setSize);
+    public TimedMultimap(Multimap<K, V> multiMap, int defaultLifespan, TimeScale timeScale) {
 
         _defaultTime = defaultLifespan;
-        _expireMap = new HashMap<>(mapSize);
+        _multiMap = multiMap;
+        _expireMap = new HashMap<>(multiMap.keySet().size() + 20);
         _instances.put(this, null);
 
         _timeFactor = timeScale.getTimeFactor();
@@ -105,9 +92,9 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
                 @Override
                 public void run() {
 
-                    List<TimedHashSetMap> maps = new ArrayList<>(_instances.keySet());
+                    List<TimedMultimap> maps = new ArrayList<>(_instances.keySet());
 
-                    for (TimedHashSetMap map : maps) {
+                    for (TimedMultimap map : maps) {
                         synchronized (map._sync) {
                             map.cleanup();
                         }
@@ -119,7 +106,7 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
 
     @Override
     public void clear() {
-        super.clear();
+        _multiMap.clear();
         _expireMap.clear();
 
         onEmpty();
@@ -133,24 +120,24 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
      * @param lifespan  The items lifespan.
      */
     @Override
-    @Nullable
-    public V put(final K key, final V value, int lifespan) {
+    public boolean put(final K key, final V value, int lifespan) {
         PreCon.notNull(key);
         PreCon.notNull(value);
         PreCon.positiveNumber(lifespan);
 
         if (lifespan == 0)
-            return null;
+            return false;
 
         synchronized (_sync) {
 
-            if (lifespan < 0) {
-                return super.put(key, value);
-            }
+            if (_multiMap.put(key, value)) {
 
-            V previous = super.put(key, value);
-            _expireMap.put(key, getExpires(lifespan));
-            return previous;
+                if (lifespan > 0) {
+                    _expireMap.put(key, getExpires(lifespan));
+                }
+                return true;
+            }
+            return false;
         }
     }
 
@@ -158,7 +145,7 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
     public int size() {
         synchronized (_sync) {
             cleanup();
-            return super.size();
+            return _multiMap.size();
         }
     }
 
@@ -166,7 +153,7 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
     public boolean isEmpty() {
         synchronized (_sync) {
             cleanup();
-            return super.isEmpty();
+            return _multiMap.isEmpty();
         }
     }
 
@@ -176,7 +163,7 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
 
         synchronized (_sync) {
             return !isExpired(key, true) &&
-                    super.containsKey(key);
+                    _multiMap.containsKey(key);
         }
     }
 
@@ -186,21 +173,51 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
 
         synchronized (_sync) {
             cleanup();
-            return super.containsValue(value);
+            return _multiMap.containsValue(value);
         }
     }
 
     @Override
+    public boolean containsEntry(@Nullable Object o, @Nullable Object o1) {
+        return _multiMap.containsEntry(o, o1);
+    }
+
+    @Override
     @Nullable
-    public V get(Object key) {
+    public Collection<V> get(K key) {
         PreCon.notNull(key);
 
         synchronized (_sync) {
             if (isExpired(key, true)) {
-                return null;
+                return new ArrayList<>(0);
             }
-            return super.get(key);
+            return _multiMap.get(key);
         }
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return _multiMap.keySet();
+    }
+
+    @Override
+    public Multiset<K> keys() {
+        return _multiMap.keys();
+    }
+
+    @Override
+    public Collection<V> values() {
+        return _multiMap.values();
+    }
+
+    @Override
+    public Collection<Map.Entry<K, V>> entries() {
+        return _multiMap.entries();
+    }
+
+    @Override
+    public Map<K, Collection<V>> asMap() {
+        return _multiMap.asMap();
     }
 
     /**
@@ -211,7 +228,7 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
      */
     @Override
     @Nullable
-    public V put(K key, V value) {
+    public boolean put(K key, V value) {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
@@ -243,30 +260,61 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
      * @param entries  The map to add.
      */
     @Override
-    public void putAll(Map<? extends K, ? extends V> entries) {
+    public boolean putAll(Multimap<? extends K, ? extends V> entries) {
         PreCon.notNull(entries);
 
-        putAll(entries, _defaultTime);
+        boolean isChanged = false;
+
+        for (Map.Entry<? extends K, ? extends V> entry : entries.entries()) {
+            isChanged = isChanged || put(entry.getKey(), entry.getValue());
+        }
+
+        return isChanged;
     }
 
     @Override
-    @Nullable
-    public V remove(Object key) {
-        PreCon.notNull(key);
+    public Collection<V> replaceValues(@Nullable K k, Iterable<? extends V> iterable) {
+        return _multiMap.replaceValues(k, iterable);
+    }
 
-        V value;
+    @Override
+    public Collection<V> removeAll(@Nullable Object o) {
+        Collection<V> result = _multiMap.removeAll(o);
+        //noinspection SuspiciousMethodCalls
+        _expireMap.remove(o);
+
+        return result;
+    }
+
+    @Override
+    public boolean remove(Object key, Object value) {
+        PreCon.notNull(key);
 
         synchronized (_sync) {
 
-            value = super.remove(key);
-            if (value != null) {
+            if (_multiMap.remove(key, value)) {
+                //noinspection SuspiciousMethodCalls
                 _expireMap.remove(key);
+                onEmpty();
+                return true;
             }
         }
 
-        onEmpty();
+        return false;
+    }
 
-        return value;
+    @Override
+    public boolean putAll(@Nullable K k, Iterable<? extends V> iterable) {
+        if (iterable == null)
+            return false;
+
+        boolean isChanged = false;
+
+        for (V element : iterable) {
+            isChanged = isChanged || put(k, element);
+        }
+
+        return isChanged;
     }
 
     /**
@@ -299,7 +347,7 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
      * @param callback  The handler to call
      */
     @Override
-    public void addOnCollectionEmpty(CollectionEmptyAction<TimedHashSetMap<K, V>> callback) {
+    public void addOnCollectionEmpty(CollectionEmptyAction<TimedMultimap<K, V>> callback) {
         PreCon.notNull(callback);
 
         _onEmpty.add(callback);
@@ -311,7 +359,7 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
      * @param callback  The handler to remove.
      */
     @Override
-    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedHashSetMap<K, V>> callback) {
+    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedMultimap<K, V>> callback) {
         PreCon.notNull(callback);
 
         _onEmpty.remove(callback);
@@ -321,7 +369,7 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
         if (!isEmpty() || _onEmpty.isEmpty())
             return;
 
-        for (CollectionEmptyAction<TimedHashSetMap<K, V>> action : _onEmpty) {
+        for (CollectionEmptyAction<TimedMultimap<K, V>> action : _onEmpty) {
             action.onEmpty(this);
         }
     }
@@ -336,18 +384,18 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
         return date.compareTo(new Date()) <= 0;
     }
 
-    private boolean isExpired(Object entry, boolean removeIfExpired) {
+    private boolean isExpired(Object key, boolean removeIfExpired) {
         //noinspection SuspiciousMethodCalls
-        Date expires = _expireMap.get(entry);
+        Date expires = _expireMap.get(key);
         if (expires == null)
             return true;
 
         if (isExpired(expires)) {
             if (removeIfExpired) {
                 //noinspection SuspiciousMethodCalls
-                _map.remove(entry);
+                _multiMap.removeAll(key);
                 //noinspection SuspiciousMethodCalls
-                _expireMap.remove(entry);
+                _expireMap.remove(key);
             }
             return true;
         }
@@ -361,13 +409,13 @@ public class TimedHashSetMap<K, V> extends HashSetMap<K, V>
 
     private void cleanup() {
 
-        Iterator<Entry<K, Date>> iterator = _expireMap.entrySet().iterator();
+        Iterator<Map.Entry<K, Date>> iterator = _expireMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Entry<K, Date> entry = iterator.next();
+            Map.Entry<K, Date> entry = iterator.next();
             if (isExpired(entry.getValue())) {
                 iterator.remove();
-                _map.remove(entry.getKey());
+                _multiMap.removeAll(entry.getKey());
             }
         }
     }

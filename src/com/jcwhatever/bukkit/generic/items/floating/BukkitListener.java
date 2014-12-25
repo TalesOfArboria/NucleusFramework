@@ -25,11 +25,12 @@
 
 package com.jcwhatever.bukkit.generic.items.floating;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.HashSetMap;
-import com.jcwhatever.bukkit.generic.collections.SetMap;
 import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemPickUpEvent;
 import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
+import com.jcwhatever.bukkit.generic.utils.CollectionUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.generic.utils.Scheduler;
 
@@ -44,15 +45,17 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 class BukkitListener implements Listener {
 
     private Map<UUID, FloatingItem> _floatingItems = new HashMap<>(100);
-    private SetMap<ChunkInfo, FloatingItem> _chunkMap = new HashSetMap<>(100);
+
+    private Multimap<ChunkInfo, FloatingItem> _chunkMap =
+            MultimapBuilder.hashKeys(100).hashSetValues(5).build();
 
     void register(FloatingItem item) {
         PreCon.notNull(item);
@@ -76,13 +79,13 @@ class BukkitListener implements Listener {
     void unregisterPendingSpawn(FloatingItem item) {
         PreCon.notNull(item);
 
-        _chunkMap.removeValue(item);
+        CollectionUtils.removeValue(_chunkMap, item);
     }
 
     @EventHandler
     private void onChunkLoad(ChunkLoadEvent event) {
 
-        Set<FloatingItem> items = _chunkMap.removeAll(new ChunkInfo(event.getChunk()));
+        Collection<FloatingItem> items = _chunkMap.removeAll(new ChunkInfo(event.getChunk()));
 
         for (FloatingItem item : items) {
             if (item.getLocation() != null)

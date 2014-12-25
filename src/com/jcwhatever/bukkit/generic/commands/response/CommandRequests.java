@@ -25,8 +25,10 @@
 
 package com.jcwhatever.bukkit.generic.commands.response;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.bukkit.generic.collections.TimeScale;
-import com.jcwhatever.bukkit.generic.collections.TimedHashSetMap;
+import com.jcwhatever.bukkit.generic.collections.TimedMultimap;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.language.Localizable;
@@ -38,7 +40,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -52,8 +53,11 @@ public class CommandRequests {
             "{YELLOW}Multiple requests for response found. " +
             "Please be more specific:";
 
-    private static TimedHashSetMap<CommandSender, ResponseRequest>
-            _requests = new TimedHashSetMap<>(25, 5, 30, TimeScale.SECONDS);
+    private static Multimap<CommandSender, ResponseRequest> _requestsHandle =
+            MultimapBuilder.hashKeys(25).hashSetValues(5).build();
+
+    private static TimedMultimap<CommandSender, ResponseRequest>
+            _requests = new TimedMultimap<>(_requestsHandle, 30, TimeScale.SECONDS);
 
     /**
      * Get a list of response requests for the specified command sender.
@@ -63,7 +67,7 @@ public class CommandRequests {
     @Nullable
     public static List<ResponseRequest> getRequests(CommandSender sender) {
 
-        Set<ResponseRequest> requests = _requests.getAll(sender);
+        Collection<ResponseRequest> requests = _requests.get(sender);
         if (requests == null)
             return null;
 
@@ -104,7 +108,7 @@ public class CommandRequests {
      * @param request
      */
     public static void cancel(ResponseRequest request) {
-        _requests.removeValue(request.getCommandSender(), request);
+        _requests.remove(request.getCommandSender(), request);
     }
 
     /**
@@ -178,7 +182,7 @@ public class CommandRequests {
                                        ResponseRequest responseRequest,
                                        ResponseType type) {
         responseRequest.getHandler().onResponse(type);
-        _requests.removeValue(sender, responseRequest);
+        _requests.remove(sender, responseRequest);
     }
 
     private static void tellMultipleRequests(CommandSender sender, ResponseType type,

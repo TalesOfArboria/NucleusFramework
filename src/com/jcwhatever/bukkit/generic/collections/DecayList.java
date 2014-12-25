@@ -50,10 +50,10 @@ public class DecayList<T> extends LinkedList<T>{
     private int _decayTicks;
 
     // task that removes items at interval.
-    private BukkitTask _decayTask;
+    private transient BukkitTask _decayTask;
 
     // reference to Rot instance responsible for removing items.
-    private Rot _rot;
+    private transient Rot _rot;
 
     // holds actions to be executed whenever an item is removed due to decay
     private List<DecayAction<T>> _onDecay = new ArrayList<DecayAction<T>>(5);

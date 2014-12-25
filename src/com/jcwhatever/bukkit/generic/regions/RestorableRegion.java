@@ -25,7 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.regions;
 
-import com.jcwhatever.bukkit.generic.collections.HashSetMap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.bukkit.generic.extended.MaterialExt;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.bukkit.generic.extended.serializable.SerializableFurnitureEntity;
@@ -53,6 +54,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -475,7 +477,8 @@ public abstract class RestorableRegion extends BuildableRegion {
 
             // Restore block Pairs
             // keyed to block x, y z value as a string
-            HashSetMap<String, ChunkBlockInfo> _placedMultiBlocks = new HashSetMap<>(multiBlocks.size());
+            Multimap<String, ChunkBlockInfo> _placedMultiBlocks =
+                    MultimapBuilder.hashKeys(multiBlocks.size()).hashSetValues(3).build();
 
             // Get block pairs
             while (!multiBlocks.isEmpty()) {
@@ -486,7 +489,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                 int z = info.getChunkBlockZ();
 
                 String lowerKey = getKey(x, y - 1, z);
-                Set<ChunkBlockInfo> lowerBlock = _placedMultiBlocks.getAll(lowerKey);
+                Collection<ChunkBlockInfo> lowerBlock = _placedMultiBlocks.get(lowerKey);
 
                 if (lowerBlock != null) {
                     _placedMultiBlocks.put(lowerKey, info);
@@ -494,7 +497,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                 }
 
                 String upperKey = getKey(x, y + 1, z);
-                Set<ChunkBlockInfo> upperBlock = _placedMultiBlocks.getAll(upperKey);
+                Collection<ChunkBlockInfo> upperBlock = _placedMultiBlocks.get(upperKey);
                 if (upperBlock != null) {
                     _placedMultiBlocks.put(upperKey, info);
                     continue;
@@ -508,7 +511,7 @@ public abstract class RestorableRegion extends BuildableRegion {
 
             for (String key : keys) {
 
-                Set<ChunkBlockInfo> multiBlockSetSet = _placedMultiBlocks.getAll(key);
+                Collection<ChunkBlockInfo> multiBlockSetSet = _placedMultiBlocks.get(key);
                 if (multiBlockSetSet == null)
                     continue;
 

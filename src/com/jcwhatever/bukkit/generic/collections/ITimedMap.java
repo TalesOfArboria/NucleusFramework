@@ -31,7 +31,7 @@ import java.util.Map;
  * lifespans. When the elements lifespan ends, the element is
  * removed.
  */
-public interface ITimedMap<K, V> extends Map<K, V> {
+public interface ITimedMap<K, V> {
 
     /**
      * Put an item into the map using the specified lifespan.
@@ -40,7 +40,7 @@ public interface ITimedMap<K, V> extends Map<K, V> {
      * @param value          The item to add.
      * @param lifespanTicks  The items lifespan in ticks.
      */
-    V put(final K key, final V value, int lifespanTicks);
+    boolean put(final K key, final V value, int lifespanTicks);
 
     /**
      * Put a map of items into the map using the specified lifespan.

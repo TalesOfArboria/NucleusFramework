@@ -59,10 +59,10 @@ public class TimedArrayList<E>
     private final List<Entry<E>> _list;
     private final int _timeFactor;
     private final int _defaultTime;
-    private final Object _sync = new Object();
+    private transient final Object _sync = new Object();
 
-    private List<LifespanEndAction<E>> _onLifespanEnd = new ArrayList<>(5);
-    private List<CollectionEmptyAction<TimedArrayList<E>>> _onEmpty = new ArrayList<>(5);
+    private transient List<LifespanEndAction<E>> _onLifespanEnd = new ArrayList<>(5);
+    private transient List<CollectionEmptyAction<TimedArrayList<E>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default item lifespan is 20 ticks.

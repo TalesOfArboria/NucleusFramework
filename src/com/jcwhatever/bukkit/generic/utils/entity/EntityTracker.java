@@ -87,7 +87,7 @@ public final class EntityTracker implements Listener {
                 continue;
 
             tracked.setEntity(entity);
-            tracked.onChunkLoad();
+            tracked.onChunkLoad(event.getChunk());
         }
     }
 

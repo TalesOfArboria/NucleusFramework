@@ -24,14 +24,17 @@
 
 package com.jcwhatever.bukkit.generic.utils.entity;
 
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Tracks an entity and keeps the latest instance of the entity.
@@ -44,7 +47,7 @@ public final class TrackedEntity {
     private final UUID _uuid;
     private Entity _recent;
     private World _world;
-    //private boolean _isChunkLoaded;
+    private ChunkInfo _lastKnownChunk;
     private boolean _isDisposed;
 
     private List<ITrackedEntityHandler> _handlers = new ArrayList<>(5);
@@ -91,6 +94,14 @@ public final class TrackedEntity {
      */
     public boolean isChunkLoaded() {
         return _recent.getLocation().getChunk().isLoaded();//ent_isChunkLoaded;
+    }
+
+    /**
+     * Get the last known chunk the entity was in.
+     */
+    @Nullable
+    public ChunkInfo getLastChunkInfo() {
+        return _lastKnownChunk;
     }
 
     /**
@@ -145,8 +156,9 @@ public final class TrackedEntity {
         _world = world;
     }
 
-    void onChunkLoad() {
-        //_isChunkLoaded = true;
+    void onChunkLoad(Chunk chunk) {
+
+        _lastKnownChunk = new ChunkInfo(chunk);
 
         for (ITrackedEntityHandler handler : _handlers) {
             handler.onChanged(this);
@@ -154,8 +166,6 @@ public final class TrackedEntity {
     }
 
     void onChunkUnload() {
-        //_isChunkLoaded = false;
-
         for (ITrackedEntityHandler handler : _handlers) {
             handler.onChanged(this);
         }

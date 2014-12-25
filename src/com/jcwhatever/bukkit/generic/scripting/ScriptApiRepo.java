@@ -25,7 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.scripting;
 
-import com.jcwhatever.bukkit.generic.collections.HashSetMap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.bukkit.generic.scripting.api.IScriptApi;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -33,9 +34,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -46,7 +47,8 @@ public class ScriptApiRepo {
     protected ScriptApiRepo() {}
 
     protected Map<String, ApiPackage> _scriptApis = new HashMap<>(50);
-    protected HashSetMap<Plugin, ApiPackage> _pluginScriptApis = new HashSetMap<>(50);
+    protected Multimap<Plugin, ApiPackage> _pluginScriptApis =
+            MultimapBuilder.hashKeys(50).hashSetValues(5).build();
 
     /**
      * Register a script api with the repository so
@@ -107,7 +109,7 @@ public class ScriptApiRepo {
         ApiPackage api = _scriptApis.remove(apiKey);
 
         if (api != null) {
-            _pluginScriptApis.removeValue(plugin, api);
+            _pluginScriptApis.remove(plugin, api);
             return true;
         }
 
@@ -168,7 +170,7 @@ public class ScriptApiRepo {
     public void unregisterPlugin(Plugin plugin) {
         PreCon.notNull(plugin);
 
-        Set<ApiPackage> apis = _pluginScriptApis.removeAll(plugin);
+        Collection<ApiPackage> apis = _pluginScriptApis.removeAll(plugin);
 
         for (ApiPackage api : apis) {
             ApiPackage apiPackage = _scriptApis.remove(api.name);

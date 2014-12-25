@@ -59,10 +59,10 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
     private final Map<K, Date> _expireMap;
     private final int _timeFactor;
     private final int _defaultTime;
-    private final Object _sync = new Object();
+    private transient final Object _sync = new Object();
 
-    private List<LifespanEndAction<K>> _onLifespanEnd = new ArrayList<>(5);
-    private List<CollectionEmptyAction<TimedHashMap<K, V>>> _onEmpty = new ArrayList<>(5);
+    private transient List<LifespanEndAction<K>> _onLifespanEnd = new ArrayList<>(5);
+    private transient List<CollectionEmptyAction<TimedHashMap<K, V>>> _onEmpty = new ArrayList<>(5);
 
 
     /**
@@ -158,23 +158,23 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
      */
     @Override
     @Nullable
-    public V put(final K key, final V value, int lifespan) {
+    public boolean put(final K key, final V value, int lifespan) {
         PreCon.notNull(key);
         PreCon.notNull(value);
         PreCon.positiveNumber(lifespan);
 
         if (lifespan == 0)
-            return null;
+            return false;
 
         synchronized (_sync) {
 
-            if (lifespan < 0) {
-                return _map.put(key, value);
+            V previous = _map.put(key, value);
+
+            if (lifespan > 0) {
+                _expireMap.put(key, getExpires(lifespan));
             }
 
-            V previous = _map.put(key, value);
-            _expireMap.put(key, getExpires(lifespan));
-            return previous;
+            return previous != null;
         }
     }
 
@@ -239,7 +239,13 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
         PreCon.notNull(key);
         PreCon.notNull(value);
 
-        return put(key, value, _defaultTime);
+        V previous = get(key);
+
+        if (put(key, value, _defaultTime)) {
+            return previous;
+        }
+
+        return null;
     }
 
     /**

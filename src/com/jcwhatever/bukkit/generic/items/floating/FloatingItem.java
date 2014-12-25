@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemDespawnEvent;
 import com.jcwhatever.bukkit.generic.events.floatingitems.FloatingItemSpawnEvent;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
+import com.jcwhatever.bukkit.generic.regions.data.ChunkInfo;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.InventoryUtils;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
@@ -187,6 +188,16 @@ public class FloatingItem implements IDisposable {
     @Nullable
     public Location getLocation() {
         return _currentLocation;
+    }
+
+    /**
+     * Get the last known chunk location of the entity.
+     *
+     * <p>May not be accurate if the entity moves.</p>
+     */
+    @Nullable
+    public ChunkInfo getLastChunkInfo() {
+        return _trackedEntity.getLastChunkInfo();
     }
 
     /**

@@ -58,10 +58,10 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
     private final Map<E, Date> _expireMap;
     private final int _timeFactor;
 
-    private final Object _sync = new Object();
+    private transient final Object _sync = new Object();
 
-    private List<LifespanEndAction<E>> _onLifespanEnd = new ArrayList<>(5);
-    private List<CollectionEmptyAction<TimedHashSet<E>>> _onEmpty = new ArrayList<>(5);
+    private transient List<LifespanEndAction<E>> _onLifespanEnd = new ArrayList<>(5);
+    private transient List<CollectionEmptyAction<TimedHashSet<E>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default lifespan is 20 ticks.

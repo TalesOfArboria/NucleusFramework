@@ -49,8 +49,8 @@ public class EntryCounter<T> implements Iterable<T> {
     private RemovalPolicy _removalPolicy;
 
     // cache to quickly increment a value without having to look it up in the type count map.
-    private T _currentItem;
-    private Entry _currentEntry;
+    private transient T _currentItem;
+    private transient Entry _currentEntry;
 
     /**
      * Used to specify if the counter should remove
