@@ -27,8 +27,8 @@ package com.jcwhatever.bukkit.generic.commands.response;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.jcwhatever.bukkit.generic.collections.TimeScale;
-import com.jcwhatever.bukkit.generic.collections.TimedMultimap;
+import com.jcwhatever.bukkit.generic.collections.timed.TimeScale;
+import com.jcwhatever.bukkit.generic.collections.timed.TimedMultimap;
 import com.jcwhatever.bukkit.generic.internal.Lang;
 import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.language.Localizable;

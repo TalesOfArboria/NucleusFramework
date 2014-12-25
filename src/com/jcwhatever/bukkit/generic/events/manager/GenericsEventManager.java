@@ -26,8 +26,8 @@
 package com.jcwhatever.bukkit.generic.events.manager;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.TimeScale;
-import com.jcwhatever.bukkit.generic.collections.TimedHashSet;
+import com.jcwhatever.bukkit.generic.collections.timed.TimeScale;
+import com.jcwhatever.bukkit.generic.collections.timed.TimedHashSet;
 import com.jcwhatever.bukkit.generic.collections.WeakHashSetMap;
 import com.jcwhatever.bukkit.generic.events.manager.exceptions.EventManagerDisposedException;
 import com.jcwhatever.bukkit.generic.events.manager.exceptions.HandlerAlreadyRegisteredException;

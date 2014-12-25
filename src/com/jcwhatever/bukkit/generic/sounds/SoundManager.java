@@ -26,8 +26,8 @@
 package com.jcwhatever.bukkit.generic.sounds;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.LifespanEndAction;
-import com.jcwhatever.bukkit.generic.collections.TimedArrayList;
+import com.jcwhatever.bukkit.generic.collections.timed.LifespanEndAction;
+import com.jcwhatever.bukkit.generic.collections.timed.TimedArrayList;
 import com.jcwhatever.bukkit.generic.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.bukkit.generic.events.sounds.ResourceSoundEndEvent;
 import com.jcwhatever.bukkit.generic.sounds.Playing.Future;

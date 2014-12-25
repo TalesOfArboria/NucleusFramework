@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.items.bank;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.TimedHashMap;
+import com.jcwhatever.bukkit.generic.collections.timed.TimedHashMap;
 import com.jcwhatever.bukkit.generic.performance.SingleCache;
 import com.jcwhatever.bukkit.generic.storage.DataPath;
 import com.jcwhatever.bukkit.generic.storage.DataStorage;

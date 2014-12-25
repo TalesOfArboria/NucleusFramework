@@ -22,16 +22,31 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.collections.timed;
 
-package com.jcwhatever.bukkit.generic.collections;
+import java.util.Map;
 
 /**
- * A handler used when the lifespan of an item in a
- * collection ends.
+ * Represents a map collection whose elements have individual
+ * lifespans. When the elements lifespan ends, the element is
+ * removed.
  */
-public abstract class LifespanEndAction<T> {
+public interface ITimedMap<K, V> {
 
-    public abstract void onEnd(T item);
+    /**
+     * Put an item into the map using the specified lifespan.
+     *
+     * @param key            The item key.
+     * @param value          The item to add.
+     * @param lifespanTicks  The items lifespan in ticks.
+     */
+    boolean put(final K key, final V value, int lifespanTicks);
 
+    /**
+     * Put a map of items into the map using the specified lifespan.
+     *
+     * @param entries        The map to add.
+     * @param lifespanTicks  The lifespan of the added items in ticks.
+     */
+    void putAll(Map<? extends K, ? extends V> entries, int lifespanTicks);
 }
-

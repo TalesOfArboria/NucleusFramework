@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.timed;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import org.bukkit.Bukkit;

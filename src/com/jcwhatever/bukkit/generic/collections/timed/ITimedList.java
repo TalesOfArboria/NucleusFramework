@@ -22,30 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.timed;
 
 import java.util.Collection;
 
 /**
- * Represents a collection whose elements have individual
+ * Represents a list whose elements have individual
  * lifespans. When the elements lifespan ends, the element is
  * removed.
  */
-public interface ITimedCollection<E> extends Collection<E> {
+public interface ITimedList<E> extends ITimedCollection<E> {
 
     /**
-     * Add an item to the collection and specify its lifetime in ticks.
+     * Insert an item into the collection at the specified index
+     * and specify its lifetime in ticks.
      *
-     * @param item           The item to add.
+     * @param index          The index position to insert at.
+     * @param item           The item to insert.
+     * @param lifespanTicks  The amount of time in ticks the item will stay in the list.
+     */
+    void add(int index, E item, int lifespanTicks);
+
+    /**
+     * Insert a collection into the list at the specified index
+     * and specify the lifetime in ticks.
+     *
+     * @param index          The index position to insert at.
+     * @param collection     The collection to add.
      * @param lifespanTicks  The amount of time in ticks it will stay in the list.
      */
-    boolean add(E item, int lifespanTicks);
+    boolean addAll(int index, Collection<? extends E> collection, int lifespanTicks);
 
-    /**
-     * Add a collection to the list and specify the lifetime in ticks.
-     *
-     * @param collection       The collection to add.
-     * @param lifespanTicks    The amount of time in ticks it will stay in the list.
-     */
-    boolean addAll(Collection<? extends E> collection, int lifespanTicks);
 }

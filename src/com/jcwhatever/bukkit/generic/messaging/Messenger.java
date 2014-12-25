@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.generic.messaging;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
-import com.jcwhatever.bukkit.generic.collections.TimedHashSet;
+import com.jcwhatever.bukkit.generic.collections.timed.TimedHashSet;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerMap;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PlayerUtils;

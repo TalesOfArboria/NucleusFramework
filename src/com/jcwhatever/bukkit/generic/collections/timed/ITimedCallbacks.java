@@ -22,35 +22,45 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.timed;
 
-import java.util.Collection;
+import com.jcwhatever.bukkit.generic.collections.CollectionEmptyAction;
 
 /**
- * Represents a list whose elements have individual
- * lifespans. When the elements lifespan ends, the element is
- * removed.
+ * Represents a timed collection which allows
+ * adding callbacks.
  */
-public interface ITimedList<E> extends ITimedCollection<E> {
+public interface ITimedCallbacks<E, C> {
 
     /**
-     * Insert an item into the collection at the specified index
-     * and specify its lifetime in ticks.
+     * Adds a callback to be called whenever an items
+     * lifespan ends.
      *
-     * @param index          The index position to insert at.
-     * @param item           The item to insert.
-     * @param lifespanTicks  The amount of time in ticks the item will stay in the list.
+     * @param callback  The callback to call.
      */
-    void add(int index, E item, int lifespanTicks);
+    void addOnLifespanEnd(LifespanEndAction<E> callback);
 
     /**
-     * Insert a collection into the list at the specified index
-     * and specify the lifetime in ticks.
+     * Removes a callback that is called whenever an items
+     * lifespan ends..
      *
-     * @param index          The index position to insert at.
-     * @param collection     The collection to add.
-     * @param lifespanTicks  The amount of time in ticks it will stay in the list.
+     * @param callback  The callback to remove.
      */
-    boolean addAll(int index, Collection<? extends E> collection, int lifespanTicks);
+    void removeOnLifespanEnd(LifespanEndAction<E> callback);
 
+    /**
+     * Adds a callback to be called whenever the
+     * collection becomes empty.
+     *
+     * @param callback  The callback to add.
+     */
+    void addOnCollectionEmpty(CollectionEmptyAction<C> callback);
+
+    /**
+     * Removes a callback that is called whenever the
+     * collection becomes empty.
+     *
+     * @param callback  The callback to remove.
+     */
+    void removeOnCollectionEmpty(CollectionEmptyAction<C> callback);
 }

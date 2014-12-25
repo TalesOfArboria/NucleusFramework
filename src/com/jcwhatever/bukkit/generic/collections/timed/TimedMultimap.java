@@ -22,10 +22,12 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.bukkit.generic.collections.timed;
 
-package com.jcwhatever.bukkit.generic.collections;
-
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
 import com.jcwhatever.bukkit.generic.GenericsLib;
+import com.jcwhatever.bukkit.generic.collections.CollectionEmptyAction;
 import com.jcwhatever.bukkit.generic.scheduler.ScheduledTask;
 import com.jcwhatever.bukkit.generic.utils.DateUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -43,68 +45,45 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
- * An hash map where each key value has an individual lifespan that when reached, causes the item
+ * A {@code HashSetMap} where each key value has an individual lifespan that when reached, causes the item
  * to be removed.
  *
  * <p>The lifespan can only be reset by re-adding an item.</p>
  *
  * <p>Items can be added using the default lifespan time or a lifespan can be specified per item.</p>
  */
-public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCallbacks<K, TimedHashMap<K, V>> {
+public class TimedMultimap<K, V> implements Multimap<K, V>, ITimedMap<K, V>, ITimedCallbacks<K, TimedMultimap<K, V>> {
 
-    private static Map<TimedHashMap, Void> _instances = new WeakHashMap<>(10);
+    private static Map<TimedMultimap, Void> _instances = new WeakHashMap<>(10);
     private static ScheduledTask _janitor;
 
-    private final Map<K, V> _map;
+    private final Multimap<K, V> _multiMap;
     private final Map<K, Date> _expireMap;
     private final int _timeFactor;
     private final int _defaultTime;
     private transient final Object _sync = new Object();
 
     private transient List<LifespanEndAction<K>> _onLifespanEnd = new ArrayList<>(5);
-    private transient List<CollectionEmptyAction<TimedHashMap<K, V>>> _onEmpty = new ArrayList<>(5);
-
-
-    /**
-     * Constructor. Default lifespan is 20 ticks.
-     */
-    public TimedHashMap() {
-        this(10, 20, TimeScale.TICKS);
-    }
+    private transient List<CollectionEmptyAction<TimedMultimap<K, V>>> _onEmpty = new ArrayList<>(5);
 
     /**
      * Constructor. Default lifespan is 20 ticks.
-     *
-     * @param size  The initial capacity of the map.
      */
-    public TimedHashMap(int size) {
-        this(size, 20, TimeScale.TICKS);
-    }
-
-    /**
-     * Constructor. Time scale is in ticks.
-     *
-     * @param size             The initial capacity of the map.
-     * @param defaultLifespan  The default lifespan of items in ticks.
-     */
-    public TimedHashMap(int size, int defaultLifespan) {
-        this(size, defaultLifespan, TimeScale.TICKS);
+    public TimedMultimap(Multimap<K, V> multiMap) {
+        this(multiMap, 20, TimeScale.TICKS);
     }
 
     /**
      * Constructor.
      *
-     * @param size             The initial capacity of the map.
-     * @param defaultLifespan  The default lifespan of items in ticks.
-     * @param timeScale        The lifespan time scale.
+     * @param defaultLifespan  The lifespan used when one is not specified.
+     * @param timeScale        The lifespan timescale.
      */
-    public TimedHashMap(int size, int defaultLifespan, TimeScale timeScale) {
-        super();
-        PreCon.positiveNumber(defaultLifespan);
+    public TimedMultimap(Multimap<K, V> multiMap, int defaultLifespan, TimeScale timeScale) {
 
         _defaultTime = defaultLifespan;
-        _map = new HashMap<>(size);
-        _expireMap = new HashMap<>(size);
+        _multiMap = multiMap;
+        _expireMap = new HashMap<>(multiMap.keySet().size() + 20);
         _instances.put(this, null);
 
         _timeFactor = timeScale.getTimeFactor();
@@ -114,9 +93,9 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
                 @Override
                 public void run() {
 
-                    List<TimedHashMap> maps = new ArrayList<TimedHashMap>(_instances.keySet());
+                    List<TimedMultimap> maps = new ArrayList<>(_instances.keySet());
 
-                    for (TimedHashMap map : maps) {
+                    for (TimedMultimap map : maps) {
                         synchronized (map._sync) {
                             map.cleanup();
                         }
@@ -128,25 +107,10 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
 
     @Override
     public void clear() {
-        _map.clear();
+        _multiMap.clear();
         _expireMap.clear();
 
         onEmpty();
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return _map.keySet();
-    }
-
-    @Override
-    public Collection<V> values() {
-        return _map.values();
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return _map.entrySet();
     }
 
     /**
@@ -157,7 +121,6 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
      * @param lifespan  The items lifespan.
      */
     @Override
-    @Nullable
     public boolean put(final K key, final V value, int lifespan) {
         PreCon.notNull(key);
         PreCon.notNull(value);
@@ -168,13 +131,14 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
 
         synchronized (_sync) {
 
-            V previous = _map.put(key, value);
+            if (_multiMap.put(key, value)) {
 
-            if (lifespan > 0) {
-                _expireMap.put(key, getExpires(lifespan));
+                if (lifespan > 0) {
+                    _expireMap.put(key, getExpires(lifespan));
+                }
+                return true;
             }
-
-            return previous != null;
+            return false;
         }
     }
 
@@ -182,7 +146,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
     public int size() {
         synchronized (_sync) {
             cleanup();
-            return _map.size();
+            return _multiMap.size();
         }
     }
 
@@ -190,7 +154,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
     public boolean isEmpty() {
         synchronized (_sync) {
             cleanup();
-            return _map.isEmpty();
+            return _multiMap.isEmpty();
         }
     }
 
@@ -200,7 +164,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
 
         synchronized (_sync) {
             return !isExpired(key, true) &&
-                    _map.containsKey(key);
+                    _multiMap.containsKey(key);
         }
     }
 
@@ -210,21 +174,51 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
 
         synchronized (_sync) {
             cleanup();
-            return _map.containsValue(value);
+            return _multiMap.containsValue(value);
         }
     }
 
     @Override
+    public boolean containsEntry(@Nullable Object o, @Nullable Object o1) {
+        return _multiMap.containsEntry(o, o1);
+    }
+
+    @Override
     @Nullable
-    public V get(Object key) {
+    public Collection<V> get(K key) {
         PreCon.notNull(key);
 
         synchronized (_sync) {
             if (isExpired(key, true)) {
-                return null;
+                return new ArrayList<>(0);
             }
-            return _map.get(key);
+            return _multiMap.get(key);
         }
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return _multiMap.keySet();
+    }
+
+    @Override
+    public Multiset<K> keys() {
+        return _multiMap.keys();
+    }
+
+    @Override
+    public Collection<V> values() {
+        return _multiMap.values();
+    }
+
+    @Override
+    public Collection<Map.Entry<K, V>> entries() {
+        return _multiMap.entries();
+    }
+
+    @Override
+    public Map<K, Collection<V>> asMap() {
+        return _multiMap.asMap();
     }
 
     /**
@@ -235,17 +229,11 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
      */
     @Override
     @Nullable
-    public V put(K key, V value) {
+    public boolean put(K key, V value) {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
-        V previous = get(key);
-
-        if (put(key, value, _defaultTime)) {
-            return previous;
-        }
-
-        return null;
+        return put(key, value, _defaultTime);
     }
 
     /**
@@ -273,30 +261,61 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
      * @param entries  The map to add.
      */
     @Override
-    public void putAll(Map<? extends K, ? extends V> entries) {
+    public boolean putAll(Multimap<? extends K, ? extends V> entries) {
         PreCon.notNull(entries);
 
-        putAll(entries, _defaultTime);
+        boolean isChanged = false;
+
+        for (Map.Entry<? extends K, ? extends V> entry : entries.entries()) {
+            isChanged = isChanged || put(entry.getKey(), entry.getValue());
+        }
+
+        return isChanged;
     }
 
     @Override
-    @Nullable
-    public V remove(Object key) {
-        PreCon.notNull(key);
+    public Collection<V> replaceValues(@Nullable K k, Iterable<? extends V> iterable) {
+        return _multiMap.replaceValues(k, iterable);
+    }
 
-        V value;
+    @Override
+    public Collection<V> removeAll(@Nullable Object o) {
+        Collection<V> result = _multiMap.removeAll(o);
+        //noinspection SuspiciousMethodCalls
+        _expireMap.remove(o);
+
+        return result;
+    }
+
+    @Override
+    public boolean remove(Object key, Object value) {
+        PreCon.notNull(key);
 
         synchronized (_sync) {
 
-            value = _map.remove(key);
-            if (value != null) {
+            if (_multiMap.remove(key, value)) {
+                //noinspection SuspiciousMethodCalls
                 _expireMap.remove(key);
+                onEmpty();
+                return true;
             }
         }
 
-        onEmpty();
+        return false;
+    }
 
-        return value;
+    @Override
+    public boolean putAll(@Nullable K k, Iterable<? extends V> iterable) {
+        if (iterable == null)
+            return false;
+
+        boolean isChanged = false;
+
+        for (V element : iterable) {
+            isChanged = isChanged || put(k, element);
+        }
+
+        return isChanged;
     }
 
     /**
@@ -329,7 +348,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
      * @param callback  The handler to call
      */
     @Override
-    public void addOnCollectionEmpty(CollectionEmptyAction<TimedHashMap<K, V>> callback) {
+    public void addOnCollectionEmpty(CollectionEmptyAction<TimedMultimap<K, V>> callback) {
         PreCon.notNull(callback);
 
         _onEmpty.add(callback);
@@ -341,7 +360,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
      * @param callback  The handler to remove.
      */
     @Override
-    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedHashMap<K, V>> callback) {
+    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedMultimap<K, V>> callback) {
         PreCon.notNull(callback);
 
         _onEmpty.remove(callback);
@@ -351,7 +370,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
         if (!isEmpty() || _onEmpty.isEmpty())
             return;
 
-        for (CollectionEmptyAction<TimedHashMap<K, V>> action : _onEmpty) {
+        for (CollectionEmptyAction<TimedMultimap<K, V>> action : _onEmpty) {
             action.onEmpty(this);
         }
     }
@@ -366,18 +385,18 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
         return date.compareTo(new Date()) <= 0;
     }
 
-    private boolean isExpired(Object entry, boolean removeIfExpired) {
+    private boolean isExpired(Object key, boolean removeIfExpired) {
         //noinspection SuspiciousMethodCalls
-        Date expires = _expireMap.get(entry);
+        Date expires = _expireMap.get(key);
         if (expires == null)
             return true;
 
         if (isExpired(expires)) {
             if (removeIfExpired) {
                 //noinspection SuspiciousMethodCalls
-                _map.remove(entry);
+                _multiMap.removeAll(key);
                 //noinspection SuspiciousMethodCalls
-                _expireMap.remove(entry);
+                _expireMap.remove(key);
             }
             return true;
         }
@@ -391,13 +410,13 @@ public class TimedHashMap<K, V> implements Map<K, V>, ITimedMap<K, V>, ITimedCal
 
     private void cleanup() {
 
-        Iterator<Entry<K, Date>> iterator = _expireMap.entrySet().iterator();
+        Iterator<Map.Entry<K, Date>> iterator = _expireMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Entry<K, Date> entry = iterator.next();
+            Map.Entry<K, Date> entry = iterator.next();
             if (isExpired(entry.getValue())) {
                 iterator.remove();
-                _map.remove(entry.getKey());
+                _multiMap.removeAll(entry.getKey());
             }
         }
     }

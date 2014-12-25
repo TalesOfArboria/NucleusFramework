@@ -26,7 +26,7 @@
 package com.jcwhatever.bukkit.generic.signs;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.TimedHashMap;
+import com.jcwhatever.bukkit.generic.collections.timed.TimedHashMap;
 import com.jcwhatever.bukkit.generic.events.signs.SignInteractEvent;
 import com.jcwhatever.bukkit.generic.internal.Msg;
 import com.jcwhatever.bukkit.generic.mixins.IPluginOwned;

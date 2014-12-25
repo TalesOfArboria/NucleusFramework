@@ -22,43 +22,30 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.bukkit.generic.collections;
+package com.jcwhatever.bukkit.generic.collections.timed;
+
+import java.util.Collection;
 
 /**
- * Represents a timed collection which allows
- * adding callbacks.
+ * Represents a collection whose elements have individual
+ * lifespans. When the elements lifespan ends, the element is
+ * removed.
  */
-public interface ITimedCallbacks<E, C> {
+public interface ITimedCollection<E> extends Collection<E> {
 
     /**
-     * Adds a callback to be called whenever an items
-     * lifespan ends.
+     * Add an item to the collection and specify its lifetime in ticks.
      *
-     * @param callback  The callback to call.
+     * @param item           The item to add.
+     * @param lifespanTicks  The amount of time in ticks it will stay in the list.
      */
-    void addOnLifespanEnd(LifespanEndAction<E> callback);
+    boolean add(E item, int lifespanTicks);
 
     /**
-     * Removes a callback that is called whenever an items
-     * lifespan ends..
+     * Add a collection to the list and specify the lifetime in ticks.
      *
-     * @param callback  The callback to remove.
+     * @param collection       The collection to add.
+     * @param lifespanTicks    The amount of time in ticks it will stay in the list.
      */
-    void removeOnLifespanEnd(LifespanEndAction<E> callback);
-
-    /**
-     * Adds a callback to be called whenever the
-     * collection becomes empty.
-     *
-     * @param callback  The callback to add.
-     */
-    void addOnCollectionEmpty(CollectionEmptyAction<C> callback);
-
-    /**
-     * Removes a callback that is called whenever the
-     * collection becomes empty.
-     *
-     * @param callback  The callback to remove.
-     */
-    void removeOnCollectionEmpty(CollectionEmptyAction<C> callback);
+    boolean addAll(Collection<? extends E> collection, int lifespanTicks);
 }

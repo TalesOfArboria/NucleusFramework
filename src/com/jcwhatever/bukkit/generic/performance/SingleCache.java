@@ -25,7 +25,7 @@
 
 package com.jcwhatever.bukkit.generic.performance;
 
-import com.jcwhatever.bukkit.generic.collections.TimeScale;
+import com.jcwhatever.bukkit.generic.collections.timed.TimeScale;
 
 import javax.annotation.Nullable;
 
