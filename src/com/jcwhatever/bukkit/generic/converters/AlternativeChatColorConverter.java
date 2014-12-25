@@ -25,6 +25,8 @@
 
 package com.jcwhatever.bukkit.generic.converters;
 
+import com.jcwhatever.bukkit.generic.utils.text.TextColor;
+
 import org.bukkit.ChatColor;
 
 import javax.annotation.Nullable;
@@ -65,7 +67,7 @@ public class AlternativeChatColorConverter extends ValueConverter<String, String
         if (!(value instanceof String))
             return null;
 
-        return ((String)value).replaceAll("\\�", "&");
+        return ((String)value).replaceAll(String.valueOf(TextColor.FORMAT_CHAR), "&");
     }
 
 }
