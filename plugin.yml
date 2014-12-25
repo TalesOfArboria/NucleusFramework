@@ -1,6 +1,6 @@
 name: GenericsLib
 author: JCThePants
-main: com.jcwhatever.bukkit.generic.BukkitPlugin
+main: com.jcwhatever.generic.BukkitPlugin
 version: 0.0-beta
 softdepend: [Vault, WorldEdit]
 commands:
