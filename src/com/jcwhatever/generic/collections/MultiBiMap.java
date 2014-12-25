@@ -35,7 +35,6 @@ import com.jcwhatever.generic.collections.wrappers.AbstractIteratorWrapper;
 import com.jcwhatever.generic.collections.wrappers.AbstractMapWrapper;
 import com.jcwhatever.generic.collections.wrappers.AbstractSetWrapper;
 import com.jcwhatever.generic.utils.PreCon;
-import com.sun.javafx.beans.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -300,7 +299,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
     }
 
     @Override
-    public boolean putAll(@NonNull K k, Iterable<? extends V> iterable) {
+    public boolean putAll(@Nonnull K k, Iterable<? extends V> iterable) {
         PreCon.notNull(k);
         PreCon.notNull(iterable);
 
