@@ -24,8 +24,8 @@
 
 package com.jcwhatever.bukkit.generic.internal.providers.economy;
 
+import com.google.common.collect.MapMaker;
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.collections.wrappers.WeakValueHashMap;
 import com.jcwhatever.bukkit.generic.providers.economy.IAccount;
 import com.jcwhatever.bukkit.generic.providers.economy.IBank;
 import com.jcwhatever.bukkit.generic.providers.economy.IEconomyProvider;
@@ -54,7 +54,10 @@ public final class GenericsEconomyProvider implements IEconomyProvider {
     private final Plugin _plugin;
     private final IDataNode _dataNode;
     private final IDataNode _globalAccountNode;
-    private final Map<UUID, GenericsAccount> _accounts = new WeakValueHashMap<>(100);
+
+    private final Map<UUID, GenericsAccount> _accounts =
+            new MapMaker().weakValues().concurrencyLevel(1).initialCapacity(100).makeMap();
+
     private final Map<String, IBank> _banks = new HashMap<>(25);
 
     private String _currencyNameSingular = "Dollar";

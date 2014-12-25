@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.generic.internal.providers.economy;
 
-import com.jcwhatever.bukkit.generic.collections.wrappers.WeakValueHashMap;
+import com.google.common.collect.MapMaker;
 import com.jcwhatever.bukkit.generic.providers.economy.IAccount;
 import com.jcwhatever.bukkit.generic.providers.economy.IBank;
 import com.jcwhatever.bukkit.generic.providers.economy.IEconomyProvider;
@@ -57,7 +57,8 @@ public final class VaultEconomyProvider implements IEconomyProvider {
         return rsp != null && rsp.getProvider() != null;
     }
 
-    private final Map<UUID, VaultAccount> _accounts = new WeakValueHashMap<>(100);
+    private final Map<UUID, VaultAccount> _accounts =
+            new MapMaker().weakValues().concurrencyLevel(1).initialCapacity(100).makeMap();
 
     private Economy _economy;
 
