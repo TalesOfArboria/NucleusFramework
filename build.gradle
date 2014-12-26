@@ -3,14 +3,18 @@ def majorVersion = '0'
 def minorVersion = '0'
 def buildBy = null
 def mavenRepositories = [
+        'https://github.com/JCThePants/mvn-repo/raw/master',
         'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
 ]
 def providedDependsFiles = [
-        'C:/JavaRepo/bukkit/unmapped-spigot-1.8-R0.1-SNAPSHOT.jar',
-        'C:/JavaRepo/bukkit/Vault.jar',
-        'C:/JavaRepo/bukkit/WorldEdit.jar',
+        //'C:/JavaRepo/bukkit/unmapped-spigot-1.8-R0.1-SNAPSHOT.jar',
+        //'C:/JavaRepo/bukkit/Vault.jar',
+        //'C:/JavaRepo/bukkit/WorldEdit.jar',
 ]
 def providedDepends = [
+        'org.spigotmc:unmapped-spigot:1.8-R0.1-SNAPSHOT',
+        'com.sk89q:WorldEdit:SNAPSHOT',
+        'net.milkbowl.vault:Vault:1.4.1',
         'com.google.code.findbugs:jsr305:3.0.0'
 ]
 def compileDependsFiles = null
