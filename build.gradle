@@ -26,7 +26,7 @@ def includeFiles = [
 def javaVersion = 1.7
 
 /* Maven Repository Task Stuff */
-def shCmd = 'sh.exe'
+def shCmd = 'D:/mvn-repo/bin/sh.exe'
 def mavenCmd = 'D:/apache-maven-3.2.5/bin/mvn'
 def mavenFolder = 'D:/mvn-repo/'
 def mavenGroupId = 'com.jcwhatever.bukkit'
