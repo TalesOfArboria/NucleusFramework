@@ -26,6 +26,7 @@ def includeFiles = [
 def javaVersion = 1.7
 
 /* Maven Repository Task Stuff */
+def shCmd = 'sh'
 def mavenCmd = 'D:/apache-maven-3.2.5/bin/mvn'
 def mavenFolder = 'D:/mvn-repo'
 def mavenGroupId = 'com.jcwhatever.bukkit'
@@ -184,7 +185,6 @@ task updateLocalMavenHolding(type: Copy) {
 
 task updateLocalMaven(type: Exec) {
     workingDir mavenFolder
-    executable 'sh'
-    args '-c', mavenCmd + ' install:install-file -DgroupId=' + mavenGroupId +
+    commandLine shCmd, '-c', mavenCmd + ' install:install-file -DgroupId=' + mavenGroupId +
             ' -DartifactId=' + mavenArtifactId + ' -Dversion=' + mavenVersion + ' -Dfile=holding/' + projectName + '.jar -Dpackaging=jar -DgeneratePom=true -DlocalRepositoryPath=';
 }
