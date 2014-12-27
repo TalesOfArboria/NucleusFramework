@@ -35,8 +35,9 @@ def mavenVersion = majorVersion + '.' + minorVersion + '.SNAPSHOT'
 
 /* Begin */
 
+def hasTeamCity = hasProperty("teamcity")
 // Set version number
-if (hasProperty("teamcity")) {
+if (hasTeamCity) {
     version = majorVersion + '.' + minorVersion + '.' + teamcity["build.number"] + '.git-' + teamcity["build.vcs.number"]
 
     if (buildBy == null) {
@@ -200,7 +201,7 @@ task commitMavenGit(type: Exec) {
     workingDir mavenFolder
     executable shCmd
 
-    if (hasProperty('teamcity')) {
+    if (hasTeamCity) {
         args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + " build# " + teamcity["build.number"] + "'";
     }
     else {
