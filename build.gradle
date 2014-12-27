@@ -36,7 +36,7 @@ def mavenVersion = majorVersion + '.' + minorVersion + '.SNAPSHOT'
 /* Begin */
 
 def hasTeamCity = hasProperty("teamcity")
-def buildNumber = hasTeamCity ? teamcity["build.number"] : 'unknown'
+ext.buildNumber = hasTeamCity ? teamcity["build.number"] : 'unknown'
 // Set version number
 if (hasTeamCity) {
     version = majorVersion + '.' + minorVersion + '.' + buildNumber + '.git-' + teamcity["build.vcs.number"]
