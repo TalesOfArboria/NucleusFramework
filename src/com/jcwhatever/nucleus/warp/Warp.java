@@ -25,7 +25,6 @@
 
 package com.jcwhatever.nucleus.warp;
 
-import com.jcwhatever.nucleus.mixins.INamedLocation;
 import com.jcwhatever.nucleus.mixins.INamedLocationDistance;
 import com.jcwhatever.nucleus.mixins.implemented.NamedLocationDistance;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -36,7 +35,7 @@ import org.bukkit.Location;
 /**
  * Represents a warp location.
  */
-public class Warp implements INamedLocation {
+public class Warp implements IWarp {
 
     private final String _warpName;
     private final String _warpSearchName;
@@ -96,11 +95,12 @@ public class Warp implements INamedLocation {
      *
      * @param location  The warp location.
      */
+    @Override
     public void setLocation(Location location) {
         PreCon.notNull(location);
 
         _location = location;
-        _dataNode.set(_warpName, location);
+        _dataNode.set("location", location);
         _dataNode.saveAsync(null);
     }
 }
