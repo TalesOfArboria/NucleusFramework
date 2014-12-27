@@ -31,7 +31,7 @@ def mavenCmd = 'D:/apache-maven-3.2.5/bin/mvn'
 def mavenFolder = 'D:/mvn-repo/'
 def mavenGroupId = 'com.jcwhatever.bukkit'
 def mavenArtifactId = projectName
-def mavenVersion = majorVersion + '.' + minorVersion + '.SNAPSHOT'
+def mavenVersion = majorVersion + '.' + minorVersion + '-SNAPSHOT'
 
 /* Begin */
 
