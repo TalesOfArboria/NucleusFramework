@@ -201,7 +201,7 @@ task commitMavenGit(type: Exec) {
     executable shCmd
 
     if (hasProperty('teamcity')) {
-        args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + "' build# " + teamcity["build.number"];
+        args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + " build# " + teamcity["build.number"] + "'";
     }
     else {
         args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + "'";
