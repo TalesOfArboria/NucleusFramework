@@ -36,9 +36,10 @@ def mavenVersion = majorVersion + '.' + minorVersion + '.SNAPSHOT'
 /* Begin */
 
 def hasTeamCity = hasProperty("teamcity")
+def buildNumber = hasTeamCity ? teamcity["build.number"] : 'unknown'
 // Set version number
 if (hasTeamCity) {
-    version = majorVersion + '.' + minorVersion + '.' + teamcity["build.number"] + '.git-' + teamcity["build.vcs.number"]
+    version = majorVersion + '.' + minorVersion + '.' + buildNumber + '.git-' + teamcity["build.vcs.number"]
 
     if (buildBy == null) {
         buildBy = teamcity["build.triggeredBy.username"]
@@ -201,13 +202,8 @@ task commitMavenGit(type: Exec) {
     workingDir mavenFolder
     executable shCmd
 
-    if (hasTeamCity) {
-        args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + " build# " + teamcity["build.number"] + "'";
-    }
-    else {
-        args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + "'";
-    }
 
+    args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + " build# " + buildNumber + "'";
 }
 
 task pushMavenGit(type: Exec) {
