@@ -122,6 +122,9 @@ public final class InternalJailManager implements IJailManager {
         PreCon.notNull(playerId);
         PreCon.notNull(expires);
 
+        if (isPrisoner(playerId))
+            return null;
+
         // create session
         JailSession jailSession = new JailSession(jail, playerId, expires);
 
