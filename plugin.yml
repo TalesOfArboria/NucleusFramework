@@ -1,16 +1,16 @@
-name: GenericsLib
+name: NucleusFramework
 author: JCThePants
-main: com.jcwhatever.generic.BukkitPlugin
+main: com.jcwhatever.nucleus.BukkitPlugin
 version: 0.0-beta
 softdepend: [Vault, WorldEdit]
 commands:
-    g:
-        aliases: [gen, generics]
-        description: Base command for GenericsLib
+    nucleusframework:
+        aliases: [n, nuc, nucleus]
+        description: Base command for NucleusFramework
         usage: |
             ERROR!
-    geconomy:
-        aliases: [gecon, economy, econ, money]
+    neconomy:
+        aliases: [necon, economy, econ, money]
         description: Economy commands.
         usage: |
             ERROR!
