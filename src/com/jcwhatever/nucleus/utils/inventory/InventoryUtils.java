@@ -503,6 +503,183 @@ public final class InventoryUtils {
         return items.toArray(new ItemStack[items.size()]);
     }
 
+
+    /**
+     * Remove specified items from the the {@code ItemStack} array.
+     *
+     * <p>Removes the quantity of the stack, not all matching items.</p>
+     *
+     * @param contents    The array to remove items from.
+     * @param itemStacks  The {@code ItemStack}'s to remove.
+     *
+     * @return  The removed items.
+     */
+    public static List<ItemStack> remove(ItemStack[] contents, ItemStack... itemStacks) {
+
+        ItemStackComparer comparer = ItemStackComparer.getDurability();
+
+        return remove(contents, comparer, itemStacks);
+    }
+
+    /**
+     * Remove specified items from the the {@code ItemStack} array.
+     *
+     * <p>Removes the quantity of the stack, not all matching items.</p>
+     *
+     * @param contents    The array to remove items from.
+     * @param comparer    The comparer to use.
+     * @param itemStacks  The {@code ItemStack}'s to remove.
+     *
+     * @return  The removed items.
+     */
+    public static List<ItemStack> remove(ItemStack[] contents, ItemStackComparer comparer,
+                                         ItemStack... itemStacks) {
+        PreCon.notNull(contents);
+        PreCon.notNull(comparer);
+        PreCon.notNull(itemStacks);
+
+
+        List<ItemStack> result = new ArrayList<>(itemStacks.length);
+
+        for (ItemStack item : itemStacks) {
+            result.addAll(removeAmount(contents, item, comparer, item.getAmount()));
+        }
+
+        return result;
+    }
+
+    /**
+     * Remove specified items from the the {@code ItemStack} array.
+     *
+     * <p>Removes the quantity of the stack, not all matching items.</p>
+     *
+     * @param contents    The array to remove items from.
+     * @param itemStacks  The {@code ItemStack}'s to remove.
+     *
+     * @return  The removed items.
+     */
+    public static List<ItemStack> remove(ItemStack[] contents, Collection<ItemStack> itemStacks) {
+
+        ItemStackComparer comparer = ItemStackComparer.getDurability();
+
+        return remove(contents, comparer, itemStacks);
+    }
+
+    /**
+     * Remove specified items from the the {@code ItemStack} array.
+     *
+     * <p>Removes the quantity of the stack, not all matching items.</p>
+     *
+     * @param contents    The array to remove items from.
+     * @param comparer    The comparer to use.
+     * @param itemStacks  The {@code ItemStack}'s to remove.
+     *
+     * @return  The removed items.
+     */
+    public static List<ItemStack> remove(ItemStack[] contents, ItemStackComparer comparer,
+                                         Collection<ItemStack> itemStacks) {
+        PreCon.notNull(contents);
+        PreCon.notNull(comparer);
+        PreCon.notNull(itemStacks);
+
+
+        List<ItemStack> result = new ArrayList<>(itemStacks.size());
+
+        for (ItemStack item : itemStacks) {
+            result.addAll(removeAmount(contents, item, comparer, item.getAmount()));
+        }
+
+        return result;
+    }
+
+    /**
+     * Remove specified items from the the inventory.
+     *
+     * <p>Removes the quantity of the stack, not all matching items.</p>
+     *
+     * @param inventory   The inventory to remove items from.
+     * @param itemStacks  The {@code ItemStack}'s to remove.
+     *
+     * @return  The removed items.
+     */
+    public static List<ItemStack> remove(Inventory inventory, ItemStack... itemStacks) {
+
+        ItemStackComparer comparer = ItemStackComparer.getDurability();
+
+        return remove(inventory, comparer, itemStacks);
+    }
+
+    /**
+     * Remove specified items from the the inventory.
+     *
+     * <p>Removes the quantity of the stack, not all matching items.</p>
+     *
+     * @param inventory   The inventory to remove items from.
+     * @param comparer    The comparer to use.
+     * @param itemStacks  The {@code ItemStack}'s to remove.
+     *
+     * @return  The removed items.
+     */
+    public static List<ItemStack> remove(Inventory inventory, ItemStackComparer comparer,
+                                         ItemStack... itemStacks) {
+        PreCon.notNull(inventory);
+        PreCon.notNull(comparer);
+        PreCon.notNull(itemStacks);
+
+
+        List<ItemStack> result = new ArrayList<>(itemStacks.length);
+
+        for (ItemStack item : itemStacks) {
+            result.addAll(removeAmount(inventory, item, comparer, item.getAmount()));
+        }
+
+        return result;
+    }
+
+    /**
+     * Remove specified items from the the inventory.
+     *
+     * <p>Removes the quantity of the stack, not all matching items.</p>
+     *
+     * @param inventory   The inventory to remove items from.
+     * @param itemStacks  The {@code ItemStack}'s to remove.
+     *
+     * @return  The removed items.
+     */
+    public static List<ItemStack> remove(Inventory inventory, Collection<ItemStack> itemStacks) {
+
+        ItemStackComparer comparer = ItemStackComparer.getDurability();
+
+        return remove(inventory, comparer, itemStacks);
+    }
+
+    /**
+     * Remove specified items from the the inventory.
+     *
+     * <p>Removes the quantity of the stack, not all matching items.</p>
+     *
+     * @param inventory   The inventory to remove items from.
+     * @param comparer    The comparer to use.
+     * @param itemStacks  The {@code ItemStack}'s to remove.
+     *
+     * @return  The removed items.
+     */
+    public static List<ItemStack> remove(Inventory inventory, ItemStackComparer comparer,
+                                         Collection<ItemStack> itemStacks) {
+        PreCon.notNull(inventory);
+        PreCon.notNull(comparer);
+        PreCon.notNull(itemStacks);
+
+
+        List<ItemStack> result = new ArrayList<>(itemStacks.size());
+
+        for (ItemStack item : itemStacks) {
+            result.addAll(removeAmount(inventory, item, comparer, item.getAmount()));
+        }
+
+        return result;
+    }
+
     /**
      * Remove a specified quantity of {@code ItemStack}'s from the specified inventory
      * that match the specified {@code ItemStack} array.
@@ -512,7 +689,9 @@ public final class InventoryUtils {
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
      */
-    public static List<ItemStack> remove (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+    public static List<ItemStack> removeAmount(Inventory inventory,
+                                               ItemStack itemStack,
+                                               ItemStackComparer comparer, int qty) {
         PreCon.notNull(inventory);
         PreCon.notNull(itemStack);
         PreCon.notNull(comparer);
@@ -599,7 +778,9 @@ public final class InventoryUtils {
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
      */
-    public static List<ItemStack> remove (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+    public static List<ItemStack> removeAmount(ItemStack[] contents,
+                                               ItemStack itemStack,
+                                               ItemStackComparer comparer, int qty) {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
         PreCon.notNull(comparer);
