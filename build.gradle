@@ -185,6 +185,7 @@ task updateLocalMavenHolding(type: Copy) {
 
 task updateLocalMaven(type: Exec) {
     workingDir mavenFolder
-    commandLine shCmd, '-c', mavenCmd + ' install:install-file -DgroupId=' + mavenGroupId +
+    executable shCmd
+    args '-c', mavenCmd + ' install:install-file -DgroupId=' + mavenGroupId +
             ' -DartifactId=' + mavenArtifactId + ' -Dversion=' + mavenVersion + ' -Dfile=holding/' + projectName + '.jar -Dpackaging=jar -DgeneratePom=true -DlocalRepositoryPath=';
 }
