@@ -25,6 +25,13 @@ def includeFiles = [
 ]
 def javaVersion = 1.7
 
+/* Maven Repository Task Stuff */
+def mavenCmd = 'D:/apache-maven-3.2.5/bin/mvn'
+def mavenFolder = 'D:/mvn-repo'
+def mavenGroupId = 'com.jcwhatever.bukkit'
+def mavenArtifactId = projectName
+def mavenVersion = majorVersion + '.' + minorVersion + '.SNAPSHOT'
+
 /* Begin */
 
 // Set version number
@@ -59,16 +66,6 @@ apply plugin: 'java'
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
-repositories {
-    mavenCentral()
-
-    for (repo in mavenRepositories) {
-        maven {
-            url repo
-        }
-    }
-}
-
 // Add provided configuration to prevent dependencies
 // from being included in the jar
 configurations {
@@ -92,6 +89,23 @@ sourceSets {
     }
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies { classpath 'org.ajoberstar:gradle-git:0.2.3' }
+}
+
+repositories {
+    mavenCentral()
+
+    for (repo in mavenRepositories) {
+        maven {
+            url repo
+        }
+    }
+}
+
 // Add dependencies
 dependencies {
 
@@ -112,6 +126,12 @@ dependencies {
     }
 }
 
+def manifestAttr = manifest {
+    attributes("Built-By": buildBy,
+            "Created-By": System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
+            "Implementation-Title": projectName,
+            "Implementation-Version": version)
+}
 
 // Jar file output with version number
 jar {
@@ -124,13 +144,7 @@ jar {
         from includeFiles
     }
 
-    manifest {
-        attributes("Built-By": buildBy,
-                "Created-By": System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
-                "Implementation-Title": projectName,
-                "Implementation-Version": version)
-    }
-
+    manifest = manifestAttr
 }
 
 // Task to create a Jar file artifact with no version number
@@ -144,16 +158,33 @@ task simpleNamedJar(type: Jar) {
         from includeFiles
     }
 
-    manifest {
-        attributes("Built-By": buildBy,
-                "Created-By": System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
-                "Implementation-Title": projectName,
-                "Implementation-Version": version)
-    }
+    manifest = manifestAttr
 
     with jar
 }
 
 artifacts {
     archives simpleNamedJar
+}
+
+/* Maven Snapshot Update Tasks */
+import org.ajoberstar.gradle.git.tasks.*
+task cloneMaven(type: GitClone) {
+    def destination = file(mavenFolder)
+    uri = "https://github.com/JCThePants/mvn-repo.git"
+    destinationPath = destination
+    bare = false
+    enabled = !destination.exists()
+}
+
+task updateLocalMavenHolding(type: Copy) {
+    from file('build/libs/' + projectName + '.jar')
+    into file(mavenFolder + '/holding')
+}
+
+task updateLocalMaven(type: Exec) {
+    workingDir mavenFolder
+    executable 'sh'
+    args '-c', mavenCmd + ' install:install-file -DgroupId=' + mavenGroupId +
+            ' -DartifactId=' + mavenArtifactId + ' -Dversion=' + mavenVersion + ' -Dfile=holding/' + projectName + '.jar -Dpackaging=jar -DgeneratePom=true -DlocalRepositoryPath=';
 }
