@@ -49,7 +49,7 @@ public final class ClearReleaseTPSubCommand extends AbstractCommand {
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
-        CommandException.assertNotConsole(this, sender);
+        CommandException.checkNotConsole(this, sender);
         
         Jail jail = Nucleus.getDefaultJail();
         jail.setReleaseLocation(null);

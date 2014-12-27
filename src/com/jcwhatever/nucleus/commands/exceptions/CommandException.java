@@ -207,7 +207,7 @@ public abstract class CommandException extends Exception {
      *
      * @throws InvalidCommandSenderException
      */
-    public static void assertCommandSender(
+    public static void checkCommandSender(
             AbstractCommand command, CommandSender sender, CommandSenderType expected)
             throws InvalidCommandSenderException {
         PreCon.notNull(command);
@@ -239,7 +239,7 @@ public abstract class CommandException extends Exception {
      *
      * @throws InvalidCommandSenderException
      */
-    public static void assertNotConsole(AbstractCommand command, CommandSender sender)
+    public static void checkNotConsole(AbstractCommand command, CommandSender sender)
             throws InvalidCommandSenderException {
         PreCon.notNull(command);
         PreCon.notNull(sender);

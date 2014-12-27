@@ -64,7 +64,7 @@ public final class ShowSubCommand extends AbstractCommand {
 
         if (playerName.equals("$self")) {
 
-            CommandException.assertNotConsole(this, sender);
+            CommandException.checkNotConsole(this, sender);
 
             player = (Player)sender;
         }
