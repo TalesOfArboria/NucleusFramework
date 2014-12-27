@@ -36,7 +36,7 @@ def mavenVersion = majorVersion + '.' + minorVersion + '.SNAPSHOT'
 /* Begin */
 
 def hasTeamCity = hasProperty("teamcity")
-ext.buildNumber = hasTeamCity ? teamcity["build.number"] : 'unknown'
+def buildNumber = hasTeamCity ? teamcity["build.number"] : 'unknown'
 // Set version number
 if (hasTeamCity) {
     version = majorVersion + '.' + minorVersion + '.' + buildNumber + '.git-' + teamcity["build.vcs.number"]
@@ -212,6 +212,10 @@ task pushMavenGit(type: Exec) {
     args '--login', '-i', '-c', "git push GITHUB master";
 }
 
-task updateMaven(type: GradleBuild) {
-    tasks = ['updateLocalMavenHolding', 'updateLocalMaven', 'addMavenGit', 'commitMavenGit', 'pushMavenGit']
+task updateMaven << {
+    updateLocalMavenHolding.execute()
+    updateLocalMaven.execute()
+    addMavenGit.execute()
+    commitMavenGit.execute()
+    pushMavenGit.execute()
 }
