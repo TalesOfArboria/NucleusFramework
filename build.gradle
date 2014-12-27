@@ -212,7 +212,7 @@ task commitMavenGit(type: Exec) {
 task pushMavenGit(type: Exec) {
     workingDir mavenFolder
     executable shCmd
-    args '--login', '-i', '-c', "git push GITHUB master'";
+    args '--login', '-i', '-c', "git push GITHUB master";
 }
 
 task updateMaven(type: GradleBuild) {
