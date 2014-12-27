@@ -31,7 +31,8 @@ import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.Lang;
-import com.jcwhatever.nucleus.kits.Kit;
+import com.jcwhatever.nucleus.kits.IKit;
+import com.jcwhatever.nucleus.kits.IModifiableKit;
 import com.jcwhatever.nucleus.kits.KitManager;
 import com.jcwhatever.nucleus.language.Localizable;
 
@@ -62,17 +63,16 @@ public final class DelSubCommand extends AbstractCommand {
 
         KitManager manager = Nucleus.getKitManager();
 
-        Kit kit = manager.getKitByName(kitName);
+        IKit kit = manager.getKit(kitName);
         if (kit == null) {
             tellError(sender, Lang.get(_KIT_NOT_FOUND, kitName));
             return; // finish
         }
 
-        for (ItemStack item : items) {
-            kit.removeItem(item);
-        }
+        IModifiableKit modKit = manager.modifyKit(kit);
 
-        manager.saveKits();
+        modKit.removeAnyItems(items);
+        modKit.save();
 
         tellSuccess(sender, Lang.get(_SUCCESS, kit.getName()));
     }

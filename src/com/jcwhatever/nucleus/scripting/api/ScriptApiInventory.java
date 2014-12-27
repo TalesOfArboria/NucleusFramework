@@ -199,7 +199,7 @@ public class ScriptApiInventory extends NucleusScriptApi {
          * @param qty        The quantity to remove.
          */
         public List<ItemStack> remove(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-            return InventoryUtils.remove(inventory, itemStack, comparer, qty);
+            return InventoryUtils.removeAmount(inventory, itemStack, comparer, qty);
         }
     }
 }

@@ -28,12 +28,11 @@ package com.jcwhatever.nucleus.kits;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.kits.GiveKitEvent;
 import com.jcwhatever.nucleus.extended.ArmorType;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
-import com.jcwhatever.nucleus.mixins.INamedInsensitive;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
+import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
+import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -42,24 +41,22 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * A kit of chest items that can be given to a player.
+ * A kit of inventory items that can be given to a player.
  */
-public class Kit implements INamedInsensitive, IPluginOwned {
+public class Kit implements IKit {
 
     private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
 
-    private ItemStack _helmet;
-    private ItemStack _chestplate;
-    private ItemStack _leggings;
-    private ItemStack _boots;
+    private ItemStack[] _armor = new ItemStack[4]; // helmet, chestplate, leggings, boots
     private List<ItemStack> _items;
-
 
     /**
      * Constructor.
@@ -104,38 +101,43 @@ public class Kit implements INamedInsensitive, IPluginOwned {
     /**
      * Get the kit helmet, if any.
      */
+    @Override
     @Nullable
     public ItemStack getHelmet() {
-        return _helmet != null ? _helmet.clone() : null;
+        return _armor[0] != null ? _armor[0].clone() : null;
     }
 
     /**
      * Get the kit chest plate, if any.
      */
+    @Override
     @Nullable
     public ItemStack getChestplate() {
-        return _chestplate != null ? _chestplate.clone() : null;
+        return _armor[1] != null ? _armor[1].clone() : null;
     }
 
     /**
      * Get the kit leggings, if any.
      */
+    @Override
     @Nullable
     public ItemStack getLeggings() {
-        return _leggings != null ? _leggings.clone() : null;
+        return _armor[2] != null ? _armor[2].clone() : null;
     }
 
     /**
      * Gets the kit boots, if any.
      */
+    @Override
     @Nullable
     public ItemStack getBoots() {
-        return _boots != null ? _boots : null;
+        return _armor[3] != null ? _armor[3].clone() : null;
     }
 
     /**
      * Gets a new array of non-armor items in the kit.
      */
+    @Override
     public ItemStack[] getItems() {
 
         // deep clone into an array
@@ -148,209 +150,22 @@ public class Kit implements INamedInsensitive, IPluginOwned {
 
     /**
      * Gets the kit armor items as an a new array.
+     *
+     * <p>The array always has 4 elements. Starting from index 0 the items are
+     * helmet, chestplate, leggings, boots. If any of the items is not present in
+     * the kit then the value of the element is null.</p>
      */
+    @Override
     public ItemStack[] getArmor() {
-        List<ItemStack> armorList = getArmorList();
-        if (armorList == null)
-            return new ItemStack[0];
 
-        ItemStack[] array = new ItemStack[armorList.size()];
-        for (int i = 0; i < armorList.size(); ++i) {
-            array[i] = armorList.get(i);
-        }
-        return array;
-    }
+        ItemStack[] armor = new ItemStack[4];
 
-    /**
-     * Get a new list of the kits armor items.
-     */
-    @Nullable
-    private List<ItemStack> getArmorList() {
-        List<ItemStack> armorList = new ArrayList<ItemStack>(5);
+        armor[0] = getHelmet();
+        armor[1] = getChestplate();
+        armor[2] = getLeggings();
+        armor[3] = getBoots();
 
-        if (_helmet != null)
-            armorList.add(_helmet.clone());
-
-        if (_chestplate != null)
-            armorList.add(_chestplate.clone());
-
-        if (_leggings != null)
-            armorList.add(_leggings.clone());
-
-        if (_boots != null)
-            armorList.add(_boots.clone());
-
-        return armorList;
-    }
-
-    /**
-     * Set the kits helmet item.
-     *
-     * @param helmet  The helmet.
-     */
-    public void setHelmet(@Nullable ItemStack helmet) {
-        _helmet = helmet != null ? helmet.clone() : null;
-    }
-
-    /**
-     * Set the kits chest plate item.
-     *
-     * @param chestplate  The chestplate.
-     */
-    public void setChestplate(@Nullable ItemStack chestplate) {
-        _chestplate = chestplate != null ? chestplate.clone() : null;
-    }
-
-    /**
-     * Set the kits legging item.
-     *
-     * @param leggings  The leggings.
-     */
-    public void setLeggings(@Nullable ItemStack leggings) {
-        _leggings = leggings != null ? leggings.clone() : null;
-    }
-
-    /**
-     * Set the kits boots item.
-     *
-     * @param boots  The boots.
-     */
-    public void setBoots(@Nullable ItemStack boots) {
-        _boots = boots != null ? boots.clone() : null;
-    }
-
-    /**
-     * Add an item, armor or non-armor, to the kit.
-     *
-     * <p>An armor item automatically replaces to the appropriate
-     * armor item.</p>
-     *
-     * @param item  The item to add.
-     */
-    public void addItem(ItemStack item) {
-        PreCon.notNull(item);
-
-        if (ArmorType.getType(item) == ArmorType.NOT_ARMOR) {
-            _items.add(item.clone());
-        } else {
-            addArmor(item);
-        }
-    }
-
-    /**
-     * Add an array of items, armor or non-armor, to the kit.
-     *
-     * <p>Armor items automatically replace the appropriate
-     * armor item.</p>
-     *
-     * @param items  The items to add.
-     */
-    public void addItems(ItemStack[] items) {
-        PreCon.notNull(items);
-
-        for (ItemStack item : items) {
-            addItem(item);
-        }
-    }
-
-    /**
-     * Add a collection of items, armor or non-armor, to the kit.
-     *
-     * <p>Armor items automatically replace the appropriate
-     * armor item.</p>
-     *
-     * @param items  The items to add.
-     */
-    public void addItems(Collection<ItemStack> items) {
-        PreCon.notNull(items);
-
-        for (ItemStack item : items) {
-            addItem(item);
-        }
-    }
-
-    /**
-     * Add an array of armor items to the kit.
-     *
-     * <p>If an item is not armor, it is ignored.</p>
-     *
-     * @param armor  The armor items to add.
-     */
-    public void addArmor(ItemStack[] armor) {
-        PreCon.notNull(armor);
-
-        for (ItemStack item : armor) {
-            addArmor(item);
-        }
-    }
-
-    /**
-     * Add an armor item to the kit
-     * @param item {ItemStack}
-     */
-    public void addArmor(ItemStack item) {
-        switch (ArmorType.getType(item)) {
-            case HELMET:
-                setHelmet(item);
-                break;
-
-            case CHESTPLATE:
-                setChestplate(item);
-                break;
-
-            case LEGGINGS:
-                setLeggings(item);
-                break;
-
-            case BOOTS:
-                setBoots(item);
-                break;
-
-            case HORSE_ARMOR:
-                _items.add(item.clone());
-                break;
-        }
-    }
-
-    /**
-     * Remove an item from the kit, armor or non-armor.
-     * @param item {ItemStack}
-     * @return {Boolean} - True if removed.
-     */
-    public boolean removeItem(ItemStack item) {
-        if (item == null) {
-            return false;
-        }
-
-        switch (ArmorType.getType(item)) {
-            case HELMET:
-                setHelmet(null);
-                break;
-
-            case CHESTPLATE:
-                setChestplate(null);
-                break;
-
-            case LEGGINGS:
-                setLeggings(null);
-                break;
-
-            case BOOTS:
-                setBoots(null);
-                break;
-
-            default:
-                int count = _items.size();
-                for (int i = 0; i < count; i++) {
-                    if (_items.get(i).getType() != item.getType())
-                        continue;
-
-                    _items.remove(i);
-                    i--;
-                    count--;
-                }
-        }
-        return true;
+        return armor;
     }
 
     /**
@@ -363,6 +178,7 @@ public class Kit implements INamedInsensitive, IPluginOwned {
      *
      * @return  True if the player had all the items.
      */
+    @Override
     public boolean take(Player p, int qty) {
         return take(p, ItemStackComparer.getDurability(), qty);
     }
@@ -378,23 +194,24 @@ public class Kit implements INamedInsensitive, IPluginOwned {
      *
      * @return  True if the player had all the items.
      */
+    @Override
     public boolean take(Player p, ItemStackComparer comparer, int qty) {
 
         List<ItemStack> itemsToTake = new ArrayList<>(_items.size() + 4);
 
         itemsToTake.addAll(_items);
 
-        if (_helmet != null)
-            itemsToTake.add(_helmet);
+        if (_armor[0] != null)
+            itemsToTake.add(getHelmet());
 
-        if (_chestplate != null)
-            itemsToTake.add(_chestplate);
+        if (_armor[1] != null)
+            itemsToTake.add(getChestplate());
 
-        if (_leggings != null)
-            itemsToTake.add(_leggings);
+        if (_armor[2] != null)
+            itemsToTake.add(getLeggings());
 
-        if (_boots != null)
-            itemsToTake.add(_boots);
+        if (_armor[3] != null)
+            itemsToTake.add(getBoots());
 
         // check player has all required items
         for (ItemStack item : itemsToTake) {
@@ -404,7 +221,7 @@ public class Kit implements INamedInsensitive, IPluginOwned {
 
         // take items
         for (ItemStack item : itemsToTake) {
-            InventoryUtils.remove(p.getInventory(), item, comparer, qty);
+            InventoryUtils.removeAmount(p.getInventory(), item, comparer, qty);
         }
 
         return true;
@@ -415,6 +232,7 @@ public class Kit implements INamedInsensitive, IPluginOwned {
      *
      * @param p  The player to give a copy of the kit to.
      */
+    @Override
     public void give(final Player p) {
 
         class TGive implements Runnable {
@@ -454,6 +272,252 @@ public class Kit implements INamedInsensitive, IPluginOwned {
         }
 
         Scheduler.runTaskLater(_plugin, 1, new TGive(new GiveKitEvent(p, this)));
+    }
+
+    /**
+     * Set the kits helmet item.
+     *
+     * @param helmet  The helmet.
+     */
+    protected void setHelmet(@Nullable ItemStack helmet) {
+        _armor[0] = helmet != null ? helmet.clone() : null;
+    }
+
+    /**
+     * Set the kits chest plate item.
+     *
+     * @param chestplate  The chestplate.
+     */
+    protected void setChestplate(@Nullable ItemStack chestplate) {
+        _armor[1] = chestplate != null ? chestplate.clone() : null;
+    }
+
+    /**
+     * Set the kits legging item.
+     *
+     * @param leggings  The leggings.
+     */
+    protected void setLeggings(@Nullable ItemStack leggings) {
+        _armor[2] = leggings != null ? leggings.clone() : null;
+    }
+
+    /**
+     * Set the kits boots item.
+     *
+     * @param boots  The boots.
+     */
+    protected void setBoots(@Nullable ItemStack boots) {
+        _armor[3] = boots != null ? boots.clone() : null;
+    }
+
+    /**
+     * Add an array of items, armor or non-armor, to the kit.
+     *
+     * <p>Armor items automatically replace the appropriate
+     * armor item.</p>
+     *
+     * @param items  The items to add.
+     */
+    protected void addItems(ItemStack... items) {
+        PreCon.notNull(items);
+
+        InventoryUtils.add(_items, items);
+    }
+
+    /**
+     * Add an array of items, armor or non-armor, to the kit.
+     *
+     * <p>Armor items automatically replace the appropriate
+     * armor item.</p>
+     *
+     * @param items  The items to add.
+     */
+    protected void addItems(Collection<ItemStack> items) {
+        PreCon.notNull(items);
+
+        ItemStack[] itemArray = items.toArray(new ItemStack[items.size()]);
+        InventoryUtils.add(_items, itemArray);
+    }
+
+    /**
+     * Add a collection of items, armor or non-armor, to the kit.
+     *
+     * <p>Armor items automatically replace the appropriate
+     * armor item.</p>
+     *
+     * @param items  The items to add.
+     */
+    protected void addAnyItems(ItemStack... items) {
+        PreCon.notNull(items);
+
+        List<ItemStack> clone = new ArrayList<>(items.length);
+        Collections.addAll(clone, items);
+
+        addAnyItems(clone);
+    }
+
+    /**
+     * Add a collection of items, armor or non-armor, to the kit.
+     *
+     * <p>Armor items automatically replace the appropriate
+     * armor item.</p>
+     *
+     * @param items  The items to add.
+     */
+    protected void addAnyItems(Collection<ItemStack> items) {
+        PreCon.notNull(items);
+
+        List<ItemStack> clone = new ArrayList<>(items);
+
+        ItemStack helmet = null;
+        ItemStack chestplate = null;
+        ItemStack leggings = null;
+        ItemStack boots = null;
+
+        Iterator<ItemStack> iterator = clone.iterator();
+        while (iterator.hasNext()) {
+            ItemStack item = iterator.next();
+
+            ArmorType type = ArmorType.getType(item);
+            switch (type) {
+                case HELMET:
+                    if (helmet == null) {
+                        helmet = item;
+                        iterator.remove();
+                    }
+                    break;
+                case CHESTPLATE:
+                    if (chestplate == null) {
+                        chestplate = item;
+                        iterator.remove();
+                    }
+                    break;
+                case LEGGINGS:
+                    if (leggings == null) {
+                        leggings = item;
+                        iterator.remove();
+                    }
+                    break;
+                case BOOTS:
+                    if (boots == null) {
+                        boots = item;
+                        iterator.remove();
+                    }
+                    break;
+            }
+
+            if (helmet != null && chestplate != null && leggings != null && boots != null)
+                break;
+        }
+
+        if (helmet != null)
+            setHelmet(helmet);
+
+        if (chestplate != null)
+            setChestplate(chestplate);
+
+        if (leggings != null)
+            setLeggings(leggings);
+
+        if (boots != null)
+            setBoots(boots);
+
+        if (!clone.isEmpty())
+            InventoryUtils.add(_items, clone.toArray(new ItemStack[clone.size()]));
+    }
+
+
+    /**
+     * Remove an item from the kit, armor or non-armor.
+     *
+     * @param items {ItemStack}
+     * @return {Boolean} - True if removed.
+     */
+    protected boolean removeItems(ItemStack... items) {
+        PreCon.notNull(items);
+
+        ItemStack[] kitItems = _items.toArray(new ItemStack[_items.size()]);
+
+        if (!InventoryUtils.remove(kitItems, items).isEmpty()) {
+
+            _items.clear();
+
+            kitItems = ArrayUtils.removeNull(kitItems);
+            Collections.addAll(_items, kitItems);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Remove an item from the kit, armor or non-armor.
+     *
+     * @param items {ItemStack}
+     * @return {Boolean} - True if removed.
+     */
+    protected boolean removeAnyItems(ItemStack... items) {
+        PreCon.notNull(items);
+
+        List<ItemStack> clone = new ArrayList<>(items.length);
+        Collections.addAll(clone, items);
+
+        ItemStackComparer comparer = ItemStackComparer.getDefault();
+
+        boolean[] armorFlags = new boolean[4];
+
+        Iterator<ItemStack> iterator = clone.iterator();
+        while (iterator.hasNext()) {
+            ItemStack item = iterator.next();
+
+            switch (ArmorType.getType(item)) {
+                case HELMET:
+                    if (comparer.isSame(item, _armor[0])) {
+                        setHelmet(null);
+                        armorFlags[0] = true;
+                        iterator.remove();
+                    }
+                    break;
+
+                case CHESTPLATE:
+                    if (comparer.isSame(item, _armor[1])) {
+                        setChestplate(null);
+                        armorFlags[1] = true;
+                        iterator.remove();
+                    }
+                    break;
+
+                case LEGGINGS:
+                    if (comparer.isSame(item, _armor[2])) {
+                        setLeggings(null);
+                        armorFlags[2] = true;
+                        iterator.remove();
+                    }
+                    break;
+
+                case BOOTS:
+                    if (comparer.isSame(item, _armor[3])) {
+                        setBoots(null);
+                        armorFlags[3] = true;
+                        iterator.remove();
+                    }
+                    break;
+            }
+
+            if (armorFlags[0] && armorFlags[1] && armorFlags[2] && armorFlags[3])
+                break;
+        }
+
+        ItemStack[] kitItems = _items.toArray(new ItemStack[_items.size()]);
+
+        if (!InventoryUtils.remove(kitItems, items).isEmpty()) {
+
+            _items.clear();
+
+            kitItems = ArrayUtils.removeNull(kitItems);
+            Collections.addAll(_items, kitItems);
+            return true;
+        }
+        return false;
     }
 }
 

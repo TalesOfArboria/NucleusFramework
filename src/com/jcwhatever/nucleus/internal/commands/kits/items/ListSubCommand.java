@@ -31,12 +31,12 @@ import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.Lang;
-import com.jcwhatever.nucleus.kits.Kit;
+import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.kits.KitManager;
-import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
 
 import org.bukkit.command.CommandSender;
@@ -69,7 +69,7 @@ public final class ListSubCommand extends AbstractCommand {
 
         KitManager manager = Nucleus.getKitManager();
 
-        Kit kit = manager.getKitByName(kitName);
+        IKit kit = manager.getKit(kitName);
         if (kit == null) {
             tellError(sender, Lang.get(_KIT_NOT_FOUND, kitName));
             return; // finish

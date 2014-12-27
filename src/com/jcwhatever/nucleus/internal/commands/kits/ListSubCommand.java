@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.Lang;
-import com.jcwhatever.nucleus.kits.Kit;
+import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 
@@ -59,11 +59,11 @@ public final class ListSubCommand extends AbstractCommand {
 
         int	page = args.getInteger("page");
 
-        List<Kit> kits = Nucleus.getKitManager().getKits();
+        List<IKit> kits = Nucleus.getKitManager().getKits();
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 5, Lang.get(_PAGINATOR_TITLE));
 
-        for (Kit kit : kits) {
+        for (IKit kit : kits) {
             pagin.add(kit.getName(), kit.getItems().length, kit.getArmor().length);
         }
 
