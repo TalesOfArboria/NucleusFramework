@@ -37,6 +37,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -45,6 +48,152 @@ import java.util.List;
 public final class InventoryUtils {
 
     private InventoryUtils() {}
+
+    /**
+     * Add and merge item stacks into an {@code ItemStack} array.
+     *
+     * <p>Merges matching item stacks if there is room.</p>
+     *
+     * @param array       The array to add items stacks to.
+     * @param itemStacks  The item stacks to add.
+     *
+     * @return  A list of {@code ItemStack}'s that could not be added.
+     */
+    public static List<ItemStack> add(ItemStack[] array, ItemStack... itemStacks) {
+
+        List<ItemStack> toAdd = new ArrayList<>(itemStacks.length);
+        Collections.addAll(toAdd, itemStacks);
+        ItemStackComparer comparer = ItemStackComparer.getDurability();
+
+        for (int i=0; i < array.length; i++) {
+            ItemStack item = array[i];
+
+            Iterator<ItemStack> iterator = toAdd.iterator();
+            while (iterator.hasNext()) {
+                ItemStack newItem = iterator.next();
+
+                if (newItem == null || newItem.getType() == Material.AIR) {
+                    iterator.remove();
+                    continue;
+                }
+
+                if (item == null || item.getType() == Material.AIR) {
+                    array[i] = newItem;
+                    iterator.remove();
+                    continue;
+                }
+
+                int maxStackSize = item.getType().getMaxStackSize();
+
+                // make sure item is not already full
+                if (item.getAmount() == maxStackSize)
+                    break;
+
+                if (!comparer.isSame(item, newItem))
+                    continue;
+
+                // merge
+                int space = maxStackSize - item.getAmount();
+                int add = Math.min(newItem.getAmount(), space);
+
+                item.setAmount(item.getAmount() + add);
+
+                if (newItem.getAmount() >= add) {
+                    iterator.remove();
+                }
+                else {
+                    newItem.setAmount(newItem.getAmount() - add);
+                }
+
+                // check no more room in item
+                if (add == space)
+                    break;
+            }
+
+            // check no more items to add
+            if (toAdd.size() == 0)
+                break;
+        }
+
+        return toAdd;
+    }
+
+    /**
+     * Add and merge item stacks into an {@code ItemStack} collection.
+     *
+     * <p>Merges matching item stacks if there is room.</p>
+     *
+     * @param collection  The array to add items stacks to.
+     * @param itemStacks  The item stacks to add.
+     */
+    public static void add(Collection<ItemStack> collection, ItemStack... itemStacks) {
+
+        List<ItemStack> list = collection instanceof ArrayList
+                ? (ArrayList<ItemStack>)collection
+                : new ArrayList<ItemStack>(collection);
+
+        List<ItemStack> toAdd = new ArrayList<>(itemStacks.length);
+        Collections.addAll(toAdd, itemStacks);
+
+        ItemStackComparer comparer = ItemStackComparer.getDurability();
+
+        for (int i=0; i < list.size(); i++) {
+            ItemStack item = list.get(i);
+
+            Iterator<ItemStack> iterator = toAdd.iterator();
+            while (iterator.hasNext()) {
+                ItemStack newItem = iterator.next();
+
+                if (newItem == null || newItem.getType() == Material.AIR) {
+                    iterator.remove();
+                    continue;
+                }
+
+                if (item == null || item.getType() == Material.AIR) {
+                    list.set(i, newItem);
+                    iterator.remove();
+                    continue;
+                }
+
+                int maxStackSize = item.getType().getMaxStackSize();
+
+                // make sure item is not already full
+                if (item.getAmount() == maxStackSize)
+                    break;
+
+                if (!comparer.isSame(item, newItem))
+                    continue;
+
+                // merge
+                int space = maxStackSize - item.getAmount();
+                int add = Math.min(newItem.getAmount(), space);
+
+                item.setAmount(item.getAmount() + add);
+
+                if (newItem.getAmount() >= add) {
+                    iterator.remove();
+                }
+                else {
+                    newItem.setAmount(newItem.getAmount() - add);
+                }
+
+                // check no more room in item
+                if (add == space)
+                    break;
+            }
+
+            // check no more items to add
+            if (toAdd.size() == 0)
+                break;
+        }
+
+        list.addAll(toAdd);
+
+        if (!(collection instanceof ArrayList)) {
+            collection.clear();
+            collection.addAll(list);
+        }
+    }
 
     /**
      * Gets the number of items of the specified stack that
