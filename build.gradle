@@ -28,7 +28,7 @@ def javaVersion = 1.7
 /* Maven Repository Task Stuff */
 def shCmd = 'sh.exe'
 def mavenCmd = 'D:/apache-maven-3.2.5/bin/mvn'
-def mavenFolder = 'D:/mvn-repo'
+def mavenFolder = 'D:/mvn-repo/'
 def mavenGroupId = 'com.jcwhatever.bukkit'
 def mavenArtifactId = projectName
 def mavenVersion = majorVersion + '.' + minorVersion + '.SNAPSHOT'
@@ -180,7 +180,7 @@ task cloneMaven(type: GitClone) {
 
 task updateLocalMavenHolding(type: Copy) {
     from file('build/libs/' + projectName + '.jar')
-    into file(mavenFolder + '/holding')
+    into file(mavenFolder + 'holding')
 }
 
 task updateLocalMaven(type: Exec) {
