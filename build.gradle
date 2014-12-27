@@ -209,5 +209,5 @@ task pushMavenGit(type: Exec) {
 }
 
 task updateMaven {
-    tasks = ['updateLocalMavenHoling', 'updateLocalMaven', 'addMavenGit', 'commitMavenGit', 'pushMavenGit']
+    tasks = ['updateLocalMavenHolding', 'updateLocalMaven', 'addMavenGit', 'commitMavenGit', 'pushMavenGit']
 }
