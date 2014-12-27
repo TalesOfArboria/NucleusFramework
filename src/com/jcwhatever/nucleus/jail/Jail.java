@@ -77,7 +77,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         _dataNode = dataNode;
         _bounds = new JailBounds(_plugin, this, _name, _dataNode.getNode("bounds"));
 
-        loadSettings();
+        load();
 
         Nucleus.getJailManager().registerJail(this);
     }
@@ -262,8 +262,20 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         _dataNode.saveAsync(null);
     }
 
+    @Override
+    public boolean isDisposed() {
+        return false;
+    }
+
+    @Override
+    public void dispose() {
+        Nucleus.getJailManager().unregisterJail(this);
+    }
+
     // load settings from data node
-    private void loadSettings() {
+    protected void load() {
+
+        _jailLocations.clear();
 
         _releaseLocation = _dataNode.getLocation("release-location");
 
@@ -279,15 +291,5 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
 
             _jailLocations.put(teleportName.toLowerCase(), new NamedLocation(teleportName, location));
         }
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return false;
-    }
-
-    @Override
-    public void dispose() {
-        Nucleus.getJailManager().unregisterJail(this);
     }
 }
