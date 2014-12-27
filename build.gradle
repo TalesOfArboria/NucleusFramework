@@ -199,7 +199,14 @@ task addMavenGit(type: Exec) {
 task commitMavenGit(type: Exec) {
     workingDir mavenFolder
     executable shCmd
-    args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + "'";
+
+    if (hasProperty('teamcity')) {
+        args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + "' build# " + teamcity["build.number"];
+    }
+    else {
+        args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + "'";
+    }
+
 }
 
 task pushMavenGit(type: Exec) {
@@ -208,6 +215,6 @@ task pushMavenGit(type: Exec) {
     args '--login', '-i', '-c', "git push GITHUB master'";
 }
 
-task updateMaven {
+task updateMaven(type: GradleBuild) {
     tasks = ['updateLocalMavenHolding', 'updateLocalMaven', 'addMavenGit', 'commitMavenGit', 'pushMavenGit']
 }
