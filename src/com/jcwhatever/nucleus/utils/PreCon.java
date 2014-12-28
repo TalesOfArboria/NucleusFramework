@@ -42,7 +42,7 @@ public final class PreCon {
     /**
      * Ensure supplied condition is true.
      *
-     * @param condition  The condition to test
+     * @param condition  The condition to test.
      *
      * @throws java.lang.IllegalStateException
      */
@@ -53,15 +53,16 @@ public final class PreCon {
     /**
      * Ensure supplied condition is true.
      *
-     * @param condition  The condition to test
-     * @param message    The exception message to use if the condition is false
+     * @param condition  The condition to test.
+     * @param message    The exception message to use if the condition is false.
+     * @param args       Optional message format arguments.
      *
      * @throws java.lang.IllegalStateException
      */
-    public static void isValid(boolean condition, @Nullable String message) {
+    public static void isValid(boolean condition, @Nullable String message, Object... args) {
         if (!condition) {
             if (message != null) {
-                throw new IllegalStateException(message);
+                throw new IllegalStateException(TextUtils.format(message, args));
             }
             else {
                 throw new IllegalStateException();
@@ -86,18 +87,19 @@ public final class PreCon {
      *
      * @param isSupported  The condition to test.
      * @param message      The exception message to use if the condition is false.
+     * @param args         Optional message format arguments.
      *
      * @throws java.lang.UnsupportedOperationException
      */
-    public static void supported(boolean isSupported, String message) {
+    public static void supported(boolean isSupported, String message, Object... args) {
         if (!isSupported)
-            throw new UnsupportedOperationException(message);
+            throw new UnsupportedOperationException(TextUtils.format(message, args));
     }
 
     /**
      * Ensure supplied object is not null.
      *
-     * @param value  The object to check
+     * @param value  The object to check.
      *
      * @throws java.lang.NullPointerException
      */
@@ -109,20 +111,21 @@ public final class PreCon {
     /**
      * Ensure supplied object is not null.
      *
-     * @param value    The object to check
-     * @param message  The exception message to use if the object is false
+     * @param value    The object to check.
+     * @param message  The exception message to use if the object is false.
+     * @param args     Optional message format arguments.
      *
      * @throws java.lang.NullPointerException
      */
-    public static void notNull(@Nullable Object value, String message) {
+    public static void notNull(@Nullable Object value, String message, Object... args) {
         if (value == null)
-            throw new NullPointerException(message);
+            throw new NullPointerException(TextUtils.format(message, args));
     }
 
     /**
      * Ensures supplied string is not null or empty
      *
-     * @param value  The string to check
+     * @param value  The string to check.
      *
      * @throws java.lang.NullPointerException
      * @throws java.lang.IllegalArgumentException
@@ -141,16 +144,18 @@ public final class PreCon {
      * @param value         The string to check.
      * @param nullMessage   The exception message to use if the string is null.
      * @param emptyMessage  The exception message to use if the string is empty.
+     *  @param args         Optional message format arguments for both messages.
      *
      * @throws java.lang.NullPointerException
      * @throws java.lang.IllegalArgumentException
      */
-    public static void notNullOrEmpty(@Nullable String value, String nullMessage, String emptyMessage) {
+    public static void notNullOrEmpty(@Nullable String value,
+                                      String nullMessage, String emptyMessage, Object... args) {
         if (value == null)
-            throw new NullPointerException(nullMessage);
+            throw new NullPointerException(TextUtils.format(nullMessage, args));
 
         if (value.isEmpty())
-            throw new IllegalArgumentException(emptyMessage);
+            throw new IllegalArgumentException(TextUtils.format(emptyMessage, args));
     }
 
     /**
@@ -174,12 +179,13 @@ public final class PreCon {
      *
      * @param nodeName        The name of the node.
      * @param invalidMessage  The exception message to use.
+     * @param args            Optional message format arguments.
      *
      * @throws java.lang.NullPointerException
      * @throws java.lang.IllegalArgumentException
      */
-    public static void validNodeName(@Nullable String nodeName, String invalidMessage) {
-        PreCon.notNullOrEmpty(nodeName, invalidMessage, invalidMessage);
+    public static void validNodeName(@Nullable String nodeName, String invalidMessage, Object... args) {
+        PreCon.notNullOrEmpty(nodeName, invalidMessage, invalidMessage, args);
 
         if (!TextUtils.PATTERN_NODE_NAMES.matcher(nodeName).matches())
             throw new IllegalArgumentException(invalidMessage);
@@ -227,15 +233,16 @@ public final class PreCon {
      *
      * @param nodePath        The node path.
      * @param invalidMessage  The exception message to use.
+     * @param args            Optional message format arguments.
      *
      * @throws java.lang.NullPointerException
      * @throws java.lang.IllegalArgumentException
      */
-    public static void validNodePath(@Nullable String nodePath, String invalidMessage) {
+    public static void validNodePath(@Nullable String nodePath, String invalidMessage, Object... args) {
         PreCon.notNullOrEmpty(nodePath, invalidMessage, invalidMessage);
 
         if (!TextUtils.PATTERN_NODE_PATHS.matcher(nodePath).matches())
-            throw new IllegalArgumentException(invalidMessage);
+            throw new IllegalArgumentException(TextUtils.format(invalidMessage, args));
     }
 
     /**
@@ -262,7 +269,7 @@ public final class PreCon {
     /**
      * Ensures supplied number is greater than zero.
      *
-     * @param number  The number to check
+     * @param number  The number to check.
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -274,20 +281,21 @@ public final class PreCon {
     /**
      * Ensures supplied number is greater than zero.
      *
-     * @param number   The number to check
-     * @param message  The exception message to use if the number is less than or equal to zero
+     * @param number   The number to check.
+     * @param message  The exception message to use if the number is less than or equal to zero.
+     * @param args     Optional message format arguments.
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void greaterThanZero(long number, String message) {
+    public static void greaterThanZero(long number, String message, Object... args) {
         if (number <= 0)
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(TextUtils.format(message, args));
     }
 
     /**
      * Ensures supplied number is greater than zero.
      *
-     * @param number  The number to check
+     * @param number  The number to check.
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -299,20 +307,20 @@ public final class PreCon {
     /**
      * Ensures supplied number is greater than zero.
      *
-     * @param number   The number to check
-     * @param message  The exception message to use if the number is less than or equal to zero
+     * @param number   The number to check.
+     * @param message  The exception message to use if the number is less than or equal to zero.
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void greaterThanZero(double number, String message) {
+    public static void greaterThanZero(double number, String message, Object... args) {
         if (number <= 0.0D)
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(TextUtils.format(message, args));
     }
 
     /**
      * Ensures supplied number is a positive number.
      *
-     * @param number  The number to check
+     * @param number  The number to check.
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -324,20 +332,21 @@ public final class PreCon {
     /**
      * Ensures supplied number is a positive number.
      *
-     * @param number   The number to check
-     * @param message  The exception message to use if the number is less than zero
+     * @param number   The number to check.
+     * @param message  The exception message to use if the number is less than zero.
+     * @param args     Optional message format arguments.
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void positiveNumber (long number, String message) {
+    public static void positiveNumber (long number, String message, Object... args) {
         if (number < 0)
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(TextUtils.format(message, args));
     }
 
     /**
      * Ensures supplied number is a positive number.
      *
-     * @param number  The number to check
+     * @param number  The number to check.
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -349,21 +358,22 @@ public final class PreCon {
     /**
      * Ensures supplied number is a positive number.
      *
-     * @param number   The number to check
-     * @param message  The exception message to use if the number is less than zero
+     * @param number   The number to check.
+     * @param message  The exception message to use if the number is less than zero.
+     * @param args     Optional message format arguments.
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void positiveNumber (double number, String message) {
+    public static void positiveNumber (double number, String message, Object... args) {
         if (number < 0.0D)
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(TextUtils.format(message, args));
     }
 
     /**
      * Ensures supplied number is less than limit.
      *
-     * @param number  The number to check
-     * @param limit   The numbers limit
+     * @param number  The number to check.
+     * @param limit   The numbers limit.
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -375,22 +385,23 @@ public final class PreCon {
     /**
      * Ensures supplied number is less than limit.
      *
-     * @param number   The number to check
-     * @param limit    The numbers limit
-     * @param message  The exception message to use if the number is greater than or equal to limit
+     * @param number   The number to check.
+     * @param limit    The numbers limit.
+     * @param message  The exception message to use if the number is greater than or equal to limit.
+     * @param args     Optional message format arguments.
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void lessThan (long number, long limit, String message) {
+    public static void lessThan (long number, long limit, String message, Object... args) {
         if (number >= limit)
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(TextUtils.format(message, args));
     }
 
     /**
      * Ensures supplied number is less than limit.
      *
-     * @param number  The number to check
-     * @param limit   The numbers limit
+     * @param number  The number to check.
+     * @param limit   The numbers limit.
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -402,22 +413,23 @@ public final class PreCon {
     /**
      * Ensures supplied number is less than limit.
      *
-     * @param number   The number to check
-     * @param limit    The numbers limit
-     * @param message  The exception message to use if the number is greater than or equal to limit
+     * @param number   The number to check.
+     * @param limit    The numbers limit.
+     * @param message  The exception message to use if the number is greater than or equal to limit.
+     * @param args     Optional message format arguments.
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void lessThan (double number, double limit, String message) {
+    public static void lessThan (double number, double limit, String message, Object... args) {
         if (number >= limit)
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(String.format(message, args));
     }
 
     /**
      * Ensures supplied number is less than or equal to limit.
      *
-     * @param number  The number to check
-     * @param limit   The numbers limit
+     * @param number  The number to check.
+     * @param limit   The numbers limit.
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -429,22 +441,23 @@ public final class PreCon {
     /**
      * Ensures supplied number is less than or equal to limit.
      *
-     * @param number   The number to check
-     * @param limit    The numbers limit
-     * @param message  The exception message to use if the number is greater than limit
+     * @param number   The number to check.
+     * @param limit    The numbers limit.
+     * @param message  The exception message to use if the number is greater than limit.
+     * @param args     Optional message format arguments.
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void lessThanEqual (long number, long limit, String message) {
+    public static void lessThanEqual (long number, long limit, String message, Object... args) {
         if (number > limit)
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(TextUtils.format(message, args));
     }
 
     /**
      * Ensures supplied number is less than or equal to limit.
      *
-     * @param number  The number to check
-     * @param limit   The numbers limit
+     * @param number  The number to check.
+     * @param limit   The numbers limit.
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -456,15 +469,16 @@ public final class PreCon {
     /**
      * Ensures supplied number is less than or equal to limit.
      *
-     * @param number   The number to check
-     * @param limit    The numbers limit
-     * @param message  The exception message to use if the number is greater than limit
+     * @param number   The number to check.
+     * @param limit    The numbers limit.
+     * @param message  The exception message to use if the number is greater than limit.
+     * @param args     Optional message format arguments.
      *
      * @throws java.lang.IllegalArgumentException
      */
-    public static void lessThanEqual (double number, double limit, String message) {
+    public static void lessThanEqual (double number, double limit, String message, Object... args) {
         if (number > limit)
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(TextUtils.format(message, args));
     }
 
 }
