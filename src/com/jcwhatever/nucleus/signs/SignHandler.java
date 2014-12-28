@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.signs;
 
+import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -36,7 +37,7 @@ import java.util.regex.Matcher;
 /**
  * Handles actions for a specific sign type.
  */
-public abstract class SignHandler implements IPluginOwned {
+public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
 
     private String _searchName;
     private String _displayName;
@@ -51,7 +52,32 @@ public abstract class SignHandler implements IPluginOwned {
      * The name of the sign handler, must be a valid name.
      * Starts with a letter, alphanumerics only. Underscores allowed.
      */
+    @Override
     public abstract String getName();
+
+    /**
+     * Get the sign handler name in all lower case.
+     */
+    @Override
+    public final String getSearchName() {
+        if (_searchName == null)
+            _searchName = getName().toLowerCase();
+
+        return _searchName;
+    }
+
+    /**
+     * Get a display name for the sign. Returns the sign handler name
+     * with underscores converted to spaces.
+     */
+    public final String getDisplayName() {
+        if (_displayName == null) {
+            Matcher headerMatcher = TextUtils.PATTERN_UNDERSCORE.matcher(getName());
+            _displayName = headerMatcher.replaceAll(" ");
+        }
+
+        return _displayName;
+    }
 
     /**
      * Get a prefix to append to the header of a sign.
@@ -69,30 +95,6 @@ public abstract class SignHandler implements IPluginOwned {
      * in the array.
      */
     public abstract String[] getUsage();
-
-    /**
-     * Get a display name for the sign. Returns the sign handler name
-     * with underscores converted to spaces.
-     */
-    public final String getDisplayName() {
-        if (_displayName == null) {
-            Matcher headerMatcher = TextUtils.PATTERN_UNDERSCORE.matcher(getName());
-            _displayName = headerMatcher.replaceAll(" ");
-        }
-
-        return _displayName;
-    }
-
-    /**
-     * Get the sign handler name in all lower case.
-     */
-    public final String getSearchName() {
-        if (_searchName == null)
-            _searchName = getName().toLowerCase();
-
-        return _searchName;
-    }
-
 
     /**
      * Called when a sign handled by the sign handler is
@@ -151,7 +153,4 @@ public abstract class SignHandler implements IPluginOwned {
     void signLoad(SignContainer sign) {
         onSignLoad(sign);
     }
-
-
-
 }
