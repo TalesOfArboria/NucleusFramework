@@ -83,7 +83,7 @@ public class KitManager implements IPluginOwned {
     public IKit getKit(String name) {
         PreCon.notNull(name);
 
-        return _kits.get(name);
+        return _kits.get(name.toLowerCase());
     }
 
     /**
