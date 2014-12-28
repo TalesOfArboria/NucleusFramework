@@ -243,8 +243,8 @@ public abstract class AbstractCommand
          */
         if (!command.getInfo().getParentName().isEmpty() &&
                 !isCommandMatch(command.getInfo().getParentName(), _info.getCommandNames())) {
-            _dispatcher.getUtils().debug("Failed to register sub command. Registered with incorrect parent: "
-                    + this.getClass().getName());
+            _dispatcher.getUtils().debug("Failed to register sub command '{0}'. Registered with incorrect parent: {1}",
+                    command.getClass().getName(), this.getClass().getName());
 
             _subCommands.removeAll(command);
             return false;
