@@ -66,145 +66,175 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
     }
 
     @Override
-    public synchronized boolean add(Player p) {
+    public boolean add(Player p) {
         PreCon.notNull(p);
 
-        if (_players.add(new PlayerEntry(p))) {
-            notifyPlayerAdded(p.getUniqueId());
-            return true;
-        }
+        synchronized (_sync) {
 
-        return false;
-    }
-
-    @Override
-    public synchronized boolean addAll(Collection<? extends Player> collection) {
-        PreCon.notNull(collection);
-
-        boolean isChanged = false;
-
-        for (Player p : collection) {
             if (_players.add(new PlayerEntry(p))) {
                 notifyPlayerAdded(p.getUniqueId());
-                isChanged = true;
+                return true;
             }
+
+            return false;
         }
-
-        return isChanged;
     }
 
     @Override
-    public synchronized void clear() {
-
-        for (PlayerEntry p : _players) {
-            notifyPlayerRemoved(p.getUniqueId());
-        }
-
-        _players.clear();
-    }
-
-    @Override
-    public synchronized boolean contains(Object o) {
-        PreCon.notNull(o);
-
-        return o instanceof Player
-                ? _players.contains(new PlayerEntry((Player) o))
-                : _players.contains(o);
-    }
-
-    @Override
-    public synchronized boolean containsAll(Collection<?> collection) {
+    public boolean addAll(Collection<? extends Player> collection) {
         PreCon.notNull(collection);
 
-        if (collection.isEmpty())
-            return false;
+        synchronized (_sync) {
+            boolean isChanged = false;
 
-        for (Object obj : collection) {
-            if (!contains(obj))
-                return false;
+            for (Player p : collection) {
+                if (_players.add(new PlayerEntry(p))) {
+                    notifyPlayerAdded(p.getUniqueId());
+                    isChanged = true;
+                }
+            }
+
+            return isChanged;
         }
-
-        return true;
     }
 
     @Override
-    public synchronized boolean isEmpty() {
-        return _players.isEmpty();
+    public void clear() {
+
+        synchronized (_sync) {
+            for (PlayerEntry p : _players) {
+                notifyPlayerRemoved(p.getUniqueId());
+            }
+
+            _players.clear();
+        }
     }
 
     @Override
-    public synchronized Iterator<Player> iterator() {
+    public boolean contains(Object o) {
+        PreCon.notNull(o);
+
+        synchronized (_sync) {
+            return o instanceof Player
+                    ? _players.contains(new PlayerEntry((Player) o))
+                    : _players.contains(o);
+        }
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> collection) {
+        PreCon.notNull(collection);
+
+        synchronized (_sync) {
+            if (collection.isEmpty())
+                return false;
+
+            for (Object obj : collection) {
+                if (!contains(obj))
+                    return false;
+            }
+
+            return true;
+        }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        synchronized (_sync) {
+            return _players.isEmpty();
+        }
+    }
+
+    @Override
+    public Iterator<Player> iterator() {
         return new PlayerIterator();
     }
 
     @Override
-    public synchronized boolean remove(Object o) {
+    public boolean remove(Object o) {
+        PreCon.notNull(o);
 
-        boolean isRemoved = o instanceof Player
-                ? _players.remove(new PlayerEntry((Player) o))
-                : _players.remove(o);
+        synchronized (_sync) {
+            boolean isRemoved = o instanceof Player
+                    ? _players.remove(new PlayerEntry((Player) o))
+                    : _players.remove(o);
 
-        if (isRemoved) {
-            if (o instanceof Player) {
-                notifyPlayerRemoved(((Player)o).getUniqueId());
+            if (isRemoved) {
+                if (o instanceof Player) {
+                    notifyPlayerRemoved(((Player) o).getUniqueId());
+                }
+                return true;
             }
-            return true;
+            return false;
         }
-        return false;
     }
 
     @Override
-    public synchronized boolean removeAll(Collection<?> collection) {
+    public boolean removeAll(Collection<?> collection) {
+        PreCon.notNull(collection);
 
-        boolean isChanged = false;
+        synchronized (_sync) {
 
-        for (Object obj : collection) {
-            isChanged = isChanged | remove(obj);
-        }
+            boolean isChanged = false;
 
-        return isChanged;
-    }
-
-    @Override
-    public synchronized boolean retainAll(Collection<?> collection) {
-
-        Set<PlayerEntry> temp = new HashSet<>(_players);
-        //noinspection SuspiciousMethodCalls
-
-        for (Object obj : collection) {
-            if (obj instanceof Player) {
-                //noinspection SuspiciousMethodCalls
-                temp.remove(new PlayerEntry((Player) obj));
+            for (Object obj : collection) {
+                isChanged = isChanged | remove(obj);
             }
+
+            return isChanged;
         }
+    }
 
-        boolean isChanged = false;
+    @Override
+    public boolean retainAll(Collection<?> collection) {
+        PreCon.notNull(collection);
 
-        for (PlayerEntry p : temp) {
-            isChanged = isChanged | remove(p);
+        synchronized (_sync) {
+
+            Set<PlayerEntry> temp = new HashSet<>(_players);
+            //noinspection SuspiciousMethodCalls
+
+            for (Object obj : collection) {
+                if (obj instanceof Player) {
+                    //noinspection SuspiciousMethodCalls
+                    temp.remove(new PlayerEntry((Player) obj));
+                }
+            }
+
+            boolean isChanged = false;
+
+            for (PlayerEntry p : temp) {
+                isChanged = isChanged | remove(p);
+            }
+
+            return isChanged;
         }
-
-        return isChanged;
     }
 
     @Override
-    public synchronized int size() {
-        return _players.size();
+    public int size() {
+        synchronized (_sync) {
+            return _players.size();
+        }
     }
 
     @Override
-    public synchronized Object[] toArray() {
-        return _players.toArray();
+    public Object[] toArray() {
+        synchronized (_sync) {
+            return _players.toArray();
+        }
     }
 
     @Override
-    public synchronized <T> T[] toArray(T[] a) {
-        //noinspection SuspiciousToArrayCall
-        return _players.toArray(a);
+    public <T> T[] toArray(T[] a) {
+        synchronized (_sync) {
+            //noinspection SuspiciousToArrayCall
+            return _players.toArray(a);
+        }
     }
 
     @Override
-    public synchronized void removePlayer(Player p) {
+    public void removePlayer(Player p) {
         remove(p);
     }
 
@@ -230,8 +260,10 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
         @Override
         public void remove() {
-            notifyPlayerRemoved(_current.getUniqueId());
-            iterator.remove();
+            synchronized (_sync) {
+                notifyPlayerRemoved(_current.getUniqueId());
+                iterator.remove();
+            }
         }
 
         @Override

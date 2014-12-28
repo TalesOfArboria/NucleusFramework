@@ -189,7 +189,9 @@ final class PlayerCollectionListener implements Listener {
         public void run() {
             synchronized (_sync) {
                 for (AbstractPlayerCollection collection : collections) {
-                    collection.removePlayer(p);
+                    synchronized (collection.getSync()) {
+                        collection.removePlayer(p);
+                    }
                 }
             }
         }

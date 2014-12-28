@@ -82,83 +82,109 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 	}
 
 	@Override
-	public synchronized boolean containsKey(Object key) {
-		return _map.containsKey(key);
+	public boolean containsKey(Object key) {
+		synchronized (_sync) {
+			return _map.containsKey(key);
+		}
 	}
 
 	@Override
-	public synchronized boolean containsValue(Object value) {
-		return _map.containsValue(value);
+	public boolean containsValue(Object value) {
+		synchronized (_sync) {
+			return _map.containsValue(value);
+		}
 	}
 
 	@Override
-	public synchronized Set<Entry<UUID, V>> entrySet() {
-		return new HashSet<Entry<UUID, V>>(_map.entrySet());
+	public Set<Entry<UUID, V>> entrySet() {
+		synchronized (_sync) {
+			return new HashSet<Entry<UUID, V>>(_map.entrySet());
+		}
 	}
 
 	@Override
-	public synchronized V get(Object key) {
-		return _map.get(key);
+	public V get(Object key) {
+		synchronized (_sync) {
+			return _map.get(key);
+		}
 	}
 
-	public synchronized V get(Player p) {
-		return _map.get(p.getUniqueId());
-	}
-
-	@Override
-	public synchronized boolean isEmpty() {
-		return _map.isEmpty();
-	}
-
-	@Override
-	public synchronized Set<UUID> keySet() {
-		return _keyset;
+	public V get(Player p) {
+		synchronized (_sync) {
+			return _map.get(p.getUniqueId());
+		}
 	}
 
 	@Override
-	public synchronized V put(UUID key, V value) {
+	public boolean isEmpty() {
+		synchronized (_sync) {
+			return _map.isEmpty();
+		}
+	}
+
+	@Override
+	public Set<UUID> keySet() {
+		synchronized (_sync) {
+			return _keyset;
+		}
+	}
+
+	@Override
+	public V put(UUID key, V value) {
 		PreCon.notNull(key);
 
-		notifyPlayerAdded(key);
-		return _map.put(key, value);
+		synchronized (_sync) {
+			notifyPlayerAdded(key);
+			return _map.put(key, value);
+		}
 	}
 
 	@Override
-	public synchronized void putAll(Map<? extends UUID, ? extends V> pairs) {
+	public void putAll(Map<? extends UUID, ? extends V> pairs) {
 		PreCon.notNull(pairs);
 
-		for (UUID playerId : pairs.keySet()) {
-			notifyPlayerAdded(playerId);
+		synchronized (_sync) {
+			for (UUID playerId : pairs.keySet()) {
+				notifyPlayerAdded(playerId);
+			}
+			_map.putAll(pairs);
 		}
-		_map.putAll(pairs);
 	}
 
 	@Override
-	public synchronized V remove(Object key) {
+	public V remove(Object key) {
 		PreCon.notNull(key);
 
-		V item = _map.remove(key);
+		synchronized (_sync) {
+			V item = _map.remove(key);
 
-		if (key instanceof UUID) {
-			notifyPlayerRemoved((UUID)key);
+			if (key instanceof UUID) {
+				notifyPlayerRemoved((UUID) key);
+			}
+
+			return item;
 		}
-
-		return item;
 	}
 
 	@Override
-	public synchronized int size() {
-		return _map.size();
+	public int size() {
+		synchronized (_sync) {
+			return _map.size();
+		}
 	}
 
 	@Override
-	public synchronized Collection<V> values() {
-		return _map.values();
+	public Collection<V> values() {
+		synchronized (_sync) {
+			return _map.values();
+		}
 	}
 
 	@Override
-	public synchronized void removePlayer(Player p) {
-		_map.remove(p.getUniqueId());
+	public void removePlayer(Player p) {
+		synchronized (_sync) {
+			_map.remove(p.getUniqueId());
+		}
 	}
 
 	@Override
@@ -181,73 +207,80 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 
 		@Override
 		public boolean add(UUID e) {
-			if (_map.keySet().add(e)) {
-				notifyPlayerAdded(e);
-				return true;
+			synchronized (_sync) {
+				if (_map.keySet().add(e)) {
+					notifyPlayerAdded(e);
+					return true;
+				}
+				return false;
 			}
-			return false;
 		}
 
 		@Override
 		public boolean remove(Object o) {
-			UUID id = null;
-			if (o instanceof UUID) {
-				id = (UUID)o;
-			}
-			else if (o instanceof Player) {
-				id = ((Player)o).getUniqueId();
-			}
-			else if (o instanceof IPlayerReference) {
-				Player player = ((IPlayerReference)o).getPlayer();
-				if (player != null) {
-					id =player.getUniqueId();
+			synchronized (_sync) {
+				UUID id = null;
+				if (o instanceof UUID) {
+					id = (UUID) o;
+				} else if (o instanceof Player) {
+					id = ((Player) o).getUniqueId();
+				} else if (o instanceof IPlayerReference) {
+					Player player = ((IPlayerReference) o).getPlayer();
+					if (player != null) {
+						id = player.getUniqueId();
+					}
 				}
-			}
 
-			if (id == null)
+				if (id == null)
+					return false;
+
+				if (_map.keySet().remove(id)) {
+					notifyPlayerRemoved(id);
+					return true;
+				}
+
 				return false;
-
-			if (_map.keySet().remove(id)) {
-				notifyPlayerRemoved(id);
-				return true;
 			}
-
-			return false;
 		}
 
 		@Override
 		public boolean addAll(Collection<? extends UUID> c) {
-			boolean isChanged = false;
-			for (UUID id : c) {
-				isChanged = isChanged || add(id);
+			synchronized (_sync) {
+				boolean isChanged = false;
+				for (UUID id : c) {
+					isChanged = isChanged || add(id);
+				}
+				return isChanged;
 			}
-			return isChanged;
 		}
 
 		@Override
 		public boolean removeAll(Collection<?> c) {
-			boolean isChanged = false;
-			for (Object id : c) {
-				isChanged = isChanged || remove(id);
+			synchronized (_sync) {
+				boolean isChanged = false;
+				for (Object id : c) {
+					isChanged = isChanged || remove(id);
+				}
+				return isChanged;
 			}
-			return isChanged;
 		}
 
 		@Override
 		public boolean retainAll(Collection<?> c) {
+			synchronized (_sync) {
+				Set<?> removed = new HashSet<>(this);
+				for (Object obj : c) {
+					removed.remove(obj);
+				}
 
-			Set<?> removed = new HashSet<>(this);
-			for (Object obj : c) {
-				removed.remove(obj);
+				boolean isChanged = false;
+
+				for (Object obj : removed) {
+					isChanged = isChanged || remove(obj);
+				}
+
+				return isChanged;
 			}
-
-			boolean isChanged = false;
-
-			for (Object obj : removed) {
-				isChanged = isChanged || remove(obj);
-			}
-
-			return isChanged;
 		}
 
 		@Override
@@ -272,10 +305,11 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 
 		@Override
 		public void remove() {
+			synchronized (_sync) {
+				notifyPlayerRemoved(_current);
 
-			notifyPlayerRemoved(_current);
-
-			iterator.remove();
+				iterator.remove();
+			}
 		}
 
 		@Override

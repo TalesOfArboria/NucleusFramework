@@ -53,6 +53,7 @@ public abstract class AbstractPlayerCollection implements IDisposable {
 
     private final Plugin _plugin;
     private final PlayerCollectionListener _listener;
+    protected final transient Object _sync = new Object();
 
     protected AbstractPlayerCollection(Plugin plugin) {
         _plugin = plugin;
@@ -64,6 +65,13 @@ public abstract class AbstractPlayerCollection implements IDisposable {
      */
     public Plugin getPlugin() {
         return _plugin;
+    }
+
+    /**
+     * Get the synchronization object.
+     */
+    public Object getSync() {
+        return _sync;
     }
 
     /**

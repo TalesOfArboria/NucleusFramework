@@ -55,151 +55,185 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	}
 
 	@Override
-	public synchronized boolean addAll(Collection<? extends Player> players) {
+	public boolean addAll(Collection<? extends Player> players) {
 
-		for (Player p : players) {
-			notifyPlayerAdded(p.getUniqueId());
+		synchronized (_sync) {
+
+			for (Player p : players) {
+				notifyPlayerAdded(p.getUniqueId());
+			}
+
+			return _queue.addAll(players);
 		}
-
-		return _queue.addAll(players);
 	}
 
 	@Override
-	public synchronized void clear() {
+	public void clear() {
+		synchronized (_sync) {
+			while (!_queue.isEmpty()) {
+				Player p = _queue.remove();
 
-		while (!_queue.isEmpty()) {
-			Player p = _queue.remove();
+				notifyPlayerRemoved(p.getUniqueId());
+			}
 
-			notifyPlayerRemoved(p.getUniqueId());
+			_queue.clear();
 		}
-
-		_queue.clear();
 	}
 
 	@Override
-	public synchronized boolean contains(Object arg) {
-		return _queue.contains(arg);
+	public boolean contains(Object arg) {
+		synchronized (_sync) {
+			return _queue.contains(arg);
+		}
 	}
 
 	@Override
-	public synchronized boolean containsAll(Collection<?> items) {
-		return _queue.containsAll(items);
+	public boolean containsAll(Collection<?> items) {
+		synchronized (_sync) {
+			return _queue.containsAll(items);
+		}
 	}
 
 	@Override
-	public synchronized boolean isEmpty() {
-		return _queue.isEmpty();
+	public boolean isEmpty() {
+		synchronized (_sync) {
+			return _queue.isEmpty();
+		}
 	}
 
 	@Override
-	public synchronized Iterator<Player> iterator() {
+	public Iterator<Player> iterator() {
 		return new PlayerIterator();
 	}
 
 	@Override
-	public synchronized boolean remove(Object item) {
-
-		if (_queue.remove(item)) {
-			if (item instanceof Player && !_queue.contains(item)) {
-				notifyPlayerRemoved(((Player)item).getUniqueId());
+	public boolean remove(Object item) {
+		synchronized (_sync) {
+			if (_queue.remove(item)) {
+				if (item instanceof Player && !_queue.contains(item)) {
+					notifyPlayerRemoved(((Player) item).getUniqueId());
+				}
+				return true;
 			}
-			return true;
-		}
 
-		return false;
+			return false;
+		}
 	}
 
 	@Override
-	public synchronized boolean removeAll(Collection<?> items) {
-		for (Object obj : items) {
-			if (obj instanceof Player) {
-				notifyPlayerRemoved(((Player) obj).getUniqueId());
+	public boolean removeAll(Collection<?> items) {
+		synchronized (_sync) {
+			for (Object obj : items) {
+				if (obj instanceof Player) {
+					notifyPlayerRemoved(((Player) obj).getUniqueId());
+				}
 			}
+			return _queue.removeAll(items);
 		}
-		return _queue.removeAll(items);
 	}
 
 	@Override
-	public synchronized boolean retainAll(Collection<?> items) {
-
-		LinkedList<Player> temp = new LinkedList<>(_queue);
-		//noinspection SuspiciousMethodCalls
-		if (temp.removeAll(items)) {
-			while (!temp.isEmpty()) {
-				notifyPlayerRemoved(temp.remove().getUniqueId());
+	public boolean retainAll(Collection<?> items) {
+		synchronized (_sync) {
+			LinkedList<Player> temp = new LinkedList<>(_queue);
+			//noinspection SuspiciousMethodCalls
+			if (temp.removeAll(items)) {
+				while (!temp.isEmpty()) {
+					notifyPlayerRemoved(temp.remove().getUniqueId());
+				}
 			}
+
+			return _queue.retainAll(items);
 		}
-
-		return _queue.retainAll(items);
 	}
 
 	@Override
-	public synchronized int size() {
-		return _queue.size();
-	}
-
-	@Override
-	public synchronized Object[] toArray() {
-		return _queue.toArray();
-	}
-
-	@Override
-	public synchronized <T> T[] toArray(T[] array) {
-		//noinspection SuspiciousToArrayCall
-		return _queue.toArray(array);
-	}
-
-	@Override
-	public synchronized boolean add(Player p) {
-		if (_queue.add(p)) {
-			notifyPlayerAdded(p.getUniqueId());
-			return true;
+	public int size() {
+		synchronized (_sync) {
+			return _queue.size();
 		}
-		return false;
 	}
 
 	@Override
-	public synchronized Player element() {
-		return _queue.element();
-	}
-
-	@Override
-	public synchronized boolean offer(Player p) {
-		if (_queue.offer(p)) {
-			notifyPlayerAdded(p.getUniqueId());
-			return true;
+	public Object[] toArray() {
+		synchronized (_sync) {
+			return _queue.toArray();
 		}
-		return false;
 	}
 
 	@Override
-	public synchronized Player peek() {
-		return _queue.peek();
+	public <T> T[] toArray(T[] array) {
+		synchronized (_sync) {
+			//noinspection SuspiciousToArrayCall
+			return _queue.toArray(array);
+		}
+	}
+
+	@Override
+	public boolean add(Player p) {
+		synchronized (_sync) {
+			if (_queue.add(p)) {
+				notifyPlayerAdded(p.getUniqueId());
+				return true;
+			}
+			return false;
+		}
+	}
+
+	@Override
+	public Player element() {
+		synchronized (_sync) {
+			return _queue.element();
+		}
+	}
+
+	@Override
+	public boolean offer(Player p) {
+		synchronized (_sync) {
+			if (_queue.offer(p)) {
+				notifyPlayerAdded(p.getUniqueId());
+				return true;
+			}
+			return false;
+		}
+	}
+
+	@Override
+	public Player peek() {
+		synchronized (_sync) {
+			return _queue.peek();
+		}
 	}
 
 	@Override
 	@Nullable
-	public synchronized Player poll() {
-		Player p = _queue.poll();
-		if (p != null && !_queue.contains(p)) {
-			notifyPlayerRemoved(p.getUniqueId());
+	public Player poll() {
+		synchronized (_sync) {
+			Player p = _queue.poll();
+			if (p != null && !_queue.contains(p)) {
+				notifyPlayerRemoved(p.getUniqueId());
+			}
+			return p;
 		}
-		return p;
 	}
 
 	@Override
 	@Nullable
-	public synchronized Player remove() {
-		Player p = _queue.remove();
-		if (p != null && !_queue.contains(p)) {
-			notifyPlayerRemoved(p.getUniqueId());
+	public Player remove() {
+		synchronized (_sync) {
+			Player p = _queue.remove();
+			if (p != null && !_queue.contains(p)) {
+				notifyPlayerRemoved(p.getUniqueId());
+			}
+			return p;
 		}
-		return p;
 	}
 
 	@Override
-	public synchronized void removePlayer(Player p) {
-		_queue.remove(p);
+	public void removePlayer(Player p) {
+		synchronized (_sync) {
+			_queue.remove(p);
+		}
 	}
 
 	@Override
@@ -224,8 +258,10 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 
 		@Override
 		public void remove() {
-			notifyPlayerRemoved(_current.getUniqueId());
-			iterator.remove();
+			synchronized (_sync) {
+				notifyPlayerRemoved(_current.getUniqueId());
+				iterator.remove();
+			}
 		}
 
 		@Override
