@@ -23,21 +23,24 @@
  */
 
 
-package com.jcwhatever.nucleus.permissions;
+package com.jcwhatever.nucleus.providers.permissions;
+
+import com.jcwhatever.nucleus.mixins.INamed;
 
 import org.bukkit.permissions.PermissionDefault;
 
-import javax.annotation.Nullable;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Interface for a Permission container.
  */
-public interface IPermission {
+public interface IPermission extends INamed {
 
     /**
      * Get the permission name.
      */
+    @Override
     String getName();
 
     /**
@@ -88,6 +91,6 @@ public interface IPermission {
     /**
      * Get the encapsulated permission handle.
      */
+    @Nullable
     Object getHandle();
-
 }

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.internal.providers.permissions;
 
-import com.jcwhatever.nucleus.permissions.IPermission;
+import com.jcwhatever.nucleus.providers.permissions.IPermission;
 
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;

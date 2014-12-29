@@ -27,24 +27,23 @@ package com.jcwhatever.nucleus.internal.providers;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.providers.economy.NucleusEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyProvider;
-import com.jcwhatever.nucleus.internal.providers.permissions.BukkitPermissionsProvider;
-import com.jcwhatever.nucleus.internal.providers.permissions.VaultPermissionsProvider;
+import com.jcwhatever.nucleus.internal.providers.permissions.BukkitProvider;
+import com.jcwhatever.nucleus.internal.providers.permissions.VaultProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.WorldEditSelectionProvider;
 import com.jcwhatever.nucleus.internal.providers.storage.YamlStorageProvider;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.providers.IPermissionsProvider;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
 import com.jcwhatever.nucleus.providers.economy.EconomyWrapper;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
+import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.YamlDataStorage;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -91,9 +90,9 @@ public final class InternalProviderManager implements IProviderManager {
     @Override
     public IPermissionsProvider getPermissionsProvider() {
         if (_permissions == null) {
-            _permissions = Bukkit.getPluginManager().getPlugin("Vault") != null
-                    ? new VaultPermissionsProvider()
-                    : new BukkitPermissionsProvider();
+            _permissions = VaultProvider.hasVaultPermissions()
+                    ? VaultProvider.getVaultProvider()
+                    : new BukkitProvider();
         }
         return _permissions;
     }

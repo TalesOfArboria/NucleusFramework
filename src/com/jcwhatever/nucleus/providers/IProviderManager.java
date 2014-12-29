@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.providers;
 
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
+import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 
 import org.bukkit.plugin.Plugin;
 

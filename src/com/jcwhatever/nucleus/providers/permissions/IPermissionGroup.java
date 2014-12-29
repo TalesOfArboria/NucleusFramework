@@ -23,24 +23,34 @@
  */
 
 
-package com.jcwhatever.nucleus.permissions;
+package com.jcwhatever.nucleus.providers.permissions;
+
+import com.jcwhatever.nucleus.mixins.INamed;
 
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Represents a permissions group.
  */
-public interface IPermissionGroup extends Comparable<IPermissionGroup> {
+public interface IPermissionGroup extends INamed, Comparable<IPermissionGroup> {
 
     /**
      * Get the name of the permissions group.
      */
-    String getPermissionGroupName();
+    @Override
+    String getName();
 
     /**
      * Determine if the permissions group can be assigned to the specified player.
      *
      * @param playerId  The id of the player.
      */
-    boolean canAssignPermissionGroup(UUID playerId);
+    boolean canAssign(UUID playerId);
+
+    /**
+     * Get the underlying permission object.
+     */
+    @Nullable
+    Object getHandle();
 }

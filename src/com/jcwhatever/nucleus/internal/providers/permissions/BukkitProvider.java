@@ -26,16 +26,15 @@
 package com.jcwhatever.nucleus.internal.providers.permissions;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.permissions.IPermission;
-import com.jcwhatever.nucleus.permissions.Permissions;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
+import com.jcwhatever.nucleus.providers.permissions.IPermission;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.Permissions;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -56,7 +55,7 @@ import javax.annotation.Nullable;
 /**
  * Basic Bukkit permissions handler
  */
-public final class BukkitPermissionsProvider extends AbstractPermissionsProvider {
+public final class BukkitProvider extends AbstractPermissionsProvider {
 
     private static Map<UUID, PermissionAttachment> _transient = new PlayerMap<PermissionAttachment>(Nucleus.getPlugin());
     private static Listener _bukkitListener;
@@ -66,7 +65,7 @@ public final class BukkitPermissionsProvider extends AbstractPermissionsProvider
     /**
      * Constructor.
      */
-    public BukkitPermissionsProvider() {
+    public BukkitProvider() {
 
         // get permissions data node
         _dataNode = DataStorage.getStorage(Nucleus.getPlugin(), new DataPath("bukkit-permissions"));
@@ -95,27 +94,8 @@ public final class BukkitPermissionsProvider extends AbstractPermissionsProvider
     }
 
     @Override
-    public boolean hasGroupSupport() {
-        return false;
-    }
-
-    @Override
-    public boolean hasWorldSupport() {
-        return false;
-    }
-
-    @Override
     public boolean has(CommandSender sender, String permissionName) {
         PreCon.notNull(sender);
-        PreCon.notNullOrEmpty(permissionName);
-
-        return sender.hasPermission(permissionName);
-    }
-
-    @Override
-    public boolean has(CommandSender sender, World world, String permissionName) {
-        PreCon.notNull(sender);
-        PreCon.notNull(world);
         PreCon.notNullOrEmpty(permissionName);
 
         return sender.hasPermission(permissionName);
@@ -195,16 +175,6 @@ public final class BukkitPermissionsProvider extends AbstractPermissionsProvider
     }
 
     @Override
-    public boolean add(Plugin plugin, CommandSender sender, World world, String permissionName) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(sender);
-        PreCon.notNull(world);
-        PreCon.notNullOrEmpty(permissionName);
-
-        return add(plugin, sender, permissionName);
-    }
-
-    @Override
     public boolean remove(Plugin plugin, CommandSender sender, String permissionName) {
         PreCon.notNull(plugin);
         PreCon.notNull(sender);
@@ -227,48 +197,9 @@ public final class BukkitPermissionsProvider extends AbstractPermissionsProvider
         return removeTransient(plugin, sender, permissionName);
     }
 
+    @Nullable
     @Override
-    public boolean remove(Plugin plugin, CommandSender sender, World world,	String permissionName) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(sender);
-        PreCon.notNull(world);
-        PreCon.notNullOrEmpty(permissionName);
-
-        return remove(plugin, sender, permissionName);
-    }
-
-    @Override
-    public boolean addGroup(Plugin plugin, CommandSender sender, String groupName) {
-        return false;
-    }
-
-    @Override
-    public boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return false;
-    }
-
-    @Override
-    public boolean removeGroup(Plugin plugin, CommandSender sender, String groupName) {
-        return false;
-    }
-
-    @Override
-    public boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return false;
-    }
-
-    @Override
-    public String[] getGroups() {
-        return null;
-    }
-
-    @Override
-    public String[] getGroups(CommandSender sender) {
-        return null;
-    }
-
-    @Override
-    public String[] getGroups(CommandSender sender, World world) {
+    public Object getHandle() {
         return null;
     }
 
@@ -295,7 +226,7 @@ public final class BukkitPermissionsProvider extends AbstractPermissionsProvider
 
             // give permissions
 
-            BukkitPermissionsProvider perms = (BukkitPermissionsProvider)
+            BukkitProvider perms = (BukkitProvider)
                     Nucleus.getProviderManager().getPermissionsProvider();
 
             // get players permission data node
@@ -323,8 +254,6 @@ public final class BukkitPermissionsProvider extends AbstractPermissionsProvider
                     Permissions.addTransient(plugin, p, permission);
                 }
             }
-
-
         }
 
     }

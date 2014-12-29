@@ -22,11 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers;
+package com.jcwhatever.nucleus.providers.permissions;
 
-import com.jcwhatever.nucleus.permissions.IPermission;
+import com.jcwhatever.nucleus.providers.IProvider;
 
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
@@ -37,18 +36,6 @@ import javax.annotation.Nullable;
  * Interface for a permissions provider implementation.
  */
 public interface IPermissionsProvider extends IProvider {
-
-    /**
-     * Determine if the permissions implementation
-     * has group support.
-     */
-    boolean hasGroupSupport();
-
-    /**
-     * Determine if the permissions implementation
-     * has support for permissions by world.
-     */
-    boolean hasWorldSupport();
 
     /**
      * Register a new permission.
@@ -114,18 +101,6 @@ public interface IPermissionsProvider extends IProvider {
     boolean has(CommandSender sender, String permissionName);
 
     /**
-     * Determine if the player has permission in the specified world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
-     *
-     * @param sender               The player to check.
-     * @param world           The world to check.
-     * @param permissionName  The name of the permission.
-     */
-    boolean has(CommandSender sender, World world, String permissionName);
-
-    /**
      * Add a transient permission to a player.
      *
      * @param plugin          The plugin adding the transient permission.
@@ -159,21 +134,6 @@ public interface IPermissionsProvider extends IProvider {
     boolean add(Plugin plugin, CommandSender sender, String permissionName);
 
     /**
-     * Add a permission to a player when in a specific world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
-     *
-     * @param plugin          The plugin adding the permission.
-     * @param sender               The player to add the permission to.
-     * @param world           The world.
-     * @param permissionName  The name of the permission.
-     *
-     * @return  True if the permission was added.
-     */
-    boolean add(Plugin plugin, CommandSender sender, World world, String permissionName);
-
-    /**
      * Remove a players permission.
      *
      * @param plugin          The plugin removing the permission.
@@ -185,90 +145,8 @@ public interface IPermissionsProvider extends IProvider {
     boolean remove(Plugin plugin, CommandSender sender, String permissionName);
 
     /**
-     * Remove a players permission in a world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
-     *
-     * @param plugin          The plugin removing the permission.
-     * @param sender               The player to remove the permission from.
-     * @param world           The world.
-     * @param permissionName  The name of the permission.
-     *
-     * @return  True if the permission was removed.
-     */
-    boolean remove(Plugin plugin, CommandSender sender, World world, String permissionName);
-
-    /**
-     * Add a player to a group permission.
-     * <p>
-     *     Not all implementations support group permissions.
-     * </p>
-     *
-     * @param plugin     The plugin adding the player to the group.
-     * @param sender          The player to add to the group.
-     * @param groupName  The name of the group.
-     *
-     * @return  True if the player was added.
-     */
-    boolean addGroup(Plugin plugin, CommandSender sender, String groupName);
-
-    /**
-     * Add a player to a group permission in the specified world.
-     *
-     * @param plugin     The plugin adding the player to the group.
-     * @param sender          The player to add to the group.
-     * @param world      The world.
-     * @param groupName  The name of the group.
-     *
-     * @return  True if the player was added.
-     */
-    boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName);
-
-    /**
-     * Remove a player from a group permission.
-     *
-     * @param plugin     The plugin removing the player from the group.
-     * @param sender          The player to remove from the group.
-     * @param groupName  The name of the group.
-     *
-     * @return  True if the player was removed.
-     */
-    boolean removeGroup(Plugin plugin, CommandSender sender, String groupName);
-
-    /**
-     * Remove a player from a group permission.
-     *
-     * @param plugin     The plugin removing the player from the group.
-     * @param sender          The player to remove from the group.
-     * @param world      The world.
-     * @param groupName  The name of the group.
-     *
-     * @return  True if the player was removed.
-     */
-    boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName);
-
-    /**
-     * Get a string array of group permission names.
+     * Get the underlying permissions provider.
      */
     @Nullable
-    String[] getGroups();
-
-    /**
-     * Get a string array of groups the specified player is in.
-     *
-     * @param sender  The player to check.
-     */
-    @Nullable
-    String[] getGroups(CommandSender sender);
-
-    /**
-     * Get a string array of groups the specified player is in while
-     * in the specified world.
-     *
-     * @param sender      The player to check.
-     * @param world  The world.
-     */
-    @Nullable
-    String[] getGroups(CommandSender sender, World world);
+    Object getHandle();
 }

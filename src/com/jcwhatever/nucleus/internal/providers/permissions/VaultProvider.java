@@ -26,10 +26,9 @@
 package com.jcwhatever.nucleus.internal.providers.permissions;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.ArrayUtils;
+import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -42,14 +41,39 @@ import javax.annotation.Nullable;
 /**
  * Vault interface implementation.
  */
-public final class VaultPermissionsProvider extends AbstractPermissionsProvider {
+public class VaultProvider extends AbstractPermissionsProvider {
 
-    private Permission _perms = null;
+    protected Permission _perms = null;
+
+    public static boolean hasVaultPermissions() {
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("Vault");
+        if (plugin == null)
+            return false;
+
+        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
+                .getRegistration(net.milkbowl.vault.permission.Permission.class);
+
+        return permissionProvider != null && permissionProvider.getProvider() != null;
+    }
+
+    public static IPermissionsProvider getVaultProvider() {
+
+        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
+                .getRegistration(net.milkbowl.vault.permission.Permission.class);
+
+        if (permissionProvider == null)
+            throw new RuntimeException("Vault permissions not found.");
+
+
+        Permission perms = permissionProvider.getProvider();
+
+        return perms.hasGroupSupport() ? new VaultGroupProvider() : new VaultProvider();
+    }
 
     /**
      * Constructor.
      */
-    public VaultPermissionsProvider() {
+    public VaultProvider() {
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
                 .getRegistration(net.milkbowl.vault.permission.Permission.class);
 
@@ -74,24 +98,8 @@ public final class VaultPermissionsProvider extends AbstractPermissionsProvider 
     }
 
     @Override
-    public boolean hasGroupSupport() {
-        return _perms.hasGroupSupport();
-    }
-
-    @Override
-    public boolean hasWorldSupport() {
-        return true;
-    }
-
-    @Override
     public boolean has(CommandSender sender, String permissionName) {
         return _perms.has(sender, permissionName);
-    }
-
-    @Override
-    public boolean has(CommandSender sender, World world, String permissionName) {
-        Player p = getPlayer(sender);
-        return p == null || _perms.has(p.getWorld(), sender.getName(), permissionName);
     }
 
     @Override
@@ -113,67 +121,19 @@ public final class VaultPermissionsProvider extends AbstractPermissionsProvider 
     }
 
     @Override
-    public boolean add(Plugin plugin, CommandSender sender, World world, String permissionName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerAdd(world, p.getName(), permissionName);
-    }
-
-    @Override
     public boolean remove(Plugin plugin, CommandSender sender, String permissionName) {
         Player p = getPlayer(sender);
         return p != null && _perms.playerRemove(p, permissionName);
     }
 
+    @Nullable
     @Override
-    public boolean remove(Plugin plugin, CommandSender sender, World world,	String permissionName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerRemove(world, p.getName(), permissionName);
-    }
-
-    @Override
-    public boolean addGroup(Plugin plugin, CommandSender sender, String groupName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerAddGroup(p, groupName);
-    }
-
-    @Override
-    public boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerAddGroup(world, p.getName(), groupName);
-    }
-
-    @Override
-    public boolean removeGroup(Plugin plugin, CommandSender sender, String groupName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerRemoveGroup(p, groupName);
-    }
-
-    @Override
-    public boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return _perms.playerRemoveGroup(world, sender.getName(), groupName);
-    }
-
-    @Override
-    public String[] getGroups() {
-        return _perms.getGroups();
-    }
-
-    @Override
-    public String[] getGroups(CommandSender sender) {
-        Player p = getPlayer(sender);
-        if (p == null)
-            return ArrayUtils.EMPTY_STRING_ARRAY;
-
-        return _perms.getPlayerGroups(p);
-    }
-
-    @Override
-    public String[] getGroups(CommandSender sender, World world) {
-        return _perms.getPlayerGroups(world, sender.getName());
+    public Object getHandle() {
+        return _perms;
     }
 
     @Nullable
-    private Player getPlayer(CommandSender sender) {
+    protected Player getPlayer(CommandSender sender) {
         if (!(sender instanceof Player))
             return null;
 

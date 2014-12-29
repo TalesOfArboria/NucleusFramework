@@ -26,8 +26,8 @@
 package com.jcwhatever.nucleus.internal.providers.permissions;
 
 import com.jcwhatever.nucleus.internal.Msg;
-import com.jcwhatever.nucleus.permissions.IPermission;
-import com.jcwhatever.nucleus.providers.IPermissionsProvider;
+import com.jcwhatever.nucleus.providers.permissions.IPermission;
+import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.utils.BatchTracker;
 
 import org.bukkit.Bukkit;

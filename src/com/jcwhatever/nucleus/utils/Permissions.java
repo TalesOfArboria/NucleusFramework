@@ -23,11 +23,15 @@
  */
 
 
-package com.jcwhatever.nucleus.permissions;
+package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.IPermissionsProvider;
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.providers.permissions.IGroupPermissionsProvider;
+import com.jcwhatever.nucleus.providers.permissions.IPermission;
+import com.jcwhatever.nucleus.providers.permissions.IPermissionGroup;
+import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
+import com.jcwhatever.nucleus.providers.permissions.IWorldGroupPermissionsProvider;
+import com.jcwhatever.nucleus.providers.permissions.IWorldPermissionsProvider;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -41,7 +45,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Permissions API
+ * Permissions API utility
  */
 public final class Permissions {
 
@@ -51,15 +55,23 @@ public final class Permissions {
      * Determine if the permissions implementation has group support.
      */
     public static boolean hasGroupSupport() {
-        return getProvider().hasGroupSupport();
+        return getProvider() instanceof IGroupPermissionsProvider;
     }
 
     /**
-     * Determine if the permissions implementation has permissions
-     * by world support.
+     * Determine if the permissions implementation has world
+     * permissions support.
      */
     public static boolean hasWorldSupport() {
-        return getProvider().hasWorldSupport();
+        return getProvider() instanceof IWorldPermissionsProvider;
+    }
+
+    /**
+     * Determine if the permissions implementation has
+     * world group support.
+     */
+    public static boolean hasWorldGroupSupport() {
+        return getProvider() instanceof IWorldGroupPermissionsProvider;
     }
 
     /**
@@ -158,9 +170,11 @@ public final class Permissions {
      * @param sender          The {@code CommandSender} to check.
      * @param world           The world to check.
      * @param permissionName  The name of the permission.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean has(CommandSender sender, World world, String permissionName) {
-        return getProvider().has(sender, world, permissionName);
+        return getWorldProvider().has(sender, world, permissionName);
     }
 
     /**
@@ -227,9 +241,11 @@ public final class Permissions {
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean add(Plugin plugin, CommandSender sender, World world, String permissionName) {
-        return getProvider().add(plugin, sender, world, permissionName);
+        return getWorldProvider().add(plugin, sender, world, permissionName);
     }
 
     /**
@@ -244,9 +260,11 @@ public final class Permissions {
      * @param permission  The permission.
      *
      * @return  True if the permission was added.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean add(Plugin plugin, CommandSender sender, World world, IPermission permission) {
-        return getProvider().add(plugin, sender, world, permission.getName());
+        return getWorldProvider().add(plugin, sender, world, permission.getName());
     }
 
     /**
@@ -287,9 +305,11 @@ public final class Permissions {
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean remove(Plugin plugin, CommandSender sender, World world, String permissionName) {
-        return getProvider().remove(plugin, sender, world, permissionName);
+        return getWorldProvider().remove(plugin, sender, world, permissionName);
     }
 
     /**
@@ -301,9 +321,11 @@ public final class Permissions {
      * @param permission  The permission.
      *
      * @return  True if the permission was removed.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean remove(Plugin plugin, CommandSender sender, World world, IPermission permission) {
-        return getProvider().remove(plugin, sender, world, permission.getName());
+        return getWorldProvider().remove(plugin, sender, world, permission.getName());
     }
 
     /**
@@ -317,9 +339,11 @@ public final class Permissions {
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean addGroup(Plugin plugin, CommandSender sender, String groupName) {
-        return getProvider().addGroup(plugin, sender, groupName);
+        return getGroupProvider().addGroup(plugin, sender, groupName);
     }
 
     /**
@@ -331,9 +355,11 @@ public final class Permissions {
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return getProvider().addGroup(plugin, sender, world, groupName);
+        return getWorldGroupProvider().addGroup(plugin, sender, world, groupName);
     }
 
     /**
@@ -344,9 +370,11 @@ public final class Permissions {
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean removeGroup(Plugin plugin, CommandSender sender, String groupName) {
-        return getProvider().removeGroup(plugin, sender, groupName);
+        return getGroupProvider().removeGroup(plugin, sender, groupName);
     }
 
     /**
@@ -358,9 +386,11 @@ public final class Permissions {
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return getProvider().removeGroup(plugin, sender, world, groupName);
+        return getWorldGroupProvider().removeGroup(plugin, sender, world, groupName);
     }
 
     /**
@@ -368,14 +398,16 @@ public final class Permissions {
      *
      * @param sender     The {@code CommandSender} to check.
      * @param groupName  The name of the group.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static boolean hasGroup(CommandSender sender, String groupName) {
-        String[] groups = getGroups(sender);
-        if (groups == null)
+        Collection<IPermissionGroup> groups = getGroups(sender);
+        if (groups.isEmpty())
             return false;
 
-        for (String group : groups) {
-            if (group.equals(groupName))
+        for (IPermissionGroup group : groups) {
+            if (group.getName().equals(groupName))
                 return true;
         }
 
@@ -384,20 +416,23 @@ public final class Permissions {
 
     /**
      * Get a string array of group permission names.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     @Nullable
-    public static String[] getGroups() {
-        return getProvider().getGroups();
+    public static Collection<IPermissionGroup> getGroups() {
+        return getGroupProvider().getGroups();
     }
 
     /**
      * Get a string array of groups the specified player is in.
      *
      * @param sender  The {@code CommandSender} to check.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
-    @Nullable
-    public static String[] getGroups(CommandSender sender) {
-        return getProvider().getGroups(sender);
+    public static Collection<IPermissionGroup> getGroups(CommandSender sender) {
+        return getGroupProvider().getGroups(sender);
     }
 
     /**
@@ -406,10 +441,11 @@ public final class Permissions {
      *
      * @param sender  The {@code CommandSender} to check.
      * @param world   The world.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
-    @Nullable
-    public static String[] getGroups(CommandSender sender, World world) {
-        return getProvider().getGroups(sender, world);
+    public static Collection<IPermissionGroup> getGroups(CommandSender sender, World world) {
+        return getWorldGroupProvider().getGroups(sender, world);
     }
 
     /**
@@ -419,6 +455,8 @@ public final class Permissions {
      *
      * @param plugin  The plugin fixing permission groups.
      * @param groups  The groups to fix.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
     public static void fixPermissionGroups(Plugin plugin, Collection<IPermissionGroup> groups) {
         PreCon.notNull(plugin);
@@ -440,8 +478,11 @@ public final class Permissions {
      * @param plugin  The plugin fixing permission groups.
      * @param sender  The {@code CommandSender} whose group permissions need to be checked.
      * @param groups  The groups to fix.
+     *
+     * @throws java.lang.UnsupportedOperationException
      */
-    public static void fixPermissionGroups(Plugin plugin, CommandSender sender, Collection<IPermissionGroup> groups) {
+    public static void fixPermissionGroups(Plugin plugin, CommandSender sender,
+                                           Collection<IPermissionGroup> groups) {
         PreCon.notNull(plugin);
         PreCon.notNull(sender);
         PreCon.notNull(groups);
@@ -455,19 +496,67 @@ public final class Permissions {
         UUID playerId = ((Player)sender).getUniqueId();
 
         for (IPermissionGroup group : groups) {
-            boolean canAssign = group.canAssignPermissionGroup(playerId);
-            boolean hasGroup = hasGroup(sender, group.getPermissionGroupName());
+            boolean canAssign = group.canAssign(playerId);
+            boolean hasGroup = hasGroup(sender, group.getName());
 
             if (!canAssign && hasGroup) {
-                removeGroup(plugin, sender, group.getPermissionGroupName());
+                removeGroup(plugin, sender, group.getName());
             }
             else if (canAssign && !hasGroup) {
-                addGroup(plugin, sender, group.getPermissionGroupName());
+                addGroup(plugin, sender, group.getName());
             }
         }
     }
 
-    private static IPermissionsProvider getProvider() {
+    /**
+     * Get the permissions provider.
+     */
+    public static IPermissionsProvider getProvider() {
         return Nucleus.getProviderManager().getPermissionsProvider();
+    }
+
+    /**
+     * Get the world permissions provider.
+     *
+     * @throws java.lang.UnsupportedOperationException
+     */
+    public static IWorldPermissionsProvider getWorldProvider() {
+        IWorldPermissionsProvider provider =
+                (IWorldPermissionsProvider)Nucleus.getProviderManager().getPermissionsProvider();
+
+        if (provider == null)
+            throw new UnsupportedOperationException();
+
+        return provider;
+    }
+
+    /**
+     * Get the group permissions provider.
+     *
+     * @throws java.lang.UnsupportedOperationException
+     */
+    public static IGroupPermissionsProvider getGroupProvider() {
+        IGroupPermissionsProvider provider =
+                (IGroupPermissionsProvider)Nucleus.getProviderManager().getPermissionsProvider();
+
+        if (provider == null)
+            throw new UnsupportedOperationException();
+
+        return provider;
+    }
+
+    /**
+     * Get the world group permissions provider.
+     *
+     * @throws java.lang.UnsupportedOperationException
+     */
+    public static IWorldGroupPermissionsProvider getWorldGroupProvider() {
+        IWorldGroupPermissionsProvider provider =
+                (IWorldGroupPermissionsProvider)Nucleus.getProviderManager().getPermissionsProvider();
+
+        if (provider == null)
+            throw new UnsupportedOperationException();
+
+        return provider;
     }
 }
