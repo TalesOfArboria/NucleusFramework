@@ -36,7 +36,9 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
+import com.jcwhatever.nucleus.providers.economy.EconomyBankWrapper;
 import com.jcwhatever.nucleus.providers.economy.EconomyWrapper;
+import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
@@ -144,7 +146,9 @@ public final class InternalProviderManager implements IProviderManager {
 
         _economy = provider instanceof EconomyWrapper
                 ? provider
-                : new EconomyWrapper(provider);
+                : provider instanceof IBankEconomyProvider
+                        ? new EconomyBankWrapper((IBankEconomyProvider)provider)
+                        : new EconomyWrapper(provider);
     }
 
     @Override

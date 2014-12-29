@@ -27,10 +27,9 @@ package com.jcwhatever.nucleus.providers.economy;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.economy.EconDepositEvent;
 import com.jcwhatever.nucleus.events.economy.EconWithdrawEvent;
+import com.jcwhatever.nucleus.providers.economy.EconomyBankWrapper.BankWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -45,7 +44,7 @@ import javax.annotation.Nullable;
  */
 public class EconomyWrapper implements IEconomyProvider {
 
-    private final IEconomyProvider _provider;
+    protected final IEconomyProvider _provider;
 
     public EconomyWrapper(IEconomyProvider provider) {
         PreCon.notNull(provider);
@@ -77,74 +76,6 @@ public class EconomyWrapper implements IEconomyProvider {
     }
 
     @Override
-    public boolean hasBankSupport() {
-        return _provider.hasBankSupport();
-    }
-
-    @Override
-    public List<IBank> getBanks() {
-        List<IBank> banks = _provider.getBanks();
-        List<IBank> wrapped = new ArrayList<>(banks.size());
-
-        for (IBank bank : banks) {
-            if (bank instanceof BankWrapper) {
-                wrapped.add(bank);
-            }
-            else {
-                wrapped.add(new BankWrapper(bank));
-            }
-        }
-
-        return wrapped;
-    }
-
-    @Nullable
-    @Override
-    public IBank getBank(String bankName) {
-
-        IBank bank = _provider.getBank(bankName);
-        if (bank == null)
-            return null;
-
-        if (bank instanceof BankWrapper)
-            return bank;
-
-        return new BankWrapper(bank);
-    }
-
-    @Nullable
-    @Override
-    public IBank createBank(String bankName) {
-
-        IBank bank = _provider.createBank(bankName);
-        if (bank == null)
-            return null;
-
-        if (bank instanceof BankWrapper)
-            return bank;
-
-        return new BankWrapper(bank);
-    }
-
-    @Nullable
-    @Override
-    public IBank createBank(String bankName, UUID playerId) {
-
-        IBank bank = _provider.createBank(bankName, playerId);
-        if (bank == null)
-            return null;
-
-        if (bank instanceof BankWrapper)
-            return bank;
-
-        return new BankWrapper(bank);
-    }
-
-    @Override
-    public boolean deleteBank(String bankName) {
-        return _provider.deleteBank(bankName);
-    }
-
     public IEconomyProvider getHandle() {
         return _provider;
     }
@@ -153,7 +84,6 @@ public class EconomyWrapper implements IEconomyProvider {
 
         private final IAccount _account;
         private IBank _bank;
-
 
         public AccountWrapper(IAccount account) {
             PreCon.notNull(account);
@@ -215,118 +145,19 @@ public class EconomyWrapper implements IEconomyProvider {
             return _account.equals(obj);
         }
 
+        @Override
         public IAccount getHandle() {
             return _account;
         }
-    }
 
-    public static class BankWrapper implements IBank {
-
-        private final IBank _bank;
-
-        public BankWrapper (IBank bank) {
-            PreCon.notNull(bank);
-
-            _bank = bank;
+        protected EconDepositEvent onDeposit(IAccount account, double amount) {
+            EconDepositEvent event = new EconDepositEvent(account, amount);
+            return Nucleus.getEventManager().callBukkit(event);
         }
 
-        @Nullable
-        @Override
-        public UUID getOwnerId() {
-            return _bank.getOwnerId();
+        protected EconWithdrawEvent onWithdraw(IAccount account, double amount) {
+            EconWithdrawEvent event = new EconWithdrawEvent(account, amount);
+            return Nucleus.getEventManager().callBukkit(event);
         }
-
-        @Override
-        public double getBalance() {
-            return _bank.getBalance();
-        }
-
-        @Override
-        public boolean hasAccount(UUID playerId) {
-            return _bank.hasAccount(playerId);
-        }
-
-        @Nullable
-        @Override
-        public IAccount getAccount(UUID playerId) {
-
-            IAccount account = _bank.getAccount(playerId);
-            if (account == null)
-                return null;
-
-            if (account instanceof AccountWrapper)
-                return account;
-
-            return new AccountWrapper(account);
-        }
-
-        @Override
-        public List<IAccount> getAccounts() {
-
-            List<IAccount> accounts = _bank.getAccounts();
-            List<IAccount> wrapped = new ArrayList<>(accounts.size());
-
-            for (IAccount account : accounts) {
-                if (account instanceof AccountWrapper)
-                    wrapped.add(account);
-                else
-                    wrapped.add(new AccountWrapper(account));
-            }
-
-            return wrapped;
-        }
-
-        @Nullable
-        @Override
-        public IAccount createAccount(UUID playerId) {
-
-            IAccount account = _bank.createAccount(playerId);
-            if (account == null)
-                return null;
-
-            if (account instanceof AccountWrapper)
-                return account;
-
-            return new AccountWrapper(account);
-        }
-
-        @Override
-        public boolean deleteAccount(UUID playerId) {
-            return _bank.deleteAccount(playerId);
-        }
-
-        @Override
-        public String getName() {
-            return _bank.getName();
-        }
-
-        @Override
-        public int hashCode() {
-            return _bank.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof BankWrapper) {
-                return ((BankWrapper) obj)._bank.equals(_bank);
-            }
-
-            return _bank.equals(obj);
-        }
-
-        public IBank getHandle() {
-            return _bank;
-        }
-    }
-
-
-    protected static EconDepositEvent onDeposit(IAccount account, double amount) {
-        EconDepositEvent event = new EconDepositEvent(account, amount);
-        return Nucleus.getEventManager().callBukkit(event);
-    }
-
-    protected static EconWithdrawEvent onWithdraw(IAccount account, double amount) {
-        EconWithdrawEvent event = new EconWithdrawEvent(account, amount);
-        return Nucleus.getEventManager().callBukkit(event);
     }
 }
