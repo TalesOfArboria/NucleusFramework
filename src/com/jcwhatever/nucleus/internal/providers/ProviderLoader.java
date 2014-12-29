@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.modules.ClassLoadMethod;
 import com.jcwhatever.nucleus.modules.IModuleInfo;
 import com.jcwhatever.nucleus.modules.JarModuleLoader;
+import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
@@ -97,11 +98,15 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
             }
             else if (provider instanceof IPermissionsProvider) {
 
-                _manager.setPermissionsProvider((IPermissionsProvider) provider);
+                _manager.setPermissionsProvider((IPermissionsProvider)provider);
             }
             else if (provider instanceof IRegionSelectProvider) {
 
                 _manager.setRegionSelectionProvider((IRegionSelectProvider)provider);
+            }
+            else if (provider instanceof IEconomyProvider) {
+
+                _manager.setEconomyProvider((IEconomyProvider)provider);
             }
             else {
                 removeModule(provider.getName());
