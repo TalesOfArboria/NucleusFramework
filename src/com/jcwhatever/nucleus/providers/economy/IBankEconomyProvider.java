@@ -24,76 +24,57 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
-import com.jcwhatever.nucleus.mixins.INamed;
-
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Interface for an economy bank.
+ * An economy provider that supports banks.
  */
-public interface IBank extends INamed {
+public interface IBankEconomyProvider extends IEconomyProvider {
 
     /**
-     * Get the ID of the bank owner.
+     * Get a list of banks.
+     */
+    List<IBank> getBanks();
+
+    /**
+     * Get a bank by name.
      *
-     * @return  Null if the bank has no owner.
+     * @param bankName  The name of the bank.
+     *
+     * @return  Null if the bank was not found.
      */
     @Nullable
-    UUID getOwnerId();
+    IBank getBank(String bankName);
 
     /**
-     * Get the bank balance.
-     */
-    double getBalance();
-
-    /**
-     * Determine if the specified player has
-     * an account with the bank.
+     * Create a new bank account.
      *
-     * @param playerId  The ID of the player.
-     */
-    boolean hasAccount(UUID playerId);
-
-    /**
-     * Get a player account from the bank.
+     * @param bankName  The name of the bank.
      *
-     * @param playerId  The ID of the account owner.
-     *
-     * @return  Null if the account was not found.
+     * @return  Null if the bank was not created.
      */
     @Nullable
-    IAccount getAccount(UUID playerId);
+    IBank createBank(String bankName);
 
     /**
-     * Get all bank accounts.
-     */
-    List<IAccount> getAccounts();
-
-    /**
-     * Create a bank account.
+     * Create a new bank account with the specified player as the owner.
      *
-     * @param playerId  The ID of the account owner.
+     * @param bankName  The name of the bank.
+     * @param playerId  The ID of the bank owner.
      *
-     * @return  Null if the account was not created.
+     * @return  Null if the bank was not created.
      */
     @Nullable
-    IAccount createAccount(UUID playerId);
+    IBank createBank(String bankName, UUID playerId);
 
     /**
-     * Delete a bank account.
+     * Delete a bank.
      *
-     * @param playerId  The ID of the account owner.
+     * @param bankName  The name of the bank.
      *
-     * @return  True if the account was found and deleted.
+     * @return  True if the bank was found and deleted.
      */
-    boolean deleteAccount(UUID playerId);
-
-    /**
-     * Get the underlying bank object if the
-     * object is wrapped. Otherwise, the handle is
-     * the {@code IBank} instance.
-     */
-    Object getHandle();
+    boolean deleteBank(String bankName);
 }

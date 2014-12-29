@@ -86,6 +86,11 @@ public final class VaultAccount implements IAccount {
     }
 
     @Override
+    public Object getHandle() {
+        return this;
+    }
+
+    @Override
     public int hashCode() {
         return _playerId.hashCode();
     }

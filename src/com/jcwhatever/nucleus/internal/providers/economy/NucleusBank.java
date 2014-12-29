@@ -128,6 +128,11 @@ public final class NucleusBank implements IBank {
         return true;
     }
 
+    @Override
+    public Object getHandle() {
+        return this;
+    }
+
     private void loadAccounts() {
         Set<String> accountIds = _dataNode.getSubNodeNames();
 

@@ -67,4 +67,11 @@ public interface IAccount {
      * @return  True if the operation is successful.
      */
     boolean withdraw(double amount);
+
+    /**
+     * Get the underlying account object if the
+     * object is wrapped. Otherwise, the handle is
+     * the {@code IAccount} instance.
+     */
+    Object getHandle();
 }

@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.utils;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
+import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider.CurrencyNoun;
 
@@ -51,7 +52,7 @@ public final class Economy {
     public static IAccount getAccount(UUID playerId) {
         PreCon.notNull(playerId);
 
-        return provider().getAccount(playerId);
+        return getProvider().getAccount(playerId);
     }
 
     /**
@@ -62,7 +63,7 @@ public final class Economy {
     public static double getBalance(UUID playerId) {
         PreCon.notNull(playerId);
 
-        IAccount account = provider().getAccount(playerId);
+        IAccount account = getProvider().getAccount(playerId);
         if (account == null)
             return 0;
 
@@ -80,7 +81,7 @@ public final class Economy {
 
         double balance = getBalance(playerId);
 
-        return provider().formatAmount(balance);
+        return getProvider().formatAmount(balance);
     }
 
     /**
@@ -90,7 +91,7 @@ public final class Economy {
      */
     public static String formatAmount(double amount) {
 
-        return provider().formatAmount(amount);
+        return getProvider().formatAmount(amount);
     }
 
     /**
@@ -101,7 +102,7 @@ public final class Economy {
     public static String getCurrencyName(CurrencyNoun noun) {
         PreCon.notNull(noun);
 
-        return provider().getCurrencyName(noun);
+        return getProvider().getCurrencyName(noun);
     }
 
     /**
@@ -118,11 +119,11 @@ public final class Economy {
         PreCon.notNull(receiverPlayerId);
         PreCon.positiveNumber(amount);
 
-        IAccount fromAccount = provider().getAccount(giverPlayerId);
+        IAccount fromAccount = getProvider().getAccount(giverPlayerId);
         if (fromAccount == null)
             return false;
 
-        IAccount toAccount = provider().getAccount(receiverPlayerId);
+        IAccount toAccount = getProvider().getAccount(receiverPlayerId);
         return toAccount != null && transfer(fromAccount, toAccount, amount);
     }
 
@@ -170,7 +171,7 @@ public final class Economy {
     public static boolean deposit(UUID playerId, double amount) {
         PreCon.notNull(playerId);
 
-        IAccount account = provider().getAccount(playerId);
+        IAccount account = getProvider().getAccount(playerId);
         return account != null && account.deposit(amount);
     }
 
@@ -185,7 +186,7 @@ public final class Economy {
     public static boolean withdraw(UUID playerId, double amount) {
         PreCon.notNull(playerId);
 
-        IAccount account = provider().getAccount(playerId);
+        IAccount account = getProvider().getAccount(playerId);
         return account != null && account.withdraw(amount);
     }
 
@@ -227,7 +228,7 @@ public final class Economy {
      * Determine if the economy provider has bank support.
      */
     public static boolean hasBankSupport() {
-        return provider().hasBankSupport();
+        return getProvider() instanceof IBankEconomyProvider;
     }
 
     /**
@@ -241,7 +242,7 @@ public final class Economy {
      */
     @Nullable
     public static IBank getBank(String bankName) {
-        return provider().getBank(bankName);
+        return getBankProvider().getBank(bankName);
     }
 
     /**
@@ -250,7 +251,7 @@ public final class Economy {
      * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
      */
     public static List<IBank> getBanks() {
-        return provider().getBanks();
+        return getBankProvider().getBanks();
     }
 
     /**
@@ -264,7 +265,7 @@ public final class Economy {
      */
     @Nullable
     public static IBank createBank(String bankName) {
-        return provider().createBank(bankName);
+        return getBankProvider().createBank(bankName);
     }
 
     /**
@@ -279,7 +280,7 @@ public final class Economy {
      */
     @Nullable
     public static IBank createBank(String bankName, UUID ownerId) {
-        return provider().createBank(bankName, ownerId);
+        return getBankProvider().createBank(bankName, ownerId);
     }
 
     /**
@@ -292,10 +293,28 @@ public final class Economy {
      * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
      */
     public static boolean deleteBank(String bankName) {
-        return provider().deleteBank(bankName);
+        return getBankProvider().deleteBank(bankName);
     }
 
-    private static IEconomyProvider provider() {
+    /**
+     * Get the economy provider.
+     */
+    public static IEconomyProvider getProvider() {
         return Nucleus.getProviderManager().getEconomyProvider();
+    }
+
+    /**
+     * Get the bank interface for the economy provider.
+     *
+     * <p>Check {@code #hasBankSupport} method first before calling.</p>
+     *
+     * @throws java.lang.UnsupportedOperationException
+     */
+    public static IBankEconomyProvider getBankProvider() {
+        IBankEconomyProvider provider = (IBankEconomyProvider)getProvider();
+        if (provider == null)
+            throw new UnsupportedOperationException();
+
+        return provider;
     }
 }

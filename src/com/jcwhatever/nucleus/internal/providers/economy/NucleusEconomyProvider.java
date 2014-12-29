@@ -28,7 +28,7 @@ import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
-import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
+import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.YamlDataStorage;
@@ -49,7 +49,7 @@ import javax.annotation.Nullable;
 /**
  * NucleusFramework's simple economy provider
  */
-public final class NucleusEconomyProvider implements IEconomyProvider {
+public final class NucleusEconomyProvider implements IBankEconomyProvider {
 
     private final Plugin _plugin;
     private final IDataNode _dataNode;
@@ -113,8 +113,8 @@ public final class NucleusEconomyProvider implements IEconomyProvider {
     }
 
     @Override
-    public boolean hasBankSupport() {
-        return true;
+    public Object getHandle() {
+        return this;
     }
 
     @Override

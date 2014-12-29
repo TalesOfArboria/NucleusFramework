@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
-import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -36,10 +35,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import net.milkbowl.vault.economy.Economy;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Vault economy provider. Does not support Banks, even if the underlying
@@ -99,46 +96,8 @@ public final class VaultEconomyProvider implements IEconomyProvider {
     }
 
     @Override
-    public boolean hasBankSupport() {
-        return false;
-    }
-
-    @Override
-    public List<IBank> getBanks() {
-        PreCon.supported(false);
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public IBank getBank(String bankName) {
-        PreCon.supported(false);
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public IBank createBank(String bankName) {
-        PreCon.supported(false);
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public IBank createBank(String bankName, UUID playerId) {
-        PreCon.supported(false);
-
-        return null;
-    }
-
-    @Override
-    public boolean deleteBank(String bankName) {
-        PreCon.supported(false);
-
-        return false;
+    public Object getHandle() {
+        return getEconomy();
     }
 
     public Economy getEconomy() {

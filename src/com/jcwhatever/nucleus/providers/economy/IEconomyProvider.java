@@ -24,9 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
-import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Interface for an economy provider.
@@ -63,62 +61,9 @@ public interface IEconomyProvider {
     IAccount getAccount(UUID playerId);
 
     /**
-     * Determine if the economy has bank support.
+     * Get the underlying economy provider if the
+     * provider is wrapped. Otherwise, the handle is
+     * the {@code IEconomyProvider} instance.
      */
-    boolean hasBankSupport();
-
-    /**
-     * Get a list of banks.
-     *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
-     */
-    List<IBank> getBanks();
-
-    /**
-     * Get a bank by name.
-     *
-     * @param bankName  The name of the bank.
-     *
-     * @return  Null if the bank was not found.
-     *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
-     */
-    @Nullable
-    IBank getBank(String bankName);
-
-    /**
-     * Create a new bank account.
-     *
-     * @param bankName  The name of the bank.
-     *
-     * @return  Null if the bank was not created.
-     *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
-     */
-    @Nullable
-    IBank createBank(String bankName);
-
-    /**
-     * Create a new bank account with the specified player as the owner.
-     *
-     * @param bankName  The name of the bank.
-     * @param playerId  The ID of the bank owner.
-     *
-     * @return  Null if the bank was not created.
-     *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
-     */
-    @Nullable
-    IBank createBank(String bankName, UUID playerId);
-
-    /**
-     * Delete a bank.
-     *
-     * @param bankName  The name of the bank.
-     *
-     * @return  True if the bank was found and deleted.
-     *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
-     */
-    boolean deleteBank(String bankName);
+    Object getHandle();
 }
