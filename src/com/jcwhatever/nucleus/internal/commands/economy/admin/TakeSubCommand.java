@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.Lang;
 import com.jcwhatever.nucleus.language.Localizable;
-import com.jcwhatever.nucleus.utils.EconomyUtils;
+import com.jcwhatever.nucleus.utils.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -65,11 +65,11 @@ public final class TakeSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        if (!EconomyUtils.withdraw(playerId, amount)) {
+        if (!Economy.withdraw(playerId, amount)) {
             tellError(sender, Lang.get(_FAILED));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, EconomyUtils.formatAmount(amount), playerName));
+        tellSuccess(sender, Lang.get(_SUCCESS, Economy.formatAmount(amount), playerName));
     }
 }

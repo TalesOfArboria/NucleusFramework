@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.Lang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
-import com.jcwhatever.nucleus.utils.EconomyUtils;
+import com.jcwhatever.nucleus.utils.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -87,13 +87,13 @@ public final class SendSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        IAccount account = EconomyUtils.getAccount(player.getUniqueId());
+        IAccount account = Economy.getAccount(player.getUniqueId());
         if (account == null) {
             tellError(sender, Lang.get(_NO_SEND_ACCOUNT));
             return; //finish
         }
 
-        IAccount receiverAccount = EconomyUtils.getAccount(receiverId);
+        IAccount receiverAccount = Economy.getAccount(receiverId);
         if (receiverAccount == null) {
             tellError(sender, Lang.get(_NO_RECEIVE_ACCOUNT, receiverName));
             return; // finish
@@ -105,11 +105,11 @@ public final class SendSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        if (!EconomyUtils.transfer(account, receiverAccount, amount)) {
+        if (!Economy.transfer(account, receiverAccount, amount)) {
             tellError(sender, Lang.get(_FAILED));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, EconomyUtils.formatAmount(amount), receiverName, account.getBalance()));
+        tellSuccess(sender, Lang.get(_SUCCESS, Economy.formatAmount(amount), receiverName, account.getBalance()));
     }
 }

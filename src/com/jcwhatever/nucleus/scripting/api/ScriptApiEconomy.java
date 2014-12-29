@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.utils.EconomyUtils;
+import com.jcwhatever.nucleus.utils.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
@@ -91,7 +91,7 @@ public class ScriptApiEconomy extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return EconomyUtils.getBalance(p.getUniqueId());
+            return Economy.getBalance(p.getUniqueId());
         }
 
         /**
@@ -108,7 +108,7 @@ public class ScriptApiEconomy extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return EconomyUtils.deposit(p.getUniqueId(), amount);
+            return Economy.deposit(p.getUniqueId(), amount);
         }
 
         /**
@@ -125,7 +125,7 @@ public class ScriptApiEconomy extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return EconomyUtils.withdraw(p.getUniqueId(), amount);
+            return Economy.withdraw(p.getUniqueId(), amount);
         }
 
         /**
@@ -135,7 +135,7 @@ public class ScriptApiEconomy extends NucleusScriptApi {
          */
         public String formatAmount(double amount) {
 
-            return EconomyUtils.formatAmount(amount);
+            return Economy.formatAmount(amount);
         }
     }
 }

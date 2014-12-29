@@ -39,9 +39,9 @@ import javax.annotation.Nullable;
  * Provides static functions to interface with the installed economy
  * via Vault plugin.
  */
-public final class EconomyUtils {
+public final class Economy {
 
-    private EconomyUtils() {}
+    private Economy() {}
 
     /**
      * Get a players global account.

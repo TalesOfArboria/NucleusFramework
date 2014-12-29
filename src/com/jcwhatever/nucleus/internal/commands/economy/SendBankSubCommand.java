@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.internal.Lang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
-import com.jcwhatever.nucleus.utils.EconomyUtils;
+import com.jcwhatever.nucleus.utils.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -106,13 +106,13 @@ public final class SendBankSubCommand extends AbstractCommand {
         // Get command senders account
         IAccount myAccount;
         if (myBankName.isEmpty()) {
-            myAccount = EconomyUtils.getAccount(player.getUniqueId());
+            myAccount = Economy.getAccount(player.getUniqueId());
             if (myAccount == null) {
                 tellError(sender, Lang.get(_NO_SEND_ACCOUNT));
                 return; //finish
             }
         } else {
-            IBank myBank = EconomyUtils.getBank(myBankName);
+            IBank myBank = Economy.getBank(myBankName);
             if (myBank == null) {
                 tellError(sender, Lang.get(_BANK_NOT_FOUND, myBankName));
                 return; // finish
@@ -129,14 +129,14 @@ public final class SendBankSubCommand extends AbstractCommand {
         // Get receivers account
         IAccount receiverAccount;
         if (bankName.isEmpty()) {
-            receiverAccount = EconomyUtils.getAccount(receiverId);
+            receiverAccount = Economy.getAccount(receiverId);
             if (receiverAccount == null) {
                 tellError(sender, Lang.get(_NO_RECEIVE_ACCOUNT, receiverName));
                 return; // finish
             }
         }
         else {
-            IBank bank = EconomyUtils.getBank(bankName);
+            IBank bank = Economy.getBank(bankName);
             if (bank == null) {
                 tellError(sender, Lang.get(_BANK_NOT_FOUND, myBankName));
                 return; // finish
@@ -157,12 +157,12 @@ public final class SendBankSubCommand extends AbstractCommand {
         }
 
         // transfer money
-        if (!EconomyUtils.transfer(myAccount, receiverAccount, amount)) {
+        if (!Economy.transfer(myAccount, receiverAccount, amount)) {
             tellError(sender, Lang.get(_FAILED));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, EconomyUtils.formatAmount(amount),
+        tellSuccess(sender, Lang.get(_SUCCESS, Economy.formatAmount(amount),
                 receiverName, myAccount.getBalance()));
     }
 }

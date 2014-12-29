@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.internal.Lang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
-import com.jcwhatever.nucleus.utils.EconomyUtils;
+import com.jcwhatever.nucleus.utils.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -82,17 +82,17 @@ public final class BalanceSubCommand extends AbstractCommand {
         }
 
         if (bankName.isEmpty()) {
-            double balance = EconomyUtils.getBalance(playerId);
-            tellSuccess(sender, Lang.get(_GLOBAL_BALANCE, EconomyUtils.formatAmount(balance)));
+            double balance = Economy.getBalance(playerId);
+            tellSuccess(sender, Lang.get(_GLOBAL_BALANCE, Economy.formatAmount(balance)));
         }
         else {
 
-            if (!EconomyUtils.hasBankSupport()) {
+            if (!Economy.hasBankSupport()) {
                 tellError(sender, Lang.get(_NO_BANK_SUPPORT));
                 return; // finish
             }
 
-            IBank bank = EconomyUtils.getBank(bankName);
+            IBank bank = Economy.getBank(bankName);
             if (bank == null) {
                 tellError(sender, Lang.get(_BANK_NOT_FOUND, bankName));
                 return; // finish
@@ -106,7 +106,7 @@ public final class BalanceSubCommand extends AbstractCommand {
             }
 
             tellSuccess(sender, Lang.get(_BANK_BALANCE,
-                    EconomyUtils.formatAmount(account.getBalance()), bank.getName()));
+                    Economy.formatAmount(account.getBalance()), bank.getName()));
         }
     }
 }
