@@ -235,7 +235,9 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
     @Override
     public void removePlayer(Player p) {
-        remove(p);
+        synchronized (_sync) {
+            _players.remove(new PlayerEntry(p));
+        }
     }
 
     @Override
