@@ -35,20 +35,48 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * An inventory for a menu.
  */
 public class MenuInventory implements Inventory {
 
+    private final Map<Integer, MenuItem> _menuItemMap;
     private final Inventory _inventory;
 
-    public MenuInventory(InventoryHolder inventoryHolder, int slots, String title) {
-        _inventory = Bukkit.createInventory(inventoryHolder, slots, title);
+    public MenuInventory(InventoryHolder inventoryHolder, int slots, @Nullable String title) {
+
+        _inventory = title != null
+                ? Bukkit.createInventory(inventoryHolder, slots, title)
+                : Bukkit.createInventory(inventoryHolder, slots);
+
+        _menuItemMap = new HashMap<>(slots);
+
     }
 
+    /**
+     * Add a menu item to the {@code MenuInventory}.
+     *
+     * @param menuItem  The menu item to add.
+     */
     public void addMenuItem(MenuItem menuItem) {
+        _inventory.setItem(menuItem.getSlot(), menuItem);
 
+        _menuItemMap.put(menuItem.getSlot(), menuItem);
+    }
+
+    /**
+     * Get the menu item assigned to the specified slot.
+     *
+     * @param slot  The slot.
+     *
+     * @return  Null if no menu item assigned.
+     */
+    @Nullable
+    public MenuItem getMenuItem(int slot) {
+        return _menuItemMap.get(slot);
     }
 
     @Override
@@ -78,13 +106,39 @@ public class MenuInventory implements Inventory {
 
     @Override
     public void setItem(int index, ItemStack itemStack) {
+
+        if (itemStack instanceof MenuItem) {
+            MenuItem menuItem = (MenuItem)itemStack;
+            _menuItemMap.put(index, menuItem);
+        }
+        else {
+            _menuItemMap.remove(index);
+        }
+
         _inventory.setItem(index, itemStack);
     }
 
     @Override
     public HashMap<Integer, ItemStack> addItem(ItemStack... itemStacks)
             throws IllegalArgumentException {
-        return _inventory.addItem(itemStacks);
+
+        HashMap<Integer, ItemStack> unstorable = new HashMap<>(itemStacks.length);
+
+        for (int i=0; i < itemStacks.length; i++) {
+
+            ItemStack itemStack = itemStacks[i];
+
+            if (itemStack instanceof MenuItem) {
+                MenuItem menuItem = (MenuItem)itemStack;
+
+                setItem(menuItem.getSlot(), menuItem);
+            }
+            else {
+                unstorable.put(i, itemStack);
+            }
+        }
+
+        return unstorable;
     }
 
     @Override
@@ -100,6 +154,21 @@ public class MenuInventory implements Inventory {
 
     @Override
     public void setContents(ItemStack[] itemStacks) throws IllegalArgumentException {
+
+        _menuItemMap.clear();
+
+        for (int i=0; i < itemStacks.length; i++) {
+            ItemStack itemStack = itemStacks[i];
+
+            if (itemStack == null || itemStack.getType() == Material.AIR)
+                continue;
+
+            if (itemStack instanceof MenuItem) {
+                MenuItem menuItem = (MenuItem)itemStack;
+                _menuItemMap.put(i, menuItem);
+            }
+        }
+
         _inventory.setContents(itemStacks);
     }
 
