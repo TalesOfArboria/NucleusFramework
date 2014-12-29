@@ -28,8 +28,8 @@ import com.jcwhatever.nucleus.internal.Msg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.views.IViewFactory;
-import com.jcwhatever.nucleus.views.IViewFactoryStorage;
+import com.jcwhatever.nucleus.views.factory.IViewFactory;
+import com.jcwhatever.nucleus.views.factory.IViewFactoryStorage;
 
 import org.bukkit.plugin.Plugin;
 

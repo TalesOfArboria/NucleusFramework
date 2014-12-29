@@ -28,10 +28,10 @@ package com.jcwhatever.nucleus.scripting;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.scripting.api.IScriptApi;
-import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.ScriptUtils.IScriptFactory;
+import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 
 import org.bukkit.plugin.Plugin;
 

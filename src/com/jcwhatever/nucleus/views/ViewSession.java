@@ -25,16 +25,13 @@
 package com.jcwhatever.nucleus.views;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
-import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
-import com.jcwhatever.nucleus.views.data.ViewCloseReason;
-import com.jcwhatever.nucleus.views.data.ViewOpenReason;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -49,7 +46,7 @@ import javax.annotation.Nullable;
  * A session that tracks and provides session context data
  * to view instances.
  */
-public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReference, IDisposable {
+public final class ViewSession implements IMeta, Iterable<View>, IPlayerReference, IDisposable {
 
     private static final Map<UUID, ViewSession> _sessionMap = new PlayerMap<>(Nucleus.getPlugin());
 
@@ -137,7 +134,7 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
      * @return  Null if the player is not looking at any views in the session.
      */
     @Nullable
-    public IView getCurrentView() {
+    public View getCurrentView() {
         if (_current == null)
             return null;
 
@@ -150,7 +147,7 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
      * @return  Null if the current view is the first view.
      */
     @Nullable
-    public IView getPrevView() {
+    public View getPrevView() {
         if (_current == null || _current.prev == null)
             return null;
 
@@ -163,7 +160,7 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
      * @return  Null if the current view is the last view.
      */
     @Nullable
-    public IView getNextView() {
+    public View getNextView() {
         if (_current == null || _current.next == null)
             return null;
 
@@ -176,7 +173,7 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
      * @return Null if there are no views.
      */
     @Nullable
-    public IView getFirstView() {
+    public View getFirstView() {
 
         if (_current == null)
             return null;
@@ -196,7 +193,7 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
      * @return Null if there are no views.
      */
     @Nullable
-    public IView getLastView() {
+    public View getLastView() {
 
         if (_current == null)
             return null;
@@ -256,29 +253,16 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
     /**
      * Show the next view.
      *
-     * @param factory    The factory that will create the next view.
-     * @param arguments  Arguments the previous view can pass to the next view.
+     * @param view    The factory that will create the next view.
      *
      * @return The newly created and displayed view.
      */
-    public void next(IViewFactory factory, ViewArguments arguments) {
-        next(null, factory, arguments);
-    }
+    public void next(View view) {
+        PreCon.notNull(view);
 
-    /**
-     * Show the next view.
-     *
-     * @param title      Optional view title. Not all views have customizable titles.
-     * @param factory    The factory that will create the next view.
-     * @param arguments  Arguments the previous view can pass to the next view.
-     *
-     * @return The newly created and displayed view.
-     */
-    public void next(@Nullable String title, IViewFactory factory, ViewArguments arguments) {
+        view.setViewSession(this);
 
         if (_current == null) {
-
-            IView view = factory.create(title, this, arguments);
 
             _first = new ViewContainer(view, null, null);
             _current = _first;
@@ -295,11 +279,10 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
             final ViewContainer prev = _current;
             //IView prevView = _current.view;
 
-            IView currentView = factory.create(title, this, arguments);
-            final ViewContainer current = new ViewContainer(currentView, prev, null);
+            final ViewContainer current = new ViewContainer(view, prev, null);
             prev.next = current;
 
-            Scheduler.runTaskLater(currentView.getPlugin(), new Runnable() {
+            Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
                     prev.view.close(ViewCloseReason.NEXT); // ViewEventListener will open next
@@ -309,6 +292,24 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
             });
 
         }
+    }
+
+    /**
+     * Close and re-open the current view.
+     */
+    public void refresh() {
+
+        final View view = getCurrentView();
+        if (view == null)
+            return;
+
+        view.close(ViewCloseReason.REFRESH);
+        Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                view.open(ViewOpenReason.REFRESH);
+            }
+        });
     }
 
     @Override
@@ -356,8 +357,8 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
     }
 
     @Override
-    public Iterator<IView> iterator() {
-        return new Iterator<IView>() {
+    public Iterator<View> iterator() {
+        return new Iterator<View>() {
 
             ViewContainer _current = _first;
 
@@ -367,7 +368,7 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
             }
 
             @Override
-            public IView next() {
+            public View next() {
                 _current = _current.next;
                 return _current.view;
             }
@@ -380,11 +381,11 @@ public final class ViewSession implements IMeta, Iterable<IView>, IPlayerReferen
     }
 
     protected static class ViewContainer {
-        final IView view;
+        final View view;
         final ViewContainer prev;
         ViewContainer next;
 
-        protected ViewContainer(IView view, @Nullable ViewContainer prev,
+        protected ViewContainer(View view, @Nullable ViewContainer prev,
                                 @Nullable ViewContainer next) {
             this.view = view;
             this.prev = prev;

@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.storage.settings.ISettable;
 import com.jcwhatever.nucleus.storage.settings.ISettingsManager;
-import com.jcwhatever.nucleus.views.IViewFactory;
+import com.jcwhatever.nucleus.views.factory.IViewFactory;
 
 /**
  * Represents a type that triggers a view

@@ -24,47 +24,36 @@
 
 package com.jcwhatever.nucleus.views;
 
+import com.jcwhatever.nucleus.mixins.IPlayerReference;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
-import com.jcwhatever.nucleus.views.data.ViewCloseReason;
-import com.jcwhatever.nucleus.views.data.ViewOpenReason;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of an {@link IView}.
+ * Abstract implementation of a view.
  */
-public abstract class View implements IView {
+public abstract class View implements IPluginOwned, IPlayerReference {
 
-    private final ViewSession _session;
-    private final IViewFactory _factory;
-    private final ViewArguments _meta;
+    private final Plugin _plugin;
+    private ViewSession _session;
 
-    private String _title;
     private ViewCloseReason _recentCloseReason = ViewCloseReason.ESCAPE;
 
     /**
      * Constructor.
-     *
-     * @param title      The optional title to use. Not all views can have a title set.
-     * @param session    The view session the view is part of.
-     * @param factory    The view factory that instantiated the view.
-     * @param arguments  Meta arguments for the view.
      */
-    protected View(@Nullable String title, ViewSession session,
-                   IViewFactory factory, ViewArguments arguments) {
-        PreCon.notNull(session);
-        PreCon.notNull(factory);
-        PreCon.notNull(arguments);
+    protected View(Plugin plugin) {
+        PreCon.notNull(plugin);
 
-        _title = title;
-        _session = session;
-        _factory = factory;
-        _meta = arguments;
+        _plugin = plugin;
     }
 
     /**
@@ -72,7 +61,7 @@ public abstract class View implements IView {
      */
     @Override
     public Plugin getPlugin() {
-        return _factory.getPlugin();
+        return _plugin;
     }
 
     /**
@@ -84,38 +73,63 @@ public abstract class View implements IView {
     }
 
     /**
-     * Get the title of the view.
-     *
-     * @return  Null if not set.
+     * Get the view inventory type.
      */
-    @Nullable
-    @Override
-    public String getTitle() {
-        return _title;
-    }
+    public abstract InventoryType getInventoryType();
 
     /**
      * Get the views {@code ViewSession}.
      */
-    @Override
     public ViewSession getViewSession() {
         return _session;
     }
 
     /**
-     * Get the factory that instantiated the view.
+     * Get the view instances Bukkit {@code InventoryView}.
+     *
+     * @return Null if the view has not been shown yet or
+     * does not have an {@code InventoryView}.
      */
-    @Override
-    public IViewFactory getFactory() {
-        return _factory;
+    @Nullable
+    public abstract InventoryView getInventoryView();
+
+    /**
+     * Get the view instances Bukkit {@code Inventory}.
+     *
+     * @return Null if the inventory has been set yet or
+     * the view does not have an inventory.
+     */
+    @Nullable
+    public abstract Inventory getInventory();
+
+    /**
+     * Determine if the view is capable of generating an
+     * {@code InventoryView} instance.
+     *
+     * <p>The result is not affected by whether or not the inventory
+     * view has been shown yet.</p>
+     */
+    public abstract boolean isInventoryViewable();
+
+    /**
+     * Get the most reason the view was closed.
+     *
+     * <p>Used by {@code ViewEventListener} to determine how
+     * to handle the {@code InventoryCloseEvent}.</p>
+     */
+    public ViewCloseReason getCloseReason() {
+        return _recentCloseReason;
     }
 
     /**
-     * Get the arguments that were passed into the view.
+     * Reset the close reason back to {@code ESCAPE}.
+     *
+     * <p>Used by {@code ViewEventListener} to reset
+     * the views close reason after handling its
+     * {@code InventoryCloseEvent}.</p>
      */
-    @Override
-    public ViewArguments getArguments() {
-        return _meta;
+    public void resetCloseReason() {
+        _recentCloseReason = ViewCloseReason.ESCAPE;
     }
 
     /**
@@ -128,8 +142,7 @@ public abstract class View implements IView {
      *
      * @return  True if successful.
      */
-    @Override
-    public boolean open(final ViewOpenReason reason) {
+    boolean open(final ViewOpenReason reason) {
         PreCon.notNull(reason);
 
         Scheduler.runTaskLater(getPlugin(), new Runnable() {
@@ -152,8 +165,7 @@ public abstract class View implements IView {
      *
      * @return  True if successful.
      */
-    @Override
-    public boolean close(ViewCloseReason reason) {
+    boolean close(ViewCloseReason reason) {
         PreCon.notNull(reason);
 
         if (_session.getCurrentView() != this)
@@ -170,35 +182,15 @@ public abstract class View implements IView {
     }
 
     /**
-     * Get the most reason the view was closed.
-     *
-     * <p>Used by {@code ViewEventListener} to determine how
-     * to handle the {@code InventoryCloseEvent}.</p>
+     * Set the view session.
      */
-    @Override
-    public ViewCloseReason getCloseReason() {
-        return _recentCloseReason;
-    }
+    void setViewSession(ViewSession session) {
+        PreCon.notNull(session);
 
-    /**
-     * Reset the close reason back to {@code ESCAPE}.
-     *
-     * <p>Used by {@code ViewEventListener} to reset
-     * the views close reason after handling its
-     * {@code InventoryCloseEvent}.</p>
-     */
-    @Override
-    public void resetCloseReason() {
-        _recentCloseReason = ViewCloseReason.ESCAPE;
-    }
+        if (_session != null && _session != session)
+            throw new RuntimeException("A view instance can only be used for a single view session.");
 
-    /**
-     * Sets the views title.
-     *
-     * @param title  The title text.
-     */
-    protected void setTitle(@Nullable String title) {
-        _title = title;
+        _session = session;
     }
 
     /**

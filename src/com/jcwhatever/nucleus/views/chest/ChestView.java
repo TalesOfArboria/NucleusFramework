@@ -24,18 +24,16 @@
 
 package com.jcwhatever.nucleus.views.chest;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.views.IViewFactory;
+import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
 import com.jcwhatever.nucleus.views.View;
-import com.jcwhatever.nucleus.views.ViewSession;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
-import com.jcwhatever.nucleus.views.data.ViewCloseReason;
-import com.jcwhatever.nucleus.views.data.ViewOpenReason;
+import com.jcwhatever.nucleus.views.ViewCloseReason;
+import com.jcwhatever.nucleus.views.ViewOpenReason;
 
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
@@ -54,22 +52,34 @@ public abstract class ChestView extends View {
     /**
      * Constructor.
      *
-     * @param title      The title of the inventory.
-     * @param session    The player view session.
-     * @param factory    The factory that created the view instance.
-     * @param arguments  The view meta arguments.
+     * @param plugin     The owning plugin.
      * @param comparer   The item stack comparer.
      */
-    protected ChestView(@Nullable String title, ViewSession session,
-                        IViewFactory factory, ViewArguments arguments,
-                        @Nullable ItemStackComparer comparer) {
-        super(title, session, factory, arguments);
+    protected ChestView(Plugin plugin, @Nullable ItemStackComparer comparer) {
+        this(plugin, null, comparer);
+    }
 
+    /**
+     * Constructor.
+     *
+     * @param plugin     The owning plugin.
+     * @param inventory  The inventory.
+     * @param comparer   The item stack comparer.
+     */
+    protected ChestView(Plugin plugin, @Nullable Inventory inventory, @Nullable ItemStackComparer comparer) {
+        super(plugin);
+
+        _inventory = inventory;
         _comparer = comparer;
 
         if (_comparer == null)
             _comparer = ItemStackComparer.getDefault();
     }
+
+    /**
+     * Get the inventory view title.
+     */
+    public abstract String getTitle();
 
     /**
      * Get the views {@code ItemStackComparer}.
@@ -104,9 +114,12 @@ public abstract class ChestView extends View {
     protected final boolean openView(ViewOpenReason reason) {
         ChestEventListener.register(this);
 
-        onPreShow(reason);
+        if (!onPreShow(reason))
+            return false;
 
-        _inventory = createInventory();
+        if (_inventory == null)
+            _inventory = createInventory();
+
         if (_inventory.getType() != getInventoryType())
             throw new RuntimeException("Incorrect inventory type.");
 
@@ -118,18 +131,12 @@ public abstract class ChestView extends View {
     }
 
     @Override
-    public final boolean close(ViewCloseReason reason) {
+    protected void onClose(ViewCloseReason reason) {
         PreCon.notNull(reason);
 
-        if (super.close(reason)) {
-
-            if (reason != ViewCloseReason.REFRESH) {
-                ChestEventListener.unregister(this);
-            }
-            return true;
+        if (reason != ViewCloseReason.REFRESH) {
+            ChestEventListener.unregister(this);
         }
-
-        return false;
     }
 
     /**
@@ -137,8 +144,10 @@ public abstract class ChestView extends View {
      * is created.
      *
      * @param reason  The reason the view is being opened.
+     *
+     * @return True to allow showing the view.
      */
-    protected void onPreShow(ViewOpenReason reason) {}
+    protected boolean onPreShow(ViewOpenReason reason) { return true; }
 
     /**
      * Called after the view is opened.
@@ -149,7 +158,8 @@ public abstract class ChestView extends View {
 
     /**
      * Called to get an {@code Inventory} instance used to
-     * open an inventory view to the player.
+     * open an inventory view to the player. Only called
+     * if the {@code Inventory} is not set in the constructor.
      */
     protected abstract Inventory createInventory();
 

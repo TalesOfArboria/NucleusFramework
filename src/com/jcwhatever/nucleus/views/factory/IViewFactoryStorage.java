@@ -22,35 +22,23 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.views.menu;
+package com.jcwhatever.nucleus.views.factory;
 
-import com.jcwhatever.nucleus.mixins.INamedInsensitive;
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import javax.annotation.Nullable;
 
 /**
- * An implementation of {@link MenuItem} that is named.
+ * Represents a type that stores {@code IViewFactory} instances.
  */
-public class NamedMenuItem extends MenuItem implements INamedInsensitive {
+public interface IViewFactoryStorage extends IPluginOwned {
 
-    private final String _name;
-    private final String _searchName;
-
-    public NamedMenuItem(String name, int slot) {
-        super(slot);
-
-        PreCon.notNullOrEmpty(name);
-
-        _name = name;
-        _searchName = name.toLowerCase();
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    @Override
-    public String getSearchName() {
-        return _searchName;
-    }
+    /**
+     * Get a view factory by name.
+     *
+     * @param name  The name of the factory.
+     *
+     * @return  Null if not found.
+     */
+    @Nullable
+    public IViewFactory getViewFactory(String name);
 }

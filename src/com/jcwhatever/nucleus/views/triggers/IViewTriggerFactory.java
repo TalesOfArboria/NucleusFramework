@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.views.triggers;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.views.IViewFactory;
+import com.jcwhatever.nucleus.views.factory.IViewFactory;
 
 import org.bukkit.plugin.Plugin;
 

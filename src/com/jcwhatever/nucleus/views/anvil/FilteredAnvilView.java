@@ -24,11 +24,27 @@
 
 package com.jcwhatever.nucleus.views.anvil;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
+import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
+import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
+import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
-import com.jcwhatever.nucleus.views.IViewFactory;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewSession;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
+import com.jcwhatever.nucleus.views.ViewCloseReason;
+import com.jcwhatever.nucleus.views.ViewOpenReason;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
@@ -36,18 +52,96 @@ import javax.annotation.Nullable;
  */
 public class FilteredAnvilView extends AnvilView {
 
+    @Localizable static final String _NOT_REPAIRABLE = "{RED}Not repairable here.";
+
+    private static EventListener _eventListener;
+    private static Map<Entity, ViewSession> _anvilMap = new WeakHashMap<>(20);
+
     private final ItemFilterManager _filterManager;
 
-    protected FilteredAnvilView(@Nullable String title, ViewSession session,
-                                IViewFactory factory, ViewArguments arguments,
-                                @Nullable ItemFilterManager filterManager) {
-        super(title, session, factory, arguments);
+    /**
+     * Constructor.
+     *
+     * @param plugin         The owning plugin.
+     * @param filterManager  The item filter manager.
+     */
+    protected FilteredAnvilView(Plugin plugin, @Nullable ItemFilterManager filterManager) {
+        super(plugin);
 
         _filterManager = filterManager;
+
+        if (_eventListener == null) {
+            _eventListener = new EventListener(Nucleus.getPlugin());
+            Nucleus.getEventManager().register(_eventListener);
+        }
     }
 
     @Nullable
     public ItemFilterManager getFilterManager() {
         return _filterManager;
+    }
+
+    @Override
+    protected boolean openView(ViewOpenReason reason) {
+        if (super.openView(reason)) {
+            _anvilMap.put(getPlayer(), getViewSession());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onClose(ViewCloseReason reason) {
+        super.onClose(reason);
+
+        _anvilMap.remove(getPlayer());
+    }
+
+    /**
+     * Anvil event listener.
+     */
+    static class EventListener extends NucleusEventListener {
+
+        public EventListener(Plugin plugin) {
+            super(plugin);
+        }
+
+        private void onAnvilItemRepair(AnvilItemRepairEvent event) {
+            check(event.getPlayer(), event.getItem());
+        }
+
+        private void onAnvilItemRename(AnvilItemRenameEvent event) {
+            check(event.getPlayer(), event.getItem());
+        }
+
+        private void check(Player p, ItemStack repaired) {
+
+            ViewSession session = _anvilMap.get(p);
+            if (session == null)
+                return;
+
+            View current = session.getCurrentView();
+            if (current == null)
+                return;
+
+            if (!(current instanceof FilteredAnvilView))
+                return;
+
+            FilteredAnvilView view = (FilteredAnvilView)current;
+
+            ItemFilterManager filter = view.getFilterManager();
+            if (filter == null)
+                return;
+
+            if (!filter.isValidItem(repaired)) {
+                InventoryView invView = current.getInventoryView();
+                if (invView != null) {
+                    ItemStack stack = repaired.clone();
+                    ItemStackUtils.setLore(stack, Lang.get(_NOT_REPAIRABLE));
+                    invView.setItem(0, stack);
+                }
+            }
+        }
+
     }
 }

@@ -22,28 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.views.data;
-
-import com.jcwhatever.nucleus.utils.MetaKey;
+package com.jcwhatever.nucleus.views;
 
 /**
- * A meta data container used to distribute the
- * results of a view instance.
+ * Specifies the reason a view is closed.
  */
-public class ViewResults extends ViewArguments {
+public enum ViewCloseReason {
 
-    public ViewResults(ViewResult ... results) {
-        super(results);
-    }
+    /**
+     * The player pressed escape and caused the view to close.
+     *
+     * <p>Because this can't be directly detected, this should be
+     * the default value in views.</p>
+     */
+    ESCAPE,
 
-    public ViewResults(ViewArguments merge, ViewResult ... results) {
-        super(merge, results);
-    }
+    /**
+     * The view was called upon to close so the previous
+     * view can be shown.
+     */
+    PREV,
 
-    public static class ViewResult extends ViewArgument {
+    /**
+     * The view was called upon to close so the next view
+     * can be shown.
+     */
+    NEXT,
 
-        public <T> ViewResult(MetaKey<T> key, T value) {
-            super(key, value);
-        }
-    }
+    /**
+     * The view was called upon to close so it can re-open.
+     */
+    REFRESH
 }

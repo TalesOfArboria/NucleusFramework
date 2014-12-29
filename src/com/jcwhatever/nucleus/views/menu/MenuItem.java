@@ -24,11 +24,12 @@
 
 package com.jcwhatever.nucleus.views.menu;
 
-import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IMeta;
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameResult;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -44,26 +45,20 @@ import javax.annotation.Nullable;
 /**
  * Represents an item in a {@code MenuView}.
  */
-public class MenuItem implements IMeta, ICancellable {
+public class MenuItem extends ItemStack implements IMeta {
 
     private final int _slot;
-
-    private Map<Object, Object> _metaMap;
+    private Map<Object, Object> _meta;
     private List<Runnable> _onClick;
-    private String _title;
-    private String _description;
-    private ItemStack _baseItemStack;
-    private ItemStack _menuItemStack;
 
-    private boolean _isCancelled;
+    public MenuItem(int slot, ItemStack itemStack,
+                         @Nullable Map<Object, Object> meta,
+                         @Nullable List<Runnable> onClick) {
+        super(itemStack);
 
-    /**
-     * Constructor.
-     *
-     * @param slot  The inventory slot index the item is assigned to.
-     */
-    public MenuItem(int slot) {
         _slot = slot;
+        _meta = meta;
+        _onClick = onClick;
     }
 
     /**
@@ -76,91 +71,65 @@ public class MenuItem implements IMeta, ICancellable {
 
     /**
      * Get the menu item title.
-     *
+     * <p/>
      * <p>This is used as the item stacks display name.</p>
      *
-     * @return  Null if not set.
+     * @return Null if not set.
      */
     @Nullable
     public String getTitle() {
-        return _title;
+        return ItemStackUtils.getDisplayName(this, DisplayNameResult.OPTIONAL);
     }
 
     /**
      * Get the menu item description.
-     *
+     * <p/>
      * <p>This is used as the item stacks lore.</p>
      */
     @Nullable
     public String getDescription() {
-        return _description;
-    }
+        List<String> lore = ItemStackUtils.getLore(this);
+        if (lore == null || lore.isEmpty())
+            return null;
 
-    /**
-     * Get the item stack used for the menu inventory.
-     */
-    public ItemStack getItemStack() {
-        if (_menuItemStack == null) {
-            _menuItemStack = generateItemStack(_baseItemStack);
-        }
-        return _menuItemStack;
+        return lore.get(0);
     }
 
     /**
      * Set the menu item title.
-     *
+     * <p/>
      * <p>This is used for the item stacks display name.</p>
      *
-     * @param title  The menu item title.
-     *
-     * @return  Self for chaining.
+     * @param title The menu item title.
      */
-    public MenuItem setTitle(@Nullable String title) {
-        _title = title;
-        _menuItemStack = null;
-
-        return this;
+    public void setTitle(@Nullable String title) {
+        ItemStackUtils.setDisplayName(this, title);
     }
 
     /**
      * Set the menu item description.
-     *
-     * <p>This is used for the item stacks lore.</p>
-     *
-     * @param description  The menu item description.
-     *
-     * @return  Self for chaining.
      */
-    public MenuItem setDescription(@Nullable String description) {
-        _description = description;
-        _menuItemStack = null;
+    public void setDescription(@Nullable String description) {
 
-        return this;
-    }
+        List<String> lore = ItemStackUtils.getLore(this);
+        lore = lore == null
+                ? new ArrayList<String>(1)
+                : new ArrayList<>(lore);
 
-    /**
-     * Set the item stack to use.
-     *
-     * @param itemStack  The item stack.
-     *
-     * @return  Self for chaining.
-     */
-    public MenuItem setItemStack(ItemStack itemStack) {
-        PreCon.notNull(itemStack);
+        if (lore.isEmpty())
+            lore.add(description);
+        else
+            lore.set(0, description);
 
-        _baseItemStack = itemStack;
-        _menuItemStack = null;
-
-        return this;
+        ItemStackUtils.setLore(this, lore);
     }
 
     /**
      * Set the item into the inventory of the
      * specified menu view.
      *
-     * @param menuView  The menu view.
-     *
-     * @return  True if successful.
+     * @param menuView The menu view.
+     * @return True if successful.
      */
     public boolean set(MenuView menuView) {
         PreCon.notNull(menuView);
@@ -169,7 +138,7 @@ public class MenuItem implements IMeta, ICancellable {
         if (inventory == null)
             return false;
 
-        inventory.setItem(_slot, getItemStack());
+        inventory.setItem(_slot, this);
 
         return true;
     }
@@ -178,7 +147,7 @@ public class MenuItem implements IMeta, ICancellable {
      * Determine if the menu item is set in the
      * specified menu view.
      *
-     * @param menuView  The menu view.
+     * @param menuView The menu view.
      */
     public boolean isVisible(MenuView menuView) {
         PreCon.notNull(menuView);
@@ -189,14 +158,14 @@ public class MenuItem implements IMeta, ICancellable {
 
         ItemStack itemStack = inventory.getItem(_slot);
 
-        return menuView.getItemStackComparer().isSame(itemStack, getItemStack());
+        return menuView.getItemStackComparer().isSame(itemStack, this);
     }
 
     /**
      * Set the items visibility in the specified menu view.
      *
-     * @param menuView   The menu view.
-     * @param isVisible  True to set, False to remove.
+     * @param menuView  The menu view.
+     * @param isVisible True to set, False to remove.
      */
     public void setVisible(MenuView menuView, boolean isVisible) {
         PreCon.notNull(menuView);
@@ -207,15 +176,13 @@ public class MenuItem implements IMeta, ICancellable {
 
         if (isVisible) {
             set(menuView);
-        }
-        else {
+        } else {
 
             InventoryView view = menuView.getInventoryView();
 
             if (view != null) {
                 view.setItem(_slot, new ItemStack(Material.AIR));
-            }
-            else {
+            } else {
                 throw new AssertionError();
             }
         }
@@ -227,20 +194,20 @@ public class MenuItem implements IMeta, ICancellable {
      */
     public List<Runnable> getOnClick() {
         if (_onClick == null)
-            return new ArrayList<>(0);
+            return CollectionUtils.unmodifiableList();
 
-        return new ArrayList<>(_onClick);
+        return CollectionUtils.unmodifiableList(_onClick);
     }
 
     /**
      * Add a callback to be run when the menu item is
      * selected.
      *
-     * @param runnable  The callback to add.
+     * @param runnable The callback to add.
      */
     public void onClick(Runnable runnable) {
         if (_onClick == null)
-            _onClick = new ArrayList<>(5);
+            _onClick = new ArrayList<>(3);
 
         _onClick.add(runnable);
     }
@@ -248,9 +215,8 @@ public class MenuItem implements IMeta, ICancellable {
     /**
      * Remove a click event callback from the menu item.
      *
-     * @param runnable  The callback to remove.
-     *
-     * @return  True if found and removed.
+     * @param runnable The callback to remove.
+     * @return True if found and removed.
      */
     public boolean removeOnClick(Runnable runnable) {
         return _onClick != null &&
@@ -260,11 +226,9 @@ public class MenuItem implements IMeta, ICancellable {
     /**
      * Get a meta value from the menu items meta store.
      *
-     * @param key  The meta key.
-     *
-     * @param <T>  The meta value type.
-     *
-     * @return  Null if not found.
+     * @param key The meta key.
+     * @param <T> The meta value type.
+     * @return Null if not found.
      */
     @Nullable
     @Override
@@ -272,7 +236,7 @@ public class MenuItem implements IMeta, ICancellable {
         PreCon.notNull(key);
 
         @SuppressWarnings("unchecked")
-        T value = (T)getMetaMap().get(key);
+        T value = (T) getMetaMap().get(key);
 
         return value;
     }
@@ -280,9 +244,8 @@ public class MenuItem implements IMeta, ICancellable {
     /**
      * Get a meta value from the menu items meta store.
      *
-     * @param key  The meta key.
-     *
-     * @return  Null if not found.
+     * @param key The meta key.
+     * @return Null if not found.
      */
     @Nullable
     @Override
@@ -295,10 +258,9 @@ public class MenuItem implements IMeta, ICancellable {
     /**
      * Set a meta value in the menu items meta store.
      *
-     * @param key    The meta key.
-     * @param value  The meta value.
-     *
-     * @param <T>  The meta value type.
+     * @param key   The meta key.
+     * @param value The meta value.
+     * @param <T>   The meta value type.
      */
     @Override
     public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
@@ -310,48 +272,19 @@ public class MenuItem implements IMeta, ICancellable {
             getMetaMap().put(key, value);
     }
 
-    /**
-     * Determine if the menu item click event is cancelled.
-     */
     @Override
-    public boolean isCancelled() {
-        return _isCancelled;
-    }
+    public MenuItem clone() {
+        ItemStack cloneStack = super.clone();
 
-    /**
-     * Set the cancelled state of the menu item.
-     *
-     * @param isCancelled  True to cancel click event.
-     */
-    @Override
-    public void setCancelled(boolean isCancelled) {
-        _isCancelled = isCancelled;
-    }
-
-    /**
-     * Called to generate an item stack from the base
-     * item stack and set properties such as title and
-     * description on the new item stack.
-     */
-    protected ItemStack generateItemStack(ItemStack baseItemStack) {
-        if (baseItemStack == null)
-            baseItemStack = new ItemStack(Material.WOOD);
-
-        _menuItemStack = baseItemStack.clone();
-
-        if (_title != null)
-            ItemStackUtils.setDisplayName(_menuItemStack, _title);
-
-        if (_description != null)
-            ItemStackUtils.setLore(_menuItemStack, _description);
-
-        return _menuItemStack;
+        return new MenuItem(_slot, cloneStack,
+                _meta != null ? new HashMap<>(_meta) : null,
+                _onClick != null ? new ArrayList<>(_onClick) : null);
     }
 
     // get the meta map and instantiate if not already instantiated.
     private Map<Object, Object> getMetaMap() {
-        if (_metaMap == null)
-            _metaMap = new HashMap<Object, Object>(10);
-        return _metaMap;
+        if (_meta == null)
+            _meta = new HashMap<Object, Object>(10);
+        return _meta;
     }
 }

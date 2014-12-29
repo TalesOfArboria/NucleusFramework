@@ -22,43 +22,22 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.views.anvil;
+package com.jcwhatever.nucleus.views.factory;
 
-import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.views.IView;
-import com.jcwhatever.nucleus.views.ViewFactory;
-import com.jcwhatever.nucleus.views.ViewSession;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
-
-import org.bukkit.plugin.Plugin;
-
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.views.View;
+import com.sun.istack.internal.Nullable;
 
 /**
- * Generates {@link AnvilView} instances.
+ * A factory used to dynamically generate a view.
  */
-public class AnvilViewFactory extends ViewFactory {
+public interface IViewFactory extends IPluginOwned, INamedInsensitive {
 
     /**
-     * Constructor.
+     * Create a new view instance.
      *
-     * @param plugin  The owning plugin.
-     * @param name    The name of the factory instance.
+     * @param owner  The object instance that is creating the view.
      */
-    public AnvilViewFactory(Plugin plugin, String name) {
-        super(plugin, name);
-    }
-
-    @Override
-    public IView create(@Nullable String title, ViewSession session, ViewArguments arguments) {
-        PreCon.notNull(session);
-        PreCon.notNull(arguments);
-
-        return new AnvilView(title, session, this, arguments);
-    }
-
-    @Override
-    protected void onDispose() {
-        // do nothing
-    }
+    View create(@Nullable Object owner);
 }

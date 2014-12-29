@@ -24,20 +24,18 @@
 
 package com.jcwhatever.nucleus.views.menu;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
 import com.jcwhatever.nucleus.mixins.IPaginator;
-import com.jcwhatever.nucleus.views.IViewFactory;
+import com.jcwhatever.nucleus.mixins.IPaginator.PageStartIndex;
+import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.views.View;
+import com.jcwhatever.nucleus.views.ViewCloseReason;
+import com.jcwhatever.nucleus.views.ViewOpenReason;
 import com.jcwhatever.nucleus.views.ViewSession;
-import com.jcwhatever.nucleus.views.data.ViewArgumentKey;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
-import com.jcwhatever.nucleus.views.data.ViewCloseReason;
-import com.jcwhatever.nucleus.views.data.ViewOpenReason;
-import com.jcwhatever.nucleus.views.data.ViewResultKey;
-import com.jcwhatever.nucleus.views.data.ViewResults;
-import com.jcwhatever.nucleus.views.data.ViewResults.ViewResult;
 
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,76 +44,87 @@ import javax.annotation.Nullable;
 /**
  * A basic paginator view.
  *
- * <p>The paginator view provides a selection interface for an {@link com.jcwhatever.nucleus.mixins.IPaginator}
- * instance. The paginator will also open up the next view once the player has selected a
- * page.</p>
- *
- * <p>The next view can then get the {@link com.jcwhatever.nucleus.mixins.IPaginator} instance from the paginator view
- * (by finding the previous view from the view session) and determine which page in the
- * paginator to use by retrieving the {@code PaginatorView.SELECTED_PAGE} meta value from
- * the view results.</p>
+ * <p>The paginator view provides a selection interface for an
+ * {@link com.jcwhatever.nucleus.mixins.IPaginator} instance. When a page
+ * is selected the view is closed and the result can be retrieved using the
+ * {@code #getSelectedPage} method.</p>
  */
 public class PaginatorView extends MenuView {
 
-    // ARGUMENT KEYS
+    private static final MetaKey<Integer>
+            SELECTED_PAGE = new MetaKey<>(Integer.class);
+
 
     /**
-     * Argument meta key for the {@code IPaginator} instance that the
-     * paginator view will represent and pass on to the next view.
+     * Show the paginator view if the specified paginator has more than 1 page.
+     * Otherwise show the next page.
+     *
+     * <p>If the paginator view is shown, selecting a page will cause the next view
+     * to open.</p>
+     *
+     * @param viewSession  The view session.
+     * @param nextView     The next view to show.
+     * @param paginator    The paginator.
+     * @param comparer     The {@code ItemStack} comparer.
      */
-    public static final ViewArgumentKey<IPaginator>
-            PAGINATOR = new ViewArgumentKey<>(IPaginator.class);
+    public static void paginateNext(ViewSession viewSession,
+                                    View nextView,
+                                    IPaginator paginator, @Nullable ItemStackComparer comparer) {
 
-    /**
-     * Argument meta key for the {@code IViewFactory} instance to will
-     * create the next view instance after the player selects a page.
-     */
-    public static final ViewArgumentKey<IViewFactory>
-            NEXT_VIEW = new ViewArgumentKey<>(IViewFactory.class);
+        if (paginator.getTotalPages() > 1) {
 
-    // RESULT KEYS
+            viewSession.next(new PaginatorView(nextView.getPlugin(), paginator, nextView, comparer));
 
-    /**
-     * Result meta key to indicate the page the player selected. It is the
-     * responsibility of the next view instance opened to read the value
-     * from the paginator views results.
-     */
-    public static final ViewResultKey<Integer>
-            SELECTED_PAGE = new ViewResultKey<>(Integer.class);
+        }
+        else {
+            viewSession.next(nextView);
+        }
+    }
 
     private final IPaginator _paginator;
-    private final IViewFactory _nextView;
-    private ViewResults _results;
+    private final View _nextView;
+
+    private int _selectedPage = 1;
+
+
 
     /**
      * Constructor.
      *
-     * @param title      The view title.
-     * @param session    The player view session.
-     * @param factory    The view factory that created the paginator.
-     * @param arguments  The view arguments.
      * @param comparer   The item stack comparer.
      */
-    public PaginatorView(@Nullable String title, ViewSession session,
-                         IViewFactory factory, ViewArguments arguments,
+    public PaginatorView(Plugin plugin, IPaginator paginator,
                          @Nullable ItemStackComparer comparer) {
-        super(title, session, factory, arguments, comparer);
-
-        _paginator = arguments.get(PAGINATOR);
-        if (_paginator == null) {
-            throw new RuntimeException("PAGINATOR argument is required for PaginatorView.");
-        }
-
-        _nextView = arguments.get(NEXT_VIEW);
-        if (_nextView == null) {
-            throw new RuntimeException("NEXT_VIEW argument is required for PaginatorView.");
-        }
+        this(plugin, paginator, null, comparer);
     }
 
-    @Nullable
+    /**
+     * Constructor.
+     *
+     * @param comparer   The item stack comparer.
+     */
+    public PaginatorView(Plugin plugin, IPaginator paginator,
+                         @Nullable View nextView,
+                         @Nullable ItemStackComparer comparer) {
+
+        super(plugin, comparer);
+
+        PreCon.notNull(paginator);
+
+        _paginator = paginator;
+        _nextView = nextView;
+    }
+
+    /**
+     * Get the page selected.
+     */
+    public int getSelectedPage() {
+        return _selectedPage;
+    }
+
     @Override
-    public ViewResults getResults() {
-        return _results;
+    public String getTitle() {
+        return "Select page";
     }
 
     @Override
@@ -142,7 +151,12 @@ public class PaginatorView extends MenuView {
         List<MenuItem> menuItems = new ArrayList<>(totalPages);
 
         for (int i=0; i < totalPages; i++) {
-            menuItems.add(getPageItem(i, i));
+
+            int page = i;
+            if (_paginator.getPageStartIndex() == PageStartIndex.ONE)
+                page++;
+
+            menuItems.add(getPageItem(i, page));
         }
 
         return menuItems;
@@ -151,12 +165,18 @@ public class PaginatorView extends MenuView {
     @Override
     protected void onItemSelect(MenuItem menuItem) {
 
-        _results = new ViewResults(getArguments(),
-                new ViewResult(PAGINATOR, _paginator),
-                SELECTED_PAGE.getResult(menuItem.getSlot())
-        );
+        Integer selectedPage = menuItem.getMeta(SELECTED_PAGE);
+        if (selectedPage == null)
+            throw new AssertionError();
 
-        getViewSession().next(_nextView, _results);
+        _selectedPage = selectedPage;
+
+        if (_nextView == null) {
+            getViewSession().back();
+        }
+        else {
+            getViewSession().next(_nextView);
+        }
     }
 
     /**
@@ -166,12 +186,10 @@ public class PaginatorView extends MenuView {
      * @param page  The page the menu item represents.
      */
     protected MenuItem getPageItem(int slot, int page) {
-
-        MenuItem item = new MenuItem(slot);
-        item.setTitle("Page " + page);
-        item.setDescription("Click to view page " + page + '.');
-        item.setItemStack(new ItemStack(Material.PAPER));
-
-        return item;
+        return new MenuItemBuilder(Material.PAPER)
+                .title("Page" + page)
+                .description("Click to view page " + page + '.')
+                .meta(SELECTED_PAGE, page)
+                .build(slot);
     }
 }

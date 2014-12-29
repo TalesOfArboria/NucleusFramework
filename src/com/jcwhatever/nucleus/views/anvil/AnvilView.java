@@ -24,13 +24,9 @@
 
 package com.jcwhatever.nucleus.views.anvil;
 
-import com.jcwhatever.nucleus.views.IViewFactory;
 import com.jcwhatever.nucleus.views.View;
-import com.jcwhatever.nucleus.views.ViewSession;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
-import com.jcwhatever.nucleus.views.data.ViewCloseReason;
-import com.jcwhatever.nucleus.views.data.ViewOpenReason;
-import com.jcwhatever.nucleus.views.data.ViewResults;
+import com.jcwhatever.nucleus.views.ViewCloseReason;
+import com.jcwhatever.nucleus.views.ViewOpenReason;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,6 +35,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,14 +49,10 @@ public class AnvilView extends View {
     /**
      * Constructor.
      *
-     * @param title      Ignored. Anvil titles can't be set.
-     * @param session    The players view session.
-     * @param factory    The factory that created the view session.
-     * @param arguments  The view meta arguments. (Anvil view does not take arguments)
+     * @param plugin  The owning plugin.
      */
-    protected AnvilView(@Nullable String title, ViewSession session,
-                        IViewFactory factory, ViewArguments arguments) {
-        super(title, session, factory, arguments);
+    protected AnvilView(Plugin plugin) {
+        super(plugin);
     }
 
     @Override
@@ -118,11 +111,5 @@ public class AnvilView extends View {
     @Override
     public boolean isInventoryViewable() {
         return false;
-    }
-
-    @Nullable
-    @Override
-    public ViewResults getResults() {
-        return null; // no results returned
     }
 }

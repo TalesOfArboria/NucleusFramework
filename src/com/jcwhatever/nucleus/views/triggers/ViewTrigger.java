@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.views.triggers;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.views.IViewFactory;
-import com.jcwhatever.nucleus.views.IViewFactoryStorage;
+import com.jcwhatever.nucleus.views.factory.IViewFactory;
+import com.jcwhatever.nucleus.views.factory.IViewFactoryStorage;
 
 import javax.annotation.Nullable;
 

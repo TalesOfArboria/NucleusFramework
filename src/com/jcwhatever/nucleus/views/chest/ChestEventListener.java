@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.manager.NucleusEventHandler;
 import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.views.IView;
+import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewSession;
 import com.jcwhatever.nucleus.views.chest.ChestEventInfo.ItemStackSource;
 
@@ -87,7 +87,7 @@ class ChestEventListener extends NucleusEventListener {
             return;
 
         // get current chest view instance
-        IView current = session.getCurrentView();
+        View current = session.getCurrentView();
         if (!(current instanceof ChestView))
             return;
 

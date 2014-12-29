@@ -24,33 +24,30 @@
 
 package com.jcwhatever.nucleus.views;
 
-import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.INamedInsensitive;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
-
-import org.bukkit.plugin.Plugin;
-
-import javax.annotation.Nullable;
-
 /**
- * Generates new view instances of a specific type.
+ * Specifies the reason a view is opening.
  */
-public interface IViewFactory extends INamedInsensitive, IPluginOwned, IDisposable {
-
+public enum ViewOpenReason {
     /**
-     * Get the factory's owning plugin.
+     * The view is first in the view session.
      */
-    @Override
-    Plugin getPlugin();
+    FIRST,
 
     /**
-     * Create a new view instance for the specified player
-     * view session.
+     * The view is the next view being opened.
      *
-     * @param title      Optional view title.  Not all views can have a title set.
-     * @param session    The players view session.
-     * @param arguments  Meta arguments for the view.
+     * <p>This implies that previous views exist.</p>
      */
-    IView create(@Nullable String title, ViewSession session, ViewArguments arguments);
+    NEXT,
+
+    /**
+     * The view was previously opened but the next view was opened.
+     * The next view was closed and now the view is being re-opened..
+     */
+    PREV,
+
+    /**
+     * The view was closed and is being re-opened.
+     */
+    REFRESH
 }

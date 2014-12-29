@@ -24,17 +24,14 @@
 
 package com.jcwhatever.nucleus.views.workbench;
 
-import com.jcwhatever.nucleus.views.IViewFactory;
 import com.jcwhatever.nucleus.views.View;
-import com.jcwhatever.nucleus.views.ViewSession;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
-import com.jcwhatever.nucleus.views.data.ViewCloseReason;
-import com.jcwhatever.nucleus.views.data.ViewOpenReason;
-import com.jcwhatever.nucleus.views.data.ViewResults;
+import com.jcwhatever.nucleus.views.ViewCloseReason;
+import com.jcwhatever.nucleus.views.ViewOpenReason;
 
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
@@ -48,13 +45,10 @@ public class WorkbenchView extends View {
     /**
      * Constructor.
      *
-     * @param session    The player view session.
-     * @param factory    The factory that created the view instance.
-     * @param arguments  Meta view arguments for the workbench. (Workbench does not take
-     *                   arguments but overriding implementations might)
+     * @param plugin  The owning plugin.
      */
-    protected WorkbenchView(ViewSession session, IViewFactory factory, ViewArguments arguments) {
-        super(null, session, factory, arguments);
+    protected WorkbenchView(Plugin plugin) {
+        super(plugin);
     }
 
     @Override
@@ -76,12 +70,6 @@ public class WorkbenchView extends View {
     @Override
     public boolean isInventoryViewable() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    public ViewResults getResults() {
-        return null;
     }
 
     @Override

@@ -1,0 +1,211 @@
+/*
+ * This file is part of NucleusFramework for Bukkit, licensed under the MIT License (MIT).
+ *
+ * Copyright (c) JCThePants (www.jcwhatever.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package com.jcwhatever.nucleus.views.menu;
+
+import com.jcwhatever.nucleus.extended.NamedMaterialData;
+import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.sun.istack.internal.Nullable;
+
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * A utility class to build {@code MenuItem}'s.
+ */
+public class MenuItemBuilder {
+
+    private ItemStack _itemStack;
+    private MaterialData _materialData;
+    private Integer _amount;
+    private String _title;
+    private String _description;
+    private Map<Object, Object> _meta;
+    private List<Runnable> _onClick;
+
+    /**
+     * Constructor.
+     *
+     * @param itemStack  The {@code ItemStack} that represents the menu item.
+     */
+    public MenuItemBuilder(ItemStack itemStack) {
+        PreCon.notNull(itemStack);
+
+        _itemStack = itemStack;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param material  The item {@code Material}.
+     */
+    public MenuItemBuilder(Material material) {
+        PreCon.notNull(material);
+
+        _materialData = new MaterialData(material);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param materialData  The item {@code MaterialData}.
+     */
+    public MenuItemBuilder(MaterialData materialData) {
+        PreCon.notNull(materialData);
+
+        _materialData = materialData.clone();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param materialName  The name of the material.
+     */
+    public MenuItemBuilder(String materialName) {
+        PreCon.notNullOrEmpty(materialName);
+
+        _materialData = NamedMaterialData.get(materialName);
+        if (_materialData == null)
+            throw new RuntimeException(materialName + " is not a recognized material.");
+    }
+
+    /**
+     * Set the menu item title.
+     *
+     * @param title  The title text.
+     * @param args   Optional title format arguments.
+     *
+     * @return  Self for chaining.
+     */
+    public MenuItemBuilder title(String title, Object... args) {
+        PreCon.notNull(title);
+
+        _title = TextUtils.format(title, args);
+
+        return this;
+    }
+
+    /**
+     * Set the menu item description.
+     *
+     * @param description  The description text.
+     * @param args         Optional description format arguments.
+     *
+     * @return  Self for chaining.
+     */
+    public MenuItemBuilder description(String description, Object... args) {
+        PreCon.notNull(description);
+
+        _description = TextUtils.format(description, args);
+
+        return this;
+    }
+
+    /**
+     * Set the amount.
+     *
+     * @param amount  The amount.
+     *
+     * @return  Self for chaining.
+     */
+    public MenuItemBuilder amount(int amount) {
+        _amount = amount;
+
+        return this;
+    }
+
+    /**
+     * Add meta data to the menu item.
+     *
+     * @param key    The meta key.
+     * @param value  The meta value.
+     *
+     * @param <T>  The meta value type.
+     *
+     * @return  Self for chaining.
+     */
+    public <T> MenuItemBuilder meta(MetaKey<T> key, T value) {
+        PreCon.notNull(key);
+
+        if (_meta == null) {
+            _meta = new HashMap<>(7);
+        }
+
+        _meta.put(key, value);
+
+        return this;
+    }
+
+    public MenuItemBuilder onClick(Runnable onClick) {
+        PreCon.notNull(onClick);
+
+        if (_onClick == null)
+            _onClick = new ArrayList<>(3);
+
+        _onClick.add(onClick);
+
+        return this;
+    }
+
+    /**
+     * Build and return a new {@Code MenuItem}.
+     *
+     * @param slot  The inventory slot the menu item will be placed in.
+     */
+    public MenuItem build(int slot) {
+
+        if (_itemStack == null) {
+            _itemStack = new ItemStack(_materialData.getItemType());
+            _itemStack.setData(_materialData);
+        }
+
+        MenuItem item = createMenuItem(slot, _itemStack.clone(), _meta, _onClick);
+
+        if (_amount != null)
+            item.setAmount(_amount);
+
+        if (_title != null)
+            item.setTitle(_title);
+
+        if (_description != null)
+            item.setDescription(_description);
+
+        return item;
+    }
+
+    protected MenuItem createMenuItem(int slot, ItemStack itemStack,
+                                      @Nullable Map<Object, Object> meta,
+                                      @Nullable List<Runnable> onClick) {
+
+        return new MenuItem(slot, itemStack, meta, onClick);
+    }
+}

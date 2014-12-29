@@ -28,7 +28,6 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.manager.NucleusEventHandler;
 import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.views.data.ViewOpenReason;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -95,7 +94,7 @@ class ViewEventListener extends NucleusEventListener {
         }
 
         // get the current session view.
-        IView currentView = session.getCurrentView();
+        View currentView = session.getCurrentView();
         if (currentView == null)
             throw new AssertionError();
 
@@ -111,7 +110,7 @@ class ViewEventListener extends NucleusEventListener {
 
             // Called to go back to the previous view.
             case PREV:
-                IView prevView = session.getPrevView();
+                View prevView = session.getPrevView();
                 if (prevView != null) {
                     openView(ViewOpenReason.PREV, prevView);
                 }
@@ -124,7 +123,7 @@ class ViewEventListener extends NucleusEventListener {
 
             // Closing the current view to open the next view.
             case NEXT:
-                IView nextView = session.getNextView();
+                View nextView = session.getNextView();
                 if (nextView != null) {
                     openView(ViewOpenReason.NEXT, nextView);
                 }
@@ -146,7 +145,7 @@ class ViewEventListener extends NucleusEventListener {
     }
 
     // Open a view
-    private void openView(final ViewOpenReason reason, final IView view) {
+    private void openView(final ViewOpenReason reason, final View view) {
 
         Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
             @Override

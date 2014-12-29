@@ -24,20 +24,17 @@
 
 package com.jcwhatever.nucleus.views.menu;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.views.IViewFactory;
-import com.jcwhatever.nucleus.views.ViewSession;
+import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
 import com.jcwhatever.nucleus.views.chest.ChestEventAction;
 import com.jcwhatever.nucleus.views.chest.ChestEventInfo;
 import com.jcwhatever.nucleus.views.chest.ChestView;
 import com.jcwhatever.nucleus.views.chest.InventoryItemAction.InventoryPosition;
-import com.jcwhatever.nucleus.views.data.ViewArguments;
 
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,23 +50,31 @@ public abstract class MenuView extends ChestView {
     /**
      * Constructor.
      *
+     * @param plugin     The owning plugin.
      * @param title      The inventory title of the view.
-     * @param session    The player view session.
-     * @param factory    The factory that instantiated the menu view.
-     * @param arguments  The meta arguments for the view.
      * @param comparer   An item stack comparer.
      */
-    protected MenuView(@Nullable String title, ViewSession session,
-                       IViewFactory factory, ViewArguments arguments,
+    protected MenuView(Plugin plugin, @Nullable ItemStackComparer comparer) {
+        super(plugin, comparer);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin     The owning plugin.
+     * @param inventory  The menu inventory.
+     * @param comparer   An item stack comparer.
+     */
+    protected MenuView(Plugin plugin, MenuInventory inventory,
                        @Nullable ItemStackComparer comparer) {
-        super(title, session, factory, arguments, comparer);
+        super(plugin, inventory, comparer);
     }
 
     /**
      * Get the currently registered {@code MenuItem}'s.
      */
     public List<MenuItem> getMenuItems() {
-        return new ArrayList<>(_menuItems.values());
+        return CollectionUtils.unmodifiableList(_menuItems.values());
     }
 
     /**
@@ -118,7 +123,7 @@ public abstract class MenuView extends ChestView {
         if (inventory == null)
             return;
 
-        inventory.setItem(menuItem.getSlot(), menuItem.getItemStack());
+        inventory.setItem(menuItem.getSlot(), menuItem);
     }
 
     /**
@@ -139,13 +144,11 @@ public abstract class MenuView extends ChestView {
 
         int maxSlots = getSlotsRequired();
 
-        Inventory inventory = getTitle() != null
-                ? Bukkit.createInventory(getPlayer(), maxSlots, getTitle())
-                : Bukkit.createInventory(getPlayer(), maxSlots);
+        MenuInventory inventory = new MenuInventory(getPlayer(), maxSlots, getTitle());
 
         for (MenuItem item : _menuItems.values()) {
             //item.set(this);
-            inventory.setItem(item.getSlot(), item.getItemStack());
+            inventory.setItem(item.getSlot(), item);
         }
 
         return inventory;
@@ -183,12 +186,7 @@ public abstract class MenuView extends ChestView {
                     onClick.run();
                 }
 
-                if (menuItem.isCancelled()) {
-                    menuItem.setCancelled(false);
-                }
-                else {
-                    onItemSelect(menuItem);
-                }
+                onItemSelect(menuItem);
             }
         }
 
