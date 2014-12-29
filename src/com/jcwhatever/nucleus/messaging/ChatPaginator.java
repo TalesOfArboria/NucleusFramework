@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.messaging;
 import com.jcwhatever.nucleus.internal.Lang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -43,7 +44,8 @@ import javax.annotation.Nullable;
 public class ChatPaginator {
 
     @Localizable
-    static final String _HEADER = "----------------------------------------\r{AQUA}{0} {GRAY}(Page {1} of {2})";
+    static final String _HEADER = "----------------------------------------\r" +
+            "{AQUA}{0} {GRAY}(Page {1: current page} of {2: total pages})";
     @Localizable static final String _FOOTER = "----------------------------------------";
 
     private final Plugin _plugin;
@@ -100,14 +102,15 @@ public class ChatPaginator {
      * @param plugin        The owning plugin.
      * @param itemsPerPage  Number of items to show per page.
      * @param title         The title to insert into the header.
+     * @param args          Optional title format args.
      */
-    public ChatPaginator(Plugin plugin, int itemsPerPage, String title) {
+    public ChatPaginator(Plugin plugin, int itemsPerPage, String title, Object... args) {
         PreCon.notNull(title);
 
         _plugin = plugin;
         _msg = MessengerFactory.get(plugin);
         _itemsPerPage = itemsPerPage;
-        _title = title;
+        _title = TextUtils.format(title, args);
     }
 
     /**
@@ -127,9 +130,11 @@ public class ChatPaginator {
      * @param headerFormat  The header format.
      * @param footerFormat  The footer format.
      * @param title         The title to insert into the header.
+     * @param args          Optional title format args.
      */
-    public ChatPaginator(Plugin plugin, Object headerFormat, Object footerFormat, String title) {
-        this(plugin, 5, headerFormat, footerFormat, title);
+    public ChatPaginator(Plugin plugin, Object headerFormat, Object footerFormat,
+                         String title, Object... args) {
+        this(plugin, 5, headerFormat, footerFormat, title, args);
     }
 
     /**
@@ -147,18 +152,22 @@ public class ChatPaginator {
      * @param headerFormat  The header format.
      * @param footerFormat  The footer format.
      * @param title         The title to insert into the header.
+     * @param args          Optional title format args.
      */
-    public ChatPaginator(Plugin plugin, int itemsPerPage, Object headerFormat, Object footerFormat, String title) {
+    public ChatPaginator(Plugin plugin, int itemsPerPage,
+                         Object headerFormat, Object footerFormat,
+                         String title, Object... args) {
         PreCon.notNull(headerFormat);
         PreCon.notNull(footerFormat);
         PreCon.notNull(title);
+        PreCon.notNull(args);
 
         _plugin = plugin;
         _msg = MessengerFactory.get(plugin);
         _itemsPerPage = itemsPerPage;
         _headerFormat = headerFormat.toString();
         _footerFormat = footerFormat.toString();
-        _title = title;
+        _title = TextUtils.format(title, args);
     }
 
     /**
@@ -185,13 +194,13 @@ public class ChatPaginator {
      *     as parameters are inserted into the format.
      * </p>
      *
-     * @param parameters  The object parameters inserted into the item format.
+     * @param args  The object arguments inserted into the item format.
      */
-    public void add(Object...parameters) {
-        PreCon.notNull(parameters);
-        PreCon.greaterThanZero(parameters.length);
+    public void add(Object...args) {
+        PreCon.notNull(args);
+        PreCon.greaterThanZero(args.length);
 
-        _printList.add(parameters);
+        _printList.add(args);
     }
 
     /**
@@ -199,13 +208,13 @@ public class ChatPaginator {
      * displaying the paginator.
      *
      * @param format      The format that applies to the item.
-     * @param parameters  The object parameters inserted into the item format.
+     * @param args        The object arguments inserted into the item format.
      */
-    public void addFormatted(Object format, Object...parameters) {
+    public void addFormatted(Object format, Object...args) {
         PreCon.notNull(format);
-        PreCon.notNull(parameters);
+        PreCon.notNull(args);
 
-        _printList.add(new Object[]{new PreFormattedLine(format.toString(), parameters)});
+        _printList.add(new Object[]{new PreFormattedLine(format.toString(), args)});
     }
 
     /**
@@ -276,7 +285,7 @@ public class ChatPaginator {
                 Object[] line = _printList.get(i);
                 if (line.length == 1 && line[0] instanceof PreFormattedLine) {
                     PreFormattedLine preformatted = (PreFormattedLine) line[0];
-                    _msg.tell(sender, preformatted.format, preformatted.parameters);
+                    _msg.tell(sender, preformatted.format, preformatted.arguments);
                 } else {
                     _msg.tell(sender, format, line);
                 }
@@ -296,11 +305,11 @@ public class ChatPaginator {
      */
     private static final class PreFormattedLine {
         public final String format;
-        public final Object[] parameters;
+        public final Object[] arguments;
 
-        public PreFormattedLine(String format, Object[] parameters) {
+        public PreFormattedLine(String format, Object[] arguments) {
             this.format = format;
-            this.parameters = parameters;
+            this.arguments = arguments;
         }
     }
 
