@@ -20,8 +20,8 @@ The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow de
  * [A-Star Test](https://github.com/JCThePants/NucleusAStarTest) - A plugin for testing NucleusFramework's A-Star pathing implementation.
 
 ## Plugin dependencies
- * WorldEdit - soft dependency, not required
- * Vault - soft dependency, not required
+ * [WorldEdit](https://github.com/sk89q/WorldEdit) - soft dependency, not required
+ * [Vault](https://github.com/MilkBowl/Vault) - soft dependency, not required
 
 ## Plugins using NucleusFramework
  * [PV-Star](https://github.com/JCThePants/PV-Star) - Extensible arena framework.
@@ -32,7 +32,7 @@ The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow de
 ## Build dependencies
 See the [gradle script](https://github.com/JCThePants/NucleusFramework/blob/master/build.gradle) for build dependencies.
 
-## Maven Repository
+## Maven repository
 You can include the latest NucleusFramework snapshot as a Maven dependency with the following:
 
     https://github.com/JCThePants/mvn-repo/raw/master
