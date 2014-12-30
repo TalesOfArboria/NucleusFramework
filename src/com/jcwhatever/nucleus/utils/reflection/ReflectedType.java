@@ -195,8 +195,8 @@ public class ReflectedType {
             _aliasMethods = new HashMap<>(10);
         }
 
-        if (_cached._methods.containsKey(alias))
-            throw new RuntimeException("Alias cannot match any method name.");
+        if (_aliasMethods.containsKey(alias))
+            throw new RuntimeException("Alias already registered: " + alias);
 
         Method method;
 
