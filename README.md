@@ -9,7 +9,7 @@ _"Coders like versatility. Server operators like stability. Users like usability
  * Provide a centralized framework for common plugin utilities and services.
  * Reduce the amount of redundant code in plugins.
  * Speed up plugin development by abstracting common plugin features.
- * Maintain a balance between an API for versatility and a solid unchanging foundation for stability.
+ * Maintain a balance between an API for versatility and a predictable foundation for stability.
  * Create a user command interface that has commonality that users can learn to recognize.
  * Reduce server operator work by centralizing features that are used across plugins while not forcing plugin designers to use the centralized features.
 
