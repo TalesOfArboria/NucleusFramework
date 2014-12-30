@@ -38,25 +38,21 @@ import javax.annotation.Nullable;
 /**
  * A region manager.
  */
-public class RegionManager<T extends IRegion> extends NamedInsensitiveDataManager<T> implements IPluginOwned {
+public abstract class RegionManager<T extends IRegion> extends NamedInsensitiveDataManager<T> implements IPluginOwned {
 
     protected final Plugin _plugin;
-    protected final IRegionFactory<T> _factory;
 
     /**
      * Constructor.
      *
      * @param plugin    The owning plugin.
      * @param dataNode  Optional data node to load and store regions.
-     * @param factory   The factory used to create new instances.
      */
-    public RegionManager(Plugin plugin, @Nullable IDataNode dataNode, IRegionFactory<T> factory) {
+    public RegionManager(Plugin plugin, @Nullable IDataNode dataNode) {
         super(dataNode);
         PreCon.notNull(plugin);
-        PreCon.notNull(factory);
 
         _plugin = plugin;
-        _factory = factory;
     }
 
     /**
@@ -65,13 +61,6 @@ public class RegionManager<T extends IRegion> extends NamedInsensitiveDataManage
     @Override
     public Plugin getPlugin() {
         return _plugin;
-    }
-
-    /**
-     * Get the factory used to create new regions.
-     */
-    public IRegionFactory<T> getRegionFactory() {
-        return _factory;
     }
 
     /**
@@ -94,7 +83,7 @@ public class RegionManager<T extends IRegion> extends NamedInsensitiveDataManage
 
         IDataNode regionNode = _dataNode != null ? getNode(name) : null;
 
-        T instance = _factory.create(_plugin, name, regionNode, selection);
+        T instance = create(name, regionNode, selection);
 
         if (instance != null)
             add(instance);
@@ -102,17 +91,7 @@ public class RegionManager<T extends IRegion> extends NamedInsensitiveDataManage
         return instance;
     }
 
-    @Nullable
-    @Override
-    protected T load(String name, IDataNode itemNode) {
-        return _factory.create(_plugin, name, itemNode);
-    }
-
-    @Nullable
-    @Override
-    protected void save(T item, IDataNode itemNode) {
-        // do nothing
-    }
+    protected abstract T create(String name, @Nullable IDataNode dataNode, RegionSelection selection);
 
     @Override
     protected void onRemove(T region) {
