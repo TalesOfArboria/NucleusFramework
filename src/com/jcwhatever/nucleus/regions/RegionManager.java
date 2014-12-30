@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.regions;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.mixins.IReadOnly;
-import com.jcwhatever.nucleus.regions.selection.RegionSelection;
+import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.managers.NamedInsensitiveDataManager;
@@ -49,10 +49,24 @@ public abstract class RegionManager<T extends IRegion> extends NamedInsensitiveD
      * @param dataNode  Optional data node to load and store regions.
      */
     public RegionManager(Plugin plugin, @Nullable IDataNode dataNode) {
-        super(dataNode);
+        this(plugin, dataNode, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin       The owning plugin.
+     * @param dataNode     Optional data node to load and store regions.
+     * @param loadRegions  True to load regions from the data node during the constructor.
+     */
+    public RegionManager(Plugin plugin, @Nullable IDataNode dataNode, boolean loadRegions) {
+        super(dataNode, false);
         PreCon.notNull(plugin);
 
         _plugin = plugin;
+
+        if (loadRegions)
+            load();
     }
 
     /**
@@ -72,7 +86,7 @@ public abstract class RegionManager<T extends IRegion> extends NamedInsensitiveD
      * @return  Null if the manager already has a region by the specified node name.
      */
     @Nullable
-    public T add(String name, RegionSelection selection) {
+    public T add(String name, IRegionSelection selection) {
         PreCon.validNodeName(name);
         PreCon.notNull(selection);
         PreCon.isValid(selection.isDefined(), "RegionSelection must be defined.");
@@ -91,7 +105,7 @@ public abstract class RegionManager<T extends IRegion> extends NamedInsensitiveD
         return instance;
     }
 
-    protected abstract T create(String name, @Nullable IDataNode dataNode, RegionSelection selection);
+    protected abstract T create(String name, @Nullable IDataNode dataNode, IRegionSelection selection);
 
     @Override
     protected void onRemove(T region) {

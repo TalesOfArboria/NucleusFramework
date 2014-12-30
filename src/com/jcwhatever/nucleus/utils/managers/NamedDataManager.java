@@ -47,12 +47,14 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
      * Constructor.
      *
      * @param dataNode  The data node.
+     * @param loadData  True to load data from the data node during the constructor.
      */
-    protected NamedDataManager(@Nullable IDataNode dataNode) {
+    protected NamedDataManager(@Nullable IDataNode dataNode, boolean loadData) {
 
         _dataNode = dataNode;
 
-        load();
+        if (loadData)
+            load();
     }
 
     /**

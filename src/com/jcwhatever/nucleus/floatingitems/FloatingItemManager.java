@@ -51,11 +51,25 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
      * @param dataNode  The node where items are saved.
      */
     public FloatingItemManager(Plugin plugin, IDataNode dataNode) {
-        super(dataNode);
+        this(plugin, dataNode, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin     The owning plugin.
+     * @param dataNode   sThe node where items are saved.
+     * @param loadItems  True to load items from the data node during the constructor.
+     */
+    public FloatingItemManager(Plugin plugin, IDataNode dataNode, boolean loadItems) {
+        super(dataNode, false);
         PreCon.notNull(plugin);
         PreCon.notNull(dataNode);
 
         _plugin = plugin;
+
+        if (loadItems)
+            load();
     }
 
     @Override

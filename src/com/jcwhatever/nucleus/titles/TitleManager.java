@@ -52,7 +52,7 @@ public abstract class TitleManager<T extends INamedTitle>
      * @param factory The factory used to generate new titles.
      */
     protected TitleManager(Plugin plugin, INamedTitleFactory<T> factory) {
-        this(plugin, null, factory);
+        this(plugin, null, factory, true);
     }
 
     /**
@@ -64,12 +64,28 @@ public abstract class TitleManager<T extends INamedTitle>
      */
     protected TitleManager(Plugin plugin, @Nullable IDataNode dataNode,
                            INamedTitleFactory<T> factory) {
-        super(dataNode);
+        this(plugin, dataNode, factory, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin      The owning plugin.
+     * @param dataNode    The data node to store titles in.
+     * @param factory     The factory used to generate new titles.
+     * @param loadTitles  True to load data from the data node during the constructor.
+     */
+    protected TitleManager(Plugin plugin, @Nullable IDataNode dataNode,
+                           INamedTitleFactory<T> factory, boolean loadTitles) {
+        super(dataNode, false);
         PreCon.notNull(plugin);
         PreCon.notNull(factory);
 
         _plugin = plugin;
         _factory = factory;
+
+        if (loadTitles)
+            load();
     }
 
     /**

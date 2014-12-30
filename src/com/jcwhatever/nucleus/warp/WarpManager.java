@@ -44,7 +44,17 @@ public class WarpManager extends NamedInsensitiveDataManager<IWarp> {
      * @param dataNode  The managers data node.
      */
     public WarpManager (IDataNode dataNode) {
-        super(dataNode);
+        this(dataNode, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param dataNode  The managers data node.
+     * @param loadData  True to load data from the data node during the constructor.
+     */
+    public WarpManager (IDataNode dataNode, boolean loadData) {
+        super(dataNode, loadData);
     }
 
     /**

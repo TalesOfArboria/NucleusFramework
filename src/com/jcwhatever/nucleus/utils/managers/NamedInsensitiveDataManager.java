@@ -43,9 +43,10 @@ public abstract class NamedInsensitiveDataManager<T extends INamedInsensitive>
      * Constructor.
      *
      * @param dataNode  The data node.
+     * @param loadData  True to load data from the data node during the constructor.
      */
-    protected NamedInsensitiveDataManager(IDataNode dataNode) {
-        super(dataNode);
+    protected NamedInsensitiveDataManager(IDataNode dataNode, boolean loadData) {
+        super(dataNode, loadData);
     }
 
     @Override

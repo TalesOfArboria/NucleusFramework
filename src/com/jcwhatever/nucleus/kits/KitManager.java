@@ -42,17 +42,31 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
 
     private final Plugin _plugin;
 
-    /**
+    /**True to load data from the data node during the constructor.
      * Constructor.
      *
      * @param plugin    The owning plugin.
      * @param dataNode  Config section settings to store and retrieve kit information.
      */
-    public KitManager(Plugin plugin, IDataNode dataNode) {
-        super(dataNode);
+    public KitManager(Plugin plugin, @Nullable IDataNode dataNode) {
+        this(plugin, dataNode, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin    The owning plugin.
+     * @param dataNode  Config section settings to store and retrieve kit information.
+     * @param loadKits  True to load kits from the data node during the constructor.
+     */
+    public KitManager(Plugin plugin, @Nullable IDataNode dataNode, boolean loadKits) {
+        super(dataNode, false);
         PreCon.notNull(plugin);
 
         _plugin = plugin;
+
+        if (loadKits)
+            load();
     }
 
     /**
