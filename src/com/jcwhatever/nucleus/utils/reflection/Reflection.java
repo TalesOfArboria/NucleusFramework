@@ -131,7 +131,7 @@ public class Reflection {
      *
      * @param clazz  The class to wrap.
      */
-    public static ReflectedType type(Class<?> clazz) {
+    public ReflectedType type(Class<?> clazz) {
         CachedReflectedType type = _typeCache.get(clazz);
         if (type != null)
             return new ReflectedType(type);
