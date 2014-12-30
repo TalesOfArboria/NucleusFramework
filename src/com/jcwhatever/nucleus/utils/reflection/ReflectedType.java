@@ -181,9 +181,44 @@ public class ReflectedType {
     }
 
     /**
-     * Create a method alias name.
+     * Registers a method name to a specific signature. Does not allow
+     * for overloaded methods. Improves code readability and method lookup performance.
      *
-     * @param alias       The alias for the method. Cannot match any method name in the type.
+     * @param methodName  The method name.
+     * @param argTypes    The argument types of the method.
+     *
+     * @return Self for chaining.
+     */
+    public ReflectedType method(String methodName, Class<?>... argTypes) {
+
+        if (_aliasMethods == null) {
+            _aliasMethods = new HashMap<>(10);
+        }
+
+        if (_aliasMethods.containsKey(methodName))
+            throw new RuntimeException("Method already registered: " + methodName);
+
+        Method method;
+
+        try {
+            method = getHandle().getDeclaredMethod(methodName, argTypes);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Method not found.");
+        }
+
+        method.setAccessible(true);
+
+        _aliasMethods.put(methodName, method);
+        return this;
+    }
+
+    /**
+     * Register a method alias name to a specific signature to aid
+     * in code readability and method lookup performance.
+     *
+     * @param alias       The alias for the method. Can match an actual method name
+     *                    but will prevent use of overloads.
      * @param methodName  The name of the method.
      * @param argTypes    The argument types of the method.
      *
