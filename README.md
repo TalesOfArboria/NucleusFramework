@@ -3,6 +3,8 @@ NucleusFramework for Spigot 1.8
 
 A plugin framework and rapid development library for Bukkit/Spigot. Currently under development, expect breaking changes.
 
+_"Coders like versatility. Server operators like stability. Users like usability. I like balance."_
+
 ## Goals
  * Provide a centralized framework for common plugin utilities and services.
  * Reduce the amount of redundant code in plugins.
