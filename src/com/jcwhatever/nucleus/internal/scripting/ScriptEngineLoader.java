@@ -97,7 +97,7 @@ public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactor
 
     @Override
     protected ClassLoadMethod getLoadMethod(File file) {
-        return ClassLoadMethod.SEARCH;
+        return ClassLoadMethod.DIRECT_OR_SEARCH;
     }
 
     @Override
