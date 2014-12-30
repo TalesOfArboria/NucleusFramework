@@ -129,7 +129,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
          * Get all floating items.
          */
         public List<IFloatingItem> getItems() {
-            return _manager.getItems();
+            return _manager.getAll();
         }
 
         /**
@@ -143,7 +143,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
         public IFloatingItem getItem(String name) {
             PreCon.notNullOrEmpty(name);
 
-            return _manager.getItem(name);
+            return _manager.get(name);
         }
 
         /**
@@ -156,7 +156,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
-            IFloatingItem item = _manager.getItem(name);
+            IFloatingItem item = _manager.get(name);
             PreCon.notNull(item);
 
             if (!(item instanceof FloatingItem))
@@ -177,7 +177,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
-            IFloatingItem item = _manager.getItem(name);
+            IFloatingItem item = _manager.get(name);
             PreCon.notNull(item);
 
             if (!(item instanceof FloatingItem))
@@ -198,7 +198,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
-            IFloatingItem item = _manager.getItem(name);
+            IFloatingItem item = _manager.get(name);
             PreCon.notNull(item);
 
             if (!(item instanceof FloatingItem))

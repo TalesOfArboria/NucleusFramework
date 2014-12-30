@@ -60,13 +60,13 @@ public final class AddSubCommand extends AbstractCommand {
 
         KitManager manager = Nucleus.getKitManager();
 
-        IKit kit = manager.getKit(kitName);
+        IKit kit = manager.get(kitName);
         if (kit != null) {
             tellError(sender, Lang.get(_KIT_ALREADY_EXISTS, kitName));
             return; // finish
         }
 
-        kit = manager.addKit(kitName);
+        kit = manager.add(kitName);
         if (kit == null) {
             tellError(sender, Lang.get(_FAILED));
             return; // finish

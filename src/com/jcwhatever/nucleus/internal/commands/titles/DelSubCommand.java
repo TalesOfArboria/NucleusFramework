@@ -53,7 +53,7 @@ public final class DelSubCommand extends AbstractCommand {
 
         String name = args.getName("titleName", 32);
 
-        if (Nucleus.getTitleManager().removeTitle(name) == null) {
+        if (!Nucleus.getTitleManager().remove(name)) {
             tellError(sender, Lang.get(_FAILED, name));
         }
 

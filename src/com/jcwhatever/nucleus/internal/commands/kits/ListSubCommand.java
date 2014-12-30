@@ -59,7 +59,7 @@ public final class ListSubCommand extends AbstractCommand {
 
         int	page = args.getInteger("page");
 
-        List<IKit> kits = Nucleus.getKitManager().getKits();
+        List<IKit> kits = Nucleus.getKitManager().getAll();
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 5, Lang.get(_PAGINATOR_TITLE));
 

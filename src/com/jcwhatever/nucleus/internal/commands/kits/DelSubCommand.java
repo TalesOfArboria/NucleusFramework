@@ -60,13 +60,13 @@ public final class DelSubCommand extends AbstractCommand {
 
         KitManager manager = Nucleus.getKitManager();
 
-        IKit kit = manager.getKit(kitName);
+        IKit kit = manager.get(kitName);
         if (kit == null) {
             tellError(sender, Lang.get(_KIT_NOT_FOUND, kitName));
             return; // finish
         }
 
-        if (!manager.deleteKit(kitName)) {
+        if (!manager.remove(kitName)) {
             tellError(sender, Lang.get(_FAILED));
             return; // finish
         }

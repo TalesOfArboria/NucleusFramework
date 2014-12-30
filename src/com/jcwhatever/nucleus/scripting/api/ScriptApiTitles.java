@@ -83,7 +83,7 @@ public class ScriptApiTitles extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            INamedTitle title = Nucleus.getTitleManager().getTitle(titleName);
+            INamedTitle title = Nucleus.getTitleManager().get(titleName);
             PreCon.notNull(title, "Failed to find a title named " + titleName);
 
             title.showTo(p);

@@ -67,13 +67,13 @@ public final class AddSubCommand extends AbstractCommand {
         int fadeout = args.getInteger("out");
         int stay = args.getInteger("stay");
 
-        INamedTitle currentTitle = Nucleus.getTitleManager().getTitle(name);
+        INamedTitle currentTitle = Nucleus.getTitleManager().get(name);
         if (currentTitle != null) {
             tellError(sender, Lang.get(_ALREADY_EXISTS, name));
             return; // finished
         }
 
-        if (!Nucleus.getTitleManager().addTitle(name, title,
+        if (!Nucleus.getTitleManager().add(name, title,
                 subtitle.isEmpty() ? null : subtitle, fadein, stay, fadeout)) {
 
             tellError(sender, Lang.get(_FAILED));

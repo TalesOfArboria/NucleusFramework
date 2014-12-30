@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.kits;
 
-import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
 
@@ -117,13 +116,7 @@ public class KitModifier implements IModifiableKit {
 
     @Override
     public boolean save() {
-        IDataNode node = _manager.getKitNode(_kit.getName());
-        if (node == null)
-            return false;
-
-        node.set("items", _kit.getItems());
-        node.set("armor", _kit.getArmor());
-        node.saveAsync(null);
+        _manager.save(this);
         return true;
     }
 

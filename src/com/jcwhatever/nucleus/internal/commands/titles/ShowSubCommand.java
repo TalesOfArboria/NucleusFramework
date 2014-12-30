@@ -76,7 +76,7 @@ public final class ShowSubCommand extends AbstractCommand {
             }
         }
 
-        INamedTitle title = Nucleus.getTitleManager().getTitle(name);
+        INamedTitle title = Nucleus.getTitleManager().get(name);
         if (title == null) {
             tellError(sender, Lang.get(_TITLE_NOT_FOUND, name));
             return; // finished

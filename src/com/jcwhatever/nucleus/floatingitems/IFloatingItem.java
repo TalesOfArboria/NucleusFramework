@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.floatingitems;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 /**
  * A dropped item.
  */
-public interface IFloatingItem extends INamed, IDisposable {
+public interface IFloatingItem extends INamedInsensitive, IDisposable {
 
     /**
      * Get the floating {@code ItemStack}.

@@ -27,26 +27,20 @@ package com.jcwhatever.nucleus.kits;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.managers.NamedInsensitiveDataManager;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
  * Manages player kits.
  */
-public class KitManager implements IPluginOwned {
+public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPluginOwned {
 
     private final Plugin _plugin;
-    private final IDataNode _dataNode;
-    protected Map<String, IKit> _kits;
 
     /**
      * Constructor.
@@ -55,13 +49,10 @@ public class KitManager implements IPluginOwned {
      * @param dataNode  Config section settings to store and retrieve kit information.
      */
     public KitManager(Plugin plugin, IDataNode dataNode) {
+        super(dataNode);
         PreCon.notNull(plugin);
-        PreCon.notNull(dataNode);
 
         _plugin = plugin;
-        _dataNode = dataNode;
-
-        load();
     }
 
     /**
@@ -73,75 +64,23 @@ public class KitManager implements IPluginOwned {
     }
 
     /**
-     * Gets a kit by name.
-     *
-     * @param name  The name of the kit. Not case sensitive.
-     *
-     * @return Null if kit not found.
-     */
-    @Nullable
-    public IKit getKit(String name) {
-        PreCon.notNull(name);
-
-        return _kits.get(name.toLowerCase());
-    }
-
-    /**
-     * Gets a new list containing all available kits.
-     *
-     * @return  New List of Kit objects
-     */
-    public List<IKit> getKits() {
-        return CollectionUtils.unmodifiableList(_kits.values());
-    }
-
-    /**
      * Creates a new kit.
      *
      * @param name  The name of the kit.
      *
      * @return Returns the created kit or null if the kit name already exists.
      */
-    public IKit addKit(String name) {
+    public IKit add(String name) {
         PreCon.notNullOrEmpty(name);
         PreCon.validNodeName(name);
 
-        if (_kits.containsKey(name.toLowerCase()))
+        if (contains(name))
             return null;
 
-        IDataNode kitNode = getKitNode(name);
-        kitNode.set("", null);
-        kitNode.saveAsync(null);
-
         IKit kit = createKit(name);
-        _kits.put(kit.getSearchName(), kit);
+        add(kit);
 
         return kit;
-    }
-
-    /**
-     * Deletes a kit.
-     *
-     * @param name  The name of the kit. Not case sensitive.
-     *
-     * @return True if kit found and deleted.
-     */
-    public boolean deleteKit(String name) {
-        PreCon.notNull(name);
-
-        name = name.toLowerCase();
-        IKit kit = _kits.get(name);
-        if (kit == null) {
-            return false;
-        }
-
-        _kits.remove(name);
-
-        IDataNode kitNode = getKitNode(kit.getName());
-        kitNode.remove();
-        kitNode.saveAsync(null);
-
-        return true;
     }
 
     /**
@@ -155,28 +94,12 @@ public class KitManager implements IPluginOwned {
     public IModifiableKit modifyKit(IKit kit) {
         PreCon.notNull(kit);
 
-        IKit current = _kits.get(kit.getSearchName());
+        IKit current = _map.get(getName(kit));
         if (current == null || kit != current) {
             return null;
         }
 
         return getModifiableKit(kit);
-    }
-
-    /**
-     * Get the kit manager's data node.
-     */
-    protected IDataNode getDataNode() {
-        return _dataNode;
-    }
-
-    /**
-     * Called to get a new instance of a kits data node.
-     *
-     * @param kitName  The name of the kit.
-     */
-    protected IDataNode getKitNode(String kitName) {
-        return getDataNode().getNode(kitName);
     }
 
     /**
@@ -203,29 +126,38 @@ public class KitManager implements IPluginOwned {
         return null;
     }
 
-    protected void load() {
+    @Nullable
+    @Override
+    protected IKit load(String name, IDataNode kitNode) {
+        IKit kit = createKit(name);
+        IModifiableKit modKit = getModifiableKit(kit);
 
-        Set<String> kits = _dataNode.getSubNodeNames();
-        _kits = new HashMap<String, IKit>(kits.size() + 10);
+        ItemStack[] items = kitNode.getItemStacks("items");
+        ItemStack[] armor = kitNode.getItemStacks("armor");
 
-        for (String kitName : kits) {
-            IKit kit = createKit(kitName);
-            IModifiableKit modKit = getModifiableKit(kit);
+        if (items != null)
+            modKit.addItems(items);
 
-            IDataNode kitNode = getKitNode(kitName);
+        if (armor != null)
+            modKit.addAnyItems(armor);
 
-            ItemStack[] items = kitNode.getItemStacks("items");
-            ItemStack[] armor = kitNode.getItemStacks("armor");
-
-            if (items != null)
-                modKit.addItems(items);
-
-            if (armor != null)
-                modKit.addAnyItems(armor);
-
-            _kits.put(kit.getSearchName(), kit);
-        }
+        return kit;
     }
 
+    @Nullable
+    @Override
+    protected void save(IKit kit, IDataNode node) {
+        node.set("items", kit.getItems());
+        node.set("armor", kit.getArmor());
+    }
+
+    protected void save(IKit item) {
+        if (_dataNode == null)
+            return;
+
+        IDataNode dataNode = _dataNode.getNode(getName(item));
+        save(item, dataNode);
+        dataNode.saveAsync(null);
+    }
 }
 

@@ -28,37 +28,34 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.Msg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.managers.NamedInsensitiveDataManager;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Manages floating items.
  */
-public class FloatingItemManager implements IPluginOwned {
+public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingItem> implements IPluginOwned {
 
     private final Plugin _plugin;
-    private final IDataNode _dataNode;
 
-    private Map<String, IFloatingItem> _itemMap = new HashMap<>(50);
-
+    /**
+     * Constructor.
+     *
+     * @param plugin    The owning plugin.
+     * @param dataNode  The node where items are saved.
+     */
     public FloatingItemManager(Plugin plugin, IDataNode dataNode) {
+        super(dataNode);
         PreCon.notNull(plugin);
         PreCon.notNull(dataNode);
 
         _plugin = plugin;
-        _dataNode = dataNode;
-
-        loadSettings();
     }
 
     @Override
@@ -66,128 +63,108 @@ public class FloatingItemManager implements IPluginOwned {
         return _plugin;
     }
 
+    /**
+     * Add a new floating item.
+     *
+     * @param name       The name of the item.
+     * @param itemStack  The {@code ItemStack}.
+     *
+     * @return  The created {@code IFloatingItem} or null if the name already exists.
+     */
     @Nullable
     public IFloatingItem add(String name, ItemStack itemStack) {
         return add(name, itemStack, null);
     }
 
+    /**
+     * Add a new floating item.
+     *
+     * @param name       The name of the item.
+     * @param itemStack  The {@code ItemStack}.
+     * @param location   Optional initial location to set.
+     *
+     * @return  The created {@code IFloatingItem} or null if the name already exists.
+     */
     @Nullable
     public IFloatingItem add(String name, ItemStack itemStack, @Nullable Location location) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(itemStack);
 
-        IFloatingItem item = _itemMap.get(name.toLowerCase());
-        if (item != null) {
+        if (contains(name))
             return null;
-        }
 
-        IDataNode node = _dataNode.getNode(name);
+        IDataNode node = getNode(name);
 
-        item = createFloatingItem(name, itemStack, location, node);
-
+        IFloatingItem item = createFloatingItem(name, itemStack, location, node);
         node.set("location", location);
         node.set("item", itemStack);
         node.saveAsync(null);
 
-        _itemMap.put(name.toLowerCase(), item);
+        add(item);
 
         return item;
     }
 
-    public boolean remove(String name) {
-        PreCon.notNullOrEmpty(name);
-
-        IFloatingItem item = _itemMap.remove(name.toLowerCase());
-        if (item == null)
-            return false;
-
-        item.dispose();
-
-        IDataNode node = item.getDataNode();
-        if (node != null) {
-            if (Nucleus.getPlugin().isEnabled()) {
-                node.remove();
-                node.saveAsync(null);
-            }
-            else {
-                node.set("dispose", true);
-                node.save();
-            }
-        }
-
-        return true;
-    }
-
-    public List<IFloatingItem> getItems() {
-        return CollectionUtils.unmodifiableList(_itemMap.values());
-    }
-
-    @Nullable
-    public IFloatingItem getItem(String name) {
-        PreCon.notNullOrEmpty(name);
-
-        return _itemMap.get(name.toLowerCase());
-    }
-
     /**
-     * Called after settings are loaded from the data node.
+     * Called to create a new instance of a floating item.
      *
-     * @param dataNode  The data node.
+     * @param name      The name.
+     * @param item      The {@code ItemStack}.
+     * @param location  Optional initial location.
+     * @param dataNode  The items data node.
      */
-    protected void onLoadSettings(@SuppressWarnings("unused") IDataNode dataNode) {
-        // do nothing
-    }
-
-    /**
-     * Called after an item is loaded from the data node.
-     *
-     * @param item  The item.
-     */
-    protected void onItemLoaded(@SuppressWarnings("unused") IFloatingItem item) {
-        // do nothing
-    }
-
-    private void loadSettings() {
-
-        Set<String> itemNames = _dataNode.getSubNodeNames();
-
-        for (String name : itemNames) {
-
-            IDataNode node = _dataNode.getNode(name);
-
-            Location location = node.getLocation("location");
-            if (location == null) {
-                Msg.debug(_plugin, "Location not found for floating item in data node.");
-                continue;
-            }
-
-            boolean dispose = node.getBoolean("dispose");
-            ItemStack[] itemStacks = node.getItemStacks("item");
-
-            if (itemStacks == null || itemStacks.length == 0) {
-                Msg.debug(_plugin, "Item stack not found for floating item in data node.");
-                continue;
-            }
-
-            IFloatingItem item = createFloatingItem(name, itemStacks[0], location, node);
-
-            // check if the item is marked for disposal
-            if (dispose) {
-                item.dispose();
-                continue;
-            }
-
-            _itemMap.put(name.toLowerCase(), item);
-
-            onItemLoaded(item);
-        }
-
-        onLoadSettings(_dataNode);
-    }
-
     protected IFloatingItem createFloatingItem(String name, ItemStack item,
                                             @Nullable Location location, IDataNode dataNode) {
         return new FloatingItem(name, item, location, dataNode);
     }
 
+    @Nullable
+    @Override
+    protected IFloatingItem load(String name, IDataNode node) {
+
+        Location location = node.getLocation("location");
+        if (location == null) {
+            Msg.debug(_plugin, "Location not found for floating item in data node.");
+            return null;
+        }
+
+        boolean dispose = node.getBoolean("dispose");
+        ItemStack[] itemStacks = node.getItemStacks("item");
+
+        if (itemStacks == null || itemStacks.length == 0) {
+            Msg.debug(_plugin, "Item stack not found for floating item in data node.");
+            return null;
+        }
+
+        IFloatingItem item = createFloatingItem(name, itemStacks[0], location, node);
+
+        // check if the item is marked for disposal
+        if (dispose) {
+            item.dispose();
+            return null;
+        }
+
+        return item;
+    }
+
+    @Nullable
+    @Override
+    protected void save(IFloatingItem item, IDataNode itemNode) {
+        // do nothing
+    }
+
+    @Override
+    protected void onRemove(IFloatingItem removed) {
+
+        removed.dispose();
+
+        if (Nucleus.getPlugin().isEnabled()) {
+            super.onRemove(removed);
+        }
+        else {
+            IDataNode node = getNode(removed.getName());
+            node.set("dispose", true);
+            node.save();
+        }
+    }
 }

@@ -24,30 +24,24 @@
 
 package com.jcwhatever.nucleus.regions;
 
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.mixins.IReadOnly;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.managers.NamedInsensitiveDataManager;
 
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of a region manager.
+ * A region manager.
  */
-public abstract class AbstractRegionManager<T extends IRegion> {
+public class RegionManager<T extends IRegion> extends NamedInsensitiveDataManager<T> implements IPluginOwned {
 
     protected final Plugin _plugin;
-    protected final IDataNode _dataNode;
     protected final IRegionFactory<T> _factory;
-
-    protected Map<String, T> _regionMap;
 
     /**
      * Constructor.
@@ -56,21 +50,19 @@ public abstract class AbstractRegionManager<T extends IRegion> {
      * @param dataNode  Optional data node to load and store regions.
      * @param factory   The factory used to create new instances.
      */
-    protected AbstractRegionManager(Plugin plugin, @Nullable IDataNode dataNode, IRegionFactory<T> factory) {
+    public RegionManager(Plugin plugin, @Nullable IDataNode dataNode, IRegionFactory<T> factory) {
+        super(dataNode);
         PreCon.notNull(plugin);
-        PreCon.notNull(dataNode);
         PreCon.notNull(factory);
 
         _plugin = plugin;
-        _dataNode = dataNode;
         _factory = factory;
-
-        loadSettings();
     }
 
     /**
      * Get the owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }
@@ -83,33 +75,6 @@ public abstract class AbstractRegionManager<T extends IRegion> {
     }
 
     /**
-     * Get a region.
-     *
-     * @param regionName  The name of the region.
-     *
-     * @return  Null if not found.
-     */
-    @Nullable
-    public T getRegion(String regionName) {
-        PreCon.notNullOrEmpty(regionName);
-
-        if (_regionMap == null)
-            return null;
-
-        return _regionMap.get(regionName.toLowerCase());
-    }
-
-    /**
-     * Get all regions.
-     */
-    public List<T> getRegions() {
-        if (_regionMap == null)
-            return new ArrayList<>(0);
-
-        return new ArrayList<>(_regionMap.values());
-    }
-
-    /**
      * Add a new region.
      *
      * @param name       The node name of the region.
@@ -118,76 +83,43 @@ public abstract class AbstractRegionManager<T extends IRegion> {
      * @return  Null if the manager already has a region by the specified node name.
      */
     @Nullable
-    public T addRegion(String name, RegionSelection selection) {
+    public T add(String name, RegionSelection selection) {
         PreCon.validNodeName(name);
         PreCon.notNull(selection);
         PreCon.isValid(selection.isDefined(), "RegionSelection must be defined.");
 
-        if (_regionMap == null) {
-            _regionMap = new HashMap<>(10);
-        }
         // make sure a region with that name does not already exist
-        else if (_regionMap.containsKey(name.toLowerCase())) {
+        if (contains(name))
             return null;
-        }
 
-        IDataNode regionNode = _dataNode != null ? _dataNode.getNode(name) : null;
+        IDataNode regionNode = _dataNode != null ? getNode(name) : null;
 
         T instance = _factory.create(_plugin, name, regionNode, selection);
 
-        _regionMap.put(instance.getSearchName(), instance);
+        if (instance != null)
+            add(instance);
 
         return instance;
     }
 
-    /**
-     * Remove a region.
-     *
-     * @param name  The name of the region.
-     *
-     * @return  False if the region was not found and/or removed.
-     */
-    public boolean removeRegion(String name) {
-        PreCon.notNullOrEmpty(name);
+    @Nullable
+    @Override
+    protected T load(String name, IDataNode itemNode) {
+        return _factory.create(_plugin, name, itemNode);
+    }
 
-        if (_regionMap == null)
-            return false;
+    @Nullable
+    @Override
+    protected void save(T item, IDataNode itemNode) {
+        // do nothing
+    }
 
-        T region = _regionMap.remove(name.toLowerCase());
-        if (region == null)
-            return false;
+    @Override
+    protected void onRemove(T region) {
+        super.onRemove(region);
 
         if (!(region instanceof IReadOnly) || !((IReadOnly) region).isReadOnly()) {
             region.dispose();
-        }
-
-        if (_dataNode != null) {
-            _dataNode.getNode(region.getName()).remove();
-            _dataNode.saveAsync(null);
-        }
-
-        return true;
-    }
-
-    /**
-     * Called to load settings from the data node, if any.
-     */
-    protected void loadSettings() {
-        if (_dataNode == null)
-            return;
-
-        _regionMap.clear();
-
-        Set<String> nodeNames = _dataNode.getSubNodeNames();
-
-        _regionMap = new HashMap<>(nodeNames.size() + 10);
-
-        for (String nodeName : nodeNames) {
-            IDataNode regionNode = _dataNode.getNode(nodeName);
-
-            T instance = _factory.create(_plugin, nodeName, regionNode);
-
-            _regionMap.put(instance.getSearchName(), instance);
         }
     }
 }

@@ -63,6 +63,7 @@ public class FloatingItem implements IFloatingItem {
     private static BukkitListener _listener;
 
     private final String _name;
+    private final String _searchName;
     private final ItemStack _item;
     private final IDataNode _dataNode;
 
@@ -116,6 +117,7 @@ public class FloatingItem implements IFloatingItem {
         PreCon.notNull(item);
 
         _name = name;
+        _searchName = name.toLowerCase();
         _item = item;
         _currentLocation = initialLocation;
         _dataNode = dataNode;
@@ -135,6 +137,11 @@ public class FloatingItem implements IFloatingItem {
     @Override
     public String getName() {
         return _name;
+    }
+
+    @Override
+    public String getSearchName() {
+        return _searchName;
     }
 
     /**

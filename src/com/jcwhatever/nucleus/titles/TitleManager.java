@@ -27,14 +27,10 @@ package com.jcwhatever.nucleus.titles;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.managers.NamedInsensitiveDataManager;
 
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -43,13 +39,11 @@ import javax.annotation.Nullable;
  *
  * <p>Optionally can store titles to a data node.</p>
  */
-public class TitleManager<T extends INamedTitle> implements IPluginOwned {
+public abstract class TitleManager<T extends INamedTitle>
+        extends NamedInsensitiveDataManager<T> implements IPluginOwned {
 
     protected final Plugin _plugin;
     protected final INamedTitleFactory<T> _factory;
-    protected final IDataNode _dataNode;
-
-    private Map<String, T> _titles = new HashMap<>(15);
 
     /**
      * Constructor.
@@ -70,14 +64,12 @@ public class TitleManager<T extends INamedTitle> implements IPluginOwned {
      */
     protected TitleManager(Plugin plugin, @Nullable IDataNode dataNode,
                            INamedTitleFactory<T> factory) {
+        super(dataNode);
         PreCon.notNull(plugin);
         PreCon.notNull(factory);
 
         _plugin = plugin;
         _factory = factory;
-        _dataNode = dataNode;
-
-        loadSettings();
     }
 
     /**
@@ -95,11 +87,9 @@ public class TitleManager<T extends INamedTitle> implements IPluginOwned {
      *
      * @return  True if added successfully.
      */
-    public boolean addTitle(T title) {
-        PreCon.notNull(title);
-
-        _titles.put(title.getSearchName(), title);
-        return true;
+    @Override
+    public boolean add(T title) {
+        return super.add(title);
     }
 
     /**
@@ -110,8 +100,8 @@ public class TitleManager<T extends INamedTitle> implements IPluginOwned {
      *
      * @return  True if added successfully.
      */
-    public boolean addTitle(String name, String titleText) {
-        return addTitle(name, titleText, null, -1, -1, -1);
+    public boolean add(String name, String titleText) {
+        return add(name, titleText, null, -1, -1, -1);
     }
 
     /**
@@ -123,8 +113,8 @@ public class TitleManager<T extends INamedTitle> implements IPluginOwned {
      *
      * @return  True if added successfully.
      */
-    public boolean addTitle(String name, String title, @Nullable String subTitle) {
-        return addTitle(name, title, subTitle, -1, -1, -1);
+    public boolean add(String name, String title, @Nullable String subTitle) {
+        return add(name, title, subTitle, -1, -1, -1);
     }
 
     /**
@@ -139,91 +129,22 @@ public class TitleManager<T extends INamedTitle> implements IPluginOwned {
      *
      * @return  True if added successfully.
      */
-    public boolean addTitle(String name, String title, @Nullable String subTitle,
-                            int fadeInTime, int stayTime, int fadeOutTime) {
+    public boolean add(String name, String title, @Nullable String subTitle,
+                       int fadeInTime, int stayTime, int fadeOutTime) {
 
         PreCon.notNullOrEmpty(name);
         PreCon.notNullOrEmpty(title);
 
         T instance = _factory.create(name, title, subTitle, fadeInTime, stayTime, fadeOutTime);
 
-        _titles.put(instance.getSearchName(), instance);
-
-        if (saveToDataNode(instance)) {
-            assert _dataNode != null;
-
-            _dataNode.saveAsync(null);
-        }
+        super.add(instance);
 
         return true;
     }
 
-    /**
-     * Get a title by name.
-     *
-     * @param name  The name of the title.
-     *
-     * @return  Null if not found.
-     */
     @Nullable
-    public T getTitle(String name) {
-        PreCon.notNullOrEmpty(name);
-
-        return _titles.get(name.toLowerCase());
-    }
-
-    /**
-     * Get all titles.
-     */
-    public List<T> getTitles() {
-        return new ArrayList<>(_titles.values());
-    }
-
-    /**
-     * Remove a title by name.
-     *
-     * @param name  The name of the title.
-     */
-    @Nullable
-    public T removeTitle(String name) {
-        PreCon.notNullOrEmpty(name);
-
-        return _titles.remove(name.toLowerCase());
-    }
-
-    protected void loadSettings() {
-        if (_dataNode == null)
-            return;
-
-        Set<String> titleNames = _dataNode.getSubNodeNames();
-
-        for (String titleName : titleNames) {
-
-            IDataNode dataNode = _dataNode.getNode(titleName);
-
-            T title = loadFromDataNode(dataNode);
-
-            _titles.put(title.getSearchName(), title);
-        }
-    }
-
-    protected boolean saveToDataNode(T title) {
-        if (_dataNode == null)
-            return false;
-
-        IDataNode node = _dataNode.getNode(title.getName());
-
-        node.set("title", title.getTitle());
-        node.set("subtitle", title.getSubTitle());
-        node.set("fadein", title.getFadeInTime());
-        node.set("stay", title.getStayTime());
-        node.set("fadeout", title.getFadeOutTime());
-        return true;
-    }
-
-    protected T loadFromDataNode(IDataNode dataNode) {
-
-        String name = dataNode.getNodeName();
+    @Override
+    protected T load(String name, IDataNode dataNode) {
         String title = dataNode.getString("title");
         String subTitle = dataNode.getString("subtitle");
         int fadein = dataNode.getInteger("fadein", -1);
@@ -236,5 +157,15 @@ public class TitleManager<T extends INamedTitle> implements IPluginOwned {
         assert name != null;
 
         return _factory.create(name, title, subTitle, fadein, stay, fadeout);
+    }
+
+    @Nullable
+    @Override
+    protected void save(T title, IDataNode node) {
+        node.set("title", title.getTitle());
+        node.set("subtitle", title.getSubTitle());
+        node.set("fadein", title.getFadeInTime());
+        node.set("stay", title.getStayTime());
+        node.set("fadeout", title.getFadeOutTime());
     }
 }

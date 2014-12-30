@@ -60,7 +60,7 @@ public final class ListSubCommand extends AbstractCommand {
 
         ChatPaginator pagin = new ChatPaginator(getPlugin(), 5, Lang.get(_PAGINATOR_TITLE));
 
-        List<INamedTitle> titles = Nucleus.getTitleManager().getTitles();
+        List<INamedTitle> titles = Nucleus.getTitleManager().getAll();
 
         for (INamedTitle title : titles) {
 
