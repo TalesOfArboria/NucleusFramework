@@ -403,8 +403,10 @@ public final class FileUtils {
             if (lineValidator != null && !lineValidator.isValid(line))
                 continue;
 
+            if (result.length() > 0)
+                result.append('\n');
+
             result.append(line);
-            result.append('\n');
         }
 
         return result.toString();
