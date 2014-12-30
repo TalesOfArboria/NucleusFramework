@@ -226,7 +226,7 @@ public class ReflectedType {
      */
     @Nullable
     public <V> V call(String staticMethodName, Object...arguments) {
-        return call(null, staticMethodName, arguments);
+        return invoke(null, staticMethodName, arguments);
     }
 
     /**
@@ -241,7 +241,7 @@ public class ReflectedType {
      * @return  Null if the method returns null or void.
      */
     @Nullable
-    public <V> V call(@Nullable Object instance, String methodName, Object...arguments) {
+    public <V> V invoke(@Nullable Object instance, String methodName, Object... arguments) {
         PreCon.notNullOrEmpty(methodName);
         PreCon.notNull(arguments);
 

@@ -70,8 +70,8 @@ public abstract class Instance {
      * @return  Null if the method returns null or void.
      */
     @Nullable
-    public Object call(String methodName, Object...arguments) {
-        return _type.call(_instance, methodName, arguments);
+    public Object invoke(String methodName, Object... arguments) {
+        return _type.invoke(_instance, methodName, arguments);
     }
 
     /**
