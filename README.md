@@ -37,9 +37,19 @@ See the [gradle script](https://github.com/JCThePants/NucleusFramework/blob/mast
 ## Maven repository
 You can include the latest NucleusFramework snapshot as a Maven dependency with the following:
 
-    https://github.com/JCThePants/mvn-repo/raw/master
+    <repositories>
+        <repository>
+            <id>jcthepants-repo</id>
+            <url>https://github.com/JCThePants/mvn-repo/raw/master</url>
+        </repository>
+    </repositories>
 
-    <groupId>com.jcwhatever.bukkit</groupId>
-    <artifactId>NucleusFramework</artifactId>
-    <version>0.0-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>com.jcwhatever.bukkit</groupId>
+            <artifactId>NucleusFramework</artifactId>
+            <version>0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 
