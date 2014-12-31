@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.nms;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
 import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsActionBarHandler_v1_8_R1;
+import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsListHeaderFooterHandler_v1_8_R1;
 import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsTitleHandler_v1_8_R1;
 import com.jcwhatever.nucleus.nms.NmsManager;
 
@@ -40,5 +41,6 @@ public final class InternalNmsManager extends NmsManager {
 
         registerNmsHandler("v1_8_R1", NmsHandlers.TITLES.name(), NmsTitleHandler_v1_8_R1.class);
         registerNmsHandler("v1_8_R1", NmsHandlers.ACTION_BAR.name(), NmsActionBarHandler_v1_8_R1.class);
+        registerNmsHandler("v1_8_R1", NmsHandlers.LIST_HEADER_FOOTER.name(), NmsListHeaderFooterHandler_v1_8_R1.class);
     }
 }

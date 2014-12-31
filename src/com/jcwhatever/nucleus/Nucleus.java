@@ -303,6 +303,7 @@ public final class Nucleus {
 
     public enum NmsHandlers {
         ACTION_BAR,
+        LIST_HEADER_FOOTER,
         TITLES
     }
 }

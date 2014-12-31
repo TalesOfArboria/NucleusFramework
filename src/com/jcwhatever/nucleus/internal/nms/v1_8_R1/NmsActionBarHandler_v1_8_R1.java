@@ -25,33 +25,13 @@
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
 import com.jcwhatever.nucleus.nms.INmsActionBarHandler;
-import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
-import com.jcwhatever.nucleus.utils.reflection.ReflectedType;
-import com.jcwhatever.nucleus.utils.reflection.Reflection;
 
 import org.bukkit.entity.Player;
 
 /**
  * Minecraft Action Bar sender for NMS version v1_8_R1
  */
-public class NmsActionBarHandler_v1_8_R1 implements INmsActionBarHandler {
-
-    Reflection reflection = new Reflection("v1_8_R1");
-
-    ReflectedType _ChatSerializer = reflection.nmsType("ChatSerializer")
-            .methodAlias("serialize", "a", String.class);
-
-    ReflectedType _PacketPlayOutChat = reflection.nmsType("PacketPlayOutChat");
-
-    ReflectedType _CraftPlayer = reflection.craftType("entity.CraftPlayer")
-            .method("getHandle");
-
-    ReflectedType _EntityPlayer = reflection.nmsType("EntityPlayer");
-
-    ReflectedType _Packet = reflection.nmsType("Packet");
-
-    ReflectedType _PlayerConnection = reflection.nmsType("PlayerConnection")
-            .method("sendPacket", _Packet.getHandle());
+public class NmsActionBarHandler_v1_8_R1 extends v1_8_R1 implements INmsActionBarHandler {
 
     /**
      * Send the action bar packet.
@@ -66,12 +46,6 @@ public class NmsActionBarHandler_v1_8_R1 implements INmsActionBarHandler {
 
         Object packet = _PacketPlayOutChat.newInstance(titleComponent, (byte) 2);
 
-        ReflectedInstance entityPlayer = _EntityPlayer.reflect(
-                _CraftPlayer.reflect(player).invoke("getHandle"));
-
-        ReflectedInstance playerConnection = _PlayerConnection.reflect(
-                entityPlayer.getFields().get("playerConnection"));
-
-        playerConnection.invoke("sendPacket", packet);
+        sendPacket(player, packet);
     }
 }

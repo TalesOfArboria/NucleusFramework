@@ -26,86 +26,54 @@ package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
 import com.jcwhatever.nucleus.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.reflection.Fields;
+import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
 
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_8_R1.ChatSerializer;
 import net.minecraft.server.v1_8_R1.EnumTitleAction;
-import net.minecraft.server.v1_8_R1.IChatBaseComponent;
-import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerListHeaderFooter;
-import net.minecraft.server.v1_8_R1.PacketPlayOutTitle;
-import net.minecraft.server.v1_8_R1.PlayerConnection;
 
-import java.lang.reflect.Field;
 import javax.annotation.Nullable;
 
 /**
  * Minecraft Title packet sender for NMS version v1_8_R1
  */
-public final class NmsTitleHandler_v1_8_R1 implements INmsTitleHandler {
+public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleHandler {
 
-    private static Field _footerField;
-
-    static {
-        try {
-            _footerField = PacketPlayOutPlayerListHeaderFooter.class.getDeclaredField("b");
-            _footerField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Send the packet to a player.
+     *
+     * @param player        The player to send the title to.
+     * @param jsonTitle     The Json title text.
+     * @param jsonSubtitle  Optional Json subtitle text.
+     * @param fadeIn        The fade-in time.
+     * @param stay          The stay time.
+     * @param fadeOut       The fade-out time.
+     */
     @Override
-    public void send(Player player, String jsonTitle, @Nullable String jsonSubtitle, int fadeIn, int stay, int fadeOut) {
+    public void send(Player player, String jsonTitle, @Nullable String jsonSubtitle,
+                     int fadeIn, int stay, int fadeOut) {
         PreCon.notNull(player);
         PreCon.notNullOrEmpty(jsonTitle);
 
-        IChatBaseComponent titleComponent = ChatSerializer.a(jsonTitle);
+        Object titleComponent = _ChatSerializer.invoke(null, "serialize", jsonTitle);
 
-        CraftPlayer craftPlayer = (CraftPlayer)player;
-        PlayerConnection connection = craftPlayer.getHandle().playerConnection;
+        Fields playerFields = _EntityPlayer.reflect(
+                _CraftPlayer.reflect(player).invoke("getHandle")).getFields();
 
-        PacketPlayOutTitle timesPacket = new PacketPlayOutTitle(fadeIn, stay, fadeOut);
-        connection.sendPacket(timesPacket);
+        ReflectedInstance connection = _PlayerConnection.reflect(playerFields.get("playerConnection"));
+
+        Object timesPacket = _PacketPlayOutTitle.newInstance(fadeIn, stay, fadeOut);
+        connection.invoke("sendPacket", timesPacket);
 
         if (jsonSubtitle != null) {
-            IChatBaseComponent subTitleComponent = ChatSerializer.a(jsonSubtitle);
-            PacketPlayOutTitle subTitlePacket = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, subTitleComponent);
-            connection.sendPacket(subTitlePacket);
+            Object subTitleComponent = _ChatSerializer.invoke(null, "serialize", jsonSubtitle);
+            //TODO: add enum reflection
+            Object subTitlePacket = _PacketPlayOutTitle.newInstance(EnumTitleAction.SUBTITLE, subTitleComponent);
+            connection.invoke("sendPacket", subTitlePacket);
         }
 
-        PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(EnumTitleAction.TITLE, titleComponent);
-        connection.sendPacket(titlePacket);
-    }
-
-    @Override
-    public void sendTab(Player player, @Nullable String jsonHeader, @Nullable String jsonFooter) {
-        PreCon.notNull(player);
-
-        if (jsonHeader == null && jsonFooter == null)
-            return;
-
-        IChatBaseComponent headerComponent = ChatSerializer.a(jsonHeader);
-
-        PacketPlayOutPlayerListHeaderFooter packet = jsonHeader != null
-                ? new PacketPlayOutPlayerListHeaderFooter(headerComponent)
-                : new PacketPlayOutPlayerListHeaderFooter();
-
-        if (jsonFooter != null && _footerField != null) {
-
-            IChatBaseComponent footerComponent = ChatSerializer.a(jsonFooter);
-
-            try {
-                _footerField.set(packet, footerComponent);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        CraftPlayer craftPlayer = (CraftPlayer)player;
-        PlayerConnection connection = craftPlayer.getHandle().playerConnection;
-
-        connection.sendPacket(packet);
+        Object titlePacket = _PacketPlayOutTitle.newInstance(EnumTitleAction.TITLE, titleComponent);
+        connection.invoke("sendPacket", titlePacket);
     }
 }

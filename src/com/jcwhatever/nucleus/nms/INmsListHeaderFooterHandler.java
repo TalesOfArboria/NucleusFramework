@@ -26,25 +26,19 @@ package com.jcwhatever.nucleus.nms;
 
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
-
 /**
- * Interface for NucleusFramework's Minecraft Titles handler which
+ * Interface for NucleusFramework's Minecraft List Header and Footer handler which
  * can be retrieved from NucleusFramework's NmsManager under the
- * name "TITLES".
+ * name "LIST_HEADER_FOOTER".
  */
-public interface INmsTitleHandler extends INmsHandler {
+public interface INmsListHeaderFooterHandler extends INmsHandler {
 
     /**
-     * Send a title to a player.
+     * Send a tab list header and/or footer to a player.
      *
-     * @param player        The player to send the title to.
-     * @param jsonTitle     The Json title text.
-     * @param jsonSubtitle  Optional Json subtitle text.
-     * @param fadeIn        The fade-in time.
-     * @param stay          The stay time.
-     * @param fadeOut       The fade-out time.
+     * @param player      The player to send the header/footer to.
+     * @param jsonHeader  The Json header text.
+     * @param jsonFooter  The Json footer text.
      */
-    void send(Player player, String jsonTitle, @Nullable String jsonSubtitle,
-              int fadeIn, int stay, int fadeOut);
+    void send(Player player, String jsonHeader, String jsonFooter);
 }
