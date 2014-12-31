@@ -194,19 +194,34 @@ public class TextFormatter {
 
             }
             else if (ch == '\\' && i < template.length() - 1) {
-                char next = template.charAt(i + 1);
-                if (next == '\\') {
-                    // append escaped back slash
-                    _textBuffer.append(ch);
-                    _textBuffer.append(next);
-                    i++;
+
+                // make sure the backslash isn't escaped
+                int s = i;
+                int bsCount = 0;
+                while (s != 0) {
+                    if (template.charAt(s - 1) == '\\') {
+                        bsCount++;
+                    }
+                    else {
+                        break;
+                    }
+                    s--;
                 }
-                else if (next == 'n' || next == 'r') {
-                    // append new line
+                if (bsCount % 2 != 0)
+                    continue;
+
+                // look at next character
+                char next = template.charAt(i + 1);
+
+                // handle new line character
+                if (next == 'n' || next == 'r') {
+
                     _textBuffer.append('\n');
                     i++;
                 }
+                // handle unicode
                 else if (next == 'u') {
+
                     i++;
                     char unicode = parseUnicode(template, i);
                     if (unicode == 0) {
@@ -218,8 +233,8 @@ public class TextFormatter {
                         i+= Math.min(4, template.length() - i);
                     }
                 }
+                // unused backslash
                 else {
-                    // append non unicode back slash
                     _textBuffer.append(ch);
                 }
             }
