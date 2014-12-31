@@ -145,7 +145,7 @@ public final class PreCon {
     public static void notNullOrEmpty(@Nullable String value, String paramName) {
         PreCon.notNull(value, paramName);
         if (value.isEmpty()) {
-            badArg("The value of {0} cannot be empty.");
+            badArg("The value of {0} cannot be empty.", paramName);
         }
     }
 
