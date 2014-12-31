@@ -164,8 +164,7 @@ public class TextFormatter {
     public String format(Map<String, ITagFormatter> formatters, String template, Object... params) {
         PreCon.notNull(template);
 
-        // make sure parsing is required
-        if (template.indexOf('{') == -1)
+        if (template.indexOf('{') == -1 && template.indexOf('\\') == -1)
             return template;
 
         _textBuffer.setLength(0);
@@ -194,6 +193,36 @@ public class TextFormatter {
                 }
 
             }
+            else if (ch == '\\' && i < template.length() - 1) {
+                char next = template.charAt(i + 1);
+                if (next == '\\') {
+                    // append escaped back slash
+                    _textBuffer.append(ch);
+                    _textBuffer.append(next);
+                    i++;
+                }
+                else if (next == 'n' || next == 'r') {
+                    // append new line
+                    _textBuffer.append('\n');
+                    i++;
+                }
+                else if (next == 'u') {
+                    i++;
+                    char unicode = parseUnicode(template, i);
+                    if (unicode == 0) {
+                        // append non unicode text
+                        _textBuffer.append("\\u");
+                    }
+                    else {
+                        _textBuffer.append(unicode);
+                        i+= Math.min(4, template.length() - i);
+                    }
+                }
+                else {
+                    // append non unicode back slash
+                    _textBuffer.append(ch);
+                }
+            }
             else {
                 // append next character
                 _textBuffer.append(ch);
@@ -201,6 +230,37 @@ public class TextFormatter {
         }
 
         return _textBuffer.toString();
+    }
+
+    /**
+     * Parse a unicode character from the string
+     */
+    private char parseUnicode(String template, int currentIndex) {
+        _tagBuffer.setLength(0);
+
+        for (int i=currentIndex + 1, readCount=0; i < template.length(); i++, readCount++) {
+
+            if (readCount == 4) {
+                break;
+            }
+            else {
+                char ch = template.charAt(i);
+                if ("01234567890abcdefABCDEF".indexOf(ch) == -1)
+                    return 0;
+                _tagBuffer.append(ch);
+            }
+        }
+
+        if (_tagBuffer.length() == 4) {
+
+            try {
+                return (char) Integer.parseInt(_tagBuffer.toString(), 16);
+            } catch (NumberFormatException ignore) {
+                return 0;
+            }
+        }
+
+        return 0;
     }
 
     /*
