@@ -68,7 +68,7 @@ public class InventoryBuilder {
      * @return  Self for chaining.
      */
     public InventoryBuilder title(String title) {
-        PreCon.notNull(title);
+        PreCon.notNull(title, "title");
 
         _title = title;
         return this;
@@ -82,8 +82,8 @@ public class InventoryBuilder {
      * @return  Self for chaining.
      */
     public InventoryBuilder slots(int slots) {
-        PreCon.positiveNumber(slots, "Number of slots must be a positive number. ({0})", slots);
-        PreCon.lessThanEqual(slots, MAX_SLOTS, "Cannot have more than {0} slots. ({1})", MAX_SLOTS, slots);
+        PreCon.positiveNumber(slots, "slots");
+        PreCon.lessThanEqual(slots, MAX_SLOTS, "slots");
 
         _rows = (int)Math.ceil((double)slots / 9);
         _rowsSetExplicit = true;
@@ -97,8 +97,8 @@ public class InventoryBuilder {
      * @return
      */
     public InventoryBuilder rows(int rows) {
-        PreCon.positiveNumber(rows, "Number of rows must be a positive number. ({0})", rows);
-        PreCon.lessThanEqual(rows, MAX_ROWS, "Cannot have more than {0} rows. ({1})", MAX_ROWS, rows);
+        PreCon.positiveNumber(rows, "rows");
+        PreCon.lessThanEqual(rows, MAX_ROWS, "rows");
 
         _rows = rows;
         _rowsSetExplicit = true;
@@ -116,8 +116,7 @@ public class InventoryBuilder {
      * @return  Self for chaining.
      */
     public InventoryBuilder layout(String... template) {
-        PreCon.lessThanEqual(template.length, MAX_ROWS,
-                "Cannot have more than '{0}' rows. ({1})", MAX_ROWS, template.length);
+        PreCon.lessThanEqual(template.length, MAX_ROWS, "template");
 
         int columns = 0;
         int slots = 0;
@@ -175,7 +174,7 @@ public class InventoryBuilder {
      * @return  Self for chaining.
      */
     public InventoryBuilder items(Collection<ItemStack> items) {
-        PreCon.notNull(items);
+        PreCon.notNull(items, "items");
 
         _items = new ArrayList<>(items);
 
@@ -212,9 +211,8 @@ public class InventoryBuilder {
      * @return  Self for chaining.
      */
     public InventoryBuilder items(ItemStack[/*rows*/][/* columns */] layout) {
-        PreCon.notNull(layout);
-        PreCon.lessThanEqual(layout.length, MAX_ROWS,
-                "Cannot have more than '{0}' rows. ({1})", MAX_ROWS, layout.length);
+        PreCon.notNull(layout, "layout");
+        PreCon.lessThanEqual(layout.length, MAX_ROWS, "layout");
 
         int columns = 0;
         int slots = 0;
