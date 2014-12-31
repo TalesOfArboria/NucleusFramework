@@ -24,10 +24,10 @@
 
 package com.jcwhatever.nucleus.collections;
 
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,8 +76,8 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
      * Get the level/depth of the node. The root
      * node is 0.
      */
-    public int getLevel() {
-        return _parent == null ? 0 : _parent.getLevel() + 1;
+    public int getDepth() {
+        return _parent == null ? 0 : _parent.getDepth() + 1;
     }
 
     /**
@@ -100,8 +100,59 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
     /**
      * Get the nodes children.
      */
-    public Collection<TreeNode<T>> getChildren() {
-        return _children != null ? _children : new ArrayList<TreeNode<T>>(0);
+    public List<TreeNode<T>> getChildren() {
+        return _children != null
+                ? CollectionUtils.unmodifiableList(_children)
+                : new ArrayList<TreeNode<T>>(0);
+    }
+
+    /**
+     * Get the number of direct children
+     * of the node.
+     */
+    public int totalChildren() {
+        if (_children == null)
+            return 0;
+
+        return _children.size();
+    }
+
+    /**
+     * Get the index of the direct child.
+     *
+     * @param childValue  The child value.
+     *
+     * @return  The list index or -1 if not found.
+     */
+    public int getChildIndex(T childValue) {
+        if (_children == null)
+            return -1;
+
+        for (int i=0; i < _children.size(); i++) {
+            if (childValue.equals(_children.get(i).getValue()))
+                return i;
+        }
+
+        return -1;
+    }
+
+    /**
+     * Get the index of the direct child node.
+     *
+     * @param childNode  The child node.
+     *
+     * @return  The list index or -1 if not found.
+     */
+    public int getChildIndex(TreeNode<T> childNode) {
+        if (_children == null)
+            return -1;
+
+        for (int i=0; i < _children.size(); i++) {
+            if (childNode.equals(_children.get(i)))
+                return i;
+        }
+
+        return -1;
     }
 
     /**
@@ -125,6 +176,25 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
     }
 
     /**
+     * Add a child node.
+     *
+     * @param childNode  The child node.
+     *
+     * @return  The child node.
+     */
+    public TreeNode<T> addChild(TreeNode<T> childNode) {
+
+        childNode._parent = this;
+
+        if (_children == null)
+            _children = new ArrayList<TreeNode<T>>(5);
+
+        _children.add(childNode);
+
+        return childNode;
+    }
+
+    /**
      * Remove a child node.
      *
      * @param child  The child value.
@@ -140,7 +210,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
         Iterator<TreeNode<T>> iterator = _children.iterator();
         while (iterator.hasNext()) {
             TreeNode<T> childNode = iterator.next();
-            if (childNode.getValue().equals(child)) {
+            if (child.equals(childNode.getValue())) {
                 iterator.remove();
                 childNode._parent = null;
                 return childNode;
@@ -150,9 +220,48 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
         return null;
     }
 
+    /**
+     * Remove a child node.
+     *
+     * @param childNode  The child node.
+     *
+     * @return  The removed child node. Null if not found.
+     */
+    @Nullable
+    public TreeNode<T> removeChild(TreeNode<T> childNode) {
+
+        if (_children == null)
+            return null;
+
+        Iterator<TreeNode<T>> iterator = _children.iterator();
+        while (iterator.hasNext()) {
+            TreeNode<T> node = iterator.next();
+            if (childNode.equals(node)) {
+                iterator.remove();
+                node._parent = null;
+                return node;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public Iterator<TreeNode<T>> iterator() {
         return new Iter();
+    }
+
+    @Override
+    public int hashCode() {
+        return _node.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof TreeNode) {
+            return _node.equals(((TreeNode) object)._node);
+        }
+        return _node.equals(object);
     }
 
     // Tree node iterator. Iterates all children and sub children from the top down,

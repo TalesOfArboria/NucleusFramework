@@ -46,7 +46,7 @@ public class HierarchyNode<T extends IHierarchyNode<T>> extends TreeNode<T> {
         Collection<T> children = value.getChildren();
         if (children != null) {
             for (T child : children) {
-                addChild(child);
+                addChild(new HierarchyNode<T>(child));
             }
         }
     }
