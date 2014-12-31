@@ -22,23 +22,22 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.nms;
+package com.jcwhatever.nucleus.nms;
 
-import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsActionBarHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsTitleHandler_v1_8_R1;
-import com.jcwhatever.nucleus.nms.NmsManager;
+import org.bukkit.entity.Player;
 
 /**
- * NucleusFramework's internal NMS manager.
+ * Interface for NucleusFramework's Minecraft Action Bar handler which
+ * can be retrieved from NucleusFramework's NmsManager under the
+ * name "ACTION_BAR".
  */
-public final class InternalNmsManager extends NmsManager {
+public interface INmsActionBarHandler extends INmsHandler {
 
-    public InternalNmsManager() {
-        super(Nucleus.getPlugin());
-
-        registerNmsHandler("v1_8_R1", NmsHandlers.TITLES.name(), NmsTitleHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", NmsHandlers.ACTION_BAR.name(), NmsActionBarHandler_v1_8_R1.class);
-    }
+    /**
+     * Send action bar text to a player.
+     *
+     * @param player    The player to send the text to.
+     * @param jsonText  The Json text.
+     */
+    void send(Player player, String jsonText);
 }
