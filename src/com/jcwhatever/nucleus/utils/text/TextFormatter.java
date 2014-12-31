@@ -31,9 +31,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
- * Replaces tags in text.
+ * Replaces tags and unicode escapes in text.
+ *
+ * <p>Not to be used by multiple threads.</p>
  *
  * <p>Tags consist of enclosing curly braces with tag text inside.</p>
  *
@@ -76,11 +79,15 @@ public class TextFormatter {
     private final Map<String, ITagFormatter> _formatters = new HashMap<>(20);
     private final StringBuilder _textBuffer = new StringBuilder(100);
     private final StringBuilder _tagBuffer = new StringBuilder(25);
+    private final Object _sync = new Object();
+    private final Thread _instantiatedThread;
 
     /**
      * Constructor.
      */
-    public TextFormatter(){}
+    public TextFormatter() {
+        _instantiatedThread = Thread.currentThread();
+    }
 
     /**
      * Constructor.
@@ -91,6 +98,7 @@ public class TextFormatter {
         for (ITagFormatter formatter : formatters) {
             _formatters.put(formatter.getTag(), formatter);
         }
+        _instantiatedThread = Thread.currentThread();
     }
 
     /**
@@ -102,6 +110,7 @@ public class TextFormatter {
         for (ITagFormatter formatter : formatters) {
             _formatters.put(formatter.getTag(), formatter);
         }
+        _instantiatedThread = Thread.currentThread();
     }
 
     /**
@@ -110,14 +119,18 @@ public class TextFormatter {
      * @param tag  The tag text.
      */
     public ITagFormatter getFormatter(String tag) {
-        return _formatters.get(tag);
+        synchronized (_sync) {
+            return _formatters.get(tag);
+        }
     }
 
     /**
      * Get all default tag formatters.
      */
     public List<ITagFormatter> getFormatters() {
-        return new ArrayList<>(_formatters.values());
+        synchronized (_sync) {
+            return new ArrayList<>(_formatters.values());
+        }
     }
 
     /**
@@ -126,7 +139,9 @@ public class TextFormatter {
      * @param tag  The tag to remove.
      */
     public void removeFormatter(String tag) {
-        _formatters.remove(tag);
+        synchronized (_sync) {
+            _formatters.remove(tag);
+        }
     }
 
     /**
@@ -135,7 +150,9 @@ public class TextFormatter {
      * @param formatter  The tag formatter to add.
      */
     public void addFormatter(ITagFormatter formatter) {
-        _formatters.put(formatter.getTag(), formatter);
+        synchronized (_sync) {
+            _formatters.put(formatter.getTag(), formatter);
+        }
     }
 
     /**
@@ -149,7 +166,16 @@ public class TextFormatter {
     public String format(String template, Object... params) {
         PreCon.notNull(template);
 
-        return format(_formatters, template, params);
+        if (isHomeThread()) {
+            return format(_formatters, template, params);
+        }
+        else {
+            Map<String, ITagFormatter> formatters;
+            synchronized (_sync) {
+                formatters = new HashMap<>(_formatters);
+            }
+            return format(formatters, template, params);
+        }
     }
 
     /**
@@ -162,12 +188,37 @@ public class TextFormatter {
      * @return  The formatted string.
      */
     public String format(Map<String, ITagFormatter> formatters, String template, Object... params) {
+        PreCon.notNull(formatters);
         PreCon.notNull(template);
+        PreCon.notNull(params);
+
+        if (isHomeThread()) {
+            return format(_textBuffer, _tagBuffer, formatters, template, params);
+        }
+        else {
+            StringBuilder textBuffer = new StringBuilder(template.length());
+            StringBuilder tagBuffer = new StringBuilder(10);
+
+            return format(textBuffer, tagBuffer, formatters, template, params);
+        }
+    }
+
+    /**
+     * Format text using a custom set of formatters.
+     *
+     * @param formatters  The formatter map to use.
+     * @param template    The template text.
+     * @param params      The parameters to add.
+     *
+     * @return  The formatted string.
+     */
+    private String format(StringBuilder textBuffer, StringBuilder tagBuffer,
+                            Map<String, ITagFormatter> formatters, String template, Object... params) {
 
         if (template.indexOf('{') == -1 && template.indexOf('\\') == -1)
             return template;
 
-        _textBuffer.setLength(0);
+        textBuffer.setLength(0);
 
         for (int i=0; i < template.length(); i++) {
             char ch = template.charAt(i);
@@ -176,20 +227,20 @@ public class TextFormatter {
             if (ch == '{') {
 
                 // parse tag
-                String tag = parseTag(template, i);
+                String tag = parseTag(tagBuffer, template, i);
 
                 // update index position
-                i += _tagBuffer.length();
+                i += tagBuffer.length();
 
                 // template ended before tag was closed
                 if (tag == null) {
-                    _textBuffer.append('{');
-                    _textBuffer.append(_tagBuffer);
+                    textBuffer.append('{');
+                    textBuffer.append(tagBuffer);
                 }
                 // tag parsed
                 else {
                     i++; // add 1 for closing brace
-                    appendReplacement(_textBuffer, tag, params, formatters);
+                    appendReplacement(tagBuffer, textBuffer, tag, params, formatters);
                 }
 
             }
@@ -216,42 +267,42 @@ public class TextFormatter {
                 // handle new line character
                 if (next == 'n' || next == 'r') {
 
-                    _textBuffer.append('\n');
+                    textBuffer.append('\n');
                     i++;
                 }
                 // handle unicode
                 else if (next == 'u') {
 
                     i++;
-                    char unicode = parseUnicode(template, i);
+                    char unicode = parseUnicode(tagBuffer, template, i);
                     if (unicode == 0) {
                         // append non unicode text
-                        _textBuffer.append("\\u");
+                        textBuffer.append("\\u");
                     }
                     else {
-                        _textBuffer.append(unicode);
+                        textBuffer.append(unicode);
                         i+= Math.min(4, template.length() - i);
                     }
                 }
                 // unused backslash
                 else {
-                    _textBuffer.append(ch);
+                    textBuffer.append(ch);
                 }
             }
             else {
                 // append next character
-                _textBuffer.append(ch);
+                textBuffer.append(ch);
             }
         }
 
-        return _textBuffer.toString();
+        return textBuffer.toString();
     }
 
     /**
      * Parse a unicode character from the string
      */
-    private char parseUnicode(String template, int currentIndex) {
-        _tagBuffer.setLength(0);
+    private char parseUnicode(StringBuilder tagBuffer, String template, int currentIndex) {
+        tagBuffer.setLength(0);
 
         for (int i=currentIndex + 1, readCount=0; i < template.length(); i++, readCount++) {
 
@@ -262,14 +313,14 @@ public class TextFormatter {
                 char ch = template.charAt(i);
                 if ("01234567890abcdefABCDEF".indexOf(ch) == -1)
                     return 0;
-                _tagBuffer.append(ch);
+                tagBuffer.append(ch);
             }
         }
 
-        if (_tagBuffer.length() == 4) {
+        if (tagBuffer.length() == 4) {
 
             try {
-                return (char) Integer.parseInt(_tagBuffer.toString(), 16);
+                return (char) Integer.parseInt(tagBuffer.toString(), 16);
             } catch (NumberFormatException ignore) {
                 return 0;
             }
@@ -281,19 +332,19 @@ public class TextFormatter {
     /*
      * Parse a single tag from the template
      */
-    private String parseTag(String template, int currentIndex) {
+    private String parseTag(StringBuilder tagBuffer, String template, int currentIndex) {
 
-        _tagBuffer.setLength(0);
+        tagBuffer.setLength(0);
 
         for (int i=currentIndex + 1; i < template.length(); i++) {
 
             char ch = template.charAt(i);
 
             if (ch == '}') {
-                return _tagBuffer.toString();
+                return tagBuffer.toString();
             }
             else {
-                _tagBuffer.append(ch);
+                tagBuffer.append(ch);
             }
         }
 
@@ -303,11 +354,12 @@ public class TextFormatter {
     /*
      * Append replacement text for a tag
      */
-    private void appendReplacement(StringBuilder sb, String tag, Object[] params, Map<String, ITagFormatter> formatters) {
+    private void appendReplacement(StringBuilder tagBuffer, StringBuilder sb,
+                                   String tag, Object[] params, Map<String, ITagFormatter> formatters) {
 
         boolean isNumber = !tag.isEmpty();
 
-        _tagBuffer.setLength(0);
+        tagBuffer.setLength(0);
 
         // parse out tag from comment section
         for (int i=0; i < tag.length(); i++) {
@@ -320,7 +372,7 @@ public class TextFormatter {
             }
             // append next tag character
             else {
-                _tagBuffer.append(ch);
+                tagBuffer.append(ch);
 
                 // check if the character is a number
                 if (isNumber && !Character.isDigit(ch)) {
@@ -329,7 +381,7 @@ public class TextFormatter {
             }
         }
 
-        String parsedTag = _tagBuffer.toString();
+        String parsedTag = tagBuffer.toString();
 
         if (isNumber) {
             int index = Integer.parseInt(parsedTag);
@@ -362,10 +414,10 @@ public class TextFormatter {
         else {
 
             // check for custom formatter
-            ITagFormatter formatter = formatters.get(parsedTag);
+            ITagFormatter formatter = getFormatter(parsedTag, formatters);
             if (formatter == null) {
                 // check for color formatter
-                formatter = _colors.get(parsedTag);
+                formatter = getFormatter(parsedTag, _colors);
             }
 
             if (formatter != null) {
@@ -379,6 +431,18 @@ public class TextFormatter {
         }
     }
 
+    /**
+     * Get a color formatter for the parsed tag.
+     */
+    @Nullable
+    private ITagFormatter getFormatter(String parsedTag, Map<String, ITagFormatter> formatters) {
+        synchronized (_sync) {
+            return formatters.get(parsedTag);
+        }
+    }
+
+
+
     /*
      * Append raw tag to string builder
      */
@@ -386,6 +450,14 @@ public class TextFormatter {
         sb.append('{');
         sb.append(tag);
         sb.append('}');
+    }
+
+    /*
+     * Determine if the current thread is the thread
+     * the formatter was instantiated on.
+     */
+    private boolean isHomeThread() {
+        return Thread.currentThread().equals(_instantiatedThread);
     }
 
     /**
