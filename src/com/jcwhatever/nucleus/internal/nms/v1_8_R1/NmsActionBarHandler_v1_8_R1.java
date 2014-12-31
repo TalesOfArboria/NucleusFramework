@@ -42,9 +42,9 @@ public class NmsActionBarHandler_v1_8_R1 extends v1_8_R1 implements INmsActionBa
     @Override
     public void send(Player player, String jsonText) {
 
-        Object titleComponent = _ChatSerializer.invoke(null, "serialize", jsonText);
+        Object titleComponent = _ChatSerializer.invokeStatic("serialize", jsonText);
 
-        Object packet = _PacketPlayOutChat.newInstance(titleComponent, (byte) 2);
+        Object packet = _PacketPlayOutChat.construct("new", titleComponent, (byte) 2);
 
         sendPacket(player, packet);
     }

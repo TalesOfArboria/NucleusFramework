@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
-import com.jcwhatever.nucleus.utils.reflection.Fields;
+import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
 import com.jcwhatever.nucleus.utils.reflection.ReflectedType;
 import com.jcwhatever.nucleus.utils.reflection.Reflection;
 
@@ -37,16 +37,28 @@ public class v1_8_R1 {
 
     static Reflection reflection = new Reflection("v1_8_R1");
 
-    static ReflectedType _PacketPlayOutTitle = reflection.nmsType("PacketPlayOutTitle");
+    static ReflectedType _IChatBaseComponent = reflection.nmsType("IChatBaseComponent");
 
-    static ReflectedType _PacketPlayOutChat = reflection.nmsType("PacketPlayOutChat");
+    static ReflectedType _EnumTitleAction = reflection.nmsType("EnumTitleAction");
 
-    static ReflectedType _PacketPlayOutPlayerListHeaderFooter = reflection.nmsType("PacketPlayOutPlayerListHeaderFooter");
+    static ReflectedType _EntityPlayer = reflection.nmsType("EntityPlayer");
+
+    static ReflectedType _Packet = reflection.nmsType("Packet");
+
+    static ReflectedType _PacketPlayOutTitle = reflection.nmsType("PacketPlayOutTitle")
+            .constructorAlias("new", _EnumTitleAction.getHandle(), _IChatBaseComponent.getHandle())
+            .constructorAlias("newTimes", int.class, int.class, int.class);
+
+    static ReflectedType _PacketPlayOutChat = reflection.nmsType("PacketPlayOutChat")
+            .constructorAlias("new", _IChatBaseComponent.getHandle(), byte.class);
+
+    static ReflectedType _PacketPlayOutPlayerListHeaderFooter = reflection.nmsType("PacketPlayOutPlayerListHeaderFooter")
+            .constructorAlias("new")
+            .constructorAlias("newHeader", _IChatBaseComponent.getHandle())
+            .fieldAlias("footer", "b");
 
     static ReflectedType _ChatSerializer = reflection.nmsType("ChatSerializer")
             .methodAlias("serialize", "a", String.class);
-
-    static ReflectedType _Packet = reflection.nmsType("Packet");
 
     static ReflectedType _PlayerConnection = reflection.nmsType("PlayerConnection")
             .method("sendPacket", _Packet.getHandle());
@@ -54,7 +66,6 @@ public class v1_8_R1 {
     static ReflectedType _CraftPlayer = reflection.craftType("entity.CraftPlayer")
             .method("getHandle");
 
-    static ReflectedType _EntityPlayer = reflection.nmsType("EntityPlayer");
 
     /**
      * Send an NMS packet.
@@ -64,8 +75,31 @@ public class v1_8_R1 {
      */
     void sendPacket(Player player, Object packet) {
 
-        Fields fields = _EntityPlayer.reflect(_CraftPlayer.reflect(player).invoke("getHandle")).getFields();
+        ReflectedInstance entityPlayer = getEntityPlayer(player);
 
-        _PlayerConnection.reflect(fields.get("playerConnection")).invoke("sendPacket", packet);
+        ReflectedInstance connection = _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
+
+        connection.invoke("sendPacket", packet);
+    }
+
+    /**
+     * Get the players NMS connection.
+     *
+     * @param player The player.
+     */
+    ReflectedInstance getConnection(Player player) {
+
+        ReflectedInstance entityPlayer = getEntityPlayer(player);
+
+        return _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
+    }
+
+    /**
+     * Get the {@code EntityPlayer} nms object of the player.
+     *
+     * @param player  The player.
+     */
+    ReflectedInstance getEntityPlayer(Player player) {
+        return _EntityPlayer.reflect(_CraftPlayer.reflect(player).invoke("getHandle"));
     }
 }

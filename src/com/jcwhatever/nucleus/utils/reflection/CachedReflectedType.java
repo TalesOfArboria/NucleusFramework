@@ -31,6 +31,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Stores globally available data about a class type.
@@ -40,7 +42,9 @@ public class CachedReflectedType {
     private final Class<?> _clazz;
 
     Multimap<Integer, Constructor<?>> _constructors;
-    Multimap<Class<?>, Field> _fields = MultimapBuilder.hashKeys(10).arrayListValues().build();
+    Multimap<Class<?>, ReflectedField> _fieldsByType = MultimapBuilder.hashKeys(10).arrayListValues().build();
+    Map<String, ReflectedField> _fieldsByName = new HashMap<>(10);
+    Map<String, ReflectedField> _staticFieldsByName = new HashMap<>(10);
     Multimap<String, Method> _methods = MultimapBuilder.hashKeys(10).arrayListValues().build();
     Multimap<String, Method> _staticMethods = MultimapBuilder.hashKeys(10).arrayListValues().build();
 
@@ -78,10 +82,18 @@ public class CachedReflectedType {
         Field[] fields = _clazz.getDeclaredFields();
 
         for (Field field : fields) {
-            field.setAccessible(true);
 
-            _fields.put(field.getType(), field);
-            _fields.put(Object.class, field);
+            ReflectedField reflectedField = new ReflectedField(this, field);
+
+            _fieldsByType.put(field.getType(), reflectedField);
+            _fieldsByType.put(Object.class, reflectedField);
+
+            if (reflectedField.isStatic()) {
+                _staticFieldsByName.put(field.getName(), reflectedField);
+            }
+            else {
+                _fieldsByName.put(field.getName(), reflectedField);
+            }
         }
     }
 

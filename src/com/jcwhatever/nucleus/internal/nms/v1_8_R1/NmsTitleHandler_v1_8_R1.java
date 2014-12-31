@@ -26,12 +26,9 @@ package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
 import com.jcwhatever.nucleus.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.reflection.Fields;
 import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
 
 import org.bukkit.entity.Player;
-
-import net.minecraft.server.v1_8_R1.EnumTitleAction;
 
 import javax.annotation.Nullable;
 
@@ -56,24 +53,26 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
         PreCon.notNull(player);
         PreCon.notNullOrEmpty(jsonTitle);
 
-        Object titleComponent = _ChatSerializer.invoke(null, "serialize", jsonTitle);
+        ReflectedInstance connection = getConnection(player);
 
-        Fields playerFields = _EntityPlayer.reflect(
-                _CraftPlayer.reflect(player).invoke("getHandle")).getFields();
-
-        ReflectedInstance connection = _PlayerConnection.reflect(playerFields.get("playerConnection"));
-
-        Object timesPacket = _PacketPlayOutTitle.newInstance(fadeIn, stay, fadeOut);
+        // times packet
+        Object timesPacket = _PacketPlayOutTitle.construct("newTimes", fadeIn, stay, fadeOut);
         connection.invoke("sendPacket", timesPacket);
 
+        // sub title packet
         if (jsonSubtitle != null) {
-            Object subTitleComponent = _ChatSerializer.invoke(null, "serialize", jsonSubtitle);
-            //TODO: add enum reflection
-            Object subTitlePacket = _PacketPlayOutTitle.newInstance(EnumTitleAction.SUBTITLE, subTitleComponent);
+            Object subTitleComponent = _ChatSerializer.invokeStatic("serialize", jsonSubtitle);
+            Object subTitlePacket = _PacketPlayOutTitle.construct(
+                    "new", _EnumTitleAction.getEnum("SUBTITLE"), subTitleComponent);
+
             connection.invoke("sendPacket", subTitlePacket);
         }
 
-        Object titlePacket = _PacketPlayOutTitle.newInstance(EnumTitleAction.TITLE, titleComponent);
+        // title packet
+        Object titleComponent = _ChatSerializer.invokeStatic("serialize", jsonTitle);
+        Object titlePacket = _PacketPlayOutTitle.construct(
+                "new", _EnumTitleAction.getEnum("TITLE"), titleComponent);
+
         connection.invoke("sendPacket", titlePacket);
     }
 }

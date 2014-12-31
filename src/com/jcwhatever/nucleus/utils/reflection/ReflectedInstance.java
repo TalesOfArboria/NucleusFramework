@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class ReflectedInstance extends Instance {
 
-    private final Map<Class<?>, Fields> _fields = new HashMap<>(10);
+    private Map<Class<?>, Fields> _fields;
 
     /**
      * Constructor.
@@ -46,12 +46,38 @@ public class ReflectedInstance extends Instance {
     }
 
     /**
+     * Get an instance field value.
+     *
+     * @param fieldName  The name of the field.
+     */
+    public Object get(String fieldName) {
+        ReflectedField field = getReflectedType().getField(fieldName);
+        return field.get(getHandle());
+    }
+
+    /**
+     * Set an instance field value.
+     *
+     * @param fieldName  The name of the field.
+     * @param value      The value to set.
+     */
+    public void set(String fieldName, Object value) {
+        ReflectedField field = getReflectedType().getField(fieldName);
+        field.set(getHandle(), value);
+    }
+
+    /**
      * Get fields from the instance of the specified class
      * type.
      *
      * @param fieldType  The field class type.
      */
     public Fields getFields(Class<?> fieldType) {
+
+        if (_fields == null) {
+            _fields = new HashMap<>(10);
+        }
+
         Fields fields = _fields.get(fieldType);
         if (fields == null) {
             fields = new Fields(getReflectedType().getFields(fieldType), getHandle());

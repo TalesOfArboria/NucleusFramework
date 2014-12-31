@@ -29,7 +29,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -46,6 +45,8 @@ public class ReflectedType {
 
     private final CachedReflectedType _cached;
     private Map<String, Method> _aliasMethods;
+    private Map<String, ReflectedField> _aliasFields;
+    private Map<String, Constructor<?>> _aliasConstructors;
 
     /**
      * Constructor.
@@ -73,18 +74,155 @@ public class ReflectedType {
      *
      * @param fieldType  The field type.
      */
-    public List<Field> getFields(Class<?> fieldType) {
-        return CollectionUtils.unmodifiableList(_cached._fields.get(fieldType));
+    public List<ReflectedField> getFields(Class<?> fieldType) {
+        PreCon.notNull(fieldType, "fieldType");
+
+        return CollectionUtils.unmodifiableList(_cached._fieldsByType.get(fieldType));
+    }
+
+    /**
+     * Get a field from the type by name.
+     *
+     * <p>If an alias is defined, the alias can also be used.</p>
+     *
+     * @param name  The field name.
+     */
+    public ReflectedField getField(String name) {
+        PreCon.notNullOrEmpty(name, "name");
+
+        if (_aliasFields != null) {
+            ReflectedField field = _aliasFields.get(name);
+            if (field != null)
+                return field;
+        }
+
+        ReflectedField field = _cached._fieldsByName.get(name);
+        if (field == null) {
+            throw new RuntimeException("Field " + name + " not found in type " + getHandle().getName());
+        }
+
+        return field;
+    }
+
+    /**
+     * Get a static field from the type by name.
+     *
+     * <p>If an alias is defined, the alias can also be used.</p>
+     *
+     * @param name  The field name.
+     */
+    public ReflectedField getStaticField(String name) {
+        PreCon.notNullOrEmpty(name, "name");
+
+        if (_aliasFields != null) {
+            ReflectedField field = _aliasFields.get(name);
+            if (field != null)
+                return field;
+        }
+
+        ReflectedField field = _cached._staticFieldsByName.get(name);
+        if (field == null) {
+            throw new RuntimeException("Field " + name + " not found in type " + getHandle().getName());
+        }
+
+        return field;
+    }
+
+    /**
+     * Get an enum constant from the type.
+     *
+     * @param constantName  The enum constant name.
+     *
+     * @return  The enum constant.
+     */
+    public Object getEnum(String constantName) {
+
+        ReflectedField field = getField(constantName);
+
+        if (field == null) {
+            throw new RuntimeException("Enum constant " + constantName + "not found.");
+        }
+        return field.get(null);
+    }
+
+    /**
+     * Get a static field value.
+     *
+     * @param fieldName  The name of the field.
+     */
+    public Object get(String fieldName) {
+        ReflectedField field = getField(fieldName);
+        return field.get(null);
+    }
+
+    /**
+     * Set a static field value.
+     *
+     * @param fieldName  The name of the field.
+     * @param value      The value to set.
+     */
+    public void set(String fieldName, Object value) {
+        ReflectedField field = getField(fieldName);
+        field.set(null, value);
+    }
+
+    /**
+     * Create a new instance of the encapsulated class using
+     * a pre-registered constructor alias.
+     *
+     * @param arguments  The constructor arguments.
+     *
+     * @return  The new instance.
+     */
+    public Object construct(String alias, Object... arguments) {
+        PreCon.notNullOrEmpty(alias, "alias");
+        PreCon.notNull(arguments, "arguments");
+
+        if (_aliasConstructors == null)
+            throw new RuntimeException("No constructor aliases registered.");
+
+        Constructor<?> constructor = _aliasConstructors.get(alias);
+        if (constructor == null)
+            throw new RuntimeException("Constructor alias not found : " + alias);
+
+        try {
+            return constructor.newInstance(arguments);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to instantiate constructor.");
+        }
+    }
+
+    /**
+     * Create a new instance of the encapsulated class using
+     * a pre-registered constructor alias and wrap in
+     * {@code ReflectedInstance}.
+     *
+     * @param arguments  The constructor arguments.
+     *
+     * @return  The new instance.
+     */
+    public ReflectedInstance constructReflect(String alias, Object... arguments) {
+        PreCon.notNullOrEmpty(alias, "alias");
+        PreCon.notNull(arguments, "arguments");
+
+        Object instance = construct(alias, arguments);
+        assert instance != null;
+
+        return new ReflectedInstance(this, instance);
     }
 
     /**
      * Create a new instance of the encapsulated class.
+     * Searches for the correct constructor based on
+     * provided arguments.
      *
      * @param arguments  The constructor arguments.
      *
      * @return  The new instance.
      */
     public Object newInstance(Object... arguments) {
+        PreCon.notNull(arguments, "arguments");
 
         Collection<Constructor<?>> constructors = _cached._constructors.get(arguments.length);
 
@@ -116,12 +254,16 @@ public class ReflectedType {
 
     /**
      * Create a new instance of the encapsulated class.
+     * Searches for the correct constructor based on
+     * provided arguments.
      *
      * @param arguments  The constructor arguments.
      *
      * @return  The new instance.
      */
     public ReflectedInstance newReflectedInstance(Object... arguments) {
+        PreCon.notNull(arguments, "arguments");
+
         Object instance = newInstance(arguments);
         return new ReflectedInstance(this, instance);
     }
@@ -166,6 +308,8 @@ public class ReflectedType {
      * @param instance  The instance to wrap.
      */
     public ReflectedInstance reflect(Object instance) {
+        PreCon.notNull(instance, "instance");
+
         return new ReflectedInstance(this, instance);
     }
 
@@ -177,7 +321,71 @@ public class ReflectedType {
      * @param instance  The instance to wrap.
      */
     public ReflectedArray reflectArray(Object instance) {
+        PreCon.notNull(instance, "instance");
+
         return new ReflectedArray(this, instance);
+    }
+
+    /**
+     * Register a constructor signature under an alias name. Improves performance
+     * by allowing the specific constructor to be retrieved by the alias name.
+     * Use {@code #construct} or {@code @constructReflect} to create new instances
+     * using the alias name.
+     *
+     * @param alias      The constructor alias.
+     * @param signature  The constructor signature.
+     *
+     * @return  Self for chaining.
+     */
+    public ReflectedType constructorAlias(String alias, Class<?>... signature) {
+        PreCon.notNullOrEmpty(alias, "alias");
+        PreCon.notNull(signature, "signature");
+
+        if (_aliasConstructors == null)
+            _aliasConstructors = new HashMap<>(10);
+
+        if (_aliasConstructors.containsKey(alias))
+            throw new RuntimeException("Constructor alias already registered: " + alias);
+
+        Constructor<?> constructor;
+        try {
+            constructor = getHandle().getConstructor(signature);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Constructor not found.");
+        }
+
+        constructor.setAccessible(true);
+        _aliasConstructors.put(alias, constructor);
+
+        return this;
+    }
+
+    /**
+     * Register a field alias name.
+     *
+     * @param fieldAlias  The field alias.
+     * @param fieldName   The field name.
+     *
+     * @return  Self for chaining.
+     */
+    public ReflectedType fieldAlias(String fieldAlias, String fieldName) {
+        PreCon.notNullOrEmpty(fieldAlias, "fieldAlias");
+        PreCon.notNullOrEmpty(fieldName, "fieldName");
+
+        if (_aliasFields == null)
+            _aliasFields = new HashMap<>(10);
+
+        if (_aliasFields.containsKey(fieldAlias))
+            throw new RuntimeException("Field alias already registered: " + fieldAlias);
+
+        ReflectedField field = getField(fieldName);
+        if (field == null)
+            throw new RuntimeException("Field " + fieldName + " not found in type " + getHandle().getName());
+
+        _aliasFields.put(fieldAlias, field);
+
+        return this;
     }
 
     /**
@@ -185,11 +393,13 @@ public class ReflectedType {
      * for overloaded methods. Improves code readability and method lookup performance.
      *
      * @param methodName  The method name.
-     * @param argTypes    The argument types of the method.
+     * @param signature   The argument types of the method.
      *
      * @return Self for chaining.
      */
-    public ReflectedType method(String methodName, Class<?>... argTypes) {
+    public ReflectedType method(String methodName, Class<?>... signature) {
+        PreCon.notNullOrEmpty(methodName, "methodName");
+        PreCon.notNull(signature, "argTypes");
 
         if (_aliasMethods == null) {
             _aliasMethods = new HashMap<>(10);
@@ -201,7 +411,7 @@ public class ReflectedType {
         Method method;
 
         try {
-            method = getHandle().getDeclaredMethod(methodName, argTypes);
+            method = getHandle().getDeclaredMethod(methodName, signature);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             throw new RuntimeException("Method not found.");
@@ -220,11 +430,14 @@ public class ReflectedType {
      * @param alias       The alias for the method. Can match an actual method name
      *                    but will prevent use of overloads.
      * @param methodName  The name of the method.
-     * @param argTypes    The argument types of the method.
+     * @param signature   The argument types of the method.
      *
      * @return Self for chaining.
      */
-    public ReflectedType methodAlias(String alias, String methodName, Class<?>... argTypes) {
+    public ReflectedType methodAlias(String alias, String methodName, Class<?>... signature) {
+        PreCon.notNullOrEmpty(alias, "alias");
+        PreCon.notNullOrEmpty(methodName, "methodName");
+        PreCon.notNull(signature, "argTypes");
 
         if (_aliasMethods == null) {
             _aliasMethods = new HashMap<>(10);
@@ -236,7 +449,7 @@ public class ReflectedType {
         Method method;
 
         try {
-            method = getHandle().getDeclaredMethod(methodName, argTypes);
+            method = getHandle().getDeclaredMethod(methodName, signature);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             throw new RuntimeException("Method not found.");
@@ -260,7 +473,10 @@ public class ReflectedType {
      * @return  Null if the method returns null or void.
      */
     @Nullable
-    public <V> V call(String staticMethodName, Object...arguments) {
+    public <V> V invokeStatic(String staticMethodName, Object... arguments) {
+        PreCon.notNull(staticMethodName, "staticMethodName");
+        PreCon.notNull(arguments, "arguments");
+
         return invoke(null, staticMethodName, arguments);
     }
 
@@ -277,8 +493,8 @@ public class ReflectedType {
      */
     @Nullable
     public <V> V invoke(@Nullable Object instance, String methodName, Object... arguments) {
-        PreCon.notNullOrEmpty(methodName);
-        PreCon.notNull(arguments);
+        PreCon.notNullOrEmpty(methodName, "methodName");
+        PreCon.notNull(arguments, "arguments");
 
         Method method = _aliasMethods.get(methodName);
 

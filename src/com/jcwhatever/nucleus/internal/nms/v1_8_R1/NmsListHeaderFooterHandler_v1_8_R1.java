@@ -50,19 +50,19 @@ public class NmsListHeaderFooterHandler_v1_8_R1 extends v1_8_R1 implements INmsL
         if (jsonHeader == null && jsonFooter == null)
             return;
 
-        Object headerComponent = _ChatSerializer.invoke(null, "serialize", jsonHeader);
+        Object headerComponent = _ChatSerializer.invokeStatic("serialize", jsonHeader);
 
         // create packet instance based on the presence of a header
         Object packet = jsonHeader != null
-                ? _PacketPlayOutPlayerListHeaderFooter.newInstance(headerComponent) // header constructor
-                : _PacketPlayOutPlayerListHeaderFooter.newInstance(); // no header constructor
+                ? _PacketPlayOutPlayerListHeaderFooter.construct("newHeader", headerComponent) // header constructor
+                : _PacketPlayOutPlayerListHeaderFooter.construct("new"); // no header constructor
 
         if (jsonFooter != null) {
 
-            Object footerComponent = _ChatSerializer.invoke(null, "serialize", jsonFooter);
+            Object footerComponent = _ChatSerializer.invokeStatic("serialize", jsonFooter);
 
-            // insert footer into packet field
-            _PacketPlayOutPlayerListHeaderFooter.reflect(packet).getFields().set("b", footerComponent);
+            // insert footer into packet footer field
+            _PacketPlayOutPlayerListHeaderFooter.reflect(packet).set("footer", footerComponent);
         }
 
         // send packet

@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.utils.reflection;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +35,10 @@ import java.util.Map;
  */
 public class Fields {
 
-    private final List<Field> _fields;
+    private final List<ReflectedField> _fields;
     private final Object _instance;
 
-    private Map<String, Field> _nameMap;
+    private Map<String, ReflectedField> _nameMap;
 
     /**
      * Constructor.
@@ -47,7 +46,7 @@ public class Fields {
      * @param fields     The fields in the instance of the specified type.
      * @param instance   The instance the fields are from.
      */
-    public Fields(List<Field> fields, Object instance) {
+    public Fields(List<ReflectedField> fields, Object instance) {
         PreCon.notNull(fields);
         PreCon.notNull(instance);
 
@@ -96,9 +95,9 @@ public class Fields {
      * @return Null if value is null or failed to access the field.
      */
     public <T> T get(String fieldName) {
-        Map<String, Field> nameMap = getNameMap();
+        Map<String, ReflectedField> nameMap = getNameMap();
 
-        Field field = nameMap.get(fieldName);
+        ReflectedField field = nameMap.get(fieldName);
         if (field == null)
             throw new RuntimeException("Field named " + fieldName + " not found.");
 
@@ -112,11 +111,7 @@ public class Fields {
      * @param value  The value to set.
      */
     public void set(int index, Object value) {
-        try {
-            _fields.get(index).set(_instance, value);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        _fields.get(index).set(_instance, value);
     }
 
     /**
@@ -126,17 +121,13 @@ public class Fields {
      * @param value      The value to set.
      */
     public void set(String fieldName, Object value) {
-        Map<String, Field> nameMap = getNameMap();
+        Map<String, ReflectedField> nameMap = getNameMap();
 
-        Field field = nameMap.get(fieldName);
+        ReflectedField field = nameMap.get(fieldName);
         if (field == null)
             throw new RuntimeException("Field named " + fieldName + " not found.");
 
-        try {
-            field.set(_instance, value);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        field.set(_instance, value);
     }
 
     /**
@@ -144,26 +135,21 @@ public class Fields {
      *
      * @param index  The fields index position.
      */
-    public Field getHandle(int index) {
+    public ReflectedField getField(int index) {
         return _fields.get(index);
     }
 
     // get the value of a field
-    private <T> T get(Field field) {
-        try {
-            //noinspection unchecked
-            return (T)field.get(_instance);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private <T> T get(ReflectedField field) {
+        //noinspection unchecked
+        return (T)field.get(_instance);
     }
 
     // initialize and get the name map
-    private Map<String, Field> getNameMap() {
+    private Map<String, ReflectedField> getNameMap() {
         if (_nameMap == null) {
             _nameMap = new HashMap<>(_fields.size());
-            for (Field field : _fields) {
+            for (ReflectedField field : _fields) {
                 _nameMap.put(field.getName(), field);
             }
         }
