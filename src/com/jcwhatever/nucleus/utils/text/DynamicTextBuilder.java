@@ -35,7 +35,8 @@ import java.util.List;
  */
 public class DynamicTextBuilder {
 
-    List<Object> _components = new ArrayList<>(5);
+    private List<Object> _components = new ArrayList<>(5);
+    private int _interval = 0;
 
     /**
      * Append non-dynamic text.
@@ -70,6 +71,21 @@ public class DynamicTextBuilder {
     }
 
     /**
+     * Set the preferred interval the text is refreshed at.
+     *
+     * <p>Overrides the interval of any {@code IDynamicText}
+     * objects that are appended.</p>
+     *
+     * @param ticks  The refresh interval in ticks.
+     *
+     * @return  Self for chaining.
+     */
+    public DynamicTextBuilder interval(int ticks) {
+        _interval = ticks;
+        return this;
+    }
+
+    /**
      * Build a new {@code IDynamicText} instance.
      */
     public IDynamicText build() {
@@ -92,8 +108,8 @@ public class DynamicTextBuilder {
             }
         }
 
-        Object[] dyn = dynText.toArray();
+        IDynamicText[] dyn = dynText.toArray(new IDynamicText[dynText.size()]);
 
-        return new DynamicTextComposite(buffer.toString(), dyn);
+        return new DynamicTextComposite(buffer.toString(), _interval, dyn);
     }
 }

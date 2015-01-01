@@ -33,4 +33,15 @@ public interface IDynamicText {
      * Get the next String to display.
      */
     String nextText();
+
+    /**
+     * The preferred (but not guaranteed) speed the text should be
+     * refreshed at measured in ticks. The value returned may change
+     * depending on how often the text needs to be refresh at any
+     * given time.
+     *
+     * <p>A return value of 0 or less indicates the interval is
+     * unimportant and/or not required.</p>
+     */
+    int interval();
 }

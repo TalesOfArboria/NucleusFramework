@@ -32,7 +32,8 @@ import com.jcwhatever.nucleus.utils.PreCon;
 public class DynamicTextComposite implements IDynamicText {
 
     private String _template;
-    private Object[] _args;
+    private IDynamicText[] _args;
+    private int _interval;
 
     /**
      * Constructor.
@@ -40,17 +41,39 @@ public class DynamicTextComposite implements IDynamicText {
      * @param template  Text template.
      * @param args      Format arguments.
      */
-    DynamicTextComposite(String template, Object... args) {
+    DynamicTextComposite(String template, int interval, IDynamicText... args) {
         PreCon.notNull(template);
         PreCon.notNull(args);
 
         _template = template;
+        _interval = interval;
         _args = args;
     }
 
     @Override
     public String nextText() {
         return TextUtils.format(_template, _args);
+    }
+
+    @Override
+    public int interval() {
+
+        if (_interval > 0 || _args.length == 0)
+            return _interval;
+
+        int interval = Integer.MAX_VALUE;
+
+        for (IDynamicText dyn : _args) {
+            if (dyn.interval() <= 0)
+                continue;
+
+            interval = Math.min(dyn.interval(), interval);
+        }
+
+        if (interval == Integer.MAX_VALUE)
+            interval = 0;
+
+        return interval;
     }
 
     @Override
