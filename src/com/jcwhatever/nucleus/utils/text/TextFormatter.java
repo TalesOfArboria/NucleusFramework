@@ -391,7 +391,13 @@ public class TextFormatter {
             // replace number with parameter argument.
             else {
 
-                String toAppend = String.valueOf(params[index]);
+                Object param = params[index];
+
+                if (param instanceof IDynamicText) {
+                    param = ((IDynamicText) param).nextText();
+                }
+
+                String toAppend = String.valueOf(param);
                 String lastColors = null;
 
                 // make sure colors from inserted text do not continue
