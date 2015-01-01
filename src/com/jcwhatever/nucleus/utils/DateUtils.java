@@ -55,6 +55,16 @@ public final class DateUtils {
     }
 
     /**
+     * Get the difference between two dates in ticks.
+     *
+     * @param start  The start date
+     * @param end    The end date
+     */
+    public static long getDeltaTicks(Date start, Date end) {
+        return (end.getTime() - start.getTime()) / 50;
+    }
+
+    /**
      * Get the difference between two dates in seconds.
      *
      * @param start  The start date
@@ -199,6 +209,19 @@ public final class DateUtils {
     }
 
     /**
+     * Add ticks to the specified date and return a new
+     * {@code Date} object.
+     *
+     * @param date    The date to modify.
+     * @param amount  The number of ticks to add.
+     */
+    public static Date addTicks(Date date, int amount) {
+        PreCon.notNull(date);
+
+        return add(date, Calendar.MILLISECOND, amount * 50);
+    }
+
+    /**
      * Add seconds to the specified date and return a new
      * {@code Date} object.
      *
@@ -297,6 +320,4 @@ public final class DateUtils {
         calendar.add(field, amount);
         return calendar.getTime();
     }
-
-
 }
