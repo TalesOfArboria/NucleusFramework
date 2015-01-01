@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.commands;
 import com.jcwhatever.nucleus.commands.parameters.CommandParameter;
 import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -265,7 +265,7 @@ public class CommandInfoContainer {
     @Localized
     @Nullable
     public String getDescription() {
-        return Lang.get(_plugin, _commandInfo.description());
+        return NucLang.get(_plugin, _commandInfo.description());
     }
 
     /**
@@ -273,7 +273,7 @@ public class CommandInfoContainer {
      */
     @Localized
     public String getLongDescription() {
-        return Lang.get(_plugin, _commandInfo.longDescription());
+        return NucLang.get(_plugin, _commandInfo.longDescription());
     }
 
     // setup command parameters

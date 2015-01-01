@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.UsageGenerator;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
 import com.jcwhatever.nucleus.commands.parameters.CommandParameter;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescription;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -82,7 +82,7 @@ public abstract class CommandException extends Exception {
             throws InvalidArgumentException {
 
         throw new InvalidArgumentException(
-                Lang.get(command.getPlugin(), _INVALID_ARGUMENT,
+                NucLang.get(command.getPlugin(), _INVALID_ARGUMENT,
                         parameterDescription.getName(), getInlineUsage(command),
                         parameterDescription.getDescription())
         );
@@ -101,7 +101,7 @@ public abstract class CommandException extends Exception {
             throws InvalidArgumentException {
 
         throw new InvalidArgumentException(
-                Lang.get(command.getPlugin(), _INVALID_ARGUMENT_NO_DESCRIPTION,
+                NucLang.get(command.getPlugin(), _INVALID_ARGUMENT_NO_DESCRIPTION,
                         parameterName, getInlineUsage(command))
         );
     }
@@ -117,7 +117,7 @@ public abstract class CommandException extends Exception {
         PreCon.notNull(command);
 
         throw new TooManyArgsException(
-                Lang.get(command.getPlugin(), _TOO_MANY_ARGS, getInlineUsage(command))
+                NucLang.get(command.getPlugin(), _TOO_MANY_ARGS, getInlineUsage(command))
         );
     }
 
@@ -135,7 +135,7 @@ public abstract class CommandException extends Exception {
         PreCon.notNull(command);
 
         throw new MissingArgumentException(
-                Lang.get(command.getPlugin(), _MISSING_REQUIRED_ARGUMENT,
+                NucLang.get(command.getPlugin(), _MISSING_REQUIRED_ARGUMENT,
                         parameter.getName(), getInlineUsage(command))
         );
     }
@@ -155,7 +155,7 @@ public abstract class CommandException extends Exception {
         PreCon.notNull(parameter);
 
         throw new DuplicateArgumentException(
-                Lang.get(command.getPlugin(), _DUPLICATE_ARGUMENT,
+                NucLang.get(command.getPlugin(), _DUPLICATE_ARGUMENT,
                         parameter.getName(), getInlineUsage(command))
         );
     }
@@ -174,7 +174,7 @@ public abstract class CommandException extends Exception {
         PreCon.notNull(parameterName);
 
         throw new InvalidParameterException(
-                Lang.get(command.getPlugin(), _INVALID_PARAMETER,
+                NucLang.get(command.getPlugin(), _INVALID_PARAMETER,
                         parameterName, getInlineUsage(command))
         );
     }
@@ -193,7 +193,7 @@ public abstract class CommandException extends Exception {
         PreCon.notNull(flagName);
 
         throw new InvalidParameterException(
-                Lang.get(command.getPlugin(), _INVALID_FLAG, flagName, getInlineUsage(command))
+                NucLang.get(command.getPlugin(), _INVALID_FLAG, flagName, getInlineUsage(command))
         );
     }
 
@@ -219,14 +219,14 @@ public abstract class CommandException extends Exception {
                 if (!(sender instanceof Player))
                     return;
                 throw new InvalidCommandSenderException(
-                        Lang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Console")
+                        NucLang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Console")
                 );
 
             case PLAYER:
                 if (sender instanceof Player)
                     return;
                 throw new InvalidCommandSenderException(
-                        Lang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Player")
+                        NucLang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Player")
                 );
         }
     }
@@ -248,7 +248,7 @@ public abstract class CommandException extends Exception {
             return;
 
         throw new InvalidCommandSenderException(
-                Lang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Player")
+                NucLang.get(command.getPlugin(), _INVALID_COMMAND_SENDER, "Player")
         );
     }
 

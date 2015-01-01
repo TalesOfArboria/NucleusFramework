@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.titles.INamedTitle;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -71,14 +71,14 @@ public final class ShowSubCommand extends AbstractCommand {
         else {
             player = PlayerUtils.getPlayer(playerName);
             if (player == null) {
-                tellError(sender,  Lang.get(_PLAYER_NOT_FOUND, playerName));
+                tellError(sender,  NucLang.get(_PLAYER_NOT_FOUND, playerName));
                 return; // finished
             }
         }
 
         INamedTitle title = Nucleus.getTitleManager().get(name);
         if (title == null) {
-            tellError(sender, Lang.get(_TITLE_NOT_FOUND, name));
+            tellError(sender, NucLang.get(_TITLE_NOT_FOUND, name));
             return; // finished
         }
 

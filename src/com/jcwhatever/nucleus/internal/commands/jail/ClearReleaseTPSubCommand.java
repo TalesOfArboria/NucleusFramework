@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.language.Localizable;
 
@@ -54,7 +54,7 @@ public final class ClearReleaseTPSubCommand extends AbstractCommand {
         Jail jail = Nucleus.getDefaultJail();
         jail.setReleaseLocation(null);
 
-        tellSuccess(sender, Lang.get(_SUCCESS));
+        tellSuccess(sender, NucLang.get(_SUCCESS));
     }
 
 }

@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -98,10 +98,10 @@ public final class NmsUtils {
                         .getBoolean("enforce-nms-version", true);
 
                 if (!enforceNmsVersion) {
-                    Msg.warning(plugin, "Plugin {0} is not compatible with NMS version {1}.",
+                    NucMsg.warning(plugin, "Plugin {0} is not compatible with NMS version {1}.",
                             plugin.getName(), getNmsVersion());
 
-                    Msg.warning(plugin, "enforce-nms-version has been set to false in the plugins config.");
+                    NucMsg.warning(plugin, "enforce-nms-version has been set to false in the plugins config.");
                     return true;
                 }
             }
@@ -109,7 +109,7 @@ public final class NmsUtils {
             // disable incompatible plugin
             Bukkit.getPluginManager().disablePlugin(plugin);
 
-            Msg.warning(plugin, "Disabling {0} because it's not compatible with NMS version {1}",
+            NucMsg.warning(plugin, "Disabling {0} because it's not compatible with NMS version {1}",
                     plugin.getName(), getNmsVersion());
             return false;
         }
@@ -130,15 +130,15 @@ public final class NmsUtils {
             if (versionMatcher.matches()) {
                 _version = versionMatcher.group(1);
 
-                Msg.info("Reflection: CraftBukkit version found: {0}", _version);
+                NucMsg.info("Reflection: CraftBukkit version found: {0}", _version);
             }
         }
         else {
-            Msg.info("Reflection: Using craft version from NucleusFramework config: {0}", _version);
+            NucMsg.info("Reflection: Using craft version from NucleusFramework config: {0}", _version);
         }
 
         if (_version == null) {
-            Msg.severe("Failed to find CraftBukkit version for reflection purposes.");
+            NucMsg.severe("Failed to find CraftBukkit version for reflection purposes.");
         }
     }
 

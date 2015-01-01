@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.titles.INamedTitle;
@@ -58,7 +58,7 @@ public final class ListSubCommand extends AbstractCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = new ChatPaginator(getPlugin(), 5, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(getPlugin(), 5, NucLang.get(_PAGINATOR_TITLE));
 
         List<INamedTitle> titles = Nucleus.getTitleManager().getAll();
 

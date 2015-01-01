@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.internal.jail;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.HashMapMap;
-import com.jcwhatever.nucleus.internal.Lang;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.jail.IJailManager;
 import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.jail.JailSession;
@@ -304,7 +304,7 @@ public final class InternalJailManager implements IJailManager {
                         Player p = PlayerUtils.getPlayer(session.getPlayerId());
 
                         if (p != null) {
-                            Msg.tellAnon(p, Lang.get(_RELEASE_TIME, releaseMinutes));
+                            NucMsg.tellAnon(p, NucLang.get(_RELEASE_TIME, releaseMinutes));
                         }
                     }
                 }

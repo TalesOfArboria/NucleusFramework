@@ -29,8 +29,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.collections.timed.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedMultimap;
-import com.jcwhatever.nucleus.internal.Lang;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -189,10 +189,10 @@ public class CommandRequests {
     private static void tellMultipleRequests(CommandSender sender, ResponseType type,
                                              Collection<ResponseRequest> requests) {
 
-        Msg.tellAnon(sender, Lang.get(_MULTIPLE_REQUESTS));
+        NucMsg.tellAnon(sender, NucLang.get(_MULTIPLE_REQUESTS));
 
         for (ResponseRequest request : requests) {
-            Msg.tellAnon(sender, '/' + type.getCommandName() + ' ' + request.getContext());
+            NucMsg.tellAnon(sender, '/' + type.getCommandName() + ' ' + request.getContext());
         }
     }
 

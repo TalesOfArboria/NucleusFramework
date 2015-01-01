@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.floatingitems;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -138,7 +138,7 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
 
         Location location = node.getLocation("location");
         if (location == null) {
-            Msg.debug(_plugin, "Location not found for floating item in data node.");
+            NucMsg.debug(_plugin, "Location not found for floating item in data node.");
             return null;
         }
 
@@ -146,7 +146,7 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
         ItemStack[] itemStacks = node.getItemStacks("item");
 
         if (itemStacks == null || itemStacks.length == 0) {
-            Msg.debug(_plugin, "Item stack not found for floating item in data node.");
+            NucMsg.debug(_plugin, "Item stack not found for floating item in data node.");
             return null;
         }
 

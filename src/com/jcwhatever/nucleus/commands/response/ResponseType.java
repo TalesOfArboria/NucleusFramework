@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.commands.response;
 
 
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -73,7 +73,7 @@ public class ResponseType {
 
     @Localized
     public String getCommandName() {
-        return Lang.get(_commandName);
+        return NucLang.get(_commandName);
     }
 
     @Nullable

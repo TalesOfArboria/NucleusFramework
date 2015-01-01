@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.internal.providers.permissions;
 
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.providers.permissions.IPermission;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.utils.BatchTracker;
@@ -180,7 +180,7 @@ public abstract class AbstractPermissionsProvider implements IPermissionsProvide
 
                 e.printStackTrace();
                 _canReflect = false;
-                Msg.warning("Failed to use reflection to add permission. " +
+                NucMsg.warning("Failed to use reflection to add permission. " +
                         "Permissions will be added using Bukkit API which may take longer.");
                 return false;
             }
@@ -196,7 +196,7 @@ public abstract class AbstractPermissionsProvider implements IPermissionsProvide
             e.printStackTrace();
 
             _canReflect = false;
-            Msg.warning("Failed to use reflection to add permission. " +
+            NucMsg.warning("Failed to use reflection to add permission. " +
                     "Permissions will be added using Bukkit API which may take longer.");
             return false;
         }
@@ -204,7 +204,7 @@ public abstract class AbstractPermissionsProvider implements IPermissionsProvide
             throwable.printStackTrace();
 
             _canReflect = false;
-            Msg.warning("Failed to use reflection to add permission. " +
+            NucMsg.warning("Failed to use reflection to add permission. " +
                     "Permissions will be added using Bukkit API which may take longer.");
             return false;
         }

@@ -30,7 +30,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.extended.MaterialExt;
 import com.jcwhatever.nucleus.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.nucleus.extended.serializable.SerializableFurnitureEntity;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
@@ -137,7 +137,7 @@ public abstract class RestorableRegion extends BuildableRegion {
         _isSaving = true;
         onSave();
 
-        Msg.debug(getPlugin(), "RestorableRegion: saving data for region '{0}'", getName());
+        NucMsg.debug(getPlugin(), "RestorableRegion: saving data for region '{0}'", getName());
 
         for (ChunkInfo chunk : chunks) {
             RegionChunkFileWriter writer = new RegionChunkFileWriter(this, chunk);
@@ -152,7 +152,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                     public void run() {
                         _isSaving = false;
                         onSaveComplete();
-                        Msg.debug(getPlugin(), "Restorable Region '{0}' save complete.", getName());
+                        NucMsg.debug(getPlugin(), "Restorable Region '{0}' save complete.", getName());
                     }
                 });
 

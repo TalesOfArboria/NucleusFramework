@@ -396,8 +396,8 @@ public final class InternalRegionManager implements IGlobalRegionManager {
         PreCon.notNull(region);
 
         if (!region.isDefined()) {
-            Msg.debug("Failed to register region '{0}' with RegionManager because " +
-                            "it's coords are undefined.", region.getName());
+            NucMsg.debug("Failed to register region '{0}' with RegionManager because " +
+                    "it's coords are undefined.", region.getName());
             return;
         }
 

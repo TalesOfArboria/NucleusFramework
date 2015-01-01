@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.scripting.ScriptManager;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.IScript;
@@ -105,14 +105,14 @@ public class ScriptApiInclude extends NucleusScriptApi {
                             _includeFolder, file, _manager.getScriptFactory());
 
                     if (script == null) {
-                        Msg.warning(getPlugin(), "Failed to load script named '{0}'.");
+                        NucMsg.warning(getPlugin(), "Failed to load script named '{0}'.");
                         continue;
                     }
 
                     _script.evaluate(script);
 
                 } else {
-                    Msg.warning(getPlugin(), "Failed to include script named '{0}'. " +
+                    NucMsg.warning(getPlugin(), "Failed to include script named '{0}'. " +
                             "File not found.", file.getName());
                 }
             }
@@ -136,7 +136,7 @@ public class ScriptApiInclude extends NucleusScriptApi {
 
             IScriptApi api = Nucleus.getScriptApiRepo().getApi(getPlugin(), owningPluginName, apiName);
             if (api == null) {
-                Msg.warning(getPlugin(), "Failed to include script api named '{0}' from plugin '{1}'. " +
+                NucMsg.warning(getPlugin(), "Failed to include script api named '{0}' from plugin '{1}'. " +
                         "Api not found.", apiName, owningPluginName);
                 return false;
             }
@@ -161,7 +161,7 @@ public class ScriptApiInclude extends NucleusScriptApi {
 
             IScriptApi api = Nucleus.getScriptApiRepo().getApi(getPlugin(), owningPluginName, apiName);
             if (api == null) {
-                Msg.warning(getPlugin(), "Failed to find script api named '{0}' from plugin '{1}'. " +
+                NucMsg.warning(getPlugin(), "Failed to find script api named '{0}' from plugin '{1}'. " +
                         "Api not found.", apiName, owningPluginName);
                 return null;
             }

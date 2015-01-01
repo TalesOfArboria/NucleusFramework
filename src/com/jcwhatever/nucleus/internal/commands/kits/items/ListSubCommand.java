@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.kits.KitManager;
 import com.jcwhatever.nucleus.language.Localizable;
@@ -71,18 +71,18 @@ public final class ListSubCommand extends AbstractCommand {
 
         IKit kit = manager.get(kitName);
         if (kit == null) {
-            tellError(sender, Lang.get(_KIT_NOT_FOUND, kitName));
+            tellError(sender, NucLang.get(_KIT_NOT_FOUND, kitName));
             return; // finish
         }
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 5, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 5, NucLang.get(_PAGINATOR_TITLE));
 
         // Armor
-        pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(_LABEL_ARMOR));
+        pagin.addFormatted(FormatTemplate.SUB_HEADER, NucLang.get(_LABEL_ARMOR));
         ItemStack[] armor = kit.getArmor();
 
         if (armor.length == 0) {
-            pagin.addFormatted(FormatTemplate.LIST_ITEM, Lang.get(_LABEL_NONE));
+            pagin.addFormatted(FormatTemplate.LIST_ITEM, NucLang.get(_LABEL_NONE));
         }
         else {
 
@@ -92,11 +92,11 @@ public final class ListSubCommand extends AbstractCommand {
         }
 
         // Items
-        pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(_LABEL_ITEMS));
+        pagin.addFormatted(FormatTemplate.SUB_HEADER, NucLang.get(_LABEL_ITEMS));
         ItemStack[] items = kit.getItems();
 
         if (items.length == 0) {
-            pagin.addFormatted(FormatTemplate.LIST_ITEM, Lang.get(_LABEL_NONE));
+            pagin.addFormatted(FormatTemplate.LIST_ITEM, NucLang.get(_LABEL_NONE));
         }
         else {
 

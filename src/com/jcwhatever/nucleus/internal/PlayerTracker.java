@@ -239,7 +239,7 @@ public final class PlayerTracker {
                     @Override
                     public void onFinish(StorageLoadResult result) {
                         if (!result.isLoaded())
-                            Msg.warning("Failed to load player names file.");
+                            NucMsg.warning("Failed to load player names file.");
 
                     }
 

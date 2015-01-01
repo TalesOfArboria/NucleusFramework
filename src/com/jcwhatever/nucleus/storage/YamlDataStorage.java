@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.storage;
 
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.scheduler.ScheduledTask;
@@ -176,7 +176,7 @@ public class YamlDataStorage implements IDataNode {
             } catch (Exception e) {
 
                 if (_file != null)
-                    Msg.severe("The config-file '{0}' failed to load.", _file.getName());
+                    NucMsg.severe("The config-file '{0}' failed to load.", _file.getName());
 
                 e.printStackTrace();
                 _isLoaded = false;

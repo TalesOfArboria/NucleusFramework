@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -66,15 +66,15 @@ public final class GiveSubCommand extends AbstractCommand {
 
         UUID playerId = PlayerUtils.getPlayerId(playerName);
         if (playerId == null) {
-            tellError(sender, Lang.get(_PLAYER_NOT_FOUND, playerName));
+            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, playerName));
             return; // finish
         }
 
         if (!Economy.deposit(playerId, amount)) {
-            tellError(sender, Lang.get(_FAILED));
+            tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, Economy.formatAmount(amount), playerName));
+        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.formatAmount(amount), playerName));
     }
 }

@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.commands.CommandParser.ParsedCommand;
 import com.jcwhatever.nucleus.commands.CommandParser.ParsedTabComplete;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
@@ -134,7 +134,7 @@ public class CommandDispatcher implements
 
         if (parsed == null) {
             // command not found
-            _utils.tellError(sender, Lang.get(_COMMAND_NOT_FOUND, rootName));
+            _utils.tellError(sender, NucLang.get(_COMMAND_NOT_FOUND, rootName));
             return true; // finish
         }
 
@@ -143,7 +143,7 @@ public class CommandDispatcher implements
 
         // Check if the player has permissions to run the command
         if (!Permissions.has(sender, command.getPermission().getName())) {
-            _utils.tellError(sender, Lang.get(_ACCESS_DENIED));
+            _utils.tellError(sender, NucLang.get(_ACCESS_DENIED));
             return true;
         }
 
@@ -171,7 +171,7 @@ public class CommandDispatcher implements
         // Determine if the command can execute or if it requires sub commands
         if (!command.canExecute()) {
             _utils.tellError(sender,
-                    Lang.get(_COMMAND_INCOMPLETE,
+                    NucLang.get(_COMMAND_INCOMPLETE,
                             _usageGenerator.generate(command, rootName, UsageGenerator.INLINE_HELP)));
             return true; // finished
         }

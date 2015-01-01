@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.mixins.INamedLocation;
@@ -69,16 +69,16 @@ public final class AddTPSubCommand extends AbstractCommand {
 
         INamedLocation current = jail.getTeleport(name);
         if (current != null) {
-            tellError(sender, Lang.get(_DUPLICATE_NAME, name));
+            tellError(sender, NucLang.get(_DUPLICATE_NAME, name));
             return; // finished
         }
 
         if (!jail.addTeleport(name, loc)) {
-            tellError(sender, Lang.get(_FAILED));
+            tellError(sender, NucLang.get(_FAILED));
             return; // finished
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, name));
+        tellSuccess(sender, NucLang.get(_SUCCESS, name));
     }
 
 }

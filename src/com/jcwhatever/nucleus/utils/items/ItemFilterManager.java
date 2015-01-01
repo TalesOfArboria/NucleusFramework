@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -69,9 +69,9 @@ public class ItemFilterManager implements IPluginOwned {
         public String getDisplayName() {
             switch (this) {
                 case WHITELIST:
-                    return Lang.get(_WHITELIST);
+                    return NucLang.get(_WHITELIST);
                 case BLACKLIST:
-                    return Lang.get(_BLACKLIST);
+                    return NucLang.get(_BLACKLIST);
                 default:
                     return super.toString();
             }

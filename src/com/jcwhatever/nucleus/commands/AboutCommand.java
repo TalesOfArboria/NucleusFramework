@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.commands;
 
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 
 import org.bukkit.command.CommandSender;
@@ -54,10 +54,10 @@ public class AboutCommand extends AbstractCommand {
     public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
 
         // show header
-        tell(sender, Lang.get(getPlugin(), _HEADER));
+        tell(sender, NucLang.get(getPlugin(), _HEADER));
 
         // show plugin name
-        tell(sender, Lang.get(getPlugin(), _PLUGIN_NAME));
+        tell(sender, NucLang.get(getPlugin(), _PLUGIN_NAME));
 
         List<String> authors = getPlugin().getDescription().getAuthors();
 
@@ -65,16 +65,16 @@ public class AboutCommand extends AbstractCommand {
         if (authors != null &&
                 !authors.isEmpty()) {
 
-            tell(sender, Lang.get(getPlugin(), _AUTHOR));
+            tell(sender, NucLang.get(getPlugin(), _AUTHOR));
         }
 
         // show help text
-        tell(sender, Lang.get(getPlugin(), _HELP));
+        tell(sender, NucLang.get(getPlugin(), _HELP));
 
         // show help text
-        tell(sender, Lang.get(getPlugin(), _HELP2));
+        tell(sender, NucLang.get(getPlugin(), _HELP2));
 
         // show footer
-        tell(sender, Lang.get(getPlugin(), _FOOTER));
+        tell(sender, NucLang.get(getPlugin(), _FOOTER));
     }
 }

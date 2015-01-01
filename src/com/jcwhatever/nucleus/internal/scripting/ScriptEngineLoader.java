@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.internal.scripting;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.modules.ClassLoadMethod;
 import com.jcwhatever.nucleus.modules.IModuleInfo;
 import com.jcwhatever.nucleus.modules.JarModuleLoader;
@@ -91,7 +91,7 @@ public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactor
                 _engineManager.registerEngineExtension(mime, factory);
             }
 
-            Msg.info("Loaded script engine: {0}", factory.getEngineName());
+            NucMsg.info("Loaded script engine: {0}", factory.getEngineName());
         }
     }
 

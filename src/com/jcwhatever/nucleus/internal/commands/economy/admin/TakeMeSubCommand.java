@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.Economy;
 
@@ -60,10 +60,10 @@ public final class TakeMeSubCommand extends AbstractCommand {
         double amount = args.getDouble("amount");
 
         if (!Economy.withdraw(playerId, amount)) {
-            tellError(sender, Lang.get(_FAILED));
+            tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, Economy.formatAmount(amount), sender.getName()));
+        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.formatAmount(amount), sender.getName()));
     }
 }

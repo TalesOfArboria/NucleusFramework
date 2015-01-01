@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
@@ -70,7 +70,7 @@ public final class ListSubCommand extends AbstractCommand {
 
             Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
             if (plugin == null) {
-                tellError(sender, Lang.get(_PLUGIN_NOT_FOUND, pluginName));
+                tellError(sender, NucLang.get(_PLUGIN_NOT_FOUND, pluginName));
                 return; // finish
             }
 
@@ -80,7 +80,7 @@ public final class ListSubCommand extends AbstractCommand {
             return;
         }
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
 
         List<IStorageProvider> providers = Nucleus.getProviderManager().getStorageProviders();
         IStorageProvider defaultProvider = Nucleus.getProviderManager().getStorageProvider();

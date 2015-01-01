@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 
 import org.bukkit.command.CommandSender;
@@ -54,10 +54,10 @@ public final class DelSubCommand extends AbstractCommand {
         String name = args.getName("titleName", 32);
 
         if (!Nucleus.getTitleManager().remove(name)) {
-            tellError(sender, Lang.get(_FAILED, name));
+            tellError(sender, NucLang.get(_FAILED, name));
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, name));
+        tellSuccess(sender, NucLang.get(_SUCCESS, name));
     }
 }
 

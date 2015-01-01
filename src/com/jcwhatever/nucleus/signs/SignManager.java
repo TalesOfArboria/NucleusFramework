@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.signs;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -141,7 +141,7 @@ public class SignManager implements IPluginOwned {
     public boolean registerSignType(SignHandler signHandler) {
         SignHandler current = _signHandlerMap.get(signHandler.getSearchName());
         if (current != null) {
-            Msg.warning(_plugin,
+            NucMsg.warning(_plugin,
                     "Failed to register sign handler. A sign named '{0}' is already " +
                             "registered by plugin '{1}'.",
                     current.getName(), current.getPlugin().getName());
@@ -278,7 +278,7 @@ public class SignManager implements IPluginOwned {
 
         SignHandler handler = _localHandlerMap.get(signHandlerName.toLowerCase());
         if (handler == null) {
-            Msg.warning(_plugin,
+            NucMsg.warning(_plugin,
                     "Failed to restore sign because a sign handler named '{0}' was not found for it.",
                     signHandlerName);
             return false;
@@ -293,19 +293,19 @@ public class SignManager implements IPluginOwned {
 
         final Location loc = signNode.getLocation("location");
         if (loc == null) {
-            Msg.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
+            NucMsg.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
             return false;
         }
 
         final Material type = signNode.getEnum("type", null, Material.class);
         if (type == null) {
-            Msg.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
+            NucMsg.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
             return false;
         }
 
         final BlockFace facing = signNode.getEnum("direction", null, BlockFace.class);
         if (facing == null) {
-            Msg.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
+            NucMsg.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
             return false;
         }
 
@@ -350,7 +350,7 @@ public class SignManager implements IPluginOwned {
 
         SignHandler handler = _localHandlerMap.get(signHandlerName.toLowerCase());
         if (handler == null) {
-            Msg.warning(_plugin,
+            NucMsg.warning(_plugin,
                     "Failed to restore signs because a sign handler named '{0}' was not found.",
                     signHandlerName);
             return false;
@@ -366,19 +366,19 @@ public class SignManager implements IPluginOwned {
 
             Location loc = signNode.getLocation("location");
             if (loc == null) {
-                Msg.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
+                NucMsg.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
                 continue;
             }
 
             Material type = signNode.getEnum("type", null, Material.class);
             if (type == null) {
-                Msg.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
+                NucMsg.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
                 continue;
             }
 
             BlockFace facing = signNode.getEnum("direction", null, BlockFace.class);
             if (facing == null) {
-                Msg.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
+                NucMsg.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
                 continue;
             }
 

@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.jail.JailSession;
 import com.jcwhatever.nucleus.language.Localizable;
@@ -64,7 +64,7 @@ public final class SendSubCommand extends AbstractCommand {
         
         Player player = PlayerUtils.getPlayer(playerName);
         if (player == null) {
-            tellError(sender, Lang.get(_PLAYER_NOT_FOUND, playerName));
+            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, playerName));
             return; // finish
         }
         
@@ -72,11 +72,11 @@ public final class SendSubCommand extends AbstractCommand {
         JailSession jailSession = jail.imprison(player, minutes);
         
         if (jailSession == null) {
-            tellError(sender, Lang.get(_FAILED));
+            tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }
         
-        tellSuccess(sender, Lang.get(_SUCCESS, playerName, minutes));
+        tellSuccess(sender, NucLang.get(_SUCCESS, playerName, minutes));
     }
 
 }

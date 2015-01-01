@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
@@ -99,7 +99,7 @@ public final class SendBankSubCommand extends AbstractCommand {
 
         UUID receiverId = PlayerUtils.getPlayerId(receiverName);
         if (receiverId == null) {
-            tellError(sender, Lang.get(_PLAYER_NOT_FOUND, receiverName));
+            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, receiverName));
             return; // finish
         }
 
@@ -108,20 +108,20 @@ public final class SendBankSubCommand extends AbstractCommand {
         if (myBankName.isEmpty()) {
             myAccount = Economy.getAccount(player.getUniqueId());
             if (myAccount == null) {
-                tellError(sender, Lang.get(_NO_SEND_ACCOUNT));
+                tellError(sender, NucLang.get(_NO_SEND_ACCOUNT));
                 return; //finish
             }
         } else {
             IBank myBank = Economy.getBank(myBankName);
             if (myBank == null) {
-                tellError(sender, Lang.get(_BANK_NOT_FOUND, myBankName));
+                tellError(sender, NucLang.get(_BANK_NOT_FOUND, myBankName));
                 return; // finish
             }
 
             myAccount = myBank.getAccount(player.getUniqueId());
 
             if (myAccount == null) {
-                tellError(sender, Lang.get(_NO_SEND_ACCOUNT_AT_BANK, myBank.getName()));
+                tellError(sender, NucLang.get(_NO_SEND_ACCOUNT_AT_BANK, myBank.getName()));
                 return; // finish
             }
         }
@@ -131,20 +131,20 @@ public final class SendBankSubCommand extends AbstractCommand {
         if (bankName.isEmpty()) {
             receiverAccount = Economy.getAccount(receiverId);
             if (receiverAccount == null) {
-                tellError(sender, Lang.get(_NO_RECEIVE_ACCOUNT, receiverName));
+                tellError(sender, NucLang.get(_NO_RECEIVE_ACCOUNT, receiverName));
                 return; // finish
             }
         }
         else {
             IBank bank = Economy.getBank(bankName);
             if (bank == null) {
-                tellError(sender, Lang.get(_BANK_NOT_FOUND, myBankName));
+                tellError(sender, NucLang.get(_BANK_NOT_FOUND, myBankName));
                 return; // finish
             }
 
             receiverAccount = bank.getAccount(receiverId);
             if (receiverAccount == null) {
-                tellError(sender, Lang.get(_NO_RECEIVE_ACCOUNT_AT_BANK, receiverName, bank.getName()));
+                tellError(sender, NucLang.get(_NO_RECEIVE_ACCOUNT_AT_BANK, receiverName, bank.getName()));
                 return; // finish
             }
         }
@@ -152,17 +152,17 @@ public final class SendBankSubCommand extends AbstractCommand {
         // check command senders balance
         double balance = myAccount.getBalance();
         if (balance < amount) {
-            tellError(sender, Lang.get(_NOT_ENOUGH_MONEY, balance));
+            tellError(sender, NucLang.get(_NOT_ENOUGH_MONEY, balance));
             return; // finish
         }
 
         // transfer money
         if (!Economy.transfer(myAccount, receiverAccount, amount)) {
-            tellError(sender, Lang.get(_FAILED));
+            tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, Economy.formatAmount(amount),
+        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.formatAmount(amount),
                 receiverName, myAccount.getBalance()));
     }
 }

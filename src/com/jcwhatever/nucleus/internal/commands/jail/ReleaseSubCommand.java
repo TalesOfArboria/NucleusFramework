@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.jail.JailSession;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -61,20 +61,20 @@ public final class ReleaseSubCommand extends AbstractCommand {
         
         UUID playerId = PlayerUtils.getPlayerId(playerName);
         if (playerId == null) {
-            tellError(sender, Lang.get(_PLAYER_NOT_FOUND, playerName));
+            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, playerName));
             return; // finish
         }
         
         JailSession jailSession = Nucleus.getJailManager().getSession(playerId);
         
         if (jailSession == null) {
-            tellError(sender, Lang.get(_PLAYER_NOT_IMPRISONED, playerName));
+            tellError(sender, NucLang.get(_PLAYER_NOT_IMPRISONED, playerName));
             return; // finish
         }
         
         jailSession.release();
         
-        tellSuccess(sender, Lang.get(_SUCCESS, playerName));
+        tellSuccess(sender, NucLang.get(_SUCCESS, playerName));
     }
 
 }

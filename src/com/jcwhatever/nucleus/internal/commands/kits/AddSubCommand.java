@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.kits.KitManager;
 import com.jcwhatever.nucleus.language.Localizable;
@@ -62,16 +62,16 @@ public final class AddSubCommand extends AbstractCommand {
 
         IKit kit = manager.get(kitName);
         if (kit != null) {
-            tellError(sender, Lang.get(_KIT_ALREADY_EXISTS, kitName));
+            tellError(sender, NucLang.get(_KIT_ALREADY_EXISTS, kitName));
             return; // finish
         }
 
         kit = manager.add(kitName);
         if (kit == null) {
-            tellError(sender, Lang.get(_FAILED));
+            tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, kit.getName()));
+        tellSuccess(sender, NucLang.get(_SUCCESS, kit.getName()));
     }
 }

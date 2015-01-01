@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
 
@@ -62,19 +62,19 @@ public final class SetSubCommand extends AbstractCommand {
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
         if (plugin == null) {
-            tellError(sender, Lang.get(_PLUGIN_NOT_FOUND, pluginName));
+            tellError(sender, NucLang.get(_PLUGIN_NOT_FOUND, pluginName));
             return; // finish
         }
 
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(storageName);
         if (provider == null) {
-            tellError(sender, Lang.get(_PROVIDER_NOT_FOUND, storageName));
+            tellError(sender, NucLang.get(_PROVIDER_NOT_FOUND, storageName));
             return; // finish
         }
 
         Nucleus.getProviderManager().setStorageProvider(plugin, provider);
 
-        tellSuccess(sender, Lang.get(_SUCCESS, plugin.getName(), provider.getName()));
+        tellSuccess(sender, NucLang.get(_SUCCESS, plugin.getName(), provider.getName()));
     }
 }
 

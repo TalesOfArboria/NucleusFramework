@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.commands.parameters.CommandParameter;
 import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescription;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.messaging.IMessenger;
@@ -320,7 +320,7 @@ public abstract class AbstractCommand
         ParameterDescriptions paramDescriptions = getInfo().getParamDescriptions();
 
         ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
-                Lang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
+                NucLang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
 
         String description = getInfo().getLongDescription().isEmpty()
                 ? getInfo().getDescription()
@@ -338,7 +338,7 @@ public abstract class AbstractCommand
 
             // add static parameter descriptions
             if (!staticParams.isEmpty()) {
-                pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(getPlugin(), _STATIC_PARAMETER_HEADER));
+                pagin.addFormatted(FormatTemplate.SUB_HEADER, NucLang.get(getPlugin(), _STATIC_PARAMETER_HEADER));
 
                 for (CommandParameter parameter : staticParams) {
 
@@ -349,17 +349,17 @@ public abstract class AbstractCommand
                         continue;
                     }
 
-                    pagin.addFormatted(Lang.get(getPlugin(), _STATIC_PARAMETER_ITEM_LINE1,
+                    pagin.addFormatted(NucLang.get(getPlugin(), _STATIC_PARAMETER_ITEM_LINE1,
                             paramDesc.getName(), paramDesc.getDescription()));
 
-                    pagin.addFormatted(Lang.get(getPlugin(), _STATIC_PARAMETER_ITEM_LINE2,
+                    pagin.addFormatted(NucLang.get(getPlugin(), _STATIC_PARAMETER_ITEM_LINE2,
                             paramDesc.getDescription()));
                 }
             }
 
             // add floating parameter descriptions
             if (!floatingParams.isEmpty()) {
-                pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(getPlugin(), _FLOATING_PARAMETER_HEADER));
+                pagin.addFormatted(FormatTemplate.SUB_HEADER, NucLang.get(getPlugin(), _FLOATING_PARAMETER_HEADER));
 
                 for (CommandParameter parameter : floatingParams) {
 
@@ -370,17 +370,17 @@ public abstract class AbstractCommand
                         continue;
                     }
 
-                    pagin.addFormatted(Lang.get(getPlugin(), _FLOATING_PARAMETER_ITEM_LINE1,
+                    pagin.addFormatted(NucLang.get(getPlugin(), _FLOATING_PARAMETER_ITEM_LINE1,
                             paramDesc.getName(), paramDesc.getDescription()));
 
-                    pagin.addFormatted(Lang.get(getPlugin(), _FLOATING_PARAMETER_ITEM_LINE2,
+                    pagin.addFormatted(NucLang.get(getPlugin(), _FLOATING_PARAMETER_ITEM_LINE2,
                             paramDesc.getDescription()));
                 }
             }
 
             // add flag parameter descriptions
             if (!flagParams.isEmpty()) {
-                pagin.addFormatted(FormatTemplate.SUB_HEADER, Lang.get(getPlugin(), _FLAG_PARAMETER_HEADER));
+                pagin.addFormatted(FormatTemplate.SUB_HEADER, NucLang.get(getPlugin(), _FLAG_PARAMETER_HEADER));
 
                 for (FlagParameter parameter : flagParams) {
 
@@ -391,10 +391,10 @@ public abstract class AbstractCommand
                         continue;
                     }
 
-                    pagin.addFormatted(Lang.get(getPlugin(), _FLAG_PARAMETER_ITEM_LINE1,
+                    pagin.addFormatted(NucLang.get(getPlugin(), _FLAG_PARAMETER_ITEM_LINE1,
                             paramDesc.getName(), paramDesc.getDescription()));
 
-                    pagin.addFormatted(Lang.get(getPlugin(), _FLAG_PARAMETER_ITEM_LINE2,
+                    pagin.addFormatted(NucLang.get(getPlugin(), _FLAG_PARAMETER_ITEM_LINE2,
                             paramDesc.getDescription()));
                 }
             }
@@ -412,7 +412,7 @@ public abstract class AbstractCommand
         PreCon.positiveNumber(page);
 
         ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
-                Lang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
+                NucLang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
 
         if (canExecute() && isHelpVisible(sender)) {
 

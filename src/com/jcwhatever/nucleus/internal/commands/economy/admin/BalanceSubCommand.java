@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
@@ -77,35 +77,35 @@ public final class BalanceSubCommand extends AbstractCommand {
 
         UUID playerId = PlayerUtils.getPlayerId(playerName);
         if (playerId == null) {
-            tellError(sender, Lang.get(_PLAYER_NOT_FOUND, playerName));
+            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, playerName));
             return; // finish
         }
 
         if (bankName.isEmpty()) {
             double balance = Economy.getBalance(playerId);
-            tellSuccess(sender, Lang.get(_GLOBAL_BALANCE, Economy.formatAmount(balance)));
+            tellSuccess(sender, NucLang.get(_GLOBAL_BALANCE, Economy.formatAmount(balance)));
         }
         else {
 
             if (!Economy.hasBankSupport()) {
-                tellError(sender, Lang.get(_NO_BANK_SUPPORT));
+                tellError(sender, NucLang.get(_NO_BANK_SUPPORT));
                 return; // finish
             }
 
             IBank bank = Economy.getBank(bankName);
             if (bank == null) {
-                tellError(sender, Lang.get(_BANK_NOT_FOUND, bankName));
+                tellError(sender, NucLang.get(_BANK_NOT_FOUND, bankName));
                 return; // finish
             }
 
             IAccount account = bank.getAccount(playerId);
             if (account == null) {
-                tellError(sender, Lang.get(_ACCOUNT_NOT_FOUND,
+                tellError(sender, NucLang.get(_ACCOUNT_NOT_FOUND,
                         playerName, bank.getName()));
                 return; // finish
             }
 
-            tellSuccess(sender, Lang.get(_BANK_BALANCE,
+            tellSuccess(sender, NucLang.get(_BANK_BALANCE,
                     Economy.formatAmount(account.getBalance()), bank.getName()));
         }
     }

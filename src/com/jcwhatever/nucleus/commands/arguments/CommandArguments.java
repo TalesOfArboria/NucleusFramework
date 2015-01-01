@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.DuplicateArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
 import com.jcwhatever.nucleus.utils.items.ItemWrapper;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
@@ -892,7 +892,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
                     Location location = selectedBlock.getLocation();
 
-                    String message = Lang.get("Location selected: {0} ", TextUtils.formatLocation(location, true));
+                    String message = NucLang.get("Location selected: {0} ", TextUtils.formatLocation(location, true));
                     _msg.tell(p, message);
 
                     locationHandler.onLocationRetrieved(p, location);

@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.commands.parameters;
 
 import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.language.Localized;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
@@ -70,7 +70,7 @@ public class ParameterDescription implements IPluginOwned {
 
         @Override
         public void append(StringBuilder sb, String rawTag) {
-            sb.append(Lang.get(NAME));
+            sb.append(NucLang.get(NAME));
         }
     };
 
@@ -82,7 +82,7 @@ public class ParameterDescription implements IPluginOwned {
 
         @Override
         public void append(StringBuilder sb, String rawTag) {
-            sb.append(Lang.get(NAME16));
+            sb.append(NucLang.get(NAME16));
         }
     };
 
@@ -94,7 +94,7 @@ public class ParameterDescription implements IPluginOwned {
 
         @Override
         public void append(StringBuilder sb, String rawTag) {
-            sb.append(Lang.get(ITEM_STACK));
+            sb.append(NucLang.get(ITEM_STACK));
         }
     };
 
@@ -106,7 +106,7 @@ public class ParameterDescription implements IPluginOwned {
 
         @Override
         public void append(StringBuilder sb, String rawTag) {
-            sb.append(Lang.get(LOCATION));
+            sb.append(NucLang.get(LOCATION));
         }
     };
 
@@ -118,7 +118,7 @@ public class ParameterDescription implements IPluginOwned {
 
         @Override
         public void append(StringBuilder sb, String rawTag) {
-            sb.append(Lang.get(PAGE));
+            sb.append(NucLang.get(PAGE));
         }
     };
 
@@ -147,7 +147,7 @@ public class ParameterDescription implements IPluginOwned {
 
         _command = command;
         _parameterName = parameterName;
-        _description = _textFormatter.format(Lang.get(command.getPlugin(), description));
+        _description = _textFormatter.format(NucLang.get(command.getPlugin(), description));
     }
 
     /**
@@ -171,7 +171,7 @@ public class ParameterDescription implements IPluginOwned {
         }
 
         // re-add equal characters that may have been in the description.
-        _description = _textFormatter.format(Lang.get(command.getPlugin(), TextUtils.concat(1, descComp, "=")));
+        _description = _textFormatter.format(NucLang.get(command.getPlugin(), TextUtils.concat(1, descComp, "=")));
     }
 
     /**

@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.scripting.IScript;
@@ -60,7 +60,7 @@ public final class ListSubCommand extends AbstractCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
 
         List<IScript> scripts = Nucleus.getScriptManager().getScripts();
 
@@ -69,7 +69,7 @@ public final class ListSubCommand extends AbstractCommand {
 
             pagin.add(script.getName(), engine != null
                     ? engine.getFactory().getEngineName() + ", " + engine.getFactory().getEngineVersion()
-                    : Lang.get(_LABEL_NO_ENGINE));
+                    : NucLang.get(_LABEL_NO_ENGINE));
         }
 
         pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);

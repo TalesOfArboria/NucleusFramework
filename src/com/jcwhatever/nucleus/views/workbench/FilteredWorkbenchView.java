@@ -27,8 +27,8 @@ package com.jcwhatever.nucleus.views.workbench;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.manager.NucleusEventHandler;
 import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
-import com.jcwhatever.nucleus.internal.Lang;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
@@ -125,7 +125,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
                 InventoryView invView = event.getView();
                 if (invView != null) {
                     ItemStack stack = result.clone();
-                    ItemStackUtils.setLore(stack, Lang.get(workbench.getPlugin(), _NOT_CRAFTABLE_LORE));
+                    ItemStackUtils.setLore(stack, NucLang.get(workbench.getPlugin(), _NOT_CRAFTABLE_LORE));
                     invView.setItem(0, stack);
                 }
             }
@@ -157,8 +157,8 @@ public class FilteredWorkbenchView extends WorkbenchView {
         }
 
         private void tellNoCraftMessage(FilteredWorkbenchView view) {
-            Msg.tellNoSpam(view.getPlugin(), view.getPlayer(),
-                    Lang.get(view.getPlugin(), _NOT_CRAFTABLE_CHAT));
+            NucMsg.tellNoSpam(view.getPlugin(), view.getPlayer(),
+                    NucLang.get(view.getPlugin(), _NOT_CRAFTABLE_CHAT));
         }
     }
 }

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.language;
 
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
@@ -224,7 +224,7 @@ public class LanguageManager implements IPluginOwned {
             return false;
 
         if (!keys.isCompatible(language)) {
-            Msg.warning(_plugin, "Could not merge language file due to incompatible version.");
+            NucMsg.warning(_plugin, "Could not merge language file due to incompatible version.");
             return false;
         }
 
@@ -236,7 +236,7 @@ public class LanguageManager implements IPluginOwned {
 
             String key = keys.getText(text.getIndex());
             if (key == null) {
-                Msg.warning(_plugin, "Failed to find localization key indexed {0}.", text.getIndex());
+                NucMsg.warning(_plugin, "Failed to find localization key indexed {0}.", text.getIndex());
                 continue;
             }
 

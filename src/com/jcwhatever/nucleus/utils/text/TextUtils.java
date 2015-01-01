@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.text;
 
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.language.Localized;
 import com.jcwhatever.nucleus.utils.IEntryValidator;
@@ -125,7 +125,7 @@ public final class TextUtils {
         @Override
         @Localized
         public String toString() {
-            return Lang.get(_template);
+            return NucLang.get(_template);
         }
     }
 

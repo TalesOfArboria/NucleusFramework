@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.performance.queued;
 
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
@@ -181,7 +181,7 @@ public class QueueResult {
         }
 
         if (reason != null)
-            Msg.debug(_plugin, reason);
+            NucMsg.debug(_plugin, reason);
 
         doOnEnd();
     }

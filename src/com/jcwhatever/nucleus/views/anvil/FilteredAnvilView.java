@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
@@ -137,7 +137,7 @@ public class FilteredAnvilView extends AnvilView {
                 InventoryView invView = current.getInventoryView();
                 if (invView != null) {
                     ItemStack stack = repaired.clone();
-                    ItemStackUtils.setLore(stack, Lang.get(_NOT_REPAIRABLE));
+                    ItemStackUtils.setLore(stack, NucLang.get(_NOT_REPAIRABLE));
                     invView.setItem(0, stack);
                 }
             }

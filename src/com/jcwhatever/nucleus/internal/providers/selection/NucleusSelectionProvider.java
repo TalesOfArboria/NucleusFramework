@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.internal.providers.selection;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.internal.Lang;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
@@ -158,7 +158,7 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
                 Location previous = _p1Selections.put(player.getUniqueId(), p1);
 
                 if (!p1.equals(previous)) {
-                    Msg.tell(player, Lang.get(_P1_SELECTED, LocationUtils.locationToString(p1, 2)));
+                    NucMsg.tell(player, NucLang.get(_P1_SELECTED, LocationUtils.locationToString(p1, 2)));
                 }
                 event.setCancelled(true);
             }
@@ -168,7 +168,7 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
                 Location previous = _p2Selections.put(player.getUniqueId(), p2);
 
                 if (!p2.equals(previous)) {
-                    Msg.tell(player, Lang.get(_P2_SELECTED, LocationUtils.locationToString(p2, 2)));
+                    NucMsg.tell(player, NucLang.get(_P2_SELECTED, LocationUtils.locationToString(p2, 2)));
                 }
                 event.setCancelled(true);
             }

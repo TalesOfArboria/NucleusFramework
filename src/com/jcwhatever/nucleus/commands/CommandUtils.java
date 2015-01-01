@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.arguments.LocationResponse;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
@@ -178,12 +178,12 @@ public class CommandUtils implements IPluginOwned {
         PreCon.notNull(p2);
 
         if (!p.getWorld().equals(p1.getWorld())) {
-            tellError(p, Lang.get(_SAME_WORLD_REGION_SELECT));
+            tellError(p, NucLang.get(_SAME_WORLD_REGION_SELECT));
             return false;
         }
 
         if (!p1.getWorld().equals(p2.getWorld())) {
-            tellError(p, Lang.get(_INVALID_REGION));
+            tellError(p, NucLang.get(_INVALID_REGION));
             return false;
         }
 
@@ -191,7 +191,7 @@ public class CommandUtils implements IPluginOwned {
                 .getRegionSelectionProvider().setSelection(p, new RegionSelection(p1, p2));
 
         if (!isSuccess) {
-            tellError(p, Lang.get(_SET_SELECTION_FAILED));
+            tellError(p, NucLang.get(_SET_SELECTION_FAILED));
             return false;
         }
 
@@ -215,7 +215,7 @@ public class CommandUtils implements IPluginOwned {
 
         // Check for region selection
         if (selection == null) {
-            tellError(p, Lang.get(_NO_REGION_SELECTED));
+            tellError(p, NucLang.get(_NO_REGION_SELECTED));
             return null;
         }
 
@@ -242,16 +242,16 @@ public class CommandUtils implements IPluginOwned {
 
         PropertyDefinition defs = settings.getDefinitions().get(settingName);
         if (defs == null) {
-            tellError(sender, Lang.get(_UNRECOGNIZED_PROPERTY, settingName));
+            tellError(sender, NucLang.get(_UNRECOGNIZED_PROPERTY, settingName));
             return; // finish
         }
 
         if (!settings.set(settingName, null)) {
-            tellError(sender, Lang.get(_CLEAR_PROPERTY_FAILED, settingName));
+            tellError(sender, NucLang.get(_CLEAR_PROPERTY_FAILED, settingName));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_CLEAR_PROPERTY_SUCCESS, settingName));
+        tellSuccess(sender, NucLang.get(_CLEAR_PROPERTY_SUCCESS, settingName));
     }
 
     /**
@@ -307,7 +307,7 @@ public class CommandUtils implements IPluginOwned {
         // get settings definitions
         final PropertyDefinition propertyDefinition = settings.getDefinitions().get(settingName);
         if (propertyDefinition == null) {
-            tellError(sender, Lang.get(_UNRECOGNIZED_PROPERTY, settingName));
+            tellError(sender, NucLang.get(_UNRECOGNIZED_PROPERTY, settingName));
             return; // finish
         }
 
@@ -324,7 +324,7 @@ public class CommandUtils implements IPluginOwned {
                     public void onLocationRetrieved (Player p, Location location) {
 
                         if (settings.set(settingName, location)) {
-                            String successMessage = Lang.get(_SET_PROPERTY_SUCCESS, settingName,
+                            String successMessage = NucLang.get(_SET_PROPERTY_SUCCESS, settingName,
                                     TextUtils.formatLocation(location, true));
 
                             tellSuccess(p, successMessage);
@@ -334,8 +334,8 @@ public class CommandUtils implements IPluginOwned {
 
                         } else {
 
-                            tellError(p, Lang.get(_SET_PROPERTY_FAILED, settingName));
-                            tell(p, Lang.get(_PROPERTY_DESCRIPTION,
+                            tellError(p, NucLang.get(_SET_PROPERTY_FAILED, settingName));
+                            tell(p, NucLang.get(_PROPERTY_DESCRIPTION,
                                     propertyDefinition.getName(), propertyDefinition.getDescription()));
                         }
                     }
@@ -354,13 +354,13 @@ public class CommandUtils implements IPluginOwned {
 
         // make sure the result is valid
         if (!settings.set(settingName, value)) {
-            tellError(sender, Lang.get(_INVALID_PROPERTY_VALUE, value, settingName));
-            tell(sender, Lang.get(_PROPERTY_DESCRIPTION,
+            tellError(sender, NucLang.get(_INVALID_PROPERTY_VALUE, value, settingName));
+            tell(sender, NucLang.get(_PROPERTY_DESCRIPTION,
                     propertyDefinition.getName(), propertyDefinition.getDescription()));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SET_PROPERTY_SUCCESS, settingName, args.getString(valueArgName)));
+        tellSuccess(sender, NucLang.get(_SET_PROPERTY_SUCCESS, settingName, args.getString(valueArgName)));
 
         if (onSuccess != null)
             onSuccess.run();

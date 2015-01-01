@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.scripting;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.scripting.api.IScriptApi;
 import com.jcwhatever.nucleus.scripting.api.IScriptApiObject;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -227,7 +227,7 @@ public class NucleusEvaluatedScript implements IEvaluatedScript {
 
         } catch (NoSuchMethodException | InvocationTargetException |
                 InstantiationException | IllegalAccessException e) {
-            Msg.debug(Nucleus.getPlugin(), "Failed to create new script context using current context type." +
+            NucMsg.debug(Nucleus.getPlugin(), "Failed to create new script context using current context type." +
                     "Using SimpleScriptContext instead.");
 
             // if failed, use a SimpleScriptContext

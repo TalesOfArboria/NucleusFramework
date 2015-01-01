@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.utils.Economy;
@@ -83,33 +83,33 @@ public final class SendSubCommand extends AbstractCommand {
 
         UUID receiverId = PlayerUtils.getPlayerId(receiverName);
         if (receiverId == null) {
-            tellError(sender, Lang.get(_PLAYER_NOT_FOUND, receiverName));
+            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, receiverName));
             return; // finish
         }
 
         IAccount account = Economy.getAccount(player.getUniqueId());
         if (account == null) {
-            tellError(sender, Lang.get(_NO_SEND_ACCOUNT));
+            tellError(sender, NucLang.get(_NO_SEND_ACCOUNT));
             return; //finish
         }
 
         IAccount receiverAccount = Economy.getAccount(receiverId);
         if (receiverAccount == null) {
-            tellError(sender, Lang.get(_NO_RECEIVE_ACCOUNT, receiverName));
+            tellError(sender, NucLang.get(_NO_RECEIVE_ACCOUNT, receiverName));
             return; // finish
         }
 
         double balance = account.getBalance();
         if (balance < amount) {
-            tellError(sender, Lang.get(_NOT_ENOUGH_MONEY, balance));
+            tellError(sender, NucLang.get(_NOT_ENOUGH_MONEY, balance));
             return; // finish
         }
 
         if (!Economy.transfer(account, receiverAccount, amount)) {
-            tellError(sender, Lang.get(_FAILED));
+            tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, Economy.formatAmount(amount), receiverName, account.getBalance()));
+        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.formatAmount(amount), receiverName, account.getBalance()));
     }
 }

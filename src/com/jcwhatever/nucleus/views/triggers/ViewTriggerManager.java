@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.views.triggers;
 
-import com.jcwhatever.nucleus.internal.Msg;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -159,12 +159,12 @@ public class ViewTriggerManager implements IViewTriggerStorage, IPluginOwned {
 
         IViewTriggerFactory factory = getTriggerFactory(factoryName);
         if (factory == null) {
-            Msg.debug(getPlugin(), "Failed to find a view trigger factory named '{0}'", factoryName);
+            NucMsg.debug(getPlugin(), "Failed to find a view trigger factory named '{0}'", factoryName);
             return null;
         }
 
         if (_triggers.containsKey(factoryName.toLowerCase())) {
-            Msg.debug(getPlugin(), "Failed to add a view trigger because a " +
+            NucMsg.debug(getPlugin(), "Failed to add a view trigger because a " +
                     "trigger named '{0}' already exists.", triggerName);
 
             return null;
@@ -172,7 +172,7 @@ public class ViewTriggerManager implements IViewTriggerStorage, IPluginOwned {
 
         IViewFactory target = _viewStorage.getViewFactory(targetName);
         if (target == null) {
-            Msg.debug(getPlugin(), "Failed to find a view factory named '{0}'", factoryName);
+            NucMsg.debug(getPlugin(), "Failed to find a view factory named '{0}'", factoryName);
             return null;
         }
 

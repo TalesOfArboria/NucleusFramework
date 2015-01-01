@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.commands;
 
 import com.jcwhatever.nucleus.commands.parameters.CommandParameter;
 import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 
 import java.util.LinkedList;
@@ -180,7 +180,7 @@ public class UsageGenerator {
         String commandName = command.getParent() != null
                 ? command.getInfo().getName() + ' '
                 : "";
-        return Lang.get(command.getPlugin(),
+        return NucLang.get(command.getPlugin(),
                 template, rootCommandName + ' ', commandPath, commandName, params);
     }
 }

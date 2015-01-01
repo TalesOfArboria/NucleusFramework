@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
 import com.jcwhatever.nucleus.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Utils;
-import com.jcwhatever.nucleus.utils.text.TextComponent;
+import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 import com.jcwhatever.nucleus.utils.text.TextComponents;
 
 import org.bukkit.entity.Player;
@@ -145,14 +145,14 @@ public class Title implements ITitle {
 
             StringBuilder buffer = new StringBuilder(50);
 
-            getJson(buffer, getTitleComponents());
+            SimpleJSONBuilder.text(buffer, getTitleComponents());
 
             String title = buffer.toString();
             String subTitle = null;
 
             if (_subTitle != null) {
                 buffer.setLength(0);
-                getJson(buffer, getSubTitleComponents());
+                SimpleJSONBuilder.text(buffer, getSubTitleComponents());
                 subTitle = buffer.toString();
             }
 
@@ -216,11 +216,11 @@ public class Title implements ITitle {
 
         switch (type) {
             case TITLE:
-                getJson(buffer, getTitleComponents());
+                SimpleJSONBuilder.text(buffer, getTitleComponents());
                 break;
             case SUBTITLE:
                 //noinspection ConstantConditions
-                getJson(buffer, getSubTitleComponents());
+                SimpleJSONBuilder.text(buffer, getSubTitleComponents());
                 break;
             case TIMES:
                 buffer.append(_fadeInTime);
@@ -245,42 +245,6 @@ public class Title implements ITitle {
             return -1;
 
         return time;
-    }
-
-    private void getJson(StringBuilder buffer, TextComponents segments) {
-
-        buffer.append('{');
-        getJsonSegment(buffer, segments.get(0));
-
-        if (segments.size() > 1) {
-            buffer.append(",extra:[");
-
-            for (int i=1; i < segments.size(); i++) {
-                buffer.append('{');
-                getJsonSegment(buffer, segments.get(i));
-                buffer.append('}');
-
-                if (i < segments.size() - 1) {
-                    buffer.append(',');
-                }
-            }
-
-            buffer.append(']');
-        }
-
-        buffer.append('}');
-    }
-
-    private void getJsonSegment(StringBuilder buffer, TextComponent segment) {
-        buffer.append("text:\"");
-        buffer.append(segment.getText());
-        buffer.append('"');
-
-        if (segment.getTextColor() != null) {
-
-            buffer.append(",color:");
-            buffer.append(segment.getTextColor().name().toLowerCase());
-        }
     }
 
     protected enum TitleCommandType {

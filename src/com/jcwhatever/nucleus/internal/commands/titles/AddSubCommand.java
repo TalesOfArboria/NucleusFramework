@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.titles.INamedTitle;
 
@@ -69,17 +69,17 @@ public final class AddSubCommand extends AbstractCommand {
 
         INamedTitle currentTitle = Nucleus.getTitleManager().get(name);
         if (currentTitle != null) {
-            tellError(sender, Lang.get(_ALREADY_EXISTS, name));
+            tellError(sender, NucLang.get(_ALREADY_EXISTS, name));
             return; // finished
         }
 
         if (!Nucleus.getTitleManager().add(name, title,
                 subtitle.isEmpty() ? null : subtitle, fadein, stay, fadeout)) {
 
-            tellError(sender, Lang.get(_FAILED));
+            tellError(sender, NucLang.get(_FAILED));
             return; // finished
         }
 
-        tellSuccess(sender, Lang.get(_SUCCESS, name));
+        tellSuccess(sender, NucLang.get(_SUCCESS, name));
     }
 }
