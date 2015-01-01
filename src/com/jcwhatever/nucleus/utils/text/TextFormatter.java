@@ -36,8 +36,6 @@ import javax.annotation.Nullable;
 /**
  * Replaces tags and unicode escapes in text.
  *
- * <p>Not to be used by multiple threads.</p>
- *
  * <p>Tags consist of enclosing curly braces with tag text inside.</p>
  *
  * <p>Numbers are used to mark the index of the parameter that should be

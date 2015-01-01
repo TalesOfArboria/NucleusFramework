@@ -55,6 +55,8 @@ import javax.annotation.Nullable;
 /**
  * Nucleus event manager.
  *
+ * <p>Not designed for asynchronous use.</p>
+ *
  * <p>Nucleus events are primarily intended for use in a mostly self contained
  * system with many contexts that benefit from each having their own event manager. This
  * can reduce code and the number of checks by guaranteeing event handlers in a specific event
