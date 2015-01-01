@@ -51,9 +51,9 @@ public class TimedDistributor<T> {
      * @param timeSpan   The number of ticks the element will be current for.
      */
     public boolean add(T element, int timeSpan, TimeScale timeScale) {
-
         PreCon.notNull(element);
         PreCon.greaterThanZero(timeSpan);
+        PreCon.notNull(timeScale);
 
         Element<T> timedElement = new Element<>(element, timeSpan, timeScale);
 
@@ -73,7 +73,16 @@ public class TimedDistributor<T> {
     public boolean remove(T element) {
         PreCon.notNull(element);
 
-        return _queue.removeFirstOccurrence(new Element<T>(element, -1, TimeScale.MILLISECONDS));
+        return _queue.removeFirstOccurrence(new Element<T>(element));
+    }
+
+    /**
+     * Determine if the distributor contains an element.
+     *
+     * @param element  The element to check.
+     */
+    public boolean contains(T element) {
+        return _queue.contains(new Element<T>(element));
     }
 
     /**
@@ -129,6 +138,10 @@ public class TimedDistributor<T> {
         Element(T value, int timeSpan, TimeScale timeScale) {
             this.value = value;
             this.timeSpan = timeSpan * timeScale.getTimeFactor();
+        }
+
+        Element(T value) {
+            this.value = value;
         }
 
         @Override
