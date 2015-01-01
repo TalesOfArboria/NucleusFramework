@@ -30,8 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Generates Dynamic Text and allows appending {@Code IDynamicText} into
- * the output to create a composite of dynamic text generators..
+ * Generates a dynamic text composite by appending text and {@Code IDynamicText}.
  */
 public class DynamicTextBuilder {
 
