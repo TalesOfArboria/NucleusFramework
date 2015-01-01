@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.messaging;
 
-import com.jcwhatever.nucleus.internal.Lang;
+import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
@@ -262,8 +262,8 @@ public class ChatPaginator {
         int totalPages = (int)Math.ceil((double)_printList.size() / _itemsPerPage);
 
         String header = _headerFormat != null
-                ? Lang.get(_plugin, _headerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
-                : Lang.get(_HEADER, _title, Math.max(1, page), Math.max(1, totalPages));
+                ? NucLang.get(_plugin, _headerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
+                : NucLang.get(_HEADER, _title, Math.max(1, page), Math.max(1, totalPages));
 
         if (!header.isEmpty())
             _msg.tell(sender, header);
@@ -293,8 +293,8 @@ public class ChatPaginator {
         }
 
         String footer = _footerFormat != null
-                ? Lang.get(_plugin, _footerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
-                : Lang.get(_FOOTER, _title, Math.max(1, page), Math.max(1, totalPages));
+                ? NucLang.get(_plugin, _footerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
+                : NucLang.get(_FOOTER, _title, Math.max(1, page), Math.max(1, totalPages));
 
         if (!footer.isEmpty())
             _msg.tell(sender, footer);
