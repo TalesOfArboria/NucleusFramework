@@ -56,7 +56,7 @@ public class DynamicTextComposite implements IDynamicText {
     }
 
     @Override
-    public int interval() {
+    public int getRefreshRate() {
 
         if (_interval > 0 || _args.length == 0)
             return _interval;
@@ -64,10 +64,10 @@ public class DynamicTextComposite implements IDynamicText {
         int interval = Integer.MAX_VALUE;
 
         for (IDynamicText dyn : _args) {
-            if (dyn.interval() <= 0)
+            if (dyn.getRefreshRate() <= 0)
                 continue;
 
-            interval = Math.min(dyn.interval(), interval);
+            interval = Math.min(dyn.getRefreshRate(), interval);
         }
 
         if (interval == Integer.MAX_VALUE)

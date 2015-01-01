@@ -80,7 +80,7 @@ public class DynamicTextBuilder {
      *
      * @return  Self for chaining.
      */
-    public DynamicTextBuilder interval(int ticks) {
+    public DynamicTextBuilder refreshRate(int ticks) {
         _interval = ticks;
         return this;
     }

@@ -43,5 +43,5 @@ public interface IDynamicText {
      * <p>A return value of 0 or less indicates the interval is
      * unimportant and/or not required.</p>
      */
-    int interval();
+    int getRefreshRate();
 }
