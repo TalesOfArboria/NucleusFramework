@@ -77,18 +77,12 @@ public class CircularQueue<E> implements Deque<E> {
 
     @Override
     public void addFirst(@Nullable E value) {
+
         Entry entry = new Entry(value);
 
-        if (_size == 0) {
-            addFirstEntry(entry);
-            return;
-        }
+        addEntry(entry);
 
-        _current.left.right = entry;
-        _current.left = entry;
         _current = entry;
-
-        _size++;
     }
 
     @Override
@@ -96,17 +90,7 @@ public class CircularQueue<E> implements Deque<E> {
 
         Entry entry = new Entry(value);
 
-        if (_size == 0) {
-            addFirstEntry(entry);
-            return;
-        }
-
-        _current.left.right = entry;
-        entry.left = _current.left;
-        entry.right = _current;
-        _current.left = entry;
-
-        _size++;
+        addEntry(entry);
     }
 
     @Override
@@ -413,11 +397,20 @@ public class CircularQueue<E> implements Deque<E> {
         return new ItrLeft();
     }
 
-    private void addFirstEntry(Entry entry) {
-        _current = entry;
-        entry.left = entry;
-        entry.right = entry;
-        _size = 1;
+    private void addEntry (Entry entry) {
+
+        if (_size == 0) {
+            _current = entry;
+            entry.left = entry;
+            entry.right = entry;
+        }
+        else {
+            entry.left = _current.left;
+            entry.right = _current;
+            _current.left.right = entry;
+            _current.left = entry;
+        }
+        _size++;
     }
 
     private boolean removeOccurrence(Object o, Iterator<E> iterator) {
@@ -437,69 +430,74 @@ public class CircularQueue<E> implements Deque<E> {
         return false;
     }
 
+    @Nullable
+    private Entry iteratorRemove(@Nullable Entry next) {
+        if (next == null) {
+            removeFirst();
+        }
+        else if (_size == 1) {
+            _current = null;
+            _size = 0;
+            return null;
+        }
+        else {
+            next.left.left.right = next;
+            next.left = next.left.left;
+            _size--;
+        }
+
+        return next;
+    }
+
     private class ItrRight implements Iterator<E> {
 
-        Entry current = null;
+        Entry next = null;
 
         @Override
         public boolean hasNext() {
-            return _size > 0 && (current == null || !current.equals(_current));
+            return _size > 0 && (next == null || !next.equals(_current));
         }
 
         @Override
         public E next() {
-            if (current == null) {
-                current = _current.right;
+            if (next == null) {
+                next = _current.right;
                 return _current.value;
             }
 
-            current = current.right;
-            return current.left.value;
+            next = next.right;
+            return next.left.value;
         }
 
         @Override
         public void remove() {
-            if (current == null) {
-                removeFirst();
-            }
-            else {
-                current.left.right = current.right;
-                current.right.left = current.left;
-                current = current.right;
-            }
+            next = iteratorRemove(next);
         }
     }
 
     private class ItrLeft implements Iterator<E> {
 
-        Entry current;
+        Entry next;
 
         @Override
         public boolean hasNext() {
-            return _size > 0 && (current == null || !current.equals(_current.left));
+            return _size > 0 && (next == null || !next.equals(_current.left));
         }
 
         @Override
         public E next() {
-            if (current == null) {
-                current = _current.left.left;
+            if (next == null) {
+                next = _current.left.left;
                 return _current.left.value;
             }
 
-            current = current.left;
-            return current.left.value;
+            next = next.left;
+            return next.right.value;
         }
 
         @Override
         public void remove() {
-            if (current == null) {
-                removeLast();
-            }
-            else {
-                current.left.right = current.right;
-                current.right.left = current.left;
-                current = current.right;
-            }
+            next = iteratorRemove(next);
         }
     }
 
