@@ -39,9 +39,9 @@ import java.util.UUID;
 /* 
  * NucleusFramework's internal messenger.
  */
-public final class Msg {
+public final class NucMsg {
 
-    private Msg() {}
+    private NucMsg() {}
 
     public static int getLineWrapCount() {
         return msg().getLineWrapCount();

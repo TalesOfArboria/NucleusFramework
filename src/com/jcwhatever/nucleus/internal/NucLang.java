@@ -30,9 +30,9 @@ import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.language.Localized;
 import org.bukkit.plugin.Plugin;
 
-public final class Lang {
+public final class NucLang {
 
-    private Lang() {}
+    private NucLang() {}
 
     @Localized
     public static String get(String text, Object... params) {
