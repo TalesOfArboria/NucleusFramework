@@ -25,12 +25,10 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.collections.CircularQueue;
-import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import javax.annotation.Nullable;
 
 /**
@@ -44,23 +42,23 @@ import javax.annotation.Nullable;
 public class TimedDistributor<T> {
 
     private CircularQueue<Element<T>> _queue = new CircularQueue<>();
-    private Date _nextRotation;
+    private long _nextRotation;
 
     /**
      * Add an element.
      *
      * @param element         The element to add.
-     * @param timeSpanTicks   The number of ticks the element will be current for.
+     * @param timeSpan   The number of ticks the element will be current for.
      */
-    public boolean add(T element, int timeSpanTicks) {
+    public boolean add(T element, int timeSpan, TimeScale timeScale) {
 
         PreCon.notNull(element);
-        PreCon.greaterThanZero(timeSpanTicks);
+        PreCon.greaterThanZero(timeSpan);
 
-        Element<T> timedElement = new Element<>(element, timeSpanTicks);
+        Element<T> timedElement = new Element<>(element, timeSpan, timeScale);
 
         if (_queue.offerFirst(timedElement)) {
-            _nextRotation = null;
+            _nextRotation = 0;
             return true;
         }
 
@@ -75,7 +73,7 @@ public class TimedDistributor<T> {
     public boolean remove(T element) {
         PreCon.notNull(element);
 
-        return _queue.removeFirstOccurrence(new Element<T>(element, -1));
+        return _queue.removeFirstOccurrence(new Element<T>(element, -1, TimeScale.MILLISECONDS));
     }
 
     /**
@@ -91,17 +89,19 @@ public class TimedDistributor<T> {
             return null;
 
         Element<T> element;
-        if (_nextRotation == null) {
+        long currentTime = System.currentTimeMillis();
+
+        if (_nextRotation == 0) {
             element = _queue.element();
             assert element != null;
 
-            _nextRotation = DateUtils.addTicks(new Date(), element.timeSpan);
+            _nextRotation = currentTime + element.timeSpan;
         }
-        else if (_nextRotation.compareTo(new Date()) <= 0) {
+        else if (_nextRotation <= currentTime) {
             element = _queue.next();
             assert element != null;
 
-            _nextRotation = DateUtils.addTicks(new Date(), element.timeSpan);
+            _nextRotation = currentTime + element.timeSpan;
         }
         else {
             element = _queue.element();
@@ -126,9 +126,9 @@ public class TimedDistributor<T> {
         T value;
         int timeSpan;
 
-        Element(T value, int timeSpan) {
+        Element(T value, int timeSpan, TimeScale timeScale) {
             this.value = value;
-            this.timeSpan = timeSpan;
+            this.timeSpan = timeSpan * timeScale.getTimeFactor();
         }
 
         @Override
