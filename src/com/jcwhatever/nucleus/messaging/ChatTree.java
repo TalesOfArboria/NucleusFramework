@@ -30,12 +30,14 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IHierarchyNode;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextColor;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,10 +45,10 @@ import java.util.List;
  * strings that can be used to display the node hierarchy
  * in chat.
  */
-public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned {
+public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iterable<T> {
 
     private final Plugin _plugin;
-    protected List<HierarchyNode<T>> _rootNodes;
+    protected List<TreeNode<T>> _rootNodes;
     protected StringBuilder _buffer = new StringBuilder(20);
 
     /**
@@ -64,12 +66,16 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned {
      *
      * @param rootNodes  The initial collection of root nodes.
      */
-    public ChatTree(Plugin plugin, Collection<HierarchyNode<T>> rootNodes) {
+    public ChatTree(Plugin plugin, Collection<? extends T> rootNodes) {
         PreCon.notNull(plugin);
         PreCon.notNull(rootNodes);
 
         _plugin = plugin;
-        _rootNodes = new ArrayList<>(rootNodes);
+        _rootNodes = new ArrayList<>(rootNodes.size());
+
+        for (T node : rootNodes) {
+            _rootNodes.add(new HierarchyNode<T>(node));
+        }
     }
 
     /**
@@ -89,6 +95,39 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned {
         PreCon.notNull(rootNode);
 
         _rootNodes.add(new HierarchyNode<T>(rootNode));
+    }
+
+    /**
+     * Add a collection of root nodes.
+     *
+     * @param rootNodes  The root nodes to add.
+     */
+    public void addAllRoots(Collection<? extends T> rootNodes) {
+        for (T node : rootNodes) {
+            _rootNodes.add(new HierarchyNode<T>(node));
+        }
+    }
+
+    /**
+     * Add a {@code HierarchyNode}.
+     *
+     * @param rootNode  The root node to add.
+     */
+    public void addRootNode(TreeNode<T> rootNode) {
+        PreCon.notNull(rootNode);
+
+        _rootNodes.add(rootNode);
+    }
+
+    /**
+     * Add a collection of root nodes.
+     *
+     * @param rootNodes  The root nodes to add.
+     */
+    public void addAllRootNodes(Collection<? extends TreeNode<T>> rootNodes) {
+        PreCon.notNull(rootNodes);
+
+        _rootNodes.addAll(rootNodes);
     }
 
     /**
@@ -146,12 +185,25 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned {
 
         List<String> result = new ArrayList<>(_rootNodes.size() * 3);
 
-        for (HierarchyNode<T> rootNode : _rootNodes) {
+        for (TreeNode<T> rootNode : _rootNodes) {
             for (TreeNode<T> node : rootNode) {
                 result.add(getDepthPrefix(node) + lineWriter.write(node.getValue()));
             }
         }
         return result;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        List<T> iterable = new ArrayList<>(_rootNodes.size() * 3);
+
+        for (TreeNode<T> rootNode : _rootNodes) {
+            for (TreeNode<T> node : rootNode) {
+                iterable.add(node.getValue());
+            }
+        }
+
+        return iterable.iterator();
     }
 
     /**
@@ -172,15 +224,33 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned {
 
         _buffer.setLength(0);
 
+        _buffer.append(getLinePrefix());
+
         for (int i=0; i < depth; i++) {
 
             boolean isLastIteration = i == depth - 1;
             _buffer.append(' ')
+                   .append(getDepthPrefix(i))
                    .append(isLastIteration ? (isLast ? '\u2514' : '\u251c') : '\u2502');
         }
 
-
         return _buffer.toString();
+    }
+
+    /**
+     * Get the prefix used on all lines.
+     */
+    protected String getLinePrefix() {
+        return TextColor.GRAY.getColorCode();
+    }
+
+    /**
+     * Get the prefix used for a specific depth.
+     *
+     * @param depth  The depth.
+     */
+    protected String getDepthPrefix(@SuppressWarnings("unused") int depth) {
+        return "";
     }
 
     /**
