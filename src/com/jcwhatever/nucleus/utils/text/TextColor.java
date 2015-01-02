@@ -24,6 +24,10 @@
 
 package com.jcwhatever.nucleus.utils.text;
 
+import com.jcwhatever.nucleus.utils.PreCon;
+
+import org.bukkit.Bukkit;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -59,6 +63,7 @@ public enum TextColor {
     public static final char FORMAT_CHAR = '\u00A7';
     private static final Map<Character, TextColor> _characterMap = new HashMap<>(20);
     private static final Map<String, TextColor> _nameMap = new HashMap<>(20);
+    private static final StringBuilder _buffer = new StringBuilder(6);
 
     static {
         for (TextColor color : values()) {
@@ -130,17 +135,28 @@ public enum TextColor {
     /**
      * Remove format codes from a string.
      *
-     * @param text  The text to remove format codes from.
+     * @param charArray  The text to remove format codes from.
      */
-    public static String remove(String text) {
+    public static String remove(char[] charArray) {
+        PreCon.notNull(charArray);
 
-        StringBuilder sb = new StringBuilder(text.length());
-        char[] chars = text.toCharArray();
+        return remove(new CharArraySequence(charArray));
+    }
 
-        for (int i = 0, last = chars.length - 1; i < chars.length; i++) {
-            char ch = chars[i];
+    /**
+     * Remove format codes from a {@code CharSequence}.
+     *
+     * @param charSequence  The text to remove format codes from.
+     */
+    public static String remove(CharSequence charSequence) {
+        PreCon.notNull(charSequence);
+
+        StringBuilder sb = new StringBuilder(charSequence.length());
+
+        for (int i = 0, last = charSequence.length() - 1; i < charSequence.length(); i++) {
+            char ch = charSequence.charAt(i);
             if (ch == FORMAT_CHAR && i != last) {
-                char next = chars[i + 1];
+                char next = charSequence.charAt(i + 1);
                 if (_characterMap.containsKey(next)) {
                     i += 1;
                     continue;
@@ -155,60 +171,93 @@ public enum TextColor {
 
     /**
      * Get the color and formats in effect at the
-     * end of a string.
+     * beginning of a string.
      *
-     * @param text  The text to get the end color from.
+     * @param charArray  The text to get the end color from.
      *
      * @return  The format codes.
      */
-    public static String getEndColor(String text) {
+    public static String getColorAt(int index, char[] charArray) {
+        PreCon.notNull(charArray);
 
-        StringBuilder sb = new StringBuilder(15);
-        char[] chars = text.toCharArray();
-
-        for (int i = chars.length - 1; i > -1; i--) {
-
-            char current = chars[i];
-            if (current != FORMAT_CHAR || i >= chars.length - 1)
-                continue; // finish block
-
-            char next = chars[i + 1];
-
-            TextColor color =  _characterMap.get(next);
-            if (color == null)
-                continue; // finish block
-
-            sb.insert(0, color.getColorCode());
-
-            if (color.isColor() || color == TextColor.RESET) {
-                break;
-            }
-
-        }
-        return sb.toString();
+        return getColorAt(index, new CharArraySequence(charArray));
     }
 
     /**
      * Get the color and formats in effect at the
-     * end of a string.
+     * beginning of a {@code CharSequence}.
      *
-     * @param stringBuilder  The {@code StringBuilder} to get the end color from.
+     * @param charSequence  The text to get the end color from.
      *
      * @return  The format codes.
      */
-    public static String getEndColor(StringBuilder stringBuilder) {
+    public static String getColorAt(int index, CharSequence charSequence) {
+        PreCon.positiveNumber(index, "index");
+        PreCon.lessThan(index, charSequence.length(), "index");
+        PreCon.notNull(charSequence);
 
-        StringBuilder sb = new StringBuilder(15);
+        int len = charSequence.length();
 
-        int len = stringBuilder.length();
+        if (len == 0)
+            return "";
+
+        StringBuilder buffer;
+
+        if (charSequence instanceof StringBuilder) {
+            buffer = (StringBuilder)charSequence;
+            buffer.setLength(index);
+        }
+        else {
+            buffer = new StringBuilder(charSequence);
+        }
+
+        String endColor = getEndColor(buffer);
+
+        if (charSequence instanceof StringBuilder) {
+            ((StringBuilder) charSequence).setLength(len);
+        }
+
+        return endColor;
+    }
+
+    /**
+     * Get the color and formats in effect at the end of a {@code char[]}.
+     *
+     * @param charArray  The {@code char[]} to get the end color from.
+     *
+     * @return  The format codes.
+     */
+    public static String getEndColor(final char[] charArray) {
+        PreCon.notNull(charArray);
+
+        return getEndColor(new CharArraySequence(charArray));
+    }
+
+    /**
+     * Get the color and formats in effect at the end of a {@code CharSequence}.
+     *
+     * @param charSequence  The {@code CharSequence} to get the end color from.
+     *
+     * @return  The format codes.
+     */
+    public static String getEndColor(CharSequence charSequence) {
+        PreCon.notNull(charSequence);
+
+        if (charSequence.length() == 0)
+            return "";
+
+        StringBuilder sb = Bukkit.isPrimaryThread() ? _buffer : new StringBuilder(6);
+        sb.setLength(0);
+
+        int len = charSequence.length();
 
         for (int i = len - 1; i > -1; i--) {
 
-            char current = stringBuilder.charAt(i);
+            char current = charSequence.charAt(i);
             if (current != FORMAT_CHAR || i >= len - 1)
                 continue; // finish block
 
-            char next = stringBuilder.charAt(i + 1);
+            char next = charSequence.charAt(i + 1);
 
             TextColor color =  _characterMap.get(next);
             if (color == null)
