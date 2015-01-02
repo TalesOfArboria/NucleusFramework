@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.text;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +137,11 @@ public class SimpleJSONBuilder {
 
             buffer.append(propertyName);
             buffer.append(":\"");
-            getJsonText(buffer, components, true);
+            try {
+                getJsonText(buffer, components, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             buffer.append('\"');
         }
 
@@ -165,7 +170,11 @@ public class SimpleJSONBuilder {
                     buffer.append(',');
 
                 buffer.append('"');
-                getJsonText(buffer, components, true);
+                try {
+                    getJsonText(buffer, components, true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 buffer.append('"');
             }
 
@@ -203,6 +212,22 @@ public class SimpleJSONBuilder {
      * @param args          Optional format arguments.
      */
     public static void text(StringBuilder buffer, Object textTemplate, Object... args) {
+        try {
+            text((Appendable)buffer, textTemplate, args);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Create a standalone text JSON string and append to the
+     * supplied {@code StringBuilder}.
+     *
+     * @param buffer        The {@code StringBuilder} to append the output to.
+     * @param textTemplate  The text or text template.
+     * @param args          Optional format arguments.
+     */
+    public static void text(Appendable buffer, Object textTemplate, Object... args) throws IOException {
 
         String rawText = TextUtils.format(textTemplate, args);
 
@@ -215,15 +240,19 @@ public class SimpleJSONBuilder {
      * Create a standalone text JSON string and append to the
      * supplied {@code StringBuilder}.
      *
-     * @param buffer      The {@code StringBuilder} to append the output to.
+     * @param buffer      The {@code Appendable} to append the output to.
      * @param components  The text components.
      */
-    public static void text(StringBuilder buffer, TextComponents components) {
-        getJsonText(buffer, components, false);
+    public static void text(Appendable buffer, TextComponents components) {
+        try {
+            getJsonText(buffer, components, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // generate standalone JSON text.
-    private static void getJsonText(StringBuilder buffer, TextComponents segments, boolean escape) {
+    private static void getJsonText(Appendable buffer, TextComponents segments, boolean escape) throws IOException {
 
         buffer.append('{');
         getJsonTextSegment(buffer, segments.get(0), escape);
@@ -248,7 +277,7 @@ public class SimpleJSONBuilder {
     }
 
     // generate a text property segment.
-    private static void getJsonTextSegment(StringBuilder buffer, TextComponent segment, boolean escape) {
+    private static void getJsonTextSegment(Appendable buffer, TextComponent segment, boolean escape) throws IOException {
         buffer.append("text:");
 
         if (escape)
