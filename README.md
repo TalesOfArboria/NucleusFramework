@@ -19,6 +19,7 @@ The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow de
 ## Resources
  * [NucleusLocalizer](https://github.com/JCThePants/NucleusLocalizer) - A console program used to generate language localization resource files for Nucleus based plugins.
  * [Scripting examples](https://github.com/JCThePants/NucleusScriptExamples) - Examples of cross plugin scripts using NucleusFramework.
+ * [Action Bar Test](https://github.com/JCThePants/NucleusActionBarTest) - A plugin for testing NucleusFramework's Action Bar classes.
  * [A-Star Test](https://github.com/JCThePants/NucleusAStarTest) - A plugin for testing NucleusFramework's A-Star pathing implementation.
 
 ## Plugin dependencies
