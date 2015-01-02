@@ -430,25 +430,6 @@ public class CircularQueue<E> implements Deque<E> {
         return false;
     }
 
-    @Nullable
-    private Entry iteratorRemove(@Nullable Entry next) {
-        if (next == null) {
-            removeFirst();
-        }
-        else if (_size == 1) {
-            _current = null;
-            _size = 0;
-            return null;
-        }
-        else {
-            next.left.left.right = next;
-            next.left = next.left.left;
-            _size--;
-        }
-
-        return next;
-    }
-
     private class ItrRight implements Iterator<E> {
 
         Entry next = null;
@@ -471,7 +452,24 @@ public class CircularQueue<E> implements Deque<E> {
 
         @Override
         public void remove() {
-            next = iteratorRemove(next);
+            if (next == null) {
+                removeFirst();
+            }
+            else if (_size == 1) {
+                _current = null;
+                _size = 0;
+                next = null;
+            }
+            else {
+
+                if (next.left == _current) {
+                    _current = next;
+                }
+
+                next.left.left.right = next;
+                next.left = next.left.left;
+                _size--;
+            }
         }
     }
 
@@ -497,7 +495,24 @@ public class CircularQueue<E> implements Deque<E> {
 
         @Override
         public void remove() {
-            next = iteratorRemove(next);
+            if (next == null) {
+                removeLast();
+            }
+            else if (_size == 1) {
+                _current = null;
+                _size = 0;
+                next = null;
+            }
+            else {
+
+                if (next.right == _current) {
+                    _current = next;
+                }
+
+                next.right.right.left = next;
+                next.right = next.right.right;
+                _size--;
+            }
         }
     }
 
