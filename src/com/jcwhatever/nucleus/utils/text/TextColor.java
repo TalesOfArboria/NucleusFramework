@@ -30,6 +30,7 @@ import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
@@ -63,7 +64,8 @@ public enum TextColor {
     public static final char FORMAT_CHAR = '\u00A7';
     private static final Map<Character, TextColor> _characterMap = new HashMap<>(20);
     private static final Map<String, TextColor> _nameMap = new HashMap<>(20);
-    private static final StringBuilder _buffer = new StringBuilder(6);
+    private static final StringBuilder _largeBuffer = new StringBuilder(30);
+    private static final StringBuilder _smallBuffer = new StringBuilder(6);
 
     static {
         for (TextColor color : values()) {
@@ -151,12 +153,26 @@ public enum TextColor {
     public static String remove(CharSequence charSequence) {
         PreCon.notNull(charSequence);
 
-        StringBuilder sb = new StringBuilder(charSequence.length());
+        StringBuilder sb;
 
-        for (int i = 0, last = charSequence.length() - 1; i < charSequence.length(); i++) {
+        if (Bukkit.isPrimaryThread()) {
+            sb = _largeBuffer;
+            sb.setLength(0);
+        }
+        else {
+            sb = new StringBuilder(charSequence.length());
+        }
+
+        int len = charSequence.length();
+
+        for (int i = 0, last = len - 1; i < len; i++) {
+
             char ch = charSequence.charAt(i);
+
             if (ch == FORMAT_CHAR && i != last) {
+
                 char next = charSequence.charAt(i + 1);
+
                 if (_characterMap.containsKey(next)) {
                     i += 1;
                     continue;
@@ -167,6 +183,93 @@ public enum TextColor {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Removes colors from the supplied {@code char[]} and
+     * stores them in a {@code TextColorMap} keyed to the index location
+     * of the color in the resulting colorless string.
+     *
+     * <p>The resulting colorless string can be retrieved from the
+     * {@code TextColorMap} by invoking the {@code #getText} method.</p>
+     *
+     * @param charArray  The {@code CharSequence}.
+     */
+    public static TextColorMap separate(char[] charArray) {
+        PreCon.notNull(charArray);
+
+        return separate(new CharArraySequence(charArray));
+    }
+
+    /**
+     * Removes colors from the supplied {@code CharSequence} and
+     * stores them in a {@code TextColorMap} keyed to the index location
+     * of the color in the resulting colorless string.
+     *
+     * <p>The resulting colorless string can be retrieved from the
+     * {@code TextColorMap} by invoking the {@code #getText} method.</p>
+     *
+     * @param charSequence  The {@code CharSequence}.
+     */
+    public static TextColorMap separate(CharSequence charSequence) {
+        PreCon.notNull(charSequence);
+
+        StringBuilder sb;
+        StringBuilder colorBuffer;
+        int len = charSequence.length();
+
+        if (Bukkit.isPrimaryThread()) {
+            sb = _largeBuffer;
+            sb.setLength(0);
+            sb.ensureCapacity(len);
+
+            colorBuffer = _smallBuffer;
+            colorBuffer.setLength(0);
+        }
+        else {
+            sb = new StringBuilder(len);
+            colorBuffer = new StringBuilder(6);
+        }
+
+        TextColorMap colorMap = new TextColorMap();
+
+        int virtualIndex = 0;
+
+        for (int i = 0, last = len - 1; i < len; i++) {
+            char ch = 0;
+
+            while (i < last) {
+
+                char next;
+
+                if ((ch = charSequence.charAt(i)) == FORMAT_CHAR
+                        && _characterMap.containsKey(next = charSequence.charAt(i + 1))) {
+
+                    colorBuffer.append(FORMAT_CHAR);
+                    colorBuffer.append(next);
+
+                    i = Math.min(i + 2, last);
+
+                    if (i == last)
+                        ch = 0;
+                }
+                else {
+                    break;
+                }
+            }
+
+            if (colorBuffer.length() != 0) {
+                colorMap.put(virtualIndex, colorBuffer.toString());
+                colorBuffer.setLength(0);
+            }
+
+            virtualIndex++;
+            if (ch != 0)
+                sb.append(ch);
+        }
+
+        colorMap.setText(sb.toString());
+        return colorMap;
     }
 
     /**
@@ -190,7 +293,7 @@ public enum TextColor {
     public static String getColorAt(int index, char[] charArray) {
         PreCon.notNull(charArray);
 
-        return getColorAt(index, new CharArraySequence(charArray));
+        return getEndColor(new CharArraySequence(charArray), index);
     }
 
     /**
@@ -206,28 +309,7 @@ public enum TextColor {
         PreCon.lessThan(index, charSequence.length(), "index");
         PreCon.notNull(charSequence);
 
-        int len = charSequence.length();
-
-        if (len == 0)
-            return "";
-
-        StringBuilder buffer;
-
-        if (charSequence instanceof StringBuilder) {
-            buffer = (StringBuilder)charSequence;
-            buffer.setLength(index);
-        }
-        else {
-            buffer = new StringBuilder(charSequence);
-        }
-
-        String endColor = getEndColor(buffer);
-
-        if (charSequence instanceof StringBuilder) {
-            ((StringBuilder) charSequence).setLength(len);
-        }
-
-        return endColor;
+        return getEndColor(charSequence, index);
     }
 
     /**
@@ -240,7 +322,7 @@ public enum TextColor {
     public static String getEndColor(final char[] charArray) {
         PreCon.notNull(charArray);
 
-        return getEndColor(new CharArraySequence(charArray));
+        return getEndColor(new CharArraySequence(charArray), charArray.length);
     }
 
     /**
@@ -253,13 +335,20 @@ public enum TextColor {
     public static String getEndColor(CharSequence charSequence) {
         PreCon.notNull(charSequence);
 
-        if (charSequence.length() == 0)
+        return getEndColor(charSequence, charSequence.length());
+    }
+
+    /**
+     * Get the color and formats in effect at the end of a {@code CharSequence}.
+     */
+    static String getEndColor(CharSequence charSequence, int len) {
+        PreCon.notNull(charSequence);
+
+        if (len == 0)
             return "";
 
-        StringBuilder sb = Bukkit.isPrimaryThread() ? _buffer : new StringBuilder(6);
+        StringBuilder sb = Bukkit.isPrimaryThread() ? _smallBuffer : new StringBuilder(6);
         sb.setLength(0);
-
-        int len = charSequence.length();
 
         for (int i = len - 1; i > -1; i--) {
 
@@ -281,5 +370,29 @@ public enum TextColor {
 
         }
         return sb.toString();
+    }
+
+    /**
+     * Stores color codes and their index location within a string.
+     */
+    public static class TextColorMap extends TreeMap<Integer, String> {
+
+        private String _text;
+
+        /**
+         * The text of the color map.
+         */
+        public String getText() {
+            return _text;
+        }
+
+        /**
+         * Set the text of the color map.
+         *
+         * @param text  The text.
+         */
+        protected void setText(String text) {
+            _text = text;
+        }
     }
 }
