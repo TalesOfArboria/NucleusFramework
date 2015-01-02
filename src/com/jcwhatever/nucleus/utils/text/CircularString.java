@@ -34,10 +34,10 @@ import com.jcwhatever.nucleus.utils.PreCon;
  */
 public class CircularString implements CharSequence {
 
-    private char[] _string;
-    private char[] _result;
-    private boolean _hasResult;
-    private int _rotation;
+    protected char[] _string;
+    protected char[] _result;
+    protected boolean _hasResult;
+    protected int _rotation;
 
     public CircularString() {
         _string = new char[0];
@@ -138,6 +138,7 @@ public class CircularString implements CharSequence {
      */
     public void setChar(int index, char ch) {
         _string[getCorrectIndex(_rotation + index)] = ch;
+        _hasResult = false;
     }
 
     @Override
@@ -163,22 +164,22 @@ public class CircularString implements CharSequence {
      * a sub-sequence of characters from the current.
      *
      * @param start  The start index of the sequence relative to the current rotation.
-     * @param end    The end index of the sequence relative to the current rotation.
+     * @param end    The end index (+1) of the sequence relative to the current rotation.
      */
     @Override
     public CircularString subSequence(int start, int end) {
-        PreCon.positiveNumber(start, "start");
-        PreCon.positiveNumber(end, "end");
         PreCon.isValid(end >= start, "end argument must be greater than or equal to start argument.");
         PreCon.lessThan(start, _string.length, "start");
         PreCon.lessThan(end, _string.length, "end");
 
+        int len = end - start;
+
         CircularString result = new CircularString();
-        result._string = new char[end - start];
+        result._string = new char[len];
 
-        updateResult();
-
-        System.arraycopy(_result, start % _string.length, result._string, 0, (end - start));
+        for (int i=0; i < len; i++) {
+            result._string[i] = _string[getCorrectIndex(_rotation + i + start)];
+        }
         return result;
     }
 
@@ -190,14 +191,14 @@ public class CircularString implements CharSequence {
         return new String(_result);
     }
 
-    private int getCorrectIndex(int index) {
+    protected int getCorrectIndex(int index) {
 
         return index < 0
                 ? _string.length - ((-index) % _string.length)
                 : index % _string.length;
     }
 
-    private void updateResult() {
+    protected void updateResult() {
 
         if (_hasResult)
             return;
