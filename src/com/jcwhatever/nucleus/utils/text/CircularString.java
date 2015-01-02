@@ -78,6 +78,14 @@ public class CircularString implements CharSequence {
     }
 
     /**
+     * Returns a reference to the array of un-rotated characters being
+     * used by the {@code CircularString}.
+     */
+    public char[] getChars() {
+        return _string;
+    }
+
+    /**
      * Reset the rotation back to 0.
      */
     public void reset() {
