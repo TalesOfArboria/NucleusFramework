@@ -170,6 +170,16 @@ public enum TextColor {
     }
 
     /**
+     * Determine if a character is a valid formatting
+     * character.
+     *
+     * @param ch  The character to check.
+     */
+    public static boolean isFormatChar(char ch) {
+        return _characterMap.containsKey(ch);
+    }
+
+    /**
      * Get the color and formats in effect at the
      * beginning of a string.
      *
