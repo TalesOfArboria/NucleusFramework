@@ -50,7 +50,5 @@ public final class NucleusCommandDispatcher extends CommandDispatcher {
         registerCommand(ScriptsCommand.class);
         registerCommand(StorageCommand.class);
         registerCommand(TitlesCommand.class);
-
-        registerCommand(TestCommand.class);
     }
 }
