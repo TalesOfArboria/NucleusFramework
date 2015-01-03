@@ -47,6 +47,7 @@ public class ReflectedType {
     private Map<String, Method> _aliasMethods;
     private Map<String, ReflectedField> _aliasFields;
     private Map<String, Constructor<?>> _aliasConstructors;
+    private Map<String, Object> _aliasEnum;
 
     /**
      * Constructor.
@@ -136,13 +137,15 @@ public class ReflectedType {
      * @return  The enum constant.
      */
     public Object getEnum(String constantName) {
+        PreCon.notNullOrEmpty(constantName, "constantName");
 
-        ReflectedField field = getField(constantName);
-
-        if (field == null) {
-            throw new RuntimeException("Enum constant " + constantName + "not found.");
+        if (_aliasEnum != null) {
+            Object constant = _aliasEnum.get(constantName);
+            if (constant != null)
+                return constant;
         }
-        return field.get(null);
+
+        return getEnumConstant(constantName);
     }
 
     /**
@@ -388,6 +391,35 @@ public class ReflectedType {
         return this;
     }
 
+    public ReflectedType enumAlias(String constantAlias, String constantName) {
+        PreCon.notNullOrEmpty(constantAlias, "enumAlias");
+        PreCon.notNullOrEmpty(constantName, "enumName");
+
+        if (_aliasEnum == null)
+            _aliasEnum = new HashMap<>(5);
+
+        if (_aliasEnum.containsKey(constantAlias))
+            throw new RuntimeException("Enum alias already registered: " + constantAlias);
+
+        _aliasEnum.put(constantAlias, getEnumConstant(constantName));
+
+        return this;
+    }
+
+    public ReflectedType enumConst(String constantName) {
+        PreCon.notNullOrEmpty(constantName, "enumName");
+
+        if (_aliasEnum == null)
+            _aliasEnum = new HashMap<>(5);
+
+        if (_aliasEnum.containsKey(constantName))
+            throw new RuntimeException("Enum constant already registered: " + constantName);
+
+        _aliasEnum.put(constantName, getEnumConstant(constantName));
+
+        return this;
+    }
+
     /**
      * Registers a method name to a specific signature. Does not allow
      * for overloaded methods. Improves code readability and method lookup performance.
@@ -496,7 +528,7 @@ public class ReflectedType {
         PreCon.notNullOrEmpty(methodName, "methodName");
         PreCon.notNull(arguments, "arguments");
 
-        Method method = _aliasMethods.get(methodName);
+        Method method = _aliasMethods != null ? _aliasMethods.get(methodName) : null;
 
         if (method == null) {
 
@@ -529,4 +561,37 @@ public class ReflectedType {
 
         return castedResult;
     }
+
+    private Object getEnumConstant(String constantName) {
+
+        Object[] constants = getHandle().getEnumConstants();
+
+        Method nameMethod;
+
+        try {
+            nameMethod = Enum.class.getMethod("name");
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError();
+        }
+
+        nameMethod.setAccessible(true);
+
+        for (Object constant : constants) {
+
+            String name;
+            try {
+                name = (String) nameMethod.invoke(constant);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new AssertionError();
+            }
+
+            if (constantName.equals(name)) {
+                return constant;
+            }
+        }
+
+        throw new RuntimeException("Failed to find enum constant named " +
+                constantName + " in type " + getHandle().getName());
+    }
+
 }
