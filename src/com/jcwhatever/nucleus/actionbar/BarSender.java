@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.nms.INmsActionBarHandler;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.text.IDynamicText;
+import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 
 import org.bukkit.entity.Player;
@@ -50,14 +50,14 @@ import javax.annotation.Nullable;
  * <p>Also manages packet send timing to reduce network traffic and client side lag
  * based on the max refresh rate required to persist the bar and the minimum
  * refresh rate preferred by the action bars dynamic text. The absolute minimum
- * refresh rate is 5 ticks while the absolute max is 40 ticks. The refresh rate is
+ * refresh rate is 1 tick while the absolute max is 40 ticks. The refresh rate is
  * dynamic, meaning it may change due to the dynamic texts refresh rate being dynamic.
  * The refresh rate is managed per each {@code PersistentActionBar} instance.</p>
  */
 class BarSender implements Runnable {
 
     static final int MAX_REFRESH_RATE = 40 * 50;
-    static final int MIN_REFRESH_RATE = 5 * 50;
+    static final int MIN_REFRESH_RATE = 50;
 
     static Map<UUID, TimedDistributor<PlayerBar>> _barMap = new PlayerMap<>(Nucleus.getPlugin());
     static INmsActionBarHandler _nmsHandler;
@@ -79,7 +79,7 @@ class BarSender implements Runnable {
             return;
 
         _instance = new BarSender();
-        Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, 10, _instance);
+        Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, MIN_REFRESH_RATE / 50, _instance);
     }
 
     /**
@@ -214,7 +214,7 @@ class BarSender implements Runnable {
 
         _nmsHandler.send(player, SimpleJSONBuilder.text(text));
 
-        int interval = Math.min(dynText.getRefreshRate(), MAX_REFRESH_RATE);
+        int interval = Math.min(dynText.getRefreshRate() * 50, MAX_REFRESH_RATE);
         interval = Math.max(interval, MIN_REFRESH_RATE);
 
         return System.currentTimeMillis() + interval;

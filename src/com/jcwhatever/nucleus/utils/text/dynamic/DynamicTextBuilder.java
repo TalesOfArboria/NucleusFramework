@@ -22,9 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.text;
+package com.jcwhatever.nucleus.utils.text.dynamic;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;

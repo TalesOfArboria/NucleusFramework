@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.actionbar;
 
 import com.jcwhatever.nucleus.collections.timed.TimeScale;
-import com.jcwhatever.nucleus.utils.text.IDynamicText;
+import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.entity.Player;
 

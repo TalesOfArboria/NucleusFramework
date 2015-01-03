@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.text;
+package com.jcwhatever.nucleus.utils.text.dynamic;
 
 /**
  * Represents a text generator that produces changing text.

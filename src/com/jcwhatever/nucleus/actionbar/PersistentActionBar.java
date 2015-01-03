@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.actionbar;
 
 import com.jcwhatever.nucleus.collections.timed.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.DynamicTextBuilder;
-import com.jcwhatever.nucleus.utils.text.IDynamicText;
+import com.jcwhatever.nucleus.utils.text.dynamic.DynamicTextBuilder;
+import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.entity.Player;
 
@@ -58,19 +58,19 @@ public class PersistentActionBar extends ActionBar {
      * @param text  The action bar text.
      */
     public PersistentActionBar(String text) {
-        this(new DynamicTextBuilder().append(text).build(), 3, TimeScale.SECONDS);
+        this(new DynamicTextBuilder().append(text).build(), 4, TimeScale.SECONDS);
     }
 
     /**
      * Constructor.
      *
      * <p>The default time slice duration for when a player is shown more
-     * than 1 {@code PersistentActionBar} is 3 seconds.</p>
+     * than 1 {@code PersistentActionBar} is 4 seconds.</p>
      *
      * @param dynamicText  The action bar dynamic text.
      */
     public PersistentActionBar(IDynamicText dynamicText) {
-        this(dynamicText, 3, TimeScale.SECONDS);
+        this(dynamicText, 4, TimeScale.SECONDS);
     }
 
     /**

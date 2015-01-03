@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -444,8 +445,6 @@ public class TextFormatter {
             return formatters.get(parsedTag);
         }
     }
-
-
 
     /*
      * Append raw tag to string builder
