@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.utils;
 import com.jcwhatever.nucleus.scripting.IScript;
 import com.jcwhatever.nucleus.scripting.ScriptManager;
 import com.jcwhatever.nucleus.scripting.api.IScriptApi;
+import com.jcwhatever.nucleus.scripting.api.ScriptApiActionBar;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiDepends;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiEconomy;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiEvents;
@@ -92,6 +93,7 @@ public final class ScriptUtils {
         api.add(new ScriptApiScheduler(plugin));
         api.add(new ScriptApiInclude(plugin, manager));
         api.add(new ScriptApiTitles(plugin));
+        api.add(new ScriptApiActionBar(plugin));
 
         return api;
     }
