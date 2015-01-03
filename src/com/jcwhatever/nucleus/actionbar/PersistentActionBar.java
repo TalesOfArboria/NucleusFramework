@@ -43,7 +43,7 @@ public class PersistentActionBar extends ActionBar {
      * @param player  The player to check.
      */
     public static boolean isViewing(Player player) {
-        return BarSender._barMap.containsKey(player.getUniqueId());
+        return BarSender._playerMap.containsKey(player.getUniqueId());
     }
 
     private int _defaultDuration;
@@ -151,5 +151,12 @@ public class PersistentActionBar extends ActionBar {
         PreCon.notNull(player);
 
         BarSender.removeBar(player, this);
+    }
+
+    /**
+     * Hide the {@code PersistentActionBar} from all players.
+     */
+    public void hideAll() {
+        BarSender.removeBar(this);
     }
 }

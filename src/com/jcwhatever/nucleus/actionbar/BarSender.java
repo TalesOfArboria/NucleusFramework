@@ -26,20 +26,23 @@ package com.jcwhatever.nucleus.actionbar;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
+import com.jcwhatever.nucleus.collections.SetMap;
+import com.jcwhatever.nucleus.collections.WeakHashSetMap;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.collections.timed.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.nms.INmsActionBarHandler;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
+import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -59,7 +62,8 @@ class BarSender implements Runnable {
     static final int MAX_REFRESH_RATE = 40 * 50;
     static final int MIN_REFRESH_RATE = 50;
 
-    static Map<UUID, TimedDistributor<PlayerBar>> _barMap = new PlayerMap<>(Nucleus.getPlugin());
+    static Map<UUID, TimedDistributor<PlayerBar>> _playerMap = new PlayerMap<>(Nucleus.getPlugin());
+    static SetMap<ActionBar, PlayerBar> _barMap = new WeakHashSetMap<>(35, 3);
     static INmsActionBarHandler _nmsHandler;
     static BarSender _instance;
 
@@ -108,6 +112,8 @@ class BarSender implements Runnable {
 
         distributor.add(playerBar, duration, timeScale);
 
+        _barMap.put(actionBar, playerBar);
+
         start();
     }
 
@@ -121,11 +127,31 @@ class BarSender implements Runnable {
         if (_nmsHandler == null)
             return;
 
+        PlayerBar playerBar = new PlayerBar(player, actionBar, 0, null);
+
         TimedDistributor<PlayerBar> distributor = BarSender.getDistributor(player);
-        distributor.remove(new PlayerBar(player, actionBar, 0, null));
+        distributor.remove(playerBar);
 
         if (distributor.isEmpty())
-            _barMap.remove(player.getUniqueId());
+            _playerMap.remove(player.getUniqueId());
+
+        _barMap.removeValue(actionBar, playerBar);
+    }
+
+    /**
+     * Remove a {@code PersistentActionBar} from a player view.
+     *
+     * @param actionBar  The action bar to remove.
+     */
+    static void removeBar(PersistentActionBar actionBar) {
+        if (_nmsHandler == null)
+            return;
+
+        Set<PlayerBar> playerBars =  _barMap.removeAll(actionBar);
+
+        for (PlayerBar bar : playerBars) {
+            removeBar(bar);
+        }
     }
 
     /**
@@ -141,9 +167,8 @@ class BarSender implements Runnable {
         distributor.remove(bar);
 
         if (distributor.isEmpty())
-            _barMap.remove(bar.player.getUniqueId());
+            _playerMap.remove(bar.player.getUniqueId());
     }
-
 
     /**
      * Get the players current distributor or create a new one.
@@ -152,11 +177,11 @@ class BarSender implements Runnable {
      */
     static TimedDistributor<PlayerBar> getDistributor(Player player) {
 
-        TimedDistributor<PlayerBar> distributor = _barMap.get(player.getUniqueId());
+        TimedDistributor<PlayerBar> distributor = _playerMap.get(player.getUniqueId());
 
         if (distributor == null) {
             distributor = new TimedDistributor<>();
-            _barMap.put(player.getUniqueId(), distributor);
+            _playerMap.put(player.getUniqueId(), distributor);
         }
 
         return distributor;
@@ -166,11 +191,11 @@ class BarSender implements Runnable {
     @Override
     public void run() {
 
-        if (_barMap.isEmpty())
+        if (_playerMap.isEmpty())
             return;
 
         // copy distributors to a new list to prevent concurrent modification errors.
-        List<TimedDistributor<PlayerBar>> distributors = new ArrayList<>(_barMap.values());
+        List<TimedDistributor<PlayerBar>> distributors = new ArrayList<>(_playerMap.values());
 
         long now = System.currentTimeMillis();
 
@@ -211,8 +236,9 @@ class BarSender implements Runnable {
 
         IDynamicText dynText = actionBar.getText();
         String text = dynText.nextText();
-
-        _nmsHandler.send(player, SimpleJSONBuilder.text(text));
+        if (text != null) {
+            _nmsHandler.send(player, SimpleJSONBuilder.text(text));
+        }
 
         int interval = Math.min(dynText.getRefreshRate() * 50, MAX_REFRESH_RATE);
         interval = Math.max(interval, MIN_REFRESH_RATE);
