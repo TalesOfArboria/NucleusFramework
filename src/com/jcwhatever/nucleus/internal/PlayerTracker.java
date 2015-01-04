@@ -25,11 +25,6 @@
 package com.jcwhatever.nucleus.internal;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.storage.DataPath;
-import com.jcwhatever.nucleus.storage.DataStorage;
-import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.StorageLoadHandler;
-import com.jcwhatever.nucleus.storage.StorageLoadResult;
 import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -46,8 +41,6 @@ import org.bukkit.event.server.PluginDisableEvent;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
@@ -66,8 +59,6 @@ public final class PlayerTracker {
     }
 
     private final Object _sync = new Object();
-
-    private IDataNode _nameData;
     private Map<Player, Date> _lastLogins = new WeakHashMap<>(100);
     private Map<Player, Date> _lastWorldChange = new WeakHashMap<>(100);
 
@@ -89,7 +80,9 @@ public final class PlayerTracker {
     public Date getLoginDate(Player player) {
         PreCon.notNull(player);
 
-        return _lastLogins.get(player);
+        synchronized (_sync) {
+            return _lastLogins.get(player);
+        }
     }
 
     /**
@@ -103,7 +96,9 @@ public final class PlayerTracker {
     public Date getLastWorldChangeDate(Player player) {
         PreCon.notNull(player);
 
-        return _lastWorldChange.get(player);
+        synchronized (_sync) {
+            return _lastWorldChange.get(player);
+        }
     }
 
     /**
@@ -142,139 +137,33 @@ public final class PlayerTracker {
         return DateUtils.getDeltaMilliseconds(date, new Date());
     }
 
-    /**
-     * Gets player Id from the players name using stored id to
-     * name map if the player is not online.
-     *
-     * <p>Will not return an id if the player is not online and
-     * has not logged in to the server before.</p>
-     *
-     * @param playerName  The name of the player
-     *
-     * @return Null if not found
-     */
-    @Nullable
-    public UUID getPlayerId(String playerName) {
-        PreCon.notNullOrEmpty(playerName);
-
-        // check for online player first
-        Player p = Bukkit.getPlayer(playerName);
-        if (p != null)
-            return p.getUniqueId();
-
-        // check stored id/name map
-        IDataNode nameData = getNameData();
-
-        Set<String> ids = nameData.getSubNodeNames();
-        if (ids == null || ids.isEmpty())
-            return null;
-
-        for (String idStr : ids) {
-            String name = nameData.getString(idStr);
-
-            if (name != null && name.equalsIgnoreCase(playerName)) {
-
-                try {
-                    return UUID.fromString(idStr);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the name of a player from the player Id.
-     *
-     * <p>Checks the NucleusFramework map of player names to player Id's</p>
-     *
-     * @param playerId  The id of the player.
-     *
-     * @return  Null if a record was not found.
-     */
-    @Nullable
-    public String getPlayerName(UUID playerId) {
-        PreCon.notNull(playerId);
-
-        IDataNode nameData = getNameData();
-
-        return nameData.getString(playerId.toString());
-    }
-
-    /*
-     * Update the NucleusFramework player name/player id map.
-     */
-    private void setPlayerName(UUID playerId, String name) {
-        PreCon.notNull(playerId);
-        PreCon.notNullOrEmpty(name);
-
-        IDataNode nameData = getNameData();
-
-        String currentName = getPlayerName(playerId);
-
-        if (name.equals(currentName))
-            return;
-
-        synchronized (_sync) {
-            nameData.set(playerId.toString(), name);
-        }
-
-        nameData.saveAsync(null);
-    }
-
-    // get the node that contains player id/name data.
-    private IDataNode getNameData() {
-
-        if (_nameData == null) {
-
-            synchronized (_sync) {
-
-                IDataNode data = DataStorage.getStorage(Nucleus.getPlugin(), new DataPath("player-names"));
-                data.loadAsync(new StorageLoadHandler() {
-
-                    @Override
-                    public void onFinish(StorageLoadResult result) {
-                        if (!result.isLoaded())
-                            NucMsg.warning("Failed to load player names file.");
-
-                    }
-
-                });
-
-                _nameData = data;
-            }
-        }
-        return _nameData;
-    }
-
     private class EventListener implements Listener {
 
         @EventHandler(priority= EventPriority.LOW)
         private void onPlayerJoin(PlayerJoinEvent event) {
 
-            final Player p = event.getPlayer();
+            Player p = event.getPlayer();
 
-            // update player name in id lookup
-            setPlayerName(p.getUniqueId(), p.getName());
-
-            _lastLogins.put(p, new Date());
-            _lastWorldChange.put(event.getPlayer(), new Date());
+            synchronized (_sync) {
+                _lastLogins.put(p, new Date());
+                _lastWorldChange.put(event.getPlayer(), new Date());
+            }
         }
 
         @EventHandler
         private void onPlayerLeave(PlayerQuitEvent event) {
-            _lastLogins.remove(event.getPlayer());
-            _lastWorldChange.remove(event.getPlayer());
+            synchronized (_sync) {
+                _lastLogins.remove(event.getPlayer());
+                _lastWorldChange.remove(event.getPlayer());
+            }
         }
 
         @EventHandler
         private void onPlayerKick(PlayerKickEvent event) {
-            _lastLogins.remove(event.getPlayer());
-            _lastWorldChange.remove(event.getPlayer());
+            synchronized (_sync) {
+                _lastLogins.remove(event.getPlayer());
+                _lastWorldChange.remove(event.getPlayer());
+            }
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
@@ -286,7 +175,9 @@ public final class PlayerTracker {
             if (event.getTo().getWorld().equals(event.getFrom().getWorld()))
                 return;
 
-            _lastWorldChange.put(event.getPlayer(), new Date());
+            synchronized (_sync) {
+                _lastWorldChange.put(event.getPlayer(), new Date());
+            }
         }
 
         @EventHandler

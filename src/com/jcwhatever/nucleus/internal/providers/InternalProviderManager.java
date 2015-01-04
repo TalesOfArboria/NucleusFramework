@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvi
 import com.jcwhatever.nucleus.internal.providers.selection.WorldEditSelectionProvider;
 import com.jcwhatever.nucleus.internal.providers.storage.YamlStorageProvider;
 import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.providers.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
@@ -61,6 +62,7 @@ public final class InternalProviderManager implements IProviderManager {
 
     private IDataNode _dataNode;
 
+    private IPlayerLookupProvider _playerLookup;
     private IPermissionsProvider _permissions;
     private IRegionSelectProvider _regionSelect;
     private IEconomyProvider _economy;
@@ -87,6 +89,23 @@ public final class InternalProviderManager implements IProviderManager {
         _economy = VaultEconomyProvider.hasVaultEconomy()
                 ? new VaultEconomyProvider()
                 : new NucleusEconomyProvider(Nucleus.getPlugin());
+
+        _playerLookup = new InternalPlayerLookupProvider(Nucleus.getPlugin());
+    }
+
+    @Override
+    public IPlayerLookupProvider getPlayerLookupProvider() {
+        return _playerLookup;
+    }
+
+    @Override
+    public void setPlayerLookupProvider(IPlayerLookupProvider lookupProvider) {
+        PreCon.notNull(lookupProvider);
+
+        if (_playerLookup instanceof IDisposable) {
+            ((IDisposable) _playerLookup).dispose();
+        }
+        _playerLookup = lookupProvider;
     }
 
     @Override

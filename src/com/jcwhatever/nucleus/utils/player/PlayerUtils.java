@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.player;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.IEntryValidator;
@@ -189,7 +190,7 @@ public final class PlayerUtils {
      */
     @Nullable
     public static UUID getPlayerId(String playerName) {
-        return PlayerTracker.get().getPlayerId(playerName);
+        return Nucleus.getProviderManager().getPlayerLookupProvider().getPlayerId(playerName);
     }
 
     /**
@@ -203,7 +204,7 @@ public final class PlayerUtils {
      */
     @Nullable
     public static String getPlayerName(UUID playerId) {
-        return PlayerTracker.get().getPlayerName(playerId);
+        return Nucleus.getProviderManager().getPlayerLookupProvider().getPlayerName(playerId);
     }
 
     /**

@@ -38,6 +38,18 @@ import javax.annotation.Nullable;
 public interface IProviderManager {
 
     /**
+     * Get the player lookup provider.
+     */
+    IPlayerLookupProvider getPlayerLookupProvider();
+
+    /**
+     * Set the player lookup provider.
+     *
+     * @param lookupProvider  The lookup provider.
+     */
+    void setPlayerLookupProvider(IPlayerLookupProvider lookupProvider);
+
+    /**
      * Get the permissions provider.
      */
     IPermissionsProvider getPermissionsProvider();
