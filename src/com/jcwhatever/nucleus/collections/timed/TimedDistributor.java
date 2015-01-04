@@ -234,7 +234,7 @@ public class TimedDistributor<E> implements Collection<E> {
 
         boolean isChanged = false;
         for (Object o : c) {
-            isChanged = isChanged || remove(o);
+            isChanged = remove(o) || isChanged;
         }
         return isChanged;
     }

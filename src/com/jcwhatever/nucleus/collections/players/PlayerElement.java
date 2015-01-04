@@ -24,9 +24,12 @@
 
 package com.jcwhatever.nucleus.collections.players;
 
+import com.jcwhatever.nucleus.mixins.IPlayerReference;
+
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 
 /**
@@ -35,7 +38,7 @@ import java.util.UUID;
  *
  * <p>Used to compensate for CraftBukkit player objects dynamic hashCode.</p>
  */
-public final class PlayerEntry {
+public final class PlayerElement {
 
     private Player _player;
 
@@ -44,7 +47,7 @@ public final class PlayerEntry {
      *
      * @param player  The {@code Player} object to encapsulate.
      */
-    public PlayerEntry(Player player) {
+    public PlayerElement(Player player) {
         _player = player;
     }
 
@@ -73,10 +76,69 @@ public final class PlayerEntry {
         if (obj instanceof Player) {
             return ((Player) obj).getUniqueId().equals(_player.getUniqueId());
         }
-        else if (obj instanceof PlayerEntry) {
-            return ((PlayerEntry) obj)._player.getUniqueId().equals(_player.getUniqueId());
+        else if (obj instanceof PlayerElement) {
+            return ((PlayerElement) obj)._player.getUniqueId().equals(_player.getUniqueId());
         }
 
         return false;
+    }
+
+    /**
+     * Used to match an object with a {@code PlayerEntry} object.
+     */
+    public static class PlayerElementMatcher {
+        Object object;
+        UUID id;
+        int hash;
+
+        public PlayerElementMatcher(Object object) {
+            this.object = object;
+
+            PlayerElement entry = null;
+
+            if (object instanceof Player) {
+                entry = new PlayerElement((Player)object);
+                hash = entry.getUniqueId().hashCode();
+                id = entry.getUniqueId();
+            } else if (object instanceof PlayerElement) {
+                entry = (PlayerElement)object;
+                hash = entry.getUniqueId().hashCode();
+            }
+            else if (object instanceof UUID) {
+                id = (UUID)object;
+                hash = id.hashCode();
+            }
+            else if (object instanceof IPlayerReference) {
+                entry = new PlayerElement(((IPlayerReference) object).getPlayer());
+                hash = entry.hashCode();
+                id = entry.getUniqueId();
+            }
+            else {
+                hash = object.hashCode();
+            }
+
+            this.object = entry != null ? entry : object;
+        }
+
+        @Nullable
+        public UUID getUniqueId() {
+            return id;
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (object == obj)
+                return true;
+
+            if (obj instanceof PlayerElementMatcher)
+                return object.equals(((PlayerElementMatcher) obj).object);
+
+            return object.equals(obj);
+        }
     }
 }

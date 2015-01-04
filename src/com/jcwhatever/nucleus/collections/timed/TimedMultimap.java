@@ -25,9 +25,9 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.CollectionEmptyAction;
+import com.jcwhatever.nucleus.collections.wrappers.AbstractMultimapWrapper;
 import com.jcwhatever.nucleus.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -40,7 +40,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
@@ -52,7 +51,8 @@ import javax.annotation.Nullable;
  *
  * <p>Items can be added using the default lifespan time or a lifespan can be specified per item.</p>
  */
-public class TimedMultimap<K, V> implements Multimap<K, V>, ITimedMap<K, V>, ITimedCallbacks<K, TimedMultimap<K, V>> {
+public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
+        implements ITimedMap<K, V>, ITimedCallbacks<K, TimedMultimap<K, V>> {
 
     private static Map<TimedMultimap, Void> _instances = new WeakHashMap<>(10);
     private static ScheduledTask _janitor;
@@ -179,11 +179,6 @@ public class TimedMultimap<K, V> implements Multimap<K, V>, ITimedMap<K, V>, ITi
     }
 
     @Override
-    public boolean containsEntry(@Nullable Object o, @Nullable Object o1) {
-        return _multiMap.containsEntry(o, o1);
-    }
-
-    @Override
     @Nullable
     public Collection<V> get(K key) {
         PreCon.notNull(key);
@@ -197,28 +192,8 @@ public class TimedMultimap<K, V> implements Multimap<K, V>, ITimedMap<K, V>, ITi
     }
 
     @Override
-    public Set<K> keySet() {
-        return _multiMap.keySet();
-    }
-
-    @Override
-    public Multiset<K> keys() {
-        return _multiMap.keys();
-    }
-
-    @Override
-    public Collection<V> values() {
-        return _multiMap.values();
-    }
-
-    @Override
-    public Collection<Map.Entry<K, V>> entries() {
-        return _multiMap.entries();
-    }
-
-    @Override
-    public Map<K, Collection<V>> asMap() {
-        return _multiMap.asMap();
+    protected Multimap<K, V> getMap() {
+        return _multiMap;
     }
 
     /**
@@ -267,15 +242,10 @@ public class TimedMultimap<K, V> implements Multimap<K, V>, ITimedMap<K, V>, ITi
         boolean isChanged = false;
 
         for (Map.Entry<? extends K, ? extends V> entry : entries.entries()) {
-            isChanged = isChanged || put(entry.getKey(), entry.getValue());
+            isChanged = put(entry.getKey(), entry.getValue()) || isChanged;
         }
 
         return isChanged;
-    }
-
-    @Override
-    public Collection<V> replaceValues(@Nullable K k, Iterable<? extends V> iterable) {
-        return _multiMap.replaceValues(k, iterable);
     }
 
     @Override
@@ -312,7 +282,7 @@ public class TimedMultimap<K, V> implements Multimap<K, V>, ITimedMap<K, V>, ITi
         boolean isChanged = false;
 
         for (V element : iterable) {
-            isChanged = isChanged || put(k, element);
+            isChanged = put(k, element) || isChanged;
         }
 
         return isChanged;

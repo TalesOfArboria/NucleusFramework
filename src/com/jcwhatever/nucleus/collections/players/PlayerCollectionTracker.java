@@ -24,63 +24,58 @@
 
 package com.jcwhatever.nucleus.collections.players;
 
-import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
 
 /**
- * Collection that contains player references that must be
- * removed when a player logs out.
+ * Tracks a collection of player objects or player representative objects and aids in
+ * automatically removing the player entry when the player logs out.
  * <p>
- *     The implementation is responsible for calling {@code notifyPlayerRemoved}
- *     method when a player is removed from the collection and {@code notifyPlayerAdded}
+ *     The player collection is responsible for calling {@code #notifyPlayerRemoved}
+ *     method when a player is removed from the collection and {@code #notifyPlayerAdded}
  *     when a player is added to the collection.
  * </p>
- * <p>
- *     The abstract method {@code removePlayer} should not call {@code notifyPlayerRemoved}
- *     or {@code notifyPlayerAdded} because it's used to remove the player when
- *     the player logs out.
- * </p>
- * <p>
- *     The collection should by synchronized since the {@code removePlayer} method
- *     may be called from an asynchronous thread.
- * </p>
  */
-public abstract class AbstractPlayerCollection implements IDisposable {
+public final class PlayerCollectionTracker implements IPluginOwned {
 
-    private final Plugin _plugin;
+    private final IPlayerCollection _collection;
     private final PlayerCollectionListener _listener;
     protected final transient Object _sync = new Object();
 
-    protected AbstractPlayerCollection(Plugin plugin) {
-        _plugin = plugin;
-        _listener = PlayerCollectionListener.get(plugin);
+    /**
+     * Constructor.
+     *
+     * @param collection  The player collection to track.
+     */
+    public PlayerCollectionTracker(IPlayerCollection collection) {
+        _collection = collection;
+        _listener = PlayerCollectionListener.get(collection.getPlugin());
     }
 
     /**
      * Get the collections owning plugin.
      */
+    @Override
     public Plugin getPlugin() {
-        return _plugin;
+        return _collection.getPlugin();
     }
 
     /**
      * Get the synchronization object.
      */
     public Object getSync() {
-        return _sync;
+        return _collection.getSync();
     }
 
     /**
-     * Called to remove the specified player
-     * from the collection.
-     *
-     * @param p  The player to remove.
+     * Get the player collection.
      */
-    public abstract void removePlayer(Player p);
+    public IPlayerCollection getCollection() {
+        return _collection;
+    }
 
     /**
      * Call to notify player listener that the player is
@@ -88,7 +83,7 @@ public abstract class AbstractPlayerCollection implements IDisposable {
      *
      * @param playerId  The player id.
      */
-    protected final void notifyPlayerRemoved(UUID playerId) {
+    public void notifyPlayerRemoved(UUID playerId) {
         _listener.removePlayer(playerId, this);
     }
 
@@ -98,7 +93,7 @@ public abstract class AbstractPlayerCollection implements IDisposable {
      *
      * @param playerId  The player Id.
      */
-    protected final void notifyPlayerAdded(UUID playerId) {
+    public void notifyPlayerAdded(UUID playerId) {
         _listener.addPlayer(playerId, this);
     }
 }

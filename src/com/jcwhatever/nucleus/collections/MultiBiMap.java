@@ -306,7 +306,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         boolean isChanged = false;
 
         for (V value : iterable) {
-            isChanged = isChanged || put(k, value);
+            isChanged = put(k, value) || isChanged;
         }
 
         return isChanged;
@@ -319,7 +319,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         boolean isChanged = false;
 
         for (Entry<? extends K, ? extends V> entry : multimap.entries()) {
-            isChanged = isChanged || put(entry.getKey(), entry.getValue());
+            isChanged = put(entry.getKey(), entry.getValue()) || isChanged;
         }
 
         return isChanged;
@@ -394,7 +394,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         public boolean removeAll(Collection<?> c) {
             boolean isChanged = false;
             for (Object obj : c) {
-                isChanged = isChanged || remove(obj);
+                isChanged = remove(obj) || isChanged;
             }
             return isChanged;
         }
@@ -416,7 +416,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         }
 
         @Override
-        protected Collection<K> getCollection() {
+        protected Set<K> getSet() {
             return _keyToValue.keySet();
         }
     }
@@ -461,7 +461,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         public boolean addAll(Collection<? extends Entry<K, V>> c) {
             boolean isChanged = false;
             for (Entry<K, V> entry : c) {
-                isChanged = isChanged || MultiBiMap.this.put(entry.getKey(), entry.getValue());
+                isChanged = MultiBiMap.this.put(entry.getKey(), entry.getValue()) || isChanged;
             }
             return isChanged;
         }
@@ -470,7 +470,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         public boolean removeAll(Collection<?> c) {
             boolean isChanged = false;
             for (Object obj : c) {
-                isChanged = isChanged || remove(obj);
+                isChanged = remove(obj) || isChanged;
             }
             return isChanged;
         }
@@ -497,7 +497,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         }
 
         @Override
-        protected Collection<Entry<K, V>> getCollection() {
+        protected Set<Entry<K, V>> getSet() {
             return _keyToValue.entries();
         }
     }
@@ -602,7 +602,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         public boolean removeAll(Collection<?> c) {
             boolean isChanged = false;
             for (Object key : c) {
-                isChanged = isChanged || !MultiBiMap.this.removeAll(key).isEmpty();
+                isChanged = !MultiBiMap.this.removeAll(key).isEmpty() || isChanged;
             }
             return isChanged;
         }
@@ -630,7 +630,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         }
 
         @Override
-        protected Collection<K> getCollection() {
+        protected Set<K> getSet() {
             return _keyToValue.asMap().keySet();
         }
     }
@@ -740,7 +740,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         public boolean addAll(Collection<? extends Entry<K, Collection<V>>> c) {
             boolean isChanged = false;
             for (Entry<K, Collection<V>> entry : c) {
-                isChanged = isChanged || MultiBiMap.this.putAll(entry.getKey(), entry.getValue());
+                isChanged = MultiBiMap.this.putAll(entry.getKey(), entry.getValue()) || isChanged;
             }
             return isChanged;
         }
@@ -764,7 +764,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
                     Entry<K, Collection<V>> entry = iterator.next();
 
                     if (entry.equals(obj)) {
-                        isChanged = isChanged || !MultiBiMap.this.removeAll(entry.getKey()).isEmpty();
+                        isChanged = !MultiBiMap.this.removeAll(entry.getKey()).isEmpty() || isChanged;
                         break;
                     }
 
@@ -794,7 +794,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         }
 
         @Override
-        protected Collection<Entry<K, Collection<V>>> getCollection() {
+        protected Set<Entry<K, Collection<V>>> getSet() {
             return _keyToValue.asMap().entrySet();
         }
     }

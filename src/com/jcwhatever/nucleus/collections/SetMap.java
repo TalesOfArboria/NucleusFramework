@@ -443,7 +443,7 @@ public abstract class SetMap<K, V> implements Map<K, V> {
         }
 
         @Override
-        protected Collection<K> getCollection() {
+        protected Set<K> getSet() {
             return getMap().keySet();
         }
 

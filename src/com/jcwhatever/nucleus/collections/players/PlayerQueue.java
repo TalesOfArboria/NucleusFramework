@@ -25,7 +25,9 @@
 
 package com.jcwhatever.nucleus.collections.players;
 
-import com.jcwhatever.nucleus.collections.wrappers.AbstractIteratorWrapper;
+import com.jcwhatever.nucleus.collections.players.PlayerElement.PlayerElementMatcher;
+import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -41,39 +43,58 @@ import javax.annotation.Nullable;
  *
  * <p>{@code Player} objects are automatically removed if the player logs out.</p>
  */
-public class PlayerQueue extends AbstractPlayerCollection implements Queue<Player> {
+public class PlayerQueue implements IPlayerCollection, Queue<Player> {
 
-	private final transient Queue<Player> _queue = new LinkedList<Player>();
-
-	private transient boolean _isDisposed;
+	private final Plugin _plugin;
+	private final transient Queue<PlayerElement> _queue = new LinkedList<PlayerElement>();
+	private final transient PlayerCollectionTracker _tracker;
+	private final transient Object _sync = new Object();
 
 	/**
 	 * Constructor.
 	 */
 	public PlayerQueue(Plugin plugin) {
-		super(plugin);
+		PreCon.notNull(plugin);
+
+		_plugin = plugin;
+		_tracker = new PlayerCollectionTracker(this);
+	}
+
+	@Override
+	public Plugin getPlugin() {
+		return _plugin;
+	}
+
+	@Override
+	public Object getSync() {
+		return _sync;
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends Player> players) {
+		PreCon.notNull(players);
+
+		boolean isChanged = false;
 
 		synchronized (_sync) {
 
 			for (Player p : players) {
-				notifyPlayerAdded(p.getUniqueId());
+				if (_queue.add(new PlayerElement(p))) {
+					_tracker.notifyPlayerAdded(p.getUniqueId());
+					isChanged = true;
+				}
 			}
-
-			return _queue.addAll(players);
 		}
+
+		return isChanged;
 	}
 
 	@Override
 	public void clear() {
 		synchronized (_sync) {
 			while (!_queue.isEmpty()) {
-				Player p = _queue.remove();
-
-				notifyPlayerRemoved(p.getUniqueId());
+				PlayerElement p = _queue.remove();
+				_tracker.notifyPlayerRemoved(p.getUniqueId());
 			}
 
 			_queue.clear();
@@ -88,9 +109,15 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> items) {
+	public boolean containsAll(Collection<?> collection) {
+		PreCon.notNull(collection);
+
+		boolean isChanged = false;
 		synchronized (_sync) {
-			return _queue.containsAll(items);
+			for (Object obj : collection) {
+
+			}
+			return _queue.containsAll(collection);
 		}
 	}
 
@@ -107,11 +134,14 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	}
 
 	@Override
-	public boolean remove(Object item) {
+	public boolean remove(Object o) {
+
 		synchronized (_sync) {
-			if (_queue.remove(item)) {
-				if (item instanceof Player && !_queue.contains(item)) {
-					notifyPlayerRemoved(((Player) item).getUniqueId());
+			if (_queue.remove(o)) {
+				PlayerElementMatcher matcher = new PlayerElementMatcher(o);
+				//noinspection SuspiciousMethodCalls
+				if (!_queue.contains(matcher) && matcher.getUniqueId() != null) {
+					_tracker.notifyPlayerRemoved(matcher.getUniqueId());
 				}
 				return true;
 			}
@@ -121,30 +151,46 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> items) {
+	public boolean removeAll(Collection<?> collection) {
+		PreCon.notNull(collection);
+
+		boolean isChanged = false;
 		synchronized (_sync) {
-			for (Object obj : items) {
-				if (obj instanceof Player) {
-					notifyPlayerRemoved(((Player) obj).getUniqueId());
-				}
+			for (Object obj : collection) {
+				isChanged = remove(obj) || isChanged;
 			}
-			return _queue.removeAll(items);
 		}
+		return isChanged;
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> items) {
+	public boolean retainAll(Collection<?> collection) {
+		PreCon.notNull(collection);
+
+		boolean isChanged = false;
+
 		synchronized (_sync) {
-			LinkedList<Player> temp = new LinkedList<>(_queue);
-			//noinspection SuspiciousMethodCalls
-			if (temp.removeAll(items)) {
-				while (!temp.isEmpty()) {
-					notifyPlayerRemoved(temp.remove().getUniqueId());
+
+			Iterator<PlayerElement> iterator = _queue.iterator();
+			while (iterator.hasNext()) {
+				PlayerElement entry = iterator.next();
+
+				boolean keep = false;
+				for (Object obj : collection) {
+					if (obj.equals(entry.getPlayer())) {
+						keep = true;
+						break;
+					}
+				}
+
+				if (!keep) {
+					iterator.remove();
+					isChanged = true;
 				}
 			}
-
-			return _queue.retainAll(items);
 		}
+
+		return isChanged;
 	}
 
 	@Override
@@ -170,10 +216,10 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	}
 
 	@Override
-	public boolean add(Player p) {
+	public boolean add(Player player) {
 		synchronized (_sync) {
-			if (_queue.add(p)) {
-				notifyPlayerAdded(p.getUniqueId());
+			if (_queue.add(new PlayerElement(player))) {
+				_tracker.notifyPlayerAdded(player.getUniqueId());
 				return true;
 			}
 			return false;
@@ -183,15 +229,16 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	@Override
 	public Player element() {
 		synchronized (_sync) {
-			return _queue.element();
+			PlayerElement entry = _queue.element();
+			return entry != null ? entry.getPlayer() : null;
 		}
 	}
 
 	@Override
-	public boolean offer(Player p) {
+	public boolean offer(Player player) {
 		synchronized (_sync) {
-			if (_queue.offer(p)) {
-				notifyPlayerAdded(p.getUniqueId());
+			if (_queue.offer(new PlayerElement(player))) {
+				_tracker.notifyPlayerAdded(player.getUniqueId());
 				return true;
 			}
 			return false;
@@ -201,7 +248,8 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	@Override
 	public Player peek() {
 		synchronized (_sync) {
-			return _queue.peek();
+			PlayerElement entry = _queue.peek();
+			return entry != null ? entry.getPlayer() : null;
 		}
 	}
 
@@ -209,11 +257,12 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	@Nullable
 	public Player poll() {
 		synchronized (_sync) {
-			Player p = _queue.poll();
-			if (p != null && !_queue.contains(p)) {
-				notifyPlayerRemoved(p.getUniqueId());
+			PlayerElement entry = _queue.poll();
+			if (entry != null && !_queue.contains(entry)) {
+				_tracker.notifyPlayerRemoved(entry.getUniqueId());
+				return entry.getPlayer();
 			}
-			return p;
+			return null;
 		}
 	}
 
@@ -221,51 +270,41 @@ public class PlayerQueue extends AbstractPlayerCollection implements Queue<Playe
 	@Nullable
 	public Player remove() {
 		synchronized (_sync) {
-			Player p = _queue.remove();
-			if (p != null && !_queue.contains(p)) {
-				notifyPlayerRemoved(p.getUniqueId());
+			PlayerElement entry = _queue.remove();
+			if (entry != null && !_queue.contains(entry)) {
+				_tracker.notifyPlayerRemoved(entry.getUniqueId());
+				return entry.getPlayer();
 			}
-			return p;
+			return null;
 		}
 	}
 
 	@Override
-	public void removePlayer(Player p) {
+	public void removePlayer(Player player) {
 		synchronized (_sync) {
-			_queue.remove(p);
+			_queue.remove(new PlayerElement(player));
 		}
 	}
 
-	@Override
-	public boolean isDisposed() {
-		return _isDisposed;
-	}
+	private class PlayerIterator extends AbstractConversionIterator<Player, PlayerElement> {
 
-	/**
-	 * Call to remove references that prevent
-	 * the garbage collector from collecting
-	 * the instance after it is not longer needed.
-	 */
-	@Override
-	public void dispose() {
-		clear();
-		_isDisposed = true;
-	}
-
-	private class PlayerIterator extends AbstractIteratorWrapper<Player> {
-
-		Iterator<Player> iterator = _queue.iterator();
+		Iterator<PlayerElement> iterator = _queue.iterator();
 
 		@Override
 		public void remove() {
 			synchronized (_sync) {
-				notifyPlayerRemoved(_current.getUniqueId());
+				_tracker.notifyPlayerRemoved(_current.getUniqueId());
 				iterator.remove();
 			}
 		}
 
 		@Override
-		protected Iterator<Player> getIterator() {
+		protected Player getElement(PlayerElement trueElement) {
+			return trueElement.getPlayer();
+		}
+
+		@Override
+		protected Iterator<PlayerElement> getIterator() {
 			return iterator;
 		}
 	}

@@ -41,6 +41,8 @@ import javax.annotation.Nonnull;
  */
 public class PlayerListMultimap<V> extends PlayerMultimap<V> {
 
+    private final Object _sync = new Object();
+
     /**
      * Constructor.
      *
@@ -49,6 +51,11 @@ public class PlayerListMultimap<V> extends PlayerMultimap<V> {
      */
     public PlayerListMultimap(Plugin plugin, ListMultimap<UUID, V> multimap) {
         super(plugin, multimap);
+    }
+
+    @Override
+    public Object getSync() {
+        return _sync;
     }
 
     @Override

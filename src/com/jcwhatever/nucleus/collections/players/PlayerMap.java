@@ -49,12 +49,13 @@ import java.util.UUID;
  *
  * @param <V>  The value type
  */
-public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, V> {
+public class PlayerMap<V> implements IPlayerCollection, Map<UUID, V> {
 
-	private final transient Map<UUID, V> _map;
+	private final Plugin _plugin;
+	private final Map<UUID, V> _map;
 	private final transient KeySetWrapper _keyset = new KeySetWrapper();
-
-	private transient boolean _isDisposed;
+	private final transient PlayerCollectionTracker _tracker;
+	private final transient Object _sync = new Object();
 
 	/**
 	 * Constructor.
@@ -67,15 +68,26 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 	 * Constructor.
 	 */
 	public PlayerMap(Plugin plugin, int size) {
-		super(plugin);
+		_plugin = plugin;
 		_map = new HashMap<UUID, V>(size);
+		_tracker = new PlayerCollectionTracker(this);
+	}
+
+	@Override
+	public Object getSync() {
+		return _sync;
+	}
+
+	@Override
+	public Plugin getPlugin() {
+		return _plugin;
 	}
 
 	@Override
 	public synchronized void clear() {
 
 		for (UUID playerId : _map.keySet()) {
-			notifyPlayerRemoved(playerId);
+			_tracker.notifyPlayerRemoved(playerId);
 		}
 
 		_map.clear();
@@ -134,7 +146,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 		PreCon.notNull(key);
 
 		synchronized (_sync) {
-			notifyPlayerAdded(key);
+			_tracker.notifyPlayerAdded(key);
 			return _map.put(key, value);
 		}
 	}
@@ -145,7 +157,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 
 		synchronized (_sync) {
 			for (UUID playerId : pairs.keySet()) {
-				notifyPlayerAdded(playerId);
+				_tracker.notifyPlayerAdded(playerId);
 			}
 			_map.putAll(pairs);
 		}
@@ -159,7 +171,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 			V item = _map.remove(key);
 
 			if (key instanceof UUID) {
-				notifyPlayerRemoved((UUID) key);
+				_tracker.notifyPlayerRemoved((UUID) key);
 			}
 
 			return item;
@@ -187,29 +199,13 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 		}
 	}
 
-	@Override
-	public boolean isDisposed() {
-		return _isDisposed;
-	}
-
-	/**
-	 * Call to remove references that prevent
-	 * the garbage collector from collecting
-	 * the instance after it is no longer needed.
-	 */
-	@Override
-	public void dispose() {
-		clear();
-		_isDisposed = true;
-	}
-
 	private class KeySetWrapper extends AbstractSetWrapper<UUID> {
 
 		@Override
 		public boolean add(UUID e) {
 			synchronized (_sync) {
 				if (_map.keySet().add(e)) {
-					notifyPlayerAdded(e);
+					_tracker.notifyPlayerAdded(e);
 					return true;
 				}
 				return false;
@@ -235,7 +231,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 					return false;
 
 				if (_map.keySet().remove(id)) {
-					notifyPlayerRemoved(id);
+					_tracker.notifyPlayerRemoved(id);
 					return true;
 				}
 
@@ -248,7 +244,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 			synchronized (_sync) {
 				boolean isChanged = false;
 				for (UUID id : c) {
-					isChanged = isChanged || add(id);
+					isChanged = add(id) || isChanged;
 				}
 				return isChanged;
 			}
@@ -259,7 +255,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 			synchronized (_sync) {
 				boolean isChanged = false;
 				for (Object id : c) {
-					isChanged = isChanged || remove(id);
+					isChanged = remove(id) || isChanged;
 				}
 				return isChanged;
 			}
@@ -276,7 +272,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 				boolean isChanged = false;
 
 				for (Object obj : removed) {
-					isChanged = isChanged || remove(obj);
+					isChanged = remove(obj) || isChanged;
 				}
 
 				return isChanged;
@@ -294,7 +290,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 		}
 
 		@Override
-		protected Collection<UUID> getCollection() {
+		protected Set<UUID> getSet() {
 			return _map.keySet();
 		}
 	}
@@ -306,7 +302,7 @@ public class PlayerMap<V> extends AbstractPlayerCollection implements Map<UUID, 
 		@Override
 		public void remove() {
 			synchronized (_sync) {
-				notifyPlayerRemoved(_current);
+				_tracker.notifyPlayerRemoved(_current);
 
 				iterator.remove();
 			}

@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.collections.players;
 
+import com.jcwhatever.nucleus.collections.players.PlayerElement.PlayerElementMatcher;
 import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -43,10 +44,12 @@ import java.util.Set;
  *     {@code Player} object is automatically removed when the player logs out.
  * </p>
  */
-public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
+public class PlayerSet implements IPlayerCollection, Set<Player> {
 
-    private final Set<PlayerEntry> _players;
-    private boolean _isDisposed;
+    private final Plugin _plugin;
+    private final Set<PlayerElement> _players;
+    private final PlayerCollectionTracker _tracker;
+    private final Object _sync = new Object();
 
     /**
      * Constructor.
@@ -61,8 +64,21 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
      * @param size  The initial capacity.
      */
     public PlayerSet(Plugin plugin, int size) {
-        super(plugin);
+        PreCon.notNull(plugin);
+
+        _plugin = plugin;
         _players = new HashSet<>(size);
+        _tracker = new PlayerCollectionTracker(this);
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+
+    @Override
+    public Object getSync() {
+        return _sync;
     }
 
     @Override
@@ -71,8 +87,8 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
         synchronized (_sync) {
 
-            if (_players.add(new PlayerEntry(p))) {
-                notifyPlayerAdded(p.getUniqueId());
+            if (_players.add(new PlayerElement(p))) {
+                _tracker.notifyPlayerAdded(p.getUniqueId());
                 return true;
             }
 
@@ -88,8 +104,8 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
             boolean isChanged = false;
 
             for (Player p : collection) {
-                if (_players.add(new PlayerEntry(p))) {
-                    notifyPlayerAdded(p.getUniqueId());
+                if (_players.add(new PlayerElement(p))) {
+                    _tracker.notifyPlayerAdded(p.getUniqueId());
                     isChanged = true;
                 }
             }
@@ -102,8 +118,8 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
     public void clear() {
 
         synchronized (_sync) {
-            for (PlayerEntry p : _players) {
-                notifyPlayerRemoved(p.getUniqueId());
+            for (PlayerElement p : _players) {
+                _tracker.notifyPlayerRemoved(p.getUniqueId());
             }
 
             _players.clear();
@@ -112,12 +128,8 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
 
     @Override
     public boolean contains(Object o) {
-        PreCon.notNull(o);
-
         synchronized (_sync) {
-            return o instanceof Player
-                    ? _players.contains(new PlayerEntry((Player) o))
-                    : _players.contains(o);
+            return _players.contains(new PlayerElementMatcher(o));
         }
     }
 
@@ -155,16 +167,12 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
         PreCon.notNull(o);
 
         synchronized (_sync) {
-            boolean isRemoved = o instanceof Player
-                    ? _players.remove(new PlayerEntry((Player) o))
-                    : _players.remove(o);
 
-            if (isRemoved) {
-                if (o instanceof Player) {
-                    notifyPlayerRemoved(((Player) o).getUniqueId());
-                }
+            if (_players.remove(new PlayerElementMatcher(o))) {
+                _tracker.notifyPlayerRemoved(((Player) o).getUniqueId());
                 return true;
             }
+
             return false;
         }
     }
@@ -189,26 +197,30 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
     public boolean retainAll(Collection<?> collection) {
         PreCon.notNull(collection);
 
+        boolean isChanged = false;
+
         synchronized (_sync) {
 
-            Set<PlayerEntry> temp = new HashSet<>(_players);
-            //noinspection SuspiciousMethodCalls
+            Iterator<PlayerElement> iterator = _players.iterator();
+            while (iterator.hasNext()) {
+                PlayerElement entry = iterator.next();
 
-            for (Object obj : collection) {
-                if (obj instanceof Player) {
-                    //noinspection SuspiciousMethodCalls
-                    temp.remove(new PlayerEntry((Player) obj));
+                boolean keep = false;
+                for (Object obj : collection) {
+                    if (obj.equals(entry.getPlayer())) {
+                        keep = true;
+                        break;
+                    }
+                }
+
+                if (!keep) {
+                    iterator.remove();
+                    isChanged = true;
                 }
             }
-
-            boolean isChanged = false;
-
-            for (PlayerEntry p : temp) {
-                isChanged = isChanged | remove(p);
-            }
-
-            return isChanged;
         }
+
+        return isChanged;
     }
 
     @Override
@@ -236,45 +248,29 @@ public class PlayerSet extends AbstractPlayerCollection implements Set<Player> {
     @Override
     public void removePlayer(Player p) {
         synchronized (_sync) {
-            _players.remove(new PlayerEntry(p));
+            _players.remove(new PlayerElement(p));
         }
     }
 
-    @Override
-    public boolean isDisposed() {
-        return _isDisposed;
-    }
+    private final class PlayerIterator extends AbstractConversionIterator<Player, PlayerElement> {
 
-    /**
-     * Call to remove references that prevent
-     * the garbage collector from collecting
-     * the instance after it is no longer needed.
-     */
-    @Override
-    public void dispose() {
-        clear();
-        _isDisposed = true;
-    }
-
-    private final class PlayerIterator extends AbstractConversionIterator<Player, PlayerEntry> {
-
-        Iterator<PlayerEntry> iterator = _players.iterator();
+        Iterator<PlayerElement> iterator = _players.iterator();
 
         @Override
         public void remove() {
             synchronized (_sync) {
-                notifyPlayerRemoved(_current.getUniqueId());
+                _tracker.notifyPlayerRemoved(_current.getUniqueId());
                 iterator.remove();
             }
         }
 
         @Override
-        protected Player getElement(PlayerEntry trueElement) {
+        protected Player getElement(PlayerElement trueElement) {
             return trueElement.getPlayer();
         }
 
         @Override
-        protected Iterator<PlayerEntry> getIterator() {
+        protected Iterator<PlayerElement> getIterator() {
             return iterator;
         }
     }

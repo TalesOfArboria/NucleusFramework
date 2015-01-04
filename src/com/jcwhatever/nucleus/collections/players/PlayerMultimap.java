@@ -50,16 +50,23 @@ import java.util.UUID;
  *
  * <p> When the player logs out, the entry is automatically removed.</p>
  *
+ *
  * @param <V>  The value type
  */
-public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multimap<UUID, V> {
+public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<UUID, V> {
 
-    private final transient Multimap<UUID, V> _map;
+    private final Plugin _plugin;
+    private final Multimap<UUID, V> _map;
     private final transient MapWrapper _mapWrapper = new MapWrapper();
-    private final EntrySetWrapper _entrySet = new EntrySetWrapper();
-    private final KeySetWrapper _keySet = new KeySetWrapper();
+    private final transient EntrySetWrapper _entrySet = new EntrySetWrapper();
+    private final transient KeySetWrapper _keySet = new KeySetWrapper();
+    private final transient PlayerCollectionTracker _tracker;
 
-    private boolean _isDisposed;
+    private PlayerMultimap() {
+        _plugin = null;
+        _map = null;
+        _tracker = new PlayerCollectionTracker(this);
+    }
 
     /**
      * Constructor.
@@ -68,115 +75,153 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
      * @param multimap  The player Multimap.
      */
     public PlayerMultimap(Plugin plugin, Multimap<UUID, V> multimap) {
-        super(plugin);
+        PreCon.notNull(plugin);
+        PreCon.notNull(multimap);
 
+        _plugin = plugin;
         _map = multimap;
+        _tracker = new PlayerCollectionTracker(this);
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        synchronized (getSync()) {
+            return _plugin;
+        }
     }
 
     @Override
     public int size() {
-        return _map.size();
+        synchronized (getSync()) {
+            return _map.size();
+        }
     }
 
     @Override
     public boolean isEmpty() {
-        return _map.isEmpty();
+        synchronized (getSync()) {
+            return _map.isEmpty();
+        }
     }
 
     @Override
     public boolean containsKey(Object o) {
-        return _map.containsKey(o);
+        synchronized (getSync()) {
+            return _map.containsKey(o);
+        }
     }
 
     @Override
     public boolean containsValue(Object o) {
-        return _map.containsValue(o);
+        synchronized (getSync()) {
+            return _map.containsValue(o);
+        }
     }
 
     @Override
     public boolean containsEntry(Object o, Object o1) {
-        return _map.containsEntry(o, o1);
+        synchronized (getSync()) {
+            return _map.containsEntry(o, o1);
+        }
     }
 
     @Override
     public boolean put(UUID playerId, V v) {
+        synchronized (getSync()) {
+            if (!_map.containsKey(playerId))
+                _tracker.notifyPlayerAdded(playerId);
 
-        if (!_map.containsKey(playerId))
-            notifyPlayerAdded(playerId);
-
-        return _map.put(playerId, v);
+            return _map.put(playerId, v);
+        }
     }
 
     @Override
     public boolean remove(Object o, Object o1) {
-        return _map.remove(o, o1);
+        synchronized (getSync()) {
+            return _map.remove(o, o1);
+        }
     }
 
     @Override
     public boolean putAll(UUID playerId, Iterable<? extends V> iterable) {
+        synchronized (getSync()) {
+            if (!_map.containsKey(playerId)) {
+                _tracker.notifyPlayerAdded(playerId);
+            }
 
-        if (!_map.containsKey(playerId)) {
-            notifyPlayerAdded(playerId);
+            return _map.putAll(playerId, iterable);
         }
-
-        return _map.putAll(playerId, iterable);
     }
 
     @Override
     public boolean putAll(Multimap<? extends UUID, ? extends V> multimap) {
 
-        Set<? extends UUID> keys = multimap.keySet();
+        synchronized (getSync()) {
+            Set<? extends UUID> keys = multimap.keySet();
 
-        for (UUID id : keys) {
-            if (!_map.containsKey(id)) {
-                notifyPlayerAdded(id);
+            for (UUID id : keys) {
+                if (!_map.containsKey(id)) {
+                    _tracker.notifyPlayerAdded(id);
+                }
             }
-        }
 
-        return _map.putAll(multimap);
+            return _map.putAll(multimap);
+        }
     }
 
     @Override
     public Collection<V> replaceValues(UUID k, Iterable<? extends V> iterable) {
         PreCon.notNull(k);
-        return _map.replaceValues(k, iterable);
+
+        synchronized (getSync()) {
+            return _map.replaceValues(k, iterable);
+        }
     }
 
     @Override
     public Collection<V> removeAll(Object o) {
         PreCon.notNull(o);
 
-        Set<? extends UUID> keys = _map.keySet();
+        synchronized (getSync()) {
 
-        for (UUID id : keys) {
-            if (o.equals(id)) {
-                notifyPlayerRemoved(id);
-                break;
+            Set<? extends UUID> keys = _map.keySet();
+
+            for (UUID id : keys) {
+                if (o.equals(id)) {
+                    _tracker.notifyPlayerRemoved(id);
+                    break;
+                }
             }
+            return _map.removeAll(o);
         }
-        return _map.removeAll(o);
     }
 
     @Override
     public void clear() {
 
-        Set<? extends UUID> keys = _map.keySet();
+        synchronized (getSync()) {
 
-        for (UUID id : keys) {
-            notifyPlayerRemoved(id);
+            Set<? extends UUID> keys = _map.keySet();
+
+            for (UUID id : keys) {
+                _tracker.notifyPlayerRemoved(id);
+            }
+
+            _map.clear();
         }
-
-        _map.clear();
     }
 
     @Override
     public Collection<V> get(UUID k) {
-        return _map.get(k);
+        synchronized (getSync()) {
+            return _map.get(k);
+        }
     }
 
     @Override
     public Set<UUID> keySet() {
         return _keySet;
+
     }
 
     @Override
@@ -186,7 +231,9 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
 
     @Override
     public Collection<V> values() {
-        return _map.values();
+        synchronized (getSync()) {
+            return _map.values();
+        }
     }
 
     @Override
@@ -201,18 +248,9 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
 
     @Override
     public void removePlayer(Player p) {
-        _map.removeAll(p.getUniqueId());
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return _isDisposed;
-    }
-
-    @Override
-    public void dispose() {
-        clear();
-        _isDisposed = true;
+        synchronized (getSync()) {
+            _map.removeAll(p.getUniqueId());
+        }
     }
 
     private class KeySetWrapper extends AbstractSetWrapper<UUID> {
@@ -241,7 +279,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         public boolean removeAll(Collection<?> c) {
             boolean isChanged = false;
             for (Object obj : c) {
-                isChanged = isChanged || remove(obj);
+                isChanged = remove(obj) || isChanged;
             }
             return isChanged;
         }
@@ -263,7 +301,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         }
 
         @Override
-        protected Collection<UUID> getCollection() {
+        protected Set<UUID> getSet() {
             return _map.keySet();
         }
     }
@@ -283,7 +321,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         }
     }
 
-    private class EntrySetWrapper extends AbstractSetWrapper<Entry<UUID, V>> {
+    private class EntrySetWrapper extends AbstractCollectionWrapper<Entry<UUID, V>> {
 
         @Override
         public Iterator<Entry<UUID, V>> iterator() {
@@ -308,7 +346,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         public boolean addAll(Collection<? extends Entry<UUID, V>> c) {
             boolean isChanged = false;
             for (Entry<UUID, V> entry : c) {
-                isChanged = isChanged || PlayerMultimap.this.put(entry.getKey(), entry.getValue());
+                isChanged = PlayerMultimap.this.put(entry.getKey(), entry.getValue()) || isChanged;
             }
             return isChanged;
         }
@@ -317,7 +355,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         public boolean removeAll(Collection<?> c) {
             boolean isChanged = false;
             for (Object obj : c) {
-                isChanged = isChanged || remove(obj);
+                isChanged = remove(obj) || isChanged;
             }
             return isChanged;
         }
@@ -374,7 +412,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         public Collection<V> put(UUID key, Collection<V> values) {
 
             if (!_map.containsKey(key))
-                notifyPlayerAdded(key);
+                _tracker.notifyPlayerAdded(key);
 
             Collection<V> current = _map.get(key);
             List<V> result = new ArrayList<V>(values.size());
@@ -452,7 +490,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         public boolean removeAll(Collection<?> c) {
             boolean isChanged = false;
             for (Object key : c) {
-                isChanged = isChanged || !PlayerMultimap.this.removeAll(key).isEmpty();
+                isChanged = !PlayerMultimap.this.removeAll(key).isEmpty() || isChanged;
             }
             return isChanged;
         }
@@ -480,7 +518,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         }
 
         @Override
-        protected Collection<UUID> getCollection() {
+        protected Set<UUID> getSet() {
             return _map.asMap().keySet();
         }
     }
@@ -590,7 +628,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         public boolean addAll(Collection<? extends Entry<UUID, Collection<V>>> c) {
             boolean isChanged = false;
             for (Entry<UUID, Collection<V>> entry : c) {
-                isChanged = isChanged || PlayerMultimap.this.putAll(entry.getKey(), entry.getValue());
+                isChanged = PlayerMultimap.this.putAll(entry.getKey(), entry.getValue()) || isChanged;
             }
             return isChanged;
         }
@@ -614,7 +652,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
                     Entry<UUID, Collection<V>> entry = iterator.next();
 
                     if (entry.equals(obj)) {
-                        isChanged = isChanged || !PlayerMultimap.this.removeAll(entry.getKey()).isEmpty();
+                        isChanged = !PlayerMultimap.this.removeAll(entry.getKey()).isEmpty() || isChanged;
                         break;
                     }
 
@@ -644,7 +682,7 @@ public class PlayerMultimap<V> extends AbstractPlayerCollection implements Multi
         }
 
         @Override
-        protected Collection<Entry<UUID, Collection<V>>> getCollection() {
+        protected Set<Entry<UUID, Collection<V>>> getSet() {
             return _map.asMap().entrySet();
         }
     }

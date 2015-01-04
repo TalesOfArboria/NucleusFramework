@@ -24,10 +24,18 @@
 
 package com.jcwhatever.nucleus.collections.wrappers;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
  * Abstract implementation of a {@code Set} wrapper.
  */
 public abstract class AbstractSetWrapper<E> extends AbstractCollectionWrapper<E> implements Set<E> {
+
+    @Override
+    protected final Collection<E> getCollection() {
+        return getSet();
+    }
+
+    protected abstract Set<E> getSet();
 }

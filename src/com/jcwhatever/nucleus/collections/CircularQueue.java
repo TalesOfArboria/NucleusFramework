@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 public class CircularQueue<E> implements Deque<E> {
 
     private Entry _current; // current is head, left is tail
-    private int _size;
+    private volatile int _size;
 
     /**
      * Moves the head and tail of the deque to the right (direction towards tail).
@@ -294,7 +294,7 @@ public class CircularQueue<E> implements Deque<E> {
 
         boolean isChanged = false;
         for (E value : c) {
-            isChanged = isChanged || add(value);
+            isChanged =  add(value) || isChanged;
         }
         return isChanged;
     }
@@ -305,7 +305,7 @@ public class CircularQueue<E> implements Deque<E> {
 
         boolean isChanged = false;
         for (Object o : c) {
-            isChanged = isChanged || remove(o);
+            isChanged = remove(o) || isChanged;
         }
         return isChanged;
     }

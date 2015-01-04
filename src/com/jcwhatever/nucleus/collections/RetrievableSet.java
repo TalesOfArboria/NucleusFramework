@@ -205,7 +205,7 @@ public class RetrievableSet<T> implements Set<T> {
     public boolean addAll(Collection<? extends T> collection) {
         boolean isChanged = false;
         for (T element : collection) {
-            isChanged = isChanged || add(element);
+            isChanged = add(element) || isChanged;
         }
         return isChanged;
     }

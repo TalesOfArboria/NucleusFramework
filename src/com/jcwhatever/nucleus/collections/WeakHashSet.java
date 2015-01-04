@@ -52,7 +52,7 @@ public class WeakHashSet<E> extends AbstractSetWrapper<E> {
     }
 
     @Override
-    protected Collection<E> getCollection() {
+    protected Set<E> getSet() {
         return _set;
     }
 }
