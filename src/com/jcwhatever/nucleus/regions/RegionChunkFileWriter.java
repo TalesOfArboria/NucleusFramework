@@ -90,7 +90,7 @@ public class RegionChunkFileWriter {
             throw new RuntimeException("Cannot get a snapshot from an undefined region.");
 
         //noinspection ConstantConditions
-        Chunk chunk = region.getWorld().getChunkAt(chunkX, chunkZ);
+        Chunk chunk = region.getWorld().getChunkAt(chunkX, chunkZ); // region.getWorld() is not null because region is defined
         _plugin = region.getPlugin();
         _region = region;
         _world = region.getWorld();

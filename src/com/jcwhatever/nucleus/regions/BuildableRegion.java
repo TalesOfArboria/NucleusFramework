@@ -25,18 +25,21 @@
 
 package com.jcwhatever.nucleus.regions;
 
+import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueWorker;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
-import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
-import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.Scheduler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
@@ -112,6 +115,26 @@ public abstract class BuildableRegion extends Region {
         QueueProject project = new QueueProject(getPlugin());
 
         for (ChunkSnapshot snapshot : snapshots) {
+
+            World world = Bukkit.getWorld(snapshot.getWorldName());
+            if (world == null) {
+                NucMsg.debug(getPlugin(),
+                        "Failed to get world named '{0}' while building region '{1}'.",
+                        snapshot.getWorldName(), getName());
+                continue;
+            }
+
+            Chunk chunk = world.getChunkAt(snapshot.getX(), snapshot.getZ());
+            if (chunk == null) {
+                NucMsg.debug(getPlugin(),
+                        "Failed to get chunk ({0}, {1}) in world '{0}' while building region '{1}'.",
+                        snapshot.getX(), snapshot.getZ(), snapshot.getWorldName(), getName());
+                continue;
+            }
+
+            if (!chunk.isLoaded()) {
+                chunk.load();
+            }
 
             // get region chunk section calculations
             RegionChunkSection section = new RegionChunkSection(this, snapshot);

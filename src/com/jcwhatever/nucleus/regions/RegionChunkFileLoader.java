@@ -27,6 +27,11 @@ package com.jcwhatever.nucleus.regions;
 
 import com.jcwhatever.nucleus.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.nucleus.extended.serializable.SerializableFurnitureEntity;
+import com.jcwhatever.nucleus.regions.data.ChunkBlockInfo;
+import com.jcwhatever.nucleus.regions.data.ChunkInfo;
+import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
+import com.jcwhatever.nucleus.utils.EnumUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
@@ -34,12 +39,8 @@ import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.CancelHandler
 import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.FailHandler;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
-import com.jcwhatever.nucleus.regions.data.ChunkBlockInfo;
-import com.jcwhatever.nucleus.regions.data.ChunkInfo;
-import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
-import com.jcwhatever.nucleus.utils.EnumUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 
+import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
@@ -166,6 +167,21 @@ public final class RegionChunkFileLoader {
         if (isLoading())
             return project.cancel("Region cannot load because it is already loading.");
 
+        if (_chunk.getWorld().getBukkitWorld() == null) {
+            return project.cancel("Failed to get world '{0}' while loading region '{1}'.",
+                    _chunk.getWorld().getName(), _region.getName());
+        }
+
+        Chunk chunk = _chunk.getChunk();
+        if (chunk == null) {
+            return project.cancel("Failed to get chunk ({0}, {1}) in world '{0}' while building region '{1}'.",
+                    _chunk.getX(), _chunk.getZ(), _chunk.getWorld().getName());
+        }
+
+        if (!chunk.isLoaded()) {
+            chunk.load();
+        }
+
         _isLoading = true;
 
         RegionChunkSection section = new RegionChunkSection(_region, _chunk);
@@ -237,6 +253,8 @@ public final class RegionChunkFileLoader {
                            int xEnd, int yEnd, int zEnd) {
 
             super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
+
+
 
             this.snapshot = _chunk.getChunk().getChunkSnapshot();
             this.file = file;
