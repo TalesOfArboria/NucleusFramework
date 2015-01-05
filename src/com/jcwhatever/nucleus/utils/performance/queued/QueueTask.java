@@ -26,8 +26,9 @@
 package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
 
@@ -123,8 +124,10 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
      * immediately.
      *
      * @param reason  Optional message describing the reason the task was cancelled.
+     * @param args    Optional message format arguments.
      */
-    public final Future cancel(@Nullable String reason) {
+    public final Future cancel(@Nullable String reason, Object... args) {
+        PreCon.notNull(args);
 
         if (isEnded())
             return _future;
@@ -134,6 +137,9 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
 
         _isRunning = false;
         _isCancelled = true;
+
+        if (reason != null)
+            reason = TextUtils.format(reason, args);
 
         _result.setCancelled(reason);
 
@@ -192,8 +198,9 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
      * Call when the task fails.
      *
      * @param reason  Optional message describing the reason the task failed.
+     * @param args    Optional message format arguments.
      */
-    protected final Future fail(String reason) {
+    protected final Future fail(@Nullable String reason, Object... args) {
 
         if (isEnded())
             return _future;
@@ -203,6 +210,9 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
 
         _isRunning = false;
         _isFailed = true;
+
+        if (reason != null)
+            reason = TextUtils.format(reason, args);
 
         _result.setFailed(reason);
 
