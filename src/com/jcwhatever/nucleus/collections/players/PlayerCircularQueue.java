@@ -64,11 +64,6 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
     }
 
     @Override
-    public Object getSync() {
-        return _sync;
-    }
-
-    @Override
     public void addFirst(Player player) {
         PreCon.notNull(player);
 

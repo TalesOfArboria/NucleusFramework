@@ -193,9 +193,7 @@ final class PlayerCollectionListener implements IPluginOwned, Listener {
         @Override
         public void run() {
             for (PlayerCollectionTracker tracker : trackers) {
-                synchronized (tracker.getSync()) {
-                    tracker.getCollection().removePlayer(p);
-                }
+                tracker.getCollection().removePlayer(p);
             }
         }
     }

@@ -64,13 +64,6 @@ public final class PlayerCollectionTracker implements IPluginOwned {
     }
 
     /**
-     * Get the synchronization object.
-     */
-    public Object getSync() {
-        return _collection.getSync();
-    }
-
-    /**
      * Get the player collection.
      */
     public IPlayerCollection getCollection() {

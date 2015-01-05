@@ -61,6 +61,7 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
     private final transient EntrySetWrapper _entrySet = new EntrySetWrapper();
     private final transient KeySetWrapper _keySet = new KeySetWrapper();
     private final transient PlayerCollectionTracker _tracker;
+    private final transient Object _sync = new Object();
 
     private PlayerMultimap() {
         _plugin = null;
@@ -85,49 +86,49 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
 
     @Override
     public Plugin getPlugin() {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _plugin;
         }
     }
 
     @Override
     public int size() {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.size();
         }
     }
 
     @Override
     public boolean isEmpty() {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.isEmpty();
         }
     }
 
     @Override
     public boolean containsKey(Object o) {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.containsKey(o);
         }
     }
 
     @Override
     public boolean containsValue(Object o) {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.containsValue(o);
         }
     }
 
     @Override
     public boolean containsEntry(Object o, Object o1) {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.containsEntry(o, o1);
         }
     }
 
     @Override
     public boolean put(UUID playerId, V v) {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             if (!_map.containsKey(playerId))
                 _tracker.notifyPlayerAdded(playerId);
 
@@ -137,14 +138,14 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
 
     @Override
     public boolean remove(Object o, Object o1) {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.remove(o, o1);
         }
     }
 
     @Override
     public boolean putAll(UUID playerId, Iterable<? extends V> iterable) {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             if (!_map.containsKey(playerId)) {
                 _tracker.notifyPlayerAdded(playerId);
             }
@@ -156,7 +157,7 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
     @Override
     public boolean putAll(Multimap<? extends UUID, ? extends V> multimap) {
 
-        synchronized (getSync()) {
+        synchronized (_sync) {
             Set<? extends UUID> keys = multimap.keySet();
 
             for (UUID id : keys) {
@@ -173,7 +174,7 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
     public Collection<V> replaceValues(UUID k, Iterable<? extends V> iterable) {
         PreCon.notNull(k);
 
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.replaceValues(k, iterable);
         }
     }
@@ -182,7 +183,7 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
     public Collection<V> removeAll(Object o) {
         PreCon.notNull(o);
 
-        synchronized (getSync()) {
+        synchronized (_sync) {
 
             Set<? extends UUID> keys = _map.keySet();
 
@@ -199,7 +200,7 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
     @Override
     public void clear() {
 
-        synchronized (getSync()) {
+        synchronized (_sync) {
 
             Set<? extends UUID> keys = _map.keySet();
 
@@ -213,7 +214,7 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
 
     @Override
     public Collection<V> get(UUID k) {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.get(k);
         }
     }
@@ -231,7 +232,7 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
 
     @Override
     public Collection<V> values() {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             return _map.values();
         }
     }
@@ -248,9 +249,13 @@ public abstract class PlayerMultimap<V> implements IPlayerCollection, Multimap<U
 
     @Override
     public void removePlayer(Player p) {
-        synchronized (getSync()) {
+        synchronized (_sync) {
             _map.removeAll(p.getUniqueId());
         }
+    }
+
+    protected Object getSync() {
+        return _sync;
     }
 
     private class KeySetWrapper extends AbstractSetWrapper<UUID> {

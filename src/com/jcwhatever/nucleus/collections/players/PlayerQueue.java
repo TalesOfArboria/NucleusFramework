@@ -66,11 +66,6 @@ public class PlayerQueue implements IPlayerCollection, Queue<Player> {
 	}
 
 	@Override
-	public Object getSync() {
-		return _sync;
-	}
-
-	@Override
 	public boolean addAll(Collection<? extends Player> players) {
 		PreCon.notNull(players);
 
@@ -112,12 +107,13 @@ public class PlayerQueue implements IPlayerCollection, Queue<Player> {
 	public boolean containsAll(Collection<?> collection) {
 		PreCon.notNull(collection);
 
-		boolean isChanged = false;
 		synchronized (_sync) {
 			for (Object obj : collection) {
-
+				//noinspection SuspiciousMethodCalls
+				if (!_queue.contains(obj))
+					return false;
 			}
-			return _queue.containsAll(collection);
+			return true;
 		}
 	}
 

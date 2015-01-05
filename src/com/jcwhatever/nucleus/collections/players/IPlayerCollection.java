@@ -51,11 +51,6 @@ import org.bukkit.entity.Player;
 public interface IPlayerCollection extends IPluginOwned {
 
     /**
-     * Get the synchronization object.
-     */
-    Object getSync();
-
-    /**
      * Called to automatically remove the specified player
      * from the collection.
      *

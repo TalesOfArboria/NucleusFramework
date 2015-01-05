@@ -77,11 +77,6 @@ public class PlayerSet implements IPlayerCollection, Set<Player> {
     }
 
     @Override
-    public Object getSync() {
-        return _sync;
-    }
-
-    @Override
     public boolean add(Player p) {
         PreCon.notNull(p);
 
