@@ -25,11 +25,11 @@
 
 package com.jcwhatever.nucleus.utils.file;
 
+import com.jcwhatever.nucleus.utils.EnumUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;
-import com.jcwhatever.nucleus.utils.EnumUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -58,7 +58,6 @@ public class NucleusByteReader extends InputStream {
 
     private final InputStream _stream;
     private final byte[] _buffer = new byte[1024];
-    private final byte[] _uuidBuffer = new byte[16];
     private long _bytesRead = 0;
 
     private int _booleanReadCount = 7; // resets to 7
@@ -446,19 +445,24 @@ public class NucleusByteReader extends InputStream {
      *     <li>The Pitch value - Double (See {@code getDouble})</li>
      * </ul>
      *
+     * <p>If not invoked from the main thread, the {@code Location}'s {@code World}
+     * value is null since it's not safe to lookup a Bukkit world from a thread other
+     * than the main thread.</p>
+     *
      * @throws IOException
-     * @throws ClassNotFoundException
      */
     public Location getLocation() throws IOException {
 
-        String worldName = getSmallString();
+        final String worldName = getSmallString();
         double x = getDouble();
         double y = getDouble();
         double z = getDouble();
         float yaw = getFloat();
         float pitch = getFloat();
 
-        return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
+        return Bukkit.isPrimaryThread()
+                ? new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch)
+                : new Location(null, x, y, z, yaw, pitch);
     }
 
     /**
