@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Randomizing utilities
@@ -38,8 +38,6 @@ public final class Rand {
     private static final String SAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String UNSAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "01234567890`~!@#$%^&*()_+-=";
-
-    public static final Random RANDOM = new Random();
 
     /**
      * Get a random item from a list.
@@ -84,7 +82,7 @@ public final class Rand {
      */
     public static int getInt(int min, int max) {
         int range = max - min + 1;
-        int i = RANDOM.nextInt() % range;
+        int i = ThreadLocalRandom.current().nextInt() % range;
         return  min + i;
     }
 
@@ -95,14 +93,14 @@ public final class Rand {
      * @param max  The maximum result.
      */
     public static int getInt(int max) {
-        return RANDOM.nextInt(max);
+        return ThreadLocalRandom.current().nextInt(max);
     }
 
     /**
      * Get a random integer.
      */
     public static int getInt() {
-        return RANDOM.nextInt();
+        return ThreadLocalRandom.current().nextInt();
     }
 
     /**
@@ -114,7 +112,7 @@ public final class Rand {
      */
     public static double getDouble(double min, double max) {
         double range = max - min + 1;
-        double i = RANDOM.nextDouble() % range;
+        double i = ThreadLocalRandom.current().nextDouble() % range;
         return  min + i;
     }
 
@@ -125,14 +123,14 @@ public final class Rand {
      * @param max  The maximum result.
      */
     public static double getDouble(double max) {
-        return RANDOM.nextDouble() % max;
+        return ThreadLocalRandom.current().nextDouble() % max;
     }
 
     /**
      * Get a random double.
      */
     public static double getDouble() {
-        return RANDOM.nextDouble();
+        return ThreadLocalRandom.current().nextDouble();
     }
 
     /**

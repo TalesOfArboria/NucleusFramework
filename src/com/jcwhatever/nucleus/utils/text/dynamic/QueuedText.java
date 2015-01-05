@@ -41,10 +41,11 @@ import java.util.List;
  */
 public class QueuedText implements IDynamicText {
 
-    private LinkedList<Pause> _pauses = new LinkedList<>();
-    private LinkedList<Runnable> _onEmpty = new LinkedList<>();
-    private long _nextUpdate;
-    private IDynamicText _currentText;
+    private final LinkedList<Pause> _pauses = new LinkedList<>();
+    private final LinkedList<Runnable> _onEmpty = new LinkedList<>();
+    private volatile long _nextUpdate;
+    private volatile IDynamicText _currentText;
+    private final Object _sync = new Object();
 
     /**
      * Constructor.
@@ -55,14 +56,18 @@ public class QueuedText implements IDynamicText {
      * Determine if there are text events queued.
      */
     public boolean isEmpty() {
-        return _pauses.isEmpty();
+        synchronized (_sync) {
+            return _pauses.isEmpty();
+        }
     }
 
     /**
      * Get the number of queued text events.
      */
     public int size() {
-        return _pauses.size();
+        synchronized (_sync) {
+            return _pauses.size();
+        }
     }
 
     /**
@@ -80,36 +85,39 @@ public class QueuedText implements IDynamicText {
             return _currentText != null ? _currentText.nextText() : null;
         }
 
-        if (_pauses.isEmpty()) {
+        synchronized (_sync) {
 
-            while (!_onEmpty.isEmpty()) {
-                Runnable onEmpty = _onEmpty.removeFirst();
+            if (isEmpty()) {
 
-                onEmpty.run();
+                while (!_onEmpty.isEmpty()) {
+                    Runnable onEmpty = _onEmpty.removeFirst();
+
+                    onEmpty.run();
+                }
+                return null;
             }
+
+            Pause pause = _pauses.removeFirst();
+
+            _nextUpdate = System.currentTimeMillis() + pause.duration;
+
+            if (pause instanceof Text) {
+                Text text = (Text) pause;
+                return (_currentText = text.text).nextText();
+            }
+
+            if (pause instanceof Action) {
+                Action action = (Action) pause;
+                action.runnable.run();
+            }
+
             return null;
         }
-
-        Pause pause = _pauses.removeFirst();
-        _nextUpdate = System.currentTimeMillis() + pause.duration;
-
-        if (pause instanceof Text) {
-            Text text = (Text)pause;
-            _currentText = text.text;
-            return _currentText.nextText();
-        }
-
-        if (pause instanceof Action) {
-            Action action = (Action)pause;
-            action.runnable.run();
-        }
-
-        return null;
     }
 
     @Override
     public int getRefreshRate() {
-        return _pauses.isEmpty() ? 0 : 1;
+        return isEmpty() ? 0 : 1;
     }
 
     @Override
@@ -208,16 +216,19 @@ public class QueuedText implements IDynamicText {
          * Build and append to the parent {@code QueueText} queue.
          */
         public void build() {
-            _pauses.addAll(pauses);
-            pauses.clear();
 
-            _onEmpty.addAll(onEmpty);
-            onEmpty.clear();
+            synchronized (_sync) {
+                _pauses.addAll(pauses);
+                pauses.clear();
+
+                _onEmpty.addAll(onEmpty);
+                onEmpty.clear();
+            }
         }
     }
 
     private static class Text extends Pause {
-        IDynamicText text;
+        final IDynamicText text;
 
         Text(int duration, IDynamicText text) {
             super(duration);
@@ -226,7 +237,7 @@ public class QueuedText implements IDynamicText {
     }
 
     private static class Action extends Pause {
-        Runnable runnable;
+        final Runnable runnable;
 
         Action(int duration, Runnable runnable) {
             super(duration);
@@ -235,7 +246,7 @@ public class QueuedText implements IDynamicText {
     }
 
     private static class Pause {
-        int duration; // milliseconds
+        final int duration; // milliseconds
 
         Pause (int duration) {
             this.duration = duration * TimeScale.TICKS.getTimeFactor();

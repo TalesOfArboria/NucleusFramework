@@ -27,25 +27,29 @@ package com.jcwhatever.nucleus.utils.text.dynamic;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
+import org.bukkit.Bukkit;
+
 /**
  * {@code IDynamicText} implementation that displays a status bar
  * that shows percentage.
  */
 public class StatusBarText implements IDynamicText {
 
-    private int _width;
-    private double _percent = 1.0D;
-    private StringBuilder _buffer = new StringBuilder(_width);
+    private volatile int _width;
+    private volatile double _percent = 1.0D;
+    private volatile String _currentText;
 
-    private char _fullChar = '\u2587';
-    private char _partialChar = '\u2587';
-    private char _emptyChar = '\u2587';
+    private volatile char _fullChar = '\u2587';
+    private volatile char _partialChar = '\u2587';
+    private volatile char _emptyChar = '\u2587';
 
-    private TextColor _fullColor = TextColor.GREEN;
-    private TextColor _partialColor = TextColor.GRAY;
-    private TextColor _emptyColor = TextColor.GRAY;
+    private volatile TextColor _fullColor = TextColor.GREEN;
+    private volatile TextColor _partialColor = TextColor.GRAY;
+    private volatile TextColor _emptyColor = TextColor.GRAY;
 
-    protected boolean _isUpdateRequired = true;
+    private final Object _sync = new Object();
+
+    protected volatile boolean _isUpdateRequired = true;
 
     /**
      * Constructor.
@@ -78,11 +82,18 @@ public class StatusBarText implements IDynamicText {
      * @param width  The character width.
      */
     public void setCharWidth(int width) {
+
         if (_width == width)
             return;
 
-        _width = width;
-        _isUpdateRequired = true;
+        synchronized (_sync) {
+
+            if (_width == width)
+                return;
+
+            _width = width;
+            _isUpdateRequired = true;
+        }
     }
 
     /**
@@ -100,11 +111,18 @@ public class StatusBarText implements IDynamicText {
      * @param ch  The character.
      */
     public void setFullChar(char ch) {
+
         if (_fullChar == ch)
             return;
 
-        _fullChar = ch;
-        _isUpdateRequired = true;
+        synchronized (_sync) {
+
+            if (_fullChar == ch)
+                return;
+
+            _fullChar = ch;
+            _isUpdateRequired = true;
+        }
     }
 
     /**
@@ -122,11 +140,18 @@ public class StatusBarText implements IDynamicText {
      * @param ch  The character.
      */
     public void setPartialChar(char ch) {
+
         if (_partialChar == ch)
             return;
 
-        _partialChar = ch;
-        _isUpdateRequired = true;
+        synchronized (_sync) {
+
+            if (_partialChar == ch)
+                return;
+
+            _partialChar = ch;
+            _isUpdateRequired = true;
+        }
     }
 
     /**
@@ -144,11 +169,18 @@ public class StatusBarText implements IDynamicText {
      * @param ch  The character.
      */
     public void setEmptyChar(char ch) {
+
         if (_emptyChar == ch)
             return;
 
-        _emptyChar = ch;
-        _isUpdateRequired = true;
+        synchronized (_sync) {
+
+            if (_emptyChar == ch)
+                return;
+
+            _emptyChar = ch;
+            _isUpdateRequired = true;
+        }
     }
 
     /**
@@ -171,8 +203,14 @@ public class StatusBarText implements IDynamicText {
         if (_fullColor == color)
             return;
 
-        _fullColor = color;
-        _isUpdateRequired = true;
+        synchronized (_sync) {
+
+            if (_fullColor == color)
+                return;
+
+            _fullColor = color;
+            _isUpdateRequired = true;
+        }
     }
 
     /**
@@ -195,8 +233,14 @@ public class StatusBarText implements IDynamicText {
         if (_partialColor == color)
             return;
 
-        _partialColor = color;
-        _isUpdateRequired = true;
+        synchronized (_sync) {
+
+            if (_partialColor == color)
+                return;
+
+            _partialColor = color;
+            _isUpdateRequired = true;
+        }
     }
 
     /**
@@ -221,8 +265,14 @@ public class StatusBarText implements IDynamicText {
         if (_emptyColor == color)
             return;
 
-        _emptyColor = color;
-        _isUpdateRequired = true;
+        synchronized (_sync) {
+
+            if (_emptyColor == color)
+                return;
+
+            _emptyColor = color;
+            _isUpdateRequired = true;
+        }
     }
 
     /**
@@ -248,42 +298,52 @@ public class StatusBarText implements IDynamicText {
         if (Double.compare(percent, _percent) == 0)
             return;
 
-        _percent = percent;
-        _isUpdateRequired = true;
+        synchronized (_sync) {
+
+            if (Double.compare(percent, _percent) == 0)
+                return;
+
+            _percent = percent;
+            _isUpdateRequired = true;
+        }
     }
 
     @Override
     public String nextText() {
-        if (!_isUpdateRequired)
-            return _buffer.toString();
+        if (!_isUpdateRequired && Bukkit.isPrimaryThread())
+            return _currentText;
 
-        _isUpdateRequired = false;
+        synchronized (_sync) {
 
-        double dblWidth = Math.min(_width, _width * _percent);
-        double round = Math.round(dblWidth);
+            if (!_isUpdateRequired)
+                return _currentText;
 
-        boolean hasPartial = dblWidth < round;
+            _isUpdateRequired = false;
 
-        int fullWidth = (int)Math.max(Math.floor(dblWidth), 0);
+            double dblWidth = Math.min(_width, _width * _percent);
+            double round = Math.round(dblWidth);
 
-        _buffer.setLength(0);
+            boolean hasPartial = dblWidth < round;
 
-        for (int i=0; i < _width; i++) {
-            if (i < fullWidth) {
-                _buffer.append(_fullColor.getColorCode());
-                _buffer.append(_fullChar);
+            int fullWidth = (int) Math.max(Math.floor(dblWidth), 0);
+
+            StringBuilder buffer = new StringBuilder(_width + 6);
+
+            for (int i = 0; i < _width; i++) {
+                if (i < fullWidth) {
+                    buffer.append(_fullColor.getColorCode());
+                    buffer.append(_fullChar);
+                } else if (i == fullWidth && hasPartial) {
+                    buffer.append(_partialColor.getColorCode());
+                    buffer.append(_partialChar);
+                } else {
+                    buffer.append(_emptyColor.getColorCode());
+                    buffer.append(_emptyChar);
+                }
             }
-            else if (i == fullWidth && hasPartial) {
-                _buffer.append(_partialColor.getColorCode());
-                _buffer.append(_partialChar);
-            }
-            else {
-                _buffer.append(_emptyColor.getColorCode());
-                _buffer.append(_emptyChar);
-            }
+
+            return _currentText = buffer.toString();
         }
-
-        return _buffer.toString();
     }
 
     @Override

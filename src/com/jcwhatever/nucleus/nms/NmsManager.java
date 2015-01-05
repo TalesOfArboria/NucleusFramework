@@ -46,14 +46,14 @@ public class NmsManager implements IPluginOwned {
     private final Plugin _plugin;
 
     // NMS handler classes
-    private HashMapMap<String, String, Class<? extends INmsHandler>>
+    private final HashMapMap<String, String, Class<? extends INmsHandler>>
             _nmsHandlerClasses = new HashMapMap<>(10);
 
     // Instantiated NMS handlers
-    private Map<String, INmsHandler> _nmsHandlers = new HashMap<>(10);
+    private final Map<String, INmsHandler> _nmsHandlers = new HashMap<>(10);
 
     // The NMS version that is being used.
-    private String _nmsVersion;
+    private final String _nmsVersion;
 
     /**
      * Constructor.
@@ -64,13 +64,9 @@ public class NmsManager implements IPluginOwned {
         PreCon.notNull(plugin);
 
         _plugin = plugin;
-
-        _nmsVersion = NmsUtils.getNmsVersion();
-
-        if (plugin instanceof NucleusPlugin) {
-            _nmsVersion = ((NucleusPlugin) plugin).getDataNode()
-                    .getString("nms-version", _nmsVersion);
-        }
+        _nmsVersion = plugin instanceof NucleusPlugin
+                ? ((NucleusPlugin) plugin).getDataNode().getString("nms-version", NmsUtils.getNmsVersion())
+                : NmsUtils.getNmsVersion();
     }
 
     /**
@@ -85,13 +81,9 @@ public class NmsManager implements IPluginOwned {
         PreCon.notNull(compatibleVersions);
 
         _plugin = plugin;
-
-        _nmsVersion = NmsUtils.getNmsVersion();
-
-        if (plugin instanceof NucleusPlugin) {
-            _nmsVersion = ((NucleusPlugin) plugin).getDataNode()
-                    .getString("nms-version", _nmsVersion);
-        }
+        _nmsVersion = plugin instanceof NucleusPlugin
+                ? ((NucleusPlugin) plugin).getDataNode().getString("nms-version", NmsUtils.getNmsVersion())
+                : NmsUtils.getNmsVersion();
 
         NmsUtils.enforceNmsVersion(plugin, compatibleVersions);
     }
@@ -120,7 +112,8 @@ public class NmsManager implements IPluginOwned {
      * @param name          The name of the handler.
      * @param handlerClass  The handler class.
      */
-    public void registerNmsHandler(String nmsVersion, String name, Class<? extends INmsHandler> handlerClass) {
+    public synchronized void registerNmsHandler(String nmsVersion, String name,
+                                                Class<? extends INmsHandler> handlerClass) {
         _nmsHandlerClasses.put(nmsVersion, name, handlerClass);
     }
 
@@ -134,7 +127,7 @@ public class NmsManager implements IPluginOwned {
      * @return  Null if not found.
      */
     @Nullable
-    public <T extends INmsHandler> T getNmsHandler(String name) {
+    public synchronized <T extends INmsHandler> T getNmsHandler(String name) {
 
         INmsHandler handler = _nmsHandlers.get(name);
         if (handler != null) {

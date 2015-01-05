@@ -24,9 +24,12 @@
 
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.nms.INmsListHeaderFooterHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Scheduler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -44,12 +47,27 @@ public class NmsListHeaderFooterHandler_v1_8_R1 extends v1_8_R1 implements INmsL
      * @param jsonFooter  The Json footer text.
      */
     @Override
-    public void send(Player player, @Nullable String jsonHeader, @Nullable String jsonFooter) {
+    public void send(final Player player, @Nullable final String jsonHeader,
+                     @Nullable final String jsonFooter) {
         PreCon.notNull(player);
 
         if (jsonHeader == null && jsonFooter == null)
             return;
 
+        if (Bukkit.isPrimaryThread()) {
+            syncSend(player, jsonHeader, jsonFooter);
+        }
+        else {
+            Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    syncSend(player, jsonHeader, jsonFooter);
+                }
+            });
+        }
+    }
+
+    private void syncSend (Player player, @Nullable String jsonHeader, @Nullable String jsonFooter) {
         Object headerComponent = _ChatSerializer.invokeStatic("serialize", jsonHeader);
 
         // create packet instance based on the presence of a header

@@ -24,8 +24,11 @@
 
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.nms.INmsActionBarHandler;
+import com.jcwhatever.nucleus.utils.Scheduler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -40,8 +43,23 @@ public class NmsActionBarHandler_v1_8_R1 extends v1_8_R1 implements INmsActionBa
      * @param jsonText  The Json text.
      */
     @Override
-    public void send(Player player, String jsonText) {
+    public void send(final Player player, final String jsonText) {
 
+        if (Bukkit.isPrimaryThread()) {
+            syncSend(player, jsonText);
+        }
+        else {
+            Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    syncSend(player, jsonText);
+                }
+            });
+        }
+
+    }
+
+    private void syncSend(Player player, String jsonText) {
         Object titleComponent = _ChatSerializer.invokeStatic("serialize", jsonText);
 
         Object packet = _PacketPlayOutChat.construct("new", titleComponent, (byte) 2);

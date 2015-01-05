@@ -37,12 +37,13 @@ public class MarqueeText implements IDynamicText {
 
     private final ColoredCircularString _marquee;
 
-    private int _charWidth;
-    private IDynamicText _text;
-    private MarqueeDirection _direction = MarqueeDirection.LEFT;
-    private int _refreshRate = 3; // 3 ticks
-    private long _nextUpdate;
-    private String _currentText;
+    private volatile int _charWidth;
+    private volatile IDynamicText _text;
+    private volatile MarqueeDirection _direction = MarqueeDirection.LEFT;
+    private volatile int _refreshRate = 3; // 3 ticks
+    private volatile long _nextUpdate;
+    private volatile String _currentText;
+    private final Object _sync = new Object();
 
     public enum MarqueeDirection {
         LEFT,
@@ -159,20 +160,23 @@ public class MarqueeText implements IDynamicText {
             return _currentText;
         }
 
-        _nextUpdate = System.currentTimeMillis() + _refreshRate;
+        synchronized (_sync) {
 
-        String text = getMarqueeText();
+            String text = getMarqueeText();
 
-        _marquee.setString(text);
+            _marquee.setString(text);
 
-        if (_direction == MarqueeDirection.LEFT) {
-            _marquee.rotateLeft(1);
+            if (_direction == MarqueeDirection.LEFT) {
+                _marquee.rotateLeft(1);
+            } else {
+                _marquee.rotateRight(1);
+            }
+
+            _currentText = _marquee.subSequence(0, _charWidth).toString();
+            _nextUpdate = System.currentTimeMillis() + _refreshRate;
+
+            return _currentText;
         }
-        else {
-            _marquee.rotateRight(1);
-        }
-
-        return _currentText = _marquee.subSequence(0, _charWidth).toString();
     }
 
     @Override

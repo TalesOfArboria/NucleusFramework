@@ -74,11 +74,6 @@ public class PlayerMap<V> implements IPlayerCollection, Map<UUID, V> {
 	}
 
 	@Override
-	public Object getSync() {
-		return _sync;
-	}
-
-	@Override
 	public Plugin getPlugin() {
 		return _plugin;
 	}

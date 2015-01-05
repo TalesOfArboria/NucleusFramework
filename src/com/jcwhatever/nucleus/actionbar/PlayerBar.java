@@ -22,23 +22,59 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.timed;
+package com.jcwhatever.nucleus.actionbar;
 
-/* 
+import com.jcwhatever.nucleus.collections.timed.TimeScale;
+
+import org.bukkit.entity.Player;
+
+import javax.annotation.Nullable;
+
+/*
  * 
  */
-public enum TimeScale {
-    MILLISECONDS (1),
-    TICKS        (50),
-    SECONDS      (1000);
+final class PlayerBar {
+    private final PersistentActionBar _bar;
+    private final Player _player;
+    private final long _expires;
+    private volatile long _nextUpdate;
 
-    private final int _timeFactor;
+    PlayerBar(Player player, PersistentActionBar bar, int duration, @Nullable TimeScale timeScale) {
+        _player = player;
+        _bar = bar;
 
-    TimeScale (int timeFactor) {
-        _timeFactor = timeFactor;
+        _expires = timeScale != null && bar instanceof TimedActionBar
+                ? System.currentTimeMillis() + (duration * timeScale.getTimeFactor())
+                : 0;
     }
 
-    public int getTimeFactor() {
-        return _timeFactor;
+    public PersistentActionBar bar() {
+        return _bar;
+    }
+
+    public Player player() {
+        return _player;
+    }
+
+    public long expires() {
+        return _expires;
+    }
+
+    public long nextUpdate() {
+        return _nextUpdate;
+    }
+
+    public synchronized void send() {
+        _nextUpdate = BarSender.send(_player, _bar);
+    }
+
+    @Override
+    public int hashCode() {
+        return _bar.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof PlayerBar && ((PlayerBar) obj)._bar.equals(_bar);
     }
 }

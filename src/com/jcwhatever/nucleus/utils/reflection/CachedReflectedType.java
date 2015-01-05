@@ -26,13 +26,16 @@ package com.jcwhatever.nucleus.utils.reflection;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Stores globally available data about a class type.
@@ -41,12 +44,22 @@ public class CachedReflectedType {
 
     private final Class<?> _clazz;
 
-    Multimap<Integer, Constructor<?>> _constructors;
-    Multimap<Class<?>, ReflectedField> _fieldsByType = MultimapBuilder.hashKeys(10).arrayListValues().build();
-    Map<String, ReflectedField> _fieldsByName = new HashMap<>(10);
-    Map<String, ReflectedField> _staticFieldsByName = new HashMap<>(10);
-    Multimap<String, Method> _methods = MultimapBuilder.hashKeys(10).arrayListValues().build();
-    Multimap<String, Method> _staticMethods = MultimapBuilder.hashKeys(10).arrayListValues().build();
+    private final Multimap<Integer, Constructor<?>> _constructors =
+            MultimapBuilder.hashKeys(3).arrayListValues().build();
+
+    private final Multimap<Class<?>, ReflectedField> _fieldsByType =
+            MultimapBuilder.hashKeys(10).arrayListValues().build();
+
+    private final Map<String, ReflectedField> _fieldsByName = new HashMap<>(10);
+    private final Map<String, ReflectedField> _staticFieldsByName = new HashMap<>(10);
+
+    private final Multimap<String, Method> _methods =
+            MultimapBuilder.hashKeys(10).arrayListValues().build();
+
+    private final Multimap<String, Method> _staticMethods =
+            MultimapBuilder.hashKeys(10).arrayListValues().build();
+
+
 
     /**
      * Constructor.
@@ -61,12 +74,48 @@ public class CachedReflectedType {
         loadConstructors();
     }
 
+    public Collection<Constructor<?>> constructorsByCount(int count) {
+        synchronized (_constructors) {
+            return CollectionUtils.unmodifiableList(_constructors.get(count));
+        }
+    }
+
+    @Nullable
+    public ReflectedField fieldByName(String name) {
+        synchronized (_fieldsByName) {
+            return _fieldsByName.get(name);
+        }
+    }
+
+    @Nullable
+    public ReflectedField staticFieldByName(String name) {
+        synchronized (_staticFieldsByName) {
+            return _staticFieldsByName.get(name);
+        }
+    }
+
+    public Collection<ReflectedField> fieldsByType(Class<?> type) {
+        synchronized (_fieldsByType) {
+            return CollectionUtils.unmodifiableList(_fieldsByType.get(type));
+        }
+    }
+
+    public Collection<Method> methodsByName(String name) {
+        synchronized (_methods) {
+            return CollectionUtils.unmodifiableList(_methods.get(name));
+        }
+    }
+
+    public Collection<Method> staticMethodsByName(String name) {
+        synchronized (_staticMethods) {
+            return CollectionUtils.unmodifiableList(_staticMethods.get(name));
+        }
+    }
+
 
     // load all constructors from the encapsulated class.
     private void loadConstructors() {
         Constructor<?>[] constructors = _clazz.getDeclaredConstructors();
-
-        _constructors = MultimapBuilder.hashKeys(constructors.length).arrayListValues().build();
 
         for (Constructor c : constructors) {
             c.setAccessible(true);

@@ -49,8 +49,8 @@ import javax.annotation.Nullable;
  */
 public final class InternalPlayerLookupProvider implements IPlayerLookupProvider {
 
-    private final Object _sync = new Object();
-    private IDataNode _nameData;
+    private final Object _dataSync = new Object();
+    private volatile IDataNode _nameData;
 
     public InternalPlayerLookupProvider(Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(new BukkitEventListener(), plugin);
@@ -84,21 +84,23 @@ public final class InternalPlayerLookupProvider implements IPlayerLookupProvider
         // check stored id/name map
         IDataNode nameData = getNameData();
 
-        Set<String> ids = nameData.getSubNodeNames();
-        if (ids == null || ids.isEmpty())
-            return null;
+        synchronized (_dataSync) {
 
-        for (String idStr : ids) {
-            String name = nameData.getString(idStr);
+            Set<String> ids = nameData.getSubNodeNames();
+            if (ids == null || ids.isEmpty())
+                return null;
 
-            if (name != null && name.equalsIgnoreCase(playerName)) {
+            for (String idStr : ids) {
+                String name = nameData.getString(idStr);
 
-                try {
-                    return UUID.fromString(idStr);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
+                if (name != null && name.equalsIgnoreCase(playerName)) {
+
+                    try {
+                        return UUID.fromString(idStr);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
                 }
             }
         }
@@ -113,7 +115,9 @@ public final class InternalPlayerLookupProvider implements IPlayerLookupProvider
 
         IDataNode nameData = getNameData();
 
-        return nameData.getString(playerId.toString());
+        synchronized (_dataSync) {
+            return nameData.getString(playerId.toString());
+        }
     }
 
     /*
@@ -130,7 +134,7 @@ public final class InternalPlayerLookupProvider implements IPlayerLookupProvider
         if (name.equals(currentName))
             return;
 
-        synchronized (_sync) {
+        synchronized (_dataSync) {
             nameData.set(playerId.toString(), name);
         }
 
@@ -142,8 +146,7 @@ public final class InternalPlayerLookupProvider implements IPlayerLookupProvider
 
         if (_nameData == null) {
 
-            synchronized (_sync) {
-
+            synchronized (_dataSync) {
                 if (_nameData != null)
                     return _nameData;
 

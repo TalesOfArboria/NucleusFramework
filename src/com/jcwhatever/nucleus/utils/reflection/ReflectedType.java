@@ -78,7 +78,7 @@ public class ReflectedType {
     public List<ReflectedField> getFields(Class<?> fieldType) {
         PreCon.notNull(fieldType, "fieldType");
 
-        return CollectionUtils.unmodifiableList(_cached._fieldsByType.get(fieldType));
+        return CollectionUtils.unmodifiableList(_cached.fieldsByType(fieldType));
     }
 
     /**
@@ -97,7 +97,7 @@ public class ReflectedType {
                 return field;
         }
 
-        ReflectedField field = _cached._fieldsByName.get(name);
+        ReflectedField field = _cached.fieldByName(name);
         if (field == null) {
             throw new RuntimeException("Field " + name + " not found in type " + getHandle().getName());
         }
@@ -121,7 +121,7 @@ public class ReflectedType {
                 return field;
         }
 
-        ReflectedField field = _cached._staticFieldsByName.get(name);
+        ReflectedField field = _cached.staticFieldByName(name);
         if (field == null) {
             throw new RuntimeException("Field " + name + " not found in type " + getHandle().getName());
         }
@@ -227,7 +227,7 @@ public class ReflectedType {
     public Object newInstance(Object... arguments) {
         PreCon.notNull(arguments, "arguments");
 
-        Collection<Constructor<?>> constructors = _cached._constructors.get(arguments.length);
+        Collection<Constructor<?>> constructors = _cached.constructorsByCount(arguments.length);
 
         Constructor<?> constructor;
 
@@ -533,8 +533,8 @@ public class ReflectedType {
         if (method == null) {
 
             Collection<Method> methods = instance != null
-                    ? _cached._methods.get(methodName)
-                    : _cached._staticMethods.get(methodName);
+                    ? _cached.methodsByName(methodName)
+                    : _cached.staticMethodsByName(methodName);
 
             // get method definition
             if (methods.size() == 1) {

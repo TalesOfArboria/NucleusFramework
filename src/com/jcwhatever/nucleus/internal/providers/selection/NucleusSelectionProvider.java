@@ -25,11 +25,11 @@
 package com.jcwhatever.nucleus.internal.providers.selection;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
@@ -70,7 +70,8 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
     private final Map<UUID, Location> _p2Selections = new PlayerMap<>(Nucleus.getPlugin());
     private final BukkitEventListener _listener;
 
-    private boolean _isDisposed;
+    private final Object _sync = new Object();
+    private volatile boolean _isDisposed;
 
     public NucleusSelectionProvider() {
         _listener = new BukkitEventListener();
@@ -97,15 +98,18 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
     public IRegionSelection getSelection(Player player) {
         PreCon.notNull(player);
 
-        Location p1 = _p1Selections.get(player.getUniqueId());
-        if (p1 == null)
-            return null;
+        synchronized (_sync) {
 
-        Location p2 = _p2Selections.get(player.getUniqueId());
-        if (p2 == null)
-            return null;
+            Location p1 = _p1Selections.get(player.getUniqueId());
+            if (p1 == null)
+                return null;
 
-        return new RegionSelection(p1.clone(), p2.clone());
+            Location p2 = _p2Selections.get(player.getUniqueId());
+            if (p2 == null)
+                return null;
+
+            return new RegionSelection(p1.clone(), p2.clone());
+        }
     }
 
     @Override
@@ -116,8 +120,10 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
         if (!selection.isDefined())
             return false;
 
-        _p1Selections.put(player.getUniqueId(), selection.getP1().clone());
-        _p2Selections.put(player.getUniqueId(), selection.getP2().clone());
+        synchronized (_sync) {
+            _p1Selections.put(player.getUniqueId(), selection.getP1().clone());
+            _p2Selections.put(player.getUniqueId(), selection.getP2().clone());
+        }
 
         return true;
     }
@@ -129,8 +135,17 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
 
     @Override
     public void dispose() {
-        _isDisposed = true;
-        HandlerList.unregisterAll(_listener);
+        if (_isDisposed)
+            return;
+
+        synchronized (_sync) {
+
+            if (_isDisposed)
+                return;
+
+            _isDisposed = true;
+            HandlerList.unregisterAll(_listener);
+        }
     }
 
     private class BukkitEventListener implements Listener {
@@ -155,7 +170,12 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 Location p1 = event.getClickedBlock().getLocation();
 
-                Location previous = _p1Selections.put(player.getUniqueId(), p1);
+
+                Location previous;
+
+                synchronized (_sync) {
+                    previous = _p1Selections.put(player.getUniqueId(), p1);
+                }
 
                 if (!p1.equals(previous)) {
                     NucMsg.tell(player, NucLang.get(_P1_SELECTED, LocationUtils.locationToString(p1, 2)));
@@ -165,7 +185,11 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
             else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 Location p2 = event.getClickedBlock().getLocation();
 
-                Location previous = _p2Selections.put(player.getUniqueId(), p2);
+                Location previous;
+
+                synchronized (_sync) {
+                    previous = _p2Selections.put(player.getUniqueId(), p2);
+                }
 
                 if (!p2.equals(previous)) {
                     NucMsg.tell(player, NucLang.get(_P2_SELECTED, LocationUtils.locationToString(p2, 2)));

@@ -52,7 +52,6 @@ import javax.annotation.Nullable;
 public final class NucleusEconomyProvider implements IBankEconomyProvider {
 
     private final Plugin _plugin;
-    private final IDataNode _dataNode;
     private final IDataNode _globalAccountNode;
 
     private final Map<UUID, NucleusAccount> _accounts =
@@ -60,19 +59,28 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
 
     private final Map<String, IBank> _banks = new HashMap<>(25);
 
-    private String _currencyNameSingular = "Dollar";
-    private String _currencyNamePlural = "Dollars";
-    private String _currencyFormat = "{0: amount} {1: currencyName}";
-    private DecimalFormat _formatter;
+    private final String _currencyNameSingular;
+    private final String _currencyNamePlural;
+    private final String _currencyFormat;
+    private final DecimalFormat _formatter;
+
+    private final Object _accountSync = new Object();
+    private final Object _bankSync = new Object();
 
     public NucleusEconomyProvider(Plugin plugin) {
         PreCon.notNull(plugin);
 
-        _dataNode = new YamlDataStorage(plugin, new DataPath("economy.config"));
+        IDataNode dataNode = new YamlDataStorage(plugin, new DataPath("economy.config"));
         _globalAccountNode = new YamlDataStorage(plugin, new DataPath("economy.global"));
         _plugin = plugin;
 
-        loadSettings();
+        _currencyNameSingular = dataNode.getString("currency-singular", "Dollar");
+        _currencyNamePlural = dataNode.getString("currency-plural", "Dollars");
+        _currencyFormat = dataNode.getString("currency-format", "{0: amount} {1: currencyName}");
+        String decimalFormat = dataNode.getString("decimal-format", "###,###,###,###.00");
+
+        assert decimalFormat != null;
+        _formatter = new DecimalFormat(decimalFormat);
     }
 
     @Override
@@ -103,13 +111,16 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
     public IAccount getAccount(UUID playerId) {
         PreCon.notNull(playerId);
 
-        NucleusAccount account = _accounts.get(playerId);
-        if (account == null) {
-            account = new NucleusAccount(playerId, null, _globalAccountNode.getNode(playerId.toString()));
-            _accounts.put(playerId, account);
-        }
+        synchronized (_accountSync) {
+            NucleusAccount account = _accounts.get(playerId);
 
-        return account;
+            if (account == null) {
+                account = new NucleusAccount(playerId, null, _globalAccountNode.getNode(playerId.toString()));
+                _accounts.put(playerId, account);
+            }
+
+            return account;
+        }
     }
 
     @Override
@@ -119,13 +130,19 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
 
     @Override
     public List<IBank> getBanks() {
-        return new ArrayList<>(_banks.values());
+        synchronized (_bankSync) {
+            return new ArrayList<>(_banks.values());
+        }
     }
 
     @Nullable
     @Override
     public IBank getBank(String bankName) {
-        return _banks.get(bankName);
+        PreCon.notNull(bankName);
+
+        synchronized (_bankSync) {
+            return _banks.get(bankName);
+        }
     }
 
     @Nullable
@@ -139,15 +156,19 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
     public IBank createBank(String bankName, @Nullable UUID playerId) {
         PreCon.notNullOrEmpty(bankName);
 
-        if (_banks.containsKey(bankName)) {
-            return null;
+        synchronized (_bankSync) {
+            if (_banks.containsKey(bankName)) {
+                return null;
+            }
         }
 
         IDataNode node = new YamlDataStorage(Nucleus.getPlugin(), new DataPath("economy.accounts." + bankName));
 
         NucleusBank bank = new NucleusBank(bankName, null, node);
 
-        _banks.put(bankName, bank);
+        synchronized (_bankSync) {
+            _banks.put(bankName, bank);
+        }
 
         return bank;
     }
@@ -156,24 +177,18 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
     public boolean deleteBank(String bankName) {
         PreCon.notNullOrEmpty(bankName);
 
-        IBank bank = _banks.remove(bankName);
-        if (bank == null)
-            return false;
+        IBank bank;
+
+        synchronized (_bankSync) {
+            bank = _banks.remove(bankName);
+            if (bank == null)
+                return false;
+        }
 
         File economyFolder = new File(_plugin.getDataFolder(), "economy");
         File accountsFolder = new File(economyFolder, "accounts");
         File accountFile = new File(accountsFolder, bank.getName() + ".yml");
 
         return accountFile.delete();
-    }
-
-    private void loadSettings() {
-        _currencyNameSingular = _dataNode.getString("currency-singular", _currencyNameSingular);
-        _currencyNamePlural = _dataNode.getString("currency-plural", _currencyNamePlural);
-        _currencyFormat = _dataNode.getString("currency-format", _currencyFormat);
-        String decimalFormat = _dataNode.getString("decimal-format", "###,###,###,###.00");
-
-        assert decimalFormat != null;
-        _formatter = new DecimalFormat(decimalFormat);
     }
 }

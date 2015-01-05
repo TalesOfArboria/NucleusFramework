@@ -43,11 +43,11 @@ public class PersistentActionBar extends ActionBar {
      * @param player  The player to check.
      */
     public static boolean isViewing(Player player) {
-        return BarSender._playerMap.containsKey(player.getUniqueId());
+        return BarSender.isViewing(player);
     }
 
-    private int _defaultDuration;
-    private TimeScale _defaultTimeScale;
+    private final int _defaultDuration;
+    private final TimeScale _defaultTimeScale;
 
     /**
      * Constructor.

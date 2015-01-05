@@ -63,12 +63,12 @@ public final class NucleusAccount implements IAccount {
     }
 
     @Override
-    public double getBalance() {
+    public synchronized double getBalance() {
         return _balance;
     }
 
     @Override
-    public boolean deposit(double amount) {
+    public synchronized boolean deposit(double amount) {
         PreCon.positiveNumber(amount);
 
         if (amount == 0)
@@ -77,7 +77,7 @@ public final class NucleusAccount implements IAccount {
         _balance += amount;
 
         if (_bank != null) {
-            _bank._balance += amount;
+            _bank.incrementBalance(amount);
         }
 
         _dataNode.set("balance", _balance);
@@ -87,7 +87,7 @@ public final class NucleusAccount implements IAccount {
     }
 
     @Override
-    public boolean withdraw(double amount) {
+    public synchronized boolean withdraw(double amount) {
         PreCon.positiveNumber(amount);
 
         if (amount == 0)
@@ -99,7 +99,7 @@ public final class NucleusAccount implements IAccount {
         _balance -= amount;
 
         if (_bank != null) {
-            _bank._balance -= amount;
+            _bank.incrementBalance(-amount);
         }
 
         _dataNode.set("balance", _balance);

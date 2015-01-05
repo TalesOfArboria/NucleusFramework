@@ -59,6 +59,8 @@ public final class WorldEditSelectionProvider implements IRegionSelectProvider {
         return _isWorldEditInstalled;
     }
 
+    private final Object _sync = new Object();
+
     @Override
     public String getName() {
         return "WorldEdit";
@@ -86,21 +88,24 @@ public final class WorldEditSelectionProvider implements IRegionSelectProvider {
         WorldEditPlugin plugin = (WorldEditPlugin)_wePlugin;
         Selection sel;
 
-        // Check for World Edit selection
-        if ((sel = plugin.getSelection(player)) == null) {
-            return null;
-        }
+        synchronized (_sync) {
 
-        // Make sure both points are selected
-        if (sel.getMaximumPoint() == null || sel.getMinimumPoint() == null) {
-            return null;
-        }
+            // Check for World Edit selection
+            if ((sel = plugin.getSelection(player)) == null) {
+                return null;
+            }
 
-        if (!sel.getMaximumPoint().getWorld().equals(sel.getMinimumPoint().getWorld())) {
-            return null;
-        }
+            // Make sure both points are selected
+            if (sel.getMaximumPoint() == null || sel.getMinimumPoint() == null) {
+                return null;
+            }
 
-        return new RegionSelection(sel.getMinimumPoint(), sel.getMaximumPoint());
+            if (!sel.getMaximumPoint().getWorld().equals(sel.getMinimumPoint().getWorld())) {
+                return null;
+            }
+
+            return new RegionSelection(sel.getMinimumPoint(), sel.getMaximumPoint());
+        }
     }
 
     @Override
@@ -122,16 +127,19 @@ public final class WorldEditSelectionProvider implements IRegionSelectProvider {
             return false;
         }
 
-        WorldEditPlugin plugin = (WorldEditPlugin)_wePlugin;
-        RegionSelector selector = plugin.getSession(player).getRegionSelector(plugin.wrapPlayer(player).getWorld());
+        synchronized (_sync) {
 
-        Vector p1Vector = new Vector(p1.toVector().getX(), p1.toVector().getY(), p1.toVector().getZ());
-        Vector p2Vector = new Vector(p2.toVector().getX(), p2.toVector().getY(), p2.toVector().getZ());
+            WorldEditPlugin plugin = (WorldEditPlugin) _wePlugin;
+            RegionSelector selector = plugin.getSession(player).getRegionSelector(plugin.wrapPlayer(player).getWorld());
 
-        selector.selectPrimary(p1Vector);
-        selector.selectSecondary(p2Vector);
+            Vector p1Vector = new Vector(p1.toVector().getX(), p1.toVector().getY(), p1.toVector().getZ());
+            Vector p2Vector = new Vector(p2.toVector().getX(), p2.toVector().getY(), p2.toVector().getZ());
 
-        return true;
+            selector.selectPrimary(p1Vector);
+            selector.selectSecondary(p2Vector);
+
+            return true;
+        }
     }
 
     @Nullable

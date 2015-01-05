@@ -38,7 +38,7 @@ public class ActionBar {
 
     private final IDynamicText _text;
     private final int _hash;
-    private PersistentActionBar _persistent;
+    private volatile PersistentActionBar _persistent;
 
     /**
      * Constructor.

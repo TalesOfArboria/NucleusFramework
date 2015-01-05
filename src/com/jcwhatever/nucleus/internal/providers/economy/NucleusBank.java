@@ -48,7 +48,7 @@ public final class NucleusBank implements IBank {
     private final IDataNode _dataNode;
     private final Map<UUID, IAccount> _accounts = new HashMap<>(5);
 
-    double _balance;
+    private double _balance;
 
     NucleusBank(String name, @Nullable UUID ownerId, IDataNode dataNode) {
         _name = name;
@@ -72,12 +72,16 @@ public final class NucleusBank implements IBank {
     }
 
     @Override
-    public double getBalance() {
+    public synchronized double getBalance() {
         return _balance;
     }
 
+    synchronized void incrementBalance(double amount) {
+        _balance += amount;
+    }
+
     @Override
-    public boolean hasAccount(UUID playerId) {
+    public synchronized boolean hasAccount(UUID playerId) {
         PreCon.notNull(playerId);
 
         return _accounts.containsKey(playerId);
@@ -85,20 +89,20 @@ public final class NucleusBank implements IBank {
 
     @Nullable
     @Override
-    public IAccount getAccount(UUID playerId) {
+    public synchronized IAccount getAccount(UUID playerId) {
         PreCon.notNull(playerId);
 
         return _accounts.get(playerId);
     }
 
     @Override
-    public List<IAccount> getAccounts() {
+    public synchronized List<IAccount> getAccounts() {
         return new ArrayList<>(_accounts.values());
     }
 
     @Nullable
     @Override
-    public IAccount createAccount(UUID playerId) {
+    public synchronized IAccount createAccount(UUID playerId) {
         PreCon.notNull(playerId);
 
         if (hasAccount(playerId))
@@ -112,7 +116,7 @@ public final class NucleusBank implements IBank {
     }
 
     @Override
-    public boolean deleteAccount(UUID playerId) {
+    public synchronized boolean deleteAccount(UUID playerId) {
         PreCon.notNull(playerId);
 
         IAccount account = _accounts.remove(playerId);

@@ -24,10 +24,13 @@
 
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -48,10 +51,28 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
      * @param fadeOut       The fade-out time.
      */
     @Override
-    public void send(Player player, String jsonTitle, @Nullable String jsonSubtitle,
-                     int fadeIn, int stay, int fadeOut) {
+    public void send(final Player player,
+                     final String jsonTitle, @Nullable final String jsonSubtitle,
+                     final int fadeIn, final int stay, final int fadeOut) {
         PreCon.notNull(player);
         PreCon.notNullOrEmpty(jsonTitle);
+
+        if (Bukkit.isPrimaryThread()) {
+            syncSend(player, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
+        }
+        else {
+            Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    syncSend(player, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
+                }
+            });
+        }
+
+    }
+
+    private void syncSend(Player player, String jsonTitle, @Nullable String jsonSubtitle,
+                          int fadeIn, int stay, int fadeOut) {
 
         ReflectedInstance connection = getConnection(player);
 

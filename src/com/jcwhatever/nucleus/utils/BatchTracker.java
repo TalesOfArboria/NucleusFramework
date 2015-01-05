@@ -25,33 +25,35 @@
 
 package com.jcwhatever.nucleus.utils;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Used to provide internal batch execution functionality
  * within a class.
  */
 public class BatchTracker {
 
-    private int _batchOperations = 0;
+    private AtomicInteger _batchOperations = new AtomicInteger();
 
     /**
      * Begin a batch operation.
      */
-    public void start() {
-        _batchOperations ++;
+    public int start() {
+        return _batchOperations.incrementAndGet();
     }
 
     /**
      * End a batch operation.
      */
-    public void end() {
-        _batchOperations --;
+    public int end() {
+        return _batchOperations.decrementAndGet();
     }
 
     /**
      * Determine if there is at least 1 batch operation running.
      */
     public boolean isRunning() {
-        return _batchOperations > 0;
+        return _batchOperations.intValue() > 0;
     }
 
     /**
@@ -59,6 +61,6 @@ public class BatchTracker {
      * running.
      */
     public int getBatchCount() {
-        return _batchOperations;
+        return _batchOperations.intValue();
     }
 }

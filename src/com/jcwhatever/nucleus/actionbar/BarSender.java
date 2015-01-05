@@ -37,6 +37,7 @@ import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -44,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Sends action bars to players and manages {@code PersistentActionBar}'s
@@ -62,10 +62,11 @@ class BarSender implements Runnable {
     static final int MAX_REFRESH_RATE = 40 * 50;
     static final int MIN_REFRESH_RATE = 50;
 
-    static Map<UUID, TimedDistributor<PlayerBar>> _playerMap = new PlayerMap<>(Nucleus.getPlugin());
-    static SetMap<ActionBar, PlayerBar> _barMap = new WeakHashSetMap<>(35, 3);
-    static INmsActionBarHandler _nmsHandler;
-    static BarSender _instance;
+    private static final Map<UUID, BarDistributor> _playerMap = new PlayerMap<>(Nucleus.getPlugin());
+    private static final SetMap<ActionBar, PlayerBar> _barMap = new WeakHashSetMap<>(35, 3);
+    private static final INmsActionBarHandler _nmsHandler;
+    private static final Object _sync = new Object();
+    static volatile BarSender _instance;
 
     static {
         _nmsHandler = Nucleus.getNmsManager().getNmsHandler(NmsHandlers.ACTION_BAR.name());
@@ -76,14 +77,32 @@ class BarSender implements Runnable {
     }
 
     /**
+     * Determine if the player is currently viewing a persistent action bar.
+     *
+     * @param player  The player to check.
+     */
+    static boolean isViewing(Player player) {
+        synchronized (_sync) {
+            return _playerMap.containsKey(player.getUniqueId());
+        }
+    }
+
+    /**
      * Start the sender. Does nothing if already started.
      */
     static void start() {
+
         if (_instance != null || _nmsHandler == null)
             return;
 
-        _instance = new BarSender();
-        Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, MIN_REFRESH_RATE / 50, _instance);
+        synchronized (_sync) {
+
+            if (_instance != null)
+                return;
+
+            _instance = new BarSender();
+            Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, MIN_REFRESH_RATE / 50, _instance);
+        }
     }
 
     /**
@@ -103,18 +122,27 @@ class BarSender implements Runnable {
         if (_nmsHandler == null)
             return;
 
-        TimedDistributor<PlayerBar> distributor = BarSender.getDistributor(player);
-
         PlayerBar playerBar = new PlayerBar(player, actionBar, duration, timeScale);
+        BarDistributor distributor = BarSender.getDistributor(player);
 
-        if (distributor.contains(playerBar))
-            return;
+        synchronized (distributor._sync) {
 
-        distributor.add(playerBar, duration, timeScale);
+            // ensure distributor does not already contain the playerBar
+            if (distributor.contains(playerBar))
+                return;
 
-        _barMap.put(actionBar, playerBar);
+            // add playerBar to distributor
+            distributor.add(playerBar, duration, timeScale);
+        }
 
-        start();
+        synchronized (_sync) {
+            // add to _barMap
+            _barMap.put(actionBar, playerBar);
+        }
+
+        if(_instance == null && Bukkit.isPrimaryThread()) {
+            start();
+        }
     }
 
     /**
@@ -128,14 +156,22 @@ class BarSender implements Runnable {
             return;
 
         PlayerBar playerBar = new PlayerBar(player, actionBar, 0, null);
+        BarDistributor distributor = BarSender.getDistributor(player);
+        boolean isEmpty;
 
-        TimedDistributor<PlayerBar> distributor = BarSender.getDistributor(player);
-        distributor.remove(playerBar);
+        synchronized (distributor._sync) {
+            distributor.remove(playerBar);
+            isEmpty = distributor.isEmpty();
+        }
 
-        if (distributor.isEmpty())
-            _playerMap.remove(player.getUniqueId());
+        synchronized (_sync) {
 
-        _barMap.removeValue(actionBar, playerBar);
+            if (isEmpty) {
+                _playerMap.remove(player.getUniqueId());
+            }
+
+            _barMap.removeValue(actionBar, playerBar);
+        }
     }
 
     /**
@@ -147,7 +183,11 @@ class BarSender implements Runnable {
         if (_nmsHandler == null)
             return;
 
-        Set<PlayerBar> playerBars =  _barMap.removeAll(actionBar);
+        Set<PlayerBar> playerBars;
+
+        synchronized (_sync) {
+            playerBars = _barMap.removeAll(actionBar);
+        }
 
         for (PlayerBar bar : playerBars) {
             removeBar(bar);
@@ -163,11 +203,19 @@ class BarSender implements Runnable {
         if (_nmsHandler == null)
             return;
 
-        TimedDistributor<PlayerBar> distributor = BarSender.getDistributor(bar.player);
-        distributor.remove(bar);
+        BarDistributor distributor = BarSender.getDistributor(bar.player());
+        boolean isEmpty;
 
-        if (distributor.isEmpty())
-            _playerMap.remove(bar.player.getUniqueId());
+        synchronized (distributor._sync) {
+            distributor.remove(bar);
+            isEmpty = distributor.isEmpty();
+        }
+
+        if (isEmpty) {
+            synchronized (_sync) {
+                _playerMap.remove(bar.player().getUniqueId());
+            }
+        }
     }
 
     /**
@@ -175,13 +223,20 @@ class BarSender implements Runnable {
      *
      * @param player  The player.
      */
-    static TimedDistributor<PlayerBar> getDistributor(Player player) {
+    static BarDistributor getDistributor(Player player) {
 
-        TimedDistributor<PlayerBar> distributor = _playerMap.get(player.getUniqueId());
+        BarDistributor distributor;
+
+        synchronized (_sync) {
+            distributor = _playerMap.get(player.getUniqueId());
+        }
 
         if (distributor == null) {
-            distributor = new TimedDistributor<>();
-            _playerMap.put(player.getUniqueId(), distributor);
+
+            synchronized (_sync) {
+                distributor = new BarDistributor();
+                _playerMap.put(player.getUniqueId(), distributor);
+            }
         }
 
         return distributor;
@@ -191,31 +246,39 @@ class BarSender implements Runnable {
     @Override
     public void run() {
 
-        if (_playerMap.isEmpty())
-            return;
+        List<BarDistributor> distributors;
 
-        // copy distributors to a new list to prevent concurrent modification errors.
-        List<TimedDistributor<PlayerBar>> distributors = new ArrayList<>(_playerMap.values());
+        synchronized (_sync){
+            if (_playerMap.isEmpty())
+                return;
+
+            // copy distributors to a new list to prevent concurrent modification errors.
+            distributors = new ArrayList<>(_playerMap.values());
+        }
 
         long now = System.currentTimeMillis();
 
-        for (TimedDistributor<PlayerBar> distributor : distributors) {
+        for (BarDistributor distributor : distributors) {
 
-            // get the current action bar
-            PlayerBar playerBar = distributor.current();
-            if (playerBar == null)
-                continue;
+            PlayerBar playerBar;
+
+            synchronized (distributor._sync) {
+                // get the current action bar
+                playerBar = distributor.current();
+                if (playerBar == null)
+                    continue;
+            }
 
             // remove expired action bars
-            if (playerBar.expires > 0 && playerBar.expires <= now) {
+            if (playerBar.expires() > 0 && playerBar.expires() <= now) {
                 removeBar(playerBar);
                 NucMsg.debug("Removing Bar");
                 continue;
             }
 
             // send action bar packet if time to update
-            if (playerBar.nextUpdate == 0 ||
-                    playerBar.nextUpdate <= System.currentTimeMillis()) {
+            if (playerBar.nextUpdate() == 0 ||
+                    playerBar.nextUpdate() <= System.currentTimeMillis()) {
 
                 playerBar.send();
             }
@@ -230,14 +293,27 @@ class BarSender implements Runnable {
      *
      * @return  The next update time in milliseconds.
      */
-    static long send(Player player, ActionBar actionBar) {
+    static long send(final Player player, ActionBar actionBar) {
         if (_nmsHandler == null)
             return 0;
 
         IDynamicText dynText = actionBar.getText();
-        String text = dynText.nextText();
+        final String text = dynText.nextText();
         if (text != null) {
-            _nmsHandler.send(player, SimpleJSONBuilder.text(text));
+
+            if (Bukkit.isPrimaryThread()) {
+                _nmsHandler.send(player, SimpleJSONBuilder.text(text));
+            }
+            else {
+
+                Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {
+                        _nmsHandler.send(player, SimpleJSONBuilder.text(text));
+                    }
+                });
+
+            }
         }
 
         int interval = Math.min(dynText.getRefreshRate() * 50, MAX_REFRESH_RATE);
@@ -246,34 +322,7 @@ class BarSender implements Runnable {
         return System.currentTimeMillis() + interval;
     }
 
-    public static class PlayerBar {
-        final PersistentActionBar bar;
-        final Player player;
-        final long expires;
-        long nextUpdate;
-
-
-        PlayerBar(Player player, PersistentActionBar bar, int duration, @Nullable TimeScale timeScale) {
-            this.player = player;
-            this.bar = bar;
-
-            expires = timeScale != null && bar instanceof TimedActionBar
-                    ? System.currentTimeMillis() + (duration * timeScale.getTimeFactor())
-                    : 0;
-        }
-
-        private void send() {
-            nextUpdate = BarSender.send(player, bar);
-        }
-
-        @Override
-        public int hashCode() {
-            return bar.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof PlayerBar && ((PlayerBar) obj).bar.equals(bar);
-        }
+    static class BarDistributor extends TimedDistributor<PlayerBar> {
+        final Object _sync = new Object();
     }
 }

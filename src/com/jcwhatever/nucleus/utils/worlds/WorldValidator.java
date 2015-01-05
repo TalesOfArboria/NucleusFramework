@@ -41,7 +41,7 @@ import java.util.Set;
  */
 public class WorldValidator {
 
-    private IDataNode _worldNode;
+    private final IDataNode _worldNode;
     private WorldValidationPolicy _validationPolicy = WorldValidationPolicy.BLACKLIST;
     private Set<String> _worlds = new HashSet<String>(10);
 

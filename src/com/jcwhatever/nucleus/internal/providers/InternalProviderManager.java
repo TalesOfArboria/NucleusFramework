@@ -62,12 +62,12 @@ public final class InternalProviderManager implements IProviderManager {
 
     private IDataNode _dataNode;
 
-    private IPlayerLookupProvider _playerLookup;
-    private IPermissionsProvider _permissions;
-    private IRegionSelectProvider _regionSelect;
-    private IEconomyProvider _economy;
+    private volatile IPlayerLookupProvider _playerLookup;
+    private volatile IPermissionsProvider _permissions;
+    private volatile IRegionSelectProvider _regionSelect;
+    private volatile IEconomyProvider _economy;
 
-    private IStorageProvider _defaultStorage;
+    private volatile IStorageProvider _defaultStorage;
 
     private final YamlStorageProvider _yamlStorage = new YamlStorageProvider();
 
@@ -166,8 +166,8 @@ public final class InternalProviderManager implements IProviderManager {
         _economy = provider instanceof EconomyWrapper
                 ? provider
                 : provider instanceof IBankEconomyProvider
-                        ? new EconomyBankWrapper((IBankEconomyProvider)provider)
-                        : new EconomyWrapper(provider);
+                ? new EconomyBankWrapper((IBankEconomyProvider)provider)
+                : new EconomyWrapper(provider);
     }
 
     @Override
@@ -191,8 +191,11 @@ public final class InternalProviderManager implements IProviderManager {
     public IStorageProvider getStorageProvider(Plugin plugin) {
         PreCon.notNull(plugin);
 
-        IStorageProvider pluginProvider = _pluginStorage.get(plugin.getName().toLowerCase());
-        return pluginProvider != null ? pluginProvider : getStorageProvider();
+        synchronized (_pluginStorage) {
+
+            IStorageProvider pluginProvider = _pluginStorage.get(plugin.getName().toLowerCase());
+            return pluginProvider != null ? pluginProvider : getStorageProvider();
+        }
     }
 
     @Override
@@ -201,14 +204,18 @@ public final class InternalProviderManager implements IProviderManager {
         PreCon.notNull(storageProvider);
 
         IDataNode dataNode = getDataNode().getNode("storage");
-        List<String> pluginNames = dataNode.getStringList(storageProvider.getName(),
-                new ArrayList<String>(5));
 
-        assert pluginNames != null;
+        synchronized (_pluginStorage) {
 
-        pluginNames.add(plugin.getName());
+            List<String> pluginNames = dataNode.getStringList(storageProvider.getName(),
+                    new ArrayList<String>(5));
 
-        dataNode.set(storageProvider.getName(), pluginNames);
+            assert pluginNames != null;
+
+            pluginNames.add(plugin.getName());
+            dataNode.set(storageProvider.getName(), pluginNames);
+        }
+
         dataNode.saveAsync(null);
     }
 

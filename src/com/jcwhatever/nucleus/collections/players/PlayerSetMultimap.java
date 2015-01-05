@@ -55,11 +55,6 @@ public class PlayerSetMultimap<V> extends PlayerMultimap<V> {
     }
 
     @Override
-    public Object getSync() {
-        return _sync;
-    }
-
-    @Override
     public Set<V> get(@Nonnull UUID playerId) {
         return (Set<V>) super.get(playerId);
     }
