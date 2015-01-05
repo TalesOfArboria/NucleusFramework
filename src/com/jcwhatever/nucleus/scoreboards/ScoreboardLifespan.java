@@ -22,54 +22,23 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.scoreboards;
 
-import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
-
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scoreboard.Scoreboard;
-
 /**
- * Represents a scoreboard wrapper.
+ * Described the use of the scoreboard so the
+ * {@code ScoreboardTracker} knows how the scoreboard
+ * should be handled.
  */
-public interface IScoreboard extends IPluginOwned, IDisposable {
-
+public enum ScoreboardLifespan {
     /**
-     * Get the scoreboards owning plugin.
+     * The scoreboard is not persisted. If the player views another scoreboard,
+     * the transient scoreboard is discarded.
      */
-    @Override
-    Plugin getPlugin();
-
+    TRANSIENT,
     /**
-     * Get the scoreboard type name.
+     * The scoreboard is persisted. If the player views another scoreboard,
+     * the persistent scoreboard is held and re-shown once the player is
+     * no longer viewing the other scoreboard.
      */
-    String getType();
-
-    /**
-     * Get the encapsulated Bukkit scoreboard.
-     */
-    Scoreboard getScoreboard();
-
-    /**
-     * Apply the scoreboard to the specified player.
-     *
-     * @param p  The player.
-     */
-    void apply(Player p);
-
-    /**
-     * Remove the scoreboard from the specified player.
-     *
-     * @param p  The player.
-     */
-    void remove(Player p);
-
-    /**
-     * Dispose the scoreboard.
-     */
-    @Override
-    void dispose();
+    PERSISTENT
 }

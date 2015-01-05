@@ -22,30 +22,22 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.scoreboards;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.bukkit.scoreboard.Scoreboard;
 
 /**
- * Scoreboard info annotation required
- * for {@code AbstractScoreboard} implementations.
+ * Interface for a managed scoreboard.
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ScoreboardInfo {
+public interface IManagedScoreboard {
 
     /**
-     * The scoreboard type name.
+     * Get the scoreboard type.
      */
-    public String name();
+    ScoreboardLifespan getLifespan();
 
     /**
-     * Get the scoreboard description.
+     * Get the encapsulated scoreboard.
      */
-    public String description();
-
+    Scoreboard getScoreboard();
 }
