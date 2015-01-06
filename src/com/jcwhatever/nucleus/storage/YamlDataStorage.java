@@ -26,16 +26,17 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
-import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
+import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.BatchTracker;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.EnumUtils;
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -679,33 +680,28 @@ public class YamlDataStorage implements IDataNode {
 
     @Override
     @Nullable
-    public Location getLocation(String keyPath) {
+    public SyncLocation getLocation(String keyPath) {
 
         return getLocation(keyPath, null);
     }
 
     @Override
     @Nullable
-    public Location getLocation(String keyPath, @Nullable Location def) {
+    public SyncLocation getLocation(String keyPath, @Nullable Location def) {
 
         synchronized (_sync) {
             String coords = getString(keyPath);
             if (coords != null) {
                 return LocationUtils.parseLocation(coords);
             }
-            return def;
-        }
-    }
+            if (def == null)
+                return null;
 
-    @Nullable
-    @Override
-    public String getLocationWorldName(String keyPath) {
-        synchronized (_sync) {
-            String coords = getString(keyPath);
-            if (coords != null) {
-                return LocationUtils.parseLocationWorldName(coords);
+            if (def instanceof SyncLocation) {
+                return (SyncLocation)def;
             }
-            return null;
+
+            return new SyncLocation(def);
         }
     }
 

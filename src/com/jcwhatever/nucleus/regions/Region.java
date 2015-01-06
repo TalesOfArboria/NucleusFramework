@@ -85,7 +85,6 @@ public abstract class Region extends RegionSelection implements IRegion {
 
     private boolean _isEventListener;
     private boolean _isDisposed;
-    private String _worldName;
     private UUID _ownerId;
     private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
     private List<IRegionEventHandler> _eventHandlers = new ArrayList<>(10);
@@ -308,7 +307,10 @@ public abstract class Region extends RegionSelection implements IRegion {
      */
     @Nullable
     public final String getWorldName() {
-        return _worldName;
+        if (getP1() == null)
+            return null;
+
+        return getSyncP1().getWorldName();
     }
 
     /**
@@ -409,7 +411,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         regionManager().unregister(this);
 
         super.setCoords(p1, p2);
-        updateWorld();
 
         IDataNode dataNode = getDataNode();
         if (dataNode != null) {
@@ -569,6 +570,8 @@ public abstract class Region extends RegionSelection implements IRegion {
             List<ChunkInfo> chunks = getChunks();
             for (ChunkInfo chunkInfo : chunks) {
                 Chunk chunk = chunkInfo.getChunk();
+                if (chunk == null)
+                    continue;
 
                 for (Entity entity : chunk.getEntities()) {
                     if (this.contains(entity.getLocation())) {
@@ -697,10 +700,9 @@ public abstract class Region extends RegionSelection implements IRegion {
      * @param p2  The second point location.
      */
     protected final void initCoords(@Nullable Location p1, @Nullable Location p2) {
-        setPoint(RegionPoint.P1, p1);
-        setPoint(RegionPoint.P2, p2);
-
-        updateWorld();
+        if (p1 != null && p2 != null) {
+            super.setCoords(p1, p2);
+        }
         updateMath();
     }
 
@@ -854,42 +856,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         for (IRegionEventHandler handler : _eventHandlers) {
             if (handler.canDoPlayerLeave(p, reason)) {
                 handler.onPlayerLeave(p, reason);
-            }
-        }
-    }
-
-    /*
-     * Update world name if possible
-     */
-    private void updateWorld() {
-
-        Location p1 = getP1();
-        Location p2 = getP2();
-
-        if (p1 == null || p2 == null) {
-            _worldName = null;
-            return;
-        }
-
-        World p1World = p1.getWorld();
-        World p2World = p2.getWorld();
-
-        boolean isWorldsMismatched = p1World != null && !p1World.equals(p2World) ||
-                p2World != null && !p2World.equals(p1World);
-
-        if (isWorldsMismatched) {
-            throw new IllegalArgumentException("Both region points must be from the same world.");
-        }
-
-        if (p1World != null) {
-            _worldName = p1World.getName();
-        }
-        else {
-
-            IDataNode dataNode = getDataNode();
-
-            if (dataNode != null) {
-                _worldName = dataNode.getLocationWorldName("p1");
             }
         }
     }

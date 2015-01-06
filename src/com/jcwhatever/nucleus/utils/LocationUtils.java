@@ -26,9 +26,9 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.extended.MaterialExt;
+import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -207,10 +207,10 @@ public final class LocationUtils {
      *
      * @param coordinates  The string coordinates.
      *
-     * @return  Null if the string could not be parsed.
+     * @return  Null if the string could not be parsed or an {@code ImmutableLocation}.
      */
     @Nullable
-    public static Location parseLocation(String coordinates) {
+    public static SyncLocation parseLocation(String coordinates) {
         PreCon.notNull(coordinates);
 
         String[] parts =  TextUtils.PATTERN_COMMA.split(coordinates);
@@ -237,11 +237,7 @@ public final class LocationUtils {
         if (pitch == null)
             return null;
 
-        World world = Bukkit.getWorld(parts[5]);
-        if (world == null)
-            return null;
-
-        return new Location(world, x, y, z, yaw, pitch);
+        return new SyncLocation(parts[5], x, y, z, yaw, pitch);
     }
 
     /**

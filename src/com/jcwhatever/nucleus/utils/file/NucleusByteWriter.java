@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.file;
 
+import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;
@@ -403,6 +404,7 @@ public class NucleusByteWriter extends OutputStream {
      * significant bits while the last 8 bytes are the least significant bits.</p>
      *
      * @param uuid  The UUID to write.
+     *
      * @throws IOException
      */
     public void write(UUID uuid) throws IOException {
@@ -433,7 +435,9 @@ public class NucleusByteWriter extends OutputStream {
     public void write(Location location) throws IOException {
         PreCon.notNull(location);
 
-        writeSmallString(location.getWorld().getName());
+        writeSmallString(location instanceof SyncLocation
+                ? ((SyncLocation) location).getWorldName()
+                : location.getWorld().getName());
         write(location.getX());
         write(location.getY());
         write(location.getZ());

@@ -25,14 +25,13 @@
 
 package com.jcwhatever.nucleus.utils.file;
 
+import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -451,7 +450,7 @@ public class NucleusByteReader extends InputStream {
      *
      * @throws IOException
      */
-    public Location getLocation() throws IOException {
+    public SyncLocation getLocation() throws IOException {
 
         final String worldName = getSmallString();
         double x = getDouble();
@@ -460,9 +459,7 @@ public class NucleusByteReader extends InputStream {
         float yaw = getFloat();
         float pitch = getFloat();
 
-        return Bukkit.isPrimaryThread()
-                ? new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch)
-                : new Location(null, x, y, z, yaw, pitch);
+        return new SyncLocation(worldName, x, y, z, yaw, pitch);
     }
 
     /**

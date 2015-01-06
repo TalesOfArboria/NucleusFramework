@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.regions.data.SyncLocation;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -345,7 +346,7 @@ public interface IDataNode extends IPluginOwned {
      * @return  Value of key or null.
      */
     @Nullable
-    Location getLocation(String keyPath);
+    SyncLocation getLocation(String keyPath);
 
     /**
      * Get the {@code Location} value of a node key.
@@ -356,21 +357,7 @@ public interface IDataNode extends IPluginOwned {
      * @return  Value of key or default.
      */
     @Nullable
-    Location getLocation(String keyPath, @Nullable Location def);
-
-    /**
-     * Get the name of the world in a {@code Location} value of a node key.
-     *
-     * <p>Useful for getting the name of the world for a location if the
-     * world is not loaded and a World object can't be included with
-     * the location.</p>
-     *
-     * @param keyPath  The name or relative path and name of the key.
-     *
-     * @return  World name value or null.
-     */
-    @Nullable
-    String getLocationWorldName(String keyPath);
+    SyncLocation getLocation(String keyPath, @Nullable Location def);
 
     /**
      * Get the {@code ItemStack[]} value of a node key.

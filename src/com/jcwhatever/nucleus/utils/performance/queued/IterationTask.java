@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.utils.Scheduler;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -102,20 +101,8 @@ public abstract class IterationTask extends QueueTask {
 
     @Override
     protected final void onRun() {
-        if (Bukkit.isPrimaryThread()) {
-            onIterateBegin();
-            Scheduler.runTaskLater(getPlugin(), _delay, new Worker());
-        }
-        else {
-
-            Scheduler.runTaskSync(getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    onIterateBegin();
-                    Scheduler.runTaskLaterAsync(getPlugin(), _delay, new Worker());
-                }
-            });
-        }
+        onIterateBegin();
+        Scheduler.runTaskLater(getPlugin(), _delay, new Worker());
     }
 
     /**

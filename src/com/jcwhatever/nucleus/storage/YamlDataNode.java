@@ -25,6 +25,8 @@
 
 package com.jcwhatever.nucleus.storage;
 
+import com.jcwhatever.nucleus.regions.data.SyncLocation;
+
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -301,21 +303,15 @@ public class YamlDataNode implements IDataNode {
     }
 
     @Override
-    public Location getLocation(String keyPath) {
+    public SyncLocation getLocation(String keyPath) {
 
         return _storage.getLocation(getFullPath(keyPath));
     }
 
     @Override
-    public Location getLocation(String keyPath, Location def) {
+    public SyncLocation getLocation(String keyPath, Location def) {
 
         return _storage.getLocation(getFullPath(keyPath), def);
-    }
-
-    @Nullable
-    @Override
-    public String getLocationWorldName(String keyPath) {
-        return _storage.getLocationWorldName(getFullPath(keyPath));
     }
 
     @Override

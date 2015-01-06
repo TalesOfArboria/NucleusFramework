@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.regions.selection;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
+import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -59,10 +60,8 @@ public class RegionSelection implements IRegionSelection {
 
     protected final Object _sync = new Object();
 
-    private Location _p1;
-    private Location _p2;
-    private Location _lastP1;
-    private Location _lastP2;
+    private SyncLocation _p1;
+    private SyncLocation _p2;
 
     private int _startX;
     private int _startY;
@@ -87,11 +86,6 @@ public class RegionSelection implements IRegionSelection {
     private List<ChunkInfo> _chunks;
 
     private Location _center;
-
-    protected enum RegionPoint {
-        P1,
-        P2
-    }
 
     /**
      * Empty Constructor.
@@ -149,7 +143,7 @@ public class RegionSelection implements IRegionSelection {
             return null;
 
         synchronized (_sync) {
-            return _p1.clone();
+            return _p1.getBukkitLocation();
         }
     }
 
@@ -166,7 +160,7 @@ public class RegionSelection implements IRegionSelection {
             return null;
 
         synchronized (_sync) {
-            return _p2.clone();
+            return _p2.getBukkitLocation();
         }
     }
 
@@ -544,6 +538,22 @@ public class RegionSelection implements IRegionSelection {
     }
 
     /**
+     * Get a reference to the underlying P1 {@code ImmutableLocation}
+     * coordinates.
+     */
+    protected SyncLocation getSyncP1() {
+        return _p1;
+    }
+
+    /**
+     * Get a reference to the underlying P2 {@code ImmutableLocation}
+     * coordinates.
+     */
+    protected SyncLocation getSyncP2() {
+        return _p2;
+    }
+
+    /**
      * Set the regions cuboid point coordinates.
      *
      * @param p1  The first point location.
@@ -561,9 +571,16 @@ public class RegionSelection implements IRegionSelection {
             throw new IllegalArgumentException("Both region points must be from the same world.");
         }
 
-        setPoint(RegionPoint.P1, p1);
-        setPoint(RegionPoint.P2, p2);
+        double lowerX = Math.min(p1.getX(), p2.getX());
+        double lowerY = Math.min(p1.getY(), p2.getY());
+        double lowerZ = Math.min(p1.getZ(), p2.getZ());
 
+        double upperX = Math.max(p1.getX(), p2.getX());
+        double upperY = Math.max(p1.getY(), p2.getY());
+        double upperZ = Math.max(p1.getZ(), p2.getZ());
+
+        _p1 = new SyncLocation(p1.getWorld().getName(), lowerX, lowerY, lowerZ, 0F, 0F);
+        _p2 = new SyncLocation(p2.getWorld().getName(), upperX, upperY, upperZ, 0F, 0F);
         updateMath();
     }
 
@@ -626,73 +643,5 @@ public class RegionSelection implements IRegionSelection {
 
             _sync.notifyAll();
         }
-    }
-
-
-    /*
-    * Set one of the region points.
-    */
-    protected void setPoint(RegionPoint point, @Nullable Location l) {
-        Location lower;
-        Location upper;
-
-        switch (point) {
-            case P1: {
-                if (l == null) {
-                    _p1 = null;
-                    return;
-                }
-
-                _lastP1 = l.clone();
-                lower = _lastP1.clone();
-                upper = _lastP2 != null
-                        ? _lastP2.clone()
-                        : _p2;
-                break;
-            }
-            case P2: {
-                if (l == null) {
-                    _p2 = null;
-                    return;
-                }
-
-                _lastP2 = l.clone();
-                lower = _lastP1 != null
-                        ? _lastP1.clone()
-                        : _p1;
-                upper = _lastP2.clone();
-                break;
-            }
-            default: {
-                upper = null;
-                lower = null;
-            }
-        }
-        if (lower != null && upper != null) {
-            double tmp;
-            if (lower.getX() > upper.getX()) {
-                tmp = lower.getX();
-                lower.setX(upper.getX());
-                upper.setX(tmp);
-            }
-            if (lower.getY() > upper.getY()) {
-                tmp = lower.getY();
-                lower.setY(upper.getY());
-                upper.setY(tmp);
-            }
-            if (lower.getZ() > upper.getZ()) {
-                tmp = lower.getZ();
-                lower.setZ(upper.getZ());
-                upper.setZ(tmp);
-            }
-        }
-
-        if (lower != null) {
-            _p1 = lower;
-        }
-        if (upper != null) {
-            _p2 = upper;
-        }
-
     }
 }
