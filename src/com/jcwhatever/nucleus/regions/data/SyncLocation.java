@@ -82,8 +82,11 @@ public class SyncLocation extends Location {
      * @param yaw   The yaw angle.
      * @param pitch The pitch angle.
      */
-    public SyncLocation(World world, double x, double y, double z, float yaw, float pitch) {
-        this(world.getName(), x, y, z, yaw, pitch);
+    public SyncLocation(@Nullable World world, double x, double y, double z, float yaw, float pitch) {
+        super(world, x, y, z, yaw, pitch);
+
+        if (world != null)
+            _worldName = world.getName();
     }
 
     /**
@@ -96,7 +99,7 @@ public class SyncLocation extends Location {
      * @param yaw       The yaw angle.
      * @param pitch     The pitch angle.
      */
-    public SyncLocation(String worldName, double x, double y, double z, float yaw, float pitch) {
+    public SyncLocation(@Nullable String worldName, double x, double y, double z, float yaw, float pitch) {
         super(null, x, y, z, yaw, pitch);
         _worldName = worldName;
     }
@@ -109,10 +112,25 @@ public class SyncLocation extends Location {
      * @param y         The Y coordinate block value.
      * @param z         The Z coordinate block value.
      */
-    public SyncLocation(String worldName, int x, int y, int z) {
+    public SyncLocation(@Nullable String worldName, int x, int y, int z) {
         super(null, x, y, z);
 
         _worldName = worldName;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param world  The world the location is in.
+     * @param x      The X coordinate block value.
+     * @param y      The Y coordinate block value.
+     * @param z      The Z coordinate block value.
+     */
+    public SyncLocation(@Nullable World world, int x, int y, int z) {
+        super(world, x, y, z);
+
+        if (world != null)
+            _worldName = world.getName();
     }
 
     /**
@@ -176,9 +194,23 @@ public class SyncLocation extends Location {
     }
 
     @Override
+    public double getX() {
+        synchronized (_sync) {
+            return super.getX();
+        }
+    }
+
+    @Override
     public void setX(double x) {
         synchronized (_sync) {
             super.setX(x);
+        }
+    }
+
+    @Override
+    public double getY() {
+        synchronized (_sync) {
+            return super.getY();
         }
     }
 
@@ -190,9 +222,23 @@ public class SyncLocation extends Location {
     }
 
     @Override
+    public double getZ() {
+        synchronized (_sync) {
+            return super.getZ();
+        }
+    }
+
+    @Override
     public void setZ(double z) {
         synchronized (_sync) {
             super.setZ(z);
+        }
+    }
+
+    @Override
+    public float getYaw() {
+        synchronized (_sync) {
+            return super.getYaw();
         }
     }
 
@@ -204,9 +250,37 @@ public class SyncLocation extends Location {
     }
 
     @Override
+    public float getPitch() {
+        synchronized (_sync) {
+            return super.getPitch();
+        }
+    }
+
+    @Override
     public void setPitch(float pitch) {
         synchronized (_sync) {
             super.setPitch(pitch);
+        }
+    }
+
+    @Override
+    public int getBlockX() {
+        synchronized (_sync) {
+            return super.getBlockX();
+        }
+    }
+
+    @Override
+    public int getBlockY() {
+        synchronized (_sync) {
+            return super.getBlockY();
+        }
+    }
+
+    @Override
+    public int getBlockZ() {
+        synchronized (_sync) {
+            return super.getBlockZ();
         }
     }
 
@@ -274,6 +348,20 @@ public class SyncLocation extends Location {
     }
 
     @Override
+    public double length() {
+        synchronized (_sync) {
+            return super.length();
+        }
+    }
+
+    @Override
+    public double lengthSquared() {
+        synchronized (_sync) {
+            return super.lengthSquared();
+        }
+    }
+
+    @Override
     public double distance(Location location) {
         return Math.sqrt(distanceSquared(location));
     }
@@ -324,13 +412,12 @@ public class SyncLocation extends Location {
      * @param z The Z coordinates.
      */
     public double distanceSquared(double x, double y, double z) {
-        synchronized (_sync) {
-            double dx = getX() - x;
-            double dy = getY() - y;
-            double dz = getZ() - z;
 
-            return (dx * dx) + (dy * dy) + (dz * dz);
-        }
+        double dx = getX() - x;
+        double dy = getY() - y;
+        double dz = getZ() - z;
+
+        return (dx * dx) + (dy * dy) + (dz * dz);
     }
 
     /**
@@ -341,10 +428,19 @@ public class SyncLocation extends Location {
      * than the primary.</p>
      */
     public Location getBukkitLocation() {
-        return Bukkit.isPrimaryThread()
-                ? new Location(Bukkit.getWorld(getWorldName()), getX(), getY(), getZ(), getYaw(), getPitch())
-                : new Location(null, getX(), getY(), getZ(), getYaw(), getPitch());
 
+        World world = super.getWorld();
+        if (world == null && Bukkit.isPrimaryThread() && getWorldName() != null)
+            world = Bukkit.getWorld(getWorldName());
+
+        return new Location(world, getX(), getY(), getZ(), getYaw(), getPitch());
+    }
+
+    @Override
+    public Vector toVector() {
+        synchronized (_sync) {
+            return super.toVector();
+        }
     }
 
     @Override
@@ -354,7 +450,9 @@ public class SyncLocation extends Location {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        synchronized (_sync) {
+            return super.hashCode();
+        }
     }
 
     @Override
@@ -369,14 +467,24 @@ public class SyncLocation extends Location {
 
             if (obj instanceof SyncLocation) {
                 SyncLocation other = (SyncLocation) obj;
+
                 return ((_worldName == null && other._worldName == null) ||
                         (_worldName != null && _worldName.equals(other._worldName))) &&
                         Double.compare(getX(), other.getX()) == 0 && Double.compare(getY(), other.getY()) == 0 &&
                         Double.compare(getZ(), other.getZ()) == 0 && Float.compare(getYaw(), other.getYaw()) == 0 &&
                         Float.compare(getPitch(), other.getPitch()) == 0;
             }
+            else if (obj instanceof Location) {
+                Location other = (Location) obj;
 
-            return super.equals(obj);
+                return ((_worldName == null && other.getWorld() == null) ||
+                        (_worldName != null && other.getWorld() != null && _worldName.equals(other.getWorld().getName()))) &&
+                        Double.compare(getX(), other.getX()) == 0 && Double.compare(getY(), other.getY()) == 0 &&
+                        Double.compare(getZ(), other.getZ()) == 0 && Float.compare(getYaw(), other.getYaw()) == 0 &&
+                        Float.compare(getPitch(), other.getPitch()) == 0;
+            }
+
+            return false;
         }
     }
 }
