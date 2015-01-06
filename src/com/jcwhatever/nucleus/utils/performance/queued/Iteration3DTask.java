@@ -26,6 +26,8 @@
 package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.utils.Scheduler;
+
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -177,8 +179,21 @@ public abstract class Iteration3DTask extends QueueTask {
 
     @Override
     protected final void onRun() {
-        onIterateBegin();
-        Scheduler.runTaskLater(getPlugin(), _delay, new Iterator3D());
+
+        if (Bukkit.isPrimaryThread()) {
+            onIterateBegin();
+            Scheduler.runTaskLater(getPlugin(), _delay, new Iterator3D());
+        }
+        else {
+
+            Scheduler.runTaskSync(getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    onIterateBegin();
+                    Scheduler.runTaskLaterAsync(getPlugin(), _delay, new Iterator3D());
+                }
+            });
+        }
     }
 
     /**
@@ -195,6 +210,8 @@ public abstract class Iteration3DTask extends QueueTask {
      *
      * <p>Implementation can optionally override this to perform
      * actions when the task begins.</p>
+     *
+     * <p>Always invoked from the primary thread.</p>
      */
     protected void onIterateBegin() {}
 
