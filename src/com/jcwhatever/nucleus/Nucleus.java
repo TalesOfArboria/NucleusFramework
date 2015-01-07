@@ -42,8 +42,6 @@ import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.IScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiRepo;
 import com.jcwhatever.nucleus.scripting.ScriptManager;
-import com.jcwhatever.nucleus.titles.INamedTitle;
-import com.jcwhatever.nucleus.titles.TitleManager;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.EntityType;
@@ -224,15 +222,6 @@ public final class Nucleus {
         PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._kitManager;
-    }
-
-    /**
-     * Get the default title manager.
-     */
-    public static TitleManager<INamedTitle> getTitleManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
-
-        return _plugin._titleManager;
     }
 
     /**

@@ -33,7 +33,6 @@ import com.jcwhatever.nucleus.internal.commands.kits.KitsCommand;
 import com.jcwhatever.nucleus.internal.commands.plugins.PluginsCommand;
 import com.jcwhatever.nucleus.internal.commands.scripts.ScriptsCommand;
 import com.jcwhatever.nucleus.internal.commands.storage.StorageCommand;
-import com.jcwhatever.nucleus.internal.commands.titles.TitlesCommand;
 
 public final class NucleusCommandDispatcher extends CommandDispatcher {
 
@@ -49,6 +48,5 @@ public final class NucleusCommandDispatcher extends CommandDispatcher {
         registerCommand(PluginsCommand.class);
         registerCommand(ScriptsCommand.class);
         registerCommand(StorageCommand.class);
-        registerCommand(TitlesCommand.class);
     }
 }

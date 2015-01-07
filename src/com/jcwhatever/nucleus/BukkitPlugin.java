@@ -28,7 +28,6 @@ import com.jcwhatever.nucleus.internal.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.InternalScriptManager;
-import com.jcwhatever.nucleus.internal.InternalTitleManager;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.jail.InternalJailManager;
@@ -38,13 +37,12 @@ import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
 import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.nucleus.kits.KitManager;
-import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.nucleus.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.scripting.NucleusScriptEngineManager;
-import com.jcwhatever.nucleus.titles.NamedTitleFactory;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
+import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
 import java.io.File;
@@ -57,7 +55,6 @@ public final class BukkitPlugin extends NucleusPlugin {
 
     InternalProviderManager _providerManager;
     InternalEventManager _eventManager;
-    InternalTitleManager _titleManager;
     InternalRegionManager _regionManager;
     InternalScriptManager _scriptManager;
     InternalScriptApiRepo _scriptApiRepo;
@@ -123,7 +120,6 @@ public final class BukkitPlugin extends NucleusPlugin {
         _scriptEngineLoader.loadModules();
 
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
-        _titleManager = new InternalTitleManager(this, getDataNode().getNode("titles"), new NamedTitleFactory());
 
         _regionManager = new InternalRegionManager(this);
         _equipperManager = new EntityEquipperManager();

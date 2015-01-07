@@ -24,16 +24,12 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
-import com.jcwhatever.nucleus.titles.Title;
-import com.jcwhatever.nucleus.titles.INamedTitle;
 import com.jcwhatever.nucleus.titles.ITitle;
-import com.jcwhatever.nucleus.utils.player.PlayerUtils;
+import com.jcwhatever.nucleus.titles.Title;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
@@ -68,25 +64,6 @@ public class ScriptApiTitles extends NucleusScriptApi {
         @Override
         public void dispose() {
             // do nothing
-        }
-
-        /**
-         * Show a named title from the NucleusFramework's title manager.
-         *
-         * @param player     The player to show the title to.
-         * @param titleName  The name of the title.
-         */
-        public void show(Object player, String titleName) {
-            PreCon.notNull(player);
-            PreCon.notNullOrEmpty(titleName);
-
-            Player p = PlayerUtils.getPlayer(player);
-            PreCon.notNull(p);
-
-            INamedTitle title = Nucleus.getTitleManager().get(titleName);
-            PreCon.notNull(title, "Failed to find a title named " + titleName);
-
-            title.showTo(p);
         }
 
         /**
