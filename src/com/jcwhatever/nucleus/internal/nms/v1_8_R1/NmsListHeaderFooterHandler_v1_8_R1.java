@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.nms.INmsListHeaderFooterHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -43,41 +44,59 @@ public class NmsListHeaderFooterHandler_v1_8_R1 extends v1_8_R1 implements INmsL
      * Send the packet to a player.
      *
      * @param player      The player to send the header/footer to.
-     * @param jsonHeader  The Json header text.
-     * @param jsonFooter  The Json footer text.
+     * @param rawHeaderText  The Json header text.
+     * @param rawFooterText  The Json footer text.
      */
     @Override
-    public void send(final Player player, @Nullable final String jsonHeader,
-                     @Nullable final String jsonFooter) {
+    public void send(final Player player,
+                     @Nullable final String rawHeaderText,
+                     @Nullable final String rawFooterText) {
         PreCon.notNull(player);
 
-        if (jsonHeader == null && jsonFooter == null)
+        if (rawHeaderText == null && rawFooterText == null)
             return;
 
+        String jsonHeader = rawHeaderText != null
+                ? SimpleJSONBuilder.text(rawHeaderText)
+                : null;
+
+        String jsonFooter = rawFooterText != null
+                ? SimpleJSONBuilder.text(rawFooterText)
+                : null;
+
+        sendJson(player, jsonHeader, jsonFooter);
+    }
+
+    @Override
+    public void sendJson(final Player player,
+                         @Nullable final String jsonHeaderText,
+                         @Nullable final String jsonFooterText) {
+        PreCon.notNull(player);
+
         if (Bukkit.isPrimaryThread()) {
-            syncSend(player, jsonHeader, jsonFooter);
+            syncSend(player, jsonHeaderText, jsonFooterText);
         }
         else {
             Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    syncSend(player, jsonHeader, jsonFooter);
+                    syncSend(player, jsonHeaderText, jsonFooterText);
                 }
             });
         }
     }
 
-    private void syncSend (Player player, @Nullable String jsonHeader, @Nullable String jsonFooter) {
-        Object headerComponent = _ChatSerializer.invokeStatic("serialize", jsonHeader);
+    private void syncSend (Player player, @Nullable String headerText, @Nullable String footerText) {
 
         // create packet instance based on the presence of a header
-        Object packet = jsonHeader != null
-                ? _PacketPlayOutPlayerListHeaderFooter.construct("newHeader", headerComponent) // header constructor
+        Object packet = headerText != null
+                ? _PacketPlayOutPlayerListHeaderFooter.construct("newHeader",
+                        _ChatSerializer.invokeStatic("serialize", headerText)) // header constructor
                 : _PacketPlayOutPlayerListHeaderFooter.construct("new"); // no header constructor
 
-        if (jsonFooter != null) {
+        if (footerText != null) {
 
-            Object footerComponent = _ChatSerializer.invokeStatic("serialize", jsonFooter);
+            Object footerComponent = _ChatSerializer.invokeStatic("serialize", footerText);
 
             // insert footer into packet footer field
             _PacketPlayOutPlayerListHeaderFooter.reflect(packet).set("footer", footerComponent);

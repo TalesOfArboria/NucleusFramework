@@ -36,8 +36,23 @@ public interface INmsActionBarHandler extends INmsHandler {
     /**
      * Send action bar text to a player.
      *
+     * <p>The handler is responsible for converting the raw text
+     * to whatever format is required.</p>
+     *
+     * @param player   The player to send the text to.
+     * @param rawText  The raw text.
+     *
+     * @return  The json converted text.
+     */
+    void send(Player player, String rawText);
+
+    /**
+     * Send action bar text to a player.
+     *
+     * <p>Bypasses the handlers text conversion.</p>
+     *
      * @param player    The player to send the text to.
      * @param jsonText  The Json text.
      */
-    void send(Player player, String jsonText);
+    void sendJson(Player player, String jsonText);
 }

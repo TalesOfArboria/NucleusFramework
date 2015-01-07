@@ -36,9 +36,23 @@ public interface INmsListHeaderFooterHandler extends INmsHandler {
     /**
      * Send a tab list header and/or footer to a player.
      *
-     * @param player      The player to send the header/footer to.
-     * @param jsonHeader  The Json header text.
-     * @param jsonFooter  The Json footer text.
+     * <p>The handler is responsible for converting the raw
+     * header and footer text into the appropriate format.</p>
+     *
+     * @param player         The player to send the header/footer to.
+     * @param rawHeaderText  The header text.
+     * @param rawFooterText  The footer text.
      */
-    void send(Player player, String jsonHeader, String jsonFooter);
+    void send(Player player, String rawHeaderText, String rawFooterText);
+
+    /**
+     * Send a tab list header and/or footer to a player.
+     *
+     * <p>Bypasses the handlers text conversion.</p>
+     *
+     * @param player           The player to send the header/footer to.
+     * @param jsonHeaderText  The json header text.
+     * @param jsonFooterText  The json footer text.
+     */
+    void sendJson(Player player, String jsonHeaderText, String jsonFooterText);
 }

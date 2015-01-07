@@ -34,7 +34,6 @@ import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.nms.INmsActionBarHandler;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.Bukkit;
@@ -302,14 +301,14 @@ class BarSender implements Runnable {
         if (text != null) {
 
             if (Bukkit.isPrimaryThread()) {
-                _nmsHandler.send(player, SimpleJSONBuilder.text(text));
+                _nmsHandler.send(player, text);
             }
             else {
 
                 Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
-                        _nmsHandler.send(player, SimpleJSONBuilder.text(text));
+                        _nmsHandler.send(player, text);
                     }
                 });
 

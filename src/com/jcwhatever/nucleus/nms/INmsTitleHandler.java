@@ -38,13 +38,31 @@ public interface INmsTitleHandler extends INmsHandler {
     /**
      * Send a title to a player.
      *
+     * <p>The handler is responsible for converting the raw
+     * text into the appropriate format.</p>
+     *
      * @param player        The player to send the title to.
-     * @param jsonTitle     The Json title text.
-     * @param jsonSubtitle  Optional Json subtitle text.
+     * @param rawTitle      The title text.
+     * @param rawSubtitle   Optional subtitle text.
      * @param fadeIn        The fade-in time.
      * @param stay          The stay time.
      * @param fadeOut       The fade-out time.
      */
-    void send(Player player, String jsonTitle, @Nullable String jsonSubtitle,
+    void send(Player player, String rawTitle, @Nullable String rawSubtitle,
+              int fadeIn, int stay, int fadeOut);
+
+    /**
+     * Send a title to a player.
+     *
+     * <p>Bypasses the handlers text conversion.</p>
+     *
+     * @param player        The player to send the title to.
+     * @param jsonTitle     The title text.
+     * @param jsonSubtitle  Optional subtitle text.
+     * @param fadeIn        The fade-in time.
+     * @param stay          The stay time.
+     * @param fadeOut       The fade-out time.
+     */
+    void sendJson(Player player, String jsonTitle, @Nullable String jsonSubtitle,
               int fadeIn, int stay, int fadeOut);
 }

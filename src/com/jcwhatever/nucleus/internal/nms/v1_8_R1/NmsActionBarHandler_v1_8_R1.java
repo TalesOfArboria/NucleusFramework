@@ -26,7 +26,9 @@ package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.nms.INmsActionBarHandler;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -40,10 +42,22 @@ public class NmsActionBarHandler_v1_8_R1 extends v1_8_R1 implements INmsActionBa
      * Send the action bar packet.
      *
      * @param player    The player to send the text to.
-     * @param jsonText  The Json text.
+     * @param rawText  The Json text.
      */
     @Override
-    public void send(final Player player, final String jsonText) {
+    public void send(Player player, String rawText) {
+        PreCon.notNull(player);
+        PreCon.notNull(rawText);
+
+        String jsonText = "{text:\"" + TextUtils.format(rawText).replace("\"", "\\\"") + "\"}";
+
+        sendJson(player, jsonText);
+    }
+
+    @Override
+    public void sendJson(final Player player, final String jsonText) {
+        PreCon.notNull(player);
+        PreCon.notNull(jsonText);
 
         if (Bukkit.isPrimaryThread()) {
             syncSend(player, jsonText);
@@ -56,11 +70,11 @@ public class NmsActionBarHandler_v1_8_R1 extends v1_8_R1 implements INmsActionBa
                 }
             });
         }
-
     }
 
-    private void syncSend(Player player, String jsonText) {
-        Object titleComponent = _ChatSerializer.invokeStatic("serialize", jsonText);
+    private void syncSend(Player player, String text) {
+
+        Object titleComponent = _ChatSerializer.invokeStatic("serialize", text);
 
         Object packet = _PacketPlayOutChat.construct("new", titleComponent, (byte) 2);
 

@@ -143,20 +143,7 @@ public class Title implements ITitle {
         INmsTitleHandler titleHandler = Nucleus.getNmsManager().getNmsHandler(NmsHandlers.TITLES.name());
         if (titleHandler != null) {
 
-            StringBuilder buffer = new StringBuilder(50);
-
-            SimpleJSONBuilder.text(buffer, getTitleComponents());
-
-            String title = buffer.toString();
-            String subTitle = null;
-
-            if (_subTitle != null) {
-                buffer.setLength(0);
-                SimpleJSONBuilder.text(buffer, getSubTitleComponents());
-                subTitle = buffer.toString();
-            }
-
-            titleHandler.send(p, title, subTitle, _fadeInTime, _stayTime, _fadeOutTime);
+            titleHandler.send(p, _title, _subTitle, _fadeInTime, _stayTime, _fadeOutTime);
 
             return;
         }

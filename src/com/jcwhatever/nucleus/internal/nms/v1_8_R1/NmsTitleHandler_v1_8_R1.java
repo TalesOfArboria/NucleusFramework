@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
+import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -44,18 +45,44 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
      * Send the packet to a player.
      *
      * @param player        The player to send the title to.
-     * @param jsonTitle     The Json title text.
-     * @param jsonSubtitle  Optional Json subtitle text.
+     * @param rawTitle     The Json title text.
+     * @param rawSubtitle  Optional Json subtitle text.
      * @param fadeIn        The fade-in time.
      * @param stay          The stay time.
      * @param fadeOut       The fade-out time.
      */
     @Override
     public void send(final Player player,
-                     final String jsonTitle, @Nullable final String jsonSubtitle,
+                     final String rawTitle,
+                     @Nullable final String rawSubtitle,
                      final int fadeIn, final int stay, final int fadeOut) {
         PreCon.notNull(player);
-        PreCon.notNullOrEmpty(jsonTitle);
+        PreCon.notNullOrEmpty(rawTitle);
+
+        String jsonTitle = SimpleJSONBuilder.text(rawTitle);
+        String jsonSubtitle = rawSubtitle != null
+                ? SimpleJSONBuilder.text(rawSubtitle)
+                : null;
+
+        sendJson(player, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
+
+    }
+
+    /**
+     * Send the packet to a player.
+     *
+     * @param player        The player to send the title to.
+     * @param jsonTitle     The title text.
+     * @param jsonSubtitle  Optional subtitle text.
+     * @param fadeIn        The fade-in time.
+     * @param stay          The stay time.
+     * @param fadeOut       The fade-out time.
+     */
+    @Override
+    public void sendJson(final Player player,
+                         final String jsonTitle,
+                         @Nullable final String jsonSubtitle,
+                         final int fadeIn, final int stay, final int fadeOut) {
 
         if (Bukkit.isPrimaryThread()) {
             syncSend(player, jsonTitle, jsonSubtitle, fadeIn, stay, fadeOut);
@@ -68,10 +95,9 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
                 }
             });
         }
-
     }
 
-    private void syncSend(Player player, String jsonTitle, @Nullable String jsonSubtitle,
+    private void syncSend(Player player, String title, @Nullable String subTitle,
                           int fadeIn, int stay, int fadeOut) {
 
         ReflectedInstance connection = getConnection(player);
@@ -81,8 +107,8 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
         connection.invoke("sendPacket", timesPacket);
 
         // sub title packet
-        if (jsonSubtitle != null) {
-            Object subTitleComponent = _ChatSerializer.invokeStatic("serialize", jsonSubtitle);
+        if (subTitle != null) {
+            Object subTitleComponent = _ChatSerializer.invokeStatic("serialize", subTitle);
             Object subTitlePacket = _PacketPlayOutTitle.construct(
                     "new", _EnumTitleAction.getEnum("SUBTITLE"), subTitleComponent);
 
@@ -90,7 +116,7 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
         }
 
         // title packet
-        Object titleComponent = _ChatSerializer.invokeStatic("serialize", jsonTitle);
+        Object titleComponent = _ChatSerializer.invokeStatic("serialize", title);
         Object titlePacket = _PacketPlayOutTitle.construct(
                 "new", _EnumTitleAction.getEnum("TITLE"), titleComponent);
 
