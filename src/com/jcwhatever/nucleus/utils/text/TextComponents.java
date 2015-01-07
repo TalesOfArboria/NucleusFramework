@@ -159,17 +159,20 @@ public class TextComponents implements Iterable<TextComponent> {
 
             char ch = text.charAt(i);
 
-            if (ch == TextFormat.CHAR && i < text.length() - 1) {
+            boolean hasFormat = false;
+            int startIndex = i;
+            while (ch == TextFormat.CHAR && i < text.length() - 1 &&
+                    TextFormat.isFormatChar(text.charAt(i + 1))) {
+                hasFormat = true;
+                i += 1;
+                ch = text.charAt(i);
+            }
 
-                TextFormat format = TextFormat.fromFormatChar(text.charAt(i + 1));
-                if (format == null) {
-                    buffer.append(ch);
-                    continue;
-                }
+            if (hasFormat) {
 
                 if (buffer.length() > 0) {
 
-                    TextFormats formats = TextFormat.getFormatAt(i, text);
+                    TextFormats formats = TextFormat.getFormatAt(startIndex - 1, text);
                     TextComponent textComponent = new TextComponent(buffer.toString(), formats);
 
                     buffer.setLength(0);
@@ -177,16 +180,16 @@ public class TextComponents implements Iterable<TextComponent> {
                     if (textComponent.getText().length() > 0)
                         result.addLast(textComponent);
                 }
-
-                i += 1;
             }
             else {
+
                 buffer.append(ch);
             }
         }
 
         if (buffer.length() > 0) {
-            TextComponent textComponent = new TextComponent(buffer.toString(), null);
+            TextFormats formats = TextFormat.getFormatAt(text.length() - 1, text);
+            TextComponent textComponent = new TextComponent(buffer.toString(), formats);
             result.addLast(textComponent);
         }
 
