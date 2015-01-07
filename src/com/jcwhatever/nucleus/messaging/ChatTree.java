@@ -241,7 +241,7 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iter
      * Get the prefix used on all lines.
      */
     protected String getLinePrefix() {
-        return TextColor.GRAY.getColorCode();
+        return TextColor.GRAY.getFormatCode();
     }
 
     /**

@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.TextColor.TextColorMap;
+import com.jcwhatever.nucleus.utils.text.TextFormat.TextFormatMap;
 
 import java.util.Map.Entry;
 
@@ -38,7 +38,7 @@ import java.util.Map.Entry;
  */
 public class ColoredCircularString extends CircularString {
 
-    private TextColorMap _colorMap;
+    private TextFormatMap _colorMap;
 
     /**
      * Constructor.
@@ -97,7 +97,7 @@ public class ColoredCircularString extends CircularString {
 
         CircularString result = super.subSequence(start, end);
 
-        TextColorMap colorMap = new TextColorMap();
+        TextFormatMap colorMap = new TextFormatMap();
 
         for (int i = start; i < end; i++) {
 

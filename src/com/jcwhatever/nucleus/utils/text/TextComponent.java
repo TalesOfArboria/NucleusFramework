@@ -25,8 +25,10 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextFormat.TextFormats;
+import com.sun.istack.internal.Nullable;
 
-import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * A segment of text that begins with a color/format.
@@ -34,46 +36,158 @@ import javax.annotation.Nullable;
 public class TextComponent {
 
     private final TextColor _textColor;
+    private boolean _isBold;
+    private boolean _isItalic;
+    private boolean _isMagic;
+    private boolean _isReset;
+    private boolean _isStrikethrough;
+    private boolean _isUnderline;
+
     private final String _text;
+    private final Object _sync = new Object();
+    private final int _hash;
     private String _formatted;
-    private int _hash;
 
     /**
      * Constructor.
      *
-     * <p>No color/formatting.</p>
-     *
-     * @param text  The text of the component.
+     * @param text     The text of the component.
+     * @param color    Optional text color.
+     * @param formats  Optional text formats.
      */
-    public TextComponent(String text) {
-        this(null, text);
+    TextComponent(String text, @Nullable TextColor color, TextFormat... formats) {
+        PreCon.notNull(text);
+
+        _textColor = color;
+        _text = text;
+
+        int hash = text.hashCode();
+
+        if (color != null) {
+            hash = color.hashCode();
+        }
+
+        for (TextFormat format : formats) {
+
+            if (format == null)
+                break;
+
+            if (format == TextFormat.BOLD)
+                _isBold = true;
+            else if (format == TextFormat.ITALIC)
+                _isItalic = true;
+            else if (format == TextFormat.MAGIC)
+                _isMagic = true;
+            else if (format == TextFormat.RESET)
+                _isReset = true;
+            else if (format == TextFormat.STRIKETHROUGH)
+                _isStrikethrough = true;
+            else if (format == TextFormat.UNDERLINE)
+                _isUnderline = true;
+            else
+                break;
+
+            hash ^= format.hashCode();
+        }
+
+        _hash = hash;
     }
 
     /**
      * Constructor.
      *
-     * @param textColor  The text color/format.
-     * @param text       The text of the component.
+     * @param text     The text of the component.
+     * @param formats  Optional text formats.
      */
-    public TextComponent(@Nullable TextColor textColor, String text) {
+    TextComponent(String text, @Nullable TextFormats formats) {
         PreCon.notNull(text);
 
-        _textColor = textColor;
         _text = text;
 
-        _hash = text.hashCode();
+        int hash = text.hashCode();
 
-        if (textColor != null) {
-            _hash ^= textColor.hashCode();
+        TextColor color = null;
+
+        if (formats != null) {
+
+            List<TextFormat> formatList = formats.getFormats();
+
+            for (TextFormat format : formatList) {
+
+                if (format instanceof TextColor) {
+                    color = (TextColor) format;
+                }
+                if (format == TextFormat.BOLD)
+                    _isBold = true;
+                else if (format == TextFormat.ITALIC)
+                    _isItalic = true;
+                else if (format == TextFormat.MAGIC)
+                    _isMagic = true;
+                else if (format == TextFormat.RESET)
+                    _isReset = true;
+                else if (format == TextFormat.STRIKETHROUGH)
+                    _isStrikethrough = true;
+                else if (format == TextFormat.UNDERLINE)
+                    _isUnderline = true;
+                else
+                    continue;
+
+                hash ^= format.hashCode();
+            }
         }
+
+        _textColor = color;
+        _hash = hash;
     }
 
     /**
      * Get the text color.
      */
     @Nullable
-    public TextColor getTextColor() {
+    public TextColor getColor() {
         return _textColor;
+    }
+
+    /**
+     * Determine if the text is bold.
+     */
+    public boolean isBold() {
+        return _isBold;
+    }
+
+    /**
+     * Determine if the text is italic.
+     */
+    public boolean isItalic() {
+        return _isItalic;
+    }
+
+    /**
+     * Determine if the text is magic/obfuscated.
+     */
+    public boolean isMagic() {
+        return _isMagic;
+    }
+
+    /**
+     * Determine if the text formatting is reset.
+     */
+    public boolean isReset() {
+        return _isReset;
+    }
+
+    /**
+     * Determine if the text is striked.
+     */
+    public boolean isStrikethrough() {
+        return _isStrikethrough;
+    }
+
+    /**
+     * Determine if the text is underline.
+     */
+    public boolean isUnderline() {
+        return _isUnderline;
     }
 
     /**
@@ -88,11 +202,38 @@ public class TextComponent {
      */
     public String getFormatted() {
         if (_formatted == null) {
-            _formatted = "";
-            if (_textColor != null) {
-                _formatted += _textColor.getColorCode();
+            synchronized (_sync) {
+                if (_formatted != null) {
+                    return _formatted;
+                }
+                _formatted = "";
+
+                if (isReset()) {
+                    _formatted += TextFormat.RESET.getFormatCode();
+                }
+                else {
+
+                    if (_textColor != null)
+                        _formatted += _textColor.getFormatCode();
+
+                    if (isBold())
+                        _formatted += TextFormat.BOLD.getFormatCode();
+
+                    if (isItalic())
+                        _formatted += TextFormat.ITALIC.getFormatCode();
+
+                    if (isMagic())
+                        _formatted += TextFormat.MAGIC.getFormatCode();
+
+                    if (isStrikethrough())
+                        _formatted += TextFormat.STRIKETHROUGH.getFormatCode();
+
+                    if (isUnderline())
+                        _formatted += TextFormat.UNDERLINE.getFormatCode();
+                }
+
+                _formatted += TextUtils.format(_text);
             }
-            _formatted += TextUtils.format(_text);
         }
 
         return _formatted;

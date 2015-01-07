@@ -331,13 +331,13 @@ public class StatusBarText implements IDynamicText {
 
             for (int i = 0; i < _width; i++) {
                 if (i < fullWidth) {
-                    buffer.append(_fullColor.getColorCode());
+                    buffer.append(_fullColor.getFormatCode());
                     buffer.append(_fullChar);
                 } else if (i == fullWidth && hasPartial) {
-                    buffer.append(_partialColor.getColorCode());
+                    buffer.append(_partialColor.getFormatCode());
                     buffer.append(_partialChar);
                 } else {
-                    buffer.append(_emptyColor.getColorCode());
+                    buffer.append(_emptyColor.getFormatCode());
                     buffer.append(_emptyChar);
                 }
             }

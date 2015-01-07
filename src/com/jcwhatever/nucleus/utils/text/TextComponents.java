@@ -25,8 +25,11 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextFormat.TextFormats;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -36,6 +39,7 @@ public class TextComponents implements Iterable<TextComponent> {
 
     private final String _text;
     private final List<TextComponent> _components;
+    private final Object _sync = new Object();
     private String _formatted;
 
     /**
@@ -49,21 +53,19 @@ public class TextComponents implements Iterable<TextComponent> {
         PreCon.notNull(text);
 
         _text = text;
-        _components = TextUtils.getTextComponents(text);
+        _components = getTextComponents(text);
     }
 
     /**
      * Constructor.
      *
-     * @param text        The original text used to generate the components.
-     * @param components  The components generated from the text.
+     * @param textComponents  The text components to clone.
      */
-    public TextComponents(String text, List<TextComponent> components) {
-        PreCon.notNull(text);
-        PreCon.notNull(components);
+    public TextComponents(TextComponents textComponents) {
+        PreCon.notNull(textComponents);
 
-        _text = text;
-        _components = components;
+        _text = textComponents._text;
+        _components = new ArrayList<>(textComponents._components);
     }
 
     /**
@@ -79,13 +81,19 @@ public class TextComponents implements Iterable<TextComponent> {
      */
     public String getFormatted() {
         if (_formatted == null) {
-            StringBuilder buffer = new StringBuilder(_components.size() * 15);
+            synchronized (_sync) {
 
-            for (TextComponent component : this) {
-                buffer.append(component.getFormatted());
+                if (_formatted != null)
+                    return _formatted;
+
+                StringBuilder buffer = new StringBuilder(_components.size() * 15);
+
+                for (TextComponent component : this) {
+                    buffer.append(component.getFormatted());
+                }
+
+                _formatted = buffer.toString();
             }
-
-            _formatted = buffer.toString();
         }
         return _formatted;
     }
@@ -131,5 +139,57 @@ public class TextComponents implements Iterable<TextComponent> {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    /**
+     * Parse the given text into a list of {@code TextComponents}.
+     *
+     * @param text  The text to parse.
+     */
+    private static List<TextComponent> getTextComponents(String text) {
+        PreCon.notNull(text);
+
+        text = TextUtils.format(text);
+
+        StringBuilder buffer = new StringBuilder(text.length());
+
+        LinkedList<TextComponent> result = new LinkedList<>();
+
+        for (int i = 0; i < text.length(); i++) {
+
+            char ch = text.charAt(i);
+
+            if (ch == TextFormat.CHAR && i < text.length() - 1) {
+
+                TextFormat format = TextFormat.fromFormatChar(text.charAt(i + 1));
+                if (format == null) {
+                    buffer.append(ch);
+                    continue;
+                }
+
+                if (buffer.length() > 0) {
+
+                    TextFormats formats = TextFormat.getFormatAt(i, text);
+                    TextComponent textComponent = new TextComponent(buffer.toString(), formats);
+
+                    buffer.setLength(0);
+
+                    if (textComponent.getText().length() > 0)
+                        result.addLast(textComponent);
+                }
+
+                i += 1;
+            }
+            else {
+                buffer.append(ch);
+            }
+        }
+
+        if (buffer.length() > 0) {
+            TextComponent textComponent = new TextComponent(buffer.toString(), null);
+            result.addLast(textComponent);
+        }
+
+        return new ArrayList<>(result);
     }
 }

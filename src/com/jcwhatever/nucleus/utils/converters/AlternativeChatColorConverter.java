@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.converters;
 
-import com.jcwhatever.nucleus.utils.text.TextColor;
+import com.jcwhatever.nucleus.utils.text.TextFormat;
 
 import org.bukkit.ChatColor;
 
@@ -67,7 +67,7 @@ public class AlternativeChatColorConverter extends ValueConverter<String, String
         if (!(value instanceof String))
             return null;
 
-        return ((String)value).replaceAll(String.valueOf(TextColor.FORMAT_CHAR), "&");
+        return ((String)value).replaceAll(String.valueOf(TextFormat.CHAR), "&");
     }
 
 }

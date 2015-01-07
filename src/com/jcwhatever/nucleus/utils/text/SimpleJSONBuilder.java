@@ -291,10 +291,29 @@ public class SimpleJSONBuilder {
         else
             buffer.append('"');
 
-        if (segment.getTextColor() != null) {
+        if (!segment.isReset()) {
 
-            buffer.append(",color:");
-            buffer.append(segment.getTextColor().name().toLowerCase());
+            if (segment.getColor() != null) {
+
+                buffer.append(",color:");
+
+                buffer.append(segment.getColor().getMinecraftName());
+            }
+
+            if (segment.isBold())
+                buffer.append(",bold:true");
+
+            if (segment.isItalic())
+                buffer.append(",italic:true");
+
+            if (segment.isMagic())
+                buffer.append(",obfuscated:true");
+
+            if (segment.isStrikethrough())
+                buffer.append(",strikethrough:true");
+
+            if (segment.isUnderline())
+                buffer.append(",underlined:true");
         }
     }
 

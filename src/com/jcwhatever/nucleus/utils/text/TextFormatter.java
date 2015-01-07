@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -56,20 +57,25 @@ import javax.annotation.Nullable;
  */
 public class TextFormatter {
 
-    private static Map<String, ITagFormatter> _colors = new HashMap<>(TextColor.values().length);
+    private static Map<String, ITagFormatter> _colors = new HashMap<>(TextFormat.totalCodes());
 
     static {
-        for (final TextColor color : TextColor.values()) {
-            _colors.put(color.name(), new ITagFormatter() {
+
+        Iterator<TextFormat> iterator = TextFormat.formatIterator();
+        while (iterator.hasNext()) {
+
+            final TextFormat color = iterator.next();
+
+            _colors.put(color.getTagName(), new ITagFormatter() {
 
                 @Override
                 public String getTag() {
-                    return color.name();
+                    return color.getTagName();
                 }
 
                 @Override
                 public void append(StringBuilder sb, String tag) {
-                    sb.append(color.getColorCode());
+                    sb.append(color.getFormatCode());
                 }
             });
         }
@@ -403,8 +409,8 @@ public class TextFormatter {
 
                 // make sure colors from inserted text do not continue
                 // into template text
-                if (toAppend.indexOf(TextColor.FORMAT_CHAR) != -1) {
-                    lastColors = TextColor.getEndColor(sb);
+                if (toAppend.indexOf(TextFormat.CHAR) != -1) {
+                    lastColors = TextColor.getEndFormat(sb).toString();
                 }
 
                 // append parameter argument
