@@ -283,6 +283,20 @@ public enum TextColor {
     }
 
     /**
+     * Get the {@code TextColor} that represents the
+     * format code character.
+     *
+     * @param ch  The format character to check.
+     *
+     * @return The {@code TextColor} or null if the character is not
+     * a recognized format code character.
+     */
+    @Nullable
+    public static TextColor fromFormatChar(char ch) {
+        return _characterMap.get(ch);
+    }
+
+    /**
      * Get the color and formats in effect at the
      * beginning of a string.
      *
