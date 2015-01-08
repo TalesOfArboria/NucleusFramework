@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.commands;
 
 import com.jcwhatever.nucleus.utils.ArrayUtils;
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -167,12 +167,12 @@ public class CommandParser {
         Collection<String> commandNames = commandOwner.getCommandNames();
 
         return TextUtils.search(commandNames,
-                new IEntryValidator<String>() {
+                new IValidator<String>() {
                     @Override
-                    public boolean isValid(String entry) {
-                        AbstractCommand subCommand = commandOwner.getCommand(entry);
+                    public boolean isValid(String element) {
+                        AbstractCommand subCommand = commandOwner.getCommand(element);
                         return subCommand != null && subCommand.isHelpVisible(sender) &&
-                                entry.toLowerCase().startsWith(caseSearchName);
+                                element.toLowerCase().startsWith(caseSearchName);
                     }
                 });
     }

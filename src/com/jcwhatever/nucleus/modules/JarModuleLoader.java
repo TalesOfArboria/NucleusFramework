@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.modules;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
@@ -157,11 +157,11 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
             throw new RuntimeException("Module folder must be a folder.");
 
         List<File> files = FileUtils.getFiles(folder, getDirectoryTraversal(),
-                new IEntryValidator<File>() {
+                new IValidator<File>() {
 
                     @Override
-                    public boolean isValid(File entry) {
-                        return entry.getName().endsWith(".jar");
+                    public boolean isValid(File element) {
+                        return element.getName().endsWith(".jar");
                     }
                 });
 
@@ -460,11 +460,11 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
         if (!saveFile.exists())
             return null;
 
-        return FileUtils.scanTextFile(saveFile, StandardCharsets.UTF_8, new IEntryValidator<String>() {
+        return FileUtils.scanTextFile(saveFile, StandardCharsets.UTF_8, new IValidator<String>() {
 
             int index = 0;
             @Override
-            public boolean isValid(String entry) {
+            public boolean isValid(String element) {
                 index++;
                 return index == 1;
             }

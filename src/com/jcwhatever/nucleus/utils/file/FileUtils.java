@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.file;
 
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -85,7 +85,7 @@ public final class FileUtils {
      */
     public static List<File> getFiles(File folder,
                                       DirectoryTraversal traversal,
-                                      @Nullable IEntryValidator<File> fileValidator) {
+                                      @Nullable IValidator<File> fileValidator) {
         PreCon.notNull(folder);
         PreCon.isValid(folder.isDirectory(), "folder argument must be a folder.");
         PreCon.notNull(traversal);
@@ -218,7 +218,7 @@ public final class FileUtils {
     @Nullable
     public static String scanTextFile(Class<?> cls, String resourcePath,
                                       Charset charSet,
-                                      @Nullable IEntryValidator<String> lineValidator) {
+                                      @Nullable IValidator<String> lineValidator) {
         PreCon.notNull(cls);
         PreCon.notNullOrEmpty(resourcePath);
         PreCon.notNull(charSet);
@@ -270,7 +270,7 @@ public final class FileUtils {
      */
     @Nullable
     public static String scanTextFile(File file, Charset charSet,
-                                      @Nullable IEntryValidator<String> lineValidator) {
+                                      @Nullable IValidator<String> lineValidator) {
         PreCon.notNull(file);
         PreCon.notNull(charSet);
 
@@ -330,7 +330,7 @@ public final class FileUtils {
      */
     @Nullable
     public static String scanTextFile(ZipFile zipFile, String fileName, Charset charSet,
-                                      @Nullable IEntryValidator<String> lineValidator) {
+                                      @Nullable IValidator<String> lineValidator) {
         PreCon.notNull(zipFile);
         PreCon.notNull(fileName);
         PreCon.notNull(charSet);
@@ -388,7 +388,7 @@ public final class FileUtils {
      */
     public static String scanTextFile(InputStream input, Charset charSet,
                                       int initialBufferSize,
-                                      @Nullable IEntryValidator<String> lineValidator) {
+                                      @Nullable IValidator<String> lineValidator) {
         PreCon.notNull(input);
         PreCon.notNull(charSet);
 

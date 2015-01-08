@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.utils;
 import com.jcwhatever.nucleus.extended.MaterialExt;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -378,7 +379,7 @@ public final class LocationUtils {
      */
     @Nullable
     public static Location getClosestLocation(Location sourceLocation, Collection<Location> locations,
-                                              @Nullable IEntryValidator<Location> validator) {
+                                              @Nullable IValidator<Location> validator) {
         PreCon.notNull(sourceLocation);
         PreCon.notNull(locations);
 

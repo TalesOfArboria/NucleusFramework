@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.utils.converters.ValueConverter;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.EnumUtils;
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -91,7 +91,7 @@ public class SettingsManager implements ISettingsManager {
             value = converter.convert(value);
         }
 
-        IEntryValidator<Object> validator = definition.getValidator();
+        IValidator<Object> validator = definition.getValidator();
         if (!(validator != null && !validator.isValid(value)) && _dataNode.set(propertyName, value)) {
 
             if (_onChanged != null) {

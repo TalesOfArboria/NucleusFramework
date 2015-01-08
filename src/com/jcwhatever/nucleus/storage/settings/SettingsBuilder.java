@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.storage.settings;
 
 import com.jcwhatever.nucleus.utils.converters.ValueConverter;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.Collection;
@@ -111,7 +111,7 @@ public class SettingsBuilder {
      *
      * @return  Self for chaining.
      */
-    public SettingsBuilder setValidator(String propertyName, IEntryValidator<Object> validator) {
+    public SettingsBuilder setValidator(String propertyName, IValidator<Object> validator) {
         PreCon.notNullOrEmpty(propertyName);
         PreCon.notNull(validator);
 

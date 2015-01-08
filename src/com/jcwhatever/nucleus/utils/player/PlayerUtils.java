@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.utils.player;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -261,7 +261,7 @@ public final class PlayerUtils {
      * @param validator    A validator used to validate if a player is a candidate to return.
      */
     public static List<Player> getClosestPlayers(Location loc, int chunkRadius,
-                                                 @Nullable IEntryValidator<Player> validator) {
+                                                 @Nullable IValidator<Player> validator) {
         PreCon.notNull(loc);
         PreCon.greaterThanZero(chunkRadius);
 

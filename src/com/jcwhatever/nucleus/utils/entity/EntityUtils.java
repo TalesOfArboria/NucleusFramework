@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -214,7 +214,7 @@ public final class EntityUtils {
      */
     @Nullable
     public static Entity getClosestEntity(Entity sourceEntity, double range,
-                                          @Nullable IEntryValidator<Entity> validator) {
+                                          @Nullable IValidator<Entity> validator) {
         return getClosestEntity(sourceEntity, range, range, range, validator);
     }
 
@@ -242,7 +242,7 @@ public final class EntityUtils {
      */
     @Nullable
     public static Entity getClosestEntity(Entity sourceEntity, double rangeX, double rangeY, double rangeZ,
-                                          @Nullable IEntryValidator<Entity> validator) {
+                                          @Nullable IValidator<Entity> validator) {
         PreCon.notNull(sourceEntity);
         PreCon.positiveNumber(rangeX);
         PreCon.positiveNumber(rangeY);
@@ -287,7 +287,7 @@ public final class EntityUtils {
      */
     @Nullable
     public static LivingEntity getClosestLivingEntity(Entity sourceEntity, double range,
-                                                      @Nullable IEntryValidator<LivingEntity> validator) {
+                                                      @Nullable IValidator<LivingEntity> validator) {
         return getClosestLivingEntity(sourceEntity, range, range, range, validator);
     }
 
@@ -317,7 +317,7 @@ public final class EntityUtils {
     @Nullable
     public static LivingEntity getClosestLivingEntity(Entity sourceEntity,
                                                       double rangeX, double rangeY, double rangeZ,
-                                                      @Nullable IEntryValidator<LivingEntity> validator) {
+                                                      @Nullable IValidator<LivingEntity> validator) {
         PreCon.notNull(sourceEntity);
         PreCon.positiveNumber(rangeX);
         PreCon.positiveNumber(rangeY);

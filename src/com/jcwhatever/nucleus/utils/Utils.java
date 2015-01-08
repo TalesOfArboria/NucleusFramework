@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -133,7 +134,7 @@ public final class Utils {
      * @param searchCandidates  The search candidates.
      * @param entryValidator    The entry validator.
      */
-    public static <T> List<T> search(Collection<T> searchCandidates, IEntryValidator<T> entryValidator) {
+    public static <T> List<T> search(Collection<T> searchCandidates, IValidator<T> entryValidator) {
         PreCon.notNull(searchCandidates);
         PreCon.notNull(entryValidator);
 

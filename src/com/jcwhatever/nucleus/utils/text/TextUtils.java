@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.utils.text;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.language.Localized;
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
@@ -324,7 +324,7 @@ public final class TextUtils {
      * @param searchCandidates  The search candidates.
      * @param entryValidator    The entry validator.
      */
-    public static List<String> search(Collection<String> searchCandidates, IEntryValidator<String> entryValidator) {
+    public static List<String> search(Collection<String> searchCandidates, IValidator<String> entryValidator) {
         return Utils.search(searchCandidates, entryValidator);
     }
 

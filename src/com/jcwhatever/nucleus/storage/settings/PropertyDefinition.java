@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.storage.settings;
 
 import com.jcwhatever.nucleus.utils.converters.ValueConverter;
-import com.jcwhatever.nucleus.utils.IEntryValidator;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import javax.annotation.Nullable;
@@ -43,7 +43,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
     private final Object _defaultValue;
 
     private ValueConverter<?, ?> _converter;
-    private IEntryValidator<Object> _validator;
+    private IValidator<Object> _validator;
 
     /**
      * Constructor.
@@ -159,7 +159,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
      * Get the value validator.
      */
     @Nullable
-    public IEntryValidator<Object> getValidator() {
+    public IValidator<Object> getValidator() {
         return _validator;
     }
 
@@ -168,7 +168,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
      *
      * @param validator  The value validator.
      */
-    public void setValidator(@Nullable IEntryValidator<Object> validator) {
+    public void setValidator(@Nullable IValidator<Object> validator) {
         _validator = validator;
     }
 

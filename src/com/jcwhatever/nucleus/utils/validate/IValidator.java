@@ -23,20 +23,20 @@
  */
 
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.utils.validate;
 
 /**
  * Generic validator that can be passed into methods and classes
  * to add custom validation functionality.
  *
- * @param <T>  The type being validated
+ * @param <E>  The type being validated
  */
-public interface IEntryValidator<T> {
+public interface IValidator<E> {
 
     /**
      * Called to validate an entry.
      *
-     * @param entry  The entry to be validated.
+     * @param element  The element to be validated.
      */
-    boolean isValid(T entry);
+    boolean isValid(E element);
 }
