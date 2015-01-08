@@ -27,8 +27,6 @@ package com.jcwhatever.nucleus.utils.text.dynamic;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
-import org.bukkit.Bukkit;
-
 /**
  * {@code IDynamicText} implementation that displays a status bar
  * that shows percentage.
@@ -44,8 +42,8 @@ public class StatusBarText implements IDynamicText {
     private volatile char _emptyChar = '\u2587';
 
     private volatile TextColor _fullColor = TextColor.GREEN;
-    private volatile TextColor _partialColor = TextColor.GRAY;
-    private volatile TextColor _emptyColor = TextColor.GRAY;
+    private volatile TextColor _partialColor = TextColor.DARK_GREEN;
+    private volatile TextColor _emptyColor = TextColor.DARK_GRAY;
 
     private final Object _sync = new Object();
 
@@ -310,40 +308,41 @@ public class StatusBarText implements IDynamicText {
 
     @Override
     public String nextText() {
-        if (!_isUpdateRequired && Bukkit.isPrimaryThread())
-            return _currentText;
+        if (_isUpdateRequired) {
 
-        synchronized (_sync) {
+            synchronized (_sync) {
 
-            if (!_isUpdateRequired)
-                return _currentText;
+                if (!_isUpdateRequired)
+                    return _currentText;
 
-            _isUpdateRequired = false;
+                _isUpdateRequired = false;
 
-            double dblWidth = Math.min(_width, _width * _percent);
-            double round = Math.round(dblWidth);
+                double dblWidth = Math.min(_width, _width * _percent);
+                double round = Math.round(dblWidth);
 
-            boolean hasPartial = dblWidth < round;
+                boolean hasPartial = dblWidth < round;
 
-            int fullWidth = (int) Math.max(Math.floor(dblWidth), 0);
+                int fullWidth = (int) Math.max(Math.floor(dblWidth), 0);
 
-            StringBuilder buffer = new StringBuilder(_width + 6);
+                StringBuilder buffer = new StringBuilder(_width + 6);
 
-            for (int i = 0; i < _width; i++) {
-                if (i < fullWidth) {
-                    buffer.append(_fullColor.getFormatCode());
-                    buffer.append(_fullChar);
-                } else if (i == fullWidth && hasPartial) {
-                    buffer.append(_partialColor.getFormatCode());
-                    buffer.append(_partialChar);
-                } else {
-                    buffer.append(_emptyColor.getFormatCode());
-                    buffer.append(_emptyChar);
+                for (int i = 0; i < _width; i++) {
+                    if (i < fullWidth) {
+                        buffer.append(_fullColor.getFormatCode());
+                        buffer.append(_fullChar);
+                    } else if (i == fullWidth && hasPartial) {
+                        buffer.append(_partialColor.getFormatCode());
+                        buffer.append(_partialChar);
+                    } else {
+                        buffer.append(_emptyColor.getFormatCode());
+                        buffer.append(_emptyChar);
+                    }
                 }
-            }
 
-            return _currentText = buffer.toString();
+                _currentText = buffer.toString();
+            }
         }
+        return _currentText;
     }
 
     @Override
