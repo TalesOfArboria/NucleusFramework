@@ -30,8 +30,8 @@ import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.language.Localized;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.TextFormatter;
 import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
+import com.jcwhatever.nucleus.utils.text.TextFormatterSettings;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
@@ -122,7 +122,8 @@ public class ParameterDescription implements IPluginOwned {
         }
     };
 
-    private static final TextFormatter _textFormatter = new TextFormatter(
+    private static final TextFormatterSettings FORMAT_SETTINGS = new TextFormatterSettings(
+            TextUtils.TEXT_FORMATTER_SETTINGS,
             NAME_FORMATTER,
             NAME16_FORMATTER,
             ITEM_STACK_FORMATTER,
@@ -147,7 +148,7 @@ public class ParameterDescription implements IPluginOwned {
 
         _command = command;
         _parameterName = parameterName;
-        _description = _textFormatter.format(NucLang.get(command.getPlugin(), description));
+        _description = TextUtils.format(FORMAT_SETTINGS, NucLang.get(command.getPlugin(), description));
     }
 
     /**
@@ -171,7 +172,8 @@ public class ParameterDescription implements IPluginOwned {
         }
 
         // re-add equal characters that may have been in the description.
-        _description = _textFormatter.format(NucLang.get(command.getPlugin(), TextUtils.concat(1, descComp, "=")));
+        _description = TextUtils.format(FORMAT_SETTINGS,
+                NucLang.get(command.getPlugin(), TextUtils.concat(1, descComp, "=")));
     }
 
     /**
