@@ -383,14 +383,14 @@ public final class LocationUtils {
         PreCon.notNull(locations);
 
         Location closest = null;
-        double closestDist = 0.0D;
+        double closestDist = Double.MAX_VALUE;
 
         for (Location loc : locations) {
             if (validator != null && !validator.isValid(loc))
                 continue;
 
-            double dist = 0.0D;
-            if (closest == null || (dist = sourceLocation.distanceSquared(loc)) < closestDist) {
+            double dist;
+            if ((dist = sourceLocation.distanceSquared(loc)) < closestDist) {
                 closest = loc;
                 closestDist = dist;
             }

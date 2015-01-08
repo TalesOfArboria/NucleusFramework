@@ -251,14 +251,14 @@ public final class EntityUtils {
         List<Entity> entities = sourceEntity.getNearbyEntities(rangeX, rangeY, rangeZ);
 
         Entity closest = null;
-        double closestDist = 0.0D;
+        double closestDist = Double.MAX_VALUE;
 
         for (Entity entity : entities) {
             if (validator != null && !validator.isValid(entity))
                 continue;
 
-            double dist = 0.0D;
-            if (closest == null || (dist = sourceEntity.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
+            double dist;
+            if ((dist = sourceEntity.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
                 closest = entity;
                 closestDist = dist;
             }
@@ -326,7 +326,7 @@ public final class EntityUtils {
         List<Entity> entities = sourceEntity.getNearbyEntities(rangeX, rangeY, rangeZ);
 
         LivingEntity closest = null;
-        double closestDist = 0.0D;
+        double closestDist = Double.MAX_VALUE;
 
         for (Entity entity : entities) {
             if (!(entity instanceof LivingEntity))
@@ -337,8 +337,8 @@ public final class EntityUtils {
             if (validator != null && !validator.isValid(livingEntity))
                 continue;
 
-            double dist = 0.0D;
-            if (closest == null || (dist = sourceEntity.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
+            double dist;
+            if ((dist = sourceEntity.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
                 closest = livingEntity;
                 closestDist = dist;
             }
