@@ -34,6 +34,7 @@ public final class DynamicTextComposite implements IDynamicText {
 
     private final String _template;
     private final IDynamicText[] _args;
+    private final Object[] _formatArgs;
     private final int _interval;
 
     /**
@@ -50,11 +51,13 @@ public final class DynamicTextComposite implements IDynamicText {
         _template = template;
         _interval = interval;
         _args = args;
+        _formatArgs = new Object[args.length];
+        System.arraycopy(args, 0, _formatArgs, 0, args.length);
     }
 
     @Override
     public String nextText() {
-        return TextUtils.format(_template, _args);
+        return TextUtils.format(_template, _formatArgs);
     }
 
     @Override
