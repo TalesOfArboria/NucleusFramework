@@ -40,6 +40,7 @@ public final class DynamicTextComposite implements IDynamicText {
      * Constructor.
      *
      * @param template  Text template.
+     * @param interval  A hard set interval. 0 to use dynamic interval.
      * @param args      Format arguments.
      */
     DynamicTextComposite(String template, int interval, IDynamicText... args) {
@@ -59,11 +60,13 @@ public final class DynamicTextComposite implements IDynamicText {
     @Override
     public int getRefreshRate() {
 
+        // check for interval hard set or no dynamic text
         if (_interval > 0 || _args.length == 0)
             return _interval;
 
         int interval = Integer.MAX_VALUE;
 
+        // get smallest refresh rate required
         for (IDynamicText dyn : _args) {
             if (dyn.getRefreshRate() <= 0)
                 continue;
@@ -71,6 +74,7 @@ public final class DynamicTextComposite implements IDynamicText {
             interval = Math.min(dyn.getRefreshRate(), interval);
         }
 
+        // check for changed
         if (interval == Integer.MAX_VALUE)
             interval = 0;
 

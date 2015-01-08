@@ -315,8 +315,14 @@ class BarSender implements Runnable {
             }
         }
 
-        int interval = Math.min(dynText.getRefreshRate() * 50, MAX_REFRESH_RATE);
-        interval = Math.max(interval, MIN_REFRESH_RATE);
+        int interval = dynText.getRefreshRate();
+        if (interval <= 0) {
+            interval = MAX_REFRESH_RATE;
+        }
+        else {
+            interval = Math.min(interval * 50, MAX_REFRESH_RATE);
+            interval = Math.max(interval, MIN_REFRESH_RATE);
+        }
 
         return System.currentTimeMillis() + interval;
     }
