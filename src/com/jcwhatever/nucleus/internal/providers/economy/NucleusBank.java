@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Utils;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -141,7 +141,7 @@ public final class NucleusBank implements IBank {
         Set<String> accountIds = _dataNode.getSubNodeNames();
 
         for (String rawAccountId : accountIds) {
-            UUID playerId = Utils.getId(rawAccountId);
+            UUID playerId = TextUtils.parseUUID(rawAccountId);
             if (playerId == null)
                 continue;
 

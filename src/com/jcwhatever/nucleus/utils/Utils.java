@@ -25,7 +25,6 @@
 
 package com.jcwhatever.nucleus.utils;
 
-import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.Bukkit;
@@ -34,8 +33,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Generic utilities
@@ -64,85 +61,21 @@ public final class Utils {
     }
 
     /**
-     * Parse the {@code UUID} from the supplied string.
-     * If parsing fails, null is returned.
-     *
-     * @param id  The id to parse.
-     */
-    @Nullable
-    public static UUID getId(String id) {
-
-        try {
-            return UUID.fromString(id);
-        }
-        catch (IllegalArgumentException iae) {
-            return null;
-        }
-    }
-
-    /**
-     * Parse the {@code UUID}'s from the supplied collection
-     * of strings. If a string cannot be parsed, it is not
-     * included in the results.
-     *
-     * @param uuids  The ids to parse.
-     */
-    public static List<UUID> getIds(Collection<String> uuids) {
-
-        List<UUID> results = new ArrayList<UUID>(uuids.size());
-
-        for (String raw : uuids) {
-            UUID id = Utils.getId(raw);
-            if (id == null)
-                continue;
-
-            results.add(id);
-        }
-        return results;
-    }
-
-    /**
-     * Parse the {@code UUID}'s from the supplied comma
-     * delimited string of ids. If an Id cannot be parsed,
-     * it is not included in the results.
-     *
-     * @param uuidStr  The string Ids to parse.
-     */
-    public static List<UUID> getIds(String uuidStr) {
-        uuidStr = uuidStr.toLowerCase();
-        String[] rawIds = TextUtils.PATTERN_COMMA.split(uuidStr);
-
-        List<UUID> results = new ArrayList<UUID>(rawIds.length);
-
-        for (String rawId : rawIds) {
-            String trimmedId = rawId.trim();
-
-            UUID id = Utils.getId(trimmedId);
-            if (id == null)
-                continue;
-
-            results.add(id);
-        }
-
-        return results;
-    }
-
-    /**
      * Search a collection for valid candidates using an
-     * {@code EntryValidator} to validate.
+     * {@code IValidator} to validate.
      *
      * @param searchCandidates  The search candidates.
-     * @param entryValidator    The entry validator.
+     * @param validator         The validator.
      */
-    public static <T> List<T> search(Collection<T> searchCandidates, IValidator<T> entryValidator) {
+    public static <T> List<T> search(Collection<T> searchCandidates, IValidator<T> validator) {
         PreCon.notNull(searchCandidates);
-        PreCon.notNull(entryValidator);
+        PreCon.notNull(validator);
 
         List<T> result = new ArrayList<>(searchCandidates.size());
 
         for (T candidate : searchCandidates) {
 
-            if (entryValidator.isValid(candidate)) {
+            if (validator.isValid(candidate)) {
                 result.add(candidate);
             }
         }

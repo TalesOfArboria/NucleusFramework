@@ -25,21 +25,21 @@
 
 package com.jcwhatever.nucleus.itembank;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
-import com.jcwhatever.nucleus.utils.items.ItemWrapper;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Utils;
+import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemWrapper;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Represents a single players Item Bank Account.
@@ -256,7 +256,7 @@ class ItemBankAccount {
 
             for (String rawId : rawIds) {
 
-                UUID itemId = Utils.getId(rawId);
+                UUID itemId = TextUtils.parseUUID(rawId);
                 if (itemId == null)
                     continue;
 

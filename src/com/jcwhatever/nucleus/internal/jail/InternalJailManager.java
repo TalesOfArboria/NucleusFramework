@@ -36,10 +36,10 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.DateUtils.TimeRound;
 import com.jcwhatever.nucleus.utils.DependencyRunner;
-import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.Utils;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -208,7 +208,7 @@ public final class InternalJailManager implements IJailManager {
         Set<String> rawIds = lateNode.getSubNodeNames();
 
         for (String rawId : rawIds) {
-            UUID playerId = Utils.getId(rawId);
+            UUID playerId = TextUtils.parseUUID(rawId);
             if (playerId == null)
                 continue;
 
@@ -230,7 +230,7 @@ public final class InternalJailManager implements IJailManager {
 
             IDataNode node = sessions.getNode(rawId);
 
-            UUID playerId = Utils.getId(rawId);
+            UUID playerId = TextUtils.parseUUID(rawId);
             if (playerId == null)
                 continue;
 
