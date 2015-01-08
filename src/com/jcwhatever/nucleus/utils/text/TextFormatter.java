@@ -25,13 +25,11 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextFormatterSettings.FormatPolicy;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -81,83 +79,32 @@ public class TextFormatter {
         }
     }
 
-    private final Map<String, ITagFormatter> _formatters = new HashMap<>(20);
+    private static ITagFormatter ERASER = new ITagFormatter() {
+        @Override
+        public String getTag() {
+            return "#ERASER#";
+        }
+
+        @Override
+        public void append(StringBuilder sb, String rawTag) {
+            // do nothing
+        }
+    };
+
     private final StringBuilder _textBuffer = new StringBuilder(100);
     private final StringBuilder _tagBuffer = new StringBuilder(25);
     private final Object _sync = new Object();
-    private final Thread _instantiatedThread;
-
-    /**
-     * Constructor.
-     */
-    public TextFormatter() {
-        _instantiatedThread = Thread.currentThread();
-    }
+    private final Thread _homeThread;
+    private final TextFormatterSettings _settings;
 
     /**
      * Constructor.
      *
-     * @param formatters  A collection of formatters to include.
+     * @param settings  The formatter settings
      */
-    public TextFormatter(Collection<? extends ITagFormatter> formatters) {
-        for (ITagFormatter formatter : formatters) {
-            _formatters.put(formatter.getTag(), formatter);
-        }
-        _instantiatedThread = Thread.currentThread();
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param formatters  The formatters to include.
-     */
-    public TextFormatter(ITagFormatter... formatters) {
-        for (ITagFormatter formatter : formatters) {
-            _formatters.put(formatter.getTag(), formatter);
-        }
-        _instantiatedThread = Thread.currentThread();
-    }
-
-    /**
-     * Get a default tag formatter by case sensitive tag.
-     *
-     * @param tag  The tag text.
-     */
-    public ITagFormatter getFormatter(String tag) {
-        synchronized (_sync) {
-            return _formatters.get(tag);
-        }
-    }
-
-    /**
-     * Get all default tag formatters.
-     */
-    public List<ITagFormatter> getFormatters() {
-        synchronized (_sync) {
-            return new ArrayList<>(_formatters.values());
-        }
-    }
-
-    /**
-     * Remove a default tag formatter.
-     *
-     * @param tag  The tag to remove.
-     */
-    public void removeFormatter(String tag) {
-        synchronized (_sync) {
-            _formatters.remove(tag);
-        }
-    }
-
-    /**
-     * Add a default tag formatter.
-     *
-     * @param formatter  The tag formatter to add.
-     */
-    public void addFormatter(ITagFormatter formatter) {
-        synchronized (_sync) {
-            _formatters.put(formatter.getTag(), formatter);
-        }
+    public TextFormatter(TextFormatterSettings settings) {
+        _settings = settings;
+        _homeThread = Thread.currentThread();
     }
 
     /**
@@ -171,40 +118,29 @@ public class TextFormatter {
     public String format(String template, Object... params) {
         PreCon.notNull(template);
 
-        if (isHomeThread()) {
-            return format(_formatters, template, params);
-        }
-        else {
-            Map<String, ITagFormatter> formatters;
-            synchronized (_sync) {
-                formatters = new HashMap<>(_formatters);
-            }
-            return format(formatters, template, params);
-        }
+        return format(_settings, template, params);
     }
 
     /**
-     * Format text using a custom set of formatters.
+     * Format text.
      *
-     * @param formatters  The formatter map to use.
-     * @param template    The template text.
-     * @param params      The parameters to add.
+     * @param settings  Custom formatter settings to use.
+     * @param template  The template text.
+     * @param params    The parameters to add.
      *
      * @return  The formatted string.
      */
-    public String format(Map<String, ITagFormatter> formatters, String template, Object... params) {
-        PreCon.notNull(formatters);
+    public String format(TextFormatterSettings settings, String template, Object... params) {
         PreCon.notNull(template);
-        PreCon.notNull(params);
 
         if (isHomeThread()) {
-            return format(_textBuffer, _tagBuffer, formatters, template, params);
+            return format(settings, _textBuffer, _tagBuffer, settings.getFormatMap(), template, params);
         }
         else {
             StringBuilder textBuffer = new StringBuilder(template.length());
             StringBuilder tagBuffer = new StringBuilder(10);
 
-            return format(textBuffer, tagBuffer, formatters, template, params);
+            return format(settings, textBuffer, tagBuffer, settings.getFormatMap(), template, params);
         }
     }
 
@@ -217,8 +153,9 @@ public class TextFormatter {
      *
      * @return  The formatted string.
      */
-    private String format(StringBuilder textBuffer, StringBuilder tagBuffer,
-                            Map<String, ITagFormatter> formatters, String template, Object... params) {
+    private String format(TextFormatterSettings settings,
+                          StringBuilder textBuffer, StringBuilder tagBuffer,
+                          Map<String, ITagFormatter> formatters, String template, Object... params) {
 
         if (template.indexOf('{') == -1 && template.indexOf('\\') == -1)
             return template;
@@ -245,7 +182,7 @@ public class TextFormatter {
                 // tag parsed
                 else {
                     i++; // add 1 for closing brace
-                    appendReplacement(tagBuffer, textBuffer, tag, params, formatters);
+                    appendReplacement(settings, tagBuffer, textBuffer, tag, params, formatters);
                 }
 
             }
@@ -270,13 +207,14 @@ public class TextFormatter {
                 char next = template.charAt(i + 1);
 
                 // handle new line character
-                if (next == 'n' || next == 'r') {
+                if ((next == 'n' || next == 'r') && settings.getLineReturnPolicy() != FormatPolicy.IGNORE) {
 
-                    textBuffer.append('\n');
+                    if (settings.getLineReturnPolicy() != FormatPolicy.REMOVE)
+                        textBuffer.append('\n');
                     i++;
                 }
                 // handle unicode
-                else if (next == 'u') {
+                else if (next == 'u' && settings.getUnicodePolicy() != FormatPolicy.IGNORE) {
 
                     i++;
                     char unicode = parseUnicode(tagBuffer, template, i);
@@ -285,7 +223,9 @@ public class TextFormatter {
                         textBuffer.append("\\u");
                     }
                     else {
-                        textBuffer.append(unicode);
+                        if (settings.getUnicodePolicy() != FormatPolicy.REMOVE)
+                            textBuffer.append(unicode);
+
                         i+= Math.min(4, template.length() - i);
                     }
                 }
@@ -359,7 +299,8 @@ public class TextFormatter {
     /*
      * Append replacement text for a tag
      */
-    private void appendReplacement(StringBuilder tagBuffer, StringBuilder sb,
+    private void appendReplacement(TextFormatterSettings settings,
+                                      StringBuilder tagBuffer, StringBuilder sb,
                                    String tag, Object[] params, Map<String, ITagFormatter> formatters) {
 
         boolean isNumber = !tag.isEmpty();
@@ -425,10 +366,23 @@ public class TextFormatter {
         else {
 
             // check for custom formatter
-            ITagFormatter formatter = getFormatter(parsedTag, formatters);
-            if (formatter == null) {
+            ITagFormatter formatter = settings.getTagPolicy() == FormatPolicy.IGNORE
+                    ? null
+                    : getFormatter(parsedTag, formatters);
+
+            if (formatter == null && settings.getColorPolicy() != FormatPolicy.IGNORE) {
+
                 // check for color formatter
                 formatter = getFormatter(parsedTag, _colors);
+
+                // remove color tag if color policy is remove
+                if (formatter != null && settings.getColorPolicy() == FormatPolicy.REMOVE) {
+                    formatter = ERASER;
+                }
+            }
+            // remove tag if tag policy is remove
+            else if (formatter != null && settings.getTagPolicy() == FormatPolicy.REMOVE) {
+                formatter = ERASER;
             }
 
             if (formatter != null) {
@@ -466,7 +420,7 @@ public class TextFormatter {
      * the formatter was instantiated on.
      */
     private boolean isHomeThread() {
-        return Thread.currentThread().equals(_instantiatedThread);
+        return Thread.currentThread().equals(_homeThread);
     }
 
     /**

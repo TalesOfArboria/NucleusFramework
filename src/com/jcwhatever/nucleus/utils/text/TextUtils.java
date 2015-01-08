@@ -82,10 +82,10 @@ public final class TextUtils {
     public static final Pattern PATTERN_DOUBLE_QUOTE = Pattern.compile("\"");
     public static final Pattern PATTERN_SINGLE_QUOTE = Pattern.compile("'");
 
-    public static final TextFormatter TEXT_FORMATTER = new TextFormatter();
+    public static final TextFormatterSettings TEXT_FORMATTER_SETTINGS = new TextFormatterSettings();
+    public static final TextFormatter TEXT_FORMATTER = new TextFormatter(TEXT_FORMATTER_SETTINGS);
 
-    private static final Map<Plugin, Map<String, ITagFormatter>> _pluginFormatters = new WeakHashMap<>(50);
-    private static final Object _sync = new Object();
+    private static final Map<Plugin, TextFormatterSettings> _pluginFormatters = new WeakHashMap<>(10);
 
     public enum FormatTemplate {
         /**
@@ -858,18 +858,44 @@ public final class TextUtils {
      *
      * @param plugin  The plugin
      * @param msg     The message to format plugin info into.
+     * @param args    Optional message format arguments.
      */
-    public static String formatPluginInfo(Plugin plugin, String msg) {
+    public static String formatPluginInfo(Plugin plugin, String msg, Object... args) {
+        return formatPluginInfo(plugin, null, msg, args);
+    }
 
-        Map<String, ITagFormatter> formatters = _pluginFormatters.get(plugin);
-        if (formatters == null) {
-            formatters = getPluginFormatters(plugin);
-            _pluginFormatters.put(plugin, formatters);
+    /**
+     * Format text string by replacing placeholders with the information
+     * about the specified plugin.
+     *
+     * <p>Placeholders: {plugin-version}, {plugin-name}, {plugin-full-name}, {plugin-author}, {plugin-command}</p>
+     *
+     * @param plugin    The plugin
+     * @param settings  The settings to use.
+     * @param msg       The message to format plugin info into.
+     * @param args      Optional message format arguments.
+     */
+    public static String formatPluginInfo(Plugin plugin,
+                                          @Nullable TextFormatterSettings settings,
+                                          String msg, Object... args) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(msg);
+        PreCon.notNull(args);
+
+        TextFormatterSettings formatters;
+
+        if (settings == null) {
+            formatters = _pluginFormatters.get(plugin);
+            if (formatters == null) {
+                formatters = getPluginFormatters(plugin, null);
+                _pluginFormatters.put(plugin, formatters);
+            }
+        }
+        else {
+            formatters = getPluginFormatters(plugin, settings);
         }
 
-        synchronized (_sync) {
-            return TEXT_FORMATTER.format(formatters, msg);
-        }
+        return TEXT_FORMATTER.format(formatters, msg, args);
     }
 
     /**
@@ -882,11 +908,33 @@ public final class TextUtils {
      * <p>Color can be specified using {@link TextColor} enum names in curly brackets.
      * (i.e. {GREEN})</p>
      *
-     * @param template  An object whose toString method yields the message template.
-     * @param params    The object to format into the message.
+     * @param template  An object whose {@code #toString} method yields the message template.
+     * @param args      Optional format arguments.
      */
-    public static String format(Object template, Object... params) {
-        return format(template.toString(), params);
+    public static String format(Object template, Object... args) {
+        return format(template.toString(), args);
+    }
+
+    /**
+     * Formats text string by replacing placeholders (i.e {0})
+     * with the string representation of the objects provided.
+     *
+     * <p>The index order of the object params as provided is mapped to the number
+     * inside the placeholder. </p>
+     *
+     * <p>Color can be specified using {@link TextColor} enum names in curly brackets.
+     * (i.e. {GREEN})</p>
+     *
+     * @param settings  A custom set of settings to use.
+     * @param template  An object whose {@code #toString} method yields the message template.
+     * @param args      Optional format arguments.
+     */
+    public static String format(TextFormatterSettings settings, Object template, Object... args) {
+        PreCon.notNull(settings);
+        PreCon.notNull(template);
+        PreCon.notNull(args);
+
+        return TEXT_FORMATTER.format(settings, template.toString(), args);
     }
 
     /**
@@ -899,39 +947,24 @@ public final class TextUtils {
      * <p>Color can be specified using {@link TextColor} names in curly brackets.
      * (i.e. {GREEN})</p>
      *
-     * @param msg     The message to format.
-     * @param params  The object to format into the message.
+     * @param msg   The message to format.
+     * @param args  Optional format arguments.
      */
-    public static String format(String msg, Object... params) {
+    public static String format(String msg, Object... args) {
         PreCon.notNull(msg);
-        PreCon.notNull(params);
+        PreCon.notNull(args);
 
-        synchronized (_sync) {
-            return TEXT_FORMATTER.format(msg, params);
-        }
+        return TEXT_FORMATTER.format(msg, args);
     }
 
     /**
-     * Combine a collection of text components into a formatted {@code String}.
-     *
-     * @param textComponents  The collection of {@code TextComponents} to combine.
+     * Creates a new {@code TextFormatterSettings} that contains the settings from the
+     * specified {@code TextFormatterSettings} and additionally formatters for the specified
+     * plugin.
      */
-    public static String combineTextComponents(Collection<TextComponent> textComponents) {
-        PreCon.notNull(textComponents);
-
-        StringBuilder buffer = new StringBuilder(textComponents.size() * 15);
-
-        for (TextComponent component : textComponents) {
-            buffer.append(component.getFormatted());
-        }
-
-        return buffer.toString();
-    }
-
-    /**
-     * Get plugin specific tag formatters.
-     */
-    public static Map<String, ITagFormatter> getPluginFormatters(final Plugin plugin) {
+    public static TextFormatterSettings getPluginFormatters(final Plugin plugin,
+                                                            @Nullable TextFormatterSettings settings) {
+        PreCon.notNull(plugin);
 
         Map<String, ITagFormatter> formatters = new HashMap<>(10);
 
@@ -1010,7 +1043,9 @@ public final class TextUtils {
             }
         });
 
-        return formatters;
+        return settings != null
+                ? new TextFormatterSettings(settings, formatters)
+                : new TextFormatterSettings(formatters);
     }
 
     /**
