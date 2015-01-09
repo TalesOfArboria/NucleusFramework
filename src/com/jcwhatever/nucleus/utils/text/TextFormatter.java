@@ -476,9 +476,6 @@ public class TextFormatter {
         if (template.isEmpty())
             return false;
 
-        if (template.length() > 150)
-            return true; // faster to format than to check then format
-
         if (settings.getEscaped().length == 0 && template.indexOf('{') == -1 && template.indexOf('\\') == -1)
             return false;
 
