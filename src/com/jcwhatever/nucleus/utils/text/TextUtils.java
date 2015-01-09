@@ -402,7 +402,7 @@ public final class TextUtils {
         PreCon.lessThan(length, s.length());
 
         if (s.length() > length)
-            return s.substring(0, length - 1);
+            return s.substring(0, length);
 
         return s;
     }
@@ -415,7 +415,7 @@ public final class TextUtils {
      * @param s  The string to truncate
      */
     public static String truncate(String s) {
-        return TextUtils.truncate(s, 15);
+        return TextUtils.truncate(s, 16);
     }
 
     /**
@@ -573,12 +573,12 @@ public final class TextUtils {
      * specified separator string.
      *
      * @param startIndex  The index to start concatenating at
-     * @param endIndex    The index to stop concatenating at
+     * @param endIndexP1    The index to stop concatenating at (+1, add 1 to the end index)
      * @param strArray    The array to concatenate
      */
-    public static <T> String concat(int startIndex, int endIndex, T[] strArray) {
+    public static <T> String concat(int startIndex, int endIndexP1, T[] strArray) {
         //noinspection ConstantConditions
-        return concat(startIndex, endIndex, strArray, null, "");
+        return concat(startIndex, endIndexP1, strArray, null, "");
     }
 
 
@@ -587,13 +587,13 @@ public final class TextUtils {
      * specified separator string.
      *
      * @param startIndex  The index to start concatenating at
-     * @param endIndex    The index to stop concatenating at
+     * @param endIndexP1    The index to stop concatenating at (+1, add 1 to the end index)
      * @param strArray    The array to concatenate
      * @param separator   The separator to insert between elements
      */
-    public static <T> String concat(int startIndex, int endIndex, T[] strArray, @Nullable String separator) {
+    public static <T> String concat(int startIndex, int endIndexP1, T[] strArray, @Nullable String separator) {
         //noinspection ConstantConditions
-        return concat(startIndex, endIndex, strArray, separator, "");
+        return concat(startIndex, endIndexP1, strArray, separator, "");
     }
 
 
@@ -602,23 +602,23 @@ public final class TextUtils {
      * specified separator string.
      *
      * @param startIndex  The index to start concatenating at
-     * @param endIndex    The index to stop concatenating at
+     * @param endIndexP1    The index to stop concatenating at (+1, add 1 to the end index)
      * @param strArray    The array to concatenate
      */
     @Nullable
-    public static <T> String concat(int startIndex, int endIndex, T[] strArray,
+    public static <T> String concat(int startIndex, int endIndexP1, T[] strArray,
                                     @Nullable String separator, @Nullable String emptyValue) {
         PreCon.notNull(strArray);
 
-        if (strArray.length == 0 || startIndex == endIndex)
+        if (strArray.length == 0 || startIndex == endIndexP1)
             return emptyValue;
 
         if (separator == null)
             separator = "";
 
-        StringBuilder buffy = new StringBuilder((endIndex - startIndex) * 25);
+        StringBuilder buffy = new StringBuilder((endIndexP1 - startIndex) * 25);
         boolean isEnum = strArray[0] instanceof Enum<?>;
-        for (int i = startIndex; i < endIndex; i++) {
+        for (int i = startIndex; i < endIndexP1; i++) {
             T str = strArray[i];
             if (str == null)
                 continue;
@@ -653,11 +653,13 @@ public final class TextUtils {
      *
      * @param str                   The string to split/paginate
      * @param linePrefix            The prefix to append to each line
-     * @param maxLineLen            The max length of a line
+     * @param maxLineLen            The max length of a line. Must be greater than 1.
      * @param excludeColorsFromLen  True to exclude color characters from length calculations
      */
     public static List<String> paginateString(String str, @Nullable String linePrefix,
                                               int maxLineLen, boolean excludeColorsFromLen) {
+        PreCon.notNull(str);
+        PreCon.isValid(maxLineLen > 1);
 
         if (linePrefix != null)
             str = str.replace(linePrefix, "");
@@ -668,7 +670,6 @@ public final class TextUtils {
 
         List<String> results = new ArrayList<String>(str.length() / maxLineLen);
 
-        String format;
         StringBuilder line = new StringBuilder(maxLineLen);
         line.append(linePrefix);
 
@@ -679,15 +680,15 @@ public final class TextUtils {
         for (int i=0; i < words.length; i++) {
 
             int lineLength = excludeColorsFromLen
-                    ? TextColor.remove(line.toString()).length()
+                    ? TextColor.remove(line).length()
                     : line.length();
 
             int wordLength = excludeColorsFromLen
                     ? TextColor.remove(words[i]).length()
                     : words[i].length();
 
-            if (lineLength + wordLength + 1 <= maxLineLen ||
-                    prefixSize + wordLength >= maxLineLen) { // append to current line
+            if (lineLength + wordLength + 1 <= maxLineLen &&
+                    prefixSize + wordLength < maxLineLen) { // append to current line
 
                 if (wordAddedToLine)
                     line.append(' ');
@@ -697,19 +698,31 @@ public final class TextUtils {
             }
             else { // create new line
 
-                if (i != 0) {
-                    i = i - 1;
-                }
+                String format = null;
 
-                String finishedLine = line.toString();
-                format = ChatColor.getLastColors(finishedLine);
-                results.add(finishedLine);
+                if (line.length() != 0 && i != 0) {
+                    String finishedLine = line.toString();
+                    format = ChatColor.getLastColors(finishedLine);
+                    results.add(finishedLine);
+                }
 
                 line.setLength(0);
                 line.append(linePrefix);
-                line.append(format);
+                if (format != null)
+                    line.append(format);
 
-                wordAddedToLine = false;
+                if (prefixSize + wordLength >= maxLineLen) {
+                    line.append(words[i]);
+                    wordAddedToLine = true;
+                }
+                else {
+
+                    if (i != 0) {
+                        i = i - 1;
+                    }
+
+                    wordAddedToLine = false;
+                }
             }
         }
 
@@ -721,78 +734,6 @@ public final class TextUtils {
         }
 
         return results;
-    }
-
-    /**
-     * Remove null items from an array and return
-     * as a {@code String[]}
-     *
-     * @param array  Array to trim
-     */
-    public static <T> String[] trimArray(T[] array) {
-
-        List<String> items = new ArrayList<String>(array.length);
-
-        for (T item : array) {
-            if (item == null)
-                continue;
-
-            items.add(String.valueOf(item));
-        }
-
-        return items.toArray(new String[items.size()]);
-    }
-
-    /**
-     * Remove null items from an array and return
-     * as a {@code String[]}
-     *
-     * @param array  Array to trim
-     */
-    public static <T> String[] trimArray(T[] array, T nullValue) {
-
-        List<String> items = new ArrayList<String>(array.length);
-
-        for (T item : array) {
-            if (item == null && nullValue != null) {
-                items.add(String.valueOf(nullValue));
-            }
-
-            if (item == null)
-                continue;
-
-            items.add(String.valueOf(item));
-        }
-
-        return items.toArray(new String[items.size()]);
-    }
-
-
-    /**
-     * Replace null values in an array with the specified
-     * value and return as a {@code String[]}
-     *
-     * @param array      Array to fill null values
-     * @param nullValue  The value to insert in place of null values
-     */
-    public static <T> String[] fillArray(T[] array, T nullValue) {
-        PreCon.notNull(array);
-        PreCon.notNull(nullValue);
-
-        List<String> items = new ArrayList<String>(array.length);
-
-        for (T item : array) {
-            if (item == null) {
-                items.add(String.valueOf(nullValue));
-            }
-
-            if (item == null)
-                continue;
-
-            items.add(String.valueOf(item));
-        }
-
-        return items.toArray(new String[items.size()]);
     }
 
     /**
@@ -1170,7 +1111,7 @@ public final class TextUtils {
      * @param string      The string to parse.
      * @param defaultVal  The default value to return if parsing fails.
      */
-    public static double parseDouble(@Nullable String string, byte defaultVal) {
+    public static double parseDouble(@Nullable String string, double defaultVal) {
         if (string == null)
             return defaultVal;
 
