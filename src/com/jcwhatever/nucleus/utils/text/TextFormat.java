@@ -208,7 +208,7 @@ public class TextFormat {
 
         StringBuilder sb;
 
-        if (Bukkit.isPrimaryThread()) {
+        if (Bukkit.getServer() != null && Bukkit.isPrimaryThread()) {
             sb = _largeBuffer;
             sb.setLength(0);
         }
