@@ -26,8 +26,8 @@
 package com.jcwhatever.nucleus.internal;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.EntryCounter;
-import com.jcwhatever.nucleus.collections.EntryCounter.RemovalPolicy;
+import com.jcwhatever.nucleus.collections.ElementCounter;
+import com.jcwhatever.nucleus.collections.ElementCounter.RemovalPolicy;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.regions.IRegion;
@@ -83,7 +83,7 @@ public final class InternalRegionManager implements IGlobalRegionManager {
     private final Map<String, Set<IRegion>> _allRegionsMap = new HashMap<>(500);
 
     // worlds that have regions
-    private EntryCounter<World> _listenerWorlds = new EntryCounter<>(RemovalPolicy.REMOVE);
+    private ElementCounter<World> _listenerWorlds = new ElementCounter<>(RemovalPolicy.REMOVE);
 
     // cached regions the player was detected in in last player watcher cycle.
     private Map<UUID, OrderedRegions<IRegion>> _playerCacheMap;
@@ -547,7 +547,7 @@ public final class InternalRegionManager implements IGlobalRegionManager {
         @Override
         public void run() {
 
-            List<World> worlds = new ArrayList<World>(_manager._listenerWorlds.getEntries());
+            List<World> worlds = new ArrayList<World>(_manager._listenerWorlds.getElements());
 
             final List<WorldPlayers> worldPlayers = new ArrayList<WorldPlayers>(worlds.size());
 

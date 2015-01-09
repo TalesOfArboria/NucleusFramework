@@ -39,18 +39,18 @@ import java.util.Set;
 /**
  * Counts the number of times an item is added but only holds a single reference to the item.
  *
- * <p>Depending on the removal policy, when the items count goes below 0 the item is or isn't removed.</p>
+ * <p>Depending on the removal policy, when the items count reaches 0 the item is or isn't removed.</p>
  *
- * @param <T>
+ * @param <E>  The element type.
  */
-public class EntryCounter<T> implements Iterable<T> {
+public class ElementCounter<E> implements Iterable<E> {
 
-    private Map<T, Entry> _countMap;
+    private Map<E, Counter> _countMap;
     private RemovalPolicy _removalPolicy;
 
     // cache to quickly increment a value without having to look it up in the type count map.
-    private transient T _currentItem;
-    private transient Entry _currentEntry;
+    private transient E _current;
+    private transient Counter _currentCounter;
 
     /**
      * Used to specify if the counter should remove
@@ -77,7 +77,7 @@ public class EntryCounter<T> implements Iterable<T> {
      *
      * @param removalPolicy Specify how items are handled when their count reaches 0.
      */
-    public EntryCounter(RemovalPolicy removalPolicy) {
+    public ElementCounter(RemovalPolicy removalPolicy) {
         _removalPolicy = removalPolicy;
         _countMap = new HashMap<>(25);
     }
@@ -87,7 +87,7 @@ public class EntryCounter<T> implements Iterable<T> {
      *
      * @param removalPolicy Specify how items are handled when their count reaches 0.
      */
-    public EntryCounter(RemovalPolicy removalPolicy, int size) {
+    public ElementCounter(RemovalPolicy removalPolicy, int size) {
         _removalPolicy = removalPolicy;
         _countMap = new HashMap<>(size);
     }
@@ -95,148 +95,148 @@ public class EntryCounter<T> implements Iterable<T> {
     /**
      * Add a collection of items to the counter
      *
-     * @param items  The collection to add
+     * @param collection  The collection to add
      */
-    public void addAll(Collection<T> items) {
-        for (T item : items)
+    public void addAll(Collection<E> collection) {
+        for (E item : collection)
             add(item);
     }
 
     /**
      * Add an item to the counter.
      *
-     * @param item  The item to add.
+     * @param element  The item to add.
      *
      * @return  The new count for the item.
      */
-    public int add(T item) {
-        PreCon.notNull(item);
+    public int add(E element) {
+        PreCon.notNull(element);
 
-        Entry entry;
+        Counter counter;
 
-        entry = _currentItem != null && _currentItem.equals(item)
-                ? _currentEntry
-                : _countMap.get(item);
+        counter = _current != null && _current.equals(element)
+                ? _currentCounter
+                : _countMap.get(element);
 
         // establish baseline value
-        if (entry == null) {
-            entry = new Entry(1);
-            _countMap.put(item, entry);
+        if (counter == null) {
+            counter = new Counter(1);
+            _countMap.put(element, counter);
         }
         // increment value
         else {
-            entry.increment(1);
+            counter.increment(1);
         }
 
         // place value in cache
-        _currentItem = item;
-        _currentEntry = entry;
+        _current = element;
+        _currentCounter = counter;
 
-        return entry.count();
+        return counter.count();
     }
 
     /**
      * Subtract a collection of items from the counter
      *
-     * @param items  The collection to subtract.
+     * @param collection  The collection to subtract.
      */
-    public void subtractAll(Collection<T> items) {
-        for (T item : items)
+    public void subtractAll(Collection<E> collection) {
+        for (E item : collection)
             subtract(item);
     }
 
     /**
      * Subtract the count from an item.
      *
-     * @param item  The item to subtract.
+     * @param element  The item to subtract.
      *
      * @return  The new count for the item.
      */
-    public int subtract(T item) {
-        PreCon.notNull(item);
+    public int subtract(E element) {
+        PreCon.notNull(element);
 
-        Entry entry;
+        Counter counter;
 
-        entry = _currentItem != null && _currentItem.equals(item)
-                ? _currentEntry
-                : _countMap.get(item);
+        counter = _current != null && _current.equals(element)
+                ? _currentCounter
+                : _countMap.get(element);
 
         // Check if item is in counter
-        if (entry == null) {
+        if (counter == null) {
             if (_removalPolicy == RemovalPolicy.REMOVE) {
                 return 0;
             }
             else {
-                entry = new Entry(-1);
-                _countMap.put(item, entry);
+                counter = new Counter(-1);
+                _countMap.put(element, counter);
             }
         }
         // decrement count
         else {
-            entry.increment(-1);
+            counter.increment(-1);
         }
 
         // check if the item needs to be removed
-        if (_removalPolicy == RemovalPolicy.REMOVE && entry.count() <= 0) {
-            _currentItem = null;
-            _currentEntry = null;
-            _countMap.remove(item);
+        if (_removalPolicy == RemovalPolicy.REMOVE && counter.count() <= 0) {
+            _current = null;
+            _currentCounter = null;
+            _countMap.remove(element);
             return 0;
         }
 
         // place value in cache
-        _currentItem = item;
-        _currentEntry = entry;
+        _current = element;
+        _currentCounter = counter;
 
-        return entry.count();
+        return counter.count();
     }
 
     /**
      * Get the current counter value for the specified item.
      *
-     * @param item  The item to get the count value for
+     * @param element  The item to get the count value for
      */
-    public int getCount(T item) {
-        PreCon.notNull(item);
+    public int getCount(E element) {
+        PreCon.notNull(element);
 
-        if (_currentItem != null && _currentItem.equals(item)) {
-            return _currentEntry.count();
+        if (_current != null && _current.equals(element)) {
+            return _currentCounter.count();
         }
 
-        Entry entry = _countMap.get(item);
+        Counter counter = _countMap.get(element);
 
-        if (entry == null) {
+        if (counter == null) {
             return 0;
         }
 
-        return entry.count();
+        return counter.count();
     }
 
     /**
-     * Get the number of types that are counted.
+     * Get the number of elements that are counted.
      */
-    public int getEntrySize() {
+    public int size() {
         return _countMap.keySet().size();
     }
 
     /**
      * Determine if an item is in the counter.
      *
-     * @param item  The item to check.
+     * @param element  The item to check.
      */
-    public boolean contains(T item) {
-        PreCon.notNull(item);
+    public boolean contains(E element) {
+        PreCon.notNull(element);
 
-        return _countMap.keySet().contains(item);
+        return _countMap.keySet().contains(element);
     }
 
 
     /**
      * Get a new hash set containing the items that were counted.
      */
-    public Set<T> getEntries() {
+    public Set<E> getElements() {
 
-        return new HashSet<T>(_countMap.keySet());
+        return new HashSet<E>(_countMap.keySet());
     }
 
     /**
@@ -244,8 +244,8 @@ public class EntryCounter<T> implements Iterable<T> {
      */
     public void reset() {
         _countMap.clear();
-        _currentItem = null;
-        _currentEntry = null;
+        _current = null;
+        _currentCounter = null;
     }
 
     /**
@@ -257,17 +257,17 @@ public class EntryCounter<T> implements Iterable<T> {
      * <p>Each item appears only once in the iteration regardless of its count.</p>
      */
     @Override
-    public Iterator<T> iterator() {
+    public Iterator<E> iterator() {
 
-        List<T> types = new ArrayList<T>(_countMap.keySet());
+        List<E> types = new ArrayList<E>(_countMap.keySet());
         return types.iterator();
     }
 
-    private class Entry {
+    private class Counter {
 
         private int _count;
 
-        Entry(int count) {
+        Counter(int count) {
             _count = _removalPolicy == RemovalPolicy.BOTTOM_OUT
                     ? Math.max(0, count)
                     : count;
