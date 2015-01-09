@@ -26,9 +26,9 @@ package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextFormat.TextFormats;
-import com.sun.istack.internal.Nullable;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * A segment of text that begins with a color/format.

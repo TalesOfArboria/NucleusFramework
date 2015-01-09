@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.views.factory;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.views.View;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * A factory used to dynamically generate a view.

@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.utils.items;
 
 import com.jcwhatever.nucleus.extended.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -38,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * {@code ItemStack} builder.
