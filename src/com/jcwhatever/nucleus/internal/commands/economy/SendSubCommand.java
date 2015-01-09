@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
+import com.jcwhatever.nucleus.providers.economy.TransactionFailException;
 import com.jcwhatever.nucleus.utils.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
@@ -105,7 +106,9 @@ public final class SendSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        if (!Economy.transfer(account, receiverAccount, amount)) {
+        try {
+            Economy.transfer(account, receiverAccount, amount);
+        } catch (TransactionFailException e) {
             tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }

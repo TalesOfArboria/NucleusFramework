@@ -76,6 +76,11 @@ public class EconomyWrapper implements IEconomyProvider {
     }
 
     @Override
+    public IEconomyTransaction createTransaction() {
+        return _provider.createTransaction();
+    }
+
+    @Override
     public IEconomyProvider getHandle() {
         return _provider;
     }

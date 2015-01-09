@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
+import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.YamlDataStorage;
@@ -121,6 +122,11 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
 
             return account;
         }
+    }
+
+    @Override
+    public IEconomyTransaction createTransaction() {
+        return new NucleusTransaction();
     }
 
     @Override

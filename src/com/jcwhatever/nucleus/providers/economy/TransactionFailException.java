@@ -24,54 +24,38 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
-import java.util.UUID;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.sun.istack.internal.Nullable;
 
 /**
- * Interface for an economy provider.
+ * Thrown when a transaction fails.
  */
-public interface IEconomyProvider {
+public class TransactionFailException extends Exception {
 
-    /**
-     * Specifies how a currency name is used.
-     */
-    public enum CurrencyNoun {
-        SINGULAR,
-        PLURAL
+    private IAccount _account;
+    private String _message;
+
+    public TransactionFailException (@Nullable IAccount account, String message) {
+        PreCon.notNull(message);
+
+        _account = account;
+        _message = message;
     }
 
     /**
-     * Format an amount into a string using the economy settings.
-     *
-     * @param amount  The amount to format.
+     * Get the account where the transaction failure occurred.
      */
-    String formatAmount(double amount);
+    @Nullable
+    public IAccount getFailedAccount() {
+        return _account;
+    }
 
     /**
-     * Get the currency name.
-     *
-     * @param noun  The type of noun to return.
+     * Get the transaction failure message.
      */
-    String getCurrencyName(CurrencyNoun noun);
+    @Override
+    public String getMessage() {
+        return _message;
+    }
 
-    /**
-     * Get a global economy account.
-     *
-     * @param playerId  The ID of the account owner.
-     */
-    IAccount getAccount(UUID playerId);
-
-    /**
-     * Get an object used to run a transaction. Used to prevent or
-     * minimize the chance of account balances being
-     * incorrect should 1 or more operations in the
-     * transaction fail.
-     */
-    IEconomyTransaction createTransaction();
-
-    /**
-     * Get the underlying economy provider if the
-     * provider is wrapped. Otherwise, the handle is
-     * the {@code IEconomyProvider} instance.
-     */
-    Object getHandle();
 }

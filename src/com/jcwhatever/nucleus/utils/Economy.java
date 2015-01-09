@@ -31,6 +31,8 @@ import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider.CurrencyNoun;
+import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
+import com.jcwhatever.nucleus.providers.economy.TransactionFailException;
 
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +45,17 @@ import javax.annotation.Nullable;
 public final class Economy {
 
     private Economy() {}
+
+    /**
+     * Create a new transaction to perform multiple
+     * operations on before executing them.
+     *
+     * <p>If the transaction fails, the economy operations
+     * performed in it are undone.</p>
+     */
+    public static IEconomyTransaction createTransaction() {
+        return getProvider().createTransaction();
+    }
 
     /**
      * Get a players global account.
@@ -112,19 +125,24 @@ public final class Economy {
      * @param receiverPlayerId  The id of the player who is receiving money
      * @param amount            The amount of money to transfer.
      *
-     * @return  True if the operation completed successfully.
+     * @throws TransactionFailException if the transaction fails. All economy operations
+     * performed during the transfer are undone.
      */
-    public static boolean transfer(UUID giverPlayerId, UUID receiverPlayerId, double amount) {
+    public static void transfer(UUID giverPlayerId, UUID receiverPlayerId, double amount)
+                throws TransactionFailException {
         PreCon.notNull(giverPlayerId);
         PreCon.notNull(receiverPlayerId);
         PreCon.positiveNumber(amount);
 
         IAccount fromAccount = getProvider().getAccount(giverPlayerId);
         if (fromAccount == null)
-            return false;
+            throw new TransactionFailException(null, "Failed to find giving players account.");
 
         IAccount toAccount = getProvider().getAccount(receiverPlayerId);
-        return toAccount != null && transfer(fromAccount, toAccount, amount);
+        if (toAccount == null)
+            throw new TransactionFailException(null, "Failed to find receiving players account.");
+
+        transfer(fromAccount, toAccount, amount);
     }
 
     /**
@@ -134,30 +152,20 @@ public final class Economy {
      * @param toAccount    The account to transfer money into.
      * @param amount       The amount to transfer.
      *
-     * @return  True if the operation is successful.
+     * @throws TransactionFailException if the transaction fails. All economy operations
+     * performed during the transfer are undone.
      */
-    public static boolean transfer(IAccount fromAccount, IAccount toAccount, double amount) {
+    public static void transfer(IAccount fromAccount, IAccount toAccount, double amount)
+                throws TransactionFailException {
         PreCon.notNull(fromAccount);
         PreCon.notNull(toAccount);
         PreCon.positiveNumber(amount);
 
-        if (Double.compare(amount, 0.0D) == 0)
-            return true;
+        IEconomyTransaction transaction = createTransaction();
 
-
-        if (fromAccount.getBalance() < amount)
-            return false;
-
-        if (!fromAccount.withdraw(amount))
-            return false;
-
-        if (!toAccount.deposit(amount)) {
-            // give money back
-            fromAccount.deposit(amount);
-            return false;
-        }
-
-        return true;
+        transaction.withdraw(fromAccount, amount);
+        transaction.deposit(toAccount, amount);
+        transaction.execute();
     }
 
     /**

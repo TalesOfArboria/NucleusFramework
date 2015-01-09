@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
+import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -93,6 +94,11 @@ public final class VaultEconomyProvider implements IEconomyProvider {
         }
 
         return account;
+    }
+
+    @Override
+    public IEconomyTransaction createTransaction() {
+        return new NucleusTransaction();
     }
 
     @Override
