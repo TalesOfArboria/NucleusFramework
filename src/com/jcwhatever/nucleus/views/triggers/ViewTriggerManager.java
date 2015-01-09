@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -225,17 +224,18 @@ public class ViewTriggerManager implements IViewTriggerStorage, IPluginOwned {
         if (_dataNode == null)
             return;
 
-        Set<String> triggerNames = _dataNode.getSubNodeNames();
-        for (String triggerName : triggerNames) {
+        for (IDataNode node : _dataNode) {
+
+            String triggerName = node.getName();
 
             if (_triggers.containsKey(triggerName))
                 continue;
 
-            String factoryName = _dataNode.getString("factory");
+            String factoryName = node.getString("factory");
             if (factoryName == null)
                 continue;
 
-            String targetName = _dataNode.getString("target");
+            String targetName = node.getString("target");
             if (targetName == null)
                 continue;
 
@@ -247,7 +247,7 @@ public class ViewTriggerManager implements IViewTriggerStorage, IPluginOwned {
             if (target == null)
                 continue;
 
-            IViewTrigger trigger = factory.create(triggerName, target, _dataNode.getNode(triggerName));
+            IViewTrigger trigger = factory.create(triggerName, target, node);
 
             _triggers.put(trigger.getSearchName(), trigger);
         }

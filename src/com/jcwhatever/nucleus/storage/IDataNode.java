@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a key/value data storage node
  */
-public interface IDataNode extends IPluginOwned {
+public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
 
     /**
      * The owning plugin.
@@ -58,10 +58,9 @@ public interface IDataNode extends IPluginOwned {
     /**
      * Get the name of the node.
      *
-     * @return  Null if the node is the root node.
+     * @return  The node name or empty if the node is root.
      */
-    @Nullable
-    String getNodeName();
+    String getName();
 
     /**
      * Get the path of the node.
@@ -122,6 +121,11 @@ public interface IDataNode extends IPluginOwned {
     void saveAsync(File destination, @Nullable StorageSaveHandler saveHandler);
 
     /**
+     * Get the number of direct child data nodes.
+     */
+    int size();
+
+    /**
      * Determine if the current node has the specified node.
      *
      * @param nodePath  The node path to check.
@@ -157,9 +161,8 @@ public interface IDataNode extends IPluginOwned {
 
     /**
      * Remove the node.
-     * <p>
-     *     The root node cannot be removed.
-     * </p>
+     *
+     * <p>The root node cannot be removed.</p>
      */
     void remove();
 

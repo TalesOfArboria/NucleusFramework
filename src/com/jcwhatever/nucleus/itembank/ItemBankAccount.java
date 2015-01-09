@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -46,7 +45,7 @@ import javax.annotation.Nullable;
  * Internally used (as opposed to public) to prevent memory leaks.
  */
 class ItemBankAccount {
-    
+
     private UUID _playerId;
     private Map<UUID, BankItem> _idMap = new HashMap<UUID, BankItem>(1000);
     private Map<ItemWrapper, BankItem> _itemMap = new HashMap<ItemWrapper, BankItem>(1000);
@@ -250,39 +249,31 @@ class ItemBankAccount {
 
         IDataNode itemsNode = _dataNode.getNode("items");
 
-        Set<String> rawIds = itemsNode.getSubNodeNames();
+        for (IDataNode itemNode : itemsNode) {
 
-        if (rawIds != null && !rawIds.isEmpty()) {
+            UUID itemId = TextUtils.parseUUID(itemNode.getName());
+            if (itemId == null)
+                continue;
 
-            for (String rawId : rawIds) {
-
-                UUID itemId = TextUtils.parseUUID(rawId);
-                if (itemId == null)
-                    continue;
-
-                IDataNode itemNode = itemsNode.getNode(rawId);
-
-                int qty = itemNode.getInteger("qty");
-                if (qty <= 0) {
-                    itemNode.remove();
-                    continue;
-                }
-
-                ItemStack[] items = itemNode.getItemStacks("item");
-                if (items == null || items.length == 0)
-                    continue;
-
-                ItemStack item = items[0];
-
-                BankItem bankItem = new BankItem(itemId, this, item, qty, itemNode);
-
-                ItemWrapper wrapper = new ItemWrapper(item, ItemStackComparer.getDurability());
-
-                _itemMap.put(wrapper, bankItem);
-                _idMap.put(itemId, bankItem);
+            int qty = itemNode.getInteger("qty");
+            if (qty <= 0) {
+                itemNode.remove();
+                continue;
             }
-        }
 
+            ItemStack[] items = itemNode.getItemStacks("item");
+            if (items == null || items.length == 0)
+                continue;
+
+            ItemStack item = items[0];
+
+            BankItem bankItem = new BankItem(itemId, this, item, qty, itemNode);
+
+            ItemWrapper wrapper = new ItemWrapper(item, ItemStackComparer.getDurability());
+
+            _itemMap.put(wrapper, bankItem);
+            _idMap.put(itemId, bankItem);
+        }
     }
 
 }

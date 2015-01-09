@@ -198,9 +198,9 @@ public abstract class StoredValidationSet<E> extends ValidationSet<E> {
 
         clear();
         IDataNode eNode = _dataNode.getNode("elements");
-        Set<String> elementNodes = eNode.getSubNodeNames();
-        for (String nodeName : elementNodes) {
-            E element = loadElement(eNode.getNode(nodeName));
+
+        for (IDataNode node : eNode) {
+            E element = loadElement(node);
             if (element == null)
                 continue;
 

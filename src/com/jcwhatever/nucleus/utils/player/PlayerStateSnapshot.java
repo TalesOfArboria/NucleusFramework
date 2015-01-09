@@ -35,12 +35,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * A snapshot of a players state.
@@ -90,13 +89,11 @@ public class PlayerStateSnapshot {
 
         try {
 
-            Set<String> potionNodeNames = dataNode.getNode("potions").getSubNodeNames();
+            IDataNode potionsNode = dataNode.getNode("potions");
 
-            snapshot._potions = new ArrayList<>(potionNodeNames.size());
+            snapshot._potions = new ArrayList<>(potionsNode.size());
 
-            for (String nodeName : potionNodeNames) {
-
-                IDataNode potionNode = dataNode.getNode(nodeName);
+            for (IDataNode potionNode : potionsNode) {
 
                 PotionEffect effect = getEffectFromNode(potionNode);
                 if (effect == null)

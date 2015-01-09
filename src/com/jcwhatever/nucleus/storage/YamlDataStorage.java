@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.storage;
 
+import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.scheduler.ScheduledTask;
@@ -52,6 +53,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +76,7 @@ public class YamlDataStorage implements IDataNode {
     private Map<String, Double> _doubles;
     private Map<String, String> _strings;
     private Map<String, ItemStack[]> _items;
+    private ScheduledTask _saveTask;
     private boolean _isLoaded;
 
 
@@ -321,8 +324,6 @@ public class YamlDataStorage implements IDataNode {
         }
     }
 
-    private ScheduledTask _saveTask;
-
     @Override
     public void saveAsync(@Nullable final StorageSaveHandler saveHandler) {
 
@@ -432,6 +433,15 @@ public class YamlDataStorage implements IDataNode {
             }
 
         });
+    }
+
+    @Override
+    public int size() {
+        return _yaml.getKeys(false).size();
+    }
+
+    public int size(String nodePath) {
+        return _yaml.getConfigurationSection(nodePath).getKeys(false).size();
     }
 
     @Override
@@ -905,10 +915,8 @@ public class YamlDataStorage implements IDataNode {
     public void remove() {
 
         Set<String> subNodes = getSubNodeNames();
-        if (subNodes != null && !subNodes.isEmpty()) {
-            for (String subNode : subNodes) {
-                remove(subNode);
-            }
+        for (String subNode : subNodes) {
+            remove(subNode);
         }
     }
 
@@ -924,9 +932,8 @@ public class YamlDataStorage implements IDataNode {
     }
 
     @Override
-    public String getNodeName() {
-
-        return null;
+    public String getName() {
+        return "";
     }
 
     @Override
@@ -983,9 +990,6 @@ public class YamlDataStorage implements IDataNode {
                             : self.getNode(destNode);
 
                     Set<String> keys = config.getSubNodeNames();
-                    if (keys == null)
-                        return;
-
                     for (String key : keys) {
                         if (dest.get(key) == null)
                             continue;
@@ -998,5 +1002,23 @@ public class YamlDataStorage implements IDataNode {
             });
 
         }
+    }
+
+    @Override
+    public Iterator<IDataNode> iterator() {
+        return new AbstractConversionIterator<IDataNode, String>() {
+
+            Iterator<String> iterator = getSubNodeNames().iterator();
+
+            @Override
+            protected IDataNode getElement(String nodeName) {
+                return getNode(nodeName);
+            }
+
+            @Override
+            protected Iterator<String> getIterator() {
+                return iterator;
+            }
+        };
     }
 }

@@ -50,10 +50,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -218,13 +217,9 @@ public class SignManager implements IPluginOwned {
 
         IDataNode handlerNode = _dataNode.getNode(handler.getName());
 
-        Set<String> signNames = handlerNode.getSubNodeNames();
+        List<SignContainer> signs = new ArrayList<>(handlerNode.size());
 
-        List<SignContainer> signs = new ArrayList<>(signNames.size());
-
-        for (String signName : signNames) {
-
-            IDataNode signNode = handlerNode.getNode(signName);
+        for (IDataNode signNode : handlerNode) {
 
             Location location = signNode.getLocation("location");
             if (location == null)
@@ -357,12 +352,9 @@ public class SignManager implements IPluginOwned {
         }
 
         IDataNode handlerNode = _dataNode.getNode(handler.getName());
-        Set<String> signNames = handlerNode.getSubNodeNames();
-        final Stack<SignInfo> signInfo = new Stack<SignInfo>();
+        final LinkedList<SignInfo> signInfo = new LinkedList<>();
 
-        for (String signName : signNames) {
-
-            IDataNode signNode = handlerNode.getNode(signName);
+        for (IDataNode signNode : handlerNode) {
 
             Location loc = signNode.getLocation("location");
             if (loc == null) {
@@ -530,11 +522,7 @@ public class SignManager implements IPluginOwned {
 
         IDataNode handlerNode = _dataNode.getNode(handler.getName());
 
-        Set<String> signNames = handlerNode.getSubNodeNames();
-
-        for (String signName : signNames) {
-
-            IDataNode signNode = handlerNode.getNode(signName);
+        for (IDataNode signNode : handlerNode) {
 
             Location location = signNode.getLocation("location");
             if (location == null)

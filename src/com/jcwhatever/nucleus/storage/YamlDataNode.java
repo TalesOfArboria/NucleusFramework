@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.storage;
 
+import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
 
 import org.bukkit.Location;
@@ -32,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -86,7 +88,7 @@ public class YamlDataNode implements IDataNode {
     }
 
     @Override
-    public String getNodeName() {
+    public String getName() {
 
         return _nodeName;
     }
@@ -151,6 +153,11 @@ public class YamlDataNode implements IDataNode {
             saveHandler._dataNode = this;
 
         _storage.saveAsync(destination, saveHandler);
+    }
+
+    @Override
+    public int size() {
+        return _storage.size(getFullPath(""));
     }
 
     @Override
@@ -380,4 +387,21 @@ public class YamlDataNode implements IDataNode {
         return _path + relativePath;
     }
 
+    @Override
+    public Iterator<IDataNode> iterator() {
+        return new AbstractConversionIterator<IDataNode, String>() {
+
+            Iterator<String> iterator = getSubNodeNames().iterator();
+
+            @Override
+            protected IDataNode getElement(String nodeName) {
+                return getNode(nodeName);
+            }
+
+            @Override
+            protected Iterator<String> getIterator() {
+                return iterator;
+            }
+        };
+    }
 }

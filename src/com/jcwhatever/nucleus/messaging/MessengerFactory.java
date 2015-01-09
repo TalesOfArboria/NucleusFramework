@@ -38,7 +38,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
 import javax.annotation.Nullable;
@@ -206,14 +205,9 @@ public class MessengerFactory {
 
             IDataNode playerData = data.getNode(p.getUniqueId().toString());
 
-            Set<String> contexts = playerData.getSubNodeNames();
-            if (contexts == null)
-                return;
-
             boolean save = false;
 
-            for (String context : contexts) {
-                IDataNode contextData = playerData.getNode(context);
+            for (IDataNode contextData : playerData) {
 
                 String prefix = contextData.getString("prefix", "");
                 String message = contextData.getString("message", "");

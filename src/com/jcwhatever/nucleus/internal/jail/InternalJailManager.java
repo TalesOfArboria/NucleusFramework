@@ -51,7 +51,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -205,14 +204,13 @@ public final class InternalJailManager implements IJailManager {
 
         // load late releases
         IDataNode lateNode = _dataNode.getNode("late-release");
-        Set<String> rawIds = lateNode.getSubNodeNames();
 
-        for (String rawId : rawIds) {
-            UUID playerId = TextUtils.parseUUID(rawId);
+        for (IDataNode dataNode : lateNode) {
+            UUID playerId = TextUtils.parseUUID(dataNode.getName());
             if (playerId == null)
                 continue;
 
-            Location release = lateNode.getLocation(rawId);
+            Location release = dataNode.getLocation("");
             if (release == null)
                 continue;
 
@@ -224,13 +222,10 @@ public final class InternalJailManager implements IJailManager {
                 new DependencyRunner<JailDependency>(Nucleus.getPlugin());
 
         IDataNode sessions = _dataNode.getNode("sessions");
-        Set<String> rawSessionIds = sessions.getSubNodeNames();
 
-        for (String rawId : rawSessionIds) {
+        for (IDataNode node : sessions) {
 
-            IDataNode node = sessions.getNode(rawId);
-
-            UUID playerId = TextUtils.parseUUID(rawId);
+            UUID playerId = TextUtils.parseUUID(node.getName());
             if (playerId == null)
                 continue;
 

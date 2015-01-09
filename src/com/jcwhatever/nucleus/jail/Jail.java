@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -281,9 +280,10 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
 
         // Load jail teleport locations
         IDataNode teleportNode = _dataNode.getNode("teleport");
-        Set<String> teleportNames = teleportNode.getSubNodeNames();
 
-        for(String teleportName : teleportNames) {
+        for(IDataNode node : teleportNode) {
+
+            String teleportName = node.getName();
 
             Location location = teleportNode.getLocation(teleportName);
             if (location == null)

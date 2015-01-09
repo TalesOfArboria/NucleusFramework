@@ -40,7 +40,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -86,17 +85,13 @@ public final class InternalPlayerLookupProvider implements IPlayerLookupProvider
 
         synchronized (_dataSync) {
 
-            Set<String> ids = nameData.getSubNodeNames();
-            if (ids == null || ids.isEmpty())
-                return null;
-
-            for (String idStr : ids) {
-                String name = nameData.getString(idStr);
+            for (IDataNode node : nameData) {
+                String name = node.getString("");
 
                 if (name != null && name.equalsIgnoreCase(playerName)) {
 
                     try {
-                        return UUID.fromString(idStr);
+                        return UUID.fromString(node.getName());
                     } catch (Exception e) {
                         e.printStackTrace();
                         return null;

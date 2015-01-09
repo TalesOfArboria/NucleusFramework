@@ -259,16 +259,12 @@ public final class SoundManager {
      */
     private static void load() {
 
-        IDataNode config = DataStorage.getStorage(Nucleus.getPlugin(), new DataPath("resource-sounds"));
-        config.load();
+        IDataNode dataNode = DataStorage.getStorage(Nucleus.getPlugin(), new DataPath("resource-sounds"));
+        dataNode.load();
 
-        Set<String> soundNames = config.getSubNodeNames();
+        _sounds = new HashMap<>(dataNode.size());
 
-        _sounds = new HashMap<>(soundNames.size());
-
-        for (String soundName : soundNames) {
-
-            IDataNode soundNode = config.getNode(soundName);
+        for (IDataNode soundNode : dataNode) {
 
             ResourceSound sound = getNewSound(soundNode);
 

@@ -48,7 +48,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -233,17 +232,15 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
             IDataNode playerNode = perms._dataNode.getNode(p.getUniqueId().toString());
 
             // get the names of the plugins that have set permissions on the player.
-            Set<String> pluginNames = playerNode.getSubNodeNames();
-
-            for (String pluginName : pluginNames) {
+            for (IDataNode node : playerNode) {
 
                 // make sure the plugin is loaded.
-                Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+                Plugin plugin = Bukkit.getPluginManager().getPlugin(node.getName());
                 if (plugin == null)
                     continue;
 
                 // get the list of permissions the player has.
-                List<String> permissions = playerNode.getStringList(pluginName, null);
+                List<String> permissions = playerNode.getStringList(plugin.getName(), null);
 
                 if (permissions == null || permissions.isEmpty())
                     continue;

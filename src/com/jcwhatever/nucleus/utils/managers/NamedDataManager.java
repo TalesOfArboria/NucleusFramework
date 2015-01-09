@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.utils.managers;
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -120,10 +119,8 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
 
         _map.clear();
 
-        Set<String> names =  _dataNode.getSubNodeNames();
-
-        for (String name : names) {
-            T item = load(name, getNode(name));
+        for (IDataNode node : _dataNode) {
+            T item = load(node.getName(), node);
             if (item == null)
                 continue;
 

@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -138,14 +137,11 @@ public final class NucleusBank implements IBank {
     }
 
     private void loadAccounts() {
-        Set<String> accountIds = _dataNode.getSubNodeNames();
+        for (IDataNode dataNode : _dataNode) {
 
-        for (String rawAccountId : accountIds) {
-            UUID playerId = TextUtils.parseUUID(rawAccountId);
+            UUID playerId = TextUtils.parseUUID(dataNode.getName());
             if (playerId == null)
                 continue;
-
-            IDataNode dataNode = _dataNode.getNode(rawAccountId);
 
             NucleusAccount account = new NucleusAccount(playerId, this, dataNode);
 
