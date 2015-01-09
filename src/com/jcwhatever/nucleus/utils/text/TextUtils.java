@@ -836,7 +836,7 @@ public final class TextUtils {
             formatters = getPluginFormatters(plugin, settings);
         }
 
-        return TEXT_FORMATTER.format(formatters, msg, args);
+        return TEXT_FORMATTER.format(formatters, msg, args).toString();
     }
 
     /**
@@ -875,7 +875,7 @@ public final class TextUtils {
         PreCon.notNull(template);
         PreCon.notNull(args);
 
-        return TEXT_FORMATTER.format(settings, template.toString(), args);
+        return TEXT_FORMATTER.format(settings, template.toString(), args).toString();
     }
 
     /**
@@ -895,7 +895,7 @@ public final class TextUtils {
         PreCon.notNull(msg);
         PreCon.notNull(args);
 
-        return TEXT_FORMATTER.format(msg, args);
+        return TEXT_FORMATTER.format(msg, args).toString();
     }
 
     /**

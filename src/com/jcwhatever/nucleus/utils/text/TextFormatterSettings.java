@@ -48,6 +48,7 @@ public class TextFormatterSettings {
     private volatile FormatPolicy _unicodePolicy = FormatPolicy.FORMAT;
     private volatile FormatPolicy _colorPolicy = FormatPolicy.FORMAT;
     private volatile FormatPolicy _tagPolicy = FormatPolicy.FORMAT;
+    private volatile boolean _isArgsFormatted = true;
 
     private volatile char _escapedCache;
 
@@ -102,6 +103,7 @@ public class TextFormatterSettings {
         _unicodePolicy = source._unicodePolicy;
         _colorPolicy = source._colorPolicy;
         _tagPolicy = source._tagPolicy;
+        _isArgsFormatted = source._isArgsFormatted;
         _escapedCache = source._escapedCache;
 
         ImmutableMap.Builder<String, ITagFormatter> builder = new ImmutableMap.Builder<>();
@@ -134,6 +136,7 @@ public class TextFormatterSettings {
         _unicodePolicy = source._unicodePolicy;
         _colorPolicy = source._colorPolicy;
         _tagPolicy = source._tagPolicy;
+        _isArgsFormatted = source._isArgsFormatted;
         _escapedCache = source._escapedCache;
 
         ImmutableMap.Builder<String, ITagFormatter> builder = new ImmutableMap.Builder<>();
@@ -148,6 +151,27 @@ public class TextFormatterSettings {
         }
 
         _formatters = builder.build();
+    }
+
+    /**
+     * Determine if format arguments are formatted before
+     * being inserted into the format template.
+     */
+    public boolean isArgsFormatted() {
+        return _isArgsFormatted;
+    }
+
+    /**
+     * Set format arguments formatted before insertion.
+     *
+     * @param isFormatted  True to format, false to insert as is.
+     *
+     * @return  Self for chaining.
+     */
+    public TextFormatterSettings setIsArgsFormatted(boolean isFormatted) {
+        _isArgsFormatted = isFormatted;
+
+        return this;
     }
 
     /**

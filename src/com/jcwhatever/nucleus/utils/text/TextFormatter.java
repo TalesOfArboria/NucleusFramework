@@ -115,7 +115,7 @@ public class TextFormatter {
      *
      * @return  The formatted string.
      */
-    public String format(String template, Object... params) {
+    public TextFormatterResult format(String template, Object... params) {
         PreCon.notNull(template);
 
         return format(_settings, template, params);
@@ -130,17 +130,15 @@ public class TextFormatter {
      *
      * @return  The formatted string.
      */
-    public String format(TextFormatterSettings settings, String template, Object... params) {
+    public TextFormatterResult format(TextFormatterSettings settings, String template, Object... params) {
         PreCon.notNull(template);
 
         if (isHomeThread()) {
+            _textBuffer.setLength(0);
             return format(settings, _textBuffer, _tagBuffer, settings.getFormatMap(), template, params);
         }
         else {
-            StringBuilder textBuffer = new StringBuilder(template.length());
-            StringBuilder tagBuffer = new StringBuilder(10);
-
-            return format(settings, textBuffer, tagBuffer, settings.getFormatMap(), template, params);
+            return format(settings, null, null, settings.getFormatMap(), template, params);
         }
     }
 
@@ -153,14 +151,26 @@ public class TextFormatter {
      *
      * @return  The formatted string.
      */
-    private String format(TextFormatterSettings settings,
-                          StringBuilder textBuffer, StringBuilder tagBuffer,
+    private TextFormatterResult format(TextFormatterSettings settings,
+                          @Nullable StringBuilder textBuffer,
+                          @Nullable StringBuilder tagBuffer,
                           Map<String, ITagFormatter> formatters, String template, Object... params) {
 
-        if (template.indexOf('{') == -1 && template.indexOf('\\') == -1)
-            return template;
+        if (!shouldFormat(settings, template)) {
 
-        textBuffer.setLength(0);
+            if (textBuffer != null)
+                textBuffer.append(template);
+
+            return new TextFormatterResult(template);
+        }
+
+        if (textBuffer == null)
+            textBuffer = new StringBuilder(template.length());
+
+        if (tagBuffer == null)
+            tagBuffer = new StringBuilder(10);
+
+        TextFormatterResult result = new TextFormatterResult();
 
         for (int i=0; i < template.length(); i++) {
             char ch = template.charAt(i);
@@ -182,65 +192,25 @@ public class TextFormatter {
                 // tag parsed
                 else {
                     i++; // add 1 for closing brace
-                    appendReplacement(settings, tagBuffer, textBuffer, tag, params, formatters);
+                    appendReplacement(settings, result, textBuffer, tagBuffer, tag, params, formatters);
                 }
 
             }
             else if (ch == '\\' && i < template.length() - 1) {
 
-                // make sure the backslash isn't escaped
-                int s = i;
-                int bsCount = 0;
-                while (s != 0) {
-                    if (template.charAt(s - 1) == '\\') {
-                        bsCount++;
-                    }
-                    else {
-                        break;
-                    }
-                    s--;
-                }
-                if (bsCount % 2 != 0)
-                    continue;
-
-                // look at next character
-                char next = template.charAt(i + 1);
-
-                // handle new line character
-                if ((next == 'n' || next == 'r') && settings.getLineReturnPolicy() != FormatPolicy.IGNORE) {
-
-                    if (settings.getLineReturnPolicy() != FormatPolicy.REMOVE)
-                        textBuffer.append('\n');
-                    i++;
-                }
-                // handle unicode
-                else if (next == 'u' && settings.getUnicodePolicy() != FormatPolicy.IGNORE) {
-
-                    i++;
-                    char unicode = parseUnicode(tagBuffer, template, i);
-                    if (unicode == 0) {
-                        // append non unicode text
-                        textBuffer.append("\\u");
-                    }
-                    else {
-                        if (settings.getUnicodePolicy() != FormatPolicy.REMOVE)
-                            textBuffer.append(unicode);
-
-                        i+= Math.min(4, template.length() - i);
-                    }
-                }
-                // unused backslash
-                else {
-                    textBuffer.append(ch);
-                }
+                i = processBackslash(settings, textBuffer, tagBuffer, template, i);
             }
             else {
+
+                if (settings.isEscaped(ch))
+                    textBuffer.append('\\');
+
                 // append next character
                 textBuffer.append(ch);
             }
         }
 
-        return textBuffer.toString();
+        return result.setResult(textBuffer);
     }
 
     /**
@@ -300,7 +270,9 @@ public class TextFormatter {
      * Append replacement text for a tag
      */
     private void appendReplacement(TextFormatterSettings settings,
-                                      StringBuilder tagBuffer, StringBuilder sb,
+                                   TextFormatterResult result,
+                                   StringBuilder textBuffer,
+                                   StringBuilder tagBuffer,
                                    String tag, Object[] params, Map<String, ITagFormatter> formatters) {
 
         boolean isNumber = !tag.isEmpty();
@@ -334,7 +306,7 @@ public class TextFormatter {
 
             // make sure number is in the range of the provided parameters.
             if (params.length <= index) {
-                reappendTag(sb, tag);
+                reappendTag(textBuffer, tag);
             }
             // replace number with parameter argument.
             else {
@@ -346,20 +318,30 @@ public class TextFormatter {
                 }
 
                 String toAppend = String.valueOf(param);
-                String lastColors = null;
+
+                // cache length so we know where to look for
+                // colors if needed.
+                int bufferLength = textBuffer.length();
+
+                TextFormatterResult argResult = null;
+
+                // append parameter argument
+                if (settings.isArgsFormatted())
+                    argResult = format(settings, textBuffer, null, formatters, toAppend);
+                else
+                    textBuffer.append(toAppend);
 
                 // make sure colors from inserted text do not continue
                 // into template text
-                if (toAppend.indexOf(TextFormat.CHAR) != -1) {
-                    lastColors = TextColor.getEndFormat(sb).toString();
-                }
+                if ((argResult != null && argResult.isParsed() && argResult.parsedColor()) ||
+                        ((argResult == null || !argResult.isParsed()) && toAppend.indexOf(TextFormat.CHAR) != -1)) {
 
-                // append parameter argument
-                sb.append(params[index]);
+                    String lastColors = TextColor.getFormatAt(bufferLength, textBuffer).toString();
 
-                // append template color
-                if (lastColors != null && !lastColors.isEmpty()) {
-                    sb.append(lastColors);
+                    // append template color
+                    if (!lastColors.isEmpty()) {
+                        textBuffer.append(lastColors);
+                    }
                 }
             }
         }
@@ -375,9 +357,15 @@ public class TextFormatter {
                 // check for color formatter
                 formatter = getFormatter(parsedTag, _colors);
 
-                // remove color tag if color policy is remove
-                if (formatter != null && settings.getColorPolicy() == FormatPolicy.REMOVE) {
-                    formatter = ERASER;
+                if (formatter != null) {
+
+                    // remove color tag if color policy is remove
+                    if (settings.getColorPolicy() == FormatPolicy.REMOVE) {
+                        formatter = ERASER;
+                    }
+                    else {
+                        result.setParsedColor(true);
+                    }
                 }
             }
             // remove tag if tag policy is remove
@@ -387,13 +375,71 @@ public class TextFormatter {
 
             if (formatter != null) {
                 // formatter appends replacement text to format buffer
-                formatter.append(sb, tag);
+                formatter.append(textBuffer, tag);
             }
             else {
                 // no formatter, append tag to result buffer
-                reappendTag(sb, tag);
+                reappendTag(textBuffer, tag);
             }
         }
+    }
+
+    /**
+     * Process an escape character. Returns the new index location.
+     */
+    private int processBackslash(TextFormatterSettings settings,
+                                 StringBuilder textBuffer,
+                                 StringBuilder tagBuffer,
+                                 String template, int index) {
+
+        // make sure the backslash isn't escaped
+        int s = index;
+        int bsCount = 0;
+        while (s != 0) {
+            if (template.charAt(s - 1) == '\\') {
+                bsCount++;
+            }
+            else {
+                break;
+            }
+            s--;
+        }
+        if (bsCount % 2 != 0)
+            return index;
+
+        // look at next character
+        char next = template.charAt(index + 1);
+
+        // handle new line character
+        if ((next == 'n' || next == 'r') && settings.getLineReturnPolicy() != FormatPolicy.IGNORE) {
+
+            if (settings.getLineReturnPolicy() != FormatPolicy.REMOVE)
+                textBuffer.append('\n');
+            return index + 1;
+        }
+        // handle unicode
+        else if (next == 'u' && settings.getUnicodePolicy() != FormatPolicy.IGNORE) {
+
+            index++;
+            char unicode = parseUnicode(tagBuffer, template, index);
+            if (unicode == 0) {
+                // append non unicode text
+                textBuffer.append("\\u");
+            }
+            else {
+                if (settings.getUnicodePolicy() != FormatPolicy.REMOVE)
+                    textBuffer.append(unicode);
+
+                index+= Math.min(4, template.length() - index);
+            }
+
+        }
+        // unused backslash
+        else {
+            textBuffer.append('\\');
+        }
+
+        return index;
     }
 
     /**
@@ -421,6 +467,22 @@ public class TextFormatter {
      */
     private boolean isHomeThread() {
         return Thread.currentThread().equals(_homeThread);
+    }
+
+    /**
+     * Determine if a text template should be formatted.
+     */
+    private boolean shouldFormat(TextFormatterSettings settings, String template) {
+        if (template.isEmpty())
+            return false;
+
+        if (template.length() > 150)
+            return true; // faster to format than to check then format
+
+        if (settings.getEscaped().length == 0 && template.indexOf('{') == -1 && template.indexOf('\\') == -1)
+            return false;
+
+        return true;
     }
 
     /**
