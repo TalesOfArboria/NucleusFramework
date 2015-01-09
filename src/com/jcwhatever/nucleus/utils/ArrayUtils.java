@@ -486,7 +486,7 @@ public final class ArrayUtils {
 
         T[] newArray = newArray(componentClass, size);
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -514,7 +514,7 @@ public final class ArrayUtils {
 
         boolean[] newArray = new boolean[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -542,7 +542,7 @@ public final class ArrayUtils {
 
         byte[] newArray = new byte[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -570,7 +570,7 @@ public final class ArrayUtils {
 
         char[] newArray = new char[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -598,7 +598,7 @@ public final class ArrayUtils {
 
         short[] newArray = new short[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -626,7 +626,7 @@ public final class ArrayUtils {
 
         int[] newArray = new int[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -654,7 +654,7 @@ public final class ArrayUtils {
 
         long[] newArray = new long[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -682,7 +682,7 @@ public final class ArrayUtils {
 
         float[] newArray = new float[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -738,7 +738,7 @@ public final class ArrayUtils {
 
         String[] newArray = new String[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -766,7 +766,7 @@ public final class ArrayUtils {
 
         ItemStack[] newArray = new ItemStack[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
@@ -794,7 +794,7 @@ public final class ArrayUtils {
 
         Entity[] newArray = new Entity[size];
 
-        System.arraycopy(array, startAmountToRemove - 1, newArray, 0, newArray.length);
+        System.arraycopy(array, startAmountToRemove, newArray, 0, newArray.length);
 
         return newArray;
     }
