@@ -201,7 +201,7 @@ public final class PreCon {
      * @throws java.lang.IllegalArgumentException
      */
     public static void validNodePath(@Nullable String nodePath, String paramName) {
-        PreCon.notNullOrEmpty(nodePath, paramName);
+        PreCon.notNull(nodePath, paramName);
 
         if (!TextUtils.PATTERN_NODE_PATHS.matcher(nodePath).matches()) {
             badArg("The argument for {0} is an invalid node path. Is '{1}'. Node paths must be alphanumeric " +
