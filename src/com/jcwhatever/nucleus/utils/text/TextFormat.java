@@ -271,7 +271,7 @@ public class TextFormat {
         StringBuilder formatBuffer;
         int len = charSequence.length();
 
-        if (Bukkit.isPrimaryThread()) {
+        if (Bukkit.getServer() != null && Bukkit.isPrimaryThread()) {
             sb = _largeBuffer;
             sb.setLength(0);
             sb.ensureCapacity(len);
