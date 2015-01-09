@@ -314,15 +314,19 @@ public class CircularQueue<E> implements Deque<E> {
     public boolean retainAll(Collection<?> c) {
         PreCon.notNull(c);
 
+        boolean isChanged = false;
+
         Iterator<E> iterator = new ItrRight();
         while (iterator.hasNext()) {
             E element = iterator.next();
 
-            if (!c.contains(element))
+            if (!c.contains(element)) {
                 iterator.remove();
+                isChanged = true;
+            }
         }
 
-        return false;
+        return isChanged;
     }
 
     @Override
@@ -433,14 +437,16 @@ public class CircularQueue<E> implements Deque<E> {
     private class ItrRight implements Iterator<E> {
 
         Entry next = null;
+        int steps = 0;
 
         @Override
         public boolean hasNext() {
-            return _size > 0 && (next == null || !next.equals(_current));
+            return _size > 0 && steps < _size;
         }
 
         @Override
         public E next() {
+            steps++;
             if (next == null) {
                 next = _current.right;
                 return _current.value;
@@ -452,10 +458,8 @@ public class CircularQueue<E> implements Deque<E> {
 
         @Override
         public void remove() {
-            if (next == null) {
-                removeFirst();
-            }
-            else if (_size == 1) {
+            steps--;
+            if (_size == 1) {
                 _current = null;
                 _size = 0;
                 next = null;
@@ -476,14 +480,16 @@ public class CircularQueue<E> implements Deque<E> {
     private class ItrLeft implements Iterator<E> {
 
         Entry next;
+        int steps = 0;
 
         @Override
         public boolean hasNext() {
-            return _size > 0 && (next == null || !next.equals(_current.left));
+            return _size > 0 && steps < _size;
         }
 
         @Override
         public E next() {
+            steps++;
             if (next == null) {
                 next = _current.left.left;
                 return _current.left.value;
@@ -495,10 +501,8 @@ public class CircularQueue<E> implements Deque<E> {
 
         @Override
         public void remove() {
-            if (next == null) {
-                removeLast();
-            }
-            else if (_size == 1) {
+            steps--;
+            if (_size == 1) {
                 _current = null;
                 _size = 0;
                 next = null;
