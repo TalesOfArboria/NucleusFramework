@@ -183,7 +183,7 @@ public final class FileUtils {
         if (absPath.indexOf(absBase) != 0)
             return absPath;
 
-        return absPath.substring(absBase.length() + 1);
+        return absPath.substring(absBase.length() + (absPath.equals(absBase) ? 0 : 1));
     }
 
     /**

@@ -59,4 +59,14 @@ public class FileUtilsTest {
         Assert.assertEquals("test.js", FileUtils.getRelative(base, file));
     }
 
+    @Test
+    public void testGetRelative2() throws Exception {
+
+        File base = new File("folder1/base");
+
+        File file = new File("folder1/base");
+
+        Assert.assertEquals("", FileUtils.getRelative(base, file));
+    }
+
 }
