@@ -30,10 +30,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -100,6 +102,14 @@ public class TreeEntryNode<K, V> implements Iterable<TreeEntryNode<K, V>> {
     }
 
     /**
+     * Get the nodes value.
+     */
+    @Nullable
+    public void setValue(@Nullable V value) {
+        _node.setValue(value);
+    }
+
+    /**
      * Get the nodes parent.
      *
      * @return  Null if the node is a root node.
@@ -119,6 +129,15 @@ public class TreeEntryNode<K, V> implements Iterable<TreeEntryNode<K, V>> {
     }
 
     /**
+     * Get the child key set..
+     */
+    public Set<K> getChildKeySet() {
+        return _children != null
+                ? Collections.unmodifiableSet(_children.keySet())
+                : new HashSet<K>(0);
+    }
+
+    /**
      * Get the number of direct children
      * of the node.
      */
@@ -127,6 +146,14 @@ public class TreeEntryNode<K, V> implements Iterable<TreeEntryNode<K, V>> {
             return 0;
 
         return _children.size();
+    }
+
+    /**
+     * Clear all children from the node.
+     */
+    public void clearChildren() {
+        if (_children != null)
+            _children.clear();
     }
 
     /**

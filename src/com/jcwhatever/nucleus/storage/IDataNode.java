@@ -73,6 +73,12 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     IDataNode getRoot();
 
     /**
+     * Determine if the {@code IDataNode} is
+     * the root node.
+     */
+    boolean isRoot();
+
+    /**
      * Load the data synchronously.
      */
     boolean load();
@@ -184,12 +190,6 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     boolean set(String keyPath, @Nullable Object value);
 
     /**
-     * Get all node key values in the node including
-     * sub node key values.
-     */
-    Map<String, Object> getAllValues();
-
-    /**
      * Get the value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key to set.
@@ -200,15 +200,10 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     Object get(String keyPath);
 
     /**
-     * Get the value of a node key.
-     *
-     * @param keyPath  The name or relative path and name of the key to set.
-     * @param type     The data type expected.
-     *
-     * @return  Null if the key is not found.
+     * Get all node key values in the node including
+     * sub node key values.
      */
-    @Nullable
-    Object get(String keyPath, DataType type); // must return null if node not found
+    Map<String, Object> getAllValues();
 
     /**
      * Deserialize an {@code IDataNodeSerializable} object from the specified node path.

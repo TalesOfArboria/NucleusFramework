@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.YamlDataStorage;
+import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -71,8 +71,8 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
     public NucleusEconomyProvider(Plugin plugin) {
         PreCon.notNull(plugin);
 
-        IDataNode dataNode = new YamlDataStorage(plugin, new DataPath("economy.config"));
-        _globalAccountNode = new YamlDataStorage(plugin, new DataPath("economy.global"));
+        IDataNode dataNode = new YamlDataNode(plugin, new DataPath("economy.config"));
+        _globalAccountNode = new YamlDataNode(plugin, new DataPath("economy.global"));
         _plugin = plugin;
 
         _currencyNameSingular = dataNode.getString("currency-singular", "Dollar");
@@ -168,7 +168,7 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
             }
         }
 
-        IDataNode node = new YamlDataStorage(Nucleus.getPlugin(), new DataPath("economy.accounts." + bankName));
+        IDataNode node = new YamlDataNode(Nucleus.getPlugin(), new DataPath("economy.accounts." + bankName));
 
         NucleusBank bank = new NucleusBank(bankName, null, node);
 

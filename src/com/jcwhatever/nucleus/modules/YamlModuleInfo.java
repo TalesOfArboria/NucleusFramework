@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.modules;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.YamlDataStorage;
+import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -111,7 +111,7 @@ public class YamlModuleInfo implements IModuleInfo, IPluginOwned {
         String yamlString = FileUtils.scanTextFile(jarFile, filename, StandardCharsets.UTF_8);
 
         // Load yaml string into data node.
-        YamlDataStorage moduleNode = new YamlDataStorage(getPlugin(), yamlString);
+        YamlDataNode moduleNode = new YamlDataNode(getPlugin(), yamlString);
         if (!moduleNode.load())
             return false;
 

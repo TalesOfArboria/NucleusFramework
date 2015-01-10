@@ -44,7 +44,7 @@ import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.YamlDataStorage;
+import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
@@ -254,7 +254,7 @@ public final class InternalProviderManager implements IProviderManager {
 
     private IDataNode getDataNode() {
         if (_dataNode == null) {
-            _dataNode = new YamlDataStorage(Nucleus.getPlugin(), new DataPath("providers"));
+            _dataNode = new YamlDataNode(Nucleus.getPlugin(), new DataPath("providers"));
         }
         return _dataNode;
     }

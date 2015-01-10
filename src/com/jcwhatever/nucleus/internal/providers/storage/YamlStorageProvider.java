@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.YamlDataStorage;
+import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
@@ -60,7 +60,7 @@ public final class YamlStorageProvider implements IStorageProvider {
         PreCon.notNull(plugin);
         PreCon.notNull(path);
 
-        File file = YamlDataStorage.convertStoragePathToFile(plugin, path);
+        File file = YamlDataNode.dataPathToFile(plugin, path);
         return file.exists() && file.delete();
     }
 
@@ -69,7 +69,7 @@ public final class YamlStorageProvider implements IStorageProvider {
         PreCon.notNull(plugin);
         PreCon.notNull(path);
 
-        return new YamlDataStorage(plugin, path);
+        return new YamlDataNode(plugin, path);
     }
 
     @Override
@@ -77,7 +77,7 @@ public final class YamlStorageProvider implements IStorageProvider {
         PreCon.notNull(plugin);
         PreCon.notNull(path);
 
-        File file = YamlDataStorage.convertStoragePathToFile(plugin, path);
+        File file = YamlDataNode.dataPathToFile(plugin, path);
         return file.exists();
     }
 }
