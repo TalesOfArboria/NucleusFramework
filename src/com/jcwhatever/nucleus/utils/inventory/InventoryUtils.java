@@ -224,6 +224,17 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents.
      * @param itemStack  The {@code ItemStack} to check.
+     */
+    public static int getMax(ItemStack[] contents, ItemStack itemStack) {
+        return getMax(contents, itemStack, ItemStackComparer.getDurability(), -1);
+    }
+
+    /**
+     * Gets the number of items of the specified stack that
+     * can be stored in the specified {@code ItemStack} array.
+     *
+     * @param contents   The inventory contents.
+     * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      */
     public static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
@@ -287,6 +298,32 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents to check.
      * @param itemStack  The {@code ItemStack} to check.
+     */
+    public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack) {
+        return getMax(contents, itemStack, ItemStackComparer.getDurability(), itemStack.getAmount())
+                >= itemStack.getAmount();
+    }
+
+    /**
+     * Determine if there is enough room in the specified {@code ItemStack} array
+     * for items of the same type as the specified stack in the amount of the
+     * specified quantity.
+     *
+     * @param contents   The inventory contents to check.
+     * @param itemStack  The {@code ItemStack} to check.
+     * @param qty        The quantity.
+     */
+    public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack, int qty) {
+        return getMax(contents, itemStack, ItemStackComparer.getDurability(), qty) >= qty;
+    }
+
+    /**
+     * Determine if there is enough room in the specified {@code ItemStack} array
+     * for items of the same type as the specified stack in the amount of the
+     * specified quantity.
+     *
+     * @param contents   The inventory contents to check.
+     * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
      */
@@ -315,6 +352,17 @@ public final class InventoryUtils {
      */
     public static int count (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
         return count(inventory.getContents(), itemStack, comparer, -1);
+    }
+
+    /**
+     * Count the number of items of the same type as the specified item stack
+     * in the specified {@code ItemStack} array.
+     *
+     * @param contents   The inventory contents.
+     * @param itemStack  The {@code ItemStack} to check.
+     */
+    public static int count (ItemStack[] contents, ItemStack itemStack) {
+        return count(contents, itemStack, ItemStackComparer.getDurability(), -1);
     }
 
     /**
@@ -385,6 +433,42 @@ public final class InventoryUtils {
     }
 
     /**
+     * Determine if the specified inventory contains the specified quantity
+     * of items that match the specified {@code ItemStack}.
+     *
+     * @param inventory  The inventory to check.
+     * @param itemStack  The {@code ItemStack} to check.
+     * @param qty        The quantity.
+     */
+    public static boolean has (Inventory inventory, ItemStack itemStack, int qty) {
+        return has(inventory, itemStack, ItemStackComparer.getDurability(), qty);
+    }
+
+    /**
+     * Determine if the specified inventory contains the specified quantity
+     * of items that match the specified {@code ItemStack}.
+     *
+     * @param inventory  The inventory to check.
+     * @param itemStack  The {@code ItemStack} to check.
+     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param qty        The quantity.
+     */
+    public static boolean has (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        return count(inventory, itemStack, comparer, qty) >= qty;
+    }
+
+    /**
+     * Determine if the specified {@code ItemStack} array contains an item stack
+     * that matches the specified {@code ItemStack}.
+     *
+     * @param contents   The inventory contents to check.
+     * @param itemStack  The {@code ItemStack} to check.
+     */
+    public static boolean has(ItemStack[] contents, ItemStack itemStack) {
+        return has(contents, itemStack, ItemStackComparer.getDurability());
+    }
+
+    /**
      * Determine if the specified {@code ItemStack} array contains an item stack
      * that matches the specified {@code ItemStack}.
      *
@@ -409,28 +493,15 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if the specified inventory contains the specified quantity
+     * Determine if the specified {@code ItemStack} array contains the specified quantity
      * of items that match the specified {@code ItemStack}.
      *
-     * @param inventory  The inventory to check.
+     * @param contents   The inventory contents to check.
      * @param itemStack  The {@code ItemStack} to check.
      * @param qty        The quantity.
      */
-    public static boolean has (Inventory inventory, ItemStack itemStack, int qty) {
-        return has(inventory, itemStack, ItemStackComparer.getDurability(), qty);
-    }
-
-    /**
-     * Determine if the specified inventory contains the specified quantity
-     * of items that match the specified {@code ItemStack}.
-     *
-     * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
-     * @param qty        The quantity.
-     */
-    public static boolean has (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-        return count(inventory, itemStack, comparer, qty) == qty;
+    public static boolean has (ItemStack[] contents, ItemStack itemStack, int qty) {
+        return has(contents, itemStack, ItemStackComparer.getDurability(), qty);
     }
 
     /**
@@ -474,6 +545,17 @@ public final class InventoryUtils {
      */
     public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
         return getAll(inventory.getContents(), itemStack, comparer);
+    }
+
+    /**
+     * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
+     * the specified {@code ItemStack} array.
+     *
+     * @param contents   The inventory contents to check.
+     * @param itemStack  The {@code ItemStack} to check.
+     */
+    public static ItemStack[] getAll (ItemStack[] contents, ItemStack itemStack) {
+        return getAll(contents, itemStack, ItemStackComparer.getDurability());
     }
 
     /**
@@ -686,6 +768,21 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
+     * @param qty        The quantity.
+     */
+    public static List<ItemStack> removeAmount(Inventory inventory,
+                                               ItemStack itemStack,
+                                               int qty) {
+
+        return removeAmount(inventory, itemStack, ItemStackComparer.getDurability(), qty);
+    }
+
+    /**
+     * Remove a specified quantity of {@code ItemStack}'s from the specified inventory
+     * that match the specified {@code ItemStack} array.
+     *
+     * @param inventory  The inventory to check.
+     * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
      */
@@ -775,6 +872,21 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents.
      * @param itemStack  The {@code ItemStack} to check.
+     * @param qty        The quantity.
+     */
+    public static List<ItemStack> removeAmount(ItemStack[] contents,
+                                               ItemStack itemStack,
+                                               int qty) {
+
+        return removeAmount(contents, itemStack, ItemStackComparer.getDurability(), qty);
+    }
+
+    /**
+     * Remove a specified quantity of {@code ItemStack}'s from the specified
+     * {@code ItemStack} array that match the specified {@code ItemStack}.
+     *
+     * @param contents   The inventory contents.
+     * @param itemStack  The {@code ItemStack} to check.
      * @param comparer   The {@code ItemStackComparer} to use.
      * @param qty        The quantity.
      */
@@ -849,6 +961,20 @@ public final class InventoryUtils {
             playerInventory.setLeggings(null);
             playerInventory.setBoots(null);
             playerInventory.setItemInHand(null);
+        }
+    }
+
+    /**
+     * Clear an inventory. If the inventory is a {@code PlayerInventory},
+     * the armor contents are also cleared.
+     *
+     * @param contents  The inventory contents.
+     */
+    public static void clearAll(ItemStack[] contents) {
+        PreCon.notNull(contents);
+
+        for (int i=0; i < contents.length;i++) {
+            contents[i] = null;
         }
     }
 
