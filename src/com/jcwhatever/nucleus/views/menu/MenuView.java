@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.views.menu;
 
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.views.chest.ChestEventAction;
 import com.jcwhatever.nucleus.views.chest.ChestEventInfo;
 import com.jcwhatever.nucleus.views.chest.ChestView;
@@ -54,7 +54,7 @@ public abstract class MenuView extends ChestView {
      * @param title      The inventory title of the view.
      * @param comparer   An item stack comparer.
      */
-    protected MenuView(Plugin plugin, @Nullable ItemStackComparer comparer) {
+    protected MenuView(Plugin plugin, @Nullable ItemStackMatcher comparer) {
         super(plugin, comparer);
     }
 
@@ -66,7 +66,7 @@ public abstract class MenuView extends ChestView {
      * @param comparer   An item stack comparer.
      */
     protected MenuView(Plugin plugin, MenuInventory inventory,
-                       @Nullable ItemStackComparer comparer) {
+                       @Nullable ItemStackMatcher comparer) {
         super(plugin, inventory, comparer);
     }
 

@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.utils.inventory;
 import com.jcwhatever.nucleus.extended.ArmorType;
 import com.jcwhatever.nucleus.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 
 import org.bukkit.Material;
@@ -63,7 +63,7 @@ public final class InventoryUtils {
 
         List<ItemStack> toAdd = new ArrayList<>(itemStacks.length);
         Collections.addAll(toAdd, itemStacks);
-        ItemStackComparer comparer = ItemStackComparer.getDurability();
+        ItemStackMatcher matcher = ItemStackMatcher.getTypeMetaDurability();
 
         for (int i=0; i < array.length; i++) {
             ItemStack item = array[i];
@@ -89,7 +89,7 @@ public final class InventoryUtils {
                 if (item.getAmount() == maxStackSize)
                     break;
 
-                if (!comparer.isSame(item, newItem))
+                if (!matcher.isMatch(item, newItem))
                     continue;
 
                 // merge
@@ -135,7 +135,7 @@ public final class InventoryUtils {
         List<ItemStack> toAdd = new ArrayList<>(itemStacks.length);
         Collections.addAll(toAdd, itemStacks);
 
-        ItemStackComparer comparer = ItemStackComparer.getDurability();
+        ItemStackMatcher matcher = ItemStackMatcher.getTypeMetaDurability();
 
         for (int i=0; i < list.size(); i++) {
             ItemStack item = list.get(i);
@@ -161,7 +161,7 @@ public final class InventoryUtils {
                 if (item.getAmount() == maxStackSize)
                     break;
 
-                if (!comparer.isSame(item, newItem))
+                if (!matcher.isMatch(item, newItem))
                     continue;
 
                 // merge
@@ -203,7 +203,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static int getMax(Inventory inventory, ItemStack itemStack) {
-        return getMax(inventory.getContents(), itemStack, ItemStackComparer.getDurability(), -1);
+        return getMax(inventory.getContents(), itemStack, ItemStackMatcher.getTypeMetaDurability(), -1);
     }
 
     /**
@@ -212,10 +212,10 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static int getMax(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
-        return getMax(inventory.getContents(), itemStack, comparer, -1);
+    public static int getMax(Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
+        return getMax(inventory.getContents(), itemStack, matcher, -1);
     }
 
     /**
@@ -226,7 +226,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static int getMax(ItemStack[] contents, ItemStack itemStack) {
-        return getMax(contents, itemStack, ItemStackComparer.getDurability(), -1);
+        return getMax(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), -1);
     }
 
     /**
@@ -235,10 +235,10 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-        return getMax(contents, itemStack, comparer, -1);
+    public static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher) {
+        return getMax(contents, itemStack, matcher, -1);
     }
 
     /**
@@ -258,10 +258,10 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
-        return hasRoom(inventory, itemStack, comparer, itemStack.getAmount());
+    public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
+        return hasRoom(inventory, itemStack, matcher, itemStack.getAmount());
     }
 
     /**
@@ -274,7 +274,7 @@ public final class InventoryUtils {
      * @param qty        The amount of space needed.
      */
     public static boolean hasRoom(Inventory inventory, ItemStack itemStack, int qty) {
-        return getMax(inventory.getContents(), itemStack, ItemStackComparer.getDurability(), qty) >= qty;
+        return getMax(inventory.getContents(), itemStack, ItemStackMatcher.getTypeMetaDurability(), qty) >= qty;
     }
 
     /**
@@ -284,11 +284,11 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
-    public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-        return getMax(inventory.getContents(), itemStack, comparer, qty) >= qty;
+    public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
+        return getMax(inventory.getContents(), itemStack, matcher, qty) >= qty;
     }
 
     /**
@@ -300,7 +300,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack) {
-        return getMax(contents, itemStack, ItemStackComparer.getDurability(), itemStack.getAmount())
+        return getMax(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), itemStack.getAmount())
                 >= itemStack.getAmount();
     }
 
@@ -314,7 +314,7 @@ public final class InventoryUtils {
      * @param qty        The quantity.
      */
     public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack, int qty) {
-        return getMax(contents, itemStack, ItemStackComparer.getDurability(), qty) >= qty;
+        return getMax(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), qty) >= qty;
     }
 
     /**
@@ -324,11 +324,11 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
-    public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-        return getMax(contents, itemStack, comparer, qty) >= qty;
+    public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
+        return getMax(contents, itemStack, matcher, qty) >= qty;
     }
 
     /**
@@ -339,7 +339,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static int count (Inventory inventory, ItemStack itemStack) {
-        return count(inventory, itemStack, ItemStackComparer.getDurability());
+        return count(inventory, itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**
@@ -348,10 +348,10 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static int count (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
-        return count(inventory.getContents(), itemStack, comparer, -1);
+    public static int count (Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
+        return count(inventory.getContents(), itemStack, matcher, -1);
     }
 
     /**
@@ -362,7 +362,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static int count (ItemStack[] contents, ItemStack itemStack) {
-        return count(contents, itemStack, ItemStackComparer.getDurability(), -1);
+        return count(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), -1);
     }
 
     /**
@@ -371,10 +371,10 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static int count (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
-        return count(contents, itemStack, comparer, -1);
+    public static int count (ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher) {
+        return count(contents, itemStack, matcher, -1);
     }
 
     /**
@@ -385,7 +385,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static boolean has(Inventory inventory, ItemStack itemStack) {
-        return has (inventory, itemStack, ItemStackComparer.getDurability());
+        return has (inventory, itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**
@@ -394,12 +394,12 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static boolean has(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+    public static boolean has(Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(inventory);
         PreCon.notNull(itemStack);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
 
         ItemStack[] contents = inventory.getContents();
 
@@ -407,7 +407,7 @@ public final class InventoryUtils {
             if (item == null || item.getType() == Material.AIR)
                 continue;
 
-            if (comparer.isSame(itemStack, item))
+            if (matcher.isMatch(itemStack, item))
                 return true;
         }
 
@@ -416,16 +416,16 @@ public final class InventoryUtils {
 
             ArmorType type = ArmorType.getType(itemStack);
 
-            if (type == ArmorType.HELMET && comparer.isSame(playerInventory.getHelmet(), itemStack))
+            if (type == ArmorType.HELMET && matcher.isMatch(playerInventory.getHelmet(), itemStack))
                 return true;
 
-            if (type == ArmorType.CHESTPLATE && comparer.isSame(playerInventory.getChestplate(), itemStack))
+            if (type == ArmorType.CHESTPLATE && matcher.isMatch(playerInventory.getChestplate(), itemStack))
                 return true;
 
-            if (type == ArmorType.LEGGINGS && comparer.isSame(playerInventory.getLeggings(), itemStack))
+            if (type == ArmorType.LEGGINGS && matcher.isMatch(playerInventory.getLeggings(), itemStack))
                 return true;
 
-            if (type == ArmorType.BOOTS && comparer.isSame(playerInventory.getBoots(), itemStack))
+            if (type == ArmorType.BOOTS && matcher.isMatch(playerInventory.getBoots(), itemStack))
                 return true;
         }
 
@@ -441,7 +441,7 @@ public final class InventoryUtils {
      * @param qty        The quantity.
      */
     public static boolean has (Inventory inventory, ItemStack itemStack, int qty) {
-        return has(inventory, itemStack, ItemStackComparer.getDurability(), qty);
+        return has(inventory, itemStack, ItemStackMatcher.getTypeMetaDurability(), qty);
     }
 
     /**
@@ -450,11 +450,11 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
-    public static boolean has (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
-        return count(inventory, itemStack, comparer, qty) >= qty;
+    public static boolean has (Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
+        return count(inventory, itemStack, matcher, qty) >= qty;
     }
 
     /**
@@ -465,7 +465,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static boolean has(ItemStack[] contents, ItemStack itemStack) {
-        return has(contents, itemStack, ItemStackComparer.getDurability());
+        return has(contents, itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**
@@ -474,18 +474,18 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static boolean has(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
+    public static boolean has(ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
 
         for (ItemStack item : contents) {
             if (item == null || item.getType() == Material.AIR)
                 continue;
 
-            if (comparer.isSame(itemStack, item))
+            if (matcher.isMatch(itemStack, item))
                 return true;
         }
 
@@ -501,7 +501,7 @@ public final class InventoryUtils {
      * @param qty        The quantity.
      */
     public static boolean has (ItemStack[] contents, ItemStack itemStack, int qty) {
-        return has(contents, itemStack, ItemStackComparer.getDurability(), qty);
+        return has(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), qty);
     }
 
     /**
@@ -510,16 +510,16 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
-    public static boolean has (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+    public static boolean has (ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
         PreCon.positiveNumber(qty);
 
-        int count = count(contents, itemStack, comparer, qty);
+        int count = count(contents, itemStack, matcher, qty);
 
         return count >= qty;
     }
@@ -532,7 +532,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack) {
-        return getAll(inventory, itemStack, ItemStackComparer.getDurability());
+        return getAll(inventory, itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**
@@ -541,10 +541,10 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
-        return getAll(inventory.getContents(), itemStack, comparer);
+    public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
+        return getAll(inventory.getContents(), itemStack, matcher);
     }
 
     /**
@@ -555,7 +555,7 @@ public final class InventoryUtils {
      * @param itemStack  The {@code ItemStack} to check.
      */
     public static ItemStack[] getAll (ItemStack[] contents, ItemStack itemStack) {
-        return getAll(contents, itemStack, ItemStackComparer.getDurability());
+        return getAll(contents, itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**
@@ -564,12 +564,12 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      */
-    public static ItemStack[] getAll (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer) {
+    public static ItemStack[] getAll (ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
 
         List<ItemStack> items = new ArrayList<ItemStack>(contents.length);
 
@@ -578,7 +578,7 @@ public final class InventoryUtils {
             if (item == null || item.getType() == Material.AIR)
                 continue;
 
-            if (comparer.isSame(itemStack, item))
+            if (matcher.isMatch(itemStack, item))
                 items.add(item);
         }
 
@@ -598,9 +598,9 @@ public final class InventoryUtils {
      */
     public static List<ItemStack> remove(ItemStack[] contents, ItemStack... itemStacks) {
 
-        ItemStackComparer comparer = ItemStackComparer.getDurability();
+        ItemStackMatcher matcher = ItemStackMatcher.getTypeMetaDurability();
 
-        return remove(contents, comparer, itemStacks);
+        return remove(contents, matcher, itemStacks);
     }
 
     /**
@@ -609,22 +609,22 @@ public final class InventoryUtils {
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param contents    The array to remove items from.
-     * @param comparer    The comparer to use.
+     * @param matcher     The matcher to use.
      * @param itemStacks  The {@code ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
-    public static List<ItemStack> remove(ItemStack[] contents, ItemStackComparer comparer,
+    public static List<ItemStack> remove(ItemStack[] contents, ItemStackMatcher matcher,
                                          ItemStack... itemStacks) {
         PreCon.notNull(contents);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
         PreCon.notNull(itemStacks);
 
 
         List<ItemStack> result = new ArrayList<>(itemStacks.length);
 
         for (ItemStack item : itemStacks) {
-            result.addAll(removeAmount(contents, item, comparer, item.getAmount()));
+            result.addAll(removeAmount(contents, item, matcher, item.getAmount()));
         }
 
         return result;
@@ -642,9 +642,9 @@ public final class InventoryUtils {
      */
     public static List<ItemStack> remove(ItemStack[] contents, Collection<ItemStack> itemStacks) {
 
-        ItemStackComparer comparer = ItemStackComparer.getDurability();
+        ItemStackMatcher matcher = ItemStackMatcher.getTypeMetaDurability();
 
-        return remove(contents, comparer, itemStacks);
+        return remove(contents, matcher, itemStacks);
     }
 
     /**
@@ -653,22 +653,22 @@ public final class InventoryUtils {
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param contents    The array to remove items from.
-     * @param comparer    The comparer to use.
+     * @param matcher     The matcher to use.
      * @param itemStacks  The {@code ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
-    public static List<ItemStack> remove(ItemStack[] contents, ItemStackComparer comparer,
+    public static List<ItemStack> remove(ItemStack[] contents, ItemStackMatcher matcher,
                                          Collection<ItemStack> itemStacks) {
         PreCon.notNull(contents);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
         PreCon.notNull(itemStacks);
 
 
         List<ItemStack> result = new ArrayList<>(itemStacks.size());
 
         for (ItemStack item : itemStacks) {
-            result.addAll(removeAmount(contents, item, comparer, item.getAmount()));
+            result.addAll(removeAmount(contents, item, matcher, item.getAmount()));
         }
 
         return result;
@@ -686,9 +686,9 @@ public final class InventoryUtils {
      */
     public static List<ItemStack> remove(Inventory inventory, ItemStack... itemStacks) {
 
-        ItemStackComparer comparer = ItemStackComparer.getDurability();
+        ItemStackMatcher matcher = ItemStackMatcher.getTypeMetaDurability();
 
-        return remove(inventory, comparer, itemStacks);
+        return remove(inventory, matcher, itemStacks);
     }
 
     /**
@@ -697,22 +697,22 @@ public final class InventoryUtils {
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param inventory   The inventory to remove items from.
-     * @param comparer    The comparer to use.
+     * @param matcher     The matcher to use.
      * @param itemStacks  The {@code ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
-    public static List<ItemStack> remove(Inventory inventory, ItemStackComparer comparer,
+    public static List<ItemStack> remove(Inventory inventory, ItemStackMatcher matcher,
                                          ItemStack... itemStacks) {
         PreCon.notNull(inventory);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
         PreCon.notNull(itemStacks);
 
 
         List<ItemStack> result = new ArrayList<>(itemStacks.length);
 
         for (ItemStack item : itemStacks) {
-            result.addAll(removeAmount(inventory, item, comparer, item.getAmount()));
+            result.addAll(removeAmount(inventory, item, matcher, item.getAmount()));
         }
 
         return result;
@@ -730,9 +730,9 @@ public final class InventoryUtils {
      */
     public static List<ItemStack> remove(Inventory inventory, Collection<ItemStack> itemStacks) {
 
-        ItemStackComparer comparer = ItemStackComparer.getDurability();
+        ItemStackMatcher matcher = ItemStackMatcher.getTypeMetaDurability();
 
-        return remove(inventory, comparer, itemStacks);
+        return remove(inventory, matcher, itemStacks);
     }
 
     /**
@@ -741,22 +741,22 @@ public final class InventoryUtils {
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param inventory   The inventory to remove items from.
-     * @param comparer    The comparer to use.
+     * @param matcher     The matcher to use.
      * @param itemStacks  The {@code ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
-    public static List<ItemStack> remove(Inventory inventory, ItemStackComparer comparer,
+    public static List<ItemStack> remove(Inventory inventory, ItemStackMatcher matcher,
                                          Collection<ItemStack> itemStacks) {
         PreCon.notNull(inventory);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
         PreCon.notNull(itemStacks);
 
 
         List<ItemStack> result = new ArrayList<>(itemStacks.size());
 
         for (ItemStack item : itemStacks) {
-            result.addAll(removeAmount(inventory, item, comparer, item.getAmount()));
+            result.addAll(removeAmount(inventory, item, matcher, item.getAmount()));
         }
 
         return result;
@@ -774,7 +774,7 @@ public final class InventoryUtils {
                                                ItemStack itemStack,
                                                int qty) {
 
-        return removeAmount(inventory, itemStack, ItemStackComparer.getDurability(), qty);
+        return removeAmount(inventory, itemStack, ItemStackMatcher.getTypeMetaDurability(), qty);
     }
 
     /**
@@ -783,15 +783,15 @@ public final class InventoryUtils {
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
     public static List<ItemStack> removeAmount(Inventory inventory,
                                                ItemStack itemStack,
-                                               ItemStackComparer comparer, int qty) {
+                                               ItemStackMatcher matcher, int qty) {
         PreCon.notNull(inventory);
         PreCon.notNull(itemStack);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
         PreCon.positiveNumber(qty);
 
         int size = inventory.getSize();
@@ -810,7 +810,7 @@ public final class InventoryUtils {
             if (item == null || item.getType() == Material.AIR)
                 continue;
 
-            if (comparer.isSame(itemStack, item)) {
+            if (matcher.isMatch(itemStack, item)) {
 
                 ItemStack clone = item.clone();
 
@@ -842,22 +842,22 @@ public final class InventoryUtils {
 
             ArmorType armorType = ArmorType.getType(itemStack);
 
-            if (armorType == ArmorType.HELMET && comparer.isSame(playerInventory.getHelmet(), itemStack)) {
+            if (armorType == ArmorType.HELMET && matcher.isMatch(playerInventory.getHelmet(), itemStack)) {
                 results.add(playerInventory.getHelmet());
                 playerInventory.setHelmet(null);
             }
 
-            if (armorType == ArmorType.CHESTPLATE && comparer.isSame(playerInventory.getChestplate(), itemStack)) {
+            if (armorType == ArmorType.CHESTPLATE && matcher.isMatch(playerInventory.getChestplate(), itemStack)) {
                 results.add(playerInventory.getChestplate());
                 playerInventory.setChestplate(null);
             }
 
-            if (armorType == ArmorType.LEGGINGS && comparer.isSame(playerInventory.getLeggings(), itemStack)) {
+            if (armorType == ArmorType.LEGGINGS && matcher.isMatch(playerInventory.getLeggings(), itemStack)) {
                 results.add(playerInventory.getLeggings());
                 playerInventory.setLeggings(null);
             }
 
-            if (armorType == ArmorType.BOOTS && comparer.isSame(playerInventory.getBoots(), itemStack)) {
+            if (armorType == ArmorType.BOOTS && matcher.isMatch(playerInventory.getBoots(), itemStack)) {
                 results.add(playerInventory.getBoots());
                 playerInventory.setLeggings(null);
             }
@@ -878,7 +878,7 @@ public final class InventoryUtils {
                                                ItemStack itemStack,
                                                int qty) {
 
-        return removeAmount(contents, itemStack, ItemStackComparer.getDurability(), qty);
+        return removeAmount(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), qty);
     }
 
     /**
@@ -887,15 +887,15 @@ public final class InventoryUtils {
      *
      * @param contents   The inventory contents.
      * @param itemStack  The {@code ItemStack} to check.
-     * @param comparer   The {@code ItemStackComparer} to use.
+     * @param matcher    The {@code ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
     public static List<ItemStack> removeAmount(ItemStack[] contents,
                                                ItemStack itemStack,
-                                               ItemStackComparer comparer, int qty) {
+                                               ItemStackMatcher matcher, int qty) {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher);
         PreCon.positiveNumber(qty);
 
         List<ItemStack> results = new ArrayList<ItemStack>(contents.length);
@@ -912,7 +912,7 @@ public final class InventoryUtils {
             if (item == null || item.getType() == Material.AIR)
                 continue;
 
-            if (comparer.isSame(itemStack, item)) {
+            if (matcher.isMatch(itemStack, item)) {
 
                 ItemStack clone = item.clone();
 
@@ -1053,7 +1053,7 @@ public final class InventoryUtils {
         return true;
     }
 
-    private static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int totalRequired) {
+    private static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher, int totalRequired) {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
 
@@ -1068,7 +1068,7 @@ public final class InventoryUtils {
             if (slotStack == null || slotStack.getType() == Material.AIR) {
                 totalSpace += maxStackSize;
             }
-            else if (comparer.isSame(slotStack, itemStack)) {
+            else if (matcher.isMatch(slotStack, itemStack)) {
 
                 if (slotStack.getAmount() <= maxStackSize)
                     totalSpace += (maxStackSize - slotStack.getAmount());
@@ -1081,7 +1081,7 @@ public final class InventoryUtils {
         return totalSpace;
     }
 
-    private static int count (ItemStack[] contents, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+    private static int count (ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
 
         int count = 0;
 
@@ -1089,7 +1089,7 @@ public final class InventoryUtils {
             if (item == null || item.getType() == Material.AIR)
                 continue;
 
-            if (comparer.isSame(itemStack, item))
+            if (matcher.isMatch(itemStack, item))
                 count += item.getAmount();
 
             if (qty >= 0 && count >= qty)
@@ -1099,27 +1099,27 @@ public final class InventoryUtils {
         return count;
     }
 
-    private static int count (Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+    private static int count (Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
 
         ItemStack[] contents = inventory.getContents();
 
-        int count = count(contents, itemStack, comparer, qty);
+        int count = count(contents, itemStack, matcher, qty);
 
         if (inventory instanceof PlayerInventory) {
             PlayerInventory playerInventory = (PlayerInventory)inventory;
 
             ArmorType type = ArmorType.getType(itemStack);
 
-            if (type == ArmorType.HELMET && comparer.isSame(playerInventory.getHelmet(), itemStack))
+            if (type == ArmorType.HELMET && matcher.isMatch(playerInventory.getHelmet(), itemStack))
                 count++;
 
-            if (type == ArmorType.CHESTPLATE && comparer.isSame(playerInventory.getChestplate(), itemStack))
+            if (type == ArmorType.CHESTPLATE && matcher.isMatch(playerInventory.getChestplate(), itemStack))
                 count++;
 
-            if (type == ArmorType.LEGGINGS && comparer.isSame(playerInventory.getLeggings(), itemStack))
+            if (type == ArmorType.LEGGINGS && matcher.isMatch(playerInventory.getLeggings(), itemStack))
                 count++;
 
-            if (type == ArmorType.BOOTS && comparer.isSame(playerInventory.getBoots(), itemStack))
+            if (type == ArmorType.BOOTS && matcher.isMatch(playerInventory.getBoots(), itemStack))
                 count++;
         }
 

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
@@ -85,22 +85,22 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param operations  The compare operations to perform.
          */
-        public ItemStackComparer getComparer(byte operations) {
-            return ItemStackComparer.getCustom(operations);
+        public ItemStackMatcher getComparer(byte operations) {
+            return ItemStackMatcher.getCustom(operations);
         }
 
         /**
          * Get the default item stack comparer.
          */
-        public ItemStackComparer getDefaultComparer() {
-            return ItemStackComparer.getDefault();
+        public ItemStackMatcher getDefaultComparer() {
+            return ItemStackMatcher.getDefault();
         }
 
         /**
          * Get the durability/meta/type item stack comparer.
          */
-        public ItemStackComparer getDurabilityComparer() {
-            return ItemStackComparer.getDefault();
+        public ItemStackMatcher getDurabilityComparer() {
+            return ItemStackMatcher.getDefault();
         }
 
         /**
@@ -109,9 +109,9 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
-         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param comparer   The {@code ItemStackMatcher} to use.
          */
-        public int getMax(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+        public int getMax(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer) {
             return InventoryUtils.getMax(inventory, itemStack, comparer);
         }
 
@@ -121,9 +121,9 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
-         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param comparer   The {@code ItemStackMatcher} to use.
          */
-        public boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+        public boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer) {
             return InventoryUtils.hasRoom(inventory, itemStack, comparer, itemStack.getAmount());
         }
 
@@ -134,10 +134,10 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check .
-         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param comparer   The {@code ItemStackMatcher} to use.
          * @param qty        The amount of space needed.
          */
-        public boolean hasRoomForQty(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        public boolean hasRoomForQty(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer, int qty) {
             return InventoryUtils.hasRoom(inventory, itemStack, comparer, qty);
         }
 
@@ -147,9 +147,9 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
-         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param comparer   The {@code ItemStackMatcher} to use.
          */
-        public int count(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+        public int count(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer) {
             return InventoryUtils.count(inventory, itemStack, comparer);
         }
 
@@ -158,9 +158,9 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
-         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param comparer   The {@code ItemStackMatcher} to use.
          */
-        public boolean has(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+        public boolean has(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer) {
             return InventoryUtils.has(inventory, itemStack, comparer);
         }
 
@@ -170,10 +170,10 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
-         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param comparer   The {@code ItemStackMatcher} to use.
          * @param qty        The quantity.
          */
-        public boolean hasQty(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        public boolean hasQty(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer, int qty) {
             return InventoryUtils.has(inventory, itemStack, comparer, qty);
         }
 
@@ -183,9 +183,9 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
-         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param comparer   The {@code ItemStackMatcher} to use.
          */
-        public ItemStack[] getAll(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer) {
+        public ItemStack[] getAll(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer) {
             return InventoryUtils.getAll(inventory, itemStack, comparer);
         }
 
@@ -195,10 +195,10 @@ public class ScriptApiInventory extends NucleusScriptApi {
          *
          * @param inventory  The inventory to check.
          * @param itemStack  The item stack to check.
-         * @param comparer   The {@code ItemStackComparer} to use.
+         * @param comparer   The {@code ItemStackMatcher} to use.
          * @param qty        The quantity to remove.
          */
-        public List<ItemStack> remove(Inventory inventory, ItemStack itemStack, ItemStackComparer comparer, int qty) {
+        public List<ItemStack> remove(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer, int qty) {
             return InventoryUtils.removeAmount(inventory, itemStack, comparer, qty);
         }
     }

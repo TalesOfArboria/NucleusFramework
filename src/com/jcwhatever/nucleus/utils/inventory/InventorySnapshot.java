@@ -25,19 +25,19 @@
 
 package com.jcwhatever.nucleus.utils.inventory;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
-import com.jcwhatever.nucleus.utils.items.ItemWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
+import com.jcwhatever.nucleus.utils.items.ItemWrapper;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Takes a snapshot of an chest.
@@ -47,13 +47,13 @@ public class InventorySnapshot {
     private Map<ItemWrapper, Item> _itemMap = new HashMap<ItemWrapper, Item>(6 * 9);
     private ItemStack[] _items;
     private ItemStack[] _snapshot;
-    private ItemStackComparer _comparer;
+    private ItemStackMatcher _comparer;
 
     /**
      * Constructor.
      *
      * <p>
-     *     Uses default {@code ItemStackComparer}
+     *     Uses default {@code ItemStackMatcher}
      * </p>
      *
      * @param inventory  The chest to snapshot.
@@ -61,20 +61,20 @@ public class InventorySnapshot {
     public InventorySnapshot(Inventory inventory) {
         PreCon.notNull(inventory);
 
-        init(inventory, ItemStackComparer.getDefault());
+        init(inventory, ItemStackMatcher.getDefault());
     }
 
     /**
      * Constructor.
      *
      * @param inventory  The chest to snapshot.
-     * @param comparer   The item stack comparer to use internally.
+     * @param matcher    The item stack matcher  to use internally.
      */
-    public InventorySnapshot(Inventory inventory, ItemStackComparer comparer) {
+    public InventorySnapshot(Inventory inventory, ItemStackMatcher matcher ) {
         PreCon.notNull(inventory);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher );
 
-        init(inventory, comparer);
+        init(inventory, matcher );
     }
 
     /**
@@ -142,12 +142,12 @@ public class InventorySnapshot {
     }
 
     // init, take snapshot
-    private void init(Inventory inventory, ItemStackComparer comparer) {
+    private void init(Inventory inventory, ItemStackMatcher matcher ) {
 
         ItemStack[] itemStacks = inventory.getContents();
         List<ItemStack> items = new ArrayList<ItemStack>(itemStacks.length);
         _snapshot = new ItemStack[itemStacks.length];
-        _comparer = comparer;
+        _comparer = matcher ;
 
         for (int i=0; i < itemStacks.length; i++) {
             ItemStack itemStack = itemStacks[i];

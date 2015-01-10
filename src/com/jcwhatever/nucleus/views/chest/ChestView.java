@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.views.chest;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
@@ -47,7 +47,7 @@ public abstract class ChestView extends View {
 
     private Inventory _inventory;
     private InventoryView _inventoryView;
-    private ItemStackComparer _comparer;
+    private ItemStackMatcher _comparer;
 
     /**
      * Constructor.
@@ -55,7 +55,7 @@ public abstract class ChestView extends View {
      * @param plugin     The owning plugin.
      * @param comparer   The item stack comparer.
      */
-    protected ChestView(Plugin plugin, @Nullable ItemStackComparer comparer) {
+    protected ChestView(Plugin plugin, @Nullable ItemStackMatcher comparer) {
         this(plugin, null, comparer);
     }
 
@@ -66,14 +66,14 @@ public abstract class ChestView extends View {
      * @param inventory  The inventory.
      * @param comparer   The item stack comparer.
      */
-    protected ChestView(Plugin plugin, @Nullable Inventory inventory, @Nullable ItemStackComparer comparer) {
+    protected ChestView(Plugin plugin, @Nullable Inventory inventory, @Nullable ItemStackMatcher comparer) {
         super(plugin);
 
         _inventory = inventory;
         _comparer = comparer;
 
         if (_comparer == null)
-            _comparer = ItemStackComparer.getDefault();
+            _comparer = ItemStackMatcher.getDefault();
     }
 
     /**
@@ -82,9 +82,9 @@ public abstract class ChestView extends View {
     public abstract String getTitle();
 
     /**
-     * Get the views {@code ItemStackComparer}.
+     * Get the views {@code ItemStackMatcher}.
      */
-    public ItemStackComparer getItemStackComparer() {
+    public ItemStackMatcher getItemStackMatcher() {
         return _comparer;
     }
 

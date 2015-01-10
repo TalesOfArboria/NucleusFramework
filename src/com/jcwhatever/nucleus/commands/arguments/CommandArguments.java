@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.commands.exceptions.DuplicateArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemWrapper;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.messaging.IMessenger;
@@ -771,7 +771,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             for (int i=0; i < 9; i++) {
                 ItemStack item = inventory.getItem(i);
                 if (item != null && item.getType() != Material.AIR) {
-                    ItemWrapper wrapper = new ItemWrapper(item, ItemStackComparer.getDefault());
+                    ItemWrapper wrapper = new ItemWrapper(item, ItemStackMatcher.getDefault());
                     wrappers.add(wrapper);
                 }
             }

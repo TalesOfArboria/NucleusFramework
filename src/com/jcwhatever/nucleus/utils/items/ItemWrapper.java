@@ -25,22 +25,22 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
-import org.bukkit.inventory.ItemStack;
-
 import com.jcwhatever.nucleus.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.PreCon;
+
+import org.bukkit.inventory.ItemStack;
 
 /**
  * An {@code ItemStack} wrapper.
  *
  * <p>
- *     Provides built in {@code ItemStackComparer} support in the
+ *     Provides built in {@code ItemStackMatcher} support in the
  *     {@code equals} method making the wrapper ideal for use as a {@code Map} key.
  * </p>
  *
  * <p>
  *     {@code hashCode} method returns the hash of the encapsulated {@code ItemStack}'s
- *     {@code Material} type so that different {@code ItemStackComparer} compare operations
+ *     {@code Material} type so that different {@code ItemStackMatcher} compare operations
  *     can be used to find an {@code ItemStack} by key or in a hash set.
  * </p>
  *
@@ -49,14 +49,14 @@ public class ItemWrapper {
 
     private ItemStack _itemStack;
     private MaterialExt _materialExt;
-    private ItemStackComparer _comparer;
+    private ItemStackMatcher _comparer;
     private int _hash = -1;
 
     /**
      * Constructor.
      *
      * <p>
-     *     Uses the default {@code ItemStackComparer}.
+     *     Uses the default {@code ItemStackMatcher}.
      * </p>
      *
      * @param itemStack  The item stack to encapsulate.
@@ -65,21 +65,21 @@ public class ItemWrapper {
         PreCon.notNull(itemStack);
 
         _itemStack = itemStack;
-        _comparer = ItemStackComparer.getDefault();
+        _comparer = ItemStackMatcher.getDefault();
     }
 
     /**
      * Constructor.
      *
      * @param itemStack  The item stack to encapsulate.
-     * @param comparer   The comparer to use.
+     * @param matcher    The matcher  to use.
      */
-    public ItemWrapper(ItemStack itemStack, ItemStackComparer comparer) {
+    public ItemWrapper(ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(itemStack);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher );
 
         _itemStack = itemStack;
-        _comparer = comparer;
+        _comparer = matcher ;
     }
 
     /**
@@ -101,16 +101,16 @@ public class ItemWrapper {
     }
 
     /**
-     * Get the compare operations of the {@code ItemStackComparer}.
+     * Get the compare operations of the {@code ItemStackMatcher}.
      */
     public byte getCompareOperations() {
-        return _comparer.getCompareOperations();
+        return _comparer.getMatcherOperations();
     }
 
     /**
-     * Get the {@code ItemStackComparer}.
+     * Get the {@code ItemStackMatcher}.
      */
-    public ItemStackComparer getItemStackComparer() {
+    public ItemStackMatcher getItemStackMatcher() {
         return _comparer;
     }
 
@@ -127,12 +127,12 @@ public class ItemWrapper {
     @Override
     public boolean equals(Object o) {
         if (o instanceof ItemStack) {
-            return _comparer.isSame(_itemStack, (ItemStack)o);
+            return _comparer.isMatch(_itemStack, (ItemStack) o);
         }
         else if (o instanceof ItemWrapper) {
             ItemWrapper wrapper = (ItemWrapper)o;
 
-            return _comparer.isSame(_itemStack, wrapper.getItem());
+            return _comparer.isMatch(_itemStack, wrapper.getItem());
         }
 
         return false;

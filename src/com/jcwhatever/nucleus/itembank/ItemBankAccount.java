@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.itembank;
 
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemWrapper;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -118,7 +118,7 @@ class ItemBankAccount {
     public BankItem getBankItem (ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        ItemWrapper wrapper = new ItemWrapper(itemStack, ItemStackComparer.getDurability());
+        ItemWrapper wrapper = new ItemWrapper(itemStack, ItemStackMatcher.getTypeMetaDurability());
 
         return _itemMap.get(wrapper);
     }
@@ -138,7 +138,7 @@ class ItemBankAccount {
         PreCon.notNull(itemStack);
         PreCon.greaterThanZero(qty);
 
-        ItemWrapper wrapper = new ItemWrapper(itemStack, ItemStackComparer.getDurability());
+        ItemWrapper wrapper = new ItemWrapper(itemStack, ItemStackMatcher.getTypeMetaDurability());
 
         BankItem bankItem = _itemMap.get(wrapper);
         if (bankItem == null)
@@ -211,7 +211,7 @@ class ItemBankAccount {
         PreCon.notNull(itemStack);
         PreCon.greaterThanZero(qty);
 
-        ItemWrapper wrapper = new ItemWrapper(itemStack, ItemStackComparer.getDurability());
+        ItemWrapper wrapper = new ItemWrapper(itemStack, ItemStackMatcher.getTypeMetaDurability());
 
         BankItem bankItem = _itemMap.get(wrapper);
         IDataNode dataNode;
@@ -269,7 +269,7 @@ class ItemBankAccount {
 
             BankItem bankItem = new BankItem(itemId, this, item, qty, itemNode);
 
-            ItemWrapper wrapper = new ItemWrapper(item, ItemStackComparer.getDurability());
+            ItemWrapper wrapper = new ItemWrapper(item, ItemStackMatcher.getTypeMetaDurability());
 
             _itemMap.put(wrapper, bankItem);
             _idMap.put(itemId, bankItem);

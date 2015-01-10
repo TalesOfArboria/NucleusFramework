@@ -4,7 +4,7 @@ import com.jcwhatever.dummy.DummyInventory;
 import com.jcwhatever.dummy.DummyServer;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -66,7 +66,7 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        int max = InventoryUtils.getMax(stacks, toCheck, ItemStackComparer.getTypeComparer());
+        int max = InventoryUtils.getMax(stacks, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals((5 * 64) + 32, max);
     }
@@ -77,7 +77,7 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        int max = InventoryUtils.getMax(inventory, toCheck, ItemStackComparer.getTypeComparer());
+        int max = InventoryUtils.getMax(inventory, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals((5 * 64) + 32, max);
     }
@@ -88,11 +88,11 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        boolean result = InventoryUtils.hasRoom(contents, toCheck, ItemStackComparer.getTypeComparer(), toCheck.getAmount());
+        boolean result = InventoryUtils.hasRoom(contents, toCheck, ItemStackMatcher.getTypeMatcher(), toCheck.getAmount());
 
         Assert.assertEquals(true, result);
 
-        result = InventoryUtils.hasRoom(contents, toCheck, ItemStackComparer.getTypeComparer(), 1000);
+        result = InventoryUtils.hasRoom(contents, toCheck, ItemStackMatcher.getTypeMatcher(), 1000);
 
         Assert.assertEquals(false, result);
     }
@@ -103,7 +103,7 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        boolean result = InventoryUtils.hasRoom(inventory, toCheck, ItemStackComparer.getTypeComparer());
+        boolean result = InventoryUtils.hasRoom(inventory, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals(true, result);
 
@@ -119,7 +119,7 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        int total = InventoryUtils.count(contents, toCheck, ItemStackComparer.getTypeComparer());
+        int total = InventoryUtils.count(contents, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals(32, total);
     }
@@ -131,7 +131,7 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        int total = InventoryUtils.count(inventory, toCheck, ItemStackComparer.getTypeComparer());
+        int total = InventoryUtils.count(inventory, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals(32, total);
     }
@@ -143,14 +143,14 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        boolean result = InventoryUtils.has(contents, toCheck, ItemStackComparer.getTypeComparer());
+        boolean result = InventoryUtils.has(contents, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals(true, result);
 
 
         toCheck = new ItemStackBuilder(Material.REDSTONE_BLOCK).amount(5).build();
 
-        result = InventoryUtils.has(contents, toCheck, ItemStackComparer.getTypeComparer());
+        result = InventoryUtils.has(contents, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals(false, result);
     }
@@ -162,14 +162,14 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        boolean result = InventoryUtils.has(inventory, toCheck, ItemStackComparer.getTypeComparer());
+        boolean result = InventoryUtils.has(inventory, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals(true, result);
 
 
         toCheck = new ItemStackBuilder(Material.REDSTONE_BLOCK).amount(5).build();
 
-        result = InventoryUtils.has(inventory, toCheck, ItemStackComparer.getTypeComparer());
+        result = InventoryUtils.has(inventory, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertEquals(false, result);
     }
@@ -181,12 +181,12 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        boolean result = InventoryUtils.has(contents, toCheck, ItemStackComparer.getTypeComparer(), 5);
+        boolean result = InventoryUtils.has(contents, toCheck, ItemStackMatcher.getTypeMatcher(), 5);
 
         Assert.assertEquals(true, result);
 
 
-        result = InventoryUtils.has(contents, toCheck, ItemStackComparer.getTypeComparer(), 33);
+        result = InventoryUtils.has(contents, toCheck, ItemStackMatcher.getTypeMatcher(), 33);
 
         Assert.assertEquals(false, result);
     }
@@ -198,12 +198,12 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(5).build();
 
-        boolean result = InventoryUtils.has(inventory, toCheck, ItemStackComparer.getTypeComparer(), 5);
+        boolean result = InventoryUtils.has(inventory, toCheck, ItemStackMatcher.getTypeMatcher(), 5);
 
         Assert.assertEquals(true, result);
 
 
-        result = InventoryUtils.has(inventory, toCheck, ItemStackComparer.getTypeComparer(), 33);
+        result = InventoryUtils.has(inventory, toCheck, ItemStackMatcher.getTypeMatcher(), 33);
 
         Assert.assertEquals(false, result);
     }
@@ -215,7 +215,7 @@ public class InventoryUtilsTest {
 
         ItemStack toCheck = new ItemStackBuilder(Material.GRASS).amount(32).build();
 
-        ItemStack[] result = InventoryUtils.getAll(contents, toCheck, ItemStackComparer.getTypeComparer());
+        ItemStack[] result = InventoryUtils.getAll(contents, toCheck, ItemStackMatcher.getTypeMatcher());
 
         Assert.assertArrayEquals(new ItemStack[] { toCheck }, result);
     }

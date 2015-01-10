@@ -48,15 +48,14 @@ import javax.annotation.Nullable;
  */
 public class ItemFilterManager implements IPluginOwned {
 
-    @Localizable
-    static final String _WHITELIST = "Whitelist";
+    @Localizable static final String _WHITELIST = "Whitelist";
     @Localizable static final String _BLACKLIST = "Blacklist";
 
     private final Plugin _plugin;
     private final IDataNode _dataNode;
 
     private FilterPolicy _filter = FilterPolicy.WHITELIST;
-    private ItemStackComparer _comparer;
+    private ItemStackMatcher _matcher;
     private final Map<ItemWrapper, ItemWrapper> _filterItems = new HashMap<ItemWrapper, ItemWrapper>(6 * 9);
 
     /**
@@ -94,7 +93,7 @@ public class ItemFilterManager implements IPluginOwned {
 
         _plugin = plugin;
         _dataNode = dataNode;
-        _comparer = ItemStackComparer.getDefault();
+        _matcher = ItemStackMatcher.getDefault();
 
         loadSettings();
     }
@@ -104,14 +103,14 @@ public class ItemFilterManager implements IPluginOwned {
      *
      * @param plugin             The owning plugin
      * @param dataNode           Data node to save and load settings.
-     * @param compareOperations  ItemStackComparer bit compare operations to use to match items
+     * @param matchOperations    {@code ItemStackMatcher} bit matcher operations to use to match items
      */
-    public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode, byte compareOperations) {
+    public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode, byte matchOperations) {
         PreCon.notNull(plugin);
 
         _plugin = plugin;
         _dataNode = dataNode;
-        _comparer = new ItemStackComparer(compareOperations);
+        _matcher = new ItemStackMatcher(matchOperations);
 
         loadSettings();
     }
@@ -121,15 +120,15 @@ public class ItemFilterManager implements IPluginOwned {
      *
      * @param plugin    The owning plugin
      * @param dataNode  Data node to save and load settings.
-     * @param comparer  The {@link ItemStackComparer} to use to match items.
+     * @param matcher   The {@link ItemStackMatcher} to use to match items.
      */
-    public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode, ItemStackComparer comparer) {
+    public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode, ItemStackMatcher matcher) {
         PreCon.notNull(plugin);
-        PreCon.notNull(comparer);
+        PreCon.notNull(matcher );
 
         _plugin = plugin;
         _dataNode = dataNode;
-        _comparer = comparer;
+        _matcher = matcher ;
 
         loadSettings();
     }
@@ -170,27 +169,27 @@ public class ItemFilterManager implements IPluginOwned {
      * Get the compare operations bit flags.
      */
     public byte getCompareOperations() {
-        return _comparer.getCompareOperations();
+        return _matcher.getMatcherOperations();
     }
 
     /**
-     * Get the {@link ItemStackComparer} used to match items.
+     * Get the {@link ItemStackMatcher} used to match items.
      */
-    public ItemStackComparer getItemStackComparer() {
-        return _comparer;
+    public ItemStackMatcher getItemStackMatcher() {
+        return _matcher;
     }
 
     /**
      * Determine if the specified {code ItemStack} is valid.
      * Checks to see if the collection contains a matching {@code ItemStack} as
-     * determined by the collections {@code ItemStackComparer} and the filter mode.
+     * determined by the collections {@code ItemStackMatcher} and the filter mode.
      *
      * @param item  The item to check.
      */
     public boolean isValidItem(ItemStack item) {
         PreCon.notNull(item);
 
-        ItemWrapper wrapper = _filterItems.get(new ItemWrapper(item, _comparer));
+        ItemWrapper wrapper = _filterItems.get(new ItemWrapper(item, _matcher));
         if (wrapper == null)
             return _filter == FilterPolicy.BLACKLIST;
 
@@ -212,7 +211,7 @@ public class ItemFilterManager implements IPluginOwned {
     public boolean addItem(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        ItemWrapper wrapper = new ItemWrapper(itemStack, _comparer);
+        ItemWrapper wrapper = new ItemWrapper(itemStack, _matcher);
         if (_filterItems.put(wrapper, wrapper) != null) {
             saveFilterItems();
             return true;
@@ -229,7 +228,7 @@ public class ItemFilterManager implements IPluginOwned {
         PreCon.notNull(itemStacks);
 
         for (ItemStack stack : itemStacks) {
-            ItemWrapper wrapper = new ItemWrapper(stack, _comparer);
+            ItemWrapper wrapper = new ItemWrapper(stack, _matcher);
             _filterItems.put(wrapper, wrapper);
         }
 
@@ -246,7 +245,7 @@ public class ItemFilterManager implements IPluginOwned {
     public boolean removeItem(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        if (_filterItems.remove(new ItemWrapper(itemStack, _comparer)) != null) {
+        if (_filterItems.remove(new ItemWrapper(itemStack, _matcher)) != null) {
             saveFilterItems();
             return true;
         }
@@ -262,7 +261,7 @@ public class ItemFilterManager implements IPluginOwned {
         PreCon.notNull(itemStacks);
 
         for (ItemStack stack : itemStacks) {
-            _filterItems.remove(new ItemWrapper(stack, _comparer));
+            _filterItems.remove(new ItemWrapper(stack, _matcher));
         }
 
         saveFilterItems();
@@ -311,7 +310,7 @@ public class ItemFilterManager implements IPluginOwned {
         _filterItems.clear();
         if (craftItems != null && craftItems.length > 0) {
             for (ItemStack stack : craftItems) {
-                ItemWrapper wrapper = new ItemWrapper(stack, _comparer);
+                ItemWrapper wrapper = new ItemWrapper(stack, _matcher);
                 _filterItems.put(wrapper, wrapper);
             }
         }

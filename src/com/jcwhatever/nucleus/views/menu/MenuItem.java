@@ -158,7 +158,7 @@ public class MenuItem extends ItemStack implements IMeta {
 
         ItemStack itemStack = inventory.getItem(_slot);
 
-        return menuView.getItemStackComparer().isSame(itemStack, this);
+        return menuView.getItemStackMatcher().isMatch(itemStack, this);
     }
 
     /**

@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.kits;
 
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -95,10 +95,10 @@ public interface IKit extends INamedInsensitive, IPluginOwned {
      * <p>Does not take items if the player does not have all required items.</p>
      *
      * @param p        The player to take from.
-     * @param comparer The {@code ItemStackComparer} used to compare items.
+     * @param comparer The {@code ItemStackMatcher} used to compare items.
      * @param qty      The number of items to take. (kit * qty)
      *
      * @return  True if the player had all the items.
      */
-    boolean take(Player p, ItemStackComparer comparer, int qty);
+    boolean take(Player p, ItemStackMatcher comparer, int qty);
 }

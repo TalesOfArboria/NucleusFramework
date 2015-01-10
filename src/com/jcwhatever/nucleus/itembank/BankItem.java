@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.itembank;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemWrapper;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -72,7 +72,7 @@ public class BankItem {
         _dataNode = dataNode;
         
         _itemStack.setAmount(1);
-        _wrapper = new ItemWrapper(_itemStack, ItemStackComparer.getDurability());
+        _wrapper = new ItemWrapper(_itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**

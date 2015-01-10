@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.mixins.IPaginator;
 import com.jcwhatever.nucleus.mixins.IPaginator.PageStartIndex;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
@@ -69,7 +69,7 @@ public class PaginatorView extends MenuView {
      */
     public static void paginateNext(ViewSession viewSession,
                                     View nextView,
-                                    IPaginator paginator, @Nullable ItemStackComparer comparer) {
+                                    IPaginator paginator, @Nullable ItemStackMatcher comparer) {
 
         if (paginator.getTotalPages() > 1) {
 
@@ -94,7 +94,7 @@ public class PaginatorView extends MenuView {
      * @param comparer   The item stack comparer.
      */
     public PaginatorView(Plugin plugin, IPaginator paginator,
-                         @Nullable ItemStackComparer comparer) {
+                         @Nullable ItemStackMatcher comparer) {
         this(plugin, paginator, null, comparer);
     }
 
@@ -105,7 +105,7 @@ public class PaginatorView extends MenuView {
      */
     public PaginatorView(Plugin plugin, IPaginator paginator,
                          @Nullable View nextView,
-                         @Nullable ItemStackComparer comparer) {
+                         @Nullable ItemStackMatcher comparer) {
 
         super(plugin, comparer);
 

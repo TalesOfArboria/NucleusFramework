@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
-import com.jcwhatever.nucleus.utils.items.ItemStackComparer;
+import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -180,7 +180,7 @@ public class Kit implements IKit {
      */
     @Override
     public boolean take(Player p, int qty) {
-        return take(p, ItemStackComparer.getDurability(), qty);
+        return take(p, ItemStackMatcher.getTypeMetaDurability(), qty);
     }
 
     /**
@@ -189,13 +189,13 @@ public class Kit implements IKit {
      * <p>Does not take items if the player does not have all required items.</p>
      *
      * @param p        The player to take from.
-     * @param comparer The {@code ItemStackComparer} used to compare items.
+     * @param comparer The {@code ItemStackMatcher} used to compare items.
      * @param qty      The number of items to take. (kit * qty)
      *
      * @return  True if the player had all the items.
      */
     @Override
-    public boolean take(Player p, ItemStackComparer comparer, int qty) {
+    public boolean take(Player p, ItemStackMatcher comparer, int qty) {
 
         List<ItemStack> itemsToTake = new ArrayList<>(_items.size() + 4);
 
@@ -461,7 +461,7 @@ public class Kit implements IKit {
         List<ItemStack> clone = new ArrayList<>(items.length);
         Collections.addAll(clone, items);
 
-        ItemStackComparer comparer = ItemStackComparer.getDefault();
+        ItemStackMatcher comparer = ItemStackMatcher.getDefault();
 
         boolean[] armorFlags = new boolean[4];
 
@@ -471,7 +471,7 @@ public class Kit implements IKit {
 
             switch (ArmorType.getType(item)) {
                 case HELMET:
-                    if (comparer.isSame(item, _armor[0])) {
+                    if (comparer.isMatch(item, _armor[0])) {
                         setHelmet(null);
                         armorFlags[0] = true;
                         iterator.remove();
@@ -479,7 +479,7 @@ public class Kit implements IKit {
                     break;
 
                 case CHESTPLATE:
-                    if (comparer.isSame(item, _armor[1])) {
+                    if (comparer.isMatch(item, _armor[1])) {
                         setChestplate(null);
                         armorFlags[1] = true;
                         iterator.remove();
@@ -487,7 +487,7 @@ public class Kit implements IKit {
                     break;
 
                 case LEGGINGS:
-                    if (comparer.isSame(item, _armor[2])) {
+                    if (comparer.isMatch(item, _armor[2])) {
                         setLeggings(null);
                         armorFlags[2] = true;
                         iterator.remove();
@@ -495,7 +495,7 @@ public class Kit implements IKit {
                     break;
 
                 case BOOTS:
-                    if (comparer.isSame(item, _armor[3])) {
+                    if (comparer.isMatch(item, _armor[3])) {
                         setBoots(null);
                         armorFlags[3] = true;
                         iterator.remove();
