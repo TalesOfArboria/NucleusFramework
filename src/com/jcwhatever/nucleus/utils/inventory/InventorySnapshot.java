@@ -141,6 +141,13 @@ public class InventorySnapshot {
         return _items.clone();
     }
 
+    /**
+     * Get the snapshot {@code ItemStack} array.
+     */
+    public ItemStack[] getSnapshot() {
+        return _snapshot.clone();
+    }
+
     // init, take snapshot
     private void init(Inventory inventory, ItemStackMatcher matcher ) {
 
