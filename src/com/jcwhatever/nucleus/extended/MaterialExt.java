@@ -49,7 +49,7 @@ public enum MaterialExt {
     ACACIA_STAIRS         (Material.ACACIA_STAIRS,           MP.PLACEABLE, MP.CRAFTABLE, MP.SURFACE),
     ACTIVATOR_RAIL        (Material.ACTIVATOR_RAIL,          MP.TRANSPARENT, MP.PLACEABLE, MP.REDSTONE, MP.CRAFTABLE),
     AIR			          (Material.AIR,                     MP.TRANSPARENT),
-    ANVIL                 (Material.ANVIL,                   MP.PLACEABLE, MP.GUI, MP.CRAFTABLE, MP.SURFACE),
+    ANVIL                 (Material.ANVIL,                   MP.PLACEABLE, MP.GUI, MP.CRAFTABLE, MP.SURFACE, MP.REPAIRABLE),
     APPLE                 (Material.APPLE),
     ARMOR_STAND           (Material.ARMOR_STAND,             MP.CRAFTABLE, MP.PLACEABLE), // item
     ARROW                 (Material.ARROW,                   MP.THROWABLE, MP.CRAFTABLE),
