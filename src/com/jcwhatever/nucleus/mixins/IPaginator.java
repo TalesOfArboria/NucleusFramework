@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.mixins;
 
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Represents a type that acts as a paginator.
@@ -66,7 +66,7 @@ public interface IPaginator<E> {
      * Get an iterator to iterate over the elements of the
      * specified page.
      */
-    ListIterator<E> iterator(int page);
+    Iterator<E> iterator(int page);
 
 
     public enum PageStartIndex {
