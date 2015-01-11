@@ -45,7 +45,7 @@ import java.util.List;
         parent="storage",
         command = "list",
         staticParams = { "page=1" },
-        floatingParams = { "plugin" },
+        floatingParams = { "plugin=" },
         description = "List available data storage providers or display the provider for a specific plugin.",
 
         paramDescriptions = {
@@ -54,8 +54,7 @@ import java.util.List;
 
 public final class ListSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _PAGINATOR_TITLE = "Storage Providers";
+    @Localizable static final String _PAGINATOR_TITLE = "Storage Providers";
     @Localizable static final String _PLUGIN_NOT_FOUND = "A plugin named '{0: plugin name}' was not found.";
     @Localizable static final String _PLUGIN_PROVIDER = "The storage provider for plugin '{0}' is named '{1}'.";
     @Localizable static final String _LABEL_DEFAULT = "[Default]";
@@ -65,7 +64,7 @@ public final class ListSubCommand extends AbstractCommand {
 
         int page = args.getInteger("page");
 
-        if (args.hasString("plugin")) {
+        if (!args.isDefaultValue("plugin")) {
             String pluginName = args.getString("plugin");
 
             Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);

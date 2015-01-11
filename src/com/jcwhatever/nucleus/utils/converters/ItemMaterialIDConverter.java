@@ -89,8 +89,7 @@ public class ItemMaterialIDConverter extends ValueConverter<Integer, Material> {
             try {
                 id = Integer.parseInt(str);
             }
-            catch (NumberFormatException nfe) {
-                nfe.printStackTrace();
+            catch (NumberFormatException ignore) {
                 return null;
             }
         }

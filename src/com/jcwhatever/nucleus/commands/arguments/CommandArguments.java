@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.commands.arguments;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.nucleus.commands.exceptions.InvalidParameterException;
 import com.jcwhatever.nucleus.commands.exceptions.DuplicateArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
@@ -44,7 +45,6 @@ import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
@@ -86,9 +86,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param command      The command the arguments are being parsed for.
      *
-     * @throws com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException    If a value provided is not valid.
+     * @throws InvalidArgumentException    If a value provided is not valid.
      * @throws DuplicateArgumentException  If a parameter is defined in the arguments more than once.
-     * @throws com.jcwhatever.nucleus.commands.exceptions.InvalidParameterException   If a parameter int the arguments is not found for the command.
+     * @throws InvalidParameterException   If a parameter int the arguments is not found for the command.
      * @throws TooManyArgsException        If the provided arguments are more than is expected.
      */
     public CommandArguments(AbstractCommand command)
@@ -104,9 +104,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @param command  The commands info annotation container.
      * @param args     The command arguments.
      *
-     * @throws com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException    If a value provided is not valid.
+     * @throws InvalidArgumentException    If a value provided is not valid.
      * @throws DuplicateArgumentException  If a parameter is defined in the arguments more than once.
-     * @throws com.jcwhatever.nucleus.commands.exceptions.InvalidParameterException   If a parameter int the arguments is not found for the command.
+     * @throws InvalidParameterException   If a parameter int the arguments is not found for the command.
      * @throws TooManyArgsException        If the provided arguments are more than is expected.
      */
     public CommandArguments(AbstractCommand command, @Nullable String[] args)
@@ -196,11 +196,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 if (!hasNext())
                     throw new IndexOutOfBoundsException("No more elements.");
 
-
-
                 CommandArgument arg = index < staticSize()
                         ? _parseResults.getStaticArgs().get(index)
-                        : _parseResults.getFloatingArgs().get(index);
+                        : _parseResults.getFloatingArgs().get(index - (staticSize() > 0 ? 1 : 0));
 
                 index++;
                 //noinspection ConstantConditions
@@ -222,7 +220,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @param parameterName  The name of the parameter to get
      *
-     * @throws com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException  If the argument for the parameter is not a valid name.
+     * @throws InvalidArgumentException  If the argument for the parameter is not a valid name.
      */
     public String getName(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -285,6 +283,55 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         return value;
     }
 
+    /**
+     * Gets an argument as a boolean.
+     *
+     * <p>true,on,yes = true</p>
+     * <p>false,off,no = false</p>
+     *
+     * @param parameterName  The name of the arguments parameter
+     *
+     * @throws InvalidArgumentException  If the argument cannot be parsed or recognized as a boolean.
+     */
+    public boolean getBoolean(String parameterName) throws InvalidArgumentException {
+        PreCon.notNullOrEmpty(parameterName);
+
+        // get the raw argument
+        String arg = getRawArgument(parameterName);
+
+        // make sure the argument was provided
+        if (arg == null) {
+
+            Boolean flag = _parseResults.getFlag(parameterName);
+
+            if (flag == null) {
+                invalidArg(parameterName, ArgumentValueType.BOOLEAN);
+            }
+            else {
+                return flag;
+            }
+        }
+
+        // get boolean based on value
+        arg = arg.toLowerCase();
+        switch (arg.toLowerCase()) {
+            case "true":
+            case "allow":
+            case "1":
+            case "yes":
+            case "on":
+                return true;
+            case "false":
+            case "deny":
+            case "0":
+            case "no":
+            case "off":
+                return false;
+            default:
+                invalidArg(parameterName, ArgumentValueType.BOOLEAN);
+                return false;
+        }
+    }
 
     /**
      * Get an argument as a character.
@@ -601,56 +648,6 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         }
 
         return result;
-    }
-
-    /**
-     * Gets an argument as a boolean.
-     *
-     * <p>true,on,yes = true</p>
-     * <p>false,off,no = false</p>
-     *
-     * @param parameterName  The name of the arguments parameter
-     *
-     * @throws InvalidArgumentException  If the argument cannot be parsed or recognized as a boolean.
-     */
-    public boolean getBoolean(String parameterName) throws InvalidArgumentException {
-        PreCon.notNullOrEmpty(parameterName);
-
-        // get the raw argument
-        String arg = getRawArgument(parameterName);
-
-        // make sure the argument was provided
-        if (arg == null) {
-
-            Boolean flag = _parseResults.getFlag(parameterName);
-
-            if (flag == null) {
-                invalidArg(parameterName, ArgumentValueType.BOOLEAN);
-            }
-            else {
-                return flag;
-            }
-        }
-
-        // get boolean based on value
-        arg = arg.toLowerCase();
-        switch (arg.toLowerCase()) {
-            case "true":
-            case "allow":
-            case "1":
-            case "yes":
-            case "on":
-                return true;
-            case "false":
-            case "deny":
-            case "0":
-            case "no":
-            case "off":
-                return false;
-            default:
-                invalidArg(parameterName, ArgumentValueType.BOOLEAN);
-                return false;
-        }
     }
 
     /**
@@ -1015,41 +1012,20 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     }
 
     /**
-     * Determine if an argument is provided.
-     *
-     * <p>When used on floating parameters, returns false
-     * if the command sender does not reference the 
-     * parameter.</p>
+     * Determine if an argument is provided and can be used as a boolean value.
      *
      * @param parameterName  The name of the arguments parameter
      */
-    public boolean hasValue(String parameterName) {
+    public boolean hasBoolean(String parameterName) {
         PreCon.notNullOrEmpty(parameterName);
 
-        CommandArgument argument = _parseResults.getArgMap().get(parameterName);
-        if (argument == null)
-            return false;
-
         try {
-            return getRawArgument(parameterName) != null;
+            getBoolean(parameterName);
         }
         catch (InvalidArgumentException ive) {
             return false;
         }
-    }
-
-    /**
-     * Determine if an argument is provided.
-     *
-     * <p>When used on floating parameters, returns the string "false"
-     * if the command sender does not reference the parameter</p>
-     *
-     * @param parameterName  The name of the arguments parameter
-     */
-    public boolean hasString(String parameterName) {
-        PreCon.notNullOrEmpty(parameterName);
-
-        return hasValue(parameterName);
+        return true;
     }
 
     /**
@@ -1060,13 +1036,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     public boolean hasChar(String parameterName) {
         PreCon.notNullOrEmpty(parameterName);
 
-        String value;
-        try {
-            value = getRawArgument(parameterName);
-        }
-        catch (InvalidArgumentException ive) {
-            return false;
-        }
+        String value = getRawArgument(parameterName);
 
         if (value == null)
             return false;
@@ -1074,40 +1044,6 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         if (value.length() != 1)
             return false;
 
-        return true;
-    }
-
-    /**
-     * Determine if an argument is provided and can be used as an integer value.
-     *
-     * @param parameterName  The name of the arguments parameter
-     */
-    public boolean hasInt(String parameterName) {
-        PreCon.notNullOrEmpty(parameterName);
-
-        try {
-            getInteger(parameterName);
-        }
-        catch (InvalidArgumentException ive) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Determine if an argument is provided and can be used as a short value.
-     *
-     * @param parameterName  The name of the arguments parameter
-     */
-    public boolean hasShort(String parameterName) {
-        PreCon.notNullOrEmpty(parameterName);
-
-        try {
-            getShort(parameterName);
-        }
-        catch (InvalidArgumentException ive) {
-            return false;
-        }
         return true;
     }
 
@@ -1130,21 +1066,37 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     }
 
     /**
-     * Determine if an argument is provided and can be used as a double value.
+     * Determine if an argument is provided and can be used as a short value.
      *
      * @param parameterName  The name of the arguments parameter
      */
-    public boolean hasDouble(String parameterName) {
+    public boolean hasShort(String parameterName) {
         PreCon.notNullOrEmpty(parameterName);
 
         try {
-            getDouble(parameterName);
+            getShort(parameterName);
         }
         catch (InvalidArgumentException ive) {
             return false;
         }
         return true;
+    }
 
+    /**
+     * Determine if an argument is provided and can be used as an integer value.
+     *
+     * @param parameterName  The name of the arguments parameter
+     */
+    public boolean hasInteger(String parameterName) {
+        PreCon.notNullOrEmpty(parameterName);
+
+        try {
+            getInteger(parameterName);
+        }
+        catch (InvalidArgumentException ive) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1162,19 +1114,18 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             return false;
         }
         return true;
-
     }
 
     /**
-     * Determine if an argument is provided and can be used as a boolean value.
+     * Determine if an argument is provided and can be used as a double value.
      *
      * @param parameterName  The name of the arguments parameter
      */
-    public boolean hasBoolean(String parameterName) {
+    public boolean hasDouble(String parameterName) {
         PreCon.notNullOrEmpty(parameterName);
 
         try {
-            getBoolean(parameterName);
+            getDouble(parameterName);
         }
         catch (InvalidArgumentException ive) {
             return false;
@@ -1236,25 +1187,38 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         return true;
     }
 
+    /**
+     * Determine if the value of an argument was omitted and
+     * the default value was inserted.
+     *
+     * @param parameterName  The name of the arguments parameter.
+     */
+    public boolean isDefaultValue(String parameterName) {
+
+        CommandArgument param = _parseResults.getArgMap().get(parameterName);
+        if (param == null) {
+            throw new RuntimeException("A parameter named '" + parameterName +
+                    "' is not defined by the command: " + _command.getClass().getName());
+        }
+
+        return param.isDefaultValue();
+    }
 
     /**
      * Get the raw argument provided for a parameter.
      *
      * @param parameterName  The name of the arguments parameter.
-
-     * @throws InvalidArgumentException
      */
     @Nullable
-    private String getRawArgument(String parameterName) throws InvalidArgumentException {
+    private String getRawArgument(String parameterName) {
 
         CommandArgument param = _parseResults.getArgMap().get(parameterName);
-        if (param == null)
-            return null;
+        if (param == null) {
+            throw new RuntimeException("A parameter named '" + parameterName +
+                    "' is not defined by the command: " + _command.getClass().getName());
+        }
 
-        String value = param.getValue();
-        String defaultVal = param.getDefaultValue();
-
-        return value != null ? value : defaultVal;
+        return param.getValue();
     }
 
     private void invalidArg(String parameterName, ArgumentValueType type, Object... args) throws InvalidArgumentException {

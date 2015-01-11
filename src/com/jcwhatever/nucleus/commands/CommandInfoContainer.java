@@ -68,13 +68,26 @@ public class CommandInfoContainer {
      * @param rootCommand  The commands root command.
      */
     public CommandInfoContainer(AbstractCommand command, @Nullable AbstractCommand rootCommand) {
+        this(command, rootCommand, command.getClass().getAnnotation(CommandInfo.class));
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param command      The command to get annotation info from.
+     * @param rootCommand  The commands root command.
+     * @param info         The commands {CommandInfo} annotation.
+     */
+    public CommandInfoContainer(AbstractCommand command, @Nullable AbstractCommand rootCommand,
+                                CommandInfo info) {
         PreCon.notNull(command);
+        PreCon.notNull(info);
 
         _plugin = command.getPlugin();
         _command = command;
-        _commandInfo = command.getClass().getAnnotation(CommandInfo.class);
+        _commandInfo = info;
         _rootCommand = rootCommand;
-        _usage = _commandInfo.usage();
+        _usage = info.usage();
 
         _parameterNames = new HashSet<>(
                 getRawStaticParams().length + getRawFloatingParams().length + getRawFlagParams().length);

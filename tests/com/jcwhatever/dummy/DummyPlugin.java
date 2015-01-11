@@ -2,6 +2,7 @@ package com.jcwhatever.dummy;
 
 import com.avaje.ebean.EbeanServer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,7 +14,11 @@ import org.bukkit.plugin.PluginLoader;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /*
@@ -22,9 +27,30 @@ import java.util.logging.Logger;
 public class DummyPlugin implements Plugin {
 
     private String _name;
+    private PluginDescriptionFile _description;
 
     public DummyPlugin(String name) {
         _name = name;
+
+        PluginDescriptionFile descriptionFile = new PluginDescriptionFile("dummy", "v0", "");
+
+        Map<String, Object> descriptionMap = new HashMap<>(10);
+        descriptionMap.put("version", "v0");
+        descriptionMap.put("name", "dummy");
+        descriptionMap.put("main", "");
+        descriptionMap.put("commands", new HashMap(0));
+
+        try {
+            Method method = descriptionFile.getClass().getDeclaredMethod("loadMap", Map.class);
+            method.setAccessible(true);
+
+            method.invoke(descriptionFile, descriptionMap);
+
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        _description = descriptionFile;
     }
 
     @Override
@@ -34,7 +60,7 @@ public class DummyPlugin implements Plugin {
 
     @Override
     public PluginDescriptionFile getDescription() {
-        return null;
+        return _description;
     }
 
     @Override
@@ -74,7 +100,12 @@ public class DummyPlugin implements Plugin {
 
     @Override
     public Server getServer() {
-        return null;
+
+        if (Bukkit.getServer() == null) {
+            Bukkit.setServer(new DummyServer());
+        }
+
+        return Bukkit.getServer();
     }
 
     @Override

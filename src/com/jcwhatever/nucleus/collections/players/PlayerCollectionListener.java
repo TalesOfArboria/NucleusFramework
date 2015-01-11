@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.collections.MultiBiMap;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -72,7 +73,7 @@ final class PlayerCollectionListener implements IPluginOwned, Listener {
                 if (listener == null) { // check again in case previous thread already instantiated
                     listener = new PlayerCollectionListener(plugin);
 
-                    PluginManager pm = Nucleus.getPlugin().getServer().getPluginManager();
+                    PluginManager pm = Bukkit.getServer().getPluginManager();
                     pm.registerEvents(listener, Nucleus.getPlugin());
 
                     _listeners.put(plugin, listener);

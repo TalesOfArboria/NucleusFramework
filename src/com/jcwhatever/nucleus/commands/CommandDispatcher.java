@@ -33,8 +33,8 @@ import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.Permissions;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
+import com.jcwhatever.nucleus.utils.Permissions;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -43,7 +43,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,7 +83,6 @@ public class CommandDispatcher implements
      */
     public CommandDispatcher(Plugin plugin) {
         PreCon.notNull(plugin);
-        PreCon.isValid(plugin instanceof JavaPlugin);
 
         _plugin = plugin;
 

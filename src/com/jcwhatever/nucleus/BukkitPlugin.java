@@ -45,6 +45,9 @@ import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPluginLoader;
+
 import java.io.File;
 import javax.script.ScriptEngineManager;
 
@@ -75,6 +78,16 @@ public final class BukkitPlugin extends NucleusPlugin {
      */
     public BukkitPlugin() {
         super();
+
+        Nucleus._plugin = this;
+    }
+
+    /**
+     * Constructor for testing.
+     *
+     */
+    protected BukkitPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
 
         Nucleus._plugin = this;
     }

@@ -38,6 +38,7 @@ public class CommandArgument {
 
     private final CommandParameter _parameter;
     private final String _argument;
+    private final boolean _isDefaultValue;
 
     /**
      * Constructor.
@@ -48,8 +49,10 @@ public class CommandArgument {
     public CommandArgument (CommandParameter parameter, @Nullable String argument) {
         PreCon.notNull(parameter);
 
+        _isDefaultValue = argument == null;
+
         _parameter = parameter;
-        _argument = argument;
+        _argument = _isDefaultValue ? parameter.getDefaultValue() : argument;
     }
 
     /**
@@ -66,15 +69,14 @@ public class CommandArgument {
     public String getValue() {
         return _argument;
     }
-    
+
     /**
-     * Get the default value for the parameter, if any.
+     * Determine if the default value was used.
      */
-    @Nullable
-    public String getDefaultValue() {
-        return _parameter.getDefaultValue();
+    public boolean isDefaultValue() {
+        return _isDefaultValue;
     }
-    
+
     @Override
     public final int hashCode() {
         return _parameter.hashCode();

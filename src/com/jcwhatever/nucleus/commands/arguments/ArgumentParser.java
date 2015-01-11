@@ -40,6 +40,13 @@ import java.util.LinkedList;
  */
 public class ArgumentParser {
 
+    // common floating argument prefix, all floating arguments begin with this
+    public static final String COMMON_PREFIX = "-";
+    // floating argument prefix
+    public static final String FLOATING_PREFIX = COMMON_PREFIX;
+    // flag prefix
+    public static final String FLAG_PREFIX = COMMON_PREFIX + '-';
+
     /**
      * Parse command arguments
      *
@@ -62,7 +69,8 @@ public class ArgumentParser {
         parseStaticArgs(command, results, staticParameters, arguments);
 
         // check if there are floating parameters for the command.
-        if (command.getInfo().getRawFloatingParams().length == 0) {
+        if (command.getInfo().getRawFloatingParams().length == 0 &&
+                command.getInfo().getRawFlagParams().length == 0) {
 
             // if there are no more parameters but there are still
             // arguments left, then there are too many arguments.
@@ -104,7 +112,7 @@ public class ArgumentParser {
                 String arg = arguments.removeFirst();
 
                 // Should not be any floating or flag parameters  before required arguments
-                if (arg.startsWith("-")) {
+                if (arg.startsWith(COMMON_PREFIX)) {
 
                     // the last static parameter might be optional, in which
                     // case it should have a default value.
@@ -125,6 +133,7 @@ public class ArgumentParser {
                     // this is the end of the loop.
                     else {
                         arguments.addFirst(arg);
+                        return;
                     }
                 }
                 else {
@@ -135,14 +144,17 @@ public class ArgumentParser {
 
             // add argument
             if (value != null || parameter.hasDefaultValue()) {
-                CommandArgument commandArgument = new CommandArgument(parameter, value);
+                CommandArgument argument = new CommandArgument(parameter, value);
 
                 if (results.getArgMap().containsKey(name)) {
                     CommandException.duplicateArg(command, parameter);
                 }
 
-                results.getStaticArgs().add(commandArgument);
-                results.getArgMap().put(name, commandArgument);
+                results.getStaticArgs().add(argument);
+                results.getArgMap().put(name, argument);
+            }
+            else {
+                CommandException.missingRequiredArg(command, parameter);
             }
         }
     }
@@ -159,13 +171,25 @@ public class ArgumentParser {
 
             String paramName = arguments.removeFirst();
 
-            if (!paramName.startsWith("-"))
+            if (!paramName.startsWith(COMMON_PREFIX))
                 CommandException.invalidArgument(command, paramName);
 
-            // check if floating parameter
-            if (paramName.startsWith("--")) {
+            // check for flag
+            if (paramName.startsWith(FLAG_PREFIX)) {
 
-                paramName = paramName.substring(2);
+                paramName = paramName.substring(FLAG_PREFIX.length());
+
+                FlagParameter parameter = flags.removeRetrieve(new FlagParameter(paramName, -1));
+                if (parameter == null) {
+                    CommandException.invalidFlag(command, paramName);
+                }
+
+                results.setFlag(paramName, true);
+            }
+            // check if floating parameter
+            else if (paramName.startsWith(FLOATING_PREFIX)) {
+
+                paramName = paramName.substring(FLOATING_PREFIX.length());
 
                 CommandParameter parameter = parameters.removeRetrieve(new CommandParameter(paramName, null));
                 if (parameter == null) {
@@ -176,7 +200,7 @@ public class ArgumentParser {
                     CommandException.missingRequiredArg(command, parameter);
                 }
 
-                String arg = arguments.removeFirst();
+                String arg = parseArgValue(arguments.removeFirst(), arguments);
                 CommandArgument commandArgument = new CommandArgument(parameter, arg);
 
                 if (results.getArgMap().containsKey(paramName)) {
@@ -186,24 +210,16 @@ public class ArgumentParser {
                 results.getFloatingArgs().add(commandArgument);
                 results.getArgMap().put(paramName, commandArgument);
             }
-            // the parameter is a flag
-            else {
-
-                paramName = paramName.substring(1);
-
-                FlagParameter parameter = flags.removeRetrieve(new FlagParameter(paramName, -1));
-                if (parameter == null) {
-                    CommandException.invalidFlag(command, paramName);
-                }
-
-                results.setFlag(paramName, true);
-            }
         }
 
         if (!parameters.isEmpty()) {
 
             for (CommandParameter param : parameters) {
-                if (!param.hasDefaultValue()) {
+                if (param.hasDefaultValue()) {
+                    CommandArgument commandArgument = new CommandArgument(param, param.getDefaultValue());
+                    results.getFloatingArgs().add(commandArgument);
+                    results.getArgMap().put(param.getName(), commandArgument);
+                } else {
                     CommandException.missingRequiredArg(command, param);
                 }
             }

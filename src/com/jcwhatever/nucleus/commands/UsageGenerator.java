@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.commands;
 
+import com.jcwhatever.nucleus.commands.arguments.ArgumentParser;
 import com.jcwhatever.nucleus.commands.parameters.CommandParameter;
 import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
 import com.jcwhatever.nucleus.internal.NucLang;
@@ -38,8 +39,7 @@ import javax.annotation.Nullable;
  */
 public class UsageGenerator {
 
-    @Localizable
-    public static final String HELP_USAGE =
+    @Localizable public static final String HELP_USAGE =
             "{GOLD}/{0: root command}{1: command path}{GREEN}{2: command}{DARK_AQUA}{3: parameters}";
 
     @Localizable public static final String HELP_USAGE_HAS_SUB_COMMANDS =
@@ -163,7 +163,7 @@ public class UsageGenerator {
             boolean isRequired = !parameter.hasDefaultValue();
 
             params.append(isRequired ? '<' : '[')
-                  .append("--")
+                  .append(ArgumentParser.FLOATING_PREFIX)
                   .append(parameter.getName())
                   .append(isRequired ? '>' : ']')
                   .append(' ');
@@ -172,7 +172,7 @@ public class UsageGenerator {
         List<FlagParameter> flagParams = command.getInfo().getFlagParams();
         for (FlagParameter parameter : flagParams) {
             params.append('[')
-                  .append('-')
+                  .append(ArgumentParser.FLAG_PREFIX)
                   .append(parameter.getName())
                   .append("] ");
         }

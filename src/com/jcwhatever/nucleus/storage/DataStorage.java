@@ -38,6 +38,8 @@ public final class DataStorage {
 
     private DataStorage() {}
 
+    private static boolean _isTransientOnly;
+
     /**
      * Remove data storage.
      *
@@ -47,6 +49,10 @@ public final class DataStorage {
      * @return  True if successful.
      */
     public static boolean removeStorage(Plugin plugin, DataPath path) {
+
+        if (_isTransientOnly)
+            return true;
+
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
         return provider.removeStorage(plugin, path);
     }
@@ -58,6 +64,10 @@ public final class DataStorage {
      * @param path    Storage path.
      */
     public static IDataNode getStorage(Plugin plugin, DataPath path) {
+
+        if (_isTransientOnly)
+            return new MemoryDataNode(plugin);
+
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
         return provider.getStorage(plugin, path);
     }
@@ -69,7 +79,22 @@ public final class DataStorage {
      * @param path    Storage path.
      */
     public static boolean hasStorage(Plugin plugin, DataPath path) {
+
+        if (_isTransientOnly)
+            return false;
+
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
         return provider.hasStorage(plugin, path);
+    }
+
+    /**
+     * When true, Ensures only transient data nodes are returned.
+     *
+     * <p>Used for testing.</p>
+     *
+     * @param transientOnly  True to only return transient memory nodes.
+     */
+    static void setTransientOnly(boolean transientOnly) {
+        _isTransientOnly = transientOnly;
     }
 }

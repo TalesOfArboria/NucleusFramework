@@ -51,7 +51,8 @@ import java.util.logging.Logger;
 public class DummyServer implements Server {
 
     private Thread _homeThread;
-
+    private final DummyPluginManager _pluginManager = new DummyPluginManager();
+    private final DummyScheduler _scheduler = new DummyScheduler();
 
     public DummyServer() {
         _homeThread = Thread.currentThread();
@@ -204,12 +205,12 @@ public class DummyServer implements Server {
 
     @Override
     public PluginManager getPluginManager() {
-        return null;
+        return _pluginManager;
     }
 
     @Override
     public BukkitScheduler getScheduler() {
-        return null;
+        return _scheduler;
     }
 
     @Override

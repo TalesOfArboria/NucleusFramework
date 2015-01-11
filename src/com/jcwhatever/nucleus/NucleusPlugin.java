@@ -33,11 +33,14 @@ import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.MemoryDataNode;
 
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
 import java.util.Set;
@@ -53,12 +56,24 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     private boolean _isDebugging;
     private IMessenger _messenger;
     private IMessenger _anonMessenger;
+    private boolean _isTesting;
 
     /**
      * Constructor.
      */
     public NucleusPlugin() {
         super();
+        onInit();
+    }
+
+    /**
+     * Constructor for testing.
+     */
+    protected NucleusPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+
+        _isTesting = true;
+
         onInit();
     }
 
@@ -206,14 +221,19 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
      */
     private void loadDataNode() {
         File dir = getDataFolder();
-        if (!dir.exists() && !dir.mkdirs()) {
+        if (!_isTesting && !dir.exists() && !dir.mkdirs()) {
             throw new RuntimeException("Failed to create data folders.");
         }
 
-        _dataNode = DataStorage.getStorage(this, new DataPath("config"));
-        if (!_dataNode.load()) {
-            getServer().getPluginManager().disablePlugin(this);
-            throw new RuntimeException("The plugins data node (config) could not be loaded!");
+        if (_isTesting) {
+            _dataNode = new MemoryDataNode(this);
+        }
+        else {
+            _dataNode = DataStorage.getStorage(this, new DataPath("config"));
+            if (!_dataNode.load()) {
+                getServer().getPluginManager().disablePlugin(this);
+                throw new RuntimeException("The plugins data node (config) could not be loaded!");
+            }
         }
 
         _isDebugging = _dataNode.getBoolean("debug");

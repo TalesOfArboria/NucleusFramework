@@ -124,14 +124,14 @@ public abstract class AbstractCommand
     /**
      * Get the commands {@code ICommandInfo} annotation.
      */
-    public final CommandInfoContainer getInfo() {
+    public CommandInfoContainer getInfo() {
         return _info;
     }
 
     /**
      * Get the command handler
      */
-    public final CommandDispatcher getDispatcher() {
+    public CommandDispatcher getDispatcher() {
         return _dispatcher;
     }
 
@@ -139,7 +139,7 @@ public abstract class AbstractCommand
      * Get the commands parent command, if any.
      */
     @Nullable
-    public final AbstractCommand getParent() {
+    public AbstractCommand getParent() {
         return _parent;
     }
 
@@ -174,7 +174,7 @@ public abstract class AbstractCommand
      */
     @Override
     @Nullable
-    public final AbstractCommand getCommand(String subCommandName) {
+    public AbstractCommand getCommand(String subCommandName) {
         PreCon.notNullOrEmpty(subCommandName);
 
         return _subCommands.getCommand(subCommandName);
@@ -184,7 +184,7 @@ public abstract class AbstractCommand
      * Get the commands registered sub commands.
      */
     @Override
-    public final Collection<AbstractCommand> getCommands() {
+    public Collection<AbstractCommand> getCommands() {
         return _subCommands.getCommands();
     }
 
@@ -192,7 +192,7 @@ public abstract class AbstractCommand
      * Get the sub command names.
      */
     @Override
-    public final Collection<String> getCommandNames() {
+    public Collection<String> getCommandNames() {
         return _subCommands.getCommandNames();
     }
 
@@ -206,7 +206,7 @@ public abstract class AbstractCommand
      * @param subCommandClass
      */
     @Override
-    public final boolean registerCommand(Class<? extends AbstractCommand> subCommandClass) {
+    public boolean registerCommand(Class<? extends AbstractCommand> subCommandClass) {
         PreCon.notNull(subCommandClass);
 
         if (subCommandClass.equals(getClass())) {
@@ -214,7 +214,7 @@ public abstract class AbstractCommand
         }
 
         // add sub command to registration queue if not ready to register it yet
-        if (_info == null) {
+        if (getInfo() == null) {
             _subCommandQueue.add(subCommandClass);
             return true;
         }
@@ -236,13 +236,13 @@ public abstract class AbstractCommand
 
         // set the instance's command handler
         if (_dispatcher != null)
-            command.setDispatcher(_dispatcher, _info.getRoot() != null ? _info.getRoot() : this);
+            command.setDispatcher(_dispatcher, getInfo().getRoot() != null ? getInfo().getRoot() : this);
 
         /**
          * Sanity check. Make sure the parent specified by the command is this command
          */
         if (!command.getInfo().getParentName().isEmpty() &&
-                !isCommandMatch(command.getInfo().getParentName(), _info.getCommandNames())) {
+                !isCommandMatch(command.getInfo().getParentName(), getInfo().getCommandNames())) {
             _dispatcher.getUtils().debug("Failed to register sub command '{0}'. Registered with incorrect parent: {1}",
                     command.getClass().getName(), this.getClass().getName());
 
@@ -261,7 +261,7 @@ public abstract class AbstractCommand
      * @param commandClass  The commands implementation class.
      */
     @Override
-    public final boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
+    public boolean unregisterCommand(Class<? extends AbstractCommand> commandClass) {
 
         CommandInfo commandInfo = commandClass.getAnnotation(CommandInfo.class);
         if (commandInfo == null) {
@@ -278,7 +278,7 @@ public abstract class AbstractCommand
     /**
      * Get the commands permission object.
      */
-    public final IPermission getPermission() {
+    public IPermission getPermission() {
 
         // lazy loaded
         if (_permission == null) {
@@ -287,7 +287,7 @@ public abstract class AbstractCommand
 
             AbstractCommand parent = this;
 
-            permissions.add(_info.getName());
+            permissions.add(getInfo().getName());
 
             while((parent = parent.getParent()) != null) {
                 permissions.add(parent.getInfo().getName());
@@ -417,7 +417,7 @@ public abstract class AbstractCommand
         if (canExecute() && isHelpVisible(sender)) {
 
             // add command to paginator
-            pagin.add(_usageGenerator.generate(this), _info.getDescription());
+            pagin.add(_usageGenerator.generate(this), getInfo().getDescription());
         }
 
         List<AbstractCommand> subCommands = new ArrayList<AbstractCommand>(20);
@@ -466,7 +466,7 @@ public abstract class AbstractCommand
      */
     @Override
     public int compareTo(AbstractCommand o) {
-        return _info.getName().compareTo(o._info.getName());
+        return getInfo().getName().compareTo(o.getInfo().getName());
     }
 
     /**
@@ -494,7 +494,7 @@ public abstract class AbstractCommand
     /**
      * Get the command collection.
      */
-    final CommandCollection getCommandCollection() {
+    protected CommandCollection getCommandCollection() {
         return _subCommands;
     }
 
@@ -505,7 +505,7 @@ public abstract class AbstractCommand
      * @param parentName     The command name to match
      * @param possibleNames  A {@code String[]} of valid names
      */
-    final boolean isCommandMatch(@Nullable String parentName, String[] possibleNames) {
+    protected boolean isCommandMatch(@Nullable String parentName, String[] possibleNames) {
         PreCon.notNull(possibleNames);
 
         if (parentName == null)
@@ -525,7 +525,7 @@ public abstract class AbstractCommand
      * @param parentNames    A {@code String[]} of possible names
      * @param possibleNames  A {@code String[]} of valid names
      */
-    final boolean isCommandMatch(String[] parentNames, String[] possibleNames) {
+    protected boolean isCommandMatch(String[] parentNames, String[] possibleNames) {
         PreCon.notNull(parentNames);
         PreCon.notNull(possibleNames);
 
@@ -586,7 +586,7 @@ public abstract class AbstractCommand
     /**
      * Determine if a command sender can see the command in help.
      */
-    final boolean isHelpVisible(CommandSender sender) {
+    protected boolean isHelpVisible(CommandSender sender) {
 
         // determine if the CommandSender has permission to use the command
         if (!Permissions.has(sender, getPermission().getName()))
