@@ -110,7 +110,7 @@ public class RegionSelection implements IRegionSelection {
      */
     @Override
     public final boolean isDefined() {
-        return _p1 != null && _p2 != null;
+        return _p1 != null && _p2 != null && _p1.getWorldName() != null;
     }
 
     /**
@@ -579,8 +579,17 @@ public class RegionSelection implements IRegionSelection {
         double upperY = Math.max(p1.getY(), p2.getY());
         double upperZ = Math.max(p1.getZ(), p2.getZ());
 
-        _p1 = new SyncLocation(p1.getWorld().getName(), lowerX, lowerY, lowerZ, 0F, 0F);
-        _p2 = new SyncLocation(p2.getWorld().getName(), upperX, upperY, upperZ, 0F, 0F);
+        String worldName = null;
+
+        if (p1 instanceof SyncLocation) {
+            worldName = ((SyncLocation) p1).getWorldName();
+        }
+        else if (p1.getWorld() != null) {
+            worldName = p1.getWorld().getName();
+        }
+
+        _p1 = new SyncLocation(worldName, lowerX, lowerY, lowerZ, 0F, 0F);
+        _p2 = new SyncLocation(worldName, upperX, upperY, upperZ, 0F, 0F);
         updateMath();
     }
 
