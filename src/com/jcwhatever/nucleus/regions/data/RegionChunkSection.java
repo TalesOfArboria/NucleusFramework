@@ -25,20 +25,16 @@
 
 package com.jcwhatever.nucleus.regions.data;
 
-import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
-import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
+import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
+import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 
-import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
-import org.bukkit.World;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides variables representing a section of a region
@@ -73,12 +69,8 @@ public class RegionChunkSection implements IBinarySerializable {
     private int _regionStartX;
     private int _regionEndX;
 
-
     private int _regionStartZ;
     private int _regionEndZ;
-
-    private int _firstChunkX;
-    private int _firstChunkZ;
 
     Location _p1;
     Location _p2;
@@ -137,20 +129,6 @@ public class RegionChunkSection implements IBinarySerializable {
      */
     public Location getP2() {
         return _p2;
-    }
-
-    /**
-     * Get the regions ChunkX value.
-     */
-    public int getRegionChunkX() {
-        return _firstChunkX;
-    }
-
-    /**
-     * Get the regions ChunkZ value.
-     */
-    public int getRegionChunkZ() {
-        return _firstChunkZ;
     }
 
     /**
@@ -369,38 +347,6 @@ public class RegionChunkSection implements IBinarySerializable {
 
         _p1 = new Location(p1.getWorld(), _startBlockX, _yStart, _startBlockZ);
         _p2 = new Location(p2.getWorld(), _endBlockX, _yEnd, _endBlockZ);
-
-
-        _firstChunkX = _chunkX;
-        _firstChunkZ = _chunkZ;
-
-        List<Chunk> chunks = getChunks(_p1.getWorld());
-        for (Chunk chunk : chunks) {
-            _firstChunkX = Math.min(chunk.getX(), _firstChunkX);
-            _firstChunkZ = Math.min(chunk.getZ(), _firstChunkZ);
-        }
-    }
-
-    private List<Chunk> getChunks(World world) {
-
-        Chunk c1 = world.getChunkAt(getP1());
-        Chunk c2 = world.getChunkAt(getP2());
-
-        int startX = Math.min(c1.getX(), c2.getX());
-        int endX = Math.max(c1.getX(), c2.getX());
-
-        int startZ = Math.min(c1.getZ(), c2.getZ());
-        int endZ = Math.max(c1.getZ(), c2.getZ());
-
-        ArrayList<Chunk> result = new ArrayList<Chunk>((endX - startX) * (endZ - startZ));
-
-        for (int x = startX; x <= endX; x++) {
-            for (int z = startZ; z <= endZ; z++) {
-                result.add(world.getChunkAt(x, z));
-            }
-        }
-
-        return result;
     }
 
     @Override
