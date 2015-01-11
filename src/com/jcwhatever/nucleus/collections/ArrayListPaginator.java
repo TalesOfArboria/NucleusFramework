@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * An ArrayList that implements {@link com.jcwhatever.nucleus.mixins.IPaginator}.
+ * An {@code ArrayList} that implements {@link com.jcwhatever.nucleus.mixins.IPaginator}.
  */
 public class ArrayListPaginator<E> extends ArrayList<E> implements IPaginator<E> {
 
@@ -192,7 +192,7 @@ public class ArrayListPaginator<E> extends ArrayList<E> implements IPaginator<E>
 
         @Override
         public boolean hasNext() {
-            return size() > 0 && _index <= _endIndex && _index <= size();
+            return size() > 0 && _index < _endIndex && _index < size();
         }
 
         @Override
