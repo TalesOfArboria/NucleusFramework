@@ -67,7 +67,7 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
     public BukkitProvider() {
 
         // get permissions data node
-        _dataNode = DataStorage.getStorage(Nucleus.getPlugin(), new DataPath("bukkit-permissions"));
+        _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bukkit-permissions"));
         _dataNode.load();
 
         // initialize bukkit listener if its not already initialized

@@ -42,7 +42,7 @@ public interface IStorageProvider extends IProvider {
      *
      * @return  True if successful.
      */
-    boolean removeStorage(Plugin plugin, DataPath path);
+    boolean remove(Plugin plugin, DataPath path);
 
     /**
      * Get or create data store.
@@ -50,7 +50,7 @@ public interface IStorageProvider extends IProvider {
      * @param plugin  The owning plugin.
      * @param path    Storage path.
      */
-    IDataNode getStorage(Plugin plugin, DataPath path);
+    IDataNode get(Plugin plugin, DataPath path);
 
     /**
      * Determine if a data store exists.
@@ -58,5 +58,5 @@ public interface IStorageProvider extends IProvider {
      * @param plugin  The owning plugin.
      * @param path    Storage path.
      */
-    boolean hasStorage(Plugin plugin, DataPath path);
+    boolean has(Plugin plugin, DataPath path);
 }

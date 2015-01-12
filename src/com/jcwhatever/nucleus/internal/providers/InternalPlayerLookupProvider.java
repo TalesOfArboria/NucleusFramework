@@ -145,7 +145,7 @@ public final class InternalPlayerLookupProvider implements IPlayerLookupProvider
                 if (_nameData != null)
                     return _nameData;
 
-                IDataNode data = DataStorage.getStorage(Nucleus.getPlugin(), new DataPath("player-names"));
+                IDataNode data = DataStorage.get(Nucleus.getPlugin(), new DataPath("player-names"));
                 if (!data.load()) {
                     NucMsg.warning("Failed to load player names file.");
                 }

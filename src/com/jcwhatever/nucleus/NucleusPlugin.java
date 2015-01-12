@@ -229,7 +229,7 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
             _dataNode = new MemoryDataNode(this);
         }
         else {
-            _dataNode = DataStorage.getStorage(this, new DataPath("config"));
+            _dataNode = DataStorage.get(this, new DataPath("config"));
             if (!_dataNode.load()) {
                 getServer().getPluginManager().disablePlugin(this);
                 throw new RuntimeException("The plugins data node (config) could not be loaded!");

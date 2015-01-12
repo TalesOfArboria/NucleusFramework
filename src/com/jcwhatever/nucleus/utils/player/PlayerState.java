@@ -211,7 +211,7 @@ public class PlayerState implements IPluginOwned {
         if (_plugin == null)
             return false;
 
-        IDataNode dataNode = DataStorage.getStorage(_plugin, new DataPath("player-states." + _playerId));
+        IDataNode dataNode = DataStorage.get(_plugin, new DataPath("player-states." + _playerId));
 
         _snapshot.save(dataNode);
 
@@ -273,7 +273,7 @@ public class PlayerState implements IPluginOwned {
         });
 
         // remove back up state storage
-        DataStorage.removeStorage(_plugin, new DataPath("player-states." + _playerId));
+        DataStorage.remove(_plugin, new DataPath("player-states." + _playerId));
 
         // remove from state map
         getStateMap(_plugin).remove(_player.getUniqueId());
@@ -289,8 +289,8 @@ public class PlayerState implements IPluginOwned {
 
         DataPath dataPath = new DataPath("player-states." + _playerId);
 
-        if (DataStorage.hasStorage(_plugin, dataPath)) {
-            DataStorage.removeStorage(_plugin, dataPath);
+        if (DataStorage.has(_plugin, dataPath)) {
+            DataStorage.remove(_plugin, dataPath);
         }
     }
 
@@ -313,10 +313,10 @@ public class PlayerState implements IPluginOwned {
      */
     private static boolean loadFromFile(PlayerState state) {
 
-        if (!DataStorage.hasStorage(state._plugin, new DataPath("player-states." + state._playerId)))
+        if (!DataStorage.has(state._plugin, new DataPath("player-states." + state._playerId)))
             return false;
 
-        IDataNode dataNode = DataStorage.getStorage(state._plugin, new DataPath("player-states." + state._playerId));
+        IDataNode dataNode = DataStorage.get(state._plugin, new DataPath("player-states." + state._playerId));
         if (!dataNode.load())
             return false;
 

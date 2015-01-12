@@ -48,13 +48,13 @@ public final class DataStorage {
      *
      * @return  True if successful.
      */
-    public static boolean removeStorage(Plugin plugin, DataPath path) {
+    public static boolean remove(Plugin plugin, DataPath path) {
 
         if (_isTransientOnly)
             return true;
 
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
-        return provider.removeStorage(plugin, path);
+        return provider.remove(plugin, path);
     }
 
     /**
@@ -63,13 +63,13 @@ public final class DataStorage {
      * @param plugin  The owning plugin.
      * @param path    Storage path.
      */
-    public static IDataNode getStorage(Plugin plugin, DataPath path) {
+    public static IDataNode get(Plugin plugin, DataPath path) {
 
         if (_isTransientOnly)
             return new MemoryDataNode(plugin);
 
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
-        return provider.getStorage(plugin, path);
+        return provider.get(plugin, path);
     }
 
     /**
@@ -78,13 +78,13 @@ public final class DataStorage {
      * @param plugin  The owning plugin.
      * @param path    Storage path.
      */
-    public static boolean hasStorage(Plugin plugin, DataPath path) {
+    public static boolean has(Plugin plugin, DataPath path) {
 
         if (_isTransientOnly)
             return false;
 
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
-        return provider.hasStorage(plugin, path);
+        return provider.has(plugin, path);
     }
 
     /**

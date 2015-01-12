@@ -183,7 +183,7 @@ public class MessengerFactory {
             return dataNode;
 
 
-        dataNode = DataStorage.getStorage(plugin, new DataPath("important-messages"));
+        dataNode = DataStorage.get(plugin, new DataPath("important-messages"));
         dataNode.load();
 
         _nodeCache.put(plugin, dataNode);

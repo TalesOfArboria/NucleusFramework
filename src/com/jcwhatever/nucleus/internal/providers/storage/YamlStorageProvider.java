@@ -56,7 +56,7 @@ public final class YamlStorageProvider implements IStorageProvider {
     }
 
     @Override
-    public boolean removeStorage(Plugin plugin, DataPath path) {
+    public boolean remove(Plugin plugin, DataPath path) {
         PreCon.notNull(plugin);
         PreCon.notNull(path);
 
@@ -65,7 +65,7 @@ public final class YamlStorageProvider implements IStorageProvider {
     }
 
     @Override
-    public IDataNode getStorage(Plugin plugin, DataPath path) {
+    public IDataNode get(Plugin plugin, DataPath path) {
         PreCon.notNull(plugin);
         PreCon.notNull(path);
 
@@ -73,7 +73,7 @@ public final class YamlStorageProvider implements IStorageProvider {
     }
 
     @Override
-    public boolean hasStorage(Plugin plugin, DataPath path) {
+    public boolean has(Plugin plugin, DataPath path) {
         PreCon.notNull(plugin);
         PreCon.notNull(path);
 

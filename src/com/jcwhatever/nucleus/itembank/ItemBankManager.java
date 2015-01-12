@@ -332,7 +332,7 @@ public class ItemBankManager {
     @Nullable
     private static ItemBankAccount loadAccountFromFile (UUID playerId) {
 
-        IDataNode dataNode = DataStorage.getStorage(Nucleus.getPlugin(), new DataPath("bank." + playerId));
+        IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bank." + playerId));
 
         if (!dataNode.load())
             return null;
