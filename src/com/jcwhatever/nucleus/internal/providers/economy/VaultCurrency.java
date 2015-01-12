@@ -22,40 +22,56 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.economy;
+package com.jcwhatever.nucleus.internal.providers.economy;
 
-import java.util.UUID;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
+import com.jcwhatever.nucleus.utils.PreCon;
+
+import net.milkbowl.vault.economy.Economy;
 
 /**
- * Interface for an economy provider.
+ * Vault economy provider currency.
  */
-public interface IEconomyProvider {
+public class VaultCurrency implements ICurrency {
 
-    /**
-     * Get the currency of the provider. The provider currency
-     * conversion factor is 1.0
-     */
-    ICurrency getCurrency();
+    private final Economy _economy;
 
-    /**
-     * Get a global economy account.
-     *
-     * @param playerId  The ID of the account owner.
-     */
-    IAccount getAccount(UUID playerId);
+    public VaultCurrency(Economy economy) {
+        _economy = economy;
+    }
 
-    /**
-     * Get an object used to run a transaction. Used to prevent or
-     * minimize the chance of account balances being
-     * incorrect should 1 or more operations in the
-     * transaction fail.
-     */
-    IEconomyTransaction createTransaction();
+    @Override
+    public String format(double amount) {
+        return _economy.format(amount);
+    }
 
-    /**
-     * Get the underlying economy provider if the
-     * provider is wrapped. Otherwise, the handle is
-     * the {@code IEconomyProvider} instance.
-     */
-    Object getHandle();
+    @Override
+    public String getName(CurrencyNoun noun) {
+        PreCon.notNull(noun);
+
+        switch (noun) {
+            case SINGULAR:
+                //noinspection ConstantConditions
+                return _economy.currencyNameSingular();
+
+            case PLURAL:
+                //noinspection ConstantConditions
+                return _economy.currencyNamePlural();
+
+            default:
+                throw new AssertionError();
+        }
+    }
+
+    @Override
+    public double getConversionFactor() {
+        return 1.0D;
+    }
+
+    @Override
+    public double convert(double amount, ICurrency currency) {
+        PreCon.notNull(currency);
+
+        return amount / currency.getConversionFactor();
+    }
 }

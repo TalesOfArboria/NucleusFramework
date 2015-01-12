@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -68,6 +69,11 @@ public final class VaultAccount implements IAccount {
     }
 
     @Override
+    public double getBalance(ICurrency currency) {
+        return getBalance() * currency.getConversionFactor();
+    }
+
+    @Override
     public boolean deposit(double amount) {
         PreCon.positiveNumber(amount);
 
@@ -77,12 +83,22 @@ public final class VaultAccount implements IAccount {
     }
 
     @Override
+    public boolean deposit(double amount, ICurrency currency) {
+        return deposit(amount * currency.getConversionFactor());
+    }
+
+    @Override
     public boolean withdraw(double amount) {
         PreCon.positiveNumber(amount);
 
         EconomyResponse response = _economy.withdrawPlayer(_playerName, amount);
 
         return response.transactionSuccess();
+    }
+
+    @Override
+    public boolean withdraw(double amount, ICurrency currency) {
+        return withdraw(amount * currency.getConversionFactor());
     }
 
     @Override

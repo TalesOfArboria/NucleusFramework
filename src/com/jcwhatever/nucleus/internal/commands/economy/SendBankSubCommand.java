@@ -165,7 +165,7 @@ public final class SendBankSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.formatAmount(amount),
+        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.getCurrency().format(amount),
                 receiverName, myAccount.getBalance()));
     }
 }

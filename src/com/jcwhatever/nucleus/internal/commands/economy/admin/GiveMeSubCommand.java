@@ -64,6 +64,6 @@ public final class GiveMeSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.formatAmount(amount), sender.getName()));
+        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.getCurrency().format(amount), sender.getName()));
     }
 }

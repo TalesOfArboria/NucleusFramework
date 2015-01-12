@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.providers.economy.TransactionFailException;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -59,6 +60,11 @@ public class NucleusTransaction implements IEconomyTransaction {
     }
 
     @Override
+    public double getBalance(IAccount account, ICurrency currency) {
+        return getBalance(account) * currency.getConversionFactor();
+    }
+
+    @Override
     public synchronized boolean deposit(IAccount account, double amount) {
         PreCon.notNull(account);
         PreCon.positiveNumber(amount);
@@ -73,6 +79,11 @@ public class NucleusTransaction implements IEconomyTransaction {
         _balanceDelta.put(account, delta);
 
         return true;
+    }
+
+    @Override
+    public boolean deposit(IAccount account, double amount, ICurrency currency) {
+        return deposit(account, amount * currency.getConversionFactor());
     }
 
     @Override
@@ -93,6 +104,11 @@ public class NucleusTransaction implements IEconomyTransaction {
         _balanceDelta.put(account, delta);
 
         return true;
+    }
+
+    @Override
+    public boolean withdraw(IAccount account, double amount, ICurrency currency) {
+        return withdraw(account, amount * currency.getConversionFactor());
     }
 
     @Override

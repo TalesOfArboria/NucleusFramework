@@ -24,38 +24,45 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
-import java.util.UUID;
-
 /**
- * Interface for an economy provider.
+ * A type that represents an economy currency.
  */
-public interface IEconomyProvider {
+public interface ICurrency {
 
     /**
-     * Get the currency of the provider. The provider currency
-     * conversion factor is 1.0
+     * Specifies how a currency name is used.
      */
-    ICurrency getCurrency();
+    public enum CurrencyNoun {
+        SINGULAR,
+        PLURAL
+    }
 
     /**
-     * Get a global economy account.
+     * Format an amount into a string using the economy settings.
      *
-     * @param playerId  The ID of the account owner.
+     * @param amount  The amount to format.
      */
-    IAccount getAccount(UUID playerId);
+    String format(double amount);
 
     /**
-     * Get an object used to run a transaction. Used to prevent or
-     * minimize the chance of account balances being
-     * incorrect should 1 or more operations in the
-     * transaction fail.
+     * Get the currency name.
+     *
+     * @param noun  The type of noun to return.
      */
-    IEconomyTransaction createTransaction();
+    String getName(CurrencyNoun noun);
 
     /**
-     * Get the underlying economy provider if the
-     * provider is wrapped. Otherwise, the handle is
-     * the {@code IEconomyProvider} instance.
+     * Get the conversion factor from the
+     * stored currency amount.
      */
-    Object getHandle();
+    double getConversionFactor();
+
+    /**
+     * Convert an amount of the specified currency to
+     * the current currency.
+     *
+     * @param amount    The amount to convert.
+     * @param currency  The currency of the amount.
+     */
+    double convert(double amount, ICurrency currency);
 }

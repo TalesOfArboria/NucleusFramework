@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
-import com.jcwhatever.nucleus.providers.economy.IEconomyProvider.CurrencyNoun;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.providers.economy.TransactionFailException;
 
@@ -58,6 +58,13 @@ public final class Economy {
     }
 
     /**
+     * Get the economy providers currency.
+     */
+    public static ICurrency getCurrency() {
+        return getProvider().getCurrency();
+    }
+
+    /**
      * Get a players global account.
      *
      * @param playerId  The id of the player.
@@ -69,9 +76,10 @@ public final class Economy {
     }
 
     /**
-     * Get a players global account balance.
+     * Get a players global account balance. The currency of the
+     * balance is the economy providers currency.
      *
-     * @param playerId The id of the player.
+     * @param playerId  The id of the player.
      */
     public static double getBalance(UUID playerId) {
         PreCon.notNull(playerId);
@@ -84,38 +92,19 @@ public final class Economy {
     }
 
     /**
-     * Get a players global account balance as a formatted string.
+     * Get a players global account balance.
      *
-     * @param playerId The id of the player.
-     * @return
+     * @param playerId  The id of the player.
+     * @param currency  The currency to return the amount in.
      */
-    public static String getBalanceText(UUID playerId) {
+    public static double getBalance(UUID playerId, ICurrency currency) {
         PreCon.notNull(playerId);
 
-        double balance = getBalance(playerId);
+        IAccount account = getProvider().getAccount(playerId);
+        if (account == null)
+            return 0;
 
-        return getProvider().formatAmount(balance);
-    }
-
-    /**
-     * Format an amount into a string using the economy provider.
-     *
-     * @param amount The amount to format.
-     */
-    public static String formatAmount(double amount) {
-
-        return getProvider().formatAmount(amount);
-    }
-
-    /**
-     * Get the currency name.
-     *
-     * @param noun The type of noun to return.
-     */
-    public static String getCurrencyName(CurrencyNoun noun) {
-        PreCon.notNull(noun);
-
-        return getProvider().getCurrencyName(noun);
+        return account.getBalance(currency);
     }
 
     /**
@@ -129,10 +118,26 @@ public final class Economy {
      * performed during the transfer are undone.
      */
     public static void transfer(UUID giverPlayerId, UUID receiverPlayerId, double amount)
+            throws TransactionFailException {
+        transfer(giverPlayerId, receiverPlayerId, amount, getCurrency());
+    }
+
+    /**
+     * Transfer money between two players global accounts.
+     *
+     * @param giverPlayerId     The id of the player who is giving money
+     * @param receiverPlayerId  The id of the player who is receiving money
+     * @param amount            The amount of money to transfer.
+     *
+     * @throws TransactionFailException if the transaction fails. All economy operations
+     * performed during the transfer are undone.
+     */
+    public static void transfer(UUID giverPlayerId, UUID receiverPlayerId, double amount, ICurrency currency)
                 throws TransactionFailException {
         PreCon.notNull(giverPlayerId);
         PreCon.notNull(receiverPlayerId);
         PreCon.positiveNumber(amount);
+        PreCon.notNull(currency);
 
         IAccount fromAccount = getProvider().getAccount(giverPlayerId);
         if (fromAccount == null)
@@ -142,11 +147,12 @@ public final class Economy {
         if (toAccount == null)
             throw new TransactionFailException(null, "Failed to find receiving players account.");
 
-        transfer(fromAccount, toAccount, amount);
+        transfer(fromAccount, toAccount, amount, currency);
     }
 
     /**
-     * Transfer money between two accounts.
+     * Transfer money between two accounts. The currency of the amount
+     * transferred is the economy providers currency.
      *
      * @param fromAccount  The account to transfer money out of.
      * @param toAccount    The account to transfer money into.
@@ -156,20 +162,38 @@ public final class Economy {
      * performed during the transfer are undone.
      */
     public static void transfer(IAccount fromAccount, IAccount toAccount, double amount)
+            throws TransactionFailException {
+        transfer(fromAccount, toAccount, amount, getCurrency());
+    }
+
+    /**
+     * Transfer money between two accounts.
+     *
+     * @param fromAccount  The account to transfer money out of.
+     * @param toAccount    The account to transfer money into.
+     * @param amount       The amount to transfer.
+     * @param currency     The currency of the amount.
+     *
+     * @throws TransactionFailException if the transaction fails. All economy operations
+     * performed during the transfer are undone.
+     */
+    public static void transfer(IAccount fromAccount, IAccount toAccount, double amount, ICurrency currency)
                 throws TransactionFailException {
         PreCon.notNull(fromAccount);
         PreCon.notNull(toAccount);
         PreCon.positiveNumber(amount);
+        PreCon.notNull(currency);
 
         IEconomyTransaction transaction = createTransaction();
 
-        transaction.withdraw(fromAccount, amount);
-        transaction.deposit(toAccount, amount);
+        transaction.withdraw(fromAccount, amount, currency);
+        transaction.deposit(toAccount, amount, currency);
         transaction.execute();
     }
 
     /**
-     * Deposit money into a players global account.
+     * Deposit money into a players global account. The currency
+     * of the amount is the economy providers currency.
      *
      * @param playerId  The id of the player to give money to.
      * @param amount    The amount to give the player.
@@ -177,14 +201,30 @@ public final class Economy {
      * @return  True if the operation is successful.
      */
     public static boolean deposit(UUID playerId, double amount) {
-        PreCon.notNull(playerId);
-
-        IAccount account = getProvider().getAccount(playerId);
-        return account != null && account.deposit(amount);
+        return deposit(playerId, amount, getCurrency());
     }
 
     /**
-     * Withdraw money from a players global account.
+     * Deposit money into a players global account.
+     *
+     * @param playerId  The id of the player to give money to.
+     * @param amount    The amount to give the player.
+     * @param currency  The currency of the amount.
+     *
+     * @return  True if the operation is successful.
+     */
+    public static boolean deposit(UUID playerId, double amount, ICurrency currency) {
+        PreCon.notNull(playerId);
+        PreCon.positiveNumber(amount);
+        PreCon.notNull(currency);
+
+        IAccount account = getProvider().getAccount(playerId);
+        return account != null && account.deposit(amount, currency);
+    }
+
+    /**
+     * Withdraw money from a players global account. The currency
+     * of the amount is the economy providers currency.
      *
      * @param playerId  The id of the player to take money from.
      * @param amount    The amount to take.
@@ -192,10 +232,41 @@ public final class Economy {
      * @return  True if the operation is successful.
      */
     public static boolean withdraw(UUID playerId, double amount) {
+        return withdraw(playerId, amount, getCurrency());
+    }
+
+    /**
+     * Withdraw money from a players global account.
+     *
+     * @param playerId  The id of the player to take money from.
+     * @param amount    The amount to take.
+     * @param currency  The currency of the amount.
+     *
+     * @return  True if the operation is successful.
+     */
+    public static boolean withdraw(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
+        PreCon.positiveNumber(amount);
+        PreCon.notNull(currency);
 
         IAccount account = getProvider().getAccount(playerId);
-        return account != null && account.withdraw(amount);
+        return account != null && account.withdraw(amount, currency);
+    }
+
+    /**
+     * Deposit or withdraw money from a players global account
+     * depending on the value provided. The currency of the amount
+     * is the economy providers currency.
+     *
+     * <p>Positive values are deposited, negative values are withdrawn.</p>
+     *
+     * @param playerId  The id of the player.
+     * @param amount    The amount to deposit or withdraw.
+     *
+     * @return  True if the operation is successful.
+     */
+    public static boolean depositOrWithdraw(UUID playerId, double amount) {
+        return depositOrWithdraw(playerId, amount, getCurrency());
     }
 
     /**
@@ -209,15 +280,16 @@ public final class Economy {
      *
      * @return  True if the operation is successful.
      */
-    public static boolean depositOrWithdraw(UUID playerId, double amount) {
+    public static boolean depositOrWithdraw(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
         return Double.compare(amount, 0.0D) == 0 ||
-                (amount < 0 ? withdraw(playerId, amount) : deposit(playerId, amount));
+                (amount < 0 ? withdraw(playerId, amount, currency) : deposit(playerId, amount, currency));
     }
 
     /**
      * Deposit or withdraw money from an account depending on the
-     * value provided.
+     * value provided. The currency of the amount is the economy providers
+     * currency.
      *
      * <p>Positive values are deposited, negative values are withdrawn.</p>
      *
@@ -227,9 +299,25 @@ public final class Economy {
      * @return  True if the operation is successful.
      */
     public static boolean depositOrWithdraw(IAccount account, double amount) {
+        return depositOrWithdraw(account, amount, getCurrency());
+    }
+
+    /**
+     * Deposit or withdraw money from an account depending on the
+     * value provided.
+     *
+     * <p>Positive values are deposited, negative values are withdrawn.</p>
+     *
+     * @param account   The account.
+     * @param amount    The amount to deposit or withdraw.
+     * @param currency  The currency of the amount.
+     *
+     * @return  True if the operation is successful.
+     */
+    public static boolean depositOrWithdraw(IAccount account, double amount, ICurrency currency) {
         PreCon.notNull(account);
         return Double.compare(amount, 0.0D) == 0 ||
-                (amount < 0 ? account.withdraw(amount) : account.deposit(amount));
+                (amount < 0 ? account.withdraw(amount, currency) : account.deposit(amount, currency));
     }
 
     /**

@@ -83,7 +83,7 @@ public final class BalanceSubCommand extends AbstractCommand {
 
         if (bankName.isEmpty()) {
             double balance = Economy.getBalance(playerId);
-            tellSuccess(sender, NucLang.get(_GLOBAL_BALANCE, Economy.formatAmount(balance)));
+            tellSuccess(sender, NucLang.get(_GLOBAL_BALANCE, Economy.getCurrency().format(balance)));
         }
         else {
 
@@ -106,7 +106,7 @@ public final class BalanceSubCommand extends AbstractCommand {
             }
 
             tellSuccess(sender, NucLang.get(_BANK_BALANCE,
-                    Economy.formatAmount(account.getBalance()), bank.getName()));
+                    Economy.getCurrency().format(account.getBalance()), bank.getName()));
         }
     }
 }

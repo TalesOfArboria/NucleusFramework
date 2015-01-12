@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
@@ -73,6 +74,11 @@ public final class NucleusBank implements IBank {
     @Override
     public synchronized double getBalance() {
         return _balance;
+    }
+
+    @Override
+    public double getBalance(ICurrency currency) {
+        return currency.getConversionFactor() * _balance;
     }
 
     synchronized void incrementBalance(double amount) {

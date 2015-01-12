@@ -136,6 +136,11 @@ public class EconomyBankWrapper extends EconomyWrapper implements IBankEconomyPr
         }
 
         @Override
+        public double getBalance(ICurrency currency) {
+            return getBalance() * currency.getConversionFactor();
+        }
+
+        @Override
         public boolean hasAccount(UUID playerId) {
             return _bank.hasAccount(playerId);
         }

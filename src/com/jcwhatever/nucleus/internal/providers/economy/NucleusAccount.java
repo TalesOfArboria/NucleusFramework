@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -68,6 +69,11 @@ public final class NucleusAccount implements IAccount {
     }
 
     @Override
+    public double getBalance(ICurrency currency) {
+        return _balance * currency.getConversionFactor();
+    }
+
+    @Override
     public synchronized boolean deposit(double amount) {
         PreCon.positiveNumber(amount);
 
@@ -87,14 +93,16 @@ public final class NucleusAccount implements IAccount {
     }
 
     @Override
+    public boolean deposit(double amount, ICurrency currency) {
+        return deposit(amount * currency.getConversionFactor());
+    }
+
+    @Override
     public synchronized boolean withdraw(double amount) {
         PreCon.positiveNumber(amount);
 
         if (amount == 0)
             return true;
-
-        if (_balance < amount)
-            return false;
 
         _balance -= amount;
 
@@ -104,7 +112,12 @@ public final class NucleusAccount implements IAccount {
 
         _dataNode.set("balance", _balance);
         _dataNode.saveAsync(null);
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean withdraw(double amount, ICurrency currency) {
+        return withdraw(amount * currency.getConversionFactor());
     }
 
     @Override

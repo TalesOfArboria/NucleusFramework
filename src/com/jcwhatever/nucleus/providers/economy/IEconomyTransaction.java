@@ -37,7 +37,8 @@ public interface IEconomyTransaction {
     boolean isExecuted();
 
     /**
-     * Get the players balance.
+     * Get the players balance. The currency of the amount is the
+     * economy providers currency.
      *
      * @param account  The account to get the transaction balance for.
      *
@@ -47,7 +48,19 @@ public interface IEconomyTransaction {
     double getBalance(IAccount account);
 
     /**
-     * Deposit into an account.
+     * Get the players balance.
+     *
+     * @param account   The account to get the transaction balance for.
+     * @param currency  The currency to return the amount in.
+     *
+     * @return  The balance current for the transaction. Does not
+     * represent the actual balance until {@code #execute} is invoked.
+     */
+    double getBalance(IAccount account, ICurrency currency);
+
+    /**
+     * Deposit into an account. The currency of the amount is the
+     * economy providers currency.
      *
      * <p>The amount is not actually deposited until the
      * {@code #execute} method is invoked.</p>
@@ -59,7 +72,21 @@ public interface IEconomyTransaction {
     boolean deposit(IAccount account, double amount);
 
     /**
-     * Withdraw from the account.
+     * Deposit into an account.
+     *
+     * <p>The amount is not actually deposited until the
+     * {@code #execute} method is invoked.</p>
+     *
+     * @param amount    The amount to deposit.
+     * @param currency  The currency of the amount.
+     *
+     * @return  True if the operation is successful.
+     */
+    boolean deposit(IAccount account, double amount, ICurrency currency);
+
+    /**
+     * Withdraw from the account. The currency of the amount is the
+     * economy providers currency.
      *
      * <p>The amount is not actually withdrawn until the
      * {@code #execute} method is invoked.</p>
@@ -69,6 +96,19 @@ public interface IEconomyTransaction {
      * @return  True if the operation is successful.
      */
     boolean withdraw(IAccount account, double amount);
+
+    /**
+     * Withdraw from the account.
+     *
+     * <p>The amount is not actually withdrawn until the
+     * {@code #execute} method is invoked.</p>
+     *
+     * @param amount    The amount to withdraw from the account.
+     * @param currency  The currency of the amount.
+     *
+     * @return  True if the operation is successful.
+     */
+    boolean withdraw(IAccount account, double amount, ICurrency currency);
 
     /**
      * Execute the transaction. Any methods called should not

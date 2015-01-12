@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -59,28 +60,12 @@ public final class VaultEconomyProvider implements IEconomyProvider {
             new MapMaker().weakValues().concurrencyLevel(1).initialCapacity(100).makeMap();
 
     private Economy _economy;
+    private VaultCurrency _currency;
+
 
     @Override
-    public String formatAmount(double amount) {
-        return getEconomy().format(amount);
-    }
-
-    @Override
-    public String getCurrencyName(CurrencyNoun noun) {
-        PreCon.notNull(noun);
-
-        switch (noun) {
-            case SINGULAR:
-                //noinspection ConstantConditions
-                return getEconomy().currencyNameSingular();
-
-            case PLURAL:
-                //noinspection ConstantConditions
-                return getEconomy().currencyNamePlural();
-
-            default:
-                throw new AssertionError();
-        }
+    public ICurrency getCurrency() {
+        return _currency;
     }
 
     @Override
@@ -110,6 +95,7 @@ public final class VaultEconomyProvider implements IEconomyProvider {
         if (_economy == null) {
             RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
             _economy = rsp.getProvider();
+            _currency = new VaultCurrency(_economy);
         }
 
         return _economy;

@@ -46,27 +46,69 @@ public interface IAccount {
     IBank getBank();
 
     /**
-     * Get the players balance.
+     * Get the players balance. The currency of the amount
+     * returned is the economy providers currency.
      */
     double getBalance();
 
     /**
+     * Get the players balance converted to
+     * the specified currency.
+     *
+     * @param currency  The currency to convert the result to.
+     */
+    double getBalance(ICurrency currency);
+
+    /**
      * Deposit into the account.
      *
-     * @param amount  The amount to deposit.
+     * @param amount  The amount to deposit. The currency of the
+     *                amount is assumed to be the economy providers
+     *                currency.
      *
      * @return  True if the operation is successful.
      */
     boolean deposit(double amount);
 
     /**
+     * Deposit into the account.
+     *
+     * @param amount    The amount to deposit.
+     * @param currency  The currency of the amount to deposit.
+     *
+     * @return  True if the operation is successful.
+     */
+    boolean deposit(double amount, ICurrency currency);
+
+    /**
      * Withdraw from the account.
      *
-     * @param amount  The amount to withdraw from the account.
+     * <p>Do not assume the operation will fail if the
+     * account has insufficient funds. Check the balance first if
+     * allowing a negative balance is not the intention.</p>
+     *
+     * @param amount  The amount to withdraw from the account. The
+     *                currency of the amount is assumed to be the
+     *                economy providers currency.
      *
      * @return  True if the operation is successful.
      */
     boolean withdraw(double amount);
+
+
+    /**
+     * Withdraw from the account.
+     *
+     * <p>Do not assume the operation will fail if the
+     * account has insufficient funds. Check the balance first if
+     * allowing a negative balance is not the intention.</p>
+     *
+     * @param amount   The amount to withdraw from the account.
+     * @param currency The currency of the amount to withdraw.
+     *
+     * @return  True if the operation is successful.
+     */
+    boolean withdraw(double amount, ICurrency currency);
 
     /**
      * Get the underlying account object if the

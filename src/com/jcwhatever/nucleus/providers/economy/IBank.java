@@ -44,9 +44,17 @@ public interface IBank extends INamed {
     UUID getOwnerId();
 
     /**
-     * Get the bank balance.
+     * Get the bank balance. The currency of the amount
+     * returned is the economy providers currency.
      */
     double getBalance();
+
+    /**
+     * Get the bank balance.
+     *
+     * @param currency  The currency of the amount to return.
+     */
+    double getBalance(ICurrency currency);
 
     /**
      * Determine if the specified player has

@@ -29,12 +29,12 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
 
@@ -56,14 +56,10 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
     private final IDataNode _globalAccountNode;
 
     private final Map<UUID, NucleusAccount> _accounts =
-            new MapMaker().weakValues().concurrencyLevel(1).initialCapacity(100).makeMap();
+            new MapMaker().weakValues().concurrencyLevel(2).initialCapacity(100).makeMap();
 
     private final Map<String, IBank> _banks = new HashMap<>(25);
-
-    private final String _currencyNameSingular;
-    private final String _currencyNamePlural;
-    private final String _currencyFormat;
-    private final DecimalFormat _formatter;
+    private final NucleusCurrency _currency;
 
     private final Object _accountSync = new Object();
     private final Object _bankSync = new Object();
@@ -75,37 +71,20 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
         _globalAccountNode = new YamlDataNode(plugin, new DataPath("economy.global"));
         _plugin = plugin;
 
-        _currencyNameSingular = dataNode.getString("currency-singular", "Dollar");
-        _currencyNamePlural = dataNode.getString("currency-plural", "Dollars");
-        _currencyFormat = dataNode.getString("currency-format", "{0: amount} {1: currencyName}");
+        String singular = dataNode.getString("currency-singular", "Dollar");
+        String plural = dataNode.getString("currency-plural", "Dollars");
+        String formatTemplate = dataNode.getString("format-template", "{0: amount} {1: currencyName}");
         String decimalFormat = dataNode.getString("decimal-format", "###,###,###,###.00");
 
         assert decimalFormat != null;
-        _formatter = new DecimalFormat(decimalFormat);
+        DecimalFormat formatter = new DecimalFormat(decimalFormat);
+
+        _currency = new NucleusCurrency(singular, plural, 1.0D, formatTemplate, formatter);
     }
 
     @Override
-    public String formatAmount(double amount) {
-
-        String formattedDecimal = _formatter.format(amount);
-        return TextUtils.format(_currencyFormat,
-                formattedDecimal, (amount > 1 ? _currencyNamePlural : _currencyNameSingular));
-    }
-
-    @Override
-    public String getCurrencyName(CurrencyNoun noun) {
-        PreCon.notNull(noun);
-
-        switch (noun) {
-            case SINGULAR:
-                return _currencyNameSingular;
-
-            case PLURAL:
-                return _currencyNamePlural;
-
-            default:
-                throw new AssertionError();
-        }
+    public ICurrency getCurrency() {
+        return _currency;
     }
 
     @Override
@@ -164,13 +143,13 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
 
         synchronized (_bankSync) {
             if (_banks.containsKey(bankName)) {
-                return null;
+                throw new RuntimeException("The specified bank already exists: " + bankName);
             }
         }
 
         IDataNode node = new YamlDataNode(Nucleus.getPlugin(), new DataPath("economy.accounts." + bankName));
 
-        NucleusBank bank = new NucleusBank(bankName, null, node);
+        NucleusBank bank = new NucleusBank(bankName, playerId, node);
 
         synchronized (_bankSync) {
             _banks.put(bankName, bank);

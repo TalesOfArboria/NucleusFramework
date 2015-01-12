@@ -53,13 +53,8 @@ public class EconomyWrapper implements IEconomyProvider {
     }
 
     @Override
-    public String formatAmount(double amount) {
-        return _provider.formatAmount(amount);
-    }
-
-    @Override
-    public String getCurrencyName(CurrencyNoun noun) {
-        return _provider.getCurrencyName(noun);
+    public ICurrency getCurrency() {
+        return _provider.getCurrency();
     }
 
     @Override
@@ -123,6 +118,13 @@ public class EconomyWrapper implements IEconomyProvider {
         }
 
         @Override
+        public double getBalance(ICurrency currency) {
+            PreCon.notNull(currency);
+
+            return getBalance() * currency.getConversionFactor();
+        }
+
+        @Override
         public boolean deposit(double amount) {
 
             EconDepositEvent event = onDeposit(_account, amount);
@@ -130,10 +132,24 @@ public class EconomyWrapper implements IEconomyProvider {
         }
 
         @Override
+        public boolean deposit(double amount, ICurrency currency) {
+            PreCon.notNull(currency);
+
+            return deposit(amount * currency.getConversionFactor());
+        }
+
+        @Override
         public boolean withdraw(double amount) {
 
             EconWithdrawEvent event = onWithdraw(_account, amount);
             return _account.withdraw(event.getAmount());
+        }
+
+        @Override
+        public boolean withdraw(double amount, ICurrency currency) {
+            PreCon.notNull(currency);
+
+            return withdraw(amount * currency.getConversionFactor());
         }
 
         @Override
