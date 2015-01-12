@@ -28,5 +28,5 @@ package com.jcwhatever.nucleus.storage;
  * Thrown when an object that implements {@link IDataNodeSerializable} is
  * unable to deserialize data from the provided {@link IDataNode}.
  */
-public class UnableToDeserializeException extends Exception {
+public class DeserializeException extends Exception {
 }

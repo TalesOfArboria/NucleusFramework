@@ -37,7 +37,7 @@ public interface IDataNodeSerializable {
      *
      * @param dataNode  The data node.
      */
-    void serializeToDataNode(IDataNode dataNode);
+    void serialize(IDataNode dataNode);
 
     /**
      * Deserialize information from the provided data node
@@ -46,6 +46,9 @@ public interface IDataNodeSerializable {
      * <p>The data node provided is dedicated to the object.</p>
      *
      * @param dataNode  The data node.
+     *
+     * @throws DeserializeException if the implementation cannot deserialize using the
+     * data provided.
      */
-    void deserializeFromDataNode(IDataNode dataNode) throws UnableToDeserializeException;
+    void deserialize(IDataNode dataNode) throws DeserializeException;
 }

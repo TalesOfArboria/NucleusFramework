@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
-import com.jcwhatever.nucleus.storage.UnableToDeserializeException;
+import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -145,14 +145,14 @@ public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IBinarySeri
     }
 
     @Override
-    public void serializeToDataNode(IDataNode dataNode) {
+    public void serialize(IDataNode dataNode) {
         dataNode.set("id", _id);
         dataNode.set("name", _worldName);
         dataNode.set("environment", _environment);
     }
 
     @Override
-    public void deserializeFromDataNode(IDataNode dataNode) throws UnableToDeserializeException {
+    public void deserialize(IDataNode dataNode) throws DeserializeException {
         _id = dataNode.getUUID("id");
         _worldName = dataNode.getString("name");
         _environment = dataNode.getEnum("environment", Environment.class);
@@ -176,9 +176,9 @@ public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IBinarySeri
         _environment = reader.getEnum(Environment.class);
     }
 
-    private void checkDeserialized(Object object) throws UnableToDeserializeException {
+    private void checkDeserialized(Object object) throws DeserializeException {
         if (object == null) {
-            throw new UnableToDeserializeException();
+            throw new DeserializeException();
         }
     }
 }

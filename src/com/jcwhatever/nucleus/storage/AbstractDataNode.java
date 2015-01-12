@@ -391,8 +391,8 @@ public abstract class AbstractDataNode implements IDataNode {
         _root._read.lock();
         try {
             try {
-                instance.deserializeFromDataNode(dataNode);
-            } catch (UnableToDeserializeException ignore) {
+                instance.deserialize(dataNode);
+            } catch (DeserializeException ignore) {
                 return null;
             }
         }

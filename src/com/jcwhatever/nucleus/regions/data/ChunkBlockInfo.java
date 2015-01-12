@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
-import com.jcwhatever.nucleus.storage.UnableToDeserializeException;
+import com.jcwhatever.nucleus.storage.DeserializeException;
 
 import org.bukkit.Material;
 
@@ -155,7 +155,7 @@ public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBl
     }
 
     @Override
-    public void serializeToDataNode(IDataNode dataNode) {
+    public void serialize(IDataNode dataNode) {
         dataNode.set("x", _x);
         dataNode.set("y", _y);
         dataNode.set("z", _z);
@@ -166,7 +166,7 @@ public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBl
     }
 
     @Override
-    public void deserializeFromDataNode(IDataNode dataNode) throws UnableToDeserializeException {
+    public void deserialize(IDataNode dataNode) throws DeserializeException {
         _x = dataNode.getInteger("x");
         _y = dataNode.getInteger("y");
         _z = dataNode.getInteger("z");

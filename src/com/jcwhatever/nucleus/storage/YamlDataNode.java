@@ -598,7 +598,7 @@ public class YamlDataNode extends AbstractDataNode {
 
                 IDataNodeSerializable serializable = (IDataNodeSerializable)value;
 
-                serializable.serializeToDataNode(getNode(keyPath));
+                serializable.serialize(getNode(keyPath));
 
                 return true;
             }
