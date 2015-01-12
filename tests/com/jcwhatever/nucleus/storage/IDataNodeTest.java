@@ -194,7 +194,7 @@ public abstract class IDataNodeTest {
 
         // the second setter should have converted "testGet" from a value
         // to a node.
-        Assert.assertNotEquals("node", node.getString(""));
+        Assert.assertEquals(null, node.getString(""));
 
         _dataNode.set("testGet", "node");
 
@@ -341,6 +341,50 @@ public abstract class IDataNodeTest {
 
         Assert.assertEquals(true, result != null);
         Assert.assertEquals(2, result.size());
+    }
+
+    /**
+     * Make sure that non key nodes do not return a key value.
+     */
+    @Test
+    public void testNonKeyNodesNull() throws Exception {
+
+        _dataNode.set("node", "string");
+        _dataNode.set("node.key", "string");
+        Assert.assertEquals(null, _dataNode.getString("node"));
+        Assert.assertEquals("default", _dataNode.getString("node", "default"));
+
+        _dataNode.set("node", 10);
+        _dataNode.set("node.key", 10);
+        Assert.assertEquals(0, _dataNode.getInteger("node"));
+        Assert.assertEquals(20, _dataNode.getInteger("node", 20));
+
+        _dataNode.set("node", 10L);
+        _dataNode.set("node.key", 10L);
+        Assert.assertEquals(0, _dataNode.getLong("node"));
+        Assert.assertEquals(20L, _dataNode.getLong("node"), 20L);
+
+        _dataNode.set("node", true);
+        _dataNode.set("node.key", true);
+        Assert.assertEquals(false, _dataNode.getBoolean("node"));
+        Assert.assertEquals(true, _dataNode.getBoolean("node", true));
+
+        _dataNode.set("node", TestEnum.CONSTANT);
+        _dataNode.set("node.key", TestEnum.CONSTANT);
+        Assert.assertEquals(null, _dataNode.getEnum("node", TestEnum.class));
+        Assert.assertEquals(TestEnum.CONSTANT, _dataNode.getEnum("node", TestEnum.CONSTANT, TestEnum.class));
+
+        _dataNode.set("node", 10.0D);
+        _dataNode.set("node.key", 10.0D);
+        Assert.assertEquals(0, _dataNode.getDouble("node"), 0.0D);
+        Assert.assertEquals(20.0D, _dataNode.getDouble("node", 20.0D), 0.0D);
+
+        _dataNode.set("node", new ItemStackBuilder(Material.WOOD).build());
+        _dataNode.set("node.key", new ItemStackBuilder(Material.WOOD).build());
+        Assert.assertArrayEquals(null, _dataNode.getItemStacks("node"));
+        Assert.assertArrayEquals(new ItemStack[] { new ItemStackBuilder(Material.GRASS).build() },
+                _dataNode.getItemStacks("node", new ItemStackBuilder(Material.GRASS).build()));
+
     }
 
     public enum TestEnum {

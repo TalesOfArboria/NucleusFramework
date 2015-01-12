@@ -34,6 +34,7 @@ import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringExcep
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Constructor;
@@ -195,6 +196,10 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public String getString(String keyPath, @Nullable String def) {
         Object value = get(keyPath);
+
+        if (value instanceof MemorySection)
+            return def;
+
         if (value != null)
             return String.valueOf(value);
 
