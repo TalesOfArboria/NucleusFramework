@@ -75,6 +75,34 @@ public class CollectionUtils {
     }
 
     /**
+     * Removes all elements from the target collection that are not present
+     * in the retain collection. Useful if the removed elements are needed.
+     *
+     * @param target  The target collection.
+     * @param retain  The collection of items that must be retained.
+     *
+     * @param <T>  The element type.
+     *
+     * @return  A {@code List} of elements removed from the target.
+     */
+    public static <T> List<T> retainAll(Collection<T> target, Collection<?> retain) {
+
+        List<T> removed = new ArrayList<>(Math.abs(target.size() - retain.size()));
+
+        Iterator<T> iterator = target.iterator();
+        while (iterator.hasNext()) {
+            T element = iterator.next();
+
+            if (!retain.contains(element)) {
+                removed.add(element);
+                iterator.remove();
+            }
+        }
+
+        return removed;
+    }
+
+    /**
      * Wrap a {@code Collection} in an unmodifiable {@code List}. If the
      * collection is already a {@code List} then it is cast, otherwise
      * its elements are copied into a new {@code List}.
