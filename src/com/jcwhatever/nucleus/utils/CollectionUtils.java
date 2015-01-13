@@ -25,6 +25,8 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.google.common.collect.Multimap;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
+import com.sun.istack.internal.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +34,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -54,18 +57,50 @@ public class CollectionUtils {
      *
      * @return  True if the {@code Multimap} was modified.
      */
-    public static <K, V> boolean removeValue(Multimap<K, V> multimap, V value) {
-        PreCon.notNull(multimap);
-        PreCon.notNull(value);
+    public static <K, V> boolean removeValue(Multimap<K, V> multimap, @Nullable Object value) {
+        return removeValue(multimap.entries(), value);
+    }
 
-        Iterator<Entry<K, V>> iterator = multimap.entries().iterator();
+    /**
+     * Removes all matching instances of a value from the specified
+     * {@code Map}.
+     *
+     * @param map    The map.
+     * @param value  The value to remove.
+     *
+     * @param <K>  The key type.
+     * @param <V>  The value type.
+     *
+     * @return  True if the {@code Map} was modified.
+     */
+    public static <K, V> boolean removeValue(Map<K, V> map, @Nullable Object value) {
+        return removeValue(map.entrySet(), value);
+    }
+
+    /**
+     * Removes all entries with matching specified value from the specified
+     * {@code Collection} of {@code Map.Entry}.
+     *
+     * @param entries  The map.
+     * @param value    The value to remove.
+     *
+     * @param <K>  The key type.
+     * @param <V>  The value type.
+     *
+     * @return  True if the {@code Collection} was modified.
+     */
+    public static <K, V> boolean removeValue(Collection<Entry<K, V>> entries, @Nullable Object value) {
+        PreCon.notNull(entries);
+
+        Iterator<Entry<K, V>> iterator = entries.iterator();
 
         boolean isChanged = false;
 
         while (iterator.hasNext()) {
-            Entry<K, V> entry = iterator.next();
+            Entry<? extends K, ? extends V> entry = iterator.next();
 
-            if (value.equals(entry.getValue())) {
+            if ((value == null && entry.getValue() == null) ||
+                    (value != null && value.equals(entry.getValue()))) {
                 iterator.remove();
                 isChanged = true;
             }
@@ -94,6 +129,34 @@ public class CollectionUtils {
             T element = iterator.next();
 
             if (!retain.contains(element)) {
+                removed.add(element);
+                iterator.remove();
+            }
+        }
+
+        return removed;
+    }
+
+    /**
+     * Removes all elements from the target collection that are not valid
+     * according to the supplied {@code IValidator}.
+     *
+     * @param target     The target collection.
+     * @param validator  The validator that will validate each element in the collection.
+     *
+     * @param <T>  The element type.
+     *
+     * @return  A {@code List} of elements removed from the target.
+     */
+    public static <T> List<T> retainAll(Collection<T> target, IValidator<T> validator) {
+
+        List<T> removed = new ArrayList<>(10);
+
+        Iterator<T> iterator = target.iterator();
+        while (iterator.hasNext()) {
+            T element = iterator.next();
+
+            if (!validator.isValid(element)) {
                 removed.add(element);
                 iterator.remove();
             }
