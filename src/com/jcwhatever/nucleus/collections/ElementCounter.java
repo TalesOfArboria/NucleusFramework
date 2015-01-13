@@ -25,14 +25,13 @@
 
 package com.jcwhatever.nucleus.collections;
 
+import com.jcwhatever.nucleus.collections.ElementCounter.ElementCount;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,14 +42,14 @@ import java.util.Set;
  *
  * @param <E>  The element type.
  */
-public class ElementCounter<E> implements Iterable<E> {
+public class ElementCounter<E> implements Iterable<ElementCount<E>> {
 
-    private Map<E, Counter> _countMap;
-    private RemovalPolicy _removalPolicy;
+    private Map<E, ElementCount<E>> _countMap;
+    private RemovalPolicy _policy;
 
     // cache to quickly increment a value without having to look it up in the type count map.
     private transient E _current;
-    private transient Counter _currentCounter;
+    private transient ElementCount<E> _currentCounter;
 
     /**
      * Used to specify if the counter should remove
@@ -75,141 +74,59 @@ public class ElementCounter<E> implements Iterable<E> {
     /**
      * Constructor.
      *
-     * @param removalPolicy Specify how items are handled when their count reaches 0.
+     * @param removalPolicy  Specify how items are handled when their count reaches 0.
      */
     public ElementCounter(RemovalPolicy removalPolicy) {
-        _removalPolicy = removalPolicy;
-        _countMap = new HashMap<>(25);
+        this(removalPolicy, 10);
     }
 
     /**
      * Constructor.
      *
-     * @param removalPolicy Specify how items are handled when their count reaches 0.
+     * @param removalPolicy  Specify how items are handled when their count reaches 0.
+     * @param capacity       The initial capacity of the internal collection.
      */
-    public ElementCounter(RemovalPolicy removalPolicy, int size) {
-        _removalPolicy = removalPolicy;
-        _countMap = new HashMap<>(size);
+    public ElementCounter(RemovalPolicy removalPolicy, int capacity) {
+        PreCon.notNull(removalPolicy);
+
+        _policy = removalPolicy;
+        _countMap = new HashMap<>(capacity);
     }
 
     /**
-     * Add a collection of items to the counter
+     * Constructor.
      *
-     * @param collection  The collection to add
+     * @param removalPolicy  Specify how items are handled when their count reaches 0.
+     * @param iterable       The initial elements to count.
      */
-    public void addAll(Collection<E> collection) {
-        for (E item : collection)
-            add(item);
+    public ElementCounter(RemovalPolicy removalPolicy, Iterable<? extends E> iterable) {
+        PreCon.notNull(removalPolicy);
+        PreCon.notNull(iterable);
+
+        _policy = removalPolicy;
+        _countMap = new HashMap<>(10);
+
+        for (E element : iterable) {
+            add(element);
+        }
     }
 
     /**
-     * Add an item to the counter.
+     * Constructor.
      *
-     * @param element  The item to add.
-     *
-     * @return  The new count for the item.
+     * @param removalPolicy  Specify how items are handled when their count reaches 0.
+     * @param collection     The initial collection of elements to count.
      */
-    public int add(E element) {
-        PreCon.notNull(element);
+    public ElementCounter(RemovalPolicy removalPolicy, Collection<? extends E> collection) {
+        PreCon.notNull(removalPolicy);
+        PreCon.notNull(collection);
 
-        Counter counter;
+        _policy = removalPolicy;
+        _countMap = new HashMap<>(collection.size());
 
-        counter = _current != null && _current.equals(element)
-                ? _currentCounter
-                : _countMap.get(element);
-
-        // establish baseline value
-        if (counter == null) {
-            counter = new Counter(1);
-            _countMap.put(element, counter);
+        for (E element : collection) {
+            add(element);
         }
-        // increment value
-        else {
-            counter.increment(1);
-        }
-
-        // place value in cache
-        _current = element;
-        _currentCounter = counter;
-
-        return counter.count();
-    }
-
-    /**
-     * Subtract a collection of items from the counter
-     *
-     * @param collection  The collection to subtract.
-     */
-    public void subtractAll(Collection<E> collection) {
-        for (E item : collection)
-            subtract(item);
-    }
-
-    /**
-     * Subtract the count from an item.
-     *
-     * @param element  The item to subtract.
-     *
-     * @return  The new count for the item.
-     */
-    public int subtract(E element) {
-        PreCon.notNull(element);
-
-        Counter counter;
-
-        counter = _current != null && _current.equals(element)
-                ? _currentCounter
-                : _countMap.get(element);
-
-        // Check if item is in counter
-        if (counter == null) {
-            if (_removalPolicy == RemovalPolicy.REMOVE) {
-                return 0;
-            }
-            else {
-                counter = new Counter(-1);
-                _countMap.put(element, counter);
-            }
-        }
-        // decrement count
-        else {
-            counter.increment(-1);
-        }
-
-        // check if the item needs to be removed
-        if (_removalPolicy == RemovalPolicy.REMOVE && counter.count() <= 0) {
-            _current = null;
-            _currentCounter = null;
-            _countMap.remove(element);
-            return 0;
-        }
-
-        // place value in cache
-        _current = element;
-        _currentCounter = counter;
-
-        return counter.count();
-    }
-
-    /**
-     * Get the current counter value for the specified item.
-     *
-     * @param element  The item to get the count value for
-     */
-    public int getCount(E element) {
-        PreCon.notNull(element);
-
-        if (_current != null && _current.equals(element)) {
-            return _currentCounter.count();
-        }
-
-        Counter counter = _countMap.get(element);
-
-        if (counter == null) {
-            return 0;
-        }
-
-        return counter.count();
     }
 
     /**
@@ -220,16 +137,174 @@ public class ElementCounter<E> implements Iterable<E> {
     }
 
     /**
-     * Determine if an item is in the counter.
+     * Determine if an element is in the counter.
      *
-     * @param element  The item to check.
+     * @param element  The element to check.
      */
-    public boolean contains(E element) {
+    public boolean contains(Object element) {
         PreCon.notNull(element);
 
+        //noinspection SuspiciousMethodCalls
         return _countMap.keySet().contains(element);
     }
 
+    /**
+     * Increment elements in the counter.
+     *
+     * @param iterable  The elements to increment.
+     */
+    public void addAll(Iterable<? extends E> iterable) {
+        addAll(iterable, 1);
+    }
+
+    /**
+     * Increment elements in the counter.
+     *
+     * @param iterable  The elements to increment.
+     * @param amount    The amount to add to each element.
+     */
+    public void addAll(Iterable<? extends E> iterable, int amount) {
+        PreCon.notNull(iterable);
+
+        for (E element : iterable)
+            modifyCount(element, amount);
+    }
+
+    /**
+     * Increment an element in the counter.
+     *
+     * @param element  The element to increment.
+     *
+     * @return  The new count for the element.
+     */
+    public int add(E element) {
+        return modifyCount(element, 1);
+    }
+
+    /**
+     * Increment an element in the counter.
+     *
+     * @param element  The element to increment.
+     * @param amount   The amount to increment.
+     *
+     * @return  The new count for the element.
+     */
+    public int add(E element, int amount) {
+        PreCon.notNull(element);
+
+        return modifyCount(element, amount);
+    }
+
+    /**
+     * Add from the specified {@code ElementCounter}'s counts
+     * to the current {@code ElementCounter}.
+     *
+     * @param counter  The counter.
+     *
+     * @return  Self for chaining.
+     */
+    public ElementCounter<E> add(ElementCounter<E> counter) {
+        PreCon.notNull(counter);
+
+        for (ElementCount<E> element : counter) {
+            modifyCount(element.getElement(), element.getCount());
+        }
+
+        return this;
+    }
+
+    /**
+     * Decrement elements in the counter.
+     *
+     * @param iterable  The iterable collection of elements to subtract.
+     */
+    public void subtractAll(Iterable<? extends E> iterable) {
+        subtractAll(iterable, -1);
+    }
+
+    /**
+     * Decrement elements in the counter.
+     *
+     * @param iterable  The iterable collection of elements to subtract.
+     * @param amount    The amount to subtract from each element.
+     */
+    public void subtractAll(Iterable<? extends E> iterable, int amount) {
+        PreCon.notNull(iterable);
+
+        for (E element : iterable) {
+            if (element == null)
+                continue;
+
+            modifyCount(element, -amount);
+        }
+    }
+
+    /**
+     * Decrement an elements count.
+     *
+     * @param element  The element to subtract.
+     *
+     * @return  The new count for the element.
+     */
+    public int subtract(E element) {
+        PreCon.notNull(element);
+
+        return modifyCount(element, -1);
+    }
+
+    /**
+     * Decrement an elements count.
+     *
+     * @param element  The element to subtract.
+     * @param amount   The amount to subtract.
+     *
+     * @return  The new count for the element.
+     */
+    public int subtract(E element, int amount) {
+        PreCon.notNull(element);
+
+        return modifyCount(element, -amount);
+    }
+
+    /**
+     * Subtract from the current {@code ElementCounter} all the items
+     * counted by the specified {@code ElementCounter}.
+     *
+     * @param counter  The counter.
+     *
+     * @return  Self for chaining.
+     */
+    public ElementCounter<E> subtract(ElementCounter<E> counter) {
+        PreCon.notNull(counter);
+
+        for (ElementCount<E> element : counter) {
+            modifyCount(element.getElement(), -element.getCount());
+        }
+
+        return this;
+    }
+
+    /**
+     * Get the current counter value for the specified item.
+     *
+     * @param element  The item to get the count value for
+     */
+    public int count(Object element) {
+        PreCon.notNull(element);
+
+        if (_current != null && _current.equals(element)) {
+            return _currentCounter.count;
+        }
+
+        //noinspection SuspiciousMethodCalls
+        ElementCount counter = _countMap.get(element);
+
+        if (counter == null) {
+            return 0;
+        }
+
+        return counter.count;
+    }
 
     /**
      * Get a new hash set containing the items that were counted.
@@ -257,32 +332,91 @@ public class ElementCounter<E> implements Iterable<E> {
      * <p>Each item appears only once in the iteration regardless of its count.</p>
      */
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<ElementCount<E>> iterator() {
 
-        List<E> types = new ArrayList<E>(_countMap.keySet());
-        return types.iterator();
+        return _countMap.values().iterator();
     }
 
-    private class Counter {
+    /**
+     * Modify the count of an element
+     */
+    private int modifyCount(E element, int amount) {
+        PreCon.notNull(element);
 
-        private int _count;
+        ElementCount<E> counter;
 
-        Counter(int count) {
-            _count = _removalPolicy == RemovalPolicy.BOTTOM_OUT
+        counter = _current != null && _current.equals(element)
+                ? _currentCounter
+                : _countMap.get(element);
+
+        // Check if item is in counter
+        if (counter == null) {
+            if (_policy == RemovalPolicy.REMOVE) {
+                return 0;
+            }
+            else {
+                counter = new ElementCount<>(_policy, element, amount);
+                _countMap.put(element, counter);
+            }
+        }
+        // modify count
+        else {
+            counter.increment(amount);
+        }
+
+        // check if the item needs to be removed
+        if (_policy == RemovalPolicy.REMOVE && counter.count <= 0) {
+            _current = null;
+            _currentCounter = null;
+            _countMap.remove(element);
+            return 0;
+        }
+
+        // place value in cache
+        _current = element;
+        _currentCounter = counter;
+
+        return counter.count;
+    }
+
+    /**
+     * Contains count information for a single element.
+     *
+     * @param <E>  The element type.
+     */
+    public static class ElementCount<E> {
+
+        final RemovalPolicy policy;
+        final E element;
+        int count;
+
+        ElementCount(RemovalPolicy policy, E element, int count) {
+            this.policy = policy;
+            this.element = element;
+            this.count = policy == RemovalPolicy.BOTTOM_OUT
                     ? Math.max(0, count)
                     : count;
         }
 
-        int count() {
-            return _count;
+        /**
+         * Get the elements count.
+         */
+        public int getCount() {
+            return count;
+        }
+
+        /**
+         * Get the element.
+         */
+        public E getElement() {
+            return element;
         }
 
         void increment(int amount) {
-            if (_removalPolicy == RemovalPolicy.BOTTOM_OUT)
-                _count = Math.max(0, _count + amount);
+            if (policy == RemovalPolicy.BOTTOM_OUT)
+                count = Math.max(0, count + amount);
             else
-                _count += amount;
+                count += amount;
         }
     }
-
 }
