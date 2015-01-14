@@ -22,26 +22,40 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.collections.observer.subscriber;
 
-package com.jcwhatever.nucleus.events.manager.exceptions;
+import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 
-import com.jcwhatever.nucleus.events.manager.IEventListener;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
 
 /**
- * Thrown when an event listener that is already registered with a {@code NucleusEventManager}
- * is registered again.
+ * A linked list of {@link ISubscriber} which automatically removes agents
+ * when they are disposed.
  */
-public class ListenerAlreadyRegisteredException extends RuntimeException {
+public class SubscriberLinkedList<E extends ISubscriber> extends SubscriberDeque<E> {
 
-    private String _msg;
+    private final LinkedList<E> _list;
 
-    public ListenerAlreadyRegisteredException(IEventListener listener) {
-        _msg = "Event listener is already registered: " + listener.getClass().getName();
+    /**
+     * Constructor.
+     */
+    public SubscriberLinkedList() {
+        _list = new LinkedList<>();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param collection  The initial collection to add.
+     */
+    public SubscriberLinkedList(Collection<? extends E> collection) {
+        _list = new LinkedList<>(collection);
     }
 
     @Override
-    public String getMessage() {
-        return _msg;
+    protected Deque<E> queue() {
+        return _list;
     }
-
 }

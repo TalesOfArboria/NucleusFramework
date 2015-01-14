@@ -22,26 +22,51 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.collections.observer.agent;
 
-package com.jcwhatever.nucleus.events.manager.exceptions;
+import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
 
-import com.jcwhatever.nucleus.events.manager.IEventHandler;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Thrown when an event handler that is already registered with a {@code NucleusEventManager}
- * is registered again.
+ * A {@link HashSet} based implementation of {@link AgentCollection} which
+ * automatically removes agents when they are disposed.
  */
-public class HandlerAlreadyRegisteredException extends RuntimeException {
+public class AgentHashSet<E extends ISubscriberAgent> extends AgentCollection<E> implements Set<E> {
 
-    private String _msg;
+    private final Set<E> _set;
 
-    public HandlerAlreadyRegisteredException(IEventHandler handler) {
-        _msg = "Event handler is already registered: " + handler.getClass().getName();
+    /**
+     * Constructor.
+     *
+     * <p>The initial capacity is 7.</p>
+     */
+    public AgentHashSet() {
+        this(7);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param size  The initial capacity.
+     */
+    public AgentHashSet(int size) {
+        _set = new HashSet<>(size);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param collection  The initial collection to add.
+     */
+    public AgentHashSet(Collection<? extends E> collection) {
+        _set = new HashSet<>(collection);
     }
 
     @Override
-    public String getMessage() {
-        return _msg;
+    protected Collection<E> collection() {
+        return _set;
     }
-
 }

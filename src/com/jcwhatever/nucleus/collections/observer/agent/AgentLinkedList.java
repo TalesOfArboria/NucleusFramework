@@ -22,13 +22,40 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.collections.observer.agent;
 
-package com.jcwhatever.nucleus.events.manager;
+import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
+
+import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
 
 /**
- * Event handler interface
+ * A linked list of {@link ISubscriberAgent} which automatically removes agents
+ * when they are disposed.
  */
-public interface IEventHandler<T> {
+public class AgentLinkedList<E extends ISubscriberAgent> extends AgentDeque<E> {
 
-    void handle(T event);
+    private final LinkedList<E> _list;
+
+    /**
+     * Constructor.
+     */
+    public AgentLinkedList() {
+        _list = new LinkedList<>();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param collection  The initial collection to start with.
+     */
+    public AgentLinkedList(Collection<? extends E> collection) {
+        _list = new LinkedList<>(collection);
+    }
+
+    @Override
+    protected Deque<E> queue() {
+        return _list;
+    }
 }
