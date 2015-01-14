@@ -52,7 +52,7 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
     private final ValuesWrapper _valuesWrapper = new ValuesWrapper();
     private final KeySetWrapper _keySetWrapper = new KeySetWrapper();
     private final EntrySetWrapper _entrySetWrapper = new EntrySetWrapper();
-    protected final Object _sync;
+    private final Object _sync;
 
     /**
      * Constructor.
@@ -82,7 +82,7 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
      * @param key    The key.
      * @param value  The value.
      */
-    protected abstract void onPut(K key, V value);
+    protected void onPut(K key, V value) {}
 
     /**
      * Invoked after an entry is removed from the map except
@@ -95,7 +95,7 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
      * @param key      The key.
      * @param removed  The value.
      */
-    protected abstract void onRemove(Object key, V removed);
+    protected void onRemove(Object key, V removed) {}
 
     /**
      * Invoked after the map is cleared.
@@ -106,7 +106,7 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
      *
      * @param entries  The cleared entries.
      */
-    protected abstract void onClear(Collection<Entry<K, V>> entries);
+    protected void onClear(Collection<Entry<K, V>> entries) {}
 
     /**
      * Invoked from a synchronized block to get the encapsulated {@code Map}.

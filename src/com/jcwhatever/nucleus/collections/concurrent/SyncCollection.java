@@ -301,6 +301,8 @@ public abstract class SyncCollection<E> implements Collection<E> {
 
     private class Itr extends SyncIterator<E> {
 
+        Iterator<E> iterator = collection().iterator();
+
         @Override
         protected boolean onRemove(E element) {
             if (!SyncCollection.this.onPreRemove(element))
@@ -312,7 +314,7 @@ public abstract class SyncCollection<E> implements Collection<E> {
 
         @Override
         protected Iterator<E> iterator() {
-            return collection().iterator();
+            return iterator;
         }
     }
 }
