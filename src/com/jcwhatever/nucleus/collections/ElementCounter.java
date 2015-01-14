@@ -219,7 +219,7 @@ public class ElementCounter<E> implements Iterable<ElementCount<E>> {
      * @param iterable  The iterable collection of elements to subtract.
      */
     public void subtractAll(Iterable<? extends E> iterable) {
-        subtractAll(iterable, -1);
+        subtractAll(iterable, 1);
     }
 
     /**
@@ -351,7 +351,7 @@ public class ElementCounter<E> implements Iterable<ElementCount<E>> {
 
         // Check if item is in counter
         if (counter == null) {
-            if (_policy == RemovalPolicy.REMOVE) {
+            if (_policy == RemovalPolicy.REMOVE && amount <= 0) {
                 return 0;
             }
             else {

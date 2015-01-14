@@ -17,10 +17,10 @@ public class ElementCounterTest {
 
         counter.addAll(ArrayUtils.asList("1", "2", "3"));
 
-        Assert.assertEquals(1, counter.getCount("1"));
-        Assert.assertEquals(1, counter.getCount("2"));
-        Assert.assertEquals(1, counter.getCount("3"));
-        Assert.assertEquals(0, counter.getCount("4"));
+        Assert.assertEquals(1, counter.count("1"));
+        Assert.assertEquals(1, counter.count("2"));
+        Assert.assertEquals(1, counter.count("3"));
+        Assert.assertEquals(0, counter.count("4"));
 
         Assert.assertEquals(3, counter.size());
     }
@@ -66,7 +66,7 @@ public class ElementCounterTest {
 
         Assert.assertEquals(true, counter.contains("1"));
 
-        Assert.assertEquals(0, counter.getCount("1"));
+        Assert.assertEquals(0, counter.count("1"));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ElementCounterTest {
 
         Assert.assertEquals(true, counter.contains("1"));
 
-        Assert.assertEquals(0, counter.getCount("1"));
+        Assert.assertEquals(0, counter.count("1"));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ElementCounterTest {
         Assert.assertEquals(true, counter.contains("1"));
         Assert.assertEquals(true, counter.contains("2"));
 
-        Assert.assertEquals(1, counter.getCount("2"));
+        Assert.assertEquals(1, counter.count("2"));
     }
 
     @Test
@@ -121,11 +121,11 @@ public class ElementCounterTest {
         Assert.assertEquals(true, counter.contains("1"));
         Assert.assertEquals(true, counter.contains("2"));
 
-        Assert.assertEquals(0, counter.getCount("1"));
+        Assert.assertEquals(0, counter.count("1"));
 
         counter.subtract("1");
 
-        Assert.assertEquals(0, counter.getCount("1"));
+        Assert.assertEquals(0, counter.count("1"));
     }
 
     @Test
@@ -143,11 +143,11 @@ public class ElementCounterTest {
         Assert.assertEquals(true, counter.contains("1"));
         Assert.assertEquals(true, counter.contains("2"));
 
-        Assert.assertEquals(0, counter.getCount("1"));
+        Assert.assertEquals(0, counter.count("1"));
 
         counter.subtract("1");
 
-        Assert.assertEquals(-1, counter.getCount("1"));
+        Assert.assertEquals(-1, counter.count("1"));
     }
 
     @Test
@@ -161,9 +161,9 @@ public class ElementCounterTest {
         counter.add("3");
         counter.add("3");
 
-        Assert.assertEquals(1, counter.getCount("1"));
-        Assert.assertEquals(2, counter.getCount("2"));
-        Assert.assertEquals(3, counter.getCount("3"));
+        Assert.assertEquals(1, counter.count("1"));
+        Assert.assertEquals(2, counter.count("2"));
+        Assert.assertEquals(3, counter.count("3"));
     }
 
     @Test
