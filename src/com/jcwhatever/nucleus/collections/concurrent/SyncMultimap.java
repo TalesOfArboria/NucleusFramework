@@ -54,9 +54,9 @@ import javax.annotation.Nonnull;
 public abstract class SyncMultimap<K, V> implements Multimap<K, V> {
 
     protected final Object _sync;
-    private final KeySetWrapper _keySet = new KeySetWrapper();
-    private final ValuesWrapper _values = new ValuesWrapper();
-    private final AsMapWrapper _asMap = new AsMapWrapper();
+    private final KeySetWrapper _keySet;
+    private final ValuesWrapper _values;
+    private final AsMapWrapper _asMap;
 
     /**
      * Constructor.
@@ -74,6 +74,10 @@ public abstract class SyncMultimap<K, V> implements Multimap<K, V> {
         PreCon.notNull(sync);
 
         _sync = sync;
+
+        _keySet = new KeySetWrapper();
+        _values = new ValuesWrapper();
+        _asMap = new AsMapWrapper();
     }
 
     /**
