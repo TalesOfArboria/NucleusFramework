@@ -22,16 +22,16 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.events.manager.exceptions;
+package com.jcwhatever.nucleus.utils.observer.event;
 
 /**
- * Thrown when attempting to use a {@code NucleusEventManager} that is disposed.
+ * A wrapper for an event. Ensures an event agent
+ * can retrieve the wrapped event.
  */
-public class EventManagerDisposedException extends RuntimeException {
+public interface IEventWrapper<E> {
 
-    @Override
-    public String getMessage() {
-        return "Cannot use an event manager after it is disposed.";
-    }
+    /**
+     * Get the wrapped event.
+     */
+    E getEvent();
 }

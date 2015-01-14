@@ -22,24 +22,29 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.events.manager;
+package com.jcwhatever.nucleus.utils.observer.event;
 
-import org.bukkit.plugin.Plugin;
+import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
+import javax.annotation.Nullable;
 
 /**
- * Event call handler
+ * An agent between producers of events and {@code IEventSubscriber}'s
+ * registered with the agent.
+ *
+ * <p>The agent accepts {@code ISubscriber} instances for registration as
+ * all {@code ISubscriberAgent} implementations must. However the
+ * {@code IEventSubscriber} interface should be used by subscribers that
+ * wish to receive events from the agent. The implementation decides how
+ * the non-event subscribers are used but must at the least hold a reference
+ * to the subscriber until it un-registers.</p>
  */
-public interface IEventCallHandler {
+public interface IEventAgent<E> extends ISubscriberAgent {
 
     /**
-     * Get the owning plugin.
-     */
-    Plugin getPlugin();
-
-    /**
-     * Called when an event is called.
+     * Call by an event producer to notify event subscribers.
      *
-     * @param event  The event that was called.
+     * @param caller  Optional object that is the caller of the event
+     * @param event   The event.
      */
-    void onCall(Object event);
+    void call(@Nullable Object caller, E event);
 }

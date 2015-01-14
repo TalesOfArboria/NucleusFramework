@@ -23,13 +23,12 @@
  */
 
 
-package com.jcwhatever.nucleus.events.manager;
+package com.jcwhatever.nucleus.utils.observer.event;
 
 /**
- * Defines the order an event handler
- * executed.
+ * Defines the order an event subscriber is notified.
  */
-public enum NucleusEventPriority {
+public enum EventSubscriberPriority {
 
     /**
      * Watcher. Only watches to see if the event
@@ -50,9 +49,9 @@ public enum NucleusEventPriority {
     LOW     (3),
 
     /**
-     * Normal priority.
+     * Normal/Default priority.
      */
-    NORMAL  (2),
+    NORMAL (2),
 
     /**
      * High priority. Called second.
@@ -66,7 +65,7 @@ public enum NucleusEventPriority {
 
     private final int _order;
 
-    NucleusEventPriority(int order) {
+    EventSubscriberPriority(int order) {
         _order = order;
     }
 
