@@ -32,10 +32,10 @@ import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
 import com.jcwhatever.nucleus.utils.observer.SubscriberAgent;
-import com.sun.istack.internal.Nullable;
 
 import java.util.Collection;
 import java.util.Map.Entry;
+import javax.annotation.Nullable;
 
 /**
  * A {@link com.google.common.collect.Multimap} of {@link ISubscriber} which automatically

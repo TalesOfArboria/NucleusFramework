@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.providers.economy;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Thrown when a transaction fails.

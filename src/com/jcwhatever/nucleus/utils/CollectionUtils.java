@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.utils;
 
 import com.google.common.collect.Multimap;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
-import com.sun.istack.internal.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +37,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Collection utilities

@@ -33,12 +33,12 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
 import com.jcwhatever.nucleus.utils.observer.Subscriber;
-import com.sun.istack.internal.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
+import javax.annotation.Nullable;
 
 /**
  * A {@link com.google.common.collect.Multimap} of {@link ISubscriberAgent} which
