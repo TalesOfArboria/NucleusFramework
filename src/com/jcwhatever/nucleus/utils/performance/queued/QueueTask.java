@@ -27,7 +27,9 @@ package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
@@ -42,8 +44,7 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
 
     private final Plugin _plugin;
     private final TaskConcurrency _concurrency;
-    private final QueueResult _result;
-    private final Future _future;
+    private final FutureResultAgent<QueueTask> _resultAgent = new FutureResultAgent<>();
 
     private volatile boolean _isRunning = false;
     private volatile boolean _isComplete = false;
@@ -58,8 +59,6 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
 
         _plugin = plugin;
         _concurrency = concurrency;
-        _result = new QueueResult(this);
-        _future = _result.getFuture();
     }
 
     /**
@@ -80,8 +79,8 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
     /**
      * Get the task result future.
      */
-    public final Future getResult() {
-        return _future;
+    public final Future<QueueTask> getResult() {
+        return _resultAgent.getFuture();
     }
 
     /**
@@ -126,11 +125,11 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
      * @param reason  Optional message describing the reason the task was cancelled.
      * @param args    Optional message format arguments.
      */
-    public final Future cancel(@Nullable String reason, Object... args) {
+    public final Future<QueueTask> cancel(@Nullable String reason, Object... args) {
         PreCon.notNull(args);
 
         if (isEnded())
-            return _future;
+            return _resultAgent.getFuture();
 
         onCancel();
         onEnd();
@@ -141,12 +140,13 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
         if (reason != null)
             reason = TextUtils.format(reason, args);
 
-        _result.setCancelled(reason);
+        _resultAgent.sendResult(
+                new ResultBuilder<QueueTask>().cancel().message(reason).result(this).build());
 
         if (_parent != null)
             _parent.update(this);
 
-        return _future;
+        return _resultAgent.getFuture();
     }
 
     /**
@@ -163,7 +163,6 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
             onRun();
     }
 
-
     protected abstract void onRun();
 
     protected void onComplete() {}
@@ -171,14 +170,13 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
     protected void onCancel() {}
     protected void onEnd() {}
 
-
     /**
      * Call when the task is completed successfully.
      */
-    protected final Future complete() {
+    protected final Future<QueueTask> complete() {
 
         if (isEnded())
-            return _future;
+            return _resultAgent.getFuture();
 
         onComplete();
         onEnd();
@@ -186,12 +184,13 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
         _isRunning = false;
         _isComplete = true;
 
-        _result.setComplete();
+        _resultAgent.sendResult(
+                new ResultBuilder<QueueTask>().success().message("Completed.").result(this).build());
 
         if (_parent != null)
             _parent.update(this);
 
-        return _future;
+        return _resultAgent.getFuture();
     }
 
     /**
@@ -200,10 +199,10 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
      * @param reason  Optional message describing the reason the task failed.
      * @param args    Optional message format arguments.
      */
-    protected final Future fail(@Nullable String reason, Object... args) {
+    protected final Future<QueueTask> fail(@Nullable String reason, Object... args) {
 
         if (isEnded())
-            return _future;
+            return _resultAgent.getFuture();
 
         onFail();
         onEnd();
@@ -214,12 +213,13 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
         if (reason != null)
             reason = TextUtils.format(reason, args);
 
-        _result.setFailed(reason);
+        _resultAgent.sendResult(
+                new ResultBuilder<QueueTask>().error().message(reason).result(this).build());
 
         if (_parent != null)
             _parent.update(this);
 
-        return _future;
+        return _resultAgent.getFuture();
     }
 
     /**
