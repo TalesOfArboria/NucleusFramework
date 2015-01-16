@@ -33,11 +33,10 @@ import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.CancelHandler;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.FailHandler;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 
 import org.bukkit.Chunk;
@@ -49,7 +48,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
-import javax.annotation.Nullable;
 
 /**
  * Loads a regions chunk block data from a file.
@@ -160,7 +158,7 @@ public final class RegionChunkFileLoader {
      * @param project   The project to add the loading task to.
      * @param loadType  The callback to run when load is finished.
      */
-    public Future loadInProject(File file, QueueProject project, LoadType loadType) {
+    public Future<QueueTask> loadInProject(File file, QueueProject project, LoadType loadType) {
         PreCon.notNull(file);
         PreCon.notNull(project);
 
@@ -199,41 +197,16 @@ public final class RegionChunkFileLoader {
      *
      * @param file      The file.
      * @param loadType  The block load type.
-     * @param callback  The callback to run when load is finished.
      */
-    public void load(File file, LoadType loadType, final LoadFileCallback callback) {
+    public Future<QueueTask> load(File file, LoadType loadType) {
 
         QueueProject project = new QueueProject(_plugin);
 
-        loadInProject(file, project, loadType)
-                .onCancel(new CancelHandler() {
-                    @Override
-                    public void run(@Nullable String reason) {
-                        callback.onFinish(false);
-                    }
-                })
-                .onFail(new FailHandler() {
-
-                    @Override
-                    public void run(@Nullable String reason) {
-                        callback.onFinish(false);
-                    }
-                })
-                .onComplete(new Runnable() {
-                    @Override
-                    public void run() {
-                        callback.onFinish(true);
-                    }
-                });
+        Future<QueueTask> future = loadInProject(file, project, loadType);
 
         project.run();
-    }
 
-    /**
-     * Load callback interface.
-     */
-    public interface LoadFileCallback {
-        void onFinish(boolean isLoadSuccess);
+        return future;
     }
 
     /**
@@ -253,8 +226,6 @@ public final class RegionChunkFileLoader {
                            int xEnd, int yEnd, int zEnd) {
 
             super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
-
-
 
             this.snapshot = _chunk.getChunk().getChunkSnapshot();
             this.file = file;

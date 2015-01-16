@@ -57,132 +57,132 @@ public final class BlockListener implements Listener{
     @EventHandler
     private void onBlockBreak(BlockBreakEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockBurn(BlockBurnEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockCanBuildEvent(BlockCanBuildEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockDamage(BlockDamageEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockDispense(BlockDispenseEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockExp(BlockExpEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockFade(BlockFadeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockForm(BlockFormEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockFromTo(BlockFromToEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockGrow(BlockGrowEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockIgnite(BlockIgniteEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockMultiPlace(BlockMultiPlaceEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockPhysics(BlockPhysicsEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockPistonExtend(BlockPistonExtendEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockPistonRetractEvent(BlockPistonRetractEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockPlace(BlockPlaceEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockRedstone(BlockRedstoneEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onBlockSpread(BlockSpreadEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityBlockForm(EntityBlockFormEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onLeavesDecay(LeavesDecayEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onNotePlay(NotePlayEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onSignChange(SignChangeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 }

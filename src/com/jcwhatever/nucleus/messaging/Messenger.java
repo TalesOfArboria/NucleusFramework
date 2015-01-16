@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.messaging;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
+import com.jcwhatever.nucleus.collections.timed.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedHashSet;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -140,14 +141,14 @@ public class Messenger implements IMessenger {
 
         TimedHashSet<String> recent = _noSpamCache.get(p.getUniqueId());
         if (recent == null) {
-            recent = new TimedHashSet<String>(20, 140);
+            recent = new TimedHashSet<String>(_plugin, 20, 140);
             _noSpamCache.put(p.getUniqueId(), recent);
         }
 
-        if (recent.contains(msg, ticks))
+        if (recent.contains(msg, ticks, TimeScale.TICKS))
             return false;
 
-        recent.add(msg, ticks);
+        recent.add(msg, ticks, TimeScale.TICKS);
 
         return tell(p, lineWrapping, msg);
     }

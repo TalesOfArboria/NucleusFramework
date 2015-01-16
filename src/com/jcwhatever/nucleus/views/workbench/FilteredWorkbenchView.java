@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.views.workbench;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.manager.NucleusEventHandler;
-import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
+import com.jcwhatever.nucleus.events.manager.EventMethod;
+import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.language.Localizable;
@@ -54,7 +54,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
     static final String _NOT_CRAFTABLE_LORE = "{RED}Not craftable here.";
     @Localizable static final String _NOT_CRAFTABLE_CHAT = "{RED}You can't craft this item here.";
 
-    private static EventListener _eventListener;
+    private static AnvilEventListener _eventListener;
     private static Map<InventoryView, FilteredWorkbenchView> _viewMap = new WeakHashMap<>(10);
 
     private final ItemFilterManager _filter;
@@ -84,7 +84,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
         if (super.openView(reason)) {
 
             if (_eventListener == null) {
-                _eventListener = new EventListener(Nucleus.getPlugin());
+                _eventListener = new AnvilEventListener(Nucleus.getPlugin());
                 Nucleus.getEventManager().register(_eventListener);
             }
 
@@ -102,13 +102,13 @@ public class FilteredWorkbenchView extends WorkbenchView {
     /**
      * Anvil event listener
      */
-    private static class EventListener extends NucleusEventListener {
+    private static class AnvilEventListener extends EventListener {
 
-        public EventListener(Plugin plugin) {
+        public AnvilEventListener(Plugin plugin) {
             super(plugin);
         }
 
-        @NucleusEventHandler
+        @EventMethod
         private void onPrepareItemCraft(PrepareItemCraftEvent event) {
 
             FilteredWorkbenchView workbench = _viewMap.get(event.getView());
@@ -131,7 +131,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
             }
         }
 
-        @NucleusEventHandler
+        @EventMethod
         private void onCraftItem(CraftItemEvent event) {
 
             FilteredWorkbenchView workbench = _viewMap.get(event.getView());
@@ -150,7 +150,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
             }
         }
 
-        @NucleusEventHandler
+        @EventMethod
         private void onNucleusDisable(PluginDisableEvent event) {
             if (event.getPlugin() == Nucleus.getPlugin())
                 _eventListener = null;

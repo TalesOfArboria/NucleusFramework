@@ -2573,6 +2573,34 @@ public final class ArrayUtils {
         return newArray;
     }
 
+    /**
+     * Converts an array of one type into an array of another type.
+     *
+     * <p>The array sizes do not have to match. The conversion takes place in
+     * linear order starting from index 0 until either the end of the output
+     * array is reached or the end of the input array is reached.</p>
+     *
+     * @param inputArray   The input array.
+     * @param outputArray  The output array.
+     * @param converter    The converter that will convert each element.
+     *
+     * @param <I>  The input array component type.
+     * @param <O>  The output array component type.
+     *
+     * @return  The output array.
+     */
+    public static <I, O> O[] convert(I[] inputArray, O[] outputArray, IConverter<I, O> converter) {
+        PreCon.notNull(inputArray);
+        PreCon.notNull(outputArray);
+        PreCon.notNull(converter);
+
+        for (int i=0, iLen=inputArray.length, oLen=outputArray.length; i < iLen && i < oLen; i++) {
+            outputArray[i] = converter.convert(inputArray[i]);
+        }
+
+        return outputArray;
+    }
+
     private static <T> T[] newArray(Class<T> arrayClass, int size) {
 
         @SuppressWarnings("unchecked")

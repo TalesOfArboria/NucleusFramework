@@ -248,7 +248,7 @@ public class Kit implements IKit {
                 if (p == null)
                     return;
 
-                Nucleus.getEventManager().callBukkit(_event);
+                Nucleus.getEventManager().callBukkit(this, _event);
 
                 PlayerInventory inv = p.getInventory();
 

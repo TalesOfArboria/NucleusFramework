@@ -12,7 +12,7 @@ public class UpdateSubscriberTest {
 
         UpdateSubscriber<String> subscriber = new UpdateSubscriber<String>() {
             @Override
-            public void onUpdate(IUpdateAgent agent, String argument) {
+            public void on(String argument) {
 
             }
         };

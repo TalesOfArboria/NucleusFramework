@@ -43,49 +43,49 @@ public final class VehicleListener implements Listener {
     @EventHandler
     private void onVehicleCreate(VehicleCreateEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onVehicleDamage(VehicleDamageEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onVehicleDestroy(VehicleDestroyEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onVehicleEnter(VehicleEnterEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onVehicleEntityCollision(VehicleEntityCollisionEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onVehicleExit(VehicleExitEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onVehicleMove(VehicleMoveEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onVehicleUpdate(VehicleUpdateEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
 }

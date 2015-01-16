@@ -49,85 +49,85 @@ public final class InventoryListener implements Listener {
     @EventHandler
     private void onBrew(BrewEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onCraftItem(CraftItemEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onFurnaceBurn(FurnaceBurnEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onFurnaceExtract(FurnaceExtractEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onFurnaceSmelt(FurnaceSmeltEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onInventoryClose(InventoryCloseEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onInventoryCreative(InventoryCreativeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onInventoryDrag(InventoryDragEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onInventoryInteract(InventoryInteractEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onInventoryMoveItem(InventoryMoveItemEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onInventoryOpen(InventoryOpenEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onInventoryPickupItem(InventoryPickupItemEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onPrepareItemCraft(PrepareItemCraftEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
 }

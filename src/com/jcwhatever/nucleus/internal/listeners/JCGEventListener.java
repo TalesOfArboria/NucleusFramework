@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.response.CommandRequests;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
-import com.jcwhatever.nucleus.events.manager.NucleusEventManager;
+import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.InternalRegionManager;
 import com.jcwhatever.nucleus.regions.Region.LeaveRegionReason;
@@ -76,7 +76,7 @@ public final class JCGEventListener implements Listener {
 	private void onPluginDisable(PluginDisableEvent event) {
 
 		// unregister all event handlers associated with the plugin
-		NucleusEventManager.unregisterPlugin(event.getPlugin());
+		EventManager.unregisterPlugin(event.getPlugin());
 
 		if (Nucleus.getPlugin().isEnabled()) {
 			Nucleus.getScriptApiRepo().unregisterPlugin(event.getPlugin());
@@ -175,7 +175,7 @@ public final class JCGEventListener implements Listener {
 
 			Sign sign = (Sign)signState;
 			SignInteractEvent signInteractEvent = new SignInteractEvent(event, sign);
-			Nucleus.getEventManager().callBukkit(signInteractEvent);
+			Nucleus.getEventManager().callBukkit(this, signInteractEvent);
 		}
 	}
 
@@ -220,7 +220,7 @@ public final class JCGEventListener implements Listener {
 			AnvilItemRenameEvent renameEvent = new AnvilItemRenameEvent(
 					p, anvilInventory, resultItem, newName, originalName);
 
-			Nucleus.getEventManager().callBukkit(renameEvent);
+			Nucleus.getEventManager().callBukkit(this, renameEvent);
 
 			if (renameEvent.isCancelled()) {
 				event.setCancelled(true);
@@ -237,7 +237,7 @@ public final class JCGEventListener implements Listener {
 		if (resultDurability > startDurability) {
 			AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
 
-			Nucleus.getEventManager().callBukkit(repairEvent);
+			Nucleus.getEventManager().callBukkit(this, repairEvent);
 
 			if (repairEvent.isCancelled()) {
 				event.setCancelled(true);

@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.views.anvil;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
-import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
+import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
@@ -54,7 +54,7 @@ public class FilteredAnvilView extends AnvilView {
 
     @Localizable static final String _NOT_REPAIRABLE = "{RED}Not repairable here.";
 
-    private static EventListener _eventListener;
+    private static AnvilEventListener _eventListener;
     private static Map<Entity, ViewSession> _anvilMap = new WeakHashMap<>(20);
 
     private final ItemFilterManager _filterManager;
@@ -71,7 +71,7 @@ public class FilteredAnvilView extends AnvilView {
         _filterManager = filterManager;
 
         if (_eventListener == null) {
-            _eventListener = new EventListener(Nucleus.getPlugin());
+            _eventListener = new AnvilEventListener(Nucleus.getPlugin());
             Nucleus.getEventManager().register(_eventListener);
         }
     }
@@ -100,9 +100,9 @@ public class FilteredAnvilView extends AnvilView {
     /**
      * Anvil event listener.
      */
-    static class EventListener extends NucleusEventListener {
+    static class AnvilEventListener extends EventListener {
 
-        public EventListener(Plugin plugin) {
+        public AnvilEventListener(Plugin plugin) {
             super(plugin);
         }
 

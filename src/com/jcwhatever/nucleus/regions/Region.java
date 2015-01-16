@@ -373,7 +373,7 @@ public abstract class Region extends RegionSelection implements IRegion {
         UUID oldId = _ownerId;
 
         RegionOwnerChangedEvent event = new RegionOwnerChangedEvent(new ReadOnlyRegion(this), oldId, ownerId);
-        Nucleus.getEventManager().callBukkit(event);
+        Nucleus.getEventManager().callBukkit(this, event);
 
         if (event.isCancelled())
             return false;

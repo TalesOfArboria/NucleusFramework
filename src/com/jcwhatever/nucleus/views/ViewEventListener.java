@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.views;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.manager.NucleusEventHandler;
-import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
+import com.jcwhatever.nucleus.events.manager.EventMethod;
+import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
 import org.bukkit.entity.Entity;
@@ -40,7 +40,7 @@ import java.util.WeakHashMap;
  * Common view event Listener that works in conjunction with
  * {@link ViewSession}.
  */
-class ViewEventListener extends NucleusEventListener {
+class ViewEventListener extends EventListener {
 
     private static ViewEventListener _instance;
 
@@ -81,7 +81,7 @@ class ViewEventListener extends NucleusEventListener {
     }
 
     // Handle view closing.
-    @NucleusEventHandler
+    @EventMethod
     private void onInventoryClose(InventoryCloseEvent event) {
 
         ViewSession session = _sessions.get(event.getPlayer());
@@ -138,7 +138,7 @@ class ViewEventListener extends NucleusEventListener {
     }
 
     // reset static instance field if NucleusFramework is disabled. (i.e. reload server)
-    @NucleusEventHandler
+    @EventMethod
     private void onNucleusDisabled(PluginDisableEvent event) {
         if (event.getPlugin() == Nucleus.getPlugin())
             _instance = null;

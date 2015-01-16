@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.views.chest;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.manager.NucleusEventHandler;
-import com.jcwhatever.nucleus.events.manager.NucleusEventListener;
+import com.jcwhatever.nucleus.events.manager.EventMethod;
+import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewSession;
@@ -44,7 +44,7 @@ import java.util.WeakHashMap;
 /**
  * Listens to events related to the {@code ChestView}.
  */
-class ChestEventListener extends NucleusEventListener {
+class ChestEventListener extends EventListener {
 
     private static ChestEventListener _instance;
 
@@ -79,7 +79,7 @@ class ChestEventListener extends NucleusEventListener {
     /*
      * Inventory Click Event
      */
-    @NucleusEventHandler
+    @EventMethod
     private void onInventoryClick(InventoryClickEvent event) {
 
         ViewSession session = _chestSessionMap.get(event.getWhoClicked());
@@ -191,7 +191,7 @@ class ChestEventListener extends NucleusEventListener {
     /*
      * Reset listener instance if NucleusFramework is disabled (i.e Server reset)
      */
-    @NucleusEventHandler
+    @EventMethod
     private void onNucleusDisabled(PluginDisableEvent event) {
         if (event.getPlugin() == Nucleus.getPlugin())
             _instance = null;

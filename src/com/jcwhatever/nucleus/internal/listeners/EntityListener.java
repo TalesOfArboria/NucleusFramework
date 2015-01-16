@@ -73,229 +73,229 @@ public final class EntityListener implements Listener {
     @EventHandler
     private void onCreatureSpawn(CreatureSpawnEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onCreeperPower(CreeperPowerEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityBreakDoor(EntityBreakDoorEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityChangeBlock(EntityChangeBlockEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityCombustByBlock(EntityCombustByBlockEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityCombust(EntityCombustEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityCreatePortal(EntityCreatePortalEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityDamage(EntityDamageEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityDeath(EntityDeathEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityExplode(EntityExplodeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityInteract(EntityInteractEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityPortalEnter(EntityPortalEnterEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityPortal(EntityPortalEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityPortalExit(EntityPortalExitEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityRegainHealth(EntityRegainHealthEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityShootBow(EntityShootBowEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityTame(EntityTameEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityTarget(EntityTargetEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityTargetLivingEntity(EntityTargetLivingEntityEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityTeleport(EntityTeleportEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onEntityUnleash(EntityUnleashEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onExpBottle(ExpBottleEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onExplosionPrime(ExplosionPrimeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onFoodLevelChange(FoodLevelChangeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onHorseJump(HorseJumpEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onItemDespawn(ItemDespawnEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onItemSpawn(ItemSpawnEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onPigZap(PigZapEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onPlayerDeath(PlayerDeathEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onPlayerLeashEntity(PlayerLeashEntityEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onPotionSplash(PotionSplashEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onProjectileHit(ProjectileHitEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onProjectileLaunch(ProjectileLaunchEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onSheepDyeWool(SheepDyeWoolEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onSlimeSplit(SlimeSplitEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
 }

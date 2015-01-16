@@ -26,15 +26,17 @@
 package com.jcwhatever.nucleus.floatingitems;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemDespawnEvent;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemSpawnEvent;
-import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.entity.TrackedEntity;
+import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,8 +47,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -77,9 +77,11 @@ public class FloatingItem implements IFloatingItem {
     private boolean _isDisposed;
     private Location _currentLocation;
 
-    private List<PickupHandler> _pickupHandlers;
-    private List<Runnable> _spawnHandlers;
-    private List<Runnable> _despawnHandlers;
+    private AgentHashMap<String, UpdateAgent> _updateAgents =
+            new AgentHashMap<String, UpdateAgent>()
+                    .set("onPickup", new UpdateAgent<Player>())
+                    .set("onSpawn", new UpdateAgent<Entity>())
+                    .set("onDespawn", new UpdateAgent<Entity>());
 
     /**
      * Constructor.
@@ -203,17 +205,6 @@ public class FloatingItem implements IFloatingItem {
     }
 
     /**
-     * Get the last known chunk location of the entity.
-     *
-     * <p>May not be accurate if the entity moves.</p>
-     */
-    @Override
-    @Nullable
-    public ChunkInfo getLastChunkInfo() {
-        return _trackedEntity.getLastChunkInfo();
-    }
-
-    /**
      * Determine if the item can be picked up.
      */
     @Override
@@ -308,7 +299,7 @@ public class FloatingItem implements IFloatingItem {
 
         FloatingItemSpawnEvent event = new FloatingItemSpawnEvent(this);
 
-        Nucleus.getEventManager().callBukkit(event);
+        Nucleus.getEventManager().callBukkit(this, event);
 
         if (event.isCancelled())
             return false;
@@ -352,10 +343,10 @@ public class FloatingItem implements IFloatingItem {
             _dataNode.saveAsync(null);
         }
 
-        if (_spawnHandlers != null) {
-            for (Runnable runnable : _spawnHandlers)
-                runnable.run();
-        }
+        // notify onSpawn subscribers
+        @SuppressWarnings("unchecked")
+        UpdateAgent<Entity> agent = _updateAgents.get("onSpawn");
+        agent.update(entity);
 
         return true;
     }
@@ -374,7 +365,7 @@ public class FloatingItem implements IFloatingItem {
         FloatingItemDespawnEvent event = new FloatingItemDespawnEvent(this);
 
         if (Nucleus.getPlugin().isEnabled())
-            Nucleus.getEventManager().callBukkit(event);
+            Nucleus.getEventManager().callBukkit(this, event);
 
         if (event.isCancelled())
             return false;
@@ -398,10 +389,9 @@ public class FloatingItem implements IFloatingItem {
             _dataNode.saveAsync(null);
         }
 
-        if (_despawnHandlers != null) {
-            for (Runnable runnable : _despawnHandlers)
-                runnable.run();
-        }
+        @SuppressWarnings("unchecked")
+        UpdateAgent<Entity> agent = _updateAgents.get("onDespawn");
+        agent.update(entity);
 
         return true;
     }
@@ -438,87 +428,52 @@ public class FloatingItem implements IFloatingItem {
     }
 
     /**
-     * Add a callback to run when the item is spawned.
+     * Get updated when the item is spawned.
      *
-     * @param handler  The callback handler.
+     * @param subscriber  The update subscriber.
+     *
+     * @return  Self for chaining.
      */
-    public void addOnSpawn(Runnable handler) {
-        PreCon.notNull(handler);
+    public FloatingItem onSpawn(IUpdateSubscriber<Entity> subscriber) {
+        PreCon.notNull(subscriber);
 
-        if (_spawnHandlers == null)
-            _spawnHandlers = new ArrayList<>(10);
+        _updateAgents.get("onSpawn").register(subscriber);
 
-        _spawnHandlers.add(handler);
+        return this;
     }
 
     /**
-     * Remove a spawn callback handler.
+     * Get updated when the item is despawned.
      *
-     * @param handler  The callback handler.
+     * @param subscriber  The update subscriber.
+     *
+     * @return  Self for chaining.
      */
-    public void removeOnSpawn(Runnable handler) {
-        PreCon.notNull(handler);
+    public FloatingItem onDespawn(IUpdateSubscriber<Entity> subscriber) {
+        PreCon.notNull(subscriber);
 
-        if (_spawnHandlers == null)
-            return;
+        _updateAgents.get("onDespawn").register(subscriber);
 
-        _spawnHandlers.remove(handler);
+        return this;
     }
 
     /**
-     * Add a callback to run when the item is despawned.
+     * Get updated when the item is picked up by a player.
      *
-     * @param handler  The callback handler.
-     */
-    public void addOnDespawn(Runnable handler) {
-        PreCon.notNull(handler);
-
-        if (_despawnHandlers == null)
-            _despawnHandlers = new ArrayList<>(10);
-
-        _despawnHandlers.add(handler);
-    }
-
-    /**
-     * Remove a despawn callback handler.
+     * <p>Is updated event if the player is prevented from
+     * picking up the item.</p>
      *
-     * @param handler  The callback handler.
-     */
-    public void removeOnDespawn(Runnable handler) {
-        PreCon.notNull(handler);
-
-        if (_despawnHandlers == null)
-            return;
-
-        _despawnHandlers.remove(handler);
-    }
-
-    /**
-     * Add a callback to run when an attempt is made to pickup the item.
+     * @param subscriber  The update subscriber. The subscriber will receive the player
+     *                    that was detected picking up the item.
      *
-     * @param handler  The callback handler.
+     * @return  Self for chaining.
      */
-    public void addOnPickup(PickupHandler handler) {
-        PreCon.notNull(handler);
+    public FloatingItem onPickup(IUpdateSubscriber<Player> subscriber) {
+        PreCon.notNull(subscriber);
 
-        if (_pickupHandlers == null)
-            _pickupHandlers = new ArrayList<>(10);
+        _updateAgents.get("onPickup").register(subscriber);
 
-        _pickupHandlers.add(handler);
-    }
-
-    /**
-     * Remove a pickup callback handler.
-     *
-     * @param handler  The callback handler.
-     */
-    public void removeOnPickup(PickupHandler handler) {
-        PreCon.notNull(handler);
-
-        if (_pickupHandlers == null)
-            return;
-
-        _pickupHandlers.remove(handler);
+        return this;
     }
 
     /**
@@ -531,11 +486,10 @@ public class FloatingItem implements IFloatingItem {
     }
 
     void onPickup(Player p, boolean isCancelled) {
-        if (_pickupHandlers == null)
-            return;
 
-        for (PickupHandler handler : _pickupHandlers)
-            handler.onPickup(p, this, isCancelled);
+        @SuppressWarnings("unchecked")
+        UpdateAgent<Player> agent = _updateAgents.get("onPickup");
+        agent.update(p);
     }
 
     private void loadSettings() {

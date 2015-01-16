@@ -37,13 +37,13 @@ public final class EnchantmentListener implements Listener {
     @EventHandler
     private void onEnchantItem(EnchantItemEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
 }

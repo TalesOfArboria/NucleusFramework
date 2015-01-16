@@ -3,8 +3,6 @@ package com.jcwhatever.nucleus.utils.observer.result;
 import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
-import com.jcwhatever.nucleus.utils.observer.update.IUpdateAgent;
-import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 import org.junit.Test;
 
@@ -22,27 +20,27 @@ public class FutureResultAgentTest {
         final List<String> updates = new ArrayList<>(10);
 
         Future<String> future = agent.getFuture();
-        future.onResult(new UpdateSubscriber<Result<String>>() {
+        future.onResult(new FutureSubscriber<String>() {
             @Override
-            public void onUpdate(IUpdateAgent agent, Result<String> argument) {
+            public void on(Result<String> argument) {
                 updates.add("RESULT");
             }
         })
-        .onSuccess(new UpdateSubscriber<Result<String>>() {
+        .onSuccess(new FutureSubscriber<String>() {
             @Override
-            public void onUpdate(IUpdateAgent agent, Result<String> argument) {
+            public void on(Result<String> argument) {
                 updates.add("SUCCESS");
             }
         })
-        .onCancel(new UpdateSubscriber<Result<String>>() {
+        .onCancel(new FutureSubscriber<String>() {
             @Override
-            public void onUpdate(IUpdateAgent agent, Result<String> argument) {
+            public void on(Result<String> argument) {
                 updates.add("CANCEL");
             }
         })
-        .onError(new UpdateSubscriber<Result<String>>() {
+        .onError(new FutureSubscriber<String>() {
             @Override
-            public void onUpdate(IUpdateAgent agent, Result<String> argument) {
+            public void on(Result<String> argument) {
                 updates.add("ERROR");
             }
         })

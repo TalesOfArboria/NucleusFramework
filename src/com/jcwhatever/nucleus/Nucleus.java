@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.nucleus.events.manager.NucleusEventManager;
+import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.InternalMessengerFactory;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.kits.KitManager;
@@ -129,7 +129,7 @@ public final class Nucleus {
     /**
      * Get the global event manager.
      */
-    public static NucleusEventManager getEventManager() {
+    public static EventManager getEventManager() {
         PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         return _plugin._eventManager;

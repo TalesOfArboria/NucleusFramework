@@ -19,9 +19,7 @@ public class UpdateAgentTest {
 
         UpdateSubscriber<String> subscriber = new UpdateSubscriber<String>() {
             @Override
-            public void onUpdate(IUpdateAgent sourceAgent, String argument) {
-
-                assertEquals(agent, sourceAgent);
+            public void on(String argument) {
 
                 updateResults.add(argument);
             }

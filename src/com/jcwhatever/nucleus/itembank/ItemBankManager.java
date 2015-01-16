@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.itembank;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.timed.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.utils.performance.SingleCache;
 import com.jcwhatever.nucleus.storage.DataPath;
@@ -46,8 +47,12 @@ import javax.annotation.Nullable;
 public class ItemBankManager {
 
     private static final int CACHE_DURATION = 20 * 60 * 5; // 5 minutes
-    private static TimedHashMap<UUID, ItemBankAccount> _recentAccounts = new TimedHashMap<UUID, ItemBankAccount>();
-    private static SingleCache<UUID, ItemBankAccount> _accountCache = new SingleCache<UUID, ItemBankAccount>();
+
+    private static TimedHashMap<UUID, ItemBankAccount> _recentAccounts
+            = new TimedHashMap<UUID, ItemBankAccount>(Nucleus.getPlugin());
+
+    private static SingleCache<UUID, ItemBankAccount> _accountCache
+            = new SingleCache<UUID, ItemBankAccount>();
 
     private ItemBankManager() {}
 
@@ -321,7 +326,7 @@ public class ItemBankManager {
             if (account == null)
                 return null;
 
-            _recentAccounts.put(playerId, account, CACHE_DURATION);
+            _recentAccounts.put(playerId, account, CACHE_DURATION, TimeScale.TICKS);
         }
 
         _accountCache.set(playerId, account);

@@ -38,19 +38,19 @@ public final class HangingListener implements Listener {
     @EventHandler
     private void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onHangingBreak(HangingBreakEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onHangingPlace(HangingPlaceEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
 }

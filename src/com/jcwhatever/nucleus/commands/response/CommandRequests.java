@@ -25,10 +25,10 @@
 
 package com.jcwhatever.nucleus.commands.response;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.timed.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedMultimap;
+import com.jcwhatever.nucleus.collections.timed.TimedSetMultimap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.language.Localizable;
@@ -54,11 +54,8 @@ public class CommandRequests {
             "{YELLOW}Multiple requests for response found. " +
             "Please be more specific:";
 
-    private static Multimap<CommandSender, ResponseRequest> _requestsHandle =
-            MultimapBuilder.hashKeys(25).hashSetValues(5).build();
-
     private static TimedMultimap<CommandSender, ResponseRequest>
-            _requests = new TimedMultimap<>(_requestsHandle, 30, TimeScale.SECONDS);
+            _requests = new TimedSetMultimap<>(Nucleus.getPlugin(), 30, TimeScale.SECONDS);
 
     /**
      * Get a list of response requests for the specified command sender.
@@ -99,7 +96,7 @@ public class CommandRequests {
                                           CommandSender sender, IResponseHandler handler,
                                           ResponseType... responseType) {
         ResponseRequest request = new ResponseRequest(plugin, context, sender, handler, responseType);
-        _requests.put(request.getCommandSender(), request, request.getLifespan());
+        _requests.put(request.getCommandSender(), request, request.getLifespan(), TimeScale.SECONDS);
 
         return request;
     }

@@ -38,18 +38,18 @@ public final class WeatherListener implements Listener {
     @EventHandler
     private void onLightningStrike(LightningStrikeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onThunderChange(ThunderChangeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 
     @EventHandler
     private void onWeatherChange(WeatherChangeEvent event) {
 
-        Nucleus.getEventManager().call(event);
+        Nucleus.getEventManager().call(this, event);
     }
 }

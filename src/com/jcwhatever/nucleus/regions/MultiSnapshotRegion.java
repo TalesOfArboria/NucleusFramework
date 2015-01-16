@@ -25,10 +25,13 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
@@ -129,15 +132,13 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      * @throws IOException
      */
     @Override
-    public Future restoreData(BuildMethod buildMethod) throws IOException {
+    public Future<QueueTask> restoreData(BuildMethod buildMethod) throws IOException {
 
-        return super.restoreData(buildMethod).onComplete(new Runnable() {
-
+        return super.restoreData(buildMethod).onSuccess(new FutureSubscriber<QueueTask>() {
             @Override
-            public void run() {
+            public void on(Result<QueueTask> argument) {
                 _currentSnapshot = "";
             }
-
         });
     }
 
@@ -150,15 +151,14 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      * @throws IOException
      */
     @Override
-    public Future restoreData(BuildMethod buildMethod, final String snapshotName) throws IOException {
-        return super.restoreData(buildMethod, snapshotName).onComplete(new Runnable() {
-
-            @Override
-            public void run() {
-                _currentSnapshot = snapshotName;
-            }
-
-        });
+    public Future<QueueTask> restoreData(BuildMethod buildMethod, final String snapshotName) throws IOException {
+        return super.restoreData(buildMethod, snapshotName)
+                .onSuccess(new FutureSubscriber<QueueTask>() {
+                    @Override
+                    public void on(Result<QueueTask> argument) {
+                        _currentSnapshot = snapshotName;
+                    }
+                });
     }
 
     /**
@@ -169,7 +169,7 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      * @throws IOException
      */
     @Override
-    public Future saveData(String snapshotName) throws IOException {
+    public Future<QueueTask> saveData(String snapshotName) throws IOException {
         return super.saveData(snapshotName);
     }
 

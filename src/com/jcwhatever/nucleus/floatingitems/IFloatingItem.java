@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.floatingitems;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
-import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
 import org.bukkit.Location;
@@ -78,14 +77,6 @@ public interface IFloatingItem extends INamedInsensitive, IDisposable {
      */
     @Nullable
     public Location getLocation();
-
-    /**
-     * Get the last known chunk location of the entity.
-     *
-     * <p>May not be accurate if the entity moves.</p>
-     */
-    @Nullable
-    public ChunkInfo getLastChunkInfo();
 
     /**
      * Determine if the item can be picked up.

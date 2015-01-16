@@ -91,7 +91,7 @@ public class SignManager implements IPluginOwned {
     private final Plugin _plugin;
     private final IDataNode _dataNode;
     private final Map<String, SignHandler> _localHandlerMap = new HashMap<>(10);
-    private final Map<Location, IDataNode> _signNodes = new TimedHashMap<>(30, 20 * 60);
+    private final Map<Location, IDataNode> _signNodes;
 
     /**
      * Constructor.
@@ -105,6 +105,7 @@ public class SignManager implements IPluginOwned {
 
         _plugin = plugin;
         _dataNode = dataNode;
+        _signNodes = new TimedHashMap<>(plugin, 30, 20 * 60);
 
         _managers.put(this, null);
 

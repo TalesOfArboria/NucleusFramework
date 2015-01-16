@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.internal;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.manager.NucleusEventManager;
+import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.listeners.BlockListener;
 import com.jcwhatever.nucleus.internal.listeners.EnchantmentListener;
 import com.jcwhatever.nucleus.internal.listeners.EntityListener;
@@ -39,7 +39,7 @@ import com.jcwhatever.nucleus.utils.Scheduler;
 
 import org.bukkit.Bukkit;
 
-public final class InternalEventManager extends NucleusEventManager {
+public final class InternalEventManager extends EventManager {
 
     public InternalEventManager() {
         super(null);
@@ -59,13 +59,6 @@ public final class InternalEventManager extends NucleusEventManager {
                 Bukkit.getPluginManager().registerEvents(new WorldListener(), Nucleus.getPlugin());
             }
         });
-    }
-
-    @Override
-    public void unregisterAll() {
-
-        // The global manager cannot unregister all.
-        throw new RuntimeException("Cannot unregister all handlers at once from the global event manager.");
     }
 
     @Override

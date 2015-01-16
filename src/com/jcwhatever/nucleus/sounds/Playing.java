@@ -43,7 +43,7 @@ public final class Playing {
     private final ResourceSound _sound;
     private final Location _location;
     private final float _volume;
-    private final Future _future;
+    private final SoundFuture _future;
 
     private boolean _isFinished;
 
@@ -61,7 +61,7 @@ public final class Playing {
         _sound = sound;
         _location = location;
         _volume = volume;
-        _future = new Future();
+        _future = new SoundFuture();
     }
 
     /**
@@ -104,14 +104,14 @@ public final class Playing {
      * when the sound is finished.
      * @return
      */
-    public Future getFuture() {
+    public SoundFuture getFuture() {
         return _future;
     }
 
     /**
      * Mark the sound as finished.
      */
-    Future setFinished() {
+    SoundFuture setFinished() {
         _isFinished = true;
 
         if (_onFinish == null)
@@ -128,7 +128,7 @@ public final class Playing {
      * A future used to add callbacks that are
      * run when the sound is finished playing.
      */
-    public class Future {
+    public class SoundFuture {
 
         /**
          * Add a callback to run when the sound is finished.
@@ -148,8 +148,5 @@ public final class Playing {
 
             _onFinish.add(callback);
         }
-
     }
-
-
 }

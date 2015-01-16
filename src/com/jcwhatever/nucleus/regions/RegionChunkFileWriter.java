@@ -26,14 +26,17 @@ package com.jcwhatever.nucleus.regions;
 
 import com.jcwhatever.nucleus.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.nucleus.extended.serializable.SerializableFurnitureEntity;
-import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
-import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
-import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
+import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
@@ -150,7 +153,7 @@ public class RegionChunkFileWriter {
      *
      * @param file  The file to save to.
      */
-    public Future saveData(File file) {
+    public Future<QueueTask> saveData(File file) {
         return saveData(file, null);
     }
 
@@ -164,7 +167,7 @@ public class RegionChunkFileWriter {
      * @param file     The file to save to.
      * @param project  The optional project to add tasks to.
      */
-    public Future saveData(File file, @Nullable QueueProject project) {
+    public Future<QueueTask> saveData(File file, @Nullable QueueProject project) {
         PreCon.notNull(file);
 
         boolean runNow = project == null;
@@ -187,9 +190,9 @@ public class RegionChunkFileWriter {
             project.run();
         }
 
-        return project.getResult().onEnd(new Runnable() {
+        return project.getResult().onResult(new FutureSubscriber<QueueTask>() {
             @Override
-            public void run() {
+            public void on(Result<QueueTask> argument) {
                 _isSaving = false;
             }
         });

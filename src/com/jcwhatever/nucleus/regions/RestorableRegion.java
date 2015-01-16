@@ -31,15 +31,17 @@ import com.jcwhatever.nucleus.extended.MaterialExt;
 import com.jcwhatever.nucleus.extended.serializable.SerializableBlockEntity;
 import com.jcwhatever.nucleus.extended.serializable.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueResult.Future;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueWorker;
-import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 import com.jcwhatever.nucleus.regions.RegionChunkFileLoader.LoadType;
 import com.jcwhatever.nucleus.regions.data.ChunkBlockInfo;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueWorker;
+import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
@@ -111,14 +113,14 @@ public abstract class RestorableRegion extends BuildableRegion {
     /**
      * Save region data to disk
      */
-    public Future saveData() throws IOException {
+    public Future<QueueTask> saveData() throws IOException {
         return saveData("");
     }
 
     /*
      * Save region data to disk
      */
-    protected Future saveData(String snapshotName) throws IOException {
+    protected Future<QueueTask> saveData(String snapshotName) throws IOException {
 
         List<ChunkInfo> chunks = this.getChunks();
 
@@ -146,16 +148,14 @@ public abstract class RestorableRegion extends BuildableRegion {
 
         QueueWorker.get().addTask(project);
 
-        return project.getResult()
-                .onEnd(new Runnable() {
-                    @Override
-                    public void run() {
-                        _isSaving = false;
-                        onSaveComplete();
-                        NucMsg.debug(getPlugin(), "Restorable Region '{0}' save complete.", getName());
-                    }
-                });
-
+        return project.getResult().onResult(new FutureSubscriber<QueueTask>() {
+            @Override
+            public void on(Result<QueueTask> argument) {
+                _isSaving = false;
+                onSaveComplete();
+                NucMsg.debug(getPlugin(), "Restorable Region '{0}' save complete.", getName());
+            }
+        });
     }
 
     /**
@@ -197,7 +197,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @throws IOException
      */
-    public Future restoreData(BuildMethod buildMethod) throws IOException {
+    public Future<QueueTask> restoreData(BuildMethod buildMethod) throws IOException {
         return restoreData(buildMethod, "");
     }
 
@@ -209,7 +209,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @throws IOException
      */
-    protected Future restoreData(BuildMethod buildMethod, String version) throws IOException {
+    protected Future<QueueTask> restoreData(BuildMethod buildMethod, String version) throws IOException {
 
         List<ChunkInfo> chunks = getChunks();
 
@@ -274,9 +274,9 @@ public abstract class RestorableRegion extends BuildableRegion {
                 break;
         }
 
-        return restoreProject.getResult().onEnd(new Runnable() {
+        return restoreProject.getResult().onResult(new FutureSubscriber<QueueTask>() {
             @Override
-            public void run() {
+            public void on(Result<QueueTask> argument) {
                 _isRestoring = false;
                 onRestoreComplete();
             }

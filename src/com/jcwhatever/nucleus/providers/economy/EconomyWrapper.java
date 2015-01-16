@@ -173,12 +173,16 @@ public class EconomyWrapper implements IEconomyProvider {
 
         protected EconDepositEvent onDeposit(IAccount account, double amount) {
             EconDepositEvent event = new EconDepositEvent(account, amount);
-            return Nucleus.getEventManager().callBukkit(event);
+            Nucleus.getEventManager().callBukkit(this, event);
+
+            return event;
         }
 
         protected EconWithdrawEvent onWithdraw(IAccount account, double amount) {
             EconWithdrawEvent event = new EconWithdrawEvent(account, amount);
-            return Nucleus.getEventManager().callBukkit(event);
+            Nucleus.getEventManager().callBukkit(this, event);
+
+            return event;
         }
     }
 }

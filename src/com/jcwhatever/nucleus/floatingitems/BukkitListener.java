@@ -116,7 +116,7 @@ class BukkitListener implements Listener {
         FloatingItemPickUpEvent fiEvent = new FloatingItemPickUpEvent(item, event.getPlayer());
         fiEvent.setCancelled(event.isCancelled());
 
-        Nucleus.getEventManager().callBukkit(fiEvent);
+        Nucleus.getEventManager().callBukkit(this, fiEvent);
 
         event.setCancelled(fiEvent.isCancelled());
 

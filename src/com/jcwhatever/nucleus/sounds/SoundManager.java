@@ -26,16 +26,17 @@
 package com.jcwhatever.nucleus.sounds;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.timed.LifespanEndAction;
+import com.jcwhatever.nucleus.collections.timed.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedArrayList;
 import com.jcwhatever.nucleus.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.nucleus.events.sounds.ResourceSoundEndEvent;
-import com.jcwhatever.nucleus.sounds.Playing.Future;
+import com.jcwhatever.nucleus.sounds.Playing.SoundFuture;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Utils;
+import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -150,7 +151,7 @@ public final class SoundManager {
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    public static Future playSound(Plugin plugin, Player p, ResourceSound sound, float volume) {
+    public static SoundFuture playSound(Plugin plugin, Player p, ResourceSound sound, float volume) {
         return playSound(plugin, p, sound, null, volume, null);
     }
 
@@ -165,7 +166,7 @@ public final class SoundManager {
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    public static Future playSound(Plugin plugin, final Player p, ResourceSound sound,
+    public static SoundFuture playSound(Plugin plugin, final Player p, ResourceSound sound,
                                    @Nullable Location location, float volume) {
         return playSound(plugin, p, sound, location, volume, null);
     }
@@ -182,7 +183,7 @@ public final class SoundManager {
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    public static Future playSound(Plugin plugin, Player p, ResourceSound sound,
+    public static SoundFuture playSound(Plugin plugin, Player p, ResourceSound sound,
                                    @Nullable Location location, float volume,
                                    @Nullable Collection<Player> transcriptViewers) {
 
@@ -195,7 +196,7 @@ public final class SoundManager {
 
         // run event
         PlayResourceSoundEvent event = new PlayResourceSoundEvent(p, sound, location, volume);
-        Nucleus.getEventManager().callBukkit(event);
+        Nucleus.getEventManager().callBukkit(null, event);
 
         // see if the event was cancelled
         if (event.isCancelled())
@@ -210,18 +211,19 @@ public final class SoundManager {
         TimedArrayList<Playing> currentPlaying = _playing.get(p.getUniqueId());
 
         if (currentPlaying == null) {
-            // create timed list for player and add callback to set a
-            // Playing item as finished when the items time expires.
-            currentPlaying = new TimedArrayList<>(3);
-            currentPlaying.addOnLifespanEnd(new LifespanEndAction<Playing>() {
+
+            // create timed list for player and add a subscriber to handle sounds ending.
+            currentPlaying = new TimedArrayList<Playing>(Nucleus.getPlugin(), 3)
+            .onLifespanEnd(new UpdateSubscriber<Playing>() {
                 @Override
-                public void onEnd(Playing item) {
+                public void on(Playing item) {
+
                     item.setFinished();
 
                     ResourceSoundEndEvent event = new ResourceSoundEndEvent(item.getPlayer(),
                             item.getResourceSound(), item.getLocation(), item.getVolume());
 
-                    Nucleus.getEventManager().callBukkit(event);
+                    Nucleus.getEventManager().callBukkit(this, event);
                 }
             });
 
@@ -229,7 +231,7 @@ public final class SoundManager {
         }
 
         // add playing sound to timed list, will expire when the song ends.
-        currentPlaying.add(playing, sound.getDurationTicks());
+        currentPlaying.add(playing, sound.getDurationTicks(), TimeScale.TICKS);
 
         // display transcript to players if the sound is a voice
         // sound and transcript viewers are provided.
