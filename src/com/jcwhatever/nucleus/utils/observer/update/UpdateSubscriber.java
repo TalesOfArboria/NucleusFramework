@@ -34,5 +34,5 @@ public abstract class UpdateSubscriber<A> extends Subscriber
         implements IUpdateSubscriber<A> {
 
     @Override
-    public abstract void onUpdate(IUpdateAgent agent, A argument);
+    public abstract void on(A argument);
 }

@@ -38,8 +38,7 @@ public interface IUpdateSubscriber<A> extends ISubscriber {
      * Called to notify the subscriber of an update from
      * the specified agent.
      *
-     * @param agent     The agent the update is received from.
      * @param argument  The updated argument/value.
      */
-    void onUpdate(IUpdateAgent agent, @Nullable A argument);
+    void on(@Nullable A argument);
 }

@@ -70,7 +70,7 @@ public class UpdateAgent<A> implements IUpdateAgent<A>, IDisposable {
                 @SuppressWarnings("unchecked")
                 IUpdateSubscriber<A> updateable = (IUpdateSubscriber<A>) subscriber;
 
-                updateable.onUpdate(this, argument);
+                updateable.on(argument);
             }
         }
     }
