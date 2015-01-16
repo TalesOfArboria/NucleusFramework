@@ -24,7 +24,9 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
+import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -33,11 +35,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,19 +46,27 @@ import java.util.UUID;
  */
 public final class EntityTracker implements Listener {
 
-    private Map<UUID, TrackedEntity> _entities = new HashMap<>(50);
+    private Map<UUID, TrackedEntity> _entities = new MapMaker().concurrencyLevel(3).initialCapacity(25).makeMap();
 
+    /**
+     * Constructor.
+     */
     EntityTracker() {
+
         Bukkit.getPluginManager().registerEvents(this, Nucleus.getPlugin());
     }
 
+    /**
+     * Track a non-player entity.
+     *
+     * @param entity  The entity to track.
+     *
+     * @return  A new or cached {@code TrackedEntity} instance.
+     */
     public TrackedEntity trackEntity(Entity entity) {
 
-        if (entity instanceof Player) {
-            // Tracking players is nice for player NPC's, but difficult. The NPC
-            // plugin should handle this.
+        if (entity instanceof Player)
             throw new IllegalArgumentException("Player entities cannot be tracked.");
-        }
 
         TrackedEntity tracked = _entities.get(entity.getUniqueId());
         if (tracked != null && !tracked.isDisposed())
@@ -70,56 +78,59 @@ public final class EntityTracker implements Listener {
         return tracked;
     }
 
-    void untrackEntity(TrackedEntity tracked) {
+    /**
+     * Called when a {@code TrackedEntity} is disposed so it can
+     * be removed from the entity map.
+     */
+    void disposeEntity(TrackedEntity tracked) {
         _entities.remove(tracked.getUniqueId());
     }
 
+    /**
+     * Handle chunk load
+     */
     @EventHandler
     private void onChunkLoad(ChunkLoadEvent event) {
+
+        // new chunks wont have any tracked entities.
         if (event.isNewChunk())
             return;
 
         Entity[] entities = event.getChunk().getEntities();
 
         for (Entity entity : entities) {
+
             TrackedEntity tracked = _entities.get(entity.getUniqueId());
             if (tracked == null || isDisposed(tracked))
                 continue;
 
-            tracked.setEntity(entity);
-            tracked.onChunkLoad(event.getChunk());
+            // update entity instance to the latest
+            tracked.updateEntity(entity);
         }
     }
 
+    /**
+     * Handle chunk unload
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     private void onChunkUnload(ChunkUnloadEvent event) {
-        if (event.isCancelled())
-            return;
 
         Entity[] entities = event.getChunk().getEntities();
 
         for (Entity entity : entities) {
+
             TrackedEntity tracked = _entities.get(entity.getUniqueId());
             if (tracked == null || isDisposed(tracked))
                 continue;
 
-            tracked.onChunkUnload();
+            tracked.notifyChunkUnload(new ChunkInfo(event.getChunk()));
         }
     }
 
+    /**
+     * Handle entity removed.
+     */
     @EventHandler(priority = EventPriority.MONITOR)
-    private void onEntityTeleport(EntityTeleportEvent event) {
-        if (event.isCancelled())
-            return;
-
-        TrackedEntity tracked = _entities.get(event.getEntity().getUniqueId());
-        if (tracked == null || isDisposed(tracked))
-            return;
-
-        tracked.setWorld(event.getTo().getWorld());
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
     private void onEntityDestroy(EntityDeathEvent event) {
 
         // Make sure the event wasn't "cancelled"
@@ -130,6 +141,7 @@ public final class EntityTracker implements Listener {
         if (tracked == null || tracked.isDisposed())
             return;
 
+        // dispose tracked entity
         tracked.dispose();
     }
 

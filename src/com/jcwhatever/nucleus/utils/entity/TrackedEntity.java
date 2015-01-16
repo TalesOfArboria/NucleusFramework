@@ -24,17 +24,17 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
+import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
+import com.jcwhatever.nucleus.collections.observer.agent.AgentMap;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
+import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Tracks an entity and keeps the latest instance of the entity.
@@ -47,10 +47,12 @@ public final class TrackedEntity {
     private final UUID _uuid;
     private Entity _recent;
     private World _world;
-    private ChunkInfo _lastKnownChunk;
     private boolean _isDisposed;
 
-    private List<ITrackedEntityHandler> _handlers = new ArrayList<>(5);
+    private AgentMap<String, UpdateAgent<?>> _updateAgents = new AgentHashMap<String, UpdateAgent<?>>(3)
+                    .set("onUpdate", new UpdateAgent<Entity>())
+                    .set("onUnload", new UpdateAgent<ChunkInfo>())
+                    .set("onDeath", new UpdateAgent<Entity>());
 
     /**
      * Constructor.
@@ -63,8 +65,6 @@ public final class TrackedEntity {
         _uuid = entity.getUniqueId();
         _world = entity.getWorld();
         _recent = entity;
-
-        //_isChunkLoaded = entity.getLocation().getChunk().isLoaded();
     }
 
     /**
@@ -77,14 +77,14 @@ public final class TrackedEntity {
     /**
      * Get the most recent entity instance.
      */
-    public Entity getEntity() {
+    public synchronized Entity getEntity() {
         return _recent;
     }
 
     /**
      * Get the world the entity is in.
      */
-    public World getWorld() {
+    public synchronized World getWorld() {
         return _world;
     }
 
@@ -92,98 +92,107 @@ public final class TrackedEntity {
      * Determine if the chunk the entity is in
      * is loaded.
      */
-    public boolean isChunkLoaded() {
+    public synchronized boolean isChunkLoaded() {
         return _recent.getLocation().getChunk().isLoaded();//ent_isChunkLoaded;
     }
 
     /**
-     * Get the last known chunk the entity was in.
+     * Add an event handler to handle when the chunk the entity
+     * is in is unloaded.
+     *
+     * @param subscriber  The handler.
+     *
+     * @return  Self for chaining.
      */
-    @Nullable
-    public ChunkInfo getLastChunkInfo() {
-        return _lastKnownChunk;
+    public synchronized TrackedEntity onUnload(UpdateSubscriber<ChunkInfo> subscriber) {
+        PreCon.notNull(subscriber);
+
+        UpdateAgent<?> subject = _updateAgents.get("onUnload");
+        subject.addSubscriber(subscriber);
+
+        return this;
     }
 
     /**
-     * Add a handler that is called whenever the
-     * {@code Entity} instance is changed.
+     * Add an event handler to track when the entity instance is
+     * updated.
      *
-     * @param handler  The handler to add.
+     * @param subscriber  The handler.
+     * @return
      */
-    public void addHandler(ITrackedEntityHandler handler) {
-        PreCon.notNull(handler);
+    public synchronized TrackedEntity onUpdate(UpdateSubscriber<Entity> subscriber) {
+        PreCon.notNull(subscriber);
 
-        _handlers.add(handler);
+        UpdateAgent<?> subject = _updateAgents.get("onUpdate");
+        subject.addSubscriber(subscriber);
+
+        return this;
     }
 
     /**
-     * Remove a handler that is called whenever the
-     * {@code Entity} instance is changed.
+     * Add an event handler to handle when the entity is removed.
      *
-     * @param handler  The handler to remove.
+     * @param subscriber  The handler.
+     *
+     * @return  Self for chaining.
      */
-    public void removeHandler(ITrackedEntityHandler handler) {
-        PreCon.notNull(handler);
+    public synchronized TrackedEntity onDeath(UpdateSubscriber<Entity> subscriber) {
+        PreCon.notNull(subscriber);
 
-        _handlers.remove(handler);
+        UpdateAgent<?> subject = _updateAgents.get("onDeath");
+        subject.addSubscriber(subscriber);
+
+        return this;
     }
 
     /**
      * Determine if the tracked object is disposed.
      */
-    public boolean isDisposed() {
+    public synchronized boolean isDisposed() {
         return _isDisposed;
     }
 
-
-    void dispose() {
+    /**
+     * Dispose the tracked object. Not public because it should
+     * only be disposed if the entity is removed.
+     */
+    synchronized void dispose() {
         if (_isDisposed)
             return;
 
         _isDisposed = true;
 
-        for (ITrackedEntityHandler handler : _handlers) {
-            handler.onChanged(this);
-        }
+        @SuppressWarnings("unchecked")
+        UpdateAgent<Entity> deathSubject = (UpdateAgent<Entity>)_updateAgents.get("onDeath");
+        deathSubject.update(getEntity());
 
         _world = null;
-        _handlers = null;
+        _updateAgents.dispose();
 
-        EntityUtils._entityTracker.untrackEntity(this);
-    }
-
-    void setWorld(World world) {
-        _world = world;
-    }
-
-    void onChunkLoad(Chunk chunk) {
-
-        _lastKnownChunk = new ChunkInfo(chunk);
-
-        for (ITrackedEntityHandler handler : _handlers) {
-            handler.onChanged(this);
-        }
-    }
-
-    void onChunkUnload() {
-        for (ITrackedEntityHandler handler : _handlers) {
-            handler.onChanged(this);
-        }
-    }
-
-    void setEntity(Entity entity) {
-        _recent = entity;
-
-        for (ITrackedEntityHandler handler : _handlers) {
-            handler.onChanged(this);
-        }
+        EntityUtils._entityTracker.disposeEntity(this);
     }
 
     /**
-     * A transient handler to track when the {@code Entity} instance
-     * is changed.
+     * Notify that the chunk the entity is in is unloading.
      */
-    public interface ITrackedEntityHandler {
-        void onChanged(TrackedEntity trackedEntity);
+    synchronized void notifyChunkUnload(ChunkInfo info) {
+
+        @SuppressWarnings("unchecked")
+        UpdateAgent<ChunkInfo> subject = (UpdateAgent<ChunkInfo>)_updateAgents.get("onUnload");
+        subject.update(info);
+    }
+
+    /**
+     * Update the entity instance.
+     *
+     * @param entity  The new entity instance.
+     */
+    synchronized void updateEntity(Entity entity) {
+
+        _recent = entity;
+
+        @SuppressWarnings("unchecked")
+        UpdateAgent<Entity> subject = (UpdateAgent<Entity>)_updateAgents.get("onUpdate");
+        subject.update(entity);
     }
 }
