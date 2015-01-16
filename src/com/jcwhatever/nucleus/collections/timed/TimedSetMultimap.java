@@ -24,47 +24,39 @@
 
 package com.jcwhatever.nucleus.collections.timed;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+
+import org.bukkit.plugin.Plugin;
+
 /**
- * Specifies the time scale of a time unit of
- * measure.
+ * An implementation of {@link TimedMultimap} that utilizes an internal
+ * {@link Multimap} with hash keys and hash set values.
  */
-public enum TimeScale {
-    /**
-     * Time scale is in milliseconds.
-     */
-    MILLISECONDS (1),
-    /**
-     * Time scale is in ticks. (50 milliseconds per unit)
-     */
-    TICKS        (50),
-    /**
-     * Time scale is in seconds.
-     */
-    SECONDS      (1000),
-    /**
-     * Time scale is in minutes.
-     */
-    MINUTES      (1000 * 60),
-    /**
-     * Time scale is in hours.
-      */
-    HOURS        (1000 * 60 * 60),
-    /**
-     * Time scale is in days.
-     */
-    DAYS         (1000 * 60 * 60 * 24);
+public class TimedSetMultimap<K, V> extends TimedMultimap<K, V> {
 
-    private final int _timeFactor;
-
-    TimeScale (int timeFactor) {
-        _timeFactor = timeFactor;
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     */
+    public TimedSetMultimap(Plugin plugin) {
+        super(plugin);
     }
 
     /**
-     * Get the factor to apply to a unit of time
-     * of the time scale to convert it to milliseconds.
+     * Constructor.
+     *
+     * @param plugin           The owning plugin.
+     * @param defaultLifespan  The default lifespan for keys.
+     * @param timeScale        The time scale of the specified lifespan.
      */
-    public int getTimeFactor() {
-        return _timeFactor;
+    public TimedSetMultimap(Plugin plugin, int defaultLifespan, TimeScale timeScale) {
+        super(plugin, defaultLifespan, timeScale);
+    }
+
+    @Override
+    protected Multimap<K, V> createMultimap() {
+        return MultimapBuilder.hashKeys().hashSetValues().build();
     }
 }

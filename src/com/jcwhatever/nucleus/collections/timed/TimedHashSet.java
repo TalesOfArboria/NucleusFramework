@@ -26,15 +26,18 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.CollectionEmptyAction;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.scheduler.ScheduledTask;
-import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -49,26 +52,48 @@ import java.util.WeakHashMap;
  *
  * <p>If a duplicate item is added, the items lifespan is reset, in addition to normal
  * hash set operations.</p>
+ *
+ * <p>Subscribers that are added to track when an item expires or the collection is
+ * empty will have a varying degree of resolution up to 10 ticks, meaning the subscriber
+ * may be notified up to 10 ticks after an element expires (but not before).</p>
+ *
+ * <p>Getter operations cease to return an element within approximately 50 milliseconds
+ * (1 tick) of expiring.</p>
+ *
+ * <p>Thread safe.</p>
  */
-public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallbacks<E, TimedHashSet<E>> {
+public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
-    private static Map<TimedHashSet, Void> _instances = new WeakHashMap<>(10);
+    // The minimum interval the cleanup is allowed to run at.
+    // Used to prevent cleanup from being run too often.
+    private static final int MIN_CLEANUP_INTERVAL_MS = 50;
+
+    // The interval the janitor runs at
+    private static final int JANITOR_INTERVAL_TICKS = 10;
+
+    // random initial delay interval for janitor, random to help spread out
+    // task execution in relation to other scheduled tasks
+    private static final int JANITOR_INITIAL_DELAY_TICKS = Rand.getInt(1, 9);
+
+    private final static Map<TimedHashSet, Void> _instances = new WeakHashMap<>(10);
     private static ScheduledTask _janitor;
 
-    private final int _defaultTime;
-    private final Map<E, Date> _expireMap;
-    private final int _timeFactor;
+    private final Plugin _plugin;
+    private final Map<E, ExpireInfo> _expireMap;
 
-    private transient final Object _sync = new Object();
+    private final int _lifespan; // milliseconds
+    private final TimeScale _timeScale;
 
-    private transient List<LifespanEndAction<E>> _onLifespanEnd = new ArrayList<>(5);
-    private transient List<CollectionEmptyAction<TimedHashSet<E>>> _onEmpty = new ArrayList<>(5);
+    private final transient Object _sync = new Object();
+    private transient long _nextCleanup;
+
+    private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
 
     /**
      * Constructor. Default lifespan is 20 ticks.
      */
-    public TimedHashSet() {
-        this(10, 20, TimeScale.TICKS);
+    public TimedHashSet(Plugin plugin) {
+        this(plugin, 10, 20, TimeScale.TICKS);
     }
 
     /**
@@ -76,8 +101,8 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
      *
      * @param size  The initial capacity.
      */
-    public TimedHashSet(int size) {
-        this(size, 20, TimeScale.TICKS);
+    public TimedHashSet(Plugin plugin, int size) {
+        this(plugin, size, 20, TimeScale.TICKS);
     }
 
     /**
@@ -86,8 +111,8 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
      * @param size             The initial capacity.
      * @param defaultLifespan  The default lifespan.
      */
-    public TimedHashSet(int size, int defaultLifespan) {
-        this(size, defaultLifespan, TimeScale.TICKS);
+    public TimedHashSet(Plugin plugin, int size, int defaultLifespan) {
+        this(plugin, size, defaultLifespan, TimeScale.TICKS);
     }
 
     /**
@@ -97,55 +122,185 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
      * @param defaultLifespan  The default lifespan.
      * @param timeScale        The lifespan time scale.
      */
-    public TimedHashSet(int size, int defaultLifespan, TimeScale timeScale) {
+    public TimedHashSet(Plugin plugin, int size, int defaultLifespan, TimeScale timeScale) {
+        PreCon.notNull(plugin);
         PreCon.positiveNumber(defaultLifespan);
         PreCon.notNull(timeScale);
 
-        _defaultTime = defaultLifespan;
+        _plugin = plugin;
+        _lifespan = defaultLifespan * timeScale.getTimeFactor();
+        _timeScale = timeScale;
         _expireMap = new HashMap<>(size);
-        _instances.put(this, null);
 
-        _timeFactor = timeScale.getTimeFactor();
+        synchronized (_instances) {
+            _instances.put(this, null);
+        }
 
-        if (_janitor == null) {
-            _janitor = Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(), 1, 20, new Runnable() {
-                @Override
-                public void run() {
+        startJanitor();
+    }
 
-                    List<TimedHashSet> sets = new ArrayList<TimedHashSet>(_instances.keySet());
+    /**
+     * Determine if the set contains the specified item and
+     * if present, reset the items lifespan using the time scale
+     * specified in the constructor.
+     *
+     * @param item       The item to check.
+     * @param lifespan   The new lifespan of the item.
+     */
+    public boolean contains(E item, int lifespan) {
+        return contains(item, lifespan, _timeScale);
+    }
 
-                    for (TimedHashSet set : sets) {
+    /**
+     * Determine if the set contains the specified item and
+     * if present, reset the items lifespan using the specified
+     * time scale.
+     *
+     * @param item       The item to check.
+     * @param lifespan   The new lifespan of the item.
+     * @param timeScale  The time scale of the specified lifespan.
+     */
+    public boolean contains(E item, int lifespan, TimeScale timeScale) {
+        PreCon.notNull(item);
+        PreCon.positiveNumber(lifespan);
+        PreCon.notNull(timeScale);
 
-                        synchronized (set._sync) {
-                            set.cleanup();
-                        }
-                    }
-                }
-            });
+        synchronized (_sync) {
+            ExpireInfo info = _expireMap.get(item);
+            if (info == null)
+                return false;
+
+            if (info.isExpired()) {
+                _expireMap.remove(item);
+                onLifespanEnd(item);
+                return false;
+            }
+
+            _expireMap.put(item, new ExpireInfo(lifespan, timeScale));
+
+            return true;
         }
     }
 
     /**
-     * Add an item to the hash set with the specified lifespan.
+     * Add an item to the hash set with the specified lifespan
+     * using the time scale specified in the constructor.
      *
      * <p>If the item is already present, the lifespan is reset
      * using the new lifespan value.</p>
      *
-     * @param item      The item to add.
-     * @param lifespan  The lifespan of the item in ticks.
+     * @param item       The item to add.
+     * @param lifespan   The lifespan of the item.
+     *
+     * @return  True if added.
      */
-    @Override
-    public boolean add(final E item, int lifespan) {
+    public boolean add(E item, int lifespan) {
+        return add(item, lifespan, _timeScale);
+    }
+
+    /**
+     * Add an item to the hash set with the specified lifespan
+     * using the time scale specified.
+     *
+     * <p>If the item is already present, the lifespan is reset
+     * using the new lifespan value and the item is replaced with
+     * the new value.</p>
+     *
+     * @param item       The item to add.
+     * @param lifespan   The lifespan of the item.
+     * @param timeScale  The time scale of the specified lifespan.
+     *
+     * @return  True if added.
+     */
+    public boolean add(E item, int lifespan, TimeScale timeScale) {
         PreCon.notNull(item);
+        PreCon.positiveNumber(lifespan);
+        PreCon.notNull(timeScale);
+
+        synchronized (_sync) {
+
+            _expireMap.put(item, new ExpireInfo(lifespan, timeScale));
+            return true;
+        }
+    }
+
+    /**
+     * Add items from a collection using the specified lifespan in
+     * the time scale specified in the constructor.
+     *
+     * <p>Any item that is already present will have its lifespan reset
+     * using the specified lifespan value and the item is replaced with
+     * the new element.</p>
+     *
+     * @param collection  The collection to add.
+     * @param lifespan    The lifespan of the item.
+     *
+     * @return  True if the internal collection was modified.
+     */
+    public boolean addAll(Collection<? extends E> collection, int lifespan) {
+        return addAll(collection, lifespan, _timeScale);
+    }
+
+    /**
+     * Add items from a collection using the specified lifespan in
+     * the time scale specified.
+     *
+     * <p>Any item that is already present will have its lifespan reset
+     * using the specified lifespan value and the item is replaced with
+     * the new element.</p>
+     *
+     * @param collection  The collection to add.
+     * @param lifespan    The lifespan of the item.
+     * @param timeScale   The time scale of the specified lifespan.
+     */
+    public boolean addAll(Collection<? extends E> collection, int lifespan, TimeScale timeScale) {
+        PreCon.notNull(collection);
         PreCon.positiveNumber(lifespan);
 
         synchronized (_sync) {
-            Date expires = getExpires(lifespan);
-
-            _expireMap.put(item, expires);
-
-            return true;
+            for (E item : collection) {
+                _expireMap.put(item, new ExpireInfo(lifespan, timeScale));
+            }
         }
+
+        return true;
+    }
+
+    /**
+     * Register a subscriber to be notified when an elements lifespan
+     * ends.
+     *
+     * @param subscriber  The subscriber to register.
+     *
+     * @return  Self for chaining.
+     */
+    public TimedHashSet<E> onLifespanEnd(IUpdateSubscriber<E> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onLifespanEnd").register(subscriber);
+
+        return this;
+    }
+
+    /**
+     * Register a subscriber to be notified when the collection is empty
+     * due to elements expiring.
+     *
+     * @param subscriber  The subscriber to register.
+     *
+     * @return  Self for chaining.
+     */
+    public TimedHashSet<E> onEmpty(IUpdateSubscriber<TimedHashSet<E>> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onEmpty").register(subscriber);
+
+        return this;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     @Override
@@ -171,11 +326,11 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         synchronized (_sync) {
 
             //noinspection SuspiciousMethodCalls
-            Date date = _expireMap.get(o);
-            if (date == null)
+            ExpireInfo info = _expireMap.get(o);
+            if (info == null)
                 return false;
 
-            if (isExpired(date)) {
+            if (info.isExpired()) {
                 //noinspection SuspiciousMethodCalls
                 _expireMap.remove(o);
                 return false;
@@ -185,47 +340,18 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         }
     }
 
-    /**
-     * Determine if the set contains the specified item and
-     * reset the items lifespan.
-     *
-     * @param item       The item to check.
-     * @param lifespan   The new lifespan of the item.
-     */
-    public boolean contains(E item, int lifespan) {
-        PreCon.notNull(item);
-        PreCon.positiveNumber(lifespan);
-
-        synchronized (_sync) {
-            boolean isExpired = isExpired(item, true);
-            if (isExpired)
-                return false;
-
-            Date expires = _expireMap.get(item);
-            if (expires == null)
-                return false;
-
-            if (isExpired(expires)) {
-                _expireMap.remove(item);
-                return false;
-            }
-
-            _expireMap.put(item, getExpires(lifespan));
-
-            return true;
-        }
-    }
-
     @Override
     public Iterator<E> iterator() {
-        final Iterator<E> iterator;
+
+        final Iterator<Entry<E, ExpireInfo>> iterator;
 
         synchronized (_sync) {
-            iterator = _expireMap.keySet().iterator();
+            iterator = _expireMap.entrySet().iterator();
         }
 
         return new Iterator<E>() {
-            E peek;
+
+            Entry<E, ExpireInfo> peek;
 
             @Override
             public boolean hasNext() {
@@ -237,7 +363,8 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
 
                     while (iterator.hasNext()) {
                         peek = iterator.next();
-                        if (isExpired(peek, false)) {
+
+                        if (peek.getValue().isExpired()) {
                             iterator.remove();
                         }
                         else {
@@ -252,12 +379,16 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
             @Override
             public E next() {
                 synchronized (_sync) {
-                    if (peek != null) {
-                        E n = peek;
-                        peek = null;
-                        return n;
-                    }
-                    return iterator.next();
+
+                    if (peek == null)
+                        hasNext();
+
+                    if (peek == null)
+                        throw new IndexOutOfBoundsException();
+
+                    Entry<E, ExpireInfo> n = peek;
+                    peek = null;
+                    return n.getKey();
                 }
             }
 
@@ -289,57 +420,18 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         }
     }
 
-    /**
-     * Add an item to the hash set using the default lifespan.
-     *
-     * <p>If the item is already present, the lifespan is reset
-     * using the default lifespan value.</p>
-     *
-     * @param item  The item to add.
-     */
     @Override
     public boolean add(E item) {
         PreCon.notNull(item);
 
-        return add(item, _defaultTime);
+        return add(item, _lifespan, TimeScale.MILLISECONDS);
     }
 
-    /**
-     * Add items from a collection using the specified lifespan.
-     *
-     * <p>Any item that is already present will have its lifespan reset
-     * using the specified lifespan value.</p>
-     *
-     * @param collection  The collection to add.
-     * @param lifespan    The lifespan of the item in ticks.
-     */
-    @Override
-    public boolean addAll(Collection<? extends E> collection, int lifespan) {
-        PreCon.notNull(collection);
-        PreCon.positiveNumber(lifespan);
-
-        synchronized (_sync) {
-            for (E item : collection) {
-                _expireMap.put(item, getExpires(lifespan));
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Add items from a collection using the default lifespan.
-     *
-     * <p>Any item that is already present will have its lifespan reset
-     * using the default lifespan value.</p>
-     *
-     * @param collection  The collection to add.
-     */
     @Override
     public boolean addAll(Collection<? extends E> collection) {
         PreCon.notNull(collection);
 
-        return addAll(collection, _defaultTime);
+        return addAll(collection, _lifespan, TimeScale.MILLISECONDS);
     }
 
     @Override
@@ -351,34 +443,23 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         }
     }
 
-    /**
-     * Remove all items.
-     */
     @Override
     public void clear() {
         synchronized (_sync) {
             _expireMap.clear();
         }
-
-        onEmpty();
     }
 
-    /**
-     * Remove an item.
-     *
-     * @param item  The item to remove.
-     */
     @Override
     public boolean remove(Object item) {
         PreCon.notNull(item);
 
         synchronized (_sync) {
-            Date expires = _expireMap.remove(item);
-            if (expires == null)
+            ExpireInfo info = _expireMap.remove(item);
+            if (info == null || info.isExpired())
                 return false;
         }
 
-        onEmpty();
         return true;
     }
 
@@ -387,15 +468,11 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         PreCon.notNull(c);
 
         synchronized (_sync) {
+            cleanup();
             return _expireMap.keySet().containsAll(c);
         }
     }
 
-    /**
-     * Remove all items from the collection.
-     *
-     * @param collection  The items to remove.
-     */
     @Override
     public boolean removeAll(Collection<?> collection) {
         PreCon.notNull(collection);
@@ -405,114 +482,93 @@ public class TimedHashSet<E> implements Set<E>, ITimedCollection<E>, ITimedCallb
         synchronized (_sync) {
             for (Object item : collection) {
                 //noinspection SuspiciousMethodCalls
-                Date expires = _expireMap.remove(item);
-                if (expires != null)
+                ExpireInfo info = _expireMap.remove(item);
+                if (info != null && !info.isExpired())
                     isChanged = true;
             }
 
-            if (isChanged) {
-                onEmpty();
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    /**
-     * Add a handler to be called whenever an items lifespan ends.
-     *
-     * @param callback  The handler to call.
-     */
-    @Override
-    public void addOnLifespanEnd(LifespanEndAction<E> callback) {
-        PreCon.notNull(callback);
-
-        _onLifespanEnd.add(callback);
-    }
-
-    /**
-     * Remove a handler.
-     *
-     * @param callback  The handler to remove.
-     */
-    @Override
-    public void removeOnLifespanEnd(LifespanEndAction<E> callback) {
-        PreCon.notNull(callback);
-
-        _onLifespanEnd.remove(callback);
-    }
-
-    /**
-     * Add a handler to be called whenever the collection becomes empty.
-     *
-     * @param callback  The handler to call
-     */
-    @Override
-    public void addOnCollectionEmpty(CollectionEmptyAction<TimedHashSet<E>> callback) {
-        PreCon.notNull(callback);
-
-        _onEmpty.add(callback);
-    }
-
-    /**
-     * Remove a handler.
-     *
-     * @param callback  The handler to remove.
-     */
-    @Override
-    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedHashSet<E>> callback) {
-        PreCon.notNull(callback);
-
-        _onEmpty.remove(callback);
-    }
-
-    private void onEmpty() {
-        if (!isEmpty() || _onEmpty.isEmpty())
-            return;
-
-        for (CollectionEmptyAction<TimedHashSet<E>> action : _onEmpty) {
-            action.onEmpty(this);
+            return isChanged;
         }
     }
 
     private void onLifespanEnd(E item) {
-        for (LifespanEndAction<E> action : _onLifespanEnd) {
-            action.onEnd(item);
-        }
-    }
 
-    private boolean isExpired(Date date) {
-        return date.compareTo(new Date()) <= 0;
-    }
-
-    private boolean isExpired(E entry, boolean removeIfExpired) {
-        Date expires = _expireMap.get(entry);
-        if (expires == null)
-            return true;
-
-        if (isExpired(expires)) {
-            if (removeIfExpired) {
-                _expireMap.remove(entry);
-            }
-            return true;
+        if (_agents.hasAgent("onLifespanEnd")) {
+            _agents.getAgent("onLifespanEnd").update(item);
         }
 
-        return false;
-    }
-
-    private Date getExpires(int lifespan) {
-        return DateUtils.addMilliseconds(new Date(), _timeFactor * lifespan);
+        if (isEmpty() && _agents.hasAgent("onEmpty")) {
+            _agents.getAgent("onEmpty").update(this);
+        }
     }
 
     private void cleanup() {
-        Iterator<Entry<E, Date>> iterator = _expireMap.entrySet().iterator();
+
+        if (_expireMap.isEmpty())
+            return;
+
+        // prevent cleanup from running too often
+        if (_nextCleanup == 0 || _nextCleanup > System.currentTimeMillis())
+            return;
+
+        _nextCleanup = System.currentTimeMillis() + MIN_CLEANUP_INTERVAL_MS;
+
+        Iterator<Entry<E, ExpireInfo>> iterator = _expireMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Entry<E, Date> entry = iterator.next();
-            if (isExpired(entry.getValue())) {
+            Entry<E, ExpireInfo> entry = iterator.next();
+            if (entry.getValue().isExpired()) {
                 iterator.remove();
+                onLifespanEnd(entry.getKey());
             }
+        }
+    }
+
+    private void startJanitor() {
+        if (_janitor != null)
+            return;
+
+        _janitor = Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(),
+                JANITOR_INITIAL_DELAY_TICKS, JANITOR_INTERVAL_TICKS, new Runnable() {
+            @Override
+            public void run() {
+
+                List<TimedHashSet> sets;
+
+                synchronized (_instances) {
+                    sets = new ArrayList<TimedHashSet>(_instances.keySet());
+                }
+
+                for (TimedHashSet set : sets) {
+
+                    // remove instance if owning plugin is not enabled
+                    if (!set.getPlugin().isEnabled()) {
+
+                        synchronized (_instances) {
+                            _instances.remove(set);
+                        }
+                        continue;
+                    }
+
+                    // cleanup instance
+                    synchronized (set._sync) {
+                        set.cleanup();
+                    }
+                }
+            }
+        });
+    }
+
+    private static final class ExpireInfo {
+
+        long expires;
+
+        ExpireInfo(long lifespan, TimeScale timeScale) {
+            expires = System.currentTimeMillis() + (lifespan * timeScale.getTimeFactor());
+        }
+
+        boolean isExpired() {
+            return System.currentTimeMillis() >= expires;
         }
     }
 }

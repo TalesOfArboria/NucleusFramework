@@ -25,15 +25,17 @@
 
 package com.jcwhatever.nucleus.collections.timed;
 
-import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A Linked List that begins removing first in items at interval if new
@@ -41,40 +43,75 @@ import java.util.List;
  *
  * <p>Items must be continuously added to prevent items from being removed.</p>
  *
- * <p>The number of items added at one time does not effect the length of the decay interval.</p>
+ * <p>The number of items added at one time does not effect the length of the
+ * decay interval.</p>
+ *
+ * <p>Subscribers that are added to track when an element decays or the collection
+ * is empty are notified without delay when the element is removed or the
+ * collection becomes empty due to decay.</p>
+ *
+ * <p>Not thread safe.</p>
  */
-public class DecayList<T> extends LinkedList<T>{
+public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
 
     private static final long serialVersionUID = -532564384179678355L;
+
+    private final Plugin _plugin;
 
     // default removal delay when ticks are not specified
     private int _decayTicks;
 
     // task that removes items at interval.
     private transient BukkitTask _decayTask;
-
-    // reference to Rot instance responsible for removing items.
     private transient Rot _rot;
 
-    // holds actions to be executed whenever an item is removed due to decay
-    private List<DecayAction<T>> _onDecay = new ArrayList<DecayAction<T>>(5);
+    // holds subscribers to be notified whenever an item is removed due to decay
+    // or the list is empty.
+    private transient NamedUpdateAgents _agents = new NamedUpdateAgents();
 
     /**
      * Constructor. Decay interval is every 1 second.
      */
-    public DecayList() {
-        super();
-        _decayTicks = 20;
+    public DecayList(Plugin plugin) {
+        this(plugin, 20);
     }
 
     /**
      * Constructor.
      *
+     * @param plugin              The owning plugin.
      * @param decayIntervalTicks  The decay interval in ticks.
      */
-    public DecayList(int decayIntervalTicks) {
+    public DecayList(Plugin plugin, int decayIntervalTicks) {
         super();
+
+        PreCon.notNull(plugin);
+        PreCon.greaterThanZero(decayIntervalTicks);
+
+        _plugin = plugin;
         _decayTicks = decayIntervalTicks;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin              The owning plugin.
+     * @param decayIntervalTicks  The decay interval in ticks.
+     * @param collection          The initial collection of elements.
+     */
+    public DecayList(Plugin plugin, int decayIntervalTicks, Collection<E> collection) {
+        super(collection);
+
+        PreCon.notNull(plugin);
+        PreCon.greaterThanZero(decayIntervalTicks);
+
+        _plugin = plugin;
+        _decayTicks = decayIntervalTicks;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     /**
@@ -87,67 +124,38 @@ public class DecayList<T> extends LinkedList<T>{
     /**
      * Change the decay interval. Causes the decay interval to reset.
      *
-     * @param ticks  The decay interval in ticks.
+     * @param interval   The decay interval.
+     * @param timeScale  The timeScale of the interval. The maximum resolution is ticks.
      */
-    public void setDecayInterval(int ticks) {
-        _decayTicks = ticks;
+    public void setDecayInterval(int interval, TimeScale timeScale) {
+        _decayTicks = (interval * timeScale.getTimeFactor()) / 50;
         scheduleRemoval();
     }
 
-    /**
-     * Add an item. Causes the decay interval to reset.
-     *
-     * @param item  The item to add.
-     */
     @Override
-    public boolean add(T item) {
+    public boolean add(E item) {
         scheduleRemoval();
         return super.add(item);
     }
 
-    /**
-     * Add an item at the specified index.
-     * Causes the decay interval to reset.
-     *
-     * @param index  The index to add the item at.
-     * @param item   The item to add.
-     */
     @Override
-    public void add(int index, T item) {
+    public void add(int index, E item) {
         scheduleRemoval();
         super.add(index, item);
     }
 
-    /**
-     * Add a collection of items.
-     * Causes the decay interval to reset.
-     *
-     * @param c  The collection to add.
-     */
     @Override
-    public boolean addAll(Collection<? extends T> c) {
+    public boolean addAll(Collection<? extends E> c) {
         scheduleRemoval();
         return super.addAll(c);
     }
 
-    /**
-     * Add a collection of items starting at the specified index.
-     * Causes the decay interval to reset.
-     *
-     * @param index  The index to insert the items at.
-     * @param c      The collection to insert.
-     */
     @Override
-    public boolean addAll(int index, Collection<? extends T> c) {
+    public boolean addAll(int index, Collection<? extends E> c) {
         scheduleRemoval();
         return super.addAll(index, c);
     }
 
-    /**
-     * Remove all items.
-     *
-     * <p>Decay handlers are not executed.</p>
-     */
     @Override
     public void clear() {
         if (_decayTask != null) {
@@ -158,21 +166,35 @@ public class DecayList<T> extends LinkedList<T>{
     }
 
     /**
-     * Add a handler to be executed when an item decays.
+     * Register a subscriber to be notified when an item is removed
+     * due to decay.
      *
-     * @param action  The handler to add.
+     * @param subscriber  The subscriber to register.
+     *
+     * @return  Self for chaining.
      */
-    public boolean addOnDecay(DecayAction<T> action) {
-        return _onDecay.add(action);
+    public DecayList<E> onDecay(IUpdateSubscriber<E> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onDecay").register(subscriber);
+
+        return this;
     }
 
     /**
-     * Remove a decay action handler.
+     * Register a subscriber to be notified when the list is empty
+     * due to decay.
      *
-     * @param action  The handler to remove.
+     * @param subscriber  The subscriber to register.
+     *
+     * @return  Self for chaining.
      */
-    public boolean removeOnDecay(DecayAction<T> action) {
-        return _onDecay.remove(action);
+    public DecayList<E> onEmpty(IUpdateSubscriber<DecayList<E>> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onEmpty").register(subscriber);
+
+        return this;
     }
 
     // begins or resets the decay timer
@@ -184,36 +206,40 @@ public class DecayList<T> extends LinkedList<T>{
             _decayTask.cancel();
 
         if (_rot == null)
-            _rot = new Rot(this);
+            _rot = new Rot<E>(this);
 
-        _decayTask = Bukkit.getScheduler().runTaskTimer(Nucleus.getPlugin(), new Rot(this), _decayTicks, _decayTicks);
+        _decayTask = Bukkit.getScheduler().runTaskTimer(
+                _plugin, _rot, _decayTicks, _decayTicks);
     }
 
-    public static abstract class DecayAction<T> {
-        public abstract void onDecay(T decayedItem);
-    }
-
-    private class Rot implements Runnable {
+    private static class Rot<E> implements Runnable {
 
         // a reference to the parent instance
-        private final DecayList<T> _parent;
+        private final DecayList<E> parent;
 
-        Rot(DecayList<T> parent) {
-            _parent = parent;
+        Rot(DecayList<E> parent) {
+            this.parent = parent;
         }
 
         @Override
         public void run() {
-            if (_parent.size() == 0)
+            if (parent.isEmpty())
                 return;
 
             // remove a single item
-            T removed = _parent.remove();
+            E removed = parent.remove();
 
-            // execute decay actions
-            for (DecayAction<T> action : _onDecay) {
-                action.onDecay(removed);
+            if (parent._agents.hasAgent("onDecay")) {
+                parent._agents.getAgent("onDecay").update(removed);
             }
+
+            if (parent.isEmpty() && parent._agents.hasAgent("onEmpty")) {
+                parent._agents.getAgent("onEmpty").update(parent);
+            }
+
+            try {
+                Thread.sleep(1L);
+            } catch (InterruptedException ignore) {}
         }
     }
 

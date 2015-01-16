@@ -25,52 +25,88 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.CollectionEmptyAction;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractMultimapWrapper;
+import com.jcwhatever.nucleus.collections.concurrent.SyncCollection;
+import com.jcwhatever.nucleus.collections.concurrent.SyncMap;
+import com.jcwhatever.nucleus.collections.concurrent.SyncSet;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.scheduler.ScheduledTask;
-import com.jcwhatever.nucleus.utils.DateUtils;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
- * A {@code HashSetMap} where each key value has an individual lifespan that when reached, causes the item
- * to be removed.
+ * An encapsulated {@link Multimap} where each key has an individual lifespan that
+ * when ended, causes the item to be removed.
  *
- * <p>The lifespan can only be reset by re-adding an item.</p>
+ * <p>The lifespan can be reset by re-adding a key.</p>
  *
  * <p>Items can be added using the default lifespan time or a lifespan can be specified per item.</p>
+ *
+ * <p>Subscribers that are added to track when an item expires or the collection is
+ * empty will have a varying degree of resolution up to 10 ticks, meaning the subscriber
+ * may be notified up to 10 ticks after an element expires (but not before).</p>
+ *
+ * <p>Getter operations cease to return an element within approximately 50 milliseconds
+ * (1 tick) of expiring.</p>
+ *
+ * <p>Thread safe.</p>
  */
-public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
-        implements ITimedMap<K, V>, ITimedCallbacks<K, TimedMultimap<K, V>> {
+public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwned {
 
-    private static Map<TimedMultimap, Void> _instances = new WeakHashMap<>(10);
+    // The minimum interval the cleanup is allowed to run at.
+    // Used to prevent cleanup from being run too often.
+    private static final int MIN_CLEANUP_INTERVAL_MS = 50;
+
+    // The interval the janitor runs at
+    private static final int JANITOR_INTERVAL_TICKS = 10;
+
+    // random initial delay interval for janitor, random to help spread out
+    // task execution in relation to other scheduled tasks
+    private static final int JANITOR_INITIAL_DELAY_TICKS = Rand.getInt(1, 9);
+
+    private static final Map<TimedMultimap, Void> _instances = new WeakHashMap<>(10);
     private static ScheduledTask _janitor;
 
-    private final Multimap<K, V> _multiMap;
-    private final Map<K, Date> _expireMap;
-    private final int _timeFactor;
-    private final int _defaultTime;
-    private transient final Object _sync = new Object();
+    private final Plugin _plugin;
+    private final Multimap<K, V> _map;
+    private final Map<K, ExpireInfo> _expireMap;
 
-    private transient List<LifespanEndAction<K>> _onLifespanEnd = new ArrayList<>(5);
-    private transient List<CollectionEmptyAction<TimedMultimap<K, V>>> _onEmpty = new ArrayList<>(5);
+    private final int _lifespan;
+    private final TimeScale _timeScale;
+
+    private final transient KeySetWrapper _keySet;
+    private final transient ValuesWrapper _values;
+    private final transient EntriesWrapper _entries;
+    private final transient AsMapWrapper _asMap;
+
+    private final transient Object _sync = new Object();
+    private transient long _nextCleanup;
+
+    private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
 
     /**
      * Constructor. Default lifespan is 20 ticks.
      */
-    public TimedMultimap(Multimap<K, V> multiMap) {
-        this(multiMap, 20, TimeScale.TICKS);
+    public TimedMultimap(Plugin plugin) {
+        this(plugin, 20, TimeScale.TICKS);
     }
 
     /**
@@ -79,74 +115,152 @@ public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
      * @param defaultLifespan  The lifespan used when one is not specified.
      * @param timeScale        The lifespan timescale.
      */
-    public TimedMultimap(Multimap<K, V> multiMap, int defaultLifespan, TimeScale timeScale) {
+    public TimedMultimap(Plugin plugin, int defaultLifespan, TimeScale timeScale) {
+        PreCon.notNull(plugin);
+        PreCon.positiveNumber(defaultLifespan);
+        PreCon.notNull(timeScale);
 
-        _defaultTime = defaultLifespan;
-        _multiMap = multiMap;
-        _expireMap = new HashMap<>(multiMap.keySet().size() + 20);
-        _instances.put(this, null);
+        _plugin = plugin;
+        _lifespan = defaultLifespan * timeScale.getTimeFactor();
+        _timeScale = timeScale;
+        _map = createMultimap();
+        _expireMap = new HashMap<>(_map.keySet().size() + 5);
 
-        _timeFactor = timeScale.getTimeFactor();
+        _keySet = new KeySetWrapper();
+        _values = new ValuesWrapper();
+        _entries = new EntriesWrapper();
+        _asMap = new AsMapWrapper();
 
-        if (_janitor == null) {
-            _janitor = Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(), 1, 20, new Runnable() {
-                @Override
-                public void run() {
-
-                    List<TimedMultimap> maps = new ArrayList<>(_instances.keySet());
-
-                    for (TimedMultimap map : maps) {
-                        synchronized (map._sync) {
-                            map.cleanup();
-                        }
-                    }
-                }
-            });
+        synchronized (_instances) {
+            _instances.put(this, null);
         }
-    }
 
-    @Override
-    public void clear() {
-        _multiMap.clear();
-        _expireMap.clear();
-
-        onEmpty();
+        startJanitor();
     }
 
     /**
-     * Put an item into the map using the specified lifespan.
+     * Put an item into the map using the specified lifespan in
+     * the time scale specified in the constructor..
      *
-     * @param key       The item key.
-     * @param value     The item to add.
-     * @param lifespan  The items lifespan.
+     * @param key        The item key.
+     * @param value      The item to add.
+     * @param lifespan   The items lifespan.
      */
-    @Override
-    public boolean put(final K key, final V value, int lifespan) {
+    public boolean put(K key, V value, long lifespan) {
+        return put(key, value, lifespan, _timeScale);
+    }
+
+    /**
+     * Put an item into the map using the specified lifespan in
+     * the time scale specified.
+     *
+     * @param key        The item key.
+     * @param value      The item to add.
+     * @param lifespan   The items lifespan.
+     * @param timeScale  The time scale of the specified lifespan
+     */
+    public boolean put(K key, V value, long lifespan, TimeScale timeScale) {
         PreCon.notNull(key);
         PreCon.notNull(value);
         PreCon.positiveNumber(lifespan);
-
-        if (lifespan == 0)
-            return false;
+        PreCon.notNull(timeScale);
 
         synchronized (_sync) {
 
-            if (_multiMap.put(key, value)) {
+            if (_map.put(key, value)) {
+                _expireMap.put(key, new ExpireInfo(key, lifespan, timeScale));
 
-                if (lifespan > 0) {
-                    _expireMap.put(key, getExpires(lifespan));
-                }
                 return true;
             }
             return false;
         }
     }
 
+    /**
+     * Put a map of items into the map using the specified lifespan
+     * in the time scale specified in the constructor..
+     *
+     * @param entries   The map to add.
+     * @param lifespan  The lifespan of the added items.
+     */
+    public void putAll(Map<? extends K, ? extends V> entries, int lifespan) {
+        putAll(entries, lifespan, _timeScale);
+    }
+
+    /**
+     * Put a map of items into the map using the specified lifespan
+     * int the time scale specified.
+     *
+     * @param entries    The map to add.
+     * @param lifespan   The lifespan of the added items.
+     * @param timeScale  The time scale of the specified lifespan.
+     */
+    public void putAll(Map<? extends K, ? extends V> entries, int lifespan, TimeScale timeScale) {
+        PreCon.notNull(entries);
+        PreCon.positiveNumber(lifespan);
+        PreCon.notNull(timeScale);
+
+        synchronized (_sync) {
+
+            for (Map.Entry<? extends K, ? extends V> entry : entries.entrySet()) {
+                put(entry.getKey(), entry.getValue(), lifespan, timeScale);
+            }
+        }
+    }
+
+    /**
+     * Register a subscriber to be notified when an entry's lifespan ends.
+     *
+     * @param subscriber  The subscriber.
+     *
+     * @return  Self for chaining.
+     */
+    public TimedMultimap<K, V> onLifespanEnd(IUpdateSubscriber<Entry<K, Collection<V>>> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onLifespanEnd").register(subscriber);
+
+        return this;
+    }
+
+    /**
+     * Register a subscriber to be notified when the collection becomes
+     * empty due to an entry's lifespan ending.
+     *
+     * @param subscriber  The subscriber.
+     *
+     * @return  Self for chaining.
+     */
+    public TimedMultimap<K, V> onEmpty(IUpdateSubscriber<TimedMultimap<K, V>> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onEmpty").register(subscriber);
+
+        return this;
+    }
+
+    /**
+     * Invoked once during the constructor to create the
+     * encapsulated {@code Multimap}.
+     */
+    protected abstract Multimap<K, V> createMultimap();
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+
+    @Override
+    public void clear() {
+        _map.clear();
+        _expireMap.clear();
+    }
+
     @Override
     public int size() {
         synchronized (_sync) {
             cleanup();
-            return _multiMap.size();
+            return _map.size();
         }
     }
 
@@ -154,7 +268,7 @@ public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
     public boolean isEmpty() {
         synchronized (_sync) {
             cleanup();
-            return _multiMap.isEmpty();
+            return _map.isEmpty();
         }
     }
 
@@ -163,18 +277,26 @@ public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
         PreCon.notNull(key);
 
         synchronized (_sync) {
-            return !isExpired(key, true) &&
-                    _multiMap.containsKey(key);
+            return !isExpiredRemove(key) &&
+                    _map.containsKey(key);
         }
     }
 
     @Override
-    public boolean containsValue(Object value) {
-        PreCon.notNull(value);
+    public boolean containsValue(@Nullable Object value) {
 
         synchronized (_sync) {
             cleanup();
-            return _multiMap.containsValue(value);
+            return _map.containsValue(value);
+        }
+    }
+
+    @Override
+    public boolean containsEntry(@Nullable Object o, @Nullable Object o1) {
+
+        synchronized (_sync) {
+            cleanup();
+            return _map.containsEntry(o, o1);
         }
     }
 
@@ -184,57 +306,47 @@ public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
         PreCon.notNull(key);
 
         synchronized (_sync) {
-            if (isExpired(key, true)) {
-                return new ArrayList<>(0);
+            if (isExpiredRemove(key)) {
+                return CollectionUtils.unmodifiableList();
             }
-            return _multiMap.get(key);
+            return _map.get(key);
         }
     }
 
     @Override
-    protected Multimap<K, V> getMap() {
-        return _multiMap;
+    public Set<K> keySet() {
+        return _keySet;
     }
 
-    /**
-     * Put an item into the map using the default lifespan.
-     *
-     * @param key    The item key.
-     * @param value  The item to add.
-     */
+    @Override
+    public Multiset<K> keys() {
+        return _map.keys(); // TODO: Wrap
+    }
+
+    @Override
+    public Collection<V> values() {
+        return _values;
+    }
+
+    @Override
+    public Collection<Entry<K, V>> entries() {
+        return _entries;
+    }
+
+    @Override
+    public Map<K, Collection<V>> asMap() {
+        return _asMap;
+    }
+
     @Override
     @Nullable
     public boolean put(K key, V value) {
         PreCon.notNull(key);
         PreCon.notNull(value);
 
-        return put(key, value, _defaultTime);
+        return put(key, value, _lifespan, TimeScale.TICKS);
     }
 
-    /**
-     * Put a map of items into the map using the specified lifespan.
-     *
-     * @param entries   The map to add.
-     * @param lifespan  The lifespan of the added items.
-     */
-    @Override
-    public void putAll(Map<? extends K, ? extends V> entries, int lifespan) {
-        PreCon.notNull(entries);
-        PreCon.positiveNumber(lifespan);
-
-        synchronized (_sync) {
-
-            for (Map.Entry<? extends K, ? extends V> entry : entries.entrySet()) {
-                put(entry.getKey(), entry.getValue(), lifespan);
-            }
-        }
-    }
-
-    /**
-     * Put a map of items into the map using the default lifespan.
-     *
-     * @param entries  The map to add.
-     */
     @Override
     public boolean putAll(Multimap<? extends K, ? extends V> entries) {
         PreCon.notNull(entries);
@@ -249,8 +361,17 @@ public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
     }
 
     @Override
+    public Collection<V> replaceValues(@Nullable K k, Iterable<? extends V> iterable) {
+        synchronized (_sync) {
+            Collection<V> result = _map.replaceValues(k, iterable);
+            _expireMap.put(k, new ExpireInfo(k, _lifespan, TimeScale.MILLISECONDS));
+            return result;
+        }
+    }
+
+    @Override
     public Collection<V> removeAll(@Nullable Object o) {
-        Collection<V> result = _multiMap.removeAll(o);
+        Collection<V> result = _map.removeAll(o);
         //noinspection SuspiciousMethodCalls
         _expireMap.remove(o);
 
@@ -263,10 +384,9 @@ public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
 
         synchronized (_sync) {
 
-            if (_multiMap.remove(key, value)) {
+            if (_map.remove(key, value)) {
                 //noinspection SuspiciousMethodCalls
                 _expireMap.remove(key);
-                onEmpty();
                 return true;
             }
         }
@@ -288,106 +408,246 @@ public class TimedMultimap<K, V> extends AbstractMultimapWrapper<K, V>
         return isChanged;
     }
 
-    /**
-     * Add a handler to be called whenever an items lifespan ends.
-     *
-     * @param callback  The handler to call.
-     */
-    @Override
-    public void addOnLifespanEnd(LifespanEndAction<K> callback) {
-        PreCon.notNull(callback);
 
-        _onLifespanEnd.add(callback);
-    }
+    private void onLifespanEnd(final K key, final Collection<V> values) {
+        if (_agents.hasAgent("onLifespanEnd")) {
+            _agents.getAgent("onLifespanEnd").update(getEntry(key, values));
+        }
 
-    /**
-     * Remove a handler.
-     *
-     * @param callback  The handler to remove.
-     */
-    @Override
-    public void removeOnLifespanEnd(LifespanEndAction<K> callback) {
-        PreCon.notNull(callback);
-
-        _onLifespanEnd.remove(callback);
-    }
-
-    /**
-     * Add a handler to be called whenever the collection becomes empty.
-     *
-     * @param callback  The handler to call
-     */
-    @Override
-    public void addOnCollectionEmpty(CollectionEmptyAction<TimedMultimap<K, V>> callback) {
-        PreCon.notNull(callback);
-
-        _onEmpty.add(callback);
-    }
-
-    /**
-     * Remove a handler.
-     *
-     * @param callback  The handler to remove.
-     */
-    @Override
-    public void removeOnCollectionEmpty(CollectionEmptyAction<TimedMultimap<K, V>> callback) {
-        PreCon.notNull(callback);
-
-        _onEmpty.remove(callback);
-    }
-
-    private void onEmpty() {
-        if (!isEmpty() || _onEmpty.isEmpty())
-            return;
-
-        for (CollectionEmptyAction<TimedMultimap<K, V>> action : _onEmpty) {
-            action.onEmpty(this);
+        if (isEmpty() && _agents.hasAgent("onEmpty")) {
+            _agents.getAgent("onEmpty").update(this);
         }
     }
 
-    private void onLifespanEnd(K key) {
-        for (LifespanEndAction<K> action : _onLifespanEnd) {
-            action.onEnd(key);
-        }
-    }
-
-    private boolean isExpired(Date date) {
-        return date.compareTo(new Date()) <= 0;
-    }
-
-    private boolean isExpired(Object key, boolean removeIfExpired) {
+    private boolean isExpiredRemove(Object key) {
         //noinspection SuspiciousMethodCalls
-        Date expires = _expireMap.get(key);
-        if (expires == null)
+        ExpireInfo info = _expireMap.get(key);
+        if (info == null)
             return true;
 
-        if (isExpired(expires)) {
-            if (removeIfExpired) {
-                //noinspection SuspiciousMethodCalls
-                _multiMap.removeAll(key);
-                //noinspection SuspiciousMethodCalls
-                _expireMap.remove(key);
-            }
+        if (info.isExpired()) {
+
+            //noinspection SuspiciousMethodCalls
+            Collection<V> collection = _map.removeAll(key);
+
+            //noinspection SuspiciousMethodCalls
+            _expireMap.remove(key);
+
+            onLifespanEnd(info.key, collection);
+
             return true;
         }
 
         return false;
     }
 
-    private Date getExpires(int lifespan) {
-        return DateUtils.addMilliseconds(new Date(), _timeFactor * lifespan);
-    }
-
     private void cleanup() {
 
-        Iterator<Map.Entry<K, Date>> iterator = _expireMap.entrySet().iterator();
+        if (_expireMap.isEmpty())
+            return;
 
+        // prevent cleanup from running too often
+        if (_nextCleanup == 0 || _nextCleanup > System.currentTimeMillis())
+            return;
+
+        _nextCleanup = System.currentTimeMillis() + MIN_CLEANUP_INTERVAL_MS;
+
+        Iterator<Map.Entry<K, ExpireInfo>> iterator = _expireMap.entrySet().iterator();
+
+        // iterate over entry set for items to remove
         while (iterator.hasNext()) {
-            Map.Entry<K, Date> entry = iterator.next();
-            if (isExpired(entry.getValue())) {
+
+            final Map.Entry<K, ExpireInfo> entry = iterator.next();
+
+            // check if entry is expired
+            if (entry.getValue().isExpired()) {
+
                 iterator.remove();
-                _multiMap.removeAll(entry.getKey());
+
+                final Collection<V> removed = _map.removeAll(entry.getKey());
+
+                // notify subscribers
+                onLifespanEnd(entry.getKey(), removed);
             }
+        }
+    }
+
+    private Entry<K, Collection<V>> getEntry(final K key, final Collection<V> values) {
+        return new Entry<K, Collection<V>>() {
+
+            Collection<V> value = values;
+
+            @Override
+            public K getKey() {
+                return key;
+            }
+
+            @Override
+            public Collection<V> getValue() {
+                return values;
+            }
+
+            @Override
+            public Collection<V> setValue(Collection<V> value) {
+                Collection<V> prev = this.value;
+                this.value = value;
+                return prev;
+            }
+        };
+    }
+
+    private void startJanitor() {
+
+        if (_janitor != null)
+            return;
+
+        synchronized (_instances) {
+
+            if (_janitor != null)
+                return;
+
+            _janitor = Scheduler.runTaskRepeatAsync(
+                    Nucleus.getPlugin(), JANITOR_INITIAL_DELAY_TICKS, JANITOR_INTERVAL_TICKS, new Runnable() {
+                        @Override
+                        public void run() {
+
+                            List<TimedMultimap> maps;
+
+                            synchronized (_instances) {
+                                maps = new ArrayList<>(_instances.keySet());
+                            }
+
+                            for (TimedMultimap map : maps) {
+
+                                if (!map._plugin.isEnabled()) {
+                                    synchronized (_instances) {
+                                        _instances.remove(map);
+                                    }
+                                    continue;
+                                }
+
+                                synchronized (map._sync) {
+                                    map.cleanup();
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+    private final class ExpireInfo {
+        final K key;
+        final long expires;
+
+        ExpireInfo(K key, long lifespan, TimeScale timeScale) {
+            this.key = key;
+            this.expires = System.currentTimeMillis() + (lifespan * timeScale.getTimeFactor());
+        }
+
+        boolean isExpired() {
+            return System.currentTimeMillis() >= expires;
+        }
+    }
+
+    private final class KeySetWrapper extends SyncSet<K> {
+
+        KeySetWrapper() {
+            super(_sync);
+        }
+
+        @Override
+        protected boolean onPreAdd(K k) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected void onRemoved(Object o) {
+            synchronized (_sync) {
+                //noinspection SuspiciousMethodCalls
+                _expireMap.remove(o);
+            }
+        }
+
+        @Override
+        protected void onClear(Collection<K> values) {
+            synchronized (_sync) {
+                _expireMap.clear();
+            }
+        }
+
+        @Override
+        protected Set<K> set() {
+            return _map.keySet();
+        }
+    }
+
+    private final class ValuesWrapper extends SyncCollection<V> {
+
+        ValuesWrapper() {
+            super(_sync);
+        }
+
+        @Override
+        protected boolean onPreAdd(V v) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected boolean onPreRemove(Object o) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected void onClear(Collection<V> values) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected final Collection<V> collection() {
+            return _map.values();
+        }
+    }
+
+    private final class EntriesWrapper extends SyncCollection<Entry<K, V>> {
+
+        EntriesWrapper() {
+            super(_sync);
+        }
+
+        @Override
+        protected void onAdded(Entry<K, V> entry) {
+            synchronized (_sync) {
+                _expireMap.put(entry.getKey(), new ExpireInfo(entry.getKey(), _lifespan, TimeScale.MILLISECONDS));
+            }
+        }
+
+        @Override
+        protected boolean onPreRemove(Object o) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected void onClear(Collection<Entry<K, V>> values) {
+            synchronized (_sync) {
+                _expireMap.clear();
+            }
+        }
+
+        @Override
+        protected Collection<Entry<K, V>> collection() {
+            return _map.entries();
+        }
+    }
+
+    private final class AsMapWrapper extends SyncMap<K, Collection<V>> {
+
+        AsMapWrapper() {
+            super(_sync);
+        }
+
+        @Override
+        protected Map<K, Collection<V>> map() {
+            return _map.asMap();
         }
     }
 }
