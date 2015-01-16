@@ -32,10 +32,6 @@ import javax.annotation.Nullable;
  */
 public class Result<R> {
 
-    public static final Result SUCCESS = new Result(1.0D, 1.0D, "Completed");
-    public static final Result CANCELLED = new Result(1.0D, -1.0D, "Cancelled");
-    public static final Result FAIL = new Result(1.0D, 0.0D, "Failed");
-
     private final double _totalCompletion;
     private final double _resultCompletion;
     private final R _result;

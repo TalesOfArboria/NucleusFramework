@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.utils.observer.result;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentMap;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
 
 /**
@@ -131,7 +130,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
          *
          * @param subscriber  The result update subscriber.
          */
-        public Future<R> onResult(IUpdateSubscriber<Result<R>> subscriber) {
+        public Future<R> onResult(FutureSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
             addSubscriber("onResult", subscriber, parent._finalResult != null);
@@ -145,7 +144,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
          *
          * @param subscriber  The result update subscriber.
          */
-        public Future<R> onSuccess(IUpdateSubscriber<Result<R>> subscriber) {
+        public Future<R> onSuccess(FutureSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
             addSubscriber("onSuccess", subscriber, parent._finalResult != null &&
@@ -160,7 +159,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
          *
          * @param subscriber  The result update subscriber.
          */
-        public Future<R> onCancel(IUpdateSubscriber<Result<R>> subscriber) {
+        public Future<R> onCancel(FutureSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
             addSubscriber("onCancel", subscriber, parent._finalResult != null &&
@@ -175,7 +174,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
          *
          * @param subscriber  The result update subscriber.
          */
-        public Future<R> onError(IUpdateSubscriber<Result<R>> subscriber) {
+        public Future<R> onError(FutureSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
             addSubscriber("onError", subscriber, parent._finalResult != null &&
@@ -185,11 +184,11 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
         }
 
         private void addSubscriber(String agentName,
-                                   IUpdateSubscriber<Result<R>> subscriber, boolean updateNow) {
+                                   FutureSubscriber<R> subscriber, boolean updateNow) {
             UpdateAgent<Result<R>> agent = parent._updateAgents.get(agentName);
 
             if (updateNow) {
-                subscriber.onUpdate(agent, parent._finalResult);
+                subscriber.on(parent._finalResult);
             }
 
             agent.register(subscriber);
