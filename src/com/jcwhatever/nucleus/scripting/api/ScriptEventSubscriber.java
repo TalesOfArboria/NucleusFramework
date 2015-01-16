@@ -22,45 +22,41 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.timed;
+package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.collections.CollectionEmptyAction;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.event.EventSubscriber;
 
-/**
- * Represents a timed collection which allows
- * adding callbacks.
+import javax.annotation.Nullable;
+
+/*
+ * 
  */
-public interface ITimedCallbacks<E, C> {
+public class ScriptEventSubscriber<E> extends EventSubscriber<E> {
+
+    private final IScriptEventSubscriber _scriptSubscriber;
 
     /**
-     * Adds a callback to be called whenever an items
-     * lifespan ends.
+     * Constructor.
      *
-     * @param callback  The callback to call.
+     * @param subscriber  The subscriber passed in from a script.
      */
-    void addOnLifespanEnd(LifespanEndAction<E> callback);
+    public ScriptEventSubscriber(IScriptEventSubscriber subscriber) {
+        PreCon.notNull(subscriber);
+
+        _scriptSubscriber = subscriber;
+    }
+
+    @Override
+    public void onEvent(@Nullable Object caller, E event) {
+        _scriptSubscriber.onEvent(event);
+    }
 
     /**
-     * Removes a callback that is called whenever an items
-     * lifespan ends..
-     *
-     * @param callback  The callback to remove.
+     * An interface that can be easily created by script engines
+     * from a script function.
      */
-    void removeOnLifespanEnd(LifespanEndAction<E> callback);
-
-    /**
-     * Adds a callback to be called whenever the
-     * collection becomes empty.
-     *
-     * @param callback  The callback to add.
-     */
-    void addOnCollectionEmpty(CollectionEmptyAction<C> callback);
-
-    /**
-     * Removes a callback that is called whenever the
-     * collection becomes empty.
-     *
-     * @param callback  The callback to remove.
-     */
-    void removeOnCollectionEmpty(CollectionEmptyAction<C> callback);
+    public interface IScriptEventSubscriber {
+        void onEvent(Object event);
+    }
 }

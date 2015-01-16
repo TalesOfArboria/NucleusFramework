@@ -26,11 +26,13 @@
 package com.jcwhatever.nucleus.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.manager.NucleusEventPriority;
-import com.jcwhatever.nucleus.events.manager.IEventHandler;
+import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
+import com.jcwhatever.nucleus.scripting.api.ScriptEventSubscriber.IScriptEventSubscriber;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.ISubscriber;
+import com.jcwhatever.nucleus.utils.observer.event.EventSubscriberPriority;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.event.Event;
@@ -44,6 +46,7 @@ import org.bukkit.plugin.RegisteredListener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -81,8 +84,8 @@ public class ScriptApiEvents extends NucleusScriptApi {
     public static class ApiObject implements IScriptApiObject {
 
         private final Plugin _plugin;
-        private final List<RegisteredBukkitEvent> _registeredBukkit = new ArrayList<>(15);
-        private final List<RegisteredNucleusEvent> _registeredGenerics = new ArrayList<>(15);
+        private final List<RegisteredBukkitEvent> _registeredBukkit = new ArrayList<>(10);
+        private final Deque<ISubscriber> _subscribers = new SubscriberLinkedList<>();
         private Listener _dummyBukkitListener = new Listener() {};
         private boolean _isDisposed;
 
@@ -106,11 +109,10 @@ public class ScriptApiEvents extends NucleusScriptApi {
             _dummyBukkitListener = new Listener() {};
 
             // unregister nucleus event handlers
-            for (RegisteredNucleusEvent registered : _registeredGenerics) {
-                //noinspection unchecked
-                Nucleus.getEventManager().unregister(registered._eventClass, registered._handler);
+            while (!_subscribers.isEmpty()) {
+                ISubscriber subscriber = _subscribers.remove();
+                subscriber.dispose();
             }
-            _registeredGenerics.clear();
 
             _isDisposed = true;
         }
@@ -124,7 +126,7 @@ public class ScriptApiEvents extends NucleusScriptApi {
          *
          * @return True if successfully registered.
          */
-        public boolean on(String eventName, String priority, final IScriptEventHandler handler) {
+        public boolean on(String eventName, String priority, final IScriptEventSubscriber handler) {
             PreCon.notNullOrEmpty(eventName);
             PreCon.notNullOrEmpty(priority);
             PreCon.notNull(handler);
@@ -162,27 +164,24 @@ public class ScriptApiEvents extends NucleusScriptApi {
          * Register NucleusFramework event.
          */
         private boolean registerNucleusEvent(Class<?> event, String priority, boolean ignoreCancelled,
-                                             final IScriptEventHandler handler) {
+                                             final IScriptEventSubscriber handler) {
 
-            NucleusEventPriority eventPriority = NucleusEventPriority.NORMAL;
+            EventSubscriberPriority eventPriority = EventSubscriberPriority.NORMAL;
 
             try {
-                eventPriority = NucleusEventPriority.valueOf(priority.toUpperCase());
+                eventPriority = EventSubscriberPriority.valueOf(priority.toUpperCase());
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            IEventHandler eventHandler = new IEventHandler() {
-                @Override
-                public void handle(Object event) {
-                    handler.onEvent(event);
-                }
-            };
+            ScriptEventSubscriber subscriber = new ScriptEventSubscriber(handler);
+            subscriber.setPriority(eventPriority);
+            subscriber.setCancelIgnored(ignoreCancelled);
 
             //noinspection unchecked
-            Nucleus.getEventManager().register(_plugin, event, eventPriority, ignoreCancelled, eventHandler);
+            Nucleus.getEventManager().register(_plugin, event, subscriber);
 
-            _registeredGenerics.add(new RegisteredNucleusEvent(event, eventHandler));
+            _subscribers.add(subscriber);
 
             return true;
         }
@@ -192,7 +191,7 @@ public class ScriptApiEvents extends NucleusScriptApi {
          */
         private boolean registerBukkitEvent(Class<? extends Event> event, String priority,
                                             boolean ignoreCancelled,
-                                            final IScriptEventHandler handler) {
+                                            final IScriptEventSubscriber handler) {
             EventPriority eventPriority = EventPriority.NORMAL;
 
             try {
@@ -234,10 +233,6 @@ public class ScriptApiEvents extends NucleusScriptApi {
 
     }
 
-    public static interface IScriptEventHandler {
-        public void onEvent(Object event);
-    }
-
     private static class RegisteredBukkitEvent {
         HandlerList _handlerList;
         RegisteredListener _registeredListener;
@@ -245,16 +240,6 @@ public class ScriptApiEvents extends NucleusScriptApi {
         RegisteredBukkitEvent(HandlerList handlerList, RegisteredListener listener) {
             _handlerList = handlerList;
             _registeredListener = listener;
-        }
-    }
-
-    private static class RegisteredNucleusEvent {
-        Class<?> _eventClass;
-        IEventHandler _handler;
-
-        RegisteredNucleusEvent(Class<?> eventClass, IEventHandler handler) {
-            _eventClass = eventClass;
-            _handler = handler;
         }
     }
 }

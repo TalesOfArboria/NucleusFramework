@@ -25,19 +25,22 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
+import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;
 import com.jcwhatever.nucleus.floatingitems.FloatingItem;
-import com.jcwhatever.nucleus.floatingitems.FloatingItem.PickupHandler;
 import com.jcwhatever.nucleus.floatingitems.FloatingItemManager;
 import com.jcwhatever.nucleus.floatingitems.IFloatingItem;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
+import com.jcwhatever.nucleus.scripting.api.ScriptUpdateSubscriber.IScriptUpdateSubscriber;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -83,9 +86,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
 
     public static class ApiObject implements IScriptApiObject {
 
-        private LinkedList<PickupWrapper> _pickupCallbacks = new LinkedList<>();
-        private LinkedList<CallbackWrapper> _spawnCallbacks = new LinkedList<>();
-        private LinkedList<CallbackWrapper> _despawnCallbacks = new LinkedList<>();
+        private Deque<ISubscriber> _subscribers = new SubscriberLinkedList<>();
         private final FloatingItemManager _manager;
         private boolean _isDisposed;
 
@@ -101,25 +102,9 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
         @Override
         public void dispose() {
 
-            while (!_pickupCallbacks.isEmpty()) {
-                PickupWrapper wrapper = _pickupCallbacks.remove();
-
-                if (wrapper.getItem() instanceof FloatingItem)
-                    ((FloatingItem) wrapper.getItem()).removeOnPickup(wrapper);
-            }
-
-            while (!_spawnCallbacks.isEmpty()) {
-                CallbackWrapper wrapper = _spawnCallbacks.remove();
-
-                if (wrapper.getItem() instanceof FloatingItem)
-                    ((FloatingItem) wrapper.getItem()).removeOnSpawn(wrapper);
-            }
-
-            while (!_despawnCallbacks.isEmpty()) {
-                CallbackWrapper wrapper = _despawnCallbacks.remove();
-
-                if (wrapper.getItem() instanceof FloatingItem)
-                    ((FloatingItem) wrapper.getItem()).removeOnDespawn(wrapper);
+            while (!_subscribers.isEmpty()) {
+                ISubscriber subscriber = _subscribers.remove();
+                subscriber.dispose();
             }
 
             _isDisposed = true;
@@ -152,7 +137,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
          * @param name      The name of the floating item.
          * @param callback  The callback to run when the item is picked up.
          */
-        public void onPickup(String name, final PickupCallback callback) {
+        public void onPickup(String name, final IScriptUpdateSubscriber callback) {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
@@ -162,9 +147,11 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
             if (!(item instanceof FloatingItem))
                 return;
 
-            PickupWrapper wrapper = new PickupWrapper(item, callback);
-            ((FloatingItem) item).addOnPickup(wrapper);
-            _pickupCallbacks.add(wrapper);
+            ScriptUpdateSubscriber<Player> subscriber = new ScriptUpdateSubscriber<>(callback);
+
+            ((FloatingItem) item).onPickup(subscriber);
+
+            _subscribers.add(subscriber);
         }
 
         /**
@@ -173,7 +160,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
          * @param name      The name of the floating item.
          * @param callback  The callback to run when the item is spawned.
          */
-        public void onSpawn(String name, Runnable callback) {
+        public void onSpawn(String name, IScriptUpdateSubscriber callback) {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
@@ -183,9 +170,10 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
             if (!(item instanceof FloatingItem))
                 return;
 
-            CallbackWrapper wrapper = new CallbackWrapper(item, callback);
-            ((FloatingItem) item).addOnSpawn(wrapper);
-            _spawnCallbacks.add(wrapper);
+            ScriptUpdateSubscriber<Entity> subscriber = new ScriptUpdateSubscriber<>(callback);
+
+            ((FloatingItem) item).onSpawn(subscriber);
+            _subscribers.add(subscriber);
         }
 
         /**
@@ -194,7 +182,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
          * @param name      The name of the floating item.
          * @param callback  The callback to run when the item is despawned.
          */
-        public void onDespawn(String name, Runnable callback) {
+        public void onDespawn(String name, IScriptUpdateSubscriber callback) {
             PreCon.notNullOrEmpty(name);
             PreCon.notNull(callback);
 
@@ -204,53 +192,10 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
             if (!(item instanceof FloatingItem))
                 return;
 
-            CallbackWrapper wrapper = new CallbackWrapper(item, callback);
-            ((FloatingItem) item).addOnDespawn(wrapper);
-            _despawnCallbacks.add(wrapper);
-        }
-    }
+            ScriptUpdateSubscriber<Entity> subscriber = new ScriptUpdateSubscriber<>(callback);
 
-    public interface PickupCallback {
-        void onPickup(Object player, Object item, Object isCancelled);
-    }
-
-    private static class PickupWrapper implements PickupHandler {
-
-        private final IFloatingItem _item;
-        private final PickupCallback _callback;
-
-        PickupWrapper(IFloatingItem item, PickupCallback callback) {
-            _item = item;
-            _callback = callback;
-        }
-
-        public IFloatingItem getItem() {
-            return _item;
-        }
-
-        @Override
-        public void onPickup(Player p, FloatingItem item, boolean isCancelled) {
-            _callback.onPickup(p, item, isCancelled);
-        }
-    }
-
-    private static class CallbackWrapper implements Runnable {
-
-        private final IFloatingItem _item;
-        private final Runnable _callback;
-
-        CallbackWrapper(IFloatingItem item, Runnable callback) {
-            _item = item;
-            _callback = callback;
-        }
-
-        public IFloatingItem getItem() {
-            return _item;
-        }
-
-        @Override
-        public void run() {
-            _callback.run();
+            ((FloatingItem) item).onDespawn(subscriber);
+            _subscribers.add(subscriber);
         }
     }
 }
