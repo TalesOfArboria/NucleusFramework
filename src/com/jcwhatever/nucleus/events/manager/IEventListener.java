@@ -25,16 +25,19 @@
 
 package com.jcwhatever.nucleus.events.manager;
 
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+
 import org.bukkit.plugin.Plugin;
 
 /**
  * An interface flag that indicates a class has
  * NucleusFramework event handlers.
  */
-public interface IEventListener {
+public interface IEventListener extends IPluginOwned {
 
     /**
      * Get the listeners owning plugin.
      */
+    @Override
     Plugin getPlugin();
 }

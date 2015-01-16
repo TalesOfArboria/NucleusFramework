@@ -25,7 +25,9 @@
 package com.jcwhatever.nucleus.events.manager;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockEvent;
@@ -37,7 +39,7 @@ import org.bukkit.event.vehicle.VehicleEvent;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Used to forward Bukkit events from a {@link NucleusEventManager} instance.
+ * Used to forward Bukkit events from a {@link EventManager} instance.
  *
  * <p>The forwarder is automatically attached the event manager source
  * specified in the constructor.</p>
@@ -48,24 +50,17 @@ import org.bukkit.plugin.Plugin;
  *
  * <p>The use of the forwarder should be avoided except in instances where an
  * event may relate to a specific event manager. (i.e. An event manager for 1 of hundreds of
- * regions might want to receive Bukkit events that occur within itself). In these
- * instances the use of the forwarder should be tightly controlled to prevent issues
- * with Bukkit events being called more than once in child event managers.</p>
+ * regions might want to receive Bukkit events that occur within itself).</p>
  *
  * <p>The forwarder can be avoided by simply using the global event manager
  * instead of a child instance or using Bukkit events directly.</p>
  *
- * <p>Note that because of this ability and the way events "bubble" up to the
- * global event manager, the global event manager does not receive Bukkit events
- * from child event managers.</p>
- *
- * <p>Do not forget to call the {@code dispose} method in the plugins {@code onDisable}
- * method to remove the forwarder from the source event manager.</p>
+ * <p>If you need to detach the forwarder, call the {@code dispose} method. The forwarder
+ * will not be usable afterwards.</p>
  */
-public abstract class AbstractBukkitForwarder implements IDisposable {
+public abstract class AbstractBukkitForwarder implements IPluginOwned, IDisposable {
 
     private final Plugin _plugin;
-    private final NucleusEventManager _source;
     private final Forwarder _forwarder;
     private boolean _isDisposed;
 
@@ -74,21 +69,22 @@ public abstract class AbstractBukkitForwarder implements IDisposable {
      *
      * <p>Automatically attaches forwarder to the specified source event manager.</p>
      *
-     * @param plugin  The owning plugin.
-     * @param source  The event manager source that Bukkit events are handled from.
-     *                Typically this will be the global event manager since it is the
-     *                only manager that receives bukkit events as part of its normal
-     *                operation.
+     * @param plugin        The owning plugin.
+     * @param eventManager  The event manager to register the forwarder with.
      */
-    protected AbstractBukkitForwarder(Plugin plugin, NucleusEventManager source) {
+    protected AbstractBukkitForwarder(Plugin plugin, EventManager eventManager) {
         PreCon.notNull(plugin);
-        PreCon.notNull(source);
+        PreCon.notNull(eventManager);
 
         _plugin = plugin;
-        _source = source;
         _forwarder = new Forwarder();
 
-        source.addCallHandler(_forwarder);
+        eventManager.onCall(plugin, _forwarder);
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     @Override
@@ -98,7 +94,7 @@ public abstract class AbstractBukkitForwarder implements IDisposable {
 
     @Override
     public void dispose() {
-        _source.removeCallHandler(_forwarder);
+        _forwarder.dispose();
         _isDisposed = true;
     }
 
@@ -116,15 +112,10 @@ public abstract class AbstractBukkitForwarder implements IDisposable {
 
     protected abstract void onOtherEvent(Event event);
 
-    public class Forwarder implements IEventCallHandler {
+    public class Forwarder extends UpdateSubscriber<Object> {
 
         @Override
-        public Plugin getPlugin() {
-            return _plugin;
-        }
-
-        @Override
-        public void onCall(Object e) {
+        public void on(Object e) {
 
             if (!(e instanceof Event))
                 return;

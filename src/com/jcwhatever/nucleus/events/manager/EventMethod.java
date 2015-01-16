@@ -22,23 +22,32 @@
  * THE SOFTWARE.
  */
 
+
 package com.jcwhatever.nucleus.events.manager;
 
-import org.bukkit.plugin.Plugin;
+import com.jcwhatever.nucleus.utils.observer.event.EventSubscriberPriority;
 
-/*
- * 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Annotation used to mark a method in a class that implements
+ * {@code NucleusEventListener} as a Nucleus event handler.
  */
-public class NucleusEventListener implements IEventListener {
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface EventMethod {
 
-    private Plugin _plugin;
+    /**
+     * The priority/order that the event should be executed in.
+     */
+    EventSubscriberPriority priority() default EventSubscriberPriority.NORMAL;
 
-    public NucleusEventListener(Plugin plugin) {
-        _plugin = plugin;
-    }
-
-    @Override
-    public Plugin getPlugin() {
-        return _plugin;
-    }
+    /**
+     * Determine if the handler should be run even if the
+     * event is already cancelled.
+     */
+    boolean ignoreCancelled() default false;
 }
