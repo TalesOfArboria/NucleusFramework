@@ -124,7 +124,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _commandHandler = new NucleusCommandDispatcher();
         _scheduler = new BukkitTaskScheduler();
 
-        _eventManager = new InternalEventManager();
+        _eventManager = new InternalEventManager(this);
 
         _scriptApiRepo = new InternalScriptApiRepo();
 

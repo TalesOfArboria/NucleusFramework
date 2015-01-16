@@ -38,11 +38,12 @@ import com.jcwhatever.nucleus.internal.listeners.WorldListener;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 public final class InternalEventManager extends EventManager {
 
-    public InternalEventManager() {
-        super(null);
+    public InternalEventManager(Plugin plugin) {
+        super(plugin, null);
 
         Scheduler.runTaskLater(Nucleus.getPlugin(), new Runnable() {
             @Override
