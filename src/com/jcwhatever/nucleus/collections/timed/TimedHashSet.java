@@ -524,7 +524,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
             return;
 
         // prevent cleanup from running too often
-        if (_nextCleanup == 0 || _nextCleanup > System.currentTimeMillis())
+        if (_nextCleanup > System.currentTimeMillis())
             return;
 
         _nextCleanup = System.currentTimeMillis() + MIN_CLEANUP_INTERVAL_MS;

@@ -45,4 +45,28 @@ public class TimedArrayListTest {
             Thread.sleep(5);
         }
     }
+
+    @Test
+    public void testElementLifespan1() throws Exception {
+
+        NucleusInit.init();
+
+        DummyPlugin plugin = new DummyPlugin("dummy");
+        plugin.onEnable();
+
+        TimedArrayList<String> list = new TimedArrayList<String>(plugin);
+
+        list.add("a", 1000, TimeScale.MILLISECONDS);
+
+        long expires = System.currentTimeMillis() + 1000;
+
+        while (System.currentTimeMillis() < expires + 100) {
+
+            NucleusInit.heartBeat();
+
+            Thread.sleep(5);
+        }
+
+        assertEquals(0, list.size());
+    }
 }

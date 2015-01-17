@@ -47,4 +47,28 @@ public class TimedSetMultimapTest {
         }
     }
 
+    @Test
+    public void testEntryLifespan1() throws Exception {
+
+        NucleusInit.init();
+
+        DummyPlugin plugin = new DummyPlugin("dummy");
+        plugin.onEnable();
+
+        TimedSetMultimap<String, String> map = new TimedSetMultimap<String, String>(plugin);
+
+        map.put("a", "b", 1000, TimeScale.MILLISECONDS);
+
+        long expires = System.currentTimeMillis() + 1000;
+
+        while (System.currentTimeMillis() < expires + 100) {
+
+            NucleusInit.heartBeat();
+
+            Thread.sleep(5);
+        }
+
+        assertEquals(0, map.size());
+    }
+
 }

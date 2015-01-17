@@ -26,6 +26,10 @@ public class TimedHashSetTest {
     }
 
 
+    /**
+     * Make sure element is removed.
+     * Tests the scheduled janitor task.
+     */
     @Test
     public void testElementLifespan() throws Exception {
 
@@ -47,5 +51,33 @@ public class TimedHashSetTest {
             Thread.sleep(5);
         }
     }
+
+    /**
+     * Make sure element is removed without a direct check.
+     */
+    @Test
+    public void testElementLifespan1() throws Exception {
+
+        NucleusInit.init();
+
+        DummyPlugin plugin = new DummyPlugin("dummy");
+        plugin.onEnable();
+
+        TimedHashSet<String> set = new TimedHashSet<String>(plugin);
+
+        set.add("a", 1000, TimeScale.MILLISECONDS);
+
+        long expires = System.currentTimeMillis() + 1000;
+
+        while (System.currentTimeMillis() < expires + 500) {
+
+            NucleusInit.heartBeat();
+
+            Thread.sleep(5);
+        }
+
+        assertEquals(0, set.size());
+    }
+
 
 }

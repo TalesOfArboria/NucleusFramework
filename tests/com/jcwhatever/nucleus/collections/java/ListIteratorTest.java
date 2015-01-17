@@ -87,27 +87,29 @@ public class ListIteratorTest<E> implements Runnable {
 
 
         try {
-            _iterator.add(_value2);
-            // next or previous must be called before calling set after add
-            _iterator.set(_value1);
-            throw new AssertionError("IllegalStateException expected.");
-        }
-        catch (IllegalStateException | UnsupportedOperationException ignore){}
+            try {
+                _iterator.add(_value2);
+                // next or previous must be called before calling set after add
+                _iterator.set(_value1);
+                throw new AssertionError("IllegalStateException expected.");
+            } catch (IllegalStateException ignore) {}
 
-        // go to beginning
-        while(_iterator.hasPrevious())
-            _iterator.previous();
+            // test remove: must be called after calling next or previous
+            try {
+                _iterator.remove();
+                throw new AssertionError("IllegalStateException expected.");
+            } catch (IllegalStateException ignore) {
+            }
 
+            // go to beginning
+            while (_iterator.hasPrevious())
+                _iterator.previous();
 
-        // test remove: must be called after calling next or previous
-        try {
+            // test remove
+            _iterator.next();
             _iterator.remove();
-            throw new AssertionError("IllegalStateException expected.");
-        }
-        catch (IllegalStateException ignore){}
 
-        // test remove
-        _iterator.next();
-        _iterator.remove();
+        }
+        catch(UnsupportedOperationException ignore) {}
     }
 }

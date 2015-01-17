@@ -26,7 +26,9 @@ public class TimedHashMapTest {
         mapTest.run();
     }
 
-
+    /**
+     * Make sure entry is removed.
+     */
     @Test
     public void testEntryLifespan() throws Exception {
 
@@ -47,6 +49,34 @@ public class TimedHashMapTest {
 
             Thread.sleep(5);
         }
+    }
+
+    /**
+     * Make sure entry is removed without a direct check on the entry.
+     * Tests the scheduled janitor task.
+     */
+    @Test
+    public void testEntryLifespan1() throws Exception {
+
+        NucleusInit.init();
+
+        DummyPlugin plugin = new DummyPlugin("dummy");
+        plugin.onEnable();
+
+        TimedHashMap<String, String> map = new TimedHashMap<String, String>(plugin);
+
+        map.put("a", "b", 1000, TimeScale.MILLISECONDS);
+
+        long expires = System.currentTimeMillis() + 1000;
+
+        while (System.currentTimeMillis() < expires + 500) {
+
+            NucleusInit.heartBeat();
+
+            Thread.sleep(5);
+        }
+
+        assertEquals(0, map.size());
     }
 
 }
