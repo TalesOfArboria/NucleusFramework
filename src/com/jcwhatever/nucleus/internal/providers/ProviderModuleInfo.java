@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.internal.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.modules.YamlModuleInfo;
+import com.jcwhatever.nucleus.utils.modules.YamlModuleInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
 import java.util.jar.JarFile;

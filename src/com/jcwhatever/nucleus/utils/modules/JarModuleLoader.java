@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.modules;
+package com.jcwhatever.nucleus.utils.modules;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.validate.IValidator;

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.modules;
+package com.jcwhatever.nucleus.utils.modules;
 
 /**
  * Specifies how classes are loaded from a jar file.

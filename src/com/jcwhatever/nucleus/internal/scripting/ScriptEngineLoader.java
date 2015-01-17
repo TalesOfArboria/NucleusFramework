@@ -26,9 +26,9 @@ package com.jcwhatever.nucleus.internal.scripting;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.modules.ClassLoadMethod;
-import com.jcwhatever.nucleus.modules.IModuleInfo;
-import com.jcwhatever.nucleus.modules.JarModuleLoader;
+import com.jcwhatever.nucleus.utils.modules.ClassLoadMethod;
+import com.jcwhatever.nucleus.utils.modules.IModuleInfo;
+import com.jcwhatever.nucleus.utils.modules.JarModuleLoader;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 
 import java.io.File;

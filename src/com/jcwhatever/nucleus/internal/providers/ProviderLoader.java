@@ -25,9 +25,9 @@
 package com.jcwhatever.nucleus.internal.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.modules.ClassLoadMethod;
-import com.jcwhatever.nucleus.modules.IModuleInfo;
-import com.jcwhatever.nucleus.modules.JarModuleLoader;
+import com.jcwhatever.nucleus.utils.modules.ClassLoadMethod;
+import com.jcwhatever.nucleus.utils.modules.IModuleInfo;
+import com.jcwhatever.nucleus.utils.modules.JarModuleLoader;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.providers.IProvider;
