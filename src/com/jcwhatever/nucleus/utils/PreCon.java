@@ -104,7 +104,7 @@ public final class PreCon {
      * @throws java.lang.NullPointerException
      */
     public static void notNull(@Nullable Object value) {
-        notNull(value, null);
+        notNull(value, "a checked argument");
     }
 
     /**
