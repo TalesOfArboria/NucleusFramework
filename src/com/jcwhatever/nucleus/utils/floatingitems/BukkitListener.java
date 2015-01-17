@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.floatingitems;
+package com.jcwhatever.nucleus.utils.floatingitems;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.floatingitems;
+package com.jcwhatever.nucleus.utils.floatingitems;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;

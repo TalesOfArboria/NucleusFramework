@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.floatingitems;
+package com.jcwhatever.nucleus.utils.floatingitems;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;

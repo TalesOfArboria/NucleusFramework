@@ -26,9 +26,9 @@
 package com.jcwhatever.nucleus.scripting.api;
 
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;
-import com.jcwhatever.nucleus.floatingitems.FloatingItem;
-import com.jcwhatever.nucleus.floatingitems.FloatingItemManager;
-import com.jcwhatever.nucleus.floatingitems.IFloatingItem;
+import com.jcwhatever.nucleus.utils.floatingitems.FloatingItem;
+import com.jcwhatever.nucleus.utils.floatingitems.FloatingItemManager;
+import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import com.jcwhatever.nucleus.scripting.api.ScriptUpdateSubscriber.IScriptUpdateSubscriber;
