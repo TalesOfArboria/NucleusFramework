@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.scripting.api;
 
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
-import com.jcwhatever.nucleus.titles.ITitle;
-import com.jcwhatever.nucleus.titles.Title;
+import com.jcwhatever.nucleus.utils.titles.ITitle;
+import com.jcwhatever.nucleus.utils.titles.Title;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;

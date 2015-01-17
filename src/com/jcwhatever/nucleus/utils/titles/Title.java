@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.titles;
+package com.jcwhatever.nucleus.utils.titles;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
