@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescription;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;

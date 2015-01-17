@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;

@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.commands.CommandDispatcher;
-import com.jcwhatever.nucleus.language.LanguageManager;
+import com.jcwhatever.nucleus.utils.language.LanguageManager;
 import com.jcwhatever.nucleus.messaging.IChatPrefixed;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;

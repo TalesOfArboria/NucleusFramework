@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.commands;
 
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.permissions.PermissionDefault;
 

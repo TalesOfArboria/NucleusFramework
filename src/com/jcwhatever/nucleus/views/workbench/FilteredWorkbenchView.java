@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.events.manager.EventMethod;
 import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.views.ViewOpenReason;

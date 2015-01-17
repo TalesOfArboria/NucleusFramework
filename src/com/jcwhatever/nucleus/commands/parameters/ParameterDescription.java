@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.commands.parameters;
 
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.language.Localizable;
-import com.jcwhatever.nucleus.language.Localized;
+import com.jcwhatever.nucleus.utils.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localized;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;

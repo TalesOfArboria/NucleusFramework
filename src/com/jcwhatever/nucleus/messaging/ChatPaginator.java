@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.messaging;
 
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 

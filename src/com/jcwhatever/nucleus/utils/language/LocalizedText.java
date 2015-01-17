@@ -23,18 +23,62 @@
  */
 
 
-package com.jcwhatever.nucleus.language;
+package com.jcwhatever.nucleus.utils.language;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
+import com.jcwhatever.nucleus.utils.PreCon;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Indicates the annotated method returns language localized strings
- * or a parameter requires a localized string.
+ * Represents a single line from a language file.
  */
-@Documented
-@Target({ElementType.METHOD, ElementType.PARAMETER})
-public @interface Localized {
+public class LocalizedText {
+
+    private static final Pattern PATTERN_ESCAPED_NEW_LINE = Pattern.compile("\\n");
+
+    private final int _index;
+    private final String _text;
+
+    /**
+     * Constructor.
+     *
+     * @param index  The key index.
+     * @param text   The text.
+     */
+    public LocalizedText(int index, String text) {
+        PreCon.notNull(text);
+
+        _index = index;
+
+        Matcher matcher = PATTERN_ESCAPED_NEW_LINE.matcher(text);
+        _text = matcher.replaceAll("\n");
+    }
+
+    /**
+     * Get the key index.
+     */
+    public int getIndex() {
+        return _index;
+    }
+
+    /**
+     * Get the text.
+     */
+    public String getText() {
+        return _text;
+    }
+
+    @Override
+    public int hashCode() {
+        return _index;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        return obj instanceof LocalizedText &&
+                ((LocalizedText) obj).getIndex() == _index;
+    }
+
 }

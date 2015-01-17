@@ -27,8 +27,8 @@ package com.jcwhatever.nucleus.commands.response;
 
 
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.language.Localizable;
-import com.jcwhatever.nucleus.language.Localized;
+import com.jcwhatever.nucleus.utils.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.HashMap;

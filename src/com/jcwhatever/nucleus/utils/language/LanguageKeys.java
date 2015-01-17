@@ -23,21 +23,42 @@
  */
 
 
-package com.jcwhatever.nucleus.language;
+package com.jcwhatever.nucleus.utils.language;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
+import java.io.InputStream;
+import java.util.List;
 
 /**
- * Indicates a static final {@code String} field or an annotation
- * method that returns {@code String} is a candidate for localization.
+ * Parsed language key file data.
  */
-@Documented
-@Target({ElementType.FIELD, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Localizable {
+public class LanguageKeys extends Language {
+
+    /**
+     * Constructor.
+     *
+     * @param keyStream  The key file stream.
+     */
+    public LanguageKeys(InputStream keyStream) {
+        super(keyStream);
+    }
+
+    /**
+     * Determine if a language's versions are compatible.
+     *
+     * @param language  The language to check.
+     */
+    public boolean isCompatible(Language language) {
+
+        List<String> versions = language.getVersions();
+
+        if (versions.isEmpty())
+            return false;
+
+        for (String version : versions) {
+            if (!isValidVersion(version))
+                return false;
+        }
+
+        return true;
+    }
 }

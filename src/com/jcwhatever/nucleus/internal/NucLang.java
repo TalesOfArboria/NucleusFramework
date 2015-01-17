@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.internal;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
-import com.jcwhatever.nucleus.language.Localized;
+import com.jcwhatever.nucleus.utils.language.Localized;
 import org.bukkit.plugin.Plugin;
 
 public final class NucLang {

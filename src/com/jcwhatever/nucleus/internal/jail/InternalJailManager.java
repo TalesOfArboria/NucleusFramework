@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.jail.IJailManager;
 import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.jail.JailSession;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.DateUtils.TimeRound;

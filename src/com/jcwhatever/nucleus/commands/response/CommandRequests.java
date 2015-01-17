@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.collections.timed.TimedMultimap;
 import com.jcwhatever.nucleus.collections.timed.TimedSetMultimap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.command.CommandSender;

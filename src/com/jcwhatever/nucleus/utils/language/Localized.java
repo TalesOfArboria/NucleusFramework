@@ -23,42 +23,18 @@
  */
 
 
-package com.jcwhatever.nucleus.language;
+package com.jcwhatever.nucleus.utils.language;
 
-import java.io.InputStream;
-import java.util.List;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+
 
 /**
- * Parsed language key file data.
+ * Indicates the annotated method returns language localized strings
+ * or a parameter requires a localized string.
  */
-public class LanguageKeys extends Language {
-
-    /**
-     * Constructor.
-     *
-     * @param keyStream  The key file stream.
-     */
-    public LanguageKeys(InputStream keyStream) {
-        super(keyStream);
-    }
-
-    /**
-     * Determine if a language's versions are compatible.
-     *
-     * @param language  The language to check.
-     */
-    public boolean isCompatible(Language language) {
-
-        List<String> versions = language.getVersions();
-
-        if (versions.isEmpty())
-            return false;
-
-        for (String version : versions) {
-            if (!isValidVersion(version))
-                return false;
-        }
-
-        return true;
-    }
+@Documented
+@Target({ElementType.METHOD, ElementType.PARAMETER})
+public @interface Localized {
 }

@@ -23,62 +23,21 @@
  */
 
 
-package com.jcwhatever.nucleus.language;
+package com.jcwhatever.nucleus.utils.language;
 
-import com.jcwhatever.nucleus.utils.PreCon;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Represents a single line from a language file.
+ * Indicates a static final {@code String} field or an annotation
+ * method that returns {@code String} is a candidate for localization.
  */
-public class LocalizedText {
-
-    private static final Pattern PATTERN_ESCAPED_NEW_LINE = Pattern.compile("\\n");
-
-    private final int _index;
-    private final String _text;
-
-    /**
-     * Constructor.
-     *
-     * @param index  The key index.
-     * @param text   The text.
-     */
-    public LocalizedText(int index, String text) {
-        PreCon.notNull(text);
-
-        _index = index;
-
-        Matcher matcher = PATTERN_ESCAPED_NEW_LINE.matcher(text);
-        _text = matcher.replaceAll("\n");
-    }
-
-    /**
-     * Get the key index.
-     */
-    public int getIndex() {
-        return _index;
-    }
-
-    /**
-     * Get the text.
-     */
-    public String getText() {
-        return _text;
-    }
-
-    @Override
-    public int hashCode() {
-        return _index;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        return obj instanceof LocalizedText &&
-                ((LocalizedText) obj).getIndex() == _index;
-    }
-
+@Documented
+@Target({ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Localizable {
 }

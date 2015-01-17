@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.language;
+package com.jcwhatever.nucleus.utils.language;
 
 /**
  * Thrown when a line from a language file is not valid.

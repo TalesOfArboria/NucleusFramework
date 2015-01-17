@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.kits.KitManager;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;

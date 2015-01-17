@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.commands.parameters;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfoContainer;
 import com.jcwhatever.nucleus.commands.arguments.ArgumentValueType;
-import com.jcwhatever.nucleus.language.Localized;
+import com.jcwhatever.nucleus.utils.language.Localized;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
 

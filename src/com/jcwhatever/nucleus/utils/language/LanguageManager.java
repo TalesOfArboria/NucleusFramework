@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.language;
+package com.jcwhatever.nucleus.utils.language;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;

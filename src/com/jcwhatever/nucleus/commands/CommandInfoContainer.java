@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.commands.parameters.CommandParameter;
 import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.language.Localized;
+import com.jcwhatever.nucleus.utils.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.permissions.PermissionDefault;

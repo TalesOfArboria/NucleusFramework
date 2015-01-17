@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.kits.IModifiableKit;
 import com.jcwhatever.nucleus.kits.KitManager;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;

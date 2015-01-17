@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.arguments.LocationResponse;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.language.Localizable;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
