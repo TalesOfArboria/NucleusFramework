@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.nms;
+package com.jcwhatever.nucleus.utils.nms;
 
 import org.bukkit.entity.Player;
 

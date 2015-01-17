@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.nucleus.jail.IJailManager;
 import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
-import com.jcwhatever.nucleus.nms.NmsManager;
+import com.jcwhatever.nucleus.utils.nms.NmsManager;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;

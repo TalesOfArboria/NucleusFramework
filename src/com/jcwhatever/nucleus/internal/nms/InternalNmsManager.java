@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
 import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsActionBarHandler_v1_8_R1;
 import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsListHeaderFooterHandler_v1_8_R1;
 import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsTitleHandler_v1_8_R1;
-import com.jcwhatever.nucleus.nms.NmsManager;
+import com.jcwhatever.nucleus.utils.nms.NmsManager;
 
 /**
  * NucleusFramework's internal NMS manager.

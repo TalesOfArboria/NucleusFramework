@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.utils.titles;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
-import com.jcwhatever.nucleus.nms.INmsTitleHandler;
+import com.jcwhatever.nucleus.utils.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;

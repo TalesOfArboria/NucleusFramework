@@ -22,37 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.nms;
-
-import org.bukkit.entity.Player;
+package com.jcwhatever.nucleus.utils.nms;
 
 /**
- * Interface for NucleusFramework's Minecraft List Header and Footer handler which
- * can be retrieved from NucleusFramework's NmsManager under the
- * name "LIST_HEADER_FOOTER".
+ * Interface for a type that uses NMS and CraftBukkit code.
  */
-public interface INmsListHeaderFooterHandler extends INmsHandler {
-
-    /**
-     * Send a tab list header and/or footer to a player.
-     *
-     * <p>The handler is responsible for converting the raw
-     * header and footer text into the appropriate format.</p>
-     *
-     * @param player         The player to send the header/footer to.
-     * @param rawHeaderText  The header text.
-     * @param rawFooterText  The footer text.
-     */
-    void send(Player player, String rawHeaderText, String rawFooterText);
-
-    /**
-     * Send a tab list header and/or footer to a player.
-     *
-     * <p>Bypasses the handlers text conversion.</p>
-     *
-     * @param player           The player to send the header/footer to.
-     * @param jsonHeaderText  The json header text.
-     * @param jsonFooterText  The json footer text.
-     */
-    void sendJson(Player player, String jsonHeaderText, String jsonFooterText);
+public interface INmsHandler {
 }
