@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.pathing;
 
-import com.jcwhatever.nucleus.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;

@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.converters;
 
-import com.jcwhatever.nucleus.extended.NamedMaterialData;
+import com.jcwhatever.nucleus.utils.extended.NamedMaterialData;
 
 import org.bukkit.material.MaterialData;
 

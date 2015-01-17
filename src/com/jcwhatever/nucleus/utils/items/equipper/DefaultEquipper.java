@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.items.equipper;
 
-import com.jcwhatever.nucleus.extended.ArmorType;
+import com.jcwhatever.nucleus.utils.extended.ArmorType;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Material;

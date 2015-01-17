@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.kits;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.kits.GiveKitEvent;
-import com.jcwhatever.nucleus.extended.ArmorType;
+import com.jcwhatever.nucleus.utils.extended.ArmorType;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;

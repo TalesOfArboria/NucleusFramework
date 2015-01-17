@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.extended;
+package com.jcwhatever.nucleus.utils.extended;
 
 import org.bukkit.Material;
 

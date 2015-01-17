@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.pathing;
 
-import com.jcwhatever.nucleus.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.pathing.astar.AStar;
 import com.jcwhatever.nucleus.utils.pathing.astar.AStar.LocationAdjustment;
 import com.jcwhatever.nucleus.utils.pathing.astar.AStarUtils;

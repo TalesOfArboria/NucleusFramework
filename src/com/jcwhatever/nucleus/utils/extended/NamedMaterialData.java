@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.extended;
+package com.jcwhatever.nucleus.utils.extended;
 
 import com.jcwhatever.nucleus.collections.MultiBiMap;
 import com.jcwhatever.nucleus.utils.PreCon;

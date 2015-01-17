@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.extended.serializable.SerializableBlockEntity;
-import com.jcwhatever.nucleus.extended.serializable.SerializableFurnitureEntity;
+import com.jcwhatever.nucleus.utils.extended.serializable.SerializableBlockEntity;
+import com.jcwhatever.nucleus.utils.extended.serializable.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.utils.PreCon;

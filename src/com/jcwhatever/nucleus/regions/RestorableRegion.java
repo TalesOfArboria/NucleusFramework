@@ -27,9 +27,9 @@ package com.jcwhatever.nucleus.regions;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.jcwhatever.nucleus.extended.MaterialExt;
-import com.jcwhatever.nucleus.extended.serializable.SerializableBlockEntity;
-import com.jcwhatever.nucleus.extended.serializable.SerializableFurnitureEntity;
+import com.jcwhatever.nucleus.utils.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.extended.serializable.SerializableBlockEntity;
+import com.jcwhatever.nucleus.utils.extended.serializable.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.RegionChunkFileLoader.LoadType;
 import com.jcwhatever.nucleus.regions.data.ChunkBlockInfo;

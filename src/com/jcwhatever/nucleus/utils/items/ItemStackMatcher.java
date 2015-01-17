@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.nucleus.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;

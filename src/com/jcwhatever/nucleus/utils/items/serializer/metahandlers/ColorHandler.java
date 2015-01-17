@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.items.serializer.metahandlers;
 
-import com.jcwhatever.nucleus.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 

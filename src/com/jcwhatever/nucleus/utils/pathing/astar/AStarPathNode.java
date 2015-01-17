@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.pathing.astar;
 
-import com.jcwhatever.nucleus.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;

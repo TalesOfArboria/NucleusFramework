@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.extended.serializable;
+package com.jcwhatever.nucleus.utils.extended.serializable;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.Scheduler;

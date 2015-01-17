@@ -25,8 +25,8 @@
 
 package com.jcwhatever.nucleus.utils.inventory;
 
-import com.jcwhatever.nucleus.extended.ArmorType;
-import com.jcwhatever.nucleus.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.extended.ArmorType;
+import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
