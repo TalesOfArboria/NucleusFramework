@@ -26,6 +26,9 @@ package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.collections.TreeEntryNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
@@ -104,39 +107,39 @@ public class MemoryDataNode extends AbstractDataNode {
     }
 
     @Override
-    public void loadAsync() {
-        // do nothing
+    public Future<IDataNode> loadAsync() {
+
+        FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
+        agent.sendResult(new ResultBuilder<IDataNode>().result(this).success().build());
+
+        return agent.getFuture();
     }
 
     @Override
-    public void loadAsync(@Nullable StorageLoadHandler loadHandler) {
-        if (loadHandler != null) {
-            loadHandler.onFinish(new StorageLoadResult(true, loadHandler));
-        }
-    }
-
-    @Override
-    public boolean save() {
+    public boolean saveSync() {
         return true;
     }
 
     @Override
-    public void saveAsync(@Nullable StorageSaveHandler saveHandler) {
-        if (saveHandler != null) {
-            saveHandler.onFinish(new StorageSaveResult(true, saveHandler));
-        }
+    public Future<IDataNode> save() {
+
+        FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
+        agent.sendResult(new ResultBuilder<IDataNode>().result(this).success().build());
+
+        return agent.getFuture();
     }
 
     @Override
-    public boolean save(File destination) {
+    public boolean saveSync(File destination) {
         return false;
     }
 
     @Override
-    public void saveAsync(File destination, @Nullable StorageSaveHandler saveHandler) {
-        if (saveHandler != null) {
-            saveHandler.onFinish(new StorageSaveResult(false, saveHandler));
-        }
+    public Future<IDataNode> save(File destination) {
+        FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
+        agent.sendResult(new ResultBuilder<IDataNode>().result(this).cancel().build());
+
+        return agent.getFuture();
     }
 
     @Override

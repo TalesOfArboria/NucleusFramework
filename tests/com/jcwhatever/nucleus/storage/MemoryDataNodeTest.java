@@ -8,6 +8,9 @@ public class MemoryDataNodeTest extends IDataNodeTest {
         setNodeGenerator(new IDataNodeGenerator() {
             @Override
             public IDataNode generateRoot() {
+                DummyPlugin plugin = new DummyPlugin("dummy");
+                plugin.onEnable();
+
                 return new MemoryDataNode(new DummyPlugin("dummy"));
             }
         });

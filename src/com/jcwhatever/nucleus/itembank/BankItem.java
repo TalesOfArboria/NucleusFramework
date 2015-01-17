@@ -214,7 +214,7 @@ public class BankItem {
         
         if (_dataNode != null) {
             _dataNode.set("qty", _qty);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
     }
 

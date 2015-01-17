@@ -387,7 +387,7 @@ public abstract class Region extends RegionSelection implements IRegion {
         IDataNode dataNode = getDataNode();
         if (dataNode != null) {
             dataNode.set("owner-id", ownerId);
-            dataNode.saveAsync(null);
+            dataNode.save();
         }
 
         return true;
@@ -416,7 +416,7 @@ public abstract class Region extends RegionSelection implements IRegion {
         if (dataNode != null) {
             dataNode.set("p1", getP1());
             dataNode.set("p2", getP2());
-            dataNode.saveAsync(null);
+            dataNode.save();
         }
 
         onCoordsChanged(getP1(), getP2());

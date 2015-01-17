@@ -112,7 +112,7 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
         IFloatingItem item = createFloatingItem(name, itemStack, location, node);
         node.set("location", location);
         node.set("item", itemStack);
-        node.saveAsync(null);
+        node.save();
 
         add(item);
 
@@ -170,15 +170,14 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
     @Override
     protected void onRemove(IFloatingItem removed) {
 
-        removed.dispose();
-
         if (Nucleus.getPlugin().isEnabled()) {
+            removed.dispose();
             super.onRemove(removed);
         }
         else {
-            IDataNode node = getNode(removed.getName());
+            IDataNode node = getNode(removed.getSearchName());
             node.set("dispose", true);
-            node.save();
+            node.saveSync();
         }
     }
 }

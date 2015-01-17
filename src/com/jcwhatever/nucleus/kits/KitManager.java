@@ -171,7 +171,7 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
 
         IDataNode dataNode = _dataNode.getNode(getName(item));
         save(item, dataNode);
-        dataNode.saveAsync(null);
+        dataNode.save();
     }
 }
 

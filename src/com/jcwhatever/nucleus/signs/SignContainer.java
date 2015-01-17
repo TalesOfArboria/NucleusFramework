@@ -265,7 +265,7 @@ public class SignContainer implements IPluginOwned {
         if (_signNode == null)
             return false;
 
-        _signNode.saveAsync(null);
+        _signNode.save();
 
         return true;
     }

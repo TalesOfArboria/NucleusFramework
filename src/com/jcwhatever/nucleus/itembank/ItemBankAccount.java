@@ -175,7 +175,7 @@ class ItemBankAccount {
 
             if (bankItem.getDataNode() != null) {
                 bankItem.getDataNode().remove();
-                bankItem.getDataNode().saveAsync(null);
+                bankItem.getDataNode().save();
             }
         }
 
@@ -239,7 +239,7 @@ class ItemBankAccount {
         }
 
         dataNode.set("qty", qty);
-        dataNode.saveAsync(null);
+        dataNode.save();
 
         return bankItem;
     }

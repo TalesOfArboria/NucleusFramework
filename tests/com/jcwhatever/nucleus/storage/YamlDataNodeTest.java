@@ -10,6 +10,7 @@ public class YamlDataNodeTest extends IDataNodeTest{
     public YamlDataNodeTest() {
 
         final Plugin plugin = new DummyPlugin("dummy");
+        plugin.onEnable();
 
         setNodeGenerator(new IDataNodeGenerator() {
             @Override

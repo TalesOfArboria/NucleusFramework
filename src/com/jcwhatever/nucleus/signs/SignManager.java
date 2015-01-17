@@ -450,7 +450,7 @@ public class SignManager implements IPluginOwned {
             signNode.set("line3", event.getLine(3));
             signNode.set("type", sign.getType().name());
             signNode.set("direction", SignUtils.getSignFacing(sign).name());
-            signNode.saveAsync(null);
+            signNode.save();
         }
 
         return true;
@@ -507,7 +507,7 @@ public class SignManager implements IPluginOwned {
 
         if (allowBreak) {
             signNode.remove();
-            signNode.saveAsync(null);
+            signNode.save();
         }
         else {
             event.setCancelled(true);

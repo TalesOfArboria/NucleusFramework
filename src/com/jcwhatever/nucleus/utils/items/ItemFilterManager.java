@@ -160,7 +160,7 @@ public class ItemFilterManager implements IPluginOwned {
 
         if (_dataNode != null) {
             _dataNode.set("mode", filter);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
     }
 
@@ -277,7 +277,7 @@ public class ItemFilterManager implements IPluginOwned {
 
         if (_dataNode != null) {
             _dataNode.set("items", null);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
         return true;
     }
@@ -296,7 +296,7 @@ public class ItemFilterManager implements IPluginOwned {
         }
 
         _dataNode.set("items", stacks.toArray(new ItemStack[stacks.size()]));
-        _dataNode.saveAsync(null);
+        _dataNode.save();
     }
 
     private void loadSettings() {

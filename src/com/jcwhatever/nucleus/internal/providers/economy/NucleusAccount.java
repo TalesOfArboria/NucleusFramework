@@ -87,7 +87,7 @@ public final class NucleusAccount implements IAccount {
         }
 
         _dataNode.set("balance", _balance);
-        _dataNode.saveAsync(null);
+        _dataNode.save();
 
         return true;
     }
@@ -111,7 +111,7 @@ public final class NucleusAccount implements IAccount {
         }
 
         _dataNode.set("balance", _balance);
-        _dataNode.saveAsync(null);
+        _dataNode.save();
         return true;
     }
 

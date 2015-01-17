@@ -216,7 +216,7 @@ public final class InternalProviderManager implements IProviderManager {
             dataNode.set(storageProvider.getName(), pluginNames);
         }
 
-        dataNode.saveAsync(null);
+        dataNode.save();
     }
 
     @Nullable

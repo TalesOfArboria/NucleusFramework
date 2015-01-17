@@ -94,7 +94,7 @@ public class WorldValidator extends StoredValidationSet<String> {
     @Override
     protected void saveElement(String element, IDataNode dataNode) {
         _dataNode.set("worlds", new ArrayList<>(this));
-        _dataNode.saveAsync(null);
+        _dataNode.save();
     }
 
     @Override

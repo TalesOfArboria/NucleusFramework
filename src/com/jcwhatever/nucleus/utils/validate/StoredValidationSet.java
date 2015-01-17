@@ -60,7 +60,7 @@ public abstract class StoredValidationSet<E> extends ValidationSet<E> {
         super.setPolicy(policy);
 
         _dataNode.set("policy", policy);
-        _dataNode.saveAsync(null);
+        _dataNode.save();
     }
 
     @Override
@@ -108,7 +108,7 @@ public abstract class StoredValidationSet<E> extends ValidationSet<E> {
         if (super.remove(element)) {
             IDataNode dataNode = _dataNode.getNode("elements." + name);
             dataNode.remove();
-            dataNode.saveAsync(null);
+            dataNode.save();
             return true;
         }
 
@@ -130,7 +130,7 @@ public abstract class StoredValidationSet<E> extends ValidationSet<E> {
             if (super.remove(obj)) {
                 IDataNode dataNode = _dataNode.getNode("elements." + name);
                 dataNode.remove();
-                dataNode.saveAsync(null);
+                dataNode.save();
                 isChanged = true;
             }
         }
@@ -157,7 +157,7 @@ public abstract class StoredValidationSet<E> extends ValidationSet<E> {
             if (super.remove(element)) {
                 IDataNode dataNode = _dataNode.getNode("elements." + name);
                 dataNode.remove();
-                dataNode.saveAsync(null);
+                dataNode.save();
                 isChanged = true;
             }
         }

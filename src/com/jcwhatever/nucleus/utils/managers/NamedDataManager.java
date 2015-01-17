@@ -81,7 +81,7 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
         if (_dataNode != null) {
             IDataNode dataNode = getNode(added.getName());
             save(added, dataNode);
-            dataNode.saveAsync(null);
+            dataNode.save();
         }
         return true;
     }
@@ -91,7 +91,7 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
         if (_dataNode != null) {
             IDataNode dataNode = getNode(removed.getName());
             dataNode.remove();
-            dataNode.saveAsync(null);
+            dataNode.save();
         }
     }
 

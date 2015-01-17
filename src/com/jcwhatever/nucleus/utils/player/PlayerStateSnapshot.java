@@ -285,7 +285,7 @@ public class PlayerStateSnapshot {
             setEffectToNode(effect, effectNode);
         }
 
-        dataNode.saveAsync(null);
+        dataNode.save();
     }
 
     /*

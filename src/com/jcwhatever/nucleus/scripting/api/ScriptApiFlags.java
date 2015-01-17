@@ -119,7 +119,7 @@ public class ScriptApiFlags extends NucleusScriptApi {
             PreCon.notNull(p);
 
             _dataNode.set(p.getUniqueId().toString() + '.' + flagName, true);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
 
         /**
@@ -136,7 +136,7 @@ public class ScriptApiFlags extends NucleusScriptApi {
             PreCon.notNull(p);
 
             _dataNode.remove(p.getUniqueId().toString() + '.' + flagName);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
 
     }

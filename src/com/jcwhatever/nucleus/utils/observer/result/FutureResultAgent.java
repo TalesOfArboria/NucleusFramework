@@ -111,7 +111,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
     }
 
     @Override
-    protected boolean hasSubscribers() {
+    public boolean hasSubscribers() {
         return super.hasSubscribers() || _hasFutureSubscribers;
     }
 

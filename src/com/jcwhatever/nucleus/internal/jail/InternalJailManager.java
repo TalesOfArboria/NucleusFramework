@@ -131,7 +131,7 @@ public final class InternalJailManager implements IJailManager {
         node.set("plugin", jail.getPlugin().getName());
         node.set("jail", jail.getName());
         node.set("expires", expires.getTime());
-        node.saveAsync(null);
+        node.save();
 
         _sessionMap.put(playerId, jailSession);
 
@@ -188,7 +188,7 @@ public final class InternalJailManager implements IJailManager {
 
         IDataNode node = _dataNode.getNode("late-release");
         node.set(playerId.toString(), releaseLocation);
-        node.saveAsync(null);
+        node.save();
     }
 
     public void loadSettings() {

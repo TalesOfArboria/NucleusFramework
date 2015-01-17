@@ -133,7 +133,7 @@ public final class InternalPlayerLookupProvider implements IPlayerLookupProvider
             nameData.set(playerId.toString(), name);
         }
 
-        nameData.saveAsync(null);
+        nameData.save();
     }
 
     // get the node that contains player id/name data.

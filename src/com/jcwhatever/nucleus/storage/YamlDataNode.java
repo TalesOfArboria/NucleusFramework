@@ -25,8 +25,9 @@
 
 package com.jcwhatever.nucleus.storage;
 
+import com.jcwhatever.nucleus.collections.observer.agent.AgentMultimap;
+import com.jcwhatever.nucleus.collections.observer.agent.AgentSetMultimap;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.BatchTracker;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.LocationUtils;
@@ -34,8 +35,13 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
+import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -46,9 +52,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -77,18 +83,15 @@ public class YamlDataNode extends AbstractDataNode {
 
     private final Plugin _plugin;
     private final YamlDataNode _root;
-    private final BatchTracker _batch = new BatchTracker();
-
-    private LinkedList<StorageSaveHandler> _saveHandlers = new LinkedList<StorageSaveHandler>();
-    private volatile ScheduledTask _saveTask;
-    private boolean _isLoaded;
-
-    protected File _file;
-    protected String _yamlString;
 
     // instantiated on root only
     private final ConfigurationSection _section;
-
+    private final AgentMultimap<IDataNode, FutureResultAgent<IDataNode>> _saveAgents;
+    private final BatchTracker _batch;
+    private boolean _isLoaded;
+    private volatile ScheduledTask _saveTask;
+    protected String _yamlString;
+    protected File _file;
 
     /**
      * Constructor.
@@ -160,6 +163,8 @@ public class YamlDataNode extends AbstractDataNode {
         yaml.options().indent(2);
         _section = yaml;
         _root = this;
+        _saveAgents = new AgentSetMultimap<>();
+        _batch = new BatchTracker();
     }
 
     /**
@@ -173,6 +178,8 @@ public class YamlDataNode extends AbstractDataNode {
         _root = root;
         _section = null;
         _plugin = root.getPlugin();
+        _saveAgents = null;
+        _batch = null;
     }
 
     @Override
@@ -192,19 +199,19 @@ public class YamlDataNode extends AbstractDataNode {
 
     @Override
     public boolean isLoaded() {
-        return _isLoaded;
+        return getRoot()._isLoaded;
     }
 
     @Override
     public boolean load() {
 
-        if (_file == null && _isLoaded)
+        if (getRoot()._file == null && getRoot()._isLoaded)
             return true;
 
-        if (_file == null)
+        if (getRoot()._file == null)
             return false;
 
-        if (!_file.exists())
+        if (!getRoot()._file.exists())
             return false;
 
         YamlConfiguration yaml = (YamlConfiguration)getRoot()._section;
@@ -212,8 +219,8 @@ public class YamlDataNode extends AbstractDataNode {
         getRoot()._write.lock();
         try {
 
-            yaml.load(_file);
-            return _isLoaded = true;
+            yaml.load(getRoot()._file);
+            return getRoot()._isLoaded = true;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -223,22 +230,17 @@ public class YamlDataNode extends AbstractDataNode {
         }
 
 
-        if (_file != null)
-            NucMsg.severe("The config-file '{0}' failed to load.", _file.getName());
+        if (getRoot()._file != null)
+            NucMsg.severe("The config-file '{0}' failed to load.", getRoot()._file.getName());
 
-        return _isLoaded = false;
+        return getRoot()._isLoaded = false;
     }
 
     @Override
-    public void loadAsync() {
-        loadAsync(null);
-    }
+    public Future<IDataNode> loadAsync() {
 
-    @Override
-    public void loadAsync(@Nullable final StorageLoadHandler loadHandler) {
-
-        if (loadHandler != null && loadHandler._dataNode == null)
-            loadHandler._dataNode = this;
+        final FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
+        final ResultBuilder<IDataNode> resultBuilder = new ResultBuilder<IDataNode>().result(this);
 
         Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
 
@@ -248,28 +250,29 @@ public class YamlDataNode extends AbstractDataNode {
                 getRoot()._write.lock();
                 try {
 
-                    boolean loaded = load();
+                    boolean isLoaded = load();
 
-                    if (loadHandler != null) {
-
-                        StorageLoadResult result = new StorageLoadResult(loaded, loadHandler);
-
-                        loadHandler.onFinish(result);
-                    }
+                    agent.sendResult(
+                            isLoaded
+                                    ? resultBuilder.success().build()
+                                    : resultBuilder.error().build()
+                    );
                 }
                 finally {
                     getRoot()._write.unlock();
                 }
             }
         });
+
+        return agent.getFuture();
     }
 
     @Override
-    public boolean save() {
+    public boolean saveSync() {
 
         YamlConfiguration yaml = (YamlConfiguration)getRoot()._section;
 
-        if (_batch.isRunning())
+        if (getRoot()._batch.isRunning())
             return false;
 
         boolean isSaved;
@@ -279,11 +282,11 @@ public class YamlDataNode extends AbstractDataNode {
 
             try {
 
-                if (_file != null) {
-                    yaml.save(_file);
+                if (getRoot()._file != null) {
+                    yaml.save(getRoot()._file);
                 }
                 else {
-                    _yamlString = yaml.getKeys(false).size() == 0 ? "" : yaml.saveToString();
+                    getRoot()._yamlString = yaml.getKeys(false).size() == 0 ? "" : yaml.saveToString();
                 }
 
                 isSaved = true;
@@ -292,102 +295,74 @@ public class YamlDataNode extends AbstractDataNode {
                 e.printStackTrace();
                 isSaved = false;
             }
-
-            if (_saveHandlers.isEmpty())
-                return isSaved;
         }
         finally {
             getRoot()._write.unlock();
         }
 
-        final boolean saveResult = isSaved;
-
-        // return results on main thread
-        Scheduler.runTaskSync(_plugin, new Runnable() {
-
-            @Override
-            public void run() {
-
-                getRoot()._write.lock();
-                try {
-
-                    while (!_saveHandlers.isEmpty()) {
-                        StorageSaveHandler saveHandler = _saveHandlers.removeFirst();
-                        saveHandler.onFinish(new StorageSaveResult(saveResult, saveHandler));
-                    }
-                }
-                finally {
-                    getRoot()._write.unlock();
-                }
-            }
-        });
-
         return isSaved;
     }
 
     @Override
-    public void saveAsync(@Nullable final StorageSaveHandler saveHandler) {
+    public Future<IDataNode> save() {
 
-        // set data node on save handler
-        if (saveHandler != null && saveHandler._dataNode == null)
-            saveHandler._dataNode = this;
+        final FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
+        final ResultBuilder<IDataNode> resultBuilder = new ResultBuilder<IDataNode>().result(this);
+
+        getRoot()._saveAgents.put(this, agent);
 
         // check that 1 or more batch operations are not in progress.
-        if (_batch.isRunning()) {
-
-            // put away the save handler for later
-            if (saveHandler != null)
-                _saveHandlers.add(saveHandler);
-
-            return;
-        }
-
-        // check if save operation already scheduled.
-        if (_saveTask != null) {
-            return;
+        if (getRoot()._batch.isRunning() || getRoot()._saveTask != null) {
+            return agent.getFuture();
         }
 
         if (_plugin.isEnabled()) {
 
-            _saveTask = Scheduler.runTaskLater(_plugin, 5, new Runnable() {
+            getRoot()._saveTask = Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
+
                 @Override
                 public void run() {
 
-                    // save data node on alternate thread
-                    Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
+                    final boolean isSaved = saveSync();
+                    final Collection<FutureResultAgent<IDataNode>> agents = getRoot()._saveAgents.removeAll(YamlDataNode.this);
+
+                    getRoot()._saveTask = null;
+
+                    if (agents.isEmpty())
+                        return;
+
+                    // return results on main thread
+                    Scheduler.runTaskSync(_plugin, new Runnable() {
 
                         @Override
                         public void run() {
 
-                            final boolean isSaved = save();
+                            for (FutureResultAgent<IDataNode> agent : agents) {
+                                agent.sendResult(
+                                        isSaved
+                                                ? resultBuilder.success().build()
+                                                : resultBuilder.error().build()
 
-                            if (saveHandler != null) {
-                                // return results on main thread
-                                Scheduler.runTaskSync(_plugin, new Runnable() {
-
-                                    @Override
-                                    public void run() {
-
-                                        saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
-                                        _saveTask = null;
-                                    }
-                                });
+                                );
                             }
                         }
                     });
                 }
             });
+
         }
         else {
-            boolean isSaved = save();
-            if (saveHandler != null) {
-                saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
-            }
+            boolean isSaved = saveSync();
+            agent.sendResult(isSaved
+                    ? resultBuilder.success().build()
+                    : resultBuilder.error().build());
         }
+
+        return agent.getFuture();
     }
 
     @Override
-    public boolean save(File destination) {
+    public boolean saveSync(File destination) {
 
         getRoot()._write.lock();
         try {
@@ -405,11 +380,10 @@ public class YamlDataNode extends AbstractDataNode {
     }
 
     @Override
-    public void saveAsync(final File destination, @Nullable final StorageSaveHandler saveHandler) {
+    public Future<IDataNode> save(final File destination) {
 
-        // set data node on save handler
-        if (saveHandler != null && saveHandler._dataNode == null)
-            saveHandler._dataNode = this;
+        final FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
+        final ResultBuilder<IDataNode> resultBuilder = new ResultBuilder<IDataNode>().result(this);
 
         // save on alternate thread
         Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
@@ -417,26 +391,27 @@ public class YamlDataNode extends AbstractDataNode {
             @Override
             public void run() {
 
-                final boolean isSaved = save(destination);
+                final boolean isSaved = saveSync(destination);
 
-                if (saveHandler != null) {
+                if (!agent.hasSubscribers())
+                    return;
 
-                    // return results on main thread
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(_plugin, new Runnable() {
+                // return results on main thread
+                Scheduler.runTaskSync(_plugin, new Runnable() {
 
-                        @Override
-                        public void run() {
-
-                            saveHandler.onFinish(new StorageSaveResult(isSaved, saveHandler));
-                        }
-
-                    });
-
-                }
-
+                    @Override
+                    public void run() {
+                        agent.sendResult(
+                                isSaved
+                                        ? resultBuilder.success().build()
+                                        : resultBuilder.error().build());
+                    }
+                });
             }
 
         });
+
+        return agent.getFuture();
     }
 
     @Override
@@ -486,19 +461,12 @@ public class YamlDataNode extends AbstractDataNode {
 
         getRoot()._write.lock();
         try {
-            _batch.start();
+            getRoot()._batch.start();
             batch.run(dataNode);
-            _batch.end();
+            getRoot()._batch.end();
 
-            if (!_batch.isRunning()) {
-                saveAsync(new StorageSaveHandler() {
-
-                    @Override
-                    public void onFinish(StorageSaveResult result) {
-
-                        batch.onFinish();
-                    }
-                });
+            if (!getRoot()._batch.isRunning()) {
+                save();
             }
         }
         finally {
@@ -511,9 +479,9 @@ public class YamlDataNode extends AbstractDataNode {
     public void preventSave(DataBatchOperation batch) {
         getRoot()._write.lock();
         try {
-            _batch.start();
+            getRoot()._batch.start();
             batch.run(this);
-            _batch.end();
+            getRoot()._batch.end();
         }
         finally {
             getRoot()._write.unlock();
@@ -697,13 +665,12 @@ public class YamlDataNode extends AbstractDataNode {
         return (YamlConfiguration)getRoot()._section;
     }
 
-    public void assertNodes(File defaultConfig) {
+    public Future<IDataNode> assertNodes(File defaultConfig) {
         final YamlDataNode config = new YamlDataNode(_plugin, defaultConfig);
 
-        config.loadAsync(new StorageLoadHandler() {
-
+        return config.loadAsync().onSuccess(new FutureSubscriber<IDataNode>() {
             @Override
-            public void onFinish(StorageLoadResult result) {
+            public void on(Result<IDataNode> result) {
 
                 IDataNode dest = YamlDataNode.this;
 
@@ -714,6 +681,7 @@ public class YamlDataNode extends AbstractDataNode {
 
                     dest.set(key, config.get(key));
                 }
+
             }
         });
     }

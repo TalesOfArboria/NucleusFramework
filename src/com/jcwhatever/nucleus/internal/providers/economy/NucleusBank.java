@@ -132,7 +132,7 @@ public final class NucleusBank implements IBank {
 
         IDataNode node = _dataNode.getNode(playerId.toString());
         node.remove();
-        node.saveAsync(null);
+        node.save();
 
         return true;
     }

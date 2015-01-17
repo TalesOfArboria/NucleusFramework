@@ -118,7 +118,7 @@ public class ScriptApiMeta extends NucleusScriptApi {
             PreCon.notNull(p);
 
             _dataNode.set(p.getUniqueId().toString() + '.' + key, value);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
 
         /**
@@ -144,7 +144,7 @@ public class ScriptApiMeta extends NucleusScriptApi {
             PreCon.notNullOrEmpty(key);
 
             _dataNode.set("global." + key, value);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
     }
 

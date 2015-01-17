@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -79,52 +80,60 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     boolean isRoot();
 
     /**
-     * Load the data synchronously.
+     * Load the data.
      */
     boolean load();
 
     /**
      * Load the data asynchronously.
-     */
-    void loadAsync();
-
-    /**
-     * Load the data asynchronously.
      *
-     * @param loadHandler  The handler to run when the loading is completed.
+     * @return A future object to get the result with. The result is the data node
+     * that {@code #save} was invoked from.
      */
-    void loadAsync(@Nullable StorageLoadHandler loadHandler);
+    Future<IDataNode> loadAsync();
 
     /**
-     * Save the data synchronously.
+     * Save the data from the main thread.
+     *
+     * <p>It is best to save synchronously when the server is shutting down since
+     * async threads may not run.</p>
      *
      * @return  True if the data was saved successfully.
      */
-    boolean save();
+    boolean saveSync();
 
     /**
-     * Save the data asynchronously.
+     * Save the data.
      *
-     * @param saveHandler  The handler to run when the save is completed.
+     * @return  A future object to get the results with. The result is the
+     * data node that {@code #save} was invoked from.
      */
-    void saveAsync(@Nullable StorageSaveHandler saveHandler);
+    Future<IDataNode> save();
 
     /**
-     * Save the data to the specified file.
+     * Save the data to the specified file from the main thread.
+     *
+     * <p>Not all implementation will support this. If not, false
+     * is always returned.</p>
      *
      * @param destination  The destination file.
      *
      * @return  True if the save was completed successfully.
      */
-    boolean save(File destination);
+    boolean saveSync(File destination);
 
     /**
      * Save the data to the specified file asynchronously.
      *
+     * <p>Not all implementations will support this. If not, the future
+     * is cancelled.</p>
+     *
      * @param destination  The destination file.
-     * @param saveHandler  The handler to run when the save is completed.
+     *
+     * @return  A future object to get the results with. The result is the
+     * data node that {@code #save} was invoked from.
      */
-    void saveAsync(File destination, @Nullable StorageSaveHandler saveHandler);
+    Future<IDataNode> save(File destination);
 
     /**
      * Get the number of direct child data nodes.

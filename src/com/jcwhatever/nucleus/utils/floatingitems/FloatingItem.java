@@ -224,7 +224,7 @@ public class FloatingItem implements IFloatingItem {
 
         if (_dataNode != null) {
             _dataNode.set("can-pickup", canPickup);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
     }
 
@@ -249,7 +249,7 @@ public class FloatingItem implements IFloatingItem {
 
         if (_dataNode != null) {
             _dataNode.set("is-centered", isCentered);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
     }
 
@@ -274,7 +274,7 @@ public class FloatingItem implements IFloatingItem {
 
         if (_dataNode != null) {
             _dataNode.set("respawn-time-seconds", seconds);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
     }
 
@@ -341,7 +341,7 @@ public class FloatingItem implements IFloatingItem {
             _dataNode.set("location", location);
             _dataNode.set("is-spawned", true);
             _dataNode.set("entity-id", _entityId);
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
 
         // notify onSpawn subscribers
@@ -387,7 +387,7 @@ public class FloatingItem implements IFloatingItem {
             if (Nucleus.getPlugin().isEnabled())
                 _dataNode.set("entity-id", null);
 
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
 
         @SuppressWarnings("unchecked")

@@ -173,7 +173,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
 
         IDataNode teleportNode = _dataNode.getNode("teleport");
         teleportNode.set(name, teleport);
-        _dataNode.saveAsync(null);
+        _dataNode.save();
 
         return true;
     }
@@ -194,7 +194,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
 
         IDataNode teleportNode = _dataNode.getNode("teleport");
         teleportNode.set(name, null);
-        _dataNode.saveAsync(null);
+        _dataNode.save();
 
         return true;
     }
@@ -258,7 +258,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         _releaseLocation = location;
 
         _dataNode.set("release-location", location);
-        _dataNode.saveAsync(null);
+        _dataNode.save();
     }
 
     @Override

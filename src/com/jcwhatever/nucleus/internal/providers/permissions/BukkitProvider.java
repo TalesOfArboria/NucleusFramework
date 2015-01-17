@@ -168,7 +168,7 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
         permissions.add(permissionName);
 
         _dataNode.set(pid, permissions);
-        _dataNode.saveAsync(null);
+        _dataNode.save();
 
         return addTransient(plugin, sender, permissionName);
     }

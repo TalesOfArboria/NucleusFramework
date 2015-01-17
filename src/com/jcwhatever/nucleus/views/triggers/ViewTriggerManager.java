@@ -181,7 +181,7 @@ public class ViewTriggerManager implements IViewTriggerStorage, IPluginOwned {
             node = _dataNode.getNode(triggerName);
             node.set("factory", factory.getName());
             node.set("target", target.getName());
-            node.saveAsync(null);
+            node.save();
         }
 
         IViewTrigger trigger = factory.create(triggerName, target, node);
@@ -211,7 +211,7 @@ public class ViewTriggerManager implements IViewTriggerStorage, IPluginOwned {
 
         if (_dataNode != null) {
             _dataNode.remove(trigger.getName());
-            _dataNode.saveAsync(null);
+            _dataNode.save();
         }
 
         return true;

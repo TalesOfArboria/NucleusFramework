@@ -6,7 +6,10 @@ import static org.junit.Assert.assertNotNull;
 
 import com.jcwhatever.dummy.DummyServer;
 import com.jcwhatever.dummy.DummyWorld;
+import com.jcwhatever.nucleus.NucleusInit;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
+import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.result.Result;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,6 +30,8 @@ import java.util.UUID;
 public abstract class IDataNodeTest {
 
     protected IDataNodeGenerator _generator;
+    private volatile int _testLoadRunCount;
+    private volatile int _testSaveRunCount;
 
     public interface IDataNodeGenerator {
         IDataNode generateRoot();
@@ -815,6 +820,84 @@ public abstract class IDataNodeTest {
         assertArrayEquals(new ItemStack[]{new ItemStackBuilder(Material.GRASS).build()},
                 dataNode.getItemStacks("node", new ItemStackBuilder(Material.GRASS).build()));
 
+    }
+
+    @Test
+    public void testLoad() {
+
+        NucleusInit.init();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                IDataNode dataNode = _generator.generateRoot();
+                dataNode.loadAsync().onResult(new FutureSubscriber<IDataNode>() {
+                    @Override
+                    public void on(Result<IDataNode> result) {
+
+                        _testLoadRunCount++;
+
+                    }
+                });
+            }
+        });
+
+        thread.run();
+
+        long timeout = System.currentTimeMillis() + 5000;
+
+        while(_testLoadRunCount == 0 && System.currentTimeMillis() < timeout) {
+
+            NucleusInit.heartBeat();
+
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ignore) {}
+        }
+
+        assertEquals(1, _testLoadRunCount);
+
+    }
+
+    @Test
+    public void testSave() {
+
+        NucleusInit.init();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                IDataNode dataNode = _generator.generateRoot();
+                assertEquals(true, dataNode.load());
+
+                dataNode = _generator.generateRoot();
+
+                dataNode.save().onResult(new FutureSubscriber<IDataNode>() {
+                    @Override
+                    public void on(Result<IDataNode> result) {
+
+                        _testSaveRunCount++;
+
+                    }
+                });
+            }
+        });
+
+        thread.run();
+
+        long timeout = System.currentTimeMillis() + 5000;
+
+        while(_testSaveRunCount == 0 && System.currentTimeMillis() < timeout) {
+
+            NucleusInit.heartBeat();
+
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ignore) {}
+        }
+
+        assertEquals(1, _testSaveRunCount);
     }
 
     public enum TestEnum {

@@ -225,7 +225,7 @@ public class MessengerFactory {
             }
 
             if (save)
-                data.saveAsync(null);
+                data.save();
         }
     }
 
