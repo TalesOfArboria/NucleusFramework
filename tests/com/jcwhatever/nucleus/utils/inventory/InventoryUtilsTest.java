@@ -1,18 +1,17 @@
 package com.jcwhatever.nucleus.utils.inventory;
 
 import com.jcwhatever.dummy.DummyInventory;
-import com.jcwhatever.dummy.DummyServer;
+import com.jcwhatever.nucleus.NucleusInit;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -40,9 +39,9 @@ public class InventoryUtilsTest {
         return inventory;
     }
 
-    @BeforeClass
-    public static void testStartup() {
-        Bukkit.setServer(new DummyServer());
+    @Before
+    public void testStartup() {
+        NucleusInit.init();
     }
 
     @Test

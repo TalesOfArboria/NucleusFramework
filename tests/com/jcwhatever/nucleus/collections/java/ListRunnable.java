@@ -7,13 +7,13 @@ import java.util.List;
 /**
  * Test a {@link List} implementation.
  *
- * <p>Also runs {@link ListIteratorTest} and {@link CollectionTest}
- * which runs {@link IterableTest}.</p>
+ * <p>Also runs {@link ListIteratorRunnable} and {@link CollectionRunnable}
+ * which runs {@link IterableRunnable}.</p>
  *
  * <p>Not a JUnit test case but throws errors via JUnit. Intended
  * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
-public class ListTest<E> implements Runnable {
+public class ListRunnable<E> implements Runnable {
 
     final List<E> _list;
     final E _value1;
@@ -28,7 +28,7 @@ public class ListTest<E> implements Runnable {
      * @param value2  A value to use for testing.
      * @param value3  A value to use for testing.
      */
-    public ListTest(List<E> list, E value1, E value2, E value3) {
+    public ListRunnable(List<E> list, E value1, E value2, E value3) {
         this._list = list;
         this._value1 = value1;
         this._value2 = value2;
@@ -37,7 +37,7 @@ public class ListTest<E> implements Runnable {
 
     @Override
     public void run() {
-        CollectionTest<E> test = new CollectionTest<>(_list, _value1, _value2, _value3);
+        CollectionRunnable<E> test = new CollectionRunnable<>(_list, _value1, _value2, _value3);
         test.run();
 
         _list.clear();
@@ -170,7 +170,7 @@ public class ListTest<E> implements Runnable {
             assertEquals(2, subList.size());
             assertEquals(5, _list.size());
 
-            ListIteratorTest<E> listIteratorTest = new ListIteratorTest<E>(
+            ListIteratorRunnable<E> listIteratorTest = new ListIteratorRunnable<E>(
                     _list.listIterator(), _list, _value2, _value3);
             listIteratorTest.run();
 

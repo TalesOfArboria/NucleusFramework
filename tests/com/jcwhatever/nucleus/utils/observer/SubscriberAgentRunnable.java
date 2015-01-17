@@ -3,20 +3,18 @@ package com.jcwhatever.nucleus.utils.observer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Test;
-
-public class SubscriberAgentTest {
+public class SubscriberAgentRunnable implements Runnable {
 
     SubscriberAgent _agent;
 
-    public SubscriberAgentTest() {}
+    public SubscriberAgentRunnable() {}
 
-    public SubscriberAgentTest(SubscriberAgent agent) {
+    public SubscriberAgentRunnable(SubscriberAgent agent) {
         _agent = agent;
     }
 
-    @Test
-    public void test() throws Exception {
+    @Override
+    public void run() {
 
         if (_agent == null)
             _agent = new SubscriberAgent() {};

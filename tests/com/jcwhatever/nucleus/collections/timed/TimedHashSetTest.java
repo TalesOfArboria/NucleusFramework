@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.dummy.DummyPlugin;
 import com.jcwhatever.nucleus.NucleusInit;
-import com.jcwhatever.nucleus.collections.java.SetTest;
+import com.jcwhatever.nucleus.collections.java.SetRunnable;
 
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class TimedHashSetTest {
 
         TimedHashSet<String> set = new TimedHashSet<String>(plugin);
 
-        SetTest<String> setTest = new SetTest<String>(set, "a", "b", "c");
+        SetRunnable<String> setTest = new SetRunnable<String>(set, "a", "b", "c");
 
         setTest.run();
     }

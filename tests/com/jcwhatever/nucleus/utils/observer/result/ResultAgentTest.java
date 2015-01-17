@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.utils.observer.result;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.nucleus.utils.observer.SubscriberAgentTest;
+import com.jcwhatever.nucleus.utils.observer.SubscriberAgentRunnable;
 
 import org.junit.Test;
 
@@ -17,8 +17,8 @@ public class ResultAgentTest {
 
         ResultAgent<String> agent = new ResultAgent<>();
 
-        SubscriberAgentTest test = new SubscriberAgentTest(agent);
-        test.test();
+        SubscriberAgentRunnable test = new SubscriberAgentRunnable(agent);
+        test.run();
 
 
         final List<String> resultList = new ArrayList<>(5);

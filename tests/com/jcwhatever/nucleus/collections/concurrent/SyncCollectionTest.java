@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.collections.concurrent;
 
-import com.jcwhatever.nucleus.collections.java.CollectionTest;
+import com.jcwhatever.nucleus.collections.java.CollectionRunnable;
 
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class SyncCollectionTest {
         };
 
 
-        CollectionTest<String>  test = new CollectionTest<>(collection, "a", "b", "c");
+        CollectionRunnable<String> test = new CollectionRunnable<>(collection, "a", "b", "c");
         test.run();
     }
 

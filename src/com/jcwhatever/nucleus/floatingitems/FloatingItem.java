@@ -170,8 +170,9 @@ public class FloatingItem implements IFloatingItem {
     @Override
     @Nullable
     public Entity getEntity() {
-        if (_trackedEntity == null)
+        if (_trackedEntity == null) {
             return null;
+        }
 
         return _trackedEntity.getEntity();
     }
@@ -521,17 +522,10 @@ public class FloatingItem implements IFloatingItem {
             }
 
         }
+        else {
+            _isSpawned = false;
+        }
 
         onLoadSettings(_dataNode);
     }
-
-    private void setTrackedEntity(Entity entity) {
-        _trackedEntity = EntityUtils.trackEntity(entity);
-    }
-
-    public static interface PickupHandler {
-        void onPickup(Player p, FloatingItem item, boolean isCancelled);
-    }
-
-
 }

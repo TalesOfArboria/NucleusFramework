@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * <p>Not a JUnit test case but throws errors via JUnit. Intended
  * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
-public class IterableTest<E> implements Runnable {
+public class IterableRunnable<E> implements Runnable {
 
     final Iterable<E> _iterable;
     final int _size;
@@ -25,7 +25,7 @@ public class IterableTest<E> implements Runnable {
      * @param size      The number of elements in the iterable.
      * @param refill    A runnable that can refill the elements of iterable.
      */
-    public IterableTest(Iterable<E> iterable, int size, Runnable refill) {
+    public IterableRunnable(Iterable<E> iterable, int size, Runnable refill) {
         _iterable = iterable;
         _size = size;
         _refill = refill;

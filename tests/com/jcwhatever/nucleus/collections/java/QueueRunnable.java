@@ -10,12 +10,12 @@ import java.util.Queue;
 /**
  * Test a {@link Queue} implementation.
  *
- * <p>Also runs {@link CollectionTest} on the queue.</p>
+ * <p>Also runs {@link CollectionRunnable} on the queue.</p>
  *
  * <p>Not a JUnit test case but throws errors via JUnit. Intended
  * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
-public class QueueTest<E> implements Runnable {
+public class QueueRunnable<E> implements Runnable {
 
     final Queue<E> _queue;
     final E _value1;
@@ -30,7 +30,7 @@ public class QueueTest<E> implements Runnable {
      * @param value2  A value to use for testing.
      * @param value3  A value to use for testing.
      */
-    public QueueTest(Queue<E> queue, E value1, E value2, E value3) {
+    public QueueRunnable(Queue<E> queue, E value1, E value2, E value3) {
         this._queue = queue;
         this._value1 = value1;
         this._value2 = value2;
@@ -40,7 +40,7 @@ public class QueueTest<E> implements Runnable {
     @Override
     public void run() {
 
-        CollectionTest<E> test = new CollectionTest<E>(_queue, _value1, _value2, _value3);
+        CollectionRunnable<E> test = new CollectionRunnable<E>(_queue, _value1, _value2, _value3);
         test.run();
 
         _queue.clear();

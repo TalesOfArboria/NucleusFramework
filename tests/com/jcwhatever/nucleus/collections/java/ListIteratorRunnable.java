@@ -11,7 +11,7 @@ import java.util.ListIterator;
  * <p>Not a JUnit test case but throws errors via JUnit. Intended
  * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
-public class ListIteratorTest<E> implements Runnable {
+public class ListIteratorRunnable<E> implements Runnable {
 
     final ListIterator<E> _iterator;
     final List<E> _values;
@@ -26,7 +26,7 @@ public class ListIteratorTest<E> implements Runnable {
      * @param value1    A value to insert for testing.
      * @param value2    A value to insert for testing.
      */
-    public ListIteratorTest(ListIterator<E> iterator, List<E> values, E value1, E value2) {
+    public ListIteratorRunnable(ListIterator<E> iterator, List<E> values, E value1, E value2) {
         _iterator = iterator;
         _values = values;
         _value1 = value1;

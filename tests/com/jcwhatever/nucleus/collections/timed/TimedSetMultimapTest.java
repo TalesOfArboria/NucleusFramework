@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.dummy.DummyPlugin;
 import com.jcwhatever.nucleus.NucleusInit;
-import com.jcwhatever.nucleus.collections.java.MultimapTest;
+import com.jcwhatever.nucleus.collections.java.MultimapRunnable;
 
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class TimedSetMultimapTest {
 
         TimedSetMultimap<String, String> map = new TimedSetMultimap<String, String>(plugin);
 
-        MultimapTest<String> test = new MultimapTest<>(map, "va", "vb", "vc");
+        MultimapRunnable<String> test = new MultimapRunnable<>(map, "va", "vb", "vc");
         test.run();
     }
 

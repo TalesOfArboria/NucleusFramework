@@ -17,7 +17,7 @@ import java.util.Map;
  * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
 @Ignore
-public class MapTest<V> implements Runnable {
+public class MapRunnable<V> implements Runnable {
 
     final Map<String, V> _map;
     final V _value1;
@@ -32,7 +32,7 @@ public class MapTest<V> implements Runnable {
      * @param value2  A value to use for testing.
      * @param value3  A value to use for testing.
      */
-    public MapTest(Map<String, V> map, V value1, V value2, V value3) {
+    public MapRunnable(Map<String, V> map, V value1, V value2, V value3) {
         _map = map;
         _value1 = value1;
         _value2 = value2;

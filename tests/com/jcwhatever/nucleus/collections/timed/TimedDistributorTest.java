@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.collections.timed;
 
-import com.jcwhatever.nucleus.collections.java.CollectionTest;
+import com.jcwhatever.nucleus.collections.java.CollectionRunnable;
 
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ public class TimedDistributorTest {
 
         TimedDistributor<String> distributor = new TimedDistributor<>();
 
-        CollectionTest<String> test = new CollectionTest<>(distributor, "a", "b", "c");
+        CollectionRunnable<String> test = new CollectionRunnable<>(distributor, "a", "b", "c");
         test.run();
 
     }

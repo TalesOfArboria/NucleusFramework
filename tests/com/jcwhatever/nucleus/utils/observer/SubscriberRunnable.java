@@ -3,20 +3,18 @@ package com.jcwhatever.nucleus.utils.observer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Test;
-
-public class SubscriberTest {
+public class SubscriberRunnable implements Runnable {
 
     private Subscriber _subscriber;
 
-    public SubscriberTest() {}
+    public SubscriberRunnable() {}
 
-    public SubscriberTest(Subscriber subscriber) {
+    public SubscriberRunnable(Subscriber subscriber) {
         _subscriber = subscriber;
     }
 
-    @Test
-    public void test() throws Exception {
+    @Override
+    public void run() {
 
         if (_subscriber == null)
             _subscriber =  new Subscriber() {};

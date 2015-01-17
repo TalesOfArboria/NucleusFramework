@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.collections.concurrent;
 
-import com.jcwhatever.nucleus.collections.java.SetTest;
+import com.jcwhatever.nucleus.collections.java.SetRunnable;
 
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class SyncSetTest {
         };
 
 
-        SetTest<String> test = new SetTest<>(set, "a", "b", "c");
+        SetRunnable<String> test = new SetRunnable<>(set, "a", "b", "c");
         test.run();
     }
 

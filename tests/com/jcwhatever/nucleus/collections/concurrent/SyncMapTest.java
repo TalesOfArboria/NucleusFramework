@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.collections.concurrent;
 
-import com.jcwhatever.nucleus.collections.java.MapTest;
+import com.jcwhatever.nucleus.collections.java.MapRunnable;
 
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class SyncMapTest {
             }
         };
 
-        MapTest<Integer> test = new MapTest<>(map, 1, 2, 3);
+        MapRunnable<Integer> test = new MapRunnable<>(map, 1, 2, 3);
 
         test.run();
     }

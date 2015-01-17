@@ -1,17 +1,16 @@
 package com.jcwhatever.nucleus.utils.inventory;
 
 import com.jcwhatever.dummy.DummyInventory;
-import com.jcwhatever.dummy.DummyServer;
+import com.jcwhatever.nucleus.NucleusInit;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 public class InventorySnapshotTest {
@@ -37,12 +36,9 @@ public class InventorySnapshotTest {
         return inventory;
     }
 
-    @BeforeClass
-    public static void testStartup() {
-        try {
-            Bukkit.setServer(new DummyServer());
-        }
-        catch (UnsupportedOperationException ignore) {}
+    @Before
+    public void testStartup() {
+        NucleusInit.init();
     }
 
     @Test

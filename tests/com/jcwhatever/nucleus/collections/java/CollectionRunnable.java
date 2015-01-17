@@ -14,13 +14,13 @@ import java.util.Iterator;
 /**
  * Test a {@link Collection} implementation.
  *
- * <p>Also runs {@link IterableTest}.</p>
+ * <p>Also runs {@link IterableRunnable}.</p>
  *
  * <p>Not a JUnit test case but throws errors via JUnit. Intended
  * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
 @Ignore
-public class CollectionTest<E> implements Runnable {
+public class CollectionRunnable<E> implements Runnable {
 
     final Collection<E> _collection;
     final E _value1;
@@ -35,7 +35,7 @@ public class CollectionTest<E> implements Runnable {
      * @param value2      A value to use for testing.
      * @param value3      A value to use for testing.
      */
-    public CollectionTest(Collection<E> collection, E value1, E value2, E value3) {
+    public CollectionRunnable(Collection<E> collection, E value1, E value2, E value3) {
         _collection = collection;
         _value1 = value1;
         _value2 = value2;
@@ -149,7 +149,7 @@ public class CollectionTest<E> implements Runnable {
             assertEquals(true, _collection.contains(_value2));
             assertEquals(false, _collection.contains(_value3));
 
-            IterableTest<E> iterableTest = new IterableTest<>(_collection, _collection.size(), new Runnable() {
+            IterableRunnable<E> iterableTest = new IterableRunnable<>(_collection, _collection.size(), new Runnable() {
                 @Override
                 public void run() {
                     _collection.add(_value1);

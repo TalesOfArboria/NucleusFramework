@@ -11,14 +11,14 @@ import java.util.Map.Entry;
 /*
  * 
  */
-public class MultimapTest<V> implements Runnable {
+public class MultimapRunnable<V> implements Runnable {
 
     final Multimap<String, V> _map;
     final V _value1;
     final V _value2;
     final V _value3;
 
-    public MultimapTest(Multimap<String, V> map, V value1, V value2, V value3) {
+    public MultimapRunnable(Multimap<String, V> map, V value1, V value2, V value3) {
         _map = map;
         _value1 = value1;
         _value2 = value2;
@@ -71,26 +71,26 @@ public class MultimapTest<V> implements Runnable {
         _map.clear();
         assertEquals(0, _map.size());
 
-        SetTest<String> setTest = new SetTest<String>(_map.keySet(), "a", "b", "c");
+        SetRunnable<String> setTest = new SetRunnable<String>(_map.keySet(), "a", "b", "c");
         setTest.run();
 
         _map.clear();
         assertEquals(0, _map.size());
 
-        CollectionTest<V> valuesTest = new CollectionTest<V>(_map.values(), _value1, _value2, _value3);
+        CollectionRunnable<V> valuesTest = new CollectionRunnable<V>(_map.values(), _value1, _value2, _value3);
         valuesTest.run();
 
         _map.clear();
         assertEquals(0, _map.size());
 
-        CollectionTest<Entry<String, V>> entryTest = new CollectionTest<>(_map.entries(),
+        CollectionRunnable<Entry<String, V>> entryTest = new CollectionRunnable<>(_map.entries(),
                 getEntry("a", _value1), getEntry("b", _value2), getEntry("c", _value3));
         valuesTest.run();
 
         _map.clear();
         assertEquals(0, _map.size());
 
-        MapTest<Collection<V>> mapTest = new MapTest<>(_map.asMap(),
+        MapRunnable<Collection<V>> mapTest = new MapRunnable<>(_map.asMap(),
                 ArrayUtils.asList(_value1),
                 ArrayUtils.asList(_value1, _value2),
                 ArrayUtils.asList(_value1, _value2, _value3));

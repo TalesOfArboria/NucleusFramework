@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.collections.observer.agent;
 
-import com.jcwhatever.nucleus.collections.java.MapTest;
+import com.jcwhatever.nucleus.collections.java.MapRunnable;
 import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
 import com.jcwhatever.nucleus.utils.observer.SubscriberAgent;
 
@@ -28,7 +28,7 @@ public class AgentHashMapTest {
         ISubscriberAgent agent2 = new SubscriberAgent() {};
         ISubscriberAgent agent3 = new SubscriberAgent() {};
 
-        MapTest<ISubscriberAgent> test = new MapTest<>(map, agent1, agent2, agent3);
+        MapRunnable<ISubscriberAgent> test = new MapRunnable<>(map, agent1, agent2, agent3);
 
         test.run();
     }

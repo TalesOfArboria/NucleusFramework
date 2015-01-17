@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.collections;
 
-import com.jcwhatever.nucleus.collections.java.DequeTest;
+import com.jcwhatever.nucleus.collections.java.DequeRunnable;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 
 import org.junit.Assert;
@@ -18,7 +18,7 @@ public class CircularQueueTest {
 
         CircularQueue<String> queue = new CircularQueue<>();
 
-        DequeTest<String> dequeTest = new DequeTest<>(queue, "a", "b", "c");
+        DequeRunnable<String> dequeTest = new DequeRunnable<>(queue, "a", "b", "c");
         dequeTest.run();
     }
 

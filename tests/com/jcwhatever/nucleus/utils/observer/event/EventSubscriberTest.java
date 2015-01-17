@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.utils.observer.event;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.nucleus.utils.observer.SubscriberTest;
+import com.jcwhatever.nucleus.utils.observer.SubscriberRunnable;
 
 import org.junit.Test;
 
@@ -28,8 +28,8 @@ public class EventSubscriberTest {
             }
         };
 
-        SubscriberTest subscriberTest = new SubscriberTest(subscriber);
-        subscriberTest.test();
+        SubscriberRunnable subscriberTest = new SubscriberRunnable(subscriber);
+        subscriberTest.run();
 
         EventAgent agent = new EventAgent() {};
 

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.dummy.DummyPlugin;
 import com.jcwhatever.nucleus.NucleusInit;
-import com.jcwhatever.nucleus.collections.java.MapTest;
+import com.jcwhatever.nucleus.collections.java.MapRunnable;
 
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class TimedHashMapTest {
 
         TimedHashMap<String, String> map = new TimedHashMap<String, String>(plugin);
 
-        MapTest<String> mapTest = new MapTest<String>(map, "a", "b", "c");
+        MapRunnable<String> mapTest = new MapRunnable<String>(map, "a", "b", "c");
 
         mapTest.run();
     }

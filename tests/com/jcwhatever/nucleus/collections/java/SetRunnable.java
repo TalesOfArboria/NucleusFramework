@@ -8,12 +8,12 @@ import java.util.Set;
 /**
  * Tests a {@link Set} implementation.
  *
- * <p>Also runs {@link CollectionTest} on the set.</p>
+ * <p>Also runs {@link CollectionRunnable} on the set.</p>
  *
  * <p>Not a JUnit test case but throws errors via JUnit. Intended
  * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
-public class SetTest<E> implements Runnable {
+public class SetRunnable<E> implements Runnable {
 
     final Set<E> _set;
     final E _value1;
@@ -28,7 +28,7 @@ public class SetTest<E> implements Runnable {
      * @param value2  A value to use for testing.
      * @param value3  A value to use for testing.
      */
-    public SetTest(Set<E> set, E value1, E value2, E value3) {
+    public SetRunnable(Set<E> set, E value1, E value2, E value3) {
         _set = set;
         _value1 = value1;
         _value2 = value2;
@@ -37,7 +37,7 @@ public class SetTest<E> implements Runnable {
 
     @Override
     public void run() {
-        CollectionTest<E> collectionTest = new CollectionTest<E>(_set, _value1, _value2, _value3);
+        CollectionRunnable<E> collectionTest = new CollectionRunnable<E>(_set, _value1, _value2, _value3);
         collectionTest.run();
 
         try {

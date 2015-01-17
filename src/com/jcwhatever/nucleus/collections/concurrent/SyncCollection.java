@@ -270,7 +270,7 @@ public abstract class SyncCollection<E> implements Collection<E> {
             removed = CollectionUtils.retainAll(collection(), new IValidator<E>() {
                 @Override
                 public boolean isValid(E element) {
-                    return !c.contains(element) && onPreRemove(element);
+                    return c.contains(element) && onPreRemove(element);
                 }
             });
         }

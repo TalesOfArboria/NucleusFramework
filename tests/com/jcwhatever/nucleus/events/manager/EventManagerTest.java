@@ -28,7 +28,7 @@ public class EventManagerTest {
 
         NucleusInit.init();
 
-        EventManager manager = new EventManager(null);
+        EventManager manager = new EventManager(plugin, null);
 
         manager.register(plugin, TestEvent.class, new TestEventSubscriber<TestEvent>(false, false));
 

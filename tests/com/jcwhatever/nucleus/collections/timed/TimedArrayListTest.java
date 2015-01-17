@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.dummy.DummyPlugin;
 import com.jcwhatever.nucleus.NucleusInit;
-import com.jcwhatever.nucleus.collections.java.ListTest;
+import com.jcwhatever.nucleus.collections.java.ListRunnable;
 
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class TimedArrayListTest {
 
         TimedArrayList<String> list = new TimedArrayList<String>(plugin);
 
-        ListTest<String> listTest = new ListTest<>(list, "a", "b", "c");
+        ListRunnable<String> listTest = new ListRunnable<>(list, "a", "b", "c");
         listTest.run();
     }
 

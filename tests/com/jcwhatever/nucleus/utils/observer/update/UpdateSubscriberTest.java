@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.utils.observer.update;
 
-import com.jcwhatever.nucleus.utils.observer.SubscriberTest;
+import com.jcwhatever.nucleus.utils.observer.SubscriberRunnable;
 
 import org.junit.Test;
 
@@ -17,8 +17,8 @@ public class UpdateSubscriberTest {
             }
         };
 
-        SubscriberTest subscriberTest = new SubscriberTest(subscriber);
-        subscriberTest.test();
+        SubscriberRunnable subscriberTest = new SubscriberRunnable(subscriber);
+        subscriberTest.run();
     }
 
 }

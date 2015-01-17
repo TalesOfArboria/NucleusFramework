@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.collections.observer.agent;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.nucleus.collections.java.MapTest;
+import com.jcwhatever.nucleus.collections.java.MapRunnable;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
@@ -33,7 +33,7 @@ public class AgentMapTest {
         DisposableAgent agent2 = new DisposableAgent() {};
         DisposableAgent agent3 = new DisposableAgent() {};
 
-        new MapTest<>(map, agent1, agent2, agent3).run();
+        new MapRunnable<>(map, agent1, agent2, agent3).run();
 
         map.clear();
 

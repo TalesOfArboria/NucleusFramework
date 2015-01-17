@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.dummy.DummyPlugin;
 import com.jcwhatever.nucleus.NucleusInit;
-import com.jcwhatever.nucleus.collections.java.DequeTest;
+import com.jcwhatever.nucleus.collections.java.DequeRunnable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class DecayListTest {
 
         DecayList<String> list = new DecayList<String>(plugin);
 
-        DequeTest<String> test = new DequeTest<>(list, "a", "b", "c");
+        DequeRunnable<String> test = new DequeRunnable<>(list, "a", "b", "c");
         test.run();
     }
 

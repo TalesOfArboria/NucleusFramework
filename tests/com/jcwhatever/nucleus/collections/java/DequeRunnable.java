@@ -8,13 +8,13 @@ import java.util.NoSuchElementException;
 /**
  * Test a {@link Deque} implementation.
  *
- * <p>Also runs {@link QueueTest}, which runs {@link CollectionTest} and
- * {@link IterableTest}.</p>
+ * <p>Also runs {@link QueueRunnable}, which runs {@link CollectionRunnable} and
+ * {@link IterableRunnable}.</p>
  *
  * <p>Not a JUnit test case but throws errors via JUnit. Intended
  * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
-public class DequeTest<E> implements Runnable {
+public class DequeRunnable<E> implements Runnable {
 
     final Deque<E> _queue;
     final E _value1;
@@ -29,7 +29,7 @@ public class DequeTest<E> implements Runnable {
      * @param value2  A value to use for testing.
      * @param value3  A value to use for testing.
      */
-    public DequeTest(Deque<E> queue, E value1, E value2, E value3) {
+    public DequeRunnable(Deque<E> queue, E value1, E value2, E value3) {
         this._queue = queue;
         this._value1 = value1;
         this._value2 = value2;
@@ -38,7 +38,7 @@ public class DequeTest<E> implements Runnable {
 
     @Override
     public void run() {
-        QueueTest<E> test = new QueueTest<>(_queue, _value1, _value2, _value3);
+        QueueRunnable<E> test = new QueueRunnable<>(_queue, _value1, _value2, _value3);
         test.run();
 
         _queue.clear();
