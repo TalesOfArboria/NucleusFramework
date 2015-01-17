@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.scoreboards;
+package com.jcwhatever.nucleus.utils.scoreboards;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;

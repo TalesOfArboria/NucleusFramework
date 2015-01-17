@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.scoreboards;
+package com.jcwhatever.nucleus.utils.scoreboards;
 
 /**
  * Described the use of the scoreboard so the
