@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.scheduler;
+package com.jcwhatever.nucleus.utils.scheduler;
 
 import org.bukkit.plugin.Plugin;
 

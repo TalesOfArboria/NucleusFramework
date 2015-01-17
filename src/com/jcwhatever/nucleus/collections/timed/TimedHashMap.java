@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.collections.concurrent.SyncConversionEntry;
 import com.jcwhatever.nucleus.collections.concurrent.SyncSet;
 import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;

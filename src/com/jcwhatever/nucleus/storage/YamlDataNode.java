@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.BatchTracker;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.LocationUtils;

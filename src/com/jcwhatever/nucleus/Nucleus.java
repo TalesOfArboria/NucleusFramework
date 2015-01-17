@@ -37,7 +37,7 @@ import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.nms.NmsManager;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
-import com.jcwhatever.nucleus.scheduler.ITaskScheduler;
+import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.IScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiRepo;
