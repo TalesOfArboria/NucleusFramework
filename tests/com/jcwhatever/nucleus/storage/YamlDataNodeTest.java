@@ -9,14 +9,16 @@ public class YamlDataNodeTest extends IDataNodeTest{
 
     public YamlDataNodeTest() {
 
-        Plugin plugin = new DummyPlugin("dummy");
+        final Plugin plugin = new DummyPlugin("dummy");
 
-        YamlDataNode initNode = new YamlDataNode(plugin, "");
+        setNodeGenerator(new IDataNodeGenerator() {
+            @Override
+            public IDataNode generateRoot() {
+                YamlDataNode node = new YamlDataNode(plugin, "");
+                node.load();
 
-        initNode(initNode);
-        initNode.save();
-
-        _dataNode = new YamlDataNode(plugin, initNode._yamlString);
-        _dataNode.load();
+                return node;
+            }
+        });
     }
 }

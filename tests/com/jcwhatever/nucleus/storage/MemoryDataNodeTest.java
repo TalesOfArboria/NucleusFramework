@@ -5,8 +5,12 @@ import com.jcwhatever.dummy.DummyPlugin;
 public class MemoryDataNodeTest extends IDataNodeTest {
 
     public MemoryDataNodeTest() {
-        _dataNode = new MemoryDataNode(new DummyPlugin("dummy"));
-        initNode(_dataNode);
+        setNodeGenerator(new IDataNodeGenerator() {
+            @Override
+            public IDataNode generateRoot() {
+                return new MemoryDataNode(new DummyPlugin("dummy"));
+            }
+        });
     }
 
 }

@@ -46,7 +46,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -465,7 +464,12 @@ public class YamlDataNode extends AbstractDataNode {
 
         getRoot()._read.lock();
         try {
-            return _section.getConfigurationSection(nodePath).getKeys(false).size();
+
+            ConfigurationSection section = _section.getConfigurationSection(nodePath);
+            if (section == null)
+                return 0;
+
+            return section.getKeys(false).size();
         }
         finally {
             getRoot()._read.unlock();
@@ -536,9 +540,10 @@ public class YamlDataNode extends AbstractDataNode {
             if (_section.get(nodePath) == null) {
                 return CollectionUtils.unmodifiableSet();
             }
+            //noinspection unchecked
             return (section = _section.getConfigurationSection(nodePath)) != null
                     ? CollectionUtils.unmodifiableSet(section.getKeys(false))
-                    : CollectionUtils.unmodifiableSet(new ArrayList<String>(0));
+                    : (Set<String>)CollectionUtils.UNMODIFIABLE_EMPTY_SET;
         }
         finally {
             getRoot()._read.unlock();
@@ -676,9 +681,15 @@ public class YamlDataNode extends AbstractDataNode {
 
     @Override
     public void clear() {
-        Set<String> keys = getSubNodeNames();
-        for (String key : keys) {
-            set(key, null);
+
+        if (isRoot()) {
+            Set<String> keys = getSubNodeNames();
+            for (String key : keys) {
+                set(key, null);
+            }
+        }
+        else {
+            getRoot().set(getFullPath(""), null);
         }
     }
 

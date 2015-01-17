@@ -1,5 +1,9 @@
 package com.jcwhatever.nucleus.storage;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import com.jcwhatever.dummy.DummyServer;
 import com.jcwhatever.dummy.DummyWorld;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
@@ -22,9 +26,17 @@ import java.util.UUID;
  */
 public abstract class IDataNodeTest {
 
-    protected IDataNode _dataNode;
+    protected IDataNodeGenerator _generator;
 
-    protected void initNode(IDataNode node) {
+    public interface IDataNodeGenerator {
+        IDataNode generateRoot();
+    }
+
+    protected void setNodeGenerator(IDataNodeGenerator generator) {
+        _generator = generator;
+    }
+
+    protected void initDataNode(IDataNode node) {
         node.set("boolean", true);
         node.set("integer", Integer.MAX_VALUE);
         node.set("long", Long.MAX_VALUE);
@@ -48,245 +60,600 @@ public abstract class IDataNodeTest {
     @Test
     public void testRoot() throws Exception {
 
-        IDataNode node1 = _dataNode.getNode("node1");
+        IDataNode dataNode = _generator.generateRoot();
+        initDataNode(dataNode);
+
+        IDataNode node1 = dataNode.getNode("node1");
         IDataNode node2 = node1.getNode("node2");
 
-        Assert.assertTrue(node1.getRoot() == _dataNode);
-        Assert.assertTrue(node2.getRoot() == _dataNode);
+        assertEquals(dataNode, node1.getRoot());
+        assertEquals(dataNode, node2.getRoot());
     }
 
+    /**
+     * Test size from a root node.
+     */
     @Test
-    public void testSize() throws Exception {
+    public void testSizeRoot() throws Exception {
 
-        int initialSize = _dataNode.size();
+        IDataNode dataNode = _generator.generateRoot();
 
-        _dataNode.set("testSize", "value");
-
-        Assert.assertEquals(initialSize + 1, _dataNode.size());
+        testSize(dataNode);
     }
 
+    /**
+     * Test size from a sub node.
+     */
+    @Test
+    public void testSizeSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        testSize(dataNode.getNode("newNode"));
+    }
+
+    private void testSize(IDataNode dataNode) {
+
+        assertEquals(0, dataNode.size());
+
+        // add 9 key values
+        initDataNode(dataNode);
+
+        assertEquals(9, dataNode.size());
+
+        dataNode.set("testSize", "value");
+
+        assertEquals(10, dataNode.size());
+
+        dataNode.clear();
+
+        assertEquals(0, dataNode.size());
+    }
+
+    /**
+     * test hasNode on root node.
+     */
     @Test
     public void testHasNode() throws Exception {
 
-        _dataNode.set("testHasNode", "value");
+        IDataNode dataNode = _generator.generateRoot();
 
-        Assert.assertTrue(_dataNode.hasNode("testHasNode"));
-
-        _dataNode.set("testHasNode1.val", "value");
-
-        Assert.assertTrue(_dataNode.hasNode("testHasNode1.val"));
+        testHasNode(dataNode);
     }
 
+    /**
+     * test hasNode on sub node.
+     */
     @Test
-    public void testGetNode() throws Exception {
+    public void testHasNode1() throws Exception {
 
-        _dataNode.set("testGetNode", "node");
+        IDataNode dataNode = _generator.generateRoot();
 
-        IDataNode dataNode = _dataNode.getNode("testGetNode");
-
-        Assert.assertTrue(dataNode != null);
-
-        dataNode = _dataNode.getNode("newNode");
-
-        Assert.assertTrue(dataNode != null);
+        testHasNode(dataNode.getNode("newNode"));
     }
 
+    private void testHasNode(IDataNode dataNode) {
+
+        dataNode.set("testHasNode", "value");
+
+        assertEquals(true, dataNode.hasNode("testHasNode"));
+
+        dataNode.set("testHasNode1.val", "value");
+
+        assertEquals(true, dataNode.hasNode("testHasNode1.val"));
+    }
+
+    /**
+     * test getNode from root node.
+     */
     @Test
-    public void testGetSubNodeNames() throws Exception {
+    public void testGetNodeRoot() throws Exception {
 
-        _dataNode.set("testGetSubNodeNames", "node");
+        IDataNode dataNode = _generator.generateRoot();
 
-        IDataNode dataNode = _dataNode.getNode("testGetNode");
-
-        Assert.assertTrue(dataNode != null);
-
-        dataNode = _dataNode.getNode("newNode");
-
-        Assert.assertTrue(dataNode != null);
+        testGetNode(dataNode);
     }
 
+    /**
+     * test getNode from sub node.
+     */
     @Test
-    public void testClear() throws Exception {
+    public void testGetNodeSub() throws Exception {
 
-        int initialSize = _dataNode.size();
+        IDataNode dataNode = _generator.generateRoot();
 
-        _dataNode.set("testClear", "node");
-        _dataNode.set("testClear2", "node");
-        _dataNode.set("testClear3", "node");
-
-        Assert.assertTrue(_dataNode.size() == initialSize + 3);
-
-        _dataNode.clear();
-
-        Assert.assertTrue(_dataNode.size() == 0);
+        testGetNode(dataNode.getNode("newNode"));
     }
 
+    private void testGetNode(IDataNode dataNode) {
+
+        dataNode.set("testGetNode", "node");
+
+        IDataNode node = dataNode.getNode("testGetNode");
+
+        assertNotNull(node);
+
+        node = dataNode.getNode("newNode");
+
+        assertNotNull(node);
+    }
+
+    /**
+     * test getSubNodeNames from root node.
+     */
+    @Test
+    public void testGetSubNodeNamesRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        initDataNode(dataNode);
+
+        testGetSubNodeNames(dataNode);
+    }
+
+    /**
+     * test getSubNodeNames from subNode
+     */
+    @Test
+    public void testGetSubNodeNamesSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        testGetSubNodeNames(dataNode.getNode("newNode"));
+    }
+
+    private void testGetSubNodeNames(IDataNode dataNode) {
+        dataNode.set("testGetSubNodeNames", "node");
+
+        IDataNode node = dataNode.getNode("testGetNode");
+
+        assertNotNull(node);
+
+        node = dataNode.getNode("newNode");
+
+        assertNotNull(node);
+    }
+
+    /**
+     * test clear from root node.
+     */
+    @Test
+    public void testClearRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testClear(dataNode);
+    }
+
+    /**
+     * test clear from sub node.
+     */
+    @Test
+    public void testClearSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        testClear(dataNode.getNode("newNode"));
+    }
+
+    private void testClear(IDataNode dataNode) {
+
+        dataNode.set("testClear", "node");
+        dataNode.set("testClear2", "node");
+        dataNode.set("testClear3", "node");
+
+        assertEquals(3, dataNode.size());
+
+        dataNode.clear();
+
+        assertEquals(0, dataNode.size());
+    }
+
+    /**
+     * test remove from root node.
+     */
     @Test
     public void testRemove() throws Exception {
-        _dataNode.set("testRemoval", "node");
-        _dataNode.set("testRemoval2", "node");
-        _dataNode.set("testRemoval3", "node");
 
-        Assert.assertTrue(_dataNode.hasNode("testRemoval2"));
+        IDataNode dataNode = _generator.generateRoot();
+        initDataNode(dataNode);
 
-        _dataNode.remove("testRemoval2");
+        dataNode.set("testRemoval", "node");
+        dataNode.set("testRemoval2", "node");
+        dataNode.set("testRemoval3", "node");
 
-        Assert.assertFalse(_dataNode.hasNode("testRemoval2"));
+        assertEquals(true, dataNode.hasNode("testRemoval2"));
+
+        dataNode.remove("testRemoval2");
+
+        assertEquals(false, dataNode.hasNode("testRemoval2"));
     }
 
+    /**
+     * test remove from sub node
+     */
     @Test
     public void testRemove1() throws Exception {
-        _dataNode.set("testRemoval", "node");
-        _dataNode.set("testRemoval2", "node");
-        _dataNode.set("testRemoval3", "node");
 
-        Assert.assertTrue(_dataNode.hasNode("testRemoval2"));
+        IDataNode dataNode = _generator.generateRoot();
+        initDataNode(dataNode);
 
-        IDataNode node = _dataNode.getNode("testRemoval2");
+        dataNode.set("testRemoval", "node");
+        dataNode.set("testRemoval2", "node");
+        dataNode.set("testRemoval3", "node");
 
-        node.remove();
+        assertEquals(true, dataNode.hasNode("testRemoval2"));
 
-        Assert.assertFalse(_dataNode.hasNode("testRemoval2"));
+        IDataNode subNode = dataNode.getNode("testRemoval2");
+
+        subNode.remove();
+
+        assertEquals(false, dataNode.hasNode("testRemoval2"));
     }
 
+    /**
+     * test set from root node.
+     */
     @Test
-    public void testSet() throws Exception {
-        //_dataNode.set("testSet", "node");
-        _dataNode.set("testSet.test", "node");
+    public void testSetRoot() throws Exception {
 
-        Assert.assertTrue(_dataNode.hasNode("testSet"));
-        Assert.assertTrue(_dataNode.hasNode("testSet.test"));
+        IDataNode dataNode = _generator.generateRoot();
+        initDataNode(dataNode);
 
-        IDataNode node = _dataNode.getNode("testSet");
+        testSet(dataNode);
+    }
 
-        Assert.assertTrue(node.hasNode("test"));
+    /**
+     * test set from sub node.
+     */
+    @Test
+    public void testSetSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        testSet(dataNode.getNode("newNode"));
+    }
+
+    private void testSet(IDataNode dataNode) {
+
+        dataNode.set("testSet.test", "node");
+
+        assertEquals(true, dataNode.hasNode("testSet"));
+        assertEquals(true, dataNode.hasNode("testSet.test"));
+
+        IDataNode node = dataNode.getNode("testSet");
+
+        assertEquals(true, node.hasNode("test"));
 
         String value = node.getString("test");
 
-        Assert.assertEquals("node", value);
+        assertEquals("node", value);
     }
 
+    /**
+     * test getAllValues from root node.
+     */
     @Test
-    public void testGetAllValues() throws Exception {
+    public void testGetAllValuesRoot() throws Exception {
 
-        _dataNode.clear();
-        _dataNode.set("testGetAllValues.test1", "node");
-        _dataNode.set("testGetAllValues.test2", "node");
+        IDataNode dataNode = _generator.generateRoot();
 
-        Map<String, Object> values = _dataNode.getAllValues();
-
-        Assert.assertEquals("node", values.get("testGetAllValues.test1"));
-        Assert.assertEquals("node", values.get("testGetAllValues.test2"));
-        Assert.assertEquals(2, values.size());
+        testGetAllValues(dataNode);
     }
 
+    /**
+     * test getAllValues from root node.
+     */
     @Test
-    public void testGet() throws Exception {
+    public void testGetAllValuesSub() throws Exception {
 
-        _dataNode.set("testGet", "node");
-        _dataNode.set("testGet.test", "node"); // should erase test get
+        IDataNode dataNode = _generator.generateRoot();
 
-        Assert.assertFalse(_dataNode.get("testGet") instanceof String);
-        Assert.assertTrue(_dataNode.get("testGet.test") instanceof String);
+        testGetAllValues(dataNode.getNode("newNode"));
+    }
+
+    private void testGetAllValues(IDataNode dataNode) {
+
+        dataNode.set("testGetAllValues.test1", "node");
+        dataNode.set("testGetAllValues.test2", "node");
+
+        Map<String, Object> values = dataNode.getAllValues();
+
+        assertEquals("node", values.get("testGetAllValues.test1"));
+        assertEquals("node", values.get("testGetAllValues.test2"));
+        assertEquals(2, values.size());
+
+    }
+
+    /**
+     * test get from root node.
+     */
+    @Test
+    public void testGetRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        initDataNode(dataNode);
+
+        testGet(dataNode);
+    }
+
+    /**
+     * test get from sub node.
+     */
+    @Test
+    public void testGetSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        testGet(dataNode.getNode("newNode"));
+    }
+
+    private void testGet(IDataNode dataNode) {
+
+        dataNode.set("testGet", "node");
+        dataNode.set("testGet.test", "node"); // should erase test get
+
+        assertEquals(false, dataNode.get("testGet") instanceof String);
+        assertEquals(true, dataNode.get("testGet.test") instanceof String);
 
 
-        IDataNode node = _dataNode.getNode("testGet");
+        IDataNode node = dataNode.getNode("testGet");
 
         // the second setter should have converted "testGet" from a value
         // to a node.
-        Assert.assertEquals(null, node.getString(""));
+        assertEquals(null, node.getString(""));
 
-        _dataNode.set("testGet", "node");
+        dataNode.set("testGet", "node");
 
-        Assert.assertEquals("node", node.getString(""));
+        assertEquals("node", node.getString(""));
         //children destroyed when testGet converted to key value
-        Assert.assertFalse(_dataNode.get("testGet.test") instanceof String);
+        assertEquals(false, dataNode.get("testGet.test") instanceof String);
 
         node.set("", "node2");
-        Assert.assertEquals("node2", node.getString(""));
+        assertEquals("node2", node.getString(""));
     }
 
+    /**
+     * test getInteger on root node.
+     */
     @Test
-    public void testGetInteger() throws Exception {
+    public void testGetIntegerRoot() throws Exception {
 
-        _dataNode.set("testGetInteger", 1);
-
-        Assert.assertEquals(1, _dataNode.getInteger("testGetInteger"));
-        Assert.assertEquals(0, _dataNode.getInteger("testGetInteger1"));
-
-        Assert.assertEquals(Integer.MAX_VALUE, _dataNode.getInteger("integer"));
+        testGetInteger(_generator.generateRoot());
     }
 
+    /**
+     * test getInteger on sub node.
+     */
     @Test
-    public void testGetLong() throws Exception {
+    public void testGetIntegerSub() throws Exception {
 
-        _dataNode.set("testGetLong", 1);
-
-        Assert.assertEquals(1, _dataNode.getLong("testGetLong"));
-        Assert.assertEquals(0, _dataNode.getLong("testGetLong1"));
-
-        Assert.assertEquals(Long.MAX_VALUE, _dataNode.getLong("long"));
+        testGetInteger(_generator.generateRoot().getNode("newNode"));
     }
 
-    @Test
-    public void testGetDouble() throws Exception {
-        _dataNode.set("testGetDouble", 1.0D);
+    private void testGetInteger(IDataNode dataNode) {
 
-        Assert.assertEquals(1.0D, _dataNode.getDouble("testGetDouble"), 0.0D);
-        Assert.assertEquals(0.0D, _dataNode.getDouble("testGetDouble1"), 0.0D);
+        initDataNode(dataNode);
 
-        Assert.assertEquals(Double.MAX_VALUE, _dataNode.getDouble("double"), 0.0D);
+        dataNode.set("testGetInteger", 1);
+
+        assertEquals(1, dataNode.getInteger("testGetInteger"));
+        assertEquals(0, dataNode.getInteger("testGetInteger1"));
+
+        assertEquals(Integer.MAX_VALUE, dataNode.getInteger("integer"));
     }
 
+    /**
+     * test getLong on root node.
+     */
     @Test
-    public void testGetBoolean() throws Exception {
-        _dataNode.set("testGetBoolean", true);
+    public void testGetLongRoot() throws Exception {
 
-        Assert.assertEquals(true, _dataNode.getBoolean("testGetBoolean"));
-        Assert.assertEquals(false, _dataNode.getBoolean("testGetBoolean1"));
-
-        Assert.assertEquals(true, _dataNode.getBoolean("boolean"));
+        IDataNode dataNode = _generator.generateRoot();
+        testGetLong(dataNode);
     }
 
+    /**
+     * test getLong on sub node.
+     */
     @Test
-    public void testGetString() throws Exception {
-        _dataNode.set("testGetString", "string");
+    public void testGetLongSub() throws Exception {
 
-        Assert.assertEquals("string", _dataNode.getString("testGetString"));
-        Assert.assertEquals(null, _dataNode.getString("testGetString1"));
-
-        Assert.assertEquals("String", _dataNode.getString("string"));
+        IDataNode dataNode = _generator.generateRoot();
+        testGetLong(dataNode.getNode("newNode"));
     }
 
+    private void testGetLong(IDataNode dataNode) {
+        initDataNode(dataNode);
+
+        dataNode.set("testGetLong", 1);
+
+        assertEquals(1, dataNode.getLong("testGetLong"));
+        assertEquals(0, dataNode.getLong("testGetLong1"));
+
+        assertEquals(Long.MAX_VALUE, dataNode.getLong("long"));
+    }
+
+    /**
+     * test getDouble on root node.
+     */
     @Test
-    public void testGetUUID() throws Exception {
+    public void testGetDoubleRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetDouble(dataNode);
+    }
+
+    /**
+     * test getDouble on sub node.
+     */
+    @Test
+    public void testGetDoubleSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetDouble(dataNode.getNode("newNode"));
+    }
+
+    private void testGetDouble(IDataNode dataNode) {
+        initDataNode(dataNode);
+
+        dataNode.set("testGetDouble", 1.0D);
+
+        assertEquals(1.0D, dataNode.getDouble("testGetDouble"), 0.0D);
+        assertEquals(0.0D, dataNode.getDouble("testGetDouble1"), 0.0D);
+
+        assertEquals(Double.MAX_VALUE, dataNode.getDouble("double"), 0.0D);
+    }
+
+    /**
+     * test getBoolean on root node.
+     */
+    @Test
+    public void testGetBooleanRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetBoolean(dataNode);
+    }
+
+    /**
+     * test getBoolean on sub node.
+     */
+    @Test
+    public void testGetBooleanSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetBoolean(dataNode.getNode("newNode"));
+    }
+
+    private void testGetBoolean(IDataNode dataNode) {
+        initDataNode(dataNode);
+
+        dataNode.set("testGetBoolean", true);
+
+        assertEquals(true, dataNode.getBoolean("testGetBoolean"));
+        assertEquals(false, dataNode.getBoolean("testGetBoolean1"));
+
+        assertEquals(true, dataNode.getBoolean("boolean"));
+    }
+
+    /**
+     * test getString on root node.
+     */
+    @Test
+    public void testGetStringRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetString(dataNode);
+    }
+
+    /**
+     * test getString on sub node.
+     */
+    @Test
+    public void testGetStringSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetString(dataNode.getNode("newNode"));
+    }
+
+    private void testGetString(IDataNode dataNode) {
+        initDataNode(dataNode);
+
+        dataNode.set("testGetString", "string");
+
+        assertEquals("string", dataNode.getString("testGetString"));
+        assertEquals(null, dataNode.getString("testGetString1"));
+
+        assertEquals("String", dataNode.getString("string"));
+    }
+
+    /**
+     * test getUUID on root node.
+     */
+    @Test
+    public void testGetUUIDRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetUUID(dataNode);
+    }
+
+    /**
+     * test getUUID on sub node.
+     */
+    @Test
+    public void testGetUUIDSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetUUID(dataNode.getNode("newNode"));
+    }
+
+    private void testGetUUID(IDataNode dataNode) {
+        initDataNode(dataNode);
 
         UUID id = UUID.randomUUID();
 
-        _dataNode.set("testGetUUID", id);
+        dataNode.set("testGetUUID", id);
 
-        Assert.assertEquals(id, _dataNode.getUUID("testGetUUID"));
-        Assert.assertEquals(null, _dataNode.getUUID("testGetUUID1"));
+        assertEquals(id, dataNode.getUUID("testGetUUID"));
+        assertEquals(null, dataNode.getUUID("testGetUUID1"));
 
-        Assert.assertTrue(_dataNode.getUUID("uuid") != null);
+        Assert.assertEquals(true, dataNode.getUUID("uuid") != null);
     }
 
+    /**
+     * test getLocation on root node.
+     */
     @Test
-    public void testGetLocation() throws Exception {
+    public void testGetLocationRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetLocation(dataNode);
+    }
+
+    /**
+     * test getLocation on sub node.
+     */
+    @Test
+    public void testGetLocationSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetLocation(dataNode.getNode("newNode"));
+    }
+
+    private void testGetLocation(IDataNode dataNode) {
+        initDataNode(dataNode);
 
         World world = new DummyWorld("dummy");
         Location location = new Location(world, 0, 0, 0);
 
-        _dataNode.set("testGetLocation", location);
+        dataNode.set("testGetLocation", location);
 
-        Assert.assertTrue(_dataNode.getLocation("testGetLocation") != null);
-        Assert.assertEquals(null, _dataNode.getLocation("testGetLocation1"));
+        Assert.assertEquals(true, dataNode.getLocation("testGetLocation") != null);
+        assertEquals(null, dataNode.getLocation("testGetLocation1"));
 
-        Assert.assertTrue(_dataNode.getLocation("location") != null);
+        Assert.assertEquals(true, dataNode.getLocation("location") != null);
     }
 
+    /**
+     * test getItemStacks on root node.
+     */
     @Test
-    public void testGetItemStacks() throws Exception {
+    public void testGetItemStacksRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetItemStack(dataNode);
+    }
+
+    /**
+     * test getItemStacks on sub node.
+     */
+    @Test
+    public void testGetItemStacksSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetItemStack(dataNode.getNode("newNode"));
+    }
+
+    private void testGetItemStack(IDataNode dataNode) {
+        initDataNode(dataNode);
 
         ItemStack[] items = new ItemStack[] {
                 new ItemStackBuilder(Material.STONE).build(),
@@ -296,51 +663,111 @@ public abstract class IDataNodeTest {
 
         ItemStack item = new ItemStackBuilder(Material.STONE).build();
 
-        _dataNode.set("testGetItemStacks", items);
-        _dataNode.set("testGetItemStack_Single", item);
+        dataNode.set("testGetItemStacks", items);
+        dataNode.set("testGetItemStack_Single", item);
 
-        Assert.assertArrayEquals(items, _dataNode.getItemStacks("testGetItemStacks"));
-        Assert.assertArrayEquals(new ItemStack[]{item}, _dataNode.getItemStacks("testGetItemStack_Single"));
-        Assert.assertArrayEquals(null, _dataNode.getItemStacks("testGetItemStacks1"));
+        assertArrayEquals(items, dataNode.getItemStacks("testGetItemStacks"));
+        assertArrayEquals(new ItemStack[]{item}, dataNode.getItemStacks("testGetItemStack_Single"));
+        assertArrayEquals(null, dataNode.getItemStacks("testGetItemStacks1"));
 
-        Assert.assertTrue(_dataNode.getItemStacks("items") != null);
-        Assert.assertTrue(_dataNode.getItemStacks("items").length == 1);
+        assertNotNull(dataNode.getItemStacks("items"));
+        assertEquals(1, dataNode.getItemStacks("items").length);
     }
 
+    /**
+     * test getEnum on root node.
+     */
     @Test
-    public void testGetEnum() throws Exception {
+    public void testGetEnumRoot() throws Exception {
 
-        _dataNode.set("testGetEnum", TestEnum.CONSTANT);
-
-        Assert.assertEquals(TestEnum.CONSTANT, _dataNode.getEnum("testGetEnum", TestEnum.class));
-        Assert.assertEquals(null, _dataNode.getEnum("testGetEnum1", TestEnum.class));
-
-        Assert.assertTrue(_dataNode.getEnum("enum", TestEnum.class) == TestEnum.CONSTANT);
+        IDataNode dataNode = _generator.generateRoot();
+        testGetEnum(dataNode);
     }
 
+    /**
+     * test getEnum on sub node.
+     */
     @Test
-    public void testGetEnumGeneric() throws Exception {
+    public void testGetEnumSub() throws Exception {
 
-        _dataNode.set("testGetEnumGeneric", TestEnum.CONSTANT);
-
-        Assert.assertEquals(TestEnum.CONSTANT, _dataNode.getEnum("testGetEnumGeneric", TestEnum.class));
-        Assert.assertEquals(null, _dataNode.getEnum("testGetEnumGeneric1", TestEnum.class));
+        IDataNode dataNode = _generator.generateRoot();
+        testGetEnum(dataNode.getNode("newNode"));
     }
 
+    private void testGetEnum(IDataNode dataNode) {
+        initDataNode(dataNode);
+
+        dataNode.set("testGetEnum", TestEnum.CONSTANT);
+
+        assertEquals(TestEnum.CONSTANT, dataNode.getEnum("testGetEnum", TestEnum.class));
+        assertEquals(null, dataNode.getEnum("testGetEnum1", TestEnum.class));
+
+        assertEquals(TestEnum.CONSTANT, dataNode.getEnum("enum", TestEnum.class));
+    }
+
+    /**
+     * test getEnumGeneric on root node.
+     */
     @Test
-    public void testGetStringList() throws Exception {
+    public void testGetEnumGenericRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetEnumGeneric(dataNode);
+    }
+
+    /**
+     * test getEnumGeneric on sub node.
+     */
+    @Test
+    public void testGetEnumGenericSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetEnumGeneric(dataNode.getNode("newNode"));
+    }
+
+    private void testGetEnumGeneric(IDataNode dataNode) {
+        initDataNode(dataNode);
+
+        dataNode.set("testGetEnumGeneric", TestEnum.CONSTANT);
+
+        assertEquals(TestEnum.CONSTANT, dataNode.getEnum("testGetEnumGeneric", TestEnum.class));
+        assertEquals(null, dataNode.getEnum("testGetEnumGeneric1", TestEnum.class));
+    }
+
+    /**
+     * test getStringList on root node.
+     */
+    @Test
+    public void testGetStringListRoot() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetStringList(dataNode);
+    }
+
+    /**
+     * test getStringList on sub node.
+     */
+    @Test
+    public void testGetStringListSub() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+        testGetStringList(dataNode.getNode("newNode"));
+    }
+
+    private void testGetStringList(IDataNode dataNode) {
+        initDataNode(dataNode);
 
         String[] array = new String[] {
                 "line1",
                 "line2"
         };
 
-        _dataNode.set("testGetStringList", array);
+        dataNode.set("testGetStringList", array);
 
-        List<String> result = _dataNode.getStringList("testGetStringList", null);
+        List<String> result = dataNode.getStringList("testGetStringList", null);
 
-        Assert.assertEquals(true, result != null);
-        Assert.assertEquals(2, result.size());
+        assertNotNull(result);
+        assertEquals(2, result.size());
     }
 
     /**
@@ -349,41 +776,44 @@ public abstract class IDataNodeTest {
     @Test
     public void testNonKeyNodesNull() throws Exception {
 
-        _dataNode.set("node", "string");
-        _dataNode.set("node.key", "string");
-        Assert.assertEquals(null, _dataNode.getString("node"));
-        Assert.assertEquals("default", _dataNode.getString("node", "default"));
+        IDataNode dataNode = _generator.generateRoot();
+        initDataNode(dataNode);
 
-        _dataNode.set("node", 10);
-        _dataNode.set("node.key", 10);
-        Assert.assertEquals(0, _dataNode.getInteger("node"));
-        Assert.assertEquals(20, _dataNode.getInteger("node", 20));
+        dataNode.set("node", "string");
+        dataNode.set("node.key", "string");
+        assertEquals(null, dataNode.getString("node"));
+        assertEquals("default", dataNode.getString("node", "default"));
 
-        _dataNode.set("node", 10L);
-        _dataNode.set("node.key", 10L);
-        Assert.assertEquals(0, _dataNode.getLong("node"));
-        Assert.assertEquals(20L, _dataNode.getLong("node"), 20L);
+        dataNode.set("node", 10);
+        dataNode.set("node.key", 10);
+        assertEquals(0, dataNode.getInteger("node"));
+        assertEquals(20, dataNode.getInteger("node", 20));
 
-        _dataNode.set("node", true);
-        _dataNode.set("node.key", true);
-        Assert.assertEquals(false, _dataNode.getBoolean("node"));
-        Assert.assertEquals(true, _dataNode.getBoolean("node", true));
+        dataNode.set("node", 10L);
+        dataNode.set("node.key", 10L);
+        assertEquals(0, dataNode.getLong("node"));
+        assertEquals(20L, dataNode.getLong("node"), 20L);
 
-        _dataNode.set("node", TestEnum.CONSTANT);
-        _dataNode.set("node.key", TestEnum.CONSTANT);
-        Assert.assertEquals(null, _dataNode.getEnum("node", TestEnum.class));
-        Assert.assertEquals(TestEnum.CONSTANT, _dataNode.getEnum("node", TestEnum.CONSTANT, TestEnum.class));
+        dataNode.set("node", true);
+        dataNode.set("node.key", true);
+        assertEquals(false, dataNode.getBoolean("node"));
+        assertEquals(true, dataNode.getBoolean("node", true));
 
-        _dataNode.set("node", 10.0D);
-        _dataNode.set("node.key", 10.0D);
-        Assert.assertEquals(0, _dataNode.getDouble("node"), 0.0D);
-        Assert.assertEquals(20.0D, _dataNode.getDouble("node", 20.0D), 0.0D);
+        dataNode.set("node", TestEnum.CONSTANT);
+        dataNode.set("node.key", TestEnum.CONSTANT);
+        assertEquals(null, dataNode.getEnum("node", TestEnum.class));
+        assertEquals(TestEnum.CONSTANT, dataNode.getEnum("node", TestEnum.CONSTANT, TestEnum.class));
 
-        _dataNode.set("node", new ItemStackBuilder(Material.WOOD).build());
-        _dataNode.set("node.key", new ItemStackBuilder(Material.WOOD).build());
-        Assert.assertArrayEquals(null, _dataNode.getItemStacks("node"));
-        Assert.assertArrayEquals(new ItemStack[] { new ItemStackBuilder(Material.GRASS).build() },
-                _dataNode.getItemStacks("node", new ItemStackBuilder(Material.GRASS).build()));
+        dataNode.set("node", 10.0D);
+        dataNode.set("node.key", 10.0D);
+        assertEquals(0, dataNode.getDouble("node"), 0.0D);
+        assertEquals(20.0D, dataNode.getDouble("node", 20.0D), 0.0D);
+
+        dataNode.set("node", new ItemStackBuilder(Material.WOOD).build());
+        dataNode.set("node.key", new ItemStackBuilder(Material.WOOD).build());
+        assertArrayEquals(null, dataNode.getItemStacks("node"));
+        assertArrayEquals(new ItemStack[]{new ItemStackBuilder(Material.GRASS).build()},
+                dataNode.getItemStacks("node", new ItemStackBuilder(Material.GRASS).build()));
 
     }
 

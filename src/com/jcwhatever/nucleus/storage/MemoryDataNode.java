@@ -286,14 +286,16 @@ public class MemoryDataNode extends AbstractDataNode {
     }
 
     protected String getPath(TreeEntryNode<String, Object> node) {
+        PreCon.notNull(node);
         LinkedList<String> components = new LinkedList<>();
 
-        components.addFirst(node.getKey());
-
-        while (node.getParent() != null) {
-            node = node.getParent();
+        while (!node.equals(_node)) {
             if (!node.isRoot())
                 components.addFirst(node.getKey());
+
+            node = node.getParent();
+            if (node == null)
+                break;
         }
 
         return TextUtils.concat(components, ".");
