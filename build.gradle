@@ -6,11 +6,7 @@ def mavenRepositories = [
         'https://github.com/JCThePants/mvn-repo/raw/master',
         'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
 ]
-def providedDependsFiles = [
-        //'C:/JavaRepo/bukkit/unmapped-spigot-1.8-R0.1-SNAPSHOT.jar',
-        //'C:/JavaRepo/bukkit/Vault.jar',
-        //'C:/JavaRepo/bukkit/WorldEdit.jar',
-]
+def providedDependsFiles = null
 def providedDepends = [
         'org.spigotmc:unmapped-spigot:1.8-R0.1-SNAPSHOT',
         'com.sk89q:WorldEdit:SNAPSHOT',
@@ -22,6 +18,16 @@ def compileDepends = null
 def includeFiles = [
         'plugin.yml',
         'LICENSE.txt'
+]
+def testIncludes = [
+        'com/jcwhatever/nucleus/TestAll.class'
+]
+def testExcludes = null
+def testDepends = [
+        'junit:junit:4.+'
+]
+def testRuntimeDepends = [
+        'junit:junit:4.+'
 ]
 def javaVersion = 1.7
 
@@ -64,6 +70,11 @@ if (buildBy == null) {
 defaultTasks 'build'
 
 apply plugin: 'java'
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 
 // Minimum Java Version
 sourceCompatibility = javaVersion
@@ -87,8 +98,13 @@ sourceSets {
     }
 
     test {
+
         compileClasspath += configurations.provided
         runtimeClasspath += configurations.provided
+
+        java {
+            srcDir 'tests'
+        }
     }
 }
 
@@ -127,6 +143,14 @@ dependencies {
     if (providedDepends) {
         provided providedDepends
     }
+
+    if (testDepends) {
+        testCompile testDepends
+    }
+
+    if (testRuntimeDepends) {
+        testRuntime testRuntimeDepends
+    }
 }
 
 def manifestAttr = manifest {
@@ -148,6 +172,36 @@ jar {
     }
 
     manifest = manifestAttr
+}
+
+/**
+ * JUnit Tests
+ */
+test {
+    if (testIncludes)
+        include testIncludes
+
+    if (testExcludes)
+        exclude testExcludes
+
+    testLogging {
+        events 'started', 'passed'
+    }
+
+    minHeapSize = '128m'
+    maxHeapSize = '512m'
+
+    // set JVM arguments for the test JVM(s)
+    jvmArgs '-XX:MaxPermSize=256m'
+
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+    }
 }
 
 // Task to create a Jar file artifact with no version number
