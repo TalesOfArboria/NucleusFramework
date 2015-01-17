@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.actionbar;
 
-import com.jcwhatever.nucleus.collections.timed.TimeScale;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.dynamic.DynamicTextBuilder;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;

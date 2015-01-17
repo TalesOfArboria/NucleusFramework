@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.collections.concurrent.SyncCollection;
 import com.jcwhatever.nucleus.collections.concurrent.SyncMap;
 import com.jcwhatever.nucleus.collections.concurrent.SyncSet;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;

@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.text.dynamic;
 
-import com.jcwhatever.nucleus.collections.timed.TimeScale;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.ArrayList;

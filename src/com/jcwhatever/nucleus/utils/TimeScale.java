@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.timed;
+package com.jcwhatever.nucleus.utils;
 
 /**
  * Specifies the time scale of a time unit of

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import com.jcwhatever.dummy.DummyPlugin;
 import com.jcwhatever.nucleus.NucleusInit;
 import com.jcwhatever.nucleus.collections.java.ListRunnable;
+import com.jcwhatever.nucleus.utils.TimeScale;
 
 import org.junit.Test;
 

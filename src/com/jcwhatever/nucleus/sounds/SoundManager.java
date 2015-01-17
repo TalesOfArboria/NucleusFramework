@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.sounds;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.timed.TimeScale;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedArrayList;
 import com.jcwhatever.nucleus.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.nucleus.events.sounds.ResourceSoundEndEvent;

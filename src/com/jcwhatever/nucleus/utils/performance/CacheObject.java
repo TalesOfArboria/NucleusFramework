@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.performance;
 
-import com.jcwhatever.nucleus.collections.timed.TimeScale;
+import com.jcwhatever.nucleus.utils.TimeScale;
 
 import javax.annotation.Nullable;
 

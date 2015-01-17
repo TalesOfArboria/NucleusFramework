@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
 import com.jcwhatever.nucleus.collections.SetMap;
 import com.jcwhatever.nucleus.collections.WeakHashSetMap;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
-import com.jcwhatever.nucleus.collections.timed.TimeScale;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.nms.INmsActionBarHandler;

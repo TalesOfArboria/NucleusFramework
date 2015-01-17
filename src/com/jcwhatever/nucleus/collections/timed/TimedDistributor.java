@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.collections.timed;
 import com.jcwhatever.nucleus.collections.CircularQueue;
 import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.TimeScale;
 
 import java.util.Collection;
 import java.util.Iterator;

@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.commands.response;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.timed.TimeScale;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedMultimap;
 import com.jcwhatever.nucleus.collections.timed.TimedSetMultimap;
 import com.jcwhatever.nucleus.internal.NucLang;

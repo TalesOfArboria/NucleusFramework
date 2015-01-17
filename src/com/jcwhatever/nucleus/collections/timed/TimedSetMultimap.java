@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.jcwhatever.nucleus.utils.TimeScale;
 
 import org.bukkit.plugin.Plugin;
 

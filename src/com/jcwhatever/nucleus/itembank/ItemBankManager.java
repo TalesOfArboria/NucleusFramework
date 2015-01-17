@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.itembank;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.timed.TimeScale;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.utils.performance.SingleCache;
 import com.jcwhatever.nucleus.storage.DataPath;
