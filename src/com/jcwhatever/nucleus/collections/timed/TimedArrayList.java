@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.concurrent.SyncConversionList;
 import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionListIterator;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.scheduler.ScheduledTask;
@@ -43,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
@@ -53,10 +55,10 @@ import javax.annotation.Nullable;
  *
  * <p>The items lifespan cannot be reset except by removing it.</p>
  *
- * <p>Items can be added using the default lifespan time or a lifespan can be specified
+ * <p>Items can be added using the default lifespan or a lifespan can be specified
  * per item.</p>
  *
- * <p>Subscribers that are added to track when an item expires or the collection is
+ * <p>Subscribers that are added to track when an item expires or when the collection is
  * empty will have a varying degree of resolution up to 10 ticks, meaning the subscriber
  * may be notified up to 10 ticks after an element expires (but not before).</p>
  *
@@ -349,7 +351,10 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
                     continue;
                 }
 
-                if (o.equals(entry.element))
+                if (o == null && entry.element == null)
+                    return true;
+
+                if (o != null && o.equals(entry.element))
                     return true;
             }
             return false;
@@ -368,9 +373,13 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         return new Iterator<E>() {
 
             Element<E> peek;
+            boolean invokedHasNext;
+            boolean invokedNext;
 
             @Override
             public boolean hasNext() {
+
+                invokedHasNext = true;
 
                 synchronized (_sync) {
 
@@ -396,13 +405,20 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
             @Override
             public E next() {
+
+                if (!invokedHasNext)
+                    throw new IllegalStateException("Cannot invoke 'next' until 'hasNext' has been invoked.");
+
+                invokedHasNext = false;
+                invokedNext = true;
+
                 synchronized (_sync) {
 
                     if (peek == null)
                         hasNext();
 
                     if (peek == null)
-                        throw new IndexOutOfBoundsException();
+                        throw new NoSuchElementException();
 
 
                     Element<E> n = peek;
@@ -413,8 +429,14 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
             @Override
             public void remove() {
+
+                if (!invokedNext)
+                    throw new IllegalStateException("Cannot 'remove' until 'next' method is invoked.");
+
+                invokedNext =false;
+
                 synchronized (_sync) {
-                    iterator().remove();
+                    iterator.remove();
                 }
             }
         };
@@ -606,12 +628,29 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
         synchronized (_sync) {
-            List<Element<E>> sle = _list.subList(fromIndex, toIndex);
-            List<E> result = new ArrayList<>(sle.size());
-            for (Element<E> entry : sle) {
-                result.add(entry.element);
-            }
-            return result;
+
+            final List<Element<E>> subList = _list.subList(fromIndex, toIndex);
+
+            return new SyncConversionList<E, Element<E>>() {
+                @Override
+                protected List<Element<E>> list() {
+                    return subList;
+                }
+
+                @Override
+                protected E convert(Element<E> internal) {
+                    return internal.element;
+                }
+
+                @Override
+                protected Element<E> unconvert(Object external) {
+
+                    @SuppressWarnings("unchecked")
+                    E element = (E)external;
+
+                    return new Element<E>(element, _lifespan, _timeScale);
+                }
+            };
         }
     }
 
@@ -729,7 +768,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
         Element(T item, long lifespan, TimeScale timeScale) {
             this.element = item;
-            this.expires = lifespan * timeScale.getTimeFactor();
+            this.expires = System.currentTimeMillis() + (lifespan * timeScale.getTimeFactor());
             this.matcher = item;
         }
 

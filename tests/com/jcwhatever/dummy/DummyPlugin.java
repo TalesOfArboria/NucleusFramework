@@ -28,6 +28,7 @@ public class DummyPlugin implements Plugin {
 
     private String _name;
     private PluginDescriptionFile _description;
+    private boolean _isEnabled;
 
     public DummyPlugin(String name) {
         _name = name;
@@ -110,12 +111,12 @@ public class DummyPlugin implements Plugin {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return _isEnabled;
     }
 
     @Override
     public void onDisable() {
-
+        _isEnabled = false;
     }
 
     @Override
@@ -125,7 +126,7 @@ public class DummyPlugin implements Plugin {
 
     @Override
     public void onEnable() {
-
+        _isEnabled = true;
     }
 
     @Override

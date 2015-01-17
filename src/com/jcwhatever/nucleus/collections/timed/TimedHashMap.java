@@ -183,6 +183,9 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
             previous = _map.put(key, new DateEntry<K, V>(key, value, lifespan, timeScale));
         }
 
+        if (previous == null)
+            return null;
+
         return previous.value;
     }
 

@@ -82,7 +82,7 @@ public final class Rand {
      */
     public static int getInt(int min, int max) {
         int range = max - min + 1;
-        int i = ThreadLocalRandom.current().nextInt() % range;
+        int i = Math.abs(ThreadLocalRandom.current().nextInt()) % range;
         return  min + i;
     }
 

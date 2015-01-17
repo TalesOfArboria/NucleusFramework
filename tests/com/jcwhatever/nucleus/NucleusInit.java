@@ -4,7 +4,9 @@ import com.jcwhatever.dummy.DummyServer;
 import com.jcwhatever.nucleus.storage.DataStorageUtil;
 
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R1.scheduler.CraftScheduler;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
@@ -19,11 +21,27 @@ import java.util.Map;
 public class NucleusInit {
 
     private static boolean _isInit;
+    private static long _nextHeartBeat;
+    private static int _currentTick = 0;
+
+    public static void heartBeat() {
+        if (!_isInit || System.currentTimeMillis() < _nextHeartBeat)
+            return;
+
+        ((CraftScheduler)Bukkit.getServer().getScheduler()).mainThreadHeartbeat(_currentTick);
+        _currentTick++;
+
+        _nextHeartBeat = System.currentTimeMillis() + 50;
+    }
 
     public static void init() {
 
-        if (_isInit)
+        _currentTick = 0;
+        _nextHeartBeat = 0;
+
+        if (_isInit) {
             return;
+        }
 
         _isInit = true;
 
@@ -55,8 +73,18 @@ public class NucleusInit {
         BukkitPlugin plugin = new BukkitPlugin(new JavaPluginLoader(Bukkit.getServer()), descriptionFile,
                 new File(""), new File(""));
 
-        plugin.onEnable();
 
+        try {
+            Method method = JavaPlugin.class.getDeclaredMethod("setEnabled", boolean.class);
+            method.setAccessible(true);
+
+            method.invoke(plugin, true);
+
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        plugin.onEnable();
     }
 
 }

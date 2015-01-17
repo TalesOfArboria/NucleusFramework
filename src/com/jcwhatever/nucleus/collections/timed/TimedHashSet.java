@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -352,9 +353,13 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
         return new Iterator<E>() {
 
             Entry<E, ExpireInfo> peek;
+            boolean invokedHasNext;
+            boolean invokedNext;
 
             @Override
             public boolean hasNext() {
+
+                invokedHasNext = true;
 
                 synchronized (_sync) {
 
@@ -378,13 +383,20 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
             @Override
             public E next() {
+
+                if (!invokedHasNext)
+                    throw new IllegalStateException("Cannot invoke 'next' before invoking 'hasNext'.");
+
+                invokedHasNext = false;
+                invokedNext = true;
+
                 synchronized (_sync) {
 
                     if (peek == null)
                         hasNext();
 
                     if (peek == null)
-                        throw new IndexOutOfBoundsException();
+                        throw new NoSuchElementException();
 
                     Entry<E, ExpireInfo> n = peek;
                     peek = null;
@@ -394,8 +406,12 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
             @Override
             public void remove() {
+
+                if (!invokedNext)
+                    throw new IllegalStateException("Cannot invoke 'remove' before invoking 'next'");
+
                 synchronized (_sync) {
-                    iterator().remove();
+                    iterator.remove();
                 }
             }
         };
@@ -405,7 +421,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
     public Object[] toArray() {
         synchronized (_sync) {
             cleanup();
-            return _expireMap.entrySet().toArray();
+            return _expireMap.keySet().toArray();
         }
     }
 
@@ -416,7 +432,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
         synchronized (_sync) {
             cleanup();
             //noinspection SuspiciousToArrayCall
-            return _expireMap.entrySet().toArray(a);
+            return _expireMap.keySet().toArray(a);
         }
     }
 

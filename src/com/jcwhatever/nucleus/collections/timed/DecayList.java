@@ -26,14 +26,16 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -58,11 +60,16 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
 
     private final Plugin _plugin;
 
-    // default removal delay when ticks are not specified
-    private int _decayTicks;
+    // the decay interval in ticks
+    private int _decay;
 
     // task that removes items at interval.
-    private transient BukkitTask _decayTask;
+    private transient ScheduledTask _decayTask;
+
+    // task that initiates the repeating decay task.
+    private transient ScheduledTask _resetRotTask;
+
+    // removes a single item from the list when run.
     private transient Rot _rot;
 
     // holds subscribers to be notified whenever an item is removed due to decay
@@ -73,40 +80,46 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
      * Constructor. Decay interval is every 1 second.
      */
     public DecayList(Plugin plugin) {
-        this(plugin, 20);
+        this(plugin, 1, TimeScale.SECONDS);
     }
 
     /**
      * Constructor.
      *
-     * @param plugin              The owning plugin.
-     * @param decayIntervalTicks  The decay interval in ticks.
+     * @param plugin         The owning plugin.
+     * @param decayInterval  The decay interval.
+     * @param timeScale      The time scale of the specified decay interval.
+     *                       Minimum value is 1 tick.
      */
-    public DecayList(Plugin plugin, int decayIntervalTicks) {
+    public DecayList(Plugin plugin, int decayInterval, TimeScale timeScale) {
         super();
 
         PreCon.notNull(plugin);
-        PreCon.greaterThanZero(decayIntervalTicks);
+        PreCon.greaterThanZero(decayInterval);
+        PreCon.notNull(timeScale);
 
         _plugin = plugin;
-        _decayTicks = decayIntervalTicks;
+        _decay = Math.max(1, (decayInterval * timeScale.getTimeFactor()) / 50);
     }
 
     /**
      * Constructor.
      *
-     * @param plugin              The owning plugin.
-     * @param decayIntervalTicks  The decay interval in ticks.
-     * @param collection          The initial collection of elements.
+     * @param plugin         The owning plugin.
+     * @param decayInterval  The decay interval.
+     * @param timeScale      The time scale of the specified decay interval.
+     *                       Minimum value is 1 tick.
+     * @param collection     The initial collection of elements.
      */
-    public DecayList(Plugin plugin, int decayIntervalTicks, Collection<E> collection) {
+    public DecayList(Plugin plugin, int decayInterval, TimeScale timeScale, Collection<E> collection) {
         super(collection);
 
         PreCon.notNull(plugin);
-        PreCon.greaterThanZero(decayIntervalTicks);
+        PreCon.greaterThanZero(decayInterval);
+        PreCon.notNull(timeScale);
 
         _plugin = plugin;
-        _decayTicks = decayIntervalTicks;
+        _decay = Math.max(1, (decayInterval * timeScale.getTimeFactor()) / 50);
     }
 
     @Override
@@ -118,18 +131,50 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
      * Get the decay interval in ticks.
      */
     public int getDecayInterval() {
-        return _decayTicks;
+        return _decay;
     }
 
     /**
      * Change the decay interval. Causes the decay interval to reset.
      *
      * @param interval   The decay interval.
-     * @param timeScale  The timeScale of the interval. The maximum resolution is ticks.
+     * @param timeScale  The timeScale of the interval. The maximum resolution is 1 tick.
      */
     public void setDecayInterval(int interval, TimeScale timeScale) {
-        _decayTicks = (interval * timeScale.getTimeFactor()) / 50;
+        _decay = Math.max(1, (interval * timeScale.getTimeFactor()) / 50);
         scheduleRemoval();
+    }
+
+    /**
+     * Register a subscriber to be notified when an item is removed
+     * due to decay.
+     *
+     * @param subscriber  The subscriber to register.
+     *
+     * @return  Self for chaining.
+     */
+    public DecayList<E> onDecay(IUpdateSubscriber<E> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onDecay").register(subscriber);
+
+        return this;
+    }
+
+    /**
+     * Register a subscriber to be notified when the list is empty
+     * due to decay.
+     *
+     * @param subscriber  The subscriber to register.
+     *
+     * @return  Self for chaining.
+     */
+    public DecayList<E> onEmpty(IUpdateSubscriber<DecayList<E>> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onEmpty").register(subscriber);
+
+        return this;
     }
 
     @Override
@@ -165,66 +210,60 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
         super.clear();
     }
 
-    /**
-     * Register a subscriber to be notified when an item is removed
-     * due to decay.
-     *
-     * @param subscriber  The subscriber to register.
-     *
-     * @return  Self for chaining.
-     */
-    public DecayList<E> onDecay(IUpdateSubscriber<E> subscriber) {
-        PreCon.notNull(subscriber);
-
-        _agents.getAgent("onDecay").register(subscriber);
-
-        return this;
-    }
-
-    /**
-     * Register a subscriber to be notified when the list is empty
-     * due to decay.
-     *
-     * @param subscriber  The subscriber to register.
-     *
-     * @return  Self for chaining.
-     */
-    public DecayList<E> onEmpty(IUpdateSubscriber<DecayList<E>> subscriber) {
-        PreCon.notNull(subscriber);
-
-        _agents.getAgent("onEmpty").register(subscriber);
-
-        return this;
-    }
-
     // begins or resets the decay timer
     protected void scheduleRemoval() {
-        if (_decayTicks < 0)
+
+        // check if a repeating task is already scheduled to be started.
+        if (_resetRotTask != null)
             return;
 
+        // cancel the current repeating task
         if (_decayTask != null)
             _decayTask.cancel();
 
+        // make sure there is a rot instance.
         if (_rot == null)
             _rot = new Rot<E>(this);
 
-        _decayTask = Bukkit.getScheduler().runTaskTimer(
-                _plugin, _rot, _decayTicks, _decayTicks);
+        // use a separate task to schedule the repeating task so it is not
+        // repeatedly rescheduled when performing multiple operations on the
+        // decay list
+        _resetRotTask = Scheduler.runTaskLater(_plugin, new Runnable() {
+            @Override
+            public void run() {
+
+                // schedule the repeating task.
+                _decayTask = Scheduler.runTaskRepeat(
+                        _plugin, _decay, _decay, _rot);
+
+                // set to null to indicate a new repeating task can
+                // now be scheduled
+                _resetRotTask = null;
+            }
+        });
     }
 
-    private static class Rot<E> implements Runnable {
+    private static class Rot<E> extends TaskHandler {
 
-        // a reference to the parent instance
-        private final DecayList<E> parent;
+        // a weak reference to the parent instance. used to hold the reference
+        // when available and to know when to remove the scheduled rot task if
+        // the parent decay list is no longer being used.
+        private final WeakReference<DecayList<E>> parent;
 
         Rot(DecayList<E> parent) {
-            this.parent = parent;
+            super();
+            this.parent = new WeakReference<DecayList<E>>(parent);
         }
 
         @Override
         public void run() {
-            if (parent.isEmpty())
+
+            DecayList<E> parent = this.parent.get();
+
+            if (parent == null || parent.isEmpty()) {
+                cancelTask();
                 return;
+            }
 
             // remove a single item
             E removed = parent.remove();
@@ -236,10 +275,6 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
             if (parent.isEmpty() && parent._agents.hasAgent("onEmpty")) {
                 parent._agents.getAgent("onEmpty").update(parent);
             }
-
-            try {
-                Thread.sleep(1L);
-            } catch (InterruptedException ignore) {}
         }
     }
 

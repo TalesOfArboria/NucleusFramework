@@ -16,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_8_R1.scheduler.CraftScheduler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.help.HelpMap;
@@ -52,7 +53,7 @@ public class DummyServer implements Server {
 
     private Thread _homeThread;
     private final DummyPluginManager _pluginManager = new DummyPluginManager();
-    private final DummyScheduler _scheduler = new DummyScheduler();
+    private final CraftScheduler _scheduler = new CraftScheduler();
 
     public DummyServer() {
         _homeThread = Thread.currentThread();

@@ -1,5 +1,6 @@
 package com.jcwhatever.nucleus.collections;
 
+import com.jcwhatever.nucleus.collections.java.DequeTest;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 
 import org.junit.Assert;
@@ -8,8 +9,18 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class CircularQueueTest {
+
+    @Test
+    public void testDequeInterface() {
+
+        CircularQueue<String> queue = new CircularQueue<>();
+
+        DequeTest<String> dequeTest = new DequeTest<>(queue, "a", "b", "c");
+        dequeTest.run();
+    }
 
     @Test
     public void testNext() throws Exception {
@@ -557,5 +568,25 @@ public class CircularQueueTest {
         }
 
         Assert.assertEquals(0, queue.size());
+
+        iterator = queue.descendingIterator();
+        Assert.assertEquals(false, iterator.hasNext());
+
+        try {
+            iterator.next();
+            throw new AssertionError("NoSuchElementException expected.");
+        }
+        catch (NoSuchElementException ignore){}
+
+
+        queue.add("1");
+        iterator = queue.descendingIterator();
+        Assert.assertEquals(true, iterator.hasNext());
+
+        try {
+            iterator.remove();
+            throw new AssertionError("IllegalStateException expected.");
+        }
+        catch (IllegalStateException ignore) {}
     }
 }

@@ -3,22 +3,33 @@ package com.jcwhatever.nucleus.collections.java;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Test;
-
 import java.util.Set;
 
-/*
- * 
+/**
+ * Tests a {@link Set} implementation.
+ *
+ * <p>Also runs {@link CollectionTest} on the set.</p>
+ *
+ * <p>Not a JUnit test case but throws errors via JUnit. Intended
+ * to be instantiated with a test and the {@link #run} method invoked.</p>
  */
 public class SetTest<E> implements Runnable {
 
-    Set<E> _set;
-    E _value1;
-    E _value2;
-    E _value3;
+    final Set<E> _set;
+    final E _value1;
+    final E _value2;
+    final E _value3;
 
-    public SetTest(Set<E> collection, E value1, E value2, E value3) {
-        _set = collection;
+    /**
+     * Constructor.
+     *
+     * @param set     The set to test.
+     * @param value1  A value to use for testing.
+     * @param value2  A value to use for testing.
+     * @param value3  A value to use for testing.
+     */
+    public SetTest(Set<E> set, E value1, E value2, E value3) {
+        _set = set;
         _value1 = value1;
         _value2 = value2;
         _value3 = value3;
@@ -26,23 +37,23 @@ public class SetTest<E> implements Runnable {
 
     @Override
     public void run() {
-        basicTest();
-    }
-
-    @Test
-    public void basicTest() {
-
         CollectionTest<E> collectionTest = new CollectionTest<E>(_set, _value1, _value2, _value3);
         collectionTest.run();
 
-        _set.clear();
-        assertEquals(true, _set.isEmpty());
-        assertEquals(0, _set.size());
-        assertNotNull(_set.toString());
+        try {
+            _set.clear();
+            assertEquals(true, _set.isEmpty());
+            assertEquals(0, _set.size());
+            assertNotNull(_set.toString());
 
-        _set.add(_value1);
-        _set.add(_value1);
-        _set.add(_value1);
+
+            _set.add(_value1);
+            _set.add(_value1);
+            _set.add(_value1);
+        }
+        catch (UnsupportedOperationException e) {
+            return;
+        }
 
         assertEquals(1, _set.size());
 
@@ -63,6 +74,5 @@ public class SetTest<E> implements Runnable {
         _set.clear();
         assertEquals(true, _set.isEmpty());
         assertEquals(0, _set.size());
-
     }
 }

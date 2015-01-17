@@ -438,14 +438,27 @@ public class CircularQueue<E> implements Deque<E> {
 
         Entry next = null;
         int steps = 0;
+        boolean invokedHasNext;
+        boolean invokedNext;
 
         @Override
         public boolean hasNext() {
+            invokedHasNext = true;
             return _size > 0 && steps < _size;
         }
 
         @Override
         public E next() {
+
+            if (!invokedHasNext)
+                throw new IllegalStateException("Cannot invoke 'next' until after invoking 'hasNext'.");
+
+            if (!hasNext())
+                throw new NoSuchElementException();
+
+            invokedHasNext = false;
+            invokedNext = true;
+
             steps++;
             if (next == null) {
                 next = _current.right;
@@ -458,6 +471,12 @@ public class CircularQueue<E> implements Deque<E> {
 
         @Override
         public void remove() {
+
+            if (!invokedNext)
+                throw new IllegalStateException("Cannot invoke 'remove' until after invoking 'next'.");
+
+            invokedNext = false;
+
             steps--;
             if (_size == 1) {
                 _current = null;
@@ -481,14 +500,27 @@ public class CircularQueue<E> implements Deque<E> {
 
         Entry next;
         int steps = 0;
+        boolean invokedHasNext;
+        boolean invokedNext;
 
         @Override
         public boolean hasNext() {
+            invokedHasNext = true;
             return _size > 0 && steps < _size;
         }
 
         @Override
         public E next() {
+
+            if (!invokedHasNext)
+                throw new IllegalStateException("Cannot invoke 'next' until after invoking 'hasNext'.");
+
+            if (!hasNext())
+                throw new NoSuchElementException();
+
+            invokedHasNext = false;
+            invokedNext = true;
+
             steps++;
             if (next == null) {
                 next = _current.left.left;
@@ -501,6 +533,12 @@ public class CircularQueue<E> implements Deque<E> {
 
         @Override
         public void remove() {
+
+            if (!invokedNext)
+                throw new IllegalStateException("Cannot invoke 'remove' until after invoking 'next'.");
+
+            invokedNext = false;
+
             steps--;
             if (_size == 1) {
                 _current = null;
