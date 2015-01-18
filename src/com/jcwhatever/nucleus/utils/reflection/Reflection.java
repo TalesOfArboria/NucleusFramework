@@ -36,15 +36,15 @@ import java.util.regex.Pattern;
  */
 public class Reflection {
 
-    private static final String CRAFT_BASE_PACKAGE = "org.bukkit.craftbukkit";
-    private static final String NMS_BASE_PACKAGE = "net.minecraft.server";
-    private static final Pattern CRAFT_BASE_PACKAGE_PATTERN = Pattern.compile(CRAFT_BASE_PACKAGE);
-    private static final Pattern NMS_BASE_PACKAGE_PATTERN = Pattern.compile(NMS_BASE_PACKAGE);
+    static final String CRAFT_BASE_PACKAGE = "org.bukkit.craftbukkit";
+    static final String NMS_BASE_PACKAGE = "net.minecraft.server";
+    static final Pattern CRAFT_BASE_PACKAGE_PATTERN = Pattern.compile(CRAFT_BASE_PACKAGE);
+    static final Pattern NMS_BASE_PACKAGE_PATTERN = Pattern.compile(NMS_BASE_PACKAGE);
 
-    private static Map<Class<?>, CachedReflectedType> _typeCache = new WeakHashMap<>(30);
-    private static Map<String, CachedReflectedType> _typeNameCache = new WeakHashMap<>(30);
+    static final Map<Class<?>, CachedReflectedType> _typeCache = new WeakHashMap<>(30);
+    static final Map<String, CachedReflectedType> _typeNameCache = new WeakHashMap<>(30);
 
-    private final String _nmsVersion;
+    final String _nmsVersion;
 
     /**
      * Constructor.

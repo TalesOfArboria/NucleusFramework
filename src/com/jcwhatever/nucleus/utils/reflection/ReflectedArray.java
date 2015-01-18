@@ -166,8 +166,13 @@ public class ReflectedArray extends Instance {
             throw new RuntimeException("Instance is not an array.");
         }
 
-        if (!type.getHandle().isAssignableFrom(
-                instance.getClass().getComponentType())) {
+        Class<?> componentType = instance.getClass().getComponentType();
+
+        while (componentType.isArray()) {
+            componentType = componentType.getComponentType();
+        }
+
+        if (!type.getHandle().isAssignableFrom(componentType)) {
             throw new RuntimeException("Array components don't match type.");
         }
     }

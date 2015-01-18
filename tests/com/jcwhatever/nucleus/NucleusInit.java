@@ -20,6 +20,8 @@ import java.util.Map;
  */
 public class NucleusInit {
 
+    public static final String NMS_TEST_VERSION = "v1_8_R1";
+
     private static boolean _isInit;
     private static long _nextHeartBeat;
     private static int _currentTick = 0;

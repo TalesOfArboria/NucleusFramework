@@ -154,7 +154,7 @@ public class ReflectedType {
      * @param fieldName  The name of the field.
      */
     public Object get(String fieldName) {
-        ReflectedField field = getField(fieldName);
+        ReflectedField field = getStaticField(fieldName);
         return field.get(null);
     }
 
@@ -165,7 +165,7 @@ public class ReflectedType {
      * @param value      The value to set.
      */
     public void set(String fieldName, Object value) {
-        ReflectedField field = getField(fieldName);
+        ReflectedField field = getStaticField(fieldName);
         field.set(null, value);
     }
 
@@ -352,7 +352,8 @@ public class ReflectedType {
 
         Constructor<?> constructor;
         try {
-            constructor = getHandle().getConstructor(signature);
+            constructor = getHandle().getDeclaredConstructor(signature);
+            constructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             throw new RuntimeException("Constructor not found.");
@@ -391,9 +392,18 @@ public class ReflectedType {
         return this;
     }
 
+    /**
+     * Register an enum constant for faster lookup under an
+     * alias name.
+     *
+     * @param constantAlias  The alias name.
+     * @param constantName   The enum constant name.
+     *
+     * @return  Self for chaining.
+     */
     public ReflectedType enumAlias(String constantAlias, String constantName) {
-        PreCon.notNullOrEmpty(constantAlias, "enumAlias");
-        PreCon.notNullOrEmpty(constantName, "enumName");
+        PreCon.notNullOrEmpty(constantAlias, "constantAlias");
+        PreCon.notNullOrEmpty(constantName, "constantName");
 
         if (_aliasEnum == null)
             _aliasEnum = new HashMap<>(5);
@@ -406,8 +416,15 @@ public class ReflectedType {
         return this;
     }
 
+    /**
+     * Register an enum constant for faster lookup.
+     *
+     * @param constantName  The constant name.
+     *
+     * @return  Self for chaining.
+     */
     public ReflectedType enumConst(String constantName) {
-        PreCon.notNullOrEmpty(constantName, "enumName");
+        PreCon.notNullOrEmpty(constantName, "constantName");
 
         if (_aliasEnum == null)
             _aliasEnum = new HashMap<>(5);
@@ -563,6 +580,9 @@ public class ReflectedType {
     }
 
     private Object getEnumConstant(String constantName) {
+
+        if (!getHandle().isEnum())
+            throw new RuntimeException("Type '" + getHandle().getName() + "' is not an enum.");
 
         Object[] constants = getHandle().getEnumConstants();
 

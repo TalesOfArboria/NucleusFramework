@@ -4,6 +4,7 @@ import com.jcwhatever.nucleus.utils.file._FileTestSuite;
 import com.jcwhatever.nucleus.utils.inventory._InventoryTestSuite;
 import com.jcwhatever.nucleus.utils.items._ItemsTestSuite;
 import com.jcwhatever.nucleus.utils.observer._ObserverTestSuite;
+import com.jcwhatever.nucleus.utils.reflection._ReflectionTestSuite;
 import com.jcwhatever.nucleus.utils.text._TextTestSuite;
 
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import org.junit.runners.Suite;
         _InventoryTestSuite.class,
         _ItemsTestSuite.class,
         _ObserverTestSuite.class,
+        _ReflectionTestSuite.class,
         _TextTestSuite.class
 })
 public class _UtilsTestSuite {

@@ -145,10 +145,25 @@ public class ReflectedField {
     }
 
     /**
+     * Get the type the field is in.
+     */
+    public ReflectedType getOwnerType() {
+        return new ReflectedType(_type);
+    }
+
+    /**
      * Get the field type.
      */
-    public CachedReflectedType getType() {
-        return _type;
+    public ReflectedType getType() {
+
+        CachedReflectedType type = Reflection._typeCache.get(_field.getType());
+        if (type == null) {
+
+            type = new CachedReflectedType(_field.getType());
+            Reflection._typeCache.put(_field.getType(), type);
+        }
+
+        return new ReflectedType(type);
     }
 
     /**
@@ -159,9 +174,14 @@ public class ReflectedField {
     public Object get(@Nullable Object instance) {
         try {
             return _field.get(instance);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | NullPointerException e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to get field value.");
+            if (instance != null) {
+                throw new RuntimeException("Failed to get field value. The field might be static.");
+            }
+            else {
+                throw new RuntimeException("Failed to get field value. The field might not be static.");
+            }
         }
     }
 
