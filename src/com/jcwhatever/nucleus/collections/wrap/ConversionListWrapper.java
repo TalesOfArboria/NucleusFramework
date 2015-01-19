@@ -25,11 +25,11 @@
 package com.jcwhatever.nucleus.collections.wrap;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.sun.istack.internal.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
+import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link List} wrapper

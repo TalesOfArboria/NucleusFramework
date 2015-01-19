@@ -27,13 +27,13 @@ package com.jcwhatever.nucleus.collections.wrap;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
-import com.sun.istack.internal.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
+import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link Collection} wrapper designed to convert

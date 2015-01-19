@@ -24,10 +24,9 @@
 
 package com.jcwhatever.nucleus.collections.wrap;
 
-import com.sun.istack.internal.Nullable;
-
 import java.util.Collection;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link Set} wrapper
