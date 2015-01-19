@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.collections.observer.subscriber;
 
-import com.jcwhatever.nucleus.collections.concurrent.SyncMap;
+import com.jcwhatever.nucleus.collections.wrap.MapWrapper;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
  * <p>Implementations may need to use their own synchronization object, in which case it can be
  * passed in via the constructor.</p>
  */
-public abstract class SubscriberMap<K, V extends ISubscriber> extends SyncMap<K, V>
+public abstract class SubscriberMap<K, V extends ISubscriber> extends MapWrapper<K, V>
         implements IDisposable {
 
     private final Object _sync;

@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.storage;
 
-import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
+import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.LocationUtils;
@@ -410,9 +410,19 @@ public abstract class AbstractDataNode implements IDataNode {
 
     @Override
     public Iterator<IDataNode> iterator() {
-        return new AbstractConversionIterator<IDataNode, String>() {
+        return new ConversionIteratorWrapper<IDataNode, String>() {
 
             Iterator<String> iterator = getSubNodeNames().iterator();
+
+            @Override
+            protected IDataNode convert(String nodeName) {
+                return getNode(nodeName);
+            }
+
+            @Override
+            protected Iterator<String> iterator() {
+                return iterator;
+            }
 
             @Override
             public void remove() {
@@ -423,16 +433,6 @@ public abstract class AbstractDataNode implements IDataNode {
                 finally {
                     _root._write.unlock();
                 }
-            }
-
-            @Override
-            protected IDataNode getElement(String nodeName) {
-                return getNode(nodeName);
-            }
-
-            @Override
-            protected Iterator<String> getIterator() {
-                return iterator;
             }
         };
     }

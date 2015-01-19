@@ -25,25 +25,23 @@
 
 package com.jcwhatever.nucleus.collections.players;
 
-import com.jcwhatever.nucleus.collections.players.PlayerElement.PlayerElementMatcher;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
+import com.jcwhatever.nucleus.collections.wrap.ConversionQueueWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * A Queue of {@code Player} objects.
  *
  * <p>{@code Player} objects are automatically removed if the player logs out.</p>
  */
-public class PlayerQueue implements IPlayerCollection, Queue<Player> {
+public class PlayerQueue extends ConversionQueueWrapper<Player, PlayerElement> implements IPlayerCollection {
 
 	private final Plugin _plugin;
 	private final transient Queue<PlayerElement> _queue = new LinkedList<PlayerElement>();
@@ -66,242 +64,44 @@ public class PlayerQueue implements IPlayerCollection, Queue<Player> {
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends Player> players) {
-		PreCon.notNull(players);
-
-		boolean isChanged = false;
-
-		synchronized (_sync) {
-
-			for (Player p : players) {
-				if (_queue.add(new PlayerElement(p))) {
-					_tracker.notifyPlayerAdded(p.getUniqueId());
-					isChanged = true;
-				}
-			}
-		}
-
-		return isChanged;
+	protected void onAdded(PlayerElement element) {
+		_tracker.notifyPlayerAdded(element.getUniqueId());
 	}
 
 	@Override
-	public void clear() {
-		synchronized (_sync) {
-			while (!_queue.isEmpty()) {
-				PlayerElement p = _queue.remove();
-				_tracker.notifyPlayerRemoved(p.getUniqueId());
-			}
+	protected void onRemoved(@SuppressWarnings("unused") Object element) {
 
-			_queue.clear();
-		}
+		UUID playerID = PlayerUtils.getPlayerId(element);
+		if (playerID == null)
+			throw new ClassCastException();
+
+		_tracker.notifyPlayerRemoved(playerID);
 	}
 
 	@Override
-	public boolean contains(Object arg) {
-		synchronized (_sync) {
-			return _queue.contains(arg);
-		}
+	protected Player convert(PlayerElement internal) {
+		return internal.getPlayer();
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> collection) {
-		PreCon.notNull(collection);
+	protected PlayerElement unconvert(Object external) {
 
-		synchronized (_sync) {
-			for (Object obj : collection) {
-				//noinspection SuspiciousMethodCalls
-				if (!_queue.contains(obj))
-					return false;
-			}
-			return true;
-		}
+		Player player = PlayerUtils.getPlayer(external);
+		if (player == null)
+			throw new ClassCastException();
+
+		return new PlayerElement(player);
 	}
 
 	@Override
-	public boolean isEmpty() {
-		synchronized (_sync) {
-			return _queue.isEmpty();
-		}
-	}
-
-	@Override
-	public Iterator<Player> iterator() {
-		return new PlayerIterator();
-	}
-
-	@Override
-	public boolean remove(Object o) {
-
-		synchronized (_sync) {
-			if (_queue.remove(o)) {
-				PlayerElementMatcher matcher = new PlayerElementMatcher(o);
-				//noinspection SuspiciousMethodCalls
-				if (!_queue.contains(matcher) && matcher.getUniqueId() != null) {
-					_tracker.notifyPlayerRemoved(matcher.getUniqueId());
-				}
-				return true;
-			}
-
-			return false;
-		}
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> collection) {
-		PreCon.notNull(collection);
-
-		boolean isChanged = false;
-		synchronized (_sync) {
-			for (Object obj : collection) {
-				isChanged = remove(obj) || isChanged;
-			}
-		}
-		return isChanged;
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> collection) {
-		PreCon.notNull(collection);
-
-		boolean isChanged = false;
-
-		synchronized (_sync) {
-
-			Iterator<PlayerElement> iterator = _queue.iterator();
-			while (iterator.hasNext()) {
-				PlayerElement entry = iterator.next();
-
-				boolean keep = false;
-				for (Object obj : collection) {
-					if (obj.equals(entry.getPlayer())) {
-						keep = true;
-						break;
-					}
-				}
-
-				if (!keep) {
-					iterator.remove();
-					isChanged = true;
-				}
-			}
-		}
-
-		return isChanged;
-	}
-
-	@Override
-	public int size() {
-		synchronized (_sync) {
-			return _queue.size();
-		}
-	}
-
-	@Override
-	public Object[] toArray() {
-		synchronized (_sync) {
-			return _queue.toArray();
-		}
-	}
-
-	@Override
-	public <T> T[] toArray(T[] array) {
-		synchronized (_sync) {
-			//noinspection SuspiciousToArrayCall
-			return _queue.toArray(array);
-		}
-	}
-
-	@Override
-	public boolean add(Player player) {
-		synchronized (_sync) {
-			if (_queue.add(new PlayerElement(player))) {
-				_tracker.notifyPlayerAdded(player.getUniqueId());
-				return true;
-			}
-			return false;
-		}
-	}
-
-	@Override
-	public Player element() {
-		synchronized (_sync) {
-			PlayerElement entry = _queue.element();
-			return entry != null ? entry.getPlayer() : null;
-		}
-	}
-
-	@Override
-	public boolean offer(Player player) {
-		synchronized (_sync) {
-			if (_queue.offer(new PlayerElement(player))) {
-				_tracker.notifyPlayerAdded(player.getUniqueId());
-				return true;
-			}
-			return false;
-		}
-	}
-
-	@Override
-	public Player peek() {
-		synchronized (_sync) {
-			PlayerElement entry = _queue.peek();
-			return entry != null ? entry.getPlayer() : null;
-		}
-	}
-
-	@Override
-	@Nullable
-	public Player poll() {
-		synchronized (_sync) {
-			PlayerElement entry = _queue.poll();
-			if (entry != null && !_queue.contains(entry)) {
-				_tracker.notifyPlayerRemoved(entry.getUniqueId());
-				return entry.getPlayer();
-			}
-			return null;
-		}
-	}
-
-	@Override
-	@Nullable
-	public Player remove() {
-		synchronized (_sync) {
-			PlayerElement entry = _queue.remove();
-			if (entry != null && !_queue.contains(entry)) {
-				_tracker.notifyPlayerRemoved(entry.getUniqueId());
-				return entry.getPlayer();
-			}
-			return null;
-		}
+	protected Queue<PlayerElement> queue() {
+		return _queue;
 	}
 
 	@Override
 	public void removePlayer(Player player) {
 		synchronized (_sync) {
 			_queue.remove(new PlayerElement(player));
-		}
-	}
-
-	private class PlayerIterator extends AbstractConversionIterator<Player, PlayerElement> {
-
-		Iterator<PlayerElement> iterator = _queue.iterator();
-
-		@Override
-		public void remove() {
-			synchronized (_sync) {
-				_tracker.notifyPlayerRemoved(_current.getUniqueId());
-				iterator.remove();
-			}
-		}
-
-		@Override
-		protected Player getElement(PlayerElement trueElement) {
-			return trueElement.getPlayer();
-		}
-
-		@Override
-		protected Iterator<PlayerElement> getIterator() {
-			return iterator;
 		}
 	}
 }

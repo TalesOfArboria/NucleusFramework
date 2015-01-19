@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.collections.observer.subscriber;
 
 import com.jcwhatever.nucleus.collections.ElementCounter;
 import com.jcwhatever.nucleus.collections.ElementCounter.RemovalPolicy;
-import com.jcwhatever.nucleus.collections.concurrent.SyncMultimap;
+import com.jcwhatever.nucleus.collections.wrap.MultimapWrapper;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
@@ -52,7 +52,7 @@ import javax.annotation.Nullable;
  * passed in via the constructor.</p>
  */
 public abstract class SubscriberMultimap<K, V
-        extends ISubscriber> extends SyncMultimap<K, V> implements IDisposable {
+        extends ISubscriber> extends MultimapWrapper<K, V> implements IDisposable {
 
     private final Object _sync;
     private final MapAgent _mapAgent;

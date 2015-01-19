@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.collections.concurrent;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import com.jcwhatever.nucleus.collections.java.CollectionRunnable;
 
@@ -14,7 +14,7 @@ public class SyncCollectionTest {
     @Test
     public void basicTest() {
 
-        SyncCollection<String> collection = new SyncCollection<String>() {
+        CollectionWrapper<String> collection = new CollectionWrapper<String>() {
 
             List<String> list = new ArrayList<>(10);
 

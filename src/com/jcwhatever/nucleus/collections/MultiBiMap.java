@@ -30,10 +30,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractCollectionWrapper;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractIteratorWrapper;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractMapWrapper;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractSetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.CollectionWrapper;
+import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.ArrayList;
@@ -368,7 +367,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         return _mapWrapper;
     }
 
-    private class KeySetWrapper extends AbstractSetWrapper<K> {
+    private class KeySetWrapper extends SetWrapper<K> {
 
         @Override
         public Iterator<K> iterator() {
@@ -416,27 +415,27 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         }
 
         @Override
-        protected Set<K> getSet() {
+        protected Set<K> set() {
             return _keyToValue.keySet();
         }
     }
 
-    private class KeySetIteratorWrapper extends AbstractIteratorWrapper<K> {
+    private class KeySetIteratorWrapper extends IteratorWrapper<K> {
 
         Iterator<K> iterator = _keyToValue.keySet().iterator();
 
         @Override
-        public void remove() {
-            MultiBiMap.this.removeAll(_current);
+        protected Iterator<K> iterator() {
+            return iterator;
         }
 
         @Override
-        protected Iterator<K> getIterator() {
-            return iterator;
+        public void remove() {
+            MultiBiMap.this.removeAll(getCurrent());
         }
     }
 
-    private class EntrySetWrapper extends AbstractSetWrapper<Entry<K, V>> {
+    private class EntrySetWrapper extends SetWrapper<Entry<K, V>> {
 
         @Override
         public Iterator<Entry<K, V>> iterator() {
@@ -497,31 +496,36 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         }
 
         @Override
-        protected Set<Entry<K, V>> getSet() {
+        protected Set<Entry<K, V>> set() {
             return _keyToValue.entries();
         }
     }
 
-    private class EntrySetIteratorWrapper extends AbstractIteratorWrapper<Entry<K, V>> {
+    private class EntrySetIteratorWrapper extends IteratorWrapper<Entry<K, V>> {
 
         Iterator<Entry<K, V>> iterator = _keyToValue.entries().iterator();
 
         @Override
-        public void remove() {
-            MultiBiMap.this.remove(_current.getKey(), _current.getValue());
+        protected Iterator<Entry<K, V>> iterator() {
+            return iterator;
         }
 
         @Override
-        protected Iterator<Entry<K, V>> getIterator() {
-            return iterator;
+        public void remove() {
+            MultiBiMap.this.remove(getCurrent().getKey(), getCurrent().getValue());
         }
     }
 
-    private class MapWrapper extends AbstractMapWrapper<K, Collection<V>> {
+    private class MapWrapper extends com.jcwhatever.nucleus.collections.wrap.MapWrapper<K, Collection<V>> {
 
         final MapKeySetWrapper keySet = new MapKeySetWrapper();
         final MapValuesWrapper values = new MapValuesWrapper();
         final MapEntrySetWrapper entrySet = new MapEntrySetWrapper();
+
+        @Override
+        protected Map<K, Collection<V>> map() {
+            return _keyToValue.asMap();
+        }
 
         @Override
         public Collection<V> put(K key, Collection<V> values) {
@@ -569,14 +573,9 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         public Set<Entry<K, Collection<V>>> entrySet() {
             return entrySet;
         }
-
-        @Override
-        protected Map<K, Collection<V>> getMap() {
-            return _keyToValue.asMap();
-        }
     }
 
-    private class MapKeySetWrapper extends AbstractSetWrapper<K> {
+    private class MapKeySetWrapper extends SetWrapper<K> {
 
         @Override
         public Iterator<K> iterator() {
@@ -630,27 +629,32 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         }
 
         @Override
-        protected Set<K> getSet() {
+        protected Set<K> set() {
             return _keyToValue.asMap().keySet();
         }
     }
 
-    private class MapKeySetIteratorWrapper extends AbstractIteratorWrapper<K> {
+    private class MapKeySetIteratorWrapper extends IteratorWrapper<K> {
 
         Iterator<K> iterator = _keyToValue.keySet().iterator();
 
         @Override
-        public void remove() {
-            MultiBiMap.this.removeAll(_current);
+        protected Iterator<K> iterator() {
+            return iterator;
         }
 
         @Override
-        protected Iterator<K> getIterator() {
-            return iterator;
+        public void remove() {
+            MultiBiMap.this.removeAll(getCurrent());
         }
     }
 
-    private class MapValuesWrapper extends AbstractCollectionWrapper<Collection<V>> {
+    private class MapValuesWrapper extends CollectionWrapper<Collection<V>> {
+
+        @Override
+        protected Collection<Collection<V>> collection() {
+            return _keyToValue.asMap().values();
+        }
 
         @Override
         public Iterator<Collection<V>> iterator() {
@@ -686,33 +690,28 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         public void clear() {
             MultiBiMap.this.clear();
         }
-
-        @Override
-        protected Collection<Collection<V>> getCollection() {
-            return _keyToValue.asMap().values();
-        }
     }
 
-    private class MapValuesIteratorWrapper extends AbstractIteratorWrapper<Collection<V>> {
+    private class MapValuesIteratorWrapper extends IteratorWrapper<Collection<V>> {
 
         Iterator<Collection<V>> iterator = _keyToValue.asMap().values().iterator();
+
+        @Override
+        protected Iterator<Collection<V>> iterator() {
+            return iterator;
+        }
 
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
-
-        @Override
-        protected Iterator<Collection<V>> getIterator() {
-            return iterator;
-        }
     }
 
-    private class MapEntrySetWrapper extends AbstractSetWrapper<Entry<K, Collection<V>>> {
+    private class MapEntrySetWrapper extends SetWrapper<Entry<K, Collection<V>>> {
 
         @Override
         public Iterator<Entry<K, Collection<V>>> iterator() {
-            return getCollection().iterator();
+            return collection().iterator();
         }
 
         @Override
@@ -794,7 +793,7 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
         }
 
         @Override
-        protected Set<Entry<K, Collection<V>>> getSet() {
+        protected Set<Entry<K, Collection<V>>> set() {
             return _keyToValue.asMap().entrySet();
         }
     }

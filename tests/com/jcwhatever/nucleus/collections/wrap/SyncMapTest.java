@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.collections.concurrent;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import com.jcwhatever.nucleus.collections.java.MapRunnable;
 
@@ -12,7 +12,7 @@ public class SyncMapTest {
     @Test
     public void test() {
 
-        SyncMap<String, Integer> map = new SyncMap<String, Integer>() {
+        MapWrapper<String, Integer> map = new MapWrapper<String, Integer>() {
 
             Map<String, Integer> internalMap = new HashMap<>(10);
 

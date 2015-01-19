@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.validate;
 
-import com.jcwhatever.nucleus.collections.wrappers.AbstractSetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.Collection;
@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * Used for validation using a set of elements.
  */
-public class ValidationSet<E> extends AbstractSetWrapper<E> implements IValidator<E> {
+public class ValidationSet<E> extends SetWrapper<E> implements IValidator<E> {
 
     protected final Set<E> _set;
     protected ValidationPolicy _policy = ValidationPolicy.WHITELIST;
@@ -98,7 +98,7 @@ public class ValidationSet<E> extends AbstractSetWrapper<E> implements IValidato
     }
 
     @Override
-    protected Set<E> getSet() {
+    protected Set<E> set() {
         return _set;
     }
 

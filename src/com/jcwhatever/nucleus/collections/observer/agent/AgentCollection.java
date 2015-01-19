@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.collections.observer.agent;
 
-import com.jcwhatever.nucleus.collections.concurrent.SyncCollection;
+import com.jcwhatever.nucleus.collections.wrap.CollectionWrapper;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
@@ -51,7 +51,7 @@ import javax.annotation.Nullable;
  * passed in via the constructor.</p>
  */
 public abstract class AgentCollection<E extends ISubscriberAgent>
-        extends SyncCollection<E> implements IDisposable {
+        extends CollectionWrapper<E> implements IDisposable {
 
     private final Object _sync;
     private final InternalSubscriber _collectionSubscriber;

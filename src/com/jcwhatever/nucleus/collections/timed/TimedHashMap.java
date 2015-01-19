@@ -26,9 +26,9 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.concurrent.SyncConversionEntry;
-import com.jcwhatever.nucleus.collections.concurrent.SyncSet;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
+import com.jcwhatever.nucleus.collections.wrap.ConversionEntryWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
@@ -480,7 +480,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
     private Entry<K, V> getEntry(final Entry<K, DateEntry<K, V>> entry) {
 
-        return new SyncConversionEntry<K, V, DateEntry<K, V>>(_sync) {
+        return new ConversionEntryWrapper<K, V, DateEntry<K, V>>(_sync) {
 
             @Override
             protected Entry<K, DateEntry<K, V>> entry() {
@@ -488,13 +488,13 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
             }
 
             @Override
-            protected V convertFrom(K key, DateEntry<K, V> internalVal) {
-                return internalVal.value;
+            protected V convert(K key, DateEntry<K, V> internal) {
+                return internal.value;
             }
 
             @Override
-            protected DateEntry<K, V> convertTo(K key, V value) {
-                return new DateEntry<K, V>(key, value, _lifespan, TimeScale.MILLISECONDS);
+            protected DateEntry<K, V> unconvert(K key, V external) {
+                return new DateEntry<K, V>(key, external, _lifespan, TimeScale.MILLISECONDS);
             }
         };
     }
@@ -539,7 +539,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
         }
     }
 
-    private final class KeySetWrapper extends SyncSet<K> {
+    private final class KeySetWrapper extends SetWrapper<K> {
 
         @Override
         protected boolean onPreAdd(K e) {
@@ -708,17 +708,17 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
         @Override
         public Iterator<Entry<K, V>> iterator() {
-            return new AbstractConversionIterator<Entry<K, V>, Entry<K, DateEntry<K, V>>>() {
+            return new ConversionIteratorWrapper<Entry<K, V>, Entry<K, DateEntry<K, V>>>(_sync) {
 
                 Iterator<Entry<K, DateEntry<K, V>>> iterator = _map.entrySet().iterator();
 
                 @Override
-                protected Entry<K, V> getElement(final Entry<K, DateEntry<K, V>> trueElement) {
-                    return getEntry(trueElement);
+                protected Entry<K, V> convert(Entry<K, DateEntry<K, V>> internal) {
+                    return getEntry(internal);
                 }
 
                 @Override
-                protected Iterator<Entry<K, DateEntry<K, V>>> getIterator() {
+                protected Iterator<Entry<K, DateEntry<K, V>>> iterator() {
                     return iterator;
                 }
             };

@@ -22,34 +22,32 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.concurrent;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.Collection;
 import java.util.Queue;
+import java.util.concurrent.locks.ReadWriteLock;
+import javax.annotation.Nullable;
 
 /**
- * An abstract implementation of a synchronized {@link Queue} wrapper.
+ * An abstract implementation of a synchronized {@link Queue} wrapper. The wrapper is
+ * optionally synchronized via a sync object or {@link ReadWriteLock} passed in
+ * through the constructor.
  *
  * <p>The actual collection is provided to the abstract implementation by
  * overriding and returning it from the {@link #queue} method.</p>
  *
- * <p>If the wrapper is being used to wrap a collection that is part of the internals
- * of another type, the other types synchronization object can be used by passing
- * it into the wrappers constructor.</p>
- *
  * <p>In order to make using the wrapper as an extension of a collection easier,
  * several protected methods are provided for optional override. These methods
- * are provided by the superclass {@link SyncCollection}.
+ * are provided by the superclass {@link CollectionWrapper}.
  */
-public abstract class SyncQueue<E> extends SyncCollection<E> implements Queue<E> {
-
-    private final Object _sync;
+public abstract class QueueWrapper<E> extends CollectionWrapper<E> implements Queue<E> {
 
     /**
      * Constructor.
      */
-    public SyncQueue() {
-        this(new Object());
+    public QueueWrapper() {
+        this(null);
     }
 
     /**
@@ -57,10 +55,8 @@ public abstract class SyncQueue<E> extends SyncCollection<E> implements Queue<E>
      *
      * @param sync  The synchronization object to use.
      */
-    protected SyncQueue(Object sync) {
+    public QueueWrapper(@Nullable Object sync) {
         super(sync);
-
-        _sync = sync;
     }
 
     /**
@@ -82,7 +78,20 @@ public abstract class SyncQueue<E> extends SyncCollection<E> implements Queue<E>
 
         boolean isAdded;
 
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                isAdded = queue().offer(e);
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                isAdded = queue().offer(e);
+            }
+        } else {
             isAdded = queue().offer(e);
         }
 
@@ -100,7 +109,20 @@ public abstract class SyncQueue<E> extends SyncCollection<E> implements Queue<E>
 
         E removed;
 
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                removed = queue().remove();
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                removed = queue().remove();
+            }
+        } else {
             removed = queue().remove();
         }
 
@@ -114,16 +136,21 @@ public abstract class SyncQueue<E> extends SyncCollection<E> implements Queue<E>
 
         E element;
 
-        synchronized (_sync) {
-            element = queue().peek();
-
-            if (element == null)
-                return null;
-
-            if (!onPreRemove(element))
-                throw new UnsupportedOperationException();
-
-            queue().poll();
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                element = pollSource();
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                element = pollSource();
+            }
+        } else {
+            element = pollSource();
         }
 
         onRemoved(element);
@@ -131,16 +158,56 @@ public abstract class SyncQueue<E> extends SyncCollection<E> implements Queue<E>
         return element;
     }
 
+    private E pollSource() {
+        E element = queue().peek();
+
+        if (element == null)
+            return null;
+
+        if (!onPreRemove(element))
+            throw new UnsupportedOperationException();
+
+        queue().poll();
+
+        return element;
+    }
+
     @Override
     public E element() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return queue().element();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return queue().element();
+            }
+        } else {
             return queue().element();
         }
     }
 
     @Override
     public E peek() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return queue().peek();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return queue().peek();
+            }
+        } else {
             return queue().peek();
         }
     }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.concurrent;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -32,31 +32,31 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import javax.annotation.Nullable;
 
 /**
- * An abstract implementation of a synchronized {@link Collection} wrapper.
+ * An abstract implementation of a {@link Collection} wrapper. The wrapper is
+ * optionally synchronized via a sync object or {@link ReadWriteLock}.
  *
  * <p>The actual collection is provided to the abstract implementation by
  * overriding and returning it from the {@link #collection} method.</p>
- *
- * <p>If the wrapper is being used to wrap a collection that is part of the internals
- * of another type, the other types synchronization object can be used by passing
- * it into the wrappers constructor.</p>
  *
  * <p>In order to make using the wrapper as an extension of a collection easier,
  * several protected methods are provided for optional override.
  * See {@link #onPreAdd}, {@link #onAdded}, {@link #onPreRemove}, {@link #onRemoved},
  * {@link #onPreClear}, {@link #onClear}</p>
  */
-public abstract class SyncCollection<E> implements Collection<E> {
+public abstract class CollectionWrapper<E> implements Collection<E> {
 
-    private final Object _sync;
+    protected final Object _sync;
+    protected final ReadWriteLock _lock;
 
     /**
      * Constructor.
      */
-    public SyncCollection() {
-        this(new Object());
+    public CollectionWrapper() {
+        this(null);
     }
 
     /**
@@ -64,10 +64,12 @@ public abstract class SyncCollection<E> implements Collection<E> {
      *
      * @param sync  The synchronization object to use.
      */
-    protected SyncCollection(Object sync) {
-        PreCon.notNull(sync);
+    public CollectionWrapper(@Nullable Object sync) {
 
         _sync = sync;
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock) sync
+                : null;
     }
 
     /**
@@ -147,21 +149,64 @@ public abstract class SyncCollection<E> implements Collection<E> {
 
     @Override
     public int size() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return collection().size();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return collection().size();
+            }
+        }
+        else {
             return collection().size();
         }
     }
 
     @Override
     public boolean isEmpty() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return collection().isEmpty();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return collection().isEmpty();
+            }
+        }
+        else {
             return collection().isEmpty();
         }
     }
 
     @Override
     public boolean contains(Object o) {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return collection().contains(o);
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return collection().contains(o);
+            }
+        }
+        else {
             return collection().contains(o);
         }
     }
@@ -173,14 +218,44 @@ public abstract class SyncCollection<E> implements Collection<E> {
 
     @Override
     public Object[] toArray() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return collection().toArray();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return collection().toArray();
+            }
+        }
+        else {
             return collection().toArray();
         }
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                //noinspection SuspiciousToArrayCall
+                return collection().toArray(a);
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                //noinspection SuspiciousToArrayCall
+                return collection().toArray(a);
+            }
+        }
+        else {
             //noinspection SuspiciousToArrayCall
             return collection().toArray(a);
         }
@@ -195,7 +270,21 @@ public abstract class SyncCollection<E> implements Collection<E> {
 
         boolean isAdded;
 
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                isAdded = collection().add(e);
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                isAdded = collection().add(e);
+            }
+        }
+        else {
             isAdded = collection().add(e);
         }
 
@@ -213,7 +302,21 @@ public abstract class SyncCollection<E> implements Collection<E> {
 
         boolean isRemoved;
 
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                isRemoved = collection().remove(o);
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                isRemoved = collection().remove(o);
+            }
+        }
+        else {
             isRemoved = collection().remove(o);
         }
 
@@ -228,7 +331,21 @@ public abstract class SyncCollection<E> implements Collection<E> {
     public boolean containsAll(Collection<?> c) {
         PreCon.notNull(c);
 
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return collection().containsAll(c);
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return collection().containsAll(c);
+            }
+        }
+        else {
             return collection().containsAll(c);
         }
     }
@@ -237,28 +354,62 @@ public abstract class SyncCollection<E> implements Collection<E> {
     public boolean addAll(Collection<? extends E> c) {
         PreCon.notNull(c);
 
-        synchronized (_sync) {
-
-            boolean isChanged = false;
-            for (E e : c) {
-                isChanged = add(e) || isChanged;
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                return addAllSource(c);
             }
-            return isChanged;
+            finally {
+                _lock.writeLock().unlock();
+            }
         }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return addAllSource(c);
+            }
+        }
+        else {
+            return addAllSource(c);
+        }
+    }
+
+    private boolean addAllSource(Collection<? extends E> c) {
+        boolean isChanged = false;
+        for (E e : c) {
+            isChanged = add(e) || isChanged;
+        }
+        return isChanged;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
         PreCon.notNull(c);
 
-        synchronized (_sync) {
-
-            boolean isChanged = false;
-            for (Object obj : c) {
-                isChanged = remove(obj) || isChanged;
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                return removeAllSource(c);
             }
-            return isChanged;
+            finally {
+                _lock.writeLock().unlock();
+            }
         }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return removeAllSource(c);
+            }
+        }
+        else {
+            return removeAllSource(c);
+        }
+    }
+
+    private boolean removeAllSource(Collection<?> c) {
+        boolean isChanged = false;
+        for (Object obj : c) {
+            isChanged = remove(obj) || isChanged;
+        }
+        return isChanged;
     }
 
     @Override
@@ -266,13 +417,22 @@ public abstract class SyncCollection<E> implements Collection<E> {
         PreCon.notNull(c);
         List<E> removed;
 
-        synchronized (_sync) {
-            removed = CollectionUtils.retainAll(collection(), new IValidator<E>() {
-                @Override
-                public boolean isValid(E element) {
-                    return c.contains(element) && onPreRemove(element);
-                }
-            });
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                removed = retainAllSource(c);
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                removed = retainAllSource(c);
+            }
+        }
+        else {
+            removed = retainAllSource(c);
         }
 
         for (E agent : removed) {
@@ -282,6 +442,15 @@ public abstract class SyncCollection<E> implements Collection<E> {
         return !removed.isEmpty();
     }
 
+    private List<E> retainAllSource(final Collection<?> c) {
+        return CollectionUtils.retainAll(collection(), new IValidator<E>() {
+            @Override
+            public boolean isValid(E element) {
+                return c.contains(element) && onPreRemove(element);
+            }
+        });
+    }
+
     @Override
     public void clear() {
 
@@ -289,26 +458,45 @@ public abstract class SyncCollection<E> implements Collection<E> {
 
         Collection<E> values;
 
-        synchronized (_sync) {
-
-            values = new ArrayList<E>(collection());
-
-            collection().clear();
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                values = clearSource();
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                values = clearSource();
+            }
+        }
+        else {
+            values = clearSource();
         }
 
         onClear(values);
     }
 
-    private class Itr extends SyncIterator<E> {
+    private Collection<E> clearSource() {
+        Collection<E> values = new ArrayList<E>(collection());
+
+        collection().clear();
+
+        return values;
+    }
+
+    private class Itr extends IteratorWrapper<E> {
 
         Iterator<E> iterator = collection().iterator();
 
         @Override
         protected boolean onRemove(E element) {
-            if (!SyncCollection.this.onPreRemove(element))
+            if (!CollectionWrapper.this.onPreRemove(element))
                 return false;
 
-            SyncCollection.this.onRemoved(element);
+            CollectionWrapper.this.onRemoved(element);
             return true;
         }
 

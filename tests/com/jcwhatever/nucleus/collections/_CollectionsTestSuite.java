@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.collections;
 
-import com.jcwhatever.nucleus.collections.concurrent._SyncCollectionTestSuite;
+import com.jcwhatever.nucleus.collections.wrap._SyncCollectionTestSuite;
 import com.jcwhatever.nucleus.collections.observer.agent._AgentCollectionTestSuite;
 import com.jcwhatever.nucleus.collections.timed._TimedCollectionTestSuite;
 

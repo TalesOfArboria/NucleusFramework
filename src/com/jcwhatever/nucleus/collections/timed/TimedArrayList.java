@@ -26,8 +26,8 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.concurrent.SyncConversionList;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionListIterator;
+import com.jcwhatever.nucleus.collections.wrap.ConversionListWrapper;
+import com.jcwhatever.nucleus.collections.wrap.ConversionListIteratorWrapper;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
@@ -632,7 +632,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
             final List<Element<E>> subList = _list.subList(fromIndex, toIndex);
 
-            return new SyncConversionList<E, Element<E>>() {
+            return new ConversionListWrapper<E, Element<E>>() {
                 @Override
                 protected List<Element<E>> list() {
                     return subList;
@@ -805,7 +805,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         }
     }
 
-    private final class TimedListIterator extends AbstractConversionListIterator<E, Element<E>> {
+    private final class TimedListIterator extends ConversionListIteratorWrapper<E, Element<E>> {
 
         ListIterator<Element<E>> iterator;
 
@@ -814,17 +814,17 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         }
 
         @Override
-        protected E getFalseElement(Element<E> trueElement) {
-            return trueElement.element;
+        protected E convert(Element<E> internal) {
+            return internal.element;
         }
 
         @Override
-        protected Element<E> getTrueElement(E falseElement) {
-            return new Element<E>(falseElement, _lifespan, TimeScale.MILLISECONDS);
+        protected Element<E> unconvert(Object external) {
+            return new Element<E>(external);
         }
 
         @Override
-        protected ListIterator<Element<E>> getIterator() {
+        protected ListIterator<Element<E>> iterator() {
             return iterator;
         }
     }

@@ -22,27 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.concurrent;
-
-import com.jcwhatever.nucleus.utils.PreCon;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.Map.Entry;
+import java.util.concurrent.locks.ReadWriteLock;
+import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * An abstract implementation of an {@link Entry} wrapper. The wrapper is
+ * optionally synchronized via a sync object or {@link ReadWriteLock}
+ * passed in through the constructor.
+ *
+ * <p>The actual entry is provided to the abstract implementation by
+ * overriding and returning it from the {@link #entry} method.</p>
  */
-public abstract class SyncEntry<K, V> implements Entry<K, V> {
+public abstract class EntryWrapper<K, V> implements Entry<K, V> {
 
     private final Object _sync;
+    private final ReadWriteLock _lock;
 
-    public SyncEntry() {
-        this(new Object());
+    public EntryWrapper() {
+        this(null);
     }
 
-    public SyncEntry(Object sync) {
-        PreCon.notNull(sync);
+    public EntryWrapper(@Nullable Object sync) {
 
         _sync = sync;
+        _lock = sync instanceof ReadWriteLock
+                ? (ReadWriteLock)sync
+                : null;
     }
 
     protected abstract Entry<K, V> entry();
@@ -54,14 +62,40 @@ public abstract class SyncEntry<K, V> implements Entry<K, V> {
 
     @Override
     public V getValue() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return entry().getValue();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return entry().getValue();
+            }
+        } else {
             return entry().getValue();
         }
     }
 
     @Override
     public V setValue(V value) {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                return entry().setValue(value);
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return entry().setValue(value);
+            }
+        } else {
             return entry().setValue(value);
         }
     }

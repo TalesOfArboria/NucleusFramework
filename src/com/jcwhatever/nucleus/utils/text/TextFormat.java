@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.google.common.collect.ImmutableMap;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractIteratorWrapper;
+import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -444,7 +444,7 @@ public class TextFormat {
      * Get an iterator for the {@code TextFormat}'s with a format code.
      */
     public static Iterator<TextFormat> formatIterator() {
-        return new AbstractIteratorWrapper<TextFormat>() {
+        return new IteratorWrapper<TextFormat>() {
 
             Iterator<TextFormat> iterator = _characterMap.values().iterator();
 
@@ -454,7 +454,7 @@ public class TextFormat {
             }
 
             @Override
-            protected Iterator<TextFormat> getIterator() {
+            protected Iterator<TextFormat> iterator() {
                 return iterator;
             }
         };

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.wrappers;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.AbstractList;
 

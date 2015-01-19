@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.collections.players;
 
+import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.SetMultimap;
 
 import org.bukkit.plugin.Plugin;
 
@@ -42,7 +42,7 @@ import javax.annotation.Nonnull;
  */
 public class PlayerSetMultimap<V> extends PlayerMultimap<V> {
 
-    private final Object _sync = new Object();
+    private final Multimap<UUID, V> _map;
 
     /**
      * Constructor.
@@ -51,7 +51,9 @@ public class PlayerSetMultimap<V> extends PlayerMultimap<V> {
      */
     public PlayerSetMultimap(Plugin plugin, int keySize, int valueSize) {
         //noinspection unchecked
-        super(plugin, (SetMultimap)MultimapBuilder.hashKeys(keySize).hashSetValues(valueSize).build());
+        super(plugin);
+
+        _map = MultimapBuilder.hashKeys(keySize).hashSetValues(valueSize).build();
     }
 
     @Override
@@ -62,6 +64,11 @@ public class PlayerSetMultimap<V> extends PlayerMultimap<V> {
     @Override
     public Set<V> removeAll(@Nonnull Object playerId) {
         return (Set<V>) super.removeAll(playerId);
+    }
+
+    @Override
+    protected Multimap<UUID, V> map() {
+        return _map;
     }
 
     @Override

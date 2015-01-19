@@ -27,9 +27,9 @@ package com.jcwhatever.nucleus.collections.timed;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.concurrent.SyncCollection;
-import com.jcwhatever.nucleus.collections.concurrent.SyncMap;
-import com.jcwhatever.nucleus.collections.concurrent.SyncSet;
+import com.jcwhatever.nucleus.collections.wrap.CollectionWrapper;
+import com.jcwhatever.nucleus.collections.wrap.MapWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
@@ -550,10 +550,10 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         }
     }
 
-    private final class KeySetWrapper extends SyncSet<K> {
+    private final class KeySetWrapper extends SetWrapper<K> {
 
         KeySetWrapper() {
-            super(_sync);
+            super(TimedMultimap.this._sync);
         }
 
         @Override
@@ -582,10 +582,10 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         }
     }
 
-    private final class ValuesWrapper extends SyncCollection<V> {
+    private final class ValuesWrapper extends CollectionWrapper<V> {
 
         ValuesWrapper() {
-            super(_sync);
+            super(TimedMultimap.this._sync);
         }
 
         @Override
@@ -609,10 +609,10 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         }
     }
 
-    private final class EntriesWrapper extends SyncCollection<Entry<K, V>> {
+    private final class EntriesWrapper extends CollectionWrapper<Entry<K, V>> {
 
         EntriesWrapper() {
-            super(_sync);
+            super(TimedMultimap.this._sync);
         }
 
         @Override
@@ -640,10 +640,10 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         }
     }
 
-    private final class AsMapWrapper extends SyncMap<K, Collection<V>> {
+    private final class AsMapWrapper extends MapWrapper<K, Collection<V>> {
 
         AsMapWrapper() {
-            super(_sync);
+            super(TimedMultimap.this._sync);
         }
 
         @Override

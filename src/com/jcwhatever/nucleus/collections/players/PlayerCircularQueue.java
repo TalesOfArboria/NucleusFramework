@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.collections.CircularQueue;
 import com.jcwhatever.nucleus.collections.players.PlayerElement.PlayerElementMatcher;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
+import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
@@ -531,11 +531,21 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
         return new ItrLeft();
     }
 
-    private class ItrRight extends AbstractConversionIterator<Player, PlayerElement> {
+    private class ItrRight extends ConversionIteratorWrapper<Player, PlayerElement> {
 
         Iterator<PlayerElement> iterator = _queue.iterator();
 
         @Override
+        protected Player convert(PlayerElement internal) {
+            return internal.getPlayer();
+        }
+
+        @Override
+        protected Iterator<PlayerElement> iterator() {
+            return iterator;
+        }
+
+        @Override
         public boolean hasNext() {
             synchronized (_sync) {
                 return iterator.hasNext();
@@ -552,30 +562,30 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
         @Override
         public void remove() {
             synchronized (_sync) {
-                PlayerElement removed = _current;
+                PlayerElement removed = getCurrent();
                 iterator.remove();
                 if (!contains(removed)) {
                     _tracker.notifyPlayerRemoved(removed.getUniqueId());
                 }
             }
         }
-
-        @Override
-        protected Player getElement(PlayerElement trueElement) {
-            return trueElement.getPlayer();
-        }
-
-        @Override
-        protected Iterator<PlayerElement> getIterator() {
-            return iterator;
-        }
     }
 
-    private class ItrLeft extends AbstractConversionIterator<Player, PlayerElement> {
+    private class ItrLeft extends ConversionIteratorWrapper<Player, PlayerElement> {
 
         Iterator<PlayerElement> iterator = _queue.descendingIterator();
 
         @Override
+        protected Player convert(PlayerElement internal) {
+            return internal.getPlayer();
+        }
+
+        @Override
+        protected Iterator<PlayerElement> iterator() {
+            return iterator;
+        }
+
+        @Override
         public boolean hasNext() {
             synchronized (_sync) {
                 return iterator.hasNext();
@@ -592,22 +602,12 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
         @Override
         public void remove() {
             synchronized (_sync) {
-                PlayerElement removed = _current;
+                PlayerElement removed = getCurrent();
                 iterator.remove();
                 if (!contains(removed)) {
                     _tracker.notifyPlayerRemoved(removed.getUniqueId());
                 }
             }
-        }
-
-        @Override
-        protected Player getElement(PlayerElement trueElement) {
-            return trueElement.getPlayer();
-        }
-
-        @Override
-        protected Iterator<PlayerElement> getIterator() {
-            return iterator;
         }
     }
 }

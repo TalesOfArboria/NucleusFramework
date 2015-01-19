@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.collections.CircularQueue;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
+import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
@@ -315,21 +315,20 @@ public class TimedDistributor<E> implements Collection<E> {
         }
     }
 
-    private class Itr extends AbstractConversionIterator<E, Element<E>> {
+    private class Itr extends ConversionIteratorWrapper<E, Element<E>> {
 
         Iterator<Element<E>> iterator = _queue.iterator();
 
         @Override
-        protected E getElement(Element<E> trueElement) {
-
+        protected E convert(Element<E> internal) {
             @SuppressWarnings("unchecked")
-            E result = (E)trueElement.value;
+            E result = (E)internal.value;
 
             return result;
         }
 
         @Override
-        protected Iterator<Element<E>> getIterator() {
+        protected Iterator<Element<E>> iterator() {
             return iterator;
         }
     }

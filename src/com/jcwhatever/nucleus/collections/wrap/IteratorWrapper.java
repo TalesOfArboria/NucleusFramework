@@ -22,35 +22,34 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.concurrent;
-
-import com.jcwhatever.nucleus.utils.PreCon;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.Iterator;
+import java.util.concurrent.locks.ReadWriteLock;
+import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link Iterator} wrapper.
+ * The wrapper is optionally synchronized via a sync object or {@link ReadWriteLock}
+ * passed in through the constructor.
  *
  * <p>The actual iterator is provided to the abstract implementation by
  * overriding and returning it from the {@link #iterator} method.</p>
  *
- * <p>If the wrapper is being used to wrap an iterator returned from a
- * collection or other type, the other types synchronization object can
- * be used by passing it into the wrappers constructor.</p>
- *
  * <p>In order to make using the wrapper as an extension of a iterator easier,
  * the {@link #onRemove} method is provided for optional override.</p>
  */
-public abstract class SyncIterator<E> implements Iterator<E> {
+public abstract class IteratorWrapper<E> implements Iterator<E> {
 
     private final Object _sync;
+    private final ReadWriteLock _lock;
     private E _current;
 
     /**
      * Constructor.
      */
-    public SyncIterator() {
-        this(new Object());
+    public IteratorWrapper() {
+        this(null);
     }
 
     /**
@@ -58,10 +57,12 @@ public abstract class SyncIterator<E> implements Iterator<E> {
      *
      * @param sync  The synchronization object to use.
      */
-    protected SyncIterator(Object sync) {
-        PreCon.notNull(sync);
+    public IteratorWrapper(@Nullable Object sync) {
 
         _sync = sync;
+        _lock = sync instanceof ReadWriteLock
+                ? (ReadWriteLock)sync
+                : null;
     }
 
     /**
@@ -82,29 +83,79 @@ public abstract class SyncIterator<E> implements Iterator<E> {
      */
     protected abstract Iterator<E> iterator();
 
+    @Nullable
+    public Object getSync() {
+        return _sync;
+    }
+
+    public E getCurrent() {
+        return _current;
+    }
+
     @Override
     public boolean hasNext() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return iterator().hasNext();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return iterator().hasNext();
+            }
+        } else {
             return iterator().hasNext();
         }
     }
 
     @Override
     public E next() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return _current = iterator().next();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return _current = iterator().next();
+            }
+        } else {
             return _current = iterator().next();
         }
     }
 
     @Override
     public void remove() {
-
-        synchronized (_sync) {
-
-            if (!onRemove(_current))
-                throw new UnsupportedOperationException();
-
-            iterator().remove();
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                removeSource();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
         }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                removeSource();
+            }
+        } else {
+            removeSource();
+        }
+    }
+
+    private void removeSource() {
+        if (!onRemove(_current))
+            throw new UnsupportedOperationException();
+
+        iterator().remove();
     }
 }

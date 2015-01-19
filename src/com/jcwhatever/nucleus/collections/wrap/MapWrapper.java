@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.concurrent;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -32,33 +32,34 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import javax.annotation.Nullable;
 
 /**
- * An abstract implementation of a synchronized {@link Map} wrapper.
+ * An abstract implementation of a synchronized {@link Map} wrapper. The wrapper is
+ * optionally synchronized via a sync object or {@link ReadWriteLock} passed in
+ * through the constructor.
  *
  * <p>The actual map is provided to the abstract implementation by
  * overriding and returning it from the {@link #map} method.</p>
  *
- * <p>If the wrapper is being used to wrap a collection that is part of the internals
- * of another type, the other types synchronization object can be used by passing
- * it into the wrappers constructor.</p>
- *
  * <p>In order to make using the wrapper as an extension of a map easier,
  * several protected methods are provided for optional override. See {@link #onPut},
- * {@link #onRemove}, {@link #onClear}</p>
+ * {@link #onRemove}, {@link #onClear}.</p>
  */
-public abstract class SyncMap<K, V> implements Map<K, V> {
+public abstract class MapWrapper<K, V> implements Map<K, V> {
 
-    private final ValuesWrapper _valuesWrapper = new ValuesWrapper();
-    private final KeySetWrapper _keySetWrapper = new KeySetWrapper();
-    private final EntrySetWrapper _entrySetWrapper = new EntrySetWrapper();
-    private final Object _sync;
+    private final ValuesWrapper _valuesWrapper;
+    private final KeySetWrapper _keySetWrapper;
+    private final EntrySetWrapper _entrySetWrapper;
+    protected final Object _sync;
+    protected final ReadWriteLock _lock;
 
     /**
      * Constructor.
      */
-    public SyncMap() {
-        this(new Object());
+    public MapWrapper() {
+        this(null);
     }
 
     /**
@@ -66,10 +67,16 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
      *
      * @param sync  The synchronization object to use.
      */
-    protected SyncMap(Object sync) {
-        PreCon.notNull(sync);
+    public MapWrapper(@Nullable Object sync) {
 
         _sync = sync;
+        _lock = sync instanceof ReadWriteLock
+                ? (ReadWriteLock)sync
+                : null;
+
+        _valuesWrapper = new ValuesWrapper();
+        _keySetWrapper = new KeySetWrapper();
+        _entrySetWrapper = new EntrySetWrapper();
     }
 
     /**
@@ -115,35 +122,100 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
 
     @Override
     public int size() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return map().size();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return map().size();
+            }
+        } else {
             return map().size();
         }
     }
 
     @Override
     public boolean isEmpty() {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return map().isEmpty();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return map().isEmpty();
+            }
+        } else {
             return map().isEmpty();
         }
     }
 
     @Override
     public boolean containsKey(Object key) {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return map().containsKey(key);
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return map().containsKey(key);
+            }
+        } else {
             return map().containsKey(key);
         }
     }
 
     @Override
     public boolean containsValue(Object value) {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return map().containsValue(value);
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return map().containsValue(value);
+            }
+        } else {
             return map().containsValue(value);
         }
     }
 
     @Override
     public V get(Object key) {
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return map().get(key);
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return map().get(key);
+            }
+        } else {
             return map().get(key);
         }
     }
@@ -155,7 +227,20 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
 
         V previous;
 
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                previous = map().put(key, value);
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                previous = map().put(key, value);
+            }
+        } else {
             previous = map().put(key, value);
         }
 
@@ -171,7 +256,20 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
 
         V removed;
 
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                removed = map().remove(key);
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                removed = map().remove(key);
+            }
+        } else {
             removed = map().remove(key);
         }
 
@@ -186,7 +284,20 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
 
         List<Entry<? extends K, ? extends V>> entrySet;
 
-        synchronized (_sync) {
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                entrySet = new ArrayList<Entry<? extends K, ? extends V>>(m.entrySet());
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                entrySet = new ArrayList<Entry<? extends K, ? extends V>>(m.entrySet());
+            }
+        } else {
             entrySet = new ArrayList<Entry<? extends K, ? extends V>>(m.entrySet());
         }
 
@@ -198,14 +309,30 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
     @Override
     public void clear() {
 
-        synchronized (_sync) {
-
-            Set<Entry<K, V>> entries = map().entrySet();
-
-            map().clear();
-
-            onClear(entries);
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                clearSource();
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
         }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                clearSource();
+            }
+        } else {
+            clearSource();
+        }
+    }
+
+    private void clearSource() {
+        Set<Entry<K, V>> entries = new HashSet<>(map().entrySet());
+
+        map().clear();
+
+        onClear(entries);
     }
 
     @Override
@@ -223,7 +350,11 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
         return _entrySetWrapper;
     }
 
-    private class ValuesWrapper extends SyncCollection<V> {
+    private class ValuesWrapper extends CollectionWrapper<V> {
+
+        ValuesWrapper() {
+            super(MapWrapper.this._sync);
+        }
 
         @Override
         protected boolean onPreAdd(V v) {
@@ -246,7 +377,11 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
         }
     }
 
-    private class KeySetWrapper extends SyncSet<K> {
+    private class KeySetWrapper extends SetWrapper<K> {
+
+        KeySetWrapper() {
+            super(MapWrapper.this._sync);
+        }
 
         V removed;
         Set<Entry<K, V>> cleared;
@@ -263,7 +398,22 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
 
         @Override
         protected boolean onPreRemove(Object o) {
-            synchronized (_sync) {
+            if (_lock != null) {
+                _lock.readLock().lock();
+                try {
+                    //noinspection SuspiciousMethodCalls
+                    removed = map().get(o);
+                }
+                finally {
+                    _lock.readLock().unlock();
+                }
+            }
+            else if (_sync != null) {
+                synchronized (_sync) {
+                    //noinspection SuspiciousMethodCalls
+                    removed = map().get(o);
+                }
+            } else {
                 //noinspection SuspiciousMethodCalls
                 removed = map().get(o);
             }
@@ -272,25 +422,43 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
 
         @Override
         protected void onRemoved(Object key) {
-            SyncMap.this.onRemove(key, removed);
+            MapWrapper.this.onRemove(key, removed);
             removed = null;
         }
 
         @Override
         protected void onPreClear() {
-            synchronized (_sync) {
+
+            if (_lock != null) {
+                _lock.readLock().lock();
+                try {
+                    cleared = new HashSet<Entry<K, V>>(map().entrySet());
+                }
+                finally {
+                    _lock.readLock().unlock();
+                }
+            }
+            else if (_sync != null) {
+                synchronized (_sync) {
+                    cleared = new HashSet<Entry<K, V>>(map().entrySet());
+                }
+            } else {
                 cleared = new HashSet<Entry<K, V>>(map().entrySet());
             }
         }
 
         @Override
         protected void onClear(Collection<K> values) {
-            SyncMap.this.onClear(cleared);
+            MapWrapper.this.onClear(cleared);
             cleared = null;
         }
     }
 
-    private class EntrySetWrapper extends SyncSet<Entry<K, V>> {
+    private class EntrySetWrapper extends SetWrapper<Entry<K, V>> {
+
+        EntrySetWrapper() {
+            super(MapWrapper.this._sync);
+        }
 
         @Override
         protected Set<Entry<K, V>> set() {
@@ -304,7 +472,7 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
 
         @Override
         protected void onAdded(Entry<K, V> kvEntry) {
-            SyncMap.this.onPut(kvEntry.getKey(), kvEntry.getValue());
+            MapWrapper.this.onPut(kvEntry.getKey(), kvEntry.getValue());
         }
 
         @Override
@@ -319,13 +487,13 @@ public abstract class SyncMap<K, V> implements Map<K, V> {
                 @SuppressWarnings("unchecked")
                 Entry<K, V> entry = (Entry<K, V>)o;
 
-                SyncMap.this.onRemove(entry.getKey(), entry.getValue());
+                MapWrapper.this.onRemove(entry.getKey(), entry.getValue());
             }
         }
 
         @Override
         protected void onClear(Collection<Entry<K, V>> values) {
-            SyncMap.this.onClear(values);
+            MapWrapper.this.onClear(values);
         }
     }
 }

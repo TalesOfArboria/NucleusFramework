@@ -25,16 +25,14 @@
 
 package com.jcwhatever.nucleus.collections.players;
 
-import com.jcwhatever.nucleus.collections.players.PlayerElement.PlayerElementMatcher;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractConversionIterator;
+import com.jcwhatever.nucleus.collections.wrap.ConversionSetWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -44,12 +42,11 @@ import java.util.Set;
  *     {@code Player} object is automatically removed when the player logs out.
  * </p>
  */
-public class PlayerSet implements IPlayerCollection, Set<Player> {
+public class PlayerSet extends ConversionSetWrapper<Player, PlayerElement> implements IPlayerCollection {
 
     private final Plugin _plugin;
     private final Set<PlayerElement> _players;
     private final PlayerCollectionTracker _tracker;
-    private final Object _sync = new Object();
 
     /**
      * Constructor.
@@ -64,6 +61,7 @@ public class PlayerSet implements IPlayerCollection, Set<Player> {
      * @param size  The initial capacity.
      */
     public PlayerSet(Plugin plugin, int size) {
+        super(new Object());
         PreCon.notNull(plugin);
 
         _plugin = plugin;
@@ -77,196 +75,29 @@ public class PlayerSet implements IPlayerCollection, Set<Player> {
     }
 
     @Override
-    public boolean add(Player p) {
-        PreCon.notNull(p);
-
-        synchronized (_sync) {
-
-            if (_players.add(new PlayerElement(p))) {
-                _tracker.notifyPlayerAdded(p.getUniqueId());
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends Player> collection) {
-        PreCon.notNull(collection);
-
-        synchronized (_sync) {
-            boolean isChanged = false;
-
-            for (Player p : collection) {
-                if (_players.add(new PlayerElement(p))) {
-                    _tracker.notifyPlayerAdded(p.getUniqueId());
-                    isChanged = true;
-                }
-            }
-
-            return isChanged;
-        }
-    }
-
-    @Override
-    public void clear() {
-
-        synchronized (_sync) {
-            for (PlayerElement p : _players) {
-                _tracker.notifyPlayerRemoved(p.getUniqueId());
-            }
-
-            _players.clear();
-        }
-    }
-
-    @Override
-    public boolean contains(Object o) {
-        synchronized (_sync) {
-            return _players.contains(new PlayerElementMatcher(o));
-        }
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> collection) {
-        PreCon.notNull(collection);
-
-        synchronized (_sync) {
-            if (collection.isEmpty())
-                return false;
-
-            for (Object obj : collection) {
-                if (!contains(obj))
-                    return false;
-            }
-
-            return true;
-        }
-    }
-
-    @Override
-    public boolean isEmpty() {
-        synchronized (_sync) {
-            return _players.isEmpty();
-        }
-    }
-
-    @Override
-    public Iterator<Player> iterator() {
-        return new PlayerIterator();
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        PreCon.notNull(o);
-
-        synchronized (_sync) {
-
-            if (_players.remove(new PlayerElementMatcher(o))) {
-                _tracker.notifyPlayerRemoved(((Player) o).getUniqueId());
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> collection) {
-        PreCon.notNull(collection);
-
-        synchronized (_sync) {
-
-            boolean isChanged = false;
-
-            for (Object obj : collection) {
-                isChanged = isChanged | remove(obj);
-            }
-
-            return isChanged;
-        }
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> collection) {
-        PreCon.notNull(collection);
-
-        boolean isChanged = false;
-
-        synchronized (_sync) {
-
-            Iterator<PlayerElement> iterator = _players.iterator();
-            while (iterator.hasNext()) {
-                PlayerElement entry = iterator.next();
-
-                boolean keep = false;
-                for (Object obj : collection) {
-                    if (obj.equals(entry.getPlayer())) {
-                        keep = true;
-                        break;
-                    }
-                }
-
-                if (!keep) {
-                    iterator.remove();
-                    isChanged = true;
-                }
-            }
-        }
-
-        return isChanged;
-    }
-
-    @Override
-    public int size() {
-        synchronized (_sync) {
-            return _players.size();
-        }
-    }
-
-    @Override
-    public Object[] toArray() {
-        synchronized (_sync) {
-            return _players.toArray();
-        }
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        synchronized (_sync) {
-            //noinspection SuspiciousToArrayCall
-            return _players.toArray(a);
-        }
-    }
-
-    @Override
     public void removePlayer(Player p) {
         synchronized (_sync) {
             _players.remove(new PlayerElement(p));
         }
     }
 
-    private final class PlayerIterator extends AbstractConversionIterator<Player, PlayerElement> {
+    @Override
+    protected Player convert(PlayerElement internal) {
+        return internal.getPlayer();
+    }
 
-        Iterator<PlayerElement> iterator = _players.iterator();
+    @Override
+    protected PlayerElement unconvert(Object external) {
 
-        @Override
-        public void remove() {
-            synchronized (_sync) {
-                _tracker.notifyPlayerRemoved(_current.getUniqueId());
-                iterator.remove();
-            }
-        }
+        Player player = PlayerUtils.getPlayer(external);
+        if (player == null)
+            throw new ClassCastException();
 
-        @Override
-        protected Player getElement(PlayerElement trueElement) {
-            return trueElement.getPlayer();
-        }
+        return new PlayerElement(player);
+    }
 
-        @Override
-        protected Iterator<PlayerElement> getIterator() {
-            return iterator;
-        }
+    @Override
+    protected Set<PlayerElement> set() {
+        return _players;
     }
 }

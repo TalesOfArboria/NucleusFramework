@@ -25,6 +25,8 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder.ListMultimapBuilder;
 
 import org.bukkit.plugin.Plugin;
 
@@ -41,14 +43,18 @@ import javax.annotation.Nonnull;
  */
 public class PlayerListMultimap<V> extends PlayerMultimap<V> {
 
+    ListMultimap<UUID, V> _map;
+
     /**
      * Constructor.
      *
      * @param plugin   The owning plugin.
-     * @param multimap The player Multimap.
      */
-    public PlayerListMultimap(Plugin plugin, ListMultimap<UUID, V> multimap) {
-        super(plugin, multimap);
+    public PlayerListMultimap(Plugin plugin) {
+        super(plugin);
+
+        _map = ListMultimapBuilder.hashKeys().arrayListValues().build();
+
     }
 
     @Override
@@ -64,5 +70,10 @@ public class PlayerListMultimap<V> extends PlayerMultimap<V> {
     @Override
     public List<V> replaceValues(UUID playerId, Iterable<? extends V> iterable) {
         return (List<V>)super.replaceValues(playerId, iterable);
+    }
+
+    @Override
+    protected Multimap<UUID, V> map() {
+        return _map;
     }
 }

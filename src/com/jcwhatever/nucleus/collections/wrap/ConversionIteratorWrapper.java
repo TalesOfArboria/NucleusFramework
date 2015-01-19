@@ -22,40 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.concurrent;
-
-import com.jcwhatever.nucleus.utils.PreCon;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.Iterator;
+import java.util.concurrent.locks.ReadWriteLock;
+import javax.annotation.Nullable;
 
 /**
- * An abstract implementation of a synchronized {@link Iterator} wrapper
- * designed to convert between the encapsulated element type and
- * an externally visible type.
+ * An abstract implementation of a {@link Iterator} wrapper
+ * designed to convert between the encapsulated collection element type and
+ * an externally visible type. The wrapper is optionally synchronized via a sync
+ * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the constructor.
  *
  * <p>The actual iterator is provided to the abstract implementation by
  * overriding and returning it from the {@link #iterator} method.</p>
  *
- * <p>If the wrapper is being used to wrap an iterator that is part of the internals
- * of another type, the other types synchronization object can be used by passing
- * it into the wrappers constructor.</p>
- *
- * <p>In order to make using the wrapper as an extension of a collection easier,
- * the {@link #onRemove} methods is provided for optional override.</p>
- *
- * <p>The {@link #convert} abstract method is used to convert between the internal
- * iterators element type and the external type.</p>
+ * <p>The {@link #convert} method is used to convert between the internal list element
+ * type and the external type.</p>
  */
-public abstract class SyncConversionIterator<E, T> implements Iterator<E> {
+public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
 
     private final Object _sync;
+    private final ReadWriteLock _lock;
     private T _current;
 
     /**
      * Constructor.
      */
-    public SyncConversionIterator() {
-        this(new Object());
+    public ConversionIteratorWrapper() {
+        this(null);
     }
 
     /**
@@ -63,10 +58,12 @@ public abstract class SyncConversionIterator<E, T> implements Iterator<E> {
      *
      * @param sync  The synchronization object to use.
      */
-    protected SyncConversionIterator(Object sync) {
-        PreCon.notNull(sync);
+    public ConversionIteratorWrapper(@Nullable Object sync) {
 
         _sync = sync;
+        _lock = sync instanceof ReadWriteLock
+                ? (ReadWriteLock)sync
+                : null;
     }
 
     /**
@@ -96,30 +93,87 @@ public abstract class SyncConversionIterator<E, T> implements Iterator<E> {
      */
     protected abstract Iterator<T> iterator();
 
+    @Nullable
+    public Object getSync() {
+        return _sync;
+    }
+
+    @Nullable
+    public T getCurrent() {
+        return _current;
+    }
+
     @Override
     public boolean hasNext() {
-        synchronized (_sync) {
+
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return iterator().hasNext();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
+        }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return iterator().hasNext();
+            }
+        } else {
             return iterator().hasNext();
         }
     }
 
     @Override
     public E next() {
-        synchronized (_sync) {
-            _current = iterator().next();
-            return convert(_current);
+        if (_lock != null) {
+            _lock.readLock().lock();
+            try {
+                return nextSource();
+            }
+            finally {
+                _lock.readLock().unlock();
+            }
         }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                return nextSource();
+            }
+        } else {
+            return nextSource();
+        }
+    }
+
+    private E nextSource() {
+        _current = iterator().next();
+        return convert(_current);
     }
 
     @Override
     public void remove() {
 
-        synchronized (_sync) {
-
-            if (!onRemove(_current))
-                throw new UnsupportedOperationException();
-
-            iterator().remove();
+        if (_lock != null) {
+            _lock.writeLock().lock();
+            try {
+                removeSource();
+            }
+            finally {
+                _lock.writeLock().unlock();
+            }
         }
+        else if (_sync != null) {
+            synchronized (_sync) {
+                removeSource();
+            }
+        } else {
+            removeSource();
+        }
+    }
+
+    private void removeSource() {
+        if (!onRemove(_current))
+            throw new UnsupportedOperationException();
+
+        iterator().remove();
     }
 }

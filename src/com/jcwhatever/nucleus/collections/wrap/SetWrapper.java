@@ -22,76 +22,50 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.wrappers;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of a {@code Map} wrapper.
+ * An abstract implementation of a synchronized {@link Set} wrapper. The wrapper is
+ * optionally synchronized via a sync object or {@link java.util.concurrent.locks.ReadWriteLock}
+ * passed in through the constructor.
+ *
+ * <p>The actual collection is provided to the abstract implementation by
+ * overriding and returning it from the {@link #set} method.</p>
+ *
+ * <p>In order to make using the wrapper as an extension of a collection easier,
+ * several protected methods are provided for optional override. These methods
+ * are provided by the superclass {@link CollectionWrapper}.
  */
-public abstract class AbstractMapWrapper<K, V> implements Map<K, V> {
+public abstract class SetWrapper<E> extends CollectionWrapper<E> implements Set<E> {
 
-    @Override
-    public int size() {
-        return getMap().size();
+    /**
+     * Constructor.
+     */
+    public SetWrapper() {
+        super(null);
     }
 
-    @Override
-    public boolean isEmpty() {
-        return getMap().isEmpty();
+    /**
+     * Constructor.
+     *
+     * @param sync  The synchronization object to use.
+     */
+    public SetWrapper(@Nullable Object sync) {
+        super(sync);
     }
 
-    @Override
-    public boolean containsKey(Object key) {
-        return getMap().containsKey(key);
-    }
+    /**
+     * Invoked from a synchronized block to get the
+     * encapsulated {@code Set}.
+     */
+    protected abstract Set<E> set();
 
     @Override
-    public boolean containsValue(Object value) {
-        return getMap().containsValue(value);
+    protected Collection<E> collection() {
+        return set();
     }
-
-    @Override
-    public V get(Object key) {
-        return getMap().get(key);
-    }
-
-    @Override
-    public V put(K key, V value) {
-        return getMap().put(key, value);
-    }
-
-    @Override
-    public V remove(Object key) {
-        return getMap().remove(key);
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        getMap().putAll(m);
-    }
-
-    @Override
-    public void clear() {
-        getMap().clear();
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return getMap().keySet();
-    }
-
-    @Override
-    public Collection<V> values() {
-        return getMap().values();
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return getMap().entrySet();
-    }
-
-    protected abstract Map<K, V> getMap();
 }

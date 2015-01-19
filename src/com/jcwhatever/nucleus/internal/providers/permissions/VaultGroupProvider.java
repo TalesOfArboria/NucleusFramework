@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.providers.permissions;
 
-import com.jcwhatever.nucleus.collections.wrappers.WrappedArrayList;
+import com.jcwhatever.nucleus.collections.wrap.WrappedArrayList;
 import com.jcwhatever.nucleus.providers.permissions.IGroupPermissionsProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionGroup;
 

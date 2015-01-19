@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.collections;
 
-import com.jcwhatever.nucleus.collections.wrappers.AbstractSetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,7 +34,7 @@ import java.util.WeakHashMap;
 /**
  * A hash {@code Set} with weak referenced values.
  */
-public class WeakHashSet<E> extends AbstractSetWrapper<E> {
+public class WeakHashSet<E> extends SetWrapper<E> {
 
     private final transient Set<E> _set;
 
@@ -52,7 +52,7 @@ public class WeakHashSet<E> extends AbstractSetWrapper<E> {
     }
 
     @Override
-    protected Set<E> getSet() {
+    protected Set<E> set() {
         return _set;
     }
 }

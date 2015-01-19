@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.collections;
 
-import com.jcwhatever.nucleus.collections.wrappers.AbstractIteratorWrapper;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractSetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.ArrayList;
@@ -390,7 +390,7 @@ public abstract class SetMap<K, V> implements Map<K, V> {
         return results;
     }
 
-    private final class SetMapKeySet extends AbstractSetWrapper<K> {
+    private final class SetMapKeySet extends SetWrapper<K> {
 
         @Override
         public Iterator<K> iterator() {
@@ -443,11 +443,11 @@ public abstract class SetMap<K, V> implements Map<K, V> {
         }
 
         @Override
-        protected Set<K> getSet() {
+        protected Set<K> set() {
             return getMap().keySet();
         }
 
-        private final class StackedKeySetIterator extends AbstractIteratorWrapper<K> {
+        private final class StackedKeySetIterator extends IteratorWrapper<K> {
 
             Iterator<K> iterator = getMap().keySet().iterator();
 
@@ -458,7 +458,7 @@ public abstract class SetMap<K, V> implements Map<K, V> {
             }
 
             @Override
-            protected Iterator<K> getIterator() {
+            protected Iterator<K> iterator() {
                 return iterator;
             }
         }

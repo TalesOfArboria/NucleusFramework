@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.collections;
 
-import com.jcwhatever.nucleus.collections.wrappers.AbstractListWrapper;
+import com.jcwhatever.nucleus.collections.wrap.ListWrapper;
 import com.jcwhatever.nucleus.mixins.IPaginator;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -35,7 +35,7 @@ import java.util.ListIterator;
 /**
  * An {@code IPaginator} implementation that wraps a {@code List} implementation.
  */
-public class Paginated<E> extends AbstractListWrapper<E> implements IPaginator<E> {
+public class Paginated<E> extends ListWrapper<E> implements IPaginator<E> {
 
     private final PageStartIndex _start;
     private final List<E> _list;
@@ -101,11 +101,6 @@ public class Paginated<E> extends AbstractListWrapper<E> implements IPaginator<E
         return new PaginatorIterator(page);
     }
 
-    @Override
-    protected List<E> getList() {
-        return _list;
-    }
-
     protected int getStartIndex(int page) {
         return (page - _start.getStartIndex()) * _itemsPerPage;
     }
@@ -127,6 +122,11 @@ public class Paginated<E> extends AbstractListWrapper<E> implements IPaginator<E
             default:
                 throw new AssertionError();
         }
+    }
+
+    @Override
+    protected List<E> list() {
+        return _list;
     }
 
     /**

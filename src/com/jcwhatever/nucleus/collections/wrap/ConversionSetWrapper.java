@@ -22,32 +22,37 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.concurrent;
+package com.jcwhatever.nucleus.collections.wrap;
+
+import com.sun.istack.internal.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
 
 /**
- * An abstract implementation of a synchronized {@link Set} wrapper.
+ * An abstract implementation of a {@link Set} wrapper
+ * designed to convert between the encapsulated set element type and
+ * an externally visible type. The wrapper is optionally synchronized via a sync
+ * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the constructor.
  *
- * <p>The actual collection is provided to the abstract implementation by
+ * <p>The actual list is provided to the abstract implementation by
  * overriding and returning it from the {@link #set} method.</p>
  *
- * <p>If the wrapper is being used to wrap a collection that is part of the internals
- * of another type, the other types synchronization object can be used by passing
- * it into the wrappers constructor.</p>
+ * <p>The {@link #convert} and {@link #unconvert} abstract methods are used to
+ * convert between the internal set element type and the external type.</p>
  *
- * <p>In order to make using the wrapper as an extension of a collection easier,
- * several protected methods are provided for optional override. These methods
- * are provided by the superclass {@link SyncCollection}.
+ * <p>When using the {@link #unconvert} method, a {@link ClassCastException} can be
+ * thrown to indicate the value cannot be converted. The exception is caught and handled
+ * where it is appropriate to do so.</p>
  */
-public abstract class SyncSet<E> extends SyncCollection<E> implements Set<E> {
+public abstract class ConversionSetWrapper<E, T>
+        extends ConversionCollectionWrapper<E, T> implements Set<E> {
 
     /**
      * Constructor.
      */
-    public SyncSet() {
-        super(new Object());
+    public ConversionSetWrapper() {
+        this(null);
     }
 
     /**
@@ -55,18 +60,17 @@ public abstract class SyncSet<E> extends SyncCollection<E> implements Set<E> {
      *
      * @param sync  The synchronization object to use.
      */
-    protected SyncSet(Object sync) {
+    public ConversionSetWrapper(@Nullable Object sync) {
         super(sync);
     }
 
     /**
-     * Invoked from a synchronized block to get the
-     * encapsulated {@code Set}.
+     * Invoked from a synchronized block to get the encapsulated {@code Set}.
      */
-    protected abstract Set<E> set();
+    protected abstract Set<T> set();
 
     @Override
-    protected Collection<E> collection() {
+    protected final Collection<T> collection() {
         return set();
     }
 }

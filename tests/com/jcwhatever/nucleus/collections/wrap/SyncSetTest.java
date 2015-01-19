@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.collections.concurrent;
+package com.jcwhatever.nucleus.collections.wrap;
 
 import com.jcwhatever.nucleus.collections.java.SetRunnable;
 
@@ -16,7 +16,7 @@ public class SyncSetTest {
     @Test
     public void basicTest() {
 
-        SyncSet<String> set = new SyncSet<String>() {
+        SetWrapper<String> set = new SetWrapper<String>() {
 
             Set<String> hashSet = new HashSet<>(10);
 

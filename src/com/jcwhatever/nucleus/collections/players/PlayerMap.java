@@ -25,20 +25,15 @@
 
 package com.jcwhatever.nucleus.collections.players;
 
-import com.jcwhatever.nucleus.collections.wrappers.AbstractIteratorWrapper;
-import com.jcwhatever.nucleus.collections.wrappers.AbstractSetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.MapWrapper;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
-import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -49,13 +44,11 @@ import java.util.UUID;
  *
  * @param <V>  The value type
  */
-public class PlayerMap<V> implements IPlayerCollection, Map<UUID, V> {
+public class PlayerMap<V> extends MapWrapper<UUID, V> implements IPlayerCollection {
 
 	private final Plugin _plugin;
 	private final Map<UUID, V> _map;
-	private final transient KeySetWrapper _keyset = new KeySetWrapper();
 	private final transient PlayerCollectionTracker _tracker;
-	private final transient Object _sync = new Object();
 
 	/**
 	 * Constructor.
@@ -68,9 +61,44 @@ public class PlayerMap<V> implements IPlayerCollection, Map<UUID, V> {
 	 * Constructor.
 	 */
 	public PlayerMap(Plugin plugin, int size) {
+		super(new Object());
 		_plugin = plugin;
 		_map = new HashMap<UUID, V>(size);
 		_tracker = new PlayerCollectionTracker(this);
+	}
+
+	@Override
+	protected void onPut(UUID key, V value) {
+		_tracker.notifyPlayerAdded(key);
+	}
+
+	@Override
+	protected void onRemove(Object key, V removed) {
+
+		UUID playerId;
+
+		if (key instanceof UUID) {
+			playerId = (UUID)key;
+		}
+		else if (key instanceof Player) {
+			playerId = ((Player) key).getUniqueId();
+		}
+		else if (key instanceof IPlayerReference) {
+			playerId = ((IPlayerReference) key).getPlayer().getUniqueId();
+		}
+		else {
+			throw new ClassCastException();
+		}
+
+		_tracker.notifyPlayerRemoved(playerId);
+	}
+
+	@Override
+	protected void onClear(Collection<Entry<UUID, V>> entries) {
+
+		for (Entry<UUID, V> entry : entries) {
+			_tracker.notifyPlayerRemoved(entry.getKey());
+		}
 	}
 
 	@Override
@@ -78,234 +106,25 @@ public class PlayerMap<V> implements IPlayerCollection, Map<UUID, V> {
 		return _plugin;
 	}
 
-	@Override
-	public synchronized void clear() {
-
-		for (UUID playerId : _map.keySet()) {
-			_tracker.notifyPlayerRemoved(playerId);
-		}
-
-		_map.clear();
-	}
-
-	@Override
-	public boolean containsKey(Object key) {
-		synchronized (_sync) {
-			return _map.containsKey(key);
-		}
-	}
-
-	@Override
-	public boolean containsValue(Object value) {
-		synchronized (_sync) {
-			return _map.containsValue(value);
-		}
-	}
-
-	@Override
-	public Set<Entry<UUID, V>> entrySet() {
-		synchronized (_sync) {
-			return new HashSet<Entry<UUID, V>>(_map.entrySet());
-		}
-	}
-
-	@Override
-	public V get(Object key) {
-		synchronized (_sync) {
-			return _map.get(key);
-		}
-	}
-
 	public V get(Player p) {
-		synchronized (_sync) {
-			return _map.get(p.getUniqueId());
-		}
+		return super.get(p.getUniqueId());
 	}
 
-	@Override
-	public boolean isEmpty() {
-		synchronized (_sync) {
-			return _map.isEmpty();
-		}
-	}
-
-	@Override
-	public Set<UUID> keySet() {
-		synchronized (_sync) {
-			return _keyset;
-		}
-	}
-
-	@Override
-	public V put(UUID key, V value) {
-		PreCon.notNull(key);
-
-		synchronized (_sync) {
-			_tracker.notifyPlayerAdded(key);
-			return _map.put(key, value);
-		}
-	}
-
-	@Override
-	public void putAll(Map<? extends UUID, ? extends V> pairs) {
-		PreCon.notNull(pairs);
-
-		synchronized (_sync) {
-			for (UUID playerId : pairs.keySet()) {
-				_tracker.notifyPlayerAdded(playerId);
-			}
-			_map.putAll(pairs);
-		}
-	}
-
-	@Override
-	public V remove(Object key) {
-		PreCon.notNull(key);
-
-		synchronized (_sync) {
-			V item = _map.remove(key);
-
-			if (key instanceof UUID) {
-				_tracker.notifyPlayerRemoved((UUID) key);
-			}
-
-			return item;
-		}
-	}
-
-	@Override
-	public int size() {
-		synchronized (_sync) {
-			return _map.size();
-		}
-	}
-
-	@Override
-	public Collection<V> values() {
-		synchronized (_sync) {
-			return _map.values();
-		}
+	public V get(IPlayerReference p) {
+		return super.get(p.getPlayer().getUniqueId());
 	}
 
 	@Override
 	public void removePlayer(Player p) {
+		assert _sync != null;
+
 		synchronized (_sync) {
 			_map.remove(p.getUniqueId());
 		}
 	}
 
-	private class KeySetWrapper extends AbstractSetWrapper<UUID> {
-
-		@Override
-		public boolean add(UUID e) {
-			synchronized (_sync) {
-				if (_map.keySet().add(e)) {
-					_tracker.notifyPlayerAdded(e);
-					return true;
-				}
-				return false;
-			}
-		}
-
-		@Override
-		public boolean remove(Object o) {
-			synchronized (_sync) {
-				UUID id = null;
-				if (o instanceof UUID) {
-					id = (UUID) o;
-				} else if (o instanceof Player) {
-					id = ((Player) o).getUniqueId();
-				} else if (o instanceof IPlayerReference) {
-					Player player = ((IPlayerReference) o).getPlayer();
-					if (player != null) {
-						id = player.getUniqueId();
-					}
-				}
-
-				if (id == null)
-					return false;
-
-				if (_map.keySet().remove(id)) {
-					_tracker.notifyPlayerRemoved(id);
-					return true;
-				}
-
-				return false;
-			}
-		}
-
-		@Override
-		public boolean addAll(Collection<? extends UUID> c) {
-			synchronized (_sync) {
-				boolean isChanged = false;
-				for (UUID id : c) {
-					isChanged = add(id) || isChanged;
-				}
-				return isChanged;
-			}
-		}
-
-		@Override
-		public boolean removeAll(Collection<?> c) {
-			synchronized (_sync) {
-				boolean isChanged = false;
-				for (Object id : c) {
-					isChanged = remove(id) || isChanged;
-				}
-				return isChanged;
-			}
-		}
-
-		@Override
-		public boolean retainAll(Collection<?> c) {
-			synchronized (_sync) {
-				Set<?> removed = new HashSet<>(this);
-				for (Object obj : c) {
-					removed.remove(obj);
-				}
-
-				boolean isChanged = false;
-
-				for (Object obj : removed) {
-					isChanged = remove(obj) || isChanged;
-				}
-
-				return isChanged;
-			}
-		}
-
-		@Override
-		public void clear() {
-			PlayerMap.this.clear();
-		}
-
-		@Override
-		public Iterator<UUID> iterator() {
-			return new KeySetIteratorWrapper();
-		}
-
-		@Override
-		protected Set<UUID> getSet() {
-			return _map.keySet();
-		}
-	}
-
-	private class KeySetIteratorWrapper extends AbstractIteratorWrapper<UUID> {
-
-		Iterator<UUID> iterator = _map.keySet().iterator();
-
-		@Override
-		public void remove() {
-			synchronized (_sync) {
-				_tracker.notifyPlayerRemoved(_current);
-
-				iterator.remove();
-			}
-		}
-
-		@Override
-		protected Iterator<UUID> getIterator() {
-			return iterator;
-		}
+	@Override
+	protected Map<UUID, V> map() {
+		return _map;
 	}
 }
