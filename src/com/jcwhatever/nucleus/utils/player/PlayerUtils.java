@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.utils.player;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -173,6 +174,43 @@ public final class PlayerUtils {
 
         if (player instanceof String)
             return getPlayer((String)player);
+
+        return null;
+    }
+
+    /**
+     * Gets player Id from provided object.
+     *
+     * <p>Attempts to retrieve the player object from one of the following
+     * types of objects:</p>
+     *
+     * <p>{@code Player}, {@code IPlayerWrapper} (handle),
+     * {@code UUID} (player id), {@code String} (player name or UUID as a string)</p>
+     *
+     * @param player  The object to get the player ID from.
+     *
+     * @return Null if not found
+     */
+    @Nullable
+    public static UUID getPlayerId(Object player) {
+
+        if (player instanceof UUID)
+            return (UUID)player;
+
+        if (player instanceof Player)
+            return ((Player)player).getUniqueId();
+
+        if (player instanceof IPlayerReference)
+            return ((IPlayerReference)player).getPlayer().getUniqueId();
+
+        if (player instanceof String) {
+
+            UUID playerId = TextUtils.parseUUID((String)player);
+            if (playerId != null)
+                return playerId;
+
+            return getPlayerId((String)player);
+        }
 
         return null;
     }
