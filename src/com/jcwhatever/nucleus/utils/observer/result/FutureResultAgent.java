@@ -115,7 +115,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
         return super.hasSubscribers() || _hasFutureSubscribers;
     }
 
-    public static class Future<R> {
+    public static class Future<R> implements IFuture<R> {
 
         FutureResultAgent<R> parent;
 
@@ -123,13 +123,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
             this.parent = parent;
         }
 
-        /**
-         * Called when a result is available. Always called
-         * along with {@code onSuccess}, {@code onCancel}, or
-         * {@code onFail}.
-         *
-         * @param subscriber  The result update subscriber.
-         */
+        @Override
         public Future<R> onResult(FutureSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
@@ -138,12 +132,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
             return this;
         }
 
-        /**
-         * Adds an update subscriber to receive an update when and
-         * if the result is successful.
-         *
-         * @param subscriber  The result update subscriber.
-         */
+        @Override
         public Future<R> onSuccess(FutureSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
@@ -153,12 +142,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
             return this;
         }
 
-        /**
-         * Adds an update subscriber to receive an update when and
-         * if the result is cancelled.
-         *
-         * @param subscriber  The result update subscriber.
-         */
+        @Override
         public Future<R> onCancel(FutureSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
@@ -168,12 +152,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
             return this;
         }
 
-        /**
-         * Adds an update subscriber to receive an update when and
-         * if the result fails.
-         *
-         * @param subscriber  The result update subscriber.
-         */
+        @Override
         public Future<R> onError(FutureSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
