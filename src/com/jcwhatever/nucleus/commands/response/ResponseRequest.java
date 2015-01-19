@@ -27,6 +27,9 @@ package com.jcwhatever.nucleus.commands.response;
 
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.result.IFuture;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -39,14 +42,16 @@ import java.util.Set;
  * Data object holding information about a
  * player response request.
  */
-public class ResponseRequest {
+public class ResponseRequest implements IFuture<ResponseType> {
 
-    private CommandSender _sender;
-    private Plugin _plugin;
-    private String _context;
-    private IResponseHandler _responseHandler;
-    private Set<ResponseType> _responseTypes = new HashSet<>(ResponseType.totalTypes());
+    private final CommandSender _sender;
+    private final Plugin _plugin;
+    private final String _context;
+    private final Set<ResponseType> _responseTypes = new HashSet<>(ResponseType.totalTypes());
     private int _lifespan = 30;
+
+    protected final FutureResultAgent<ResponseType> _agent = new FutureResultAgent<>();
+    IFuture<ResponseType> future = _agent.getFuture();
 
     /**
      * Constructor.
@@ -54,23 +59,20 @@ public class ResponseRequest {
      * @param plugin        The owning plugin.
      * @param context       A context name the sender can use if more than one request is made.
      * @param sender        The command sender to make a request at.
-     * @param handler       The {@code ResponseHandler} that handles the players response.
      * @param responseType  The requested responses.
      */
     public ResponseRequest(Plugin plugin, String context,
-                           CommandSender sender, IResponseHandler handler,
+                           CommandSender sender,
                            ResponseType... responseType) {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(context);
         PreCon.notNull(sender);
-        PreCon.notNull(handler);
         PreCon.notNull(responseType);
         PreCon.greaterThanZero(responseType.length);
 
         _plugin = plugin;
         _context = context;
         _sender = sender;
-        _responseHandler = handler;
         Collections.addAll(_responseTypes, responseType);
     }
 
@@ -93,13 +95,6 @@ public class ResponseRequest {
      */
     public CommandSender getCommandSender() {
         return _sender;
-    }
-
-    /**
-     * Get the response handler.
-     */
-    public IResponseHandler getHandler() {
-        return _responseHandler;
     }
 
     /**
@@ -126,6 +121,30 @@ public class ResponseRequest {
     }
 
     @Override
+    public ResponseRequest onResult(FutureSubscriber<ResponseType> subscriber) {
+        future.onResult(subscriber);
+        return this;
+    }
+
+    @Override
+    public ResponseRequest onSuccess(FutureSubscriber<ResponseType> subscriber) {
+        future.onSuccess(subscriber);
+        return this;
+    }
+
+    @Override
+    public ResponseRequest onCancel(FutureSubscriber<ResponseType> subscriber) {
+        future.onCancel(subscriber);
+        return this;
+    }
+
+    @Override
+    public ResponseRequest onError(FutureSubscriber<ResponseType> subscriber) {
+        future.onError(subscriber);
+        return this;
+    }
+
+    @Override
     public  int hashCode() {
         return _context.hashCode();
     }
@@ -134,6 +153,5 @@ public class ResponseRequest {
     public boolean equals(Object obj) {
         return obj instanceof ResponseRequest && ((ResponseRequest) obj)._context.equals(_context);
     }
-
-
 }
+

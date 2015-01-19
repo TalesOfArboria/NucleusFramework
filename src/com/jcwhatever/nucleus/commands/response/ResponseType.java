@@ -37,8 +37,7 @@ import javax.annotation.Nullable;
 
 public class ResponseType {
 
-    @Localizable
-    static final String _YES = "yes";
+    @Localizable static final String _YES = "yes";
     @Localizable static final String _NO = "no";
     @Localizable static final String _ACCEPT = "accept";
     @Localizable static final String _DECLINE = "decline";

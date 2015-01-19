@@ -26,12 +26,14 @@
 package com.jcwhatever.nucleus.commands.response;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedMultimap;
 import com.jcwhatever.nucleus.collections.timed.TimedSetMultimap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.language.Localizable;
+import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
+import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.command.CommandSender;
@@ -40,6 +42,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 import javax.annotation.Nullable;
 
 /**
@@ -55,7 +58,26 @@ public class CommandRequests {
             "Please be more specific:";
 
     private static TimedMultimap<CommandSender, ResponseRequest>
-            _requests = new TimedSetMultimap<>(Nucleus.getPlugin(), 30, TimeScale.SECONDS);
+            _requests = new TimedSetMultimap<CommandSender, ResponseRequest>(
+                Nucleus.getPlugin(), 30, TimeScale.SECONDS)
+            .onLifespanEnd(new UpdateSubscriber<Entry<CommandSender, Collection<ResponseRequest>>>() {
+
+                // notify subscribers that the requests is expired/cancelled.
+                @Override
+                public void on(Entry<CommandSender, Collection<ResponseRequest>> entry) {
+
+                    Collection<ResponseRequest> requests = entry.getValue();
+
+                    for (ResponseRequest request : requests) {
+
+                        request._agent.sendResult(
+                                new ResultBuilder<ResponseType>().cancel().build()
+                        );
+
+                        request._agent.dispose();
+                    }
+                }
+            });
 
     /**
      * Get a list of response requests for the specified command sender.
@@ -87,15 +109,14 @@ public class CommandRequests {
      * @param plugin        The owning plugin.
      * @param context       The context name of the request.
      * @param sender        The command sender to make the request to.
-     * @param handler       The response handler.
      * @param responseType  The type of responses expected.
      *
      * @return  {@code ResponseRequest} object.
      */
     public static ResponseRequest request(Plugin plugin, String context,
-                                          CommandSender sender, IResponseHandler handler,
+                                          CommandSender sender,
                                           ResponseType... responseType) {
-        ResponseRequest request = new ResponseRequest(plugin, context, sender, handler, responseType);
+        ResponseRequest request = new ResponseRequest(plugin, context, sender, responseType);
         _requests.put(request.getCommandSender(), request, request.getLifespan(), TimeScale.SECONDS);
 
         return request;
@@ -103,10 +124,16 @@ public class CommandRequests {
 
     /**
      * Cancel a request for a response from a player.
-     * @param request
+     *
+     * @param request  The request object issued when the request was made.
      */
     public static void cancel(ResponseRequest request) {
-        _requests.remove(request.getCommandSender(), request);
+        if (_requests.remove(request.getCommandSender(), request)) {
+
+            request._agent.sendResult(
+                    new ResultBuilder<ResponseType>().cancel().build()
+            );
+        }
     }
 
     /**
@@ -179,7 +206,9 @@ public class CommandRequests {
     private static void handleResponse(CommandSender sender,
                                        ResponseRequest responseRequest,
                                        ResponseType type) {
-        responseRequest.getHandler().onResponse(type);
+
+        responseRequest._agent.sendResult(
+                new ResultBuilder<ResponseType>().success().result(type).build());
         _requests.remove(sender, responseRequest);
     }
 
