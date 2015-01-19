@@ -101,12 +101,12 @@ public class ReflectionUtils {
     /**
      * Determine if an object is an array.
      *
-     * @param object  The object to check.
+     * @param instance  The object to check.
      */
-    public static int getArrayDimensions(Object object) {
-        PreCon.notNull(object);
+    public static int getArrayDimensions(Object instance) {
+        PreCon.notNull(instance);
 
-        String className = object.getClass().getName();
+        String className = instance.getClass().getName();
 
         for (int i=0; i < className.length(); i++) {
             char ch = className.charAt(i);
@@ -115,6 +115,28 @@ public class ReflectionUtils {
         }
 
         return 0;
+    }
+
+    /**
+     * Get the component type of an array instance. If the instance
+     * is not an array then the instance type is returned.
+     *
+     * @param instance  The instance of a 1 or more dimensional array.
+     *
+     * @return  The component type of the array.
+     */
+    public static Class<?> getArrayComponentType(Object instance) {
+
+        if (!instance.getClass().isArray())
+            return instance.getClass();
+
+        Class<?> componentType = instance.getClass().getComponentType();
+
+        while (componentType.isArray()) {
+            componentType = componentType.getComponentType();
+        }
+
+        return componentType;
     }
 
     /**
