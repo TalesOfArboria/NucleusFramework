@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.wrap.ConversionListWrapper;
 import com.jcwhatever.nucleus.collections.wrap.ConversionListIteratorWrapper;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -36,6 +37,7 @@ import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.plugin.Plugin;
 
@@ -670,27 +672,15 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     }
 
     @Override
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(final Collection<?> c) {
         PreCon.notNull(c);
 
-        ListIterator<E> iterator = listIterator();
-
-        boolean isChanged = false;
-
-        synchronized (_sync) {
-            while (iterator.hasNext()) {
-                E item = iterator.next();
-
-                if (c.contains(item)) {
-                    iterator.set(item);
-                } else {
-                    iterator.remove();
-                    isChanged = true;
-                }
+        return !CollectionUtils.retainAll(_list, new IValidator<Element<E>>() {
+            @Override
+            public boolean isValid(Element<E> element) {
+                return c.contains(element.element);
             }
-        }
-
-        return isChanged;
+        }).isEmpty();
     }
 
     private void onLifespanEnd(E item) {
@@ -820,7 +810,11 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
         @Override
         protected Element<E> unconvert(Object external) {
-            return new Element<E>(external);
+
+            @SuppressWarnings("unchecked")
+            E e = (E)external;
+
+            return new Element<E>(e, _lifespan, _timeScale);
         }
 
         @Override
