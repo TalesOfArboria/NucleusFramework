@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.dummy.DummyServer;
+import com.jcwhatever.dummy.v1_8_R1.DummyServer;
 import com.jcwhatever.nucleus.storage.DataStorageUtil;
 
 import org.bukkit.Bukkit;

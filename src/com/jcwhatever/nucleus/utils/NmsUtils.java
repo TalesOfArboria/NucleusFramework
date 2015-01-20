@@ -42,7 +42,7 @@ public final class NmsUtils {
 
     private NmsUtils() {}
 
-    private static Pattern PATTERN_VERSION = Pattern.compile(".*\\.(v\\d+_\\d+_\\w*\\d+)");
+    static Pattern PATTERN_VERSION = Pattern.compile(".*\\.(v\\d+_\\d+_\\w*\\d+)(\\.[\\.a-zA-Z0-9_]*)?");
 
     private static String _version; // package version
 
@@ -125,7 +125,7 @@ public final class NmsUtils {
 
             Class<? extends Server> serverClass = Bukkit.getServer().getClass();
 
-            Matcher versionMatcher = PATTERN_VERSION.matcher(getPackage(serverClass));
+            Matcher versionMatcher = PATTERN_VERSION.matcher(serverClass.getName());
 
             if (versionMatcher.matches()) {
                 _version = versionMatcher.group(1);
@@ -140,24 +140,5 @@ public final class NmsUtils {
         if (_version == null) {
             NucMsg.severe("Failed to find CraftBukkit version for reflection purposes.");
         }
-    }
-
-    /*
-     * Get the package name from a class.
-     */
-    private static String getPackage(Class<?> clazz) {
-        return getPackage(clazz.getCanonicalName());
-    }
-
-    /*
-     * Get the package name from a class name.
-     */
-    private static String getPackage(String className) {
-
-        int index = className.lastIndexOf('.');
-
-        return index > 0
-                ? className.substring(0, index)
-                : "";
     }
 }

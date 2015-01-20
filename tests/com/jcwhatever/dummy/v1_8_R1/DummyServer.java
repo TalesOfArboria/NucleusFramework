@@ -1,6 +1,10 @@
-package com.jcwhatever.dummy;
+package com.jcwhatever.dummy.v1_8_R1;
 
 import com.avaje.ebean.config.ServerConfig;
+import com.jcwhatever.dummy.DummyInventory;
+import com.jcwhatever.dummy.DummyPlayer;
+import com.jcwhatever.dummy.DummyPluginManager;
+import com.jcwhatever.dummy.DummyWorld;
 
 import org.bukkit.BanList;
 import org.bukkit.BanList.Type;

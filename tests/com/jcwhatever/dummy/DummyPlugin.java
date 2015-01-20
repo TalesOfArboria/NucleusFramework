@@ -1,6 +1,7 @@
 package com.jcwhatever.dummy;
 
 import com.avaje.ebean.EbeanServer;
+import com.jcwhatever.dummy.v1_8_R1.DummyServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -112,6 +113,16 @@ public class DummyPlugin implements Plugin {
     @Override
     public boolean isEnabled() {
         return _isEnabled;
+    }
+
+    public DummyPlugin enable() {
+        _isEnabled = true;
+        return this;
+    }
+
+    public DummyPlugin disable() {
+        _isEnabled = false;
+        return this;
     }
 
     @Override

@@ -31,7 +31,9 @@ import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,54 +42,74 @@ import java.util.UUID;
  */
 public class DummyWorld implements World {
 
-    private String _name;
+    private static Map<String, UUID> _nameIdMap = new HashMap<>(3);
+
+    private final String _name;
+    private UUID _uuid;
+    private Location _spawnLocation = new Location(this, 0, 0, 0);
 
     public DummyWorld(String name) {
         _name = name;
+        _uuid = _nameIdMap.get(name);
+        if (_uuid == null) {
+            _uuid = UUID.randomUUID();
+            _nameIdMap.put(name, _uuid);
+        }
     }
 
     @Override
     public Block getBlockAt(int x, int y, int z) {
-        return new DummyBlock(this, Material.AIR, x, y, z);
+        return y > 10
+                ? new DummyBlock(this, Material.AIR, x, y, z)
+                : new DummyBlock(this, Material.STONE, x, y, z);
     }
 
     @Override
     public Block getBlockAt(Location location) {
-        return new DummyBlock(this, Material.AIR, location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        Material material = location.getY() > 10
+                ? Material.AIR
+                : Material.STONE;
+
+        return new DummyBlock(this, material,
+                location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override
-    public int getBlockTypeIdAt(int i, int i1, int i2) {
-        return 0;
+    public int getBlockTypeIdAt(int x, int y, int z) {
+        return y > 10
+                ? Material.AIR.getId()
+                : Material.STONE.getId();
     }
 
     @Override
     public int getBlockTypeIdAt(Location location) {
-        return 0;
+        return location.getY() > 10
+                ? Material.AIR.getId()
+                : Material.STONE.getId();
     }
 
     @Override
-    public int getHighestBlockYAt(int i, int i1) {
-        return 0;
+    public int getHighestBlockYAt(int x, int z) {
+        return 10;
     }
 
     @Override
     public int getHighestBlockYAt(Location location) {
-        return 0;
+        return 10;
     }
 
     @Override
     public Block getHighestBlockAt(int x, int z) {
-        return new DummyBlock(this, Material.STONE, x, 0, z);
+        return new DummyBlock(this, Material.STONE, x, 10, z);
     }
 
     @Override
     public Block getHighestBlockAt(Location location) {
-        return new DummyBlock(this, Material.STONE, location.getBlockX(), 0, location.getBlockZ());
+        return new DummyBlock(this, Material.STONE, location.getBlockX(), 10, location.getBlockZ());
     }
 
     @Override
-    public Chunk getChunkAt(int i, int i1) {
+    public Chunk getChunkAt(int x, int z) {
         return null;
     }
 
@@ -258,22 +280,23 @@ public class DummyWorld implements World {
 
     @Override
     public String getName() {
-        return null;
+        return _name;
     }
 
     @Override
     public UUID getUID() {
-        return null;
+        return _uuid;
     }
 
     @Override
     public Location getSpawnLocation() {
-        return null;
+        return _spawnLocation;
     }
 
     @Override
-    public boolean setSpawnLocation(int i, int i1, int i2) {
-        return false;
+    public boolean setSpawnLocation(int x, int y, int z) {
+        _spawnLocation = new Location(this, x, y, z);
+        return true;
     }
 
     @Override
@@ -644,5 +667,15 @@ public class DummyWorld implements World {
     @Override
     public Set<String> getListeningPluginChannels() {
         return null;
+    }
+
+    @Override
+    public int hashCode() {
+        return _name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof World && ((World) obj).getName().equals(_name);
     }
 }

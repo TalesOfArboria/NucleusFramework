@@ -167,7 +167,7 @@ public final class LocationUtils {
         double zDelta = Math.abs(location1.getZ() - location2.getZ());
         double yDelta = Math.abs(location1.getY() - location2.getY());
 
-        return xDelta < precision && zDelta < precision && yDelta < precision;
+        return xDelta <= precision && zDelta <= precision && yDelta <= precision;
     }
 
     /**
@@ -313,13 +313,13 @@ public final class LocationUtils {
     public static BlockFace getBlockFacingYaw(Location location) {
         PreCon.notNull(location);
 
-        float yaw = (location.getYaw() + (location.getYaw() < 0 ? 360 : 0)) % 360;
+        float yaw = location.getYaw() + 11.25f;
+
+        yaw = yaw < 0
+                ? 360 - (Math.abs(yaw) % 360)
+                : yaw % 360;
 
         int i = (int)(yaw / 22.5);
-
-        if (i > YAW_FACES.length - 1 || i < 0) {
-            i = YAW_FACES.length - 1;
-        }
 
         return YAW_FACES[i];
     }

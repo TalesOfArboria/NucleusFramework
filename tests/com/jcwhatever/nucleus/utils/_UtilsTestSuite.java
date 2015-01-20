@@ -15,7 +15,10 @@ import org.junit.runners.Suite;
         ArrayUtilsTest.class,
         DateUtilsTest.class,
         EnumUtilsTest.class,
+        LocationUtilsTest.class,
+        NmsUtilsTest.class,
         PreConTest.class,
+        RandTest.class,
 
         _FileTestSuite.class,
         _InventoryTestSuite.class,

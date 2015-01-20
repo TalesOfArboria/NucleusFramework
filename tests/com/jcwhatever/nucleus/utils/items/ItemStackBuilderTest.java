@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.dummy.DummyServer;
+import com.jcwhatever.dummy.v1_8_R1.DummyServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

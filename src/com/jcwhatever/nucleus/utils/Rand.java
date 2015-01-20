@@ -35,8 +35,8 @@ public final class Rand {
 
     private Rand() {}
 
-    private static final String SAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String UNSAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+    static final String SAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static final String UNSAFE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "01234567890`~!@#$%^&*()_+-=";
 
     /**
@@ -111,9 +111,7 @@ public final class Rand {
      * @param max  The maximum result.
      */
     public static double getDouble(double min, double max) {
-        double range = max - min + 1;
-        double i = ThreadLocalRandom.current().nextDouble() % range;
-        return  min + i;
+        return ThreadLocalRandom.current().nextDouble(min, max);
     }
 
     /**
@@ -123,7 +121,7 @@ public final class Rand {
      * @param max  The maximum result.
      */
     public static double getDouble(double max) {
-        return ThreadLocalRandom.current().nextDouble() % max;
+        return ThreadLocalRandom.current().nextDouble(0, max);
     }
 
     /**

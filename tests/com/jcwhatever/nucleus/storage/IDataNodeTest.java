@@ -4,7 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.jcwhatever.dummy.DummyServer;
+import com.jcwhatever.dummy.v1_8_R1.DummyServer;
 import com.jcwhatever.dummy.DummyWorld;
 import com.jcwhatever.nucleus.NucleusInit;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;

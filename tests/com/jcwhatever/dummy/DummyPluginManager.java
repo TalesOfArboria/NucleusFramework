@@ -92,10 +92,16 @@ public class DummyPluginManager implements PluginManager {
     @Override
     public void enablePlugin(Plugin plugin) {
 
+        if (plugin instanceof DummyPlugin)
+            ((DummyPlugin) plugin).enable();
+
     }
 
     @Override
     public void disablePlugin(Plugin plugin) {
+
+        if (plugin instanceof DummyPlugin)
+            ((DummyPlugin) plugin).disable();
 
     }
 
