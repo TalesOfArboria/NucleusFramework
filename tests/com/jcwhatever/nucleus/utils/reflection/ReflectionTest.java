@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.utils.reflection;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
-import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
 
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.junit.Test;

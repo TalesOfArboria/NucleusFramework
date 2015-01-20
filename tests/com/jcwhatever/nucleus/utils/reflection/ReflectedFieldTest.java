@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.utils.reflection;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
 
 import org.junit.Test;
 

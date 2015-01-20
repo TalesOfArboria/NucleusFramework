@@ -2,8 +2,8 @@ package com.jcwhatever.nucleus.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.BukkitTest;
-import com.jcwhatever.bukkit.MockPlugin;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.MockPlugin;
 import com.jcwhatever.nucleus.NucleusTest;
 
 import org.junit.Test;

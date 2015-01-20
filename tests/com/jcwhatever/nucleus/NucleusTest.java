@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
 import com.jcwhatever.nucleus.storage.DataStorageUtil;
 
 /**
@@ -15,6 +15,8 @@ public class NucleusTest {
 
         DataStorageUtil.setTestMode();
 
-        BukkitTest.initPlugin("NucleusFramework", "v0", BukkitPlugin.class);
+        BukkitPlugin plugin = BukkitTest.initPlugin("NucleusFramework", "v0", BukkitPlugin.class);
+
+        BukkitTest.getServer().getPluginManager().enablePlugin(plugin);
     }
 }

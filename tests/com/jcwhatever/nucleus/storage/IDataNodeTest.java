@@ -4,8 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.jcwhatever.bukkit.BukkitTest;
-import com.jcwhatever.bukkit.MockWorld;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
 import com.jcwhatever.bukkit.v1_8_R1.MockServer;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
@@ -50,7 +49,7 @@ public abstract class IDataNodeTest {
         node.set("string", "String");
         node.set("uuid", UUID.randomUUID());
         node.set("enum", TestEnum.CONSTANT);
-        node.set("location", new Location(new MockWorld("world"), 0, 0, 0));
+        node.set("location", new Location(BukkitTest.world("world"), 0, 0, 0));
         node.set("items", new ItemStackBuilder(Material.WOOD).build());
     }
 
@@ -627,7 +626,7 @@ public abstract class IDataNodeTest {
     private void testGetLocation(IDataNode dataNode) {
         initDataNode(dataNode);
 
-        World world = new MockWorld("dummy");
+        World world = BukkitTest.world("dummy");
         Location location = new Location(world, 0, 0, 0);
 
         dataNode.set("testGetLocation", location);

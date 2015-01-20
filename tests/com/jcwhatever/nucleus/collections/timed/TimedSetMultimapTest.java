@@ -2,8 +2,8 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.BukkitTest;
-import com.jcwhatever.bukkit.MockPlugin;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.MockPlugin;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.collections.java.MultimapRunnable;
 import com.jcwhatever.nucleus.utils.TimeScale;
