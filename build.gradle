@@ -53,7 +53,9 @@ def testDepends = [
 def testRuntimeDepends = null
 
 // dependencies that should always be downloaded (cached for 30 seconds)
-def snapshotDepends = null;
+def snapshotDepends = [
+        'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT'
+];
 
 /**
  * MAVEN TASK SETTINGS
