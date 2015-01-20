@@ -3,14 +3,14 @@ package com.jcwhatever.nucleus.utils.reflection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class ReflectedInstanceTest {
 
-    private Reflection reflection = new Reflection(NucleusInit.NMS_TEST_VERSION);
+    private Reflection reflection = new Reflection(BukkitTest.NMS_TEST_VERSION);
     private ReflectedType reflectedClass = reflection.type(ReflectableType.class);
 
 

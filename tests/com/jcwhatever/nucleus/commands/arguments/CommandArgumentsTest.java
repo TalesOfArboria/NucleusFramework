@@ -1,7 +1,7 @@
 package com.jcwhatever.nucleus.commands.arguments;
 
-import com.jcwhatever.dummy.DummyPlayer;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.MockPlayer;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.DummyCommand;
 import com.jcwhatever.nucleus.commands.DummyCommand.CommandInfoBuilder;
@@ -53,7 +53,7 @@ public class CommandArgumentsTest {
     @BeforeClass
     public static void testStartup() {
 
-        NucleusInit.init();
+        NucleusTest.init();
     }
 
     @Test
@@ -538,13 +538,13 @@ public class CommandArgumentsTest {
         CommandArguments args;
 
         args = getParseArguments("wood");
-        Assert.assertArrayEquals(new ItemStack[] { wood }, args.getItemStack(new DummyPlayer("dummy"), "param1"));
+        Assert.assertArrayEquals(new ItemStack[] { wood }, args.getItemStack(new MockPlayer("dummy"), "param1"));
 
         args = getParseArguments("wood,wood");
-        Assert.assertArrayEquals(new ItemStack[] { wood, wood }, args.getItemStack(new DummyPlayer("dummy"), "param1"));
+        Assert.assertArrayEquals(new ItemStack[] { wood, wood }, args.getItemStack(new MockPlayer("dummy"), "param1"));
 
         args = getParseArguments("wood,wood;5");
-        Assert.assertArrayEquals(new ItemStack[] { wood, woodAmount }, args.getItemStack(new DummyPlayer("dummy"), "param1"));
+        Assert.assertArrayEquals(new ItemStack[] { wood, woodAmount }, args.getItemStack(new MockPlayer("dummy"), "param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {

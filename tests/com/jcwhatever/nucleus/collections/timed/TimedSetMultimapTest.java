@@ -2,8 +2,9 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.dummy.DummyPlugin;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.MockPlugin;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.collections.java.MultimapRunnable;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
@@ -15,9 +16,9 @@ public class TimedSetMultimapTest {
     @Test
     public void basicTest() {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedSetMultimap<String, String> map = new TimedSetMultimap<String, String>(plugin);
@@ -29,9 +30,9 @@ public class TimedSetMultimapTest {
     @Test
     public void testEntryLifespan() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedSetMultimap<String, String> map = new TimedSetMultimap<String, String>(plugin);
@@ -51,23 +52,16 @@ public class TimedSetMultimapTest {
     @Test
     public void testEntryLifespan1() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedSetMultimap<String, String> map = new TimedSetMultimap<String, String>(plugin);
 
-        map.put("a", "b", 1000, TimeScale.MILLISECONDS);
+        map.put("a", "b", 20, TimeScale.TICKS);
 
-        long expires = System.currentTimeMillis() + 1000;
-
-        while (System.currentTimeMillis() < expires + 100) {
-
-            NucleusInit.heartBeat();
-
-            Thread.sleep(5);
-        }
+        BukkitTest.pause(22);
 
         assertEquals(0, map.size());
     }

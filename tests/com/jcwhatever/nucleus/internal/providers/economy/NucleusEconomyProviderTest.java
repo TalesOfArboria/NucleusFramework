@@ -1,7 +1,7 @@
 package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProviderTest;
 
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class NucleusEconomyProviderTest {
     @Test
     public void test() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
         NucleusEconomyProvider provider = new NucleusEconomyProvider(Nucleus.getPlugin());
 

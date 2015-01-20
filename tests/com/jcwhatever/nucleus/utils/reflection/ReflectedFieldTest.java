@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.utils.reflection;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
 
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 
 public class ReflectedFieldTest {
 
-    private Reflection reflection = new Reflection(NucleusInit.NMS_TEST_VERSION);
+    private Reflection reflection = new Reflection(BukkitTest.NMS_TEST_VERSION);
     private ReflectedType reflectedClass = reflection.type(ReflectableType.class);
     private ReflectedInstance instance = reflectedClass.newReflectedInstance();
 

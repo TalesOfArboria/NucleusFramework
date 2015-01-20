@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.utils.reflection;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
 
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class ReflectionTest {
     @Test
     public void testType() throws Exception {
 
-        Reflection reflection = new Reflection(NucleusInit.NMS_TEST_VERSION);
+        Reflection reflection = new Reflection(BukkitTest.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.type(
                 "com.jcwhatever.nucleus.utils.reflection.ReflectionTest$ReflectableTestClass");
@@ -31,7 +31,7 @@ public class ReflectionTest {
     @Test
     public void testType1() throws Exception {
 
-        Reflection reflection = new Reflection(NucleusInit.NMS_TEST_VERSION);
+        Reflection reflection = new Reflection(BukkitTest.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.type(ReflectableTestClass.class);
 
@@ -42,7 +42,7 @@ public class ReflectionTest {
     @Test
     public void testNmsType() throws Exception {
 
-        Reflection reflection = new Reflection(NucleusInit.NMS_TEST_VERSION);
+        Reflection reflection = new Reflection(BukkitTest.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.nmsType("EntityLiving");
         assertNotNull(reflected);
@@ -52,7 +52,7 @@ public class ReflectionTest {
     @Test
     public void testCraftType() throws Exception {
 
-        Reflection reflection = new Reflection(NucleusInit.NMS_TEST_VERSION);
+        Reflection reflection = new Reflection(BukkitTest.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.craftType("entity.CraftPlayer");
         assertNotNull(reflected);

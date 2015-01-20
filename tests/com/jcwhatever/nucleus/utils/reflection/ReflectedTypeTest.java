@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.utils.reflection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
 import com.jcwhatever.nucleus.utils.reflection.ReflectableType.ReflectableTestEnum;
 
 import org.junit.Before;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ReflectedTypeTest {
 
-    private Reflection reflection = new Reflection(NucleusInit.NMS_TEST_VERSION);
+    private Reflection reflection = new Reflection(BukkitTest.NMS_TEST_VERSION);
 
     private ReflectedType reflectedClass = reflection.type(ReflectableType.class);
     private ReflectedType reflectedEnum = reflection.type(ReflectableTestEnum.class);

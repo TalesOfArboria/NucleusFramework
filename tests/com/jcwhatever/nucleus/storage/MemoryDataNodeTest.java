@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.storage;
 
-import com.jcwhatever.dummy.DummyPlugin;
+import com.jcwhatever.bukkit.MockPlugin;
 
 public class MemoryDataNodeTest extends IDataNodeTest {
 
@@ -8,10 +8,10 @@ public class MemoryDataNodeTest extends IDataNodeTest {
         setNodeGenerator(new IDataNodeGenerator() {
             @Override
             public IDataNode generateRoot() {
-                DummyPlugin plugin = new DummyPlugin("dummy");
+                MockPlugin plugin = new MockPlugin("dummy");
                 plugin.onEnable();
 
-                return new MemoryDataNode(new DummyPlugin("dummy"));
+                return new MemoryDataNode(new MockPlugin("dummy"));
             }
         });
     }

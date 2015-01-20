@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.commands;
 
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.junit.Assert;
@@ -12,7 +12,7 @@ public class UsageGeneratorTest {
     @BeforeClass
     public static void testStartup() {
 
-        NucleusInit.init();
+        NucleusTest.init();
     }
 
     @Test

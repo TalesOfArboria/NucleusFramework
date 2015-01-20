@@ -2,8 +2,9 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.dummy.DummyPlugin;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.MockPlugin;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.collections.java.SetRunnable;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
@@ -14,9 +15,9 @@ public class TimedHashSetTest {
     @Test
     public void testSetInterface() {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedHashSet<String> set = new TimedHashSet<String>(plugin);
@@ -34,9 +35,9 @@ public class TimedHashSetTest {
     @Test
     public void testElementLifespan() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedHashSet<String> set = new TimedHashSet<String>(plugin);
@@ -59,23 +60,16 @@ public class TimedHashSetTest {
     @Test
     public void testElementLifespan1() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedHashSet<String> set = new TimedHashSet<String>(plugin);
 
-        set.add("a", 1000, TimeScale.MILLISECONDS);
+        set.add("a", 20, TimeScale.TICKS);
 
-        long expires = System.currentTimeMillis() + 1000;
-
-        while (System.currentTimeMillis() < expires + 500) {
-
-            NucleusInit.heartBeat();
-
-            Thread.sleep(5);
-        }
+        BukkitTest.pause(30);
 
         assertEquals(0, set.size());
     }

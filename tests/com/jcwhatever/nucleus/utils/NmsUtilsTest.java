@@ -2,8 +2,9 @@ package com.jcwhatever.nucleus.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.dummy.DummyPlugin;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.MockPlugin;
+import com.jcwhatever.nucleus.NucleusTest;
 
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class NmsUtilsTest {
     @Test
     public void testGetNmsVersion() throws Exception {
 
-        assertEquals(NucleusInit.NMS_TEST_VERSION, NmsUtils.getNmsVersion());
+        assertEquals(BukkitTest.NMS_TEST_VERSION, NmsUtils.getNmsVersion());
     }
 
     @Test
@@ -42,9 +43,9 @@ public class NmsUtilsTest {
     @Test
     public void testEnforceNmsVersion() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy").enable();
+        MockPlugin plugin = new MockPlugin("dummy").enable();
 
         NmsUtils.enforceNmsVersion(plugin, "a");
 

@@ -1,7 +1,7 @@
 package com.jcwhatever.nucleus.utils.inventory;
 
-import com.jcwhatever.dummy.DummyInventory;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.MockInventory;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
@@ -34,14 +34,14 @@ public class InventoryUtilsTest {
 
     private Inventory getInventory() {
 
-        DummyInventory inventory = new DummyInventory(null, InventoryType.CHEST, 9);
+        MockInventory inventory = new MockInventory(null, InventoryType.CHEST, 9);
         inventory.setContents(getInventoryStack());
         return inventory;
     }
 
     @Before
     public void testStartup() {
-        NucleusInit.init();
+        NucleusTest.init();
     }
 
     @Test

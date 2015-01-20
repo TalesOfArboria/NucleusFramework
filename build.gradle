@@ -47,11 +47,10 @@ def testExcludes = null
 def testDepends = [
         'junit:junit:4.+',
         'org.easetech:easytest-core:1.3.1',
+        'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT',
         'org.spigotmc:unmapped-spigot:1.8-R0.1-SNAPSHOT'
 ]
-def testRuntimeDepends = [
-        'junit:junit:4.+'
-]
+def testRuntimeDepends = null
 
 // dependencies that should always be downloaded (cached for 30 seconds)
 def snapshotDepends = null;

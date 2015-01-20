@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.dummy.DummyPlugin;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.MockPlugin;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.utils.observer.event.EventSubscriber;
 import com.jcwhatever.nucleus.utils.observer.event.EventSubscriberPriority;
@@ -19,14 +19,14 @@ import javax.annotation.Nullable;
 
 public class EventManagerTest {
 
-    Plugin plugin = new DummyPlugin("dummy");
+    Plugin plugin = new MockPlugin("dummy");
 
     List<String> callTracker = new ArrayList<>(3);
 
     @Test
     public void test() {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
         EventManager manager = new EventManager(plugin, null);
 

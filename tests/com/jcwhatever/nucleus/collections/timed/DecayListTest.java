@@ -2,8 +2,9 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.dummy.DummyPlugin;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.MockPlugin;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.collections.java.DequeRunnable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -17,9 +18,9 @@ public class DecayListTest {
     @Test
     public synchronized void testDequeInterface() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         DecayList<String> list = new DecayList<String>(plugin);
@@ -31,40 +32,30 @@ public class DecayListTest {
     @Test
     public synchronized void testPreventDecay() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         DecayList<String> list = new DecayList<String>(plugin);
 
         list.clear();
-
-        long next = System.currentTimeMillis() + 500; // half second
-
         // check decay prevented by adding before 1 seconds has elapsed (blocking should not matter)
         for (int i=0; i < 20; i++) {
 
-            while (System.currentTimeMillis() < next) {
-
-                NucleusInit.heartBeat();
-
-                Thread.sleep(10);
-            }
+            BukkitTest.pause(10); // 10 ticks
 
             list.add(String.valueOf(i));
             assertEquals(i + 1, list.size());
-
-            next = System.currentTimeMillis() + 500;
         }
     }
 
     @Test
     public synchronized void testAllowDecay() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         DecayList<String> list = new DecayList<String>(plugin);
@@ -83,7 +74,7 @@ public class DecayListTest {
 
         while(!list.isEmpty() && System.currentTimeMillis() < timeout) {
 
-            NucleusInit.heartBeat();
+            BukkitTest.heartBeat();
 
             try {
                 Thread.sleep(10);

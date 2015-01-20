@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.commands.arguments;
 
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.DummyCommand;
 import com.jcwhatever.nucleus.commands.DummyCommand.CommandInfoBuilder;
@@ -30,7 +30,7 @@ public class ArgumentParserTest {
     @BeforeClass
     public static void testStartup() {
 
-        NucleusInit.init();
+        NucleusTest.init();
     }
 
 

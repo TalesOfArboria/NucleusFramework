@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.dummy.v1_8_R1.DummyServer;
+import com.jcwhatever.bukkit.v1_8_R1.MockServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,7 +17,7 @@ public class ItemStackBuilderTest {
     @BeforeClass
     public static void testStartup() {
         try {
-            Bukkit.setServer(new DummyServer());
+            Bukkit.setServer(new MockServer());
         }
         catch (UnsupportedOperationException ignore) {}
     }

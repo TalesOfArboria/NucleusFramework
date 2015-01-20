@@ -2,8 +2,9 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.dummy.DummyPlugin;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.MockPlugin;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.collections.java.ListRunnable;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
@@ -14,9 +15,9 @@ public class TimedArrayListTest {
     @Test
     public void testListInterface() {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedArrayList<String> list = new TimedArrayList<String>(plugin);
@@ -28,9 +29,9 @@ public class TimedArrayListTest {
     @Test
     public void testElementLifespan() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedArrayList<String> list = new TimedArrayList<String>(plugin);
@@ -50,23 +51,16 @@ public class TimedArrayListTest {
     @Test
     public void testElementLifespan1() throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
-        DummyPlugin plugin = new DummyPlugin("dummy");
+        MockPlugin plugin = new MockPlugin("dummy");
         plugin.onEnable();
 
         TimedArrayList<String> list = new TimedArrayList<String>(plugin);
 
-        list.add("a", 1000, TimeScale.MILLISECONDS);
+        list.add("a", 20, TimeScale.TICKS);
 
-        long expires = System.currentTimeMillis() + 1000;
-
-        while (System.currentTimeMillis() < expires + 100) {
-
-            NucleusInit.heartBeat();
-
-            Thread.sleep(5);
-        }
+        BukkitTest.pause(22);
 
         assertEquals(0, list.size());
     }

@@ -4,9 +4,10 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.jcwhatever.dummy.v1_8_R1.DummyServer;
-import com.jcwhatever.dummy.DummyWorld;
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.bukkit.BukkitTest;
+import com.jcwhatever.bukkit.MockWorld;
+import com.jcwhatever.bukkit.v1_8_R1.MockServer;
+import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.result.Result;
@@ -49,14 +50,14 @@ public abstract class IDataNodeTest {
         node.set("string", "String");
         node.set("uuid", UUID.randomUUID());
         node.set("enum", TestEnum.CONSTANT);
-        node.set("location", new Location(new DummyWorld("world"), 0, 0, 0));
+        node.set("location", new Location(new MockWorld("world"), 0, 0, 0));
         node.set("items", new ItemStackBuilder(Material.WOOD).build());
     }
 
     @BeforeClass
     public static void testStartup() {
         try {
-            Bukkit.setServer(new DummyServer());
+            Bukkit.setServer(new MockServer());
         }
         catch (UnsupportedOperationException ignore) {}
     }
@@ -626,7 +627,7 @@ public abstract class IDataNodeTest {
     private void testGetLocation(IDataNode dataNode) {
         initDataNode(dataNode);
 
-        World world = new DummyWorld("dummy");
+        World world = new MockWorld("dummy");
         Location location = new Location(world, 0, 0, 0);
 
         dataNode.set("testGetLocation", location);
@@ -825,7 +826,7 @@ public abstract class IDataNodeTest {
     @Test
     public void testLoad() {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -849,7 +850,7 @@ public abstract class IDataNodeTest {
 
         while(_testLoadRunCount == 0 && System.currentTimeMillis() < timeout) {
 
-            NucleusInit.heartBeat();
+            BukkitTest.heartBeat();
 
             try {
                 Thread.sleep(10);
@@ -863,7 +864,7 @@ public abstract class IDataNodeTest {
     @Test
     public void testSave() {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -890,7 +891,7 @@ public abstract class IDataNodeTest {
 
         while(_testSaveRunCount == 0 && System.currentTimeMillis() < timeout) {
 
-            NucleusInit.heartBeat();
+            BukkitTest.heartBeat();
 
             try {
                 Thread.sleep(10);

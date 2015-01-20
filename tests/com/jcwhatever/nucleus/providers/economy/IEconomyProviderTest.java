@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.providers.economy;
 
-import com.jcwhatever.nucleus.NucleusInit;
+import com.jcwhatever.nucleus.NucleusTest;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -23,7 +23,7 @@ public class IEconomyProviderTest {
 
     public static void run(IEconomyProvider provider, UUID testPlayer1Id, UUID testPlayer2Id) throws Exception {
 
-        NucleusInit.init();
+        NucleusTest.init();
 
         IEconomyProviderTest test = new IEconomyProviderTest(provider, testPlayer1Id, testPlayer2Id);
 
