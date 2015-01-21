@@ -47,7 +47,7 @@ public class WorkbenchView extends View {
      *
      * @param plugin  The owning plugin.
      */
-    protected WorkbenchView(Plugin plugin) {
+    public WorkbenchView(Plugin plugin) {
         super(plugin);
     }
 

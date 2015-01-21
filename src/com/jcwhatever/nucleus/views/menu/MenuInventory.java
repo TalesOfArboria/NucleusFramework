@@ -32,6 +32,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -77,6 +78,20 @@ public class MenuInventory implements Inventory {
     @Nullable
     public MenuItem getMenuItem(int slot) {
         return _menuItemMap.get(slot);
+    }
+
+    /**
+     * Get the total number of {@code MenuItem}.
+     */
+    public int getTotalMenuItems() {
+        return _menuItemMap.size();
+    }
+
+    /**
+     * Get all {@code MenuItem}.
+     */
+    public Collection<MenuItem> getMenuItems() {
+        return _menuItemMap.values();
     }
 
     @Override

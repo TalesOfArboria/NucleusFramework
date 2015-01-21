@@ -35,9 +35,7 @@ import com.jcwhatever.nucleus.views.chest.InventoryItemAction.InventoryPosition;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
@@ -45,13 +43,12 @@ import javax.annotation.Nullable;
  */
 public abstract class MenuView extends ChestView {
 
-    private final Map<Integer, MenuItem> _menuItems = new HashMap<>(MAX_SLOTS);
+    private MenuInventory _inventory;
 
     /**
      * Constructor.
      *
      * @param plugin     The owning plugin.
-     * @param title      The inventory title of the view.
      * @param comparer   An item stack comparer.
      */
     protected MenuView(Plugin plugin, @Nullable ItemStackMatcher comparer) {
@@ -74,7 +71,7 @@ public abstract class MenuView extends ChestView {
      * Get the currently registered {@code MenuItem}'s.
      */
     public List<MenuItem> getMenuItems() {
-        return CollectionUtils.unmodifiableList(_menuItems.values());
+        return CollectionUtils.unmodifiableList(_inventory.getMenuItems());
     }
 
     /**
@@ -87,7 +84,7 @@ public abstract class MenuView extends ChestView {
      */
     @Nullable
     public MenuItem getMenuItem(int slot) {
-        return _menuItems.get(slot);
+        return _inventory.getMenuItem(slot);
     }
 
     /**
@@ -96,11 +93,13 @@ public abstract class MenuView extends ChestView {
      * @param menuItem  The menu item to remove.
      */
     public void removeMenuItem(MenuItem menuItem) {
-        MenuItem item = _menuItems.get(menuItem.getSlot());
-        if (menuItem.equals(item))
+        PreCon.notNull(menuItem);
+
+        MenuItem item = _inventory.getMenuItem(menuItem.getSlot());
+        if (!menuItem.equals(item))
             return;
 
-        _menuItems.remove(menuItem.getSlot());
+        _inventory.setItem(menuItem.getSlot(), null);
 
         Inventory inventory = getInventory();
         if (inventory == null)
@@ -117,13 +116,7 @@ public abstract class MenuView extends ChestView {
     public void setMenuItem(MenuItem menuItem) {
         PreCon.notNull(menuItem);
 
-        _menuItems.put(menuItem.getSlot(), menuItem);
-
-        Inventory inventory = getInventory();
-        if (inventory == null)
-            return;
-
-        inventory.setItem(menuItem.getSlot(), menuItem);
+        menuItem.setVisible(this, true);
     }
 
     /**
@@ -132,26 +125,21 @@ public abstract class MenuView extends ChestView {
     @Override
     protected Inventory createInventory() {
 
-        _menuItems.clear();
-
         List<MenuItem> menuItems = createMenuItems();
-        for (MenuItem item : menuItems) {
-            _menuItems.put(item.getSlot(), item);
-        }
 
-        if (_menuItems.size() > MAX_SLOTS)
+        if (menuItems.size() > MAX_SLOTS)
             throw new RuntimeException("The number of menu items cannot be more than " + MAX_SLOTS + '.');
 
-        int maxSlots = getSlotsRequired();
+        int maxSlots = getSlotsRequired(menuItems);
 
-        MenuInventory inventory = new MenuInventory(getPlayer(), maxSlots, getTitle());
+        _inventory = new MenuInventory(getPlayer(), maxSlots, getTitle());
 
-        for (MenuItem item : _menuItems.values()) {
+        for (MenuItem item : menuItems) {
             //item.set(this);
-            inventory.setItem(item.getSlot(), item);
+            _inventory.setItem(item.getSlot(), item);
         }
 
-        return inventory;
+        return _inventory;
     }
 
     /**
@@ -178,7 +166,7 @@ public abstract class MenuView extends ChestView {
 
         if (eventInfo.getInventoryPosition() == InventoryPosition.TOP) {
 
-            MenuItem menuItem = _menuItems.get(eventInfo.getSlot());
+            MenuItem menuItem = _inventory.getMenuItem(eventInfo.getSlot());
             if (menuItem != null && menuItem.isVisible(this)) {
 
                 List<Runnable> clickCallbacks = menuItem.getOnClick();
@@ -197,10 +185,10 @@ public abstract class MenuView extends ChestView {
      * Get the number of slots needed for the {@code Inventory}
      * instance.
      */
-    protected int getSlotsRequired() {
-        int maxSlot = _menuItems.size();
+    protected int getSlotsRequired(List<MenuItem> menuItems) {
+        int maxSlot = menuItems.size();
 
-        for (MenuItem menuItem: _menuItems.values()) {
+        for (MenuItem menuItem: menuItems) {
 
             if (menuItem.getSlot() > maxSlot) {
                 maxSlot = menuItem.getSlot();

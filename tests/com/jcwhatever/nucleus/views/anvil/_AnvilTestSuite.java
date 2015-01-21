@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         AnvilViewTest.class,
-        FilteredAnvilView.class
+        FilteredAnvilViewTest.class
 })
 public class _AnvilTestSuite {
 }

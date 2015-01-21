@@ -47,7 +47,7 @@ public abstract class ChestView extends View {
 
     private Inventory _inventory;
     private InventoryView _inventoryView;
-    private ItemStackMatcher _comparer;
+    private ItemStackMatcher _matcher;
 
     /**
      * Constructor.
@@ -70,10 +70,10 @@ public abstract class ChestView extends View {
         super(plugin);
 
         _inventory = inventory;
-        _comparer = comparer;
+        _matcher = comparer;
 
-        if (_comparer == null)
-            _comparer = ItemStackMatcher.getDefault();
+        if (_matcher == null)
+            _matcher = ItemStackMatcher.getDefault();
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class ChestView extends View {
      * Get the views {@code ItemStackMatcher}.
      */
     public ItemStackMatcher getItemStackMatcher() {
-        return _comparer;
+        return _matcher;
     }
 
     @Override

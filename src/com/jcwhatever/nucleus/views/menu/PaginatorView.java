@@ -65,15 +65,15 @@ public class PaginatorView extends MenuView {
      * @param viewSession  The view session.
      * @param nextView     The next view to show.
      * @param paginator    The paginator.
-     * @param comparer     The {@code ItemStack} comparer.
+     * @param matcher      The {@code ItemStackMatcher} to use.
      */
     public static void paginateNext(ViewSession viewSession,
                                     View nextView,
-                                    IPaginator paginator, @Nullable ItemStackMatcher comparer) {
+                                    IPaginator paginator, @Nullable ItemStackMatcher matcher) {
 
         if (paginator.getTotalPages() > 1) {
 
-            viewSession.next(new PaginatorView(nextView.getPlugin(), paginator, nextView, comparer));
+            viewSession.next(new PaginatorView(nextView.getPlugin(), paginator, nextView, matcher));
 
         }
         else {
@@ -85,8 +85,6 @@ public class PaginatorView extends MenuView {
     private final View _nextView;
 
     private int _selectedPage = 1;
-
-
 
     /**
      * Constructor.
@@ -172,7 +170,7 @@ public class PaginatorView extends MenuView {
         _selectedPage = selectedPage;
 
         if (_nextView == null) {
-            getViewSession().back();
+            getViewSession().previous();
         }
         else {
             getViewSession().next(_nextView);

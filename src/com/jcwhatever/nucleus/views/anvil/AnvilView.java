@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.views.anvil;
 
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
@@ -51,7 +52,7 @@ public class AnvilView extends View {
      *
      * @param plugin  The owning plugin.
      */
-    protected AnvilView(Plugin plugin) {
+    public AnvilView(Plugin plugin) {
         super(plugin);
     }
 
@@ -63,6 +64,11 @@ public class AnvilView extends View {
         }
 
         Location loc = block.getLocation();
+
+        if (!getPlayer().getClass().getName().contains("CraftPlayer")) {
+            NucMsg.debug(getPlugin(), "Unable to open anvil view because of incorrect Player implementation.");
+            return false;
+        }
 
         try {
 

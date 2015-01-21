@@ -45,6 +45,9 @@ import javax.annotation.Nullable;
 /**
  * A session that tracks and provides session context data
  * to view instances.
+ *
+ * <p>Not thread safe. {@code ViewSession} should always be
+ * invoked from the main thread.</p>
  */
 public final class ViewSession implements IMeta, Iterable<View>, IPlayerReference, IDisposable {
 
@@ -79,7 +82,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      */
     public static ViewSession get(Player p, @Nullable Block sessionBlock) {
         ViewSession session = getCurrent(p);
-        if (session == null) {
+        if (session == null || session.isDisposed()) {
             session = new ViewSession(p, sessionBlock);
             _sessionMap.put(p.getUniqueId(), session);
         }
@@ -144,7 +147,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Get the previous view, if any.
      *
-     * @return  Null if the current view is the first view.
+     * @return  Null if the current view is the first view or there is no
+     * current view.
      */
     @Nullable
     public View getPrevView() {
@@ -157,7 +161,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Get the next view, if any.
      *
-     * @return  Null if the current view is the last view.
+     * @return  Null if the current view is the last view or there is
+     * no current view.
      */
     @Nullable
     public View getNextView() {
@@ -212,12 +217,17 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      *
      * <p>If there is no previous view, the session is ended.</p>
      *
-     * @return Null if there is no previous view.
+     * <p>There is a 1 tick delay before the previous view is shown. The
+     * state of the view will reflect the previous state until then.</p>
+     *
+     * @throws java.lang.IllegalStateException if there is no current view.
      */
-    @Nullable
-    public void back() {
+    public void previous() {
         if (_current == null)
-            return;
+            throw new IllegalStateException();
+
+        if (_isDisposed)
+            throw new RuntimeException("Cannot use a disposed ViewSession.");
 
         Scheduler.runTaskLater(_current.view.getPlugin(), new Runnable() {
             @Override
@@ -253,12 +263,20 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Show the next view.
      *
-     * @param view    The factory that will create the next view.
+     * <p>There is a 1 tick delay before the view is actually
+     * opened. The state of the view may be inaccurate until then.
+     * The view session of the view is updated immediately as well
+     * as the view session's state.</p>
+     *
+     * @param view  The factory that will create the next view.
      *
      * @return The newly created and displayed view.
      */
     public void next(View view) {
         PreCon.notNull(view);
+
+        if (_isDisposed)
+            throw new RuntimeException("Cannot use a disposed ViewSession.");
 
         view.setViewSession(this);
 
@@ -270,7 +288,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
             Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    _current.view.open(ViewOpenReason.NEXT);
+                    _current.view.open(ViewOpenReason.FIRST);
                 }
             });
         }
@@ -296,8 +314,15 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
 
     /**
      * Close and re-open the current view.
+     *
+     * <p>There is a 2 tick delay before the view refresh
+     * is complete. The state of the view will remain the same
+     * until then.</p>
      */
     public void refresh() {
+
+        if (_isDisposed)
+            throw new RuntimeException("Cannot use a disposed ViewSession.");
 
         final View view = getCurrentView();
         if (view == null)
@@ -319,8 +344,13 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
 
     @Override
     public void dispose() {
+        if (_isDisposed)
+            return;
+
         ViewEventListener.unregister(this);
         _sessionMap.remove(_player.getUniqueId());
+
+        _player.closeInventory();
 
         _isDisposed = true;
     }
@@ -347,6 +377,9 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     @Override
     public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
         PreCon.notNull(key);
+
+        if (_isDisposed)
+            throw new RuntimeException("Cannot use a disposed ViewSession.");
 
         if (value == null) {
             _meta.remove(key);

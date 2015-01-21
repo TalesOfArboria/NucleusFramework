@@ -196,14 +196,17 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     /**
      * Called when the view needs to be opened.
      *
+     * <p>This method should handle creating the inventory and
+     * inventory view and showing them to the player.</p>
+     *
      * @param reason  The reason the view is being opened.
      */
     protected abstract boolean openView(ViewOpenReason reason);
 
     /**
-     * Called when the view is closed.
+     * Invoked after the view is closed.
      *
-     * @param reason  The reason the view is being closed.
+     * @param reason  The reason the view was closed.
      */
-    protected abstract void onClose(ViewCloseReason reason);
+    protected void onClose(ViewCloseReason reason) {}
 }

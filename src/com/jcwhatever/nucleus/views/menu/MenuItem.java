@@ -31,7 +31,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameResult;
 
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -125,25 +124,6 @@ public class MenuItem extends ItemStack implements IMeta {
     }
 
     /**
-     * Set the item into the inventory of the
-     * specified menu view.
-     *
-     * @param menuView The menu view.
-     * @return True if successful.
-     */
-    public boolean set(MenuView menuView) {
-        PreCon.notNull(menuView);
-
-        Inventory inventory = menuView.getInventory();
-        if (inventory == null)
-            return false;
-
-        inventory.setItem(_slot, this);
-
-        return true;
-    }
-
-    /**
      * Determine if the menu item is set in the
      * specified menu view.
      *
@@ -152,7 +132,7 @@ public class MenuItem extends ItemStack implements IMeta {
     public boolean isVisible(MenuView menuView) {
         PreCon.notNull(menuView);
 
-        Inventory inventory = menuView.getInventory();
+        InventoryView inventory = menuView.getInventoryView();
         if (inventory == null)
             return false;
 
@@ -174,18 +154,17 @@ public class MenuItem extends ItemStack implements IMeta {
         if (inventory == null || isVisible(menuView) == isVisible)
             return;
 
-        if (isVisible) {
-            set(menuView);
-        } else {
+        inventory.setItem(_slot, isVisible ? this : null);
+    }
 
-            InventoryView view = menuView.getInventoryView();
-
-            if (view != null) {
-                view.setItem(_slot, new ItemStack(Material.AIR));
-            } else {
-                throw new AssertionError();
-            }
-        }
+    /**
+     * Set the {@code MenuItem} into the specified {@code MenuView}
+     * inventory.
+     * 
+     * @param menuView  The menu view.
+     */
+    public void set(MenuView menuView) {
+        setVisible(menuView, true);
     }
 
     /**

@@ -6,6 +6,7 @@ import com.jcwhatever.nucleus.events.manager._ManagerTestSuite;
 import com.jcwhatever.nucleus.internal.providers.economy._InternalEconomyTestSuite;
 import com.jcwhatever.nucleus.storage._StorageTestSuite;
 import com.jcwhatever.nucleus.utils._UtilsTestSuite;
+import com.jcwhatever.nucleus.views._ViewTestSuite;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -17,7 +18,8 @@ import org.junit.runners.Suite;
         _ManagerTestSuite.class,
         _InternalEconomyTestSuite.class,
         _StorageTestSuite.class,
-        _UtilsTestSuite.class
+        _UtilsTestSuite.class,
+        _ViewTestSuite.class
 })
 public class TestAll {
 }

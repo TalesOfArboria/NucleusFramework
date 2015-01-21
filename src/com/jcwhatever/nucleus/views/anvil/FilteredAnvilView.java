@@ -65,7 +65,7 @@ public class FilteredAnvilView extends AnvilView {
      * @param plugin         The owning plugin.
      * @param filterManager  The item filter manager.
      */
-    protected FilteredAnvilView(Plugin plugin, @Nullable ItemFilterManager filterManager) {
+    public FilteredAnvilView(Plugin plugin, @Nullable ItemFilterManager filterManager) {
         super(plugin);
 
         _filterManager = filterManager;
