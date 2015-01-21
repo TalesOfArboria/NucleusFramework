@@ -79,6 +79,17 @@ public abstract class IteratorWrapper<E> implements Iterator<E> {
     protected boolean onRemove(E element) { return true; }
 
     /**
+     * Invoked after removing an element.
+     *
+     * @param element  The element that was removed.
+     *
+     * <p>Not guaranteed to be called from a synchronized block.</p>
+     *
+     * <p>Intended to be optionally overridden by implementation.</p>
+     */
+    protected void onRemoved(@SuppressWarnings("unused") E element) { }
+
+    /**
      * Invoked from a synchronized block to get the encapsulated {@code Iterator}.
      */
     protected abstract Iterator<E> iterator();
@@ -157,5 +168,7 @@ public abstract class IteratorWrapper<E> implements Iterator<E> {
             throw new UnsupportedOperationException();
 
         iterator().remove();
+
+        onRemoved(_current);
     }
 }

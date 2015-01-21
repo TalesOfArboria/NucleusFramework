@@ -79,6 +79,17 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
     protected boolean onRemove(E element) { return true; }
 
     /**
+     * Invoked after removing an element.
+     *
+     * @param element  The element that was removed.
+     *
+     * <p>Not guaranteed to be called from a synchronized block.</p>
+     *
+     * <p>Intended to be optionally overridden by implementation.</p>
+     */
+    protected void onRemoved(@SuppressWarnings("unused") E element) { }
+
+    /**
      * Invoked from a synchronized block to get the encapsulated {@code Iterator}.
      */
     protected abstract ListIterator<E> iterator();
@@ -229,6 +240,8 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
         } else {
             iterator().remove();
         }
+
+        onRemoved(_current);
     }
 
     @Override
