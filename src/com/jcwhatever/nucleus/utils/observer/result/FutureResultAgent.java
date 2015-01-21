@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentMap;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
+import javax.annotation.Nullable;
 
 /**
  * Used for returning asynchronous results from a method. Intended
@@ -60,6 +61,144 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
         }
 
         super.sendResult(result);
+    }
+
+    /**
+     * Declare the result cancelled. The same as calling
+     * {@code #sendResult} with a generic cancel result.
+     *
+     * <p>The result object and message are null.</p>
+     *
+     * @return The agents future.
+     */
+    public Future<R> cancel() {
+        return cancel(null, null);
+    }
+
+    /**
+     * Declare the result cancelled. The same as calling
+     * {@code #sendResult} with a generic cancel result.
+     *
+     * <p>The result message is null.</p>
+     *
+     * @param result   The result object.
+     *
+     * @return The agents future.
+     */
+    public Future<R> cancel(@Nullable R result) {
+        return cancel(result, null);
+    }
+
+    /**
+     * Declare the result cancelled. The same as calling
+     * {@code #sendResult} with a generic cancel result.
+     *
+     * @param result   The result object.
+     * @param message  The message to send with the result.
+     *
+     * @return The agents future.
+     */
+    public Future<R> cancel(@Nullable R result, @Nullable String message) {
+
+        sendResult(new ResultBuilder<R>()
+                .cancel()
+                .result(result)
+                .message(message)
+                .build());
+
+        return getFuture();
+    }
+
+    /**
+     * Declare an error in the result. The same as calling
+     * {@code #sendResult} with a generic error result.
+     *
+     * <p>The result object and message are null.</p>
+     *
+     * @return The agents future.
+     */
+    public Future<R> error() {
+        return error(null, null);
+    }
+
+    /**
+     * Declare an error in the result. The same as calling
+     * {@code #sendResult} with a generic error result.
+     *
+     * <p>The result message is null.</p>
+     *
+     * @param result   The result object.
+     *
+     * @return The agents future.
+     */
+    public Future<R> error(@Nullable R result) {
+        return error(result, null);
+    }
+
+    /**
+     * Declare an error in the result. The same as calling
+     * {@code #sendResult} with a generic error result.
+     *
+     * @param result   The result object.
+     * @param message  The message to send with the result.
+     *
+     * @return The agents future.
+     */
+    public Future<R> error(@Nullable R result, @Nullable String message) {
+
+        sendResult(new ResultBuilder<R>()
+                .error()
+                .result(result)
+                .message(message)
+                .build());
+
+        return getFuture();
+    }
+
+    /**
+     * Declare the result a success. The same as calling
+     * {@code #sendResult} with a generic success result.
+     *
+     * <p>The result object and message are null.</p>
+     *
+     * @return The agents future.
+     */
+    public Future<R> success() {
+        return success(null, null);
+    }
+
+    /**
+     * Declare the result a success. The same as calling
+     * {@code #sendResult} with a generic success result.
+     *
+     * <p>The result message is null.</p>
+     *
+     * @param result   The result object.
+     *
+     * @return The agents future.
+     */
+    public Future<R> success(@Nullable R result) {
+        return success(result, null);
+    }
+
+    /**
+     * Declare the result a success. The same as calling
+     * {@code #sendResult} with a generic success result.
+     *
+     * @param result   The result object.
+     * @param message  The message to send with the result.
+     *
+     * @return The agents future.
+     */
+    public Future<R> success(@Nullable R result, @Nullable String message) {
+
+        sendResult(new ResultBuilder<R>()
+                .success()
+                .result(result)
+                .message(message)
+                .build());
+
+        return getFuture();
     }
 
     /**
