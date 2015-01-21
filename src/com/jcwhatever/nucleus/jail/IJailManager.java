@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.jail;
 
+import com.jcwhatever.nucleus.utils.TimeScale;
+
 import org.bukkit.plugin.Plugin;
 
 import java.util.Date;
@@ -70,14 +72,15 @@ public interface IJailManager {
     /**
      * Register a jail session.
      *
-     * @param jail      The jail.
-     * @param playerId  The ID of the imprisoned player.
-     * @param minutes   The number of minutes the session will last.
+     * @param jail       The jail.
+     * @param playerId   The ID of the imprisoned player.
+     * @param duration   The duration of the session.
+     * @param timeScale  The time scale of the specified duration.
      *
      * @return  Null if the player is already in a jail session.
      */
     @Nullable
-    JailSession registerJailSession(Jail jail, UUID playerId, int minutes);
+    JailSession registerJailSession(Jail jail, UUID playerId, int duration, TimeScale timeScale);
 
     /**
      * Register a jail session.

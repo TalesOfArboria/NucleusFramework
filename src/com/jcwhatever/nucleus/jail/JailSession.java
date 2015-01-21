@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.jail;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;
@@ -37,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a players session in a jail.
  */
-public final class JailSession {
+public final class JailSession implements IDisposable {
 
     private final Jail _jail;
     private final UUID _playerId;
@@ -48,16 +49,16 @@ public final class JailSession {
     /**
      * Constructor.
      *
-     * @param jailManager      The owning jail manager.
-     * @param playerId         The id of the player.
-     * @param expires          The time the jail session will expire.
+     * @param jail      The owning jail manager.
+     * @param playerId  The id of the player.
+     * @param expires   The time the jail session will expire. (Player release date)
      */
-    public JailSession(Jail jailManager, UUID playerId, Date expires) {
-        PreCon.notNull(jailManager);
+    public JailSession(Jail jail, UUID playerId, Date expires) {
+        PreCon.notNull(jail);
         PreCon.notNull(playerId);
         PreCon.notNull(expires);
 
-        _jail = jailManager;
+        _jail = jail;
         _playerId = playerId;
         _expires = expires;
     }
@@ -80,6 +81,9 @@ public final class JailSession {
      * Get the session expiration date.
      */
     public Date getExpiration() {
+        if (_jail.isDisposed())
+           _expires = null;
+
         return _expires != null ? _expires : new Date();
     }
 
@@ -101,10 +105,9 @@ public final class JailSession {
     /**
      * Release the player from jail.
      */
-    public void release() {
-        _isReleased = true;
-        _expires = null;
-        Nucleus.getJailManager().release(_playerId);
+    public boolean release() {
+        dispose();
+        return Nucleus.getJailManager().release(_playerId);
     }
 
     /**
@@ -113,5 +116,16 @@ public final class JailSession {
     @Nullable
     public Location getReleaseLocation() {
         return _jail.getReleaseLocation();
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return _isReleased;
+    }
+
+    @Override
+    public void dispose() {
+        _isReleased = true;
+        _expires = null;
     }
 }

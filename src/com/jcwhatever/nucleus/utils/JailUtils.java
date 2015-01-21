@@ -65,16 +65,19 @@ public final class JailUtils {
     /**
      * Imprison the player in the server jail.
      *
-     * @param player   The player to imprison.
-     * @param minutes  The number of minutes to imprison the player.
+     * @param player     The player to imprison.
+     * @param duration   The number of minutes to imprison the player.
+     * @param timeScale  The time scale of the specified duration.
+     *                   Max resolution is implementation dependent.
      *
      * @return  Null if the player could not be imprisoned.
      */
-    public static JailSession imprison(Player player, int minutes) {
+    public static JailSession imprison(Player player, int duration, TimeScale timeScale) {
         PreCon.notNull(player);
-        PreCon.greaterThanZero(minutes);
+        PreCon.greaterThanZero(duration);
+        PreCon.notNull(timeScale);
 
-        return Nucleus.getDefaultJail().imprison(player, minutes);
+        return Nucleus.getDefaultJail().imprison(player, duration, timeScale);
     }
 
     /**

@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.jail;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.mixins.INamedLocation;
@@ -34,6 +35,7 @@ import com.jcwhatever.nucleus.mixins.implemented.NamedLocation;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.GameMode;
@@ -42,6 +44,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,34 +103,54 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
     /**
      * Imprison a player in the jail.
      *
-     * @param p        The player to imprison.
-     * @param minutes  The number of minutes to imprison the player.
+     * @param player     The player to imprison.
+     * @param duration   The duration to imprison the player for.
+     * @param timeScale  The time scale of the specified duration.
      *
      * @return Null if failed to imprison player.
      */
     @Nullable
-    public JailSession imprison(Player p, int minutes) {
-        PreCon.notNull(p);
+    public JailSession imprison(Player player, int duration, TimeScale timeScale) {
+        PreCon.greaterThanZero(duration);
+        PreCon.notNull(timeScale);
+
+        return imprison(player, new Date(System.currentTimeMillis() + (duration * timeScale.getTimeFactor())));
+    }
+
+    /**
+     * Imprison a player in the jail.
+     *
+     * @param player   The player to imprison.
+     * @param expires  The date and time the session will expire. (prisoner release date)
+     *
+     * @return Null if failed to imprison player.
+     */
+    @Nullable
+    public JailSession imprison(Player player, Date expires) {
+        PreCon.notNull(player);
 
         // teleport player to jail
         Location teleport = getRandomTeleport();
         if (teleport == null) {
 
-            if (!_bounds.isDefined())
+            if (!_bounds.isDefined()) {
+                NucMsg.debug(getPlugin(), "Cannot imprison player in jail '{0}' because its coordinates " +
+                        "are undefined and no teleport location has been assigned.");
                 return null;
+            }
 
             teleport = _bounds.getCenter();
         }
 
         // register session
         JailSession session = Nucleus.getJailManager().registerJailSession(
-                this, p.getUniqueId(), minutes);
+                this, player.getUniqueId(), expires);
 
         if (session == null)
             return null;
 
-        p.teleport(teleport);
-        p.setGameMode(GameMode.SURVIVAL);
+        player.teleport(teleport);
+        player.setGameMode(GameMode.SURVIVAL);
 
         return session;
     }

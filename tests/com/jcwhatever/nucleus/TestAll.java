@@ -4,6 +4,7 @@ import com.jcwhatever.nucleus.collections._CollectionsTestSuite;
 import com.jcwhatever.nucleus.commands._CommandsTestSuite;
 import com.jcwhatever.nucleus.events.manager._ManagerTestSuite;
 import com.jcwhatever.nucleus.internal.providers.economy._InternalEconomyTestSuite;
+import com.jcwhatever.nucleus.jail._JailTestSuite;
 import com.jcwhatever.nucleus.storage._StorageTestSuite;
 import com.jcwhatever.nucleus.utils._UtilsTestSuite;
 import com.jcwhatever.nucleus.views._ViewTestSuite;
@@ -17,6 +18,7 @@ import org.junit.runners.Suite;
         _CommandsTestSuite.class,
         _ManagerTestSuite.class,
         _InternalEconomyTestSuite.class,
+        _JailTestSuite.class,
         _StorageTestSuite.class,
         _UtilsTestSuite.class,
         _ViewTestSuite.class

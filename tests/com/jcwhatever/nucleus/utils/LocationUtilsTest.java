@@ -42,7 +42,7 @@ public class LocationUtilsTest {
     @Test
     public void testTeleportCentered() throws Exception {
 
-        MockEntity entity = new MockEntity(EntityType.BAT);
+        MockEntity entity = new MockEntity(0, EntityType.BAT);
 
         Location location = new Location(BukkitTest.world("dummy"), 10, 10, 10);
 

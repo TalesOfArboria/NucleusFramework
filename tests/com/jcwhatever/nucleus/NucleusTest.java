@@ -18,5 +18,7 @@ public class NucleusTest {
         BukkitPlugin plugin = BukkitTest.initPlugin("NucleusFramework", "v0", BukkitPlugin.class);
 
         BukkitTest.getServer().getPluginManager().enablePlugin(plugin);
+
+        plugin.setDebugging(true);
     }
 }

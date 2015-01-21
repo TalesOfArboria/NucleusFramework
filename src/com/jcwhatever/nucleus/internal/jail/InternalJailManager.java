@@ -31,13 +31,15 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.jail.IJailManager;
 import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.jail.JailSession;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.DateUtils.TimeRound;
 import com.jcwhatever.nucleus.utils.DependencyRunner;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.TimeScale;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -104,13 +106,13 @@ public final class InternalJailManager implements IJailManager {
     }
 
     @Override
-    public JailSession registerJailSession(Jail jail, UUID playerId, int minutes) {
+    public JailSession registerJailSession(Jail jail, UUID playerId, int duration, TimeScale timeScale) {
         PreCon.notNull(jail);
         PreCon.notNull(playerId);
-        PreCon.positiveNumber(minutes);
+        PreCon.positiveNumber(duration);
 
         // get release time
-        Date expires = DateUtils.addMinutes(new Date(), minutes);
+        Date expires = new Date(System.currentTimeMillis() + (duration * timeScale.getTimeFactor()));
 
         return registerJailSession(jail, playerId, expires);
     }
@@ -121,8 +123,10 @@ public final class InternalJailManager implements IJailManager {
         PreCon.notNull(playerId);
         PreCon.notNull(expires);
 
-        if (isPrisoner(playerId))
+        if (isPrisoner(playerId)) {
+            NucMsg.debug("Failed to imprison player because the player is already imprisoned.");
             return null;
+        }
 
         // create session
         JailSession jailSession = new JailSession(jail, playerId, expires);
@@ -166,6 +170,7 @@ public final class InternalJailManager implements IJailManager {
 
         JailSession session = getSession(playerId);
         if (session != null) {
+            session.dispose();
             _warden.run();
             return true;
         }
@@ -196,8 +201,8 @@ public final class InternalJailManager implements IJailManager {
         // automatically registers
         new Jail(Nucleus.getPlugin(), "default", _dataNode.getNode("default"));
 
-        // check for prisoner release every 1 minute.
-        Scheduler.runTaskRepeat(Nucleus.getPlugin(), 20, 1200, _warden);
+        // check for prisoner release every 1 second.
+        Scheduler.runTaskRepeat(Nucleus.getPlugin(), Rand.getInt(1, 20), 20, _warden);
 
         BukkitEventListener _eventListener = new BukkitEventListener();
         Bukkit.getPluginManager().registerEvents(_eventListener, Nucleus.getPlugin());

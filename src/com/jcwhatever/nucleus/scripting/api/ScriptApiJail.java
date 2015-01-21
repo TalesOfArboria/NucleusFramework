@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.jail.JailSession;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -92,7 +93,7 @@ public class ScriptApiJail extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return Nucleus.getDefaultJail().imprison(p, minutes) != null;
+            return Nucleus.getDefaultJail().imprison(p, minutes, TimeScale.MINUTES) != null;
         }
 
         /**

@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.jail.JailSession;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
@@ -69,7 +70,7 @@ public final class SendSubCommand extends AbstractCommand {
         }
         
         Jail jail = Nucleus.getDefaultJail();
-        JailSession jailSession = jail.imprison(player, minutes);
+        JailSession jailSession = jail.imprison(player, minutes, TimeScale.MINUTES);
         
         if (jailSession == null) {
             tellError(sender, NucLang.get(_FAILED));
