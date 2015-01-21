@@ -32,6 +32,8 @@ import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -220,26 +222,38 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * <p>There is a 1 tick delay before the previous view is shown. The
      * state of the view will reflect the previous state until then.</p>
      *
+     * @return A future that will return the result once it has completed. Possible
+     * outcomes are success or cancel.
+     *
      * @throws java.lang.IllegalStateException if there is no current view.
      */
-    public void previous() {
+    public Future<View> previous() {
         if (_current == null)
             throw new IllegalStateException();
 
         if (_isDisposed)
             throw new RuntimeException("Cannot use a disposed ViewSession.");
 
+        final FutureResultAgent<View> agent = new FutureResultAgent<>();
+
         Scheduler.runTaskLater(_current.view.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                _current.view.close(ViewCloseReason.PREV);
 
-                _current = _current.prev;
-                if (_current == null) {
-                    dispose();
+                if (_current.view.close(ViewCloseReason.PREV)) {
+                    _current = _current.prev;
+                    if (_current == null) {
+                        dispose();
+                    }
+                    agent.success(getCurrentView());
+                }
+                else {
+                    agent.cancel(getCurrentView());
                 }
             }
         });
+
+        return agent.getFuture();
     }
 
     /**
@@ -264,19 +278,20 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * Show the next view.
      *
      * <p>There is a 1 tick delay before the view is actually
-     * opened. The state of the view may be inaccurate until then.
-     * The view session of the view is updated immediately as well
-     * as the view session's state.</p>
+     * opened. The state of the view may be inaccurate until then.</p>
      *
-     * @param view  The factory that will create the next view.
+     * @param view  The view instance to display next.
      *
-     * @return The newly created and displayed view.
+     * @return A future that will return the result of the operation once
+     * it has completed. Possible outcomes are success or cancel.
      */
-    public void next(View view) {
+    public Future<View> next(final View view) {
         PreCon.notNull(view);
 
         if (_isDisposed)
             throw new RuntimeException("Cannot use a disposed ViewSession.");
+
+        final FutureResultAgent<View> agent = new FutureResultAgent<>();
 
         view.setViewSession(this);
 
@@ -288,53 +303,84 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
             Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    _current.view.open(ViewOpenReason.FIRST);
+                    if (_current.view.open(ViewOpenReason.FIRST)) {
+                        agent.success(getCurrentView());
+                    }
+                    else {
+                        _first = null;
+                        _current = null;
+                        agent.cancel(null);
+                    }
                 }
             });
         }
         else {
 
-            final ViewContainer prev = _current;
-            //IView prevView = _current.view;
-
-            final ViewContainer current = new ViewContainer(view, prev, null);
-            prev.next = current;
-
             Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    prev.view.close(ViewCloseReason.NEXT); // ViewEventListener will open next
 
-                    _current = current;
+                    ViewContainer prev = _current;
+                    ViewContainer origNext = prev.next;
+                    ViewContainer current = new ViewContainer(view, prev, null);
+                    prev.next = current;
+
+                    // close current view, ViewEventListener will open next view
+                    if (_current.view.close(ViewCloseReason.NEXT)) {
+
+                        _current = current;
+                        agent.success(getCurrentView());
+                    }
+                    else {
+                        prev.next = origNext;
+                        agent.cancel(getCurrentView());
+                    }
                 }
             });
-
         }
+
+        return agent.getFuture();
     }
 
     /**
      * Close and re-open the current view.
      *
-     * <p>There is a 2 tick delay before the view refresh
-     * is complete. The state of the view will remain the same
-     * until then.</p>
+     * <p>There is a 1-2 tick delay before the view refresh
+     * is complete. The state of the view will be inaccurate until then.</p>
+     *
+     * @return A future that will return the result of the operation once
+     * it has completed. Possible outcomes are success, error or cancel.
      */
-    public void refresh() {
+    public Future<View> refresh() {
 
         if (_isDisposed)
             throw new RuntimeException("Cannot use a disposed ViewSession.");
 
-        final View view = getCurrentView();
-        if (view == null)
-            return;
+        final FutureResultAgent<View> agent = new FutureResultAgent<>();
 
-        view.close(ViewCloseReason.REFRESH);
+        final View view = getCurrentView();
+        if (view == null) {
+            return agent.cancel(null, "No current view to refresh.");
+        }
+
+        if (!view.close(ViewCloseReason.REFRESH)) {
+            return agent.cancel(view);
+        }
+
         Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                view.open(ViewOpenReason.REFRESH);
+                if (view.open(ViewOpenReason.REFRESH)) {
+                    agent.success(view);
+                }
+                else {
+                    // error: refresh is not an appropriate time to not be able to re-open the view.
+                    agent.error(view);
+                }
             }
         });
+
+        return agent.getFuture();
     }
 
     @Override
