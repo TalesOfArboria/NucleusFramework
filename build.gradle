@@ -57,6 +57,18 @@ def snapshotDepends = [
         'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT'
 ];
 
+// source directory
+def sourceDir = 'src'
+
+// resource directory
+def resourceDir = null
+
+// test source directory
+def testSourceDir = 'tests/src'
+
+// test resource directory
+def testResourceDir = 'tests/res'
+
 /**
  * MAVEN TASK SETTINGS
  */
@@ -129,7 +141,13 @@ sourceSets {
         runtimeClasspath += configurations.provided
 
         java {
-            srcDir 'src'
+            srcDir sourceDir
+        }
+
+        if (resourceDir) {
+            resources {
+                srcDir resourceDir
+            }
         }
     }
 
@@ -138,8 +156,16 @@ sourceSets {
         compileClasspath += configurations.provided
         runtimeClasspath += configurations.provided
 
-        java {
-            srcDir 'tests'
+        if (testSourceDir) {
+            java {
+                srcDir testSourceDir
+            }
+        }
+
+        if (testResourceDir) {
+            resources {
+                srcDir testResourceDir
+            }
         }
     }
 }
