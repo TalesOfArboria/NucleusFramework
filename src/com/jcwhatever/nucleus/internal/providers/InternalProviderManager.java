@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.internal.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.providers.bankitems.BankItemsProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.NucleusEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.BukkitProvider;
@@ -37,6 +38,7 @@ import com.jcwhatever.nucleus.providers.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
+import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.EconomyBankWrapper;
 import com.jcwhatever.nucleus.providers.economy.EconomyWrapper;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
@@ -66,6 +68,7 @@ public final class InternalProviderManager implements IProviderManager {
     private volatile IPermissionsProvider _permissions;
     private volatile IRegionSelectProvider _regionSelect;
     private volatile IEconomyProvider _economy;
+    private volatile IBankItemsProvider _bankItems;
 
     private volatile IStorageProvider _defaultStorage;
 
@@ -140,6 +143,20 @@ public final class InternalProviderManager implements IProviderManager {
         }
 
         _regionSelect = provider;
+    }
+
+    @Override
+    public IBankItemsProvider getBankItemsProvider() {
+
+        if (_bankItems == null)
+            _bankItems = new BankItemsProvider();
+
+        return _bankItems;
+    }
+
+    @Override
+    public void setBankItemsProvider(IBankItemsProvider provider) {
+        _bankItems = provider;
     }
 
     @Override

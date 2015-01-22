@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.internal.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.utils.modules.ClassLoadMethod;
 import com.jcwhatever.nucleus.utils.modules.IModuleInfo;
 import com.jcwhatever.nucleus.utils.modules.JarModuleLoader;
@@ -94,19 +95,23 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
             if (provider instanceof IStorageProvider) {
 
-                _manager.registerStorageProvider((IStorageProvider)provider);
+                _manager.registerStorageProvider((IStorageProvider) provider);
             }
             else if (provider instanceof IPermissionsProvider) {
 
-                _manager.setPermissionsProvider((IPermissionsProvider)provider);
+                _manager.setPermissionsProvider((IPermissionsProvider) provider);
             }
             else if (provider instanceof IRegionSelectProvider) {
 
-                _manager.setRegionSelectionProvider((IRegionSelectProvider)provider);
+                _manager.setRegionSelectionProvider((IRegionSelectProvider) provider);
             }
             else if (provider instanceof IEconomyProvider) {
 
-                _manager.setEconomyProvider((IEconomyProvider)provider);
+                _manager.setEconomyProvider((IEconomyProvider) provider);
+            }
+            else if (provider instanceof IBankItemsProvider) {
+
+                _manager.setBankItemsProvider((IBankItemsProvider) provider);
             }
             else {
                 removeModule(provider.getName());

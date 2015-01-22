@@ -25,13 +25,14 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.itembank.BankItem;
-import com.jcwhatever.nucleus.itembank.InsufficientItemsException;
-import com.jcwhatever.nucleus.itembank.ItemBankManager;
-import com.jcwhatever.nucleus.utils.player.PlayerUtils;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.providers.bankitems.IBankItem;
+import com.jcwhatever.nucleus.providers.bankitems.IBankItemsAccount;
+import com.jcwhatever.nucleus.providers.bankitems.InsufficientItemsException;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -89,10 +90,8 @@ public class ScriptApiItemBank extends NucleusScriptApi {
          * @param player  The player.
          * @param item    The item to deposit.
          * @param qty     The quantity to deposit.
-         *
-         * @return  True if successful.
          */
-        public boolean deposit(Object player, ItemStack item, int qty) {
+        public void deposit(Object player, ItemStack item, int qty) {
             PreCon.notNull(player);
             PreCon.notNull(item);
             PreCon.greaterThanZero(qty);
@@ -100,7 +99,10 @@ public class ScriptApiItemBank extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return ItemBankManager.deposit(p, item, qty) != null;
+            IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+                    .getAccount(p.getUniqueId());
+
+            account.deposit(item, qty);
         }
 
         /**
@@ -109,7 +111,8 @@ public class ScriptApiItemBank extends NucleusScriptApi {
          * @param player  The player.
          * @param item    The item to withdraw.
          * @param qty     The quantity to withdraw.
-         * @return
+         *
+         * @return  True if successful, false if insufficient items.
          */
         public boolean withdraw(Object player, ItemStack item, int qty) {
             PreCon.notNull(player);
@@ -119,10 +122,12 @@ public class ScriptApiItemBank extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
+            IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+                    .getAccount(p.getUniqueId());
+
             try {
-                ItemBankManager.withdraw(p, item, qty);
+                account.withdraw(item, qty);
             } catch (InsufficientItemsException e) {
-                e.printStackTrace();
                 return false;
             }
             return true;
@@ -133,19 +138,22 @@ public class ScriptApiItemBank extends NucleusScriptApi {
          *
          * @param player  The player.
          */
-        public BankItem[] getBankItems(Object player) {
+        public IBankItem[] getBankItems(Object player) {
             PreCon.notNull(player);
 
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            List<BankItem> items = ItemBankManager.getBankItems(p);
+            IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+                    .getAccount(p.getUniqueId());
+
+            List<IBankItem> items = account.getItems();
             if (items == null)
-                return new BankItem[0];
+                return new IBankItem[0];
 
-            BankItem[] itemsArray = new BankItem[items.size()];
+            IBankItem[] itemsArray = new IBankItem[items.size()];
 
-            for (int i=0; i < items.size(); i++) {
+            for (int i=0; i < itemsArray.length; i++) {
                 itemsArray[i] = items.get(i);
             }
 
@@ -170,8 +178,11 @@ public class ScriptApiItemBank extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(qty);
             PreCon.notNull(p);
 
-            BankItem bankItem = ItemBankManager.getBankItem(p, item);
-            return bankItem != null && bankItem.getQty() >= qty;
+            IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+                    .getAccount(p.getUniqueId());
+
+            IBankItem bankItem = account.getItem(item);
+            return bankItem != null && bankItem.getAmount() >= qty;
         }
 
         /**
@@ -187,12 +198,15 @@ public class ScriptApiItemBank extends NucleusScriptApi {
 
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
-            
-            BankItem bankItem = ItemBankManager.getBankItem(p, item);
+
+            IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+                    .getAccount(p.getUniqueId());
+
+            IBankItem bankItem = account.getItem(item);
             if (bankItem == null)
                 return 0;
 
-            return bankItem.getQty();
+            return bankItem.getAmount();
         }
     }
 

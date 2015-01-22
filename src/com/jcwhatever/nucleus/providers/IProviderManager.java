@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.providers;
 
+import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 
@@ -74,6 +75,18 @@ public interface IProviderManager {
      * @param provider  The region selection provider.
      */
     void setRegionSelectionProvider(IRegionSelectProvider provider);
+
+    /**
+     * Get the bank item provider.
+     */
+    IBankItemsProvider getBankItemsProvider();
+
+    /**
+     * Set the bank item provider.
+     *
+     * @param provider  The provider.
+     */
+    void setBankItemsProvider(IBankItemsProvider provider);
 
     /**
      * Get the economy provider.

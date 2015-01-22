@@ -39,6 +39,11 @@ public interface IPaginator<E> {
     PageStartIndex getPageStartIndex();
 
     /**
+     * Get the total number of individual items.
+     */
+    int size();
+
+    /**
      * Get the total number of pages.
      */
     int getTotalPages();
