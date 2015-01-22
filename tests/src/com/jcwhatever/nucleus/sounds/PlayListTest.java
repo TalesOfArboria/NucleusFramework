@@ -182,11 +182,11 @@ public class PlayListTest {
 
         assertEquals(sounds.get(0), queue.getCurrent());
 
-        BukkitTest.pause(25);
+        BukkitTest.pause(30);
 
         assertEquals(sounds.get(1), queue.getCurrent());
 
-        BukkitTest.pause(25);
+        BukkitTest.pause(30);
 
         assertEquals(sounds.get(2), queue.getCurrent());
     }
