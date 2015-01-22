@@ -28,7 +28,6 @@ import com.jcwhatever.nucleus.collections.TreeEntryNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
-import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
@@ -109,24 +108,21 @@ public class MemoryDataNode extends AbstractDataNode {
     @Override
     public Future<IDataNode> loadAsync() {
 
-        FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
-        agent.sendResult(new ResultBuilder<IDataNode>().result(this).success().build());
-
-        return agent.getFuture();
+        return new FutureResultAgent<IDataNode>().success(this);
     }
 
     @Override
     public boolean saveSync() {
+        cleanAll();
         return true;
     }
 
     @Override
     public Future<IDataNode> save() {
 
-        FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
-        agent.sendResult(new ResultBuilder<IDataNode>().result(this).success().build());
+        cleanAll();
 
-        return agent.getFuture();
+        return new FutureResultAgent<IDataNode>().success(this);
     }
 
     @Override
@@ -136,10 +132,12 @@ public class MemoryDataNode extends AbstractDataNode {
 
     @Override
     public Future<IDataNode> save(File destination) {
-        FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
-        agent.sendResult(new ResultBuilder<IDataNode>().result(this).cancel().build());
+        return new FutureResultAgent<IDataNode>().cancel(this);
+    }
 
-        return agent.getFuture();
+    @Override
+    public AutoSaveMode getDefaultAutoSaveMode() {
+        return AutoSaveMode.DISABLED;
     }
 
     @Override
@@ -175,12 +173,16 @@ public class MemoryDataNode extends AbstractDataNode {
     @Override
     public void clear() {
         _node.clearChildren();
+
+        markDirty();
     }
 
     @Override
     public void remove() {
         if (_node.getParent() == null)
             throw new UnsupportedOperationException("Cannot remove root node.");
+
+        markDirty();
 
         _node.getParent().removeChild(_node);
     }
@@ -190,6 +192,8 @@ public class MemoryDataNode extends AbstractDataNode {
         TreeEntryNode<String, Object> treeNode = getNodeFromPath(nodePath, false);
         if (treeNode == null)
             return;
+
+        markDirty();
 
         //noinspection ConstantConditions
         treeNode.getParent().removeChild(treeNode);
@@ -222,6 +226,8 @@ public class MemoryDataNode extends AbstractDataNode {
     @Override
     public boolean set(String keyPath, @Nullable Object value) {
 
+        markDirty();
+
         if (value != null) {
             setNodeFromPath(keyPath, value);
         } else {
@@ -238,6 +244,7 @@ public class MemoryDataNode extends AbstractDataNode {
     @Override
     public void runBatchOperation(DataBatchOperation batch) {
         batch.run(this);
+        saveSync();
     }
 
     @Override

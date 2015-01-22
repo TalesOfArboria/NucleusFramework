@@ -46,6 +46,15 @@ import javax.annotation.Nullable;
 public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
 
     /**
+     * Specifies auto save settings for an {@code IDataNode}.
+     */
+    public enum AutoSaveMode {
+        DEFAULT,
+        DISABLED,
+        ENABLED
+    }
+
+    /**
      * The owning plugin.
      */
     @Override
@@ -78,6 +87,14 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      * the root node.
      */
     boolean isRoot();
+
+    /**
+     * Get the parent node.
+     *
+     * @return  The parent node or null if the node is root.
+     */
+    @Nullable
+    IDataNode getParent();
 
     /**
      * Load the data.
@@ -134,6 +151,28 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      * data node that {@code #save} was invoked from.
      */
     Future<IDataNode> save(File destination);
+
+    /**
+     * Determine if the node contains unsaved changes.
+     */
+    boolean isDirty();
+
+    /**
+     * Determine if auto save is enabled for the node.
+     */
+    AutoSaveMode getAutoSaveMode();
+
+    /**
+     * Get the default auto save mode.
+     */
+    AutoSaveMode getDefaultAutoSaveMode();
+
+    /**
+     * Set auto save mode for the node.
+     *
+     * @param mode  The auto save mode.
+     */
+    void setAutoSaveMode(AutoSaveMode mode);
 
     /**
      * Get the number of direct child data nodes.

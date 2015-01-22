@@ -26,9 +26,12 @@ package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Rand;
+import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
@@ -42,9 +45,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
@@ -55,7 +62,17 @@ import javax.annotation.Nullable;
  */
 public abstract class AbstractDataNode implements IDataNode {
 
+    private static final Map<AbstractDataNode, Void> _autoSaveNodes = new WeakHashMap<>(25);
+    private static AutoSaveRunner _autoSaveRunner;
+
     private final AbstractDataNode _root;
+    private final String _parentPath;
+
+    private volatile AbstractDataNode _parent;
+    private volatile AutoSaveMode _saveMode = AutoSaveMode.DEFAULT;
+    private volatile boolean _isDirty;
+    private volatile int _dirtyChildren;
+
     protected final String _rawPath;
     protected final String _path;
     protected final String _nodeName;
@@ -63,6 +80,7 @@ public abstract class AbstractDataNode implements IDataNode {
     // instantiated on root only
     protected final ReadLock _read;
     protected final WriteLock _write;
+    protected final Set<AbstractDataNode> _dirtyNodes;
 
     /**
      * Constructor for the root node.
@@ -72,6 +90,8 @@ public abstract class AbstractDataNode implements IDataNode {
         _path = "";
         _nodeName = "";
         _root = this;
+        _parentPath = null;
+        _dirtyNodes = new HashSet<>(5);
 
         ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         _read = lock.readLock();
@@ -102,6 +122,8 @@ public abstract class AbstractDataNode implements IDataNode {
         _read = null;
         _write = null;
         _root = root;
+        _parentPath = getParentPath(path);
+        _dirtyNodes = null;
     }
 
     @Override
@@ -112,6 +134,51 @@ public abstract class AbstractDataNode implements IDataNode {
     @Override
     public String getNodePath() {
         return _rawPath;
+    }
+
+    @Nullable
+    @Override
+    public IDataNode getParent() {
+        if (_parentPath == null)
+            return null;
+
+        if (_parent == null) {
+            _root._write.lock();
+            try {
+
+                if (_parent != null)
+                    return _parent;
+
+                _parent = _parentPath.isEmpty()
+                        ? (AbstractDataNode) getRoot()
+                        : (AbstractDataNode) getRoot().getNode(_parentPath);
+
+            } finally {
+                _root._write.unlock();
+            }
+        }
+
+        return _parent;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return _isDirty || _dirtyChildren > 0;
+    }
+
+    @Override
+    public AutoSaveMode getAutoSaveMode() {
+        return _saveMode;
+    }
+
+    @Override
+    public void setAutoSaveMode(AutoSaveMode mode) {
+        PreCon.notNull(mode);
+
+        if (_saveMode == mode)
+            return;
+
+        _saveMode = mode;
     }
 
     @Override
@@ -438,8 +505,8 @@ public abstract class AbstractDataNode implements IDataNode {
     }
 
     /**
-     * Get the relative path for the data node and
-     * get the full path from the root node.
+     * Get the full path from the root node of the
+     * specified path relative to the current node.
      *
      * @param relativePath  The relative path.
      */
@@ -448,5 +515,124 @@ public abstract class AbstractDataNode implements IDataNode {
             return _rawPath;
 
         return _path + relativePath;
+    }
+
+    /**
+     * Get the full path from the root node to the parent of the specified child node.
+     *
+     * @param fullPath  The full path to the child node.
+     *
+     * @return The full path to parent or null if the current node is root.
+     */
+    @Nullable
+    protected String getParentPath(String fullPath) {
+        if (fullPath.isEmpty()) {
+            return null;
+        }
+
+        String[] components = TextUtils.PATTERN_DOT.split(fullPath);
+
+        if (components.length == 1)
+            return "";
+
+        components = ArrayUtils.reduceEnd(components, 1);
+
+        return TextUtils.concat(components, ".");
+    }
+
+    /**
+     * To be invoked by implementation to mark the node
+     * as modified without saving.
+     */
+    protected void markDirty() {
+
+        // don't mark again if already marked.
+        if (_isDirty)
+            return;
+
+        _isDirty = true;
+        _root._dirtyNodes.add(this);
+        parentDirty();
+
+        if (_saveMode == AutoSaveMode.ENABLED) {
+
+            synchronized (_autoSaveNodes) {
+                _autoSaveNodes.put(this, null);
+
+                if (_autoSaveRunner == null) {
+                    _autoSaveRunner = new AutoSaveRunner();
+
+                    Scheduler.runTaskRepeatAsync(getPlugin(),
+                            Rand.getInt(1, 40), 40, _autoSaveRunner);
+                }
+            }
+        }
+    }
+
+    /**
+     * To be invoked from implementation upon saving the node.
+     */
+    protected void clean() {
+        _root._dirtyNodes.remove(this);
+        safeClean();
+    }
+
+    /**
+     * To be invoked from implementation to indicate all nodes are saved.
+     */
+    protected void cleanAll() {
+
+        for (AbstractDataNode node : _root._dirtyNodes) {
+            node.safeClean();
+        }
+        _root._dirtyNodes.clear();
+    }
+
+    // mark all parents as dirty without adding them
+    // to the auto save pool.
+    private void parentDirty() {
+        AbstractDataNode node = this;
+        while ((node = (AbstractDataNode)node.getParent()) != null) {
+            node._dirtyChildren++;
+        }
+    }
+
+    private void safeClean() {
+        _isDirty = false;
+
+        AbstractDataNode node = this;
+        while ((node = (AbstractDataNode)node.getParent()) != null) {
+            node._dirtyChildren--;
+        }
+    }
+
+    /**
+     * Auto save runnable.
+     */
+    private static class AutoSaveRunner implements Runnable {
+
+        @Override
+        public void run() {
+
+            synchronized (_autoSaveNodes) {
+
+                Iterator<AbstractDataNode> iterator = _autoSaveNodes.keySet().iterator();
+
+                while (iterator.hasNext()) {
+
+                    AbstractDataNode dataNode = iterator.next();
+
+                    if (dataNode.getAutoSaveMode() == AutoSaveMode.ENABLED ||
+                            (dataNode.getAutoSaveMode() == AutoSaveMode.DEFAULT &&
+                            dataNode.getDefaultAutoSaveMode() == AutoSaveMode.ENABLED)) {
+                        dataNode.save();
+                        dataNode.clean();
+                    }
+
+                    iterator.remove();
+                }
+            }
+
+        }
     }
 }

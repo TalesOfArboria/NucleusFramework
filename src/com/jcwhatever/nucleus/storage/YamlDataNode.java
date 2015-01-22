@@ -37,8 +37,6 @@ import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
-import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.result.Result;
 import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
 import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 
@@ -54,6 +52,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,6 +61,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 public class YamlDataNode extends AbstractDataNode {
+
 
     public static File dataPathToFile(Plugin plugin, DataPath storagePath) {
         String[] pathComp = storagePath.getPath();
@@ -86,9 +86,10 @@ public class YamlDataNode extends AbstractDataNode {
 
     // instantiated on root only
     private final ConfigurationSection _section;
+    private final Map<String, YamlDataNode> _cachedNodes;
     private final AgentMultimap<IDataNode, FutureResultAgent<IDataNode>> _saveAgents;
     private final BatchTracker _batch;
-    private boolean _isLoaded;
+    private volatile boolean _isLoaded;
     private volatile ScheduledTask _saveTask;
     protected String _yamlString;
     protected File _file;
@@ -150,7 +151,7 @@ public class YamlDataNode extends AbstractDataNode {
 
     /**
      * Private Constructor. Used by public constructors
-     * for common code.
+     * for root node.
      *
      * @param plugin  The owning plugin.
      */
@@ -165,6 +166,7 @@ public class YamlDataNode extends AbstractDataNode {
         _root = this;
         _saveAgents = new AgentSetMultimap<>();
         _batch = new BatchTracker();
+        _cachedNodes = new HashMap<>(10);
     }
 
     /**
@@ -180,6 +182,7 @@ public class YamlDataNode extends AbstractDataNode {
         _plugin = root.getPlugin();
         _saveAgents = null;
         _batch = null;
+        _cachedNodes = null;
     }
 
     @Override
@@ -270,26 +273,35 @@ public class YamlDataNode extends AbstractDataNode {
     @Override
     public boolean saveSync() {
 
-        YamlConfiguration yaml = (YamlConfiguration)getRoot()._section;
+        if (!isRoot()) {
+            //noinspection TailRecursion
+            return getRoot().saveSync();
+        }
 
-        if (getRoot()._batch.isRunning())
+        YamlConfiguration yaml = (YamlConfiguration)_section;
+
+        if (_batch.isRunning())
             return false;
 
         boolean isSaved;
 
-        getRoot()._write.lock();
+        _write.lock();
         try {
 
             try {
 
-                if (getRoot()._file != null) {
-                    yaml.save(getRoot()._file);
+                // save yaml
+                if (_file != null) {
+                    yaml.save(_file);
                 }
                 else {
-                    getRoot()._yamlString = yaml.getKeys(false).size() == 0 ? "" : yaml.saveToString();
+                    _yamlString = yaml.getKeys(false).size() == 0 ? "" : yaml.saveToString();
                 }
 
                 isSaved = true;
+
+                // mark dirty nodes as clean
+                cleanAll();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -297,7 +309,7 @@ public class YamlDataNode extends AbstractDataNode {
             }
         }
         finally {
-            getRoot()._write.unlock();
+            _write.unlock();
         }
 
         return isSaved;
@@ -307,7 +319,6 @@ public class YamlDataNode extends AbstractDataNode {
     public Future<IDataNode> save() {
 
         final FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
-        final ResultBuilder<IDataNode> resultBuilder = new ResultBuilder<IDataNode>().result(this);
 
         getRoot()._saveAgents.put(this, agent);
 
@@ -338,12 +349,11 @@ public class YamlDataNode extends AbstractDataNode {
                         public void run() {
 
                             for (FutureResultAgent<IDataNode> agent : agents) {
-                                agent.sendResult(
-                                        isSaved
-                                                ? resultBuilder.success().build()
-                                                : resultBuilder.error().build()
 
-                                );
+                                if (isSaved)
+                                    agent.success(YamlDataNode.this);
+                                else
+                                    agent.error(YamlDataNode.this);
                             }
                         }
                     });
@@ -352,10 +362,11 @@ public class YamlDataNode extends AbstractDataNode {
 
         }
         else {
-            boolean isSaved = saveSync();
-            agent.sendResult(isSaved
-                    ? resultBuilder.success().build()
-                    : resultBuilder.error().build());
+            if (saveSync()) {
+                agent.success(this);
+            } else {
+                agent.error(this);
+            }
         }
 
         return agent.getFuture();
@@ -412,6 +423,11 @@ public class YamlDataNode extends AbstractDataNode {
         });
 
         return agent.getFuture();
+    }
+
+    @Override
+    public AutoSaveMode getDefaultAutoSaveMode() {
+        return AutoSaveMode.DISABLED;
     }
 
     @Override
@@ -538,13 +554,20 @@ public class YamlDataNode extends AbstractDataNode {
     @Override
     public boolean set(String keyPath, @Nullable Object value) {
 
+        markDirty();
+
         if (_section == null) {
             //noinspection TailRecursion
-            return getRoot().set(getFullPath(keyPath), value);
+            if (getRoot().set(getFullPath(keyPath), value)) {
+
+                return true;
+            }
+            return false;
         }
 
         getRoot()._write.lock();
         try {
+
             if (value instanceof UUID) {
                 value = String.valueOf(value);
             }
@@ -644,7 +667,16 @@ public class YamlDataNode extends AbstractDataNode {
 
     @Override
     public IDataNode getNode(String nodePath) {
-        return new YamlDataNode(getRoot(), getFullPath(nodePath));
+        PreCon.notNull(nodePath);
+
+        String fullPath = getFullPath(nodePath);
+        YamlDataNode node = getRoot()._cachedNodes.get(fullPath);
+        if (node == null) {
+            node = new YamlDataNode(getRoot(), fullPath);
+            getRoot()._cachedNodes.put(fullPath, node);
+        }
+
+        return node;
     }
 
     @Override
@@ -663,26 +695,5 @@ public class YamlDataNode extends AbstractDataNode {
 
     public YamlConfiguration getYamlConfiguration() {
         return (YamlConfiguration)getRoot()._section;
-    }
-
-    public Future<IDataNode> assertNodes(File defaultConfig) {
-        final YamlDataNode config = new YamlDataNode(_plugin, defaultConfig);
-
-        return config.loadAsync().onSuccess(new FutureSubscriber<IDataNode>() {
-            @Override
-            public void on(Result<IDataNode> result) {
-
-                IDataNode dest = YamlDataNode.this;
-
-                Set<String> keys = config.getSubNodeNames();
-                for (String key : keys) {
-                    if (dest.get(key) == null)
-                        continue;
-
-                    dest.set(key, config.get(key));
-                }
-
-            }
-        });
     }
 }

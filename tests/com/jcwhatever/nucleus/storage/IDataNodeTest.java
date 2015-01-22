@@ -2,16 +2,16 @@ package com.jcwhatever.nucleus.storage;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
-import com.jcwhatever.bukkit.v1_8_R1.MockServer;
 import com.jcwhatever.nucleus.NucleusTest;
+import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.result.Result;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -20,8 +20,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /*
@@ -53,17 +55,16 @@ public abstract class IDataNodeTest {
         node.set("items", new ItemStackBuilder(Material.WOOD).build());
     }
 
+    /**
+     * Make sure Nucleus and Bukkit are initialized.
+     */
     @BeforeClass
-    public static void testStartup() {
-        try {
-            Bukkit.setServer(new MockServer());
-        }
-        catch (UnsupportedOperationException ignore) {}
+    public static void init() {
+        NucleusTest.init();
     }
 
-
     @Test
-    public void testRoot() throws Exception {
+    public void testRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         initDataNode(dataNode);
@@ -79,7 +80,7 @@ public abstract class IDataNodeTest {
      * Test size from a root node.
      */
     @Test
-    public void testSizeRoot() throws Exception {
+    public void testSizeRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -90,7 +91,7 @@ public abstract class IDataNodeTest {
      * Test size from a sub node.
      */
     @Test
-    public void testSizeSub() throws Exception {
+    public void testSizeSub() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -116,10 +117,38 @@ public abstract class IDataNodeTest {
     }
 
     /**
+     * Make sure {@code #isDirty} method returns the correct value.
+     */
+    @Test
+    public void testDirty() {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        assertEquals(false, dataNode.isDirty());
+
+        IDataNode node1 = dataNode.getNode("node1");
+        IDataNode node2 = dataNode.getNode("node2");
+
+        assertEquals(false, dataNode.isDirty());
+
+        node1.set("test", "value");
+
+        assertEquals(true, dataNode.isDirty());
+        assertEquals(true, node1.isDirty());
+        assertEquals(false, node2.isDirty());
+
+        node1.saveSync();
+
+        assertEquals(false, dataNode.isDirty());
+        assertEquals(false, node1.isDirty());
+        assertEquals(false, node2.isDirty());
+    }
+
+    /**
      * test hasNode on root node.
      */
     @Test
-    public void testHasNode() throws Exception {
+    public void testHasNode() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -130,7 +159,7 @@ public abstract class IDataNodeTest {
      * test hasNode on sub node.
      */
     @Test
-    public void testHasNode1() throws Exception {
+    public void testHasNode1() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -152,7 +181,7 @@ public abstract class IDataNodeTest {
      * test getNode from root node.
      */
     @Test
-    public void testGetNodeRoot() throws Exception {
+    public void testGetNodeRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -163,7 +192,7 @@ public abstract class IDataNodeTest {
      * test getNode from sub node.
      */
     @Test
-    public void testGetNodeSub() throws Exception {
+    public void testGetNodeSub() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -187,7 +216,7 @@ public abstract class IDataNodeTest {
      * test getSubNodeNames from root node.
      */
     @Test
-    public void testGetSubNodeNamesRoot() throws Exception {
+    public void testGetSubNodeNamesRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         initDataNode(dataNode);
@@ -199,7 +228,7 @@ public abstract class IDataNodeTest {
      * test getSubNodeNames from subNode
      */
     @Test
-    public void testGetSubNodeNamesSub() throws Exception {
+    public void testGetSubNodeNamesSub() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -222,7 +251,7 @@ public abstract class IDataNodeTest {
      * test clear from root node.
      */
     @Test
-    public void testClearRoot() throws Exception {
+    public void testClearRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testClear(dataNode);
@@ -232,7 +261,7 @@ public abstract class IDataNodeTest {
      * test clear from sub node.
      */
     @Test
-    public void testClearSub() throws Exception {
+    public void testClearSub() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -256,7 +285,7 @@ public abstract class IDataNodeTest {
      * test remove from root node.
      */
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
 
         IDataNode dataNode = _generator.generateRoot();
         initDataNode(dataNode);
@@ -270,13 +299,20 @@ public abstract class IDataNodeTest {
         dataNode.remove("testRemoval2");
 
         assertEquals(false, dataNode.hasNode("testRemoval2"));
+
+        try {
+            // test remove root node
+            dataNode.remove();
+            throw new AssertionError("UnsupportedOperationException expected.");
+        }
+        catch (UnsupportedOperationException ignore) {}
     }
 
     /**
      * test remove from sub node
      */
     @Test
-    public void testRemove1() throws Exception {
+    public void testRemove1() {
 
         IDataNode dataNode = _generator.generateRoot();
         initDataNode(dataNode);
@@ -288,17 +324,20 @@ public abstract class IDataNodeTest {
         assertEquals(true, dataNode.hasNode("testRemoval2"));
 
         IDataNode subNode = dataNode.getNode("testRemoval2");
-
         subNode.remove();
-
         assertEquals(false, dataNode.hasNode("testRemoval2"));
+
+        // remove non-explicitly set node
+        subNode = dataNode.getNode("testRemoval4");
+        subNode.remove();
+        assertEquals(false, dataNode.hasNode("testRemoval4"));
     }
 
     /**
      * test set from root node.
      */
     @Test
-    public void testSetRoot() throws Exception {
+    public void testSetRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         initDataNode(dataNode);
@@ -310,7 +349,7 @@ public abstract class IDataNodeTest {
      * test set from sub node.
      */
     @Test
-    public void testSetSub() throws Exception {
+    public void testSetSub() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -337,7 +376,7 @@ public abstract class IDataNodeTest {
      * test getAllValues from root node.
      */
     @Test
-    public void testGetAllValuesRoot() throws Exception {
+    public void testGetAllValuesRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -348,7 +387,7 @@ public abstract class IDataNodeTest {
      * test getAllValues from root node.
      */
     @Test
-    public void testGetAllValuesSub() throws Exception {
+    public void testGetAllValuesSub() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -372,7 +411,7 @@ public abstract class IDataNodeTest {
      * test get from root node.
      */
     @Test
-    public void testGetRoot() throws Exception {
+    public void testGetRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         initDataNode(dataNode);
@@ -384,7 +423,7 @@ public abstract class IDataNodeTest {
      * test get from sub node.
      */
     @Test
-    public void testGetSub() throws Exception {
+    public void testGetSub() {
 
         IDataNode dataNode = _generator.generateRoot();
 
@@ -420,7 +459,7 @@ public abstract class IDataNodeTest {
      * test getInteger on root node.
      */
     @Test
-    public void testGetIntegerRoot() throws Exception {
+    public void testGetIntegerRoot() {
 
         testGetInteger(_generator.generateRoot());
     }
@@ -429,7 +468,7 @@ public abstract class IDataNodeTest {
      * test getInteger on sub node.
      */
     @Test
-    public void testGetIntegerSub() throws Exception {
+    public void testGetIntegerSub() {
 
         testGetInteger(_generator.generateRoot().getNode("newNode"));
     }
@@ -450,7 +489,7 @@ public abstract class IDataNodeTest {
      * test getLong on root node.
      */
     @Test
-    public void testGetLongRoot() throws Exception {
+    public void testGetLongRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetLong(dataNode);
@@ -460,7 +499,7 @@ public abstract class IDataNodeTest {
      * test getLong on sub node.
      */
     @Test
-    public void testGetLongSub() throws Exception {
+    public void testGetLongSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetLong(dataNode.getNode("newNode"));
@@ -481,7 +520,7 @@ public abstract class IDataNodeTest {
      * test getDouble on root node.
      */
     @Test
-    public void testGetDoubleRoot() throws Exception {
+    public void testGetDoubleRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetDouble(dataNode);
@@ -491,7 +530,7 @@ public abstract class IDataNodeTest {
      * test getDouble on sub node.
      */
     @Test
-    public void testGetDoubleSub() throws Exception {
+    public void testGetDoubleSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetDouble(dataNode.getNode("newNode"));
@@ -512,7 +551,7 @@ public abstract class IDataNodeTest {
      * test getBoolean on root node.
      */
     @Test
-    public void testGetBooleanRoot() throws Exception {
+    public void testGetBooleanRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetBoolean(dataNode);
@@ -522,7 +561,7 @@ public abstract class IDataNodeTest {
      * test getBoolean on sub node.
      */
     @Test
-    public void testGetBooleanSub() throws Exception {
+    public void testGetBooleanSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetBoolean(dataNode.getNode("newNode"));
@@ -543,7 +582,7 @@ public abstract class IDataNodeTest {
      * test getString on root node.
      */
     @Test
-    public void testGetStringRoot() throws Exception {
+    public void testGetStringRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetString(dataNode);
@@ -553,7 +592,7 @@ public abstract class IDataNodeTest {
      * test getString on sub node.
      */
     @Test
-    public void testGetStringSub() throws Exception {
+    public void testGetStringSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetString(dataNode.getNode("newNode"));
@@ -574,7 +613,7 @@ public abstract class IDataNodeTest {
      * test getUUID on root node.
      */
     @Test
-    public void testGetUUIDRoot() throws Exception {
+    public void testGetUUIDRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetUUID(dataNode);
@@ -584,7 +623,7 @@ public abstract class IDataNodeTest {
      * test getUUID on sub node.
      */
     @Test
-    public void testGetUUIDSub() throws Exception {
+    public void testGetUUIDSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetUUID(dataNode.getNode("newNode"));
@@ -607,7 +646,7 @@ public abstract class IDataNodeTest {
      * test getLocation on root node.
      */
     @Test
-    public void testGetLocationRoot() throws Exception {
+    public void testGetLocationRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetLocation(dataNode);
@@ -617,7 +656,7 @@ public abstract class IDataNodeTest {
      * test getLocation on sub node.
      */
     @Test
-    public void testGetLocationSub() throws Exception {
+    public void testGetLocationSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetLocation(dataNode.getNode("newNode"));
@@ -641,7 +680,7 @@ public abstract class IDataNodeTest {
      * test getItemStacks on root node.
      */
     @Test
-    public void testGetItemStacksRoot() throws Exception {
+    public void testGetItemStacksRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetItemStack(dataNode);
@@ -651,7 +690,7 @@ public abstract class IDataNodeTest {
      * test getItemStacks on sub node.
      */
     @Test
-    public void testGetItemStacksSub() throws Exception {
+    public void testGetItemStacksSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetItemStack(dataNode.getNode("newNode"));
@@ -683,7 +722,7 @@ public abstract class IDataNodeTest {
      * test getEnum on root node.
      */
     @Test
-    public void testGetEnumRoot() throws Exception {
+    public void testGetEnumRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetEnum(dataNode);
@@ -693,7 +732,7 @@ public abstract class IDataNodeTest {
      * test getEnum on sub node.
      */
     @Test
-    public void testGetEnumSub() throws Exception {
+    public void testGetEnumSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetEnum(dataNode.getNode("newNode"));
@@ -714,7 +753,7 @@ public abstract class IDataNodeTest {
      * test getEnumGeneric on root node.
      */
     @Test
-    public void testGetEnumGenericRoot() throws Exception {
+    public void testGetEnumGenericRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetEnumGeneric(dataNode);
@@ -724,7 +763,7 @@ public abstract class IDataNodeTest {
      * test getEnumGeneric on sub node.
      */
     @Test
-    public void testGetEnumGenericSub() throws Exception {
+    public void testGetEnumGenericSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetEnumGeneric(dataNode.getNode("newNode"));
@@ -743,7 +782,7 @@ public abstract class IDataNodeTest {
      * test getStringList on root node.
      */
     @Test
-    public void testGetStringListRoot() throws Exception {
+    public void testGetStringListRoot() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetStringList(dataNode);
@@ -753,7 +792,7 @@ public abstract class IDataNodeTest {
      * test getStringList on sub node.
      */
     @Test
-    public void testGetStringListSub() throws Exception {
+    public void testGetStringListSub() {
 
         IDataNode dataNode = _generator.generateRoot();
         testGetStringList(dataNode.getNode("newNode"));
@@ -776,10 +815,50 @@ public abstract class IDataNodeTest {
     }
 
     /**
+     * Make sure node iteration works correctly on root node.
+     */
+    @Test
+    public void testIterableRoot() {
+        testIterable(_generator.generateRoot());
+    }
+
+    /**
+     * Make sure node iteration works correctly on root node.
+     */
+    @Test
+    public void testIterableSub() {
+        IDataNode dataNode = _generator.generateRoot();
+        testIterable(dataNode.getNode("newNode"));
+    }
+
+    private void testIterable(IDataNode dataNode) {
+
+        dataNode.set("key1", "value");
+        dataNode.set("key2", "value");
+        dataNode.set("node1.key1", "value");
+        dataNode.set("node2.key1", "value");
+        dataNode.set("node3.key1", "value");
+        dataNode.set("node4.key1", "value");
+
+        Set<String> nodesIterated = new HashSet<>(6);
+
+        for (IDataNode node : dataNode) {
+
+            nodesIterated.add(node.getNodePath());
+
+            // the parent node should not be included in the iterations.
+            assertNotEquals(dataNode.getNodePath(), node.getNodePath());
+        }
+
+        assertEquals(6, nodesIterated.size());
+    }
+
+
+    /**
      * Make sure that non key nodes do not return a key value.
      */
     @Test
-    public void testNonKeyNodesNull() throws Exception {
+    public void testNonKeyNodesNull() {
 
         IDataNode dataNode = _generator.generateRoot();
         initDataNode(dataNode);
@@ -898,6 +977,41 @@ public abstract class IDataNodeTest {
         }
 
         assertEquals(1, _testSaveRunCount);
+    }
+
+    /**
+     * Make sure auto save works.
+     */
+    @Test
+    public void testAutoSave() {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        assertEquals(AutoSaveMode.DEFAULT, dataNode.getAutoSaveMode());
+
+        dataNode.setAutoSaveMode(AutoSaveMode.ENABLED);
+        assertEquals(AutoSaveMode.ENABLED, dataNode.getAutoSaveMode());
+
+        assertEquals(false, dataNode.isDirty());
+
+
+        dataNode.set("test", "value");
+
+        assertEquals(true, dataNode.isDirty());
+
+        BukkitTest.pause(50);
+
+        assertEquals(false, dataNode.isDirty());
+    }
+
+    /**
+     * Make sure {@code #getDefaultAutoSave} does not return {@code DEFAULT}.
+     */
+    @Test
+    public void testDefaultAutoSave() {
+        IDataNode dataNode = _generator.generateRoot();
+
+        assertNotEquals(AutoSaveMode.DEFAULT, dataNode.getDefaultAutoSaveMode());
     }
 
     public enum TestEnum {
