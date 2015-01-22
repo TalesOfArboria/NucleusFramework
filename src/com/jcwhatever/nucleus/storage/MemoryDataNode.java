@@ -180,7 +180,7 @@ public class MemoryDataNode extends AbstractDataNode {
     @Override
     public void remove() {
         if (_node.getParent() == null)
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Cannot remove root node.");
 
         _node.getParent().removeChild(_node);
     }
