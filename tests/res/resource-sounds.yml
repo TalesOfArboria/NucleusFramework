@@ -1,0 +1,37 @@
+music1:
+    display: 'My song 1'
+    credit: 'Author name 1'
+    type: music
+    duration: 1
+
+music2:
+    display: 'My song 2'
+    credit: 'Author name 2'
+    type: music
+    duration: 1
+
+voice1:
+    display: 'Talking 1'
+    credit: 'Speakers name 1'
+    type: voice
+    duration: 1
+    transcript: 'This is what the voice says.{p: 1}This is what it says at 1 seconds'
+
+voice2:
+    display: 'Talking 2'
+    credit: 'Speakers name 2'
+    type: voice
+    duration: 1
+    transcript: 'This is what the voice says.{p: 1}This is what it says at 1 seconds'
+
+effect1:
+    display: 'Sound effect 1'
+    credit: 'Sound maker 1'
+    type: effect
+    duration: 1
+
+effect2:
+    display: 'Sound effect 2'
+    credit: 'Sound maker 2'
+    type: effect
+    duration: 1

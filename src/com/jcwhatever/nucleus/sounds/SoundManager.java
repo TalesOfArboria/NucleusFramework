@@ -26,15 +26,18 @@
 package com.jcwhatever.nucleus.sounds;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedArrayList;
 import com.jcwhatever.nucleus.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.nucleus.events.sounds.ResourceSoundEndEvent;
+import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
 import com.jcwhatever.nucleus.sounds.Playing.SoundFuture;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
@@ -45,10 +48,8 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -63,14 +64,10 @@ public final class SoundManager {
     private static Map<String, ResourceSound> _sounds;
 
     static {
-        load();
-    }
+        IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("resource-sounds"));
+        dataNode.load();
 
-    /**
-     * Get all resource sounds.
-     */
-    public static List<ResourceSound> getSounds() {
-        return new ArrayList<>(_sounds.values());
+        load(dataNode);
     }
 
     /**
@@ -86,22 +83,34 @@ public final class SoundManager {
     }
 
     /**
+     * Get all resource sounds.
+     */
+    public static List<ResourceSound> getSounds() {
+        return CollectionUtils.unmodifiableList(_sounds.values());
+    }
+
+    /**
      * Get resource sounds by type.
      *
      * @param type  The type to look for.
      */
-    public static Set<ResourceSound> getSounds(Class<? extends ResourceSound> type) {
+    public static <T extends ResourceSound> List<T> getSounds(Class<T> type) {
         PreCon.notNull(type);
 
-        Set<ResourceSound> results = new HashSet<>(_sounds.size());
+        List<T> results = new ArrayList<>(_sounds.size());
 
         for (ResourceSound sound : _sounds.values()) {
 
-            if (type.isInstance(sound))
-                results.add(sound);
+            if (type.isInstance(sound)) {
+
+                @SuppressWarnings("unchecked")
+                T result = (T) sound;
+
+                results.add(result);
+            }
         }
 
-        return results;
+        return CollectionUtils.unmodifiableList(results);
     }
 
     /**
@@ -109,20 +118,20 @@ public final class SoundManager {
      *
      * @param p  The player to check.
      */
-    public static Set<ResourceSound> getSounds(Player p) {
+    public static List<ResourceSound> getSounds(Player p) {
 
         List<Playing> playing = _playing.get(p.getUniqueId());
 
         if (playing == null || playing.isEmpty())
-            return new HashSet<>(0);
+            return CollectionUtils.unmodifiableList();
 
-        HashSet<ResourceSound> result = new HashSet<>(playing.size());
+        List<ResourceSound> result = new ArrayList<>(playing.size());
 
         for (Playing play : playing) {
             result.add(play.getResourceSound());
         }
 
-        return result;
+        return CollectionUtils.unmodifiableList(result);
     }
 
     /**
@@ -136,9 +145,9 @@ public final class SoundManager {
         List<Playing> playing = _playing.get(p.getUniqueId());
 
         if (playing == null || playing.isEmpty())
-            return new ArrayList<>(0);
+            return CollectionUtils.unmodifiableList();
 
-        return new ArrayList<>(playing);
+        return CollectionUtils.unmodifiableList(playing);
     }
 
     /**
@@ -183,9 +192,9 @@ public final class SoundManager {
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    public static SoundFuture playSound(Plugin plugin, Player p, ResourceSound sound,
+    public static SoundFuture playSound(final Plugin plugin, Player p, ResourceSound sound,
                                    @Nullable Location location, float volume,
-                                   @Nullable Collection<Player> transcriptViewers) {
+                                   final @Nullable Collection<Player> transcriptViewers) {
 
         // substitute players location if no sound is provided.
         if (location == null)
@@ -241,7 +250,17 @@ public final class SoundManager {
 
             Transcript transcript = ((VoiceSound) sound).getTranscript();
             if (transcript != null) {
-                transcript.tell(plugin, transcriptViewers);
+
+                transcript.run(plugin, new UpdateSubscriber<String>() {
+                    @Override
+                    public void on(String text) {
+
+                        for (Player viewer : transcriptViewers) {
+                            NucMsg.tell(plugin, viewer, LineWrapping.DISABLED, text);
+                        }
+
+                    }
+                });
             }
         }
 
@@ -259,10 +278,7 @@ public final class SoundManager {
     /*
      * Load resource sounds
      */
-    private static void load() {
-
-        IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("resource-sounds"));
-        dataNode.load();
+    static void load(IDataNode dataNode) {
 
         _sounds = new HashMap<>(dataNode.size());
 

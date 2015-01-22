@@ -95,6 +95,11 @@ public final class NucMsg {
         return msg().tell(sender, lineWrapping, message, params);
     }
 
+    public static boolean tell(Plugin plugin, CommandSender sender, LineWrapping lineWrapping,
+                               Object message, Object... params) {
+        return msg(plugin).tell(sender, lineWrapping, message, params);
+    }
+
     public static boolean tellAnon(CommandSender sender, Object message, Object... params) {
         return anonMsg().tell(sender, message, params);
     }

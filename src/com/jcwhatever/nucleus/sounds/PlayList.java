@@ -79,10 +79,25 @@ public class PlayList implements IPluginOwned {
     /**
      * Constructor.
      *
+     * @param plugin  The owning plugin.
+     */
+    public PlayList(Plugin plugin) {
+        PreCon.notNull(plugin);
+
+        _plugin = plugin;
+        _playList = new ArrayList<>(10);
+    }
+
+    /**
+     * Constructor.
+     *
      * @param plugin    The owning plugin.
      * @param playList  The collections of sounds for the playlist.
      */
-    public PlayList(Plugin plugin, Collection<ResourceSound> playList) {
+    public PlayList(Plugin plugin, Collection<? extends ResourceSound> playList) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(playList);
+
         _plugin = plugin;
         _playList = new ArrayList<>(playList);
     }
@@ -177,7 +192,7 @@ public class PlayList implements IPluginOwned {
      *
      * @param sounds  The collection of sounds to add.
      */
-    public void addSounds(Collection<ResourceSound> sounds) {
+    public void addSounds(Collection<? extends ResourceSound> sounds) {
         _playList.addAll(sounds);
     }
 
@@ -199,12 +214,15 @@ public class PlayList implements IPluginOwned {
      * Add a player to the playlist so they can listen to it.
      *
      * @param p  The player to add.
+     *
+     * @return  True if the player is added or already added. False if the
+     * {@code PlayList} does not have any sounds.
      */
     public boolean addPlayer(Player p) {
         PreCon.notNull(p);
 
         if (_playerQueues.containsKey(p))
-            return false;
+            return true;
 
         final PlayerSoundQueue queue = new PlayerSoundQueue(p);
 

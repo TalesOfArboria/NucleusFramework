@@ -25,17 +25,16 @@
 
 package com.jcwhatever.nucleus.sounds;
 
-import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateAgent;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.regex.Matcher;
@@ -125,50 +124,76 @@ public class Transcript {
     }
 
     /**
-     * Tell a collection of players the transcript text.
+     * Run the transcript and receive each paragraph at the appropriate time
+     * via an {@code IUpdateSubscriber}.
      *
-     * @param plugin   The plugin the text is from.
-     * @param players  The players to display to.
+     * <p>After all paragraphs have been sent to the subscriber, one final update
+     * is sent with a null value to indicate there are no more paragraphs.</p>
+     *
+     * @param plugin      The calling plugin.
+     * @param subscriber  The subscriber.
      */
-    public void tell(final Plugin plugin, Collection<Player> players) {
-        tell(plugin, players, -1);
-    }
+    public void run(Plugin plugin, final IUpdateSubscriber<String> subscriber) {
 
-    /**
-     * Tell a collection of players the transcript text.
-     * @param plugin          The plugin the text is from.
-     * @param players         The players to display to.
-     * @param maxTimeSeconds  The maximum time in seconds the transcript can run.
-     */
-    public void tell(final Plugin plugin, Collection<Player> players, int maxTimeSeconds) {
+        if (_paragraphs.isEmpty())
+            return;
 
         final PriorityQueue<Paragraph> paragraphs = new PriorityQueue<Paragraph>(_paragraphs);
-        final IMessenger msg = MessengerFactory.get(plugin);
+        final IUpdateAgent<String> agent = new UpdateAgent<>(1);
+        agent.register(subscriber);
 
-        while (!paragraphs.isEmpty()) {
-            final Paragraph paragraph = paragraphs.remove();
+        Paragraph first = paragraphs.peek();
+        if (first.getStartTimeSeconds() == 0) {
+            agent.update(first.getText());
+            paragraphs.remove();
+        }
 
-            for (final Player p : players) {
+        if (paragraphs.size() == 0) {
+            agent.dispose();
+            return;
+        }
 
-                if (maxTimeSeconds > -1 && paragraph.getStartTimeSeconds() > maxTimeSeconds)
-                    continue;
+        final Paragraph firstScheduled = paragraphs.remove();
+        final long firstUpdate = System.currentTimeMillis() + (firstScheduled.getStartTimeSeconds() * 1000);
 
-                if (paragraph.getStartTimeSeconds() == 0) {
+        Scheduler.runTaskRepeat(plugin, 1, 1, new TaskHandler() {
 
-                    msg.tell(p, LineWrapping.DISABLED, paragraph.getText());
-                } else {
+            Paragraph next = firstScheduled;
+            long nextUpdate = firstUpdate;
+            int lastStartTime = firstScheduled.getStartTimeSeconds();
 
-                    Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+            @Override
+            public void run() {
 
-                        @Override
-                        public void run() {
-                            msg.tell(p, LineWrapping.DISABLED, paragraph.getText());
-                        }
+                if (subscriber.isDisposed() || agent.isDisposed()) {
+                    cancelTask();
+                    return;
+                }
 
-                    }, paragraph.getStartTimeSeconds() * 20);
+                if (nextUpdate > System.currentTimeMillis())
+                    return;
+
+                agent.update(next.getText());
+
+                if (paragraphs.isEmpty()) {
+                    cancelTask();
+                    return;
+                }
+
+                next = paragraphs.remove();
+                nextUpdate =  System.currentTimeMillis() + ((next.getStartTimeSeconds() - lastStartTime) * 1000);
+                lastStartTime = next.getStartTimeSeconds();
+            }
+
+            @Override
+            protected void onCancel() {
+
+                if (!agent.isDisposed()) {
+                    agent.update(null);
+                    agent.dispose();
                 }
             }
-        }
+        });
     }
 
     /**
@@ -221,7 +246,7 @@ public class Transcript {
          */
         @Override
         public int compareTo(Paragraph paragraph) {
-            return Integer.compare(paragraph._startTimeSeconds, _startTimeSeconds);
+            return Integer.compare(_startTimeSeconds, paragraph._startTimeSeconds);
         }
     }
 }

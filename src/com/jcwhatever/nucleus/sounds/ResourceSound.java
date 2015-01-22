@@ -106,11 +106,6 @@ public abstract class ResourceSound implements INamed {
      *  load the name of the resource sound.
      */
     protected String loadName(IDataNode dataNode) {
-        String soundName = dataNode.getString("name");
-        if (soundName == null)
-            throw new RuntimeException("Required name parameter is missing in resource sounds file.");
-
-        return soundName;
+        return dataNode.getName();
     }
-
 }
