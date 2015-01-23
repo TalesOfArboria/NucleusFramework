@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.views.chest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
 import com.jcwhatever.nucleus.views.AbstractViewTest;
@@ -43,7 +43,7 @@ public class ChestViewTest  extends AbstractViewTest {
         MockChestView view = new MockChestView(plugin, null);
 
         _session.next(view);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         // check that "onShow" was invoked.
         assertEquals(ViewOpenReason.FIRST, view.openReason);
@@ -59,12 +59,12 @@ public class ChestViewTest  extends AbstractViewTest {
         MockChestView view = new MockChestView(plugin, null);
 
         _session.next(view);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
-        BukkitTest.viewClick(player,
+        BukkitTester.viewClick(player,
                 SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.PICKUP_ALL);
 
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         // check "onItemsPickup" is invoked
         assertTrue(view.itemsPickup != null);
@@ -79,12 +79,12 @@ public class ChestViewTest  extends AbstractViewTest {
         MockChestView view = new MockChestView(plugin, null);
 
         _session.next(view);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
-        BukkitTest.viewClick(player,
+        BukkitTester.viewClick(player,
                 SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.PLACE_ALL);
 
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         // check "onItemsPlaced" is invoked
         assertTrue(view.itemsPlaced != null);
@@ -100,12 +100,12 @@ public class ChestViewTest  extends AbstractViewTest {
         MockChestView view = new MockChestView(plugin, null);
 
         _session.next(view);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
-        BukkitTest.viewClick(player,
+        BukkitTester.viewClick(player,
                 SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.DROP_ALL_CURSOR);
 
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         // check "onItemsDropped" is invoked
         assertTrue(view.itemsDropped != null);
@@ -117,7 +117,7 @@ public class ChestViewTest  extends AbstractViewTest {
     @Test
     public void testGetInventoryType() throws Exception {
 
-        MockChestView view = new MockChestView(BukkitTest.mockPlugin("dummy"), null);
+        MockChestView view = new MockChestView(BukkitTester.mockPlugin("dummy"), null);
 
         assertEquals(InventoryType.CHEST, view.getInventoryType());
     }

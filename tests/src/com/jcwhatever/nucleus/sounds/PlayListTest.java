@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.sounds.PlayList.PlayerSoundQueue;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
@@ -21,8 +21,8 @@ import java.util.List;
 
 public class PlayListTest {
 
-    private Plugin _plugin = BukkitTest.mockPlugin("dummy");
-    private Player _player = BukkitTest.login("dummy");
+    private Plugin _plugin = BukkitTester.mockPlugin("dummy");
+    private Player _player = BukkitTester.login("dummy");
 
     /**
      * Make sure Nucleus and Bukkit are initialized.
@@ -31,7 +31,7 @@ public class PlayListTest {
     public static void init() {
         NucleusTest.init();
 
-        Plugin plugin = BukkitTest.mockPlugin("dummy");
+        Plugin plugin = BukkitTester.mockPlugin("dummy");
         String yml = FileUtils.scanTextFile(SoundManagerTest.class, "/resource-sounds.yml", StandardCharsets.UTF_8);
 
         YamlDataNode dataNode = new YamlDataNode(plugin, yml);
@@ -154,7 +154,7 @@ public class PlayListTest {
         assertNotEquals(null, playList.getSoundQueue(_player));
 
         // wait for audio to end
-        BukkitTest.pause(70);
+        BukkitTester.pause(70);
 
         // sound queue should no longer be available
         assertEquals(null, playList.getSoundQueue(_player));
@@ -182,11 +182,11 @@ public class PlayListTest {
 
         assertEquals(sounds.get(0), queue.getCurrent());
 
-        BukkitTest.pause(30);
+        BukkitTester.pause(30);
 
         assertEquals(sounds.get(1), queue.getCurrent());
 
-        BukkitTest.pause(30);
+        BukkitTester.pause(30);
 
         assertEquals(sounds.get(2), queue.getCurrent());
     }

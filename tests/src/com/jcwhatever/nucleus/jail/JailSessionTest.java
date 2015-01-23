@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.jail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
@@ -25,9 +25,9 @@ import java.util.Date;
  */
 public class JailSessionTest {
 
-    private Plugin _plugin = BukkitTest.mockPlugin("dummy");
-    private Player _player = BukkitTest.login("dummy");
-    private World _world = BukkitTest.world("world");
+    private Plugin _plugin = BukkitTester.mockPlugin("dummy");
+    private Player _player = BukkitTester.login("dummy");
+    private World _world = BukkitTester.world("world");
     private Jail _jail;
 
     /**
@@ -43,9 +43,9 @@ public class JailSessionTest {
      */
     @Before
     public void before() {
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
         Nucleus.getJailManager().release(_player.getUniqueId());
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         _jail = new Jail(_plugin, "testJail", new MemoryDataNode(_plugin));
         _jail.getJailBounds().setCoords(new Location(_world, 0, 0, 0), new Location(_world, 100, 100, 100));
@@ -54,7 +54,7 @@ public class JailSessionTest {
     @After
     public void after() {
         Nucleus.getJailManager().release(_player.getUniqueId());
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
         _jail.dispose();
     }
 
@@ -112,7 +112,7 @@ public class JailSessionTest {
         assertEquals(false, session.isReleased());
         assertEquals(true, Nucleus.getJailManager().isPrisoner(_player.getUniqueId()));
 
-        BukkitTest.pause(30);
+        BukkitTester.pause(30);
 
         assertEquals(true, session.isReleased());
         assertEquals(false, Nucleus.getJailManager().isPrisoner(_player.getUniqueId()));
@@ -131,7 +131,7 @@ public class JailSessionTest {
         assertEquals(false, session.isExpired());
         assertEquals(true, Nucleus.getJailManager().isPrisoner(_player.getUniqueId()));
 
-        BukkitTest.pause(30);
+        BukkitTester.pause(30);
 
         assertEquals(true, session.isExpired());
         assertEquals(false, Nucleus.getJailManager().isPrisoner(_player.getUniqueId()));
@@ -149,7 +149,7 @@ public class JailSessionTest {
         assertEquals(false, session.isReleased());
         assertEquals(true, Nucleus.getJailManager().isPrisoner(_player.getUniqueId()));
 
-        BukkitTest.pause(10);
+        BukkitTester.pause(10);
 
         session.release();
 

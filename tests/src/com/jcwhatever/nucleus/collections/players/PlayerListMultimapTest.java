@@ -1,7 +1,7 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.google.common.collect.Multimap;
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.collections.java.MultimapRunnable;
 
 import org.bukkit.entity.Player;
@@ -12,10 +12,10 @@ import java.util.UUID;
 
 public class PlayerListMultimapTest  extends AbstractPlayerMultimapTest<String> {
 
-    protected Plugin _plugin = BukkitTest.mockPlugin("dummy");
-    protected Player _player1 = BukkitTest.login("player1");
-    protected Player _player2 = BukkitTest.login("player2");
-    protected Player _player3 = BukkitTest.login("player3");
+    protected Plugin _plugin = BukkitTester.mockPlugin("dummy");
+    protected Player _player1 = BukkitTester.login("player1");
+    protected Player _player2 = BukkitTester.login("player2");
+    protected Player _player3 = BukkitTester.login("player3");
 
     @Test
     public void testMapInterface() throws Exception {

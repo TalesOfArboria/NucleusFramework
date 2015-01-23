@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.collections.players;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 
 import org.bukkit.entity.Player;
@@ -38,8 +38,8 @@ public abstract class AbstractPlayerCollectionTest {
         Collection<Player> collection = getCollection();
         assertEquals(0, collection.size());
 
-        Player player1 = BukkitTest.login("playerCollectionTest1");
-        Player player2 = BukkitTest.login("playerCollectionTest2");
+        Player player1 = BukkitTester.login("playerCollectionTest1");
+        Player player2 = BukkitTester.login("playerCollectionTest2");
 
         collection.add(player1);
         collection.add(player2);
@@ -48,7 +48,7 @@ public abstract class AbstractPlayerCollectionTest {
         assertEquals(true, collection.contains(player2));
         assertEquals(2, collection.size());
 
-        BukkitTest.pause(20);
+        BukkitTester.pause(20);
 
         // make sure players are still in collection after waiting 20 ticks
         assertEquals(true, collection.contains(player1));
@@ -56,8 +56,8 @@ public abstract class AbstractPlayerCollectionTest {
         assertEquals(2, collection.size());
 
         // logout player 1
-        BukkitTest.logout("playerCollectionTest1");
-        BukkitTest.pause(3);
+        BukkitTester.logout("playerCollectionTest1");
+        BukkitTester.pause(3);
 
         // make sure player1 was removed
         assertEquals(false, collection.contains(player1));
@@ -65,8 +65,8 @@ public abstract class AbstractPlayerCollectionTest {
         assertEquals(1, collection.size());
 
         // kick player 2
-        BukkitTest.kick("playerCollectionTest2");
-        BukkitTest.pause(3);
+        BukkitTester.kick("playerCollectionTest2");
+        BukkitTester.pause(3);
 
         // make sure player2 was removed
         assertEquals(false, collection.contains(player1));

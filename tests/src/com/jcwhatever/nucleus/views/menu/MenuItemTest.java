@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views.menu;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.views.ViewSession;
 
@@ -22,8 +22,8 @@ import org.junit.Test;
  */
 public class MenuItemTest {
 
-    Player player = BukkitTest.login("dummy");
-    Plugin plugin = BukkitTest.mockPlugin("dummy");
+    Player player = BukkitTester.login("dummy");
+    Plugin plugin = BukkitTester.mockPlugin("dummy");
 
     boolean _isOnClickRun = false;
 
@@ -40,7 +40,7 @@ public class MenuItemTest {
      */
     @Before
     public void before() {
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
     }
 
     /**
@@ -128,7 +128,7 @@ public class MenuItemTest {
         ViewSession session = ViewSession.get(player, null);
 
         session.next(view);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         menuItem.setVisible(view, true);
 
@@ -165,16 +165,16 @@ public class MenuItemTest {
 
         // open a menu view
         session.next(view);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         // set the item in the menu view
         menuItem.setVisible(view, true);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         // click the menu item
-        BukkitTest.viewClick(player,
+        BukkitTester.viewClick(player,
                 SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.PICKUP_ALL);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         // make sure the items on click runnables ran
         assertEquals(true, _isOnClickRun);

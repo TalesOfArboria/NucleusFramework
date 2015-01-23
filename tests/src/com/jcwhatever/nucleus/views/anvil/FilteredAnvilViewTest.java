@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views.anvil;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R1.MockBlock;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  */
 public class FilteredAnvilViewTest extends AbstractViewTest {
 
-    static Plugin plugin = BukkitTest.mockPlugin("dummy");
+    static Plugin plugin = BukkitTester.mockPlugin("dummy");
     static ItemFilterManager manager = new ItemFilterManager(plugin, new MemoryDataNode(plugin));
 
     public FilteredAnvilViewTest() {
@@ -50,7 +50,7 @@ public class FilteredAnvilViewTest extends AbstractViewTest {
     @Nullable
     @Override
     protected Block getSourceBlock() {
-        return new MockBlock(BukkitTest.world("world"), Material.ANVIL, 0, 0, 0);
+        return new MockBlock(BukkitTester.world("world"), Material.ANVIL, 0, 0, 0);
     }
 
 }

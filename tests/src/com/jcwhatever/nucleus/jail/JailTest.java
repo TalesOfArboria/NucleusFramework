@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.jail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.mixins.INamedLocation;
@@ -28,9 +28,9 @@ import java.util.Set;
  */
 public class JailTest {
 
-    private Plugin _plugin = BukkitTest.mockPlugin("dummy");
-    private Player _player = BukkitTest.login("dummy");
-    private World _world = BukkitTest.world("world");
+    private Plugin _plugin = BukkitTester.mockPlugin("dummy");
+    private Player _player = BukkitTester.login("dummy");
+    private World _world = BukkitTester.world("world");
     private Jail _jail;
 
     /**
@@ -46,7 +46,7 @@ public class JailTest {
      */
     @Before
     public void before() {
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
         Nucleus.getJailManager().release(_player.getUniqueId());
 
         _jail = new Jail(_plugin, "testJail", new MemoryDataNode(_plugin));
@@ -92,7 +92,7 @@ public class JailTest {
         // make sure player is prisoner
         assertEquals(true, _jail.isPrisoner(_player));
 
-        BukkitTest.pause(30); // warden resolution is approx. 20 ticks
+        BukkitTester.pause(30); // warden resolution is approx. 20 ticks
 
         // make sure player is released
         assertEquals(false, _jail.isPrisoner(_player));
@@ -204,7 +204,7 @@ public class JailTest {
 
         _jail.imprison(_player, 10, TimeScale.TICKS);
 
-        BukkitTest.pause(30);
+        BukkitTester.pause(30);
 
         assertEquals(location, _player.getLocation());
     }

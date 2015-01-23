@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.sounds;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class SoundManagerTest {
 
-    private Plugin _plugin = BukkitTest.mockPlugin("dummy");
-    private Player _player = BukkitTest.login("dummy");
+    private Plugin _plugin = BukkitTester.mockPlugin("dummy");
+    private Player _player = BukkitTester.login("dummy");
 
     /**
      * Make sure Nucleus and Bukkit are initialized.
@@ -31,7 +31,7 @@ public class SoundManagerTest {
     public static void init() {
         NucleusTest.init();
 
-        Plugin plugin = BukkitTest.mockPlugin("dummy");
+        Plugin plugin = BukkitTester.mockPlugin("dummy");
         String yml = FileUtils.scanTextFile(SoundManagerTest.class, "/resource-sounds.yml", StandardCharsets.UTF_8);
 
         YamlDataNode dataNode = new YamlDataNode(plugin, yml);
@@ -90,7 +90,7 @@ public class SoundManagerTest {
         assertEquals(1, sounds.size());
 
         // wait for sound to end
-        BukkitTest.pause(25);
+        BukkitTester.pause(25);
 
         // make sure the sound ended
         sounds = SoundManager.getSounds(_player);
@@ -129,7 +129,7 @@ public class SoundManagerTest {
         playing = SoundManager.getPlaying(_player);
         assertEquals(1, playing.size());
 
-        BukkitTest.pause(25); // wait for sound to end
+        BukkitTester.pause(25); // wait for sound to end
 
         // make sure sound ended
         playing = SoundManager.getPlaying(_player);

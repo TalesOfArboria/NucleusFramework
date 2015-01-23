@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 
 import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
@@ -41,22 +41,22 @@ public class ViewTest extends AbstractViewTest {
         MockView view2 = new MockView(plugin);
 
         _session.next(view1);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(ViewOpenReason.FIRST, view1.onOpenReason);
 
         _session.next(view2);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(ViewOpenReason.NEXT, view2.onOpenReason);
 
         _session.previous();
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(ViewOpenReason.PREV, view1.onOpenReason);
 
         _session.refresh();
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(ViewOpenReason.REFRESH, view1.onOpenReason);
     }
@@ -73,28 +73,28 @@ public class ViewTest extends AbstractViewTest {
         MockView view2 = new MockView(plugin);
 
         _session.next(view1);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         _session.next(view2);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(ViewCloseReason.NEXT, view1.onCloseReason);
 
         _session.previous();
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(ViewCloseReason.PREV, view2.onCloseReason);
 
         _session.next(view2);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         _session.escaped();
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(ViewCloseReason.ESCAPE, view2.onCloseReason);
 
         _session.refresh();
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(ViewCloseReason.REFRESH, view1.onCloseReason);
     }

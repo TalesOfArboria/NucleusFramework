@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 
 import org.bukkit.block.Block;
@@ -19,8 +19,8 @@ import javax.annotation.Nullable;
  */
 public abstract class AbstractViewTest {
 
-    protected Plugin plugin = BukkitTest.mockPlugin("dummy");
-    protected Player player = BukkitTest.login("dummy");
+    protected Plugin plugin = BukkitTester.mockPlugin("dummy");
+    protected Player player = BukkitTester.login("dummy");
     protected ViewSession _session;
     protected final IViewGenerator _generator;
 
@@ -50,7 +50,7 @@ public abstract class AbstractViewTest {
      */
     @Before
     public void before() {
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         // ensure a view session from a previous test is disposed.
         ViewSession s = ViewSession.getCurrent(player);
@@ -71,7 +71,7 @@ public abstract class AbstractViewTest {
     @Test
     public void testGetPlugin() {
 
-        Plugin plugin = BukkitTest.mockPlugin("dummy");
+        Plugin plugin = BukkitTester.mockPlugin("dummy");
 
         View view = _generator.generate(plugin);
 
@@ -89,7 +89,7 @@ public abstract class AbstractViewTest {
 
         _session.next(view);
 
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         assertEquals(player, view.getPlayer());
     }
@@ -117,7 +117,7 @@ public abstract class AbstractViewTest {
         View view = _generator.generate(plugin);
 
         _session.next(view);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         assertEquals(view.getInventoryView(), player.getOpenInventory());
     }

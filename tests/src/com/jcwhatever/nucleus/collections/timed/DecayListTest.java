@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R1.MockPlugin;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.collections.java.DequeRunnable;
@@ -41,7 +41,7 @@ public class DecayListTest {
         // check decay prevented by adding before 1 seconds has elapsed (blocking should not matter)
         for (int i=0; i < 20; i++) {
 
-            BukkitTest.pause(10); // 10 ticks
+            BukkitTester.pause(10); // 10 ticks
 
             list.add(String.valueOf(i));
             assertEquals(i + 1, list.size());
@@ -72,7 +72,7 @@ public class DecayListTest {
 
         while(!list.isEmpty() && System.currentTimeMillis() < timeout) {
 
-            BukkitTest.heartBeat();
+            BukkitTester.heartBeat();
 
             try {
                 Thread.sleep(10);

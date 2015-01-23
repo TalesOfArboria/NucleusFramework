@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.internal.providers.bankitems;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItem;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemTest;
 import com.jcwhatever.nucleus.providers.bankitems.InsufficientItemsException;
@@ -21,7 +21,7 @@ import java.util.UUID;
  */
 public class BankItemTest extends IBankItemTest {
 
-    private Plugin _plugin = BukkitTest.mockPlugin("dummy");
+    private Plugin _plugin = BukkitTester.mockPlugin("dummy");
 
     @Override
     protected IBankItem getBankItem(UUID id, ItemStack itemStack, int amount) {

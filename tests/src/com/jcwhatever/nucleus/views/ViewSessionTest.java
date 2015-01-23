@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R1.MockBlock;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.views.workbench.WorkbenchView;
@@ -21,8 +21,8 @@ import org.junit.Test;
 public class ViewSessionTest {
 
 
-    Plugin plugin = BukkitTest.mockPlugin("dummy");
-    Player player = BukkitTest.login("dummy");
+    Plugin plugin = BukkitTester.mockPlugin("dummy");
+    Player player = BukkitTester.login("dummy");
     ViewSession _session;
 
     /**
@@ -39,7 +39,7 @@ public class ViewSessionTest {
      */
     @Before
     public void before() {
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         // ensure a view session from a previous test is disposed.
         ViewSession s = ViewSession.getCurrent(player);
@@ -81,7 +81,7 @@ public class ViewSessionTest {
 
         // show view1 to player
         _session.next(view1);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         // make sure player sees view1
         assertEquals(view1.getInventoryView(), player.getOpenInventory());
@@ -93,7 +93,7 @@ public class ViewSessionTest {
 
         // show view 2 to player
         _session.next(view2);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         assertEquals(view2, _session.getCurrentView()); // make sure view2 is the current reported view
         assertEquals(view1, _session.getPrevView()); // make sure view1 is the reported previous view
@@ -114,7 +114,7 @@ public class ViewSessionTest {
         // open to view2
         _session.next(view1);
         _session.next(view2);
-        BukkitTest.pause(4);
+        BukkitTester.pause(4);
 
         // baseline test: Reported views should be correct
         assertEquals(view2, _session.getCurrentView());
@@ -124,7 +124,7 @@ public class ViewSessionTest {
 
         // close view2 and show view1 to the player
         _session.previous();
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         assertEquals(view1, _session.getCurrentView()); // make sure view1 is the current reported view
         assertEquals(null, _session.getPrevView());
@@ -133,7 +133,7 @@ public class ViewSessionTest {
 
         // close view1 (ends/disposes session)
         _session.previous();
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         // session should be disposed from closing first view,
         // all values cleared.
@@ -153,7 +153,7 @@ public class ViewSessionTest {
 
         // open first view
         _session.next(view1);
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         // baseline test : Reported views should be correct
         assertEquals(view1, _session.getCurrentView());
@@ -163,7 +163,7 @@ public class ViewSessionTest {
 
         // refresh the view (Close and re-open)
         _session.refresh();
-        BukkitTest.pause(2);
+        BukkitTester.pause(2);
 
         // reported views should be the same as before
         assertEquals(view1, _session.getCurrentView());

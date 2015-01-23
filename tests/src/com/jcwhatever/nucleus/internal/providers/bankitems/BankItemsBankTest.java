@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.internal.providers.bankitems;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsBank;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsBankTest;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
@@ -18,7 +18,7 @@ import java.util.UUID;
  */
 public class BankItemsBankTest extends IBankItemsBankTest {
 
-    private Plugin _plugin = BukkitTest.mockPlugin("dummy");
+    private Plugin _plugin = BukkitTester.mockPlugin("dummy");
 
     @Override
     protected IBankItemsBank getBank(String name, UUID ownerId) {
@@ -31,7 +31,7 @@ public class BankItemsBankTest extends IBankItemsBankTest {
     @Test
     public void testDispose() {
 
-        Player player1 = BukkitTest.login("player1");
+        Player player1 = BukkitTester.login("player1");
 
         BankItemsBank bank = new BankItemsBank("Dummy", null, new MemoryDataNode(_plugin).getNode("banks"));
 

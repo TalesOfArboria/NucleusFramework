@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.sounds;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.sounds.Transcript.Paragraph;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class TranscriptTest {
 
-    private Plugin _plugin = BukkitTest.mockPlugin("dummy");
+    private Plugin _plugin = BukkitTester.mockPlugin("dummy");
 
     private String _testText = "This is a paragraph1{p:1}Text at 1 seconds.";
     private String[] _testTexts = new String[] {
@@ -40,7 +40,7 @@ public class TranscriptTest {
     public static void init() {
         NucleusTest.init();
 
-        Plugin plugin = BukkitTest.mockPlugin("dummy");
+        Plugin plugin = BukkitTester.mockPlugin("dummy");
         String yml = FileUtils.scanTextFile(SoundManagerTest.class, "/resource-sounds.yml", StandardCharsets.UTF_8);
 
         YamlDataNode dataNode = new YamlDataNode(plugin, yml);
@@ -108,7 +108,7 @@ public class TranscriptTest {
         long timeout = System.currentTimeMillis() + 1500;
         while (!textRan.contains(null) && timeout > System.currentTimeMillis()) {
 
-            BukkitTest.heartBeat();
+            BukkitTester.heartBeat();
 
             Thread.sleep(10);
         }

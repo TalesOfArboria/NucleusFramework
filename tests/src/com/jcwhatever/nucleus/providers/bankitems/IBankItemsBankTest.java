@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.providers.bankitems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 
 import org.bukkit.entity.Player;
@@ -60,8 +60,8 @@ public abstract class IBankItemsBankTest {
     @Test
     public void testAccounts() {
 
-        Player player1 = BukkitTest.login("player1");
-        Player player2 = BukkitTest.login("player2");
+        Player player1 = BukkitTester.login("player1");
+        Player player2 = BukkitTester.login("player2");
 
         IBankItemsBank bank = getBank("dummy", null);
 

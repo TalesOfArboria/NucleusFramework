@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views.anvil;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R1.MockBlock;
 import com.jcwhatever.nucleus.views.AbstractViewTest;
 import com.jcwhatever.nucleus.views.View;
@@ -40,7 +40,7 @@ public class AnvilViewTest extends AbstractViewTest {
     @Test
     public void testGetInventoryType() throws Exception {
 
-        AnvilView view = new AnvilView(BukkitTest.mockPlugin("dummy"));
+        AnvilView view = new AnvilView(BukkitTester.mockPlugin("dummy"));
 
         assertEquals(InventoryType.ANVIL, view.getInventoryType());
     }
@@ -48,6 +48,6 @@ public class AnvilViewTest extends AbstractViewTest {
     @Nullable
     @Override
     protected Block getSourceBlock() {
-        return new MockBlock(BukkitTest.world("world"), Material.ANVIL, 0, 0, 0);
+        return new MockBlock(BukkitTester.world("world"), Material.ANVIL, 0, 0, 0);
     }
 }

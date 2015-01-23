@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.views.menu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.collections.ArrayListPaginator;
 import com.jcwhatever.nucleus.mixins.IPaginator;
 import com.jcwhatever.nucleus.mixins.IPaginator.PageStartIndex;
@@ -68,7 +68,7 @@ public class PaginatorViewTest extends AbstractViewTest {
 
         // show the paginator to the player
         _session.next(view);
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         // ensure that page 2 items are shown in the view
         assertTrue(view.getInventoryView().getItem(0) != null);
@@ -76,10 +76,10 @@ public class PaginatorViewTest extends AbstractViewTest {
         assertTrue(view.getInventoryView().getItem(2) == null);
 
         // click on inventory slot index 1 (page 2)
-        BukkitTest.viewClick(player,
+        BukkitTester.viewClick(player,
                 SlotType.CONTAINER, 1, ClickType.LEFT, InventoryAction.PICKUP_ALL);
 
-        BukkitTest.pause(5);
+        BukkitTester.pause(5);
 
         // make sure the paginator reports that page 2 was selected.
         assertEquals(2, view.getSelectedPage());

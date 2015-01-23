@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
@@ -51,7 +51,7 @@ public abstract class IDataNodeTest {
         node.set("string", "String");
         node.set("uuid", UUID.randomUUID());
         node.set("enum", TestEnum.CONSTANT);
-        node.set("location", new Location(BukkitTest.world("world"), 0, 0, 0));
+        node.set("location", new Location(BukkitTester.world("world"), 0, 0, 0));
         node.set("items", new ItemStackBuilder(Material.WOOD).build());
     }
 
@@ -665,7 +665,7 @@ public abstract class IDataNodeTest {
     private void testGetLocation(IDataNode dataNode) {
         initDataNode(dataNode);
 
-        World world = BukkitTest.world("dummy");
+        World world = BukkitTester.world("dummy");
         Location location = new Location(world, 0, 0, 0);
 
         dataNode.set("testGetLocation", location);
@@ -928,7 +928,7 @@ public abstract class IDataNodeTest {
 
         while(_testLoadRunCount == 0 && System.currentTimeMillis() < timeout) {
 
-            BukkitTest.heartBeat();
+            BukkitTester.heartBeat();
 
             try {
                 Thread.sleep(10);
@@ -969,7 +969,7 @@ public abstract class IDataNodeTest {
 
         while(_testSaveRunCount == 0 && System.currentTimeMillis() < timeout) {
 
-            BukkitTest.heartBeat();
+            BukkitTester.heartBeat();
 
             try {
                 Thread.sleep(10);
@@ -999,7 +999,7 @@ public abstract class IDataNodeTest {
 
         assertEquals(true, dataNode.isDirty());
 
-        BukkitTest.pause(50);
+        BukkitTester.pause(50);
 
         assertEquals(false, dataNode.isDirty());
     }

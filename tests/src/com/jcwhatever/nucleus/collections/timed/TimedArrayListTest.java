@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R1.MockPlugin;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.collections.java.ListRunnable;
@@ -60,7 +60,7 @@ public class TimedArrayListTest {
 
         list.add("a", 20, TimeScale.TICKS);
 
-        BukkitTest.pause(22);
+        BukkitTester.pause(22);
 
         assertEquals(0, list.size());
     }

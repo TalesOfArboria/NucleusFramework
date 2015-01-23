@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views.workbench;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.views.AbstractViewTest;
 import com.jcwhatever.nucleus.views.View;
 
@@ -35,7 +35,7 @@ public class WorkbenchViewTest extends AbstractViewTest {
     @Test
     public void testGetInventoryType() throws Exception {
 
-        WorkbenchView view = new WorkbenchView(BukkitTest.mockPlugin("dummy"));
+        WorkbenchView view = new WorkbenchView(BukkitTester.mockPlugin("dummy"));
 
         assertEquals(InventoryType.CRAFTING, view.getInventoryType());
     }

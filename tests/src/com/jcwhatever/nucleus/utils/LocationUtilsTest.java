@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R1.MockEntity;
 import com.jcwhatever.bukkit.v1_8_R1.MockWorld;
 import com.jcwhatever.nucleus.NucleusTest;
@@ -44,7 +44,7 @@ public class LocationUtilsTest {
 
         MockEntity entity = new MockEntity(0, EntityType.BAT);
 
-        Location location = new Location(BukkitTest.world("dummy"), 10, 10, 10);
+        Location location = new Location(BukkitTester.world("dummy"), 10, 10, 10);
 
         LocationUtils.teleportCentered(entity, location);
 
@@ -58,7 +58,7 @@ public class LocationUtilsTest {
     @Test
     public void testGetBlockLocation() throws Exception {
 
-        Location location = new Location(BukkitTest.world("dummy"),
+        Location location = new Location(BukkitTester.world("dummy"),
                 10.37D, 10.29D, 10.953D, 3.35f, 8.36f);
 
         Location blockLoc = LocationUtils.getBlockLocation(location);
@@ -74,7 +74,7 @@ public class LocationUtilsTest {
     @Test
     public void testAdd() throws Exception {
 
-        Location location = new Location(BukkitTest.world("dummy"), 10, 10, 10);
+        Location location = new Location(BukkitTester.world("dummy"), 10, 10, 10);
 
         Location added = LocationUtils.add(location, 1.1D, 1.2D, 1.3D);
 
@@ -90,7 +90,7 @@ public class LocationUtilsTest {
     @Repeat(times=500)
     public void testAddNoise() throws Exception {
 
-        Location location = new Location(BukkitTest.world("dummy"), 10, 10, 10);
+        Location location = new Location(BukkitTester.world("dummy"), 10, 10, 10);
 
         Location noise = LocationUtils.addNoise(location, 5, 5, 5);
 
@@ -109,9 +109,9 @@ public class LocationUtilsTest {
     @Test
     public void testIsLocationMatch() throws Exception {
 
-        Location location1 = new Location(BukkitTest.world("dummy"), 10, 10, 10);
+        Location location1 = new Location(BukkitTester.world("dummy"), 10, 10, 10);
 
-        Location location2 = new Location(BukkitTest.world("dummy"), 11, 11, 11);
+        Location location2 = new Location(BukkitTester.world("dummy"), 11, 11, 11);
 
         assertEquals(true, LocationUtils.isLocationMatch(location1, location2, 1D));
 
@@ -123,7 +123,7 @@ public class LocationUtilsTest {
 
         String text = "10,10,10.0";
 
-        Location location = LocationUtils.parseSimpleLocation(BukkitTest.world("world"), text);
+        Location location = LocationUtils.parseSimpleLocation(BukkitTester.world("world"), text);
 
         assertTrue(location != null);
 
@@ -137,7 +137,7 @@ public class LocationUtilsTest {
 
         String text = "10,10,10.0,0.5,0.6,dummy";
 
-        MockWorld world = BukkitTest.world("dummy");
+        MockWorld world = BukkitTester.world("dummy");
 
         Location location = LocationUtils.parseLocation(text);
 
@@ -224,7 +224,7 @@ public class LocationUtilsTest {
     @Test
     public void testFindSurfaceBelow() throws Exception {
 
-        Location location = new Location(BukkitTest.world("dummy"), 0, 100, 0, 0, 0);
+        Location location = new Location(BukkitTester.world("dummy"), 0, 100, 0, 0, 0);
 
         Location result = LocationUtils.findSurfaceBelow(location);
 
@@ -236,7 +236,7 @@ public class LocationUtilsTest {
     @Test
     public void testGetClosestLocation() throws Exception {
 
-        World world = BukkitTest.world("dummy");
+        World world = BukkitTester.world("dummy");
 
         Location source = new Location(world, 0, 0, 0);
         Location closest = new Location(world, 10, 10, 10);
@@ -257,7 +257,7 @@ public class LocationUtilsTest {
 
     @Test
     public void testGetClosestLocation1() throws Exception {
-        World world = BukkitTest.world("dummy");
+        World world = BukkitTester.world("dummy");
 
         Location source = new Location(world, 0, 0, 0);
         final Location closest = new Location(world, 10, 10, 10);
@@ -286,7 +286,7 @@ public class LocationUtilsTest {
     @Test
     public void testRotate() throws Exception {
 
-        World world = BukkitTest.world("dummy");
+        World world = BukkitTester.world("dummy");
 
         Location axis = new Location(world, 0, 0, 0);
         Location location = new Location(world, 10, 0, 0);

@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.collections.players;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.Multimap;
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 
 import org.bukkit.entity.Player;
@@ -39,8 +39,8 @@ public abstract class AbstractPlayerMultimapTest<V> {
         Multimap<UUID, V> map = getMap();
         assertEquals(0, map.size());
 
-        Player player1 = BukkitTest.login("playerCollectionTest1");
-        Player player2 = BukkitTest.login("playerCollectionTest2");
+        Player player1 = BukkitTester.login("playerCollectionTest1");
+        Player player2 = BukkitTester.login("playerCollectionTest2");
 
         map.put(player1.getUniqueId(), null);
         map.put(player2.getUniqueId(), null);
@@ -49,7 +49,7 @@ public abstract class AbstractPlayerMultimapTest<V> {
         assertEquals(true, map.containsKey(player2.getUniqueId()));
         assertEquals(2, map.size());
 
-        BukkitTest.pause(20);
+        BukkitTester.pause(20);
 
         // make sure players are still in map after waiting 20 ticks
         assertEquals(true, map.containsKey(player1.getUniqueId()));
@@ -57,8 +57,8 @@ public abstract class AbstractPlayerMultimapTest<V> {
         assertEquals(2, map.size());
 
         // logout player 1
-        BukkitTest.logout("playerCollectionTest1");
-        BukkitTest.pause(3);
+        BukkitTester.logout("playerCollectionTest1");
+        BukkitTester.pause(3);
 
         // make sure player1 was removed
         assertEquals(false, map.containsKey(player1.getUniqueId()));
@@ -66,8 +66,8 @@ public abstract class AbstractPlayerMultimapTest<V> {
         assertEquals(1, map.size());
 
         // kick player 2
-        BukkitTest.kick("playerCollectionTest2");
-        BukkitTest.pause(3);
+        BukkitTester.kick("playerCollectionTest2");
+        BukkitTester.pause(3);
 
         // make sure player2 was removed
         assertEquals(false, map.containsKey(player1.getUniqueId()));
