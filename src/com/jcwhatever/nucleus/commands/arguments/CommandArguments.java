@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
-import com.jcwhatever.nucleus.utils.items.ItemWrapper;
+import com.jcwhatever.nucleus.utils.items.MatchableItem;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
@@ -762,13 +762,13 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
             Inventory inventory = p.getInventory();
 
-            Set<ItemWrapper> wrappers = new HashSet<ItemWrapper>(9);
+            Set<MatchableItem> wrappers = new HashSet<MatchableItem>(9);
 
             // iterate and add players hotbar items to wrapper set.
             for (int i=0; i < 9; i++) {
                 ItemStack item = inventory.getItem(i);
                 if (item != null && item.getType() != Material.AIR) {
-                    ItemWrapper wrapper = new ItemWrapper(item, ItemStackMatcher.getDefault());
+                    MatchableItem wrapper = new MatchableItem(item, ItemStackMatcher.getDefault());
                     wrappers.add(wrapper);
                 }
             }
@@ -776,7 +776,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             // generate result {@code ItemStack} array
             ItemStack[] result = new ItemStack[wrappers.size()];
             int index = 0;
-            for (ItemWrapper wrapper : wrappers) {
+            for (MatchableItem wrapper : wrappers) {
                 result[index] = wrapper.getItem();
                 index++;
             }
@@ -797,7 +797,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             Inventory inventory = p.getInventory();
 
             int len = inventory.getContents().length;
-            Set<ItemWrapper> wrappers = new HashSet<ItemWrapper>(len);
+            Set<MatchableItem> wrappers = new HashSet<MatchableItem>(len);
 
             // iterate and add players chest items to wrapper set
             for (int i=0; i < len; i++) {
@@ -805,7 +805,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 if (item != null && item.getType() != Material.AIR) {
 
                     // use item wrapper to prevent duplicates in set
-                    ItemWrapper wrapper = new ItemWrapper(item);
+                    MatchableItem wrapper = new MatchableItem(item);
                     wrappers.add(wrapper);
                 }
             }
@@ -813,7 +813,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             // generate result {@code ItemStack} array.
             ItemStack[] result = new ItemStack[wrappers.size()];
             int index = 0;
-            for (ItemWrapper wrapper : wrappers) {
+            for (MatchableItem wrapper : wrappers) {
                 result[index] = wrapper.getItem();
                 index++;
             }

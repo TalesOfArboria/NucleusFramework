@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
-import com.jcwhatever.nucleus.utils.items.ItemWrapper;
+import com.jcwhatever.nucleus.utils.items.MatchableItem;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Material;
@@ -59,7 +59,7 @@ public class BankItemsAccount implements IBankItemsAccount {
     private final UUID _ownerId;
     private final BankItemsBank _bank;
     private final IDataNode _dataNode;
-    private final Map<ItemWrapper, BankItem> _items = new HashMap<>(10);
+    private final Map<MatchableItem, BankItem> _items = new HashMap<>(10);
     private final Object _sync = new Object();
     private final Date _created;
 
@@ -145,7 +145,7 @@ public class BankItemsAccount implements IBankItemsAccount {
 
         synchronized (_sync) {
             BankItem item = _items.get(
-                    new ItemWrapper(matchingStack.clone(), ItemStackMatcher.getTypeMetaDurability()));
+                    new MatchableItem(matchingStack.clone(), ItemStackMatcher.getTypeMetaDurability()));
 
             return item != null ? item.getAmount() : 0;
         }
@@ -181,7 +181,7 @@ public class BankItemsAccount implements IBankItemsAccount {
         checkDisposed();
         updateLastAccess();
 
-        ItemWrapper wrapper = new ItemWrapper(itemStack, ItemStackMatcher.getTypeMetaDurability());
+        MatchableItem wrapper = new MatchableItem(itemStack, ItemStackMatcher.getTypeMetaDurability());
 
         synchronized (_sync) {
             BankItem item = _items.get(wrapper);
@@ -278,7 +278,7 @@ public class BankItemsAccount implements IBankItemsAccount {
         if (amount == 0)
             return CollectionUtils.unmodifiableList();
 
-        ItemWrapper wrapper = new ItemWrapper(matchingStack, ItemStackMatcher.getTypeMetaDurability());
+        MatchableItem wrapper = new MatchableItem(matchingStack, ItemStackMatcher.getTypeMetaDurability());
 
         synchronized (_sync) {
             BankItem item = _items.get(wrapper);
@@ -313,7 +313,7 @@ public class BankItemsAccount implements IBankItemsAccount {
 
         updateLastAccess();
 
-        ItemWrapper wrapper = new ItemWrapper(matchingStack, ItemStackMatcher.getTypeMetaDurability());
+        MatchableItem wrapper = new MatchableItem(matchingStack, ItemStackMatcher.getTypeMetaDurability());
 
         synchronized (_sync) {
             return _items.get(wrapper);
@@ -367,7 +367,7 @@ public class BankItemsAccount implements IBankItemsAccount {
             }
 
             BankItem item = new BankItem(id, items[0], amount, itemNode);
-            _items.put(new ItemWrapper(items[0]), item);
+            _items.put(new MatchableItem(items[0]), item);
         }
     }
 

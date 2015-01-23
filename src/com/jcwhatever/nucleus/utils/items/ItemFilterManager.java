@@ -56,7 +56,7 @@ public class ItemFilterManager implements IPluginOwned {
 
     private FilterPolicy _filter = FilterPolicy.WHITELIST;
     private ItemStackMatcher _matcher;
-    private final Map<ItemWrapper, ItemWrapper> _filterItems = new HashMap<ItemWrapper, ItemWrapper>(6 * 9);
+    private final Map<MatchableItem, MatchableItem> _filterItems = new HashMap<MatchableItem, MatchableItem>(6 * 9);
 
     /**
      * Validation filtering mode
@@ -189,7 +189,7 @@ public class ItemFilterManager implements IPluginOwned {
     public boolean isValidItem(ItemStack item) {
         PreCon.notNull(item);
 
-        ItemWrapper wrapper = _filterItems.get(new ItemWrapper(item, _matcher));
+        MatchableItem wrapper = _filterItems.get(new MatchableItem(item, _matcher));
         if (wrapper == null)
             return _filter == FilterPolicy.BLACKLIST;
 
@@ -199,7 +199,7 @@ public class ItemFilterManager implements IPluginOwned {
     /**
      * Get a new set of wrapped items from the collection.
      */
-    public Set<ItemWrapper> getItems() {
+    public Set<MatchableItem> getItems() {
         return CollectionUtils.unmodifiableSet(_filterItems.keySet());
     }
 
@@ -211,7 +211,7 @@ public class ItemFilterManager implements IPluginOwned {
     public boolean addItem(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        ItemWrapper wrapper = new ItemWrapper(itemStack, _matcher);
+        MatchableItem wrapper = new MatchableItem(itemStack, _matcher);
         if (_filterItems.put(wrapper, wrapper) != null) {
             saveFilterItems();
             return true;
@@ -228,7 +228,7 @@ public class ItemFilterManager implements IPluginOwned {
         PreCon.notNull(itemStacks);
 
         for (ItemStack stack : itemStacks) {
-            ItemWrapper wrapper = new ItemWrapper(stack, _matcher);
+            MatchableItem wrapper = new MatchableItem(stack, _matcher);
             _filterItems.put(wrapper, wrapper);
         }
 
@@ -245,7 +245,7 @@ public class ItemFilterManager implements IPluginOwned {
     public boolean removeItem(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        if (_filterItems.remove(new ItemWrapper(itemStack, _matcher)) != null) {
+        if (_filterItems.remove(new MatchableItem(itemStack, _matcher)) != null) {
             saveFilterItems();
             return true;
         }
@@ -261,7 +261,7 @@ public class ItemFilterManager implements IPluginOwned {
         PreCon.notNull(itemStacks);
 
         for (ItemStack stack : itemStacks) {
-            _filterItems.remove(new ItemWrapper(stack, _matcher));
+            _filterItems.remove(new MatchableItem(stack, _matcher));
         }
 
         saveFilterItems();
@@ -287,11 +287,11 @@ public class ItemFilterManager implements IPluginOwned {
         if (_dataNode == null)
             return;
 
-        Collection<ItemWrapper> wrappers = _filterItems.values();
+        Collection<MatchableItem> wrappers = _filterItems.values();
 
         List<ItemStack> stacks = new ArrayList<ItemStack>(wrappers.size());
 
-        for (ItemWrapper wrapper : wrappers) {
+        for (MatchableItem wrapper : wrappers) {
             stacks.add(wrapper.getItem());
         }
 
@@ -310,7 +310,7 @@ public class ItemFilterManager implements IPluginOwned {
         _filterItems.clear();
         if (craftItems != null && craftItems.length > 0) {
             for (ItemStack stack : craftItems) {
-                ItemWrapper wrapper = new ItemWrapper(stack, _matcher);
+                MatchableItem wrapper = new MatchableItem(stack, _matcher);
                 _filterItems.put(wrapper, wrapper);
             }
         }

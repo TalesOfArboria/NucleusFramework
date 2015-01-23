@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.utils.inventory;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
-import com.jcwhatever.nucleus.utils.items.ItemWrapper;
+import com.jcwhatever.nucleus.utils.items.MatchableItem;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
  */
 public class InventorySnapshot {
 
-    private Map<ItemWrapper, Item> _itemMap = new HashMap<ItemWrapper, Item>(6 * 9);
+    private Map<MatchableItem, Item> _itemMap = new HashMap<MatchableItem, Item>(6 * 9);
     private ItemStack[] _items;
     private ItemStack[] _snapshot;
     private ItemStackMatcher _comparer;
@@ -99,7 +99,7 @@ public class InventorySnapshot {
     public int getAmount (ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        Item item = _itemMap.get(new Item(itemStack).itemWrapper);
+        Item item = _itemMap.get(new Item(itemStack).matchableItem);
 
         if (item == null)
             return 0;
@@ -113,7 +113,7 @@ public class InventorySnapshot {
      *
      * @param wrapper  The wrapper with the item to check.
      */
-    public int getAmount (ItemWrapper wrapper) {
+    public int getAmount (MatchableItem wrapper) {
         PreCon.notNull(wrapper);
 
         Item item = _itemMap.get(wrapper);
@@ -125,10 +125,10 @@ public class InventorySnapshot {
     }
 
     /**
-     * Get all {@code ItemWrapper}'s created from the snapshot.
+     * Get all {@code MatchableItem}'s created from the snapshot.
      */
-    public List<ItemWrapper> getWrappers () {
-        return new ArrayList<ItemWrapper>(_itemMap.keySet());
+    public List<MatchableItem> getWrappers () {
+        return new ArrayList<MatchableItem>(_itemMap.keySet());
     }
 
     /**
@@ -165,13 +165,13 @@ public class InventorySnapshot {
             ItemStack clone = itemStack.clone();
             _snapshot[i] = clone;
 
-            Item item = _itemMap.get(new Item(clone).itemWrapper);
+            Item item = _itemMap.get(new Item(clone).matchableItem);
             if (item != null) {
                 item.qty += clone.getAmount();
             }
             else {
                 item = new Item(clone);
-                _itemMap.put(item.itemWrapper, item);
+                _itemMap.put(item.matchableItem, item);
             }
 
             items.add(clone);
@@ -182,13 +182,13 @@ public class InventorySnapshot {
 
     private class Item {
 
-        final ItemWrapper itemWrapper;
+        final MatchableItem matchableItem;
         int qty;
 
         public Item(ItemStack itemStack) {
             PreCon.notNull(itemStack);
 
-            this.itemWrapper = new ItemWrapper(itemStack, _comparer);
+            this.matchableItem = new MatchableItem(itemStack, _comparer);
             this.qty = itemStack.getAmount();
         }
     }

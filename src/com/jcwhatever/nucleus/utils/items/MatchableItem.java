@@ -45,7 +45,7 @@ import org.bukkit.inventory.ItemStack;
  * </p>
  *
  */
-public class ItemWrapper {
+public class MatchableItem {
 
     private ItemStack _itemStack;
     private MaterialExt _materialExt;
@@ -61,7 +61,7 @@ public class ItemWrapper {
      *
      * @param itemStack  The item stack to encapsulate.
      */
-    public ItemWrapper(ItemStack itemStack) {
+    public MatchableItem(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
         _itemStack = itemStack;
@@ -74,7 +74,7 @@ public class ItemWrapper {
      * @param itemStack  The item stack to encapsulate.
      * @param matcher    The matcher  to use.
      */
-    public ItemWrapper(ItemStack itemStack, ItemStackMatcher matcher) {
+    public MatchableItem(ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(itemStack);
         PreCon.notNull(matcher );
 
@@ -129,8 +129,8 @@ public class ItemWrapper {
         if (o instanceof ItemStack) {
             return _comparer.isMatch(_itemStack, (ItemStack) o);
         }
-        else if (o instanceof ItemWrapper) {
-            ItemWrapper wrapper = (ItemWrapper)o;
+        else if (o instanceof MatchableItem) {
+            MatchableItem wrapper = (MatchableItem)o;
 
             return _comparer.isMatch(_itemStack, wrapper.getItem());
         }
