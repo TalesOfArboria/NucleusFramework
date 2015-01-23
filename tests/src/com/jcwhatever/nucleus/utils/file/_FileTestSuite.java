@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         FileUtilsTest.class,
         NucleusByteReaderTest.class,
-        NucleusByteWriterTest.class
+        NucleusByteWriterTest.class,
+        NucleusByteReaderWriterTest.class
 })
 public class _FileTestSuite {
 }

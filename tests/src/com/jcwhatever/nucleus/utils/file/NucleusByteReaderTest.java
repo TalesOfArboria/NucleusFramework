@@ -1,8 +1,10 @@
 package com.jcwhatever.nucleus.utils.file;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -11,6 +13,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+/**
+ * Tests {@link NucleusByteReader}.
+ */
 public class NucleusByteReaderTest {
 
     private enum TestEnum {
@@ -18,6 +23,9 @@ public class NucleusByteReaderTest {
         DEFAULT
     }
 
+    /**
+     * Make sure {@code #getBytesRead} returns the correct value.
+     */
     @Test
     public void testGetBytesRead() throws Exception {
 
@@ -27,104 +35,131 @@ public class NucleusByteReaderTest {
         reader.getByte();
         reader.getByte();
 
-        Assert.assertEquals(3, reader.getBytesRead());
+        assertEquals(3, reader.getBytesRead());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #read} returns the correct value.
+     */
     @Test
     public void testRead() throws Exception {
 
         NucleusByteReader reader = getReader(new byte[] { 0, 1, 2});
 
-        Assert.assertEquals(0, reader.getByte());
-        Assert.assertEquals(1, reader.getByte());
-        Assert.assertEquals(2, reader.getByte());
+        assertEquals(0, reader.getByte());
+        assertEquals(1, reader.getByte());
+        assertEquals(2, reader.getByte());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #skip} works correctly.
+     */
     @Test
     public void testSkip() throws Exception {
         NucleusByteReader reader = getReader(new byte[] { 0, 1, 2});
 
-        Assert.assertEquals(0, reader.getByte());
+        assertEquals(0, reader.getByte());
         reader.skip(1);
-        Assert.assertEquals(2, reader.getByte());
+        assertEquals(2, reader.getByte());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getBoolean} returns the correct value.
+     */
     @Test
     public void testGetBoolean() throws Exception {
 
         NucleusByteReader reader = getReader(new byte[] { 0xF, 0, 0xF });
 
-        Assert.assertEquals(true, reader.getBoolean());
-        Assert.assertEquals(true, reader.getBoolean());
-        Assert.assertEquals(true, reader.getBoolean());
-        Assert.assertEquals(true, reader.getBoolean());
+        assertEquals(true, reader.getBoolean());
+        assertEquals(true, reader.getBoolean());
+        assertEquals(true, reader.getBoolean());
+        assertEquals(true, reader.getBoolean());
 
-        Assert.assertEquals(0, reader.getByte());
+        assertEquals(0, reader.getByte());
 
-        Assert.assertEquals(true, reader.getBoolean());
-        Assert.assertEquals(true, reader.getBoolean());
-        Assert.assertEquals(true, reader.getBoolean());
-        Assert.assertEquals(true, reader.getBoolean());
-        Assert.assertEquals(false, reader.getBoolean());
-        Assert.assertEquals(false, reader.getBoolean());
-        Assert.assertEquals(false, reader.getBoolean());
+        assertEquals(true, reader.getBoolean());
+        assertEquals(true, reader.getBoolean());
+        assertEquals(true, reader.getBoolean());
+        assertEquals(true, reader.getBoolean());
+        assertEquals(false, reader.getBoolean());
+        assertEquals(false, reader.getBoolean());
+        assertEquals(false, reader.getBoolean());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getByte} returns the correct value.
+     */
     @Test
     public void testGetByte() throws Exception {
         NucleusByteReader reader = getReader(new byte[] { 0, 1, 2 });
 
-        Assert.assertEquals(0, reader.getByte());
-        Assert.assertEquals(1, reader.getByte());
-        Assert.assertEquals(2, reader.getByte());
+        assertEquals(0, reader.getByte());
+        assertEquals(1, reader.getByte());
+        assertEquals(2, reader.getByte());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getBytes} returns the correct value.
+     */
     @Test
     public void testGetBytes() throws Exception {
         NucleusByteReader reader = getReader(new byte[] { 0, 0, 0, 1, 5 });
 
-        Assert.assertArrayEquals(new byte[] { 5 }, reader.getBytes());
+        assertArrayEquals(new byte[]{5}, reader.getBytes());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code getShort} returns the correct value.
+     */
     @Test
     public void testGetShort() throws Exception {
         NucleusByteReader reader = getReader(new byte[] { 0, 5 });
 
-        Assert.assertEquals(5, reader.getShort());
+        assertEquals(5, reader.getShort());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getInteger} returns the correct value.
+     */
     @Test
     public void testGetInteger() throws Exception {
         NucleusByteReader reader = getReader(new byte[] { 0, 0, 0, 5 });
 
-        Assert.assertEquals(5, reader.getInteger());
+        assertEquals(5, reader.getInteger());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getLong} returns the correct value.
+     */
     @Test
     public void testGetLong() throws Exception {
         NucleusByteReader reader = getReader(new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 });
 
-        Assert.assertEquals(5, reader.getLong());
+        assertEquals(5, reader.getLong());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getString} returns the correct value.
+     */
     @Test
     public void testGetString() throws Exception {
 
@@ -140,12 +175,15 @@ public class NucleusByteReaderTest {
 
         NucleusByteReader reader = getReader(bytes);
 
-        Assert.assertEquals("test", reader.getString());
+        assertEquals("test", reader.getString());
 
         reader.close();
 
     }
 
+    /**
+     * Make sure {@code #getSmallString} returns the correct value.
+     */
     @Test
     public void testGetSmallString() throws Exception {
 
@@ -153,11 +191,14 @@ public class NucleusByteReaderTest {
 
         NucleusByteReader reader = getReader(bytes);
 
-        Assert.assertEquals("test", reader.getSmallString());
+        assertEquals("test", reader.getSmallString());
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getFloat} returns the correct value.
+     */
     @Test
     public void testGetFloat() throws Exception {
 
@@ -165,11 +206,14 @@ public class NucleusByteReaderTest {
 
         NucleusByteReader reader = getReader(bytes);
 
-        Assert.assertEquals(0.1F, reader.getFloat(), 0.0F);
+        assertEquals(0.1F, reader.getFloat(), 0.0F);
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getDouble} returns the correct value.
+     */
     @Test
     public void testGetDouble() throws Exception {
 
@@ -177,22 +221,28 @@ public class NucleusByteReaderTest {
 
         NucleusByteReader reader = getReader(bytes);
 
-        Assert.assertEquals(0.1D, reader.getDouble(), 0.0D);
+        assertEquals(0.1D, reader.getDouble(), 0.0D);
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getEnum} returns the correct value.
+     */
     @Test
     public void testGetEnum() throws Exception {
         byte[] bytes  = getSmallStringBytes(TestEnum.CONSTANT.name());
 
         NucleusByteReader reader = getReader(bytes);
 
-        Assert.assertEquals(TestEnum.CONSTANT, reader.getEnum(TestEnum.class));
+        assertEquals(TestEnum.CONSTANT, reader.getEnum(TestEnum.class));
 
         reader.close();
     }
 
+    /**
+     * Make sure {@code #getUUID} returns the correct value.
+     */
     @Test
     public void testGetUUID() throws Exception {
 
@@ -208,7 +258,7 @@ public class NucleusByteReaderTest {
 
         NucleusByteReader reader = getReader(bytes);
 
-        Assert.assertEquals(uuid, reader.getUUID());
+        assertEquals(uuid, reader.getUUID());
 
         reader.close();
     }

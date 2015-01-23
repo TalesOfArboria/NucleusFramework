@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import java.io.File;
 
+/**
+ * Tests {@link FileUtils}.
+ */
 public class FileUtilsTest {
 
     @Test

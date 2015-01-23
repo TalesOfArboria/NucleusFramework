@@ -435,9 +435,16 @@ public class NucleusByteWriter extends OutputStream {
     public void write(Location location) throws IOException {
         PreCon.notNull(location);
 
-        writeSmallString(location instanceof SyncLocation
-                ? ((SyncLocation) location).getWorldName()
-                : location.getWorld().getName());
+        String worldName = null;
+
+        if (location instanceof SyncLocation) {
+            worldName = ((SyncLocation) location).getWorldName();
+        }
+        else if (location.getWorld() != null) {
+            worldName = location.getWorld().getName();
+        }
+
+        writeSmallString(worldName);
         write(location.getX());
         write(location.getY());
         write(location.getZ());

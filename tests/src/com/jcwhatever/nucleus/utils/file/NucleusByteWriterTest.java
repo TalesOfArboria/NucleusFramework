@@ -1,15 +1,23 @@
 package com.jcwhatever.nucleus.utils.file;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Tests {@link NucleusByteWriter}.
+ */
 public class NucleusByteWriterTest {
 
+    /**
+     * Make sure {@code #getBytesWritter} returns the correct value.
+     */
     @Test
     public void testGetBytesWritten() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -17,27 +25,30 @@ public class NucleusByteWriterTest {
 
         writer.write((byte)1);
 
-        Assert.assertEquals(1, writer.getBytesWritten());
+        assertEquals(1, writer.getBytesWritten());
 
         writer.write((short)1);
 
-        Assert.assertEquals(3, writer.getBytesWritten());
+        assertEquals(3, writer.getBytesWritten());
 
         writer.write(1);
 
-        Assert.assertEquals(7, writer.getBytesWritten());
+        assertEquals(7, writer.getBytesWritten());
 
         writer.write(1L);
 
-        Assert.assertEquals(15, writer.getBytesWritten());
+        assertEquals(15, writer.getBytesWritten());
 
         writer.write(new byte[] { 1, 2, 3, 4, 5});
 
-        Assert.assertEquals(24, writer.getBytesWritten());
+        assertEquals(24, writer.getBytesWritten());
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeBoolean} works correctly.
+     */
     @Test
     public void testWriteBoolean() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -52,11 +63,14 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(new byte[] { 29 }, bytes);
+        assertArrayEquals(new byte[]{29}, bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeByte} works correctly.
+     */
     @Test
     public void testWriteByte() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -67,11 +81,14 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(new byte[] { 5 }, bytes);
+        assertArrayEquals(new byte[]{5}, bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeBytes} works correctly.
+     */
     @Test
     public void testWriteBytes() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -82,11 +99,14 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(new byte[] { 0, 0, 0, 5, 1, 2, 3, 4, 5}, bytes);
+        assertArrayEquals(new byte[]{0, 0, 0, 5, 1, 2, 3, 4, 5}, bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeShort} works correctly.
+     */
     @Test
     public void testWriteShort() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -97,13 +117,16 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(new byte[] { 0, 5 }, bytes);
+        assertArrayEquals(new byte[]{0, 5}, bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code writeInteger} works correctly.
+     */
     @Test
-    public void testWriteInt() throws Exception {
+    public void testWriteInteger() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         NucleusByteWriter writer =  new NucleusByteWriter(stream);
 
@@ -112,11 +135,14 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(new byte[] { 0, 0, 0, 5 }, bytes);
+        assertArrayEquals(new byte[]{0, 0, 0, 5}, bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeLong} works correctly.
+     */
     @Test
     public void testWriteLong() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -127,11 +153,14 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }, bytes);
+        assertArrayEquals(new byte[]{0, 0, 0, 0, 0, 0, 0, 5}, bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeFloat} works correctly.
+     */
     @Test
     public void testWriteFloat() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -142,11 +171,14 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(getSmallStringBytes("1.0"), bytes);
+        assertArrayEquals(getSmallStringBytes("1.0"), bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeDouble} works correctly.
+     */
     @Test
     public void testWriteDouble() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -157,11 +189,14 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(getSmallStringBytes("1.0"), bytes);
+        assertArrayEquals(getSmallStringBytes("1.0"), bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeString} works correctly.
+     */
     @Test
     public void testWriteString() throws Exception {
 
@@ -181,11 +216,14 @@ public class NucleusByteWriterTest {
 
         expected[1] = (byte)stringBytes.length; // string length
 
-        Assert.assertArrayEquals(expected, bytes);
+        assertArrayEquals(expected, bytes);
 
         writer.close();
     }
 
+    /**
+     * Make sure {@code #writeSmallString} works correctly.
+     */
     @Test
     public void testWriteSmallString() throws Exception {
 
@@ -197,7 +235,7 @@ public class NucleusByteWriterTest {
 
         byte[] bytes = stream.toByteArray();
 
-        Assert.assertArrayEquals(getSmallStringBytes("test"), bytes);
+        assertArrayEquals(getSmallStringBytes("test"), bytes);
 
         writer.close();
     }
