@@ -267,9 +267,8 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
     }
 
     @Override
-    public boolean put(@Nonnull K k, @Nonnull V v) {
+    public boolean put(@Nonnull K k, V v) {
         PreCon.notNull(k);
-        PreCon.notNull(v);
 
         if (_lock != null) {
             _lock.writeLock().lock();
@@ -633,7 +632,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
 
         @Override
         protected Map<K, Collection<V>> map() {
-            return MultimapWrapper.this.asMap();
+            return MultimapWrapper.this.map().asMap();
         }
     }
 

@@ -11,15 +11,21 @@ import java.util.Map.Entry;
 /*
  * 
  */
-public class MultimapRunnable<V> implements Runnable {
+public class MultimapRunnable<K, V> implements Runnable {
 
-    final Multimap<String, V> _map;
+    final Multimap<K, V> _map;
+    final K _key1;
+    final K _key2;
+    final K _key3;
     final V _value1;
     final V _value2;
     final V _value3;
 
-    public MultimapRunnable(Multimap<String, V> map, V value1, V value2, V value3) {
+    public MultimapRunnable(Multimap<K, V> map, K key1, K key2, K key3, V value1, V value2, V value3) {
         _map = map;
+        _key1 = key1;
+        _key2 = key2;
+        _key3 = key3;
         _value1 = value1;
         _value2 = value2;
         _value3 = value3;
@@ -34,16 +40,16 @@ public class MultimapRunnable<V> implements Runnable {
         assertEquals(true, _map.isEmpty());
 
         // test put
-        _map.put("a", _value1);
-        _map.put("a", _value2);
+        _map.put(_key1, _value1);
+        _map.put(_key1, _value2);
         assertEquals(2, _map.size());
-        assertEquals(true, _map.containsKey("a"));
-        assertEquals(true, _map.containsEntry("a", _value1));
-        assertEquals(true, _map.containsEntry("a", _value2));
-        assertEquals(false, _map.containsEntry("a", _value3));
+        assertEquals(true, _map.containsKey(_key1));
+        assertEquals(true, _map.containsEntry(_key1, _value1));
+        assertEquals(true, _map.containsEntry(_key1, _value2));
+        assertEquals(false, _map.containsEntry(_key1, _value3));
 
         // test removeAll
-        Collection<V> removed =  _map.removeAll("a");
+        Collection<V> removed =  _map.removeAll(_key1);
         assertEquals(2, removed.size());
         assertEquals(true, removed.contains(_value1));
         assertEquals(true, removed.contains(_value2));
@@ -52,26 +58,26 @@ public class MultimapRunnable<V> implements Runnable {
         assertEquals(0, _map.size());
 
         // test putAll
-        assertEquals(true, _map.putAll("a", ArrayUtils.asList(_value1, _value2, _value3)));
+        assertEquals(true, _map.putAll(_key1, ArrayUtils.asList(_value1, _value2, _value3)));
         assertEquals(3, _map.size());
-        assertEquals(true, _map.containsKey("a"));
-        assertEquals(true, _map.containsEntry("a", _value1));
-        assertEquals(true, _map.containsEntry("a", _value2));
-        assertEquals(true, _map.containsEntry("a", _value3));
+        assertEquals(true, _map.containsKey(_key1));
+        assertEquals(true, _map.containsEntry(_key1, _value1));
+        assertEquals(true, _map.containsEntry(_key1, _value2));
+        assertEquals(true, _map.containsEntry(_key1, _value3));
 
 
         // test replaceValues
-        Collection<V> previous = _map.replaceValues("a", ArrayUtils.asList(_value1));
+        Collection<V> previous = _map.replaceValues(_key1, ArrayUtils.asList(_value1));
         assertEquals(3, previous.size());
-        assertEquals(true, _map.containsKey("a"));
-        assertEquals(true, _map.containsEntry("a", _value1));
-        assertEquals(false, _map.containsEntry("a", _value2));
-        assertEquals(false, _map.containsEntry("a", _value3));
+        assertEquals(true, _map.containsKey(_key1));
+        assertEquals(true, _map.containsEntry(_key1, _value1));
+        assertEquals(false, _map.containsEntry(_key1, _value2));
+        assertEquals(false, _map.containsEntry(_key1, _value3));
 
         _map.clear();
         assertEquals(0, _map.size());
 
-        SetRunnable<String> setTest = new SetRunnable<String>(_map.keySet(), "a", "b", "c");
+        SetRunnable<K> setTest = new SetRunnable<>(_map.keySet(), _key1, _key2, _key3);
         setTest.run();
 
         _map.clear();
@@ -83,14 +89,15 @@ public class MultimapRunnable<V> implements Runnable {
         _map.clear();
         assertEquals(0, _map.size());
 
-        CollectionRunnable<Entry<String, V>> entryTest = new CollectionRunnable<>(_map.entries(),
-                getEntry("a", _value1), getEntry("b", _value2), getEntry("c", _value3));
-        valuesTest.run();
+        CollectionRunnable<Entry<K, V>> entryTest = new CollectionRunnable<>(_map.entries(),
+                getEntry(_key1, _value1), getEntry(_key2, _value2), getEntry(_key3, _value3));
+        entryTest.run();
 
         _map.clear();
         assertEquals(0, _map.size());
 
-        MapRunnable<Collection<V>> mapTest = new MapRunnable<>(_map.asMap(),
+        MapRunnable<K, Collection<V>> mapTest = new MapRunnable<>(_map.asMap(),
+                _key1, _key2, _key3,
                 ArrayUtils.asList(_value1),
                 ArrayUtils.asList(_value1, _value2),
                 ArrayUtils.asList(_value1, _value2, _value3));
@@ -99,12 +106,12 @@ public class MultimapRunnable<V> implements Runnable {
     }
 
 
-    private Entry<String, V> getEntry(final String key, final V value) {
-        return new Entry<String, V>() {
+    private Entry<K, V> getEntry(final K key, final V value) {
+        return new Entry<K, V>() {
             V val = value;
 
             @Override
-            public String getKey() {
+            public K getKey() {
                 return key;
             }
 

@@ -111,8 +111,12 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
         return _current;
     }
 
+    private boolean _isNextInvoked;
+
     @Override
     public boolean hasNext() {
+
+        _isNextInvoked = false;
 
         if (_lock != null) {
             _lock.readLock().lock();
@@ -134,6 +138,9 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
 
     @Override
     public E next() {
+
+        _isNextInvoked = true;
+
         if (_lock != null) {
             _lock.readLock().lock();
             try {
@@ -159,6 +166,11 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
 
     @Override
     public void remove() {
+
+        if (!_isNextInvoked)
+            throw new IllegalStateException("#next method must be invoked before invoking #remove method");
+
+        _isNextInvoked = false;
 
         if (_lock != null) {
             _lock.writeLock().lock();

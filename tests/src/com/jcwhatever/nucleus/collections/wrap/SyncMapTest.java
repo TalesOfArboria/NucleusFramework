@@ -22,8 +22,7 @@ public class SyncMapTest {
             }
         };
 
-        MapRunnable<Integer> test = new MapRunnable<>(map, 1, 2, 3);
-
+        MapRunnable<String, Integer> test = new MapRunnable<>(map, "a", "b", "c", 1, 2, 3);
         test.run();
     }
 }

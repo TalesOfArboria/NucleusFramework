@@ -23,7 +23,7 @@ public class TimedSetMultimapTest {
 
         TimedSetMultimap<String, String> map = new TimedSetMultimap<String, String>(plugin);
 
-        MultimapRunnable<String> test = new MultimapRunnable<>(map, "va", "vb", "vc");
+        MultimapRunnable<String, String> test = new MultimapRunnable<>(map, "ka", "kb", "kc", "va", "vb", "vc");
         test.run();
     }
 

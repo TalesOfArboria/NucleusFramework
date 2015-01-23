@@ -35,6 +35,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * A {@code HashSet} of {@code Player} objects.
@@ -86,6 +87,32 @@ public class PlayerSet extends ConversionSetWrapper<Player, PlayerElement> imple
         synchronized (_sync) {
             _players.remove(new PlayerElement(p));
         }
+    }
+
+    @Override
+    protected void onRemoved(Object element) {
+
+        UUID id;
+
+        if (element instanceof PlayerElement) {
+            id = ((PlayerElement) element).getUniqueId();
+        }
+        else {
+            Player player = PlayerUtils.getPlayer(element);
+            id = player == null
+                    ? PlayerUtils.getPlayerId(element)
+                    : player.getUniqueId();
+        }
+
+        if (id == null)
+            throw new ClassCastException("Failed to get Player or Player UUID object.");
+
+        _tracker.notifyPlayerRemoved(id);
+    }
+
+    @Override
+    protected void onAdded(PlayerElement element) {
+        _tracker.notifyPlayerAdded(element.getUniqueId());
     }
 
     @Override

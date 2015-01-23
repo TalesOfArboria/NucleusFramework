@@ -28,7 +28,9 @@ import com.jcwhatever.nucleus.collections.CircularQueue;
 import com.jcwhatever.nucleus.collections.players.PlayerElement.PlayerElementMatcher;
 import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
 import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -440,28 +442,30 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
     public boolean retainAll(Collection<?> c) {
         PreCon.notNull(c);
 
-        List<PlayerElement> removed = new ArrayList<>(_queue);
-        List<PlayerElementMatcher> entries = new ArrayList<>(c.size());
-
+        final List<PlayerElement> toRemove = new ArrayList<>(_queue);
         for (Object obj : c) {
             PlayerElementMatcher matcher = new PlayerElementMatcher(obj);
-            entries.add(matcher);
-            //noinspection SuspiciousMethodCalls
-            removed.remove(matcher);
-        }
 
-        boolean result;
+            //noinspection SuspiciousMethodCalls
+            toRemove.remove(matcher);
+        }
 
         synchronized (_sync) {
-            result = _queue.retainAll(entries);
 
-            for (PlayerElement rem : removed) {
-                if (!_queue.contains(rem))
-                    _tracker.notifyPlayerRemoved(rem.getUniqueId());
-            }
+            List<PlayerElement> removed = CollectionUtils.retainAll(_queue, new IValidator<PlayerElement>() {
+                @Override
+                public boolean isValid(PlayerElement element) {
+                    if (toRemove.contains(element)) {
+                        _tracker.notifyPlayerRemoved(element.getUniqueId());
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            });
+
+            return !removed.isEmpty();
         }
-
-        return result;
     }
 
     @Override

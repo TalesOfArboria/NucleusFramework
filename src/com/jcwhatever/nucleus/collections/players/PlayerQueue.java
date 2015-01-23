@@ -77,13 +77,24 @@ public class PlayerQueue extends ConversionQueueWrapper<Player, PlayerElement> i
 	}
 
 	@Override
-	protected void onRemoved(@SuppressWarnings("unused") Object element) {
+	protected void onRemoved(Object element) {
 
-		UUID playerID = PlayerUtils.getPlayerId(element);
-		if (playerID == null)
-			throw new ClassCastException();
+		UUID id;
 
-		_tracker.notifyPlayerRemoved(playerID);
+		if (element instanceof PlayerElement) {
+			id = ((PlayerElement) element).getUniqueId();
+		}
+		else {
+			Player player = PlayerUtils.getPlayer(element);
+			id = player == null
+					? PlayerUtils.getPlayerId(element)
+					: player.getUniqueId();
+		}
+
+		if (id == null)
+			throw new ClassCastException("Failed to get Player or Player UUID object.");
+
+		_tracker.notifyPlayerRemoved(id);
 	}
 
 	@Override

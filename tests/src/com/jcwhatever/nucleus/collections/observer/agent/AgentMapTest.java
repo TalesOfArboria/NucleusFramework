@@ -33,7 +33,7 @@ public class AgentMapTest {
         DisposableAgent agent2 = new DisposableAgent() {};
         DisposableAgent agent3 = new DisposableAgent() {};
 
-        new MapRunnable<>(map, agent1, agent2, agent3).run();
+        new MapRunnable<>(map, "a", "b", "c", agent1, agent2, agent3).run();
 
         map.clear();
 

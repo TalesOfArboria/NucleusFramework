@@ -1,0 +1,78 @@
+package com.jcwhatever.nucleus.collections.players;
+
+import static org.junit.Assert.assertEquals;
+
+import com.jcwhatever.bukkit.v1_8_R1.BukkitTest;
+import com.jcwhatever.nucleus.NucleusTest;
+
+import org.bukkit.entity.Player;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.Map;
+import java.util.UUID;
+
+/*
+ * 
+ */
+public abstract class AbstractPlayerMapTest<V> {
+
+    /**
+     * Make sure Nucleus and Bukkit are initialized.
+     */
+    @BeforeClass
+    public static void init() {
+        NucleusTest.init();
+    }
+
+    /**
+     * Invoked to get a new collection instance for testing.
+     */
+    protected abstract Map<UUID, V> getMap();
+
+    /**
+     * Make sure player is removed when they log out.
+     */
+    @Test
+    public void testPlayerRemoved1() {
+
+        Map<UUID, V> map = getMap();
+        assertEquals(0, map.size());
+
+        Player player1 = BukkitTest.login("playerCollectionTest1");
+        Player player2 = BukkitTest.login("playerCollectionTest2");
+
+        map.put(player1.getUniqueId(), null);
+        map.put(player2.getUniqueId(), null);
+
+        assertEquals(true, map.containsKey(player1.getUniqueId()));
+        assertEquals(true, map.containsKey(player2.getUniqueId()));
+        assertEquals(2, map.size());
+
+        BukkitTest.pause(20);
+
+        // make sure players are still in map after waiting 20 ticks
+        assertEquals(true, map.containsKey(player1.getUniqueId()));
+        assertEquals(true, map.containsKey(player2.getUniqueId()));
+        assertEquals(2, map.size());
+
+        // logout player 1
+        BukkitTest.logout("playerCollectionTest1");
+        BukkitTest.pause(3);
+
+        // make sure player1 was removed
+        assertEquals(false, map.containsKey(player1.getUniqueId()));
+        assertEquals(true, map.containsKey(player2.getUniqueId()));
+        assertEquals(1, map.size());
+
+        // kick player 2
+        BukkitTest.kick("playerCollectionTest2");
+        BukkitTest.pause(3);
+
+        // make sure player2 was removed
+        assertEquals(false, map.containsKey(player1.getUniqueId()));
+        assertEquals(false, map.containsKey(player2.getUniqueId()));
+        assertEquals(0, map.size());
+    }
+
+}

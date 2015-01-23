@@ -232,7 +232,6 @@ public abstract class MapWrapper<K, V> implements Map<K, V> {
     @Override
     public V put(K key, V value) {
         PreCon.notNull(key);
-        PreCon.notNull(value);
 
         V previous;
 

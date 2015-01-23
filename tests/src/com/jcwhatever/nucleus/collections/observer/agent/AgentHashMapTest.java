@@ -28,7 +28,7 @@ public class AgentHashMapTest {
         ISubscriberAgent agent2 = new SubscriberAgent() {};
         ISubscriberAgent agent3 = new SubscriberAgent() {};
 
-        MapRunnable<ISubscriberAgent> test = new MapRunnable<>(map, agent1, agent2, agent3);
+        MapRunnable<String, ISubscriberAgent> test = new MapRunnable<>(map, "a", "b", "c", agent1, agent2, agent3);
 
         test.run();
     }

@@ -23,7 +23,7 @@ public class TimedHashMapTest {
 
         TimedHashMap<String, String> map = new TimedHashMap<String, String>(plugin);
 
-        MapRunnable<String> mapTest = new MapRunnable<String>(map, "a", "b", "c");
+        MapRunnable<String, String> mapTest = new MapRunnable<String, String>(map, "a", "b", "c", "a", "b", "c");
 
         mapTest.run();
     }

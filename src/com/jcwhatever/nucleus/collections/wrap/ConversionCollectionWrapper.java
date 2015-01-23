@@ -226,7 +226,7 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
         if (_lock != null) {
             _lock.readLock().lock();
             try {
-                return unconvert(collection()).toArray();
+                return convert(collection()).toArray();
             }
             finally {
                 _lock.readLock().unlock();
@@ -234,10 +234,10 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
         }
         else if (_sync != null) {
             synchronized (_sync) {
-                return unconvert(collection()).toArray();
+                return convert(collection()).toArray();
             }
         } else {
-            return unconvert(collection()).toArray();
+            return convert(collection()).toArray();
         }
     }
 
@@ -247,7 +247,7 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
             _lock.readLock().lock();
             try {
                 //noinspection SuspiciousToArrayCall
-                return unconvert(collection()).toArray(a);
+                return convert(collection()).toArray(a);
             }
             finally {
                 _lock.readLock().unlock();
@@ -256,11 +256,11 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
         else if (_sync != null) {
             synchronized (_sync) {
                 //noinspection SuspiciousToArrayCall
-                return unconvert(collection()).toArray(a);
+                return convert(collection()).toArray(a);
             }
         } else {
             //noinspection SuspiciousToArrayCall
-            return unconvert(collection()).toArray(a);
+            return convert(collection()).toArray(a);
         }
     }
 
@@ -487,14 +487,26 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
 
     protected Collection<T> unconvert(Collection<?> c) {
         List<T> list = new ArrayList<T>(c.size());
-        for (Object obj : c) {
+        for (Object external : c) {
             try {
-                list.add(unconvert(obj));
+                list.add(unconvert(external));
             }
             catch(ClassCastException ignore) {}
         }
         return list;
     }
+
+    protected Collection<E> convert(Collection<T> c) {
+        List<E> list = new ArrayList<E>(c.size());
+        for (T internal : c) {
+            try {
+                list.add(convert(internal));
+            }
+            catch(ClassCastException ignore) {}
+        }
+        return list;
+    }
+
 
     protected final class Matcher {
         final T matcher;

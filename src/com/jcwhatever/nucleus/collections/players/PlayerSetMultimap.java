@@ -54,6 +54,15 @@ public class PlayerSetMultimap<V> extends PlayerMultimap<V> {
      *
      * @param plugin   The owning plugin.
      */
+    public PlayerSetMultimap(Plugin plugin) {
+        this(plugin, 7, 4);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin   The owning plugin.
+     */
     public PlayerSetMultimap(Plugin plugin, int keySize, int valueSize) {
         super(plugin);
 
