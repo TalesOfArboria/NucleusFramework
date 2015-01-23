@@ -24,14 +24,19 @@
 
 package com.jcwhatever.nucleus.collections.wrap;
 
+import com.jcwhatever.nucleus.utils.PreCon;
+
 import java.util.Iterator;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link Iterator} wrapper.
  * The wrapper is optionally synchronized via a sync object or {@link ReadWriteLock}
- * passed in through the constructor.
+ * passed into the constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the iterator is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual iterator is provided to the abstract implementation by
  * overriding and returning it from the {@link #iterator} method.</p>
@@ -41,27 +46,46 @@ import javax.annotation.Nullable;
  */
 public abstract class IteratorWrapper<E> implements Iterator<E> {
 
-    private final Object _sync;
-    private final ReadWriteLock _lock;
+    /**
+     * Ensure the current thread has a lock on the specified object
+     * for the purpose of iterating the collection.
+     *
+     * @param object  The object.
+     */
+    public static void assertIteratorLock(Object object) {
+        if (!Thread.holdsLock(object)) {
+            throw new IllegalStateException("Iteration must be performed while locked on the " +
+                    "object returned from the method #iteratorSync");
+        }
+    }
+
+    protected final Object _sync;
+    protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
+
     private E _current;
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public IteratorWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public IteratorWrapper(@Nullable Object sync) {
+    public IteratorWrapper(SyncStrategy strategy) {
+        PreCon.notNull(strategy);
 
-        _sync = sync;
-        _lock = sync instanceof ReadWriteLock
-                ? (ReadWriteLock)sync
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock)_sync
                 : null;
     }
 
@@ -94,11 +118,9 @@ public abstract class IteratorWrapper<E> implements Iterator<E> {
      */
     protected abstract Iterator<E> iterator();
 
-    @Nullable
-    public Object getSync() {
-        return _sync;
-    }
-
+    /**
+     * Get the current element of the iterator.
+     */
     public E getCurrent() {
         return _current;
     }
@@ -114,11 +136,11 @@ public abstract class IteratorWrapper<E> implements Iterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().hasNext();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().hasNext();
         }
     }
@@ -134,11 +156,11 @@ public abstract class IteratorWrapper<E> implements Iterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return _current = iterator().next();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return _current = iterator().next();
         }
     }
@@ -154,11 +176,11 @@ public abstract class IteratorWrapper<E> implements Iterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                removeSource();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             removeSource();
         }
     }

@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.collections.wrap.ConversionSetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
@@ -41,6 +42,11 @@ import java.util.Set;
  * <p>
  *     {@code Player} object is automatically removed when the player logs out.
  * </p>
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The sets iterators must be used inside a synchronized block which locks the
+ * set instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class PlayerSet extends ConversionSetWrapper<Player, PlayerElement> implements IPlayerCollection {
 
@@ -61,7 +67,8 @@ public class PlayerSet extends ConversionSetWrapper<Player, PlayerElement> imple
      * @param size  The initial capacity.
      */
     public PlayerSet(Plugin plugin, int size) {
-        super(new Object());
+        super(SyncStrategy.SYNC);
+
         PreCon.notNull(plugin);
 
         _plugin = plugin;

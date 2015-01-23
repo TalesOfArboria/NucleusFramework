@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.collections.players;
 import com.jcwhatever.nucleus.collections.CircularQueue;
 import com.jcwhatever.nucleus.collections.players.PlayerElement.PlayerElementMatcher;
 import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
@@ -43,18 +44,31 @@ import java.util.Set;
 /**
  * A {@code CircularQueue} for {@code Player} objects that automatically removes
  * players when they log out.
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The queues iterators must be used inside a synchronized block which locks the
+ * queue instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
 
     private final Plugin _plugin;
     private final CircularQueue<PlayerElement> _queue = new CircularQueue<>();
     private final PlayerCollectionTracker _tracker;
-    private final Object _sync = new Object();
+    private final Object _sync;
+    private final SyncStrategy _strategy;
 
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     */
     public PlayerCircularQueue(Plugin plugin) {
         PreCon.notNull(plugin);
 
         _plugin = plugin;
+        _sync = this;
+        _strategy = new SyncStrategy(this);
         _tracker = new PlayerCollectionTracker(this);
     }
 
@@ -531,7 +545,11 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
         return new ItrLeft();
     }
 
-    private class ItrRight extends ConversionIteratorWrapper<Player, PlayerElement> {
+    private final class ItrRight extends ConversionIteratorWrapper<Player, PlayerElement> {
+
+        ItrRight() {
+            super(PlayerCircularQueue.this._strategy);
+        }
 
         Iterator<PlayerElement> iterator = _queue.iterator();
 
@@ -546,20 +564,6 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
         }
 
         @Override
-        public boolean hasNext() {
-            synchronized (_sync) {
-                return iterator.hasNext();
-            }
-        }
-
-        @Override
-        public Player next() {
-            synchronized (_sync) {
-                return super.next();
-            }
-        }
-
-        @Override
         public void remove() {
             synchronized (_sync) {
                 PlayerElement removed = getCurrent();
@@ -571,7 +575,11 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
         }
     }
 
-    private class ItrLeft extends ConversionIteratorWrapper<Player, PlayerElement> {
+    private final class ItrLeft extends ConversionIteratorWrapper<Player, PlayerElement> {
+
+        ItrLeft() {
+            super(PlayerCircularQueue.this._strategy);
+        }
 
         Iterator<PlayerElement> iterator = _queue.descendingIterator();
 
@@ -583,20 +591,6 @@ public class PlayerCircularQueue implements IPlayerCollection, Deque<Player> {
         @Override
         protected Iterator<PlayerElement> iterator() {
             return iterator;
-        }
-
-        @Override
-        public boolean hasNext() {
-            synchronized (_sync) {
-                return iterator.hasNext();
-            }
-        }
-
-        @Override
-        public Player next() {
-            synchronized (_sync) {
-                return super.next();
-            }
         }
 
         @Override

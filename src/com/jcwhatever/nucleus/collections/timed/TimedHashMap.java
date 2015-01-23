@@ -27,16 +27,18 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.wrap.ConversionEntryWrapper;
-import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
 import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
+import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.TimeScale;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 
 import org.bukkit.plugin.Plugin;
 
@@ -66,6 +68,9 @@ import javax.annotation.Nullable;
  * (1 tick) of expiring.</p>
  *
  * <p>Thread Safe.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
@@ -93,7 +98,8 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
     private final transient KeySetWrapper _keySetWrapper;
     private final transient EntrySetWrapper _entrySetWrapper;
 
-    private final transient Object _sync = new Object();
+    private final transient Object _sync;
+    private final transient SyncStrategy _strategy;
     private transient long _nextCleanup;
 
     private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
@@ -137,6 +143,8 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
         PreCon.notNull(timeScale);
 
         _plugin = plugin;
+        _sync = this;
+        _strategy = new SyncStrategy(this);
         _lifespan = defaultLifespan * timeScale.getTimeFactor();
         _timeScale = timeScale;
         _map = new HashMap<>(size);
@@ -480,7 +488,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
     private Entry<K, V> getEntry(final Entry<K, DateEntry<K, V>> entry) {
 
-        return new ConversionEntryWrapper<K, V, DateEntry<K, V>>(_sync) {
+        return new ConversionEntryWrapper<K, V, DateEntry<K, V>>(_strategy) {
 
             @Override
             protected Entry<K, DateEntry<K, V>> entry() {
@@ -541,6 +549,10 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
     private final class KeySetWrapper extends SetWrapper<K> {
 
+        KeySetWrapper() {
+            super(TimedHashMap.this._strategy);
+        }
+
         @Override
         protected boolean onPreAdd(K e) {
             throw new UnsupportedOperationException();
@@ -579,23 +591,24 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
                 @Override
                 public boolean hasNext() {
-                    synchronized (_sync) {
-                        return iterator.hasNext();
-                    }
+
+                    IteratorWrapper.assertIteratorLock(_sync);
+                    return iterator.hasNext();
                 }
 
                 @Override
                 public V next() {
-                    synchronized (_sync) {
-                        return iterator.next().value;
-                    }
+
+                    IteratorWrapper.assertIteratorLock(_sync);
+                    return iterator.next().value;
                 }
 
                 @Override
                 public void remove() {
-                    synchronized (_sync) {
-                        iterator.remove();
-                    }
+
+                    IteratorWrapper.assertIteratorLock(_sync);
+                    iterator.remove();
+
                 }
             };
         }
@@ -708,7 +721,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
         @Override
         public Iterator<Entry<K, V>> iterator() {
-            return new ConversionIteratorWrapper<Entry<K, V>, Entry<K, DateEntry<K, V>>>(_sync) {
+            return new ConversionIteratorWrapper<Entry<K, V>, Entry<K, DateEntry<K, V>>>(_strategy) {
 
                 Iterator<Entry<K, DateEntry<K, V>>> iterator = _map.entrySet().iterator();
 

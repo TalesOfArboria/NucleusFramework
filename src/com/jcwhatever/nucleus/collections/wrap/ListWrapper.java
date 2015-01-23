@@ -28,12 +28,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link List} wrapper. The wrapper is
- * optionally synchronized via a sync object or {@link ReadWriteLock} passed in
- * through the constructor.
+ * optionally synchronized via a sync object or {@link ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the list is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual collection is provided to the abstract implementation by
  * overriding and returning it from the {@link #list} method.</p>
@@ -46,18 +49,20 @@ public abstract class ListWrapper<E> extends CollectionWrapper<E> implements Lis
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public ListWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public ListWrapper(@Nullable Object sync) {
-        super(sync);
+    public ListWrapper(SyncStrategy strategy) {
+        super(strategy);
     }
 
     /**
@@ -250,7 +255,7 @@ public abstract class ListWrapper<E> extends CollectionWrapper<E> implements Lis
 
     @Override
     public ListIterator<E> listIterator(final int index) {
-        return new ListIteratorWrapper<E>(_sync) {
+        return new ListIteratorWrapper<E>(_strategy) {
 
             ListIterator<E> iterator = list().listIterator(index);
 
@@ -276,7 +281,7 @@ public abstract class ListWrapper<E> extends CollectionWrapper<E> implements Lis
         final List<E> subList = list().subList(fromIndex, toIndex);
         final ListWrapper<E> parent = this;
 
-        return new ListWrapper<E>(_sync) {
+        return new ListWrapper<E>(_strategy) {
 
             @Override
             protected boolean onPreAdd(E element) {

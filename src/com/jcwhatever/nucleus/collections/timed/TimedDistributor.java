@@ -41,6 +41,8 @@ import javax.annotation.Nullable;
  *
  * <p>The current element is passively changed. The {@code #current} method must be
  * invoked at interval for the distributor to be effective.</p>
+ *
+ * <p>Not thread safe.</p>
  */
 public class TimedDistributor<E> implements Collection<E> {
 

@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.collections.observer.subscriber;
 
 import com.jcwhatever.nucleus.collections.wrap.DequeWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
@@ -45,12 +46,14 @@ import javax.annotation.Nullable;
  * into the constructor.</p>
  *
  * <p>Implementations may need to use their own synchronization object, in which case it can be
- * passed in via the constructor.</p>
+ * passed in via the constructor using a {@link SyncStrategy}.</p>
+ *
+ * <p>The deque iterators must be used inside a synchronized block which locks the
+ * deque instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public abstract class SubscriberDeque<E extends ISubscriber>
         extends DequeWrapper<E> implements IDisposable {
 
-    private final Object _sync;
     private final InternalAgent _collectionAgent;
 
     private transient boolean _isDisposed;
@@ -58,22 +61,21 @@ public abstract class SubscriberDeque<E extends ISubscriber>
     /**
      * Constructor.
      *
-     * <p>Uses a private synchronization object and subscriber.</p>
+     * <p>Synchronizes self and provides own subscriber agent.</p>
      */
     public SubscriberDeque() {
-        this(new Object(), null);
+        this(SyncStrategy.SYNC, null);
     }
 
     /**
      * Constructor.
      *
-     * @param sync   The synchronization object to use.
-     * @param agent  The agent to use. Optional. Creates a new one if null.
+     * @param strategy  The synchronization strategy to use.
+     * @param agent     The agent to use. Optional. Creates a new one if null.
      */
-    protected SubscriberDeque(Object sync, @Nullable ISubscriberAgent agent) {
-        super(sync);
+    protected SubscriberDeque(SyncStrategy strategy, @Nullable ISubscriberAgent agent) {
+        super(strategy);
 
-        _sync = sync;
         _collectionAgent = new InternalAgent(agent != null ? agent : new SubscriberAgent() {});
     }
 

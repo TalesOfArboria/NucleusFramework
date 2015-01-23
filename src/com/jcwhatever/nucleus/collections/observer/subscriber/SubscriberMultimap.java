@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.collections.observer.subscriber;
 import com.jcwhatever.nucleus.collections.ElementCounter;
 import com.jcwhatever.nucleus.collections.ElementCounter.RemovalPolicy;
 import com.jcwhatever.nucleus.collections.wrap.MultimapWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
@@ -49,12 +50,14 @@ import javax.annotation.Nullable;
  * into the constructor.</p>
  *
  * <p>Implementations may need to use their own synchronization object, in which case it can be
- * passed in via the constructor.</p>
+ * passed in via the constructor using a {@link SyncStrategy}.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public abstract class SubscriberMultimap<K, V
         extends ISubscriber> extends MultimapWrapper<K, V> implements IDisposable {
 
-    private final Object _sync;
     private final MapAgent _mapAgent;
     private final ElementCounter<ISubscriber> _counter = new ElementCounter<>(RemovalPolicy.REMOVE);
 
@@ -66,19 +69,18 @@ public abstract class SubscriberMultimap<K, V
      * <p>Uses a private synchronization object and subscriber.</p>
      */
     public SubscriberMultimap() {
-        this(new Object(), null);
+        this(SyncStrategy.SYNC, null);
     }
 
     /**
      * Constructor.
      *
-     * @param sync   The synchronization object to use.
-     * @param agent  The agent to use. Optional. A new one is created if null.
+     * @param strategy  The synchronization object to use.
+     * @param agent     The agent to use. Optional. A new one is created if null.
      */
-    protected SubscriberMultimap(Object sync, @Nullable ISubscriberAgent agent) {
-        super(sync);
+    protected SubscriberMultimap(SyncStrategy strategy, @Nullable ISubscriberAgent agent) {
+        super(strategy);
 
-        _sync = sync;
         _mapAgent = new MapAgent(agent != null ? agent : new SubscriberAgent() {});
     }
 

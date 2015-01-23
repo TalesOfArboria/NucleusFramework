@@ -33,11 +33,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link Collection} wrapper. The wrapper is
- * optionally synchronized via a sync object or {@link ReadWriteLock}.
+ * optionally synchronized via a sync object or {@link ReadWriteLock} passed
+ * into the constructor using a {@link SyncStrategy}.
  *
  * <p>The actual collection is provided to the abstract implementation by
  * overriding and returning it from the {@link #collection} method.</p>
@@ -51,24 +51,28 @@ public abstract class CollectionWrapper<E> implements Collection<E> {
 
     protected final Object _sync;
     protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
 
     /**
      * Constructor.
      */
     public CollectionWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public CollectionWrapper(@Nullable Object sync) {
+    public CollectionWrapper(SyncStrategy strategy) {
+        PreCon.notNull(strategy);
 
-        _sync = sync;
+
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
         _lock = _sync instanceof ReadWriteLock
-                ? (ReadWriteLock) sync
+                ? (ReadWriteLock) _sync
                 : null;
     }
 
@@ -487,7 +491,11 @@ public abstract class CollectionWrapper<E> implements Collection<E> {
         return values;
     }
 
-    private class Itr extends IteratorWrapper<E> {
+    private final class Itr extends IteratorWrapper<E> {
+
+        Itr() {
+            super(CollectionWrapper.this._strategy);
+        }
 
         Iterator<E> iterator = collection().iterator();
 

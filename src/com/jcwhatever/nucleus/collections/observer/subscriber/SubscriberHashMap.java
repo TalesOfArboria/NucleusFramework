@@ -33,6 +33,11 @@ import java.util.Map;
 /**
  * A {@link HashMap} based implementation of a {@link SubscriberMap} which automatically
  * removes subscribers when they are disposed.
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class SubscriberHashMap<K, V extends ISubscriber> extends SubscriberMap<K, V> {
 

@@ -28,13 +28,16 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link Deque} wrapper. The wrapper is
- * optionally synchronized via a sync object or {@link ReadWriteLock} passed in
- * through the constructor.
+ * optionally synchronized via a sync object or {@link ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
  *
+ * <p>If the deque is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
+
  * <p>The actual collection is provided to the abstract implementation by
  * overriding and returning it from the {@link #queue} method.</p>
  *
@@ -46,18 +49,20 @@ public abstract class DequeWrapper<E> extends QueueWrapper<E> implements Deque<E
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public DequeWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public DequeWrapper(@Nullable Object sync) {
-        super(sync);
+    public DequeWrapper(SyncStrategy strategy) {
+        super(strategy);
     }
 
     /**
@@ -555,7 +560,7 @@ public abstract class DequeWrapper<E> extends QueueWrapper<E> implements Deque<E
 
     @Override
     public Iterator<E> descendingIterator() {
-        return new IteratorWrapper<E>(_sync) {
+        return new IteratorWrapper<E>(_strategy) {
 
             Iterator<E> iterator = queue().descendingIterator();
 

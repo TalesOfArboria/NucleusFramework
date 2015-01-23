@@ -33,12 +33,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link Map} wrapper. The wrapper is
- * optionally synchronized via a sync object or {@link ReadWriteLock} passed in
- * through the constructor.
+ * optionally synchronized via a sync object or {@link ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the map is synchronized, the sync object must be externally locked while
+ * any associated iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual map is provided to the abstract implementation by
  * overriding and returning it from the {@link #map} method.</p>
@@ -52,26 +55,32 @@ public abstract class MapWrapper<K, V> implements Map<K, V> {
     private final ValuesWrapper _valuesWrapper;
     private final KeySetWrapper _keySetWrapper;
     private final EntrySetWrapper _entrySetWrapper;
+
     protected final Object _sync;
     protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public MapWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public MapWrapper(@Nullable Object sync) {
+    public MapWrapper(SyncStrategy strategy) {
+        PreCon.notNull(strategy);
 
-        _sync = sync;
-        _lock = sync instanceof ReadWriteLock
-                ? (ReadWriteLock)sync
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock)_sync
                 : null;
 
         _valuesWrapper = new ValuesWrapper();
@@ -353,7 +362,7 @@ public abstract class MapWrapper<K, V> implements Map<K, V> {
     private class ValuesWrapper extends CollectionWrapper<V> {
 
         ValuesWrapper() {
-            super(MapWrapper.this._sync);
+            super(MapWrapper.this._strategy);
         }
 
         @Override
@@ -380,7 +389,7 @@ public abstract class MapWrapper<K, V> implements Map<K, V> {
     private class KeySetWrapper extends SetWrapper<K> {
 
         KeySetWrapper() {
-            super(MapWrapper.this._sync);
+            super(MapWrapper.this._strategy);
         }
 
         V removed;
@@ -457,7 +466,7 @@ public abstract class MapWrapper<K, V> implements Map<K, V> {
     private class EntrySetWrapper extends SetWrapper<Entry<K, V>> {
 
         EntrySetWrapper() {
-            super(MapWrapper.this._sync);
+            super(MapWrapper.this._strategy);
         }
 
         @Override

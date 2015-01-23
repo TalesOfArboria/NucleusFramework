@@ -39,6 +39,11 @@ import javax.annotation.Nonnull;
  *
  * <p> When the player logs out, the entry is automatically removed.</p>
  *
+ * <p>Thread safe.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
+ *
  * @param <V>  The value type
  */
 public class PlayerListMultimap<V> extends PlayerMultimap<V> {
@@ -54,7 +59,6 @@ public class PlayerListMultimap<V> extends PlayerMultimap<V> {
         super(plugin);
 
         _map = ListMultimapBuilder.hashKeys().arrayListValues().build();
-
     }
 
     @Override

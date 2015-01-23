@@ -39,67 +39,71 @@ public class IterableRunnable<E> implements Runnable {
 
         Iterator<E> iterator = _iterable.iterator();
 
-        // test iterator hasNext, next through entire collection
-        for (int i=0; i < _size; i++) {
-            assertEquals(true, iterator.hasNext());
-            assertNotNull(iterator.next());
-        }
+        synchronized (_iterable) { // prevent exceptions caused by iterators that require external sync
 
-        // test hasNext after iteration complete
-        assertEquals(false, iterator.hasNext());
-
-        // test next after iteration complete
-        try {
-            iterator.next();
-            throw new AssertionError("NoSuchElementException expected.");
-        }
-        catch (NoSuchElementException ignore) {}
-
-        try {
-
-            iterator = _iterable.iterator();
-
-            // test remove through entire iterator
+            // test iterator hasNext, next through entire collection
             for (int i = 0; i < _size; i++) {
                 assertEquals(true, iterator.hasNext());
+                assertNotNull(iterator.next());
+            }
 
+            // test hasNext after iteration complete
+            assertEquals(false, iterator.hasNext());
+
+            // test next after iteration complete
+            try {
                 iterator.next();
-                iterator.remove();
+                throw new AssertionError("NoSuchElementException expected.");
+            } catch (NoSuchElementException ignore) {
             }
 
-            iterator = _iterable.iterator();
 
-            // test remove on empty iterator, hasNext and next not called.
             try {
-                iterator.remove();
-                throw new AssertionError("IllegalStateException expected.");
-            } catch (IllegalStateException ignore) {
-            }
 
-            _refill.run();
+                iterator = _iterable.iterator();
 
-            iterator = _iterable.iterator();
-            assertEquals(true, iterator.hasNext());
+                // test remove through entire iterator
+                for (int i = 0; i < _size; i++) {
+                    assertEquals(true, iterator.hasNext());
 
-            // test remove, hasNext called.
-            try {
-                iterator.remove();
-                throw new AssertionError("IllegalStateException expected.");
-            } catch (IllegalStateException ignore) {
-            }
+                    iterator.next();
+                    iterator.remove();
+                }
 
-            _refill.run();
+                iterator = _iterable.iterator();
 
-            iterator = _iterable.iterator();
+                // test remove on empty iterator, hasNext and next not called.
+                try {
+                    iterator.remove();
+                    throw new AssertionError("IllegalStateException expected.");
+                } catch (IllegalStateException ignore) {
+                }
 
-            // test remove, hasNext NOT called.
-            try {
-                iterator.remove();
-                throw new AssertionError("IllegalStateException expected.");
-            } catch (IllegalStateException ignore) {
+                _refill.run();
+
+                iterator = _iterable.iterator();
+                assertEquals(true, iterator.hasNext());
+
+                // test remove, hasNext called.
+                try {
+                    iterator.remove();
+                    throw new AssertionError("IllegalStateException expected.");
+                } catch (IllegalStateException ignore) {
+                }
+
+                _refill.run();
+
+                iterator = _iterable.iterator();
+
+                // test remove, hasNext NOT called.
+                try {
+                    iterator.remove();
+                    throw new AssertionError("IllegalStateException expected.");
+                } catch (IllegalStateException ignore) {
+                }
+            } catch (UnsupportedOperationException ignore) {
             }
         }
-        catch (UnsupportedOperationException ignore) {}
     }
 
 }

@@ -30,6 +30,11 @@ import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
 
 /**
  * An {@link AgentMultimap} implementation that uses hash keys and hash set values.
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class AgentSetMultimap<K, V extends ISubscriberAgent> extends AgentMultimap<K, V> {
 

@@ -26,14 +26,15 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.TimeScale;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 
 import org.bukkit.plugin.Plugin;
 
@@ -63,6 +64,9 @@ import java.util.WeakHashMap;
  * (1 tick) of expiring.</p>
  *
  * <p>Thread safe.</p>
+ *
+ * <p>The sets iterators must be used inside a synchronized block which locks the
+ * set instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
@@ -86,7 +90,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
     private final int _lifespan; // milliseconds
     private final TimeScale _timeScale;
 
-    private final transient Object _sync = new Object();
+    private final transient Object _sync;
     private transient long _nextCleanup;
 
     private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
@@ -130,6 +134,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
         PreCon.notNull(timeScale);
 
         _plugin = plugin;
+        _sync = this;
         _lifespan = defaultLifespan * timeScale.getTimeFactor();
         _timeScale = timeScale;
         _expireMap = new HashMap<>(size);
@@ -344,78 +349,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
     @Override
     public Iterator<E> iterator() {
-
-        final Iterator<Entry<E, ExpireInfo>> iterator;
-
-        synchronized (_sync) {
-            iterator = _expireMap.entrySet().iterator();
-        }
-
-        return new Iterator<E>() {
-
-            Entry<E, ExpireInfo> peek;
-            boolean invokedHasNext;
-            boolean invokedNext;
-
-            @Override
-            public boolean hasNext() {
-
-                invokedHasNext = true;
-
-                synchronized (_sync) {
-
-                    if (!iterator.hasNext())
-                        return false;
-
-                    while (iterator.hasNext()) {
-                        peek = iterator.next();
-
-                        if (peek.getValue().isExpired()) {
-                            iterator.remove();
-                        }
-                        else {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-            }
-
-            @Override
-            public E next() {
-
-                if (!invokedHasNext)
-                    throw new IllegalStateException("Cannot invoke 'next' before invoking 'hasNext'.");
-
-                invokedHasNext = false;
-                invokedNext = true;
-
-                synchronized (_sync) {
-
-                    if (peek == null)
-                        hasNext();
-
-                    if (peek == null)
-                        throw new NoSuchElementException();
-
-                    Entry<E, ExpireInfo> n = peek;
-                    peek = null;
-                    return n.getKey();
-                }
-            }
-
-            @Override
-            public void remove() {
-
-                if (!invokedNext)
-                    throw new IllegalStateException("Cannot invoke 'remove' before invoking 'next'");
-
-                synchronized (_sync) {
-                    iterator.remove();
-                }
-            }
-        };
+        return new Itr();
     }
 
     @Override
@@ -547,33 +481,33 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         _janitor = Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(),
                 JANITOR_INITIAL_DELAY_TICKS, JANITOR_INTERVAL_TICKS, new Runnable() {
-            @Override
-            public void run() {
+                    @Override
+                    public void run() {
 
-                List<TimedHashSet> sets;
-
-                synchronized (_instances) {
-                    sets = new ArrayList<TimedHashSet>(_instances.keySet());
-                }
-
-                for (TimedHashSet set : sets) {
-
-                    // remove instance if owning plugin is not enabled
-                    if (!set.getPlugin().isEnabled()) {
+                        List<TimedHashSet> sets;
 
                         synchronized (_instances) {
-                            _instances.remove(set);
+                            sets = new ArrayList<TimedHashSet>(_instances.keySet());
                         }
-                        continue;
-                    }
 
-                    // cleanup instance
-                    synchronized (set._sync) {
-                        set.cleanup();
+                        for (TimedHashSet set : sets) {
+
+                            // remove instance if owning plugin is not enabled
+                            if (!set.getPlugin().isEnabled()) {
+
+                                synchronized (_instances) {
+                                    _instances.remove(set);
+                                }
+                                continue;
+                            }
+
+                            // cleanup instance
+                            synchronized (set._sync) {
+                                set.cleanup();
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
     }
 
     private static final class ExpireInfo {
@@ -586,6 +520,74 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         boolean isExpired() {
             return System.currentTimeMillis() >= expires;
+        }
+    }
+
+    private final class Itr implements Iterator<E> {
+
+        Iterator<Entry<E, ExpireInfo>> iterator
+                = _expireMap.entrySet().iterator();
+
+        Entry<E, ExpireInfo> peek;
+        boolean invokedHasNext;
+        boolean invokedNext;
+
+        @Override
+        public boolean hasNext() {
+
+            IteratorWrapper.assertIteratorLock(_sync);
+
+            invokedHasNext = true;
+
+            if (!iterator.hasNext())
+                return false;
+
+            while (iterator.hasNext()) {
+                peek = iterator.next();
+
+                if (peek.getValue().isExpired()) {
+                    iterator.remove();
+                }
+                else {
+                    return true;
+                }
+            }
+
+            return false;
+
+        }
+
+        @Override
+        public E next() {
+
+            IteratorWrapper.assertIteratorLock(_sync);
+
+            if (!invokedHasNext)
+                throw new IllegalStateException("Cannot invoke 'next' before invoking 'hasNext'.");
+
+            invokedHasNext = false;
+            invokedNext = true;
+
+            if (peek == null)
+                hasNext();
+
+            if (peek == null)
+                throw new NoSuchElementException();
+
+            Entry<E, ExpireInfo> n = peek;
+            peek = null;
+            return n.getKey();
+        }
+
+        @Override
+        public void remove() {
+
+            IteratorWrapper.assertIteratorLock(_sync);
+
+            if (!invokedNext)
+                throw new IllegalStateException("Cannot invoke 'remove' before invoking 'next'");
+
+            iterator.remove();
         }
     }
 }

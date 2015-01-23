@@ -26,7 +26,9 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.collections.wrap.MapWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -41,6 +43,11 @@ import java.util.UUID;
  * <p>
  *     When the player logs out, the entry is automatically removed.
  * </p>
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  *
  * @param <V>  The value type
  */
@@ -61,7 +68,10 @@ public class PlayerMap<V> extends MapWrapper<UUID, V> implements IPlayerCollecti
 	 * Constructor.
 	 */
 	public PlayerMap(Plugin plugin, int size) {
-		super(new Object());
+		super(SyncStrategy.SYNC);
+
+		PreCon.notNull(plugin);
+
 		_plugin = plugin;
 		_map = new HashMap<UUID, V>(size);
 		_tracker = new PlayerCollectionTracker(this);

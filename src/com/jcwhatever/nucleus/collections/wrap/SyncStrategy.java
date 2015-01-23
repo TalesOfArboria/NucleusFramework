@@ -22,43 +22,52 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.collections.observer.subscriber;
+package com.jcwhatever.nucleus.collections.wrap;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
-import com.jcwhatever.nucleus.utils.observer.ISubscriber;
+import javax.annotation.Nullable;
 
 /**
- * A {@link SubscriberMultimap} implementation that uses hash keys and hash set values.
- *
- * <p>Thread safe.</p>
- *
- * <p>The maps iterators must be used inside a synchronized block which locks the
- * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
+ * A strategy for synchronization that provides the sync object.
  */
-public class SubscriberSetMultimap<K, V extends ISubscriber> extends SubscriberMultimap<K, V> {
-
-    private Multimap<K, V> _multimap;
+public class SyncStrategy {
 
     /**
-     * Constructor.
+     * No synchronization. {@code #getSync} returns null.
      */
-    public SubscriberSetMultimap() {
-        this(7, 3);
-    }
+    public static final SyncStrategy NONE = new SyncStrategy(null);
+
+    /**
+     * Synchronize on source. {@code #getSync} returns the source object.
+     */
+    public static final SyncStrategy SYNC = new SyncStrategy(null);
+
+    private final Object _sync;
 
     /**
      * Constructor.
      *
-     * @param keySize    The initial key set capacity.
-     * @param valueSize  The initial capacity of value collections.
+     * @param sync  The synchronization object to use.
      */
-    public SubscriberSetMultimap(int keySize, int valueSize) {
-        _multimap = MultimapBuilder.hashKeys(keySize).hashSetValues(valueSize).build();
+    public SyncStrategy(@Nullable Object sync) {
+        _sync = sync;
     }
 
-    @Override
-    protected Multimap<K, V> map() {
-        return _multimap;
+    /**
+     * Get the synchronization object to use.
+     *
+     * @param source  The source object that needs synchronization.
+     *
+     * @return  The synchronization object.
+     */
+    @Nullable
+    public Object getSync(Object source) {
+        if (this == SyncStrategy.NONE) {
+            return null;
+        }
+        else {
+            return this == SyncStrategy.SYNC
+                    ? source
+                    : _sync;
+        }
     }
 }

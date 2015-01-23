@@ -77,32 +77,36 @@ public class CollectionRunnable<E> implements Runnable {
             // test iterator
             Iterator<E> iterator = _collection.iterator();
 
-            // test iterator hasNext and next
-            assertEquals(true, iterator.hasNext());
-            assertNotNull(iterator.next());
-
             int size = 0;
+            synchronized (_collection) { // prevent exceptions from iterators that require external sync
 
-            // test iterator remove
-            try {
-                iterator.remove();
-                assertEquals(1,_collection.size());
+                // test iterator hasNext and next
+                assertEquals(true, iterator.hasNext());
+                assertNotNull(iterator.next());
+
+                // test iterator remove
+                try {
+                    iterator.remove();
+                    assertEquals(1, _collection.size());
+                } catch (UnsupportedOperationException ignore) {
+                    size++;
+                }
+
+                // test iterator hasNext and next (second iteration)
+                assertEquals(true, iterator.hasNext());
+                assertNotNull(iterator.next());
+
+                // test iterator remove (second iteration)
+                try {
+                    iterator.remove();
+                    assertEquals(0, _collection.size());
+                } catch (UnsupportedOperationException ignore) {
+                    size++;
+                }
+
+                // test iterator hasNext (iteration complete)
+                assertEquals(false, iterator.hasNext());
             }
-            catch (UnsupportedOperationException ignore) { size++; }
-
-            // test iterator hasNext and next (second iteration)
-            assertEquals(true, iterator.hasNext());
-            assertNotNull(iterator.next());
-
-            // test iterator remove (second iteration)
-            try {
-                iterator.remove();
-                assertEquals(0,_collection.size());
-            }
-            catch (UnsupportedOperationException ignore) { size ++; }
-
-            // test iterator hasNext (iteration complete)
-            assertEquals(false, iterator.hasNext());
 
             // test iterator remove valid
             assertEquals(size, _collection.size());

@@ -98,8 +98,6 @@ public class EventManager implements IPluginOwned, IDisposable {
     private static final SubscriberMultimap<Plugin, IUpdateSubscriber> _pluginCallMap
             = new SubscriberSetMultimap<>(7, 3);
 
-    private static final Object _staticSync = new Object();
-
     /**
      * Remove all registered event handlers and listeners from
      * the specified plugin from all event managers.
@@ -111,12 +109,14 @@ public class EventManager implements IPluginOwned, IDisposable {
     public static void unregisterPlugin(Plugin plugin) {
         PreCon.notNull(plugin);
 
-        synchronized (_staticSync) {
+        synchronized (_pluginEventMap) {
             Collection<IEventSubscriber> eventSubscribers = _pluginEventMap.removeAll(plugin);
             for (IEventSubscriber subscriber : eventSubscribers) {
                 subscriber.dispose();
             }
+        }
 
+        synchronized (_pluginCallMap) {
             Collection<IUpdateSubscriber> callSubscribers = _pluginCallMap.removeAll(plugin);
             for (IUpdateSubscriber subscriber : callSubscribers) {
                 subscriber.dispose();
@@ -185,9 +185,8 @@ public class EventManager implements IPluginOwned, IDisposable {
 
         agent.register(subscriber);
 
-        synchronized (_staticSync) {
-            _pluginEventMap.put(plugin, subscriber);
-        }
+
+        _pluginEventMap.put(plugin, subscriber);
     }
 
     /**
@@ -228,9 +227,8 @@ public class EventManager implements IPluginOwned, IDisposable {
             agent.register(subscriber);
         }
 
-        synchronized (_staticSync) {
-            _pluginEventMap.putAll(listener.getPlugin(), subscribers);
-        }
+
+        _pluginEventMap.putAll(listener.getPlugin(), subscribers);
     }
 
     /**
@@ -242,7 +240,7 @@ public class EventManager implements IPluginOwned, IDisposable {
         PreCon.notNull(subscriber);
 
         if (_eventAgents.unregisterAll(subscriber)) {
-            synchronized (_staticSync) {
+            synchronized (_pluginEventMap) {
                 CollectionUtils.removeValue(_pluginEventMap, subscriber);
             }
         }
@@ -348,9 +346,8 @@ public class EventManager implements IPluginOwned, IDisposable {
 
         _callAgent.addSubscriber(subscriber);
 
-        synchronized (_staticSync) {
-            _pluginCallMap.put(plugin, subscriber);
-        }
+
+        _pluginCallMap.put(plugin, subscriber);
 
         return this;
     }

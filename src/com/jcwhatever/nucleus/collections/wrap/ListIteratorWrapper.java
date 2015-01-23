@@ -26,12 +26,15 @@ package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.ListIterator;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link ListIterator} wrapper.
  * The wrapper is optionally synchronized via a sync object or {@link ReadWriteLock}
- * passed in through the constructor.
+ * passed into the constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the iterator is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual iterator is provided to the abstract implementation by
  * overriding and returning it from the {@link #iterator} method.</p>
@@ -41,27 +44,31 @@ import javax.annotation.Nullable;
  */
 public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
 
-    private final Object _sync;
-    private final ReadWriteLock _lock;
+    protected final Object _sync;
+    protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
     private E _current;
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public ListIteratorWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public ListIteratorWrapper(@Nullable Object sync) {
+    public ListIteratorWrapper(SyncStrategy strategy) {
 
-        _sync = sync;
-        _lock = sync instanceof ReadWriteLock
-                ? (ReadWriteLock)sync
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock)_sync
                 : null;
     }
 
@@ -94,11 +101,6 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
      */
     protected abstract ListIterator<E> iterator();
 
-    @Nullable
-    public Object getSync() {
-        return _sync;
-    }
-
     @Override
     public boolean hasNext() {
         if (_lock != null) {
@@ -110,11 +112,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().hasNext();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().hasNext();
         }
     }
@@ -130,11 +132,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return _current = iterator().next();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return _current = iterator().next();
         }
     }
@@ -150,11 +152,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().hasPrevious();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().hasPrevious();
         }
     }
@@ -170,11 +172,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return _current = iterator().previous();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return _current = iterator().previous();
         }
     }
@@ -190,11 +192,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().nextIndex();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().nextIndex();
         }
     }
@@ -210,11 +212,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().previousIndex();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().previousIndex();
         }
     }
@@ -233,11 +235,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.writeLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                iterator().remove();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             iterator().remove();
         }
 
@@ -255,11 +257,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.writeLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                iterator().set(_current = e);
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             iterator().set(_current = e);
         }
     }
@@ -275,11 +277,11 @@ public abstract class ListIteratorWrapper<E> implements ListIterator<E> {
                 _lock.writeLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                iterator().add(e);
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             iterator().add(e);
         }
     }

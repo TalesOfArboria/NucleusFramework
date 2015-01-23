@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.collections.observer.agent;
 
 import com.jcwhatever.nucleus.collections.wrap.CollectionWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
@@ -49,11 +50,18 @@ import javax.annotation.Nullable;
  *
  * <p>Implementations may need to use their own synchronization object, in which case it can be
  * passed in via the constructor.</p>
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>Implementations may need to use their own synchronization object, in which case it can be
+ * passed in via the constructor using a {@link SyncStrategy}.</p>
+ *
+ * <p>The collections iterators must be used inside a synchronized block which locks the
+ * collection instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public abstract class AgentCollection<E extends ISubscriberAgent>
         extends CollectionWrapper<E> implements IDisposable {
 
-    private final Object _sync;
     private final InternalSubscriber _collectionSubscriber;
 
     private volatile boolean _isDisposed;
@@ -61,22 +69,21 @@ public abstract class AgentCollection<E extends ISubscriberAgent>
     /**
      * Constructor.
      *
-     * <p>Uses a private synchronization object and subscriber.</p>
+     * <p>Synchronizes self and provides own subscriber agent.</p>
      */
     protected AgentCollection() {
-        this(new Object(), null);
+        this(SyncStrategy.SYNC, null);
     }
 
     /**
      * Constructor.
      *
-     * @param sync        The synchronization object to use.
+     * @param strategy    The synchronization strategy to use.
      * @param subscriber  The collection subscriber to use. Optional. Creates a new one if null.
      */
-    protected AgentCollection(Object sync, @Nullable ISubscriber subscriber) {
-        super(sync);
+    public AgentCollection(SyncStrategy strategy, @Nullable ISubscriber subscriber) {
+        super(strategy);
 
-        _sync = sync;
         _collectionSubscriber = new InternalSubscriber(subscriber != null ? subscriber : new Subscriber() {});
     }
 

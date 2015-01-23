@@ -33,6 +33,11 @@ import java.util.Set;
 /**
  * A {@link HashSet} based implementation of {@link AgentCollection} which
  * automatically removes agents when they are disposed.
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The sets iterators must be used inside a synchronized block which locks the
+ * set instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class AgentHashSet<E extends ISubscriberAgent> extends AgentCollection<E> implements Set<E> {
 

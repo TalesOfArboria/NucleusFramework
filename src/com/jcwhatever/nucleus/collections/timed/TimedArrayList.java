@@ -26,17 +26,19 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.wrap.ConversionListWrapper;
 import com.jcwhatever.nucleus.collections.wrap.ConversionListIteratorWrapper;
+import com.jcwhatever.nucleus.collections.wrap.ConversionListWrapper;
+import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.TimeScale;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.plugin.Plugin;
@@ -76,6 +78,9 @@ import javax.annotation.Nullable;
  * an element between operations from a different thread.</p>
  *
  * <p>Thread safe.</p>
+ *
+ * <p>The lists iterators must be used inside a synchronized block which locks the
+ * list instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
@@ -99,7 +104,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     private final int _lifespan; // milliseconds
     private final TimeScale _timeScale;
 
-    private final transient Object _sync = new Object();
+    private final transient Object _sync;
     private transient long _nextCleanup;
 
     private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
@@ -146,6 +151,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         _lifespan = defaultTime * timeScale.getTimeFactor();
         _timeScale = timeScale;
         _list = new ArrayList<>(size);
+        _sync = this;
 
         synchronized (_instances) {
             _instances.put(this, null);
@@ -366,83 +372,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
     @Override
     public Iterator<E> iterator() {
-
-        final Iterator<Element<E>> iterator;
-
-        synchronized (_sync) {
-            iterator = _list.iterator();
-        }
-
-        return new Iterator<E>() {
-
-            Element<E> peek;
-            boolean invokedHasNext;
-            boolean invokedNext;
-
-            @Override
-            public boolean hasNext() {
-
-                invokedHasNext = true;
-
-                synchronized (_sync) {
-
-                    if (!iterator.hasNext())
-                        return false;
-
-                    while (iterator.hasNext()) {
-
-                        peek = iterator.next();
-
-                        if (peek.isExpired()) {
-                            iterator.remove();
-                            onLifespanEnd(peek.element);
-                        }
-                        else {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-            }
-
-            @Override
-            public E next() {
-
-                if (!invokedHasNext)
-                    throw new IllegalStateException("Cannot invoke 'next' until 'hasNext' has been invoked.");
-
-                invokedHasNext = false;
-                invokedNext = true;
-
-                synchronized (_sync) {
-
-                    if (peek == null)
-                        hasNext();
-
-                    if (peek == null)
-                        throw new NoSuchElementException();
-
-
-                    Element<E> n = peek;
-                    peek = null;
-                    return n.element;
-                }
-            }
-
-            @Override
-            public void remove() {
-
-                if (!invokedNext)
-                    throw new IllegalStateException("Cannot 'remove' until 'next' method is invoked.");
-
-                invokedNext =false;
-
-                synchronized (_sync) {
-                    iterator.remove();
-                }
-            }
-        };
+        return new Itr();
     }
 
     @Override
@@ -800,6 +730,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         ListIterator<Element<E>> iterator;
 
         TimedListIterator(int index) {
+            super(new SyncStrategy(TimedArrayList.this._sync));
             this.iterator = _list.listIterator(index);
         }
 
@@ -820,6 +751,76 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         @Override
         protected ListIterator<Element<E>> iterator() {
             return iterator;
+        }
+    }
+
+    private final class Itr implements Iterator<E> {
+
+        final Iterator<Element<E>> iterator = _list.iterator();
+
+        Element<E> peek;
+        boolean invokedHasNext;
+        boolean invokedNext;
+
+        @Override
+        public boolean hasNext() {
+
+            IteratorWrapper.assertIteratorLock(_sync);
+
+            invokedHasNext = true;
+
+            if (!iterator.hasNext())
+                return false;
+
+            while (iterator.hasNext()) {
+
+                peek = iterator.next();
+
+                if (peek.isExpired()) {
+                    iterator.remove();
+                    onLifespanEnd(peek.element);
+                } else {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public E next() {
+
+            IteratorWrapper.assertIteratorLock(_sync);
+
+            if (!invokedHasNext)
+                throw new IllegalStateException("Cannot invoke 'next' until 'hasNext' has been invoked.");
+
+            invokedHasNext = false;
+            invokedNext = true;
+
+            if (peek == null)
+                hasNext();
+
+            if (peek == null)
+                throw new NoSuchElementException();
+
+
+            Element<E> n = peek;
+            peek = null;
+            return n.element;
+        }
+
+        @Override
+        public void remove() {
+
+            IteratorWrapper.assertIteratorLock(_sync);
+
+            if (!invokedNext)
+                throw new IllegalStateException("Cannot 'remove' until 'next' method is invoked.");
+
+            invokedNext = false;
+
+            iterator.remove();
         }
     }
 }

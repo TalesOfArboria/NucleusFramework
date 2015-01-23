@@ -38,6 +38,11 @@ import javax.annotation.Nonnull;
  *
  * <p> When the player logs out, the entry is automatically removed.</p>
  *
+ * <p>Thread safe.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
+ *
  * @param <V>  The value type
  */
 public class PlayerSetMultimap<V> extends PlayerMultimap<V> {
@@ -50,7 +55,6 @@ public class PlayerSetMultimap<V> extends PlayerMultimap<V> {
      * @param plugin   The owning plugin.
      */
     public PlayerSetMultimap(Plugin plugin, int keySize, int valueSize) {
-        //noinspection unchecked
         super(plugin);
 
         _map = MultimapBuilder.hashKeys(keySize).hashSetValues(valueSize).build();

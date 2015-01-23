@@ -26,13 +26,17 @@ package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.Collection;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link Set} wrapper
  * designed to convert between the encapsulated set element type and
  * an externally visible type. The wrapper is optionally synchronized via a sync
- * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the constructor.
+ * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the set is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual list is provided to the abstract implementation by
  * overriding and returning it from the {@link #set} method.</p>
@@ -49,18 +53,20 @@ public abstract class ConversionSetWrapper<E, T>
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public ConversionSetWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public ConversionSetWrapper(@Nullable Object sync) {
-        super(sync);
+    public ConversionSetWrapper(SyncStrategy strategy) {
+        super(strategy);
     }
 
     /**

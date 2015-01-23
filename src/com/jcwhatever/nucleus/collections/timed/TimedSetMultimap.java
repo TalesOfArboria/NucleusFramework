@@ -33,6 +33,11 @@ import org.bukkit.plugin.Plugin;
 /**
  * An implementation of {@link TimedMultimap} that utilizes an internal
  * {@link Multimap} with hash keys and hash set values.
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The sets iterators must be used inside a synchronized block which locks the
+ * set instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class TimedSetMultimap<K, V> extends TimedMultimap<K, V> {
 

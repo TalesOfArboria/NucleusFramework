@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.collections.wrap;
 
+import com.jcwhatever.nucleus.utils.PreCon;
+
 import java.util.Iterator;
 import java.util.concurrent.locks.ReadWriteLock;
 import javax.annotation.Nullable;
@@ -32,7 +34,11 @@ import javax.annotation.Nullable;
  * An abstract implementation of a {@link Iterator} wrapper
  * designed to convert between the encapsulated collection element type and
  * an externally visible type. The wrapper is optionally synchronized via a sync
- * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the constructor.
+ * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the iterator is synchronized, the sync object must be externally locked while
+ * in use. Otherwise, a {@link java.lang.IllegalStateException} will be thrown.</p>
  *
  * <p>The actual iterator is provided to the abstract implementation by
  * overriding and returning it from the {@link #iterator} method.</p>
@@ -42,27 +48,31 @@ import javax.annotation.Nullable;
  */
 public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
 
-    private final Object _sync;
-    private final ReadWriteLock _lock;
+    protected final Object _sync;
+    protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
+
     private T _current;
 
     /**
      * Constructor.
      */
     public ConversionIteratorWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public ConversionIteratorWrapper(@Nullable Object sync) {
+    public ConversionIteratorWrapper(SyncStrategy strategy) {
+        PreCon.notNull(strategy);
 
-        _sync = sync;
-        _lock = sync instanceof ReadWriteLock
-                ? (ReadWriteLock)sync
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock)_sync
                 : null;
     }
 
@@ -93,11 +103,9 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
      */
     protected abstract Iterator<T> iterator();
 
-    @Nullable
-    public Object getSync() {
-        return _sync;
-    }
-
+    /**
+     * Get the current iterator internal element.
+     */
     @Nullable
     public T getCurrent() {
         return _current;
@@ -115,11 +123,11 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().hasNext();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().hasNext();
         }
     }
@@ -135,11 +143,11 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return nextSource();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return nextSource();
         }
     }
@@ -161,11 +169,11 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
                 _lock.writeLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                removeSource();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             removeSource();
         }
     }

@@ -33,13 +33,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link Collection} wrapper designed to convert
  * between the collections internal element type and the publicly visible element
  * type. The wrapper is optionally synchronized via a sync object or {@link ReadWriteLock}
- * passed in through the constructor.
+ * passed into the constructor using a {@link SyncStrategy}.
  *
  * <p>The actual collection is provided to the abstract implementation by
  * overriding and returning it from the {@link #collection} method.</p>
@@ -52,24 +51,27 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
 
     protected final Object _sync;
     protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
 
     /**
      * Constructor.
      */
     public ConversionCollectionWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization object to use.
      */
-    public ConversionCollectionWrapper(@Nullable Object sync) {
+    public ConversionCollectionWrapper(SyncStrategy strategy) {
+        PreCon.notNull(strategy);
 
-        _sync = sync;
-        _lock = sync instanceof ReadWriteLock
-                ? (ReadWriteLock)sync
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock)_sync
                 : null;
     }
 
@@ -197,7 +199,7 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
 
     @Override
     public Iterator<E> iterator() {
-        return new ConversionIteratorWrapper<E, T>(_sync) {
+        return new ConversionIteratorWrapper<E, T>(_strategy) {
 
             Iterator<T> iterator = collection().iterator();
 
@@ -494,7 +496,7 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
         return list;
     }
 
-    protected class Matcher {
+    protected final class Matcher {
         final T matcher;
 
         public Matcher(Object obj) {

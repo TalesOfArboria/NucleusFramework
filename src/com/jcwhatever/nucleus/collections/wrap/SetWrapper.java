@@ -26,12 +26,15 @@ package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.Collection;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link Set} wrapper. The wrapper is
  * optionally synchronized via a sync object or {@link java.util.concurrent.locks.ReadWriteLock}
- * passed in through the constructor.
+ * passed into the constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the set is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual collection is provided to the abstract implementation by
  * overriding and returning it from the {@link #set} method.</p>
@@ -44,18 +47,20 @@ public abstract class SetWrapper<E> extends CollectionWrapper<E> implements Set<
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public SetWrapper() {
-        super(null);
+        super(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public SetWrapper(@Nullable Object sync) {
-        super(sync);
+    public SetWrapper(SyncStrategy strategy) {
+        super(strategy);
     }
 
     /**

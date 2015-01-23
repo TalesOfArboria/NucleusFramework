@@ -26,14 +26,18 @@ package com.jcwhatever.nucleus.collections.wrap;
 
 import java.util.Collection;
 import java.util.Queue;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link Queue} wrapper
  * designed to convert between the encapsulated queue element type and
  * an externally visible type. The wrapper is optionally synchronized via a sync
- * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the constructor.
+ * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
  *
+ * <p>If the queue is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
+
  * <p>The actual queue is provided to the abstract implementation by
  * overriding and returning it from the {@link #queue} method.</p>
  *
@@ -49,18 +53,20 @@ public abstract class ConversionQueueWrapper<E, T>
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public ConversionQueueWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public ConversionQueueWrapper(@Nullable Object sync) {
-        super(sync);
+    public ConversionQueueWrapper(SyncStrategy strategy) {
+        super(strategy);
     }
 
     /**

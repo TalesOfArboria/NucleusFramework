@@ -33,6 +33,11 @@ import java.util.LinkedList;
 /**
  * A linked list of {@link ISubscriber} which automatically removes agents
  * when they are disposed.
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The lists iterators must be used inside a synchronized block which locks the
+ * list instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class SubscriberLinkedList<E extends ISubscriber> extends SubscriberDeque<E> {
 

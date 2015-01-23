@@ -24,32 +24,46 @@
 
 package com.jcwhatever.nucleus.collections.wrap;
 
+import com.jcwhatever.nucleus.utils.PreCon;
+
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of an {@link Entry} wrapper. The wrapper is
  * optionally synchronized via a sync object or {@link ReadWriteLock}
- * passed in through the constructor.
+ * passed into the constructor using a {@link SyncStrategy}.
  *
  * <p>The actual entry is provided to the abstract implementation by
  * overriding and returning it from the {@link #entry} method.</p>
  */
 public abstract class EntryWrapper<K, V> implements Entry<K, V> {
 
-    private final Object _sync;
-    private final ReadWriteLock _lock;
+    protected final Object _sync;
+    protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
 
+    /**
+     * Constructor.
+     *
+     * <p>No synchronization.</p>
+     */
     public EntryWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
-    public EntryWrapper(@Nullable Object sync) {
+    /**
+     * Constructor.
+     *
+     * @param strategy  The synchronization strategy to use.
+     */
+    public EntryWrapper(SyncStrategy strategy) {
+        PreCon.notNull(strategy);
 
-        _sync = sync;
-        _lock = sync instanceof ReadWriteLock
-                ? (ReadWriteLock)sync
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock)_sync
                 : null;
     }
 

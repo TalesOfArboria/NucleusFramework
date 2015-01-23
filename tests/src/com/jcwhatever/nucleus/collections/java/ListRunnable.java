@@ -170,7 +170,7 @@ public class ListRunnable<E> implements Runnable {
             assertEquals(2, subList.size());
             assertEquals(5, _list.size());
 
-            ListIteratorRunnable<E> listIteratorTest = new ListIteratorRunnable<E>(
+            ListIteratorRunnable<E> listIteratorTest = new ListIteratorRunnable<E>(_list,
                     _list.listIterator(), _list, _value2, _value3);
             listIteratorTest.run();
 

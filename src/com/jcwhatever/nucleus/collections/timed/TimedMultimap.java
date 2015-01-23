@@ -30,15 +30,16 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.wrap.CollectionWrapper;
 import com.jcwhatever.nucleus.collections.wrap.MapWrapper;
 import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.TimeScale;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
 
 import org.bukkit.plugin.Plugin;
 
@@ -69,6 +70,9 @@ import javax.annotation.Nullable;
  * (1 tick) of expiring.</p>
  *
  * <p>Thread safe.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwned {
 
@@ -98,7 +102,8 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     private final transient EntriesWrapper _entries;
     private final transient AsMapWrapper _asMap;
 
-    private final transient Object _sync = new Object();
+    private final transient Object _sync;
+    private final transient SyncStrategy _strategy;
     private transient long _nextCleanup;
 
     private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
@@ -122,6 +127,8 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         PreCon.notNull(timeScale);
 
         _plugin = plugin;
+        _sync = this;
+        _strategy = new SyncStrategy(this);
         _lifespan = defaultLifespan * timeScale.getTimeFactor();
         _timeScale = timeScale;
         _map = createMultimap();
@@ -553,7 +560,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     private final class KeySetWrapper extends SetWrapper<K> {
 
         KeySetWrapper() {
-            super(TimedMultimap.this._sync);
+            super(TimedMultimap.this._strategy);
         }
 
         @Override
@@ -563,7 +570,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
 
         @Override
         protected void onRemoved(Object o) {
-            synchronized (_sync) {
+            synchronized (TimedMultimap.this._sync) {
                 //noinspection SuspiciousMethodCalls
                 _expireMap.remove(o);
             }
@@ -571,7 +578,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
 
         @Override
         protected void onClear(Collection<K> values) {
-            synchronized (_sync) {
+            synchronized (TimedMultimap.this._sync) {
                 _expireMap.clear();
             }
         }
@@ -585,7 +592,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     private final class ValuesWrapper extends CollectionWrapper<V> {
 
         ValuesWrapper() {
-            super(TimedMultimap.this._sync);
+            super(TimedMultimap.this._strategy);
         }
 
         @Override
@@ -612,12 +619,12 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     private final class EntriesWrapper extends CollectionWrapper<Entry<K, V>> {
 
         EntriesWrapper() {
-            super(TimedMultimap.this._sync);
+            super(TimedMultimap.this._strategy);
         }
 
         @Override
         protected void onAdded(Entry<K, V> entry) {
-            synchronized (_sync) {
+            synchronized (TimedMultimap.this._sync) {
                 _expireMap.put(entry.getKey(), new ExpireInfo(entry.getKey(), _lifespan, TimeScale.MILLISECONDS));
             }
         }
@@ -629,7 +636,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
 
         @Override
         protected void onClear(Collection<Entry<K, V>> values) {
-            synchronized (_sync) {
+            synchronized (TimedMultimap.this._sync) {
                 _expireMap.clear();
             }
         }
@@ -643,7 +650,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     private final class AsMapWrapper extends MapWrapper<K, Collection<V>> {
 
         AsMapWrapper() {
-            super(TimedMultimap.this._sync);
+            super(TimedMultimap.this._strategy);
         }
 
         @Override

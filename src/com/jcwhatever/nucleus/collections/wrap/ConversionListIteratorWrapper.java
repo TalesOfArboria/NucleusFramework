@@ -24,15 +24,20 @@
 
 package com.jcwhatever.nucleus.collections.wrap;
 
+import com.jcwhatever.nucleus.utils.PreCon;
+
 import java.util.ListIterator;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link ListIterator} wrapper
  * designed to convert between the encapsulated list element type and
  * an externally visible type. The wrapper is optionally synchronized via a sync
- * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the constructor.
+ * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the iterator is synchronized, the sync object must be externally locked while
+ * in use. Otherwise, a {@link java.lang.IllegalStateException} will be thrown.</p>
  *
  * <p>The actual list is provided to the abstract implementation by
  * overriding and returning it from the {@link #iterator} method.</p>
@@ -46,27 +51,30 @@ import javax.annotation.Nullable;
  */
 public abstract class ConversionListIteratorWrapper<E, T> implements ListIterator<E> {
 
-    private final Object _sync;
-    private final ReadWriteLock _lock;
+    protected final Object _sync;
+    protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
     private T _current;
 
     /**
      * Constructor.
      */
     public ConversionListIteratorWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public ConversionListIteratorWrapper(@Nullable Object sync) {
+    public ConversionListIteratorWrapper(SyncStrategy strategy) {
+        PreCon.notNull(strategy);
 
-        _sync = sync;
-        _lock = sync instanceof ReadWriteLock
-                ? (ReadWriteLock)sync
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock)_sync
                 : null;
     }
 
@@ -131,11 +139,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().hasNext();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().hasNext();
         }
     }
@@ -151,11 +159,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return convert(_current = iterator().next());
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return convert(_current = iterator().next());
         }
     }
@@ -171,11 +179,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().hasPrevious();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().hasPrevious();
         }
     }
@@ -191,11 +199,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return convert(_current = iterator().previous());
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return convert(_current = iterator().previous());
         }
     }
@@ -211,11 +219,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().nextIndex();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().nextIndex();
         }
     }
@@ -231,11 +239,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.readLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                return iterator().previousIndex();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             return iterator().previousIndex();
         }
     }
@@ -251,11 +259,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.writeLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                removeSource();
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             removeSource();
         }
     }
@@ -278,11 +286,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.writeLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                setSource(e);
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             setSource(e);
         }
     }
@@ -308,11 +316,11 @@ public abstract class ConversionListIteratorWrapper<E, T> implements ListIterato
                 _lock.writeLock().unlock();
             }
         }
-        else if (_sync != null) {
-            synchronized (_sync) {
-                addSource(e);
-            }
-        } else {
+        else {
+
+            if (_sync != null)
+                IteratorWrapper.assertIteratorLock(_sync);
+
             addSource(e);
         }
     }

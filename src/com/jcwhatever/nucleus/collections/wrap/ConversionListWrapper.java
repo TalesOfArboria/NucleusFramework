@@ -29,13 +29,17 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a {@link List} wrapper
  * designed to convert between the encapsulated list element type and
  * an externally visible type. The wrapper is optionally synchronized via a sync
- * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the constructor.
+ * object or {@link java.util.concurrent.locks.ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the list is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual list is provided to the abstract implementation by
  * overriding and returning it from the {@link #list} method.</p>
@@ -52,18 +56,20 @@ public abstract class ConversionListWrapper<E, T>
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public ConversionListWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public ConversionListWrapper(@Nullable Object sync) {
-        super(sync);
+    public ConversionListWrapper(SyncStrategy strategy) {
+        super(strategy);
     }
 
     /**
@@ -270,7 +276,7 @@ public abstract class ConversionListWrapper<E, T>
     @Override
     public ListIterator<E> listIterator(final int index) {
 
-        return new ConversionListIteratorWrapper<E, T>(_sync) {
+        return new ConversionListIteratorWrapper<E, T>(_strategy) {
 
             ListIterator<T> iterator = list().listIterator(index);
 
@@ -297,7 +303,7 @@ public abstract class ConversionListWrapper<E, T>
         final List<T> list = list().subList(fromIndex, toIndex);
         final ConversionListWrapper<E, T> parent = this;
 
-        return new ConversionListWrapper<E, T>(_sync) {
+        return new ConversionListWrapper<E, T>(_strategy) {
 
             @Override
             protected List<T> list() {

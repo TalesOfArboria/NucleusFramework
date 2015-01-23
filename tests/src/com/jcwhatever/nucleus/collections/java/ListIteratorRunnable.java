@@ -13,6 +13,7 @@ import java.util.ListIterator;
  */
 public class ListIteratorRunnable<E> implements Runnable {
 
+    final Object _sync;
     final ListIterator<E> _iterator;
     final List<E> _values;
     final E _value1;
@@ -21,12 +22,15 @@ public class ListIteratorRunnable<E> implements Runnable {
     /**
      * Constructor.
      *
+     * @param sync      The sync object to use. Needed for iterators that require external sync.
+     *                  Is generally the iterators owning collection instance.
      * @param iterator  The iterator to test.
      * @param values    The values contained in the iterator. at least 3 values required.
      * @param value1    A value to insert for testing.
      * @param value2    A value to insert for testing.
      */
-    public ListIteratorRunnable(ListIterator<E> iterator, List<E> values, E value1, E value2) {
+    public ListIteratorRunnable(Object sync, ListIterator<E> iterator, List<E> values, E value1, E value2) {
+        _sync = sync;
         _iterator = iterator;
         _values = values;
         _value1 = value1;
@@ -39,77 +43,82 @@ public class ListIteratorRunnable<E> implements Runnable {
     @Override
     public void run() {
 
-        assertEquals(false, _iterator.hasPrevious());
-
-        assertEquals(true, _iterator.hasNext());
-        assertEquals(_values.get(0), _iterator.next());
-
-        if (_iterator.hasPrevious()) {
-            assertEquals(true, _iterator.hasPrevious());
-
-            assertEquals(true, _iterator.hasNext());
-            assertEquals(_values.get(1), _iterator.next());
-
-            assertEquals(true, _iterator.hasPrevious());
-            assertEquals(_values.get(1), _iterator.previous());
-
-            assertEquals(true, _iterator.hasPrevious());
-            assertEquals(_values.get(0), _iterator.previous());
+        synchronized (_sync) {
 
             assertEquals(false, _iterator.hasPrevious());
 
-            _iterator.next();
+            assertEquals(true, _iterator.hasNext());
+            assertEquals(_values.get(0), _iterator.next());
 
-        } else {
-            try {
-                _iterator.previous();
-                throw new AssertionError("UnsupportedOperationException expected.");
-            } catch (UnsupportedOperationException ignore) {}
-        }
+            if (_iterator.hasPrevious()) {
+                assertEquals(true, _iterator.hasPrevious());
 
-        //test add
-        try {
-            _iterator.add(_value2);
-            assertEquals(true, _iterator.hasPrevious());
-            assertEquals(_value2, _iterator.previous());
-        }
-        catch (UnsupportedOperationException ignore) {}
+                assertEquals(true, _iterator.hasNext());
+                assertEquals(_values.get(1), _iterator.next());
 
-        // test set
-        try {
+                assertEquals(true, _iterator.hasPrevious());
+                assertEquals(_values.get(1), _iterator.previous());
 
-            _iterator.set(_value1);
-            _iterator.next();
-            assertEquals(_value1, _iterator.previous());
+                assertEquals(true, _iterator.hasPrevious());
+                assertEquals(_values.get(0), _iterator.previous());
 
-        }
-        catch(UnsupportedOperationException ignore) {}
+                assertEquals(false, _iterator.hasPrevious());
 
+                _iterator.next();
 
-        try {
-            try {
-                _iterator.add(_value2);
-                // next or previous must be called before calling set after add
-                _iterator.set(_value1);
-                throw new AssertionError("IllegalStateException expected.");
-            } catch (IllegalStateException ignore) {}
-
-            // test remove: must be called after calling next or previous
-            try {
-                _iterator.remove();
-                throw new AssertionError("IllegalStateException expected.");
-            } catch (IllegalStateException ignore) {
+            } else {
+                try {
+                    _iterator.previous();
+                    throw new AssertionError("UnsupportedOperationException expected.");
+                } catch (UnsupportedOperationException ignore) {
+                }
             }
 
-            // go to beginning
-            while (_iterator.hasPrevious())
-                _iterator.previous();
+            //test add
+            try {
+                _iterator.add(_value2);
+                assertEquals(true, _iterator.hasPrevious());
+                assertEquals(_value2, _iterator.previous());
+            } catch (UnsupportedOperationException ignore) {
+            }
 
-            // test remove
-            _iterator.next();
-            _iterator.remove();
+            // test set
+            try {
 
+                _iterator.set(_value1);
+                _iterator.next();
+                assertEquals(_value1, _iterator.previous());
+
+            } catch (UnsupportedOperationException ignore) {
+            }
+
+
+            try {
+                try {
+                    _iterator.add(_value2);
+                    // next or previous must be called before calling set after add
+                    _iterator.set(_value1);
+                    throw new AssertionError("IllegalStateException expected.");
+                } catch (IllegalStateException ignore) {
+                }
+
+                // test remove: must be called after calling next or previous
+                try {
+                    _iterator.remove();
+                    throw new AssertionError("IllegalStateException expected.");
+                } catch (IllegalStateException ignore) {
+                }
+
+                // go to beginning
+                while (_iterator.hasPrevious())
+                    _iterator.previous();
+
+                // test remove
+                _iterator.next();
+                _iterator.remove();
+
+            } catch (UnsupportedOperationException ignore) {
+            }
         }
-        catch(UnsupportedOperationException ignore) {}
     }
 }

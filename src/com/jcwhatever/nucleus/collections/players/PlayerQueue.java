@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.collections.wrap.ConversionQueueWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
@@ -40,6 +41,11 @@ import java.util.UUID;
  * A Queue of {@code Player} objects.
  *
  * <p>{@code Player} objects are automatically removed if the player logs out.</p>
+ *
+ * <p>Thread safe.</p>
+ *
+ * <p>The queues iterators must be used inside a synchronized block which locks the
+ * queue instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  */
 public class PlayerQueue extends ConversionQueueWrapper<Player, PlayerElement> implements IPlayerCollection {
 
@@ -52,6 +58,8 @@ public class PlayerQueue extends ConversionQueueWrapper<Player, PlayerElement> i
 	 * Constructor.
 	 */
 	public PlayerQueue(Plugin plugin) {
+		super(SyncStrategy.SYNC);
+
 		PreCon.notNull(plugin);
 
 		_plugin = plugin;

@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.jcwhatever.nucleus.collections.wrap.MultimapWrapper;
+import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
@@ -40,6 +41,10 @@ import java.util.UUID;
  *
  * <p> When the player logs out, the entry is automatically removed.</p>
  *
+ * <p>Thread safe.</p>
+ *
+ * <p>The maps iterators must be used inside a synchronized block which locks the
+ * map instance. Otherwise, a {@link java.lang.IllegalStateException} is thrown.</p>
  *
  * @param <V>  The value type
  */
@@ -54,7 +59,7 @@ public abstract class PlayerMultimap<V> extends MultimapWrapper<UUID, V> impleme
      * @param plugin    The owning plugin.
      */
     public PlayerMultimap(Plugin plugin) {
-        super(new Object());
+        super(SyncStrategy.SYNC);
 
         PreCon.notNull(plugin);
 

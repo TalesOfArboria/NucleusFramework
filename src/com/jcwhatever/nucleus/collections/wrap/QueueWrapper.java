@@ -27,12 +27,15 @@ package com.jcwhatever.nucleus.collections.wrap;
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link Queue} wrapper. The wrapper is
- * optionally synchronized via a sync object or {@link ReadWriteLock} passed in
- * through the constructor.
+ * optionally synchronized via a sync object or {@link ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the queue is synchronized, the sync object must be externally locked while
+ * the iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual collection is provided to the abstract implementation by
  * overriding and returning it from the {@link #queue} method.</p>
@@ -45,18 +48,20 @@ public abstract class QueueWrapper<E> extends CollectionWrapper<E> implements Qu
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public QueueWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization object to use.
      */
-    public QueueWrapper(@Nullable Object sync) {
-        super(sync);
+    public QueueWrapper(SyncStrategy strategy) {
+        super(strategy);
     }
 
     /**

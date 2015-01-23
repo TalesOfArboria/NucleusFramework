@@ -38,12 +38,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * An abstract implementation of a synchronized {@link Multimap} wrapper. The wrapper is
- * optionally synchronized via a sync object or {@link ReadWriteLock} passed in
- * through the constructor.
+ * optionally synchronized via a sync object or {@link ReadWriteLock} passed into the
+ * constructor using a {@link SyncStrategy}.
+ *
+ * <p>If the map is synchronized, the sync object must be externally locked while
+ * any associated iterator is in use. Otherwise, a {@link java.lang.IllegalStateException} will
+ * be thrown.</p>
  *
  * <p>The actual map is provided to the abstract implementation by
  * overriding and returning it from the {@link #map} method.</p>
@@ -58,26 +61,32 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
     private final EntrySetWrapper _entrySet;
     private final ValuesWrapper _values;
     private final AsMapWrapper _asMap;
+
     protected final Object _sync;
     protected final ReadWriteLock _lock;
+    protected final SyncStrategy _strategy;
 
     /**
      * Constructor.
+     *
+     * <p>No synchronization.</p>
      */
     public MultimapWrapper() {
-        this(null);
+        this(SyncStrategy.NONE);
     }
 
     /**
      * Constructor.
      *
-     * @param sync  The synchronization object to use.
+     * @param strategy  The synchronization strategy to use.
      */
-    public MultimapWrapper(@Nullable Object sync) {
+    public MultimapWrapper(SyncStrategy strategy) {
+        PreCon.notNull(strategy);
 
-        _sync = sync;
-        _lock = sync instanceof ReadWriteLock
-                ? (ReadWriteLock)sync
+        _sync = strategy.getSync(this);
+        _strategy = new SyncStrategy(_sync);
+        _lock = _sync instanceof ReadWriteLock
+                ? (ReadWriteLock)_sync
                 : null;
 
         _keySet = new KeySetWrapper();
@@ -520,7 +529,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
         final Collection<V> collection;
 
         GetWrapper(K key, Collection<V> collection) {
-            super(MultimapWrapper.this._sync);
+            super(MultimapWrapper.this._strategy);
             this.key = key;
             this.collection = collection;
         }
@@ -544,7 +553,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
     private class ValuesWrapper extends CollectionWrapper<V> {
 
         ValuesWrapper() {
-            super(MultimapWrapper.this._sync);
+            super(MultimapWrapper.this._strategy);
         }
 
         @Override
@@ -566,7 +575,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
     private class KeySetWrapper extends SetWrapper<K> {
 
         KeySetWrapper() {
-            super(MultimapWrapper.this._sync);
+            super(MultimapWrapper.this._strategy);
         }
 
         Collection<V> removed;
@@ -602,7 +611,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
     private class AsMapWrapper extends MapWrapper<K, Collection<V>> {
 
         AsMapWrapper() {
-            super(MultimapWrapper.this._sync);
+            super(MultimapWrapper.this._strategy);
         }
 
         @Override
@@ -631,7 +640,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
     private class EntrySetWrapper extends CollectionWrapper<Entry<K, V>> {
 
         EntrySetWrapper() {
-            super(MultimapWrapper.this._sync);
+            super(MultimapWrapper.this._strategy);
         }
 
         @Override
