@@ -60,7 +60,7 @@ public final class SoundManager {
 
     private SoundManager() {}
 
-    private static Map<UUID, TimedArrayList<Playing>> _playing = new HashMap<>(100);
+    private static final Map<UUID, TimedArrayList<Playing>> _playing = new HashMap<>(100);
     private static Map<String, ResourceSound> _sounds;
 
     static {
@@ -127,8 +127,11 @@ public final class SoundManager {
 
         List<ResourceSound> result = new ArrayList<>(playing.size());
 
-        for (Playing play : playing) {
-            result.add(play.getResourceSound());
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        synchronized (playing) {
+            for (Playing play : playing) {
+                result.add(play.getResourceSound());
+            }
         }
 
         return CollectionUtils.unmodifiableList(result);
