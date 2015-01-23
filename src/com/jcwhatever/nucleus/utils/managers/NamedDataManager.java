@@ -73,7 +73,6 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
      * @param item      The object to save.
      * @param itemNode  The data node to save its properties to.
      */
-    @Nullable
     protected abstract void save(T item, IDataNode itemNode);
 
     @Override
