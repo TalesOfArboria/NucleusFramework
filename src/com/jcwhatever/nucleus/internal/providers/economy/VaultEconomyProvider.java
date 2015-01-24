@@ -62,9 +62,11 @@ public final class VaultEconomyProvider implements IEconomyProvider {
     private Economy _economy;
     private VaultCurrency _currency;
 
-
     @Override
     public ICurrency getCurrency() {
+        if (_currency == null)
+            getEconomy(); // load economy and currency
+
         return _currency;
     }
 
