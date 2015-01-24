@@ -28,6 +28,9 @@ import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentMap;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Used for types that need to keep multiple update agents for multiple
  * update contexts.
@@ -41,9 +44,9 @@ import com.jcwhatever.nucleus.utils.PreCon;
  */
 public class NamedUpdateAgents {
 
-    AgentMap<String, UpdateAgent<?>> _agents;
-    private String _recentName;
-    private UpdateAgent<?> _recent;
+    volatile AgentMap<String, UpdateAgent<?>> _agents;
+    private volatile String _recentName;
+    private volatile UpdateAgent<?> _recent;
 
     /**
      * Get the number of instantiated agents.
@@ -135,5 +138,31 @@ public class NamedUpdateAgents {
         }
 
         return agent;
+    }
+
+    /**
+     * Dispose all agents.
+     *
+     * <p>The {@code NamedUpdateAgents} instance can still be used.</p>
+     */
+    public void disposeAgents() {
+        if (_agents == null)
+            return;
+
+        List<UpdateAgent<?>> agents;
+
+        //noinspection SynchronizeOnNonFinalField
+        synchronized (_agents) {
+            agents = new ArrayList<>(_agents.values());
+        }
+
+        for (UpdateAgent<?> agent : agents) {
+            agent.dispose();
+        }
+
+        _recentName = null;
+        _recent = null;
+        _agents.dispose();
+        _agents = null;
     }
 }
