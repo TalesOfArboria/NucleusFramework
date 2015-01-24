@@ -25,11 +25,11 @@
 package com.jcwhatever.nucleus.utils.managers;
 
 import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -73,8 +73,8 @@ public abstract class NamedManager<T extends INamed> {
     /**
      * Get all managed items.
      */
-    public List<T> getAll() {
-        return CollectionUtils.unmodifiableList(_map.values());
+    public Collection<T> getAll() {
+        return Collections.unmodifiableCollection(_map.values());
     }
 
     /**

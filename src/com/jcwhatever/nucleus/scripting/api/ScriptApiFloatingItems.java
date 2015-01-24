@@ -26,22 +26,22 @@
 package com.jcwhatever.nucleus.scripting.api;
 
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;
-import com.jcwhatever.nucleus.utils.floatingitems.FloatingItem;
-import com.jcwhatever.nucleus.utils.floatingitems.FloatingItemManager;
-import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import com.jcwhatever.nucleus.scripting.api.ScriptUpdateSubscriber.IScriptUpdateSubscriber;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.floatingitems.FloatingItem;
+import com.jcwhatever.nucleus.utils.floatingitems.FloatingItemManager;
+import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Collection;
 import java.util.Deque;
-import java.util.List;
 import javax.annotation.Nullable;
 
 @ScriptApiInfo(
@@ -113,7 +113,7 @@ public class ScriptApiFloatingItems extends NucleusScriptApi {
         /**
          * Get all floating items.
          */
-        public List<IFloatingItem> getItems() {
+        public Collection<IFloatingItem> getItems() {
             return _manager.getAll();
         }
 

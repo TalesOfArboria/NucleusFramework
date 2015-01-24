@@ -32,12 +32,12 @@ import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.kits.IKit;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
+import java.util.Collection;
 
 @CommandInfo(
         parent="kits",
@@ -59,7 +59,7 @@ public final class ListSubCommand extends AbstractCommand {
 
         int	page = args.getInteger("page");
 
-        List<IKit> kits = Nucleus.getKitManager().getAll();
+        Collection<IKit> kits = Nucleus.getKitManager().getAll();
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 5, NucLang.get(_PAGINATOR_TITLE));
 
