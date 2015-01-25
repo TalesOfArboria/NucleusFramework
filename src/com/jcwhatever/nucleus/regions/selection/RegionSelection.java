@@ -130,6 +130,17 @@ public class RegionSelection implements IRegionSelection {
         }
     }
 
+    @Nullable
+    @Override
+    public String getWorldName() {
+        return _p1.getWorldName();
+    }
+
+    @Override
+    public boolean isWorldLoaded() {
+        return isDefined() && _p1.getWorldName() != null && getWorld() != null;
+    }
+
     /**
      * Get the cuboid regions first point location.
      *

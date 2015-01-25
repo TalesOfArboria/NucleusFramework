@@ -46,9 +46,27 @@ public interface IRegionSelection {
 
     /**
      * Get the world the region is in.
+     *
+     * @return  Null if the region is undefined or the world the region
+     * is in is not loaded.
      */
     @Nullable
     World getWorld();
+
+    /**
+     * Get the name of the world the region is in.
+     *
+     * @return  Null if the region is undefined.
+     */
+    @Nullable
+    String getWorldName();
+
+
+    /**
+     * Determine if the world the selection is in is loaded.
+     * Also returns false if the selection is not defined.
+     */
+    boolean isWorldLoaded();
 
     /**
      * Get the cuboid regions first point location.

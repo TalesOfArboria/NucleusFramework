@@ -395,7 +395,7 @@ public final class InternalRegionManager implements IGlobalRegionManager {
     public void register(IRegion region) {
         PreCon.notNull(region);
 
-        if (!region.isDefined() || region.getWorld() == null) {
+        if (!region.isDefined() || !region.isWorldLoaded()) {
             NucMsg.debug("Failed to register region '{0}' with RegionManager because " +
                     "it's coords are undefined.", region.getName());
             return;
@@ -465,7 +465,7 @@ public final class InternalRegionManager implements IGlobalRegionManager {
     public void unregister(IRegion region) {
         PreCon.notNull(region);
 
-        if (!region.isDefined())
+        if (!region.isDefined() || !region.isWorldLoaded())
             return;
 
         ReadOnlyRegion readOnlyRegion = new ReadOnlyRegion(region);

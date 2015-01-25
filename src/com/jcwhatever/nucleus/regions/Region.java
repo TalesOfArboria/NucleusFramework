@@ -303,33 +303,6 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /**
-     * Get the name of the world the region is in.
-     */
-    @Nullable
-    public final String getWorldName() {
-        if (getP1() == null)
-            return null;
-
-        return getSyncP1().getWorldName();
-    }
-
-    /**
-     * Determine if the world the region is in is loaded.
-     */
-    public final boolean isWorldLoaded() {
-        if (!isDefined())
-            return false;
-
-        if (getWorld() == null)
-            return false;
-
-        World world = Bukkit.getWorld(getWorld().getName());
-
-        return getWorld().equals(world);
-    }
-
-
-    /**
      * Used to determine if the region subscribes to player events.
      */
     @Override

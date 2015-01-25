@@ -132,6 +132,17 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
         return _region.getWorld();
     }
 
+    @Nullable
+    @Override
+    public String getWorldName() {
+        return _region.getWorldName();
+    }
+
+    @Override
+    public boolean isWorldLoaded() {
+        return _region.isWorldLoaded();
+    }
+
     /**
      * Get the regions first cuboid point location.
      */
