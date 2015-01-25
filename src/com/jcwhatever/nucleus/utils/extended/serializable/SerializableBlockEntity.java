@@ -53,17 +53,19 @@ import javax.annotation.Nullable;
  * A generic serializable wrapper for a BlockState that is
  * specifically designed to store tile entity data.
  *
- * <p>Cannot create a {@code BlockState} instance but instead retains the information
+ * <p>Cannot create a {@link BlockState} instance but instead retains the information
  * necessary to apply the data to the original block location.</p>
  *
  * <p>Supported Tile Entities:</p>
  *
- * <p>{@code InventoryHolder}</p>
- * <p>{@code CommandBlock}</p>
- * <p>{@code CreatureSpawner}</p>
- * <p>{@code NoteBlock}</p>
- * <p>{@code Sign}</p>
- * <p>{@code Skull}</p>
+ * <ul>
+ *     <li>{@link InventoryHolder}</li>
+ *     <li>{@link CommandBlock}</li>
+ *     <li>{@link CreatureSpawner}</li>
+ *     <li>{@link NoteBlock}</li>
+ *     <li>{@link Sign}</li>
+ *     <li>{@link Skull}</li>
+ * </ul>
  */
 public class SerializableBlockEntity implements IBinarySerializable {
 

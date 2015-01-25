@@ -48,14 +48,17 @@ import java.io.IOException;
 /**
  * Used to serialize entities that are considered part of structures, much like blocks.
  *
- * <p>Cannot create a {@code BlockState} instance but instead retains the information
+ * <p>Cannot create a {@link Entity} instance but instead retains the information
  * necessary to apply the data to the original block location.</p>
  *
  * <p>Supported Entity Interfaces:</p>
  *
- * <p>{@code Directional}</p>
- * <p>{@code Painting}</p>
- * <p>{@code ItemFrame}</p>
+ * <ul>
+ *    <li>{@link Directional}</li>
+ *    <li>{@link Painting}</li>
+ *    <li>{@link ItemFrame}</li>
+ *    <li>{@link ArmorStand}</li>
+ * </ul>
  */
 public class SerializableFurnitureEntity implements IBinarySerializable {
 
