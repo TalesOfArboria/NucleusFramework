@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.views;
 import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
-import com.jcwhatever.bukkit.v1_8_R1.MockBlock;
+import com.jcwhatever.bukkit.v1_8_R1.blocks.MockBlock;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.views.workbench.WorkbenchView;
 

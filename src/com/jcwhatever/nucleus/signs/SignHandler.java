@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.signs;
 
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.entity.Player;
@@ -39,30 +40,72 @@ import java.util.regex.Matcher;
  */
 public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
 
-    private String _searchName;
+    private final Plugin _plugin;
+    private final String _name;
+    private final String _searchName;
     private String _displayName;
+
+    /**
+     * Specify the result of a sign change event.
+     */
+    public enum SignChangeResult {
+        /**
+         * The sign is valid.
+         */
+        VALID,
+        /**
+         * The sign is not valid.
+         */
+        INVALID
+    }
+
+    public enum SignClickResult {
+        HANDLED,
+        IGNORED
+    }
+
+    public enum SignBreakResult {
+        ALLOW,
+        DENY
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     * @param name    The name of the sign (Used in the sign header)
+     */
+    public SignHandler(Plugin plugin, String name) {
+        PreCon.notNull(plugin);
+        PreCon.notNullOrEmpty(name);
+
+        _plugin = plugin;
+        _name = name;
+        _searchName = name.toLowerCase();
+    }
 
     /**
      * The owning plugin.
      */
     @Override
-    public abstract Plugin getPlugin();
+    public final Plugin getPlugin() {
+        return _plugin;
+    }
 
     /**
      * The name of the sign handler, must be a valid name.
      * Starts with a letter, alphanumerics only. Underscores allowed.
      */
     @Override
-    public abstract String getName();
+    public final String getName() {
+        return _name;
+    }
 
     /**
      * Get the sign handler name in all lower case.
      */
     @Override
     public final String getSearchName() {
-        if (_searchName == null)
-            _searchName = getName().toLowerCase();
-
         return _searchName;
     }
 
@@ -97,7 +140,7 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
     public abstract String[] getUsage();
 
     /**
-     * Called when a sign handled by the sign handler is
+     * Invoked when a sign handled by the sign handler is
      * loaded from the sign manager data node.
      *
      * @param sign  The loaded sign encapsulated.
@@ -105,52 +148,39 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
     protected abstract void onSignLoad(SignContainer sign);
 
     /**
-     * Called when a sign handled by the sign handler is
+     * Invoked when a sign handled by the sign handler is
      * changed/created.
      *
      * @param p     The player who changed/created the sign.
      * @param sign  The encapsulated sign.
      *
-     * @return  True if the change is valid/allowed.
+     * @return  {@code VALID} if the change is valid/allowed, otherwise {@code INVALID}.
      */
-    protected abstract boolean onSignChange(Player p, SignContainer sign);
+    protected abstract SignChangeResult onSignChange(Player p, SignContainer sign);
 
     /**
-     * Called when a sign handled by the sign handler is
+     * Invoked when a sign handled by the sign handler is
      * clicked on by a player.
      *
      * @param p     The player who clicked the sign.
      * @param sign  The encapsulated sign.
      *
-     * @return  True if the click is handled.
+     * @return  {@code HANDLED} if the click was valid and handled,
+     * otherwise {@code CANCEL}.
      */
-    protected abstract boolean onSignClick(Player p, SignContainer sign);
+    protected abstract SignClickResult onSignClick(Player p, SignContainer sign);
 
     /**
-     * Called when a sign handled by the sign handler is
-     * broken by a player.
+     * Invoked when a sign handled by the sign handler is
+     * broken by a player. Sign break is only invoked when the
+     * player is capable of breaking a sign instantly. (i.e creative mode)
+     * Therefore the sign cannot be broken unless the player is capable of
+     * instant break.
      *
      * @param p     The player who is breaking the sign.
      * @param sign  The encapsulated sign.
      *
-     * @return  True if the break is allowed.
+     * @return  {@code ALLOW} if the break is allowed, otherwise {@code DENY}.
      */
-    protected abstract boolean onSignBreak(Player p, SignContainer sign);
-
-
-    boolean signClick(Player p, SignContainer sign) {
-        return onSignClick(p, sign);
-    }
-
-    boolean signChange(Player p, SignContainer sign) {
-        return onSignChange(p, sign);
-    }
-
-    boolean signBreak(Player p, SignContainer sign) {
-        return onSignBreak(p, sign);
-    }
-
-    void signLoad(SignContainer sign) {
-        onSignLoad(sign);
-    }
+    protected abstract SignBreakResult onSignBreak(Player p, SignContainer sign);
 }

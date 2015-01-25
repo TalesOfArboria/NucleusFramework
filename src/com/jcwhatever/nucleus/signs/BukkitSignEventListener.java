@@ -85,6 +85,5 @@ public final class BukkitSignEventListener implements Listener {
             if (manager.signClick(event))
                 break;
         }
-
     }
 }

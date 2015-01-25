@@ -6,6 +6,7 @@ import com.jcwhatever.nucleus.events.manager._ManagerTestSuite;
 import com.jcwhatever.nucleus.internal.providers.bankitems._InternalBankItemsTestSuite;
 import com.jcwhatever.nucleus.internal.providers.economy._InternalEconomyTestSuite;
 import com.jcwhatever.nucleus.jail._JailTestSuite;
+import com.jcwhatever.nucleus.signs._SignsTestSuite;
 import com.jcwhatever.nucleus.sounds._SoundsTestSuite;
 import com.jcwhatever.nucleus.storage._StorageTestSuite;
 import com.jcwhatever.nucleus.utils._UtilsTestSuite;
@@ -22,6 +23,7 @@ import org.junit.runners.Suite;
         _InternalBankItemsTestSuite.class,
         _InternalEconomyTestSuite.class,
         _JailTestSuite.class,
+        _SignsTestSuite.class,
         _SoundsTestSuite.class,
         _StorageTestSuite.class,
         _UtilsTestSuite.class,

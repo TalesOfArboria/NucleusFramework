@@ -30,7 +30,11 @@ import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.signs.SignHandler.SignBreakResult;
+import com.jcwhatever.nucleus.signs.SignHandler.SignClickResult;
+import com.jcwhatever.nucleus.signs.SignHandler.SignChangeResult;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.SignUtils;
@@ -49,6 +53,8 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,7 +91,15 @@ public class SignManager implements IPluginOwned {
     public static String getSignNodeName(Location signLocation) {
         PreCon.notNull(signLocation);
 
-        return "sign" + signLocation.getBlockX() + signLocation.getBlockY() + signLocation.getBlockZ();
+        String worldName = signLocation.getWorld() != null
+                ? '_' + signLocation.getWorld().getName()
+                : "";
+
+        return "sign" +
+                signLocation.getBlockX() + '_' +
+                signLocation.getBlockY() + '_' +
+                signLocation.getBlockZ() +
+                worldName;
     }
 
     private final Plugin _plugin;
@@ -139,6 +153,8 @@ public class SignManager implements IPluginOwned {
      * a problem with the sign handler.
      */
     public boolean registerSignType(SignHandler signHandler) {
+        PreCon.notNull(signHandler);
+
         SignHandler current = _signHandlerMap.get(signHandler.getSearchName());
         if (current != null) {
             NucMsg.warning(_plugin,
@@ -181,6 +197,26 @@ public class SignManager implements IPluginOwned {
 
         _signHandlerMap.put(signHandler.getSearchName(), signHandler);
         _localHandlerMap.put(signHandler.getSearchName(), signHandler);
+
+        loadSigns(signHandler);
+        return true;
+    }
+
+    /**
+     * Unregister a sign handler.
+     *
+     * @param name  The sign handler name.
+     *
+     * @return  True if found and unregistered.
+     */
+    public boolean unregisterSignType(String name) {
+        PreCon.notNull(name);
+
+        SignHandler current = _localHandlerMap.remove(name.toLowerCase());
+        if (current == null)
+            return false;
+
+        _signHandlerMap.remove(current.getSearchName());
         return true;
     }
 
@@ -190,14 +226,16 @@ public class SignManager implements IPluginOwned {
      * @param name  The name.
      */
     public SignHandler getSignHandler(String name) {
+        PreCon.notNull(name);
+
         return _localHandlerMap.get(name.toLowerCase());
     }
 
     /**
      * Get all sign handlers.
      */
-    public List<SignHandler> getSignHandlers() {
-        return new ArrayList<>(_localHandlerMap.values());
+    public Collection<SignHandler> getSignHandlers() {
+        return Collections.unmodifiableCollection(_localHandlerMap.values());
     }
 
     /**
@@ -205,16 +243,13 @@ public class SignManager implements IPluginOwned {
      * sign handler.
      *
      * @param signHandlerName  The name of the sign handler.
-     *
-     * @return Null if failed to find handler.
      */
-    @Nullable
     public List<SignContainer> getSigns(String signHandlerName) {
         PreCon.notNullOrEmpty(signHandlerName);
 
         SignHandler handler = _localHandlerMap.get(signHandlerName.toLowerCase());
         if (handler == null)
-            return null;
+            return CollectionUtils.unmodifiableList();
 
         IDataNode handlerNode = _dataNode.getNode(handler.getName());
 
@@ -231,7 +266,7 @@ public class SignManager implements IPluginOwned {
             signs.add(container);
         }
 
-        return signs;
+        return Collections.unmodifiableList(signs);
     }
 
     /**
@@ -262,6 +297,8 @@ public class SignManager implements IPluginOwned {
     /**
      * Restore a sign from the specified sign handler at the specified location
      * using config settings.
+     *
+     * <p>The sign is restored after a 1 tick scheduled delay.</p>
      *
      * @param signHandlerName  The name of the sign handler.
      * @param location         The location of the sign.
@@ -337,6 +374,8 @@ public class SignManager implements IPluginOwned {
     /**
      * Restore signs from the specified sign handler using config settings.
      *
+     * <p>The sign is restored after a 1 tick scheduled delay.</p>
+     *
      * @param signHandlerName  The name of the sign handler.
      *
      * @return  True if restore completed.
@@ -411,12 +450,12 @@ public class SignManager implements IPluginOwned {
 
 
     /**
-     * Call when a sign is changed/created.
+     * Invoke when a sign is changed/created.
      *
      * @param sign   The changed sign.
      * @param event  The sign change event.
      *
-     * @return True if a handler is found for the sign.
+     * @return True if a handler is found for the sign and the event was handled.
      */
     boolean signChange(Sign sign, SignChangeEvent event) {
 
@@ -432,16 +471,21 @@ public class SignManager implements IPluginOwned {
 
         IDataNode signNode = _dataNode.getNode(handler.getName() + '.' + getSignNodeName(sign.getLocation()));
 
-        boolean isValid = handler.signChange(
+        SignChangeResult result = handler.onSignChange(
                 event.getPlayer(),
                 new SignContainer(_plugin, sign.getLocation(), signNode, event));
 
-        String prefix = isValid ? handler.getHeaderPrefix() : "#" + ChatColor.RED;
+        if (result == null)
+            throw new RuntimeException("A SignEventResult must be returned from SignHandler#onSignChange.");
+
+        boolean isAllowed = result == SignChangeResult.VALID;
+
+        String prefix = isAllowed ? handler.getHeaderPrefix() : "#" + ChatColor.RED;
         String header = prefix + handler.getDisplayName();
 
         event.setLine(0, header);
 
-        if (isValid) {
+        if (isAllowed) {
             Location loc = sign.getLocation();
             signNode.set("location", loc);
             signNode.set("line0", header);
@@ -457,7 +501,7 @@ public class SignManager implements IPluginOwned {
     }
 
     /**
-     * Call when a sign is clicked.
+     * Invoke when a sign is clicked.
      *
      * @param event  The sign interact event.
      *
@@ -472,11 +516,14 @@ public class SignManager implements IPluginOwned {
 
         IDataNode signNode = getSignNode(handler, event.getSign().getLocation());
 
-        boolean isValidClick = handler.signClick(
+        SignClickResult result = handler.onSignClick(
                 event.getPlayer(),
                 new SignContainer(_plugin, event.getSign().getLocation(), signNode));
 
-        if (isValidClick) {
+        if (result == null)
+            throw new RuntimeException("A SignClickResult must be returned from SignHandler#onSignClick.");
+
+        if (result == SignClickResult.HANDLED) {
             event.setUseItemInHand(Event.Result.DENY);
             event.setCancelled(true);
         }
@@ -485,7 +532,7 @@ public class SignManager implements IPluginOwned {
     }
 
     /**
-     * Call when a sign is broken.
+     * Invoke when a sign is broken.
      *
      * @param sign   The sign that was broken.
      * @param event  The sign break event.
@@ -501,11 +548,14 @@ public class SignManager implements IPluginOwned {
 
         IDataNode signNode = getSignNode(handler, sign.getLocation());
 
-        boolean allowBreak = handler.signBreak(
+        SignBreakResult result = handler.onSignBreak(
                 event.getPlayer(),
                 new SignContainer(_plugin, sign.getLocation(), signNode));
 
-        if (allowBreak) {
+        if (result == null)
+            throw new RuntimeException("A SignEventResult must be returned from SignHandler#onSignBreak.");
+
+        if (result == SignBreakResult.ALLOW) {
             signNode.remove();
             signNode.save();
         }
@@ -568,5 +618,4 @@ public class SignManager implements IPluginOwned {
         Matcher spaceMatcher = TextUtils.PATTERN_SPACE.matcher(header);
         return spaceMatcher.replaceAll("_");
     }
-
 }
