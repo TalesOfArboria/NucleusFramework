@@ -26,7 +26,6 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.commands.CommandDispatcher;
-import com.jcwhatever.nucleus.utils.language.LanguageManager;
 import com.jcwhatever.nucleus.messaging.IChatPrefixed;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
@@ -34,6 +33,7 @@ import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
+import com.jcwhatever.nucleus.utils.language.LanguageManager;
 
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
@@ -43,6 +43,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -51,12 +53,16 @@ import java.util.Set;
  */
 public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed {
 
+    static List<NucleusPlugin> _enabled = new ArrayList<>(10);
+
     private LanguageManager _languageManager;
     private IDataNode _dataNode;
     private boolean _isDebugging;
     private IMessenger _messenger;
     private IMessenger _anonMessenger;
     private boolean _isTesting;
+
+    boolean _isEnabled;
 
     /**
      * Constructor.
@@ -97,7 +103,7 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
      * Determine if the plugin is finished loading.
      */
     public boolean isLoaded() {
-        return isEnabled();
+        return isEnabled() && _isEnabled;
     }
 
     /**
@@ -155,7 +161,8 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
         _languageManager = new LanguageManager(this);
         Nucleus.registerPlugin(this);
 
-        onEnablePlugin();
+        if (!(this instanceof BukkitPlugin))
+            _enabled.add(this);
     }
 
     @Override

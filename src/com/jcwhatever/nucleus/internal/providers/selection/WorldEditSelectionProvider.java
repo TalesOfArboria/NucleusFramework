@@ -77,6 +77,21 @@ public final class WorldEditSelectionProvider implements IRegionSelectProvider {
     }
 
     @Override
+    public void onRegister() {
+        // do nothing
+    }
+
+    @Override
+    public void onEnable() {
+        // do nothing
+    }
+
+    @Override
+    public void onDisable() {
+        // do nothing
+    }
+
+    @Override
     public IRegionSelection getSelection(Player player) {
         PreCon.notNull(player);
 

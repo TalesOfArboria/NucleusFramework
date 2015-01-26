@@ -24,8 +24,14 @@
 
 package com.jcwhatever.nucleus.internal.providers;
 
+import com.jcwhatever.nucleus.BukkitPlugin;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
+import com.jcwhatever.nucleus.utils.DependencyRunner;
+import com.jcwhatever.nucleus.utils.DependencyRunner.DependencyStatus;
+import com.jcwhatever.nucleus.utils.DependencyRunner.IDependantRunnable;
+import com.jcwhatever.nucleus.utils.DependencyRunner.IFinishHandler;
+import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.modules.ClassLoadMethod;
 import com.jcwhatever.nucleus.utils.modules.IModuleInfo;
 import com.jcwhatever.nucleus.utils.modules.JarModuleLoader;
@@ -53,9 +59,13 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
     private final InternalProviderManager _manager;
     private final File _folder;
+    private final DependencyRunner<IDependantRunnable> _depend =
+            new DependencyRunner<IDependantRunnable>(Nucleus.getPlugin());
 
     // keyed to module class name
     private final Map<String, ProviderModuleInfo> _moduleInfoMap = new HashMap<>(10);
+
+    private boolean _isReady;
 
     /**
      * Constructor.
@@ -82,43 +92,66 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
     @Override
     public void loadModules() {
 
-        if (!getModuleFolder().exists())
+        if (!getModuleFolder().exists()) {
+            Scheduler.runTaskLater(Nucleus.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    ((BukkitPlugin) Nucleus.getPlugin()).notifyProvidersReady();
+                }
+            });
             return;
+        }
 
         super.loadModules();
 
-        List<IProvider> providers = getModules();
+        _depend.onFinish(new IFinishHandler<IDependantRunnable>() {
+            @Override
+            public void onFinish(List<IDependantRunnable> notRun) {
 
-        _manager._isProvidersLoading = true;
+                List<IProvider> providers = getModules();
 
-        for (IProvider provider : providers) {
+                _manager._isProvidersLoading = true;
 
-            if (provider instanceof IStorageProvider) {
+                for (IProvider provider : providers) {
 
-                _manager.registerStorageProvider((IStorageProvider) provider);
+                    if (provider instanceof IStorageProvider) {
+
+                        _manager.registerStorageProvider((IStorageProvider) provider);
+                    }
+                    else if (provider instanceof IPermissionsProvider) {
+
+                        _manager.setPermissionsProvider((IPermissionsProvider) provider);
+                    }
+                    else if (provider instanceof IRegionSelectProvider) {
+
+                        _manager.setRegionSelectionProvider((IRegionSelectProvider) provider);
+                    }
+                    else if (provider instanceof IEconomyProvider) {
+
+                        _manager.setEconomyProvider((IEconomyProvider) provider);
+                    }
+                    else if (provider instanceof IBankItemsProvider) {
+
+                        _manager.setBankItemsProvider((IBankItemsProvider) provider);
+                    }
+                    else {
+                        removeModule(provider.getName());
+                    }
+                }
+
+                _manager.getStorageProvider().onEnable();
+                _manager.getPermissionsProvider().onEnable();
+                _manager.getRegionSelectionProvider().onEnable();
+                _manager.getEconomyProvider().onEnable();
+                _manager.getBankItemsProvider().onEnable();
+
+                _manager._isProvidersLoading = false;
+
+                ((BukkitPlugin)Nucleus.getPlugin()).notifyProvidersReady();
             }
-            else if (provider instanceof IPermissionsProvider) {
+        });
 
-                _manager.setPermissionsProvider((IPermissionsProvider) provider);
-            }
-            else if (provider instanceof IRegionSelectProvider) {
-
-                _manager.setRegionSelectionProvider((IRegionSelectProvider) provider);
-            }
-            else if (provider instanceof IEconomyProvider) {
-
-                _manager.setEconomyProvider((IEconomyProvider) provider);
-            }
-            else if (provider instanceof IBankItemsProvider) {
-
-                _manager.setBankItemsProvider((IBankItemsProvider) provider);
-            }
-            else {
-                removeModule(provider.getName());
-            }
-        }
-
-        _manager._isProvidersLoading = false;
+        _depend.start();
     }
 
     @Override
@@ -135,6 +168,7 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
         _moduleInfoMap.put(info.getModuleClassName(), info);
 
+
         return info.getModuleClassName();
     }
 
@@ -148,13 +182,45 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
     @Override
     protected IProvider instantiateModule(Class<IProvider> clazz) {
 
+        final IProvider instance;
+        final ProviderModuleInfo info = _moduleInfoMap.get(clazz.getCanonicalName());
+        if (info == null)
+            return null;
+
         try {
             Constructor<IProvider> constructor = clazz.getDeclaredConstructor();
-            return constructor.newInstance();
+            constructor.setAccessible(true);
+            instance = constructor.newInstance();
         } catch (NoSuchMethodException | InvocationTargetException |
                 InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
             return null;
         }
+
+        _depend.add(new IDependantRunnable() {
+
+            @Override
+            public DependencyStatus getDependencyStatus() {
+
+                boolean dependsReady = info.isDependsReady();
+                boolean softReady = info.isSoftDependsReady();
+
+                if (dependsReady && softReady) {
+                    return DependencyStatus.READY;
+                }
+                else {
+                    return dependsReady
+                            ? DependencyStatus.REQUIRED_READY
+                            : DependencyStatus.NOT_READY;
+                }
+            }
+
+            @Override
+            public void run() {
+                instance.onRegister();
+            }
+        });
+
+        return instance;
     }
 }

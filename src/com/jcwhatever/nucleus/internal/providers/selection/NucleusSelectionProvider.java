@@ -28,13 +28,12 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.language.Localizable;
-import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -57,7 +56,7 @@ import javax.annotation.Nullable;
  * NucleusFramework's default selection provider when no other
  * provider is available.
  */
-public final class NucleusSelectionProvider implements IRegionSelectProvider, IDisposable{
+public final class NucleusSelectionProvider implements IRegionSelectProvider {
 
     @Localizable
     static final String _P1_SELECTED =
@@ -68,15 +67,9 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
 
     private final Map<UUID, Location> _p1Selections = new PlayerMap<>(Nucleus.getPlugin());
     private final Map<UUID, Location> _p2Selections = new PlayerMap<>(Nucleus.getPlugin());
-    private final BukkitEventListener _listener;
 
+    private BukkitEventListener _listener;
     private final Object _sync = new Object();
-    private volatile boolean _isDisposed;
-
-    public NucleusSelectionProvider() {
-        _listener = new BukkitEventListener();
-        Bukkit.getPluginManager().registerEvents(_listener, Nucleus.getPlugin());
-    }
 
     @Override
     public String getName() {
@@ -91,6 +84,22 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
     @Override
     public int getLogicalVersion() {
         return 0;
+    }
+
+    @Override
+    public void onRegister() {
+        // do nothing
+    }
+
+    @Override
+    public void onEnable() {
+        _listener = new BukkitEventListener();
+        Bukkit.getPluginManager().registerEvents(_listener, Nucleus.getPlugin());
+    }
+
+    @Override
+    public void onDisable() {
+        HandlerList.unregisterAll(_listener);
     }
 
     @Nullable
@@ -126,26 +135,6 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider, ID
         }
 
         return true;
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return _isDisposed;
-    }
-
-    @Override
-    public void dispose() {
-        if (_isDisposed)
-            return;
-
-        synchronized (_sync) {
-
-            if (_isDisposed)
-                return;
-
-            _isDisposed = true;
-            HandlerList.unregisterAll(_listener);
-        }
     }
 
     private class BukkitEventListener implements Listener {

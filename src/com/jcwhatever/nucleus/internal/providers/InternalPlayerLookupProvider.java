@@ -70,6 +70,21 @@ public final class InternalPlayerLookupProvider implements IPlayerLookupProvider
         return 0;
     }
 
+    @Override
+    public void onRegister() {
+        // do nothing
+    }
+
+    @Override
+    public void onEnable() {
+        // do nothing
+    }
+
+    @Override
+    public void onDisable() {
+        // do nothing
+    }
+
     @Nullable
     @Override
     public UUID getPlayerId(String playerName) {

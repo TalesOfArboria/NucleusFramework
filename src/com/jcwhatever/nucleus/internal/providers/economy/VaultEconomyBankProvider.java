@@ -55,6 +55,36 @@ public class VaultEconomyBankProvider extends VaultEconomyProvider implements IB
     }
 
     @Override
+    public String getName() {
+        return "VaultEconomy";
+    }
+
+    @Override
+    public String getVersion() {
+        return Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion();
+    }
+
+    @Override
+    public int getLogicalVersion() {
+        return 0;
+    }
+
+    @Override
+    public void onRegister() {
+        // do nothing
+    }
+
+    @Override
+    public void onEnable() {
+        // do nothing
+    }
+
+    @Override
+    public void onDisable() {
+        // do nothing
+    }
+
+    @Override
     public List<IBank> getBanks() {
 
         List<String> bankNames = getEconomy().getBanks();

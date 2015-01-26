@@ -170,9 +170,6 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
     public void start() {
         checkCanUse();
 
-        if (_runnables.size() == 0)
-            return;
-
         _endTime = DateUtils.addSeconds(new Date(), _timeoutSeconds);
         _watcherTask = Scheduler.runTaskRepeat(_plugin, 1, 10, _watcher);
     }

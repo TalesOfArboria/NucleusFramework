@@ -46,4 +46,21 @@ public interface IProvider extends INamed {
      * Get the providers logical version.
      */
     int getLogicalVersion();
+
+    /**
+     * Invoked when it is time for the provider to
+     * register any types that may be used by other plugins
+     * and/or providers.
+     */
+    void onRegister();
+
+    /**
+     * Invoked when the provider is enabled.
+     */
+    void onEnable();
+
+    /**
+     * Invoked when the provider is disabled.
+     */
+    void onDisable();
 }

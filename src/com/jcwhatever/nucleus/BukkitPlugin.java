@@ -38,11 +38,11 @@ import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
 import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.nucleus.kits.KitManager;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
-import com.jcwhatever.nucleus.utils.scheduler.BukkitTaskScheduler;
-import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.scripting.NucleusScriptEngineManager;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
+import com.jcwhatever.nucleus.utils.scheduler.BukkitTaskScheduler;
+import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -72,6 +72,8 @@ public final class BukkitPlugin extends NucleusPlugin {
     MessengerFactory _messengerFactory;
 
     ScriptEngineLoader _scriptEngineLoader;
+
+    boolean _isModulesReady;
 
     /**
      * Constructor.
@@ -108,9 +110,19 @@ public final class BukkitPlugin extends NucleusPlugin {
         return "[NucleusFramework] ";
     }
 
+    /**
+     * Determine if the plugin is finished loading.
+     */
+    @Override
+    public boolean isLoaded() {
+        return isEnabled() && _isModulesReady;
+    }
+
     @Override
     protected void onPreEnable() {
         Nucleus._hasEnabled = true;
+
+        _scheduler = new BukkitTaskScheduler();
 
         _providerManager = new InternalProviderManager();
         ProviderLoader providerLoader = new ProviderLoader(_providerManager);
@@ -122,31 +134,6 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _nmsManager = new InternalNmsManager();
         _commandHandler = new NucleusCommandDispatcher();
-        _scheduler = new BukkitTaskScheduler();
-
-        _eventManager = new InternalEventManager(this);
-
-        _scriptApiRepo = new InternalScriptApiRepo();
-
-        _scriptEngineManager = new NucleusScriptEngineManager();
-        _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
-        _scriptEngineLoader.loadModules();
-
-        _kitManager = new KitManager(this, getDataNode().getNode("kits"));
-
-        _regionManager = new InternalRegionManager(this);
-        _equipperManager = new EntityEquipperManager();
-
-        _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
-        _jailManager.loadSettings();
-
-        registerEventListeners(new JCGEventListener(_regionManager));
-        registerCommands(_commandHandler);
-
-        loadScriptManager();
-
-        // initialize player tracker
-        PlayerTracker.get();
     }
 
     @Override
@@ -168,5 +155,50 @@ public final class BukkitPlugin extends NucleusPlugin {
         _scriptManager = new InternalScriptManager(this, scriptFolder);
         _scriptManager.addScriptApi(ScriptUtils.getDefaultApi(this, _scriptManager));
         _scriptManager.reload();
+    }
+
+    /**
+     * Invoked by the provider loader when all providers are ready.
+     */
+    public void notifyProvidersReady() {
+
+        if (_isModulesReady)
+            return;
+
+        _isModulesReady = true;
+
+        onEnablePlugin();
+
+        _eventManager = new InternalEventManager(this);
+        _scriptApiRepo = new InternalScriptApiRepo();
+
+        _scriptEngineManager = new NucleusScriptEngineManager();
+        _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
+        _scriptEngineLoader.loadModules();
+
+        _kitManager = new KitManager(this, getDataNode().getNode("kits"));
+
+        _regionManager = new InternalRegionManager(this);
+        _equipperManager = new EntityEquipperManager();
+
+        _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
+        _jailManager.loadSettings();
+
+        registerEventListeners(new JCGEventListener(_regionManager));
+        registerCommands(_commandHandler);
+
+        loadScriptManager();
+
+        // initialize player tracker
+        PlayerTracker.get();
+
+        // enable Nucleus plugins
+        for (NucleusPlugin plugin : NucleusPlugin._enabled) {
+            if (plugin instanceof BukkitPlugin)
+                continue;
+
+            plugin._isEnabled = true;
+            plugin.onEnablePlugin();
+        }
     }
 }

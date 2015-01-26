@@ -61,6 +61,36 @@ public class BankItemsProvider implements IBankItemsProvider {
     }
 
     @Override
+    public String getName() {
+        return "NucleusBankItems";
+    }
+
+    @Override
+    public String getVersion() {
+        return Nucleus.getPlugin().getDescription().getVersion();
+    }
+
+    @Override
+    public int getLogicalVersion() {
+        return 0;
+    }
+
+    @Override
+    public void onRegister() {
+        // do nothing
+    }
+
+    @Override
+    public void onEnable() {
+        // do nothing
+    }
+
+    @Override
+    public void onDisable() {
+        // do nothing
+    }
+
+    @Override
     public IBankItemsAccount getAccount(UUID playerId) {
         PreCon.notNull(playerId);
 

@@ -24,13 +24,15 @@
 
 package com.jcwhatever.nucleus.providers.bankitems;
 
+import com.jcwhatever.nucleus.providers.IProvider;
+
 import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
  * Interface for a {@link IBankItem} provider.
  */
-public interface IBankItemsProvider {
+public interface IBankItemsProvider extends IProvider {
 
     /**
      * Get a players global bank item account. If the account

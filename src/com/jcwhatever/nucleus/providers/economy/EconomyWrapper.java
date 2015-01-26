@@ -53,6 +53,36 @@ public class EconomyWrapper implements IEconomyProvider {
     }
 
     @Override
+    public String getName() {
+        return _provider.getName();
+    }
+
+    @Override
+    public String getVersion() {
+        return _provider.getVersion();
+    }
+
+    @Override
+    public int getLogicalVersion() {
+        return _provider.getLogicalVersion();
+    }
+
+    @Override
+    public void onRegister() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onEnable() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onDisable() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ICurrency getCurrency() {
         return _provider.getCurrency();
     }

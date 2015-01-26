@@ -63,6 +63,36 @@ public class VaultEconomyProvider implements IEconomyProvider {
     private VaultCurrency _currency;
 
     @Override
+    public String getName() {
+        return "VaultEconomy";
+    }
+
+    @Override
+    public String getVersion() {
+        return Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion();
+    }
+
+    @Override
+    public int getLogicalVersion() {
+        return 0;
+    }
+
+    @Override
+    public void onRegister() {
+        // do nothing
+    }
+
+    @Override
+    public void onEnable() {
+        // do nothing
+    }
+
+    @Override
+    public void onDisable() {
+        // do nothing
+    }
+
+    @Override
     public ICurrency getCurrency() {
         if (_currency == null)
             getEconomy(); // load economy and currency

@@ -56,6 +56,21 @@ public final class YamlStorageProvider implements IStorageProvider {
     }
 
     @Override
+    public void onRegister() {
+        // do nothing
+    }
+
+    @Override
+    public void onEnable() {
+        // do nothing
+    }
+
+    @Override
+    public void onDisable() {
+        // do nothing
+    }
+
+    @Override
     public boolean remove(Plugin plugin, DataPath path) {
         PreCon.notNull(plugin);
         PreCon.notNull(path);

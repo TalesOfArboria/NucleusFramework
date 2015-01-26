@@ -98,6 +98,21 @@ public class VaultProvider extends AbstractPermissionsProvider {
     }
 
     @Override
+    public void onRegister() {
+        // do nothing
+    }
+
+    @Override
+    public void onEnable() {
+        // do nothing
+    }
+
+    @Override
+    public void onDisable() {
+        // do nothing
+    }
+
+    @Override
     public boolean has(CommandSender sender, String permissionName) {
         return _perms.has(sender, permissionName);
     }

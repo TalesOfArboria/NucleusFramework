@@ -24,12 +24,14 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
+import com.jcwhatever.nucleus.providers.IProvider;
+
 import java.util.UUID;
 
 /**
  * Interface for an economy provider.
  */
-public interface IEconomyProvider {
+public interface IEconomyProvider extends IProvider {
 
     /**
      * Get the currency of the provider. The provider currency
