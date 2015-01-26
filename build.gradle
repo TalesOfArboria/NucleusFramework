@@ -21,7 +21,7 @@ def providedDependsFiles = null
 def providedDepends = [
         'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT',
         'com.sk89q:WorldEdit:SNAPSHOT',
-        'net.milkbowl.vault:Vault:1.4.1',
+        'net.milkbowl.vault:Vault:1.5.2',
         'com.google.code.findbugs:jsr305:3.0.0'
 ]
 
