@@ -41,8 +41,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Vault economy provider. Does not support Banks, even if the underlying
- * provider does due to vault incompatibility with API.
+ * Vault economy provider.
  */
 public class VaultEconomyProvider implements IEconomyProvider {
 
