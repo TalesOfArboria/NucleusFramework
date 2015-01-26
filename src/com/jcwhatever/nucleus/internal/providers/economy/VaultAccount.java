@@ -27,8 +27,9 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
-import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+
+import org.bukkit.Bukkit;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -42,14 +43,13 @@ import javax.annotation.Nullable;
 public final class VaultAccount implements IAccount {
 
     private final UUID _playerId;
-    private final String _playerName;
+    private final VaultBank _bank;
     private final Economy _economy;
 
-    VaultAccount(UUID ownerId, Economy economy) {
+    VaultAccount(UUID ownerId, @Nullable VaultBank bank, Economy economy) {
         _playerId = ownerId;
         _economy = economy;
-
-        _playerName = PlayerUtils.getPlayerName(ownerId);
+        _bank = bank;
     }
 
     @Override
@@ -60,12 +60,12 @@ public final class VaultAccount implements IAccount {
     @Nullable
     @Override
     public IBank getBank() {
-        return null;
+        return _bank;
     }
 
     @Override
     public double getBalance() {
-        return _economy.getBalance(_playerName);
+        return _economy.getBalance(Bukkit.getOfflinePlayer(_playerId));
     }
 
     @Override
@@ -77,7 +77,7 @@ public final class VaultAccount implements IAccount {
     public boolean deposit(double amount) {
         PreCon.positiveNumber(amount);
 
-        EconomyResponse response = _economy.depositPlayer(_playerName, amount);
+        EconomyResponse response = _economy.depositPlayer(Bukkit.getOfflinePlayer(_playerId), amount);
 
         return response.transactionSuccess();
     }
@@ -91,7 +91,7 @@ public final class VaultAccount implements IAccount {
     public boolean withdraw(double amount) {
         PreCon.positiveNumber(amount);
 
-        EconomyResponse response = _economy.withdrawPlayer(_playerName, amount);
+        EconomyResponse response = _economy.withdrawPlayer(Bukkit.getOfflinePlayer(_playerId), amount);
 
         return response.transactionSuccess();
     }

@@ -44,7 +44,7 @@ import java.util.UUID;
  * Vault economy provider. Does not support Banks, even if the underlying
  * provider does due to vault incompatibility with API.
  */
-public final class VaultEconomyProvider implements IEconomyProvider {
+public class VaultEconomyProvider implements IEconomyProvider {
 
     public static boolean hasVaultEconomy() {
 
@@ -53,7 +53,7 @@ public final class VaultEconomyProvider implements IEconomyProvider {
             return false;
 
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
-        return rsp != null && rsp.getProvider() != null;
+        return rsp != null && rsp.getProvider() != null && rsp.getProvider().isEnabled();
     }
 
     private final Map<UUID, VaultAccount> _accounts =
@@ -76,7 +76,7 @@ public final class VaultEconomyProvider implements IEconomyProvider {
 
         VaultAccount account = _accounts.get(playerId);
         if (account == null) {
-            account = new VaultAccount(playerId, getEconomy());
+            account = new VaultAccount(playerId, null, getEconomy());
             _accounts.put(playerId, account);
         }
 

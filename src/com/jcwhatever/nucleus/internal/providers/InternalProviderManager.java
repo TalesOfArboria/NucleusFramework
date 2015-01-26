@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.providers;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.providers.bankitems.BankItemsProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.NucleusEconomyProvider;
+import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyBankProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.BukkitProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.VaultProvider;
@@ -90,7 +91,9 @@ public final class InternalProviderManager implements IProviderManager {
                 : new NucleusSelectionProvider();
 
         _economy = VaultEconomyProvider.hasVaultEconomy()
-                ? new VaultEconomyProvider()
+                ? VaultEconomyBankProvider.hasBankEconomy()
+                    ? new VaultEconomyBankProvider()
+                    : new VaultEconomyProvider()
                 : new NucleusEconomyProvider(Nucleus.getPlugin());
 
         _playerLookup = new InternalPlayerLookupProvider(Nucleus.getPlugin());
