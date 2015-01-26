@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.jail;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.jail.Jail;
+import com.jcwhatever.nucleus.utils.DependencyRunner.DependencyStatus;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IDependantRunnable;
 
 import org.bukkit.Bukkit;
@@ -55,18 +56,18 @@ public final class JailDependency implements IDependantRunnable {
     }
 
     @Override
-    public boolean isDependencyReady() {
+    public DependencyStatus getDependencyStatus() {
 
         if (_plugin == null) {
             _plugin = Bukkit.getPluginManager().getPlugin(_pluginName);
             if (_plugin == null) {
-                return false;
+                return DependencyStatus.NOT_READY;
             }
         }
 
         _jail = Nucleus.getJailManager().getJail(_plugin, _jailName);
 
-        return _jail != null;
+        return _jail != null ? DependencyStatus.READY : DependencyStatus.NOT_READY;
     }
 
     @Override

@@ -55,6 +55,25 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
     private Date _endTime;
 
     /**
+     * Specifies that status of dependencies.
+     */
+    public enum DependencyStatus {
+        /**
+         * Dependencies are not ready.
+         */
+        NOT_READY,
+        /**
+         * Required dependencies are ready but 1 or more
+         * optional dependencies are not.
+         */
+        REQUIRED_READY,
+        /**
+         * All dependencies are ready.
+         */
+        READY
+    }
+
+    /**
      * Constructor.
      *
      * <p>Timeout is 20 seconds.</p>
@@ -172,7 +191,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
         /**
          * Determine if the required dependency conditions have been met.
          */
-        boolean isDependencyReady();
+        DependencyStatus getDependencyStatus();
 
         /**
          * Run the code that has dependencies.
@@ -205,10 +224,10 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
 
                 T runnable = runners.remove();
 
-                if (runnable.isDependencyReady()) {
+                DependencyStatus status = runnable.getDependencyStatus();
+                if (status == DependencyStatus.READY) {
 
                     runnable.run();
-
                     _runnables.remove(runnable);
                 }
             }
@@ -222,6 +241,23 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
          */
         @Override
         protected void onCancel() {
+
+            // run if only optional dependencies are not ready
+            LinkedList<T> runners = new LinkedList<>(_runnables);
+
+            while (!runners.isEmpty()) {
+
+                T runnable = runners.remove();
+
+                DependencyStatus status = runnable.getDependencyStatus();
+                if (status == DependencyStatus.READY ||
+                        status == DependencyStatus.REQUIRED_READY) {
+
+                    runnable.run();
+                    _runnables.remove(runnable);
+                }
+            }
+
             while (!_onFinished.isEmpty()) {
                 IFinishHandler<T> onFinished = _onFinished.remove();
                 onFinished.onFinish(new ArrayList<T>(_runnables));
