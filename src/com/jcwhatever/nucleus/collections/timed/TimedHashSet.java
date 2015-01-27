@@ -41,6 +41,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -464,12 +465,11 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         _nextCleanup = System.currentTimeMillis() + MIN_CLEANUP_INTERVAL_MS;
 
-        Iterator<Entry<E, ExpireInfo>> iterator = _expireMap.entrySet().iterator();
+        Set<Entry<E, ExpireInfo>> entries = new HashSet<>(_expireMap.entrySet());
 
-        while (iterator.hasNext()) {
-            Entry<E, ExpireInfo> entry = iterator.next();
+        for (Entry<E, ExpireInfo> entry : entries) {
             if (entry.getValue().isExpired()) {
-                iterator.remove();
+                _expireMap.remove(entry.getKey());
                 onLifespanEnd(entry.getKey());
             }
         }

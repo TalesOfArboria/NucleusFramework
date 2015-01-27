@@ -46,7 +46,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -460,19 +460,17 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
 
         _nextCleanup = System.currentTimeMillis() + MIN_CLEANUP_INTERVAL_MS;
 
-        Iterator<Map.Entry<K, ExpireInfo>> iterator = _expireMap.entrySet().iterator();
+        Set<Map.Entry<K, ExpireInfo>> entries = new HashSet<>(_expireMap.entrySet());
 
         // iterate over entry set for items to remove
-        while (iterator.hasNext()) {
-
-            final Map.Entry<K, ExpireInfo> entry = iterator.next();
+        for (Map.Entry<K, ExpireInfo> entry : entries) {
 
             // check if entry is expired
             if (entry.getValue().isExpired()) {
 
-                iterator.remove();
+                _expireMap.remove(entry.getKey());
 
-                final Collection<V> removed = _map.removeAll(entry.getKey());
+                Collection<V> removed = _map.removeAll(entry.getKey());
 
                 // notify subscribers
                 onLifespanEnd(entry.getKey(), removed);
