@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.regions.selection;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
+import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -86,6 +87,7 @@ public class RegionSelection implements IRegionSelection {
     private List<ChunkInfo> _chunks;
 
     private Location _center;
+    private RegionShape _flatness = RegionShape.CUBOID;
 
     /**
      * Empty Constructor.
@@ -387,21 +389,11 @@ public class RegionSelection implements IRegionSelection {
     }
 
     /**
-     * Determine if the region is 1 block tall.
+     * Get the region selections flatness.
      */
     @Override
-    public final boolean isFlatHorizontal() {
-        return getYBlockHeight() == 1;
-    }
-
-    /**
-     * Determine if the region is 1 block wide on the
-     * X or Z axis and is not 1 block tall.
-     */
-    @Override
-    public final boolean isFlatVertical() {
-        return !isFlatHorizontal() &&
-                (getZBlockWidth() == 1 || getXBlockWidth() == 1);
+    public final RegionShape getShape() {
+        return _flatness;
     }
 
     /**
@@ -661,7 +653,30 @@ public class RegionSelection implements IRegionSelection {
 
             _chunks = null;
 
-            _sync.notifyAll();
+            _flatness = RegionShape.CUBOID;
+
+            if (getXBlockWidth() == 1) { // west/east
+
+                if (getZBlockWidth() == 1) { // north/south
+
+                    _flatness = getYBlockHeight() == 1
+                            ? RegionShape.POINT
+                            : RegionShape.VERTICAL_LINE;
+                }
+                else {
+                    _flatness = getYBlockHeight() == 1
+                            ? RegionShape.NORTH_SOUTH_LINE
+                            : RegionShape.FLAT_WEST_EAST;
+                }
+            }
+            else if (getZBlockWidth() == 1) { // north/south
+                _flatness = getYBlockHeight() == 1
+                        ? RegionShape.WEST_EAST_LINE
+                        : RegionShape.FLAT_NORTH_SOUTH;
+            }
+            else if (getYBlockHeight() == 1) {
+                _flatness = RegionShape.FLAT_HORIZONTAL;
+            }
         }
     }
 }

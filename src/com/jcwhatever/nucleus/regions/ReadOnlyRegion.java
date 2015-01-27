@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.regions.Region.PriorityType;
 import com.jcwhatever.nucleus.regions.Region.RegionPriority;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
+import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -474,21 +475,11 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     }
 
     /**
-     * Determine if the region is 1 block tall.
+     * Get the flatness of the region.
      */
     @Override
-    public boolean isFlatHorizontal () {
-        return _region.isFlatHorizontal();
-    }
-
-    /**
-     * Determine if the region is 1 block wide on
-     * either the X axis or Z axis and is
-     * not 1 block tall.
-     */
-    @Override
-    public boolean isFlatVertical () {
-        return _region.isFlatVertical();
+    public RegionShape getShape() {
+        return _region.getShape();
     }
 
     /**

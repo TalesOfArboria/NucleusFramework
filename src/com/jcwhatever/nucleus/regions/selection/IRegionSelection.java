@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.regions.selection;
 
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
+import com.jcwhatever.nucleus.regions.data.RegionShape;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -203,15 +204,9 @@ public interface IRegionSelection {
     List<ChunkInfo> getChunks();
 
     /**
-     * Determine if the region is 1 block tall.
+     * Get the shape of the region selection.
      */
-    boolean isFlatHorizontal();
-
-    /**
-     * Determine if the region is 1 block wide on the
-     * X or Z axis and is not 1 block tall.
-     */
-    boolean isFlatVertical();
+    RegionShape getShape();
 
     /**
      * Determine if the region contains the specified location.
