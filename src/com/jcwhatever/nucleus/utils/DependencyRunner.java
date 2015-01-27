@@ -221,11 +221,18 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
 
                 T runnable = runners.remove();
 
-                DependencyStatus status = runnable.getDependencyStatus();
-                if (status == DependencyStatus.READY) {
+                try {
+                    DependencyStatus status = runnable.getDependencyStatus();
+                    if (status == DependencyStatus.READY) {
 
-                    runnable.run();
-                    _runnables.remove(runnable);
+
+                        runnable.run();
+                        _runnables.remove(runnable);
+
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -246,12 +253,17 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
 
                 T runnable = runners.remove();
 
-                DependencyStatus status = runnable.getDependencyStatus();
-                if (status == DependencyStatus.READY ||
-                        status == DependencyStatus.REQUIRED_READY) {
+                try {
+                    DependencyStatus status = runnable.getDependencyStatus();
+                    if (status == DependencyStatus.READY ||
+                            status == DependencyStatus.REQUIRED_READY) {
 
-                    runnable.run();
-                    _runnables.remove(runnable);
+                        runnable.run();
+                        _runnables.remove(runnable);
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
