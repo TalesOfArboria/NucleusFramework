@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.internal.InternalEventManager;
-import com.jcwhatever.nucleus.internal.InternalRegionManager;
+import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.PlayerTracker;

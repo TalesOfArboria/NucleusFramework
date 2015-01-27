@@ -23,12 +23,13 @@
  */
 
 
-package com.jcwhatever.nucleus.internal;
+package com.jcwhatever.nucleus.internal.regions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.ElementCounter;
 import com.jcwhatever.nucleus.collections.ElementCounter.RemovalPolicy;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.IRegionEventListener;
@@ -52,13 +53,13 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Global Region Manager.
@@ -71,16 +72,9 @@ import java.util.UUID;
  * {@link com.jcwhatever.nucleus.regions.ReadOnlyRegion} instances. This is to prevent inter-plugin conflicts
  * caused by changes to a region that the region owning plugin is unaware of.</p>
  */
-public final class InternalRegionManager implements IGlobalRegionManager {
+public final class InternalRegionManager extends RegionTypeManager<IRegion> implements IGlobalRegionManager {
 
     public static final MetaKey<IRegion> REGION_HANDLE = new MetaKey<IRegion>(IRegion.class);
-
-
-    // Player watcher regions chunk map. String key is chunk coordinates.
-    private final Map<String, OrderedRegions<IRegion>> _listenerRegionsMap = new HashMap<>(500);
-
-    // All regions chunk map. String key is chunk coordinates
-    private final Map<String, Set<IRegion>> _allRegionsMap = new HashMap<>(500);
 
     // worlds that have regions
     private ElementCounter<World> _listenerWorlds = new ElementCounter<>(RemovalPolicy.REMOVE);
@@ -91,10 +85,9 @@ public final class InternalRegionManager implements IGlobalRegionManager {
     // locations the player was detected in between player watcher cycles.
     private Map<UUID, LinkedList<CachedLocation>> _playerLocationCache;
 
-    // hash set of all registered regions
-    private Set<IRegion> _regions = new HashSet<>(500);
+    // store managers for individual region types.
+    private Map<Class<? extends IRegion>, RegionTypeManager<?>> _managers = new HashMap<>(15);
 
-    // synchronization object
     private final Object _sync = new Object();
 
     /**
@@ -103,6 +96,7 @@ public final class InternalRegionManager implements IGlobalRegionManager {
      * @param plugin  The owning plugin.
      */
     public InternalRegionManager(Plugin plugin) {
+        super(IRegion.class);
 
         if (Nucleus.getPlugin() != plugin) {
             throw new RuntimeException("InternalRegionManager should not be instantiated.");
@@ -113,148 +107,121 @@ public final class InternalRegionManager implements IGlobalRegionManager {
         Scheduler.runTaskRepeat(plugin,  3, 3, new PlayerWatcher(this));
     }
 
-    /**
-     * Get number of regions registered.
-     */
     @Override
-    public int getRegionCount() {
-        return _regions.size();
-    }
-
-    /**
-     * Get a set of regions that contain the specified location.
-     *
-     * @param location  The location to check.
-     */
-    @Override
-    public List<IRegion> getRegions(Location location) {
+    public <T extends IRegion> List<T> getRegions(Location location, Class<T> regionClass) {
         PreCon.notNull(location);
+        PreCon.notNull(regionClass);
 
-        return getRegion(location.getWorld(),
-                location.getBlockX(), location.getBlockY(), location.getBlockZ(),
-                PriorityType.ENTER, _allRegionsMap);
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        if (manager == null)
+            return CollectionUtils.unmodifiableList();
+
+        return manager.getRegions(location);
     }
 
-    /**
-     * Get a set of regions that contain the specified location.
-     *
-     * @param world  The world to check.
-     * @param x      The x coordinates.
-     * @param y      The y coordinates.
-     * @param z      The z coordinates.
-     */
     @Override
-    public List<IRegion> getRegions(World world, int x, int y, int z) {
+    public <T extends IRegion> List<T> getRegions(World world, int x, int y, int z, Class<T> regionClass) {
         PreCon.notNull(world);
+        PreCon.notNull(regionClass);
 
-        return getRegion(world, x, y, z, PriorityType.ENTER, _allRegionsMap);
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        if (manager == null)
+            return CollectionUtils.unmodifiableList();
+
+        return manager.getRegions(world, x, y, z);
     }
 
-    /**
-     * Get a set of regions that the specified location
-     * is inside of and are player watchers/listeners.
-     *
-     * @param location  The location to check.
-     */
     @Override
-    public List<IRegion> getListenerRegions(Location location) {
-        return getRegion(location.getWorld(),
-                location.getBlockX(), location.getBlockY(), location.getBlockZ(),
-                PriorityType.ENTER, _listenerRegionsMap);
+    public <T extends IRegion> List<T> getListenerRegions(Location location, Class<T> regionClass) {
+        PreCon.notNull(location);
+        PreCon.notNull(regionClass);
+
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        if (manager == null)
+            return CollectionUtils.unmodifiableList();
+
+        return manager.getListenerRegions(location);
     }
 
-    /**
-     * Get a set of regions that the specified location
-     * is inside of and are player watchers/listeners.
-     *
-     * @param world  The world to check.
-     * @param x      The x coordinates.
-     * @param y      The y coordinates.
-     * @param z      The z coordinates.
-     */
     @Override
-    public List<IRegion> getListenerRegions(World world, int x, int y, int z) {
-        return getRegion(world, x, y, z, PriorityType.ENTER, _listenerRegionsMap);
+    public <T extends IRegion> List<T> getListenerRegions(World world, int x, int y, int z,
+                                                          Class<T> regionClass) {
+        PreCon.notNull(world);
+        PreCon.notNull(regionClass);
+
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        if (manager == null)
+            return CollectionUtils.unmodifiableList();
+
+        return manager.getListenerRegions(world, x, y, z);
     }
 
-    /**
-     * Get a set of regions that the specified location
-     * is inside of and are player watchers/listeners.
-     *
-     * @param location      The location to check.
-     * @param priorityType  The priority sorting type of the returned list.
-     */
     @Override
-    public List<IRegion> getListenerRegions(Location location, PriorityType priorityType) {
-        return getRegion(location.getWorld(),
-                location.getBlockX(), location.getBlockY(), location.getBlockZ(),
-                priorityType, _listenerRegionsMap);
+    public <T extends IRegion> List<T> getListenerRegions(Location location, PriorityType priorityType,
+                                                          Class<T> regionClass) {
+        PreCon.notNull(location);
+        PreCon.notNull(priorityType);
+        PreCon.notNull(regionClass);
+
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        if (manager == null)
+            return CollectionUtils.unmodifiableList();
+
+        return manager.getListenerRegions(location, priorityType);
     }
 
-    /**
-     * Get a set of regions that the specified location
-     * is inside of and are player watchers/listeners.
-     *
-     * @param world         The world to check.
-     * @param x             The X coordinates.
-     * @param y             The Y coordinates.
-     * @param z             The Z coordinates.
-     * @param priorityType  The priority sorting type of the returned list.
-     */
     @Override
-    public List<IRegion> getListenerRegions(World world, int x, int y, int z, PriorityType priorityType) {
-        return getRegion(world, x, y, z, priorityType, _listenerRegionsMap);
+    public <T extends IRegion> List<T> getListenerRegions(World world, int x, int y, int z,
+                                                          PriorityType priorityType, Class<T> regionClass) {
+        PreCon.notNull(world);
+        PreCon.notNull(priorityType);
+        PreCon.notNull(regionClass);
+
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        if (manager == null)
+            return CollectionUtils.unmodifiableList();
+
+        return manager.getListenerRegions(world, x, y, z, priorityType);
     }
 
-    /**
-     * Get all regions that intersect with the specified chunk.
-     *
-     * @param chunk  The chunk to check.
-     */
     @Override
-    public Set<IRegion> getRegionsInChunk(Chunk chunk) {
-        return getRegionsInChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
+    public <T extends IRegion> List<T> getRegionsInChunk(Chunk chunk, Class<T> regionClass) {
+        PreCon.notNull(chunk);
+        PreCon.notNull(regionClass);
+
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        if (manager == null)
+            return CollectionUtils.unmodifiableList();
+
+        return manager.getRegionsInChunk(chunk);
     }
 
-    /**
-     * Get all regions that intersect with the specified chunk.
-     *
-     * @param world  The world the chunk is in.
-     * @param x      The chunks X coordinates.
-     * @param z      The chunks Z coordinates.
-     */
     @Override
-    public Set<IRegion> getRegionsInChunk(World world, int x, int z) {
-        synchronized(_sync) {
+    public <T extends IRegion> List<T> getRegionsInChunk(World world, int x, int z, Class<T> regionClass) {
+        PreCon.notNull(world);
+        PreCon.notNull(regionClass);
 
-            if (getRegionCount() == 0)
-                return CollectionUtils.unmodifiableSet();
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        if (manager == null)
+            return CollectionUtils.unmodifiableList();
 
-            String key = getChunkKey(world, x, z);
-
-            Set<IRegion> regions = _allRegionsMap.get(key);
-            if (regions == null)
-                return CollectionUtils.unmodifiableSet();
-
-            _sync.notifyAll();
-            return CollectionUtils.unmodifiableSet(regions);
-        }
+        return manager.getRegionsInChunk(world, x, z);
     }
 
     /**
      * Get all regions that player is currently in.
      *
-     * @param p  The player to check.
+     * @param player  The player to check.
      */
     @Override
-    public List<IRegion> getPlayerRegions(Player p) {
-        PreCon.notNull(p);
+    public List<IRegion> getPlayerRegions(Player player) {
+        PreCon.notNull(player);
 
         if (_playerCacheMap == null)
             return new ArrayList<>(0);
 
         synchronized(_sync) {
-            Set<IRegion> regions = _playerCacheMap.get(p.getUniqueId());
+            Set<IRegion> regions = _playerCacheMap.get(player.getUniqueId());
             if (regions == null)
                 return new ArrayList<>(0);
 
@@ -343,55 +310,13 @@ public final class InternalRegionManager implements IGlobalRegionManager {
         }
     }
 
-    /*
-     * Get all regions contained in the specified location using
-     * the supplied region map.
-     */
-    private <T extends Set<IRegion>> List<IRegion> getRegion(World world, int x, int y, int z,
-                                                             PriorityType priorityType,
-                                                             Map<String, T> map) {
-        synchronized(_sync) {
-
-            List<IRegion> results = new ArrayList<>(10);
-
-            if (getRegionCount() == 0)
-                return results;
-
-            // calculate chunk location instead of getting it from chunk
-            // to prevent asynchronous issues
-            int chunkX = (int)Math.floor((double)x / 16);
-            int chunkZ = (int)Math.floor((double)z / 16);
-
-            String key = getChunkKey(world, chunkX, chunkZ);
-
-            Set<IRegion> regions = map.get(key);
-            if (regions == null)
-                return results;
-
-            Iterator<IRegion> iterator;
-
-            iterator = regions instanceof OrderedRegions
-                    ? ((OrderedRegions<IRegion>) regions).iterator(priorityType)
-                    : regions.iterator();
-
-            while (iterator.hasNext()) {
-                IRegion region = iterator.next();
-
-                if (region.contains(x, y, z))
-                    results.add(region);
-            }
-
-            _sync.notifyAll();
-            return results;
-        }
-    }
-
     /**
      * Register a region so it can be found in searches
      * and its events called if it is a player watcher.
      *
      * @param region  The Region to register.
      */
+    @Override
     public void register(IRegion region) {
         PreCon.notNull(region);
 
@@ -401,58 +326,21 @@ public final class InternalRegionManager implements IGlobalRegionManager {
             return;
         }
 
-        ReadOnlyRegion readOnlyRegion = new ReadOnlyRegion(region);
+        if (region instanceof ReadOnlyRegion) {
+            region = region.getMeta(REGION_HANDLE);
 
-        _regions.add(readOnlyRegion);
-
-        synchronized(_sync) {
-
-            int xMax = region.getChunkX() + region.getChunkXWidth();
-            int zMax = region.getChunkZ() + region.getChunkZWidth();
-
-            boolean hasRegion = false;
-
-            for (int x= region.getChunkX(); x < xMax; x++) {
-                for (int z= region.getChunkZ(); z < zMax; z++) {
-
-                    //noinspection ConstantConditions
-                    String key = getChunkKey(region.getWorld(), x, z);
-
-                    if (region.isEventListener()) {
-
-                        // add to listener regions map
-                        OrderedRegions<IRegion> regions = _listenerRegionsMap.get(key);
-                        if (regions == null) {
-                            regions = new OrderedRegions<IRegion>(5);
-                            _listenerRegionsMap.put(key, regions);
-                        }
-                        regions.add(readOnlyRegion);
-                    }
-                    else {
-                        hasRegion = removeFromMap(_listenerRegionsMap, key, readOnlyRegion);
-                    }
-
-                    // add to all regions map
-                    Set<IRegion> regions = _allRegionsMap.get(key);
-                    if (regions == null) {
-                        regions = new HashSet<IRegion>(5);
-                        _allRegionsMap.put(key, regions);
-                    }
-                    regions.add(readOnlyRegion);
-                }
+            if (region == null) {
+                throw new RuntimeException("ReadOnlyRegions handle has no meta reference to itself.");
             }
-
-            if (region.isEventListener()) {
-                //noinspection ConstantConditions
-                _listenerWorlds.add(region.getWorld());
-            }
-            else if (hasRegion){
-                //noinspection ConstantConditions
-                _listenerWorlds.subtract(region.getWorld());
-            }
-
-            _sync.notifyAll();
         }
+
+        @SuppressWarnings("unchecked")
+        RegionTypeManager<IRegion> manager = (RegionTypeManager<IRegion>)getManager(region.getClass(), true);
+        assert manager != null;
+        manager.register(region);
+
+        ReadOnlyRegion readOnlyRegion = new ReadOnlyRegion(region);
+        super.register(readOnlyRegion);
     }
 
     /**
@@ -462,36 +350,40 @@ public final class InternalRegionManager implements IGlobalRegionManager {
      *
      * @param region  The Region to unregister.
      */
+    @Override
     public void unregister(IRegion region) {
         PreCon.notNull(region);
 
         if (!region.isDefined() || !region.isWorldLoaded())
             return;
 
+        @SuppressWarnings("unchecked")
+        RegionTypeManager<IRegion> manager = (RegionTypeManager<IRegion>)getManager(region.getClass(), false);
+        if (manager != null) {
+            manager.unregister(region);
+        }
+
         ReadOnlyRegion readOnlyRegion = new ReadOnlyRegion(region);
+        super.unregister(readOnlyRegion);
+    }
 
-        synchronized(_sync) {
+    @Override
+    protected void onRegister(IRegion region, boolean isFormerListener) {
+        if (region.isEventListener()) {
+            //noinspection ConstantConditions
+            _listenerWorlds.add(region.getWorld());
+        }
+        else if (isFormerListener){
+            //noinspection ConstantConditions
+            _listenerWorlds.subtract(region.getWorld());
+        }
+    }
 
-            int xMax = region.getChunkX() + region.getChunkXWidth();
-            int zMax = region.getChunkZ() + region.getChunkZWidth();
-
-            for (int x= region.getChunkX(); x < xMax; x++) {
-                for (int z= region.getChunkZ(); z < zMax; z++) {
-
-                    //noinspection ConstantConditions
-                    String key = getChunkKey(region.getWorld(), x, z);
-
-                    removeFromMap(_listenerRegionsMap, key, readOnlyRegion);
-                    removeFromMap(_allRegionsMap, key, readOnlyRegion);
-                }
-            }
-
-            if (_regions.remove(readOnlyRegion) && region.isEventListener()) {
-                //noinspection ConstantConditions
-                _listenerWorlds.subtract(region.getWorld());
-            }
-
-            _sync.notifyAll();
+    @Override
+    protected void onUnregister(IRegion region) {
+        if (region.isEventListener()) {
+            //noinspection ConstantConditions
+            _listenerWorlds.subtract(region.getWorld());
         }
     }
 
@@ -526,11 +418,18 @@ public final class InternalRegionManager implements IGlobalRegionManager {
         return regions != null && regions.remove(region);
     }
 
-    /*
-     * Get a regions chunk map key.
-     */
-    private String getChunkKey(World world, int x, int z) {
-        return world.getName() + '.' + String.valueOf(x) + '.' + String.valueOf(z);
+    @Nullable
+    private <T extends IRegion> RegionTypeManager<T> getManager(Class<T> regionClass, boolean create) {
+
+        @SuppressWarnings("unchecked")
+        RegionTypeManager<T> manager = (RegionTypeManager<T>)_managers.get(regionClass);
+
+        if (manager == null && create) {
+            manager = new RegionTypeManager<>(regionClass);
+            _managers.put(regionClass, manager);
+        }
+
+        return manager;
     }
 
     /*

@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
-import com.jcwhatever.nucleus.internal.InternalRegionManager;
+import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.regions.Region.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.Region.RegionReason;
 import com.jcwhatever.nucleus.sounds.PlayList;

@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.regions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.regions.RegionOwnerChangedEvent;
-import com.jcwhatever.nucleus.internal.InternalRegionManager;
+import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -62,7 +62,7 @@ import javax.annotation.Nullable;
  * Abstract implementation of a region.
  *
  * <p>The region is registered with NucleusFramework's
- * {@link com.jcwhatever.nucleus.internal.InternalRegionManager} as soon
+ * {@link com.jcwhatever.nucleus.internal.regions.InternalRegionManager} as soon
  * as it is defined (P1 and P2 coordinates set) via the regions settings or by
  * calling {@code setCoords} method.</p>
  *

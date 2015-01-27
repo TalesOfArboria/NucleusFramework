@@ -32,7 +32,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Global region manager interface
@@ -54,6 +53,14 @@ public interface IGlobalRegionManager {
     /**
      * Get a list of regions that contain the specified location.
      *
+     * @param location     The location to check.
+     * @param regionClass  The class of the regions to get.
+     */
+    <T extends IRegion> List<T> getRegions(Location location, Class<T> regionClass);
+
+    /**
+     * Get a list of regions that contain the specified location.
+     *
      * @param world  The world to check.
      * @param x      The x coordinates.
      * @param y      The y coordinates.
@@ -62,12 +69,32 @@ public interface IGlobalRegionManager {
     List<IRegion> getRegions(World world, int x, int y, int z);
 
     /**
+     * Get a list of regions that contain the specified location.
+     *
+     * @param world        The world to check.
+     * @param x            The x coordinates.
+     * @param y            The y coordinates.
+     * @param z            The z coordinates.
+     * @param regionClass  The class of the region type to get.
+     */
+    <T extends IRegion> List<T> getRegions(World world, int x, int y, int z, Class<T> regionClass);
+
+    /**
      * Get a list of regions that the specified location
      * is inside of and are player watchers/listeners.
      *
      * @param location  The location to check.
      */
     List<IRegion> getListenerRegions(Location location);
+
+    /**
+     * Get a list of regions that the specified location
+     * is inside of and are player watchers/listeners.
+     *
+     * @param location     The location to check.
+     * @param regionClass  The class of the region type to get.
+     */
+    <T extends IRegion> List<T> getListenerRegions(Location location, Class<T> regionClass);
 
     /**
      * Get a list of regions that the specified location
@@ -84,10 +111,33 @@ public interface IGlobalRegionManager {
      * Get a list of regions that the specified location
      * is inside of and are player watchers/listeners.
      *
+     * @param world        The world to check.
+     * @param x            The x coordinates.
+     * @param y            The y coordinates.
+     * @param z            The z coordinates.
+     * @param regionClass  The class of the region type to get.
+     */
+    <T extends IRegion> List<T> getListenerRegions(World world, int x, int y, int z, Class<T> regionClass);
+
+    /**
+     * Get a list of regions that the specified location
+     * is inside of and are player watchers/listeners.
+     *
      * @param location      The location to check.
      * @param priorityType  The priority sorting type of the returned list.
      */
     List<IRegion> getListenerRegions(Location location, PriorityType priorityType);
+
+    /**
+     * Get a list of regions that the specified location
+     * is inside of and are player watchers/listeners.
+     *
+     * @param location      The location to check.
+     * @param priorityType  The priority sorting type of the returned list.
+     * @param regionClass   The class of the regions to get.
+     */
+    <T extends IRegion> List<T> getListenerRegions(Location location, PriorityType priorityType,
+                                                   Class<T> regionClass);
 
     /**
      * Get a list of regions that the specified location
@@ -102,11 +152,33 @@ public interface IGlobalRegionManager {
     List<IRegion> getListenerRegions(World world, int x, int y, int z, PriorityType priorityType);
 
     /**
+     * Get a list of regions that the specified location
+     * is inside of and are player watchers/listeners.
+     *
+     * @param world         The world to check.
+     * @param x             The X coordinates.
+     * @param y             The Y coordinates.
+     * @param z             The Z coordinates.
+     * @param priorityType  The priority sorting type of the returned list.
+     * @param regionClass   The class of the region type to get.
+     */
+    <T extends IRegion> List<T> getListenerRegions(World world, int x, int y, int z,
+                                                   PriorityType priorityType, Class<T> regionClass);
+
+    /**
      * Get all regions that intersect with the specified chunk.
      *
      * @param chunk  The chunk to check.
      */
-    Set<IRegion> getRegionsInChunk(Chunk chunk);
+    List<IRegion> getRegionsInChunk(Chunk chunk);
+
+    /**
+     * Get all regions that intersect with the specified chunk.
+     *
+     * @param chunk        The chunk to check.
+     * @param regionClass  The class of the region type to get.
+     */
+    <T extends IRegion> List<T> getRegionsInChunk(Chunk chunk, Class<T> regionClass);
 
     /**
      * Get all regions that intersect with the specified chunk.
@@ -115,12 +187,22 @@ public interface IGlobalRegionManager {
      * @param x      The chunks X coordinates.
      * @param z      The chunks Z coordinates.
      */
-    Set<IRegion> getRegionsInChunk(World world, int x, int z);
+    List<IRegion> getRegionsInChunk(World world, int x, int z);
 
     /**
-     * Get all regions that player is currently in.
+     * Get all regions that intersect with the specified chunk.
      *
-     * @param p  The player to check.
+     * @param world        The world the chunk is in.
+     * @param x            The chunks X coordinates.
+     * @param z            The chunks Z coordinates.
+     * @param regionClass  The class of the region type to get.
      */
-    List<IRegion> getPlayerRegions(Player p);
+    <T extends IRegion> List<T> getRegionsInChunk(World world, int x, int z, Class<T> regionClass);
+
+    /**
+     * Get all regions that a player is currently in.
+     *
+     * @param player  The player to check.
+     */
+    List<IRegion> getPlayerRegions(Player player);
 }
