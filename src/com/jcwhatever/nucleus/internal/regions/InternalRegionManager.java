@@ -64,29 +64,32 @@ import javax.annotation.Nullable;
 /**
  * Global Region Manager.
  *
- * <p>Tracks instances of {@link com.jcwhatever.nucleus.regions.Region} and provides methods to determine which regions
+ * <p>Tracks instances of {@link IRegion} and provides methods to determine which regions
  * a player is in as well as track players to determine when they enter and leave
  * player watcher regions.</p>
  *
- * <p>In all cases, methods that return region instances are returning
- * {@link com.jcwhatever.nucleus.regions.ReadOnlyRegion} instances. This is to prevent inter-plugin conflicts
- * caused by changes to a region that the region owning plugin is unaware of.</p>
+ * <p>Methods that return {@link IRegion} instances are returning
+ * {@link com.jcwhatever.nucleus.regions.ReadOnlyRegion} instances. This is to prevent
+ * inter-plugin conflicts caused by changes to a region that the region owning plugin is
+ * unaware of.</p>
+ *
+ * <p>Methods that return a specific region type return the actual region instance.</p>
  */
 public final class InternalRegionManager extends RegionTypeManager<IRegion> implements IGlobalRegionManager {
 
     public static final MetaKey<IRegion> REGION_HANDLE = new MetaKey<IRegion>(IRegion.class);
 
     // worlds that have regions
-    private ElementCounter<World> _listenerWorlds = new ElementCounter<>(RemovalPolicy.REMOVE);
+    private final ElementCounter<World> _listenerWorlds = new ElementCounter<>(RemovalPolicy.REMOVE);
 
-    // cached regions the player was detected in in last player watcher cycle.
-    private Map<UUID, OrderedRegions<IRegion>> _playerCacheMap;
+    // cached regions the player was detected in during last player watcher cycle.
+    private final Map<UUID, OrderedRegions<IRegion>> _playerCacheMap;
 
     // locations the player was detected in between player watcher cycles.
-    private Map<UUID, LinkedList<CachedLocation>> _playerLocationCache;
+    private final Map<UUID, LinkedList<CachedLocation>> _playerLocationCache;
 
     // store managers for individual region types.
-    private Map<Class<? extends IRegion>, RegionTypeManager<?>> _managers = new HashMap<>(15);
+    private final Map<Class<? extends IRegion>, RegionTypeManager<?>> _managers = new HashMap<>(15);
 
     private final Object _sync = new Object();
 
@@ -105,6 +108,18 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         _playerCacheMap = new PlayerMap<>(plugin);
         _playerLocationCache = new PlayerMap<>(plugin);
         Scheduler.runTaskRepeat(plugin,  3, 3, new PlayerWatcher(this));
+    }
+
+    @Override
+    public <T extends IRegion> boolean hasRegion(Location location, Class<T> regionClass) {
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        return manager != null && manager.hasRegion(location);
+    }
+
+    @Override
+    public <T extends IRegion> boolean hasRegion(World world, int x, int y, int z, Class<T> regionClass) {
+        RegionTypeManager<T> manager = getManager(regionClass, false);
+        return manager != null && manager.hasRegion(world, x, y, z);
     }
 
     @Override

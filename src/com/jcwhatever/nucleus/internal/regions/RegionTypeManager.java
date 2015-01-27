@@ -43,8 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/*
- * 
+/**
+ * A region manager responsible for storing a specific region type.
  */
 public class RegionTypeManager<R extends IRegion> {
 
@@ -85,6 +85,52 @@ public class RegionTypeManager<R extends IRegion> {
      */
     public int getRegionCount() {
         return _regions.size();
+    }
+
+    /**
+     * Determine if there is a region at the specified location.
+     *
+     * @param location  The location to check.
+     */
+    public boolean hasRegion(Location location) {
+        PreCon.notNull(location);
+
+        return hasRegion(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    /**
+     * Determine if there is a region at the specified location.
+     *
+     * @param world  The world to check in.
+     * @param x      The X coordinates to check.
+     * @param y      The Y coordinates to check.
+     * @param z      The Z coordinates to check.
+     */
+    public boolean hasRegion(World world, int x, int y, int z) {
+
+        synchronized(_sync) {
+
+            if (_regions.size() == 0)
+                return false;
+
+            // calculate chunk location instead of getting it from chunk
+            // to prevent asynchronous issues
+            int chunkX = (int)Math.floor((double)x / 16);
+            int chunkZ = (int)Math.floor((double)z / 16);
+
+            String key = getChunkKey(world, chunkX, chunkZ);
+
+            Set<R> regions = _allRegionsMap.get(key);
+            if (regions == null)
+                return false;
+
+            for (R region : regions) {
+                if (region.contains(x, y, z))
+                    return true;
+            }
+
+            return false;
+        }
     }
 
     /**

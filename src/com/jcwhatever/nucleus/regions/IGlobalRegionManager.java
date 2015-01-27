@@ -44,6 +44,27 @@ public interface IGlobalRegionManager {
     int getRegionCount();
 
     /**
+     * Determine if there is at least one region at the specified location
+     * of the specified type.
+     *
+     * @param location     The location to check.
+     * @param regionClass  The class of the region type to check.
+     */
+    <T extends IRegion> boolean hasRegion(Location location, Class<T> regionClass);
+
+    /**
+     * Determine if there is at least one region at the specified location
+     * of the specified type.
+     *
+     * @param world        The world to check in.
+     * @param x            The X coordinates to check.
+     * @param y            The Y coordinates to check.
+     * @param z            The Z coordinates to check.
+     * @param regionClass  The class of the region type to check.
+     */
+    <T extends IRegion> boolean hasRegion(World world, int x, int y, int z, Class<T> regionClass);
+
+    /**
      * Get a list of regions that contain the specified location.
      *
      * @param location  The location to check.
