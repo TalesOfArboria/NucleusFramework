@@ -9,9 +9,8 @@ _"Coders like versatility. Server operators like stability. Users like usability
  * Provide a centralized framework for common plugin utilities and services.
  * Reduce the amount of redundant code in plugins.
  * Speed up plugin development by abstracting common plugin features.
- * Maintain a balance between an API for versatility and a predictable foundation for stability.
  * Create a user command interface that has commonality that users can learn to recognize.
- * Reduce server operator work by centralizing features that are used across plugins while not forcing plugin designers to use the centralized features.
+ * Reduce server operator work by centralizing features that are used across plugins.
 
 ## Wiki
 The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow development due to the fact that NucleusFramework is not yet finished.
@@ -31,6 +30,8 @@ The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow de
  * [NucleusCitizens](https://github.com/JCThePants/NucleusCitizens) - Extends Nucleus functionality to include script API support for [Citizens2](https://github.com/CitizensDev/Citizens2) plugin.
  * [TPRegions](https://github.com/JCThePants/TPRegions) - Portal and region teleport.
  * [PhantomPackets](https://github.com/JCThePants/PhantomPackets) - Sets viewable regions and entities to specific players.
+ * [ArborianQuests](https://github.com/JCThePants/ArborianQuests) - Quest scripting plugin.
+ * [RentalRooms](https://github.com/JCThePants/RentalRooms) - Rented regions that allow the tenant to only modify the interior of the house/room.
 
 ## Build dependencies
 See the [gradle script](https://github.com/JCThePants/NucleusFramework/blob/master/build.gradle) for build dependencies.
