@@ -63,6 +63,8 @@ public class RegionSelection implements IRegionSelection {
 
     private SyncLocation _p1;
     private SyncLocation _p2;
+    private SyncLocation _lowerPoint;
+    private SyncLocation _upperPoint;
 
     private int _startX;
     private int _startY;
@@ -107,17 +109,11 @@ public class RegionSelection implements IRegionSelection {
         setCoords(p1, p2);
     }
 
-    /**
-     * Determine if the regions cuboid points have been set.
-     */
     @Override
     public final boolean isDefined() {
         return _p1 != null && _p2 != null && _p1.getWorldName() != null;
     }
 
-    /**
-     * Get the world the region is in.
-     */
     @Override
     @Nullable
     public final World getWorld() {
@@ -135,6 +131,10 @@ public class RegionSelection implements IRegionSelection {
     @Nullable
     @Override
     public String getWorldName() {
+
+        if (_p1 == null)
+            return null;
+
         return _p1.getWorldName();
     }
 
@@ -143,12 +143,6 @@ public class RegionSelection implements IRegionSelection {
         return isDefined() && _p1.getWorldName() != null && getWorld() != null;
     }
 
-    /**
-     * Get the cuboid regions first point location.
-     *
-     * <p>Note: If the location is set but the world it's for is not
-     * loaded, the World value of location may be null.</p>
-     */
     @Override
     @Nullable
     public final Location getP1() {
@@ -160,12 +154,6 @@ public class RegionSelection implements IRegionSelection {
         }
     }
 
-    /**
-     * Get the cuboid regions seconds point location.
-     *
-     * <p>Note: If the location is set but the world it's for is not
-     * loaded, the World value of location may be null.</p>
-     */
     @Override
     @Nullable
     public final Location getP2() {
@@ -177,140 +165,89 @@ public class RegionSelection implements IRegionSelection {
         }
     }
 
-    /**
-     * Get the cuboid regions lower point location.
-     */
     @Override
     @Nullable
     public final Location getLowerPoint() {
-        return getP1();
+        if (_lowerPoint == null)
+            return null;
+
+        return _lowerPoint.getBukkitLocation();
     }
 
-    /**
-     * Get the cuboid regions upper point location.
-     */
     @Override
     @Nullable
     public final Location getUpperPoint() {
-        return getP2();
+        if (_upperPoint == null)
+            return null;
+
+        return _upperPoint.getBukkitLocation();
     }
 
-    /**
-     * Get the smallest X axis coordinates
-     * of the region.
-     */
     @Override
     public final int getXStart() {
         return _startX;
     }
 
-    /**
-     * Get the smallest Y axis coordinates
-     * of the region.
-     */
     @Override
     public final int getYStart() {
         return _startY;
     }
 
-    /**
-     * Get the smallest Z axis coordinates
-     * of the region.
-     */
     @Override
     public final int getZStart() {
         return _startZ;
     }
 
-    /**
-     * Get the largest X axis coordinates
-     * of the region.
-     */
     @Override
     public final int getXEnd() {
         return _endX;
     }
 
-    /**
-     * Get the largest Y axis coordinates
-     * of the region.
-     */
     @Override
     public final int getYEnd() {
         return _endY;
     }
 
-    /**
-     * Get the largest Z axis coordinates
-     * of the region.
-     */
     @Override
     public final int getZEnd() {
         return _endZ;
     }
 
-    /**
-     * Get the X axis width of the region.
-     */
     @Override
     public final int getXWidth() {
         return _xWidth;
     }
 
-    /**
-     * Get the Z axis width of the region.
-     */
     @Override
     public final int getZWidth() {
         return _zWidth;
     }
 
-    /**
-     * Get the Y axis height of the region.
-     */
     @Override
     public final int getYHeight() {
         return _yHeight;
     }
 
-    /**
-     * Get the number of blocks that make up the width of the
-     * region on the X axis.
-     */
     @Override
     public final int getXBlockWidth() {
         return _xBlockWidth;
     }
 
-    /**
-     * Get the number of blocks that make up the width of the
-     * region on the Z axis.
-     */
     @Override
     public final int getZBlockWidth() {
         return _zBlockWidth;
     }
 
-    /**
-     * Get the number of blocks that make up the height of the
-     * region on the Y axis.
-     */
     @Override
     public final int getYBlockHeight() {
         return _yBlockHeight;
     }
 
-    /**
-     * Get the total volume of the region.
-     */
     @Override
     public final long getVolume() {
         return _volume;
     }
 
-    /**
-     * Get the center location of the region.
-     */
     @Override
     @Nullable
     public final Location getCenter() {
@@ -319,45 +256,26 @@ public class RegionSelection implements IRegionSelection {
         return _center.clone();
     }
 
-    /**
-     * Get the smallest X axis coordinates from the chunks
-     * the region intersects with.
-     */
     @Override
     public final int getChunkX() {
         return _chunkX;
     }
 
-    /**
-     * Get the smallest Z axis coordinates from the chunks
-     * the region intersects with.
-     */
     @Override
     public final int getChunkZ() {
         return _chunkZ;
     }
 
-    /**
-     * Get the number of chunks that comprise the chunk width
-     * on the X axis of the region.
-     */
     @Override
     public final int getChunkXWidth() {
         return _chunkXWidth;
     }
 
-    /**
-     * Get the number of chunks that comprise the chunk width
-     * on the Z axis of the region.
-     */
     @Override
     public final int getChunkZWidth() {
         return _chunkZWidth;
     }
 
-    /**
-     * Get all chunks that contain at least a portion of the region.
-     */
     @Override
     public final List<ChunkInfo> getChunks() {
         if (getWorld() == null || !isDefined())
@@ -388,19 +306,11 @@ public class RegionSelection implements IRegionSelection {
         }
     }
 
-    /**
-     * Get the region selections flatness.
-     */
     @Override
     public final RegionShape getShape() {
         return _flatness;
     }
 
-    /**
-     * Determine if the region contains the specified location.
-     *
-     * @param loc  The location to check.
-     */
     @Override
     public final boolean contains(Location loc) {
 
@@ -420,14 +330,6 @@ public class RegionSelection implements IRegionSelection {
         return contains(x, y, z);
     }
 
-    /**
-     * Determine if the region contains the specified
-     * coordinates.
-     *
-     * @param x  The location X coordinates.
-     * @param y  The location Y coordinates.
-     * @param z  The location Z coordinates.
-     */
     @Override
     public final boolean contains(int x, int y, int z) {
         synchronized (_sync) {
@@ -440,15 +342,6 @@ public class RegionSelection implements IRegionSelection {
         }
     }
 
-    /**
-     * Determine if the region contains the the specified location
-     * on the specified axis.
-     *
-     * @param loc  The location to check.
-     * @param cx   True to check if the point is inside the region on the X axis.
-     * @param cy   True to check if the point is inside the region on the Y axis.
-     * @param cz   True to check if the point is inside the region on the Z axis.
-     */
     @Override
     public final boolean contains(Location loc, boolean cx, boolean cy, boolean cz) {
 
@@ -484,11 +377,6 @@ public class RegionSelection implements IRegionSelection {
         }
     }
 
-    /**
-     * Determine if the region intersects with the chunk specified.
-     *
-     * @param chunk  The chunk.
-     */
     @Override
     public final boolean intersects(Chunk chunk) {
         PreCon.notNull(chunk);
@@ -498,12 +386,6 @@ public class RegionSelection implements IRegionSelection {
                 intersects(chunk.getX(), chunk.getZ());
     }
 
-    /**
-     * Determine if the region intersects with the chunk specified.
-     *
-     * @param chunkX  The chunk X coordinates.
-     * @param chunkZ  The chunk Z coordinates.
-     */
     @Override
     public final boolean intersects(int chunkX, int chunkZ) {
 
@@ -511,12 +393,6 @@ public class RegionSelection implements IRegionSelection {
                 getChunkZ() <= chunkZ && (getChunkZ() + getChunkZWidth() - 1) >= chunkZ;
     }
 
-    /**
-     * Get a specific point location from the
-     * region selection.
-     *
-     * @param point  The point to get.
-     */
     @Override
     public Location getPoint(CuboidPoint point) {
         PreCon.notNull(point);
@@ -524,14 +400,6 @@ public class RegionSelection implements IRegionSelection {
         return point.getLocation(this);
     }
 
-    /**
-     * Get a {@code CuboidPoint} that represents the specified
-     * location.
-     *
-     * @param location  The location to check.
-     *
-     * @return  Null if the location is not any of the regions points.
-     */
     @Nullable
     @Override
     public CuboidPoint getPoint(Location location) {
@@ -591,8 +459,10 @@ public class RegionSelection implements IRegionSelection {
             worldName = p1.getWorld().getName();
         }
 
-        _p1 = new SyncLocation(worldName, lowerX, lowerY, lowerZ, 0F, 0F);
-        _p2 = new SyncLocation(worldName, upperX, upperY, upperZ, 0F, 0F);
+        _p1 = new SyncLocation(worldName, p1.getX(), p1.getY(), p1.getZ(), 0F, 0F);
+        _p2 = new SyncLocation(worldName, p2.getX(), p2.getY(), p2.getZ(), 0F, 0F);
+        _lowerPoint = new SyncLocation(worldName, lowerX, lowerY, lowerZ, 0F, 0F);
+        _upperPoint = new SyncLocation(worldName, upperX, upperY, upperZ, 0F, 0F);
         updateMath();
     }
 
@@ -614,13 +484,13 @@ public class RegionSelection implements IRegionSelection {
             _endY = Math.max(_p1.getBlockY(), _p2.getBlockY());
             _endZ = Math.max(_p1.getBlockZ(), _p2.getBlockZ());
 
-            _xWidth = _p1 == null || _p2 == null ? 0 : (int)Math.abs(_p1.getX() - _p2.getX());
-            _zWidth = _p1 == null || _p2 == null ? 0 : (int)Math.abs(_p1.getZ() - _p2.getZ());
-            _yHeight = _p1 == null || _p2 == null ? 0 : (int)Math.abs(_p1.getY() - _p2.getY());
+            _xWidth = (int)Math.abs(_p1.getX() - _p2.getX());
+            _zWidth = (int)Math.abs(_p1.getZ() - _p2.getZ());
+            _yHeight = (int)Math.abs(_p1.getY() - _p2.getY());
 
-            _xBlockWidth = _p1 == null || _p2 == null ? 0 : Math.abs(_p1.getBlockX() - _p2.getBlockX()) + 1;
-            _zBlockWidth = _p1 == null || _p2 == null ? 0 : Math.abs(_p1.getBlockZ() - _p2.getBlockZ()) + 1;
-            _yBlockHeight = _p1 == null || _p2 == null ? 0 : Math.abs(_p1.getBlockY() - _p2.getBlockY()) + 1;
+            _xBlockWidth = _xWidth + 1;
+            _zBlockWidth = _zWidth + 1;
+            _yBlockHeight = _yHeight + 1;
 
             _volume = _xWidth * _zWidth * _yHeight;
 
