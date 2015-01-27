@@ -449,7 +449,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
             _agents.getAgent("onLifespanEnd").update(item);
         }
 
-        if (isEmpty() && _agents.hasAgent("onEmpty")) {
+        if (_expireMap.isEmpty() && _agents.hasAgent("onEmpty")) {
             _agents.getAgent("onEmpty").update(this);
         }
     }
