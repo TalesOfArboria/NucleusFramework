@@ -39,7 +39,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 @CommandInfo(
-        parent="neconomy",
         command="balance",
         staticParams = { "bank=" },
         description="Get your current economy account balance.",
