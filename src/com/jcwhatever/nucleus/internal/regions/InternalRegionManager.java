@@ -337,7 +337,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
         if (!region.isDefined() || !region.isWorldLoaded()) {
             NucMsg.debug("Failed to register region '{0}' with RegionManager because " +
-                    "it's coords are undefined.", region.getName());
+                    "it's coords are undefined. Region Type: {1}", region.getName(), region.getClass().getName());
             return;
         }
 
