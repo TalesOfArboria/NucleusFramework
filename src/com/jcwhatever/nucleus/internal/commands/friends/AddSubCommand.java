@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.providers.friends.FriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
 import com.jcwhatever.nucleus.utils.Friends;
 import com.jcwhatever.nucleus.utils.language.Localizable;
@@ -42,9 +43,13 @@ import java.util.UUID;
 
 @CommandInfo(
         command="add",
-        staticParams = { "friendName" },
+        staticParams = { "friendName", "level=casual" },
         description="Add a friend to your friends list.",
-        paramDescriptions = { "friendName= The name of player to add as a friend."},
+        paramDescriptions = {
+                "friendName= The name of player to add as a friend.",
+                "level= Optional. The level of friendship. Possible values " +
+                        "are 'casual', 'good', or 'best'. Default is 'casual'."
+        },
         permissionDefault = PermissionDefault.TRUE)
 
 public final class AddSubCommand extends AbstractCommand {
@@ -59,6 +64,7 @@ public final class AddSubCommand extends AbstractCommand {
         CommandException.checkNotConsole(this, sender);
 
         String name = args.getString("friendName");
+        FriendLevel level = args.getEnum("level", FriendLevel.class);
 
         UUID friendId = PlayerUtils.getPlayerId(name);
         if (friendId == null) {
@@ -74,7 +80,7 @@ public final class AddSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        Friends.addFriend(player, friendId);
+        Friends.addFriend(player, friendId, level);
 
         tellSuccess(sender, NucLang.get(_SUCCESS, name));
     }

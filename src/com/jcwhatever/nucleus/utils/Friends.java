@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.providers.friends.FriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 
@@ -59,6 +60,50 @@ public class Friends {
      */
     public static Collection<IFriend> getFriends(UUID playerId) {
         return provider().getFriends(playerId);
+    }
+
+    /**
+     * Determine if the specified friend is in the specified
+     * players friend list.
+     *
+     * @param playerId  The ID of the player whose friend list is to be checked.
+     * @param friendId  The ID of the player to check.
+     */
+    public static boolean isFriend(UUID playerId, UUID friendId){
+        return provider().isFriend(playerId, friendId);
+    }
+
+    /**
+     * Determine if the specified friend is in the specified
+     * players friend list.
+     *
+     * @param player    The Player whose friend list is to be checked.
+     * @param friendId  The ID of the player to check.
+     */
+    public static boolean isFriend(Player player, UUID friendId){
+        return provider().isFriend(player.getUniqueId(), friendId);
+    }
+
+    /**
+     * Determine if the specified friend is in the specified
+     * players friend list.
+     *
+     * @param playerId  The ID of the player whose friend list is to be checked.
+     * @param friend    The player to check.
+     */
+    public static boolean isFriend(UUID playerId, Player friend){
+        return provider().isFriend(playerId, friend.getUniqueId());
+    }
+
+    /**
+     * Determine if the specified friend is in the specified
+     * players friend list.
+     *
+     * @param player    The player whose friend list is to be checked.
+     * @param friend    The player to check.
+     */
+    public static boolean isFriend(Player player, Player friend){
+        return provider().isFriend(player.getUniqueId(), friend.getUniqueId());
     }
 
     /**
@@ -124,11 +169,12 @@ public class Friends {
      *
      * @param playerId  The ID of the player to add a friend to.
      * @param friendId  The ID of the player to become friends with.
+     * @param level     The level of friendship.
      *
      * @return  The new or current {@code IFriend} object.
      */
-    public static IFriend addFriend(UUID playerId, UUID friendId) {
-        return provider().addFriend(playerId, friendId);
+    public static IFriend addFriend(UUID playerId, UUID friendId, FriendLevel level) {
+        return provider().addFriend(playerId, friendId, level);
     }
 
     /**
@@ -138,11 +184,12 @@ public class Friends {
      *
      * @param player    The player to add a friend to.
      * @param friendId  The ID of the player to become friends with.
+     * @param level     The level of friendship.
      *
      * @return  The new or current {@code IFriend} object.
      */
-    public static IFriend addFriend(Player player, UUID friendId) {
-        return provider().addFriend(player.getUniqueId(), friendId);
+    public static IFriend addFriend(Player player, UUID friendId, FriendLevel level) {
+        return provider().addFriend(player.getUniqueId(), friendId, level);
     }
 
     /**
@@ -152,11 +199,12 @@ public class Friends {
      *
      * @param playerId  The ID of the player to add a friend to.
      * @param friend    The player to become friends with.
+     * @param level     The level of friendship.
      *
      * @return  The new or current {@code IFriend} object.
      */
-    public static IFriend addFriend(UUID playerId, Player friend) {
-        return provider().addFriend(playerId, friend.getUniqueId());
+    public static IFriend addFriend(UUID playerId, Player friend, FriendLevel level) {
+        return provider().addFriend(playerId, friend.getUniqueId(), level);
     }
 
     /**
@@ -166,11 +214,12 @@ public class Friends {
      *
      * @param player  The player to add a friend to.
      * @param friend  The player to become friends with.
+     * @param level   The level of friendship.
      *
      * @return  The new or current {@code IFriend} object.
      */
-    public static IFriend addFriend(Player player, Player friend) {
-        return provider().addFriend(player.getUniqueId(), friend.getUniqueId());
+    public static IFriend addFriend(Player player, Player friend, FriendLevel level) {
+        return provider().addFriend(player.getUniqueId(), friend.getUniqueId(), level);
     }
 
     /**

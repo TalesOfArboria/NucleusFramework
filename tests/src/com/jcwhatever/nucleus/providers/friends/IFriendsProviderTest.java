@@ -31,7 +31,7 @@ public abstract class IFriendsProviderTest {
         Collection<IFriend> friends = provider.getFriends(_player.getUniqueId());
         assertEquals(0, friends.size());
 
-        provider.addFriend(_player.getUniqueId(), _friend1.getUniqueId());
+        provider.addFriend(_player.getUniqueId(), _friend1.getUniqueId(), FriendLevel.CASUAL);
 
         friends = provider.getFriends(_player.getUniqueId());
         assertEquals(1, friends.size());

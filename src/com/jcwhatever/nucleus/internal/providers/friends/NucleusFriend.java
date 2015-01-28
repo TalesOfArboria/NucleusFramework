@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.providers.friends;
 
 import com.google.common.collect.MultimapBuilder.SetMultimapBuilder;
 import com.google.common.collect.SetMultimap;
+import com.jcwhatever.nucleus.providers.friends.FriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
@@ -59,6 +60,7 @@ public class NucleusFriend implements IFriend {
 
     private Result<IFriend> _mutualFriend;
     private String _name;
+    private FriendLevel _level;
     private volatile boolean _isValid = true;
 
     /**
@@ -81,6 +83,7 @@ public class NucleusFriend implements IFriend {
             since = System.currentTimeMillis();
 
         _befriendDate = new Date(since);
+        _level = dataNode.getEnum("level", FriendLevel.CASUAL, FriendLevel.class);
     }
 
     @Override
@@ -130,7 +133,22 @@ public class NucleusFriend implements IFriend {
     }
 
     @Override
-    public Set<String> getPermissions(Plugin plugin) {
+    public FriendLevel getLevel() {
+        return _level;
+    }
+
+    @Override
+    public void setLevel(FriendLevel level) {
+        PreCon.notNull(level);
+
+        _level = level;
+
+        _dataNode.set("level", level);
+        _dataNode.save();
+    }
+
+    @Override
+    public Set<String> getFlags(Plugin plugin) {
         PreCon.notNull(plugin);
 
         loadPermissions(plugin);
@@ -141,9 +159,9 @@ public class NucleusFriend implements IFriend {
     }
 
     @Override
-    public boolean addPermission(Plugin plugin, String permission) {
+    public boolean addFlag(Plugin plugin, String flagName) {
         PreCon.notNull(plugin);
-        PreCon.notNullOrEmpty(permission);
+        PreCon.notNullOrEmpty(flagName);
 
         loadPermissions(plugin);
 
@@ -151,7 +169,7 @@ public class NucleusFriend implements IFriend {
 
         synchronized (_sync) {
             permissions = new HashSet<>(_permissions.get(plugin.getName()));
-            if (!permissions.add(permission))
+            if (!permissions.add(flagName))
                 return false;
         }
 
@@ -161,16 +179,16 @@ public class NucleusFriend implements IFriend {
         permNode.save();
 
         synchronized (_sync) {
-            _permissions.put(plugin.getName(), permission);
+            _permissions.put(plugin.getName(), flagName);
         }
 
         return true;
     }
 
     @Override
-    public boolean removePermission(Plugin plugin, String permission) {
+    public boolean removeFlag(Plugin plugin, String flagName) {
         PreCon.notNull(plugin);
-        PreCon.notNull(permission);
+        PreCon.notNull(flagName);
 
         loadPermissions(plugin);
 
@@ -178,7 +196,7 @@ public class NucleusFriend implements IFriend {
 
         synchronized (_sync) {
             permissions = new HashSet<>(_permissions.get(plugin.getName()));
-            if (!permissions.remove(permission))
+            if (!permissions.remove(flagName))
                 return false;
         }
 
@@ -188,7 +206,7 @@ public class NucleusFriend implements IFriend {
         permNode.save();
 
         synchronized (_sync) {
-            _permissions.remove(plugin.getName(), permission);
+            _permissions.remove(plugin.getName(), flagName);
         }
 
         return true;

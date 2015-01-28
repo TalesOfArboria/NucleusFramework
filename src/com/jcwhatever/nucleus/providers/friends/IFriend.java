@@ -76,31 +76,42 @@ public interface IFriend {
     IFriend getMutualFriend();
 
     /**
-     * Get a permission added by a specific plugin. Permissions are provided by
-     * the plugins for its own use and allow plugins to specify permissions a friend player
-     * has been given by the friend-of player.
-     *
-     * @param plugin  The plugin to get permissions for.
+     * Get the level of friendship.
      */
-    Set<String> getPermissions(Plugin plugin);
+    FriendLevel getLevel();
 
     /**
-     * Add a permission to the friend.
+     * Set the level of friendship.
      *
-     * @param plugin      The plugin that owns the permission.
-     * @param permission  The permission to add.
-     *
-     * @return  True if the permissions were modified.
+     * @param level  The level.
      */
-    boolean addPermission(Plugin plugin, String permission);
+    void setLevel(FriendLevel level);
 
     /**
-     * Remove a permission from the friend.
+     * Get flags added by a specific plugin. Flags are provided by the plugins for their
+     * own use and allow plugins to attach boolean data to the friend.
      *
-     * @param plugin      The plugin that owns the permission.
-     * @param permission  The permission to remove.
-     *
-     * @return  True if the permissions were modified.
+     * @param plugin  The plugin to get flags for.
      */
-    boolean removePermission(Plugin plugin, String permission);
+    Set<String> getFlags(Plugin plugin);
+
+    /**
+     * Add a flag to the friend.
+     *
+     * @param plugin    The plugin that owns the permission.
+     * @param flagName  The flag to add.
+     *
+     * @return  True if the flags were modified.
+     */
+    boolean addFlag(Plugin plugin, String flagName);
+
+    /**
+     * Remove a flag from the friend.
+     *
+     * @param plugin    The plugin that owns the flag.
+     * @param flagName  The permission to remove.
+     *
+     * @return  True if the flags were modified.
+     */
+    boolean removeFlag(Plugin plugin, String flagName);
 }

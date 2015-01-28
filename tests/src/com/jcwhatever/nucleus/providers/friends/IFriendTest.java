@@ -47,16 +47,16 @@ public abstract class IFriendTest {
 
         IFriend friend = createFriend(_player.getUniqueId(), _friend.getUniqueId());
 
-        Set<String> permissions = friend.getPermissions(_plugin);
+        Set<String> permissions = friend.getFlags(_plugin);
         assertEquals(0, permissions.size());
 
-        friend.addPermission(_plugin, "permission1");
+        friend.addFlag(_plugin, "permission1");
 
-        permissions = friend.getPermissions(_plugin);
+        permissions = friend.getFlags(_plugin);
         assertEquals(1, permissions.size());
         assertEquals(true, permissions.contains("permission1"));
 
-        friend.removePermission(_plugin, "permission1");
+        friend.removeFlag(_plugin, "permission1");
         assertEquals(0, permissions.size());
     }
 }

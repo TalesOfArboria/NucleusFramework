@@ -55,16 +55,26 @@ public interface IFriendsProvider extends IProvider {
     IFriend getFriend(UUID playerId, UUID friendId);
 
     /**
+     * Determine if the specified friend is in the specified
+     * players friend list.
+     *
+     * @param playerId  The ID of the player whose friend list is to be checked.
+     * @param friendId  The ID of the player to check.
+     */
+    boolean isFriend(UUID playerId, UUID friendId);
+
+    /**
      * Add a friend to the specified player. If the specified friend
      * is already a friend of the player, the existing friend is
      * returned.
      *
      * @param playerId  The ID of the player to add a friend to.
      * @param friendId  The ID of the player to become friends with.
+     * @param level     The level of friendship.
      *
      * @return  The new or current {@code IFriend} object.
      */
-    IFriend addFriend(UUID playerId, UUID friendId);
+    IFriend addFriend(UUID playerId, UUID friendId, FriendLevel level);
 
     /**
      * Remove a friend from the specified player.

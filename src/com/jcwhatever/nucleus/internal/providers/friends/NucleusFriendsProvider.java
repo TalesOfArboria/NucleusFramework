@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.providers.friends;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.providers.friends.FriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
@@ -114,7 +115,7 @@ public class NucleusFriendsProvider implements IFriendsProvider {
     }
 
     @Override
-    public IFriend addFriend(UUID playerId, UUID friendId) {
+    public boolean isFriend(UUID playerId, UUID friendId) {
         PreCon.notNull(playerId);
         PreCon.notNull(friendId);
 
@@ -123,8 +124,24 @@ public class NucleusFriendsProvider implements IFriendsProvider {
         synchronized (_sync) {
             FriendInfo friendInfo = _friends.get(playerId);
 
+            return friendInfo.friends.containsKey(friendId);
+        }
+    }
+
+    @Override
+    public IFriend addFriend(UUID playerId, UUID friendId, FriendLevel level) {
+        PreCon.notNull(playerId);
+        PreCon.notNull(friendId);
+        PreCon.notNull(level);
+
+        loadFriends(playerId);
+
+        synchronized (_sync) {
+            FriendInfo friendInfo = _friends.get(playerId);
+
             IDataNode dataNode = friendInfo.dataNode.getNode(friendId.toString());
             dataNode.set("since", System.currentTimeMillis());
+            dataNode.set("level", level);
 
             NucleusFriend friend = new NucleusFriend(this, playerId, friendId, dataNode);
             dataNode.save();
