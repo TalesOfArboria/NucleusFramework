@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.internal.commands;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.CommandDispatcher;
 import com.jcwhatever.nucleus.internal.commands.economy.NEconomyCommand;
+import com.jcwhatever.nucleus.internal.commands.friends.NFriendsCommand;
 import com.jcwhatever.nucleus.internal.commands.jail.JailCommand;
 import com.jcwhatever.nucleus.internal.commands.kits.KitsCommand;
 import com.jcwhatever.nucleus.internal.commands.plugins.PluginsCommand;
@@ -43,6 +44,7 @@ public final class NucleusCommandDispatcher extends CommandDispatcher {
     @Override
     protected void registerCommands () {
         registerCommand(NEconomyCommand.class);
+        registerCommand(NFriendsCommand.class);
         registerCommand(JailCommand.class);
         registerCommand(KitsCommand.class);
         registerCommand(PluginsCommand.class);

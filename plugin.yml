@@ -14,3 +14,8 @@ commands:
         description: Economy commands.
         usage: |
             ERROR!
+    nfriends:
+        aliases: [friends, friend, f]
+        description: Friend commands.
+        usage: |
+            ERROR!

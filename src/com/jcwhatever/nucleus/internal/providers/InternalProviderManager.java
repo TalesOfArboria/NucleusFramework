@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.internal.providers.bankitems.BankItemsProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.NucleusEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyBankProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyProvider;
+import com.jcwhatever.nucleus.internal.providers.friends.NucleusFriendsProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.BukkitProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.VaultProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvider;
@@ -44,6 +45,7 @@ import com.jcwhatever.nucleus.providers.economy.EconomyBankWrapper;
 import com.jcwhatever.nucleus.providers.economy.EconomyWrapper;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
+import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -66,6 +68,7 @@ public final class InternalProviderManager implements IProviderManager {
     private IDataNode _dataNode;
 
     private volatile IPlayerLookupProvider _playerLookup;
+    private volatile IFriendsProvider _friends;
     private volatile IPermissionsProvider _permissions;
     private volatile IRegionSelectProvider _regionSelect;
     private volatile IEconomyProvider _economy;
@@ -104,14 +107,26 @@ public final class InternalProviderManager implements IProviderManager {
         return _playerLookup;
     }
 
-    @Override
     public void setPlayerLookupProvider(IPlayerLookupProvider lookupProvider) {
         PreCon.notNull(lookupProvider);
+        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
 
-        if (_playerLookup instanceof IDisposable) {
-            ((IDisposable) _playerLookup).dispose();
-        }
         _playerLookup = lookupProvider;
+    }
+
+    @Override
+    public IFriendsProvider getFriendsProvider() {
+        if (_friends == null)
+            _friends = new NucleusFriendsProvider();
+
+        return _friends;
+    }
+
+    public void setFriendsProvider(IFriendsProvider provider) {
+        PreCon.notNull(provider);
+        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
+
+        _friends = provider;
     }
 
     @Override
@@ -124,7 +139,6 @@ public final class InternalProviderManager implements IProviderManager {
         return _permissions;
     }
 
-    @Override
     public void setPermissionsProvider(IPermissionsProvider permissionsProvider) {
         PreCon.notNull(permissionsProvider);
         PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
@@ -137,9 +151,9 @@ public final class InternalProviderManager implements IProviderManager {
         return _regionSelect;
     }
 
-    @Override
     public void setRegionSelectionProvider(IRegionSelectProvider provider) {
         PreCon.notNull(provider);
+        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
 
         if (_regionSelect instanceof IDisposable && provider != _regionSelect) {
             ((IDisposable)_regionSelect).dispose();
@@ -157,8 +171,10 @@ public final class InternalProviderManager implements IProviderManager {
         return _bankItems;
     }
 
-    @Override
     public void setBankItemsProvider(IBankItemsProvider provider) {
+        PreCon.notNull(provider);
+        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
+
         _bankItems = provider;
     }
 
@@ -167,7 +183,6 @@ public final class InternalProviderManager implements IProviderManager {
         return _economy;
     }
 
-    @Override
     public void setEconomyProvider(IEconomyProvider provider) {
         PreCon.notNull(provider);
         PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");
@@ -195,7 +210,6 @@ public final class InternalProviderManager implements IProviderManager {
         return _defaultStorage != null ? _defaultStorage : _yamlStorage;
     }
 
-    @Override
     public void setStorageProvider(IStorageProvider storageProvider) {
         PreCon.notNull(storageProvider);
         PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
@@ -252,7 +266,6 @@ public final class InternalProviderManager implements IProviderManager {
         return new ArrayList<>(_storageProviders.values());
     }
 
-    @Override
     public void registerStorageProvider(IStorageProvider storageProvider) {
         PreCon.notNull(storageProvider);
         PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");

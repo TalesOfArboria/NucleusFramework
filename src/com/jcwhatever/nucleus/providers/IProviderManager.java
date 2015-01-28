@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.providers;
 
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
+import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 
 import org.bukkit.plugin.Plugin;
@@ -44,11 +45,9 @@ public interface IProviderManager {
     IPlayerLookupProvider getPlayerLookupProvider();
 
     /**
-     * Set the player lookup provider.
-     *
-     * @param lookupProvider  The lookup provider.
+     * Get the friends provider.
      */
-    void setPlayerLookupProvider(IPlayerLookupProvider lookupProvider);
+    IFriendsProvider getFriendsProvider();
 
     /**
      * Get the permissions provider.
@@ -56,25 +55,9 @@ public interface IProviderManager {
     IPermissionsProvider getPermissionsProvider();
 
     /**
-     * Set the permissions provider.
-     *
-     * <p>Can only be set while NucleusFramework is loading providers.</p>
-     *
-     * @param permissionsProvider  The permissions provider.
-     */
-    void setPermissionsProvider(IPermissionsProvider permissionsProvider);
-
-    /**
      * Get the region selection provider.
      */
     IRegionSelectProvider getRegionSelectionProvider();
-
-    /**
-     * Set the region selection provider.
-     *
-     * @param provider  The region selection provider.
-     */
-    void setRegionSelectionProvider(IRegionSelectProvider provider);
 
     /**
      * Get the bank item provider.
@@ -82,39 +65,14 @@ public interface IProviderManager {
     IBankItemsProvider getBankItemsProvider();
 
     /**
-     * Set the bank item provider.
-     *
-     * @param provider  The provider.
-     */
-    void setBankItemsProvider(IBankItemsProvider provider);
-
-    /**
      * Get the economy provider.
      */
     IEconomyProvider getEconomyProvider();
 
     /**
-     * Set the economy provider.
-     *
-     * <p>Can only be set while NucleusFramework is loading providers.</p>
-     *
-     * @param economyProvider  The storage provider.
-     */
-    void setEconomyProvider(IEconomyProvider economyProvider);
-
-    /**
      * Get the default data storage provider.
      */
     IStorageProvider getStorageProvider();
-
-    /**
-     * Set the default data storage provider.
-     *
-     * <p>Can only be set while NucleusFramework is loading providers.</p>
-     *
-     * @param storageProvider  The storage provider.
-     */
-    void setStorageProvider(IStorageProvider storageProvider);
 
     /**
      * Get the data storage provider for a plugin.
@@ -125,8 +83,8 @@ public interface IProviderManager {
 
     /**
      * Set the data storage provider for a specific plugin.
-     *
-     * <p>Can only be set while NucleusFramework is loading providers.</p>
+     * Only sets the setting for the plugin. A restart of the
+     * server is required in order for the setting to take effect.
      *
      * @param plugin           The plugin.
      * @param storageProvider  The storage provider.
@@ -147,15 +105,4 @@ public interface IProviderManager {
      * Get all registered storage providers.
      */
     List<IStorageProvider> getStorageProviders();
-
-    /**
-     * Register a storage provider.
-     *
-     * <p>Can only register while NucleusFramework is loading providers.</p>
-     *
-     * @param storageProvider  The storage provider.
-     */
-    void registerStorageProvider(IStorageProvider storageProvider);
-
-
 }
