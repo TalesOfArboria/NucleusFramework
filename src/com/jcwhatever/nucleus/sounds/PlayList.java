@@ -355,7 +355,7 @@ public class PlayList implements IPluginOwned {
                 _queue.addAll(_playList);
             }
 
-            return _current = _queue.removeFirst();
+            return _current = _queue.pollFirst();
         }
     }
 

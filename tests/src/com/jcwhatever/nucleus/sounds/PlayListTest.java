@@ -161,7 +161,7 @@ public class PlayListTest {
     }
 
     @Test
-    public void testSoundQueue() throws Exception {
+    public void testSoundQueueNoLoop() throws Exception {
 
         List<ResourceSound> sounds = ArrayUtils.asList(
                 SoundManager.getSound("music1"),
@@ -170,6 +170,8 @@ public class PlayListTest {
         );
 
         PlayList playList = new PlayList(_plugin, sounds);
+        playList.setLoop(false);
+
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
@@ -186,8 +188,101 @@ public class PlayListTest {
 
         assertEquals(sounds.get(1), queue.getCurrent());
 
-        BukkitTester.pause(30);
+        BukkitTester.pause(22);
 
         assertEquals(sounds.get(2), queue.getCurrent());
+
+        BukkitTester.pause(22);
+
+        assertEquals(null, queue.getCurrent());
+
+        BukkitTester.pause(30);
+
+        playList.removePlayer(_player);
+    }
+
+    @Test
+    public void testSoundQueueLoop() throws Exception {
+
+        List<ResourceSound> sounds = ArrayUtils.asList(
+                SoundManager.getSound("music1"),
+                SoundManager.getSound("music2"),
+                SoundManager.getSound("voice1")
+        );
+
+        PlayList playList = new PlayList(_plugin, sounds);
+        playList.setLoop(true);
+
+        assertEquals(null, playList.getSoundQueue(_player));
+
+        // add player
+        assertEquals(true, playList.addPlayer(_player));
+
+        PlayerSoundQueue queue  = playList.getSoundQueue(_player);
+
+        assertTrue(queue != null);
+        assertEquals(_player, queue.getPlayer());
+
+        assertEquals(sounds.get(0), queue.getCurrent());
+
+        BukkitTester.pause(30);
+
+        assertEquals(sounds.get(1), queue.getCurrent());
+
+        BukkitTester.pause(22);
+
+        assertEquals(sounds.get(2), queue.getCurrent());
+
+        BukkitTester.pause(22);
+
+        assertEquals(sounds.get(0), queue.getCurrent());
+
+        BukkitTester.pause(22);
+
+        assertEquals(sounds.get(1), queue.getCurrent());
+
+        playList.removePlayer(_player);
+
+        BukkitTester.pause(30);
+    }
+
+    @Test
+    public void testSoundQueueNoLoopNoSounds() throws Exception {
+
+        PlayList playList = new PlayList(_plugin);
+        playList.setLoop(false);
+
+        assertEquals(null, playList.getSoundQueue(_player));
+
+        // add player
+        assertEquals(false, playList.addPlayer(_player));
+
+        PlayerSoundQueue queue  = playList.getSoundQueue(_player);
+
+        assertTrue(queue == null);
+
+        playList.removePlayer(_player);
+
+        BukkitTester.pause(30);
+    }
+
+    @Test
+    public void testSoundQueueLoopNoSounds() throws Exception {
+
+        PlayList playList = new PlayList(_plugin);
+        playList.setLoop(true);
+
+        assertEquals(null, playList.getSoundQueue(_player));
+
+        // add player
+        assertEquals(false, playList.addPlayer(_player));
+
+        PlayerSoundQueue queue  = playList.getSoundQueue(_player);
+
+        assertTrue(queue == null);
+
+        playList.removePlayer(_player);
+
+        BukkitTester.pause(30);
     }
 }

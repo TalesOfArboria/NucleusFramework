@@ -20,5 +20,8 @@ public class NucleusTest {
         BukkitTester.getServer().getPluginManager().enablePlugin(plugin);
 
         plugin.setDebugging(true);
+
+        // pause to allow providers to be loaded
+        BukkitTester.pause(20);
     }
 }
