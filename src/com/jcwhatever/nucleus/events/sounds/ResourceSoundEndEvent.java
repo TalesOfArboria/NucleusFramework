@@ -27,9 +27,9 @@ package com.jcwhatever.nucleus.events.sounds;
 
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.sounds.ResourceSound;
+import com.jcwhatever.nucleus.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -44,27 +44,23 @@ public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 	
 	private final Player _player;
 	private final ResourceSound _sound;
-	private final Location _location;
-	private final float _volume;
+	private final SoundSettings _settings;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param p         The player the sound was played to.
 	 * @param sound     The sound that ended.
-	 * @param location  The location of the sound.
-	 * @param volume    The volume of the sound.
+	 * @param settings  The settings the sound was played with.
 	 */
-	public ResourceSoundEndEvent(Player p, ResourceSound sound, Location location, float volume) {
+	public ResourceSoundEndEvent(Player p, ResourceSound sound, SoundSettings settings) {
 		PreCon.notNull(p);
 		PreCon.notNull(sound);
-		PreCon.notNull(location);
-		PreCon.notNull(volume);
+		PreCon.notNull(settings);
 
 		_player = p;
 		_sound = sound;
-		_location = location;
-		_volume = volume;
+		_settings = settings;
 	}
 
 	/**
@@ -83,19 +79,12 @@ public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 	}
 
 	/**
-	 * Get the location the sound was played.
+	 * Get the sound settings.
 	 */
-	public Location getLocations() {
-		return _location;
+	public SoundSettings getSettings() {
+		return _settings;
 	}
 
-	/**
-	 * Get the volume of the sound.
-	 */
-	public float getVolume() {
-		return _volume;
-	}
-	 
 	@Override
     public HandlerList getHandlers() {
 	    return handlers;

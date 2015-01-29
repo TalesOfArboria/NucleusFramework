@@ -28,7 +28,6 @@ package com.jcwhatever.nucleus.sounds;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -71,10 +70,9 @@ public class PlayList implements IPluginOwned {
     private final Plugin _plugin;
     private final List<ResourceSound> _playList;
     private final Map<Player, PlayerSoundQueue> _playerQueues = new WeakHashMap<>(100);
+    private final SoundSettings _settings = new SoundSettings();
 
     private boolean _isLoop;
-    private Location _location;
-    private float _volume = 1.0F;
 
     /**
      * Constructor.
@@ -115,58 +113,6 @@ public class PlayList implements IPluginOwned {
      */
     public int size() {
         return _playList.size();
-    }
-
-    /**
-     * Determine if the play list is being
-     * run in a loop.
-     */
-    public boolean isLoop() {
-        return _isLoop;
-    }
-
-    /**
-     * Set the play lists looping mode.
-     *
-     * @param isLoop  True to enable looping.
-     */
-    public void setLoop(boolean isLoop) {
-        _isLoop = isLoop;
-    }
-
-    /**
-     * Get the location of the sound. If the sound is null
-     * the sound is played wherever the player is at.
-     */
-    @Nullable
-    public Location getLocation() {
-        return _location;
-    }
-
-    /**
-     * Set the location sounds are played at. Null to play at
-     * the players location.
-     *
-     * @param location  The location to play at.
-     */
-    public void setLocation(@Nullable Location location) {
-        _location = location;
-    }
-
-    /**
-     * Get the volume of the sound.
-     */
-    public float getVolume() {
-        return _volume;
-    }
-
-    /**
-     * Set the volume of the sound.
-     *
-     * @param volume  The volume.
-     */
-    public void setVolume(float volume) {
-        _volume = volume;
     }
 
     /**
@@ -211,6 +157,30 @@ public class PlayList implements IPluginOwned {
     }
 
     /**
+     * Get the play lists sound settings.
+     */
+    public SoundSettings getSettings() {
+        return _settings;
+    }
+
+    /**
+     * Determine if the play list is being
+     * run in a loop.
+     */
+    public boolean isLoop() {
+        return _isLoop;
+    }
+
+    /**
+     * Set the play lists looping mode.
+     *
+     * @param isLoop  True to enable looping.
+     */
+    public void setLoop(boolean isLoop) {
+        _isLoop = isLoop;
+    }
+
+    /**
      * Add a player to the playlist so they can listen to it.
      *
      * @param p  The player to add.
@@ -239,7 +209,7 @@ public class PlayList implements IPluginOwned {
         playLists.add(this);
         _playerQueues.put(p, queue);
 
-        SoundManager.playSound(_plugin, p, sound, _location, _volume, null)
+        SoundManager.playSound(_plugin, p, sound, _settings, null)
                 .onFinish(new TrackChanger(p));
 
         return true;
@@ -281,7 +251,6 @@ public class PlayList implements IPluginOwned {
 
         return _playerQueues.get(p);
     }
-
 
     /**
      * A sound queue from a playlist for a player.
@@ -387,11 +356,12 @@ public class PlayList implements IPluginOwned {
             }
 
             ResourceSound sound = queue.next();
-            if (sound == null)
+            if (sound == null) {
+                _playerQueues.remove(p);
                 return;
+            }
 
-            SoundManager.playSound(_plugin, p, sound, _location, _volume, null).onFinish(this);
+            SoundManager.playSound(_plugin, p, sound, _settings, null).onFinish(this);
         }
     }
-
 }

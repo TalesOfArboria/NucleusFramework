@@ -77,7 +77,7 @@ public final class SoundManager {
      */
     @Nullable
     public static ResourceSound getSound(String name) {
-        PreCon.notNullOrEmpty(name);
+        PreCon.notNull(name);
 
         return _sounds.get(name.toLowerCase());
     }
@@ -116,11 +116,12 @@ public final class SoundManager {
     /**
      * Get the resource sounds being played to the specified player.
      *
-     * @param p  The player to check.
+     * @param player  The player to check.
      */
-    public static List<ResourceSound> getSounds(Player p) {
+    public static List<ResourceSound> getSounds(Player player) {
+        PreCon.notNull(player);
 
-        List<Playing> playing = _playing.get(p.getUniqueId());
+        List<Playing> playing = _playing.get(player.getUniqueId());
 
         if (playing == null || playing.isEmpty())
             return CollectionUtils.unmodifiableList();
@@ -141,11 +142,12 @@ public final class SoundManager {
      * Get information about the resource sounds being played
      * for the specified player.
      *
-     * @param p  The player to check.
+     * @param player  The player to check.
      */
-    public static List<Playing> getPlaying(Player p) {
+    public static List<Playing> getPlaying(Player player) {
+        PreCon.notNull(player);
 
-        List<Playing> playing = _playing.get(p.getUniqueId());
+        List<Playing> playing = _playing.get(player.getUniqueId());
 
         if (playing == null || playing.isEmpty())
             return CollectionUtils.unmodifiableList();
@@ -159,12 +161,11 @@ public final class SoundManager {
      * @param plugin  The requesting plugin.
      * @param p       The player who will hear the sound.
      * @param sound   The resource sound to play.
-     * @param volume  The volume of the sound.
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    public static SoundFuture playSound(Plugin plugin, Player p, ResourceSound sound, float volume) {
-        return playSound(plugin, p, sound, null, volume, null);
+    public static SoundFuture playSound(Plugin plugin, Player p, ResourceSound sound) {
+        return playSound(plugin, p, sound, new SoundSettings(), null);
     }
 
     /**
@@ -173,14 +174,13 @@ public final class SoundManager {
      * @param plugin    The requesting plugin.
      * @param p         The player who will hear the sound.
      * @param sound     The resource sound to play.
-     * @param location  The location to play the sound at.
-     * @param volume    The volume of the sound.
+     * @param settings  The settings to use.
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
     public static SoundFuture playSound(Plugin plugin, final Player p, ResourceSound sound,
-                                   @Nullable Location location, float volume) {
-        return playSound(plugin, p, sound, location, volume, null);
+                                   SoundSettings settings) {
+        return playSound(plugin, p, sound, settings, null);
     }
 
     /**
@@ -189,25 +189,30 @@ public final class SoundManager {
      * @param plugin             The requesting plugin.
      * @param p                  The player who will hear the sound.
      * @param sound              The resource sound to play.
-     * @param location           The location to play the sound at.
-     * @param volume             The volume of the sound.
+     * @param settings           The settings to use to play the sound. The settings are cloned
+     *                           within the method. If the setting has no locations, the players
+     *                           location is used.
      * @param transcriptViewers  Players who will see the sound transcript, if any.
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
     public static SoundFuture playSound(final Plugin plugin, Player p, ResourceSound sound,
-                                   @Nullable Location location, float volume,
+                                   SoundSettings settings,
                                    final @Nullable Collection<Player> transcriptViewers) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(sound);
+        PreCon.notNull(settings);
 
-        // substitute players location if no sound is provided.
-        if (location == null)
-            location = p.getLocation();
+        settings = new SoundSettings(settings);
 
+        // substitute players location if no locations are provided.
+        if (!settings.hasLocations())
+            settings.addLocations(p.getLocation());
 
-        Playing playing = new Playing(p, sound, location, volume);
+        Playing playing = new Playing(p, sound, settings);
 
         // run event
-        PlayResourceSoundEvent event = new PlayResourceSoundEvent(p, sound, location, volume);
+        PlayResourceSoundEvent event = new PlayResourceSoundEvent(p, sound, settings);
         Nucleus.getEventManager().callBukkit(null, event);
 
         // see if the event was cancelled
@@ -215,9 +220,12 @@ public final class SoundManager {
             return playing.setFinished();
 
         // run play sound command
-        String cmd = getPlaySoundCommand(event.getResourceSound().getName(), event.getPlayer(),
-                event.getLocation(), event.getVolume());
-        Utils.executeAsConsole(cmd);
+        for (Location location : settings.getLocations()) {
+            String cmd = getPlaySoundCommand(event.getResourceSound().getName(), event.getPlayer(),
+                    location, settings.getVolume());
+
+            Utils.executeAsConsole(cmd);
+        }
 
         // get timed list to store playing object in.
         TimedArrayList<Playing> currentPlaying = _playing.get(p.getUniqueId());
@@ -233,7 +241,7 @@ public final class SoundManager {
                     item.setFinished();
 
                     ResourceSoundEndEvent event = new ResourceSoundEndEvent(item.getPlayer(),
-                            item.getResourceSound(), item.getLocation(), item.getVolume());
+                            item.getResourceSound(), item.getSettings());
 
                     Nucleus.getEventManager().callBukkit(this, event);
                 }

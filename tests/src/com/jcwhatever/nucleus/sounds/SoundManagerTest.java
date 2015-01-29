@@ -23,6 +23,7 @@ public class SoundManagerTest {
 
     private Plugin _plugin = BukkitTester.mockPlugin("dummy");
     private Player _player = BukkitTester.login("dummy");
+    private SoundSettings _settings = new SoundSettings();
 
     /**
      * Make sure Nucleus and Bukkit are initialized.
@@ -84,7 +85,7 @@ public class SoundManagerTest {
         ResourceSound sound = SoundManager.getSound("voice1");
 
         // play sound and make sure it is returned
-        SoundManager.playSound(_plugin, _player, sound, 1.0f);
+        SoundManager.playSound(_plugin, _player, sound, _settings);
 
         sounds = SoundManager.getSounds(_player);
         assertEquals(1, sounds.size());
@@ -123,7 +124,7 @@ public class SoundManagerTest {
         assertEquals(0, playing.size());
 
         ResourceSound sound = SoundManager.getSound("effect1");
-        SoundManager.playSound(_plugin, _player, sound, 1.0f);
+        SoundManager.playSound(_plugin, _player, sound, _settings);
 
         // play sound and check if it is returned
         playing = SoundManager.getPlaying(_player);

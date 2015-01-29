@@ -29,9 +29,9 @@ package com.jcwhatever.nucleus.events.sounds;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.sounds.ResourceSound;
+import com.jcwhatever.nucleus.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -46,11 +46,9 @@ public class PlayResourceSoundEvent extends Event
 	private static final HandlerList handlers = new HandlerList();
 	
 	private final Player _player;
+    private final SoundSettings _settings;
 
 	private ResourceSound _sound;
-	private Location _location;
-	private float _volume;
-
 	private boolean _isCancelled;
 
 	/**
@@ -58,19 +56,16 @@ public class PlayResourceSoundEvent extends Event
 	 *
 	 * @param p         The player the sound is being played to.
 	 * @param sound     The sound being played.
-	 * @param location  The location of the sound.
-	 * @param volume    The volume of the sound.
+	 * @param settings  The sound settings.
 	 */
-	public PlayResourceSoundEvent(Player p, ResourceSound sound, Location location, float volume) {
+	public PlayResourceSoundEvent(Player p, ResourceSound sound, SoundSettings settings) {
 		PreCon.notNull(p);
 		PreCon.notNull(sound);
-		PreCon.notNull(location);
-		PreCon.notNull(volume);
+		PreCon.notNull(settings);
 
 		_player = p;
 		_sound = sound;
-		_location = location;
-		_volume = volume;
+		_settings = settings;
 	}
 
 	/**
@@ -89,44 +84,12 @@ public class PlayResourceSoundEvent extends Event
 	}
 
 	/**
-	 * Get the location the sound is being played.
+	 * Get the sound settings.
 	 */
-	public Location getLocation() {
-		return _location;
+	public SoundSettings getSettings() {
+		return _settings;
 	}
 
-	/**
-	 * Get the volume of the sound.
-	 */
-	public float getVolume() {
-		return _volume;
-	}
-
-	/**
-	 * Set the resource sound to player.
-	 */
-	public void setResourceSound(ResourceSound sound) {
-		PreCon.notNull(sound);
-
-		_sound = sound;
-	}
-
-	/**
-	 * Set the location of the sound.
-	 */
-	public void setLocation(Location location) {
-		PreCon.notNull(location);
-
-		_location = location;
-	}
-
-	/**
-	 * Set the volume of the sound.
-	 */
-	public void setVolume(float volume) {
-		_volume = volume;
-	}
-	
 	@Override
 	public boolean isCancelled() {
 		return _isCancelled;

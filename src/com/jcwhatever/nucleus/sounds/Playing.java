@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.sounds;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
@@ -41,8 +40,7 @@ public final class Playing {
 
     private final Player _player;
     private final ResourceSound _sound;
-    private final Location _location;
-    private final float _volume;
+    private final SoundSettings _settings;
     private final SoundFuture _future;
 
     private boolean _isFinished;
@@ -53,14 +51,11 @@ public final class Playing {
      *
      * @param player    The player.
      * @param sound     The sound the player hears.
-     * @param location  The location of the sound.
-     * @param volume    The volume of the sound.
      */
-    Playing(Player player, ResourceSound sound, Location location, float volume) {
+    Playing(Player player, ResourceSound sound, SoundSettings settings) {
         _player = player;
         _sound = sound;
-        _location = location;
-        _volume = volume;
+        _settings = settings;
         _future = new SoundFuture();
     }
 
@@ -81,15 +76,8 @@ public final class Playing {
     /**
      * Get the location of the sound.
      */
-    public Location getLocation() {
-        return _location;
-    }
-
-    /**
-     * Get the volume of the sound.
-     */
-    public float getVolume() {
-        return _volume;
+    public SoundSettings getSettings() {
+        return _settings;
     }
 
     /**

@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
+import com.jcwhatever.nucleus.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
@@ -96,7 +97,7 @@ public class ScriptApiSounds extends NucleusScriptApi {
             if (sound == null)
                 return false;
 
-            SoundManager.playSound(_plugin, p, sound, p.getLocation(), 500.0f, null);
+            SoundManager.playSound(_plugin, p, sound, new SoundSettings(500.0f, p.getLocation()));
             return true;
         }
 
@@ -124,7 +125,7 @@ public class ScriptApiSounds extends NucleusScriptApi {
             if (sound == null)
                 return false;
 
-            SoundManager.playSound(_plugin, p, sound, location, (float)volume, null);
+            SoundManager.playSound(_plugin, p, sound, new SoundSettings((float)volume, location));
             return false;
         }
 
@@ -149,7 +150,7 @@ public class ScriptApiSounds extends NucleusScriptApi {
             if (sound == null)
                 return false;
 
-            SoundManager.playSound(_plugin, p, sound, location, (float)volume, null);
+            SoundManager.playSound(_plugin, p, sound, new SoundSettings((float)volume, location));
             return false;
         }
     }
