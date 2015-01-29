@@ -27,7 +27,9 @@ package com.jcwhatever.nucleus.sounds;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Scheduler;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -183,34 +185,36 @@ public class PlayList implements IPluginOwned {
     /**
      * Add a player to the playlist so they can listen to it.
      *
-     * @param p  The player to add.
+     * @param player  The player to add.
      *
      * @return  True if the player is added or already added. False if the
      * {@code PlayList} does not have any sounds.
      */
-    public boolean addPlayer(Player p) {
-        PreCon.notNull(p);
+    public boolean addPlayer(Player player) {
+        PreCon.notNull(player);
 
-        if (_playerQueues.containsKey(p))
+        PlayerSoundQueue current = _playerQueues.get(player);
+        if (current != null) {
+            current._isRemoved = false;
             return true;
+        }
 
-        final PlayerSoundQueue queue = new PlayerSoundQueue(p);
-
+        PlayerSoundQueue queue = new PlayerSoundQueue(player);
         ResourceSound sound = queue.next();
         if (sound == null)
             return false;
 
-        Set<PlayList> playLists = _instances.get(p);
+        Set<PlayList> playLists = _instances.get(player);
         if (playLists == null) {
             playLists = new HashSet<>(10);
-            _instances.put(p, playLists);
+            _instances.put(player, playLists);
         }
 
         playLists.add(this);
-        _playerQueues.put(p, queue);
+        _playerQueues.put(player, queue);
 
-        SoundManager.playSound(_plugin, p, sound, _settings, null)
-                .onFinish(new TrackChanger(p));
+        SoundManager.playSound(_plugin, player, sound, _settings, null)
+                .onFinish(new TrackChanger(player, queue));
 
         return true;
     }
@@ -228,11 +232,6 @@ public class PlayList implements IPluginOwned {
             return false;
 
         queue.remove();
-
-        Set<PlayList> playLists = _instances.get(p);
-        if (playLists != null) {
-            playLists.remove(this);
-        }
 
         return true;
     }
@@ -259,6 +258,7 @@ public class PlayList implements IPluginOwned {
 
         private final WeakReference<Player> _player;
         private final LinkedList<ResourceSound> _queue = new LinkedList<>();
+        private final World _world;
         private ResourceSound _current;
         private boolean _isRemoved;
 
@@ -269,6 +269,7 @@ public class PlayList implements IPluginOwned {
          */
         PlayerSoundQueue(Player player) {
             _player = new WeakReference<Player>(player);
+            _world = player.getWorld();
             _queue.addAll(_playList);
         }
 
@@ -280,6 +281,13 @@ public class PlayList implements IPluginOwned {
         @Nullable
         public Player getPlayer() {
             return _player.get();
+        }
+
+        /**
+         * Get the world the playlist is playing in.
+         */
+        public World getWorld() {
+            return _world;
         }
 
         /**
@@ -300,10 +308,44 @@ public class PlayList implements IPluginOwned {
 
         /**
          * Mark the sound queue for removal.
+         *
+         * <p>If the player is still in a world where the sound is playing, the player
+         * is not removed from the queue until after the current sound ends since there
+         * is no way to stop the sound. If the player moves to a different world, the sound
+         * is ended on the client and the player is removed from the queue immediately.</p>
+         *
+         * <p>Remove operation is performed after a 1 tick delay to ensure the {@code World} reported by
+         * the {@code Player} object is up-to-date.</p>
          */
         void remove() {
-            _queue.clear();
-            _isRemoved = true;
+
+            Scheduler.runTaskLater(getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+
+                    // check if player should be removed from queue immediately or
+                    // wait for current song to end.
+                    Player player = getPlayer();
+                    boolean removeNow = player == null;
+                    if (player != null) {
+
+                        World world = player.getWorld();
+                        removeNow = world == null || !world.equals(_world);
+                    }
+
+                    if (removeNow) {
+                        _queue.clear();
+                        _playerQueues.remove(player);
+
+                        Set<PlayList> playLists = _instances.get(player);
+                        if (playLists != null) {
+                            playLists.remove(PlayList.this);
+                        }
+                    }
+
+                    _isRemoved = true;
+                }
+            });
         }
 
         /**
@@ -334,34 +376,45 @@ public class PlayList implements IPluginOwned {
     private class TrackChanger implements Runnable {
 
         private final WeakReference<Player> _player;
+        private final PlayerSoundQueue _soundQueue;
 
-        TrackChanger(Player p) {
-            _player = new WeakReference<Player>(p);
+        TrackChanger(Player player, PlayerSoundQueue queue) {
+            _player = new WeakReference<Player>(player);
+            _soundQueue = queue;
         }
 
         @Override
         public void run() {
 
-            Player p = _player.get();
-            if (p == null)
+            Player player = _player.get();
+            if (player == null)
                 return;
 
-            PlayerSoundQueue queue = _playerQueues.get(_player.get());
-            if (queue == null)
-                return;
-
-            if (queue.isRemoved()) {
-                _playerQueues.remove(_player.get());
+            if (_soundQueue.isRemoved()) {
+                removeNow(player);
                 return;
             }
 
-            ResourceSound sound = queue.next();
+            ResourceSound sound = _soundQueue.next();
             if (sound == null) {
-                _playerQueues.remove(p);
+                removeNow(player);
                 return;
             }
 
-            SoundManager.playSound(_plugin, p, sound, _settings, null).onFinish(this);
+            SoundManager.playSound(_plugin, player, sound, _settings, null).onFinish(this);
+        }
+
+        private void removeNow(Player player) {
+            PlayerSoundQueue current = _playerQueues.get(player);
+            if (current != _soundQueue)
+                return;
+
+            _playerQueues.remove(player);
+
+            Set<PlayList> playLists = _instances.get(player);
+            if (playLists != null) {
+                playLists.remove(PlayList.this);
+            }
         }
     }
 }
