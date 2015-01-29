@@ -130,7 +130,7 @@ public class SoundSettings {
     public SoundSettings addLocations(Location location, Location... locations) {
         PreCon.notNull(locations);
 
-        _locations.remove(location);
+        _locations.add(location);
         if (locations.length > 0) {
             _locations.addAll(ArrayUtils.asList(locations));
         }

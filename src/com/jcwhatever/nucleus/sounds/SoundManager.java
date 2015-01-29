@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.sounds;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
 import com.jcwhatever.nucleus.collections.timed.TimedArrayList;
 import com.jcwhatever.nucleus.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.nucleus.events.sounds.ResourceSoundEndEvent;
@@ -39,6 +40,7 @@ import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.Utils;
+import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 import org.bukkit.Location;
@@ -219,12 +221,28 @@ public final class SoundManager {
         if (event.isCancelled())
             return playing.setFinished();
 
+        INmsSoundEffectHandler nmsHandler = Nucleus.getNmsManager()
+                .getNmsHandler(NmsHandlers.SOUND_EFFECT.name());
+
         // run play sound command
         for (Location location : settings.getLocations()) {
-            String cmd = getPlaySoundCommand(event.getResourceSound().getName(), event.getPlayer(),
-                    location, settings.getVolume());
 
-            Utils.executeAsConsole(cmd);
+            if (location.getWorld() == null || !location.getWorld().equals(p.getWorld()))
+                continue;
+
+            if (nmsHandler != null) {
+                // send sound packet to player
+                nmsHandler.send(p, sound.getName(),
+                        location.getX(), location.getY(), location.getZ(),
+                        settings.getVolume(), settings.getPitch());
+            }
+            else {
+                // fallback to using console commands if NMS is unavailable
+                String cmd = getPlaySoundCommand(event.getResourceSound().getName(), event.getPlayer(),
+                        location, settings.getVolume(), settings.getPitch());
+
+                Utils.executeAsConsole(cmd);
+            }
         }
 
         // get timed list to store playing object in.
@@ -281,9 +299,11 @@ public final class SoundManager {
     /*
      * Get the command to run to make a player hear a sound.
      */
-    private static String getPlaySoundCommand(String soundName, Player p, Location loc, float volume) {
+    private static String getPlaySoundCommand(String soundName, Player p, Location loc, float volume, float pitch) {
+
         return "playsound " + soundName + ' ' + p.getName() + ' ' +
-                loc.getBlockX() + ' ' + loc.getBlockY() + ' ' + loc.getBlockZ() + ' ' + volume;
+                loc.getBlockX() + ' ' + loc.getBlockY() + ' ' + loc.getBlockZ() + ' '
+                + volume + ' ' + pitch;
     }
 
     /*

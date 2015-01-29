@@ -22,27 +22,27 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.nms;
+package com.jcwhatever.nucleus.utils.nms;
 
-import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsActionBarHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsListHeaderFooterHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsSoundEffectHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsTitleHandler_v1_8_R1;
-import com.jcwhatever.nucleus.utils.nms.NmsManager;
+import org.bukkit.entity.Player;
 
 /**
- * NucleusFramework's internal NMS manager.
+ * Interface for NucleusFramework's Minecraft Named Sound Effect handler which
+ * can be retrieved from NucleusFramework's NmsManager under the
+ * name "SOUND_EFFECT".
  */
-public final class InternalNmsManager extends NmsManager {
+public interface INmsSoundEffectHandler extends INmsHandler {
 
-    public InternalNmsManager() {
-        super(Nucleus.getPlugin());
-
-        registerNmsHandler("v1_8_R1", NmsHandlers.TITLES.name(), NmsTitleHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", NmsHandlers.ACTION_BAR.name(), NmsActionBarHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", NmsHandlers.LIST_HEADER_FOOTER.name(), NmsListHeaderFooterHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", NmsHandlers.SOUND_EFFECT.name(), NmsSoundEffectHandler_v1_8_R1.class);
-    }
+    /**
+     * Send a named sound effect to a player.
+     *
+     * @param player     The player to send the sound to.
+     * @param soundName  The name of the sound.
+     * @param x          The X coordinates to play the sound at.
+     * @param y          The Y coordinates to play the sound at.
+     * @param z          The Z coordinates to play the sound at.
+     * @param volume     The volume of the sound.
+     * @param pitch      The sound pitch.
+     */
+    void send(Player player, String soundName, double x, double y, double z, float volume, float pitch);
 }

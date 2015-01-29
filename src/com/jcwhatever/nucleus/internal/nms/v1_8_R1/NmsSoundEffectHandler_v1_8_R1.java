@@ -22,27 +22,43 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.nms;
+package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsActionBarHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsListHeaderFooterHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsSoundEffectHandler_v1_8_R1;
-import com.jcwhatever.nucleus.internal.nms.v1_8_R1.NmsTitleHandler_v1_8_R1;
-import com.jcwhatever.nucleus.utils.nms.NmsManager;
+import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 /**
- * NucleusFramework's internal NMS manager.
+ * Minecraft named sound effect packet sender for NMS version v1_8_R1
  */
-public final class InternalNmsManager extends NmsManager {
+public class NmsSoundEffectHandler_v1_8_R1 extends v1_8_R1 implements INmsSoundEffectHandler {
 
-    public InternalNmsManager() {
-        super(Nucleus.getPlugin());
+    @Override
+    public void send(final Player player, final String soundName,
+                     final double x, final double y, final double z,
+                     final float volume, final float pitch) {
 
-        registerNmsHandler("v1_8_R1", NmsHandlers.TITLES.name(), NmsTitleHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", NmsHandlers.ACTION_BAR.name(), NmsActionBarHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", NmsHandlers.LIST_HEADER_FOOTER.name(), NmsListHeaderFooterHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", NmsHandlers.SOUND_EFFECT.name(), NmsSoundEffectHandler_v1_8_R1.class);
+        if (Bukkit.isPrimaryThread()) {
+            syncSend(player, soundName, x, y, z, volume, pitch);
+        }
+        else {
+            Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    syncSend(player, soundName, x, y, z, volume, pitch);
+                }
+            });
+        }
+    }
+
+    private void syncSend(Player player, String soundName,
+                          double x, double y, double z, float volume, float pitch) {
+
+        Object packet = _PacketPlayOutNamedSoundEffect.construct("new", soundName, x, y, z, volume, pitch);
+
+        sendPacket(player, packet);
     }
 }

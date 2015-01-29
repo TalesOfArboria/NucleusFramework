@@ -290,9 +290,13 @@ public final class Nucleus {
         _pluginClassMap.remove(plugin.getClass());
     }
 
+    /**
+     * Nucleus NMS handlers.
+     */
     public enum NmsHandlers {
         ACTION_BAR,
         LIST_HEADER_FOOTER,
-        TITLES
+        TITLES,
+        SOUND_EFFECT
     }
 }

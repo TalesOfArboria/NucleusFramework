@@ -57,6 +57,9 @@ public class v1_8_R1 {
             .constructorAlias("newHeader", _IChatBaseComponent.getHandle())
             .fieldAlias("footer", "b");
 
+    static ReflectedType _PacketPlayOutNamedSoundEffect = reflection.nmsType("PacketPlayOutNamedSoundEffect")
+            .constructorAlias("new", String.class, double.class, double.class, double.class, float.class, float.class);
+
     static ReflectedType _ChatSerializer = reflection.nmsType("ChatSerializer")
             .methodAlias("serialize", "a", String.class);
 
