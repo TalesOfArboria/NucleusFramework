@@ -74,10 +74,18 @@ public class NmsActionBarHandler_v1_8_R1 extends v1_8_R1 implements INmsActionBa
 
     private void syncSend(Player player, String text) {
 
-        Object titleComponent = _ChatSerializer.invokeStatic("serialize", text);
+        try {
 
-        Object packet = _PacketPlayOutChat.construct("new", titleComponent, (byte) 2);
+            Object titleComponent = _ChatSerializer.invokeStatic("serialize", text);
 
-        sendPacket(player, packet);
+            Object packet = _PacketPlayOutChat.construct("new", titleComponent, (byte) 2);
+
+            sendPacket(player, packet);
+
+        }
+        catch (RuntimeException e) {
+            e.printStackTrace();
+            _isAvailable = false;
+        }
     }
 }

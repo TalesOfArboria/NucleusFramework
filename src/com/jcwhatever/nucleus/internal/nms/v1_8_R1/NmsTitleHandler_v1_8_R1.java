@@ -100,26 +100,33 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
     private void syncSend(Player player, String title, @Nullable String subTitle,
                           int fadeIn, int stay, int fadeOut) {
 
-        ReflectedInstance connection = getConnection(player);
+        try {
 
-        // times packet
-        Object timesPacket = _PacketPlayOutTitle.construct("newTimes", fadeIn, stay, fadeOut);
-        connection.invoke("sendPacket", timesPacket);
+            ReflectedInstance connection = getConnection(player);
 
-        // sub title packet
-        if (subTitle != null) {
-            Object subTitleComponent = _ChatSerializer.invokeStatic("serialize", subTitle);
-            Object subTitlePacket = _PacketPlayOutTitle.construct(
-                    "new", _EnumTitleAction.getEnum("SUBTITLE"), subTitleComponent);
+            // times packet
+            Object timesPacket = _PacketPlayOutTitle.construct("newTimes", fadeIn, stay, fadeOut);
+            connection.invoke("sendPacket", timesPacket);
 
-            connection.invoke("sendPacket", subTitlePacket);
+            // sub title packet
+            if (subTitle != null) {
+                Object subTitleComponent = _ChatSerializer.invokeStatic("serialize", subTitle);
+                Object subTitlePacket = _PacketPlayOutTitle.construct(
+                        "new", _EnumTitleAction.getEnum("SUBTITLE"), subTitleComponent);
+
+                connection.invoke("sendPacket", subTitlePacket);
+            }
+
+            // title packet
+            Object titleComponent = _ChatSerializer.invokeStatic("serialize", title);
+            Object titlePacket = _PacketPlayOutTitle.construct(
+                    "new", _EnumTitleAction.getEnum("TITLE"), titleComponent);
+
+            connection.invoke("sendPacket", titlePacket);
         }
-
-        // title packet
-        Object titleComponent = _ChatSerializer.invokeStatic("serialize", title);
-        Object titlePacket = _PacketPlayOutTitle.construct(
-                "new", _EnumTitleAction.getEnum("TITLE"), titleComponent);
-
-        connection.invoke("sendPacket", titlePacket);
+        catch (RuntimeException e) {
+            e.printStackTrace();
+            _isAvailable = false;
+        }
     }
 }

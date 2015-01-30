@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
+import com.jcwhatever.nucleus.utils.nms.INmsHandler;
 import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
 import com.jcwhatever.nucleus.utils.reflection.ReflectedType;
 import com.jcwhatever.nucleus.utils.reflection.Reflection;
@@ -33,7 +34,7 @@ import org.bukkit.entity.Player;
 /**
  * Reflected types for NMS version v1_8_R1
  */
-public class v1_8_R1 {
+public class v1_8_R1 implements INmsHandler {
 
     static Reflection reflection = new Reflection("v1_8_R1");
 
@@ -69,6 +70,13 @@ public class v1_8_R1 {
     static ReflectedType _CraftPlayer = reflection.craftType("entity.CraftPlayer")
             .method("getHandle");
 
+    protected boolean _isAvailable = true;
+
+    @Override
+    public boolean isAvailable() {
+        return _isAvailable;
+    }
+
 
     /**
      * Send an NMS packet.
@@ -78,11 +86,18 @@ public class v1_8_R1 {
      */
     void sendPacket(Player player, Object packet) {
 
-        ReflectedInstance entityPlayer = getEntityPlayer(player);
+        try {
 
-        ReflectedInstance connection = _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
+            ReflectedInstance entityPlayer = getEntityPlayer(player);
 
-        connection.invoke("sendPacket", packet);
+            ReflectedInstance connection = _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
+
+            connection.invoke("sendPacket", packet);
+        }
+        catch (RuntimeException e) {
+            e.printStackTrace();
+            _isAvailable = false;
+        }
     }
 
     /**
@@ -92,9 +107,16 @@ public class v1_8_R1 {
      */
     ReflectedInstance getConnection(Player player) {
 
-        ReflectedInstance entityPlayer = getEntityPlayer(player);
+        try {
 
-        return _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
+            ReflectedInstance entityPlayer = getEntityPlayer(player);
+
+            return _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
+        }
+        catch (RuntimeException e) {
+            _isAvailable = false;
+            throw e;
+        }
     }
 
     /**
@@ -103,6 +125,12 @@ public class v1_8_R1 {
      * @param player  The player.
      */
     ReflectedInstance getEntityPlayer(Player player) {
-        return _EntityPlayer.reflect(_CraftPlayer.reflect(player).invoke("getHandle"));
+        try {
+            return _EntityPlayer.reflect(_CraftPlayer.reflect(player).invoke("getHandle"));
+        }
+        catch (RuntimeException e) {
+            _isAvailable = false;
+            throw e;
+        }
     }
 }

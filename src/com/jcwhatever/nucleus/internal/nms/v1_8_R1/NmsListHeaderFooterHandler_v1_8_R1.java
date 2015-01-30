@@ -88,21 +88,28 @@ public class NmsListHeaderFooterHandler_v1_8_R1 extends v1_8_R1 implements INmsL
 
     private void syncSend (Player player, @Nullable String headerText, @Nullable String footerText) {
 
-        // create packet instance based on the presence of a header
-        Object packet = headerText != null
-                ? _PacketPlayOutPlayerListHeaderFooter.construct("newHeader",
-                        _ChatSerializer.invokeStatic("serialize", headerText)) // header constructor
-                : _PacketPlayOutPlayerListHeaderFooter.construct("new"); // no header constructor
+        try {
 
-        if (footerText != null) {
+            // create packet instance based on the presence of a header
+            Object packet = headerText != null
+                    ? _PacketPlayOutPlayerListHeaderFooter.construct("newHeader",
+                    _ChatSerializer.invokeStatic("serialize", headerText)) // header constructor
+                    : _PacketPlayOutPlayerListHeaderFooter.construct("new"); // no header constructor
 
-            Object footerComponent = _ChatSerializer.invokeStatic("serialize", footerText);
+            if (footerText != null) {
 
-            // insert footer into packet footer field
-            _PacketPlayOutPlayerListHeaderFooter.reflect(packet).set("footer", footerComponent);
+                Object footerComponent = _ChatSerializer.invokeStatic("serialize", footerText);
+
+                // insert footer into packet footer field
+                _PacketPlayOutPlayerListHeaderFooter.reflect(packet).set("footer", footerComponent);
+            }
+
+            // send packet
+            sendPacket(player, packet);
         }
-
-        // send packet
-        sendPacket(player, packet);
+        catch (RuntimeException e) {
+            e.printStackTrace();
+            _isAvailable = false;
+        }
     }
 }

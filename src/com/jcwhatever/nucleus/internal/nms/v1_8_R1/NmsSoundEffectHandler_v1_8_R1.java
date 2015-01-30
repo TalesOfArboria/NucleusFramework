@@ -36,6 +36,10 @@ import org.bukkit.entity.Player;
  */
 public class NmsSoundEffectHandler_v1_8_R1 extends v1_8_R1 implements INmsSoundEffectHandler {
 
+    public NmsSoundEffectHandler_v1_8_R1() {
+
+    }
+
     @Override
     public void send(final Player player, final String soundName,
                      final double x, final double y, final double z,
@@ -57,8 +61,14 @@ public class NmsSoundEffectHandler_v1_8_R1 extends v1_8_R1 implements INmsSoundE
     private void syncSend(Player player, String soundName,
                           double x, double y, double z, float volume, float pitch) {
 
-        Object packet = _PacketPlayOutNamedSoundEffect.construct("new", soundName, x, y, z, volume, pitch);
+        try {
+            Object packet = _PacketPlayOutNamedSoundEffect.construct("new", soundName, x, y, z, volume, pitch);
 
-        sendPacket(player, packet);
+            sendPacket(player, packet);
+        }
+        catch (RuntimeException e) {
+            e.printStackTrace();
+            _isAvailable = false;
+        }
     }
 }

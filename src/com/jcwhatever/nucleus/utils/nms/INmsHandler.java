@@ -28,4 +28,10 @@ package com.jcwhatever.nucleus.utils.nms;
  * Interface for a type that uses NMS and CraftBukkit code.
  */
 public interface INmsHandler {
+
+    /**
+     * Determine if the NMS handler is working and available. If the NMS handler
+     * fails for some reason, this should return false.
+     */
+    boolean isAvailable();
 }

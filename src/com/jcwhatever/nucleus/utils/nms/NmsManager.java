@@ -135,6 +135,9 @@ public class NmsManager implements IPluginOwned {
             @SuppressWarnings("unchecked")
             T result = (T)handler;
 
+            if (!result.isAvailable())
+                return null;
+
             return result;
         }
 
@@ -161,6 +164,9 @@ public class NmsManager implements IPluginOwned {
 
         @SuppressWarnings("unchecked")
         T result = (T)handler;
+
+        if (!result.isAvailable())
+            return null;
 
         return result;
     }
