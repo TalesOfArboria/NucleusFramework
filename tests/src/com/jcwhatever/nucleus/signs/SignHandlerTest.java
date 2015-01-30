@@ -47,7 +47,7 @@ public class SignHandlerTest {
     }
 
     /**
-     * Make sure {@code #getDisplayName} returns the correct value.
+     * Make sure {@code #getTitle} returns the correct value.
      */
     @Test
     public void testGetDisplayName() throws Exception {
