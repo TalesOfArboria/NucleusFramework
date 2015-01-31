@@ -161,10 +161,9 @@ public class ScriptApiSounds extends NucleusScriptApi {
         /**
          * Create a new playlist.
          *
-         * @param location    The location the sound is played from.
          * @param soundNames  The names of the resource sounds to play.
          */
-        public PlayList createPlayList(Location location, String... soundNames) {
+        public PlayList createPlayList(String... soundNames) {
 
             List<ResourceSound> sounds = new ArrayList<>(soundNames.length);
 
@@ -179,9 +178,23 @@ public class ScriptApiSounds extends NucleusScriptApi {
             PlayList playList = new PlayList(_plugin);
 
             playList.addSounds(sounds);
-            playList.getSettings().addLocations(location);
 
             return playList;
+        }
+
+        /**
+         * Create a new sound settings object.
+         *
+         * @param volume     The sound volume.
+         * @param pitch      The sound pitch.
+         * @param locations  The locations to play the sound at.
+         */
+        public SoundSettings createSoundSettings(float volume, float pitch, Location... locations) {
+            SoundSettings settings = new SoundSettings();
+
+            settings.setVolume(volume).setPitch(pitch).addLocations(locations);
+
+            return settings;
         }
     }
 

@@ -129,22 +129,26 @@ public class PlayListTest {
     @Test
     public void testAddPlayer() throws Exception {
 
+        SoundSettings settings = new SoundSettings();
+
         PlayList playList = new PlayList(_plugin, SoundManager.getSounds());
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(true, playList.addPlayer(_player));
+        assertEquals(true, playList.addPlayer(_player, settings));
         assertNotEquals(null, playList.getSoundQueue(_player));
     }
 
     @Test
     public void testRemovePlayer() throws Exception {
 
+        SoundSettings settings = new SoundSettings();
+
         PlayList playList = new PlayList(_plugin, SoundManager.getSounds());
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(true, playList.addPlayer(_player));
+        assertEquals(true, playList.addPlayer(_player, settings));
         assertNotEquals(null, playList.getSoundQueue(_player));
 
         // remove player
@@ -163,6 +167,8 @@ public class PlayListTest {
     @Test
     public void testSoundQueueNoLoop() throws Exception {
 
+        SoundSettings settings = new SoundSettings();
+
         List<ResourceSound> sounds = ArrayUtils.asList(
                 SoundManager.getSound("music1"),
                 SoundManager.getSound("music2"),
@@ -175,7 +181,7 @@ public class PlayListTest {
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(true, playList.addPlayer(_player));
+        assertEquals(true, playList.addPlayer(_player, settings));
 
         PlayerSoundQueue queue  = playList.getSoundQueue(_player);
 
@@ -204,6 +210,8 @@ public class PlayListTest {
     @Test
     public void testSoundQueueLoop() throws Exception {
 
+        SoundSettings settings = new SoundSettings();
+
         List<ResourceSound> sounds = ArrayUtils.asList(
                 SoundManager.getSound("music1"),
                 SoundManager.getSound("music2"),
@@ -216,7 +224,7 @@ public class PlayListTest {
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(true, playList.addPlayer(_player));
+        assertEquals(true, playList.addPlayer(_player, settings));
 
         PlayerSoundQueue queue  = playList.getSoundQueue(_player);
 
@@ -249,13 +257,15 @@ public class PlayListTest {
     @Test
     public void testSoundQueueNoLoopNoSounds() throws Exception {
 
+        SoundSettings settings = new SoundSettings();
+
         PlayList playList = new PlayList(_plugin);
         playList.setLoop(false);
 
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(false, playList.addPlayer(_player));
+        assertEquals(false, playList.addPlayer(_player, settings));
 
         PlayerSoundQueue queue  = playList.getSoundQueue(_player);
 
@@ -269,13 +279,15 @@ public class PlayListTest {
     @Test
     public void testSoundQueueLoopNoSounds() throws Exception {
 
+        SoundSettings settings = new SoundSettings();
+
         PlayList playList = new PlayList(_plugin);
         playList.setLoop(true);
 
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(false, playList.addPlayer(_player));
+        assertEquals(false, playList.addPlayer(_player, settings));
 
         PlayerSoundQueue queue  = playList.getSoundQueue(_player);
 

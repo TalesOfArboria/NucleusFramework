@@ -122,15 +122,13 @@ public class SoundSettings {
     /**
      * Add 1 or more locations to play the sound at.
      *
-     * @param location   The location to add.
-     * @param locations  Optional additional locations to add.
+     * @param locations  Locations to add.
      *
      * @return  Self for chaining.
      */
-    public SoundSettings addLocations(Location location, Location... locations) {
+    public SoundSettings addLocations(Location... locations) {
         PreCon.notNull(locations);
 
-        _locations.add(location);
         if (locations.length > 0) {
             _locations.addAll(ArrayUtils.asList(locations));
         }
@@ -141,16 +139,13 @@ public class SoundSettings {
     /**
      * Remove 1 or more locations.
      *
-     * @param location   The location to remove.
-     * @param locations  Optional additional locations to remove.
+     * @param locations  Locations to remove.
      *
      * @return  Self for chaining.
      */
-    public SoundSettings removeLocations(Location location, Location... locations) {
-        PreCon.notNull(location);
+    public SoundSettings removeLocations(Location... locations) {
         PreCon.notNull(locations);
 
-        _locations.remove(location);
         if (locations.length > 0) {
             _locations.removeAll(ArrayUtils.asList(locations));
         }

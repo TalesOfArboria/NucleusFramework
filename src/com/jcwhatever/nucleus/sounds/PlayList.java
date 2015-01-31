@@ -72,7 +72,6 @@ public class PlayList implements IPluginOwned {
     private final Plugin _plugin;
     private final List<ResourceSound> _playList;
     private final Map<Player, PlayerSoundQueue> _playerQueues = new WeakHashMap<>(100);
-    private final SoundSettings _settings = new SoundSettings();
 
     private boolean _isLoop;
 
@@ -159,13 +158,6 @@ public class PlayList implements IPluginOwned {
     }
 
     /**
-     * Get the play lists sound settings.
-     */
-    public SoundSettings getSettings() {
-        return _settings;
-    }
-
-    /**
      * Determine if the play list is being
      * run in a loop.
      */
@@ -185,12 +177,13 @@ public class PlayList implements IPluginOwned {
     /**
      * Add a player to the playlist so they can listen to it.
      *
-     * @param player  The player to add.
+     * @param player    The player to add.
+     * @param settings  The sound settings to use.
      *
      * @return  True if the player is added or already added. False if the
      * {@code PlayList} does not have any sounds.
      */
-    public boolean addPlayer(Player player) {
+    public boolean addPlayer(Player player, SoundSettings settings) {
         PreCon.notNull(player);
 
         PlayerSoundQueue current = _playerQueues.get(player);
@@ -199,7 +192,7 @@ public class PlayList implements IPluginOwned {
             return true;
         }
 
-        PlayerSoundQueue queue = new PlayerSoundQueue(player);
+        PlayerSoundQueue queue = new PlayerSoundQueue(player, settings);
         ResourceSound sound = queue.next();
         if (sound == null)
             return false;
@@ -213,7 +206,7 @@ public class PlayList implements IPluginOwned {
         playLists.add(this);
         _playerQueues.put(player, queue);
 
-        SoundManager.playSound(_plugin, player, sound, _settings, null)
+        SoundManager.playSound(_plugin, player, sound, settings, null)
                 .onFinish(new TrackChanger(player, queue));
 
         return true;
@@ -259,6 +252,7 @@ public class PlayList implements IPluginOwned {
         private final WeakReference<Player> _player;
         private final LinkedList<ResourceSound> _queue = new LinkedList<>();
         private final World _world;
+        private final SoundSettings _settings;
         private ResourceSound _current;
         private boolean _isRemoved;
 
@@ -267,8 +261,9 @@ public class PlayList implements IPluginOwned {
          *
          * @param player  The player the sound queue is for.
          */
-        PlayerSoundQueue(Player player) {
+        PlayerSoundQueue(Player player, SoundSettings settings) {
             _player = new WeakReference<Player>(player);
+            _settings = settings;
             _world = player.getWorld();
             _queue.addAll(_playList);
         }
@@ -304,6 +299,13 @@ public class PlayList implements IPluginOwned {
          */
         public boolean isRemoved() {
             return _isRemoved;
+        }
+
+        /**
+         * Get the sound settings to use.
+         */
+        public SoundSettings getSettings() {
+            return _settings;
         }
 
         /**
@@ -401,7 +403,7 @@ public class PlayList implements IPluginOwned {
                 return;
             }
 
-            SoundManager.playSound(_plugin, player, sound, _settings, null).onFinish(this);
+            SoundManager.playSound(_plugin, player, sound, _soundQueue.getSettings(), null).onFinish(this);
         }
 
         private void removeNow(Player player) {
