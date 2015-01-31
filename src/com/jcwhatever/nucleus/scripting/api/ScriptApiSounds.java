@@ -25,17 +25,21 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.sounds.SoundSettings;
-import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
+import com.jcwhatever.nucleus.sounds.PlayList;
 import com.jcwhatever.nucleus.sounds.ResourceSound;
 import com.jcwhatever.nucleus.sounds.SoundManager;
+import com.jcwhatever.nucleus.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @ScriptApiInfo(
@@ -152,6 +156,32 @@ public class ScriptApiSounds extends NucleusScriptApi {
 
             SoundManager.playSound(_plugin, p, sound, new SoundSettings((float)volume, location));
             return false;
+        }
+
+        /**
+         * Create a new playlist.
+         *
+         * @param location    The location the sound is played from.
+         * @param soundNames  The names of the resource sounds to play.
+         */
+        public PlayList createPlayList(Location location, String... soundNames) {
+
+            List<ResourceSound> sounds = new ArrayList<>(soundNames.length);
+
+            for (String soundName : soundNames) {
+                ResourceSound sound = SoundManager.getSound(soundName);
+                if (sound == null)
+                    throw new RuntimeException("The sound " + soundName + " was not found.");
+
+                sounds.add(sound);
+            }
+
+            PlayList playList = new PlayList(_plugin);
+
+            playList.addSounds(sounds);
+            playList.getSettings().addLocations(location);
+
+            return playList;
         }
     }
 
