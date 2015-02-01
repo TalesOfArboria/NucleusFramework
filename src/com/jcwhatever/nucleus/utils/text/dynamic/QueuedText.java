@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.utils.text.dynamic;
 
-import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.TimeScale;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -85,6 +85,8 @@ public class QueuedText implements IDynamicText {
             return _currentText != null ? _currentText.nextText() : null;
         }
 
+        Action runAction = null;
+
         synchronized (_sync) {
 
             if (isEmpty()) {
@@ -107,12 +109,15 @@ public class QueuedText implements IDynamicText {
             }
 
             if (pause instanceof Action) {
-                Action action = (Action) pause;
-                action.runnable.run();
+                runAction = (Action) pause;
             }
-
-            return null;
         }
+
+        if (runAction != null) {
+            runAction.runnable.run();
+        }
+
+        return null;
     }
 
     @Override
