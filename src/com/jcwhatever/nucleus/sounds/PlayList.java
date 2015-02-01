@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.sounds;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
 import org.bukkit.World;
@@ -74,6 +75,7 @@ public class PlayList implements IPluginOwned {
     private final Map<Player, PlayerSoundQueue> _playerQueues = new WeakHashMap<>(100);
 
     private boolean _isLoop;
+    private boolean _isRandom;
 
     /**
      * Constructor.
@@ -172,6 +174,22 @@ public class PlayList implements IPluginOwned {
      */
     public void setLoop(boolean isLoop) {
         _isLoop = isLoop;
+    }
+
+    /**
+     * Determine if the playlist should be played in random order.
+     */
+    public boolean isRandom() {
+        return _isRandom;
+    }
+
+    /**
+     * Set the playlist random order mode.
+     *
+     * @param isRandom  True to randomize order, false to play in order.
+     */
+    public void setRandom(boolean isRandom) {
+        _isRandom = isRandom;
     }
 
     /**
@@ -366,6 +384,14 @@ public class PlayList implements IPluginOwned {
             }
             else if (_queue.isEmpty()) {
                 _queue.addAll(_playList);
+            }
+
+            if (_isRandom) {
+                if (_queue.isEmpty())
+                    return _current = null;
+
+                int index = Rand.getInt(0, _queue.size() - 1);
+                return _current = _queue.remove(index);
             }
 
             return _current = _queue.pollFirst();
