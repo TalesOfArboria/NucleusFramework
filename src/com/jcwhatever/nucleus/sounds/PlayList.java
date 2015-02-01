@@ -57,17 +57,32 @@ public class PlayList implements IPluginOwned {
     /**
      * Remove player from all play lists.
      *
-     * @param p  The player to remove.
+     * @param player  The player to remove.
      */
-    public static void clearQueue(Player p) {
+    public static void clearQueue(Player player) {
 
-        Set<PlayList> playLists = _instances.get(p);
+        Set<PlayList> playLists = _instances.get(player);
         if (playLists == null)
             return;
 
         for (PlayList playList : playLists) {
-            playList.removePlayer(p);
+            playList.removePlayer(player);
         }
+    }
+
+    /**
+     * Get all {@code PlayList}'s the player is currently listening to.
+     *
+     * @param player  The player.
+     *
+     * @return  A new {@code List} of {@code PlayList}.
+     */
+    public static List<PlayList> getAll(Player player) {
+        Set<PlayList> playLists = _instances.get(player);
+        if (playLists == null)
+            return new ArrayList<>(0);
+
+        return new ArrayList<>(playLists);
     }
 
     private final Plugin _plugin;
