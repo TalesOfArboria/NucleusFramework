@@ -53,6 +53,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -92,6 +93,9 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     private final Map<Class<? extends IRegion>, RegionTypeManager<?>> _managers = new HashMap<>(15);
 
     private final Object _sync = new Object();
+
+    // IDs of players that have joined within a region and have not yet moved.
+    private Set<UUID> _joined = new HashSet<>(10);
 
     /**
      * Constructor
@@ -531,18 +535,39 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                         while (!worldPlayer.locations.isEmpty()) {
                             CachedLocation location = worldPlayer.locations.removeFirst();
 
+                            if (location.getReason() == RegionReason.JOIN_SERVER) {
+                                // add player to _join set.
+                                _manager._joined.add(playerId);
+
+                                // do not notify regions until player has moved.
+                                // allows time for player to load resource packs.
+                                continue;
+                            }
+
+                            boolean isJoining = _manager._joined.contains(playerId);
+
+                            if (isJoining && location.getReason() != RegionReason.MOVE) {
+                                // ignore all other reasons until joined player moves
+                                continue;
+                            }
+
                             // see which regions a player actually is in
                             List<IRegion> inRegions = _manager.getListenerRegions(location, PriorityType.ENTER);
 
                             // check for entered regions
-                            if (inRegions != null && !inRegions.isEmpty()) {
+                            if (!inRegions.isEmpty()) {
+
+                                // get enter reason
+                                RegionReason reason = isJoining && _manager._joined.remove(playerId)
+                                        ? RegionReason.JOIN_SERVER
+                                        : location.getReason();
+
                                 for (IRegion region : inRegions) {
 
                                     // check if player was not previously in region
                                     if (!cachedRegions.contains(region)) {
 
-                                        onPlayerEnter(region, worldPlayer.player,
-                                                location.getReason());
+                                        onPlayerEnter(region, worldPlayer.player, reason);
 
                                         cachedRegions.add(region);
                                     }
@@ -556,7 +581,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                                     IRegion region = iterator.next();
 
                                     // check if player was previously in region
-                                    if (inRegions == null || !inRegions.contains(region)) {
+                                    if (!inRegions.contains(region)) {
 
                                         onPlayerLeave(region, worldPlayer.player,
                                                 location.getReason());

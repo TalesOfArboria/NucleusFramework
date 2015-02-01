@@ -37,7 +37,6 @@ import com.jcwhatever.nucleus.regions.Region.RegionReason;
 import com.jcwhatever.nucleus.sounds.PlayList;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameResult;
-import com.jcwhatever.nucleus.utils.Scheduler;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -91,7 +90,7 @@ public final class JCGEventListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority=EventPriority.LOW)
+	@EventHandler(priority=EventPriority.LOWEST)
 	private void onPlayerJoin(PlayerJoinEvent event) {
 
 		final Player p = event.getPlayer();
@@ -99,13 +98,8 @@ public final class JCGEventListener implements Listener {
 		// tell player missed important messages
 		Nucleus.getMessengerFactory().tellImportant(p);
 
-		Scheduler.runTaskLater(Nucleus.getPlugin(), 5, new Runnable() {
-			@Override
-			public void run() {
-				_regionManager
-						.updatePlayerLocation(p, p.getLocation(), RegionReason.JOIN_SERVER);
-			}
-		});
+        _regionManager
+                .updatePlayerLocation(p, p.getLocation(), RegionReason.JOIN_SERVER);
 	}
 
 	@EventHandler(priority=EventPriority.LOW)
