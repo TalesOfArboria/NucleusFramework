@@ -233,16 +233,39 @@ public class PlayList implements IPluginOwned {
     /**
      * Remove a player from the playlist.
      *
-     * @param p  The player to remove.
+     * <p>Unless the player is in a different world than the playlist, the players
+     * sound queue is marked for removal and removed when the currently playing
+     * sound ends. Otherwise it is removed immediately.</p>
+     *
+     * @param player  The player to remove.
      */
-    public boolean removePlayer(Player p) {
-        PreCon.notNull(p);
+    public boolean removePlayer(Player player) {
+        return removePlayer(player, false);
+    }
 
-        PlayerSoundQueue queue = _playerQueues.get(p);
+    /**
+     * Remove a player from the playlist.
+     *
+     * <p>Unless forced or the player is in a different world, the players sound queue
+     * is marked for removal and removed when the currently playing sound ends.</p>
+     *
+     * <p>Forcing the immediate removal of the players sound queue does not end the
+     * sound on the client.</p>
+     *
+     * @param player  The player to remove.
+     * @param force   True to force the immediate removal of the players sound queue.
+     */
+    public boolean removePlayer(Player player, boolean force) {
+        PreCon.notNull(player);
+
+        PlayerSoundQueue queue = _playerQueues.get(player);
         if (queue == null)
             return false;
 
-        queue.remove();
+        if (force)
+            queue.removeNow();
+        else
+            queue.remove();
 
         return true;
     }
@@ -251,15 +274,15 @@ public class PlayList implements IPluginOwned {
      * Get the players current sound queue from the playlist,
      * if any.
      *
-     * @param p  The player to check.
+     * @param player  The player to check.
      *
      * @return  Null if the player is not listening to the playlist.
      */
     @Nullable
-    public PlayerSoundQueue getSoundQueue(Player p) {
-        PreCon.notNull(p);
+    public PlayerSoundQueue getSoundQueue(Player player) {
+        PreCon.notNull(player);
 
-        return _playerQueues.get(p);
+        return _playerQueues.get(player);
     }
 
     /**
@@ -354,18 +377,34 @@ public class PlayList implements IPluginOwned {
                     }
 
                     if (removeNow) {
-                        _queue.clear();
-                        _playerQueues.remove(player);
-
-                        Set<PlayList> playLists = _instances.get(player);
-                        if (playLists != null) {
-                            playLists.remove(PlayList.this);
-                        }
+                        removeNow();
                     }
 
                     _isRemoved = true;
                 }
             });
+        }
+
+        /**
+         * Remove the player sound queue.
+         *
+         * <p>Does not end sound on client.</p>
+         */
+        void removeNow() {
+
+            Player player = getPlayer();
+            if (player == null)
+                return;
+
+            _queue.clear();
+            _playerQueues.remove(player);
+
+            Set<PlayList> playLists = _instances.get(player);
+            if (playLists != null) {
+                playLists.remove(PlayList.this);
+            }
+
+            _isRemoved = true;
         }
 
         /**
@@ -386,10 +425,10 @@ public class PlayList implements IPluginOwned {
                 _queue.addAll(_playList);
             }
 
-            if (_isRandom) {
-                if (_queue.isEmpty())
-                    return _current = null;
+            if (_queue.isEmpty())
+                return _current = null;
 
+            if (_isRandom) {
                 int index = Rand.getInt(0, _queue.size() - 1);
                 return _current = _queue.remove(index);
             }
@@ -437,12 +476,7 @@ public class PlayList implements IPluginOwned {
             if (current != _soundQueue)
                 return;
 
-            _playerQueues.remove(player);
-
-            Set<PlayList> playLists = _instances.get(player);
-            if (playLists != null) {
-                playLists.remove(PlayList.this);
-            }
+            current.removeNow();
         }
     }
 }
