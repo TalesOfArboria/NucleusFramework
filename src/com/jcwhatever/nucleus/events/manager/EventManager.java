@@ -30,13 +30,13 @@ import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentMap;
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberMultimap;
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberSetMultimap;
-import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedHashSet;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.event.EventAgent;
 import com.jcwhatever.nucleus.utils.observer.event.EventSubscriber;
@@ -129,7 +129,7 @@ public class EventManager implements IPluginOwned, IDisposable {
     private final AgentMap<Class<?>, EventAgent> _eventAgents = new AgentHashMap<>(10);
     private final Map<IEventListener, ListenerInfo> _listeners = new HashMap<>(10);
     private final TimedHashSet<Object> _calledEvents;
-    private final UpdateAgent<?> _callAgent = new UpdateAgent<>();
+    private final UpdateAgent<Object> _callAgent = new UpdateAgent<>();
     private final Object _sync = new Object();
 
     private volatile boolean _isDisposed;
@@ -314,6 +314,8 @@ public class EventManager implements IPluginOwned, IDisposable {
         if (_parent != null) {
             _parent.call(caller, event);
         }
+
+        _callAgent.update(event);
 
         EventAgent agent = getEventAgent(event.getClass(), false);
         if (agent == null)
