@@ -226,4 +226,14 @@ public interface IGlobalRegionManager {
      * @param player  The player to check.
      */
     List<IRegion> getPlayerRegions(Player player);
+
+    /**
+     * Causes the {@code IGlobalRegionManager} to "forget" that a player is
+     * already in the specified region. Useful if the region enter event
+     * needs to be re-fired for a player.
+     *
+     * @param player   The player to forget.
+     * @param region   The region to forget the player is in.
+     */
+    public void forgetPlayer(Player player, IRegion region);
 }

@@ -659,11 +659,11 @@ public abstract class Region extends RegionSelection implements IRegion {
     /**
      * Causes the onPlayerEnter method to re-fire
      * if the player is already in the region.
-     * .
-     * @param p  The player to reset.
+     *
+     * @param player  The player to forget.
      */
-    protected void resetContainsPlayer(Player p) {
-        regionManager().resetPlayerRegion(p, this);
+    protected void forgetPlayer(Player player) {
+        regionManager().forgetPlayer(player, this);
     }
 
     /**

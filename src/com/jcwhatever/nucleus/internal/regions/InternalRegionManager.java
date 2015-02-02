@@ -304,14 +304,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
     }
 
-    /**
-     * Causes a region to re-fire the onPlayerEnter event
-     * if the player is already in it
-     * .
-     * @param p       The player.
-     * @param region  The region.
-     */
-    public void resetPlayerRegion(Player p, IRegion region) {
+    @Override
+    public void forgetPlayer(Player p, IRegion region) {
         PreCon.notNull(p);
         PreCon.notNull(region);
 
@@ -325,7 +319,6 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                 return;
 
             regions.remove(new ReadOnlyRegion(region));
-            _sync.notifyAll();
         }
     }
 
