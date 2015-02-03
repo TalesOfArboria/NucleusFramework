@@ -62,12 +62,11 @@ import javax.annotation.Nullable;
  * Abstract implementation of a region.
  *
  * <p>The region is registered with NucleusFramework's
- * {@link com.jcwhatever.nucleus.internal.regions.InternalRegionManager} as soon
- * as it is defined (P1 and P2 coordinates set) via the regions settings or by
- * calling {@code setCoords} method.</p>
+ * {@link IGlobalRegionManager} as soon as it is defined (P1 and P2 coordinates set) via
+ * the regions settings or by calling {@code #setCoords} method.</p>
  *
- * <p>The regions protected methods {@code onPlayerEnter} and {@code onPlayerLeave}
- * are only called if the implementing type calls {@code setEventListener(true)}.</p>
+ * <p>The regions protected methods {@code #onPlayerEnter} and {@code #onPlayerLeave}
+ * are only called if the implementing type calls {@code #setEventListener(true)}.</p>
  */
 public abstract class Region extends RegionSelection implements IRegion {
 
@@ -859,13 +858,13 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
 
         @Override
-        public void onPlayerEnter(Player p, EnterRegionReason reason) {
-            _region.doPlayerEnter(p, reason);
+        public void onPlayerEnter(Player player, EnterRegionReason reason) {
+            _region.doPlayerEnter(player, reason);
         }
 
         @Override
-        public void onPlayerLeave(Player p, LeaveRegionReason reason) {
-            _region.doPlayerLeave(p, reason);
+        public void onPlayerLeave(Player player, LeaveRegionReason reason) {
+            _region.doPlayerLeave(player, reason);
         }
     }
 

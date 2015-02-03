@@ -29,7 +29,10 @@ import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Represents an api object dispatcher.
+ * Represents an API object dispatcher.
+ *
+ * <p>Used to retrieve an API object which is inserted into a script using
+ * a specified variable name.</p>
  */
 public interface IScriptApi {
 
@@ -44,8 +47,7 @@ public interface IScriptApi {
     public String getVariableName();
 
     /**
-     * Get the Api as an object.
-     * @return
+     * Get the API object for a specific script.
      */
     public IScriptApiObject getApiObject(IEvaluatedScript script);
 

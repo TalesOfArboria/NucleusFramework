@@ -30,7 +30,8 @@ import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Abstract implementation of an api variable within a script.
+ * Abstract implementation of a script API. Requires the implementation
+ * to be annotated with {@link ScriptApiInfo}.
  */
 public abstract class NucleusScriptApi implements IScriptApi {
 

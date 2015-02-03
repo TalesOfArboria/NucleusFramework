@@ -33,7 +33,8 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * An interface for a settings manager used to manage an objects settings.
+ * An interface for a settings manager used to manage an objects settings using
+ * predefined properties.
  *
  * <p>Useful for dynamically changing settings.</p>
  *

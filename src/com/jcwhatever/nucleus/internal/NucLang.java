@@ -30,6 +30,9 @@ import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.utils.language.Localized;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * NucleusFramework's internal language convenience helper.
+ */
 public final class NucLang {
 
     private NucLang() {}

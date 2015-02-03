@@ -46,7 +46,7 @@ import org.bukkit.inventory.ItemStack;
 public class SignInteractEvent extends Event
 		implements Cancellable, ICancellable, IPlayerReference {
 	
-	private static final HandlerList _handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 	
 	private final PlayerInteractEvent _parentEvent;
 	private final Sign _sign;
@@ -135,10 +135,10 @@ public class SignInteractEvent extends Event
 
 	@Override
     public HandlerList getHandlers() {
-	    return _handlers;
+	    return handlers;
 	}
 	 
 	public static HandlerList getHandlerList() {
-	    return _handlers;
+	    return handlers;
 	}
 }

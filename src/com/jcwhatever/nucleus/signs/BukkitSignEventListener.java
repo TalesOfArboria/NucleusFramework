@@ -37,7 +37,10 @@ import org.bukkit.event.block.SignChangeEvent;
 
 import java.util.List;
 
-public final class BukkitSignEventListener implements Listener {
+/**
+ * Global Bukkit event listener for {@link SignManager} instances.
+ */
+final class BukkitSignEventListener implements Listener {
 
     @EventHandler(priority=EventPriority.NORMAL)
     private void onSignChange(SignChangeEvent event) {
@@ -47,6 +50,7 @@ public final class BukkitSignEventListener implements Listener {
 
         List<SignManager> managers = SignManager.getManagers();
 
+        // find the sign manager that handles the sign.
         for (SignManager manager : managers) {
             if (manager.signChange(sign, event))
                 break;
@@ -68,6 +72,7 @@ public final class BukkitSignEventListener implements Listener {
 
             List<SignManager> managers = SignManager.getManagers();
 
+            // find the sign manager that handles the sign.
             for (SignManager manager : managers) {
                 if (manager.signBreak(sign, event))
                     break;
@@ -81,6 +86,7 @@ public final class BukkitSignEventListener implements Listener {
 
         List<SignManager> managers = SignManager.getManagers();
 
+        // find the sign manager that handles the sign.
         for (SignManager manager : managers) {
             if (manager.signClick(event))
                 break;

@@ -26,22 +26,29 @@
 package com.jcwhatever.nucleus.sounds;
 
 import com.jcwhatever.nucleus.storage.IDataNode;
-import javax.annotation.Nullable;
 
+/**
+ * A resource sound that represents voice/dialog.
+ */
 public class VoiceSound extends ResourceSound {
 
     private final Transcript _transcript;
 
+    /**
+     * Constructor.
+     *
+     * @param dataNode  The resource sounds data node.
+     */
     public VoiceSound(IDataNode dataNode) {
         super(dataNode);
 
         String transcript = dataNode.getString("transcript", "");
-
-        //noinspection ConstantConditions
         _transcript = new Transcript(transcript);
     }
 
-    @Nullable
+    /**
+     * Get the sounds {@code Transcript} object.
+     */
     public final Transcript getTranscript() {
         return _transcript;
     }

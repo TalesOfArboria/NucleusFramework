@@ -36,9 +36,6 @@ public interface IGroupPermissionsProvider extends IPermissionsProvider {
 
     /**
      * Add a player to a group permission.
-     * <p>
-     *     Not all implementations support group permissions.
-     * </p>
      *
      * @param plugin     The plugin adding the player to the group.
      * @param sender          The player to add to the group.

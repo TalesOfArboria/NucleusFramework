@@ -38,16 +38,16 @@ public interface IRegionEventListener {
     /**
      * Called when a player enters the region.
      *
-     * @param p       The player that entered the region.
+     * @param player  The player that entered the region.
      * @param reason  The reason the player entered the region.
      */
-    void onPlayerEnter (Player p, EnterRegionReason reason);
+    void onPlayerEnter (Player player, EnterRegionReason reason);
 
     /**
      * Called when a player leaves the region.
      *
-     * @param p       The player that left the region.
+     * @param player  The player that left the region.
      * @param reason  The reason the player left the region.
      */
-    void onPlayerLeave (Player p, LeaveRegionReason reason);
+    void onPlayerLeave (Player player, LeaveRegionReason reason);
 }

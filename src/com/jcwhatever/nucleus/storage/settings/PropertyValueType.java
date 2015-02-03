@@ -31,7 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.UUID;
 
 /**
- * Valid {@code ISettingsManager} property value types.
+ * Valid {@link ISettingsManager} property value types.
  */
 public final class PropertyValueType<T> {
 
@@ -92,18 +92,32 @@ public final class PropertyValueType<T> {
         _display = display;
     }
 
+    /**
+     * Get the value types display name.
+     */
     public String getDisplay() {
         return _display;
     }
 
+    /**
+     * Get the value type.
+     */
     public ValueType getType() {
         return _type;
     }
 
+    /**
+     * Get the value type class.
+     */
     public Class<?> getTypeClass() {
         return _type.getType();
     }
 
+    /**
+     * Determine if an object is assignable to the value type.
+     *
+     * @param object  The object to check.
+     */
     public boolean isAssignable(Object object) {
         return object instanceof Class
                 ? _type._clazz.isAssignableFrom((Class<?>) object)

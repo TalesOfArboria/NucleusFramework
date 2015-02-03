@@ -40,6 +40,9 @@ import com.jcwhatever.nucleus.utils.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * NucleusFrameworks global event manager.
+ */
 public final class InternalEventManager extends EventManager {
 
     public InternalEventManager(Plugin plugin) {
@@ -49,6 +52,7 @@ public final class InternalEventManager extends EventManager {
             @Override
             public void run() {
 
+                // register Bukkit listeners which forward events to Nucleus's global event manager
                 Bukkit.getPluginManager().registerEvents(new BlockListener(), Nucleus.getPlugin());
                 Bukkit.getPluginManager().registerEvents(new EnchantmentListener(), Nucleus.getPlugin());
                 Bukkit.getPluginManager().registerEvents(new EntityListener(), Nucleus.getPlugin());

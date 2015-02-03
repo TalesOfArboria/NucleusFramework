@@ -34,6 +34,12 @@ import java.lang.annotation.Target;
 
 /**
  * Optional priority info for a region type.
+ *
+ * <p>This should not be used unless required.</p>
+ *
+ * <p>Used in cases where a player may be in multiple related regions
+ * at the same time and the order in which the regions receive events
+ * is important.</p>
  */
 @Documented
 @Target({ElementType.TYPE})

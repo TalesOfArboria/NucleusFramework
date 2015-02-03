@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 public class AnvilItemRenameEvent extends Event implements
 		Cancellable, ICancellable, IPlayerReference {
 	
-	private static final HandlerList _handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 	
 	private final Player _player;
 	private final AnvilInventory _anvilInventory;
@@ -128,10 +128,10 @@ public class AnvilItemRenameEvent extends Event implements
 
 	@Override
     public HandlerList getHandlers() {
-	    return _handlers;
+	    return handlers;
 	}
 	 
 	public static HandlerList getHandlerList() {
-	    return _handlers;
+	    return handlers;
 	}
 }

@@ -36,7 +36,7 @@ import org.bukkit.event.HandlerList;
  */
 public class EconWithdrawEvent extends Event {
 
-	private static final HandlerList _handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 
 	private final IAccount _account;
 	private final double _originalAmount;
@@ -91,10 +91,10 @@ public class EconWithdrawEvent extends Event {
 
 	@Override
 	public HandlerList getHandlers() {
-		return _handlers;
+		return handlers;
 	}
 
 	public static HandlerList getHandlerList() {
-		return _handlers;
+		return handlers;
 	}
 }

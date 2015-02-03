@@ -54,10 +54,23 @@ public class SettingsManager implements ISettingsManager {
     private Map<String, PropertyDefinition> _definitions;
     private List<Runnable> _onChanged;
 
+    /**
+     * Constructor.
+     *
+     * <p>Initializes manager without property definitions.</p>
+     *
+     * @param dataNode  The data node to manage.
+     */
     public SettingsManager(IDataNode dataNode) {
         this(dataNode, null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param dataNode     The data node to manage.
+     * @param definitions  Property definitions.
+     */
     public SettingsManager(IDataNode dataNode, @Nullable Map<String, PropertyDefinition> definitions) {
 
         _dataNode = dataNode;

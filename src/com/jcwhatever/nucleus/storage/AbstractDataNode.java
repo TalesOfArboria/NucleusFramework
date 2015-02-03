@@ -58,7 +58,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of an {@code IDataNode}.
+ * Abstract implementation of an {@link IDataNode}.
  */
 public abstract class AbstractDataNode implements IDataNode {
 

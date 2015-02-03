@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
  */
 public class RegionOwnerChangedEvent extends Event implements Cancellable, ICancellable {
     
-    private static final HandlerList _handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     
     private final ReadOnlyRegion _region;
     private final UUID _oldId;
@@ -97,11 +97,11 @@ public class RegionOwnerChangedEvent extends Event implements Cancellable, ICanc
 
     @Override
     public HandlerList getHandlers() {
-        return _handlers;
+        return handlers;
     }
      
     public static HandlerList getHandlerList() {
-        return _handlers;
+        return handlers;
     }
 }
 

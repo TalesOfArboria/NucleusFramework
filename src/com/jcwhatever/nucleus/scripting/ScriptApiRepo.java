@@ -89,10 +89,8 @@ public class ScriptApiRepo {
     /**
      * Unregister a script api from the repository.
      *
-     * <p>
-     *     Plugins are expected to unregister their API types
-     *     when they are disabled.
-     * </p>
+     * <p>Plugins are expected to unregister their API types
+     * when they are disabled.</p>
      *
      * @param plugin    The api owning plugin.
      * @param apiClass  The api type to remove.
@@ -123,6 +121,8 @@ public class ScriptApiRepo {
      * @param plugin            The plugin to instantiate the api for.
      * @param owningPluginName  The name of the api owning plugin.
      * @param variableName      Case sensitive variable name.
+     *
+     * @return  An {@code IScriptApi} instance or null if not found.
      */
     @Nullable
     public IScriptApi getApi(Plugin plugin, String owningPluginName, String variableName) {
@@ -146,6 +146,8 @@ public class ScriptApiRepo {
      *
      * @param plugin        The api owning plugin and plugin to instantiate for.
      * @param variableName  Case sensitive variable name.
+     *
+     * @return  The {@code IScriptApi} instance or null if not found.
      */
     @Nullable
     public IScriptApi getApi(Plugin plugin, String variableName) {

@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 /* 
- * NucleusFramework's internal messenger.
+ * NucleusFramework's internal messenger convenience helper.
  */
 public final class NucMsg {
 

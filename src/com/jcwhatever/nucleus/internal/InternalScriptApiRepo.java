@@ -39,7 +39,7 @@ import com.jcwhatever.nucleus.scripting.api.ScriptApiScheduler;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiSounds;
 
 /**
- * NucleusFramework's internal script api repository
+ * NucleusFramework's script api repository.
  */
 public final class InternalScriptApiRepo extends ScriptApiRepo {
 

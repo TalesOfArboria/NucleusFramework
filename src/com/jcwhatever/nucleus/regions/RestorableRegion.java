@@ -65,7 +65,7 @@ import javax.annotation.Nullable;
 
 /**
  * Abstract implementation for a region that
- * is savable and restorable from disk.
+ * is savable to and restorable from disk.
  */
 public abstract class RestorableRegion extends BuildableRegion {
 

@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.scripting.api;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 
 /**
- * Represents an api object to be included with an evaluated script.
+ * Represents an API object to be included with an evaluated script.
  */
 public interface IScriptApiObject extends IDisposable {
 }

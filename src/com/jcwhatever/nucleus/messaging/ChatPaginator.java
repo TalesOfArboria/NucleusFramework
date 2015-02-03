@@ -43,9 +43,9 @@ import javax.annotation.Nullable;
  */
 public class ChatPaginator {
 
-    @Localizable
-    static final String _HEADER = "----------------------------------------\r" +
+    @Localizable static final String _HEADER = "----------------------------------------\r" +
             "{AQUA}{0} {GRAY}(Page {1: current page} of {2: total pages})";
+
     @Localizable static final String _FOOTER = "----------------------------------------";
 
     private final Plugin _plugin;

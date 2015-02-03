@@ -31,12 +31,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Specifies the default variable name and description for a
+ * {@link com.jcwhatever.nucleus.scripting.api.NucleusScriptApi} implementation.
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ScriptApiInfo {
 
+    /**
+     * The variable name of the API object.
+     */
     public String variableName();
 
+    /**
+     * The API description.
+     */
     public String description();
 }

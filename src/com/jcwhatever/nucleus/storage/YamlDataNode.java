@@ -60,11 +60,21 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+/**
+ * A YAML based data node.
+ */
 public class YamlDataNode extends AbstractDataNode {
 
-
-    public static File dataPathToFile(Plugin plugin, DataPath storagePath) {
-        String[] pathComp = storagePath.getPath();
+    /**
+     * Convert a {@code DataPath} instance to a {@code File} which
+     * points to a disk based YAML file.
+     *
+     * @param plugin    The owning plugin. Used to determine the base
+     *                  path of the file.
+     * @param dataPath  The {@code DataPath} to convert.
+     */
+    public static File dataPathToFile(Plugin plugin, DataPath dataPath) {
+        String[] pathComp = dataPath.getPath();
 
         if (pathComp.length == 0)
             throw new IllegalArgumentException("Storage path cannot be empty.");

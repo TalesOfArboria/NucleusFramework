@@ -30,8 +30,9 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Internal class used by {@link BarSender} to track {@link PersistentActionBar}'s that are
+ * being displayed to a specific player.
  */
 final class PlayerBar {
     private final PersistentActionBar _bar;
@@ -39,6 +40,14 @@ final class PlayerBar {
     private final long _expires;
     private volatile long _nextUpdate;
 
+    /**
+     * Constructor.
+     *
+     * @param player     The player who is viewing the action bar.
+     * @param bar        The {@code PersistentActionBar} that is being viewed.
+     * @param duration   The minimum time slice duration.
+     * @param timeScale  The minimum time slice durations time scale.
+     */
     PlayerBar(Player player, PersistentActionBar bar, int duration, @Nullable TimeScale timeScale) {
         _player = player;
         _bar = bar;
@@ -48,22 +57,37 @@ final class PlayerBar {
                 : 0;
     }
 
+    /**
+     * Get the {@code PersistentActionBar}.
+     */
     public PersistentActionBar bar() {
         return _bar;
     }
 
+    /**
+     * Get the {@code Player}.
+     */
     public Player player() {
         return _player;
     }
 
+    /**
+     * Get the bars expiration date. 0 if the bar is not set to automatically expire.
+     */
     public long expires() {
         return _expires;
     }
 
+    /**
+     * Get the next update time.
+     */
     public long nextUpdate() {
         return _nextUpdate;
     }
 
+    /**
+     * Send the action bar to the player.
+     */
     public synchronized void send() {
         _nextUpdate = BarSender.send(_player, _bar);
     }

@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.messaging;
 
 /**
- * Interface for a type that can be passed into the {@link Messenger}
+ * Interface for a type that can be passed into {@link IMessenger}
  * as a source object to define a prefix to use.
  */
 public interface IChatPrefixed {

@@ -78,7 +78,7 @@ public interface IEvaluatedScript extends IDisposable {
      * @param functionName  The name of the function.
      * @param parameters    Function parameters.
      *
-     * @return  Object returned by the function
+     * @return  Object returned by the function or null.
      */
     @Nullable
     Object invokeFunction(String functionName, Object... parameters) throws NoSuchMethodException;

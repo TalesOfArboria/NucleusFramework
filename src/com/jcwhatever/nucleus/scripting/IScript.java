@@ -65,7 +65,7 @@ public interface IScript extends INamed {
     /**
      * Evaluate the script.
      *
-     * @param apiCollection  The api to include.
+     * @param apiCollection  The API to include.
      */
     @Nullable
     IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection);
