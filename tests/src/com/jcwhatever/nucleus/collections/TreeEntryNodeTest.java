@@ -158,25 +158,45 @@ public class TreeEntryNodeTest {
         }
 
         Assert.assertEquals(4, count);
+    }
 
+    @Test
+    public void testIteratorRemove() throws Exception {
+        TreeEntryNode<String, String> root = new TreeEntryNode<>("root", "test");
+        TreeEntryNode<String, String> child = root.putChild("root_child", "test");
+        TreeEntryNode<String, String> child2 = root.putChild("root_child2", "test");
+        TreeEntryNode<String, String> child_child = child.putChild("child_child", "test");
+        TreeEntryNode<String, String> child_child2 = child.putChild("child_child2", "test");
 
+        int count = 0;
+        for (TreeEntryNode<String, String> node : root) {
+            count ++;
+        }
+
+        // make sure all 4 child nodes were iterated
+        Assert.assertEquals(4, count);
+
+        count = 0;
         Iterator<TreeEntryNode<String, String>> iterator = root.iterator();
         while(iterator.hasNext()) {
             TreeEntryNode<String, String> node = iterator.next();
 
+            count ++;
+
             if (node.equals(child_child)) {
                 iterator.remove();
             }
-
         }
+
+        // make sure all 4 child nodes were iterated
+        Assert.assertEquals(4, count);
 
         count = 0;
         for (TreeEntryNode<String, String> node : root) {
-            System.out.println(node.getKey());
             count ++;
         }
 
+        // make sure 1 child node was removed
         Assert.assertEquals(3, count);
-
     }
 }
