@@ -22,7 +22,8 @@ import org.junit.runners.Suite;
         CircularQueueTest.class,
         ElementCounterTest.class,
         PaginatedTest.class,
-        TreeEntryNodeTest.class
+        TreeEntryNodeTest.class,
+        TreeNodeTest.class
 })
 public class _CollectionsTestSuite {
 }

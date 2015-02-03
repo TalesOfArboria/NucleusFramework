@@ -268,93 +268,96 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
     // does not repeat any element.
     private class Iter implements Iterator<TreeNode<T>> {
 
-        LinkedList<StackNode<T>> recursionStack = new LinkedList<>();
-        StackNode<T> nxt;
-        StackNode<T> current;
+        LinkedList<StackIterator> recursionStack = new LinkedList<>();
+        StackIterator currentIterator;
+        TreeNode<T> currentNode;
+        boolean iterSelf;
 
         Iter() {
-            nxt = new StackNode<>(TreeNode.this);
-            recursionStack.addLast(nxt);
+            if (!isLeaf()) {
+                currentIterator = new StackIterator(_children.iterator());
+                recursionStack.push(currentIterator);
+            }
         }
 
         @Override
         public boolean hasNext() {
-            return nxt != null;
+
+            if (!iterSelf)
+                return true;
+
+            if (recursionStack.isEmpty())
+                return false;
+
+            currentIterator = recursionStack.peek();
+
+            boolean hasNext = currentIterator.hasNext();
+
+            while (!hasNext) {
+                recursionStack.pop();
+
+                currentIterator = recursionStack.peek();
+                if (currentIterator == null)
+                    return false;
+
+                hasNext = currentIterator.hasNext();
+            }
+
+            return true;
         }
 
         @Override
         public TreeNode<T> next() {
-            StackNode<T> result = current = nxt;
-            setupNext();
-            return result.node;
+
+            if (iterSelf) {
+                currentNode = currentIterator.next();
+
+                if (!currentNode.isLeaf()) {
+                    recursionStack.push(new StackIterator(currentNode._children.iterator()));
+                }
+            } else {
+                iterSelf = true;
+                currentNode = TreeNode.this;
+            }
+
+            return currentNode;
         }
 
         @Override
         public void remove() {
 
-            if (current.node == TreeNode.this)
-                throw new IllegalStateException("Cannot remove the top level node of the iterator.");
+            currentIterator.remove();
 
-            StackNode<T> toRemove = current;
-
-            assert toRemove.node.getParent() != null;
-
-            if (toRemove.node.getParent().removeChild(toRemove.node.getValue()) == null)
-                throw new RuntimeException("Failed to remove node.");
-
-            if (recursionStack.isEmpty()) {
-                nxt = null;
-            } else {
-                recursionStack.removeLast(); // remove current
-
-                // set current
-                current = recursionStack.peekLast();
-                if (!current.node.isLeaf()) {
-                    current.childIndex--;
-                }
-
-                setupNext();
+            if (!currentIterator.hasNext()) {
+                recursionStack.pop();
+                currentIterator = recursionStack.peek();
             }
-        }
-
-        private void setupNext() {
-            StackNode<T> nextParent = findNextParent(current);
-            if (nextParent != null) {
-                nxt = new StackNode<>(nextParent.node._children.get(nextParent.childIndex));
-                recursionStack.addLast(nxt);
-                nextParent.childIndex++;
-            }
-            else {
-                nxt = null;
-            }
-        }
-
-        @Nullable
-        private StackNode<T> findNextParent(StackNode<T> current) {
-
-            if (recursionStack.isEmpty())
-                return null;
-
-            StackNode<T> scanNode = current;
-
-            while(scanNode != null && (scanNode.node.isLeaf() ||
-                    scanNode.childIndex >= scanNode.node._children.size())) {
-
-                recursionStack.removeLast();
-                scanNode = recursionStack.peekLast();
-            }
-
-            return scanNode;
         }
     }
 
     // used to track recursion info
-    private static class StackNode<T> {
-        TreeNode<T> node;
-        int childIndex = 0;
+    private class StackIterator {
+        Iterator<TreeNode<T>> childIterator;
+        Boolean hasNext;
 
-        StackNode(TreeNode<T> node) {
-            this.node = node;
+        StackIterator(Iterator<TreeNode<T>> iterator) {
+            this.childIterator = iterator;
+        }
+
+        boolean hasNext() {
+            if (hasNext == null) {
+                hasNext = childIterator.hasNext();
+            }
+            return hasNext;
+        }
+
+        TreeNode<T> next() {
+            hasNext = null;
+            return childIterator.next();
+        }
+
+        void remove() {
+            childIterator.remove();
         }
     }
 }
