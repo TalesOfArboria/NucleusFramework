@@ -1,9 +1,9 @@
 NucleusFramework for Spigot 1.8
 ==================
 
-A plugin framework and rapid development library for Bukkit/Spigot. Currently under development, expect breaking changes.
+A plugin framework and rapid development library for Bukkit/Spigot. Developed concurrently with the Tales of Arboria server allowing the framework to solve real world development and administrative problems. Currently under development, expect breaking changes.
 
-_"Coders like versatility. Server operators like stability. Users like usability. I like balance."_
+_Coders like versatility. Server operators like stability. Users like usability._
 
 ## Goals
  * Provide a centralized framework for common plugin utilities and services.
@@ -18,8 +18,6 @@ The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow de
 ## Resources
  * [NucleusLocalizer](https://github.com/JCThePants/NucleusLocalizer) - A console program used to generate language localization resource files for Nucleus based plugins.
  * [Scripting examples](https://github.com/JCThePants/NucleusScriptExamples) - Examples of cross plugin scripts using NucleusFramework.
- * [Action Bar Test](https://github.com/JCThePants/NucleusActionBarTest) - A plugin for testing NucleusFramework's Action Bar classes.
- * [A-Star Test](https://github.com/JCThePants/NucleusAStarTest) - A plugin for testing NucleusFramework's A-Star pathing implementation.
 
 ## Plugin dependencies
  * [WorldEdit](https://github.com/sk89q/WorldEdit) - soft dependency, not required
