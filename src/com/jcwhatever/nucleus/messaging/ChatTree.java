@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Converts a collection of root nodes into a list of
@@ -187,7 +188,10 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iter
 
         for (TreeNode<T> rootNode : _rootNodes) {
             for (TreeNode<T> node : rootNode) {
-                result.add(getDepthPrefix(node) + lineWriter.write(node.getValue()));
+                String line = lineWriter.write(node.getValue());
+                if (line != null) {
+                    result.add(getDepthPrefix(node) + line);
+                }
             }
         }
         return result;
@@ -265,8 +269,9 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iter
          *
          * @param nodeValue  The node value.
          *
-         * @return  The node's string representation.
+         * @return  The node's string representation or null to exclude.
          */
+        @Nullable
         String write(T nodeValue);
     }
 }
