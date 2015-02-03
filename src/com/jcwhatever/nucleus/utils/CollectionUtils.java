@@ -195,6 +195,25 @@ public class CollectionUtils {
     }
 
     /**
+     * Get an empty unmodifiable {@code List}.
+     *
+     * <p>Used when the empty signature method cannot be used.
+     * Prevents errors and warnings.</p>
+     *
+     * @param clazz  The component type class.
+     *
+     * @param <E>  The collection element type.
+     */
+    public static <E> List<E> unmodifiableList(
+            @SuppressWarnings("unused ")Class<E> clazz) {
+
+        @SuppressWarnings("unchecked")
+        List<E> list = (List<E>) UNMODIFIABLE_EMPTY_LIST;
+
+        return list;
+    }
+
+    /**
      * Wrap a {@code Collection} in an unmodifiable {@code Set}. If the
      * collection is already a {@code Set} then it is cast, otherwise
      * its elements are copied into a new {@code Set}.
@@ -215,6 +234,25 @@ public class CollectionUtils {
      * @param <E>  The collection element type.
      */
     public static <E> Set<E> unmodifiableSet() {
+
+        @SuppressWarnings("unchecked")
+        Set<E> set = (Set<E>)UNMODIFIABLE_EMPTY_SET;
+
+        return set;
+    }
+
+    /**
+     * Get an empty unmodifiable {@code Set}.
+     *
+     * <p>Convenience method to use when the empty signature method
+     * cannot be used. Prevents errors and warnings.</p>
+     *
+     * @param clazz  The component type class.
+     *
+     * @param <E>  The collection element type.
+     */
+    public static <E> Set<E> unmodifiableSet(
+            @SuppressWarnings("unused")Class<E> clazz) {
 
         @SuppressWarnings("unchecked")
         Set<E> set = (Set<E>)UNMODIFIABLE_EMPTY_SET;

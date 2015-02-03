@@ -537,7 +537,7 @@ public class YamlDataNode extends AbstractDataNode {
             //noinspection unchecked
             return (section = _section.getConfigurationSection(nodePath)) != null
                     ? CollectionUtils.unmodifiableSet(section.getKeys(false))
-                    : (Set<String>)CollectionUtils.UNMODIFIABLE_EMPTY_SET;
+                    : CollectionUtils.unmodifiableSet(String.class);
         }
         finally {
             getRoot()._read.unlock();

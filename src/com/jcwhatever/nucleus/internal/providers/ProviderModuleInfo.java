@@ -122,11 +122,11 @@ public class ProviderModuleInfo extends YamlModuleInfo {
         _description = dataNode.getString("description", "");
         _moduleClassName = dataNode.getString("main");
 
-        //noinspection unchecked
-        _bukkitDepends = dataNode.getStringList("bukkit-depends", CollectionUtils.UNMODIFIABLE_EMPTY_LIST);
+        _bukkitDepends = dataNode.getStringList(
+                "bukkit-depends", CollectionUtils.unmodifiableList(String.class));
 
-        //noinspection unchecked
-        _bukkitSoftDepends = dataNode.getStringList("bukkit-soft-depends", CollectionUtils.UNMODIFIABLE_EMPTY_LIST);
+        _bukkitSoftDepends = dataNode.getStringList(
+                "bukkit-soft-depends", CollectionUtils.unmodifiableList(String.class));
 
         return _moduleClassName != null;
     }

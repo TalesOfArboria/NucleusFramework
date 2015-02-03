@@ -230,9 +230,8 @@ public class NucleusFriend implements IFriend {
 
         IDataNode permNode = _dataNode.getNode("perms");
 
-        //noinspection unchecked
         List<String> permissions = permNode.getStringList(plugin.getName(),
-                CollectionUtils.UNMODIFIABLE_EMPTY_LIST);
+                CollectionUtils.unmodifiableList(String.class));
 
         assert permissions != null;
 
