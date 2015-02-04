@@ -24,10 +24,13 @@
 
 package com.jcwhatever.nucleus.sounds.playlist;
 
+import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.sounds.ResourceSound;
 import com.jcwhatever.nucleus.sounds.SoundManager;
 import com.jcwhatever.nucleus.sounds.SoundSettings;
+import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
@@ -286,12 +289,14 @@ public abstract class PlayList implements IPluginOwned {
     /**
      * An active playlist for a specific player.
      */
-    public class PlayerSoundQueue {
+    public class PlayerSoundQueue implements IMeta {
 
         private final WeakReference<Player> _player;
         private final LinkedList<ResourceSound> _queue = new LinkedList<>();
         private final World _world;
         private final SoundSettings _settings;
+        private final MetaStore _meta = new MetaStore();
+
         private ResourceSound _current;
         private boolean _isRemoved;
         private int _loopCount;
@@ -346,6 +351,23 @@ public abstract class PlayList implements IPluginOwned {
          */
         public SoundSettings getSettings() {
             return _settings;
+        }
+
+        @Nullable
+        @Override
+        public <T> T getMeta(MetaKey<T> key) {
+            return _meta.getMeta(key);
+        }
+
+        @Nullable
+        @Override
+        public Object getMetaObject(Object key) {
+            return _meta.getMetaObject(key);
+        }
+
+        @Override
+        public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
+            _meta.setMeta(key, value);
         }
 
         /**
