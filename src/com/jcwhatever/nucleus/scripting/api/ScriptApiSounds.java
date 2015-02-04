@@ -85,6 +85,20 @@ public class ScriptApiSounds extends NucleusScriptApi {
         }
 
         /**
+         * Get a {@code ResourceSound} by name.
+         *
+         * @param soundName  The name of the sound.
+         */
+        public ResourceSound get(String soundName) {
+            PreCon.notNullOrEmpty(soundName, "soundName");
+
+            ResourceSound sound = SoundManager.getSound(soundName);
+            PreCon.isValid(sound != null, "Sound not found.");
+
+            return sound;
+        }
+
+        /**
          * Play a resource sound to a player.
          *
          * @param player     The player.
