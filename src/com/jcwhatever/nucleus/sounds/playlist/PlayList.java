@@ -24,6 +24,9 @@
 
 package com.jcwhatever.nucleus.sounds.playlist;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.sounds.PlayListLoopEvent;
+import com.jcwhatever.nucleus.events.sounds.PlayListTrackChangeEvent;
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.sounds.ResourceSound;
@@ -153,22 +156,23 @@ public abstract class PlayList implements IPluginOwned {
      * @param player    The player to add.
      * @param settings  The sound settings to use.
      *
-     * @return  True if the player is added or already added. False if the
-     * {@code PlayList} does not have any sounds.
+     * @return  The current or new {@code PlayerSoundQueue} for the player.
+     * Null if the player was not added due to there being no sounds to play.
      */
-    public boolean addPlayer(Player player, SoundSettings settings) {
+    @Nullable
+    public PlayerSoundQueue addPlayer(Player player, SoundSettings settings) {
         PreCon.notNull(player);
 
         PlayerSoundQueue current = _playerQueues.get(player);
         if (current != null) {
             current._isRemoved = false;
-            return true;
+            return current;
         }
 
         PlayerSoundQueue queue = new PlayerSoundQueue(player, settings);
         ResourceSound sound = queue.next();
         if (sound == null)
-            return false;
+            return null;
 
         Set<PlayList> playLists = _instances.get(player);
         if (playLists == null) {
@@ -182,7 +186,7 @@ public abstract class PlayList implements IPluginOwned {
         SoundManager.playSound(_plugin, player, sound, settings, null)
                 .onFinish(new TrackChanger(player, queue));
 
-        return true;
+        return queue;
     }
 
     /**
@@ -256,6 +260,8 @@ public abstract class PlayList implements IPluginOwned {
      *
      * <p>Allows the next sound to be changed.</p>
      *
+     * <p>Calls the {@code PlayListTrackChangeEvent}.</p>
+     *
      * <p>Intended for optional override by implementation.</p>
      *
      * @param queue  The {@code PlayerSoundQueue} that will be refilled.
@@ -267,7 +273,14 @@ public abstract class PlayList implements IPluginOwned {
     @Nullable
     protected ResourceSound onTrackChange(PlayerSoundQueue queue,
                                                    @Nullable ResourceSound prev, ResourceSound next) {
-        return next;
+
+        PlayListTrackChangeEvent event = new PlayListTrackChangeEvent(this, queue, prev, next);
+        Nucleus.getEventManager().callBukkit(this, event);
+
+        if (event.isCancelled())
+            return null;
+
+        return event.getNextSound();
     }
 
     /**
@@ -276,6 +289,8 @@ public abstract class PlayList implements IPluginOwned {
      *
      * <p>Is also invoked on initial playback with a {@code loopCount} of 0.</p>
      *
+     * <p>Calls the {@code PlayListLoopEvent}.</p>
+     *
      * <p>Intended for optional override by implementation.</p>
      *
      * @param queue      The {@code PlayerSoundQueue} that is playing.
@@ -283,7 +298,12 @@ public abstract class PlayList implements IPluginOwned {
      * @param loopCount  The number of times the {@code PlayerSoundQueue} has already looped.
      */
     protected void onLoop(PlayerSoundQueue queue, List<ResourceSound> sounds, int loopCount) {
-        // do nothing
+
+        PlayListLoopEvent event = new PlayListLoopEvent(this, queue, sounds, loopCount);
+        Nucleus.getEventManager().callBukkit(this, event);
+
+        if (event.isCancelled())
+            sounds.clear();
     }
 
     /**
