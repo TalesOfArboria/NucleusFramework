@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         SoundManagerTest.class,
-        PlayListTest.class,
+        SimplePlayListTest.class,
         TranscriptTest.class
 })
 public class _SoundsTestSuite {

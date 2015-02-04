@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.scripting.api;
 
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
-import com.jcwhatever.nucleus.sounds.PlayList;
+import com.jcwhatever.nucleus.sounds.playlist.SimplePlayList;
 import com.jcwhatever.nucleus.sounds.ResourceSound;
 import com.jcwhatever.nucleus.sounds.SoundManager;
 import com.jcwhatever.nucleus.sounds.SoundSettings;
@@ -163,7 +163,7 @@ public class ScriptApiSounds extends NucleusScriptApi {
          *
          * @param soundNames  The names of the resource sounds to play.
          */
-        public PlayList createPlayList(String... soundNames) {
+        public SimplePlayList createPlayList(String... soundNames) {
 
             List<ResourceSound> sounds = new ArrayList<>(soundNames.length);
 
@@ -175,7 +175,7 @@ public class ScriptApiSounds extends NucleusScriptApi {
                 sounds.add(sound);
             }
 
-            PlayList playList = new PlayList(_plugin);
+            SimplePlayList playList = new SimplePlayList(_plugin);
 
             playList.addSounds(sounds);
 

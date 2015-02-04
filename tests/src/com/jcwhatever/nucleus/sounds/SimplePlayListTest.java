@@ -6,7 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
-import com.jcwhatever.nucleus.sounds.PlayList.PlayerSoundQueue;
+import com.jcwhatever.nucleus.sounds.playlist.PlayList.PlayerSoundQueue;
+import com.jcwhatever.nucleus.sounds.playlist.SimplePlayList;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
@@ -19,7 +20,7 @@ import org.junit.Test;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class PlayListTest {
+public class SimplePlayListTest {
 
     private Plugin _plugin = BukkitTester.mockPlugin("dummy");
     private Player _player = BukkitTester.login("dummy");
@@ -45,7 +46,7 @@ public class PlayListTest {
 
         List<ResourceSound> sounds =  SoundManager.getSounds();
 
-        PlayList playList = new PlayList(_plugin, sounds);
+        SimplePlayList playList = new SimplePlayList(_plugin, sounds);
 
         assertEquals(6, playList.size());
     }
@@ -56,7 +57,7 @@ public class PlayListTest {
         ResourceSound sound1 = SoundManager.getSound("music1");
         ResourceSound sound2 = SoundManager.getSound("music2");
 
-        PlayList playList = new PlayList(_plugin);
+        SimplePlayList playList = new SimplePlayList(_plugin);
         assertEquals(0, playList.size());
 
         playList.addSound(sound1);
@@ -72,7 +73,7 @@ public class PlayListTest {
         ResourceSound sound1 = SoundManager.getSound("music1");
         ResourceSound sound2 = SoundManager.getSound("music2");
 
-        PlayList playList = new PlayList(_plugin);
+        SimplePlayList playList = new SimplePlayList(_plugin);
         assertEquals(0, playList.size());
 
         playList.addSound(sound1);
@@ -94,7 +95,7 @@ public class PlayListTest {
 
         List<ResourceSound> sounds =  SoundManager.getSounds();
 
-        PlayList playList = new PlayList(_plugin);
+        SimplePlayList playList = new SimplePlayList(_plugin);
 
         playList.addSounds(sounds);
         assertEquals(6, playList.size());
@@ -104,7 +105,7 @@ public class PlayListTest {
     public void testClearSounds() throws Exception {
         List<ResourceSound> sounds =  SoundManager.getSounds();
 
-        PlayList playList = new PlayList(_plugin);
+        SimplePlayList playList = new SimplePlayList(_plugin);
 
         playList.addSounds(sounds);
         assertEquals(6, playList.size());
@@ -117,7 +118,7 @@ public class PlayListTest {
     public void testGetSounds() throws Exception {
         List<ResourceSound> sounds =  SoundManager.getSounds();
 
-        PlayList playList = new PlayList(_plugin);
+        SimplePlayList playList = new SimplePlayList(_plugin);
 
         playList.addSounds(sounds);
         assertEquals(6, playList.size());
@@ -131,7 +132,7 @@ public class PlayListTest {
 
         SoundSettings settings = new SoundSettings();
 
-        PlayList playList = new PlayList(_plugin, SoundManager.getSounds());
+        SimplePlayList playList = new SimplePlayList(_plugin, SoundManager.getSounds());
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
@@ -144,7 +145,7 @@ public class PlayListTest {
 
         SoundSettings settings = new SoundSettings();
 
-        PlayList playList = new PlayList(_plugin, SoundManager.getSounds());
+        SimplePlayList playList = new SimplePlayList(_plugin, SoundManager.getSounds());
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
@@ -175,7 +176,7 @@ public class PlayListTest {
                 SoundManager.getSound("voice1")
         );
 
-        PlayList playList = new PlayList(_plugin, sounds);
+        SimplePlayList playList = new SimplePlayList(_plugin, sounds);
         playList.setLoop(false);
 
         assertEquals(null, playList.getSoundQueue(_player));
@@ -218,7 +219,7 @@ public class PlayListTest {
                 SoundManager.getSound("voice1")
         );
 
-        PlayList playList = new PlayList(_plugin, sounds);
+        SimplePlayList playList = new SimplePlayList(_plugin, sounds);
         playList.setLoop(true);
 
         assertEquals(null, playList.getSoundQueue(_player));
@@ -259,7 +260,7 @@ public class PlayListTest {
 
         SoundSettings settings = new SoundSettings();
 
-        PlayList playList = new PlayList(_plugin);
+        SimplePlayList playList = new SimplePlayList(_plugin);
         playList.setLoop(false);
 
         assertEquals(null, playList.getSoundQueue(_player));
@@ -281,7 +282,7 @@ public class PlayListTest {
 
         SoundSettings settings = new SoundSettings();
 
-        PlayList playList = new PlayList(_plugin);
+        SimplePlayList playList = new SimplePlayList(_plugin);
         playList.setLoop(true);
 
         assertEquals(null, playList.getSoundQueue(_player));

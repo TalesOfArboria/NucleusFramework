@@ -22,10 +22,12 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.sounds;
+package com.jcwhatever.nucleus.sounds.playlist;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.sounds.ResourceSound;
+import com.jcwhatever.nucleus.sounds.SoundManager;
+import com.jcwhatever.nucleus.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
@@ -36,7 +38,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,10 +47,10 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
- * A collection of resource sounds that can be played
- * to players.
+ * Abstract implementation of a play list that plays a collection of
+ * resource sounds to a player.
  */
-public class PlayList implements IPluginOwned {
+public abstract class PlayList implements IPluginOwned {
 
     // static references for use by events
     private static Map<Player, Set<PlayList>> _instances = new WeakHashMap<>(100);
@@ -86,8 +87,7 @@ public class PlayList implements IPluginOwned {
     }
 
     private final Plugin _plugin;
-    private final List<ResourceSound> _playList;
-    private final Map<Player, PlayerSoundQueue> _playerQueues = new WeakHashMap<>(100);
+    private final Map<Player, PlayerSoundQueue> _playerQueues = new WeakHashMap<>(25);
 
     private boolean _isLoop;
     private boolean _isRandom;
@@ -101,21 +101,6 @@ public class PlayList implements IPluginOwned {
         PreCon.notNull(plugin);
 
         _plugin = plugin;
-        _playList = new ArrayList<>(10);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param plugin    The owning plugin.
-     * @param playList  The collections of sounds for the playlist.
-     */
-    public PlayList(Plugin plugin, Collection<? extends ResourceSound> playList) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(playList);
-
-        _plugin = plugin;
-        _playList = new ArrayList<>(playList);
     }
 
     /**
@@ -124,54 +109,6 @@ public class PlayList implements IPluginOwned {
     @Override
     public Plugin getPlugin() {
         return _plugin;
-    }
-
-    /**
-     * Get the number of songs in the playlist.
-     */
-    public int size() {
-        return _playList.size();
-    }
-
-    /**
-     * Add a resource sound to the playlist.
-     *
-     * @param sound  The sound to add.
-     */
-    public void addSound(ResourceSound sound) {
-        _playList.add(sound);
-    }
-
-    /**
-     * Remove a resource sound from the playlist.
-     *
-     * @param sound  The sound to remove.
-     */
-    public void removeSound(ResourceSound sound) {
-        _playList.remove(sound);
-    }
-
-    /**
-     * Add a collection of sounds to the playlist.
-     *
-     * @param sounds  The collection of sounds to add.
-     */
-    public void addSounds(Collection<? extends ResourceSound> sounds) {
-        _playList.addAll(sounds);
-    }
-
-    /**
-     * Clear all sounds from the playlist.
-     */
-    public void clearSounds() {
-        _playList.clear();
-    }
-
-    /**
-     * Get all sounds in the playlist.
-     */
-    public List<ResourceSound> getSounds() {
-        return new ArrayList<>(_playList);
     }
 
     /**
@@ -301,7 +238,53 @@ public class PlayList implements IPluginOwned {
     }
 
     /**
-     * A sound queue from a playlist for a player.
+     * Invoked to get a list of sounds to play in a {@code PlayerSoundQueue}.
+     *
+     * <p>If the playlist is loop enabled, this is invoked every time the
+     * playlist needs to refill its sound queue.</p>
+     *
+     * @param queue      The {@code PlayerSoundQueue} that will be refilled.
+     * @param loopCount  The number of times the sound queue has been refilled.
+     */
+    protected abstract List<ResourceSound> getSounds(PlayerSoundQueue queue, int loopCount);
+
+    /**
+     * Invoked when the next sound is played from a playlist.
+     *
+     * <p>Allows the next sound to be changed.</p>
+     *
+     * <p>Intended for optional override by implementation.</p>
+     *
+     * @param queue  The {@code PlayerSoundQueue} that will be refilled.
+     * @param prev   The previous sound that was playing, if any.
+     * @param next   The expected next sound to be played.
+     *
+     * @return  The next sound to play. Null ends the queue playback.
+     */
+    @Nullable
+    protected ResourceSound onTrackChange(PlayerSoundQueue queue,
+                                                   @Nullable ResourceSound prev, ResourceSound next) {
+        return next;
+    }
+
+    /**
+     * Invoked when a {@code PlayerSoundQueue} is finished and is preparing to refill so it
+     * can loop.
+     *
+     * <p>Is also invoked on initial playback with a {@code loopCount} of 0.</p>
+     *
+     * <p>Intended for optional override by implementation.</p>
+     *
+     * @param queue      The {@code PlayerSoundQueue} that is playing.
+     * @param sounds     The list of {@code ResourceSound}'s that will be played during the next loop.
+     * @param loopCount  The number of times the {@code PlayerSoundQueue} has already looped.
+     */
+    protected void onLoop(PlayerSoundQueue queue, List<ResourceSound> sounds, int loopCount) {
+        // do nothing
+    }
+
+    /**
+     * An active playlist for a specific player.
      */
     public class PlayerSoundQueue {
 
@@ -311,6 +294,7 @@ public class PlayList implements IPluginOwned {
         private final SoundSettings _settings;
         private ResourceSound _current;
         private boolean _isRemoved;
+        private int _loopCount;
 
         /**
          * Constructor.
@@ -321,7 +305,7 @@ public class PlayList implements IPluginOwned {
             _player = new WeakReference<Player>(player);
             _settings = settings;
             _world = player.getWorld();
-            _queue.addAll(_playList);
+            refill();
         }
 
         /**
@@ -429,26 +413,45 @@ public class PlayList implements IPluginOwned {
          */
         @Nullable
         ResourceSound next() {
-            if (_isRemoved ||
-                    (_queue.isEmpty() && !_isLoop) ||
-                    getPlayer() == null) {
 
-                _current = null;
-                return null;
+            Player player = getPlayer();
+            ResourceSound prev = _current;
+
+            // check for end of queue or loop
+            if (_isRemoved ||
+                    player == null ||
+                    (_queue.isEmpty() && !_isLoop)) {
+
+                return _current = null;
             }
             else if (_queue.isEmpty()) {
-                _queue.addAll(_playList);
+
+                refill();
+                if (_queue.isEmpty())
+                    return _current = null;
             }
 
-            if (_queue.isEmpty())
-                return _current = null;
-
+            // check for linear or random playback
             if (_isRandom) {
                 int index = Rand.getInt(0, _queue.size() - 1);
-                return _current = _queue.remove(index);
+                _current = _queue.remove(index);
+            }
+            else {
+                _current = _queue.pollFirst();
             }
 
-            return _current = _queue.pollFirst();
+            return _current = onTrackChange(this, prev, _current);
+        }
+
+        // refill queue
+        private void refill() {
+
+            List<ResourceSound> sounds = getSounds(this, _loopCount);
+            _queue.addAll(sounds);
+
+            onLoop(this, _queue, _loopCount);
+
+            _loopCount++;
         }
     }
 
