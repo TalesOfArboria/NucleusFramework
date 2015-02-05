@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.commands.CommandParser.ParsedTabComplete;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
@@ -91,7 +92,13 @@ public class CommandDispatcher implements
         _utils = new CommandUtils(plugin);
         _usageGenerator = new UsageGenerator();
 
-        _pluginCommands = new HashSet<>(plugin.getDescription().getCommands().keySet());
+        if (plugin.getDescription().getCommands() == null) {
+            NucMsg.warning(plugin, "Plugin has no commands registered in its plugin.yml file.");
+            _pluginCommands = new HashSet<>(2);
+        }
+        else {
+            _pluginCommands = new HashSet<>(plugin.getDescription().getCommands().keySet());
+        }
 
         _defaultRoot = new AboutCommand();
         _defaultRoot.setDispatcher(this, null);
