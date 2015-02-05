@@ -46,10 +46,10 @@ import javax.annotation.Nullable;
  */
 public class TextFormat {
 
-    private static final Map<Character, TextFormat> _characterMap = new HashMap<>(25);
     private static final StringBuilder _largeBuffer = new StringBuilder(30);
     private static final StringBuilder _smallBuffer = new StringBuilder(6);
     private static Map<String, TextFormat> _nameMap;
+    private static Map<Character, TextFormat> _characterMap;
 
     public static final char CHAR = '\u00A7';
 
@@ -72,10 +72,9 @@ public class TextFormat {
         _minecraftName = minecraftName;
 
         if (_nameMap == null)
-            _nameMap = new HashMap<>(totalCodes());
+            _nameMap = new HashMap<>(25);
 
         _nameMap.put(tagName, this);
-        _characterMap.put(_formatChar, this);
     }
 
     /**
@@ -191,6 +190,8 @@ public class TextFormat {
 
         int len = charSequence.length();
 
+        Map<Character, TextFormat> characterMap = getCharacterMap();
+
         for (int i = 0, last = len - 1; i < len; i++) {
 
             char ch = charSequence.charAt(i);
@@ -199,7 +200,7 @@ public class TextFormat {
 
                 char next = charSequence.charAt(i + 1);
 
-                if (_characterMap.containsKey(next)) {
+                if (characterMap.containsKey(next)) {
                     i += 1;
                     continue;
                 }
@@ -258,6 +259,7 @@ public class TextFormat {
         }
 
         TextFormatMap formatMap = new TextFormatMap();
+        Map<Character, TextFormat> characterMap = getCharacterMap();
 
         int virtualIndex = 0;
 
@@ -269,7 +271,7 @@ public class TextFormat {
                 char next;
 
                 if ((ch = charSequence.charAt(i)) == CHAR
-                        && _characterMap.containsKey(next = charSequence.charAt(i + 1))) {
+                        && characterMap.containsKey(next = charSequence.charAt(i + 1))) {
 
                     formatBuffer.append(CHAR);
                     formatBuffer.append(next);
@@ -305,7 +307,7 @@ public class TextFormat {
      * @param ch  The character to check.
      */
     public static boolean isFormatChar(char ch) {
-        return _characterMap.containsKey(ch);
+        return getCharacterMap().containsKey(ch);
     }
 
     /**
@@ -319,7 +321,7 @@ public class TextFormat {
      */
     @Nullable
     public static TextFormat fromFormatChar(char ch) {
-        return _characterMap.get(ch);
+        return getCharacterMap().get(ch);
     }
 
     /**
@@ -391,6 +393,8 @@ public class TextFormat {
         List<TextFormat> formats = new ArrayList<>(2);
         sb.setLength(0);
 
+        Map<Character, TextFormat> characterMap = getCharacterMap();
+
         for (int i = len - 1; i > -1; i--) {
 
             char current = charSequence.charAt(i);
@@ -399,7 +403,7 @@ public class TextFormat {
 
             char next = charSequence.charAt(i + 1);
 
-            TextFormat format =  _characterMap.get(next);
+            TextFormat format =  characterMap.get(next);
             if (format == null)
                 continue; // finish block
 
@@ -419,7 +423,7 @@ public class TextFormat {
     public static Iterator<TextFormat> formatIterator() {
         return new IteratorWrapper<TextFormat>() {
 
-            Iterator<TextFormat> iterator = new ArrayList<>(_characterMap.values()).iterator();
+            Iterator<TextFormat> iterator = getCharacterMap().values().iterator();
 
             @Override
             public void remove() {
@@ -549,5 +553,36 @@ public class TextFormat {
             }
             return string;
         }
+    }
+
+    private static Map<Character, TextFormat> getCharacterMap() {
+
+        if (_characterMap == null) {
+            _characterMap = new HashMap<>(25);
+            _characterMap.put(TextColor.AQUA.getFormatChar(), TextColor.AQUA);
+            _characterMap.put(TextColor.BLACK.getFormatChar(), TextColor.BLACK);
+            _characterMap.put(TextColor.BLUE.getFormatChar(), TextColor.BLUE);
+            _characterMap.put(TextColor.DARK_AQUA.getFormatChar(), TextColor.DARK_AQUA);
+            _characterMap.put(TextColor.DARK_BLUE.getFormatChar(), TextColor.DARK_BLUE);
+            _characterMap.put(TextColor.DARK_GRAY.getFormatChar(), TextColor.DARK_GRAY);
+            _characterMap.put(TextColor.DARK_GREEN.getFormatChar(), TextColor.DARK_GREEN);
+            _characterMap.put(TextColor.DARK_PURPLE.getFormatChar(), TextColor.DARK_PURPLE);
+            _characterMap.put(TextColor.DARK_RED.getFormatChar(), TextColor.DARK_RED);
+            _characterMap.put(TextColor.GOLD.getFormatChar(), TextColor.GOLD);
+            _characterMap.put(TextColor.GRAY.getFormatChar(), TextColor.GRAY);
+            _characterMap.put(TextColor.GREEN.getFormatChar(), TextColor.GREEN);
+            _characterMap.put(TextColor.LIGHT_PURPLE.getFormatChar(), TextColor.LIGHT_PURPLE);
+            _characterMap.put(TextColor.RED.getFormatChar(), TextColor.RED);
+            _characterMap.put(TextColor.WHITE.getFormatChar(), TextColor.WHITE);
+            _characterMap.put(TextColor.YELLOW.getFormatChar(), TextColor.YELLOW);
+
+            _characterMap.put(TextFormat.BOLD.getFormatChar(), TextFormat.BOLD);
+            _characterMap.put(TextFormat.ITALIC.getFormatChar(), TextFormat.ITALIC);
+            _characterMap.put(TextFormat.STRIKETHROUGH.getFormatChar(), TextFormat.STRIKETHROUGH);
+            _characterMap.put(TextFormat.UNDERLINE.getFormatChar(), TextFormat.UNDERLINE);
+            _characterMap.put(TextFormat.RESET.getFormatChar(), TextFormat.RESET);
+        }
+
+        return _characterMap;
     }
 }
