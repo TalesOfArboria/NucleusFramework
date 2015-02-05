@@ -153,14 +153,14 @@ public abstract class PlayList implements IPluginOwned {
     /**
      * Add a player to the playlist so they can listen to it.
      *
+     * <p>The playlist is automatically started after 1 tick.</p>
+     *
      * @param player    The player to add.
      * @param settings  The sound settings to use.
      *
      * @return  The current or new {@code PlayerSoundQueue} for the player.
-     * Null if the player was not added due to there being no sounds to play.
      */
-    @Nullable
-    public PlayerSoundQueue addPlayer(Player player, SoundSettings settings) {
+    public PlayerSoundQueue addPlayer(final Player player, final SoundSettings settings) {
         PreCon.notNull(player);
 
         PlayerSoundQueue current = _playerQueues.get(player);
@@ -169,10 +169,7 @@ public abstract class PlayList implements IPluginOwned {
             return current;
         }
 
-        PlayerSoundQueue queue = new PlayerSoundQueue(player, settings);
-        ResourceSound sound = queue.next();
-        if (sound == null)
-            return null;
+        final PlayerSoundQueue queue = new PlayerSoundQueue(player, settings);
 
         Set<PlayList> playLists = _instances.get(player);
         if (playLists == null) {
@@ -183,8 +180,26 @@ public abstract class PlayList implements IPluginOwned {
         playLists.add(this);
         _playerQueues.put(player, queue);
 
-        SoundManager.playSound(_plugin, player, sound, settings, null)
-                .onFinish(new TrackChanger(player, queue));
+        // play later to give a chance to attach meta to PlayerSoundQueue
+        // before any events are fired.
+        Scheduler.runTaskLater(getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+
+                ResourceSound sound = queue.next();
+                if (sound == null) {
+                    Set<PlayList> playLists = _instances.get(player);
+                    assert playLists != null;
+                    playLists.remove(PlayList.this);
+
+                    _playerQueues.remove(player);
+                    return;
+                }
+
+                SoundManager.playSound(_plugin, player, sound, settings, null)
+                        .onFinish(new TrackChanger(player, queue));
+            }
+        });
 
         return queue;
     }
@@ -312,11 +327,11 @@ public abstract class PlayList implements IPluginOwned {
     public class PlayerSoundQueue implements IMeta {
 
         private final WeakReference<Player> _player;
-        private final LinkedList<ResourceSound> _queue = new LinkedList<>();
         private final World _world;
         private final SoundSettings _settings;
         private final MetaStore _meta = new MetaStore();
 
+        private LinkedList<ResourceSound> _queue;
         private ResourceSound _current;
         private boolean _isRemoved;
         private int _loopCount;
@@ -330,7 +345,6 @@ public abstract class PlayList implements IPluginOwned {
             _player = new WeakReference<Player>(player);
             _settings = settings;
             _world = player.getWorld();
-            refill();
         }
 
         /**
@@ -459,14 +473,20 @@ public abstract class PlayList implements IPluginOwned {
             Player player = getPlayer();
             ResourceSound prev = _current;
 
+            // check for first time use of queue
+            if (_queue == null) {
+                _queue = new LinkedList<>();
+            }
             // check for end of queue or loop
-            if (_isRemoved ||
+            else if (_isRemoved ||
                     player == null ||
                     (_queue.isEmpty() && !_isLoop)) {
 
                 return _current = null;
             }
-            else if (_queue.isEmpty()) {
+
+            // refill queue if empty
+            if (_queue.isEmpty()) {
 
                 refill();
                 if (_queue.isEmpty())
