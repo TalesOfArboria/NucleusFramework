@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.utils.text;
 
-import com.google.common.collect.ImmutableMap;
 import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
@@ -47,46 +46,19 @@ import javax.annotation.Nullable;
  */
 public class TextFormat {
 
+    private static final Map<Character, TextFormat> _characterMap = new HashMap<>(25);
+    private static final StringBuilder _largeBuffer = new StringBuilder(30);
+    private static final StringBuilder _smallBuffer = new StringBuilder(6);
+    private static Map<String, TextFormat> _nameMap;
+
+    public static final char CHAR = '\u00A7';
+
     public static final TextFormat BOLD = new TextFormat('l', "BOLD", "bold");
     public static final TextFormat ITALIC = new TextFormat('o', "ITALIC", "italic");
     public static final TextFormat MAGIC = new TextFormat('k', "MAGIC", "obfuscated");
     public static final TextFormat STRIKETHROUGH = new TextFormat('m',"STRIKETHROUGH", "strikethrough");
     public static final TextFormat UNDERLINE = new TextFormat('n', "UNDERLINE", "underlined");
     public static final TextFormat RESET = new TextFormat('r', "RESET", "reset");
-
-
-    public static final char CHAR = '\u00A7';
-    private static final StringBuilder _largeBuffer = new StringBuilder(30);
-    private static final StringBuilder _smallBuffer = new StringBuilder(6);
-
-    private static Map<String, TextFormat> _nameMap;
-
-    private static final Map<Character, TextFormat> _characterMap =
-            new ImmutableMap.Builder<Character, TextFormat>()
-                    .put(TextColor.AQUA.getFormatChar(), TextColor.AQUA)
-                    .put(TextColor.BLACK.getFormatChar(), TextColor.BLACK)
-                    .put(TextColor.BLUE.getFormatChar(), TextColor.BLUE)
-                    .put(TextColor.DARK_AQUA.getFormatChar(), TextColor.DARK_AQUA)
-                    .put(TextColor.DARK_BLUE.getFormatChar(), TextColor.DARK_BLUE)
-                    .put(TextColor.DARK_GRAY.getFormatChar(), TextColor.DARK_GRAY)
-                    .put(TextColor.DARK_GREEN.getFormatChar(), TextColor.DARK_GREEN)
-                    .put(TextColor.DARK_PURPLE.getFormatChar(), TextColor.DARK_PURPLE)
-                    .put(TextColor.DARK_RED.getFormatChar(), TextColor.DARK_RED)
-                    .put(TextColor.GOLD.getFormatChar(), TextColor.GOLD)
-                    .put(TextColor.GRAY.getFormatChar(), TextColor.GRAY)
-                    .put(TextColor.GREEN.getFormatChar(), TextColor.GREEN)
-                    .put(TextColor.LIGHT_PURPLE.getFormatChar(), TextColor.LIGHT_PURPLE)
-                    .put(TextColor.RED.getFormatChar(), TextColor.RED)
-                    .put(TextColor.WHITE.getFormatChar(), TextColor.WHITE)
-                    .put(TextColor.YELLOW.getFormatChar(), TextColor.YELLOW)
-                    .put(BOLD.getFormatChar(), BOLD)
-                    .put(ITALIC.getFormatChar(), ITALIC)
-                    .put(MAGIC.getFormatChar(), MAGIC)
-                    .put(STRIKETHROUGH.getFormatChar(), STRIKETHROUGH)
-                    .put(UNDERLINE.getFormatChar(), UNDERLINE)
-                    .put(RESET.getFormatChar(), RESET)
-                    .build();
-
 
     private final char _formatChar;
     private final String _formatCode;
@@ -103,6 +75,7 @@ public class TextFormat {
             _nameMap = new HashMap<>(totalCodes());
 
         _nameMap.put(tagName, this);
+        _characterMap.put(_formatChar, this);
     }
 
     /**
@@ -446,7 +419,7 @@ public class TextFormat {
     public static Iterator<TextFormat> formatIterator() {
         return new IteratorWrapper<TextFormat>() {
 
-            Iterator<TextFormat> iterator = _characterMap.values().iterator();
+            Iterator<TextFormat> iterator = new ArrayList<>(_characterMap.values()).iterator();
 
             @Override
             public void remove() {

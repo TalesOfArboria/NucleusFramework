@@ -55,7 +55,7 @@ import javax.annotation.Nullable;
  */
 public class TextFormatter {
 
-    private static Map<String, ITagFormatter> _colors = new HashMap<>(TextFormat.totalCodes());
+    private static Map<String, ITagFormatter> _colors = new HashMap<>(22);
 
     static {
 
