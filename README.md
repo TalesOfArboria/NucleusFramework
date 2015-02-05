@@ -30,6 +30,7 @@ The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow de
  * [PhantomPackets](https://github.com/JCThePants/PhantomPackets) - Sets viewable regions and entities to specific players.
  * [ArborianQuests](https://github.com/JCThePants/ArborianQuests) - Quest scripting plugin.
  * [RentalRooms](https://github.com/JCThePants/RentalRooms) - Rented regions that allow the tenant to only modify the interior of the house/room.
+ * [RemoteConsole](https://github.com/JCThePants/RemoteConsole) - A remote console for Bukkit/Spigot servers.
 
 ## Build dependencies
 See the [gradle script](https://github.com/JCThePants/NucleusFramework/blob/master/build.gradle) for build dependencies.
