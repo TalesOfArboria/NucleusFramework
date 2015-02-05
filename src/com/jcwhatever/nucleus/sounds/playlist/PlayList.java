@@ -188,11 +188,7 @@ public abstract class PlayList implements IPluginOwned {
 
                 ResourceSound sound = queue.next();
                 if (sound == null) {
-                    Set<PlayList> playLists = _instances.get(player);
-                    assert playLists != null;
-                    playLists.remove(PlayList.this);
-
-                    _playerQueues.remove(player);
+                    queue.removeNow();
                     return;
                 }
 

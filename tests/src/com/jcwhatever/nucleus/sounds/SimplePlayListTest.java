@@ -136,7 +136,7 @@ public class SimplePlayListTest {
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(true, playList.addPlayer(_player, settings));
+        assertNotEquals(null, playList.addPlayer(_player, settings));
         assertNotEquals(null, playList.getSoundQueue(_player));
     }
 
@@ -149,7 +149,7 @@ public class SimplePlayListTest {
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(true, playList.addPlayer(_player, settings));
+        playList.addPlayer(_player, settings);
         assertNotEquals(null, playList.getSoundQueue(_player));
 
         // remove player
@@ -181,13 +181,12 @@ public class SimplePlayListTest {
 
         assertEquals(null, playList.getSoundQueue(_player));
 
-        // add player
-        assertEquals(true, playList.addPlayer(_player, settings));
-
-        PlayerSoundQueue queue  = playList.getSoundQueue(_player);
+        PlayerSoundQueue queue  = playList.addPlayer(_player, settings);
 
         assertTrue(queue != null);
         assertEquals(_player, queue.getPlayer());
+
+        BukkitTester.pause(2);
 
         assertEquals(sounds.get(0), queue.getCurrent());
 
@@ -211,8 +210,6 @@ public class SimplePlayListTest {
     @Test
     public void testSoundQueueLoop() throws Exception {
 
-        SoundSettings settings = new SoundSettings();
-
         List<ResourceSound> sounds = ArrayUtils.asList(
                 SoundManager.getSound("music1"),
                 SoundManager.getSound("music2"),
@@ -224,13 +221,12 @@ public class SimplePlayListTest {
 
         assertEquals(null, playList.getSoundQueue(_player));
 
-        // add player
-        assertEquals(true, playList.addPlayer(_player, settings));
-
-        PlayerSoundQueue queue  = playList.getSoundQueue(_player);
+        PlayerSoundQueue queue  = playList.addPlayer(_player, new SoundSettings());
 
         assertTrue(queue != null);
         assertEquals(_player, queue.getPlayer());
+
+        BukkitTester.pause(2);
 
         assertEquals(sounds.get(0), queue.getCurrent());
 
@@ -266,11 +262,14 @@ public class SimplePlayListTest {
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(false, playList.addPlayer(_player, settings));
+        PlayerSoundQueue queue  = playList.addPlayer(_player, settings);
 
-        PlayerSoundQueue queue  = playList.getSoundQueue(_player);
+        assertTrue(queue != null);
 
-        assertTrue(queue == null);
+        BukkitTester.pause(2);
+
+        assertEquals(true, queue.isRemoved());
+        assertEquals(null, playList.getSoundQueue(_player));
 
         playList.removePlayer(_player);
 
@@ -288,11 +287,13 @@ public class SimplePlayListTest {
         assertEquals(null, playList.getSoundQueue(_player));
 
         // add player
-        assertEquals(false, playList.addPlayer(_player, settings));
+        PlayerSoundQueue queue  = playList.addPlayer(_player, settings);
+        assertTrue(queue != null);
 
-        PlayerSoundQueue queue  = playList.getSoundQueue(_player);
+        BukkitTester.pause(2);
 
-        assertTrue(queue == null);
+        assertEquals(true, queue.isRemoved());
+        assertEquals(null, playList.getSoundQueue(_player));
 
         playList.removePlayer(_player);
 

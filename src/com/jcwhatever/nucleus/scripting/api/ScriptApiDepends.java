@@ -27,16 +27,18 @@ package com.jcwhatever.nucleus.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
-import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -98,6 +100,58 @@ public class ScriptApiDepends extends NucleusScriptApi {
 
             if (_task == null || _task.isCancelled())
                 _task = Scheduler.runTaskRepeat(Nucleus.getPlugin(), 20, 20, new DependsChecker());
+        }
+
+        /**
+         * Get a class by name.
+         *
+         * <p>Used when the class is not in the classpath and cannot be accessed
+         * normally via scripts.</p>
+         *
+         * @param clazzName  The name of the class to get.
+         *
+         * @return  The class.
+         */
+        public Class<?> clazz(String clazzName) {
+            PreCon.notNullOrEmpty(clazzName, "clazzName");
+
+            try {
+                return Class.forName(clazzName);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        /**
+         * Get the value of a static field.
+         *
+         * <p>Used when the class is not in the classpath and cannot be accessed
+         * normally via scripts.</p>
+         *
+         * @param clazzName  The name of the class the static field is in.
+         * @param fieldName  The name of the static field.
+         *
+         * @return  The value of the field.
+         */
+        public Object staticField(String clazzName, String fieldName) {
+            PreCon.notNullOrEmpty(clazzName, "clazzName");
+            PreCon.notNullOrEmpty(fieldName, "fieldName");
+
+            Class<?> clazz = clazz(clazzName);
+
+            Field field;
+            try {
+                field = clazz.getField(fieldName);
+                field.setAccessible(true);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                return field.get(null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         /*
