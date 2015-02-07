@@ -17,6 +17,7 @@ The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow de
 
 ## Resources
  * [NucleusLocalizer](https://github.com/JCThePants/NucleusLocalizer) - A console program used to generate language localization resource files for Nucleus based plugins.
+ * [ResourcePackerMC](https://github.com/JCThePants/ResourcePackerMC) - A console program that aids in generating resource packs. Also generates resource-sounds.yml file used by NucleusFramework to define resource pack sounds.
  * [Scripting examples](https://github.com/JCThePants/NucleusScriptExamples) - Examples of cross plugin scripts using NucleusFramework.
 
 ## Plugin dependencies
