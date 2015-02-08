@@ -47,6 +47,7 @@ public final class BukkitEventListener  implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     private void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
 
+        // prevent prisoners from using commands
         if (Nucleus.getJailManager().isPrisoner(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
@@ -55,6 +56,7 @@ public final class BukkitEventListener  implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     private void onPlayerInteract(PlayerInteractEvent event) {
 
+        // prevent prisoners from interacting
         if (Nucleus.getJailManager().isPrisoner(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
@@ -63,6 +65,7 @@ public final class BukkitEventListener  implements Listener {
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
 
+        // make sure player that is logging in is released if no longer a prisoner
         if (Nucleus.getJailManager().isLateRelease(event.getPlayer().getUniqueId())) {
             Nucleus.getJailManager().release(event.getPlayer().getUniqueId());
         }
@@ -80,6 +83,7 @@ public final class BukkitEventListener  implements Listener {
         }
         else if (manager.isPrisoner(playerId)) {
 
+            // send prisoner back to jail
             JailSession session = manager.getSession(playerId);
             if (session != null) {
                 Location location = session.getJail().getRandomTeleport();

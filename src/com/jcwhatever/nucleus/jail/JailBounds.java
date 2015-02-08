@@ -25,9 +25,11 @@
 
 package com.jcwhatever.nucleus.jail;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.regions.Region;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Scheduler;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -59,29 +61,37 @@ public class JailBounds extends Region {
     /**
      * Determine if the {@code onPlayerLeave} method can be called.
      *
-     * @param p  The player leaving the region.
+     * @param player  The player leaving the region.
      */
     @Override
-    protected boolean canDoPlayerLeave(Player p, LeaveRegionReason reason) {
-        PreCon.notNull(p);
+    protected boolean canDoPlayerLeave(Player player, LeaveRegionReason reason) {
+        PreCon.notNull(player);
 
-        return reason != LeaveRegionReason.QUIT_SERVER && _jail.isPrisoner(p);
+        return reason != LeaveRegionReason.QUIT_SERVER && _jail.isPrisoner(player);
     }
 
     /**
      * Prevent imprisoned players from leaving the jail region.
-     * @param p  The player leaving the region.
+     *
+     * @param player  The player leaving the region.
      */
     @Override
-    protected void onPlayerLeave (Player p, LeaveRegionReason reason) {
-        PreCon.notNull(p);
+    protected void onPlayerLeave (final Player player, LeaveRegionReason reason) {
+        PreCon.notNull(player);
 
-        // prevent player from leaving jail
-        Location tpLocation = _jail.getRandomTeleport();
+        Scheduler.runTaskLater(Nucleus.getPlugin(), 10, new Runnable() {
+            @Override
+            public void run() {
 
-        if (tpLocation == null)
-            tpLocation = this.getCenter();
+                // prevent player from leaving jail
+                Location tpLocation = _jail.getRandomTeleport();
 
-        p.teleport(tpLocation);
+                if (tpLocation == null)
+                    tpLocation = JailBounds.this.getCenter();
+
+                player.teleport(tpLocation);
+            }
+        });
+
     }
 }

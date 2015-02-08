@@ -56,8 +56,8 @@ import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * NucleusFramework JailManager
  */
 public final class InternalJailManager implements IJailManager {
 
@@ -201,8 +201,8 @@ public final class InternalJailManager implements IJailManager {
         // automatically registers
         new Jail(Nucleus.getPlugin(), "default", _dataNode.getNode("default"));
 
-        // check for prisoner release every 1 second.
-        Scheduler.runTaskRepeat(Nucleus.getPlugin(), Rand.getInt(1, 20), 20, _warden);
+        // check for prisoner release every 1 minute.
+        Scheduler.runTaskRepeat(Nucleus.getPlugin(), Rand.getInt(1, 20 * 60), 20 * 60, _warden);
 
         BukkitEventListener _eventListener = new BukkitEventListener();
         Bukkit.getPluginManager().registerEvents(_eventListener, Nucleus.getPlugin());
