@@ -50,7 +50,7 @@ You can include the latest NucleusFramework snapshot as a Maven dependency with 
         <dependency>
             <groupId>com.jcwhatever.bukkit</groupId>
             <artifactId>NucleusFramework</artifactId>
-            <version>0.0-SNAPSHOT</version>
+            <version>LATEST</version>
         </dependency>
     </dependencies>
 
