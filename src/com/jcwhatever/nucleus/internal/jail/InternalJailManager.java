@@ -260,7 +260,7 @@ public final class InternalJailManager implements IJailManager {
             String jailName = node.getString("jail");
             long expireTime = node.getLong("expires", 0);
 
-            if (pluginName == null || jailName == null) {
+            if (pluginName == null || jailName == null || expireTime <= System.currentTimeMillis()) {
                 node.remove();
                 continue;
             }
@@ -270,6 +270,9 @@ public final class InternalJailManager implements IJailManager {
 
             _sessionLoader.add(dependency);
         }
+
+        if (sessions.isDirty())
+            sessions.save();
 
         _sessionLoader.start();
     }
