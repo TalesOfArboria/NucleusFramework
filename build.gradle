@@ -3,7 +3,7 @@
  */
 def projectName = 'NucleusFramework'
 def majorVersion = '0'
-def minorVersion = '1'
+def minorVersion = '2'
 def buildBy = null // auto filled
 
 // target Java version
