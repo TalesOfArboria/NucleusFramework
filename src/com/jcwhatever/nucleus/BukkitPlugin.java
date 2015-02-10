@@ -45,6 +45,7 @@ import com.jcwhatever.nucleus.utils.scheduler.BukkitTaskScheduler;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
@@ -197,8 +198,15 @@ public final class BukkitPlugin extends NucleusPlugin {
             if (plugin instanceof BukkitPlugin)
                 continue;
 
-            plugin._isEnabled = true;
-            plugin.onEnablePlugin();
+            try {
+                plugin._isEnabled = true;
+                plugin.onEnablePlugin();
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+                plugin._isEnabled = false;
+                Bukkit.getPluginManager().disablePlugin(plugin);
+            }
         }
     }
 }
