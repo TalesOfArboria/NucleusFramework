@@ -131,7 +131,7 @@ public class JailSessionTest {
         assertEquals(false, session.isExpired());
         assertEquals(true, Nucleus.getJailManager().isPrisoner(_player.getUniqueId()));
 
-        BukkitTester.pause(30);
+        BukkitTester.pause(35);
 
         assertEquals(true, session.isExpired());
         assertEquals(false, Nucleus.getJailManager().isPrisoner(_player.getUniqueId()));

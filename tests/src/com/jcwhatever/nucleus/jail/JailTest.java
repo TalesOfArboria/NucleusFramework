@@ -92,7 +92,7 @@ public class JailTest {
         // make sure player is prisoner
         assertEquals(true, _jail.isPrisoner(_player));
 
-        BukkitTester.pause(30); // warden resolution is approx. 20 ticks
+        BukkitTester.pause(35); // warden resolution is approx. 20 ticks
 
         // make sure player is released
         assertEquals(false, _jail.isPrisoner(_player));
