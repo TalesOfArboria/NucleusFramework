@@ -27,6 +27,9 @@ package com.jcwhatever.nucleus.jail;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.mixins.IMeta;
+import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;
@@ -38,11 +41,13 @@ import javax.annotation.Nullable;
 /**
  * Represents a players session in a jail.
  */
-public final class JailSession implements IDisposable {
+public final class JailSession implements IMeta, IDisposable {
 
     private final Jail _jail;
     private final UUID _playerId;
+    private final MetaStore _meta = new MetaStore();
     private Date _expires;
+    private Location _releaseLocation;
 
     private boolean _isReleased;
 
@@ -61,6 +66,7 @@ public final class JailSession implements IDisposable {
         _jail = jail;
         _playerId = playerId;
         _expires = expires;
+        _releaseLocation = jail.getReleaseLocation();
     }
 
     /**
@@ -115,7 +121,18 @@ public final class JailSession implements IDisposable {
      */
     @Nullable
     public Location getReleaseLocation() {
-        return _jail.getReleaseLocation();
+        return _releaseLocation;
+    }
+
+    /**
+     * Set the release location.
+     *
+     * @param location  The location.
+     */
+    public void setReleaseLocation(Location location) {
+        PreCon.notNull(location);
+
+        _releaseLocation = location;
     }
 
     @Override
@@ -127,5 +144,22 @@ public final class JailSession implements IDisposable {
     public void dispose() {
         _isReleased = true;
         _expires = null;
+    }
+
+    @Nullable
+    @Override
+    public <T> T getMeta(MetaKey<T> key) {
+        return _meta.getMeta(key);
+    }
+
+    @Nullable
+    @Override
+    public Object getMetaObject(Object key) {
+        return _meta.getMetaObject(key);
+    }
+
+    @Override
+    public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
+        _meta.setMeta(key, value);
     }
 }

@@ -52,10 +52,9 @@ import org.bukkit.entity.Player;
 
 public final class SendSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _PLAYER_NOT_FOUND = "Could not find player '{0}'.";
+    @Localizable static final String _PLAYER_NOT_FOUND = "Could not find player '{0}'.";
     @Localizable static final String _FAILED = "Failed to send player to Default Jail. Make sure it is setup.";
-    @Localizable static final String _SUCCESS = "Player '{0}' sent to Default Jail for {0} minutes.";
+    @Localizable static final String _SUCCESS = "Player '{0}' sent to Default Jail for {1} minutes.";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws CommandException {

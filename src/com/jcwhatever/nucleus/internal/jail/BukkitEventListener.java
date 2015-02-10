@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.jail;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.jail.IJailManager;
 import com.jcwhatever.nucleus.jail.JailSession;
+import com.jcwhatever.nucleus.utils.Scheduler;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -63,11 +64,16 @@ public final class BukkitEventListener  implements Listener {
     }
 
     @EventHandler
-    private void onPlayerJoin(PlayerJoinEvent event) {
+    private void onPlayerJoin(final PlayerJoinEvent event) {
 
         // make sure player that is logging in is released if no longer a prisoner
         if (Nucleus.getJailManager().isLateRelease(event.getPlayer().getUniqueId())) {
-            Nucleus.getJailManager().release(event.getPlayer().getUniqueId());
+            Scheduler.runTaskLater(Nucleus.getPlugin(), 5, new Runnable() {
+                @Override
+                public void run() {
+                    Nucleus.getJailManager().release(event.getPlayer().getUniqueId());
+                }
+            });
         }
     }
 

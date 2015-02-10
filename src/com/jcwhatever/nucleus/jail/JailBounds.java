@@ -56,6 +56,7 @@ public class JailBounds extends Region {
         PreCon.notNull(jail);
 
         _jail = jail;
+        setEventListener(true);
     }
 
     /**

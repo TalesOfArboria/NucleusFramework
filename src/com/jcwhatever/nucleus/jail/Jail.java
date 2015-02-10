@@ -266,7 +266,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         }
 
         return _releaseLocation != null
-                ? _releaseLocation
+                ? _releaseLocation.clone()
                 : null;
     }
 

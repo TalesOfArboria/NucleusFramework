@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.DateUtils.TimeRound;
 import com.jcwhatever.nucleus.utils.DependencyRunner;
+import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
@@ -61,8 +62,9 @@ import javax.annotation.Nullable;
  */
 public final class InternalJailManager implements IJailManager {
 
-    @Localizable
-    static final String _RELEASE_TIME = "Release in {0} minutes.";
+    @Localizable static final String _RELEASE_TIME = "Release in {0} minutes.";
+
+    private static final MetaKey<Long> RELEASE_MESSAGE_META = new MetaKey<>(Long.class);
 
     private final IDataNode _dataNode;
 
@@ -138,6 +140,7 @@ public final class InternalJailManager implements IJailManager {
         node.save();
 
         _sessionMap.put(playerId, jailSession);
+        unregisterLateRelease(playerId);
 
         return jailSession;
     }
@@ -147,6 +150,7 @@ public final class InternalJailManager implements IJailManager {
         PreCon.notNull(playerId);
 
         _sessionMap.remove(playerId);
+        unregisterLateRelease(playerId);
     }
 
     @Override
@@ -171,7 +175,7 @@ public final class InternalJailManager implements IJailManager {
         JailSession session = getSession(playerId);
         if (session != null) {
             session.dispose();
-            _warden.run();
+            _warden.run(true, true);
             return true;
         }
 
@@ -189,11 +193,29 @@ public final class InternalJailManager implements IJailManager {
         PreCon.notNull(playerId);
         PreCon.notNull(releaseLocation);
 
+        releaseLocation = releaseLocation.clone();
+
         _lateReleases.put(playerId, releaseLocation);
 
         IDataNode node = _dataNode.getNode("late-release");
         node.set(playerId.toString(), releaseLocation);
         node.save();
+    }
+
+    // remove a late release
+    @Nullable
+    private Location unregisterLateRelease(UUID playerId) {
+        PreCon.notNull(playerId);
+
+        Location result = _lateReleases.remove(playerId);
+
+        if (result != null) {
+            IDataNode node = _dataNode.getNode("late-release");
+            node.remove(playerId.toString());
+            node.save();
+        }
+
+        return result;
     }
 
     public void loadSettings() {
@@ -202,7 +224,7 @@ public final class InternalJailManager implements IJailManager {
         new Jail(Nucleus.getPlugin(), "default", _dataNode.getNode("default"));
 
         // check for prisoner release every 1 minute.
-        Scheduler.runTaskRepeat(Nucleus.getPlugin(), Rand.getInt(1, 20 * 60), 20 * 60, _warden);
+        Scheduler.runTaskRepeat(Nucleus.getPlugin(), Rand.getInt(1, 25), 25, _warden);
 
         BukkitEventListener _eventListener = new BukkitEventListener();
         Bukkit.getPluginManager().registerEvents(_eventListener, Nucleus.getPlugin());
@@ -258,54 +280,69 @@ public final class InternalJailManager implements IJailManager {
      */
     class Warden implements Runnable {
 
+        boolean hasProcessedLateReleases;
+
         @Override
         public void run () {
-            run(false);
+            run(false, false);
         }
 
-        public void run(boolean silent) {
+        public void run(boolean silent, boolean doLateReleases) {
             if (_sessionMap.isEmpty())
                 return;
+
+            if (!hasProcessedLateReleases) {
+                doLateReleases = true;
+                hasProcessedLateReleases = true;
+            }
 
             List<JailSession> jailSessions = new ArrayList<JailSession>(_sessionMap.values());
 
             Date now = new Date();
 
             for (JailSession session : jailSessions) {
-                if (session.isExpired() || _lateReleases.containsKey(session.getPlayerId())) {
 
-                    _sessionMap.remove(session.getPlayerId());
-                    Location releaseLoc = _lateReleases.remove(session.getPlayerId());
+                boolean isLateRelease = _lateReleases.containsKey(session.getPlayerId());
+                if (isLateRelease && !doLateReleases)
+                    continue;
 
-                    if (!session.isReleased()) {
-                        session.release();
-                    }
-
-                    if (releaseLoc == null) {
-                        releaseLoc = session.getReleaseLocation();
-                        if (releaseLoc == null)
-                            throw new AssertionError();
-                    }
+                if (isLateRelease || session.isExpired()) {
 
                     Player p = PlayerUtils.getPlayer(session.getPlayerId());
-                    if (p != null) {
-                        p.teleport(releaseLoc);
-                    }
-                    else {
+                    if (p == null) {
+
                         // register player to be released at next login
-                        registerLateRelease(session.getPlayerId(), releaseLoc);
+                        registerLateRelease(session.getPlayerId(), session.getReleaseLocation());
+                        continue;
                     }
+
+                    _sessionMap.remove(session.getPlayerId());
+
+                    Location releaseLoc = unregisterLateRelease(session.getPlayerId());
+                    if (releaseLoc == null)
+                        releaseLoc = session.getReleaseLocation();
+
+                    if (!session.isReleased())
+                        session.release();
+
+                    p.teleport(releaseLoc);
                 }
                 else if (!silent) {
 
                     long releaseMinutes = DateUtils.getDeltaMinutes(now, session.getExpiration(), TimeRound.ROUND_UP);
 
-                    if (releaseMinutes <= 5 || releaseMinutes % 10 == 0) {
+                    Long lastMessageMin = session.getMeta(RELEASE_MESSAGE_META);
+                    if (lastMessageMin == null ||
+                            (lastMessageMin != releaseMinutes &&
+                                    (releaseMinutes <= 5 || releaseMinutes % 10 == 0))) {
+
                         Player p = PlayerUtils.getPlayer(session.getPlayerId());
 
                         if (p != null) {
                             NucMsg.tellAnon(p, NucLang.get(_RELEASE_TIME, releaseMinutes));
                         }
+
+                        session.setMeta(RELEASE_MESSAGE_META, releaseMinutes);
                     }
                 }
             }
