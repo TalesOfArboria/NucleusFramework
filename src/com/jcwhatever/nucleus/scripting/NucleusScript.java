@@ -28,13 +28,13 @@ package com.jcwhatever.nucleus.scripting;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.scripting.api.IScriptApi;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.ScriptUtils;
 
 import java.io.File;
 import java.util.Collection;
 import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 
 /**
  * NucleusFramework's default {@code IScript} implementation
@@ -154,19 +154,7 @@ public class NucleusScript implements IScript {
      */
     protected boolean eval(ScriptEngine engine, ScriptContext context) {
 
-        if (_file != null)
-            engine.put(ScriptEngine.FILENAME, _file.getName() + " (" + _name + ')');
-
-        try {
-            // evaluate script
-            engine.eval(getScript(), context);
-
-            return true;
-
-        } catch (ScriptException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return ScriptUtils.eval(engine, context, this).hasResult();
     }
 
 }

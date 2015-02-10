@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.scripting.api.IScriptApi;
 import com.jcwhatever.nucleus.scripting.api.IScriptApiObject;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.ScriptUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -179,16 +180,7 @@ public class NucleusEvaluatedScript implements IEvaluatedScript {
     @Override
     @Nullable
     public Object evaluate(IScript script) {
-        if (script.getFile() != null) {
-            _engine.put(ScriptEngine.FILENAME, script.getFile().getName());
-        }
-
-        try {
-            return _engine.eval(script.getScript(), getContext());
-        } catch (ScriptException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return ScriptUtils.eval(_engine, getContext(), script).getResult();
     }
 
     @Override

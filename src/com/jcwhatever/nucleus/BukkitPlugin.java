@@ -25,7 +25,6 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.internal.InternalEventManager;
-import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
@@ -35,6 +34,7 @@ import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
+import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.nucleus.kits.KitManager;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
@@ -83,6 +83,9 @@ public final class BukkitPlugin extends NucleusPlugin {
         super();
 
         Nucleus._plugin = this;
+
+        // allow script engines to find nucleus classes
+        Thread.currentThread().setContextClassLoader(getClassLoader());
     }
 
     /**

@@ -57,7 +57,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 /**
  * Script utilities.
@@ -273,6 +276,47 @@ public final class ScriptUtils {
         PreCon.isValid(!file.isDirectory());
 
         return FileUtils.getFileExtension(file);
+    }
+
+    /**
+     * Evaluate a script into a script engine.
+     *
+     * @param engine   The script engine.
+     * @param context  The script context.
+     * @param script   The script to evaluate.
+     *
+     * @return The results returned from the script, if any.
+     */
+    public static Result<Object> eval(ScriptEngine engine, ScriptContext context, IScript script) {
+
+        File file = script.getFile();
+
+        String filename = file != null ? file.getName() : "<unknown>";
+
+        context.setAttribute(ScriptEngine.FILENAME, filename, ScriptContext.ENGINE_SCOPE);
+
+        Object result;
+
+        try {
+            if (engine.getFactory().getEngineName().equals("Oracle Nashorn")) {
+
+                context.setAttribute("script", script.getScript(), ScriptContext.ENGINE_SCOPE);
+                context.setAttribute("scriptName", filename, ScriptContext.ENGINE_SCOPE);
+
+                // evaluate script into Nashorn
+                result = engine.eval("load({ script: script, name: scriptName})", context);
+            }
+            else {
+                // evaluate script
+                result = engine.eval(script.getScript(), context);
+            }
+
+            return new Result<Object>(true, result);
+
+        } catch (ScriptException e) {
+            e.printStackTrace();
+            return new Result<Object>(false);
+        }
     }
 
     /**
