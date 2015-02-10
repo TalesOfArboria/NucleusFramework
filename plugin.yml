@@ -1,7 +1,7 @@
 name: NucleusFramework
 author: JCThePants
 main: com.jcwhatever.nucleus.BukkitPlugin
-version: 0.0-beta
+version: 0.1-beta
 softdepend: [Vault, WorldEdit]
 commands:
     nucleusframework:
