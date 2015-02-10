@@ -90,7 +90,7 @@ public final class InternalJailManager implements IJailManager {
     public void unregisterJail(Jail jail) {
         PreCon.notNull(jail);
 
-        _jails.remove(jail.getPlugin(), jail.getName());
+        _jails.removeValue(jail.getPlugin(), jail.getName());
     }
 
     @Override

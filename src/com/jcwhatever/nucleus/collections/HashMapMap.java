@@ -89,7 +89,7 @@ public class HashMapMap<K1, K2, V> extends HashMap<K1, HashMap<K2, V>> {
      * @return  The removed value, if any.
      */
     @Nullable
-    public V remove(K1 key1, K2 key2) {
+    public V removeValue(K1 key1, K2 key2) {
         PreCon.notNull(key1);
         PreCon.notNull(key2);
 
