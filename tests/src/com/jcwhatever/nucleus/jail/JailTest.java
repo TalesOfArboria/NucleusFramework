@@ -204,7 +204,7 @@ public class JailTest {
 
         _jail.imprison(_player, 10, TimeScale.TICKS);
 
-        BukkitTester.pause(30);
+        BukkitTester.pause(35);
 
         assertEquals(location, _player.getLocation());
     }
