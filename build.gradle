@@ -1,386 +1,78 @@
 /**
  * SETTINGS
  */
-def projectName = 'NucleusFramework'
-def majorVersion = '0'
-def minorVersion = '2'
-def buildBy = null // auto filled
+ext.jcBuildSettings = [
+        projectName : 'NucleusFramework',
+        majorVersion : '0',
+        minorVersion : '2',
+        buildBy : null, // auto filled
+        buildNumber : null, // auto filled when using teamcity
+        mainClass : null,
 
 // target Java version
-def javaVersion = 1.7
+        javaVersion : 1.7,
+        jdkHome : null,
 
 // Maven repository url's
-def mavenRepositories = [
-        'https://github.com/JCThePants/mvn-repo/raw/master',
-        'https://hub.spigotmc.org/nexus/content/repositories/snapshots/',
-        'https://oss.sonatype.org/content/groups/public/'
-]
+        mavenRepositories : [
+                'https://github.com/JCThePants/mvn-repo/raw/master',
+                'https://hub.spigotmc.org/nexus/content/repositories/snapshots/',
+                'https://oss.sonatype.org/content/groups/public/'
+        ],
 
 // provided dependencies (provided by the runtime environment)
-def providedDependsFiles = null
-def providedDepends = [
-        'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT',
-        'com.sk89q:WorldEdit:SNAPSHOT',
-        'net.milkbowl.vault:Vault:1.5.2',
-        'com.google.code.findbugs:jsr305:3.0.0'
-]
+        providedDependsFiles : null,
+        providedDepends : [
+                'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT',
+                'com.sk89q:WorldEdit:SNAPSHOT',
+                'net.milkbowl.vault:Vault:1.5.2',
+                'com.google.code.findbugs:jsr305:3.0.0'
+        ],
 
 // compile dependencies (compiled into output jar)
-def compileDependsFiles = null
-def compileDepends = null
+        compileDependsFiles : null,
+        compileDepends : null,
 
 // include files in output jar
-def includeFiles = [
-        'plugin.yml',
-        'LICENSE.txt'
-]
+        includeFiles : [
+                'plugin.yml',
+                'LICENSE.txt'
+        ],
 
 // include test classes
-def testIncludes = [
-        'com/jcwhatever/nucleus/TestAll.class'
-]
+        testIncludes : [
+                'com/jcwhatever/nucleus/TestAll.class'
+        ],
 
 // exclude test classes
-def testExcludes = null
+        testExcludes : null,
 
 // test dependencies
-def testDepends = [
-        'junit:junit:4.+',
-        'org.easetech:easytest-core:1.3.1',
-        'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT',
-        'org.spigotmc:unmapped-spigot:1.8-R0.1-SNAPSHOT'
-]
-def testRuntimeDepends = null
+        testDepends : [
+                'junit:junit:4.+',
+                'org.easetech:easytest-core:1.3.1',
+                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT',
+                'org.spigotmc:unmapped-spigot:1.8-R0.1-SNAPSHOT'
+        ],
+        testRuntimeDepends : null,
 
 // dependencies that should always be downloaded (cached for 30 seconds)
-def snapshotDepends = [
-        'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT'
-];
+        snapshotDepends : [
+                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT'
+        ],
 
 // source directory
-def sourceDir = 'src'
+        sourceDir : 'src',
 
 // resource directory
-def resourceDir = null
+        resourceDir : null,
 
 // test source directory
-def testSourceDir = 'tests/src'
+        testSourceDir : 'tests/src',
 
 // test resource directory
-def testResourceDir = 'tests/res'
-
-/**
- * MAVEN TASK SETTINGS
- */
-
-// settings for optional Maven repo update tasks (updateMaven)
-def shCmd = 'sh'
-def mavenCmd = 'mvn'
-def mavenFolder = '/mvn-repo/'
-def mavenGroupId = 'com.jcwhatever.bukkit'
-def mavenArtifactId = projectName
-def mavenVersion = majorVersion + '.' + minorVersion + '-SNAPSHOT'
-
-/**
- * SETUP
- */
-
-def hasTeamCity = hasProperty("teamcity")
-def buildNumber = hasTeamCity ? teamcity["build.number"] : 'unknown'
-// Set version number
-if (hasTeamCity) {
-    version = majorVersion + '.' + minorVersion + '.' + buildNumber + '.git-' + teamcity["build.vcs.number"]
-
-    if (buildBy == null) {
-        buildBy = teamcity["build.triggeredBy.username"]
-
-        if (!buildBy) {
-            buildBy = teamcity["build.triggeredBy"]
-        }
-
-        if (!buildBy) {
-            buildBy = teamcity["agent.name"]
-        }
-    }
-
-}else {
-    version = majorVersion + '.' + minorVersion + '.000.git-unknown'
-}
-
-if (buildBy == null) {
-    buildBy = System.properties['user.name']
-}
-
-defaultTasks 'clean', 'build'
-
-apply plugin: 'java'
-compileJava.options.encoding = 'UTF-8'
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
-// Minimum Java Version
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
-
-// Add provided configuration to prevent dependencies
-// from being included in the jar
-configurations {
-    provided
-    all {
-        // dependencies that are marked as changing will only be cached for 30 seconds
-        resolutionStrategy.cacheChangingModulesFor 30, 'seconds'
-    }
-}
-
-sourceSets {
-
-    main {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
-
-        java {
-            srcDir sourceDir
-        }
-
-        if (resourceDir) {
-            resources {
-                srcDir resourceDir
-            }
-        }
-    }
-
-    test {
-
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
-
-        if (testSourceDir) {
-            java {
-                srcDir testSourceDir
-            }
-        }
-
-        if (testResourceDir) {
-            resources {
-                srcDir testResourceDir
-            }
-        }
-    }
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies { classpath 'org.ajoberstar:gradle-git:0.2.3' }
-}
-
-repositories {
-    mavenCentral()
-
-    if (mavenRepositories) {
-        for (repo in mavenRepositories) {
-            maven {
-                url repo
-            }
-        }
-    }
-}
-
-// Add dependencies
-dependencies {
-
-    // add compile dependency files (compiled into output jar)
-    if (compileDependsFiles) {
-        compile files(compileDependsFiles)
-    }
-
-    // add provided dependency files (provided in runtime environment)
-    if (providedDependsFiles) {
-        provided files(providedDependsFiles)
-    }
-
-    // add Maven compile dependencies (compiled into output jar)
-    if (compileDepends) {
-        for (depend in compileDepends) {
-            compile(depend) {
-
-                // flag dependency as changing so it is re-downloaded if cached
-                changing = changing || (snapshotDepends && snapshotDepends.contains(depend))
-            }
-        }
-    }
-
-    // add Maven provided dependencies (provided in runtime environment)
-    if (providedDepends) {
-        for (depend in providedDepends) {
-            provided(depend) {
-
-                // flag dependency as changing so it is re-downloaded if cached
-                changing = changing || (snapshotDepends && snapshotDepends.contains(depend))
-            }
-        }
-    }
-
-    // add test dependencies
-    if (testDepends) {
-        for (depend in testDepends) {
-            testCompile(depend) {
-
-                // flag dependency as changing so it is re-downloaded if cached
-                changing = changing || (snapshotDepends && snapshotDepends.contains(depend))
-            }
-        }
-    }
-
-    // add testRuntime dependencies
-    if (testRuntimeDepends) {
-        for (depend in testRuntimeDepends) {
-            testRuntime(depend) {
-
-                // flag dependency as changing so it is re-downloaded if cached
-                changing = changing || (snapshotDepends && snapshotDepends.contains(depend))
-            }
-        }
-    }
-}
-
-/**
- * JAR OUTPUT
- */
-
-// output jar manifest
-def manifestAttr = manifest {
-    attributes("Built-By": buildBy,
-            "Created-By": System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
-            "Implementation-Title": projectName,
-            "Implementation-Version": version)
-}
-
-// Jar file output with version number
-jar {
-
-    archiveName = projectName + '.' + version + '.jar'
-
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-
-    if (includeFiles) {
-        from includeFiles
-    }
-
-    manifest = manifestAttr
-}
-
-// Task to create a Jar file artifact with no version number
-// Task is run with Build
-task simpleNamedJar(type: Jar) {
-
-    archiveName = projectName + '.jar'
-
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-
-    if (includeFiles) {
-        from includeFiles
-    }
-
-    manifest = manifestAttr
-
-    with jar
-}
-
-// create additional artifacts using the simpleNamedJar task
-artifacts {
-    archives simpleNamedJar
-}
-
-/**
- * JUNIT TESTS
- */
-test {
-    if (testIncludes)
-        include testIncludes
-
-    if (testExcludes)
-        exclude testExcludes
-
-    testLogging {
-        events 'started', 'passed'
-    }
-
-    minHeapSize = '128m'
-    maxHeapSize = '512m'
-
-    // set JVM arguments for the test JVM(s)
-    jvmArgs '-XX:MaxPermSize=256m'
-
-    // listen to events in the test execution lifecycle
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor)
-    }
-
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
-    }
-}
-
-/**
- * OPTIONAL MAVEN REPO SNAPSHOT TASKS
- */
-
-import org.ajoberstar.gradle.git.tasks.*
-
-// perform all tasks necessary to update
-// Git Maven repository with the latest
-// snapshot artifacts
-task updateMaven << {
-    pullMaven.execute()
-    updateLocalMavenHolding.execute()
-    updateLocalMaven.execute()
-    addMavenGit.execute()
-    commitMavenGit.execute()
-    pushMavenGit.execute()
-}
-
-// pull maven repo from git
-task pullMaven(type: Exec) {
-    workingDir mavenFolder
-    executable shCmd
-    args '--login', '-i', '-c', "git pull GITHUB master";
-}
-
-// copy jar artifact to a holding folder.
-task updateLocalMavenHolding(type: Copy) {
-    from file('build/libs/' + projectName + '.jar')
-    into file(mavenFolder + 'holding')
-}
-
-// add jar artifact from holding folder to local maven repository
-task updateLocalMaven(type: Exec) {
-    workingDir mavenFolder
-    executable shCmd
-    args '--login', '-i', '-c', mavenCmd + ' install:install-file -DgroupId=' + mavenGroupId +
-            ' -DartifactId=' + mavenArtifactId + ' -Dversion=' + mavenVersion + ' -Dfile=holding/' + projectName + '.jar -Dpackaging=jar -DgeneratePom=true -DlocalRepositoryPath=';
-}
-
-// add changed Maven files to Git
-task addMavenGit(type: Exec) {
-    workingDir mavenFolder
-    executable shCmd
-    args '--login', '-i', '-c', 'git add .';
-}
-
-// commit changed Maven files to Git
-task commitMavenGit(type: Exec) {
-    workingDir mavenFolder
-    executable shCmd
-    args '--login', '-i', '-c', "git commit -m 'Snapshot update for " + projectName + " build# " + buildNumber + "'";
-}
-
-// push Maven Git repository to GITHUB
-task pushMavenGit(type: Exec) {
-    workingDir mavenFolder
-    executable shCmd
-    args '--login', '-i', '-c', "git push GITHUB master";
-}
+        testResourceDir : 'tests/res'
+]
+
+apply from : 'https://github.com/JCThePants/mvn-repo/raw/master/jcbuild.java.gradle.plugin'
+apply from : 'https://github.com/JCThePants/mvn-repo/raw/master/jcmaven.gradle.plugin'
