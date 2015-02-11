@@ -141,6 +141,26 @@ public class NamedUpdateAgents {
     }
 
     /**
+     * Update an agents subscribers.
+     *
+     * @param name      The name of the agent.
+     * @param argument  The update argument.
+     *
+     * @param <T>  The argument type.
+     */
+    public <T> void update(String name, T argument) {
+        PreCon.notNull(name);
+
+        if (!hasAgent(name))
+            return;
+
+        @SuppressWarnings("unchecked")
+        UpdateAgent<T> agent = (UpdateAgent<T>)_recent;
+
+        agent.update(argument);
+    }
+
+    /**
      * Dispose all agents.
      *
      * <p>The {@code NamedUpdateAgents} instance can still be used.</p>
