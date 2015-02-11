@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.providers;
 import com.jcwhatever.nucleus.BukkitPlugin;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
+import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.utils.DependencyRunner;
 import com.jcwhatever.nucleus.utils.DependencyRunner.DependencyStatus;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IDependantRunnable;
@@ -133,6 +134,10 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
                     else if (provider instanceof IBankItemsProvider) {
 
                         _manager.setBankItemsProvider((IBankItemsProvider) provider);
+                    }
+                    else if (provider instanceof INpcProvider) {
+
+                        _manager.setNpcProvider((INpcProvider)provider);
                     }
                     else {
                         removeModule(provider.getName());

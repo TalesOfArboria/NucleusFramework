@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.providers;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
+import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 
 import org.bukkit.plugin.Plugin;
@@ -105,4 +106,12 @@ public interface IProviderManager {
      * Get all registered storage providers.
      */
     List<IStorageProvider> getStorageProviders();
+
+    /**
+     * Get the NPC provider.
+     *
+     * @return  The NPC provider or null if there is none.
+     */
+    @Nullable
+    INpcProvider getNpcProvider();
 }

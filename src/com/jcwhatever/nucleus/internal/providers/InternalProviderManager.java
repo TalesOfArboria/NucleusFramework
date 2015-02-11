@@ -46,6 +46,7 @@ import com.jcwhatever.nucleus.providers.economy.EconomyWrapper;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
+import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -73,6 +74,7 @@ public final class InternalProviderManager implements IProviderManager {
     private volatile IRegionSelectProvider _regionSelect;
     private volatile IEconomyProvider _economy;
     private volatile IBankItemsProvider _bankItems;
+    private volatile INpcProvider _npc;
 
     private volatile IStorageProvider _defaultStorage;
 
@@ -264,6 +266,18 @@ public final class InternalProviderManager implements IProviderManager {
     @Override
     public List<IStorageProvider> getStorageProviders() {
         return new ArrayList<>(_storageProviders.values());
+    }
+
+    @Nullable
+    @Override
+    public INpcProvider getNpcProvider() {
+        return _npc;
+    }
+
+    public void setNpcProvider(INpcProvider provider) {
+        PreCon.notNull(provider);
+
+        _npc = provider;
     }
 
     public void registerStorageProvider(IStorageProvider storageProvider) {
