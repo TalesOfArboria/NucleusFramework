@@ -29,10 +29,11 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
-import com.jcwhatever.nucleus.scripting.api.ScriptEventSubscriber.IScriptEventSubscriber;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.event.EventSubscriberPriority;
+import com.jcwhatever.nucleus.utils.observer.script.IScriptEventSubscriber;
+import com.jcwhatever.nucleus.utils.observer.script.ScriptEventSubscriber;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.event.Event;

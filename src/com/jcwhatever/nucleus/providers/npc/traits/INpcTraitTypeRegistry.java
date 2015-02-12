@@ -39,7 +39,7 @@ public interface INpcTraitTypeRegistry {
      *
      * @return  Self for chaining.
      */
-    INpcTraitTypeRegistry registerTrait(INpcTraitType traitType);
+    INpcTraitTypeRegistry registerTrait(NpcTraitType traitType);
 
     /**
      * Determine if a trait is registered.
@@ -62,5 +62,5 @@ public interface INpcTraitTypeRegistry {
      * @return  The trait type or null if not found.
      */
     @Nullable
-    INpcTraitType getTraitType(String name);
+    NpcTraitType getTraitType(String name);
 }

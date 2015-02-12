@@ -38,7 +38,7 @@ import com.jcwhatever.nucleus.providers.npc.events.NpcRightClickEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcTargetedEvent;
 import com.jcwhatever.nucleus.providers.npc.traits.INpcTraitTypeRegistry;
-import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -63,6 +63,18 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      */
     @Nullable
     INpc create(String name, String npcName, EntityType type);
+
+    /**
+     * Create a new NPC.
+     *
+     * @param name     The name unique to the owning plugin.
+     * @param npcName  The NPC's display name.
+     * @param type     The NPC entity type name.
+     *
+     * @return  The new {@code INpc} instance or null if failed.
+     */
+    @Nullable
+    INpc create(String name, String npcName, String type);
 
     /**
      * Get all un-disposed {@code INpc}'s in the registry.
@@ -98,7 +110,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNavStart(IUpdateSubscriber<INpc> subscriber);
+    INpcRegistry onNavStart(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -108,7 +120,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNavPause(IUpdateSubscriber<INpc> subscriber);
+    INpcRegistry onNavPause(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -118,7 +130,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNavCancel(IUpdateSubscriber<INpc> subscriber);
+    INpcRegistry onNavCancel(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -128,7 +140,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNavComplete(IUpdateSubscriber<INpc> subscriber);
+    INpcRegistry onNavComplete(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -138,7 +150,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNavTimeout(IUpdateSubscriber<INpc> subscriber);
+    INpcRegistry onNavTimeout(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -148,7 +160,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcSpawn(IUpdateSubscriber<NpcSpawnEvent> subscriber);
+    INpcRegistry onNpcSpawn(IScriptUpdateSubscriber<NpcSpawnEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -158,7 +170,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcDespawn(IUpdateSubscriber<NpcDespawnEvent> subscriber);
+    INpcRegistry onNpcDespawn(IScriptUpdateSubscriber<NpcDespawnEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -168,7 +180,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcClick(IUpdateSubscriber<NpcClickEvent> subscriber);
+    INpcRegistry onNpcClick(IScriptUpdateSubscriber<NpcClickEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -178,7 +190,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcRightClick(IUpdateSubscriber<NpcRightClickEvent> subscriber);
+    INpcRegistry onNpcRightClick(IScriptUpdateSubscriber<NpcRightClickEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -188,7 +200,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcLeftClick(IUpdateSubscriber<NpcLeftClickEvent> subscriber);
+    INpcRegistry onNpcLeftClick(IScriptUpdateSubscriber<NpcLeftClickEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -198,7 +210,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcEntityTarget(IUpdateSubscriber<NpcTargetedEvent> subscriber);
+    INpcRegistry onNpcEntityTarget(IScriptUpdateSubscriber<NpcTargetedEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -208,7 +220,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcDamage(IUpdateSubscriber<NpcDamageEvent> subscriber);
+    INpcRegistry onNpcDamage(IScriptUpdateSubscriber<NpcDamageEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -218,7 +230,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcDamageByBlock(IUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
+    INpcRegistry onNpcDamageByBlock(IScriptUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -228,7 +240,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcDamageByEntity(IUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
+    INpcRegistry onNpcDamageByEntity(IScriptUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated whenever an {@code INpc} created
@@ -238,5 +250,5 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @return  Self for chaining.
      */
-    INpcRegistry onNpcDeath(IUpdateSubscriber<NpcDeathEvent> subscriber);
+    INpcRegistry onNpcDeath(IScriptUpdateSubscriber<NpcDeathEvent> subscriber);
 }

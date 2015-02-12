@@ -27,12 +27,13 @@ package com.jcwhatever.nucleus.providers.npc.traits;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.npc.INpc;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * NPC Trait provider. Represents a single type of trait. Used to create
  * instances of the trait type for specific {@link INpc} instances.
  */
-public interface INpcTraitType extends INamedInsensitive, IPluginOwned {
+public abstract class NpcTraitType implements INamedInsensitive, IPluginOwned {
 
     /**
      * Create a new instance of the trait for a specific
@@ -40,11 +41,17 @@ public interface INpcTraitType extends INamedInsensitive, IPluginOwned {
      *
      * @param npc  The npc instance.
      *
-     * @return  The newly created instance.
-     *
-     * @throws java.lang.IllegalStateException if the {@code npc} argument is an npc that already has the trait.
+     * @return  The newly created instance or the one the NPC already had.
      */
-    NpcTrait attachTrait(INpc npc);
+    public NpcTrait attachTrait(INpc npc) {
+        PreCon.notNull(npc);
+
+        if (npc.getRegistry().get(getName()) == null) {
+            npc.getRegistry().registerTrait(this);
+        }
+
+        return npc.getTraits().add(getName());
+    }
 
     /**
      * Create a new instance of the trait for a specific {@code INpc}
@@ -53,10 +60,9 @@ public interface INpcTraitType extends INamedInsensitive, IPluginOwned {
      * @param npc       The npc instance.
      * @param copyFrom  The {@code INpcTrait} instance to copy settings from into the new instance.
      *
-     * @return  The newly created instance.
+     * @return  The newly created instance or the one the NPC already had.
      *
-     * @throws java.lang.IllegalStateException if the {@code npc} argument is an npc that already has the trait.
      * @throws java.lang.IllegalArgumentException  if the {@code copyFrom} argument is invalid.
      */
-    NpcTrait attachTrait(INpc npc, NpcTrait copyFrom);
+    public abstract NpcTrait attachTrait(INpc npc, NpcTrait copyFrom);
 }

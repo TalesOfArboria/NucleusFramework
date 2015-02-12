@@ -40,7 +40,7 @@ import com.jcwhatever.nucleus.providers.npc.events.NpcTargetedEvent;
 import com.jcwhatever.nucleus.providers.npc.goals.INpcGoals;
 import com.jcwhatever.nucleus.providers.npc.navigator.INpcNav;
 import com.jcwhatever.nucleus.providers.npc.traits.INpcTraits;
-import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -191,7 +191,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcSpawn(IUpdateSubscriber<NpcSpawnEvent> subscriber);
+    INpc onNpcSpawn(IScriptUpdateSubscriber<NpcSpawnEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -201,7 +201,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcDespawn(IUpdateSubscriber<NpcDespawnEvent> subscriber);
+    INpc onNpcDespawn(IScriptUpdateSubscriber<NpcDespawnEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -211,7 +211,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcClick(IUpdateSubscriber<NpcClickEvent> subscriber);
+    INpc onNpcClick(IScriptUpdateSubscriber<NpcClickEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -221,7 +221,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcRightClick(IUpdateSubscriber<NpcRightClickEvent> subscriber);
+    INpc onNpcRightClick(IScriptUpdateSubscriber<NpcRightClickEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -231,7 +231,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcLeftClick(IUpdateSubscriber<NpcLeftClickEvent> subscriber);
+    INpc onNpcLeftClick(IScriptUpdateSubscriber<NpcLeftClickEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -241,7 +241,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcEntityTarget(IUpdateSubscriber<NpcTargetedEvent> subscriber);
+    INpc onNpcEntityTarget(IScriptUpdateSubscriber<NpcTargetedEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -251,7 +251,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcDamage(IUpdateSubscriber<NpcDamageEvent> subscriber);
+    INpc onNpcDamage(IScriptUpdateSubscriber<NpcDamageEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -261,7 +261,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcDamageByBlock(IUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
+    INpc onNpcDamageByBlock(IScriptUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -271,7 +271,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcDamageByEntity(IUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
+    INpc onNpcDamageByEntity(IScriptUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
 
     /**
      * Attach a subscriber to be updated when the {@code INpc}
@@ -281,5 +281,5 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      *
      * @return  Self for chaining.
      */
-    INpc onNpcDeath(IUpdateSubscriber<NpcDeathEvent> subscriber);
+    INpc onNpcDeath(IScriptUpdateSubscriber<NpcDeathEvent> subscriber);
 }

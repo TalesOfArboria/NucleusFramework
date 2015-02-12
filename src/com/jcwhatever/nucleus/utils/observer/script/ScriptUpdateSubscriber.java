@@ -22,41 +22,36 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.scripting.api;
+package com.jcwhatever.nucleus.utils.observer.script;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.event.EventSubscriber;
+import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
-import javax.annotation.Nullable;
-
-/*
- * 
+/**
+ * An {@link UpdateSubscriber} for use with scripts.
+ *
+ * <p>A script API method should accept an {@link IScriptUpdateSubscriber}
+ * argument which can then be passed into the constructor of {@link ScriptUpdateSubscriber}.
+ * The script subscriber can then be used as an {@link UpdateSubscriber} on behalf
+ * of a script function.</p>
  */
-public class ScriptEventSubscriber<E> extends EventSubscriber<E> {
+public class ScriptUpdateSubscriber<A> extends UpdateSubscriber<A> {
 
-    private final IScriptEventSubscriber _scriptSubscriber;
+    private final IScriptUpdateSubscriber<A> _scriptSubscriber;
 
     /**
      * Constructor.
      *
      * @param subscriber  The subscriber passed in from a script.
      */
-    public ScriptEventSubscriber(IScriptEventSubscriber subscriber) {
+    public ScriptUpdateSubscriber(IScriptUpdateSubscriber<A> subscriber) {
         PreCon.notNull(subscriber);
 
         _scriptSubscriber = subscriber;
     }
 
     @Override
-    public void onEvent(@Nullable Object caller, E event) {
-        _scriptSubscriber.onEvent(event);
-    }
-
-    /**
-     * An interface that can be easily created by script engines
-     * from a script function.
-     */
-    public interface IScriptEventSubscriber {
-        void onEvent(Object event);
+    public void on(A argument) {
+        _scriptSubscriber.on(argument);
     }
 }

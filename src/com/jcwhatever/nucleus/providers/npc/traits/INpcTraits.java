@@ -83,12 +83,22 @@ public interface INpcTraits {
     /**
      * Add a new trait to the NPC.
      *
-     * @param name  The name of the trait type to add.
+     * @param name  The name of the trait type to add. The trait type must be registered with
+     *              the NPC provider or the NPC's registry.
      *
      * @return  The instance of the trait or null if the trait type was not found.
      */
     @Nullable
     NpcTrait add(String name);
+
+    /**
+     * Add a new trait to the NPC.
+     *
+     * @param trait  The trait instance.
+     *
+     * @return  Self for chaining.
+     */
+    INpcTraits add(NpcTrait trait);
 
     /**
      * Get a trait from the NPC by trait type name.

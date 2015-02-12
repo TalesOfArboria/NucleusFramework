@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 /**
  * Abstract implementation of an NPC Trait.
  *
- * <p>The name of the trait is the same as the parent {@link INpcTraitType}</p>
+ * <p>The name of the trait is the same as the parent {@link NpcTraitType}</p>
  *
  * <p>The {@link NpcTrait} can optionally implement the {@link Runnable}
  * interface. If this is the case, the {@code Runnable#run} method is called
@@ -43,24 +43,22 @@ import com.jcwhatever.nucleus.utils.PreCon;
 public abstract class NpcTrait implements INamedInsensitive, IDisposable {
 
     private final INpc _npc;
-    private final INpcTraitType _type;
-    private final IDataNode _dataNode;
+    private final NpcTraitType _type;
+
+    private boolean _isDisposed;
 
     /**
      * Constructor.
      *
      * @param npc       The NPC the trait is for.
      * @param type      The parent type that instantiated the trait.
-     * @param dataNode  The traits data storage node.
      */
-    public NpcTrait(INpc npc, INpcTraitType type, IDataNode dataNode) {
+    public NpcTrait(INpc npc, NpcTraitType type) {
         PreCon.notNull(npc);
         PreCon.notNull(type);
-        PreCon.notNull(dataNode);
 
         _npc = npc;
         _type = type;
-        _dataNode = dataNode;
     }
 
     @Override
@@ -90,7 +88,7 @@ public abstract class NpcTrait implements INamedInsensitive, IDisposable {
     /**
      * Get the trait type.
      */
-    public INpcTraitType getType() {
+    public NpcTraitType getType() {
         return _type;
     }
 
@@ -109,11 +107,9 @@ public abstract class NpcTrait implements INamedInsensitive, IDisposable {
     }
 
     /**
-     * Save the trait to its dedicated data node.
+     * Save the trait to a dedicated data node.
      */
-    public void save() {
-        onSave(_dataNode);
-    }
+    public void save(IDataNode dataNode) {}
 
     /**
      * Invoked when the trait is added to an {@code INpc}.
@@ -147,10 +143,16 @@ public abstract class NpcTrait implements INamedInsensitive, IDisposable {
      */
     public void onDespawn() {}
 
-    /**
-     * Invoked when the trait needs to be saved.
-     *
-     * @param dataNode  A data node dedicated to storing trait data.
-     */
-    protected abstract void onSave(IDataNode dataNode);
+    @Override
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    @Override
+    public void dispose() {
+
+        getNpc().getTraits().remove(getName());
+
+        _isDisposed = true;
+    }
 }

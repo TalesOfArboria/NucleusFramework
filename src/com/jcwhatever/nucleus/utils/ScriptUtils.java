@@ -37,6 +37,7 @@ import com.jcwhatever.nucleus.scripting.api.ScriptApiInventory;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiItemBank;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiJail;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiMsg;
+import com.jcwhatever.nucleus.scripting.api.ScriptApiNpc;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiPermissions;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiRand;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiScheduler;
@@ -97,6 +98,7 @@ public final class ScriptUtils {
         api.add(new ScriptApiInclude(plugin, manager));
         api.add(new ScriptApiTitles(plugin));
         api.add(new ScriptApiActionBar(plugin));
+        api.add(new ScriptApiNpc(plugin));
 
         return api;
     }

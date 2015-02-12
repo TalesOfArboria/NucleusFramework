@@ -22,44 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.scripting.api;
-
-import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
+package com.jcwhatever.nucleus.utils.observer.script;
 
 /**
- * An {@code UpdateSubscriber} for use with scripts.
+ * An interface that can be easily created by script engines
+ * from a script function.
  *
- * <p>A script API method should accept an {@code IScriptUpdateSubscriber}
- * argument which can then be passed into the constructor of {@code ScriptUpdateSubscriber}.
- * The script subscriber can then be used as an {@code UpdateSubscriber} on behalf
- * of a script function.</p>
+ * <p>Encapsulate using {@link ScriptEventSubscriber} to convert to an
+ * {@link com.jcwhatever.nucleus.utils.observer.event.EventSubscriber}.</p>
  */
-public class ScriptUpdateSubscriber<A> extends UpdateSubscriber<A> {
-
-    private final IScriptUpdateSubscriber _scriptSubscriber;
-
-    /**
-     * Constructor.
-     *
-     * @param subscriber  The subscriber passed in from a script.
-     */
-    public ScriptUpdateSubscriber(IScriptUpdateSubscriber subscriber) {
-        PreCon.notNull(subscriber);
-
-        _scriptSubscriber = subscriber;
-    }
-
-    @Override
-    public void on(A argument) {
-        _scriptSubscriber.update(argument);
-    }
-
-    /**
-     * An interface that can be easily created by script engines
-     * from a script function.
-     */
-    public interface IScriptUpdateSubscriber {
-        void update(Object argument);
-    }
+public interface IScriptEventSubscriber<E> {
+    void onEvent(E event);
 }
