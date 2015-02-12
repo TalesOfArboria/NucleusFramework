@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
+import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
@@ -43,19 +44,23 @@ public abstract class NpcTrait implements INamedInsensitive, IDisposable {
 
     private final INpc _npc;
     private final INpcTraitType _type;
+    private final IDataNode _dataNode;
 
     /**
      * Constructor.
      *
-     * @param npc   The NPC the trait is for.
-     * @param type  The parent type that instantiated the trait.
+     * @param npc       The NPC the trait is for.
+     * @param type      The parent type that instantiated the trait.
+     * @param dataNode  The traits data storage node.
      */
-    public NpcTrait(INpc npc, INpcTraitType type) {
+    public NpcTrait(INpc npc, INpcTraitType type, IDataNode dataNode) {
         PreCon.notNull(npc);
         PreCon.notNull(type);
+        PreCon.notNull(dataNode);
 
         _npc = npc;
         _type = type;
+        _dataNode = dataNode;
     }
 
     @Override
@@ -104,6 +109,13 @@ public abstract class NpcTrait implements INamedInsensitive, IDisposable {
     }
 
     /**
+     * Save the trait to its dedicated data node.
+     */
+    public void save() {
+        onSave(_dataNode);
+    }
+
+    /**
      * Invoked when the trait is added to an {@code INpc}.
      *
      * <p>This is invoked by the external implementations of the
@@ -134,4 +146,11 @@ public abstract class NpcTrait implements INamedInsensitive, IDisposable {
      * {@code INpcProvider}.</p>
      */
     public void onDespawn() {}
+
+    /**
+     * Invoked when the trait needs to be saved.
+     *
+     * @param dataNode  A data node dedicated to storing trait data.
+     */
+    protected abstract void onSave(IDataNode dataNode);
 }
