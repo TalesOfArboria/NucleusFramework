@@ -61,6 +61,22 @@ public interface INpcNav {
     boolean isHostile();
 
     /**
+     * Determine if navigation targets are send to the
+     * NPC vehicle, if any.
+     */
+    boolean isVehicleProxy();
+
+    /**
+     * Set the flag for sending navigation targets to the
+     * NPC vehicle, if any.
+     *
+     * @param isProxy  True to send nav targets to NPC vehicle, otherwise false.
+     *
+     * @return  Self for chaining.
+     */
+    INpcNav setVehicleProxy(boolean isProxy);
+
+    /**
      * Determine if the current pathing target is a location.
      */
     boolean isTargetingLocation();
