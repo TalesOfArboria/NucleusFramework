@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
@@ -51,17 +52,19 @@ public final class ProjectileUtils {
      * @param from    The living entity.
      * @param target  The target location.
      */
-    public static Location getEntitySource(LivingEntity from, Location target){
+    public static Location getEntitySource(Entity from, Location target){
         PreCon.notNull(from);
         PreCon.notNull(target);
 
-        Location eyeLocation =  from.getEyeLocation();
+        Location location = from instanceof LivingEntity
+            ? ((LivingEntity) from).getEyeLocation()
+            : from.getLocation();
 
-        Vector vector = target.clone().subtract(eyeLocation).toVector();
+        Vector vector = target.clone().subtract(location).toVector();
 
         vector = vector.normalize().multiply(0.5);
 
-        return eyeLocation.add(vector);
+        return location.add(vector);
     }
 
     /**
@@ -159,11 +162,13 @@ public final class ProjectileUtils {
      *
      * @param <T>  The projectile type.
      */
-    public static <T extends Projectile> T shootBallistic(LivingEntity source, Location target,
+    public static <T extends Projectile> T shootBallistic(Entity source, Location target,
                                                           double velocity, Class<T> projectileClass) {
 
         T projectile = shootBallistic(getEntitySource(source, target), target, velocity, GRAVITY, projectileClass);
-        projectile.setShooter(source);
+
+        if (source instanceof LivingEntity)
+            projectile.setShooter((LivingEntity)source);
 
         return projectile;
     }
@@ -195,7 +200,7 @@ public final class ProjectileUtils {
      *
      * @param <T>  The projectile type.
      */
-    public static <T extends Projectile> T shootBallistic(LivingEntity source, Location target,
+    public static <T extends Projectile> T shootBallistic(Entity source, Location target,
                                                           double velocity, double gravity,
                                                           Class<T> projectileClass) {
         return shootBallistic(source, target, 1.0D, velocity, gravity, projectileClass);
@@ -213,14 +218,15 @@ public final class ProjectileUtils {
      *
      * @param <T>  The projectile type.
      */
-    public static <T extends Projectile> T shootBallistic(LivingEntity source, Location target,
+    public static <T extends Projectile> T shootBallistic(Entity source, Location target,
                                                           double sourceRadius, double velocity, double gravity,
                                                           Class<T> projectileClass) {
 
         T projectile = shootBallistic(getEntitySource(source, target),
                 target, sourceRadius, velocity, gravity, projectileClass);
 
-        projectile.setShooter(source);
+        if (source instanceof LivingEntity)
+            projectile.setShooter((LivingEntity)source);
 
         return projectile;
     }
@@ -304,10 +310,12 @@ public final class ProjectileUtils {
      *
      * @param <T>  The projectile type.
      */
-    public static <T extends Projectile> T shoot(LivingEntity source, Location target,
+    public static <T extends Projectile> T shoot(Entity source, Location target,
                                                  double velocity, Class<T> projectileClass) {
         T projectile = shoot(getEntitySource(source, target), target, velocity, projectileClass);
-        projectile.setShooter(source);
+
+        if (source instanceof LivingEntity)
+            projectile.setShooter((LivingEntity)source);
 
         return projectile;
     }
