@@ -70,6 +70,21 @@ public interface INpcGoals {
     INpcGoals clear();
 
     /**
+     * Determine if goals are running.
+     */
+    boolean isRunning();
+
+    /**
+     * Pause execution of goals.
+     */
+    INpcGoals pause();
+
+    /**
+     * Resume execution of goals.
+     */
+    INpcGoals resume();
+
+    /**
      * Set the currently running goal.
      *
      * @param goal The goal to run.
