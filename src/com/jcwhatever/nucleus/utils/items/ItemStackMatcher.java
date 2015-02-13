@@ -71,8 +71,8 @@ public class ItemStackMatcher {
     public static final byte TYPE_META_DURABILITY_MATCH = MATCH_TYPE | MATCH_META | MATCH_DURABILITY;
 
     private static final ItemStackMatcher _default = new ItemStackMatcher(DEFAULT_MATCH);
-    private static final ItemStackMatcher _typeMatcher = new ItemStackMatcher(TYPE_META_DURABILITY_MATCH);
-    private static final ItemStackMatcher _durabilityMatcher = new ItemStackMatcher(MATCH_TYPE);
+    private static final ItemStackMatcher _typeMatcher = new ItemStackMatcher(MATCH_TYPE);
+    private static final ItemStackMatcher _durabilityMatcher = new ItemStackMatcher(TYPE_META_DURABILITY_MATCH);
     private static final Map<Byte, ItemStackMatcher> _custom = new HashMap<Byte, ItemStackMatcher>(35);
 
     /**
