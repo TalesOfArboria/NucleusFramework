@@ -784,8 +784,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             return result; // finished
         }
 
-        // Check for "chest" keyword as argument
-        if (arg.equalsIgnoreCase("chest")) {
+        // Check for "inventory" keyword as argument
+        if (arg.equalsIgnoreCase("inventory")) {
 
             // sender must be player to use "chest" keyword
             if (!(sender instanceof Player)) {
