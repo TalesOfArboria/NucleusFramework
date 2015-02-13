@@ -69,7 +69,7 @@ public final class AddSubCommand extends AbstractCommand {
         }
 
         IModifiableKit modKit = manager.modifyKit(kit);
-        modKit.addItems(items);
+        modKit.addAnyItems(items);
         modKit.save();
 
         tellSuccess(sender, NucLang.get(_SUCCESS, kit.getName()));
