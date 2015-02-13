@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -73,32 +73,34 @@ public interface IKit extends INamedInsensitive, IPluginOwned {
     ItemStack[] getArmor();
 
     /**
-     * Give the kit to the specified player
+     * Give the kit to the specified entity.
      *
-     * @param p  The player to give a copy of the kit to.
+     * @param entity  The entity to give a copy of the kit to.
      */
-    void give(final Player p);
+    void give(Entity entity);
 
     /**
-     * Take items from the kit away from the specified player.
+     * Take items from the kit away from the specified entity.
      *
-     * @param p    The player to take from.
-     * @param qty  The number of items to take. (kit * qty)
+     * <p>Does not take items if the entity does not have all required items.</p>
+     *
+     * @param entity  The entity to take from.
+     * @param qty     The number of items to take. (kit * qty)
      *
      * @return  True if the items were taken.
      */
-    boolean take(Player p, int qty);
+    boolean take(Entity entity, int qty);
 
     /**
-     * Take items from the kit away from the specified player.
+     * Take items from the kit away from the specified entity.
      *
-     * <p>Does not take items if the player does not have all required items.</p>
+     * <p>Does not take items if the entity does not have all required items.</p>
      *
-     * @param p        The player to take from.
-     * @param comparer The {@code ItemStackMatcher} used to compare items.
+     * @param entity   The entity to take from.
+     * @param matcher  The {@code ItemStackMatcher} used to compare items.
      * @param qty      The number of items to take. (kit * qty)
      *
-     * @return  True if the player had all the items.
+     * @return  True if the entity had all the items and they were taken.
      */
-    boolean take(Player p, ItemStackMatcher comparer, int qty);
+    boolean take(Entity entity, ItemStackMatcher matcher, int qty);
 }

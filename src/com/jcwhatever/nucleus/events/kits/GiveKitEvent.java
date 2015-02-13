@@ -25,12 +25,11 @@
 
 package com.jcwhatever.nucleus.events.kits;
 
-import com.jcwhatever.nucleus.kits.Kit;
+import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.mixins.ICancellable;
-import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -45,7 +44,7 @@ import javax.annotation.Nullable;
  * Called when a Kit is given.
  */
 public class GiveKitEvent extends Event
-        implements Cancellable, ICancellable, IPlayerReference {
+        implements Cancellable, ICancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -55,12 +54,14 @@ public class GiveKitEvent extends Event
     private ItemStack _boots;
     private List<ItemStack> _items;
     private boolean _isCancelled = false;
-    private Player _p;
-    private Kit _kit;
+    private Entity _entity;
+    private IKit _kit;
 
+    public GiveKitEvent(Entity entity, IKit kit) {
+        PreCon.notNull(entity);
+        PreCon.notNull(kit);
 
-    public GiveKitEvent(Player p, Kit kit) {
-        _p = p;
+        _entity = entity;
         _kit = kit;
 
         if (kit.getHelmet() != null) {
@@ -84,17 +85,16 @@ public class GiveKitEvent extends Event
     }
 
     /**
-     * Get the player receiving the kit.
+     * Get the entity receiving the kit.
      */
-    @Override
-    public Player getPlayer() {
-        return _p;
+    public Entity getEntity() {
+        return _entity;
     }
 
     /**
      * Get the kit.
      */
-    public Kit getKit() {
+    public IKit getKit() {
         return _kit;
     }
 
@@ -248,6 +248,5 @@ public class GiveKitEvent extends Event
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
 }
 

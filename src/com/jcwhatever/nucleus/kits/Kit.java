@@ -27,16 +27,19 @@ package com.jcwhatever.nucleus.kits;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.kits.GiveKitEvent;
-import com.jcwhatever.nucleus.utils.extended.ArmorType;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.extended.ArmorType;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -168,34 +171,16 @@ public class Kit implements IKit {
         return armor;
     }
 
-    /**
-     * Take items from the kit away from the specified player.
-     *
-     * <p>Does not take items if the player does not have all required items.</p>
-     *
-     * @param p    The player to take from.
-     * @param qty  The number of items to take. (kit * qty)
-     *
-     * @return  True if the player had all the items.
-     */
     @Override
-    public boolean take(Player p, int qty) {
-        return take(p, ItemStackMatcher.getTypeMetaDurability(), qty);
+    public boolean take(Entity entity, int qty) {
+        return take(entity, ItemStackMatcher.getDefault(), qty);
     }
 
-    /**
-     * Take items from the kit away from the specified player.
-     *
-     * <p>Does not take items if the player does not have all required items.</p>
-     *
-     * @param p        The player to take from.
-     * @param comparer The {@code ItemStackMatcher} used to compare items.
-     * @param qty      The number of items to take. (kit * qty)
-     *
-     * @return  True if the player had all the items.
-     */
     @Override
-    public boolean take(Player p, ItemStackMatcher comparer, int qty) {
+    public boolean take(Entity entity, ItemStackMatcher matcher, int qty) {
+        PreCon.notNull(entity);
+        PreCon.notNull(matcher);
+        PreCon.greaterThanZero(qty);
 
         List<ItemStack> itemsToTake = new ArrayList<>(_items.size() + 4);
 
@@ -213,65 +198,73 @@ public class Kit implements IKit {
         if (_armor[3] != null)
             itemsToTake.add(getBoots());
 
-        // check player has all required items
-        for (ItemStack item : itemsToTake) {
-            if (!InventoryUtils.has(p.getInventory(), item, comparer, qty))
-                return false;
-        }
+        if (entity instanceof InventoryHolder) {
 
-        // take items
-        for (ItemStack item : itemsToTake) {
-            InventoryUtils.removeAmount(p.getInventory(), item, comparer, qty);
-        }
+            InventoryHolder holder = (InventoryHolder)entity;
 
-        return true;
-    }
-
-    /**
-     * Give the kit to the specified player
-     *
-     * @param p  The player to give a copy of the kit to.
-     */
-    @Override
-    public void give(final Player p) {
-
-        class TGive implements Runnable {
-            GiveKitEvent _event;
-
-            public TGive(GiveKitEvent event) {
-                _event = event;
+            // check entity has all required items
+            for (ItemStack item : itemsToTake) {
+                if (!InventoryUtils.has(holder.getInventory(), item, matcher, qty))
+                    return false;
             }
 
+            // take items
+            for (ItemStack item : itemsToTake) {
+                InventoryUtils.removeAmount(holder.getInventory(), item, matcher, qty);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void give(final Entity entity) {
+        PreCon.notNull(entity);
+
+        if (!(entity instanceof InventoryHolder) &&
+                !(entity instanceof LivingEntity))
+            return;
+
+        final GiveKitEvent event = new GiveKitEvent(entity, Kit.this);
+        Nucleus.getEventManager().callBukkit(Kit.this, event);
+
+        if (event.isCancelled())
+            return;
+
+        Scheduler.runTaskLater(_plugin, new Runnable() {
             @Override
             public void run() {
 
-                if (p == null)
-                    return;
+                Inventory inventory = entity instanceof InventoryHolder
+                        ? ((InventoryHolder) entity).getInventory()
+                        : null;
 
-                Nucleus.getEventManager().callBukkit(this, _event);
+                EntityEquipment equipment = entity instanceof LivingEntity
+                        ? ((LivingEntity) entity).getEquipment()
+                        : null;
 
-                PlayerInventory inv = p.getInventory();
-
-                for (ItemStack item : _event.getItems()) {
-                    inv.addItem(item);
+                // add items
+                if (inventory != null) {
+                    for (ItemStack item : event.getItems()) {
+                        inventory.addItem(item);
+                    }
+                }
+                else if (equipment != null) {
+                    List<ItemStack> items = event.getItems();
+                    if (items.size() > 0)
+                        equipment.setItemInHand(items.get(0));
                 }
 
-
-                if (_event.getHelmet() != null)
-                    inv.setHelmet(_event.getHelmet());
-
-                if (_event.getChestplate() != null)
-                    inv.setChestplate(_event.getChestplate());
-
-                if (_event.getLeggings() != null)
-                    inv.setLeggings(_event.getLeggings());
-
-                if (_event.getBoots() != null)
-                    inv.setBoots(_event.getBoots());
+                // add equipment
+                if (equipment != null) {
+                    giveEquipment(equipment, event);
+                }
+                else if (inventory != null) {
+                    giveEquipmentInventory(inventory, event);
+                }
             }
-        }
-
-        Scheduler.runTaskLater(_plugin, 1, new TGive(new GiveKitEvent(p, this)));
+        });
     }
 
     /**
@@ -518,6 +511,38 @@ public class Kit implements IKit {
             return true;
         }
         return false;
+    }
+
+    // give equipment to EntityEquipment
+    private void giveEquipment(EntityEquipment equipment, GiveKitEvent event) {
+
+        if (event.getHelmet() != null)
+            equipment.setHelmet(event.getHelmet());
+
+        if (event.getChestplate() != null)
+            equipment.setChestplate(event.getChestplate());
+
+        if (event.getLeggings() != null)
+            equipment.setLeggings(event.getLeggings());
+
+        if (event.getBoots() != null)
+            equipment.setBoots(event.getBoots());
+    }
+
+    // give equipment to Inventory
+    private void giveEquipmentInventory(Inventory inventory, GiveKitEvent event) {
+
+        if (event.getHelmet() != null)
+            inventory.addItem(event.getHelmet());
+
+        if (event.getChestplate() != null)
+            inventory.addItem(event.getChestplate());
+
+        if (event.getLeggings() != null)
+            inventory.addItem(event.getLeggings());
+
+        if (event.getBoots() != null)
+            inventory.addItem(event.getBoots());
     }
 }
 

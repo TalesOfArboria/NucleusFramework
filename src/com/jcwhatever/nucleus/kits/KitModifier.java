@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.kits;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -155,18 +155,18 @@ public class KitModifier implements IModifiableKit {
     }
 
     @Override
-    public void give(Player p) {
-        _kit.give(p);
+    public void give(Entity entity) {
+        _kit.give(entity);
     }
 
     @Override
-    public boolean take(Player p, int qty) {
-        return _kit.take(p, qty);
+    public boolean take(Entity entity, int qty) {
+        return _kit.take(entity, qty);
     }
 
     @Override
-    public boolean take(Player p, ItemStackMatcher comparer, int qty) {
-        return _kit.take(p, comparer, qty);
+    public boolean take(Entity entity, ItemStackMatcher comparer, int qty) {
+        return _kit.take(entity, comparer, qty);
     }
 
     @Override
