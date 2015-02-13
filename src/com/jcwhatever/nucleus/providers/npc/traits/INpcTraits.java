@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.npc.traits;
 
+import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 
 import org.bukkit.entity.EntityType;
@@ -96,6 +97,24 @@ public interface INpcTraits {
      * @return  Self for chaining.
      */
     INpcTraits setSkinName(@Nullable String skinName);
+
+    /**
+     * Get the kit the NPC is spawned with.
+     *
+     * @return The {@code IKit} or null if one is not set.
+     */
+    @Nullable
+    IKit getKit();
+
+    /**
+     * Set the kit the NPC is spawned with. If the NPC is already
+     * spawned, the kit is also applied to the spawned entity.
+     *
+     * @param kit  The {@code IKit} or null to remove kit.
+     *
+     * @return  Self for chaining.
+     */
+    INpcTraits setKit(@Nullable IKit kit);
 
     /**
      * Get all of the NPC's traits.
