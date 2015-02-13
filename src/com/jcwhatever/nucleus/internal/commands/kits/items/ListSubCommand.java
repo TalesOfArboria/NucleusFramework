@@ -87,6 +87,9 @@ public final class ListSubCommand extends AbstractCommand {
         else {
 
             for (ItemStack item : armor) {
+                if (item == null)
+                    continue;
+
                 pagin.add(ItemStackUtils.serializeToString(item, SerializerOutputType.COLOR));
             }
         }
