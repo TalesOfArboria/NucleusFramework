@@ -35,6 +35,21 @@ import com.jcwhatever.nucleus.utils.PreCon;
  */
 public abstract class NpcTraitType implements INamedInsensitive, IPluginOwned {
 
+    private String _lookupName;
+
+    /**
+     * Get the trait types lookup name.
+     *
+     * <p>This is the name used to reference the trait.</p>
+     */
+    public final String getLookupName() {
+
+        if (_lookupName == null)
+            _lookupName = getPlugin().getName() + ':' + getName();
+
+        return _lookupName;
+    }
+
     /**
      * Create a new instance of the trait for a specific
      * {@code INpc} instance and attach it.
@@ -50,7 +65,11 @@ public abstract class NpcTraitType implements INamedInsensitive, IPluginOwned {
             npc.getRegistry().registerTrait(this);
         }
 
-        return npc.getTraits().add(getName());
+        NpcTrait trait = createTrait(npc);
+
+        npc.getTraits().add(trait);
+
+        return trait;
     }
 
     /**
@@ -65,4 +84,11 @@ public abstract class NpcTraitType implements INamedInsensitive, IPluginOwned {
      * @throws java.lang.IllegalArgumentException  if the {@code copyFrom} argument is invalid.
      */
     public abstract NpcTrait attachTrait(INpc npc, NpcTrait copyFrom);
+
+    /**
+     * Invoked to create a new instance of the trait for an {@code INpc}.
+     *
+     * @param npc  The {@code INpc} to create the trait for.
+     */
+    protected abstract NpcTrait createTrait(INpc npc);
 }

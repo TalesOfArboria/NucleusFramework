@@ -72,6 +72,13 @@ public abstract class NpcTrait implements INamedInsensitive, IDisposable {
     }
 
     /**
+     * Get the traits lookup name.
+     */
+    public String getLookupName() {
+        return _type.getLookupName();
+    }
+
+    /**
      * Get the NPC the trait was instantiated for.
      */
     public INpc getNpc() {
