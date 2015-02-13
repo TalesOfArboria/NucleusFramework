@@ -55,26 +55,48 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     /**
      * Create a new NPC.
      *
-     * @param name     The name unique to the owning plugin.
+     * @param lookupName  The lookup name unique to the owning plugin.
+     * @param npcName     The NPC's display name.
+     * @param type        The NPC entity type.
+     *
+     * @return  The new {@code INpc} instance or null if failed.
+     */
+    @Nullable
+    INpc create(String lookupName, String npcName, EntityType type);
+
+    /**
+     * Create a new NPC.
+     *
+     * @param lookupName  The lookup name unique to the owning plugin.
+     * @param npcName     The NPC's display name.
+     * @param type        The NPC {@code EntityType} name.
+     *
+     * @return  The new {@code INpc} instance or null if failed.
+     */
+    @Nullable
+    INpc create(String lookupName, String npcName, String type);
+
+    /**
+     * Create a new NPC without a lookup name.
+     *
      * @param npcName  The NPC's display name.
      * @param type     The NPC entity type.
      *
      * @return  The new {@code INpc} instance or null if failed.
      */
     @Nullable
-    INpc create(String name, String npcName, EntityType type);
+    INpc create(String npcName, EntityType type);
 
     /**
-     * Create a new NPC.
+     * Create a new NPC without a lookup name.
      *
-     * @param name     The name unique to the owning plugin.
      * @param npcName  The NPC's display name.
-     * @param type     The NPC entity type name.
+     * @param type     The NPC {@code EntityType} name.
      *
      * @return  The new {@code INpc} instance or null if failed.
      */
     @Nullable
-    INpc create(String name, String npcName, String type);
+    INpc create(String npcName, String type);
 
     /**
      * Get all un-disposed {@code INpc}'s in the registry.
