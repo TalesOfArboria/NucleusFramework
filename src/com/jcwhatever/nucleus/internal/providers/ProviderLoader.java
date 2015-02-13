@@ -150,6 +150,10 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
                 _manager.getEconomyProvider().onEnable();
                 _manager.getBankItemsProvider().onEnable();
 
+                INpcProvider npcProvider = _manager.getNpcProvider();
+                if (npcProvider != null)
+                    npcProvider.onEnable();
+
                 _manager._isProvidersLoading = false;
 
                 ((BukkitPlugin)Nucleus.getPlugin()).notifyProvidersReady();
