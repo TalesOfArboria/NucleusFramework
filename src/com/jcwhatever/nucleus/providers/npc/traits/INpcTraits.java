@@ -76,6 +76,28 @@ public interface INpcTraits {
     INpcTraits setType(EntityType type);
 
     /**
+     * Get the name of the player skin.
+     *
+     * <p>If a custom skin is not set or the NPC is not
+     * capable of having a custom skin set, then the NPC's name
+     * is returned.</p>
+     *
+     * @return  The name of the player skin.
+     */
+    String getSkinName();
+
+    /**
+     * Set the skin name of the NPC. This has no effect if the NPC
+     * is not capable of using a player skin.
+     *
+     * @param skinName  The name of the player whose skin is to be used.
+     *                  Null to remove custom skin.
+     *
+     * @return  Self for chaining.
+     */
+    INpcTraits setSkinName(@Nullable String skinName);
+
+    /**
      * Get all of the NPC's traits.
      */
     Collection<NpcTrait> all();
