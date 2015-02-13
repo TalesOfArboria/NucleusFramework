@@ -63,13 +63,35 @@ public final class LocationUtils {
      * represented by the provided location.
      *
      * @param location  The location.
+     *
+     * @return  A new {@code Location} containing the result.
      */
     public static Location getCenteredLocation(Location location) {
         PreCon.notNull(location);
 
-        return new Location(location.getWorld(),
-                location.getBlockX() + 0.5, location.getY(), location.getBlockZ() + 0.5,
-                location.getYaw(), location.getPitch());
+        return getCenteredLocation(location, new Location(null, 0, 0, 0));
+    }
+
+    /**
+     * Get a location centered on the X and Z axis of the block
+     * represented by the provided location.
+     *
+     * @param location  The location.
+     * @param output    The location to put the results into.
+     *
+     * @return  The output location.
+     */
+    public static Location getCenteredLocation(Location location, Location output) {
+        PreCon.notNull(location);
+
+        output.setWorld(location.getWorld());
+        output.setX(location.getBlockX() + 0.5);
+        output.setY(location.getY());
+        output.setZ(location.getBlockZ() + 0.5);
+        output.setYaw(location.getYaw());
+        output.setPitch(location.getPitch());
+
+        return output;
     }
 
     /**
@@ -92,11 +114,33 @@ public final class LocationUtils {
      * and remove the yaw and pitch values.
      *
      * @param location  The location to convert.
+     *
+     * @return  A new {@code Location} containing the result.
      */
     public static Location getBlockLocation(Location location) {
         PreCon.notNull(location);
 
-        return new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return getBlockLocation(location, new Location(null, 0, 0, 0));
+    }
+
+    /**
+     * Convert a location into a block location (remove numbers to the right of the floating point value)
+     * and remove the yaw and pitch values.
+     *
+     * @param location  The location to convert.
+     * @param output    The location to put the results into.
+     *
+     * @return  The output location.
+     */
+    public static Location getBlockLocation(Location location, Location output) {
+        PreCon.notNull(location);
+
+        output.setWorld(location.getWorld());
+        output.setX(location.getBlockX());
+        output.setY(location.getBlockY());
+        output.setZ(location.getBlockZ());
+
+        return output;
     }
 
     /**
@@ -126,11 +170,29 @@ public final class LocationUtils {
      */
     public static Location addNoise(Location location, double radiusX, double radiusY, double radiusZ) {
         PreCon.notNull(location);
+
+        return addNoise(location, location.clone(), radiusX, radiusY, radiusZ);
+    }
+
+    /**
+     * Add noise to a location. Changes to another point within the specified
+     * radius of the original location randomly.
+     *
+     * @param location  The location.
+     * @param output    The location to put the results into.
+     * @param radiusX   The max radius on the X axis.
+     * @param radiusY   The max radius on the Y axis.
+     * @param radiusZ   The max radius on the Z axis.
+     *
+     * @return  The output location.
+     */
+    public static Location addNoise(Location location, Location output,
+                                    double radiusX, double radiusY, double radiusZ) {
+        PreCon.notNull(location);
+        PreCon.notNull(output);
         PreCon.positiveNumber(radiusX);
         PreCon.positiveNumber(radiusY);
         PreCon.positiveNumber(radiusZ);
-
-        location = location.clone();
 
         double noiseX = 0;
         double noiseY = 0;
@@ -148,7 +210,7 @@ public final class LocationUtils {
             noiseZ = Rand.getDouble(radiusZ * 2) - radiusZ;
         }
 
-        return location.add(noiseX, noiseY, noiseZ);
+        return output.add(noiseX, noiseY, noiseZ);
     }
 
     /**
@@ -179,10 +241,28 @@ public final class LocationUtils {
      * @param world        The world the location is for.
      * @param coordinates  The string coordinates.
      *
-     * @return  Null if a location could not be parsed.
+     * @return  A new {@code Location} or null if a location could not be parsed.
      */
     @Nullable
     public static Location parseSimpleLocation(World world, String coordinates) {
+        return parseSimpleLocation(new Location(null, 0, 0, 0), world, coordinates);
+    }
+
+    /**
+     * Parse a location from a formatted string.
+     * <p>
+     *     Format of string : x,y,z
+     * </p>
+     *
+     * @param output       The location place the results in.
+     * @param world        The world the location is for.
+     * @param coordinates  The string coordinates.
+     *
+     * @return  The output location or null if a location could not be parsed.
+     */
+    @Nullable
+    public static Location parseSimpleLocation(Location output, World world, String coordinates) {
+        PreCon.notNull(output);
         PreCon.notNull(world);
         PreCon.notNull(coordinates);
 
@@ -194,8 +274,12 @@ public final class LocationUtils {
         Double y = parseDouble(parts[1]);
         Double z = parseDouble(parts[2]);
 
-        if (x != null && y != null && z != null)
-            return new Location(world, x, y, z);
+        if (x != null && y != null && z != null) {
+            output.setWorld(world);
+            output.setX(x);
+            output.setY(y);
+            output.setZ(z);
+        }
 
         return null;
     }
@@ -208,7 +292,7 @@ public final class LocationUtils {
      *
      * @param coordinates  The string coordinates.
      *
-     * @return  Null if the string could not be parsed or an {@code ImmutableLocation}.
+     * @return  A new {@code SyncLocation} or null if the string could not be parsed.
      */
     @Nullable
     public static SyncLocation parseLocation(String coordinates) {
@@ -325,6 +409,23 @@ public final class LocationUtils {
     }
 
     /**
+     * Convert a yaw angle to a {@code BlockFace}.
+     *
+     * @param yaw  The yaw angle to convert.
+     */
+    public static BlockFace getBlockFacingYaw(float yaw) {
+
+        yaw = yaw + 11.25f;
+        yaw = yaw < 0
+                ? 360 - (Math.abs(yaw) % 360)
+                : yaw % 360;
+
+        int i = (int)(yaw / 22.5);
+
+        return YAW_FACES[i];
+    }
+
+    /**
      * Find a surface block (solid block that can be walked on) location below the provided
      * search location.
      * <p>
@@ -334,29 +435,46 @@ public final class LocationUtils {
      *
      * @param searchLoc  The search location.
      *
-     * @return  null if the search reaches below 0 on the Y axis.
+     * @return  A new {@code Location} or null if the search reaches below 0 on the Y axis.
      */
     @Nullable
     public static Location findSurfaceBelow(Location searchLoc) {
+        return findSurfaceBelow(searchLoc, new Location(null, 0, 0, 0));
+    }
+
+    /**
+     * Find a surface block (solid block that can be walked on) location below the provided
+     * search location.
+     * <p>
+     *     If the search location is a surface block, the search location
+     *     is returned.
+     * </p>
+     *
+     * @param searchLoc  The search location.
+     *
+     * @return  The output location or null if the search reaches below 0 on the Y axis.
+     */
+    @Nullable
+    public static Location findSurfaceBelow(Location searchLoc, Location output) {
         PreCon.notNull(searchLoc);
 
-        searchLoc = getBlockLocation(searchLoc);
+        getBlockLocation(searchLoc, output);
 
-        if (!MaterialExt.isTransparent(searchLoc.getBlock().getType()))
+        if (!MaterialExt.isTransparent(output.getBlock().getType()))
             return searchLoc;
 
-        searchLoc.add(0, -1, 0);
+        output.add(0, -1, 0);
         Block current = searchLoc.getBlock();
 
         while (!MaterialExt.isSurface(current.getType())) {
-            searchLoc.add(0, -1, 0);
-            current = searchLoc.getBlock();
+            output.add(0, -1, 0);
+            current = output.getBlock();
 
-            if (searchLoc.getY() < 0) {
+            if (output.getY() < 0) {
                 return null;
             }
         }
-        return searchLoc;
+        return output;
     }
 
     /**
@@ -452,6 +570,68 @@ public final class LocationUtils {
         return new Location(location.getWorld(),
                 translateX, translateY, translateZ,
                 (float)yaw, location.getPitch());
+    }
+
+    /**
+     * Rotate a location around an axis location.
+     *
+     * @param axis       The axis location.
+     * @param location   The location to move.
+     * @param output     The location to put results into.
+     * @param rotationX  The rotation around the X axis in degrees.
+     * @param rotationY  The rotation around the Y axis in degrees.
+     * @param rotationZ  The rotation around the Z axis in degrees.
+     *
+     * @return  The output location.
+     */
+    public static Location rotate(Location axis, Location location, Location output,
+                                  double rotationX, double rotationY, double rotationZ) {
+        PreCon.notNull(axis);
+        PreCon.notNull(location);
+
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+
+        double centerX = axis.getX();
+        double centerY = axis.getY();
+        double centerZ = axis.getZ();
+
+        double translateX = x;
+        double translateY = y;
+        double translateZ = z;
+        double yaw = location.getYaw();
+
+        // rotate on X axis
+        if (Double.compare(rotationX, 0.0D) != 0) {
+            double rotX = Math.toRadians(rotationX);
+            translateY = rotateX(centerY, centerZ, y, z, rotX);
+            translateZ = rotateZ(centerY, centerZ, y, z, rotX);
+        }
+
+        // rotate on Y axis
+        if (Double.compare(rotationY, 0.0D) != 0) {
+            double rotY = Math.toRadians(rotationY);
+            translateX = rotateX(centerX, centerZ, x, z, rotY);
+            translateZ = rotateZ(centerX, centerZ, x, z, rotY);
+            yaw += rotationY;
+        }
+
+        // rotate on Z axis
+        if (Double.compare(rotationZ, 0.0D) != 0) {
+            double rotZ = Math.toRadians(rotationZ);
+            translateX = rotateX(centerX, centerY, x, y, rotZ);
+            translateY = rotateZ(centerX, centerY, x, y, rotZ);
+        }
+
+        output.setWorld(location.getWorld());
+        output.setX(translateX);
+        output.setY(translateY);
+        output.setZ(translateZ);
+        output.setYaw((float) yaw);
+        output.setPitch(location.getPitch());
+
+        return output;
     }
 
     // helper to convert a string number to a double.
