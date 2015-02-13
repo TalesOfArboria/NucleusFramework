@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.providers.npc.traits;
 
 import com.jcwhatever.nucleus.kits.IKit;
 import com.jcwhatever.nucleus.providers.npc.INpc;
+import com.jcwhatever.nucleus.storage.IDataNode;
 
 import org.bukkit.entity.EntityType;
 
@@ -42,6 +43,14 @@ public interface INpcTraits {
      * Get the owning {@code INpc} instance.
      */
     INpc getNpc();
+
+    /**
+     * Get a data node dedicated to storing data for
+     * the specified trait.
+     *
+     * @param trait  The trait.
+     */
+    IDataNode getTraitNode(NpcTrait trait);
 
     /**
      * Determine if the NPC is invulnerable to damage.

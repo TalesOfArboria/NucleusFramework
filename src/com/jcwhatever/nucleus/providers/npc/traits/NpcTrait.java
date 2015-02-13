@@ -114,6 +114,11 @@ public abstract class NpcTrait implements INamed, IDisposable {
     public void save(IDataNode dataNode) {}
 
     /**
+     * Load trait settings from a dedicated data node.
+     */
+    public void load(IDataNode dataNode) {}
+
+    /**
      * Invoked when the trait is added to an {@code INpc}.
      *
      * <p>This is invoked by the external implementations of the

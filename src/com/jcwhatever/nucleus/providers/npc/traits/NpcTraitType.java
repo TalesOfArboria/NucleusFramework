@@ -30,6 +30,8 @@ import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import javax.annotation.Nullable;
+
 /**
  * NPC Trait provider. Represents a single type of trait. Used to create
  * instances of the trait type for specific {@link INpc} instances.
@@ -64,17 +66,7 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
      * @return  The newly created instance or the one the NPC already had.
      */
     public NpcTrait attachTrait(INpc npc) {
-        PreCon.notNull(npc);
-
-        if (npc.getRegistry().get(getName()) == null) {
-            npc.getRegistry().registerTrait(this);
-        }
-
-        NpcTrait trait = createTrait(npc);
-
-        npc.getTraits().add(trait);
-
-        return trait;
+        return attachTrait(npc, null);
     }
 
     /**
@@ -82,13 +74,28 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
      * instance, copy the settings from another trait, and attach it.
      *
      * @param npc       The npc instance.
-     * @param copyFrom  The {@code INpcTrait} instance to copy settings from into the new instance.
+     * @param copyFrom  The {@code INpc} to copy settings from into the new trait instance.
      *
      * @return  The newly created instance or the one the NPC already had.
-     *
-     * @throws java.lang.IllegalArgumentException  if the {@code copyFrom} argument is invalid.
      */
-    public abstract NpcTrait attachTrait(INpc npc, NpcTrait copyFrom);
+    public NpcTrait attachTrait(INpc npc, @Nullable INpc copyFrom) {
+        PreCon.notNull(npc);
+
+        if (npc.getRegistry().get(getName()) == null)
+            npc.getRegistry().registerTrait(this);
+
+        NpcTrait trait = createTrait(npc);
+
+        INpcTraits traits = copyFrom != null
+                ? copyFrom.getTraits()
+                : npc.getTraits();
+
+        trait.load(traits.getTraitNode(trait));
+
+        npc.getTraits().add(trait);
+
+        return trait;
+    }
 
     /**
      * Invoked to create a new instance of the trait for an {@code INpc}.

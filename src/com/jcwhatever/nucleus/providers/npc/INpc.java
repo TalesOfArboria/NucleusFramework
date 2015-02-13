@@ -40,6 +40,7 @@ import com.jcwhatever.nucleus.providers.npc.events.NpcTargetedEvent;
 import com.jcwhatever.nucleus.providers.npc.goals.INpcGoals;
 import com.jcwhatever.nucleus.providers.npc.navigator.INpcNav;
 import com.jcwhatever.nucleus.providers.npc.traits.INpcTraits;
+import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
 import org.bukkit.Location;
@@ -56,6 +57,11 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      * Get the NPC's owning registry.
      */
     INpcRegistry getRegistry();
+
+    /**
+     * Get the NPC's data node.
+     */
+    IDataNode getDataNode();
 
     /**
      * Get the NPC's non-unique name. This is the name displayed
