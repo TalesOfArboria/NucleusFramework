@@ -24,7 +24,8 @@
 
 package com.jcwhatever.nucleus.providers.npc.traits;
 
-import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -33,7 +34,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
  * NPC Trait provider. Represents a single type of trait. Used to create
  * instances of the trait type for specific {@link INpc} instances.
  */
-public abstract class NpcTraitType implements INamedInsensitive, IPluginOwned {
+public abstract class NpcTraitType implements INamed, IPluginOwned {
 
     private String _lookupName;
 
@@ -44,8 +45,12 @@ public abstract class NpcTraitType implements INamedInsensitive, IPluginOwned {
      */
     public final String getLookupName() {
 
-        if (_lookupName == null)
-            _lookupName = getPlugin().getName() + ':' + getName();
+        if (_lookupName == null) {
+
+            _lookupName = getPlugin() == Nucleus.getPlugin()
+                    ? getName()
+                    : getPlugin().getName() + ':' + getName();
+        }
 
         return _lookupName;
     }

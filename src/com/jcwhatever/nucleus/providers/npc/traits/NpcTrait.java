@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.providers.npc.traits;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -40,7 +40,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
  * interface. If this is the case, the {@code Runnable#run} method is called
  * every tick while the NPC is spawned so long as {@code #canRun} returns true.</p>
  */
-public abstract class NpcTrait implements INamedInsensitive, IDisposable {
+public abstract class NpcTrait implements INamed, IDisposable {
 
     private final INpc _npc;
     private final NpcTraitType _type;
@@ -64,11 +64,6 @@ public abstract class NpcTrait implements INamedInsensitive, IDisposable {
     @Override
     public String getName() {
         return _type.getName();
-    }
-
-    @Override
-    public String getSearchName() {
-        return _type.getSearchName();
     }
 
     /**
