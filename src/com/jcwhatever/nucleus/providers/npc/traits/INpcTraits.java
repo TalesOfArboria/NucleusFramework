@@ -117,6 +117,18 @@ public interface INpcTraits {
     INpcTraits setKit(@Nullable IKit kit);
 
     /**
+     * Set the kit using the name of the kit.
+     *
+     * <p>Generally, the kit is pulled from the Nucleus kit manager,
+     * however the provider implementation may differ.</p>
+     *
+     * @param kitName  The name of the kit or null to remove.
+     *
+     * @return  Self for chaining.
+     */
+    INpcTraits setKitName(@Nullable String kitName);
+
+    /**
      * Get all of the NPC's traits.
      */
     Collection<NpcTrait> all();
