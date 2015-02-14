@@ -15,14 +15,14 @@ _Coders like versatility. Server operators like stability. Users like usability.
 ## Wiki
 The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow development due to the fact that NucleusFramework is not yet finished.
 
+## Documentation
+ * [Doxygen](http://jcthepants.github.io/NucleusFramework)
+
 ## Resources
  * [NucleusLocalizer](https://github.com/JCThePants/NucleusLocalizer) - A console program used to generate language localization resource files for Nucleus based plugins.
  * [ResourcePackerMC](https://github.com/JCThePants/ResourcePackerMC) - A console program that aids in generating resource packs. Also generates resource-sounds.yml file used by NucleusFramework to define resource pack sounds.
  * [Scripting examples](https://github.com/JCThePants/NucleusScriptExamples) - Examples of cross plugin scripts using NucleusFramework.
-
-## Plugin dependencies
- * [WorldEdit](https://github.com/sk89q/WorldEdit) - soft dependency, not required
- * [Vault](https://github.com/MilkBowl/Vault) - soft dependency, not required
+ * [NpcTraitPack](https://github.com/JCThePants/NpcTraitPack) - A collection of NPC traits that can be used with a NucleusFramework NPC provider.
 
 ## Plugins using NucleusFramework
  * [PV-Star](https://github.com/JCThePants/PV-Star) - Extensible arena framework.
@@ -32,6 +32,13 @@ The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow de
  * [ArborianQuests](https://github.com/JCThePants/ArborianQuests) - Quest scripting plugin.
  * [RentalRooms](https://github.com/JCThePants/RentalRooms) - Rented regions that allow the tenant to only modify the interior of the house/room.
  * [RemoteConsole](https://github.com/JCThePants/RemoteConsole) - A remote console for Bukkit/Spigot servers.
+
+## Providers
+ * [CitizensNPCProvider](https://github.com/JCThePants/CitizensNpcProvider) - NPC Provider using [Citizens2](https://github.com/CitizensDev/Citizens2/) as its core.
+
+## Plugin dependencies
+ * [WorldEdit](https://github.com/sk89q/WorldEdit) - soft dependency, not required
+ * [Vault](https://github.com/MilkBowl/Vault) - soft dependency, not required
 
 ## Build dependencies
 See the [gradle script](https://github.com/JCThePants/NucleusFramework/blob/master/build.gradle) for build dependencies.
