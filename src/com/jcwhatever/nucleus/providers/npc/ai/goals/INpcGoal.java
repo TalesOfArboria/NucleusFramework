@@ -22,24 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.npc.goals;
+package com.jcwhatever.nucleus.providers.npc.ai.goals;
+
+import com.jcwhatever.nucleus.providers.npc.ai.actions.INpcAction;
 
 /**
- * Specifies the result of an {@link INpcGoal} after running.
+ * Interface for an NPC Goal
  */
-public enum NpcGoalResult {
+public interface INpcGoal extends INpcAction {
+
     /**
-     * The goal should continue to run.
+     * Determine if the goal can be run.
+     *
+     * @return  True to run the goal, otherwise false.
      */
-    CONTINUE,
-    /**
-     * The goal is finished running but should not be removed from
-     * the NPC. The goal should still be checked to see if it should be
-     * run.
-     */
-    FINISH,
-    /**
-     * The goal is finished and should be removed from the NPC.
-     */
-    FINISH_REMOVE
+    boolean canRun();
 }

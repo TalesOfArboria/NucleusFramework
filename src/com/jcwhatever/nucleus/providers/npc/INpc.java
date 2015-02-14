@@ -37,7 +37,7 @@ import com.jcwhatever.nucleus.providers.npc.events.NpcLeftClickEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcRightClickEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcTargetedEvent;
-import com.jcwhatever.nucleus.providers.npc.goals.INpcGoals;
+import com.jcwhatever.nucleus.providers.npc.ai.goals.INpcGoals;
 import com.jcwhatever.nucleus.providers.npc.navigator.INpcNav;
 import com.jcwhatever.nucleus.providers.npc.traits.INpcTraits;
 import com.jcwhatever.nucleus.storage.IDataNode;

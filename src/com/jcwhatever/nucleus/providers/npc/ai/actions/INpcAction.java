@@ -22,30 +22,24 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.npc.goals;
+package com.jcwhatever.nucleus.providers.npc.ai.actions;
 
 /**
- * Interface for an NPC Goal
+ * Interface for an action an NPC can perform.
  */
-public interface INpcGoal {
+public interface INpcAction {
 
     /**
-     * Invoked to reset the goals state.
+     * Invoke to reset the actions state.
      */
     void reset();
 
     /**
-     * Invoked every tick so long as the goal is running.
+     * Invoked every tick while the action is running.
      *
-     * @return The result of the execution which decides how the goal
-     * will be handled in the next tick.
-     */
-    NpcGoalResult run();
-
-    /**
-     * Determine if the goal should be run.
+     * @param selector  Used to select action execution flow.
      *
-     * @return  True to run the goal, otherwise false.
+     * @return  The action result.
      */
-    boolean shouldRun();
+    void run(INpcActionSelector selector);
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.npc.goals;
+package com.jcwhatever.nucleus.providers.npc.ai.goals;
 
 import com.jcwhatever.nucleus.providers.npc.INpc;
 
@@ -36,7 +36,7 @@ public interface INpcGoals {
     /**
      * Get the NPC the goals are for.
      */
-    INpc getNPC();
+    INpc getNpc();
 
     /**
      * Get all goals.
@@ -94,7 +94,7 @@ public interface INpcGoals {
     /**
      * runs the provided goals simultaneously with the current running goal.
      *
-     * <p>The goals {@code #shouldRun} method is still invoked to determine if the
+     * <p>The goals {@code #canRun} method is still invoked to determine if the
      * goals should be run.</p>
      *
      * @param goals  The goals to run.
