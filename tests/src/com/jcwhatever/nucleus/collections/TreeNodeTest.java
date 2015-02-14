@@ -13,7 +13,7 @@ public class TreeNodeTest {
     public void testIsRoot() throws Exception {
 
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("child");
+        TreeNode<String> child = root.add("child");
 
         Assert.assertEquals(true, root.isRoot());
         Assert.assertEquals(false, child.isRoot());
@@ -23,7 +23,7 @@ public class TreeNodeTest {
     @Test
     public void testIsLeaf() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("child");
+        TreeNode<String> child = root.add("child");
 
         Assert.assertEquals(false, root.isLeaf());
         Assert.assertEquals(true, child.isLeaf());
@@ -32,8 +32,8 @@ public class TreeNodeTest {
     @Test
     public void testGetDepth() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("child");
-        TreeNode<String> child2 = child.addChild("child2");
+        TreeNode<String> child = root.add("child");
+        TreeNode<String> child2 = child.add("child2");
 
         Assert.assertEquals(0, root.getDepth());
         Assert.assertEquals(1, child.getDepth());
@@ -43,7 +43,7 @@ public class TreeNodeTest {
     @Test
     public void testGetValue() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("child");
+        TreeNode<String> child = root.add("child");
 
         Assert.assertEquals("root", root.getValue());
         Assert.assertEquals("child", child.getValue());
@@ -52,8 +52,8 @@ public class TreeNodeTest {
     @Test
     public void testGetParent() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("child");
-        TreeNode<String> child2 = child.addChild("child2");
+        TreeNode<String> child = root.add("child");
+        TreeNode<String> child2 = child.add("child2");
 
         Assert.assertEquals(null, root.getParent());
         Assert.assertEquals(root, child.getParent());
@@ -63,7 +63,7 @@ public class TreeNodeTest {
     @Test
     public void testGetChildren() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("child");
+        TreeNode<String> child = root.add("child");
 
         Collection<TreeNode<String>> children = root.getChildren();
 
@@ -74,36 +74,36 @@ public class TreeNodeTest {
     @Test
     public void testTotalChildren() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("child");
-        TreeNode<String> child2 = root.addChild("child2");
-        TreeNode<String> child_child = child.addChild("child_child");
+        TreeNode<String> child = root.add("child");
+        TreeNode<String> child2 = root.add("child2");
+        TreeNode<String> child_child = child.add("child_child");
 
-        Assert.assertEquals(2, root.totalChildren());
-        Assert.assertEquals(1, child.totalChildren());
-        Assert.assertEquals(0, child2.totalChildren());
-        Assert.assertEquals(0, child_child.totalChildren());
+        Assert.assertEquals(2, root.size());
+        Assert.assertEquals(1, child.size());
+        Assert.assertEquals(0, child2.size());
+        Assert.assertEquals(0, child_child.size());
     }
 
     @Test
     public void testRemoveChild() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("child");
-        TreeNode<String> child2 = root.addChild("child2");
+        TreeNode<String> child = root.add("child");
+        TreeNode<String> child2 = root.add("child2");
 
-        root.removeChild("child");
+        root.remove("child");
 
-        Assert.assertEquals(1, root.totalChildren());
+        Assert.assertEquals(1, root.size());
 
-        root.removeChild(child2);
+        root.remove(child2);
 
-        Assert.assertEquals(0, root.totalChildren());
+        Assert.assertEquals(0, root.size());
     }
 
     @Test
     public void testIterator() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("root_child");
-        TreeNode<String> child2 = root.addChild("root_child2");
+        TreeNode<String> child = root.add("root_child");
+        TreeNode<String> child2 = root.add("root_child2");
 
         int count = 0;
         for (TreeNode<String> node : root) {
@@ -112,8 +112,8 @@ public class TreeNodeTest {
 
         Assert.assertEquals(3, count);
 
-        TreeNode<String> child_child = child.addChild("child_child");
-        TreeNode<String> child_child2 = child.addChild("child_child2");
+        TreeNode<String> child_child = child.add("child_child");
+        TreeNode<String> child_child2 = child.add("child_child2");
 
         count = 0;
         for (TreeNode<String> node : root) {
@@ -126,10 +126,10 @@ public class TreeNodeTest {
     @Test
     public void testIteratorRemove() throws Exception {
         TreeNode<String> root = new TreeNode<>("root");
-        TreeNode<String> child = root.addChild("root_child");
-        root.addChild("root_child2");
-        root.addChild("root_child3");
-        root.addChild("root_child4");
+        TreeNode<String> child = root.add("root_child");
+        root.add("root_child2");
+        root.add("root_child3");
+        root.add("root_child4");
 
 
         int count = 0;

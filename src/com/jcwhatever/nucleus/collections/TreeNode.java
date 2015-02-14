@@ -101,16 +101,17 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
      * Get the nodes children.
      */
     public List<TreeNode<T>> getChildren() {
+        //noinspection unchecked
         return _children != null
                 ? CollectionUtils.unmodifiableList(_children)
-                : new ArrayList<TreeNode<T>>(0);
+                : CollectionUtils.UNMODIFIABLE_EMPTY_LIST;
     }
 
     /**
      * Get the number of direct children
      * of the node.
      */
-    public int totalChildren() {
+    public int size() {
         if (_children == null)
             return 0;
 
@@ -124,7 +125,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
      *
      * @return  The list index or -1 if not found.
      */
-    public int getChildIndex(T childValue) {
+    public int getIndex(T childValue) {
         if (_children == null)
             return -1;
 
@@ -143,7 +144,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
      *
      * @return  The list index or -1 if not found.
      */
-    public int getChildIndex(TreeNode<T> childNode) {
+    public int getIndex(TreeNode<T> childNode) {
         if (_children == null)
             return -1;
 
@@ -162,7 +163,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
      *
      * @return  The child node.
      */
-    public TreeNode<T> addChild(T childValue) {
+    public TreeNode<T> add(T childValue) {
 
         TreeNode<T> node = new TreeNode<>(childValue);
         node._parent = this;
@@ -182,7 +183,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
      *
      * @return  The child node.
      */
-    public TreeNode<T> addChild(TreeNode<T> childNode) {
+    public TreeNode<T> add(TreeNode<T> childNode) {
 
         childNode._parent = this;
 
@@ -202,7 +203,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
      * @return  The removed child node. Null if not found.
      */
     @Nullable
-    public TreeNode<T> removeChild(T child) {
+    public TreeNode<T> remove(T child) {
 
         if (_children == null)
             return null;
@@ -228,7 +229,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
      * @return  The removed child node. Null if not found.
      */
     @Nullable
-    public TreeNode<T> removeChild(TreeNode<T> childNode) {
+    public TreeNode<T> remove(TreeNode<T> childNode) {
 
         if (_children == null)
             return null;
@@ -244,6 +245,21 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
         }
 
         return null;
+    }
+
+    /**
+     * Clear all child nodes.
+     */
+    public void clear() {
+        if (_children == null)
+            return;
+
+        Iterator<TreeNode<T>> iterator = _children.iterator();
+        while (iterator.hasNext()) {
+            TreeNode<T> node = iterator.next();
+            node._parent = null;
+            iterator.remove();
+        }
     }
 
     @Override

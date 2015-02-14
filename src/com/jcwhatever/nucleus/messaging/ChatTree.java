@@ -222,7 +222,7 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iter
         TreeNode<T> parent = node.getParent();
         assert parent != null;
 
-        boolean isLast = parent.getChildIndex(node) == parent.totalChildren() - 1;
+        boolean isLast = parent.getIndex(node) == parent.size() - 1;
 
         int depth = node.getDepth();
 
