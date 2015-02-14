@@ -24,12 +24,8 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai.goals;
 
-import com.jcwhatever.nucleus.providers.npc.INpc;
-import com.jcwhatever.nucleus.providers.npc.ai.actions.INpcAction;
 import com.jcwhatever.nucleus.providers.npc.ai.actions.INpcActionSelector;
 import com.jcwhatever.nucleus.utils.PreCon;
-
-import javax.annotation.Nullable;
 
 /**
  * A goal designed to be added from a script. Supports script
@@ -149,64 +145,5 @@ public class NpcScriptGoal implements INpcGoal {
          * @param selector  The {@code INpcActionSelector}.
          */
         void run(INpcActionSelector selector);
-    }
-
-    private class Selector implements INpcActionSelector {
-
-        INpcActionSelector selector;
-
-        Selector(INpcActionSelector selector) {
-            this.selector = selector;
-        }
-
-
-        @Override
-        public INpc getNpc() {
-            return selector.getNpc();
-        }
-
-        @Override
-        public boolean isFinished() {
-            return selector.isFinished();
-        }
-
-        @Override
-        public void finish() {
-            selector.finish();
-            checkTransient();
-        }
-
-        @Override
-        public void finish(@Nullable INpcAction action) {
-            selector.finish(action);
-            checkTransient();
-        }
-
-        @Override
-        public void cancel() {
-            selector.cancel();
-            checkTransient();
-        }
-
-        @Override
-        public void cancel(@Nullable INpcAction action) {
-            selector.cancel();
-            checkTransient();
-        }
-
-        @Override
-        public INpcActionSelector run(INpcAction action) {
-            return selector.run(action);
-        }
-
-        @Override
-        public INpcActionSelector next(INpcAction action) {
-            return selector.next(action);
-        }
-
-        private void checkTransient() {
-            if (_isTransient)
-                selector.getNpc().getGoals().remove(NpcScriptGoal.this);
-        }
     }
 }
