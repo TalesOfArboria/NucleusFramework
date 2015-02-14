@@ -16,7 +16,7 @@ _Coders like versatility. Server operators like stability. Users like usability.
 The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow development due to the fact that NucleusFramework is not yet finished.
 
 ## Documentation
- * [Doxygen](http://jcthepants.github.io/NucleusFramework)
+ * [Doxygen](http://jcthepants.github.io/NucleusFramework/annotated.html)
 
 ## Resources
  * [NucleusLocalizer](https://github.com/JCThePants/NucleusLocalizer) - A console program used to generate language localization resource files for Nucleus based plugins.
