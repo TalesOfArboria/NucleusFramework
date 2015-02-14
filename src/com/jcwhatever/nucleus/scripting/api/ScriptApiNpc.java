@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
+import com.jcwhatever.nucleus.providers.npc.ai.goals.NpcScriptGoal;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -39,7 +40,7 @@ import java.util.LinkedList;
 import javax.annotation.Nullable;
 
 @ScriptApiInfo(
-        variableName = "npc",
+        variableName = "npcProvider",
         description = "Adds script access to NPC provider.")
 public class ScriptApiNpc extends NucleusScriptApi {
 
@@ -136,6 +137,13 @@ public class ScriptApiNpc extends NucleusScriptApi {
             INpcProvider provider = getProvider();
 
             return provider.getNpc(entity);
+        }
+
+        /**
+         * Create a new {@code NpcScript} goal.
+         */
+        public NpcScriptGoal createGoal() {
+            return new NpcScriptGoal();
         }
 
         @Override
