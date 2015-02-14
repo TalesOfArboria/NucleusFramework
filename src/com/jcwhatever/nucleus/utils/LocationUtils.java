@@ -281,7 +281,7 @@ public final class LocationUtils {
             output.setZ(z);
         }
 
-        return null;
+        return output;
     }
 
     /**
