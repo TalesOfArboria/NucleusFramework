@@ -12,10 +12,8 @@ _Coders like versatility. Server operators like stability. Users like usability.
  * Create a user command interface that has commonality that users can learn to recognize.
  * Reduce server operator work by centralizing features that are used across plugins.
 
-## Wiki
-The [wiki](https://github.com/JCThePants/NucleusFramework/wiki) is under slow development due to the fact that NucleusFramework is not yet finished.
-
 ## Documentation
+ * [Wiki](https://github.com/JCThePants/NucleusFramework/wiki)
  * [Doxygen](http://jcthepants.github.io/NucleusFramework/annotated.html)
 
 ## Resources
