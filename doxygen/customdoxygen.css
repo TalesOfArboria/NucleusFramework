@@ -18,6 +18,7 @@ div.navbar-header {
     margin-right: auto;
     padding-top:15px;
     padding-bottom:15px;
+    padding-left: 22px;
 }
 
 #navrow1, #navrow2, #navrow3, #navrow4, #navrow5{
@@ -79,6 +80,16 @@ font-size: 1.15em !important;
     color: #fff;
 }
 
+.tablist li a:hover {
+    background-color: #404756;
+    background-image: none;
+}
+
+.tablist li.current a {
+    background-color: #37558f;
+    background-image: none;
+}
+
 .tabs, .tabs2, .tabs3 {
     background: #404040;
     border: none;
@@ -106,6 +117,12 @@ table {
     display: block;
     max-width: 1100px;
     overflow: auto;
+    overflow-y: hidden;
+}
+
+td {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 /* @group Heading Levels */
@@ -118,6 +135,8 @@ h1.groupheader {
     max-width: 1100px;
     margin-left: auto;
     margin-right: auto;
+    padding-left:25px;
+    padding-right: 25px;
 }
 
 .title {
@@ -356,7 +375,7 @@ div.ah, span.ah {
 	font-weight: bold;
 	color: #ffffff;
 	margin-bottom: 3px;
-	margin-top: 3px;
+	margin-top: 15px;
 	padding: 0.2em;
 	border: solid thin #333;
 	box-shadow: 2px 2px 3px #999;
@@ -546,11 +565,16 @@ hr {
 	height: 0px;
 	border: none;
 	border-top: 2px solid #4A6AAA;
+    margin-top:45px;
 }
 
 hr.footer {
 	height: 1px;
     max-width: 1100px;
+}
+
+.dyncontent {
+    margin-top: 15px;
 }
 
 /* @group Member Descriptions */
@@ -645,7 +669,7 @@ table.memberdecls {
 	margin-right: 5px;
     display: table !important;
     width: 100%;
-    background: #fafafa;    
+    background: #f7f7f7;    
 }
 
 .memitem.glow {
@@ -767,18 +791,22 @@ span.mlabels {
 }
 
 span.mlabel {
-        background-color: #728DC1;
-        border-top:1px solid #5373B4;
-        border-left:1px solid #5373B4;
-        border-right:1px solid #C4CFE5;
-        border-bottom:1px solid #C4CFE5;
-	text-shadow: none;
-	color: white;
+    background-color: #999999;
+    text-shadow: none;
+	color: #fff;
 	margin-right: 4px;
 	padding: 2px 3px;
-	font-size: 7pt;
+	font-size: 14px;
 	white-space: nowrap;
 	vertical-align: middle;
+}
+
+span.mlabel.protected {
+    background-color: #0f9d11;
+}
+
+span.mlabel.static {
+    background-color: #0f119d
 }
 
 
@@ -807,7 +835,8 @@ div.directory {
 .directory td.entry {
         white-space: nowrap;
         padding-right: 6px;
-	padding-top: 3px;
+	padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .directory td.entry a {
@@ -877,10 +906,19 @@ div.directory {
     margin-right: 2px;
 }
 
+.icon.namespace {
+    background-color: #dc910e;
+}
+
+.icon.clazz {
+    background-color: #23248d;
+}
+
 .icona {
     width: 24px;
     height: 22px;
     display: inline-block;
+    margin-right: 5px;
 }
 
 .iconfopen {
@@ -1323,9 +1361,11 @@ div.toc li.level4 {
 }
 
 .inherit_header {
-        font-weight: bold;
-        color: gray;
-        cursor: pointer;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+    background-color: #F9FAFC
+    
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -1335,7 +1375,8 @@ div.toc li.level4 {
 }
 
 .inherit_header td {
-        padding: 6px 0px 2px 5px;
+        padding: 15px 0px 15px 5px;
+        background-color: #f3f3f3;
 }
 
 .inherit {
@@ -1343,7 +1384,6 @@ div.toc li.level4 {
 }
 
 tr.heading h2 {
-        margin-top: 12px;
         margin-bottom: 4px;
 }
 
