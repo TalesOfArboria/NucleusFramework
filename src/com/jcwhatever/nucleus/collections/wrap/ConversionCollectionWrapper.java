@@ -84,7 +84,7 @@ public abstract class ConversionCollectionWrapper <E, T> implements Collection<E
      *
      * <p>Intended to be optionally overridden by implementation.</p>
      *
-     * @return  True to allow, false to throw an {@code UnsupportedOperationException}.
+     * @return  True to allow, false to throw an {@link UnsupportedOperationException}.
      */
     protected void onRemoved(@SuppressWarnings("unused") Object element) { }
 

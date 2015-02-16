@@ -30,7 +30,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
- * A {@code WeakHashMap} that uses hash sets to store values.
+ * A {@link java.util.WeakHashMap} that uses hash sets to store values.
  *
  * @param <K>  Key type
  * @param <V>  Value type

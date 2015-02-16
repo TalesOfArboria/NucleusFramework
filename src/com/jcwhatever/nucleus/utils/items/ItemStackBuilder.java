@@ -40,7 +40,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * {@code ItemStack} builder.
+ * {@link ItemStack} builder.
  */
 public class ItemStackBuilder {
 
@@ -55,7 +55,7 @@ public class ItemStackBuilder {
     /**
      * Constructor.
      *
-     * @param material  The item {@code Material}.
+     * @param material  The item {@link Material}.
      */
     public ItemStackBuilder(Material material) {
         PreCon.notNull(material);
@@ -66,7 +66,7 @@ public class ItemStackBuilder {
     /**
      * Constructor.
      *
-     * @param materialData  The item {@code MaterialData}.
+     * @param materialData  The item {@link MaterialData}.
      */
     public ItemStackBuilder(MaterialData materialData) {
         PreCon.notNull(materialData);

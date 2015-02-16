@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.regions.data;
 
 /**
- * Describes the flatness of a region.
+ * Describes the basic shape of a region.
  */
 public enum RegionShape {
     /**
@@ -68,7 +68,7 @@ public enum RegionShape {
     FLAT_HORIZONTAL  (FlatnessPosition.HORIZONTAL, Flatness.FLAT, ShapeDirection.UP_DOWN);
 
     /**
-     * Describes the common flatness shape of a {@code Flatness} constant.
+     * Describes the common flatness shape of a {@link Flatness} constant.
      */
     public enum FlatnessPosition {
         /**

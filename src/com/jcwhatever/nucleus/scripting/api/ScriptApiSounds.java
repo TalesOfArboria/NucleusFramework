@@ -85,7 +85,7 @@ public class ScriptApiSounds extends NucleusScriptApi {
         }
 
         /**
-         * Get a {@code ResourceSound} by name.
+         * Get a {@link ResourceSound} by name.
          *
          * @param soundName  The name of the sound.
          */

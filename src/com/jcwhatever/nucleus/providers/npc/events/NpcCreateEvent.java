@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.providers.npc.INpc;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when a new {@code INpc} instance is created.
+ * Called when a new {@link INpc} instance is created.
  */
 public class NpcCreateEvent extends NpcEvent {
 

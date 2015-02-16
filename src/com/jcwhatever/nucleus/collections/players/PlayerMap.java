@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * A {@code HashMap} that stores elements using the player ID as key.
+ * A {@link HashMap} that stores elements using the player ID as key.
  * <p>
  *     When the player logs out, the entry is automatically removed.
  * </p>

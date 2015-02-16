@@ -171,7 +171,7 @@ public class Friends {
      * @param friendId  The ID of the player to become friends with.
      * @param level     The level of friendship.
      *
-     * @return  The new or current {@code IFriend} object.
+     * @return  The new or current {@link IFriend} object.
      */
     public static IFriend addFriend(UUID playerId, UUID friendId, FriendLevel level) {
         return provider().addFriend(playerId, friendId, level);
@@ -186,7 +186,7 @@ public class Friends {
      * @param friendId  The ID of the player to become friends with.
      * @param level     The level of friendship.
      *
-     * @return  The new or current {@code IFriend} object.
+     * @return  The new or current {@link IFriend} object.
      */
     public static IFriend addFriend(Player player, UUID friendId, FriendLevel level) {
         return provider().addFriend(player.getUniqueId(), friendId, level);
@@ -201,7 +201,7 @@ public class Friends {
      * @param friend    The player to become friends with.
      * @param level     The level of friendship.
      *
-     * @return  The new or current {@code IFriend} object.
+     * @return  The new or current {@link IFriend} object.
      */
     public static IFriend addFriend(UUID playerId, Player friend, FriendLevel level) {
         return provider().addFriend(playerId, friend.getUniqueId(), level);
@@ -216,7 +216,7 @@ public class Friends {
      * @param friend  The player to become friends with.
      * @param level   The level of friendship.
      *
-     * @return  The new or current {@code IFriend} object.
+     * @return  The new or current {@link IFriend} object.
      */
     public static IFriend addFriend(Player player, Player friend, FriendLevel level) {
         return provider().addFriend(player.getUniqueId(), friend.getUniqueId(), level);

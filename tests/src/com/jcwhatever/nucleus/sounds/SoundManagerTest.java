@@ -42,7 +42,7 @@ public class SoundManagerTest {
     }
 
     /**
-     * Make sure {@code #getSounds()} works correctly.
+     * Make sure {@link #getSounds()} works correctly.
      */
     @Test
     public void testGetSounds() throws Exception {
@@ -53,7 +53,7 @@ public class SoundManagerTest {
     }
 
     /**
-     * Make sure {@code #getSound} works correctly.
+     * Make sure {@link #getSound} works correctly.
      */
     @Test
     public void testGetSound() throws Exception {
@@ -72,8 +72,8 @@ public class SoundManagerTest {
     }
 
     /**
-     * Make sure {@code #getSounds(Player)} works correctly.
-     * Also tests {@code #playSound} and {@code #getSounds}.
+     * Make sure {@link #getSounds(Player)} works correctly.
+     * Also tests {@link #playSound} and {@link #getSounds}.
      */
     @Test
     public void testGetSounds1() throws Exception {
@@ -99,7 +99,7 @@ public class SoundManagerTest {
     }
 
     /**
-     * Make sure {@code #getSounds(Class)} works correctly.
+     * Make sure {@link #getSounds(Class)} works correctly.
      */
     @Test
     public void testGetSounds2() throws Exception {
@@ -114,8 +114,8 @@ public class SoundManagerTest {
     }
 
     /**
-     * Make sure {@code #getPlaying} works correctly.
-     * Also tests {@code #getSound} and {@code #getPlaying}.
+     * Make sure {@link #getPlaying} works correctly.
+     * Also tests {@link #getSound} and {@link #getPlaying}.
      */
     @Test
     public void testGetPlaying() throws Exception {

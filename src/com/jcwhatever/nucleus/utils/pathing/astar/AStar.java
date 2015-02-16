@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  *
  * <p>Provides a large portion of the core implementation.</p>
  *
- * @param <T>  The {@code PathNode} type.
+ * @param <T>  The {@link IPathNode} type.
  */
 public abstract class AStar<T extends IPathNode> {
 
@@ -209,7 +209,7 @@ public abstract class AStar<T extends IPathNode> {
      * @param end    The end location.
      * @param adjustment  Specify how the provided locations should be adjusted.
      *
-     * @return  Empty {@code LinkedList} if no path was found.
+     * @return  Empty {@link java.util.LinkedList} if no path was found.
      */
     public abstract LinkedList<T> getPath(Location start, Location end, LocationAdjustment adjustment);
 

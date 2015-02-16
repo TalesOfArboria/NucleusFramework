@@ -36,14 +36,15 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 
 /**
- * A synchronized extension to Bukkit's {@code Location} class that is
+ * A synchronized extension to Bukkit's {@link org.bukkit.Location} class that is
  * partially thread safe. It's not thread safe when getting Bukkit objects such
- * as {@code Block}, {@code World} or {@code Chunk}.
+ * as {@link org.bukkit.block.Block}, {@link org.bukkit.World} or
+ * {@link org.bukkit.Chunk}.
  *
- * <p>Useful for creating/loading a {@code Location} from an asynchronous thread where
- * it's not safe to retrieve the Bukkit {@code World} object. The {@code SyncLocation} can
- * hold the name of the world until it's safe to retrieve the Bukkit {@code World} (safety
- * is determined by the coder using the class).</p>
+ * <p>Useful for creating/loading a {@link org.bukkit.Location} from an asynchronous
+ * thread where it's not safe to retrieve the Bukkit {@link org.bukkit.World} object.
+ * The {@link SyncLocation} can hold the name of the world until it's safe to retrieve the
+ * Bukkit {@link org.bukkit.World} (safety is determined by the coder using the class).</p>
  */
 public class SyncLocation extends Location {
 
@@ -53,7 +54,7 @@ public class SyncLocation extends Location {
     /**
      * Constructor.
      *
-     * @param location The {@code Location} instance to get info from.
+     * @param location The {@link org.bukkit.Location} instance to get info from.
      */
     public SyncLocation(Location location) {
         this(location.getWorld(),
@@ -64,7 +65,7 @@ public class SyncLocation extends Location {
     /**
      * Constructor.
      *
-     * @param location The {@code LocationInfo} instance to get info from.
+     * @param location The {@link SyncLocation} instance to get info from.
      */
     public SyncLocation(SyncLocation location) {
         this(location.getWorldName(),
@@ -421,11 +422,11 @@ public class SyncLocation extends Location {
     }
 
     /**
-     * Get a Bukkit {@code Location}.
+     * Get a Bukkit {@link org.bukkit.Location}.
      *
-     * <p>If invoked from an asynchronous thread, the returned {@code Location}'s {@code World}
-     * value is null since it's not safe to retrieve the world object from any thread other
-     * than the primary.</p>
+     * <p>If invoked from an asynchronous thread, the returned {@link org.bukkit.Location}'s
+     * {@link org.bukkit.World} value is null since it's not safe to retrieve the world
+     * object from any thread other than the primary.</p>
      */
     public Location getBukkitLocation() {
 

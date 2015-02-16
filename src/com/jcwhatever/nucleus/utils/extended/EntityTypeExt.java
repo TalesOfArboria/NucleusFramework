@@ -251,7 +251,7 @@ public enum EntityTypeExt {
     }
 
     /**
-     * Get the Bukkit {@code EntityType}
+     * Get the Bukkit {@link EntityType}
      */
     public EntityType getType() {
         return _entityType;
@@ -363,10 +363,10 @@ public enum EntityTypeExt {
 
 
     /**
-     * Get an {@code EntityTypeExt} enum constant that represents the
-     * specified Bukkit {@code EntityType} enum constant.
+     * Get an {@link EntityTypeExt} enum constant that represents the
+     * specified Bukkit {@link EntityType} enum constant.
      *
-     * @param type  The Bukkit {@code EntityType}.
+     * @param type  The Bukkit {@link EntityType}.
      */
     public static EntityTypeExt from(EntityType type) {
         PreCon.notNull(type);
@@ -378,7 +378,7 @@ public enum EntityTypeExt {
     }
 
     /**
-     * Get a list of {@code EntityTypeExt} that have the specified properties.
+     * Get a list of {@link EntityTypeExt} that have the specified properties.
      *
      * @param properties  The properties to check for.
      */

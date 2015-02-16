@@ -84,7 +84,7 @@ public abstract class ScriptManager<S extends IScript, E extends IEvaluatedScrip
      * Constructor.
      *
      * <p>Scripts can be loaded from the scripts directory by
-     * calling the {@code loadScripts} method.</p>
+     * calling the {@link #loadScripts} method.</p>
      *
      * <p>Include folder is set as a sub folder of the specified
      * script folder and is named "includes".</p>
@@ -113,7 +113,7 @@ public abstract class ScriptManager<S extends IScript, E extends IEvaluatedScrip
      * Constructor.
      *
      * <p>Scripts can be loaded from the scripts directory by
-     * calling the {@code loadScripts} method.</p>
+     * calling the {@link #loadScripts} method.</p>
      *
      * @param plugin              The owning plugin.
      * @param scriptFolder        The folder to load scripts from.

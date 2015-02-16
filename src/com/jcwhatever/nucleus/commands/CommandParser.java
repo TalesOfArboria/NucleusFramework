@@ -208,8 +208,8 @@ public class CommandParser {
 
     /*
      * Recursively parses a String[] of arguments for the specified
-     * parent command and return a {@code ParsedCommand} containing the
-     * {@code AbstractCommand} implementation that should be used to execute the command
+     * parent command and return a ParsedCommand containing the
+     * {@link AbstractCommand} implementation that should be used to execute the command
      * as well as the arguments to be used for the returned command.
      */
     private ParsedCommand getCommand(AbstractCommand parentCommand, @Nullable String[] args, int depth) {

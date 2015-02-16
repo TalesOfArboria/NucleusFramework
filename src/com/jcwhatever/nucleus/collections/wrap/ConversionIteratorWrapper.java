@@ -85,7 +85,7 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
      *
      * <p>Intended to be optionally overridden by implementation.</p>
      *
-     * @return  True to allow, false to throw an {@code UnsupportedOperationException}.
+     * @return  True to allow, false to throw an {@link UnsupportedOperationException}.
      */
     protected boolean onRemove(@SuppressWarnings("unused") T element) { return true; }
 
@@ -99,7 +99,7 @@ public abstract class ConversionIteratorWrapper<E, T> implements Iterator<E> {
     protected abstract E convert(T internal);
 
     /**
-     * Invoked from a synchronized block to get the encapsulated {@code Iterator}.
+     * Invoked from a synchronized block to get the encapsulated {@link Iterator}.
      */
     protected abstract Iterator<T> iterator();
 

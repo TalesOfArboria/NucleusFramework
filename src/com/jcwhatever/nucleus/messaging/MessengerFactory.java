@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nullable;
 
 /**
- * Generates {@code IMessenger} implementation instances.
+ * Generates {@link IMessenger} implementation instances.
  */
 public class MessengerFactory {
 

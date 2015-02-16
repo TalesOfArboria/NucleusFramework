@@ -57,7 +57,7 @@ public interface IEconomyProvider extends IProvider {
     /**
      * Get the underlying economy provider if the
      * provider is wrapped. Otherwise, the handle is
-     * the {@code IEconomyProvider} instance.
+     * the {@link IEconomyProvider} instance.
      */
     Object getHandle();
 }

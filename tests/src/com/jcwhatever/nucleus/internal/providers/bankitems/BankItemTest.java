@@ -30,7 +30,7 @@ public class BankItemTest extends IBankItemTest {
     }
 
     /**
-     * Make sure {@code #deposit} works correctly.
+     * Make sure {@link #deposit} works correctly.
      */
     @Test
     public void testDeposit() {
@@ -47,7 +47,7 @@ public class BankItemTest extends IBankItemTest {
     }
 
     /**
-     * Make sure {@code #withdraw} works correctly.
+     * Make sure {@link #withdraw} works correctly.
      */
     @Test
     public void testWithdraw() throws InsufficientItemsException {

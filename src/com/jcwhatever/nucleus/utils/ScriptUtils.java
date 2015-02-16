@@ -76,7 +76,7 @@ public final class ScriptUtils {
      * Get new instances of the default script API.
      *
      * @param plugin   The owning plugin.
-     * @param manager  The requesting {@code ScriptManager}.
+     * @param manager  The requesting {@link ScriptManager}.
      */
     public static List<IScriptApi> getDefaultApi(Plugin plugin, ScriptManager manager) {
         PreCon.notNull(plugin);
@@ -322,14 +322,14 @@ public final class ScriptUtils {
     }
 
     /**
-     * Script factory to create a new {@code IScript} instance.
+     * Script factory to create a new {@link IScript} instance.
      *
      * @param <T>  The instance type.
      */
     public static interface IScriptFactory<T extends IScript> {
 
         /**
-         * Called to get a new {@code IScript} instance.
+         * Called to get a new {@link IScript} instance.
          *
          * @param name      The name of the script.
          * @param file      Optional file of the script.

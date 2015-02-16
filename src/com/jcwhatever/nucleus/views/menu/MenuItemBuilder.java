@@ -40,7 +40,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * A utility class to build {@code MenuItem}'s.
+ * A utility class to build {@link MenuItem}'s.
  */
 public class MenuItemBuilder {
 
@@ -55,7 +55,7 @@ public class MenuItemBuilder {
     /**
      * Constructor.
      *
-     * @param itemStack  The {@code ItemStack} that represents the menu item.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} that represents the menu item.
      */
     public MenuItemBuilder(ItemStack itemStack) {
         PreCon.notNull(itemStack);
@@ -66,7 +66,7 @@ public class MenuItemBuilder {
     /**
      * Constructor.
      *
-     * @param material  The item {@code Material}.
+     * @param material  The item {@link org.bukkit.Material}.
      */
     public MenuItemBuilder(Material material) {
         PreCon.notNull(material);
@@ -77,7 +77,7 @@ public class MenuItemBuilder {
     /**
      * Constructor.
      *
-     * @param materialData  The item {@code MaterialData}.
+     * @param materialData  The item {@link org.bukkit.material.MaterialData}.
      */
     public MenuItemBuilder(MaterialData materialData) {
         PreCon.notNull(materialData);

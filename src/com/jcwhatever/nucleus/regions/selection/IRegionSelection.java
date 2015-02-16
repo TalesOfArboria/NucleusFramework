@@ -260,7 +260,7 @@ public interface IRegionSelection {
     Location getPoint(CuboidPoint point);
 
     /**
-     * Get a {@code CuboidPoint} that represents the specified
+     * Get a {@link CuboidPoint} that represents the specified
      * location.
      *
      * @param location  The location to check.

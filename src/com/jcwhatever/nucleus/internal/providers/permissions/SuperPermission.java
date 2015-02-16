@@ -33,7 +33,7 @@ import org.bukkit.permissions.PermissionDefault;
 import java.util.Map;
 
 /**
- * Container for Bukkits {@code Permission} permission.
+ * Container for Bukkits {@link Permission} permission.
  */
 public final class SuperPermission implements IPermission {
 

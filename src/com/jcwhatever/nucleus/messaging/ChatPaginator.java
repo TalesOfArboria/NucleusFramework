@@ -76,9 +76,7 @@ public class ChatPaginator {
     /**
      * Constructor.
      *
-     * <p>
-     *     No header or footer.
-     * </p>
+     * <p>No header or footer.</p>
      *
      * @param plugin        The owning plugin.
      * @param itemsPerPage  Number of items to show per page.
@@ -95,9 +93,7 @@ public class ChatPaginator {
     /**
      * Constructor.
      *
-     * <p>
-     *     6 items per page, default header and footer.
-     * </p>
+     * <p>6 items per page, default header and footer.</p>
      *
      * @param plugin        The owning plugin.
      * @param itemsPerPage  Number of items to show per page.
@@ -116,13 +112,11 @@ public class ChatPaginator {
     /**
      * Constructor.
      *
+     * <p>6 items per page.</p>
      * <p>
-     *     6 items per page.
-     * </p>
-     * <p>
-     *     Header format uses numbers in braces to insert title, current page and total pages:<br>
-     *     {0} = title<br>
-     *     {1} = current page<br>
+     *     Header format uses numbers in braces to insert title, current page and total pages:<br />
+     *     {0} = title<br />
+     *     {1} = current page<br />
      *     {2} = total pages
      * </p>
      *
@@ -141,9 +135,9 @@ public class ChatPaginator {
      * Constructor.
      *
      * <p>
-     *     Header format uses numbers in braces to insert title, current page and total pages:<br>
-     *     {0} = title<br>
-     *     {1} = current page<br>
+     *     Header format uses numbers in braces to insert title, current page and total pages:<br />
+     *     {0} = title<br />
+     *     {1} = current page<br />
      *     {2} = total pages
      * </p>
      *
@@ -188,11 +182,9 @@ public class ChatPaginator {
     /**
      * Add an item.
      *
-     * <p>
-     *     The format of the item is specified when the paginator
-     *     is shown to a {@code CommandSender}. The objects provided
-     *     as parameters are inserted into the format.
-     * </p>
+     * <p>The format of the item is specified when the paginator is shown to a
+     * {@link org.bukkit.command.CommandSender}. The objects provided as
+     * parameters are inserted into the format.</p>
      *
      * @param args  The object arguments inserted into the item format.
      */
@@ -223,7 +215,7 @@ public class ChatPaginator {
      * <p>
      *     Each item in the collection is 1 item in the paginator.
      *     Multiple objects can be added per item by placing them in
-     *     an {@code Object[]}
+     *     an {@link java.lang.Object[]}
      * </p>
      *
      * @param collection  The collection to add.
@@ -242,12 +234,10 @@ public class ChatPaginator {
     }
 
     /**
-     * Show a page of the paginator to a {@code CommandSender}.
+     * Show a page of the paginator to a {@link org.bukkit.command.CommandSender}.
      *
-     * <p>
-     *     The format parameter only applies to items that are not
-     *     added with a specific format.
-     * </p>
+     * <p>The format argument only applies to items that are not added with a
+     * specific format.</p>
      *
      * @param sender  The command sender to display the page to.
      * @param page    The page to display.

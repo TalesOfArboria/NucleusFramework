@@ -42,10 +42,10 @@ import java.util.Set;
  * Ordering collection container for regions.
  *
  * <p>Allows retrieving regions sorted by priority while maintaining
- * {@code HashSet} {@code contains} method performance.</p>
+ * {@link java.util.HashSet#contains} method performance.</p>
  *
- * <p>If only the {@code Set} implemented methods are used, the collection
- * performance should remain nearly the same as a {@code HashSet}.</p>
+ * <p>If only the {@link java.util.Set} implemented methods are used, the collection
+ * performance should remain nearly the same as a {@link java.util.HashSet}.</p>
  */
 public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
 

@@ -72,7 +72,7 @@ public final class Nucleus {
     static boolean _hasEnabled;
 
     /**
-     * Get the {@code NucleusFramework} plugin instance.
+     * Get the NucleusFramework plugin instance.
      */
     public static NucleusPlugin getPlugin() {
         return _plugin;
@@ -86,7 +86,7 @@ public final class Nucleus {
     }
 
     /**
-     * Get a Bukkit plugin that implements {@code NucleusPlugin} by name.
+     * Get a Bukkit plugin that implements {@link NucleusPlugin} by name.
      *
      * @param name  The name of the plugin.
      *
@@ -100,7 +100,7 @@ public final class Nucleus {
     }
 
     /**
-     * Get a Bukkit plugin that implements {@code NucleusPlugin}.
+     * Get a Bukkit plugin that implements {@link NucleusPlugin}.
      *
      * @param pluginClass  The plugin class.
      *
@@ -120,7 +120,7 @@ public final class Nucleus {
     }
 
     /**
-     * Get all Bukkit plugins that extend {@code NucleusPlugin}.
+     * Get all Bukkit plugins that extend {@link NucleusPlugin}.
      */
     public static List<NucleusPlugin> getNucleusPlugins() {
         return new ArrayList<>(_pluginNameMap.values());
@@ -145,7 +145,7 @@ public final class Nucleus {
     }
 
     /**
-     * Get the global {@code RegionManager}.
+     * Get the global Region Manager.
      */
     public static IGlobalRegionManager getRegionManager() {
         PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
@@ -182,8 +182,6 @@ public final class Nucleus {
 
     /**
      * Get the default script engine manager.
-     *
-     * <p>Returns an instance of {@code NucleusScriptEngineManager}.</p>
      *
      * <p>Engines returned from the script engine manager are singleton
      * instances that are used globally.</p>

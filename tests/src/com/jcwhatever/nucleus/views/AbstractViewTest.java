@@ -31,7 +31,7 @@ public abstract class AbstractViewTest {
     /**
      * Constructor.
      *
-     * @param generator  An abject to generate new {@code View} instances for testing.
+     * @param generator  An abject to generate new {@link View} instances for testing.
      */
     public AbstractViewTest(IViewGenerator generator) {
         _generator = generator;

@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 /**
  * An abstract implementation designed to reduce the amount of inline code needed
- * when subscribing to a {@code FutureResultAgent}.
+ * when subscribing to a {@link FutureResultAgent}.
  */
 public abstract class FutureSubscriber<R> extends UpdateSubscriber<Result<R>> {
 

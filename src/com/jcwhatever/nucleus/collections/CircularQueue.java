@@ -33,8 +33,8 @@ import java.util.NoSuchElementException;
 import javax.annotation.Nullable;
 
 /**
- * A {@code Deque} implementation whose head and tail are connected. The head and tail
- * can be moved by invoking the {@code #next} or {@code #prev} methods.
+ * A {@link Deque} implementation whose head and tail are connected. The head and tail
+ * can be moved by invoking the {@link #next} or {@link #prev} methods.
  */
 public class CircularQueue<E> implements Deque<E> {
 

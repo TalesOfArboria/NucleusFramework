@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 public interface IFloatingItem extends INamedInsensitive, IDisposable {
 
     /**
-     * Get the floating {@code ItemStack}.
+     * Get the floating {@link org.bukkit.inventory.ItemStack}.
      */
     public ItemStack getItem();
 

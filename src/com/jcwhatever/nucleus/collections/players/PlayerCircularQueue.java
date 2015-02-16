@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A {@code CircularQueue} for {@code Player} objects that automatically removes
+ * A {@link CircularQueue} for {@link Player} objects that automatically removes
  * players when they log out.
  *
  * <p>Thread safe.</p>

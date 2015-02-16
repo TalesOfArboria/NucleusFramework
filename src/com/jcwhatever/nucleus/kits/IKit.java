@@ -97,7 +97,7 @@ public interface IKit extends INamedInsensitive, IPluginOwned {
      * <p>Does not take items if the entity does not have all required items.</p>
      *
      * @param entity   The entity to take from.
-     * @param matcher  The {@code ItemStackMatcher} used to compare items.
+     * @param matcher  The {@link ItemStackMatcher} used to compare items.
      * @param qty      The number of items to take. (kit * qty)
      *
      * @return  True if the entity had all the items and they were taken.

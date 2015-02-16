@@ -106,12 +106,12 @@ public class DataPath {
     }
 
     /**
-     * Create a new {@code DataPath} using a path that is relative
-     * to the current {@code DataPath}.
+     * Create a new {@link DataPath} using a path that is relative
+     * to the current {@link DataPath}.
      *
      * @param path  The relative path to add to the existing path.
      *
-     * @return  A new {@code DataPath}.
+     * @return  A new {@link DataPath}.
      */
     public DataPath getPath(String path) {
         PreCon.notNullOrEmpty(path);
@@ -130,12 +130,12 @@ public class DataPath {
     }
 
     /**
-     * Create a new {@code DataPath} using a path that is relative
-     * to the current {@code DataPath}.
+     * Create a new {@link DataPath} using a path that is relative
+     * to the current {@link DataPath}.
      *
      * @param pathComponents  The relative path to add to the existing path.
      *
-     * @return  A new {@code DataPath}.
+     * @return  A new {@link DataPath}.
      */
     public DataPath getPath(String... pathComponents) {
         PreCon.notNull(pathComponents);
@@ -150,12 +150,12 @@ public class DataPath {
     }
 
     /**
-     * Create a new {@code DataPath} using a path that is relative
-     * to the current {@code DataPath}.
+     * Create a new {@link DataPath} using a path that is relative
+     * to the current {@link DataPath}.
      *
      * @param pathComponents  The relative path to add to the existing path.
      *
-     * @return  A new {@code DataPath}.
+     * @return  A new {@link DataPath}.
      */
     public DataPath getPath(Collection<String> pathComponents) {
         PreCon.notNull(pathComponents);

@@ -144,7 +144,7 @@ public final class Permissions {
     /**
      * Determine if the player has permission.
      *
-     * @param sender          The {@code CommandSender} to check.
+     * @param sender          The {@link org.bukkit.command.CommandSender} to check.
      * @param permissionName  The name of the permission.
      */
     public static boolean has(CommandSender sender, String permissionName) {
@@ -154,7 +154,7 @@ public final class Permissions {
     /**
      * Determine if the player has permission.
      *
-     * @param sender      The {@code CommandSender} to check.
+     * @param sender      The {@link org.bukkit.command.CommandSender} to check.
      * @param permission  The permission.
      */
     public static boolean has(CommandSender sender, IPermission permission) {
@@ -167,7 +167,7 @@ public final class Permissions {
      *     Not all permission implementations will support permissions by world.
      * </p>
      *
-     * @param sender          The {@code CommandSender} to check.
+     * @param sender          The {@link org.bukkit.command.CommandSender} to check.
      * @param world           The world to check.
      * @param permissionName  The name of the permission.
      *
@@ -181,7 +181,7 @@ public final class Permissions {
      * Add a transient permission to a player.
      *
      * @param plugin          The plugin adding the transient permission.
-     * @param sender          The {@code CommandSender} to add the permission to..
+     * @param sender          The {@link org.bukkit.command.CommandSender} to add the permission to..
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
@@ -194,7 +194,7 @@ public final class Permissions {
      * Remove a transient permission from a player.
      *
      * @param plugin          The plugin that added the transient permission.
-     * @param sender          The {@code CommandSender} to remove the permission from.
+     * @param sender          The {@link org.bukkit.command.CommandSender} to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
@@ -207,7 +207,7 @@ public final class Permissions {
      * Add a permission to a player.
      *
      * @param plugin          The plugin adding the permission.
-     * @param sender          The {@code CommandSender} to add the permission to.
+     * @param sender          The {@link org.bukkit.command.CommandSender} to add the permission to.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
@@ -220,7 +220,7 @@ public final class Permissions {
      * Add a permission to a player.
      *
      * @param plugin      The plugin adding the permission.
-     * @param sender      The {@code CommandSender} to add the permission to.
+     * @param sender      The {@link org.bukkit.command.CommandSender} to add the permission to.
      * @param permission  The permission.
      *
      * @return  True if the permission was added.
@@ -236,7 +236,7 @@ public final class Permissions {
      * </p>
      *
      * @param plugin          The plugin adding the permission.
-     * @param sender          The {@code CommandSender} to add the permission to.
+     * @param sender          The {@link org.bukkit.command.CommandSender} to add the permission to.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
@@ -255,7 +255,7 @@ public final class Permissions {
      * </p>
      *
      * @param plugin      The plugin adding the permission.
-     * @param sender      The {@code CommandSender} to check.
+     * @param sender      The {@link org.bukkit.command.CommandSender} to check.
      * @param world       The world.
      * @param permission  The permission.
      *
@@ -271,7 +271,7 @@ public final class Permissions {
      * Remove a players permission.
      *
      * @param plugin          The plugin removing the permission.
-     * @param sender          The {@code CommandSender} to remove the permission from.
+     * @param sender          The {@link org.bukkit.command.CommandSender} to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
@@ -284,7 +284,7 @@ public final class Permissions {
      * Remove a players permission.
      *
      * @param plugin      The plugin removing the permission.
-     * @param sender      The {@code CommandSender} to remove the permission from.
+     * @param sender      The {@link org.bukkit.command.CommandSender} to remove the permission from.
      * @param permission  The permission.
      *
      * @return  True if the permission was removed.
@@ -300,7 +300,7 @@ public final class Permissions {
      * </p>
      *
      * @param plugin          The plugin removing the permission.
-     * @param sender          The {@code CommandSender} to remove the permission from.
+     * @param sender          The {@link org.bukkit.command.CommandSender} to remove the permission from.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
@@ -316,7 +316,7 @@ public final class Permissions {
      * Remove a players permission in a world.
      *
      * @param plugin      The plugin removing the permission.
-     * @param sender      The {@code CommandSender} to remove the permission from.
+     * @param sender      The {@link org.bukkit.command.CommandSender} to remove the permission from.
      * @param world       The world.
      * @param permission  The permission.
      *
@@ -335,7 +335,7 @@ public final class Permissions {
      * </p>
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param sender     The {@code CommandSender} to add to the group.
+     * @param sender     The {@link org.bukkit.command.CommandSender} to add to the group.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
@@ -350,7 +350,7 @@ public final class Permissions {
      * Add a player to a group permission in the specified world.
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param sender     The {@code CommandSender} to add to the group.
+     * @param sender     The {@link org.bukkit.command.CommandSender} to add to the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
@@ -366,7 +366,7 @@ public final class Permissions {
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param sender     The {@code CommandSender} to remove from the group..
+     * @param sender     The {@link org.bukkit.command.CommandSender} to remove from the group..
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
@@ -381,7 +381,7 @@ public final class Permissions {
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param sender     The {@code CommandSender} to remove from the group.
+     * @param sender     The {@link org.bukkit.command.CommandSender} to remove from the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
@@ -396,7 +396,7 @@ public final class Permissions {
     /**
      * Determine if a player has group permission.
      *
-     * @param sender     The {@code CommandSender} to check.
+     * @param sender     The {@link org.bukkit.command.CommandSender} to check.
      * @param groupName  The name of the group.
      *
      * @throws java.lang.UnsupportedOperationException
@@ -427,7 +427,7 @@ public final class Permissions {
     /**
      * Get a string array of groups the specified player is in.
      *
-     * @param sender  The {@code CommandSender} to check.
+     * @param sender  The {@link org.bukkit.command.CommandSender} to check.
      *
      * @throws java.lang.UnsupportedOperationException
      */
@@ -439,7 +439,7 @@ public final class Permissions {
      * Get a string array of groups the specified player is in while
      * in the specified world.
      *
-     * @param sender  The {@code CommandSender} to check.
+     * @param sender  The {@link org.bukkit.command.CommandSender} to check.
      * @param world   The world.
      *
      * @throws java.lang.UnsupportedOperationException
@@ -476,7 +476,7 @@ public final class Permissions {
      * if they are able to have them as specified by the permission group instances provided.
      *
      * @param plugin  The plugin fixing permission groups.
-     * @param sender  The {@code CommandSender} whose group permissions need to be checked.
+     * @param sender  The {@link org.bukkit.command.CommandSender} whose group permissions need to be checked.
      * @param groups  The groups to fix.
      *
      * @throws java.lang.UnsupportedOperationException

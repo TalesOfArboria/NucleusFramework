@@ -41,8 +41,8 @@ import javax.annotation.Nullable;
  * A queue of {@link ISubscriberAgent} which automatically removes agents
  * when they are disposed.
  *
- * <p>Assumes the agent is properly implemented and calls the {@code #unregister} method
- * of all {@link com.jcwhatever.nucleus.utils.observer.ISubscriber} instances that are
+ * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unregister} method
+ * of all {@link ISubscriber} instances that are
  * observing it when it's disposed.</p>
  *
  * <p>The collection has its own internal subscriber which is used to observe the agents in

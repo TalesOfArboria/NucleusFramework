@@ -33,7 +33,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Manages {@code ItemStack} meta data handlers.
+ * Manages {@link org.bukkit.inventory.ItemStack} meta data handlers.
  */
 public class ItemMetaHandlerManager {
 

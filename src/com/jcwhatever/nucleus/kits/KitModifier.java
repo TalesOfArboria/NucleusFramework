@@ -35,7 +35,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * A {@code Kit} wrapper that allows modifying and saving
+ * A {@link Kit} wrapper that allows modifying and saving
  * the kit contents.
  */
 public class KitModifier implements IModifiableKit {
@@ -43,6 +43,12 @@ public class KitModifier implements IModifiableKit {
     protected final KitManager _manager;
     protected final Kit _kit;
 
+    /**
+     * Constructor.
+     *
+     * @param manager  The owning {@link KitManager}.
+     * @param kit      The {@link Kit} to modify.
+     */
     protected KitModifier(KitManager manager, Kit kit) {
         PreCon.notNull(manager);
         PreCon.notNull(kit);

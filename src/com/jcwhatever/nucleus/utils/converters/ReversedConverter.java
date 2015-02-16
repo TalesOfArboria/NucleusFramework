@@ -26,11 +26,11 @@
 package com.jcwhatever.nucleus.utils.converters;
 
 /**
- * A wrapper for a {@code ValueConverter} instance that reverses the
+ * A wrapper for a {@link ValueConverter} instance that reverses the
  * convert and unconvert methods.
  *
- * @param <F>  The parent {@code ValueConverter}'s unconvert return value type
- * @param <T>  The parent {@code ValueConverter}'s convert return value type
+ * @param <F>  The parent {@link ValueConverter}'s unconvert return value type
+ * @param <T>  The parent {@link ValueConverter}'s convert return value type
  */
 public class ReversedConverter<F, T> extends ValueConverter<F, T> {
 

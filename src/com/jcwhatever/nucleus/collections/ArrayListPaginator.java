@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A {@code Paginated} {@code List} that uses an {@code ArrayList}.
+ * A {@link Paginated} {@link java.util.List} that uses an {@link ArrayList}.
  */
 public class ArrayListPaginator<E> extends Paginated<E> {
 
@@ -47,7 +47,7 @@ public class ArrayListPaginator<E> extends Paginated<E> {
      *
      * @param pageStartIndex  The index of the first page.
      * @param itemsPerPage    The number if items per page.
-     * @param size            The initial capacity of the {@code ArrayList}.
+     * @param size            The initial capacity of the {@link ArrayList}.
      */
     public ArrayListPaginator(PageStartIndex pageStartIndex, int itemsPerPage, int size) {
         super(pageStartIndex, itemsPerPage, new ArrayList<E>(size));

@@ -67,7 +67,7 @@ public abstract class DequeWrapper<E> extends QueueWrapper<E> implements Deque<E
 
     /**
      * Invoked from a synchronized block to get the
-     * encapsulated {@code Deque}.
+     * encapsulated {@link Deque}.
      */
     @Override
     protected abstract Deque<E> queue();

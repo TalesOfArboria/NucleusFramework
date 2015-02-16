@@ -92,7 +92,7 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
 
     /**
      * Find locations in the region that are made
-     * of the specified {@code Material}.
+     * of the specified {@link Material}.
      *
      * @param material  The material to find.
      */
@@ -105,7 +105,7 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
 
     /**
      * Determine if the region contains a block
-     * of the specified {@code Material}.
+     * of the specified {@link Material}.
      *
      * @param material  The material to find.
      */
@@ -144,7 +144,7 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
     boolean removeEventHandler(IRegionEventHandler handler);
 
     /**
-     * The same as calling {@code getClass} method except
+     * The same as calling {@link #getClass} method except
      * in cases where the actual region is not represented by the
      * implementer (wrappers), in which case the encapsulated
      * regions class is returned.

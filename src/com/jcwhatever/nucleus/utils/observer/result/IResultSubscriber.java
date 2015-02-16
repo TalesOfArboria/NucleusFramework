@@ -33,8 +33,8 @@ public interface IResultSubscriber<R> extends ISubscriber {
 
     /**
      * Called when a result is available. Always called
-     * along with {@code onSuccess}, {@code onCancel}, or
-     * {@code onFail}.
+     * along with {@link #onSuccess}, {@link #onCancel}, or
+     * {@link #onError}.
      *
      * @param result  The result.
      */

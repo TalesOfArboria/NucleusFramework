@@ -53,8 +53,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Command related utils to reduce redundant code.
  */
 public class CommandUtils implements IPluginOwned {
 
@@ -126,16 +126,17 @@ public class CommandUtils implements IPluginOwned {
     }
 
     /**
-     * Tell the {@code CommandSender} a generic message.
+     * Tell the {@link org.bukkit.command.CommandSender} a generic message.
      */
     public void tell(CommandSender sender, String msg, Object... params) {
         _msg.tell(sender, TextUtils.format(msg, params));
     }
 
     /**
-     * Tell the {@code CommandSender} that something is enabled or disabled.
+     * Tell the {@link org.bukkit.command.CommandSender} that something is enabled
+     * or disabled.
      *
-     * <p>Use format code {e} to specify where to place the word Enabled or Disabled.</p>
+     * <p>Use format tag {e} to specify where to place the word Enabled or Disabled.</p>
      */
     public void tellEnabled(CommandSender sender, String msg, boolean isEnabled, Object...params) {
         PreCon.notNull(sender);
@@ -151,14 +152,16 @@ public class CommandUtils implements IPluginOwned {
     }
 
     /**
-     * Tell the {@code CommandSender} the command executed the request successfully.
+     * Tell the {@link org.bukkit.command.CommandSender} the command
+     * executed the request successfully.
      */
     public void tellSuccess(CommandSender sender, String msg, Object... params) {
         _msg.tell(sender, ChatColor.GREEN + msg, params);
     }
 
     /**
-     * Tell the {@code CommandSender} the command failed to perform the requested task.
+     * Tell the {@link org.bukkit.command.CommandSender} the command failed to
+     * perform the requested task.
      */
     public void tellError(CommandSender sender, String msg, Object... params) {
         _msg.tell(sender, ChatColor.RED + msg, params);
@@ -205,7 +208,7 @@ public class CommandUtils implements IPluginOwned {
      *
      * @param p  The player
      *
-     * @return  {@code AreaSelection} object that defines the selection.
+     * @return  {@link RegionSelection} object that defines the selection.
      */
     @Nullable
     public IRegionSelection getRegionSelection(Player p) {

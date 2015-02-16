@@ -228,7 +228,7 @@ public interface IGlobalRegionManager {
     List<IRegion> getPlayerRegions(Player player);
 
     /**
-     * Causes the {@code IGlobalRegionManager} to "forget" that a player is
+     * Causes the {@link IGlobalRegionManager} to "forget" that a player is
      * already in the specified region. Useful if the region enter event
      * needs to be re-fired for a player.
      *

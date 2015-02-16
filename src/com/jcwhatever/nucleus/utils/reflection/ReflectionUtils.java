@@ -89,7 +89,7 @@ public class ReflectionUtils {
             .build();
 
     /**
-     * Create a new {@code Reflection} instance for the specified
+     * Create a new {@link Reflection} instance for the specified
      * NMS version.
      *
      * @param nmsVersion  The nms version.

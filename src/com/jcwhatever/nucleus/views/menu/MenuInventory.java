@@ -58,7 +58,7 @@ public class MenuInventory implements Inventory {
     }
 
     /**
-     * Add a menu item to the {@code MenuInventory}.
+     * Add a menu item to the {@link MenuInventory}.
      *
      * @param menuItem  The menu item to add.
      */
@@ -81,14 +81,14 @@ public class MenuInventory implements Inventory {
     }
 
     /**
-     * Get the total number of {@code MenuItem}.
+     * Get the total number of {@link MenuItem}.
      */
     public int getTotalMenuItems() {
         return _menuItemMap.size();
     }
 
     /**
-     * Get all {@code MenuItem}.
+     * Get all {@link MenuItem}.
      */
     public Collection<MenuItem> getMenuItems() {
         return _menuItemMap.values();

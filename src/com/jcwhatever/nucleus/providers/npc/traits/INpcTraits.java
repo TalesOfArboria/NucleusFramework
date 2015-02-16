@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 public interface INpcTraits {
 
     /**
-     * Get the owning {@code INpc} instance.
+     * Get the owning {@link INpc} instance.
      */
     INpc getNpc();
 
@@ -110,7 +110,7 @@ public interface INpcTraits {
     /**
      * Get the kit the NPC is spawned with.
      *
-     * @return The {@code IKit} or null if one is not set.
+     * @return The {@link IKit} or null if one is not set.
      */
     @Nullable
     IKit getKit();
@@ -119,7 +119,7 @@ public interface INpcTraits {
      * Set the kit the NPC is spawned with. If the NPC is already
      * spawned, the kit is also applied to the spawned entity.
      *
-     * @param kit  The {@code IKit} or null to remove kit.
+     * @param kit  The {@link IKit} or null to remove kit.
      *
      * @return  Self for chaining.
      */

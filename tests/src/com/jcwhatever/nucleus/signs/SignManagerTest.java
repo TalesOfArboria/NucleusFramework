@@ -60,7 +60,7 @@ public class SignManagerTest {
 
 
     /**
-     * Make sure static method {@code #getManagers} returns the correct value.
+     * Make sure static method {@link #getManagers} returns the correct value.
      */
     @Test
     public void testGetManagers() throws Exception {
@@ -77,7 +77,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure static method {@code #getSignNodeName} returns the correct value.
+     * Make sure static method {@link #getSignNodeName} returns the correct value.
      */
     @Test
     public void testGetSignNodeName() throws Exception {
@@ -99,7 +99,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@code #getSignHandler} returns the correct value.
+     * Make sure {@link #getSignHandler} returns the correct value.
      */
     @Test
     public void testGetSignHandler() throws Exception {
@@ -110,7 +110,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@code #getSigns} returns the correct value.
+     * Make sure {@link #getSigns} returns the correct value.
      */
     @Test
     public void testGetSigns() throws Exception {
@@ -128,7 +128,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@code #getSavedLines} returns the correct value.
+     * Make sure {@link #getSavedLines} returns the correct value.
      */
     @Test
     public void testGetSavedLines() throws Exception {
@@ -148,7 +148,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@code #restoreSign} works correctly.
+     * Make sure {@link #restoreSign} works correctly.
      */
     @Test
     public void testRestoreSign() throws Exception {
@@ -177,7 +177,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@code #restoreSigns} works correctly.
+     * Make sure {@link #restoreSigns} works correctly.
      */
     @Test
     public void testRestoreSigns() throws Exception {
@@ -221,7 +221,7 @@ public class SignManagerTest {
 
     /**
      * Make sure change sign event is handled properly when
-     * player is in {@code GameMode.SURVIVAL}.
+     * player is in {@link GameMode.SURVIVAL}.
      */
     @Test
     public void testSignChangeSurvival() throws Exception {
@@ -231,7 +231,7 @@ public class SignManagerTest {
 
     /**
      * Make sure change sign event is handled properly when
-     * player is in {@code GameMode.CREATIVE}.
+     * player is in {@link GameMode.CREATIVE}.
      */
     @Test
     public void testSignChangeCreative() throws Exception {
@@ -254,7 +254,7 @@ public class SignManagerTest {
 
     /**
      * Make sure sign click event is handled properly when player
-     * is in {@code GameMode.SURVIVAL}.
+     * is in {@link GameMode.SURVIVAL}.
      */
     @Test
     public void testSignClickSurvival() throws Exception {
@@ -264,7 +264,7 @@ public class SignManagerTest {
 
     /**
      * Make sure sign click event is handled properly when player
-     * is in {@code GameMode.CREATIVE}.
+     * is in {@link GameMode.CREATIVE}.
      */
     @Test
     public void testSignClickCreative() throws Exception {
@@ -297,7 +297,7 @@ public class SignManagerTest {
 
     /**
      * Make sure sign break event is handled properly when
-     * player is in {@code GameMode.SURVIVAL}.
+     * player is in {@link GameMode.SURVIVAL}.
      */
     @Test
     public void testSignBreakSurvival() throws Exception {
@@ -310,7 +310,7 @@ public class SignManagerTest {
 
     /**
      * Make sure sign break event is handled properly when
-     * player is in {@code GameMode.CREATIVE}.
+     * player is in {@link GameMode.CREATIVE}.
      */
     @Test
     public void testSignBreakCreative() throws Exception {

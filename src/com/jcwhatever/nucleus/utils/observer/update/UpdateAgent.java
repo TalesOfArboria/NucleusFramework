@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 
 /**
  * An agent between update producers and the agents registered
- * {@code IUpdateSubscriber}'s.
+ * {@link IUpdateSubscriber}'s.
  */
 public class UpdateAgent<A> implements IUpdateAgent<A>, IDisposable {
 

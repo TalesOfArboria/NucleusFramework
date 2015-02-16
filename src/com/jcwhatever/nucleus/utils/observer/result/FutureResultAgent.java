@@ -65,7 +65,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare the result cancelled. The same as calling
-     * {@code #sendResult} with a generic cancel result.
+     * {@link #sendResult} with a generic cancel result.
      *
      * <p>The result object and message are null.</p>
      *
@@ -77,7 +77,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare the result cancelled. The same as calling
-     * {@code #sendResult} with a generic cancel result.
+     * {@link #sendResult} with a generic cancel result.
      *
      * <p>The result message is null.</p>
      *
@@ -91,7 +91,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare the result cancelled. The same as calling
-     * {@code #sendResult} with a generic cancel result.
+     * {@link #sendResult} with a generic cancel result.
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
@@ -111,7 +111,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare an error in the result. The same as calling
-     * {@code #sendResult} with a generic error result.
+     * {@link #sendResult} with a generic error result.
      *
      * <p>The result object and message are null.</p>
      *
@@ -123,7 +123,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare an error in the result. The same as calling
-     * {@code #sendResult} with a generic error result.
+     * {@link #sendResult} with a generic error result.
      *
      * <p>The result message is null.</p>
      *
@@ -137,7 +137,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare an error in the result. The same as calling
-     * {@code #sendResult} with a generic error result.
+     * {@link #sendResult} with a generic error result.
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
@@ -157,7 +157,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare the result a success. The same as calling
-     * {@code #sendResult} with a generic success result.
+     * {@link #sendResult} with a generic success result.
      *
      * <p>The result object and message are null.</p>
      *
@@ -169,7 +169,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare the result a success. The same as calling
-     * {@code #sendResult} with a generic success result.
+     * {@link #sendResult} with a generic success result.
      *
      * <p>The result message is null.</p>
      *
@@ -183,7 +183,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Declare the result a success. The same as calling
-     * {@code #sendResult} with a generic success result.
+     * {@link #sendResult} with a generic success result.
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
@@ -203,7 +203,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
 
     /**
      * Get a future that can be returned so that a method caller can
-     * attach {@code IUpdateSubscriber}'s.
+     * attach {@link com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber}'s.
      */
     public Future<R> getFuture() {
         return _future;

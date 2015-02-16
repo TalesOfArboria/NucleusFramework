@@ -39,7 +39,7 @@ import org.bukkit.event.HandlerList;
 import java.util.List;
 
 /**
- * Called when a {@link com.jcwhatever.nucleus.sounds.playlist.PlayList.PlayerSoundQueue} finishes and is ready to loop.
+ * Called when a {@link PlayList.PlayerSoundQueue} finishes and is ready to loop.
  */
 public class PlayListLoopEvent extends Event implements IPlayerReference, Cancellable, ICancellable {
 
@@ -55,9 +55,9 @@ public class PlayListLoopEvent extends Event implements IPlayerReference, Cancel
     /**
      * Constructor.
      *
-     * @param soundQueue  The {@code PlayerSoundQueue} the event is for.
+     * @param soundQueue  The {@link PlayerSoundQueue} the event is for.
      * @param sounds      The sounds that will be played in the next loop.
-     * @param loopCount   The number of times the {@code PlayerSoundQueue} has looped.
+     * @param loopCount   The number of times the {@link PlayerSoundQueue} has looped.
      */
     public PlayListLoopEvent(PlayList playList, PlayerSoundQueue soundQueue,
                              List<ResourceSound> sounds, int loopCount) {
@@ -77,14 +77,14 @@ public class PlayListLoopEvent extends Event implements IPlayerReference, Cancel
     }
 
     /**
-     * Get the {@code PlayList} the event is for.
+     * Get the {@link PlayList} the event is for.
      */
     public PlayList getPlayList() {
         return _playList;
     }
 
     /**
-     * Get the {@code PlayerSoundQueue} the event is for.
+     * Get the {@link PlayerSoundQueue} the event is for.
      */
     public PlayerSoundQueue getSoundQueue() {
         return _soundQueue;
@@ -98,7 +98,7 @@ public class PlayListLoopEvent extends Event implements IPlayerReference, Cancel
     }
 
     /**
-     * Get the number of times the {@code PlayerSoundQueue} has looped.
+     * Get the number of times the {@link PlayerSoundQueue} has looped.
      */
     public int getLoopCount() {
         return _loopCount;

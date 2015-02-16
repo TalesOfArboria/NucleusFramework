@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
 /**
- * {@code IDynamicText} implementation that displays a status bar
+ * {@link IDynamicText} implementation that displays a status bar
  * that shows percentage.
  */
 public class StatusBarText implements IDynamicText {

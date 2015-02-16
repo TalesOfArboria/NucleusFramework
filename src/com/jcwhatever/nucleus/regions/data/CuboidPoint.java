@@ -64,29 +64,29 @@ public enum CuboidPoint {
     }
 
     /**
-     * Get the {@code CuboidPoint} constants X coordinate type.
+     * Get the {@link CuboidPoint} constants X coordinate type.
      */
     public CuboidPointType getTypeX() {
         return _x;
     }
 
     /**
-     * Get the {@code CuboidPoint} constants Y coordinate type.
+     * Get the {@link CuboidPoint} constants Y coordinate type.
      */
     public CuboidPointType getTypeY() {
         return _y;
     }
 
     /**
-     * Get the {@code CuboidPoint} constants Z coordinate type.
+     * Get the {@link CuboidPoint} constants Z coordinate type.
      */
     public CuboidPointType getTypeZ() {
         return _z;
     }
 
     /**
-     * Get the location represented by the {@code CuboidPoint} from the
-     * specified {@code RegionSelection}.
+     * Get the location represented by the {@link CuboidPoint} from the
+     * specified {@link com.jcwhatever.nucleus.regions.selection.RegionSelection}.
      *
      * @param selection  The region selection to get a location from.
      */
@@ -97,8 +97,8 @@ public enum CuboidPoint {
     }
 
     /**
-     * Get the X coordinate represented by the {@code CuboidPoint} from the
-     * specified {@code RegionSelection}.
+     * Get the X coordinate represented by the {@link CuboidPoint} from the
+     * specified {@link com.jcwhatever.nucleus.regions.selection.RegionSelection}.
      *
      * @param selection  The region selection to get an X coordinate from.
      */
@@ -107,8 +107,8 @@ public enum CuboidPoint {
     }
 
     /**
-     * Get the Y coordinate represented by the {@code CuboidPoint} from the
-     * specified {@code RegionSelection}.
+     * Get the Y coordinate represented by the {@link CuboidPoint} from the
+     * specified {@link com.jcwhatever.nucleus.regions.selection.RegionSelection}.
      *
      * @param selection  The region selection to get a Y coordinate from.
      */
@@ -117,8 +117,8 @@ public enum CuboidPoint {
     }
 
     /**
-     * Get the Z coordinate represented by the {@code CuboidPoint} from the
-     * specified {@code RegionSelection}.
+     * Get the Z coordinate represented by the {@link CuboidPoint} from the
+     * specified {@link com.jcwhatever.nucleus.regions.selection.RegionSelection}.
      *
      * @param selection  The region selection to get a Z coordinate from.
      */
@@ -128,7 +128,7 @@ public enum CuboidPoint {
 
     /**
      * Choose between two values the one that is best represented by
-     * the specified {@code PointType}.
+     * the specified {@link CuboidPointType}.
      *
      * @param type    The point type.
      * @param value1  The first coordinate value.
@@ -148,7 +148,7 @@ public enum CuboidPoint {
     }
 
     /**
-     * Get a {@code CuboidPoint} that represents the specified
+     * Get a {@link CuboidPoint} that represents the specified
      * location.
      *
      * @param location   The location to check.

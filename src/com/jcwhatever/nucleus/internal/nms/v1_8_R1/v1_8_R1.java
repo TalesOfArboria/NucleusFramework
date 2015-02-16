@@ -120,7 +120,7 @@ public class v1_8_R1 implements INmsHandler {
     }
 
     /**
-     * Get the {@code EntityPlayer} nms object of the player.
+     * Get the {@link net.minecraft.server.EntityPlayer} nms object of the player.
      *
      * @param player  The player.
      */

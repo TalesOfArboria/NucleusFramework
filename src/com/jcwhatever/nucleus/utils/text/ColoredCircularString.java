@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.utils.text.TextFormat.TextFormatMap;
 import java.util.Map.Entry;
 
 /**
- * A {@code CircularString} that ignores color codes while
+ * A {@link CircularString} that ignores color codes while
  * preserving the colors in output strings.
  *
  * <p>The length of the string may be dynamic after rotation when color
@@ -86,7 +86,7 @@ public class ColoredCircularString extends CircularString {
     }
 
     /**
-     * Get a new {@code CircularString} whose characters are
+     * Get a new {@link CircularString} whose characters are
      * a sub-sequence of characters from the current.
      *
      * @param start  The start index of the sequence relative to the current rotation.

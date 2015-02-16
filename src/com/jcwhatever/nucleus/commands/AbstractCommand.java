@@ -63,7 +63,7 @@ import javax.annotation.Nullable;
 /**
  * Base implementation of a command
  *
- * <p>The command implementation must have an {@code ICommandInfo} annotation.</p>
+ * <p>The command implementation must have an {@link CommandInfo} annotation.</p>
  */
 public abstract class AbstractCommand
         implements Comparable<AbstractCommand>, ICommandOwner, IPluginOwned {
@@ -122,7 +122,7 @@ public abstract class AbstractCommand
     }
 
     /**
-     * Get the commands {@code ICommandInfo} annotation.
+     * Get the commands {@link ICommandInfo} annotation.
      */
     public CommandInfoContainer getInfo() {
         return _info;
@@ -405,7 +405,7 @@ public abstract class AbstractCommand
 
     /**
      * Display the commands help info in a paginated list that includes
-     * the sub command help to the specified {@code CommandSender}
+     * the sub command help to the specified {@link CommandSender}
      */
     public void showHelp(CommandSender sender, int page) {
         PreCon.notNull(sender);
@@ -503,7 +503,7 @@ public abstract class AbstractCommand
      * command names of the this command.
      *
      * @param parentName     The command name to match
-     * @param possibleNames  A {@code String[]} of valid names
+     * @param possibleNames  A {@link String[]} of valid names
      */
     protected boolean isCommandMatch(@Nullable String parentName, String[] possibleNames) {
         PreCon.notNull(possibleNames);
@@ -522,8 +522,8 @@ public abstract class AbstractCommand
      * Determine if one of the supplied command names match any one of the
      * command names of the this command.
      *
-     * @param parentNames    A {@code String[]} of possible names
-     * @param possibleNames  A {@code String[]} of valid names
+     * @param parentNames    A {@link String[]} of possible names
+     * @param possibleNames  A {@link String[]} of valid names
      */
     protected boolean isCommandMatch(String[] parentNames, String[] possibleNames) {
         PreCon.notNull(parentNames);
@@ -597,14 +597,14 @@ public abstract class AbstractCommand
     }
 
     /**
-     * Tell the {@code CommandSender} a generic message.
+     * Tell the {@link CommandSender} a generic message.
      */
     protected void tell(CommandSender sender, String msg, Object... params) {
         _dispatcher.getUtils().tell(sender, msg, params);
     }
 
     /**
-     * Tell the {@code CommandSender} that something is enabled or disabled.
+     * Tell the {@link CommandSender} that something is enabled or disabled.
      *
      * <p>Use format code {e} to specify where to place the word Enabled or Disabled.</p>
      */
@@ -613,14 +613,14 @@ public abstract class AbstractCommand
     }
 
     /**
-     * Tell the {@code CommandSender} the command executed the request successfully.
+     * Tell the {@link CommandSender} the command executed the request successfully.
      */
     protected void tellSuccess(CommandSender sender, String msg, Object... params) {
         _dispatcher.getUtils().tellSuccess(sender, msg, params);
     }
 
     /**
-     * Tell the {@code CommandSender} the command failed to perform the requested task.
+     * Tell the {@link CommandSender} the command failed to perform the requested task.
      */
     protected void tellError(CommandSender sender, String msg, Object... params) {
         _dispatcher.getUtils().tellError(sender, msg, params);
@@ -644,7 +644,7 @@ public abstract class AbstractCommand
      *
      * @param p  The player
      *
-     * @return  {@code AreaSelection} object that defines the selection.
+     * @return  {@link AreaSelection} object that defines the selection.
      */
     @Nullable
     protected IRegionSelection getRegionSelection(Player p) {

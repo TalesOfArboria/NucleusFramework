@@ -70,7 +70,7 @@ public abstract class ConversionEntryWrapper<K, V, I> implements Entry<K, V> {
 
     /**
      * Invoked from a synchronized block (if synchronized) to get the
-     * encapsulated {@code Entry}.
+     * encapsulated {@link Entry}.
      */
     protected abstract Entry<K, I> entry();
 

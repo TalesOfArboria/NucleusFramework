@@ -43,7 +43,7 @@ public class NpcDeathEvent extends NpcEvent {
      * Constructor.
      *
      * @param npc    The NPC the event is for.
-     * @param event  The {@code EntityDeathEvent}.
+     * @param event  The {@link EntityDeathEvent}.
      */
     public NpcDeathEvent(INpc npc, EntityDeathEvent event) {
         super(npc);
@@ -54,7 +54,7 @@ public class NpcDeathEvent extends NpcEvent {
     }
 
     /**
-     * Get the parent {@code EntityDeathEvent}.
+     * Get the parent {@link EntityDeathEvent}.
      */
     public EntityDeathEvent getParentEvent() {
         return _event;

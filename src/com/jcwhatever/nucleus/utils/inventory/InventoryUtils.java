@@ -43,21 +43,21 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Provides static methods to help with inventories of {@code ItemStack}'s.
+ * Provides static methods to help with inventories of {@link org.bukkit.inventory.ItemStack}'s.
  */
 public final class InventoryUtils {
 
     private InventoryUtils() {}
 
     /**
-     * Add and merge item stacks into an {@code ItemStack} array.
+     * Add and merge item stacks into an {@link org.bukkit.inventory.ItemStack} array.
      *
      * <p>Merges matching item stacks if there is room.</p>
      *
      * @param array       The array to add items stacks to.
      * @param itemStacks  The item stacks to add.
      *
-     * @return  A list of {@code ItemStack}'s that could not be added.
+     * @return  A list of {@link org.bukkit.inventory.ItemStack}'s that could not be added.
      */
     public static List<ItemStack> add(ItemStack[] array, ItemStack... itemStacks) {
 
@@ -119,7 +119,7 @@ public final class InventoryUtils {
     }
 
     /**
-     * Add and merge item stacks into an {@code ItemStack} collection.
+     * Add and merge item stacks into an {@link org.bukkit.inventory.ItemStack} collection.
      *
      * <p>Merges matching item stacks if there is room.</p>
      *
@@ -200,7 +200,7 @@ public final class InventoryUtils {
      * can be stored in the specified inventory.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static int getMax(Inventory inventory, ItemStack itemStack) {
         return getMax(inventory.getContents(), itemStack, ItemStackMatcher.getTypeMetaDurability(), -1);
@@ -211,8 +211,8 @@ public final class InventoryUtils {
      * can be stored in the specified inventory.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static int getMax(Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
         return getMax(inventory.getContents(), itemStack, matcher, -1);
@@ -220,10 +220,10 @@ public final class InventoryUtils {
 
     /**
      * Gets the number of items of the specified stack that
-     * can be stored in the specified {@code ItemStack} array.
+     * can be stored in the specified {@link org.bukkit.inventory.ItemStack} array.
      *
      * @param contents   The inventory contents.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static int getMax(ItemStack[] contents, ItemStack itemStack) {
         return getMax(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), -1);
@@ -231,11 +231,11 @@ public final class InventoryUtils {
 
     /**
      * Gets the number of items of the specified stack that
-     * can be stored in the specified {@code ItemStack} array.
+     * can be stored in the specified {@link org.bukkit.inventory.ItemStack} array.
      *
      * @param contents   The inventory contents.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static int getMax(ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher) {
         return getMax(contents, itemStack, matcher, -1);
@@ -246,7 +246,7 @@ public final class InventoryUtils {
      * for the specified stack.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static boolean hasRoom(Inventory inventory, ItemStack itemStack) {
         return hasRoom(inventory, itemStack, itemStack.getAmount());
@@ -257,8 +257,8 @@ public final class InventoryUtils {
      * for the specified stack.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
         return hasRoom(inventory, itemStack, matcher, itemStack.getAmount());
@@ -270,7 +270,7 @@ public final class InventoryUtils {
      * the specified quantity.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      * @param qty        The amount of space needed.
      */
     public static boolean hasRoom(Inventory inventory, ItemStack itemStack, int qty) {
@@ -283,8 +283,8 @@ public final class InventoryUtils {
      * specified quantity.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
     public static boolean hasRoom(Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
@@ -292,12 +292,12 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified {@code ItemStack} array
+     * Determine if there is enough room in the specified {@link ItemStack} array
      * for items of the same type as the specified stack in the amount of the
      * specified quantity.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack) {
         return getMax(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), itemStack.getAmount())
@@ -305,12 +305,12 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified {@code ItemStack} array
+     * Determine if there is enough room in the specified {@link org.bukkit.inventory.ItemStack} array
      * for items of the same type as the specified stack in the amount of the
      * specified quantity.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      * @param qty        The quantity.
      */
     public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack, int qty) {
@@ -318,13 +318,13 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified {@code ItemStack} array
+     * Determine if there is enough room in the specified {@link ItemStack} array
      * for items of the same type as the specified stack in the amount of the
      * specified quantity.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
     public static boolean hasRoom(ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
@@ -336,7 +336,7 @@ public final class InventoryUtils {
      * in the specified inventory.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static int count (Inventory inventory, ItemStack itemStack) {
         return count(inventory, itemStack, ItemStackMatcher.getTypeMetaDurability());
@@ -347,8 +347,8 @@ public final class InventoryUtils {
      * in the specified inventory.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static int count (Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
         return count(inventory.getContents(), itemStack, matcher, -1);
@@ -356,10 +356,10 @@ public final class InventoryUtils {
 
     /**
      * Count the number of items of the same type as the specified item stack
-     * in the specified {@code ItemStack} array.
+     * in the specified {@link org.bukkit.inventory.ItemStack} array.
      *
      * @param contents   The inventory contents.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static int count (ItemStack[] contents, ItemStack itemStack) {
         return count(contents, itemStack, ItemStackMatcher.getTypeMetaDurability(), -1);
@@ -367,11 +367,11 @@ public final class InventoryUtils {
 
     /**
      * Count the number of items of the same type as the specified item stack
-     * in the specified {@code ItemStack} array.
+     * in the specified {@link org.bukkit.inventory.ItemStack} array.
      *
      * @param contents   The inventory contents.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static int count (ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher) {
         return count(contents, itemStack, matcher, -1);
@@ -382,7 +382,7 @@ public final class InventoryUtils {
      * that matches the specified item stack.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static boolean has(Inventory inventory, ItemStack itemStack) {
         return has (inventory, itemStack, ItemStackMatcher.getTypeMetaDurability());
@@ -393,8 +393,8 @@ public final class InventoryUtils {
      * that matches the specified item stack.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static boolean has(Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(inventory);
@@ -434,10 +434,10 @@ public final class InventoryUtils {
 
     /**
      * Determine if the specified inventory contains the specified quantity
-     * of items that match the specified {@code ItemStack}.
+     * of items that match the specified {@link org.bukkit.inventory.ItemStack}.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      * @param qty        The quantity.
      */
     public static boolean has (Inventory inventory, ItemStack itemStack, int qty) {
@@ -446,11 +446,11 @@ public final class InventoryUtils {
 
     /**
      * Determine if the specified inventory contains the specified quantity
-     * of items that match the specified {@code ItemStack}.
+     * of items that match the specified {@link org.bukkit.inventory.ItemStack}.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
     public static boolean has (Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
@@ -458,23 +458,23 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if the specified {@code ItemStack} array contains an item stack
-     * that matches the specified {@code ItemStack}.
+     * Determine if the specified {@link org.bukkit.inventory.ItemStack} array contains an item stack
+     * that matches the specified {@link org.bukkit.inventory.ItemStack}.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static boolean has(ItemStack[] contents, ItemStack itemStack) {
         return has(contents, itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**
-     * Determine if the specified {@code ItemStack} array contains an item stack
-     * that matches the specified {@code ItemStack}.
+     * Determine if the specified {@link org.bukkit.inventory.ItemStack} array contains an item stack
+     * that matches the specified {@link org.bukkit.inventory.ItemStack}.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static boolean has(ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(contents);
@@ -493,11 +493,11 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if the specified {@code ItemStack} array contains the specified quantity
-     * of items that match the specified {@code ItemStack}.
+     * Determine if the specified {@link org.bukkit.inventory.ItemStack} array contains the specified quantity
+     * of items that match the specified {@link org.bukkit.inventory.ItemStack}.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      * @param qty        The quantity.
      */
     public static boolean has (ItemStack[] contents, ItemStack itemStack, int qty) {
@@ -505,12 +505,12 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if the specified {@code ItemStack} array contains the specified quantity
-     * of items that match the specified {@code ItemStack}.
+     * Determine if the specified {@link org.bukkit.inventory.ItemStack} array contains the specified quantity
+     * of items that match the specified {@link org.bukkit.inventory.ItemStack}.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
     public static boolean has (ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher, int qty) {
@@ -525,46 +525,47 @@ public final class InventoryUtils {
     }
 
     /**
-     * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
-     * the specified inventory.
+     * Get all {@link org.bukkit.inventory.ItemStack}'s that match the specified
+     * {@link org.bukkit.inventory.ItemStack} from the specified inventory.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack) {
         return getAll(inventory, itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**
-     * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
-     * the specified inventory.
+     * Get all {@link org.bukkit.inventory.ItemStack}'s that match the specified
+     * {@link org.bukkit.inventory.ItemStack} from the specified inventory.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static ItemStack[] getAll (Inventory inventory, ItemStack itemStack, ItemStackMatcher matcher) {
         return getAll(inventory.getContents(), itemStack, matcher);
     }
 
     /**
-     * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
-     * the specified {@code ItemStack} array.
+     * Get all {@link org.bukkit.inventory.ItemStack}'s that match the specified
+     * {@link org.bukkit.inventory.ItemStack} from the specified {@link ItemStack} array.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static ItemStack[] getAll (ItemStack[] contents, ItemStack itemStack) {
         return getAll(contents, itemStack, ItemStackMatcher.getTypeMetaDurability());
     }
 
     /**
-     * Get all {@code ItemStack}'s that match the specified {@code ItemStack} from
-     * the specified {@code ItemStack} array.
+     * Get all {@link org.bukkit.inventory.ItemStack}'s that match the specified
+     * {@link org.bukkit.inventory.ItemStack} from the specified
+     * {@link org.bukkit.inventory.ItemStack} array.
      *
      * @param contents   The inventory contents to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      */
     public static ItemStack[] getAll (ItemStack[] contents, ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(contents);
@@ -587,12 +588,12 @@ public final class InventoryUtils {
 
 
     /**
-     * Remove specified items from the the {@code ItemStack} array.
+     * Remove specified items from the the {@link org.bukkit.inventory.ItemStack} array.
      *
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param contents    The array to remove items from.
-     * @param itemStacks  The {@code ItemStack}'s to remove.
+     * @param itemStacks  The {@link org.bukkit.inventory.ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
@@ -604,13 +605,13 @@ public final class InventoryUtils {
     }
 
     /**
-     * Remove specified items from the the {@code ItemStack} array.
+     * Remove specified items from the the {@link org.bukkit.inventory.ItemStack} array.
      *
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param contents    The array to remove items from.
      * @param matcher     The matcher to use.
-     * @param itemStacks  The {@code ItemStack}'s to remove.
+     * @param itemStacks  The {@link org.bukkit.inventory.ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
@@ -631,12 +632,12 @@ public final class InventoryUtils {
     }
 
     /**
-     * Remove specified items from the the {@code ItemStack} array.
+     * Remove specified items from the the {@link org.bukkit.inventory.ItemStack} array.
      *
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param contents    The array to remove items from.
-     * @param itemStacks  The {@code ItemStack}'s to remove.
+     * @param itemStacks  The {@link org.bukkit.inventory.ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
@@ -648,13 +649,13 @@ public final class InventoryUtils {
     }
 
     /**
-     * Remove specified items from the the {@code ItemStack} array.
+     * Remove specified items from the the {@link org.bukkit.inventory.ItemStack} array.
      *
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param contents    The array to remove items from.
      * @param matcher     The matcher to use.
-     * @param itemStacks  The {@code ItemStack}'s to remove.
+     * @param itemStacks  The {@link org.bukkit.inventory.ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
@@ -680,7 +681,7 @@ public final class InventoryUtils {
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param inventory   The inventory to remove items from.
-     * @param itemStacks  The {@code ItemStack}'s to remove.
+     * @param itemStacks  The {@link org.bukkit.inventory.ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
@@ -698,7 +699,7 @@ public final class InventoryUtils {
      *
      * @param inventory   The inventory to remove items from.
      * @param matcher     The matcher to use.
-     * @param itemStacks  The {@code ItemStack}'s to remove.
+     * @param itemStacks  The {@link org.bukkit.inventory.ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
@@ -724,7 +725,7 @@ public final class InventoryUtils {
      * <p>Removes the quantity of the stack, not all matching items.</p>
      *
      * @param inventory   The inventory to remove items from.
-     * @param itemStacks  The {@code ItemStack}'s to remove.
+     * @param itemStacks  The {@link org.bukkit.inventory.ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
@@ -742,7 +743,7 @@ public final class InventoryUtils {
      *
      * @param inventory   The inventory to remove items from.
      * @param matcher     The matcher to use.
-     * @param itemStacks  The {@code ItemStack}'s to remove.
+     * @param itemStacks  The {@link org.bukkit.inventory.ItemStack}'s to remove.
      *
      * @return  The removed items.
      */
@@ -763,11 +764,11 @@ public final class InventoryUtils {
     }
 
     /**
-     * Remove a specified quantity of {@code ItemStack}'s from the specified inventory
-     * that match the specified {@code ItemStack} array.
+     * Remove a specified quantity of {@link org.bukkit.inventory.ItemStack}'s from the specified inventory
+     * that match the specified {@link org.bukkit.inventory.ItemStack} array.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      * @param qty        The quantity.
      */
     public static List<ItemStack> removeAmount(Inventory inventory,
@@ -778,12 +779,12 @@ public final class InventoryUtils {
     }
 
     /**
-     * Remove a specified quantity of {@code ItemStack}'s from the specified inventory
-     * that match the specified {@code ItemStack} array.
+     * Remove a specified quantity of {@link org.bukkit.inventory.ItemStack}'s from the
+     * specified inventory that match the specified {@link org.bukkit.inventory.ItemStack} array.
      *
      * @param inventory  The inventory to check.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
     public static List<ItemStack> removeAmount(Inventory inventory,
@@ -867,11 +868,12 @@ public final class InventoryUtils {
     }
 
     /**
-     * Remove a specified quantity of {@code ItemStack}'s from the specified
-     * {@code ItemStack} array that match the specified {@code ItemStack}.
+     * Remove a specified quantity of {@link org.bukkit.inventory.ItemStack}'s from the
+     * specified {@link org.bukkit.inventory.ItemStack} array that match the specified
+     * {@link org.bukkit.inventory.ItemStack}.
      *
      * @param contents   The inventory contents.
-     * @param itemStack  The {@code ItemStack} to check.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
      * @param qty        The quantity.
      */
     public static List<ItemStack> removeAmount(ItemStack[] contents,
@@ -882,12 +884,13 @@ public final class InventoryUtils {
     }
 
     /**
-     * Remove a specified quantity of {@code ItemStack}'s from the specified
-     * {@code ItemStack} array that match the specified {@code ItemStack}.
+     * Remove a specified quantity of {@link org.bukkit.inventory.ItemStack}'s from the
+     * specified {@link org.bukkit.inventory.ItemStack} array that match the specified
+     * {@link org.bukkit.inventory.ItemStack}.
      *
      * @param contents   The inventory contents.
-     * @param itemStack  The {@code ItemStack} to check.
-     * @param matcher    The {@code ItemStackMatcher} to use.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
+     * @param matcher    The {@link ItemStackMatcher} to use.
      * @param qty        The quantity.
      */
     public static List<ItemStack> removeAmount(ItemStack[] contents,
@@ -943,7 +946,7 @@ public final class InventoryUtils {
     }
 
     /**
-     * Clear an inventory. If the inventory is a {@code PlayerInventory},
+     * Clear an inventory. If the inventory is a {@link org.bukkit.inventory.PlayerInventory},
      * the armor contents are also cleared.
      *
      * @param inventory  The inventory to clear.
@@ -965,7 +968,7 @@ public final class InventoryUtils {
     }
 
     /**
-     * Clear an inventory. If the inventory is a {@code PlayerInventory},
+     * Clear an inventory. If the inventory is a {@link org.bukkit.inventory.PlayerInventory},
      * the armor contents are also cleared.
      *
      * @param contents  The inventory contents.
@@ -980,7 +983,7 @@ public final class InventoryUtils {
 
     /**
      * Repair all repairable items in an inventory. If the inventory
-     * is a {@code PlayerInventory}, the armor contents are also
+     * is a {@link org.bukkit.inventory.PlayerInventory}, the armor contents are also
      * repaired.
      *
      * @param inventory  The inventory with items to repair.
@@ -1000,7 +1003,7 @@ public final class InventoryUtils {
     }
 
     /**
-     * Repair all repairable items in an {@code ItemStack} array.
+     * Repair all repairable items in an {@link org.bukkit.inventory.ItemStack} array.
      *
      * @param contents  The inventory contents.
      */
@@ -1017,7 +1020,7 @@ public final class InventoryUtils {
 
     /**
      * Determine if an inventory is empty. If the inventory is a
-     * {code PlayerInventory}, the armor contents are included
+     * {@link org.bukkit.inventory.PlayerInventory}, the armor contents are included
      * in the check.
      *
      * @param inventory  The inventory to check.
@@ -1036,7 +1039,7 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if an {code ItemStack} array is empty.
+     * Determine if an {@link org.bukkit.inventory.ItemStack} array is empty.
      *
      * @param contents  The inventory contents.
      */

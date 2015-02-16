@@ -35,7 +35,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.FallingBlock;
 
 /**
- * {@code Block} utilities.
+ * {@link org.bukkit.block.Block} related utilities.
  */
 public final class BlockUtils {
 

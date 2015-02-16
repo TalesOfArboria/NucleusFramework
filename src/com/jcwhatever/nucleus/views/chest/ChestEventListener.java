@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * Listens to events related to the {@code ChestView}.
+ * Listens to events related to the {@link ChestView}.
  */
 class ChestEventListener extends EventListener {
 
@@ -53,7 +53,7 @@ class ChestEventListener extends EventListener {
     }
 
     /**
-     * Register a {@code ChestView} instance so its events can be handled.
+     * Register a {@link ChestView} instance so its events can be handled.
      */
     static void register(ChestView view) {
 
@@ -66,7 +66,7 @@ class ChestEventListener extends EventListener {
     }
 
     /**
-     * Unregister a {@code ChestView} instance.
+     * Unregister a {@link ChestView} instance.
      */
     static void unregister(ChestView view) {
         PreCon.notNull(view);

@@ -124,11 +124,11 @@ public class ScriptApiNpc extends NucleusScriptApi {
         }
 
         /**
-         * Get an {@code Entity}'s {@code INpc} instance.
+         * Get an {@link Entity}'s {@link INpc} instance.
          *
          * @param entity  The entity.
          *
-         * @return  The {@code INpc} instance or null if the entity is not an NPC.
+         * @return  The {@link INpc} instance or null if the entity is not an NPC.
          */
         @Nullable
         public INpc getNpc(Entity entity) {
@@ -140,7 +140,7 @@ public class ScriptApiNpc extends NucleusScriptApi {
         }
 
         /**
-         * Create a new {@code NpcScript} goal.
+         * Create a new {@link NpcScriptGoal}.
          */
         public NpcScriptGoal createGoal() {
             return new NpcScriptGoal();

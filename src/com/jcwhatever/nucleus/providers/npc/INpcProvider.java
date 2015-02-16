@@ -52,7 +52,7 @@ public interface INpcProvider extends IProvider, INpcTraitTypeRegistry {
     INpcRegistry createRegistry(Plugin plugin, String name);
 
     /**
-     * Create a registry from and stored to a specified {@code IDataNode}.
+     * Create a registry from and stored to a specified {@link IDataNode}.
      *
      * @param plugin    The owning plugin.
      * @param name      The name of the registry unique to the owning plugin.
@@ -66,16 +66,16 @@ public interface INpcProvider extends IProvider, INpcTraitTypeRegistry {
     /**
      * Determine if an entity is an NPC.
      *
-     * @param entity  The {@code Entity} to check.
+     * @param entity  The {@link org.bukkit.entity.Entity} to check.
      */
     boolean isNpc(Entity entity);
 
     /**
      * Get an NPC from an entity. If the entity is an NPC from any registry
-     * created by the provider, the entities {@code INpc} instance will
+     * created by the provider, the entities {@link INpc} instance will
      * be returned.
      *
-     * @param entity  The possible NPC {@code Entity}.
+     * @param entity  The possible NPC {@link org.bukkit.entity.Entity}.
      *
      * @return  The NPC or null if the entity is not an NPC.
      */

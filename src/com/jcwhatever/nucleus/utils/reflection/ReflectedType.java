@@ -199,7 +199,7 @@ public class ReflectedType {
     /**
      * Create a new instance of the encapsulated class using
      * a pre-registered constructor alias and wrap in
-     * {@code ReflectedInstance}.
+     * {@link ReflectedInstance}.
      *
      * @param arguments  The constructor arguments.
      *
@@ -277,7 +277,7 @@ public class ReflectedType {
      *
      * @param size  The size of the array.
      *
-     * @return  {@code ReflectedArray} instance.
+     * @return  {@link ReflectedArray} instance.
      */
     public ReflectedArray newArray(int size) {
         PreCon.positiveNumber(size);
@@ -293,7 +293,7 @@ public class ReflectedType {
      *
      * @param sizes  The size of each array dimension.
      *
-     * @return  {@code ReflectedArray} instance.
+     * @return  {@link ReflectedArray} instance.
      */
     public ReflectedArray newArray(int... sizes) {
         PreCon.greaterThanZero(sizes.length, "At least one array dimension must be specified.");
@@ -304,7 +304,7 @@ public class ReflectedType {
     }
 
     /**
-     * Create a new {@code ReflectedInstance} to encapsulate
+     * Create a new {@link ReflectedInstance} to encapsulate
      * an object instance that is known to be of the same
      * type as the encapsulated class.
      *
@@ -317,7 +317,7 @@ public class ReflectedType {
     }
 
     /**
-     * Create a new {@code ReflectedArray} to encapsulate
+     * Create a new {@link ReflectedArray} to encapsulate
      * an array instance that is known to be of the same
      * type as the encapsulated class.
      *
@@ -332,7 +332,7 @@ public class ReflectedType {
     /**
      * Register a constructor signature under an alias name. Improves performance
      * by allowing the specific constructor to be retrieved by the alias name.
-     * Use {@code #construct} or {@code @constructReflect} to create new instances
+     * Use {@link #construct} or {@link #constructReflect} to create new instances
      * using the alias name.
      *
      * @param alias      The constructor alias.

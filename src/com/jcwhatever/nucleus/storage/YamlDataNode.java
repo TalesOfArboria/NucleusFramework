@@ -66,12 +66,12 @@ import javax.annotation.Nullable;
 public class YamlDataNode extends AbstractDataNode {
 
     /**
-     * Convert a {@code DataPath} instance to a {@code File} which
+     * Convert a {@link DataPath} instance to a {@link java.io.File} which
      * points to a disk based YAML file.
      *
      * @param plugin    The owning plugin. Used to determine the base
      *                  path of the file.
-     * @param dataPath  The {@code DataPath} to convert.
+     * @param dataPath  The {@link DataPath} to convert.
      */
     public static File dataPathToFile(Plugin plugin, DataPath dataPath) {
         String[] pathComp = dataPath.getPath();

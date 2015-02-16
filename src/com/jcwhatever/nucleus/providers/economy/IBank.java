@@ -101,7 +101,7 @@ public interface IBank extends INamed {
     /**
      * Get the underlying bank object if the
      * object is wrapped. Otherwise, the handle is
-     * the {@code IBank} instance.
+     * the {@link IBank} instance.
      */
     Object getHandle();
 }

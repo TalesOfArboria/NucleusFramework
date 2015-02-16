@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
  *
  * <p>
  *     Transcript format: <br />
- *     Paragraph1 text{p:seconds}Paragraph2 text
+ *     <pre>Paragraph1 text{p:seconds}Paragraph2 text</pre>
  * </p>
  * <p>
  *     The transcript is divided into paragraphs. Each paragraph is displayed to
@@ -60,7 +60,7 @@ import javax.annotation.Nullable;
  *     be added at the beginning to delay the first paragraph.
  * </p>
  * <p>
- *     Paragraph tag example: {p:10}
+ *     Paragraph tag example: <pre>{p:10}</pre>
  * </p>
  */
 public class Transcript {
@@ -125,7 +125,7 @@ public class Transcript {
 
     /**
      * Run the transcript and receive each paragraph at the appropriate time
-     * via an {@code IUpdateSubscriber}.
+     * via an {@link IUpdateSubscriber}.
      *
      * <p>After all paragraphs have been sent to the subscriber, one final update
      * is sent with a null value to indicate there are no more paragraphs.</p>

@@ -72,7 +72,7 @@ public interface IEvaluatedScript extends IDisposable {
     /**
      * Invoke a function in the script using the.
      *
-     * <p>Returns null if the method {@code canInvoke}
+     * <p>Returns null if the method {@link #canInvoke}
      * returns false.</p>
      *
      * @param functionName  The name of the function.

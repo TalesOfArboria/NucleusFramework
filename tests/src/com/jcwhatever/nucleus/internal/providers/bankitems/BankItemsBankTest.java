@@ -26,7 +26,7 @@ public class BankItemsBankTest extends IBankItemsBankTest {
     }
 
     /**
-     * Make sure {@code IDisposable} interface works correctly.
+     * Make sure {@link IDisposable} interface works correctly.
      */
     @Test
     public void testDispose() {

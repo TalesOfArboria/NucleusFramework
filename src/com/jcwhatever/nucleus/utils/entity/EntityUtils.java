@@ -348,13 +348,13 @@ public final class EntityUtils {
     }
 
     /**
-     * Returns a {@code TrackedEntity} object that automatically updates the encapsulated entity.
+     * Returns a {@link TrackedEntity} object that automatically updates the encapsulated entity.
      *
      * <p>This is used when an entity reference needs to be kept. Entity references are changed
      * whenever the entity is in a chunk that loads/unloads. The entity id can change and references
      * become outdated and no longer represent the intended entity.</p>
      *
-     * <p>The {@code TrackedEntity} object ensures you have the latest instance of an entity.</p>
+     * <p>The {@link TrackedEntity} object ensures you have the latest instance of an entity.</p>
      *
      * @param entity  The entity to track.
      */

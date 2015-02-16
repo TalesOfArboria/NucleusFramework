@@ -83,7 +83,8 @@ public interface IMessenger extends IPluginOwned {
     void setDefaultNoSpamDelay(int delay);
 
     /**
-     * Tell a message to a {@code CommandSender} and cache it for the default spam delay.
+     * Tell a message to a {@link  org.bukkit.command.CommandSender} and cache it for
+     * the default spam delay.
      *
      * <p>The message will not be displayed again until the delay time has elapsed.</p>
      *
@@ -100,7 +101,8 @@ public interface IMessenger extends IPluginOwned {
     boolean tellNoSpam(CommandSender sender, Integer ticks, LineWrapping lineWrapping, Object message, Object...params);
 
     /**
-     * Tell a message to a {@code CommandSender} and cache it for the default spam delay.
+     * Tell a message to a {@link  org.bukkit.command.CommandSender} and cache it for
+     * the default spam delay.
      *
      * <p>The message will not be displayed again until the delay time has elapsed.</p>
      *
@@ -116,7 +118,8 @@ public interface IMessenger extends IPluginOwned {
     boolean tellNoSpam(CommandSender sender, Integer ticks, Object message, Object...params);
 
     /**
-     * Tell a message to a {@code CommandSender} and cache it the default spam delay.
+     * Tell a message to a {@link  org.bukkit.command.CommandSender} and cache it for
+     * the default spam delay.
      *
      * <p>The message will not be displayed again until the delay time has elapsed.</p>
      *
@@ -131,7 +134,7 @@ public interface IMessenger extends IPluginOwned {
     boolean tellNoSpam(CommandSender sender, Object message, Object...params);
 
     /**
-     * Tell a message to the specified {@code CommandSender}.
+     * Tell a message to the specified {@link  org.bukkit.command.CommandSender}.
      *
      * @param sender   The sender to display the message to.
      * @param message  The message to display.
@@ -142,7 +145,7 @@ public interface IMessenger extends IPluginOwned {
     boolean tell(CommandSender sender, Object message, Object...params);
 
     /**
-     * Tell a message to the specified {@code CommandSender}.
+     * Tell a message to the specified {@link  org.bukkit.command.CommandSender}.
      *
      * @param sender        The sender to display the message to.
      * @param lineWrapping  Line wrapping option.

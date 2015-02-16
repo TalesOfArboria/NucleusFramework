@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
- * A hash {@code Set} with weak referenced values.
+ * A hash {@link java.util.Set} with weak referenced values.
  */
 public class WeakHashSet<E> extends SetWrapper<E> {
 

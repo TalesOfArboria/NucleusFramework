@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 
 /**
  * A collection with weak references to its elements.
- * Uses an {@code ArrayList} internally.
+ * Uses an {@link java.util.ArrayList} internally.
  *
  * <p>Automatically removes items that have been garbage collected.</p>
  *
@@ -210,7 +210,7 @@ public class WeakCollection<E> implements Collection<E> {
 
     /**
      * Determine if all items in the specified collection
-     * are present in the {@code WeakList}.
+     * are present in the {@link WeakList}.
      */
     @Override
     public boolean containsAll(Collection<?> collection) {
@@ -297,7 +297,7 @@ public class WeakCollection<E> implements Collection<E> {
     }
 
     /**
-     * Copy the collection elements into a {@code List}.
+     * Copy the collection elements into a {@link List}.
      */
     public List<E> toList() {
 

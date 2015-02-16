@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * An intermediate meta object used to store raw data that is parsed from
- * or will be serialized into an {@code ItemStack} String.
+ * or will be serialized into an {@link org.bukkit.inventory.ItemStack} String.
  */
 public class ItemMetaObject {
 

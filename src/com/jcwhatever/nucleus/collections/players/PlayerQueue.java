@@ -38,9 +38,9 @@ import java.util.Queue;
 import java.util.UUID;
 
 /**
- * A Queue of {@code Player} objects.
+ * A Queue of {@link Player} objects.
  *
- * <p>{@code Player} objects are automatically removed if the player logs out.</p>
+ * <p>{@link Player} objects are automatically removed if the player logs out.</p>
  *
  * <p>Thread safe.</p>
  *

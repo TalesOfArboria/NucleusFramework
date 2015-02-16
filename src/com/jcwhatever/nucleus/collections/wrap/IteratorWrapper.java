@@ -98,7 +98,7 @@ public abstract class IteratorWrapper<E> implements Iterator<E> {
      *
      * <p>Intended to be optionally overridden by implementation.</p>
      *
-     * @return  True to allow, false to throw an {@code UnsupportedOperationException}.
+     * @return  True to allow, false to throw an {@link UnsupportedOperationException}.
      */
     protected boolean onRemove(E element) { return true; }
 
@@ -114,7 +114,7 @@ public abstract class IteratorWrapper<E> implements Iterator<E> {
     protected void onRemoved(@SuppressWarnings("unused") E element) { }
 
     /**
-     * Invoked from a synchronized block to get the encapsulated {@code Iterator}.
+     * Invoked from a synchronized block to get the encapsulated {@link Iterator}.
      */
     protected abstract Iterator<E> iterator();
 

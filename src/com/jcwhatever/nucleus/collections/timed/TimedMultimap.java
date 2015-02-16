@@ -249,7 +249,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
 
     /**
      * Invoked once during the constructor to create the
-     * encapsulated {@code Multimap}.
+     * encapsulated {@link Multimap}.
      */
     protected abstract Multimap<K, V> createMultimap();
 

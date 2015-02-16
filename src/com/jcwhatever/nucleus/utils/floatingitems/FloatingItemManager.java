@@ -81,9 +81,9 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
      * Add a new floating item.
      *
      * @param name       The name of the item.
-     * @param itemStack  The {@code ItemStack}.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack}.
      *
-     * @return  The created {@code IFloatingItem} or null if the name already exists.
+     * @return  The created {@link IFloatingItem} or null if the name already exists.
      */
     @Nullable
     public IFloatingItem add(String name, ItemStack itemStack) {
@@ -94,10 +94,10 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
      * Add a new floating item.
      *
      * @param name       The name of the item.
-     * @param itemStack  The {@code ItemStack}.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack}.
      * @param location   Optional initial location to set.
      *
-     * @return  The created {@code IFloatingItem} or null if the name already exists.
+     * @return  The created {@link IFloatingItem} or null if the name already exists.
      */
     @Nullable
     public IFloatingItem add(String name, ItemStack itemStack, @Nullable Location location) {
@@ -123,7 +123,7 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
      * Called to create a new instance of a floating item.
      *
      * @param name      The name.
-     * @param item      The {@code ItemStack}.
+     * @param item      The {@link org.bukkit.inventory.ItemStack}.
      * @param location  Optional initial location.
      * @param dataNode  The items data node.
      */

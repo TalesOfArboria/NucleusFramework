@@ -78,23 +78,23 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     public abstract InventoryType getInventoryType();
 
     /**
-     * Get the views {@code ViewSession}.
+     * Get the views {@link ViewSession}.
      */
     public ViewSession getViewSession() {
         return _session;
     }
 
     /**
-     * Get the view instances Bukkit {@code InventoryView}.
+     * Get the view instances Bukkit {@link org.bukkit.inventory.InventoryView}.
      *
      * @return Null if the view has not been shown yet or
-     * does not have an {@code InventoryView}.
+     * does not have an {@link org.bukkit.inventory.InventoryView}.
      */
     @Nullable
     public abstract InventoryView getInventoryView();
 
     /**
-     * Get the view instances Bukkit {@code Inventory}.
+     * Get the view instances Bukkit {@link org.bukkit.inventory.Inventory}.
      *
      * @return Null if the inventory has been set yet or
      * the view does not have an inventory.
@@ -104,7 +104,7 @@ public abstract class View implements IPluginOwned, IPlayerReference {
 
     /**
      * Determine if the view is capable of generating an
-     * {@code InventoryView} instance.
+     * {@link org.bukkit.inventory.InventoryView} instance.
      *
      * <p>The result is not affected by whether or not the inventory
      * view has been shown yet.</p>
@@ -114,19 +114,19 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     /**
      * Get the most reason the view was closed.
      *
-     * <p>Used by {@code ViewEventListener} to determine how
-     * to handle the {@code InventoryCloseEvent}.</p>
+     * <p>Used by {@link ViewEventListener} to determine how
+     * to handle the {@link org.bukkit.event.inventory.InventoryCloseEvent}.</p>
      */
     public ViewCloseReason getCloseReason() {
         return _recentCloseReason;
     }
 
     /**
-     * Reset the close reason back to {@code ESCAPE}.
+     * Reset the close reason back to {@link ViewCloseReason#ESCAPE}.
      *
-     * <p>Used by {@code ViewEventListener} to reset
+     * <p>Used by {@link ViewEventListener} to reset
      * the views close reason after handling its
-     * {@code InventoryCloseEvent}.</p>
+     * {@link org.bukkit.event.inventory.InventoryCloseEvent}.</p>
      */
     public void resetCloseReason() {
         _recentCloseReason = ViewCloseReason.ESCAPE;
@@ -135,8 +135,8 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     /**
      * Open the view and show to the view session player.
      *
-     * <p>Should not be called. Use {@code ViewSession}'s
-     * {@code next} or {@code back} methods.</p>
+     * <p>Should not be called. Use {@link ViewSession}'s
+     * {@link ViewSession#next} or {@link ViewSession#previous} methods.</p>
      *
      * @param reason  The reason the view is being opened.
      *
@@ -158,8 +158,8 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     /**
      * Close the view.
      *
-     * <p>Should not be called. Use {@code ViewSession}'s
-     * {@code next} or {@code back} methods instead.</p>
+     * <p>Should not be called. Use {@link ViewSession}'s
+     * {@link ViewSession#next} or {@link ViewSession#previous} methods instead.</p>
      *
      * @param reason  The reason the view is being closed.
      *

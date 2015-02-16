@@ -73,7 +73,7 @@ public abstract class ConversionListWrapper<E, T>
     }
 
     /**
-     * Invoked from a synchronized block to get the encapsulated {@code List}.
+     * Invoked from a synchronized block to get the encapsulated {@link List}.
      */
     protected abstract List<T> list();
 

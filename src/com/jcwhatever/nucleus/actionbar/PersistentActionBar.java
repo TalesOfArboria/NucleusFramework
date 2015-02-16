@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 
 /**
  * An action bar that persists on the players screen until the
- * {@code #hide} method is invoked.
+ * {@link #hide} method is invoked.
  */
 public class PersistentActionBar extends ActionBar {
 
@@ -53,7 +53,7 @@ public class PersistentActionBar extends ActionBar {
      * Constructor.
      *
      * <p>The default time slice duration for when a player is shown more
-     * than 1 {@code PersistentActionBar} is 3 seconds.</p>
+     * than 1 {@link PersistentActionBar} is 3 seconds.</p>
      *
      * @param text  The action bar text.
      */
@@ -65,7 +65,7 @@ public class PersistentActionBar extends ActionBar {
      * Constructor.
      *
      * <p>The default time slice duration for when a player is shown more
-     * than 1 {@code PersistentActionBar} is 4 seconds.</p>
+     * than 1 {@link PersistentActionBar} is 4 seconds.</p>
      *
      * @param dynamicText  The action bar dynamic text.
      */
@@ -78,7 +78,7 @@ public class PersistentActionBar extends ActionBar {
      *
      * @param text         The action bar text.
      * @param minDuration  The default time slice duration used when a player is shown
-     *                     more than 1 {@code PersistentActionBar}.
+     *                     more than 1 {@link PersistentActionBar}.
      * @param timeScale    The default duration time scale.
      */
     public PersistentActionBar(String text, int minDuration, TimeScale timeScale) {
@@ -90,7 +90,7 @@ public class PersistentActionBar extends ActionBar {
      *
      * @param dynamicText  The action bar dynamic text.
      * @param minDuration  The default time slice duration used when a player is shown
-     *                     more than 1 {@code PersistentActionBar}.
+     *                     more than 1 {@link PersistentActionBar}.
      * @param timeScale    The default duration time scale.
      */
     public PersistentActionBar(IDynamicText dynamicText, int minDuration, TimeScale timeScale) {
@@ -101,23 +101,23 @@ public class PersistentActionBar extends ActionBar {
     }
 
     /**
-     * Get the {@code PersistentActionBar} default time slice
+     * Get the {@link PersistentActionBar} default time slice
      * duration used when a player is shown more than 1
-     * {@code PersistentActionBar}.
+     * {@link PersistentActionBar}.
      */
     public int getDuration() {
         return _defaultDuration;
     }
 
     /**
-     * Get the default duration's {@code TimeScale}.
+     * Get the default duration's {@link TimeScale}.
      */
     public TimeScale getTimeScale() {
         return _defaultTimeScale;
     }
 
     /**
-     * Show the {@code PersistentActionBar} to a player.
+     * Show the {@link PersistentActionBar} to a player.
      *
      * @param player  The player to show the bar to.
      */
@@ -127,11 +127,11 @@ public class PersistentActionBar extends ActionBar {
     }
 
     /**
-     * Show the {@code PersistentActionBar} to a player.
+     * Show the {@link PersistentActionBar} to a player.
      *
      * @param player       The player to show the action bar to.
      * @param minDuration  The min duration the player should see the bar if the player
-     *                     is viewing more than 1 {@code PersistentActionBar}.
+     *                     is viewing more than 1 {@link PersistentActionBar}.
      * @param timeScale    The time scale of the specified duration.
      */
     public void show(Player player, int minDuration, TimeScale timeScale) {
@@ -143,9 +143,9 @@ public class PersistentActionBar extends ActionBar {
     }
 
     /**
-     * Hide the {@code PersistentActionBar} from the player.
+     * Hide the {@link PersistentActionBar} from the player.
      *
-     * @param player  The player to remove the {@code PersistentActionBar} from.
+     * @param player  The player to remove the {@link PersistentActionBar} from.
      */
     public void hide(Player player) {
         PreCon.notNull(player);
@@ -154,7 +154,7 @@ public class PersistentActionBar extends ActionBar {
     }
 
     /**
-     * Hide the {@code PersistentActionBar} from all players.
+     * Hide the {@link PersistentActionBar} from all players.
      */
     public void hideAll() {
         BarSender.removeBar(this);

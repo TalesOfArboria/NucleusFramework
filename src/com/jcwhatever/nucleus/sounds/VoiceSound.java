@@ -47,7 +47,7 @@ public class VoiceSound extends ResourceSound {
     }
 
     /**
-     * Get the sounds {@code Transcript} object.
+     * Get the sounds {@link Transcript} object.
      */
     public final Transcript getTranscript() {
         return _transcript;

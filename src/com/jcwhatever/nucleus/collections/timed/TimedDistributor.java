@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  * changes to the next when its specified time span expires. The distributor is circular,
  * meaning once it reaches the end of the collection it will go back to the beginning.
  *
- * <p>The current element is passively changed. The {@code #current} method must be
+ * <p>The current element is passively changed. The {@link #current} method must be
  * invoked at interval for the distributor to be effective.</p>
  *
  * <p>Not thread safe.</p>

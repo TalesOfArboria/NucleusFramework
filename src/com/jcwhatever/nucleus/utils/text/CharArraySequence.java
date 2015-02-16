@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.utils.text;
 
 /**
- * A {@code CharSequence} thin wrapper for a {@code char[]}.
+ * A {@link CharSequence} thin wrapper for a char[].
  */
 public class CharArraySequence implements CharSequence {
 

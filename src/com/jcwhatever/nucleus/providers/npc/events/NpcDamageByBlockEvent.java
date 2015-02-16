@@ -41,7 +41,7 @@ public class NpcDamageByBlockEvent extends NpcDamageEvent {
      * Constructor.
      *
      * @param npc    The NPC the event is for.
-     * @param event  The parent {@code EntityDamageByBlockEvent}.
+     * @param event  The parent {@link EntityDamageByBlockEvent}.
      */
     public NpcDamageByBlockEvent(INpc npc, EntityDamageByBlockEvent event) {
         super(npc, event);
@@ -55,7 +55,7 @@ public class NpcDamageByBlockEvent extends NpcDamageEvent {
     }
 
     /**
-     * Get the parent {@code EntityDamageByBlockEvent}.
+     * Get the parent {@link EntityDamageByBlockEvent}.
      */
     @Override
     public EntityDamageByBlockEvent getParentEvent() {

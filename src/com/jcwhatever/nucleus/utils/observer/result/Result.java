@@ -67,10 +67,10 @@ public class Result<R> {
      * @param totalCompletion   The completion percent where 1.0D is
      *                          completed and 0.0D is not completed at all. A value of
      *                          1.0D indicates total completion and the
-     *                          {@code resultCompletion} value is final.
+     *                          resultCompletion value is final.
      * @param resultCompletion  Indicates the completion percent of the result
      *                          where 1.0D is successfully completed and 0.0D
-     *                          is complete failure when {@code totalCompletion}
+     *                          is complete failure when totalCompletion
      *                          is at 1.0D. A value of less than 0.0D indicates the
      *                          the task to perform the result was cancelled.
      * @param message     A result message.
@@ -85,10 +85,10 @@ public class Result<R> {
      * @param totalCompletion   The completion percent where 1.0D is
      *                          completed and 0.0D is not completed at all. A value of
      *                          1.0D indicates total completion and the
-     *                          {@code resultCompletion} value is final.
+     *                          resultCompletion value is final.
      * @param resultCompletion  Indicates the completion percent of the result
      *                          where 1.0D is successfully completed and 0.0D
-     *                          is complete failure when {@code totalCompletion}
+     *                          is complete failure when totalCompletion
      *                          is at 1.0D.
      * @param result      Optional result object.
      * @param message     A result message.
@@ -104,10 +104,10 @@ public class Result<R> {
      * @param totalCompletion   The completion percent where 1.0D is
      *                          completed and 0.0D is not completed at all. A value of
      *                          1.0D indicates total completion and the
-     *                          {@code resultCompletion} value is final.
+     *                          resultCompletion value is final.
      * @param resultCompletion  Indicates the completion percent of the result
      *                          where 1.0D is successfully completed and 0.0D
-     *                          is complete failure when {@code totalCompletion}
+     *                          is complete failure when totalCompletion
      *                          is at 1.0D.
      * @param exception   The exception that was thrown.
      */
@@ -121,10 +121,10 @@ public class Result<R> {
      * @param totalCompletion   The completion percent where 1.0D is
      *                          completed and 0.0D is not completed at all. A value of
      *                          1.0D indicates total completion and the
-     *                          {@code resultCompletion} value is final.
+     *                          resultCompletion value is final.
      * @param resultCompletion  Indicates the completion percent of the result
      *                          where 1.0D is successfully completed and 0.0D
-     *                          is complete failure when {@code totalCompletion}
+     *                          is complete failure when totalCompletion
      *                          is at 1.0D.
      * @param result      Optional result object.
      * @param message     A result message.

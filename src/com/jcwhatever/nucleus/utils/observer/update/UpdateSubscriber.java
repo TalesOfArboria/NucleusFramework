@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.utils.observer.Subscriber;
 
 /**
  * A "delegate" for a type that can subscribe to updates by
- * 1 or more {@code IUpdateProducer}'s.
+ * 1 or more {@link IUpdateAgent}'s.
  */
 public abstract class UpdateSubscriber<A> extends Subscriber
         implements IUpdateSubscriber<A> {

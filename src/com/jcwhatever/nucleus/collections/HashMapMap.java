@@ -33,7 +33,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * A {@code HashMap} with a map value.
+ * A {@link HashMap} with a map value.
  */
 public class HashMapMap<K1, K2, V> extends HashMap<K1, HashMap<K2, V>> {
 

@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
  * A {@link com.google.common.collect.Multimap} of {@link ISubscriberAgent} which
  * automatically removes agents when they are disposed.
  *
- * <p>Assumes the agent is properly implemented and calls the {@code #unregister} method
+ * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unregister} method
  * of all {@link com.jcwhatever.nucleus.utils.observer.ISubscriber} instances that are
  * observing it when it's disposed.</p>
  *
@@ -133,7 +133,7 @@ public abstract class AgentMultimap<K, V extends ISubscriberAgent>
     }
 
     /**
-     * Same as {@code #put} except returns own instance
+     * Same as {@link #put} except returns own instance
      * for chaining.
      *
      * @param key    The key.

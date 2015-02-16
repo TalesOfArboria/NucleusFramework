@@ -59,7 +59,7 @@ public class BankItem implements IBankItem {
      * Constructor.
      *
      * @param id             The unique ID of the bank item.
-     * @param matchingStack  An item stack that is represented by the {@code BankItem}.
+     * @param matchingStack  An item stack that is represented by the {@link BankItem}.
      * @param amount         The quantity available.
      * @param dataNode       The items data node.
      */
@@ -118,6 +118,13 @@ public class BankItem implements IBankItem {
         return (int)Math.ceil((double)_amount / getMaxStackSize());
     }
 
+    /**
+     * Deposit the specified amount of items into the account.
+     *
+     * @param amount  The amount to deposit. Must be a positive number.
+     *
+     * @return  True if successful.
+     */
     public boolean deposit(int amount) {
         PreCon.positiveNumber(amount);
 
@@ -149,6 +156,13 @@ public class BankItem implements IBankItem {
         }
     }
 
+    /**
+     * Withdraw/Remove the specified amount of items.
+     *
+     * @param amount  The number of items. Must be a positive number.
+     *
+     * @throws InsufficientItemsException if there are not enough items.
+     */
     public void withdraw(int amount) throws InsufficientItemsException {
         PreCon.positiveNumber(amount);
 
@@ -305,14 +319,30 @@ public class BankItem implements IBankItem {
         };
     }
 
+    /**
+     * Get the index of the first item in the specified page.
+     *
+     * @param page  The page number..
+     */
     protected int getStartIndex(int page) {
         return (page - _start.getStartIndex()) * _itemsPerPage;
     }
 
+    /**
+     * Get the index of the last item in the specified page.
+     *
+     * @param page  The page number.
+     */
     protected int getEndIndex(int page) {
         return Math.min(getTotalStacks(), getStartIndex(page) + _itemsPerPage);
     }
 
+    /**
+     * Get the size of the last stack. Use when determining how many
+     * items are needed for the final stack when dividing the items
+     * into stacks with each being filled to the maximum stack size
+     * capacity.
+     */
     protected int getLastStackSize() {
         if (_amount == 0)
             return 0;

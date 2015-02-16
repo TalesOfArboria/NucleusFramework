@@ -30,21 +30,21 @@ import org.bukkit.entity.Player;
 
 /**
  * An interface that must be implemented in order to use a collection with a
- * {@code PlayerCollectionTracker}, which aids in automatically removing player entries.
+ * {@link PlayerCollectionTracker}, which aids in automatically removing player entries.
  * <p>
  *     The player collection implementation is responsible for instantiating a new
- *     {@code PlayerCollectionTracker} for itself to use. It also responsible for
- *     calling {@code PlayerCollectionTracker#notifyPlayerRemoved} method when a player
- *     is removed from the collection and {@code PlayerCollectionTracker#notifyPlayerAdded}
+ *     {@link PlayerCollectionTracker} for itself to use. It also responsible for
+ *     calling {@link PlayerCollectionTracker#notifyPlayerRemoved} method when a player
+ *     is removed from the collection and {@link PlayerCollectionTracker#notifyPlayerAdded}
  *     when a player is added to the collection.
  * </p>
  * <p>
- *     The method {@code #removePlayer} should not call {@code PlayerCollectionTracker#notifyPlayerRemoved}
- *     or {@code PlayerCollectionTracker#notifyPlayerAdded} because it's used to remove the player when
+ *     The method {@link #removePlayer} should not call {@link PlayerCollectionTracker#notifyPlayerRemoved}
+ *     or {@link PlayerCollectionTracker#notifyPlayerAdded} because it's used to remove the player when
  *     the player logs out.
  * </p>
  * <p>
- *     The collection should by synchronized since the {@code #removePlayer} method
+ *     The collection should by synchronized since the {@link #removePlayer} method
  *     may be called from an asynchronous thread.
  * </p>
  */

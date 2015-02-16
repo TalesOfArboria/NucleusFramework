@@ -40,7 +40,7 @@ import java.util.UUID;
  *
  * <p>Helps reduce plugin scoreboard conflicts by acting as the central
  * scoreboard manager. Each plugin can simply apply their scoreboards via
- * {@code ManagedScoreboard} and {@code ScoreboardTracker} ensures that when
+ * {@link ManagedScoreboard} and {@link ScoreboardTracker} ensures that when
  * a plugin is done showing a scoreboard to a player, the previous scoreboard is
  * re-shown.</p>
  */

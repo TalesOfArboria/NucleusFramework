@@ -100,7 +100,7 @@ public class ReflectedArray extends Instance {
     /**
      * Get a value from the array at the specified
      * index position and encapsulate the value in
-     * a {@code ReflectedInstance}.
+     * a {@link ReflectedInstance}.
      *
      * @param index  The index position.
      */
@@ -113,7 +113,7 @@ public class ReflectedArray extends Instance {
     /**
      * Get a value from the array at the specified
      * index position and encapsulate the value in
-     * a {@code ReflectedInstance}.
+     * a {@link ReflectedInstance}.
      *
      * @param indexes  The index position.
      */

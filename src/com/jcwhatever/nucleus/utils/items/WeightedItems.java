@@ -36,9 +36,9 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * A list of weighted {@code ItemStacks}. The weight of an item stack
+ * A list of weighted {@link org.bukkit.inventory.ItemStack}. The weight of an item stack
  * is used to affect the outcome of randomly choosing from the list
- * using the {@code getRandom} method.
+ * using the {@link #getRandom} method.
  */
 public class WeightedItems extends WeightedArrayList<ItemStack> {
 
@@ -212,7 +212,7 @@ public class WeightedItems extends WeightedArrayList<ItemStack> {
     }
 
     /**
-     * Add an {@code ItemStack} using the default weight.
+     * Add an {@link org.bukkit.inventory.ItemStack} using the default weight.
      *
      * @param item  The item to add.
      */
@@ -224,7 +224,7 @@ public class WeightedItems extends WeightedArrayList<ItemStack> {
     }
 
     /**
-     * Add a collection of {@code ItemStack}'s using the
+     * Add a collection of {@link org.bukkit.inventory.ItemStack}'s using the
      * default weights.
      *
      * @param items  The items to add.
@@ -240,7 +240,7 @@ public class WeightedItems extends WeightedArrayList<ItemStack> {
     }
 
     /**
-     * Add an array of {@code ItemStacks} using the default
+     * Add an array of {@link org.bukkit.inventory.ItemStack} using the default
      * weights.
      *
      * @param items  The items to add.
@@ -255,7 +255,7 @@ public class WeightedItems extends WeightedArrayList<ItemStack> {
 
     /**
      * Get the default weight value for the specified
-     * {@code ItemStack}.
+     * {@link org.bukkit.inventory.ItemStack}.
      *
      * @param item  The item to check.
      */

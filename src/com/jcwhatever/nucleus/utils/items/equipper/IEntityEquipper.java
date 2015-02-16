@@ -30,13 +30,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 /**
- * Abstract living entity equipper. Used to give an {@code ItemStack}
+ * Abstract living entity equipper. Used to give an {@link org.bukkit.inventory.ItemStack}
  * as equipment to a living entity.
  */
 public interface IEntityEquipper {
 
     /**
-     * Equip an entity with the specified {@code ItemStack}.
+     * Equip an entity with the specified {@link org.bukkit.inventory.ItemStack}.
      *
      * @param entity  The entity to equip.
      * @param item    The item to equip the npc with.
@@ -48,7 +48,7 @@ public interface IEntityEquipper {
      *
      * @param entity  The entity whose equipment is to be cleared.
      *
-     * @return  {@code ItemStack} array containing the cleared equipment.
+     * @return  {@link org.bukkit.inventory.ItemStack} array containing the cleared equipment.
      */
     List<ItemStack> clear(Entity entity);
 }

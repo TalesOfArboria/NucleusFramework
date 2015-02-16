@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.plugin.Plugin;
 
 /**
- * An abstract implementation of {@code IEventListener}.
+ * An abstract implementation of {@link IEventListener}.
  */
 public abstract class EventListener implements IEventListener {
 

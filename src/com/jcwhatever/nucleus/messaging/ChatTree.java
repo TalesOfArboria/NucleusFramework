@@ -79,9 +79,6 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iter
         }
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
@@ -110,7 +107,7 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iter
     }
 
     /**
-     * Add a {@code HierarchyNode}.
+     * Add a {@link HierarchyNode}.
      *
      * @param rootNode  The root node to add.
      */
@@ -132,9 +129,9 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iter
     }
 
     /**
-     * Show the entire node tree to a {@code CommandSender}.
+     * Show the entire node tree to a {@link  org.bukkit.command.CommandSender}.
      *
-     * @param sender  The {@code CommandSender}.
+     * @param sender  The {@link  org.bukkit.command.CommandSender}.
      */
     public void show(CommandSender sender) {
         PreCon.notNull(sender);
@@ -148,9 +145,9 @@ public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iter
     }
 
     /**
-     * Show the entire node tree to a {@code CommandSender}.
+     * Show the entire node tree to a {@link  org.bukkit.command.CommandSender}.
      *
-     * @param sender      The {@code CommandSender}.
+     * @param sender      The {@link  org.bukkit.command.CommandSender}.
      * @param lineWriter  The line writer used to convert node objects into a text line.
      */
     public void show(CommandSender sender, NodeLineWriter<T> lineWriter) {

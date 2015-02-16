@@ -41,7 +41,8 @@ import javax.annotation.Nullable;
 /**
  * Called when a playlist track changes
  */
-public class PlayListTrackChangeEvent extends Event implements IPlayerReference, Cancellable, ICancellable {
+public class PlayListTrackChangeEvent extends Event
+        implements IPlayerReference, Cancellable, ICancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -55,8 +56,8 @@ public class PlayListTrackChangeEvent extends Event implements IPlayerReference,
     /**
      * Constructor.
      *
-     * @param playList    The {@code PlayList} the event is for.
-     * @param soundQueue  The {@code PlayerSoundQueue} the event is for.
+     * @param playList    The {@link PlayList} the event is for.
+     * @param soundQueue  The {@link PlayerSoundQueue} the event is for.
      * @param prev        The previous song that was playing, if any.
      * @param next        The next song to be played.
      */
@@ -78,14 +79,14 @@ public class PlayListTrackChangeEvent extends Event implements IPlayerReference,
     }
 
     /**
-     * Get the {@code PlayList} the event is for.
+     * Get the {@link PlayList} the event is for.
      */
     public PlayList getPlayList() {
         return _playList;
     }
 
     /**
-     * Get the {@code PlayerSoundQueue} the event is for.
+     * Get the {@link PlayerSoundQueue} the event is for.
      */
     public PlayerSoundQueue getSoundQueue() {
         return _soundQueue;

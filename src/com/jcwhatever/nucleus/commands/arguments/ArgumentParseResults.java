@@ -36,7 +36,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * {@code ArgumentParser} results.
+ * {@link ArgumentParser} results.
  */
 public class ArgumentParseResults {
 

@@ -25,15 +25,16 @@
 package com.jcwhatever.nucleus.utils.observer.event;
 
 import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
+
 import javax.annotation.Nullable;
 
 /**
- * An agent between producers of events and {@code IEventSubscriber}'s
+ * An agent between producers of events and {@link IEventSubscriber}'s
  * registered with the agent.
  *
- * <p>The agent accepts {@code ISubscriber} instances for registration as
- * all {@code ISubscriberAgent} implementations must. However the
- * {@code IEventSubscriber} interface should be used by subscribers that
+ * <p>The agent accepts {@link com.jcwhatever.nucleus.utils.observer.ISubscriber}
+ * instances for registration as all {@link ISubscriberAgent} implementations must.
+ * However the {@link IEventSubscriber} interface should be used by subscribers that
  * wish to receive events from the agent. The implementation decides how
  * the non-event subscribers are used but must at the least hold a reference
  * to the subscriber until it un-registers.</p>

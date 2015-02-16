@@ -777,10 +777,10 @@ public enum MaterialExt {
     }
 
     /**
-     * Get a {@code MaterialExt} enum constant that represents
-     * the specified Bukkit {@code Material} enum constant.
+     * Get a {@link MaterialExt} enum constant that represents
+     * the specified Bukkit {@link Material} enum constant.
      *
-     * @param material  The Bukkit {@code Material}
+     * @param material  The Bukkit {@link Material}
      */
     public static MaterialExt from(Material material) {
         buildMaterialMap();
@@ -790,7 +790,7 @@ public enum MaterialExt {
     }
 
     /**
-     * Get a list of {@code MaterialExt} that have the specified properties.
+     * Get a list of {@link MaterialExt} that have the specified properties.
      *
      * @param properties  The properties to check for.
      */

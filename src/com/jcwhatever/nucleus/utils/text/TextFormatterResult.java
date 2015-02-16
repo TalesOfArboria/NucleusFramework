@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.utils.text;
 
 /**
- * Used by {@code TextFormatter} to return a result.
+ * Used by {@link TextFormatter} to return a result.
  */
 public class TextFormatterResult implements CharSequence {
 

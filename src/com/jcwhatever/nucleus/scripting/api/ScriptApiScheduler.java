@@ -97,14 +97,15 @@ public class ScriptApiScheduler extends NucleusScriptApi {
         /**
          * Run a task after a specified number of ticks have elapsed.
          *
-         * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
-         * add the ability to cancel the task from within the task handler and to run
-         * optional code if the task is cancelled.</p>
+         * <p>A {@link TaskHandler} instance can be used in place of a
+         * {@link java.lang.Runnable} to add the ability to cancel the task
+         * from within the task handler and to run optional code if the task is
+         * cancelled.</p>
          *
          * @param delay     The number of ticks to wait before running the task.
-         * @param runnable  The {@code Runnable} to run later.
+         * @param runnable  The {@link java.lang.Runnable} to run later.
          *
-         * @return  A {@code ScheduledTask} instance to keep track of the task.
+         * @return  A {@link ScheduledTask} instance to keep track of the task.
          */
         public ScheduledTask runTaskLater(int delay, final Runnable runnable) {
             PreCon.notNull(runnable);
@@ -138,15 +139,15 @@ public class ScriptApiScheduler extends NucleusScriptApi {
          * Run a task on a repeating schedule after a specified number of ticks
          * have elapsed and repeating after the specified repeat ticks have elapsed.
          *
-         * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
-         * add the ability to cancel the task from within the task handler and to run
-         * optional code if the task is cancelled.</p>
+         * <p>A {@link TaskHandler} instance can be used in place of a
+         * {@link java.lang.Runnable} to add the ability to cancel the task from
+         * within the task handler and to run optional code if the task is cancelled.</p>
          *
          * @param initialDelay  The number of ticks to wait before first running the task.
          * @param repeatDelay   The number of ticks to wait between each repeat of the task.
-         * @param runnable      The {@code Runnable} to run later.
+         * @param runnable      The {@link java.lang.Runnable} to run later.
          *
-         * @return  A {@code ScheduledTask} instance to keep track of the task.
+         * @return  A {@link ScheduledTask} instance to keep track of the task.
          */
         public ScheduledTask runTaskRepeat(int initialDelay, int repeatDelay, final Runnable runnable) {
             PreCon.notNull(runnable);

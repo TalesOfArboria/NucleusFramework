@@ -267,7 +267,7 @@ public class EventManager implements IPluginOwned, IDisposable {
 
     /**
      * Calls a Bukkit event using Bukkits event manager, then calls the
-     * event on the {@code EventManager} instance.
+     * event on the {@link EventManager} instance.
      *
      * @param caller  Optional source of the event.
      * @param event   The event.
@@ -333,7 +333,7 @@ public class EventManager implements IPluginOwned, IDisposable {
     }
 
     /**
-     * Attach an {@code IUpdateSubscriber} that receives all events called.
+     * Attach an {@link IUpdateSubscriber} that receives all events called.
      *
      * @param plugin      The subscribers owning plugin.
      * @param subscriber  The subscriber.

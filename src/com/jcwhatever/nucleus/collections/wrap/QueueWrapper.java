@@ -66,7 +66,7 @@ public abstract class QueueWrapper<E> extends CollectionWrapper<E> implements Qu
 
     /**
      * Invoked from a synchronized block to get the
-     * encapsulated {@code Queue}.
+     * encapsulated {@link Queue}.
      */
     protected abstract Queue<E> queue();
 

@@ -102,7 +102,7 @@ public abstract class CollectionWrapper<E> implements Collection<E> {
 
     /**
      * Invoked before an element is removed except when
-     * {@code #clear} is invoked.
+     * {@link #clear} is invoked.
      *
      * <p>Not guaranteed to be called from a synchronized block.</p>
      *
@@ -116,7 +116,7 @@ public abstract class CollectionWrapper<E> implements Collection<E> {
 
     /**
      * Invoked after an element is removed except when
-     * {@code #clear} is invoked.
+     * {@link #clear} is invoked.
      *
      * <p>Not guaranteed to be called from a synchronized block.</p>
      *
@@ -136,7 +136,7 @@ public abstract class CollectionWrapper<E> implements Collection<E> {
     protected void onPreClear() {}
 
     /**
-     * Invoked after {@code #clear} is invoked.
+     * Invoked after {@link #clear} is invoked.
      *
      * <p>Not guaranteed to be called from a synchronized block.</p>
      *

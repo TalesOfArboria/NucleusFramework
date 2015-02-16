@@ -375,7 +375,7 @@ public final class ItemStackUtils {
      * Add an enchantment to an item.
      *
      * @param stack    The item stack.
-     * @param enchant  The {@code EnchantmentWrapper} containing enchantment info.
+     * @param enchant  The {@link EnchantmentWrapper} containing enchantment info.
      */
     public static void addEnchantment(ItemStack stack, EnchantmentWrapper enchant) {
         PreCon.notNull(stack);
@@ -434,7 +434,7 @@ public final class ItemStackUtils {
 
     /**
      * Removes an enchantment from an item and returns an
-     * {@code EnchantmentWrapper} containing the enchantment
+     * {@link EnchantmentWrapper} containing the enchantment
      * and enchantment level before it was removed.
      *
      * @param stack            The item stack.
@@ -456,7 +456,7 @@ public final class ItemStackUtils {
 
     /**
      * Removes an enchantment from an item and returns an
-     * {@code EnchantmentWrapper} containing the enchantment
+     * {@link EnchantmentWrapper} containing the enchantment
      * and enchantment level before it was removed.
      *
      * @param stack        The item stack.
@@ -478,7 +478,7 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Parses item stack string to {@code ItemStack} array.
+     * Parses item stack string to {@link ItemStack} array.
      *
      * @param itemString  The item stack string.
      *

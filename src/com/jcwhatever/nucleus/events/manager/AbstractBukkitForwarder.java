@@ -55,7 +55,7 @@ import org.bukkit.plugin.Plugin;
  * <p>The forwarder can be avoided by simply using the global event manager
  * instead of a child instance or using Bukkit events directly.</p>
  *
- * <p>If you need to detach the forwarder, call the {@code dispose} method. The forwarder
+ * <p>If you need to detach the forwarder, call the {@link #dispose} method. The forwarder
  * will not be usable afterwards.</p>
  */
 public abstract class AbstractBukkitForwarder implements IPluginOwned, IDisposable {

@@ -34,8 +34,7 @@ import org.bukkit.Material;
 import javax.annotation.Nullable;
 
 /**
- * {@code AStarPathNode} implementation of the
- * {@code PathNode} interface.
+ * {@link AStarPathNode} implementation of the {@link IPathNode} interface.
  */
 public class AStarPathNode implements IPathNode {
 

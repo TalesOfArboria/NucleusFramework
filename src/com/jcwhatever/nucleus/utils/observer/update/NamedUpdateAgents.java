@@ -35,7 +35,7 @@ import java.util.List;
  * Used for types that need to keep multiple update agents for multiple
  * update contexts.
  *
- * <p>The {@code UpdateAgentTracker} uses a lazy initialization approach to
+ * <p>{@link NamedUpdateAgents} uses a lazy initialization approach to
  * prevent using resources if they are not needed. Calling the {@link #getAgent}
  * method always returns a result. If the agent is not present, a new one is created.</p>
  *
@@ -163,7 +163,7 @@ public class NamedUpdateAgents {
     /**
      * Dispose all agents.
      *
-     * <p>The {@code NamedUpdateAgents} instance can still be used.</p>
+     * <p>The {@link NamedUpdateAgents} instance can still be used.</p>
      */
     public void disposeAgents() {
         if (_agents == null)

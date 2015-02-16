@@ -78,7 +78,7 @@ public class TextFormat {
     }
 
     /**
-     * Determine if the {@code TextFormat} has a
+     * Determine if the {@link TextFormat} has a
      * format code.
      *
      * <p>This exists in case text formats are added by Minecraft
@@ -89,7 +89,7 @@ public class TextFormat {
     }
 
     /**
-     * Determine if the {@code TextFormat} has a single character format
+     * Determine if the {@link TextFormat} has a single character format
      * code.
      *
      * <p>This exists in case text formats are added by Minecraft
@@ -100,7 +100,7 @@ public class TextFormat {
     }
 
     /**
-     * Get the {@code TextFormat} format code. If there is no
+     * Get the {@link TextFormat} format code. If there is no
      * format code, an empty string is returned.
      */
     public String getFormatCode() {
@@ -108,7 +108,7 @@ public class TextFormat {
     }
 
     /**
-     * Get the {@code TextFormat} format character. If there is no
+     * Get the {@link TextFormat} format character. If there is no
      * format character, 0 is returned.
      */
     public char getFormatChar() {
@@ -117,7 +117,7 @@ public class TextFormat {
 
     /**
      * Get the formats tag name which is used by
-     * {@code TextFormatter} to identify formats inserted into
+     * {@link TextFormatter} to identify formats inserted into
      * a string to be formatted.
      */
     public String getTagName() {
@@ -145,7 +145,7 @@ public class TextFormat {
     }
 
     /**
-     * Get a {@code TextFormat} from a case tag name.
+     * Get a {@link TextFormat} from a case tag name.
      *
      * @param name  The tag name.
      *
@@ -171,7 +171,7 @@ public class TextFormat {
     }
 
     /**
-     * Remove format codes from a {@code CharSequence}.
+     * Remove format codes from a {@link java.lang.CharSequence}.
      *
      * @param charSequence  The text to remove format codes from.
      */
@@ -213,14 +213,14 @@ public class TextFormat {
     }
 
     /**
-     * Removes formats from the supplied {@code char[]} and
-     * stores them in a {@code TextFormatMap} keyed to the index location
+     * Removes formats from the supplied {@link char[]} and
+     * stores them in a {@link TextFormatMap} keyed to the index location
      * of the format in the resulting format-less string.
      *
      * <p>The resulting format-less string can be retrieved from the
-     * {@code TextFormatMap} by invoking the {@code #getText} method.</p>
+     * {@link TextFormatMap} by invoking the {@link TextFormatMap#getText} method.</p>
      *
-     * @param charArray  The {@code CharSequence}.
+     * @param charArray  The {@link java.lang.CharSequence}.
      */
     public static TextFormatMap separate(char[] charArray) {
         PreCon.notNull(charArray);
@@ -229,14 +229,14 @@ public class TextFormat {
     }
 
     /**
-     * Removes formats from the supplied {@code CharSequence} and
-     * stores them in a {@code TextFormatMap} keyed to the index location
+     * Removes formats from the supplied {@link java.lang.CharSequence} and
+     * stores them in a {@link TextFormatMap} keyed to the index location
      * of the format in the resulting format-less string.
      *
      * <p>The resulting format-less string can be retrieved from the
-     * {@code TextFormatMap} by invoking the {@code #getText} method.</p>
+     * {@link TextFormatMap} by invoking the {@link TextFormatMap#getText} method.</p>
      *
-     * @param charSequence  The {@code CharSequence}.
+     * @param charSequence  The {@link CharSequence}.
      */
     public static TextFormatMap separate(CharSequence charSequence) {
         PreCon.notNull(charSequence);
@@ -311,12 +311,12 @@ public class TextFormat {
     }
 
     /**
-     * Get the {@code TextFormat} that represents the
+     * Get the {@link TextFormat} that represents the
      * format code character.
      *
      * @param ch  The format character to check.
      *
-     * @return The {@code TextFormat} or null if the character is not
+     * @return The {@link TextFormat} or null if the character is not
      * a recognized format code character.
      */
     @Nullable
@@ -340,7 +340,7 @@ public class TextFormat {
 
     /**
      * Get the formats in effect at the
-     * beginning of a {@code CharSequence}.
+     * beginning of a {@link java.lang.CharSequence}.
      *
      * @param charSequence  The text to get the end format from.
      *
@@ -355,9 +355,9 @@ public class TextFormat {
     }
 
     /**
-     * Get the formats in effect at the end of a {@code char[]}.
+     * Get the formats in effect at the end of a {@link char[]}.
      *
-     * @param charArray  The {@code char[]} to get the end format from.
+     * @param charArray  The {@link char[]} to get the end format from.
      *
      * @return  The format codes.
      */
@@ -368,9 +368,9 @@ public class TextFormat {
     }
 
     /**
-     * Get the formats in effect at the end of a {@code CharSequence}.
+     * Get the formats in effect at the end of a {@link CharSequence}.
      *
-     * @param charSequence  The {@code CharSequence} to get the end format from.
+     * @param charSequence  The {@link CharSequence} to get the end format from.
      *
      * @return  The format codes.
      */
@@ -381,7 +381,7 @@ public class TextFormat {
     }
 
     /**
-     * Get the formats in effect at the end of a {@code CharSequence}.
+     * Get the formats in effect at the end of a {@link CharSequence}.
      */
     static TextFormats getEndFormat(CharSequence charSequence, int len) {
         PreCon.notNull(charSequence);
@@ -418,7 +418,7 @@ public class TextFormat {
     }
 
     /**
-     * Get an iterator for the {@code TextFormat}'s with a format code.
+     * Get an iterator for the {@link TextFormat}'s with a format code.
      */
     public static Iterator<TextFormat> formatIterator() {
         return new IteratorWrapper<TextFormat>() {
@@ -462,9 +462,9 @@ public class TextFormat {
     }
 
     /**
-     * Holds a collection of {@code TextFormat}'s.
+     * Holds a collection of {@link TextFormat}'s.
      *
-     * <p>Calling the {@code #toString} method returns the
+     * <p>Calling the {@link #toString} method returns the
      * format codes as a string.</p>
      */
     public static class TextFormats {
@@ -484,7 +484,7 @@ public class TextFormat {
         /**
          * Constructor.
          *
-         * @param formats  The {@code TextFormat}'s.
+         * @param formats  The {@link TextFormat}'s.
          */
         public TextFormats(TextFormat... formats) {
             PreCon.notNull(formats);
@@ -495,7 +495,7 @@ public class TextFormat {
         /**
          * Constructor.
          *
-         * @param formats  The collection of {@code TextFormat}'s.
+         * @param formats  The collection of {@link TextFormat}'s.
          */
         public TextFormats(Collection<TextFormat> formats) {
             PreCon.notNull(formats);

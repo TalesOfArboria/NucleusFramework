@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation used to mark a method in a class that implements
- * {@code NucleusEventListener} as a Nucleus event handler.
+ * {@link IEventListener} as a Nucleus event handler.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

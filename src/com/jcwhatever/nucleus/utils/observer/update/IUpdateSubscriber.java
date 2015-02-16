@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 
 /**
  * An update subscriber that receives updates from an
- * {@code IUpdateAgent}.
+ * {@link IUpdateAgent}.
  */
 public interface IUpdateSubscriber<A> extends ISubscriber {
 

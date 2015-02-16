@@ -45,9 +45,9 @@ import java.util.Set;
 public interface ISubscriber extends IDisposable {
 
     /**
-     * Register an agent. Functionally the same as {@code #addAgent}
-     * except the agents {@code #addSubscriber} method invoked with
-     * the current {@code ISubscriber} as its argument.
+     * Register an agent. Functionally the same as {@link #addAgent}
+     * except the agents {@link ISubscriberAgent#addSubscriber} method invoked with
+     * the {@link ISubscriber} as its argument.
      *
      * @param agent  The agent to register.
      *
@@ -56,9 +56,9 @@ public interface ISubscriber extends IDisposable {
     boolean register(ISubscriberAgent agent);
 
     /**
-     * Unregister an agent. Functionally the same as {@code #removeAgent}
-     * except the agents {@code #removeSubscriber} method is invoked with
-     * the current {@code ISubscriber} as its argument.
+     * Unregister an agent. Functionally the same as {@link #removeAgent}
+     * except the agents {@link ISubscriberAgent#removeSubscriber} method is invoked
+     * with the {@link ISubscriber} as its argument.
      *
      * @param agent  The agent to unregister.
      *
@@ -67,10 +67,10 @@ public interface ISubscriber extends IDisposable {
     boolean unregister(ISubscriberAgent agent);
 
     /**
-     * Add an agent. Functionally the same as {@code #register}
-     * except the agents {@code #addSubscriber} method isn't
-     * invoked. Should only be invoked by an agent that already
-     * has a reference to the subscriber.
+     * Add an agent. Functionally the same as {@link #register}
+     * except the agents {@link ISubscriberAgent#addSubscriber} method isn't
+     * invoked. Should only be invoked by an agent that already has a reference
+     * to the subscriber.
      *
      * @param agent  The agent to add.
      *
@@ -79,8 +79,8 @@ public interface ISubscriber extends IDisposable {
     boolean addAgent(ISubscriberAgent agent);
 
     /**
-     * Remove an agent. Functionally the same as {@code #unregister}
-     * except the agents {@code #removeSubscriber} method isn't
+     * Remove an agent. Functionally the same as {@link #unregister}
+     * except the agents {@link ISubscriberAgent#removeSubscriber} method isn't
      * invoked. Should only be invoked by an agent that has already
      * removed its reference to the subscriber.
      *

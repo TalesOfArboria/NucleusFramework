@@ -46,7 +46,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Sends action bars to players and manages {@code PersistentActionBar}'s
+ * Sends action bars to players and manages {@link PersistentActionBar}'s
  * per player.
  *
  * <p>Also manages packet send timing to reduce network traffic and client side lag
@@ -54,7 +54,7 @@ import java.util.UUID;
  * refresh rate preferred by the action bars dynamic text. The absolute minimum
  * refresh rate is 1 tick while the absolute max is 40 ticks. The refresh rate is
  * dynamic, meaning it may change due to the dynamic texts refresh rate being dynamic.
- * The refresh rate is managed per each {@code PersistentActionBar} instance.</p>
+ * The refresh rate is managed per each {@link PersistentActionBar} instance.</p>
  */
 class BarSender implements Runnable {
 
@@ -105,13 +105,13 @@ class BarSender implements Runnable {
     }
 
     /**
-     * Add a {@code PersistentActionBar} to show to a player.
+     * Add a {@link PersistentActionBar} to show to a player.
      *
      * @param player     The player who will see the bar.
      * @param actionBar  The action bar to show.
      * @param duration   The duration value. Determines the minimum time slice the bar
-     *                   is given when shown with other {@code PersistentActionBar}'s. If the
-     *                   action bar is an instance of {@code TimedActionBar}, then duration
+     *                   is given when shown with other {@link PersistentActionBar}'s. If the
+     *                   action bar is an instance of {@link TimedActionBar}, then duration
      *                   represents the time the bar is displayed before being automatically removed.
      * @param timeScale  The time scale value.
      */
@@ -145,7 +145,7 @@ class BarSender implements Runnable {
     }
 
     /**
-     * Remove a {@code PersistentActionBar} from a player view.
+     * Remove a {@link PersistentActionBar} from a player view.
      *
      * @param player     The player.
      * @param actionBar  The action bar to remove.
@@ -174,7 +174,7 @@ class BarSender implements Runnable {
     }
 
     /**
-     * Remove a {@code PersistentActionBar} from a player view.
+     * Remove a {@link PersistentActionBar} from a player view.
      *
      * @param actionBar  The action bar to remove.
      */
@@ -194,7 +194,7 @@ class BarSender implements Runnable {
     }
 
     /**
-     * Remove a {@code PlayerBar}.
+     * Remove a {@link PlayerBar}.
      *
      * @param bar  The player bar view instance to remove.
      */

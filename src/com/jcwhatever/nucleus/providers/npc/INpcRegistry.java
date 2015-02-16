@@ -59,7 +59,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      * @param npcName     The NPC's display name.
      * @param type        The NPC entity type.
      *
-     * @return  The new {@code INpc} instance or null if failed.
+     * @return  The new {@link INpc} instance or null if failed.
      */
     @Nullable
     INpc create(String lookupName, String npcName, EntityType type);
@@ -69,9 +69,9 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      *
      * @param lookupName  The lookup name unique to the owning plugin.
      * @param npcName     The NPC's display name.
-     * @param type        The NPC {@code EntityType} name.
+     * @param type        The NPC {@link EntityType} name.
      *
-     * @return  The new {@code INpc} instance or null if failed.
+     * @return  The new {@link INpc} instance or null if failed.
      */
     @Nullable
     INpc create(String lookupName, String npcName, String type);
@@ -82,7 +82,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      * @param npcName  The NPC's display name.
      * @param type     The NPC entity type.
      *
-     * @return  The new {@code INpc} instance or null if failed.
+     * @return  The new {@link INpc} instance or null if failed.
      */
     @Nullable
     INpc create(String npcName, EntityType type);
@@ -91,41 +91,41 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      * Create a new NPC without a lookup name.
      *
      * @param npcName  The NPC's display name.
-     * @param type     The NPC {@code EntityType} name.
+     * @param type     The NPC {@link EntityType} name.
      *
-     * @return  The new {@code INpc} instance or null if failed.
+     * @return  The new {@link INpc} instance or null if failed.
      */
     @Nullable
     INpc create(String npcName, String type);
 
     /**
-     * Get all un-disposed {@code INpc}'s in the registry.
+     * Get all un-disposed {@link INpc}'s in the registry.
      */
     Collection<INpc> all();
 
     /**
-     * Get an {@code INpc} from the registry by its unique name.
+     * Get an {@link INpc} from the registry by its unique name.
      *
      * @param name  The unique name.
      *
-     * @return  The {@code INpc} instance or null if not found.
+     * @return  The {@link INpc} instance or null if not found.
      */
     @Nullable
     INpc get(String name);
 
     /**
-     * Get an {@code INpc} from the registry by its spawned
-     * {@code Entity} instance.
+     * Get an {@link INpc} from the registry by its spawned
+     * {@link Entity} instance.
      *
      * @param entity  The entity to check.
      *
-     * @return  The {@code INpc} instance or null if not found.
+     * @return  The {@link INpc} instance or null if not found.
      */
     @Nullable
     INpc get(Entity entity);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry starts navigating.
      *
      * @param subscriber  The subscriber.
@@ -135,7 +135,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNavStart(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry has its navigation paused.
      *
      * @param subscriber  The subscriber.
@@ -145,7 +145,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNavPause(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry cancels navigation.
      *
      * @param subscriber  The subscriber.
@@ -155,7 +155,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNavCancel(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry completes navigation.
      *
      * @param subscriber  The subscriber.
@@ -165,7 +165,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNavComplete(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry gets stuck during navigation and times out.
      *
      * @param subscriber  The subscriber.
@@ -175,7 +175,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNavTimeout(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is spawned.
      *
      * @param subscriber  The subscriber.
@@ -185,7 +185,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcSpawn(IScriptUpdateSubscriber<NpcSpawnEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is despawned.
      *
      * @param subscriber  The subscriber.
@@ -195,7 +195,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcDespawn(IScriptUpdateSubscriber<NpcDespawnEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is clicked.
      *
      * @param subscriber  The subscriber.
@@ -205,7 +205,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcClick(IScriptUpdateSubscriber<NpcClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is right clicked.
      *
      * @param subscriber  The subscriber.
@@ -215,7 +215,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcRightClick(IScriptUpdateSubscriber<NpcRightClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is left clicked.
      *
      * @param subscriber  The subscriber.
@@ -225,7 +225,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcLeftClick(IScriptUpdateSubscriber<NpcLeftClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is targeted by another entity.
      *
      * @param subscriber  The subscriber.
@@ -235,7 +235,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcEntityTarget(IScriptUpdateSubscriber<NpcTargetedEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is damaged.
      *
      * @param subscriber  The subscriber.
@@ -245,7 +245,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcDamage(IScriptUpdateSubscriber<NpcDamageEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is damaged by a block.
      *
      * @param subscriber  The subscriber.
@@ -255,7 +255,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcDamageByBlock(IScriptUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry is damaged by an entity.
      *
      * @param subscriber  The subscriber.
@@ -265,7 +265,7 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
     INpcRegistry onNpcDamageByEntity(IScriptUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated whenever an {@code INpc} created
+     * Attach a subscriber to be updated whenever an {@link INpc} created
      * by the registry dies.
      *
      * @param subscriber  The subscriber.

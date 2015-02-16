@@ -72,7 +72,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     /**
      * Get the NPC entity.
      *
-     * @return  The {@code Entity} or null if not spawned.
+     * @return  The {@link org.bukkit.entity.Entity} or null if not spawned.
      */
     @Nullable
     Entity getEntity();
@@ -135,25 +135,25 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpcTraits getTraits();
 
     /**
-     * Get the NPC vehicle the {@code INpc} is riding.
+     * Get the NPC vehicle the {@link INpc} is riding.
      *
-     * @return  The {@code INpc} vehicle or null if there is no vehicle or the vehicle
-     * is not an {@code INpc}.
+     * @return  The {@link INpc} vehicle or null if there is no vehicle or the vehicle
+     * is not an {@link INpc}.
      */
     @Nullable
     INpc getNPCVehicle();
 
     /**
-     * Get the NPC passenger of the {@code INpc}.
+     * Get the NPC passenger of the {@link INpc}.
      *
-     * @return  The {@code INpc} passenger or null if there is no passenger or the the passenger
-     * is not an {@code INpc}.
+     * @return  The {@link INpc} passenger or null if there is no passenger or the the passenger
+     * is not an {@link INpc}.
      */
     @Nullable
     INpc getNPCPassenger();
 
     /**
-     * Mount the current {@code INpc} as a passenger of the specified {@code INpc}.
+     * Mount the current {@link INpc} as a passenger of the specified {@link INpc}.
      *
      * @param vehicle  The vehicle to mount.
      *
@@ -172,7 +172,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc look(float yaw, float pitch);
 
     /**
-     * Make the NPC face the specified {@code Entity}.
+     * Make the NPC face the specified {@link Entity}.
      *
      * @param entity  The entity to look at.
      *
@@ -190,7 +190,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc lookTowards(Location location);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is spawned.
      *
      * @param subscriber  The subscriber.
@@ -200,7 +200,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcSpawn(IScriptUpdateSubscriber<NpcSpawnEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is despawned.
      *
      * @param subscriber  The subscriber.
@@ -210,7 +210,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcDespawn(IScriptUpdateSubscriber<NpcDespawnEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is clicked.
      *
      * @param subscriber  The subscriber.
@@ -220,7 +220,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcClick(IScriptUpdateSubscriber<NpcClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is right clicked.
      *
      * @param subscriber  The subscriber.
@@ -230,7 +230,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcRightClick(IScriptUpdateSubscriber<NpcRightClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is left click.
      *
      * @param subscriber  The subscriber.
@@ -240,7 +240,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcLeftClick(IScriptUpdateSubscriber<NpcLeftClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is targeted by another entity.
      *
      * @param subscriber  The subscriber.
@@ -250,7 +250,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcEntityTarget(IScriptUpdateSubscriber<NpcTargetedEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is damaged.
      *
      * @param subscriber  The subscriber.
@@ -260,7 +260,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcDamage(IScriptUpdateSubscriber<NpcDamageEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is damaged by a block.
      *
      * @param subscriber  The subscriber.
@@ -270,7 +270,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcDamageByBlock(IScriptUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * is damaged by an entity.
      *
      * @param subscriber  The subscriber.
@@ -280,7 +280,7 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     INpc onNpcDamageByEntity(IScriptUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@code INpc}
+     * Attach a subscriber to be updated when the {@link INpc}
      * dies.
      *
      * @param subscriber  The subscriber.

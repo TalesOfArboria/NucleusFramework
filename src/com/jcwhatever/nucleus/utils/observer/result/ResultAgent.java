@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.SubscriberAgent;
 
 /**
- * A basic implementation of a {@code IResultAgent} used to allow a
+ * A basic implementation of a {@link IResultAgent} used to allow a
  * result producer to send results to the agents subscribers.
  */
 public class ResultAgent<R> extends SubscriberAgent implements IResultAgent<R> {

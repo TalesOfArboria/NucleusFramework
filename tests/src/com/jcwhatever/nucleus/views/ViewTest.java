@@ -30,8 +30,8 @@ public class ViewTest extends AbstractViewTest {
     }
 
     /**
-     * Make sure when a view is opened the {@code #openView} method
-     * is invoked and the correct {@code ViewOpenReason} constant
+     * Make sure when a view is opened the {@link #openView} method
+     * is invoked and the correct {@link ViewOpenReason} constant
      * is used.
      */
     @Test
@@ -62,8 +62,8 @@ public class ViewTest extends AbstractViewTest {
     }
 
     /**
-     * Make sure when a view is closed the {@code #onClosed} method
-     * is invoked and the correct {@code ViewCloseReason} constant
+     * Make sure when a view is closed the {@link #onClosed} method
+     * is invoked and the correct {@link ViewCloseReason} constant
      * is used.
      */
     @Test

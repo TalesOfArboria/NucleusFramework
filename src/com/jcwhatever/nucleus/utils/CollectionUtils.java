@@ -48,7 +48,7 @@ public class CollectionUtils {
 
     /**
      * Removes all matching instances of a value from the specified
-     * {@code Multimap}.
+     * {@link com.google.common.collect.Multimap}.
      *
      * @param multimap  The multimap.
      * @param value     The value to remove.
@@ -56,7 +56,7 @@ public class CollectionUtils {
      * @param <K>  The key type.
      * @param <V>  The value type.
      *
-     * @return  True if the {@code Multimap} was modified.
+     * @return  True if the {@link com.google.common.collect.Multimap} was modified.
      */
     public static <K, V> boolean removeValue(Multimap<K, V> multimap, @Nullable Object value) {
         return removeValue(multimap.entries(), value);
@@ -64,7 +64,7 @@ public class CollectionUtils {
 
     /**
      * Removes all matching instances of a value from the specified
-     * {@code Map}.
+     * {@link java.util.Map}.
      *
      * @param map    The map.
      * @param value  The value to remove.
@@ -72,7 +72,7 @@ public class CollectionUtils {
      * @param <K>  The key type.
      * @param <V>  The value type.
      *
-     * @return  True if the {@code Map} was modified.
+     * @return  True if the {@link java.util.Map} was modified.
      */
     public static <K, V> boolean removeValue(Map<K, V> map, @Nullable Object value) {
         return removeValue(map.entrySet(), value);
@@ -80,7 +80,7 @@ public class CollectionUtils {
 
     /**
      * Removes all entries with matching specified value from the specified
-     * {@code Collection} of {@code Map.Entry}.
+     * {@link java.util.Collection} of {@link java.util.Map.Entry}.
      *
      * @param entries  The map.
      * @param value    The value to remove.
@@ -88,7 +88,7 @@ public class CollectionUtils {
      * @param <K>  The key type.
      * @param <V>  The value type.
      *
-     * @return  True if the {@code Collection} was modified.
+     * @return  True if the {@link Collection} was modified.
      */
     public static <K, V> boolean removeValue(Collection<Entry<K, V>> entries, @Nullable Object value) {
         PreCon.notNull(entries);
@@ -119,7 +119,7 @@ public class CollectionUtils {
      *
      * @param <T>  The element type.
      *
-     * @return  A {@code List} of elements removed from the target.
+     * @return  A {@link java.util.List} of elements removed from the target.
      */
     public static <T> List<T> retainAll(Collection<T> target, Collection<?> retain) {
 
@@ -140,14 +140,14 @@ public class CollectionUtils {
 
     /**
      * Removes all elements from the target collection that are not valid
-     * according to the supplied {@code IValidator}.
+     * according to the supplied {@link IValidator}.
      *
      * @param target     The target collection.
      * @param validator  The validator that will validate each element in the collection.
      *
      * @param <T>  The element type.
      *
-     * @return  A {@code List} of elements removed from the target.
+     * @return  A {@link java.util.List} of elements removed from the target.
      */
     public static <T> List<T> retainAll(Collection<T> target, IValidator<T> validator) {
 
@@ -167,9 +167,9 @@ public class CollectionUtils {
     }
 
     /**
-     * Wrap a {@code Collection} in an unmodifiable {@code List}. If the
-     * collection is already a {@code List} then it is cast, otherwise
-     * its elements are copied into a new {@code List}.
+     * Wrap a {@link java.util.Collection} in an unmodifiable {@link java.util.List}.
+     * If the collection is already a {@link java.util.List} then it is cast, otherwise
+     * its elements are copied into a new {@link java.util.List}.
      *
      * @param collection  The collection to wrap.
      *
@@ -182,7 +182,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Get an empty unmodifiable {@code List}.
+     * Get an empty unmodifiable {@link java.util.List}.
      *
      * @param <E>  The collection element type.
      */
@@ -195,7 +195,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Get an empty unmodifiable {@code List}.
+     * Get an empty unmodifiable {@link java.util.List}.
      *
      * <p>Used when the empty signature method cannot be used.
      * Prevents errors and warnings.</p>
@@ -214,9 +214,9 @@ public class CollectionUtils {
     }
 
     /**
-     * Wrap a {@code Collection} in an unmodifiable {@code Set}. If the
-     * collection is already a {@code Set} then it is cast, otherwise
-     * its elements are copied into a new {@code Set}.
+     * Wrap a {@link java.util.Collection} in an unmodifiable {@link java.util.Set}.
+     * If the collection is already a {@link java.util.Set} then it is cast, otherwise
+     * its elements are copied into a new {@link java.util.Set}.
      *
      * @param collection  The collection to wrap.
      *
@@ -229,7 +229,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Get an empty unmodifiable {@code Set}.
+     * Get an empty unmodifiable {@link java.util.Set}.
      *
      * @param <E>  The collection element type.
      */
@@ -242,7 +242,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Get an empty unmodifiable {@code Set}.
+     * Get an empty unmodifiable {@link java.util.Set}.
      *
      * <p>Convenience method to use when the empty signature method
      * cannot be used. Prevents errors and warnings.</p>

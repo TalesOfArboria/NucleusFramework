@@ -52,9 +52,7 @@ public class InventorySnapshot {
     /**
      * Constructor.
      *
-     * <p>
-     *     Uses default {@code ItemStackMatcher}
-     * </p>
+     * <p>Uses default {@link ItemStackMatcher}</p>
      *
      * @param inventory  The chest to snapshot.
      */
@@ -125,7 +123,7 @@ public class InventorySnapshot {
     }
 
     /**
-     * Get all {@code MatchableItem}'s created from the snapshot.
+     * Get all {@link MatchableItem}'s created from the snapshot.
      */
     public List<MatchableItem> getWrappers () {
         return new ArrayList<MatchableItem>(_itemMap.keySet());
@@ -142,7 +140,7 @@ public class InventorySnapshot {
     }
 
     /**
-     * Get the snapshot {@code ItemStack} array.
+     * Get the snapshot {@link ItemStack} array.
      */
     public ItemStack[] getSnapshot() {
         return _snapshot.clone();

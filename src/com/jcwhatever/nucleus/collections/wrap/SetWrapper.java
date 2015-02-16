@@ -65,7 +65,7 @@ public abstract class SetWrapper<E> extends CollectionWrapper<E> implements Set<
 
     /**
      * Invoked from a synchronized block to get the
-     * encapsulated {@code Set}.
+     * encapsulated {@link Set}.
      */
     protected abstract Set<E> set();
 

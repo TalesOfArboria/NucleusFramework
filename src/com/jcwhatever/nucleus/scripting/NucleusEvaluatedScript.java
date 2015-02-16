@@ -47,7 +47,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 /**
- * NucleusFramework's default {@code IEvaluatedScript} implementation.
+ * NucleusFramework's default {@link IEvaluatedScript} implementation.
  *
  * <p>An evaluated script</p>
  */
@@ -139,7 +139,7 @@ public class NucleusEvaluatedScript implements IEvaluatedScript {
 
     /**
      * Determine if the script engine allows script functions
-     * to be invoked via {@code javax.script.Invocable} interface.
+     * to be invoked via {@link javax.script.Invocable} interface.
      */
     @Override
     public boolean canInvoke() {
@@ -148,7 +148,7 @@ public class NucleusEvaluatedScript implements IEvaluatedScript {
 
     /**
      * Invoke a function in the evaluated script using the
-     * {@code javax.script.Invocable} interface.
+     * {@link javax.script.Invocable} interface.
      *
      * @param functionName  The name of the function.
      * @param parameters    Function parameters.

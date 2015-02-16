@@ -38,9 +38,9 @@ import javax.annotation.Nullable;
  *     Can be used to cache an object for a specified amount of time.
  * </p>
  * <p>
- *     The {@code CacheObject} instance hash code and equals match the set value.
+ *     The {@link CacheObject} instance hash code and equals match the set value.
  *     These values change when the cached object expires. It is not recommended
- *     to use the {@code CacheObject} as a hash key.
+ *     to use the {@link CacheObject} as a hash key.
  * </p>
  *
  * @param <V>  The value type.

@@ -24,7 +24,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getBytesRead} returns the correct value.
+     * Make sure {@link #getBytesRead} returns the correct value.
      */
     @Test
     public void testGetBytesRead() throws Exception {
@@ -41,7 +41,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #read} returns the correct value.
+     * Make sure {@link #read} returns the correct value.
      */
     @Test
     public void testRead() throws Exception {
@@ -56,7 +56,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #skip} works correctly.
+     * Make sure {@link #skip} works correctly.
      */
     @Test
     public void testSkip() throws Exception {
@@ -70,7 +70,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getBoolean} returns the correct value.
+     * Make sure {@link #getBoolean} returns the correct value.
      */
     @Test
     public void testGetBoolean() throws Exception {
@@ -96,7 +96,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getByte} returns the correct value.
+     * Make sure {@link #getByte} returns the correct value.
      */
     @Test
     public void testGetByte() throws Exception {
@@ -110,7 +110,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getBytes} returns the correct value.
+     * Make sure {@link #getBytes} returns the correct value.
      */
     @Test
     public void testGetBytes() throws Exception {
@@ -122,7 +122,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code getShort} returns the correct value.
+     * Make sure {@link getShort} returns the correct value.
      */
     @Test
     public void testGetShort() throws Exception {
@@ -134,7 +134,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getInteger} returns the correct value.
+     * Make sure {@link #getInteger} returns the correct value.
      */
     @Test
     public void testGetInteger() throws Exception {
@@ -146,7 +146,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getLong} returns the correct value.
+     * Make sure {@link #getLong} returns the correct value.
      */
     @Test
     public void testGetLong() throws Exception {
@@ -158,7 +158,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getString} returns the correct value.
+     * Make sure {@link #getString} returns the correct value.
      */
     @Test
     public void testGetString() throws Exception {
@@ -182,7 +182,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getSmallString} returns the correct value.
+     * Make sure {@link #getSmallString} returns the correct value.
      */
     @Test
     public void testGetSmallString() throws Exception {
@@ -197,7 +197,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getFloat} returns the correct value.
+     * Make sure {@link #getFloat} returns the correct value.
      */
     @Test
     public void testGetFloat() throws Exception {
@@ -212,7 +212,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getDouble} returns the correct value.
+     * Make sure {@link #getDouble} returns the correct value.
      */
     @Test
     public void testGetDouble() throws Exception {
@@ -227,7 +227,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getEnum} returns the correct value.
+     * Make sure {@link #getEnum} returns the correct value.
      */
     @Test
     public void testGetEnum() throws Exception {
@@ -241,7 +241,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@code #getUUID} returns the correct value.
+     * Make sure {@link #getUUID} returns the correct value.
      */
     @Test
     public void testGetUUID() throws Exception {

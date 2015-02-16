@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.utils.items.serializer;
 
 /**
- * Thrown if the {@code ItemStackDeserializer} fails to deserialize a string.
+ * Thrown if the {@link ItemStackDeserializer} fails to deserialize a string.
  */
 public class InvalidItemStackStringException extends Exception {
 

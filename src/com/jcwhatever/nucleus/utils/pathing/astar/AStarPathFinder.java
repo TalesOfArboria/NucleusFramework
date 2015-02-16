@@ -26,10 +26,11 @@
 package com.jcwhatever.nucleus.utils.pathing.astar;
 
 import com.jcwhatever.nucleus.utils.LocationUtils;
+
 import org.bukkit.Location;
 
-import javax.annotation.Nullable;
 import java.util.LinkedList;
+import javax.annotation.Nullable;
 
 /**
  * AStar path finding implementation.
@@ -67,7 +68,7 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
      * @param end         The end location.
      * @param adjustment  Specify how the provided locations should be adjusted.
      *
-     * @return  Empty {@code LinkedList} if path could not be found.
+     * @return  Empty {@link java.util.LinkedList} if path could not be found.
      */
     @Override
     public LinkedList<AStarPathNode> getPath(Location start, Location end, LocationAdjustment adjustment) {

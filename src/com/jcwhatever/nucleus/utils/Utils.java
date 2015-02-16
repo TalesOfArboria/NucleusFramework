@@ -62,7 +62,7 @@ public final class Utils {
 
     /**
      * Search a collection for valid candidates using an
-     * {@code IValidator} to validate.
+     * {@link IValidator} to validate.
      *
      * @param searchCandidates  The search candidates.
      * @param validator         The validator.

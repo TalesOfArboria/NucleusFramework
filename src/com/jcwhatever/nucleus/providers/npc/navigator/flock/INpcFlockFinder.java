@@ -35,9 +35,9 @@ import java.util.Collection;
 public interface INpcFlockFinder {
 
     /**
-     * Find the other {@code INpc}'s in the specified {@code INpc}'s flock.
+     * Find the other {@link INpc}'s in the specified {@link INpc}'s flock.
      *
-     * @param npc  The {@code INpc} to check.
+     * @param npc  The {@link INpc} to check.
      */
     Collection<INpc> findFlock(INpc npc);
 }

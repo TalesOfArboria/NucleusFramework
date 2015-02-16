@@ -64,10 +64,8 @@ public class PlayerState implements IPluginOwned {
     /**
      * Get the currently stored player state.
      *
-     * <p>
-     *     If no player state is found in memory, an attempt
-     *     is made to see if a player state is saved to disk.
-     * </p>
+     * <p>If no player state is found in memory, an attempt
+     * is made to see if a player state is saved to disk.</p>
      *
      * @param plugin  The owning plugin.
      * @param p       The player.
@@ -96,14 +94,12 @@ public class PlayerState implements IPluginOwned {
 
     /**
      * Saves a player current state and returns the information in
-     * a {@code PlayerState} object.
+     * a {@link PlayerState} object.
      *
-     * <p>
-     *     If a player state is already saved for the specified plugin,
-     *     the current player state data overwrites the data in the
-     *     existing {@code PlayerState} object. Otherwise, a new object
-     *     is created.
-     * </p>
+     * <p>If a player state is already saved for the specified plugin,
+     * the current player state data overwrites the data in the
+     * existing {@link PlayerState} object. Otherwise, a new object
+     * is created.</p>
      *
      * @param plugin  The owning plugin.
      * @param p       The player.

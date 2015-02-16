@@ -32,8 +32,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-/*
- * 
+/**
+ * Called when an {@link INpc} is damaged.
  */
 public class NpcDamageEvent extends NpcEvent implements Cancellable, ICancellable {
 
@@ -56,7 +56,7 @@ public class NpcDamageEvent extends NpcEvent implements Cancellable, ICancellabl
     }
 
     /**
-     * Get the parent {@code EntityDamageEvent}.
+     * Get the parent {@link EntityDamageEvent}.
      */
     public EntityDamageEvent getParentEvent() {
         return _event;

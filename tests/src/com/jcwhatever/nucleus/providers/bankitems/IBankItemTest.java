@@ -30,7 +30,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure the {@code BankItem} returns the correct ID.
+     * Make sure the {@link BankItem} returns the correct ID.
      */
     @Test
     public void testGetId() {
@@ -44,7 +44,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #isRootItem} returns the correct value.
+     * Make sure {@link #isRootItem} returns the correct value.
      */
     @Test
     public void testIsRootItem() {
@@ -64,7 +64,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #getRootItem} returns the correct value.
+     * Make sure {@link #getRootItem} returns the correct value.
      */
     @Test
     public void testGetRootItem() {
@@ -83,7 +83,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #getType} returns the correct value.
+     * Make sure {@link #getType} returns the correct value.
      */
     @Test
     public void testGetType() {
@@ -96,7 +96,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #getAmount} returns the correct amount.
+     * Make sure {@link #getAmount} returns the correct amount.
      */
     @Test
     public void testGetAmount() {
@@ -115,7 +115,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #getRootAmount} returns the correct value.
+     * Make sure {@link #getRootAmount} returns the correct value.
      */
     @Test
     public void testGetRootAmount() {
@@ -134,7 +134,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #getMaxStackSize} returns the correct value.
+     * Make sure {@link #getMaxStackSize} returns the correct value.
      */
     @Test
     public void testGetMaxStackSize() {
@@ -153,7 +153,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #getTotalStacks} returns the correct amount.
+     * Make sure {@link #getTotalStacks} returns the correct amount.
      */
     @Test
     public void testGetTotalStacks() {
@@ -172,7 +172,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #toItemStack} works correctly.
+     * Make sure {@link #toItemStack} works correctly.
      */
     @Test
     public void testToItemStack() {
@@ -189,7 +189,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #getTotalPages} works correctly.
+     * Make sure {@link #getTotalPages} works correctly.
      */
     @Test
     public void testGetTotalPages() {
@@ -210,7 +210,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code getPage} works correctly.
+     * Make sure {@link getPage} works correctly.
      */
     @Test
     public void testGetPage() {
@@ -231,7 +231,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #getItems} works correctly.
+     * Make sure {@link #getItems} works correctly.
      */
     @Test
     public void testGetItems() {
@@ -246,7 +246,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #iterator} works correctly.
+     * Make sure {@link #iterator} works correctly.
      */
     @Test
     public void testIterator() {
@@ -284,7 +284,7 @@ public abstract class IBankItemTest {
     }
 
     /**
-     * Make sure {@code #iterator(int)} works correctly.
+     * Make sure {@link #iterator(int)} works correctly.
      */
     @Test
     public void testIterator1() {

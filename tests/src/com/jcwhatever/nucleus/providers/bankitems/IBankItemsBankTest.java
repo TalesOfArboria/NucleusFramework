@@ -28,7 +28,7 @@ public abstract class IBankItemsBankTest {
     }
 
     /**
-     * Make sure {@code #getName} and {@code #getSearchName} returns the correct value.
+     * Make sure {@link #getName} and {@link #getSearchName} returns the correct value.
      */
     @Test
     public void testGetName() {
@@ -40,7 +40,7 @@ public abstract class IBankItemsBankTest {
     }
 
     /**
-     * Make sure {@code getOwnerId} returns the correct value.
+     * Make sure {@link getOwnerId} returns the correct value.
      */
     @Test
     public void testGetOwnerId() {

@@ -111,7 +111,7 @@ public interface INpcNav {
     INpcNav start();
 
     /**
-     * Pause the navigator. The navigator will resume when {@code #start} is invoked.
+     * Pause the navigator. The navigator will resume when {@link #start} is invoked.
      *
      * @return  Self for chaining.
      */

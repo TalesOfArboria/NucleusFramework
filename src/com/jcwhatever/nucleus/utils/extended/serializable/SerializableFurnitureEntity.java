@@ -48,16 +48,16 @@ import java.io.IOException;
 /**
  * Used to serialize entities that are considered part of structures, much like blocks.
  *
- * <p>Cannot create a {@link Entity} instance but instead retains the information
- * necessary to apply the data to the original block location.</p>
+ * <p>Cannot create a {@link org.bukkit.entity.Entity} instance but instead retains
+ * the information necessary to apply the data to the original block location.</p>
  *
  * <p>Supported Entity Interfaces:</p>
  *
  * <ul>
- *    <li>{@link Directional}</li>
- *    <li>{@link Painting}</li>
- *    <li>{@link ItemFrame}</li>
- *    <li>{@link ArmorStand}</li>
+ *    <li>{@link org.bukkit.material.Directional}</li>
+ *    <li>{@link org.bukkit.entity.Painting}</li>
+ *    <li>{@link org.bukkit.entity.ItemFrame}</li>
+ *    <li>{@link org.bukkit.entity.ArmorStand}</li>
  * </ul>
  */
 public class SerializableFurnitureEntity implements IBinarySerializable {
@@ -124,14 +124,14 @@ public class SerializableFurnitureEntity implements IBinarySerializable {
     /**
      * Constructor.
      *
-     * <p>Required by {@code NucleusByteReader} to deserialize.</p>
+     * <p>Required by {@link NucleusByteReader} to deserialize.</p>
      */
     public SerializableFurnitureEntity() {}
 
     /**
      * Constructor.
      *
-     * @param entity  The {@code Entity} that needs to be serialized.
+     * @param entity  The {@link org.bukkit.entity.Entity} that needs to be serialized.
      */
     public SerializableFurnitureEntity(Entity entity) {
 
@@ -197,8 +197,8 @@ public class SerializableFurnitureEntity implements IBinarySerializable {
     }
 
     /**
-     * Apply the stored {@code Entity} data to the
-     * supplied {@code Entity} object.
+     * Apply the stored {@link Entity} data to the
+     * supplied {@link Entity} object.
      */
     public void apply(Entity entity) {
 

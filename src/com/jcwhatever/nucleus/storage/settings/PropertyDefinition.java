@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import javax.annotation.Nullable;
 
 /**
- * A definition of a possible configuration property/
+ * A definition of a possible configuration property.
  */
 public class PropertyDefinition implements Comparable<PropertyDefinition> {
 
@@ -119,7 +119,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
     /**
      * Get the default value.
      *
-     * <p>Use {@code #hasDefaultValue} to check first.
+     * <p>Use {@link #hasDefaultValue} to check first.
      * Default value may be null.</p>
      */
     @Nullable

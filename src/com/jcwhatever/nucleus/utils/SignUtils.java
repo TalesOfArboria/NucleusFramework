@@ -146,7 +146,7 @@ public final class SignUtils {
     }
 
     /**
-     * Create a new {@code MaterialData} instance representing a sign.
+     * Create a new {@link org.bukkit.material.MaterialData} instance representing a sign.
      *
      * @param type    The material type. Must be a sign type.
      * @param facing  The facing direction of the sign.
@@ -283,8 +283,8 @@ public final class SignUtils {
     }
 
     /**
-     * Get the most recent {@code Sign} block state using the
-     * outdated {@code Sign} block state.
+     * Get the most recent {@link org.bukkit.block.Sign} block state using the
+     * outdated {@link org.bukkit.block.Sign} block state.
      *
      * @param sign  The outdated sign block state.
      *

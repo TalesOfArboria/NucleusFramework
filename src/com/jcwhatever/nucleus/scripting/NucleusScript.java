@@ -37,7 +37,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 /**
- * NucleusFramework's default {@code IScript} implementation
+ * NucleusFramework's default {@link IScript} implementation
  */
 public class NucleusScript implements IScript {
 
@@ -65,46 +65,27 @@ public class NucleusScript implements IScript {
         _script = script;
     }
 
-    /**
-     * Get the name of the script.
-     */
     @Override
     public String getName() {
         return _name;
     }
 
-    /**
-     * Get the file the script is from.
-     *
-     * @return Null if the script did not come from a file.
-     */
     @Nullable
     @Override
     public File getFile() {
         return _file;
     }
 
-    /**
-     * Get the script source.
-     */
     @Override
     public String getScript() {
         return _script;
     }
 
-    /**
-     * Get the script type. (file extension)
-     */
     @Override
     public String getType() {
         return _type;
     }
 
-    /**
-     * Evaluate the script.
-     *
-     * @param apiCollection  The api to include.
-     */
     @Override
     @Nullable
     public IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection) {

@@ -54,7 +54,7 @@ public class SoundSettings {
     /**
      * Constructor.
      *
-     * <p>Clones settings from another {@code SoundSettings} instance.</p>
+     * <p>Clones settings from another {@link SoundSettings} instance.</p>
      *
      * @param original  The original to clone from.
      */

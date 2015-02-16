@@ -34,29 +34,29 @@ public interface ITaskScheduler {
     /**
      * Run a task later.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * <p>A {@link TaskHandler} instance can be used in place of a {@link java.lang.Runnable} to
      * add the ability to cancel the task from within the task handler and to run
      * optional code if the task is cancelled.</p>
      *
      * @param plugin    The owning plugin.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     ScheduledTask runTaskLater(Plugin plugin, Runnable runnable);
 
     /**
      * Run a task after a specified number of ticks have elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * <p>A {@link TaskHandler} instance can be used in place of a {@link java.lang.Runnable} to
      * add the ability to cancel the task from within the task handler and to run
      * optional code if the task is cancelled.</p>
      *
      * @param plugin    The owning plugin.
      * @param ticks     The number of ticks to wait before running the task.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     ScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable);
 
@@ -64,15 +64,15 @@ public interface ITaskScheduler {
      * Run a task on a new asynchronous thread after a specified number
      * of ticks have elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * <p>A {@link TaskHandler} instance can be used in place of a {@link java.lang.Runnable} to
      * add the ability to cancel the task from within the task handler and to run
      * optional code if the task is cancelled.</p>
      *
      * @param plugin    The owning plugin.
      * @param ticks     The number of ticks to wait before running the task.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     ScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable);
 
@@ -80,16 +80,16 @@ public interface ITaskScheduler {
      * Run a task on a repeating schedule after a specified number of ticks
      * have elapsed and repeating after the specified repeat ticks have elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * <p>A {@link TaskHandler} instance can be used in place of a {@link java.lang.Runnable} to
      * add the ability to cancel the task from within the task handler and to run
      * optional code if the task is cancelled.</p>
      *
      * @param plugin       The owning plugin.
      * @param startTicks   The number of ticks to wait before first running the task.
      * @param repeatTicks  The number of ticks to wait between each repeat of the task.
-     * @param runnable     The {@code Runnable} to run later.
+     * @param runnable     The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     ScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
 
@@ -98,28 +98,28 @@ public interface ITaskScheduler {
      * of ticks have elapsed and repeating after the specified repeat ticks have
      * elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * <p>A {@link TaskHandler} instance can be used in place of a {@link java.lang.Runnable} to
      * add the ability to cancel the task from within the task handler and to run
      * optional code if the task is cancelled.</p>
      *
      * @param plugin       The owning plugin.
      * @param startTicks   The number of ticks to wait before first running the task.
      * @param repeatTicks  The number of ticks to wait between each repeat of the task.
-     * @param runnable     The {@code Runnable} to run later.
+     * @param runnable     The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     ScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
 
     /**
      * Run a task on the main thread at the next available chance.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * <p>A {@link TaskHandler} instance can be used in place of a {@link java.lang.Runnable} to
      * add the ability to cancel the task from within the task handler and to run
      * optional code if the task is cancelled.</p>
      *
      * @param plugin    The owning plugin.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      */
     void runTaskSync(Plugin plugin, final Runnable runnable);
 
@@ -127,13 +127,13 @@ public interface ITaskScheduler {
      * Run a task on the main thread after the specified number of ticks have
      * elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
+     * <p>A {@link TaskHandler} instance can be used in place of a {@link java.lang.Runnable} to
      * add the ability to cancel the task from within the task handler and to run
      * optional code if the task is cancelled.</p>
      *
      * @param plugin    The owning plugin.
      * @param ticks     The number of ticks to wait before running the task.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      */
     void runTaskSync(Plugin plugin, int ticks, Runnable runnable);
 }

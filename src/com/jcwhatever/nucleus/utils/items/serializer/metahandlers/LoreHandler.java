@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles {@code ItemStack} lore meta.
+ * Handles {@link org.bukkit.inventory.ItemStack} lore meta.
  */
 public class LoreHandler implements IMetaHandler {
 

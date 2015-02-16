@@ -32,12 +32,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * An {@code IDynamicText} implementation that can be used to
+ * An {@link IDynamicText} implementation that can be used to
  * queue text to be displayed for specified amounts
  * of time in the order that they are queued.
  *
- * <p>Can also add {@code Runnable}'s to the queue as well as
- * insert pauses between queued text and {@code Runnable}'s.</p>
+ * <p>Can also add {@link java.lang.Runnable}'s to the queue as well as
+ * insert pauses between queued text and {@link java.lang.Runnable}'s.</p>
  */
 public class QueuedText implements IDynamicText {
 
@@ -72,7 +72,7 @@ public class QueuedText implements IDynamicText {
 
     /**
      * Get a builder used to add queued events to
-     * the {@code QueuedText} instance.
+     * the {@link QueuedText} instance.
      */
     public QueueTextBuilder getBuilder() {
         return new QueueTextBuilder();
@@ -170,7 +170,7 @@ public class QueuedText implements IDynamicText {
         }
 
         /**
-         * Add a {@code Runnable} instance to run.
+         * Add a {@link Runnable} instance to run.
          *
          * @param duration  The duration to pause before moving to the next queue item.
          * @param runnable  The runnable to run.
@@ -202,7 +202,7 @@ public class QueuedText implements IDynamicText {
         }
 
         /**
-         * Add a one time {@code Runnable} instance to run
+         * Add a one time {@link Runnable} instance to run
          * when the queue is empty.
          *
          * @param runnable  The runnable.
@@ -218,7 +218,7 @@ public class QueuedText implements IDynamicText {
         }
 
         /**
-         * Build and append to the parent {@code QueueText} queue.
+         * Build and append to the parent {@link QueuedText} queue.
          */
         public void build() {
 

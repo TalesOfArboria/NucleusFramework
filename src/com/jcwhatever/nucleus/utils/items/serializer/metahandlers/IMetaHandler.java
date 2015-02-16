@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * Interface for an implementation that can apply and retrieve
- * specific meta from an {@code ItemStack} for use by a
+ * specific meta from an {@link org.bukkit.inventory.ItemStack} for use by a
  * serializer/deserializer.
  */
 public interface IMetaHandler {

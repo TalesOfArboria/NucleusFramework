@@ -44,7 +44,7 @@ final class PlayerBar {
      * Constructor.
      *
      * @param player     The player who is viewing the action bar.
-     * @param bar        The {@code PersistentActionBar} that is being viewed.
+     * @param bar        The {@link PersistentActionBar} that is being viewed.
      * @param duration   The minimum time slice duration.
      * @param timeScale  The minimum time slice durations time scale.
      */
@@ -58,14 +58,14 @@ final class PlayerBar {
     }
 
     /**
-     * Get the {@code PersistentActionBar}.
+     * Get the {@link PersistentActionBar}.
      */
     public PersistentActionBar bar() {
         return _bar;
     }
 
     /**
-     * Get the {@code Player}.
+     * Get the {@link Player}.
      */
     public Player player() {
         return _player;

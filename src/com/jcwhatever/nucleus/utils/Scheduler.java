@@ -41,14 +41,14 @@ public final class Scheduler {
     /**
      * Run a task later.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
-     * add the ability to cancel the task from within the task handler and to run
-     * optional code if the task is cancelled.</p>
+     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
+     * handler and to run optional code if the task is cancelled.</p>
      *
      * @param plugin    The owning plugin.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     public static ScheduledTask runTaskLater(Plugin plugin, Runnable runnable) {
         return Nucleus.getScheduler().runTaskLater(plugin, runnable);
@@ -57,15 +57,15 @@ public final class Scheduler {
     /**
      * Run a task after a specified number of ticks have elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
-     * add the ability to cancel the task from within the task handler and to run
-     * optional code if the task is cancelled.</p>
+     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
+     * handler and to run optional code if the task is cancelled.</p>
      *
      * @param plugin    The owning plugin.
      * @param ticks     The number of ticks to wait before running the task.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     public static ScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskLater(plugin, ticks, runnable);
@@ -75,15 +75,15 @@ public final class Scheduler {
      * Run a task on a new asynchronous thread after a specified number
      * of ticks have elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
-     * add the ability to cancel the task from within the task handler and to run
-     * optional code if the task is cancelled.</p>
+     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
+     * handler and to run optional code if the task is cancelled.</p>
      *
      * @param plugin    The owning plugin.
      * @param ticks     The number of ticks to wait before running the task.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     public static ScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskLaterAsync(plugin, ticks, runnable);
@@ -93,16 +93,16 @@ public final class Scheduler {
      * Run a task on a repeating schedule after a specified number of ticks
      * have elapsed and repeating after the specified repeat ticks have elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
-     * add the ability to cancel the task from within the task handler and to run
-     * optional code if the task is cancelled.</p>
+     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
+     * handler and to run optional code if the task is cancelled.</p>
      *
      * @param plugin       The owning plugin.
      * @param startTicks   The number of ticks to wait before first running the task.
      * @param repeatTicks  The number of ticks to wait between each repeat of the task.
-     * @param runnable     The {@code Runnable} to run later.
+     * @param runnable     The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     public static ScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskRepeat(plugin, startTicks, repeatTicks, runnable);
@@ -113,16 +113,16 @@ public final class Scheduler {
      * of ticks have elapsed and repeating after the specified repeat ticks have
      * elapsed.
      *
-     * <p>A {@code TaskHandler} instance can be used in place of a {@code Runnable} to
-     * add the ability to cancel the task from within the task handler and to run
-     * optional code if the task is cancelled.</p>
+     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
+     * handler and to run optional code if the task is cancelled.</p>
      *
      * @param plugin       The owning plugin.
      * @param startTicks   The number of ticks to wait before first running the task.
      * @param repeatTicks  The number of ticks to wait between each repeat of the task.
-     * @param runnable     The {@code Runnable} to run later.
+     * @param runnable     The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@code ScheduledTask} instance to keep track of the task.
+     * @return  A {@link ScheduledTask} instance to keep track of the task.
      */
     public static ScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskRepeatAsync(plugin, startTicks, repeatTicks, runnable);
@@ -132,7 +132,7 @@ public final class Scheduler {
      * Run a task on the main thread at the next available chance.
      *
      * @param plugin    The owning plugin.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      */
     public static void runTaskSync(Plugin plugin, Runnable runnable) {
         Nucleus.getScheduler().runTaskSync(plugin, runnable);
@@ -144,7 +144,7 @@ public final class Scheduler {
      *
      * @param plugin    The owning plugin.
      * @param ticks     The number of ticks to wait before running the task.
-     * @param runnable  The {@code Runnable} to run later.
+     * @param runnable  The {@link java.lang.Runnable} to run later.
      */
     public static void runTaskSync(Plugin plugin, int ticks, Runnable runnable) {
         Nucleus.getScheduler().runTaskSync(plugin, ticks, runnable);

@@ -205,9 +205,9 @@ public class SimpleJSONBuilder {
 
     /**
      * Create a standalone text JSON string and append to the
-     * supplied {@code StringBuilder}.
+     * supplied {@link StringBuilder}.
      *
-     * @param buffer        The {@code StringBuilder} to append the output to.
+     * @param buffer        The {@link StringBuilder} to append the output to.
      * @param textTemplate  The text or text template.
      * @param args          Optional format arguments.
      */
@@ -221,9 +221,9 @@ public class SimpleJSONBuilder {
 
     /**
      * Create a standalone text JSON string and append to the
-     * supplied {@code StringBuilder}.
+     * supplied {@link java.lang.StringBuilder}.
      *
-     * @param buffer        The {@code StringBuilder} to append the output to.
+     * @param buffer        The {@link java.lang.StringBuilder} to append the output to.
      * @param textTemplate  The text or text template.
      * @param args          Optional format arguments.
      */
@@ -238,9 +238,9 @@ public class SimpleJSONBuilder {
 
     /**
      * Create a standalone text JSON string and append to the
-     * supplied {@code StringBuilder}.
+     * supplied {@link java.lang.StringBuilder}.
      *
-     * @param buffer      The {@code Appendable} to append the output to.
+     * @param buffer      The {@link java.lang.Appendable} to append the output to.
      * @param components  The text components.
      */
     public static void text(Appendable buffer, TextComponents components) {

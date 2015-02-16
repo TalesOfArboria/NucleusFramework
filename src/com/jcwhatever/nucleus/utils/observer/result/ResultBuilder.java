@@ -132,7 +132,7 @@ public class ResultBuilder<R> {
     }
 
     /**
-     * Generate a new {@code Result}.
+     * Generate a new {@link Result}.
      */
     public Result<R> build() {
         return new Result<R>(_totalCompletion, _resultCompletion, _result, _message);

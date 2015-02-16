@@ -71,8 +71,8 @@ public class ActionBar {
     /**
      * Show the action bar to a player.
      *
-     * <p>If the player is viewing 1 or more {@code PersistentActionBar}'s,
-     * a {@code TimedActionBar} is shown instead to ensure the text is given
+     * <p>If the player is viewing 1 or more {@link PersistentActionBar}'s,
+     * a {@link TimedActionBar} is shown instead to ensure the text is given
      * a proper time slice among the persisted bars.</p>
      *
      * @param player  The player to show the bar to.

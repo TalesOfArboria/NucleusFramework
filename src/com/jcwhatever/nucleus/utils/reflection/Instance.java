@@ -38,7 +38,7 @@ public abstract class Instance {
     /**
      * Constructor.
      *
-     * @param type      The instances class type represented by a {@code ReflectedType} instance.
+     * @param type      The instances class type represented by a {@link ReflectedType} instance.
      * @param instance  The instance to encapsulate.
      */
     protected Instance(ReflectedType type, Object instance) {
@@ -55,7 +55,7 @@ public abstract class Instance {
     }
 
     /**
-     * Get the {@code ReflectedType} of the instance.
+     * Get the {@link ReflectedType} of the instance.
      */
     public ReflectedType getReflectedType() {
         return _type;
@@ -76,7 +76,6 @@ public abstract class Instance {
 
     /**
      * Get the encapsulated object instance.
-     * @return
      */
     public Object getHandle() {
         return _instance;

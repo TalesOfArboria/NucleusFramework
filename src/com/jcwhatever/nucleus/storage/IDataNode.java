@@ -46,7 +46,7 @@ import javax.annotation.Nullable;
 public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
 
     /**
-     * Specifies auto save settings for an {@code IDataNode}.
+     * Specifies auto save settings for an {@link IDataNode}.
      */
     public enum AutoSaveMode {
         DEFAULT,
@@ -83,7 +83,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     IDataNode getRoot();
 
     /**
-     * Determine if the {@code IDataNode} is
+     * Determine if the {@link IDataNode} is
      * the root node.
      */
     boolean isRoot();
@@ -105,7 +105,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      * Load the data asynchronously.
      *
      * @return A future object to get the result with. The result is the data node
-     * that {@code #save} was invoked from.
+     * that {@link #save} was invoked from.
      */
     Future<IDataNode> loadAsync();
 
@@ -123,7 +123,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      * Save the data.
      *
      * @return  A future object to get the results with. The result is the
-     * data node that {@code #save} was invoked from.
+     * data node that {@link #save} was invoked from.
      */
     Future<IDataNode> save();
 
@@ -148,7 +148,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      * @param destination  The destination file.
      *
      * @return  A future object to get the results with. The result is the
-     * data node that {@code #save} was invoked from.
+     * data node that {@link #save} was invoked from.
      */
     Future<IDataNode> save(File destination);
 
@@ -254,7 +254,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     Map<String, Object> getAllValues();
 
     /**
-     * Deserialize an {@code IDataNodeSerializable} object from the specified node path.
+     * Deserialize an {@link IDataNodeSerializable} object from the specified node path.
      *
      * @param nodePath   The node path.
      * @param typeClass  The object class.
@@ -364,7 +364,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     String getString(String keyPath, @Nullable String def);
 
     /**
-     * Get the {@code UUID} value of a node key.
+     * Get the {@link UUID} value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key.
      *
@@ -374,7 +374,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     UUID getUUID(String keyPath);
 
     /**
-     * Get the {@code UUID} value of a node key.
+     * Get the {@link UUID} value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key.
      * @param def      The default value to return if the key value is not found.
@@ -385,7 +385,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     UUID getUUID(String keyPath, @Nullable UUID def);
 
     /**
-     * Get the {@code Location} value of a node key.
+     * Get the {@link Location} value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key.
      *
@@ -395,7 +395,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     SyncLocation getLocation(String keyPath);
 
     /**
-     * Get the {@code Location} value of a node key.
+     * Get the {@link Location} value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key.
      * @param def      The default value to return if the key value is not found.
@@ -406,7 +406,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     SyncLocation getLocation(String keyPath, @Nullable Location def);
 
     /**
-     * Get the {@code ItemStack[]} value of a node key.
+     * Get the {@link ItemStack[]} value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key.
      *
@@ -416,7 +416,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     ItemStack[] getItemStacks(String keyPath);
 
     /**
-     * Get the {@code ItemStack[]} value of a node key.
+     * Get the {@link ItemStack[]} value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key.
      * @param def      The default value to return if the key value is not found.
@@ -427,7 +427,7 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     ItemStack[] getItemStacks(String keyPath, @Nullable ItemStack def);
 
     /**
-     * Get the {@code ItemStack[]} value of a node key.
+     * Get the {@link ItemStack[]} value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key.
      * @param def      The default value to return if the key value is not found.

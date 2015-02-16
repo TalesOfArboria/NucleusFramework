@@ -70,7 +70,7 @@ public abstract class ConversionSetWrapper<E, T>
     }
 
     /**
-     * Invoked from a synchronized block to get the encapsulated {@code Set}.
+     * Invoked from a synchronized block to get the encapsulated {@link Set}.
      */
     protected abstract Set<T> set();
 

@@ -41,34 +41,33 @@ import java.util.Set;
  * subscriber implementation. The agent must hold the reference to the subscriber
  * and treat it as a member through methods of the {@link ISubscriberAgent} interface
  * until the subscriber is de-registered/removed. (i.e all registered subscribers are
- * visible through the {@link Set} returned by the {@link #getSubscribers} method.)</p>
+ * visible through the {@link java.util.Set} returned by the {@link #getSubscribers} method.)</p>
  */
 public interface ISubscriberAgent extends IDisposable {
 
     /**
-     * Register a subscriber. Functionally the same as {@code #addSubscriber}
-     * except the subscribers {@code #addAgent} method is invoked with
-     * the current {@code ISubscriberAgent} as its argument.
+     * Register a subscriber. Functionally the same as {@link #addSubscriber}
+     * except the subscribers {@link ISubscriber#addAgent} method is invoked with
+     * the current {@link ISubscriberAgent} as its argument.
      *
      * @param subscriber  The subscriber to register.
      */
     public boolean register(ISubscriber subscriber);
 
     /**
-     * Unregister a subscriber. Functionally the same as
-     * {@code #removeSubscriber} except the subscribers {@code #removeAgent}
-     * method is invoked with the current {@code ISubscriberAgent} as
-     * its argument.
+     * Unregister a subscriber. Functionally the same as {@link #removeSubscriber}
+     * except the subscribers {@link ISubscriber#removeAgent} method is invoked with
+     * the {@link ISubscriberAgent} as its argument.
      *
      * @param subscriber  The subscriber to unregister.
      */
     public boolean unregister(ISubscriber subscriber);
 
     /**
-     * Adds a subscriber. Functionally the same as {@code #register}
-     * except that the subscribers {@code #addAgent} method isn't
-     * invoked. Should only be invoked by a subscriber
-     * that already has a reference to the agent.
+     * Adds a subscriber. Functionally the same as {@link #register}
+     * except that the subscribers {@link ISubscriber#addAgent} method isn't
+     * invoked. Should only be invoked by a subscriber that already has a reference
+     * to the agent.
      *
      * @param subscriber  The subscriber to add.
      *
@@ -77,10 +76,10 @@ public interface ISubscriberAgent extends IDisposable {
     public boolean addSubscriber(ISubscriber subscriber);
 
     /**
-     * Remove a subscriber. Functionally the same as {@code #unregister}
-     * except that the subscribers {@code #removeAgent} method isn't
-     * invoked. Should only be invoked by a subscriber that has already
-     * removed its reference to the agent.
+     * Remove a subscriber. Functionally the same as {@link #unregister}
+     * except that the subscribers {@link ISubscriber#removeAgent} method isn't
+     * invoked. Should only be invoked by a subscriber that has already removed its
+     * reference to the agent.
      *
      * @param subscriber  The subscriber to remove.
      *

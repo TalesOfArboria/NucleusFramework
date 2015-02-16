@@ -27,16 +27,16 @@ package com.jcwhatever.nucleus.utils.pathing.astar;
 
 import org.bukkit.Location;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
- * Collection to store {@code AStarPathNode}'s
+ * Collection to store {@link AStarPathNode}'s
  */
 public class AStarNodes implements INodeCollection<AStarPathNode> {
 

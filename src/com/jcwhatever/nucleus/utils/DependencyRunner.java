@@ -107,7 +107,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
     }
 
     /**
-     * Get the number of seconds the {@code DependencyRunner} will run
+     * Get the number of seconds the {@link DependencyRunner} will run
      * before timing out.
      */
     public int getTimeoutSeconds() {
@@ -146,7 +146,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
     }
 
     /**
-     * Add an {@code IFinishHandler} to run when all dependant runnables have run
+     * Add an {@link IFinishHandler} to run when all dependant runnables have run
      * or when the timeout is reached.
      *
      * @param onFinish  The handler to add.
@@ -165,7 +165,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
      * Begin running dependant runnables when their dependency conditions are met
      * until the timeout is reached.
      *
-     * <p>Once this is called, the {@code DependencyRunner} cannot be used anymore.</p>
+     * <p>Once this is called, the {@link DependencyRunner} cannot be used anymore.</p>
      */
     public void start() {
         checkCanUse();
@@ -198,10 +198,10 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
     }
 
     /**
-     * Interface for a handler that is called when the {@code DependencyRunner} has
+     * Interface for a handler that is called when the {@link DependencyRunner} has
      * finished running all of the dependant runnables or the timeout has been reached.
      *
-     * @param <T>  The {@code IDependantRunnable} type.
+     * @param <T>  The {@link IDependantRunnable} type.
      */
     public interface IFinishHandler<T extends IDependantRunnable> {
         void onFinish(List<T> notRun);

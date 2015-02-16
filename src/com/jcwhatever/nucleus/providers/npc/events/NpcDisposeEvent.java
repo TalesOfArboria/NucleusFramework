@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.providers.npc.INpc;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when an {@code INpc} instance is disposed.
+ * Called when an {@link INpc} instance is disposed.
  */
 public class NpcDisposeEvent extends NpcEvent {
 

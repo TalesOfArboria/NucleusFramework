@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.utils.text;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
- * A {@code CharSequence} implementation that allows the characters
+ * A {@link java.lang.CharSequence} implementation that allows the characters
  * to be rotated left or right.
  *
  * <p>Allows changing the string without changing the rotation.</p>
@@ -79,7 +79,7 @@ public class CircularString implements CharSequence {
 
     /**
      * Returns a reference to the array of un-rotated characters being
-     * used by the {@code CircularString}.
+     * used by the {@link CircularString}.
      */
     public char[] getChars() {
         return _string;
@@ -160,7 +160,7 @@ public class CircularString implements CharSequence {
     }
 
     /**
-     * Get a new {@code CircularString} whose characters are
+     * Get a new {@link CircularString} whose characters are
      * a sub-sequence of characters from the current.
      *
      * @param start  The start index of the sequence relative to the current rotation.

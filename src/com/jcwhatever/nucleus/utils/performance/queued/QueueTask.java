@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 
 /**
  * Abstract class that worker tasks should extend so
- * that they can be used by {@code QueueWorker}.
+ * that they can be used by {@link QueueWorker}.
  */
 public abstract class QueueTask implements IPluginOwned, Runnable {
 

@@ -27,10 +27,9 @@ package com.jcwhatever.nucleus.mixins;
 
 /**
  * Mixin to add dispose method to classes.
- * <p>
- *     A class that implements {@code IDisposable} must have
- *     its {@code dispose} method called when it is no longer needed.
- * </p>
+ *
+ * <p>A class that implements {@link IDisposable} must have its
+ * {@link IDisposable#dispose} method called when it is no longer needed.</p>
  */
 public interface IDisposable {
 

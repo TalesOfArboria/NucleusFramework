@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 
 /**
  * An update agent which producers can use to send updates
- * to {@code IUpdateSubscriber}'s that are registered with the agent.
+ * to {@link IUpdateSubscriber}'s that are registered with the agent.
  */
 public interface IUpdateAgent<A> extends ISubscriberAgent {
 

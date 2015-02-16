@@ -327,7 +327,7 @@ public class CommandDispatcher implements
      * is ready to accept command registrations.
      *
      * <p>Intended to be overridden by a class that extends
-     * {@code CommandDispatcher}.</p>
+     * {@link CommandDispatcher}.</p>
      *
      * <p>Used for convenience. Commands can still be registered
      * outside of the dispatcher any time after instantiating it.</p>

@@ -72,7 +72,7 @@ public interface IFriendsProvider extends IProvider {
      * @param friendId  The ID of the player to become friends with.
      * @param level     The level of friendship.
      *
-     * @return  The new or current {@code IFriend} object.
+     * @return  The new or current {@link IFriend} object.
      */
     IFriend addFriend(UUID playerId, UUID friendId, FriendLevel level);
 

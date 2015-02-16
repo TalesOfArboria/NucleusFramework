@@ -53,7 +53,7 @@ import javax.annotation.Nonnull;
  *
  * <p>In order to make using the wrapper as an extension of a map easier,
  * several protected methods are provided for optional override. See {@link #onPut},
- * {@code onPutAll}, {@link #onRemove}, {@link @onRemoveAll}, {@link #onClear}</p>
+ * {@link onPutAll}, {@link #onRemove}, {@link @onRemoveAll}, {@link #onClear}</p>
  */
 public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
 
@@ -110,7 +110,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
     /**
      * Invoked after putting multiple values into the map. It is not
      * guaranteed that this is invoked for all batch "put" operations. In some
-     * cases, {@code #onPut} is invoked for each entry added instead.
+     * cases, {@link #onPut} is invoked for each entry added instead.
      *
      * <p>Not guaranteed to be called from a synchronized block.</p>
      *
@@ -137,7 +137,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
     /**
      * Invoked after removing an entry from the map except when the
      * map is cleared. It is not guaranteed that this will be called
-     * for all batch remove operations. In some cases, the {@code #onRemove}
+     * for all batch remove operations. In some cases, the {@link #onRemove}
      * method may be invoked for each value removed.
      *
      * <p>Not guaranteed to be called from a synchronized block.</p>
@@ -162,7 +162,7 @@ public abstract class MultimapWrapper<K, V> implements Multimap<K, V> {
 
     /**
      * Invoked from a synchronized block to get
-     * the encapsulated {@code Multimap}.
+     * the encapsulated {@link Multimap}.
      */
     protected abstract Multimap<K, V> map();
 

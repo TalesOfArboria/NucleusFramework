@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 public class NucleusByteWriterTest {
 
     /**
-     * Make sure {@code #getBytesWritter} returns the correct value.
+     * Make sure {@link #getBytesWritter} returns the correct value.
      */
     @Test
     public void testGetBytesWritten() throws Exception {
@@ -47,7 +47,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeBoolean} works correctly.
+     * Make sure {@link #writeBoolean} works correctly.
      */
     @Test
     public void testWriteBoolean() throws Exception {
@@ -69,7 +69,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeByte} works correctly.
+     * Make sure {@link #writeByte} works correctly.
      */
     @Test
     public void testWriteByte() throws Exception {
@@ -87,7 +87,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeBytes} works correctly.
+     * Make sure {@link #writeBytes} works correctly.
      */
     @Test
     public void testWriteBytes() throws Exception {
@@ -105,7 +105,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeShort} works correctly.
+     * Make sure {@link #writeShort} works correctly.
      */
     @Test
     public void testWriteShort() throws Exception {
@@ -123,7 +123,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code writeInteger} works correctly.
+     * Make sure {@link writeInteger} works correctly.
      */
     @Test
     public void testWriteInteger() throws Exception {
@@ -141,7 +141,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeLong} works correctly.
+     * Make sure {@link #writeLong} works correctly.
      */
     @Test
     public void testWriteLong() throws Exception {
@@ -159,7 +159,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeFloat} works correctly.
+     * Make sure {@link #writeFloat} works correctly.
      */
     @Test
     public void testWriteFloat() throws Exception {
@@ -177,7 +177,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeDouble} works correctly.
+     * Make sure {@link #writeDouble} works correctly.
      */
     @Test
     public void testWriteDouble() throws Exception {
@@ -195,7 +195,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeString} works correctly.
+     * Make sure {@link #writeString} works correctly.
      */
     @Test
     public void testWriteString() throws Exception {
@@ -222,7 +222,7 @@ public class NucleusByteWriterTest {
     }
 
     /**
-     * Make sure {@code #writeSmallString} works correctly.
+     * Make sure {@link #writeSmallString} works correctly.
      */
     @Test
     public void testWriteSmallString() throws Exception {

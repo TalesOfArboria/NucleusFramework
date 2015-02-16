@@ -66,7 +66,7 @@ public class ViewSessionTest {
     }
 
     /**
-     * Make sure the {@code ViewSession#next} method functions properly.
+     * Make sure the {@link ViewSession#next} method functions properly.
      */
     @Test
     public void testNext() {
@@ -102,7 +102,7 @@ public class ViewSessionTest {
     }
 
     /**
-     * Make sure the {@code ViewSession#previous} method functions properly.
+     * Make sure the {@link ViewSession#previous} method functions properly.
      */
     @Test
     public void testPrevious() {
@@ -144,7 +144,7 @@ public class ViewSessionTest {
     }
 
     /**
-     * Make sure the {@code ViewSession#refresh} method functions properly.
+     * Make sure the {@link ViewSession#refresh} method functions properly.
      */
     @Test
     public void refresh() {

@@ -32,12 +32,12 @@ import javax.annotation.Nullable;
 public class SyncStrategy {
 
     /**
-     * No synchronization. {@code #getSync} returns null.
+     * No synchronization. {@link #getSync} returns null.
      */
     public static final SyncStrategy NONE = new SyncStrategy(null);
 
     /**
-     * Synchronize on source. {@code #getSync} returns the source object.
+     * Synchronize on source. {@link #getSync} returns the source object.
      */
     public static final SyncStrategy SYNC = new SyncStrategy(null);
 

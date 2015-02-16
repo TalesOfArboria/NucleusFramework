@@ -46,7 +46,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * An implementation of {@code ISettingsManager}.
+ * An implementation of {@link ISettingsManager}.
  */
 public class SettingsManager implements ISettingsManager {
 

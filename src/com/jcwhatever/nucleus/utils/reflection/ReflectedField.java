@@ -201,7 +201,7 @@ public class ReflectedField {
     }
 
     /**
-     * Get the {@code Field} object.
+     * Get the {@link java.lang.reflect.Field} object.
      */
     public Field getField() {
         try {

@@ -61,7 +61,7 @@ public abstract class CollectionAgent implements ISubscriberAgent {
 
 
     /**
-     * Invoked when a subscriber is removed from the {@code CollectionAgent}
+     * Invoked when a subscriber is removed from the {@link CollectionAgent}
      * so a collection can handle removing the appropriate element.
      *
      * @param subscriber  The removed subscriber.

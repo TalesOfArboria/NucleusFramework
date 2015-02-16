@@ -72,7 +72,7 @@ public class Result<T> {
     /**
      * Determine if the result is from a successful operation.
      *
-     * <p>Alternative syntax for {@code hasResult} method to aid in code clarity.</p>
+     * <p>Alternative syntax for {@link #hasResult} method to aid in code clarity.</p>
      */
     public boolean isSuccess() {
         return _hasResult;

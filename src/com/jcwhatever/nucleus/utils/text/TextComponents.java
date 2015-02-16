@@ -45,7 +45,7 @@ public class TextComponents implements Iterable<TextComponent> {
     /**
      * Constructor.
      *
-     * <p>Generates {@code TextComponent} collection from text.</p>
+     * <p>Generates {@link TextComponent} collection from text.</p>
      *
      * @param text  The text.
      */
@@ -70,7 +70,7 @@ public class TextComponents implements Iterable<TextComponent> {
 
     /**
      * Get the text used to generate the
-     * {@code TextComponent}'s in the collection.
+     * {@link TextComponent}'s in the collection.
      */
     public String getText() {
         return _text;
@@ -99,7 +99,7 @@ public class TextComponents implements Iterable<TextComponent> {
     }
 
     /**
-     * Get the number of {@code TextComponent}'s in
+     * Get the number of {@link TextComponent}'s in
      * the collection.
      */
     public int size() {
@@ -107,7 +107,7 @@ public class TextComponents implements Iterable<TextComponent> {
     }
 
     /**
-     * Get the {@code TextComponent} at the specified
+     * Get the {@link TextComponent} at the specified
      * index location.
      *
      * @param index  The index.
@@ -142,7 +142,7 @@ public class TextComponents implements Iterable<TextComponent> {
     }
 
     /**
-     * Parse the given text into a list of {@code TextComponents}.
+     * Parse the given text into a list of {@link TextComponents}.
      *
      * @param text  The text to parse.
      */

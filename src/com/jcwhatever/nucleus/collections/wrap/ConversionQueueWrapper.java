@@ -70,7 +70,7 @@ public abstract class ConversionQueueWrapper<E, T>
     }
 
     /**
-     * Invoked from a synchronized block to get the encapsulated {@code Queue}.
+     * Invoked from a synchronized block to get the encapsulated {@link Queue}.
      */
     protected abstract Queue<T> queue();
 

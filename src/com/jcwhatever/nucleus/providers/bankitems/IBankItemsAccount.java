@@ -84,9 +84,9 @@ public interface IBankItemsAccount {
 
     /**
      * Get the sum of the amounts of all items in the account
-     * that match the specified {@code ItemStack}.
+     * that match the specified {@link org.bukkit.inventory.ItemStack}.
      *
-     * @param matchingStack  The {@code ItemStack}.
+     * @param matchingStack  The {@link org.bukkit.inventory.ItemStack}.
      */
     int getBalance(ItemStack matchingStack);
 
@@ -141,7 +141,7 @@ public interface IBankItemsAccount {
     /**
      * Withdraw all items from the account.
      *
-     * @return  A list of {@code ItemStack}'s that are the items withdrawn.
+     * @return  A list of {@link org.bukkit.inventory.ItemStack}'s that are the items withdrawn.
      */
     List<ItemStack> withdraw();
 
@@ -151,7 +151,7 @@ public interface IBankItemsAccount {
      *
      * @param material  The material.
      *
-     * @return  A list of {@code ItemStack}'s that are the items withdrawn.
+     * @return  A list of {@link org.bukkit.inventory.ItemStack}'s that are the items withdrawn.
      */
     List<ItemStack> withdraw(Material material) throws InsufficientItemsException;
 
@@ -162,7 +162,7 @@ public interface IBankItemsAccount {
      * @param material  The material.
      * @param amount    The amount to withdraw.
      *
-     * @return  A list of {@code ItemStack}'s that are the items withdrawn.
+     * @return  A list of {@link org.bukkit.inventory.ItemStack}'s that are the items withdrawn.
      *
      * @throws InsufficientItemsException if the amount specified is greater than the balance.
      */
@@ -175,7 +175,7 @@ public interface IBankItemsAccount {
      *
      * @param materialData  The material data.
      *
-     * @return  A list of {@code ItemStack}'s that are the items withdrawn.
+     * @return  A list of {@link org.bukkit.inventory.ItemStack}'s that are the items withdrawn.
      */
     List<ItemStack> withdraw(MaterialData materialData) throws InsufficientItemsException;
 
@@ -186,7 +186,8 @@ public interface IBankItemsAccount {
      * @param materialData  The material data.
      * @param amount        The amount to withdraw.
      *
-     * @return  A list of {@code ItemStack}'s that are the items withdrawn.
+     * @return  A list of {@link org.bukkit.inventory.ItemStack}'s that are the items
+     * withdrawn.
      *
      * @throws InsufficientItemsException if the amount specified is greater than the balance.
      */
@@ -194,23 +195,25 @@ public interface IBankItemsAccount {
             throws InsufficientItemsException;;
 
     /**
-     * Withdraw all items that match the specified {@code ItemStack} from
-     * the account.
+     * Withdraw all items that match the specified {@link org.bukkit.inventory.ItemStack}
+     * from the account.
      *
      * @param matchingStack  The stack used for matching purposes. The amount is not matched.
      *
-     * @return  A list of {@code ItemStack}'s that are the items withdrawn.
+     * @return  A list of {@link org.bukkit.inventory.ItemStack}'s that are the items
+     * withdrawn.
      */
     List<ItemStack> withdraw(ItemStack matchingStack) throws InsufficientItemsException;
 
     /**
-     * Withdraw the specified amount of items that match the specified {@code ItemStack}
-     * from the account.
+     * Withdraw the specified amount of items that match the specified
+     * {@link org.bukkit.inventory.ItemStack} from the account.
      *
      * @param matchingStack  The stack used for matching purposes. The amount is not matched.
      * @param amount         The amount to withdraw.
      *
-     * @return  A list of {@code ItemStack}'s that are the items withdrawn.
+     * @return  A list of {@link org.bukkit.inventory.ItemStack}'s that are the items
+     * withdrawn.
      *
      * @throws InsufficientItemsException if the amount specified is greater than the balance.
      */
@@ -218,19 +221,19 @@ public interface IBankItemsAccount {
             throws InsufficientItemsException;
 
     /**
-     * Get the root {@code IBankItem} instance that represents all stacks in the account
-     * that match the specified {@code ItemStack}.
+     * Get the root {@link IBankItem} instance that represents all stacks in the account
+     * that match the specified {@link org.bukkit.inventory.ItemStack}.
      *
      * @param matchingStack  The stack used for matching purposes. The amount is not matched.
      *
-     * @return  The accounts root {@code IBankItem} or null if the balance of the
+     * @return  The accounts root {@link IBankItem} or null if the balance of the
      * specified item is 0.
      */
     @Nullable
     IBankItem getItem(ItemStack matchingStack);
 
     /**
-     * Get all root {@code IBankItem}'s contained within the account.
+     * Get all root {@link IBankItem}'s contained within the account.
      */
     List<IBankItem> getItems();
 }

@@ -133,7 +133,7 @@ public final class JailUtils {
     }
 
     /**
-     * Get all registered {@code JailSession}'s.
+     * Get all registered {@link JailSession}'s.
      */
     public static List<JailSession> getSessions() {
         return Nucleus.getJailManager().getSessions();

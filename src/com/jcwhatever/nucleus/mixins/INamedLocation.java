@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.mixins;
 import org.bukkit.Location;
 
 /**
- * Mixin that defines an implementation as a {@code Location} wrapper
+ * Mixin that defines an implementation as a {@link Location} wrapper
  * that provides a name to the encapsulated location.
  */
 public interface INamedLocation extends INamedInsensitive{

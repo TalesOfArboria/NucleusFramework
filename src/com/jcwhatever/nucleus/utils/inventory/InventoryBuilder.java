@@ -141,12 +141,12 @@ public class InventoryBuilder {
     }
 
     /**
-     * Assign an {@code ItemStack} to a layout character. When parsing the layout template,
-     * the {@code ItemStack} will be placed into the inventory whenever the specified
-     * layout character is encountered.
+     * Assign an {@link org.bukkit.inventory.ItemStack} to a layout character. When
+     * parsing the layout template, the {@link org.bukkit.inventory.ItemStack} will
+     * be placed into the inventory whenever the specified layout character is encountered.
      *
      * @param layoutChar  The layout character.
-     * @param itemStack   The {@code ItemStack} to assign.
+     * @param itemStack   The {@link org.bukkit.inventory.ItemStack} to assign.
      *
      * @return  Self for chaining.
      */
@@ -165,9 +165,9 @@ public class InventoryBuilder {
      * items will be added in linear order until there is no more room or there
      * are no more items left.
      *
-     * If a layout template is used, these items are added in linear order
+     * <p>If a layout template is used, these items are added in linear order
      * whenever a character in the template is not registered for a specific
-     * {@code ItemStack}.
+     * {@link org.bukkit.inventory.ItemStack}.</p>
      *
      * @param items  The items to add.
      *
@@ -186,9 +186,9 @@ public class InventoryBuilder {
      * items will be added in linear order until there is no more room or there
      * are no more items left.
      *
-     * If a layout template is used, these items are added in linear order
+     * <p>If a layout template is used, these items are added in linear order
      * whenever a character in the template is not registered for a specific
-     * {@code ItemStack}.
+     * {@link org.bukkit.inventory.ItemStack}.</p>
      *
      * @param items  The items to add.
      *
@@ -204,9 +204,9 @@ public class InventoryBuilder {
 
     /**
      * Add a 2 dimensional array representing the layout of the
-     * {@code ItemStack}'s in the inventory.
+     * {@link org.bukkit.inventory.ItemStack}'s in the inventory.
      *
-     * @param layout  The layout of {@code ItemStack}'s.
+     * @param layout  The layout of {@link ItemStack}'s.
      *
      * @return  Self for chaining.
      */

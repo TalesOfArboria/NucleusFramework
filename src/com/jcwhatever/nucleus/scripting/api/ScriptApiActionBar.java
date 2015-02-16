@@ -118,7 +118,7 @@ public class ScriptApiActionBar extends NucleusScriptApi {
         }
 
         /**
-         * Create a new {@code PersistentActionBar} instance.
+         * Create a new {@link PersistentActionBar} instance.
          *
          * @param text  The action bar text.
          */
@@ -135,7 +135,7 @@ public class ScriptApiActionBar extends NucleusScriptApi {
         }
 
         /**
-         * Create a new {@code TimedActionBar} instance.
+         * Create a new {@link TimedActionBar} instance.
          *
          * @param ticks  The number of ticks the bar is visible for.
          * @param text   The action bar text.

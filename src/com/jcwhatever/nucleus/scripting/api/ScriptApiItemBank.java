@@ -85,7 +85,7 @@ public class ScriptApiItemBank extends NucleusScriptApi {
         }
 
         /**
-         * Deposit an {@code ItemStack} into the players account.
+         * Deposit an {@link ItemStack} into the players account.
          *
          * @param player  The player.
          * @param item    The item to deposit.
@@ -134,7 +134,7 @@ public class ScriptApiItemBank extends NucleusScriptApi {
         }
 
         /**
-         * Get all {@code ItemStack}'s in the players item bank account.
+         * Get all {@link ItemStack}'s in the players item bank account.
          *
          * @param player  The player.
          */
@@ -161,7 +161,7 @@ public class ScriptApiItemBank extends NucleusScriptApi {
         }
 
         /**
-         * Determine if the player has the specified {@code ItemStack} in the
+         * Determine if the player has the specified {@link ItemStack} in the
          * specified quantity available in account.
          *
          * @param player  The player.

@@ -409,7 +409,7 @@ public class RegionSelection implements IRegionSelection {
     }
 
     /**
-     * Get a reference to the underlying P1 {@code ImmutableLocation}
+     * Get a reference to the underlying P1 {@link SyncLocation}
      * coordinates.
      */
     protected SyncLocation getSyncP1() {
@@ -417,7 +417,7 @@ public class RegionSelection implements IRegionSelection {
     }
 
     /**
-     * Get a reference to the underlying P2 {@code ImmutableLocation}
+     * Get a reference to the underlying P2 {@link SyncLocation}
      * coordinates.
      */
     protected SyncLocation getSyncP2() {

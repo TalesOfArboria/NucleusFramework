@@ -117,7 +117,7 @@ public abstract class IDataNodeTest {
     }
 
     /**
-     * Make sure {@code #isDirty} method returns the correct value.
+     * Make sure {@link #isDirty} method returns the correct value.
      */
     @Test
     public void testDirty() {
@@ -1005,7 +1005,7 @@ public abstract class IDataNodeTest {
     }
 
     /**
-     * Make sure {@code #getDefaultAutoSave} does not return {@code DEFAULT}.
+     * Make sure {@link #getDefaultAutoSave} does not return {@link DEFAULT}.
      */
     @Test
     public void testDefaultAutoSave() {

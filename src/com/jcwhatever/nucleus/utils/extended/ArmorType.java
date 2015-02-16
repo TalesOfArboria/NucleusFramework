@@ -98,9 +98,9 @@ public enum ArmorType {
     }
 
     /**
-     * Get the type of armor an {@code ItemStack} is.
+     * Get the type of armor an {@link org.bukkit.inventory.ItemStack} is.
      *
-     * @param stack  The {@code ItemStack} to check.
+     * @param stack  The {@link org.bukkit.inventory.ItemStack} to check.
      */
     public static ArmorType getType(@Nullable ItemStack stack) {
         Material stackType = stack == null ? Material.AIR : stack.getType();
@@ -110,7 +110,7 @@ public enum ArmorType {
     /**
      * Get the type of armor a material is.
      *
-     * @param material  The {@code Material} to check.
+     * @param material  The {@link Material} to check.
      */
     public static ArmorType getType(Material material) {
         PreCon.notNull(material);
@@ -127,9 +127,9 @@ public enum ArmorType {
     }
 
     /**
-     * Get the sum of defense values of specified {@code ItemStack}'s.
+     * Get the sum of defense values of specified {@link org.bukkit.inventory.ItemStack}'s.
      *
-     * @param armor  The {@code ItemStack}'s to check.
+     * @param armor  The {@link org.bukkit.inventory.ItemStack}'s to check.
      */
     public static float getDefense(ItemStack... armor) {
         PreCon.notNull(armor);

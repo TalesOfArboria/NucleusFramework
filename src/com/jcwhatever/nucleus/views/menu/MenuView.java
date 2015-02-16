@@ -39,7 +39,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of a {@code ChestView} used as a menu.
+ * Abstract implementation of a {@link ChestView} used as a menu.
  */
 public abstract class MenuView extends ChestView {
 
@@ -68,14 +68,14 @@ public abstract class MenuView extends ChestView {
     }
 
     /**
-     * Get the currently registered {@code MenuItem}'s.
+     * Get the currently registered {@link MenuItem}'s.
      */
     public List<MenuItem> getMenuItems() {
         return CollectionUtils.unmodifiableList(_inventory.getMenuItems());
     }
 
     /**
-     * Get the registered {@code MenuItem} at the specified
+     * Get the registered {@link MenuItem} at the specified
      * slot index.
      *
      * @param slot  The slot index.
@@ -120,7 +120,7 @@ public abstract class MenuView extends ChestView {
     }
 
     /**
-     * Create the inventory needed by the {@code ChestView} super type.
+     * Create the inventory needed by the {@link ChestView} super type.
      */
     @Override
     protected Inventory createInventory() {
@@ -182,7 +182,7 @@ public abstract class MenuView extends ChestView {
     }
 
     /**
-     * Get the number of slots needed for the {@code Inventory}
+     * Get the number of slots needed for the {@link Inventory}
      * instance.
      */
     protected int getSlotsRequired(List<MenuItem> menuItems) {
@@ -200,8 +200,8 @@ public abstract class MenuView extends ChestView {
     }
 
     /**
-     * Called to get a list of {@code MenuItem}'s to initially register and
-     * fill the {@code Inventory} after it is created.
+     * Called to get a list of {@link MenuItem}'s to initially register and
+     * fill the {@link org.bukkit.inventory.Inventory} after it is created.
      */
     protected abstract List<MenuItem> createMenuItems();
 

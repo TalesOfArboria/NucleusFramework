@@ -113,7 +113,7 @@ public interface IAccount {
     /**
      * Get the underlying account object if the
      * object is wrapped. Otherwise, the handle is
-     * the {@code IAccount} instance.
+     * the {@link IAccount} instance.
      */
     Object getHandle();
 }

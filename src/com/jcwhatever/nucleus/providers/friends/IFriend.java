@@ -68,7 +68,7 @@ public interface IFriend {
     boolean isValid();
 
     /**
-     * Get the {@code IFriend} object is the mutual friendship between the
+     * Get the {@link IFriend} object is the mutual friendship between the
      * two players. (Friend-of player and friend player). Returns null if the
      * friendship is not mutual.
      */

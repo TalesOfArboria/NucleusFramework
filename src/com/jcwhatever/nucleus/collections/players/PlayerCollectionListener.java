@@ -49,8 +49,8 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 /**
- * Collections that implement {@code IPlayerCollection} register
- * players added to the collection with {@code PlayerCollectionListener}
+ * Collections that implement {@link IPlayerCollection} register
+ * players added to the collection with {@link PlayerCollectionListener}
  * so that the player entry can be removed if the player logs out.
  */
 final class PlayerCollectionListener implements IPluginOwned, Listener {

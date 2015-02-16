@@ -83,10 +83,6 @@ font-size: 1.15em !important;
     background: none;
 }
 
-#navrow3 .tablist li.current a, #navrow4 .tablist li.current a, #navrow5 .tablist li.current a {
-    color: #fff;
-}
-
 .tablist li a:hover {
     background-color: #404756;
     background-image: none;
@@ -95,6 +91,14 @@ font-size: 1.15em !important;
 .tablist li.current a {
     background-color: #37558f;
     background-image: none;
+}
+
+#navrow3 .tablist li.current a, #navrow4 .tablist li.current a, #navrow5 .tablist li.current a {
+    color: #fff;
+}
+
+#navrow3 .tablist li a:hover, #navrow4 .tablist li a:hover, #navrow5 .tablist li a:hover {
+    color: #fafafa;
 }
 
 .tabs, .tabs2, .tabs3 {
@@ -130,6 +134,10 @@ table {
 td {
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+dt {
+    color: #505050;
 }
 
 /* @group Heading Levels */
@@ -246,7 +254,7 @@ div.navtab {
 /* @group Link Styling */
 
 a {
-	color: #3D578C;
+	color: #243f72;
 	font-weight: normal;
 	text-decoration: none;
 }
@@ -312,11 +320,6 @@ pre.fragment {
         line-height: 125%;
         font-family: monospace, fixed;
         font-size: 105%;
-}
-
-p {
-    display: inline-block;
-    margin: 1px;
 }
 
 div.fragment {
@@ -589,6 +592,8 @@ hr.footer {
 table.memberdecls {
 	border-spacing: 0px;
 	padding: 0px;
+    width: 100%;
+    display: inline-table;
 }
 
 .memberdecls td, .fieldtable tr {
@@ -615,13 +620,28 @@ table.memberdecls {
 	background-color: #F9FAFC;
 	border: none;
 	margin: 4px;
-	padding: 10px 0 10px 8px;
+	padding: 14px 0 4px 8px;
 }
 
 .mdescLeft, .mdescRight {
 	padding: 0px 8px 4px 8px;
-	color: #555;
+	color: #444;
 }
+
+.memItemLeft a.el, li a.el {
+    font-weight: normal;
+}
+
+.mdescRight a.el, .textblock a.el, .directory .desc a.el {
+    font-weight: normal;
+}
+
+.mdescRight {
+    font-size: 14px;
+    color: #666;
+    padding-bottom: 6px;
+}
+
 
 .memSeparator {
         border-bottom: 1px solid #DEE4F0;
@@ -636,6 +656,7 @@ table.memberdecls {
 
 .memItemRight {
 	width: 100%;
+    color: #000;
 }
 
 .memTemplParams {
@@ -693,6 +714,10 @@ table.memberdecls {
 	vertical-align: bottom;
 }
 
+.memname a.el {
+    color: #202020;
+}
+
 .memproto, dl.reflist dt {
         padding: 6px 0px 6px 0px;
         color: #253555;
@@ -714,6 +739,10 @@ table.memberdecls {
 .memdoc p:last-child {
     display: block;
     margin-top: 30px;
+}
+
+.memdoc a.el {
+    font-weight: normal;
 }
 
 dl.reflist dt {
@@ -772,10 +801,6 @@ dl.reflist dd {
 .params .paramdir {
         font-family: "courier new",courier,monospace;
         vertical-align: top;
-}
-
-.params dt {
-    color: #808080;
 }
 
 table.mlabels {
@@ -840,8 +865,8 @@ div.directory {
 }
 
 .directory td.entry {
-        white-space: nowrap;
-        padding-right: 6px;
+    white-space: nowrap;
+    padding-right: 12px;
 	padding-top: 5px;
     padding-bottom: 5px;
 }
@@ -855,8 +880,8 @@ div.directory {
 }
 
 .directory td.desc {
-        width: 100%;
-        padding-left: 6px;
+    width: 100%;
+    padding-left: 12px;
 	padding-right: 6px;
 	padding-top: 3px;
 	border-left: 1px solid rgba(0,0,0,0.05);
@@ -875,7 +900,7 @@ div.directory {
         white-space: nowrap;
         width: 100%;
         text-align: right;
-        font-size: 9pt;
+        font-size: 14px;
 }
 
 .directory .levels span {
@@ -968,7 +993,9 @@ table.directory {
 /* @end */
 
 div.dynheader {
-        margin-top: 8px;
+    margin-top: 8px;
+    color: #777;
+    font-style: italic;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;

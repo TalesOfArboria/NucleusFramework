@@ -37,7 +37,7 @@ import java.util.Map.Entry;
 import javax.annotation.Nullable;
 
 /**
- * Settings for {@code TextFormatter}.
+ * Settings for {@link TextFormatter}.
  */
 public class TextFormatterSettings {
 
@@ -89,7 +89,7 @@ public class TextFormatterSettings {
     /**
      * Constructor.
      *
-     * @param source      The {@code TextFormatterSettings} to copy.
+     * @param source      The {@link TextFormatterSettings} to copy.
      * @param formatters  The formatters to use. Overwrites source settings if duplicate.
      */
     public TextFormatterSettings(TextFormatterSettings source, ITagFormatter... formatters) {
@@ -121,7 +121,7 @@ public class TextFormatterSettings {
     /**
      * Constructor.
      *
-     * @param source      The {@code TextFormatterSettings} to copy.
+     * @param source      The {@link TextFormatterSettings} to copy.
      * @param formatters  A map of formatters to use. Overwrites source settings if duplicate.
      */
     public TextFormatterSettings(TextFormatterSettings source,

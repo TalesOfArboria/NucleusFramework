@@ -154,7 +154,7 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
      * @param p     The player who changed/created the sign.
      * @param sign  The encapsulated sign.
      *
-     * @return  {@code VALID} if the change is valid/allowed, otherwise {@code INVALID}.
+     * @return  {@literal VALID} if the change is valid/allowed, otherwise {@literal INVALID}.
      */
     protected abstract SignChangeResult onSignChange(Player p, SignContainer sign);
 
@@ -165,8 +165,8 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
      * @param p     The player who clicked the sign.
      * @param sign  The encapsulated sign.
      *
-     * @return  {@code HANDLED} if the click was valid and handled,
-     * otherwise {@code CANCEL}.
+     * @return  {@literal HANDLED} if the click was valid and handled,
+     * otherwise {@literal CANCEL}.
      */
     protected abstract SignClickResult onSignClick(Player p, SignContainer sign);
 
@@ -180,7 +180,7 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
      * @param p     The player who is breaking the sign.
      * @param sign  The encapsulated sign.
      *
-     * @return  {@code ALLOW} if the break is allowed, otherwise {@code DENY}.
+     * @return  {@literal ALLOW} if the break is allowed, otherwise {@literal DENY}.
      */
     protected abstract SignBreakResult onSignBreak(Player p, SignContainer sign);
 }

@@ -31,18 +31,15 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * An {@code ItemStack} wrapper.
+ * An {@link org.bukkit.inventory.ItemStack} wrapper.
  *
- * <p>
- *     Provides built in {@code ItemStackMatcher} support in the
- *     {@code equals} method making the wrapper ideal for use as a {@code Map} key.
- * </p>
+ * <p>Provides built in {@link ItemStackMatcher} support in the {@link #equals} and
+ *  {@link #hashCode} methods making the wrapper ideal for use as a hash key that
+ *  represents the item.</p>
  *
- * <p>
- *     {@code hashCode} method returns the hash of the encapsulated {@code ItemStack}'s
- *     {@code Material} type so that different {@code ItemStackMatcher} compare operations
- *     can be used to find an {@code ItemStack} by key or in a hash set.
- * </p>
+ * <p>{@link #hashCode} method returns the hash of the encapsulated {@link org.bukkit.inventory.ItemStack}'s
+ * {@link org.bukkit.Material} type so that different {@link ItemStackMatcher} compare operations
+ * can be used to find an {@link org.bukkit.inventory.ItemStack} by key or in a hash set.</p>
  *
  */
 public class MatchableItem {
@@ -56,7 +53,7 @@ public class MatchableItem {
      * Constructor.
      *
      * <p>
-     *     Uses the default {@code ItemStackMatcher}.
+     *     Uses the default {@link ItemStackMatcher}.
      * </p>
      *
      * @param itemStack  The item stack to encapsulate.
@@ -83,7 +80,7 @@ public class MatchableItem {
     }
 
     /**
-     * Get the encapsulated {@code ItemStack}.
+     * Get the encapsulated {@link org.bukkit.inventory.ItemStack}.
      */
     public ItemStack getItem() {
         return _itemStack;
@@ -101,14 +98,14 @@ public class MatchableItem {
     }
 
     /**
-     * Get the compare operations of the {@code ItemStackMatcher}.
+     * Get the compare operations of the {@link ItemStackMatcher}.
      */
     public byte getCompareOperations() {
         return _comparer.getMatcherOperations();
     }
 
     /**
-     * Get the {@code ItemStackMatcher}.
+     * Get the {@link ItemStackMatcher}.
      */
     public ItemStackMatcher getItemStackMatcher() {
         return _comparer;

@@ -60,21 +60,21 @@ public class NpcEntityTypeChangeEvent extends NpcEvent implements Cancellable, I
     }
 
     /**
-     * Get the previous {@code EntityType}.
+     * Get the previous {@link EntityType}.
      */
     public EntityType getOldType() {
         return _oldType;
     }
 
     /**
-     * Get the new {@code EntityType}.
+     * Get the new {@link EntityType}.
      */
     public EntityType getNewType() {
         return _newType;
     }
 
     /**
-     * Set the new {@code EntityType}.
+     * Set the new {@link EntityType}.
      *
      * @param type  The entity type.
      */

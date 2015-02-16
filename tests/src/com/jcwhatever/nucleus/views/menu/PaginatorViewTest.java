@@ -41,7 +41,7 @@ public class PaginatorViewTest extends AbstractViewTest {
     }
 
     /**
-     * Make sure paginator inventory type is {@code InventoryType.CHEST}.
+     * Make sure paginator inventory type is {@link InventoryType.CHEST}.
      */
     @Test
     public void testGetInventoryType() throws Exception {

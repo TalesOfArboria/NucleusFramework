@@ -80,7 +80,7 @@ public final class NmsUtils {
      * disabled.</p>
      *
      * <p>Server operators can override this in the config of plugins
-     * that extend {@code NucleusPlugin}.</p>
+     * that extend {@link NucleusPlugin}.</p>
      *
      * @param plugin              The plugin to check.
      * @param compatibleVersions  The NMS versions the plugin is compatible with.

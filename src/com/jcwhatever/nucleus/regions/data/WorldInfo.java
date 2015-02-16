@@ -50,7 +50,7 @@ public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IBinarySeri
     private Environment _environment;
 
     /**
-     * Empty Constructor required for {@code IDataNodeSerializable}.
+     * Empty Constructor required for {@link IDataNodeSerializable}.
      */
     private WorldInfo() {}
 

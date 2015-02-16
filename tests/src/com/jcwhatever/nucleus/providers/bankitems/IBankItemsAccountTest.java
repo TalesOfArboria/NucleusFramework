@@ -31,7 +31,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #getOwnerId} returns the correct value.
+     * Make sure {@link #getOwnerId} returns the correct value.
      */
     @Test
     public void testGetOwnerId() {
@@ -43,7 +43,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #getBank} returns the correct value.
+     * Make sure {@link #getBank} returns the correct value.
      */
     @Test
     public void testGetBank() {
@@ -55,7 +55,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #getBalance(ItemStack)} works correctly.
+     * Make sure {@link #getBalance(ItemStack)} works correctly.
      */
     @Test
     public void testGetBalance() {
@@ -71,7 +71,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #getBalance(Material)} works correctly.
+     * Make sure {@link #getBalance(Material)} works correctly.
      */
     @Test
     public void testGetBalance1() throws Exception {
@@ -86,7 +86,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #getBalance(MaterialData)} works correctly.
+     * Make sure {@link #getBalance(MaterialData)} works correctly.
      */
     @Test
     public void testGetBalance2() throws Exception {
@@ -101,7 +101,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #getBalance()} works correctly.
+     * Make sure {@link #getBalance()} works correctly.
      */
     @Test
     public void testGetBalance3() {
@@ -116,7 +116,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #deposit(ItemStack)} works correctly.
+     * Make sure {@link #deposit(ItemStack)} works correctly.
      */
     @Test
     public void testDeposit() {
@@ -131,7 +131,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #deposit(ItemStack, int)} works correctly.
+     * Make sure {@link #deposit(ItemStack, int)} works correctly.
      */
     @Test
     public void testDeposit1() {
@@ -146,7 +146,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #deposit(Material, int)} works correctly.
+     * Make sure {@link #deposit(Material, int)} works correctly.
      */
     @Test
     public void testDeposit2() {
@@ -161,7 +161,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #deposit(MaterialData, int)} works correctly.
+     * Make sure {@link #deposit(MaterialData, int)} works correctly.
      */
     @Test
     public void testDeposit3() {
@@ -176,7 +176,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #withdraw()} works correctly.
+     * Make sure {@link #withdraw()} works correctly.
      */
     @Test
     public void testWithdraw() {
@@ -196,7 +196,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #withdraw(Material)} works correctly.
+     * Make sure {@link #withdraw(Material)} works correctly.
      */
     @Test
     public void testWithdraw1() throws InsufficientItemsException {
@@ -216,7 +216,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #withdraw(MaterialData)} works correctly.
+     * Make sure {@link #withdraw(MaterialData)} works correctly.
      */
     @Test
     public void testWithdraw2() throws InsufficientItemsException {
@@ -238,7 +238,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #withdraw(Material, int)} works correctly.
+     * Make sure {@link #withdraw(Material, int)} works correctly.
      */
     @Test
     public void testWithdraw3() throws InsufficientItemsException {
@@ -260,7 +260,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #withdraw(MaterialData, int)} works properly.
+     * Make sure {@link #withdraw(MaterialData, int)} works properly.
      */
     @Test
     public void testWithdraw4() throws InsufficientItemsException {
@@ -282,7 +282,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code withdraw(ItemStack, int)} works properly.
+     * Make sure {@link withdraw(ItemStack, int)} works properly.
      */
     @Test
     public void testWithdraw5() throws InsufficientItemsException {
@@ -306,7 +306,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #withdraw(ItemStack)} works correctly.
+     * Make sure {@link #withdraw(ItemStack)} works correctly.
      */
     @Test
     public void testWithdraw6() throws Exception {
@@ -331,7 +331,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #getItem} works correctly.
+     * Make sure {@link #getItem} works correctly.
      */
     @Test
     public void testGetItem() {
@@ -355,7 +355,7 @@ public abstract class IBankItemsAccountTest {
     }
 
     /**
-     * Make sure {@code #getItems} works properly.
+     * Make sure {@link #getItems} works properly.
      */
     @Test
     public void testGetItems() {

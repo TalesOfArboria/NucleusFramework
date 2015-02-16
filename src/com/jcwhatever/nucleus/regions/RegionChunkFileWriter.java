@@ -160,9 +160,9 @@ public class RegionChunkFileWriter {
     /**
      * Save the chunk section snapshot to a file.
      *
-     * <p>Runs task immediately if no {@code QueueProject} is provided.</p>
+     * <p>Runs task immediately if no {@link QueueProject} is provided.</p>
      *
-     * <p>If a {@code QueueProject} is provided, the task is not run.</p>
+     * <p>If a {@link QueueProject} is provided, the task is not run.</p>
      *
      * @param file     The file to save to.
      * @param project  The optional project to add tasks to.

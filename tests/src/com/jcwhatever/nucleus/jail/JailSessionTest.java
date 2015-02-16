@@ -59,7 +59,7 @@ public class JailSessionTest {
     }
 
     /**
-     * Make sure the {@code JailSession} returns the correct {@code Jail}.
+     * Make sure the {@link JailSession} returns the correct {@link Jail}.
      */
     @Test
     public void testGetJail() {
@@ -100,7 +100,7 @@ public class JailSessionTest {
     }
 
     /**
-     * Make sure the {@code #isReleased} method returns the correct value.
+     * Make sure the {@link #isReleased} method returns the correct value.
      */
     @Test
     public void testIsReleased() throws Exception {
@@ -119,7 +119,7 @@ public class JailSessionTest {
     }
 
     /**
-     * Make sure the {@code #isExpired} method returns the correct value.
+     * Make sure the {@link #isExpired} method returns the correct value.
      */
     @Test
     public void testIsExpired() throws Exception {
@@ -138,7 +138,7 @@ public class JailSessionTest {
     }
 
     /**
-     * Make sure the {@code release} method works properly.
+     * Make sure the {@link release} method works properly.
      */
     @Test
     public void testRelease() throws Exception {

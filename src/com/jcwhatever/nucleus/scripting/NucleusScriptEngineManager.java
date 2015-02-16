@@ -35,7 +35,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
 /**
- * Extends {@code ScriptEngineManager} and provides singleton {@code ScriptEngine}
+ * Extends {@link ScriptEngineManager} and provides singleton {@link javax.script.ScriptEngine}
  * instances.
  */
 public class NucleusScriptEngineManager extends ScriptEngineManager {

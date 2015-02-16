@@ -45,7 +45,7 @@ public final class PlayerElement {
     /**
      * Constructor.
      *
-     * @param player  The {@code Player} object to encapsulate.
+     * @param player  The {@link Player} object to encapsulate.
      */
     public PlayerElement(Player player) {
         _player = player;
@@ -84,7 +84,7 @@ public final class PlayerElement {
     }
 
     /**
-     * Used to match an object with a {@code PlayerEntry} object.
+     * Used to match an object with a {@link PlayerElement} object.
      */
     public static class PlayerElementMatcher {
         Object object;

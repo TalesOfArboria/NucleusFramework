@@ -94,7 +94,7 @@ public interface INpcGoals {
     /**
      * runs the provided goals simultaneously with the current running goal.
      *
-     * <p>The goals {@code #canRun} method is still invoked to determine if the
+     * <p>The goals {@link INpcGoal#canRun} method is still invoked to determine if the
      * goals should be run.</p>
      *
      * @param goals  The goals to run.

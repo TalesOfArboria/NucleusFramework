@@ -32,14 +32,14 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * A {@code Set} that allows retrieving the items without iteration.
+ * A {@link java.util.Set} that allows retrieving the items without iteration.
  *
- * <p>Implements a {@code HashMap} internally with both key and value
+ * <p>Implements a {@link java.util.HashMap} internally with both key and value
  * set to the same object.</p>
  *
  * <p>Useful for retrieving items from a collection using a substitute object
- * while maintaining the performance of a {@code HashMap} or {@code HashSet} in
- * most cases.</p>
+ * while maintaining the performance of a {@link java.util.HashMap} or
+ * {@link java.util.HashSet} in most cases.</p>
  */
 public class RetrievableSet<T> implements Set<T> {
 
@@ -103,7 +103,7 @@ public class RetrievableSet<T> implements Set<T> {
 
     /**
      * Remove all items in the specified collection and
-     * return the removed items as a new {@code RetrievableSet}.
+     * return the removed items as a new {@link RetrievableSet}.
      *
      * @param collection  The collection.
      */
@@ -125,7 +125,7 @@ public class RetrievableSet<T> implements Set<T> {
 
     /**
      * Retain all items in the specified collection and
-     * return the removed items as a new {@code RetrievableSet}.
+     * return the removed items as a new {@link RetrievableSet}.
      *
      * @param collection  The collection.
      */

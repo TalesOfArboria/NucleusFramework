@@ -31,7 +31,7 @@ package com.jcwhatever.nucleus.utils.scheduler;
 import javax.annotation.Nullable;
 
 /**
- * A task handler {@code Runnable} with the ability to cancel itself
+ * A task handler {@link java.lang.Runnable} with the ability to cancel itself
  * and run optional code if it is cancelled.
  */
 public abstract class TaskHandler implements Runnable {
@@ -53,7 +53,7 @@ public abstract class TaskHandler implements Runnable {
      * <p>You must still call the child task handlers run method manually.</p>
      *
      * <p>Calling cancelTask method also calls cancelTask on the child
-     * method if it's a {@code TaskHandler} instance.</p>
+     * method if it's a {@link TaskHandler} instance.</p>
      *
      * <p>Calling cancelTask method on the child also calls cancelTask method.</p>
      *
@@ -67,7 +67,7 @@ public abstract class TaskHandler implements Runnable {
     }
 
     /**
-     * Get the {@code ScheduledTask} of the task handler
+     * Get the {@link ScheduledTask} of the task handler
      */
     @Nullable
     public ScheduledTask getTask() {

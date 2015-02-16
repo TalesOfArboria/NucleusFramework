@@ -30,7 +30,7 @@ public abstract class IBankItemsProviderTest {
     }
 
     /**
-     * Make sure {@code #getAccount} works correctly.
+     * Make sure {@link #getAccount} works correctly.
      */
     @Test
     public void testGetAccount() {
@@ -44,7 +44,7 @@ public abstract class IBankItemsProviderTest {
     }
 
     /**
-     * Make sure {@code #createBank} works correctly.
+     * Make sure {@link #createBank} works correctly.
      */
     @Test
     public void testCreateBank() {
@@ -67,7 +67,7 @@ public abstract class IBankItemsProviderTest {
     }
 
     /**
-     * Make sure {@code #hasBank} works correctly.
+     * Make sure {@link #hasBank} works correctly.
      */
     @Test
     public void testHasBank() {
@@ -82,7 +82,7 @@ public abstract class IBankItemsProviderTest {
     }
 
     /**
-     * Make sure {@code #getBank} works correctly.
+     * Make sure {@link #getBank} works correctly.
      */
     @Test
     public void testGetBank() {

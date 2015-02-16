@@ -50,7 +50,7 @@ public class TranscriptTest {
     }
 
     /**
-     * Make sure {@code #getRawTranscript} returns the correct value.
+     * Make sure {@link #getRawTranscript} returns the correct value.
      */
     @Test
     public void testGetRawTranscript() throws Exception {
@@ -61,7 +61,7 @@ public class TranscriptTest {
     }
 
     /**
-     * Make sure {@code #getParagraphs} returns the correct values.
+     * Make sure {@link #getParagraphs} returns the correct values.
      */
     @Test
     public void testGetParagraphs() throws Exception {
@@ -79,7 +79,7 @@ public class TranscriptTest {
     }
 
     /**
-     * Make sure {@code #run} works correctly.
+     * Make sure {@link #run} works correctly.
      */
     @Test
     public void testRun() throws Exception {

@@ -39,12 +39,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 /**
- * Serializes {@code ItemStack}'s into a string.
+ * Serializes {@link org.bukkit.inventory.ItemStack}'s into a string.
  *
  * <p>
  *     Add item stacks to serialize them. The result can be obtained
- *     by calling the instances {@code toString} method or the results
- *     can be appended to a {@code StringBuilder} provided in the
+ *     by calling the instances {@link #toString} method or the results
+ *     can be appended to a {@link java.lang.StringBuilder} provided in the
  *     constructor.
  * </p>
  * <p>
@@ -98,7 +98,7 @@ public class ItemStackSerializer {
      *     Raw output type.
      * </p>
      *
-     * @param buffy  The {@code StringBuilder} to append the results to.
+     * @param buffy  The {@link java.lang.StringBuilder} to append the results to.
      */
     public ItemStackSerializer(StringBuilder buffy) {
         _buffy = buffy;
@@ -107,7 +107,7 @@ public class ItemStackSerializer {
     /**
      * Constructor.
      *
-     * @param buffy       The The {@code StringBuilder} to append the results to.
+     * @param buffy       The The {@link java.lang.StringBuilder} to append the results to.
      * @param outputType  The output type.
      */
     public ItemStackSerializer(StringBuilder buffy, SerializerOutputType outputType) {
@@ -116,10 +116,10 @@ public class ItemStackSerializer {
     }
 
     /**
-     * Serialize an {@code ItemStack} and append the results to
+     * Serialize an {@link org.bukkit.inventory.ItemStack} and append the results to
      * the current results.
      *
-     * @param stack  The {@code ItemStack} to serialize.
+     * @param stack  The {@link org.bukkit.inventory.ItemStack} to serialize.
      *
      * @return Self
      */
@@ -133,10 +133,10 @@ public class ItemStackSerializer {
     }
 
     /**
-     * Serialize a collection of {@code ItemStack}'s and append the results
+     * Serialize a collection of {@link org.bukkit.inventory.ItemStack}'s and append the results
      * to the current results.
      *
-     * @param stacks  The {@code ItemStack}'s to serialize.
+     * @param stacks  The {@link org.bukkit.inventory.ItemStack}'s to serialize.
      *
      * @return  Self
      */
@@ -148,10 +148,10 @@ public class ItemStackSerializer {
     }
 
     /**
-     * Serialize an array of {@code ItemStack}'s and append the results
+     * Serialize an array of {@link org.bukkit.inventory.ItemStack}'s and append the results
      * to the current results.
      *
-     * @param stacks  The array of {@code ItemStack}'s to serialize.
+     * @param stacks  The array of {@link org.bukkit.inventory.ItemStack}'s to serialize.
      *
      * @param <T>  The ItemStack type
      *
@@ -165,7 +165,7 @@ public class ItemStackSerializer {
     }
 
     /**
-     * Get the number of {@code ItemStacks} serialized.
+     * Get the number of {@link org.bukkit.inventory.ItemStacks} serialized.
      */
     public int getTotalItems() {
         return _itemsAppended;

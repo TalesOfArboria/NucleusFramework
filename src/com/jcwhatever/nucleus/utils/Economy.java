@@ -334,7 +334,7 @@ public final class Economy {
      *
      * @return  Null if the bank was not found.
      *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     * @throws java.lang.UnsupportedOperationException if {@link #hasBankSupport} returns false.
      */
     @Nullable
     public static IBank getBank(String bankName) {
@@ -344,7 +344,7 @@ public final class Economy {
     /**
      * Get a list of banks.
      *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     * @throws java.lang.UnsupportedOperationException if {@link #hasBankSupport} returns false.
      */
     public static List<IBank> getBanks() {
         return getBankProvider().getBanks();
@@ -357,7 +357,7 @@ public final class Economy {
      *
      * @return  Null if the bank was not created.
      *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     * @throws java.lang.UnsupportedOperationException if {@link #hasBankSupport} returns false.
      */
     @Nullable
     public static IBank createBank(String bankName) {
@@ -372,7 +372,7 @@ public final class Economy {
      *
      * @return  Null if the bank was not created.
      *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     * @throws java.lang.UnsupportedOperationException if {@link #hasBankSupport} returns false.
      */
     @Nullable
     public static IBank createBank(String bankName, UUID ownerId) {
@@ -386,7 +386,7 @@ public final class Economy {
      *
      * @return  True if the bank was found and deleted.
      *
-     * @throws java.lang.UnsupportedOperationException if {@code hasBankSupport} returns false.
+     * @throws java.lang.UnsupportedOperationException if {@link #hasBankSupport} returns false.
      */
     public static boolean deleteBank(String bankName) {
         return getBankProvider().deleteBank(bankName);
@@ -402,7 +402,7 @@ public final class Economy {
     /**
      * Get the bank interface for the economy provider.
      *
-     * <p>Check {@code #hasBankSupport} method first before calling.</p>
+     * <p>Check {@link #hasBankSupport} method first before calling.</p>
      *
      * @throws java.lang.UnsupportedOperationException
      */

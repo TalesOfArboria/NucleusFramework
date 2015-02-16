@@ -53,18 +53,18 @@ import javax.annotation.Nullable;
  * A generic serializable wrapper for a BlockState that is
  * specifically designed to store tile entity data.
  *
- * <p>Cannot create a {@link BlockState} instance but instead retains the information
- * necessary to apply the data to the original block location.</p>
+ * <p>Cannot create a {@link org.bukkit.block.BlockState} instance but instead
+ * retains the information necessary to apply the data to the original block location.</p>
  *
  * <p>Supported Tile Entities:</p>
  *
  * <ul>
- *     <li>{@link InventoryHolder}</li>
- *     <li>{@link CommandBlock}</li>
- *     <li>{@link CreatureSpawner}</li>
- *     <li>{@link NoteBlock}</li>
- *     <li>{@link Sign}</li>
- *     <li>{@link Skull}</li>
+ *     <li>{@link org.bukkit.inventory.InventoryHolder}</li>
+ *     <li>{@link org.bukkit.block.CommandBlock}</li>
+ *     <li>{@link org.bukkit.block.CreatureSpawner}</li>
+ *     <li>{@link org.bukkit.block.NoteBlock}</li>
+ *     <li>{@link org.bukkit.block.Sign}</li>
+ *     <li>{@link org.bukkit.block.Skull}</li>
  * </ul>
  */
 public class SerializableBlockEntity implements IBinarySerializable {
@@ -100,14 +100,14 @@ public class SerializableBlockEntity implements IBinarySerializable {
     /**
      * Constructor.
      *
-     * <p>Required by {@code NucleusByteReader} to deserialize.</p>
+     * <p>Required by {@link NucleusByteReader} to deserialize.</p>
      */
     public SerializableBlockEntity() {}
 
     /**
      * Constructor.
      *
-     * @param blockState  The {@code BlockState} that needs to be serialized.
+     * @param blockState  The {@link org.bukkit.block.BlockState} that needs to be serialized.
      */
     public SerializableBlockEntity(BlockState blockState) {
 
@@ -156,7 +156,7 @@ public class SerializableBlockEntity implements IBinarySerializable {
 
     /**
      * Get the location of the block
-     * the serialized {@code BlockState} represents.
+     * the serialized {@link org.bukkit.block.BlockState} represents.
      */
     @Nullable
     public Location getLocation() {
@@ -164,7 +164,7 @@ public class SerializableBlockEntity implements IBinarySerializable {
     }
 
     /**
-     * Get the {@code Material} of the block.
+     * Get the {@link Material} of the block.
      */
     @Nullable
     public Material getMaterial() {
@@ -179,8 +179,8 @@ public class SerializableBlockEntity implements IBinarySerializable {
     }
 
     /**
-     * Apply the stored {@code BlockState} data to the location
-     * the original {@code BlockState} was taken from.
+     * Apply the stored {@link org.bukkit.block.BlockState} data to the location
+     * the original {@link org.bukkit.block.BlockState} was taken from.
      */
     public void apply() {
 

@@ -34,8 +34,8 @@ import java.util.UUID;
  * Tracks a collection of player objects or player representative objects and aids in
  * automatically removing the player entry when the player logs out.
  * <p>
- *     The player collection is responsible for calling {@code #notifyPlayerRemoved}
- *     method when a player is removed from the collection and {@code #notifyPlayerAdded}
+ *     The player collection is responsible for calling {@link #notifyPlayerRemoved}
+ *     method when a player is removed from the collection and {@link #notifyPlayerAdded}
  *     when a player is added to the collection.
  * </p>
  */

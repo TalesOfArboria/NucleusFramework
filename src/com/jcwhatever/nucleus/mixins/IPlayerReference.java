@@ -29,12 +29,12 @@ import org.bukkit.entity.Player;
 
 /**
  * Mixin defines an implementation as being a
- * {@code Player} wrapper.
+ * {@link org.bukkit.entity.Player} wrapper.
  */
 public interface IPlayerReference {
 
     /**
-     * Get the encapsulated {@code Player} object.
+     * Get the encapsulated {@link org.bukkit.entity.Player} object.
      */
     Player getPlayer();
 }

@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
  * A session that tracks and provides session context data
  * to view instances.
  *
- * <p>Not thread safe. {@code ViewSession} should always be
+ * <p>Not thread safe. {@link ViewSession} should always be
  * invoked from the main thread.</p>
  */
 public final class ViewSession implements IMeta, Iterable<View>, IPlayerReference, IDisposable {

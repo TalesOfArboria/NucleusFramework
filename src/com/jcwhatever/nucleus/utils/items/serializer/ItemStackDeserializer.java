@@ -41,8 +41,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Parses a string representing a single or multiple {@code ItemStack}'s
- * serialized by {@code ItemStackSerializer}.
+ * Parses a string representing a single or multiple {@link org.bukkit.inventory.ItemStack}'s
+ * serialized by {@link ItemStackSerializer}.
  * <p>
  *     Format: MaterialName[:ByteData][;Amount][{ metaName1: "metaValue1", metaName2: "metaValue2" }]
  * </p>
@@ -58,7 +58,8 @@ public class ItemStackDeserializer {
     /**
      * Constructor.
      *
-     * @param itemString  The string to parse. The string must represent a one or more {@code ItemStack}'s
+     * @param itemString  The string to parse. The string must represent a one or more
+     *                    {@link org.bukkit.inventory.ItemStack}'s
      *
      * @throws InvalidItemStackStringException
      */
@@ -79,14 +80,14 @@ public class ItemStackDeserializer {
     }
 
     /**
-     * Get {@code ItemStack} results as a list.
+     * Get {@link org.bukkit.inventory.ItemStack} results as a list.
      */
     public List<ItemStack> getResultList() {
         return new ArrayList<>(_results);
     }
 
     /**
-     * Get {@code ItemStack} results as an array.
+     * Get {@link org.bukkit.inventory.ItemStack} results as an array.
      */
     public ItemStack[] getResultArray() {
         return _results.toArray(new ItemStack[_results.size()]);

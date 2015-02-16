@@ -45,15 +45,11 @@ import javax.annotation.Nullable;
  *     a user and make changes without having to hard code methods of changing the
  *     settings for each type.
  * </p>
- * <p>
- *     A settings manager can also be used to interface an external/foreign data storage system
- *     with the system in use.
- * </p>
  */
 public interface ISettingsManager {
 
     /**
-     * Get an immutable map of {@code PropertyDefinition}'s
+     * Get an immutable map of {@link PropertyDefinition}'s
      * that the settings manager manages.
      *
      * <p>The map is keyed to the property names.</p>

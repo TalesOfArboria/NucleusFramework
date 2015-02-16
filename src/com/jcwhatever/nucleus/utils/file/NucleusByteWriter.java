@@ -50,7 +50,7 @@ import javax.annotation.Nullable;
 
 /**
  * Write bytes to a stream. In order to read the stream
- * properly, {@code NucleusByteReader} needs to be used.
+ * properly, {@link NucleusByteReader} needs to be used.
  */
 public class NucleusByteWriter extends OutputStream {
 
@@ -242,10 +242,10 @@ public class NucleusByteWriter extends OutputStream {
     }
 
     /**
-     * Write a {@code BigDecimal} number.
+     * Write a {@link BigDecimal} number.
      *
-     * <p>Serializes number using {@code ObjectOutputStream}.
-     * (See {@code write(Serializable)}).</p>
+     * <p>Serializes number using {@link ObjectOutputStream}.
+     * (See {@link #write(Serializable)}).</p>
      *
      * @param decimal  The big decimal.
      *
@@ -256,10 +256,10 @@ public class NucleusByteWriter extends OutputStream {
     }
 
     /**
-     * Write a {@code BigInteger} number.
+     * Write a {@link BigInteger} number.
      *
-     * <p>Serializes number using {@code ObjectOutputStream}.
-     * (See {@code write(Serializable)}).</p>
+     * <p>Serializes number using {@link ObjectOutputStream}.
+     * (See {@link #write(Serializable)}).</p>
      *
      * @param integer  The big integer.
      *
@@ -415,17 +415,17 @@ public class NucleusByteWriter extends OutputStream {
     }
 
     /**
-     * Write a {@code Location}.
+     * Write a {@link Location}.
      *
      * <p>The location is written as follows:</p>
      *
      * <ul>
      *     <li>The world name - UTF-8 String preceded with a single byte to indicate length.</li>
-     *     <li>The X value - Double (See {@code write(double)})</li>
-     *     <li>The Y value - Double (See {@code write(double)})</li>
-     *     <li>The Z value - Double (See {@code write(double)})</li>
-     *     <li>The Yaw value - Double (See {@code write(double)})</li>
-     *     <li>The Pitch value - Double (See {@code write(double)})</li>
+     *     <li>The X value - Double (See {@link #write(double)})</li>
+     *     <li>The Y value - Double (See {@link #write(double)})</li>
+     *     <li>The Z value - Double (See {@link #write(double)})</li>
+     *     <li>The Yaw value - Double (See {@link #write(double)})</li>
+     *     <li>The Pitch value - Double (See {@link #write(double)})</li>
      * </ul>
      *
      * @param location  The location.
@@ -453,10 +453,10 @@ public class NucleusByteWriter extends OutputStream {
     }
 
     /**
-     * Write an {@code EulerAngle}.
+     * Write an {@link EulerAngle}.
      *
      * The angle is written as three doubles representing
-     * x, y and z. (See {@code write(double)}.
+     * x, y and z. (See {@link #write(double)}.
      *
      * @param angle  The angle.
      *
@@ -471,22 +471,22 @@ public class NucleusByteWriter extends OutputStream {
     }
 
     /**
-     * Write an {@code ItemStack}.
+     * Write an {@link ItemStack}.
      *
      * <p>Writes the item stack as follows:</p>
      * <ul>
      *     <li>Boolean (bit or byte depending on the data structure) indicating
-     *         if the item stack is null. 0 = null. (See {@code getBoolean})</li>
-     *     <li>Material - Enum (See {@code write(Enum)})</li>
-     *     <li>Durability - Short (See {@code write(int)})</li>
-     *     <li>Meta count - Integer (See {@code write(int)})</li>
+     *         if the item stack is null. 0 = null. (See {@link #getBoolean})</li>
+     *     <li>Material - Enum (See {@link #write(Enum)})</li>
+     *     <li>Durability - Short (See {@link #write(int)})</li>
+     *     <li>Meta count - Integer (See {@link #write(int)})</li>
      *     <li>Meta collection</li>
      * </ul>
      *
      * <p>Meta is written as follows:</p>
      * <ul>
      *     <li>Meta Name - UTF-8 String preceded with a byte to indicate length.</li>
-     *     <li>Meta Data - UTF-16 String (See {@code write(String)})</li>
+     *     <li>Meta Data - UTF-16 String (See {@link #write(String)})</li>
      * </ul>
      *
      * @param itemStack  The item stack.
@@ -521,10 +521,10 @@ public class NucleusByteWriter extends OutputStream {
     }
 
     /**
-     * Serialize an {@code IBinarySerializable} object.
+     * Serialize an {@link IBinarySerializable} object.
      *
-     * <p>A boolean is written (See {@code write(bool)} to indicate if the object
-     * is null (0 = null) and if not null the object serializes itself into the stream.</p>
+     * <p>A boolean is written to indicate if the object is null (0 = null) and if not
+     * null the object serializes itself into the stream.</p>
      *
      * @param object  The object to serialize.
      *
@@ -543,9 +543,8 @@ public class NucleusByteWriter extends OutputStream {
     /**
      * Serialize an object.
      *
-     * <p>A boolean is written (See {@code write(bool)} indicating if the object
-     * is null (0 = null) and if not null the object is serialized using an
-     * {@code ObjectOutputStream}.</p>
+     * <p>A boolean is written indicating if the object is null (0 = null) and if not
+     * null the object is serialized using an {@link ObjectOutputStream}.</p>
      *
      * @param object  The object to serialize. Can be null.
      *
@@ -565,11 +564,6 @@ public class NucleusByteWriter extends OutputStream {
         objectStream.writeObject(object);
     }
 
-    /**
-     * Close the stream.
-     *
-     * @throws IOException
-     */
     @Override
     public void close() throws IOException {
 
@@ -578,11 +572,6 @@ public class NucleusByteWriter extends OutputStream {
         _stream.close();
     }
 
-    /**
-     * Flush buffers to stream.
-     *
-     * @throws IOException
-     */
     @Override
     public void flush() throws IOException {
 
@@ -592,7 +581,6 @@ public class NucleusByteWriter extends OutputStream {
         _stream.flush();
     }
 
-
     private void writeBooleans() throws IOException {
         if (_booleanCount > 0) {
             _stream.write(_booleanBuffer, 0, 1);
@@ -601,5 +589,4 @@ public class NucleusByteWriter extends OutputStream {
             _booleanCount = 0;
         }
     }
-
 }

@@ -64,7 +64,7 @@ public final class LocationUtils {
      *
      * @param location  The location.
      *
-     * @return  A new {@code Location} containing the result.
+     * @return  A new {@link org.bukkit.Location} containing the result.
      */
     public static Location getCenteredLocation(Location location) {
         PreCon.notNull(location);
@@ -115,7 +115,7 @@ public final class LocationUtils {
      *
      * @param location  The location to convert.
      *
-     * @return  A new {@code Location} containing the result.
+     * @return  A new {@link org.bukkit.Location} containing the result.
      */
     public static Location getBlockLocation(Location location) {
         PreCon.notNull(location);
@@ -152,7 +152,7 @@ public final class LocationUtils {
      * @param y         The value to add to the Y coordinates.
      * @param z         The value to add to the Z coordinates.
      *
-     * @return  A new {@code Location} instance.
+     * @return  A new {@link org.bukkit.Location} instance.
      */
     public static Location add(Location location, double x, double y, double z) {
         location = location.clone();
@@ -241,7 +241,7 @@ public final class LocationUtils {
      * @param world        The world the location is for.
      * @param coordinates  The string coordinates.
      *
-     * @return  A new {@code Location} or null if a location could not be parsed.
+     * @return  A new {@link org.bukkit.Location} or null if a location could not be parsed.
      */
     @Nullable
     public static Location parseSimpleLocation(World world, String coordinates) {
@@ -292,7 +292,7 @@ public final class LocationUtils {
      *
      * @param coordinates  The string coordinates.
      *
-     * @return  A new {@code SyncLocation} or null if the string could not be parsed.
+     * @return  A new {@link SyncLocation} or null if the string could not be parsed.
      */
     @Nullable
     public static SyncLocation parseLocation(String coordinates) {
@@ -390,7 +390,7 @@ public final class LocationUtils {
     }
 
     /**
-     * Convert a locations yaw angle to a {@code BlockFace}.
+     * Convert a locations yaw angle to a {@link org.bukkit.block.BlockFace}.
      *
      * @param location  The location to convert.
      */
@@ -409,7 +409,7 @@ public final class LocationUtils {
     }
 
     /**
-     * Convert a yaw angle to a {@code BlockFace}.
+     * Convert a yaw angle to a {@link org.bukkit.block.BlockFace}.
      *
      * @param yaw  The yaw angle to convert.
      */
@@ -435,7 +435,7 @@ public final class LocationUtils {
      *
      * @param searchLoc  The search location.
      *
-     * @return  A new {@code Location} or null if the search reaches below 0 on the Y axis.
+     * @return  A new {@link org.bukkit.Location} or null if the search reaches below 0 on the Y axis.
      */
     @Nullable
     public static Location findSurfaceBelow(Location searchLoc) {

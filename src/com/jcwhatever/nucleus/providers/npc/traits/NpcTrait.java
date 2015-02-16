@@ -36,9 +36,9 @@ import com.jcwhatever.nucleus.utils.PreCon;
  *
  * <p>The name of the trait is the same as the parent {@link NpcTraitType}</p>
  *
- * <p>The {@link NpcTrait} can optionally implement the {@link Runnable}
- * interface. If this is the case, the {@code Runnable#run} method is called
- * every tick while the NPC is spawned so long as {@code #canRun} returns true.</p>
+ * <p>The {@link NpcTrait} can optionally implement the {@link java.lang.Runnable}
+ * interface. If this is the case, the {@link java.lang.Runnable#run} method is called
+ * every tick while the NPC is spawned so long as {@link #canRun} returns true.</p>
  */
 public abstract class NpcTrait implements INamed, IDisposable {
 
@@ -97,12 +97,12 @@ public abstract class NpcTrait implements INamed, IDisposable {
     /**
      * Determine if the Trait should be run.
      *
-     * <p>Used when the trait implements {@code Runnable} to
+     * <p>Used when the trait implements {@link java.lang.Runnable} to
      * determine if the trait wants to be run. This is always checked
-     * before {@code Runnable#run} is invoked.</p>
+     * before {@link java.lang.Runnable#run} is invoked.</p>
      *
      * <p>The default implementation always returns true if the trait implements
-     * {@code Runnable}.</p>
+     * {@link java.lang.Runnable}.</p>
      */
     public boolean canRun() {
         return this instanceof Runnable;
@@ -119,18 +119,18 @@ public abstract class NpcTrait implements INamed, IDisposable {
     public void load(IDataNode dataNode) {}
 
     /**
-     * Invoked when the trait is added to an {@code INpc}.
+     * Invoked when the trait is added to an {@link INpc}.
      *
      * <p>This is invoked by the external implementations of the
-     * {@code INpcProvider}.</p>
+     * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      */
     public void onAdd() {}
 
     /**
-     * Invoked when the trait is removed from an {@code INpc}.
+     * Invoked when the trait is removed from an {@link INpc}.
      *
      * <p>This is invoked by the external implementations of the
-     * {@code INpcProvider}.</p>
+     * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      */
     public void onRemove() {}
 
@@ -138,7 +138,7 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * Invoked when traits NPC is spawned.
      *
      * <p>This is invoked by the external implementations of the
-     * {@code INpcProvider}.</p>
+     * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      */
     public void onSpawn() {}
 
@@ -146,7 +146,7 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * Invoked when the traits NPC is despawned.
      *
      * <p>This is invoked by the external implementations of the
-     * {@code INpcProvider}.</p>
+     * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      */
     public void onDespawn() {}
 

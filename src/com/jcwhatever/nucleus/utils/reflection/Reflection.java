@@ -58,7 +58,7 @@ public class Reflection {
     }
 
     /**
-     * Get a {@code ReflectedType} instance from the specified class name.
+     * Get a {@link ReflectedType} instance from the specified class name.
      *
      * <p>Returns a cached version or a new version.</p>
      *
@@ -89,7 +89,7 @@ public class Reflection {
     }
 
     /**
-     * Get a {@code ReflectedType} instance from the specified NMS class name.
+     * Get a {@link ReflectedType} instance from the specified NMS class name.
      *
      * <p>Returns a cached version or a new version.</p>
      *
@@ -107,7 +107,7 @@ public class Reflection {
     }
 
     /**
-     * Get a {@code ReflectedType} instance from the specified Craft class name.
+     * Get a {@link ReflectedType} instance from the specified Craft class name.
      *
      * <p>Returns a cached version or a new version.</p>
      *
@@ -125,7 +125,7 @@ public class Reflection {
     }
 
     /**
-     * Get a {@code ReflectedType} instance from the specified class.
+     * Get a {@link ReflectedType} instance from the specified class.
      *
      * <p>Returns a cached version or a new version.</p>
      *

@@ -55,7 +55,7 @@ public interface INamedLocationDistance extends Comparable<NamedLocationDistance
      * and the target location squared.
      *
      * <p>Should generally provide a faster implementation than
-     * using {@code getDistance}.</p>
+     * using {@link #getDistance}.</p>
      */
     double getDistanceSquared();
 

@@ -43,16 +43,15 @@ import javax.annotation.Nullable;
 
 /**
  * A snapshot of a players state.
- * <p>
- *     The players state consists of chest items, armor, applied enchantments,
- *     game mode, flight, health, food level, exp, fire ticks, fall distance,
- *     and location.
- * </p>
+ *
+ * <p>The players state consists of chest items, armor, applied enchantments,
+ * game mode, flight, health, food level, exp, fire ticks, fall distance,
+ * and location.</p>
  */
 public class PlayerStateSnapshot {
 
     /**
-     * Loads a players state from a data node into a {@code PlayerStateSnapshot}.
+     * Loads a players state from a data node into a {@link PlayerStateSnapshot}.
      *
      * @param dataNode  The data node the player state is stored on.
      *
@@ -186,7 +185,7 @@ public class PlayerStateSnapshot {
     }
 
     /**
-     * Get the players {@code GameMode}.
+     * Get the players {@link org.bukkit.GameMode}.
      */
     public GameMode getGameMode() {
         return _gameMode;

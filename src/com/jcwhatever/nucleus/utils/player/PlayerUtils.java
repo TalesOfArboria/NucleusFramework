@@ -51,7 +51,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Provides {@code Player} related utilities.
+ * Provides {@link org.bukkit.entity.Player} related utilities.
  */
 public final class PlayerUtils {
 
@@ -155,8 +155,12 @@ public final class PlayerUtils {
      * <p>Attempts to retrieve the player object from one of the following
      * types of objects:</p>
      *
-     * <p>{@code Player}, {@code IPlayerWrapper} (handle),
-     * {@code UUID} (player id), {@code String} (player name)</p>
+     * <ul>
+     *     <li>{@link org.bukkit.entity.Player}</li>
+     *     <li>{@link IPlayerReference}</li>
+     *     <li>{@link java.util.UUID} (player ID)</li>
+     *     <li>{@link java.lang.String} (player name)</li>
+     * </ul>
      *
      * @param player  The object that represents a player.
      */
@@ -184,8 +188,12 @@ public final class PlayerUtils {
      * <p>Attempts to retrieve the player object from one of the following
      * types of objects:</p>
      *
-     * <p>{@code Player}, {@code IPlayerWrapper} (handle),
-     * {@code UUID} (player id), {@code String} (player name or UUID as a string)</p>
+     * <ul>
+     *     <li>{@link org.bukkit.entity.Player}</li>
+     *     <li>{@link IPlayerReference}</li>
+     *     <li>{@link java.util.UUID} (player ID)</li>
+     *     <li>{@link java.lang.String} (player name)</li>
+     * </ul>
      *
      * @param player  The object to get the player ID from.
      *
@@ -333,7 +341,7 @@ public final class PlayerUtils {
     /**
      * Iterates over blocks in the direction the player is looking
      * until the max distance is reached or a block that isn't
-     * {@code Material.AIR} is found.
+     * {@link org.bukkit.Material#AIR} is found.
      *
      * @param p            The player.
      * @param maxDistance  The max distance to search.

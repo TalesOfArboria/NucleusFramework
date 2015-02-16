@@ -63,10 +63,11 @@ import javax.annotation.Nullable;
  *
  * <p>The region is registered with NucleusFramework's
  * {@link IGlobalRegionManager} as soon as it is defined (P1 and P2 coordinates set) via
- * the regions settings or by calling {@code #setCoords} method.</p>
+ * the regions settings or by calling {@link #setCoords} method.</p>
  *
- * <p>The regions protected methods {@code #onPlayerEnter} and {@code #onPlayerLeave}
- * are only called if the implementing type calls {@code #setEventListener(true)}.</p>
+ * <p>The regions protected methods {@link #onPlayerEnter} and {@link #onPlayerLeave}
+ * are only called if the implementing type invokes {@link Region#setEventListener(boolean)}
+ * with a 'true' argument.</p>
  */
 public abstract class Region extends RegionSelection implements IRegion {
 
@@ -742,36 +743,36 @@ public abstract class Region extends RegionSelection implements IRegion {
      *
      * <p>Intended for override if needed.</p>
      *
-     * @param p  the player leaving the region.
+     * @param player  the player leaving the region.
      */
-    protected void onPlayerLeave (@SuppressWarnings("unused") Player p,
-                                  @SuppressWarnings("unused") LeaveRegionReason reason) {
+    protected void onPlayerLeave (Player player,
+                                  LeaveRegionReason reason) {
         // do nothing
     }
 
     /**
-     * Called to determine if {@code onPlayerEnter}
+     * Called to determine if {@link #onPlayerEnter}
      * can be called on the specified player.
      *
      * <p>Intended for override if needed.</p>
      *
-     * @param p  The player entering the region.
+     * @param player  The player entering the region.
      */
-    protected boolean canDoPlayerEnter(@SuppressWarnings("unused") Player p,
-                                       @SuppressWarnings("unused") EnterRegionReason reason) {
+    protected boolean canDoPlayerEnter(Player player,
+                                       EnterRegionReason reason) {
         return true;
     }
 
     /**
-     * Called to determine if {@code onPlayerLeave}
+     * Called to determine if {@link #onPlayerLeave}
      * can be called on the specified player.
      *
      * <p>Intended for override if needed.</p>
      *
-     * @param p  The player leaving the region.
+     * @param player  The player leaving the region.
      */
-    protected boolean canDoPlayerLeave(@SuppressWarnings("unused") Player p,
-                                       @SuppressWarnings("unused") LeaveRegionReason reason) {
+    protected boolean canDoPlayerLeave(Player player,
+                                       LeaveRegionReason reason) {
         return true;
     }
 
@@ -788,8 +789,8 @@ public abstract class Region extends RegionSelection implements IRegion {
      *
      * @return True to allow the owner change.
      */
-    protected boolean onOwnerChanged(@SuppressWarnings("unused") @Nullable UUID oldOwnerId,
-                                     @SuppressWarnings("unused") @Nullable UUID newOwnerId) {
+    protected boolean onOwnerChanged(@Nullable UUID oldOwnerId,
+                                     @Nullable UUID newOwnerId) {
         return true;
     }
 
@@ -803,7 +804,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /**
-     * Used by {@code RegionManager} to execute onPlayerEnter event.
+     * Used by {@link RegionManager} to execute onPlayerEnter event.
      */
     void doPlayerEnter (Player p, EnterRegionReason reason) {
 
@@ -818,7 +819,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /**
-     * Used by {@code RegionManager} to execute onPlayerLeave event.
+     * Used by {@link RegionManager} to execute onPlayerLeave event.
      */
     void doPlayerLeave (Player p, LeaveRegionReason reason) {
 

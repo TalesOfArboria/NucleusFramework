@@ -78,11 +78,11 @@ public abstract class PlayList implements IPluginOwned {
     }
 
     /**
-     * Get all {@code PlayList}'s the player is currently listening to.
+     * Get all {@link PlayList}'s the player is currently listening to.
      *
      * @param player  The player.
      *
-     * @return  A new {@code List} of {@code PlayList}.
+     * @return  A new {@link List} of {@link PlayList}.
      */
     public static List<PlayList> getAll(Player player) {
         Set<PlayList> playLists = _instances.get(player);
@@ -158,7 +158,7 @@ public abstract class PlayList implements IPluginOwned {
      * @param player    The player to add.
      * @param settings  The sound settings to use.
      *
-     * @return  The current or new {@code PlayerSoundQueue} for the player.
+     * @return  The current or new {@link PlayerSoundQueue} for the player.
      */
     public PlayerSoundQueue addPlayer(final Player player, final SoundSettings settings) {
         PreCon.notNull(player);
@@ -256,12 +256,12 @@ public abstract class PlayList implements IPluginOwned {
     }
 
     /**
-     * Invoked to get a list of sounds to play in a {@code PlayerSoundQueue}.
+     * Invoked to get a list of sounds to play in a {@link PlayerSoundQueue}.
      *
      * <p>If the playlist is loop enabled, this is invoked every time the
      * playlist needs to refill its sound queue.</p>
      *
-     * @param queue      The {@code PlayerSoundQueue} that will be refilled.
+     * @param queue      The {@link PlayerSoundQueue} that will be refilled.
      * @param loopCount  The number of times the sound queue has been refilled.
      */
     protected abstract List<ResourceSound> getSounds(PlayerSoundQueue queue, int loopCount);
@@ -271,11 +271,11 @@ public abstract class PlayList implements IPluginOwned {
      *
      * <p>Allows the next sound to be changed.</p>
      *
-     * <p>Calls the {@code PlayListTrackChangeEvent}.</p>
+     * <p>Calls the {@link PlayListTrackChangeEvent}.</p>
      *
      * <p>Intended for optional override by implementation.</p>
      *
-     * @param queue  The {@code PlayerSoundQueue} that will be refilled.
+     * @param queue  The {@link PlayerSoundQueue} that will be refilled.
      * @param prev   The previous sound that was playing, if any.
      * @param next   The expected next sound to be played.
      *
@@ -295,18 +295,18 @@ public abstract class PlayList implements IPluginOwned {
     }
 
     /**
-     * Invoked when a {@code PlayerSoundQueue} is finished and is preparing to refill so it
+     * Invoked when a {@link PlayerSoundQueue} is finished and is preparing to refill so it
      * can loop.
      *
-     * <p>Is also invoked on initial playback with a {@code loopCount} of 0.</p>
+     * <p>Is also invoked on initial playback with a {@literal loopCount} of 0.</p>
      *
-     * <p>Calls the {@code PlayListLoopEvent}.</p>
+     * <p>Calls the {@link PlayListLoopEvent}.</p>
      *
      * <p>Intended for optional override by implementation.</p>
      *
-     * @param queue      The {@code PlayerSoundQueue} that is playing.
-     * @param sounds     The list of {@code ResourceSound}'s that will be played during the next loop.
-     * @param loopCount  The number of times the {@code PlayerSoundQueue} has already looped.
+     * @param queue      The {@link PlayerSoundQueue} that is playing.
+     * @param sounds     The list of {@link ResourceSound}'s that will be played during the next loop.
+     * @param loopCount  The number of times the {@link PlayerSoundQueue} has already looped.
      */
     protected void onLoop(PlayerSoundQueue queue, List<ResourceSound> sounds, int loopCount) {
 
@@ -408,8 +408,9 @@ public abstract class PlayList implements IPluginOwned {
          * is no way to stop the sound. If the player moves to a different world, the sound
          * is ended on the client and the player is removed from the queue immediately.</p>
          *
-         * <p>Remove operation is performed after a 1 tick delay to ensure the {@code World} reported by
-         * the {@code Player} object is up-to-date.</p>
+         * <p>Remove operation is performed after a 1 tick delay to ensure the
+         * {@link org.bukkit.World} reported by the {@link org.bukkit.entity.Player}
+         * object is up-to-date.</p>
          */
         void remove() {
 

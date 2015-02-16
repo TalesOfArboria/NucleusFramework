@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 import org.bukkit.entity.Player;
 
 /**
- * A {@code PersistentActionBar} that is automatically removed
+ * A {@link PersistentActionBar} that is automatically removed
  * when the specified duration ends.
  */
 public class TimedActionBar extends PersistentActionBar {
@@ -38,7 +38,7 @@ public class TimedActionBar extends PersistentActionBar {
     /**
      * Constructor.
      *
-     * <p>The default duration of the {@code TimedActionBar}
+     * <p>The default duration of the {@link TimedActionBar}
      * is 3 seconds.</p>
      *
      * @param text  The action bar text.
@@ -50,7 +50,7 @@ public class TimedActionBar extends PersistentActionBar {
     /**
      * Constructor.
      *
-     * <p>The default duration of the {@code TimedActionBar}
+     * <p>The default duration of the {@link TimedActionBar}
      * is 3 seconds.</p>
      *
      * @param dynamicText  The action bar dynamic text.
@@ -82,7 +82,7 @@ public class TimedActionBar extends PersistentActionBar {
     }
 
     /**
-     * Show the {@code TimedActionBar} to a player for
+     * Show the {@link TimedActionBar} to a player for
      * the default duration.
      *
      * @param player  The player to show the bar to.
@@ -93,7 +93,7 @@ public class TimedActionBar extends PersistentActionBar {
     }
 
     /**
-     * Show the {@code TimedActionBar} to a player for
+     * Show the {@link TimedActionBar} to a player for
      * the specified duration.
      *
      * @param player     The player to show the action bar to.

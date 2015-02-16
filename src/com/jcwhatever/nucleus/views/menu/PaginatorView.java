@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
  * <p>The paginator view provides a selection interface for an
  * {@link com.jcwhatever.nucleus.mixins.IPaginator} instance. When a page
  * is selected the view is closed and the result can be retrieved using the
- * {@code #getSelectedPage} method.</p>
+ * {@link #getSelectedPage} method.</p>
  */
 public class PaginatorView extends MenuView {
 
@@ -65,7 +65,7 @@ public class PaginatorView extends MenuView {
      * @param viewSession  The view session.
      * @param nextView     The next view to show.
      * @param paginator    The paginator.
-     * @param matcher      The {@code ItemStackMatcher} to use.
+     * @param matcher      The {@link ItemStackMatcher} to use.
      */
     public static void paginateNext(ViewSession viewSession,
                                     View nextView,

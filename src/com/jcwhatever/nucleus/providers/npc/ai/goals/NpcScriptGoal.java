@@ -140,9 +140,10 @@ public class NpcScriptGoal implements INpcGoal {
     public interface IOnRunHandler {
 
         /**
-         * Invoked when the goals {@code run} method is invoked.
+         * Invoked when the goals {@link com.jcwhatever.nucleus.providers.npc.ai.actions.INpcAction#run}
+         * method is invoked.
          *
-         * @param selector  The {@code INpcActionSelector}.
+         * @param selector  The {@link INpcActionSelector}.
          */
         void run(INpcActionSelector selector);
     }

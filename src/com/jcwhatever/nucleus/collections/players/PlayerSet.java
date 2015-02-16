@@ -38,10 +38,10 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A {@code HashSet} of {@code Player} objects.
+ * A {@link HashSet} of {@link Player} objects.
  *
  * <p>
- *     {@code Player} object is automatically removed when the player logs out.
+ *     {@link Player} object is automatically removed when the player logs out.
  * </p>
  *
  * <p>Thread safe.</p>

@@ -29,11 +29,11 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
  * An abstract manager for named (case insensitive) objects that are stored to
- * an {@code IDataNode}.
+ * an {@link IDataNode}.
  *
- * <p>Does not include a public {@code #add} method. You can make the protected
- * {@code #add} method public, or make your own method. Be sure to
- * call the protected {@code #add} method from your implementation
+ * <p>Does not include a public {@link #add} method. You can make the protected
+ * {@link #add} method public, or make your own method. Be sure to
+ * call the protected {@link #add} method from your implementation
  * to add a new item.</p>
  */
 public abstract class NamedInsensitiveDataManager<T extends INamedInsensitive>

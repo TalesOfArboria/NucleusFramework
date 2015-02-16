@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
  * A deque of {@link ISubscriber} which automatically removes subscribers
  * when they are disposed.
  *
- * <p>Assumes the subscriber is properly implemented and calls the {@code #unregister} method
+ * <p>Assumes the subscriber is properly implemented and calls the {@link ISubscriberAgent#unregister} method
  * of all {@link ISubscriberAgent} instances that are registered to it when it's disposed.</p>
  *
  * <p>The collection has its own internal agent which is used to track the subscribers in

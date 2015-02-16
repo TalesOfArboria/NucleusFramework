@@ -198,8 +198,8 @@ public abstract class CommandException extends Exception {
     }
 
     /**
-     * Throw an exception if the provided {@code CommandSender} does not match the
-     * expected type.
+     * Throws an exception if the provided {@link org.bukkit.command.CommandSender}
+     * does not match the expected type.
      *
      * @param command   The command the command sender check is for.
      * @param sender    The command sender to check.
@@ -232,7 +232,8 @@ public abstract class CommandException extends Exception {
     }
 
     /**
-     * Throw an exception if the provided {@code CommandSender} is the console.
+     * Throw an exception if the provided {@link org.bukkit.command.CommandSender}
+     * is the console.
      *
      * @param command  The command the command sender check is for.
      * @param sender   The command sender to check.

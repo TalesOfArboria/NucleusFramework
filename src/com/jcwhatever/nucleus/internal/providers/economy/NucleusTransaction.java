@@ -38,7 +38,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * NucleusFrameworks {@code IEconomyTransaction} transaction implementation.
+ * NucleusFrameworks {@link IEconomyTransaction} transaction implementation.
  */
 public class NucleusTransaction implements IEconomyTransaction {
 

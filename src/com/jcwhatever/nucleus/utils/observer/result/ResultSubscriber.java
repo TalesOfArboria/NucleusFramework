@@ -29,9 +29,9 @@ import com.jcwhatever.nucleus.utils.observer.Subscriber;
 
 /**
  * An abstract implementation for a type that can subscribe to results
- * from an {@code IResultAgent}.
+ * from an {@link IResultAgent}.
  *
- * <p>The methods of {@code IResultSubscriber} are empty implementations intended
+ * <p>The methods of {@link IResultSubscriber} are empty implementations intended
  * to be overridden as needed.</p>
  */
 public abstract class ResultSubscriber<R> extends Subscriber implements IResultSubscriber<R> {

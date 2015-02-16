@@ -196,8 +196,8 @@ public class ElementCounter<E> implements Iterable<ElementCount<E>> {
     }
 
     /**
-     * Add from the specified {@code ElementCounter}'s counts
-     * to the current {@code ElementCounter}.
+     * Add from the specified {@link ElementCounter}'s counts
+     * to the current {@link ElementCounter}.
      *
      * @param counter  The counter.
      *
@@ -267,8 +267,8 @@ public class ElementCounter<E> implements Iterable<ElementCount<E>> {
     }
 
     /**
-     * Subtract from the current {@code ElementCounter} all the items
-     * counted by the specified {@code ElementCounter}.
+     * Subtract from the current {@link ElementCounter} all the items
+     * counted by the specified {@link ElementCounter}.
      *
      * @param counter  The counter.
      *

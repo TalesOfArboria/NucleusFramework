@@ -59,7 +59,7 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
 
     /**
      * Create a new instance of the trait for a specific
-     * {@code INpc} instance and attach it.
+     * {@link INpc} instance and attach it.
      *
      * @param npc  The npc instance.
      *
@@ -70,11 +70,11 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
     }
 
     /**
-     * Create a new instance of the trait for a specific {@code INpc}
+     * Create a new instance of the trait for a specific {@link INpc}
      * instance, copy the settings from another trait, and attach it.
      *
      * @param npc       The npc instance.
-     * @param copyFrom  The {@code INpc} to copy settings from into the new trait instance.
+     * @param copyFrom  The {@link INpc} to copy settings from into the new trait instance.
      *
      * @return  The newly created instance or the one the NPC already had.
      */
@@ -98,9 +98,9 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
     }
 
     /**
-     * Invoked to create a new instance of the trait for an {@code INpc}.
+     * Invoked to create a new instance of the trait for an {@link INpc}.
      *
-     * @param npc  The {@code INpc} to create the trait for.
+     * @param npc  The {@link INpc} to create the trait for.
      */
     protected abstract NpcTrait createTrait(INpc npc);
 }

@@ -69,9 +69,6 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
             load();
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
@@ -98,7 +95,7 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
     }
 
     /**
-     * Get an {@code IModifiableKit} instance for the
+     * Get an {@link IModifiableKit} instance for the
      * given git.
      *
      * @param kit  The kit to modify.
@@ -117,7 +114,7 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
     }
 
     /**
-     * Create a new {@code IKit} instance.
+     * Create a new {@link IKit} instance.
      *
      * @param kitName  The name of the kit.
      */
@@ -126,8 +123,8 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
     }
 
     /**
-     * Get a {@code IModifiableKit} used to modify the contents
-     * of the specified {@code IKit}.
+     * Get a {@link IModifiableKit} used to modify the contents
+     * of the specified {@link IKit}.
      *
      * @param kit  The kit to modify.
      *

@@ -52,7 +52,7 @@ public interface IRegionEventHandler {
 
     /**
      * Called when a player enters the region and
-     * the {@code canDoPlayerEnter} method returned true.
+     * the {@link #canDoPlayerEnter} method returned true.
      *
      * @param player  The player entering the region.
      */
@@ -60,7 +60,7 @@ public interface IRegionEventHandler {
 
     /**
      * Called when a player leaves the region and
-     * the {@code canDoPlayerLeave} method returned true.
+     * the {@link #canDoPlayerLeave} method returned true.
      *
      * @param player  The player leaving the region.
      */

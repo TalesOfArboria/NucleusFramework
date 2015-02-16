@@ -122,7 +122,7 @@ public class ScriptApiRepo {
      * @param owningPluginName  The name of the api owning plugin.
      * @param variableName      Case sensitive variable name.
      *
-     * @return  An {@code IScriptApi} instance or null if not found.
+     * @return  An {@link IScriptApi} instance or null if not found.
      */
     @Nullable
     public IScriptApi getApi(Plugin plugin, String owningPluginName, String variableName) {
@@ -147,7 +147,7 @@ public class ScriptApiRepo {
      * @param plugin        The api owning plugin and plugin to instantiate for.
      * @param variableName  Case sensitive variable name.
      *
-     * @return  The {@code IScriptApi} instance or null if not found.
+     * @return  The {@link IScriptApi} instance or null if not found.
      */
     @Nullable
     public IScriptApi getApi(Plugin plugin, String variableName) {

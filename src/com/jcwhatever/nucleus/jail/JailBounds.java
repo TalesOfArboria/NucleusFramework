@@ -60,7 +60,7 @@ public class JailBounds extends Region {
     }
 
     /**
-     * Determine if the {@code onPlayerLeave} method can be called.
+     * Determine if the {@link #onPlayerLeave} method can be called.
      *
      * @param player  The player leaving the region.
      */

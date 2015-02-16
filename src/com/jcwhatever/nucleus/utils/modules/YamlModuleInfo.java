@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.jar.JarFile;
 
 /**
- * A basic implementation of {@code IModuleInfo} designed to
+ * A basic implementation of {@link IModuleInfo} designed to
  * read a Yaml file inside the module jar file to retrieve the
  * name of the module.
  *
@@ -96,8 +96,7 @@ public class YamlModuleInfo implements IModuleInfo, IPluginOwned {
      *
      * @param dataNode  The YAML module data node.
      *
-     * @return  True if all required information was found. Result is reflected in
-     * {@code #isLoaded} method.
+     * @return  True if all required information was found.
      */
     protected boolean onLoad(@SuppressWarnings("unused") IDataNode dataNode) {
         return true;

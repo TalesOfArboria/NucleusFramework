@@ -37,9 +37,9 @@ import java.util.ListIterator;
 /**
  * An array list of weighted items. The weight of an item
  * affects the results when an item is randomly chosen from the
- * list using the {@code getRandom} method.
+ * list using the {@link #getRandom} method.
  * <p>
- *     Adding items using the {@code List} implementation
+ *     Adding items using the {@link java.util.List} implementation
  *     gives items the default weight.
  * </p>
  *

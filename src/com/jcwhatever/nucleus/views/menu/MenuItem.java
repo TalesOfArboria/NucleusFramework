@@ -42,7 +42,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Represents an item in a {@code MenuView}.
+ * Represents an item in a {@link MenuView}.
  */
 public class MenuItem extends ItemStack implements IMeta {
 
@@ -158,7 +158,7 @@ public class MenuItem extends ItemStack implements IMeta {
     }
 
     /**
-     * Set the {@code MenuItem} into the specified {@code MenuView}
+     * Set the {@link MenuItem} into the specified {@link MenuView}
      * inventory.
      * 
      * @param menuView  The menu view.

@@ -185,7 +185,7 @@ public final class DateUtils {
     }
 
     /**
-     * Format a {@code Date} object using {@code SimpleDateFormat}.
+     * Format a {@link java.util.Date} object using {@link java.text.SimpleDateFormat}.
      *
      * @param date    The date to format
      * @param format  The format to use
@@ -197,7 +197,7 @@ public final class DateUtils {
 
     /**
      * Add milliseconds to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of milliseconds to add.
@@ -210,7 +210,7 @@ public final class DateUtils {
 
     /**
      * Add ticks to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of ticks to add.
@@ -223,7 +223,7 @@ public final class DateUtils {
 
     /**
      * Add seconds to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of seconds to add.
@@ -236,7 +236,7 @@ public final class DateUtils {
 
     /**
      * Add minutes to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of minutes to add.
@@ -249,7 +249,7 @@ public final class DateUtils {
 
     /**
      * Add hours to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of hours to add.
@@ -263,7 +263,7 @@ public final class DateUtils {
 
     /**
      * Add days to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of days to add.
@@ -276,7 +276,7 @@ public final class DateUtils {
 
     /**
      * Add weeks to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of weeks to add.
@@ -289,7 +289,7 @@ public final class DateUtils {
 
     /**
      * Add months to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of months to add.
@@ -302,7 +302,7 @@ public final class DateUtils {
 
     /**
      * Add years to the specified date and return a new
-     * {@code Date} object.
+     * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
      * @param amount  The number of years to add.

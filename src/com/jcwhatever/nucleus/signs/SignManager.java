@@ -77,7 +77,7 @@ public class SignManager implements IPluginOwned {
     private static BukkitSignEventListener _listener;
 
     /**
-     * Get all {@code SignManager} instances.
+     * Get all {@link SignManager} instances.
      */
     public static List<SignManager> getManagers() {
         return new ArrayList<>(_managers.keySet());

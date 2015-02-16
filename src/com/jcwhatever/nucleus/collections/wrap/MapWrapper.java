@@ -125,7 +125,7 @@ public abstract class MapWrapper<K, V> implements Map<K, V> {
     protected void onClear(Collection<Entry<K, V>> entries) {}
 
     /**
-     * Invoked from a synchronized block to get the encapsulated {@code Map}.
+     * Invoked from a synchronized block to get the encapsulated {@link Map}.
      */
     protected abstract Map<K, V> map();
 

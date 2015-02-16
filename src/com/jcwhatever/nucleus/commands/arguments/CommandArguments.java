@@ -69,8 +69,11 @@ import javax.annotation.Nullable;
  *
  * <p>Commands can request parameters by name and have them parsed into the expected
  * object type at the same time. If the parameter has no provided value, cannot be parsed 
- * or required conditions for parsing the object are not met, an {@code InvalidValueException}
+ * or required conditions for parsing the object are not met, an {@link InvalidArgumentException}
  * is thrown and should be caught by the command handler.</p>
+ *
+ * <p>Other exceptions thrown are {@link DuplicateArgumentException}, {@link InvalidParameterException}
+ * and {@link TooManyArgsException}.</p>
  */
 public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned {
 
@@ -88,7 +91,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @throws InvalidArgumentException    If a value provided is not valid.
      * @throws DuplicateArgumentException  If a parameter is defined in the arguments more than once.
-     * @throws InvalidParameterException   If a parameter int the arguments is not found for the command.
+     * @throws InvalidParameterException   If a parameter in the arguments is not found for the command.
      * @throws TooManyArgsException        If the provided arguments are more than is expected.
      */
     public CommandArguments(AbstractCommand command)
@@ -98,8 +101,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     }
 
     /**
-     * Constructor. Parses the provided arguments and validates against information provided
-     * by the {@code CommandInfoContainer}.
+     * Constructor. Parses the provided arguments.
      *
      * @param command  The commands info annotation container.
      * @param args     The command arguments.
@@ -163,7 +165,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     }
 
     /**
-     * Get a {@code CommandArgument} by parameter name
+     * Get a {@link CommandArgument} by parameter name
      *
      * @param parameterName  The name of the parameter
      */
@@ -213,7 +215,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     }
 
     /**
-     * Get an argument as a {@code String} and ensures it meets proper naming conventions.
+     * Get an argument as a {@link String} and ensures it meets proper naming conventions.
      *
      * <p>The name must be alphanumeric characters only, must not start with a number,
      * no spaces, underscores are allowed. Must be no more than 16 characters in length.</p>
@@ -229,7 +231,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     }
 
     /**
-     * Get an argument as a {@code String} and ensures it meets proper naming conventions.
+     * Get an argument as a {@link String} and ensures it meets proper naming conventions.
      *
      * <p>The name must be alphanumeric characters only, must not start with a number,
      * no spaces, underscores are allowed. </p>
@@ -684,8 +686,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     }
 
     /**
-     * Gets an arguments raw {@code String} value, splits it at the space character
-     * and returns it as a {@code String[]}
+     * Gets an arguments raw {@link String} value, splits it at the space character
+     * and returns it as a {@link String[]}
      *
      * @param parameterName  The name of the arguments parameter
      */
@@ -701,9 +703,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     }
 
     /**
-     * Gets an argument as an {@code ItemStack[]}.
+     * Gets an argument as an {@link ItemStack[]}.
      *
-     * <p>The supplied argument can be a parsable string representing an {@code ItemStack}</p>
+     * <p>The supplied argument can be a parsable string representing an {@link ItemStack}</p>
      *
      * <p>The supplied argument can also be "inhand" for the stack in the players hand,
      * "chest" to return all items in the players chest, or "hotbar" to return
@@ -715,10 +717,10 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * <p>If the command sender is not a player, and therefore has no chest, the argument
      * will only be valid if a parsable item stack string was provided.</p>
      *
-     * @param sender         The {@code CommandSender} who executed the command
+     * @param sender         The {@link CommandSender} who executed the command
      * @param parameterName  The name of the arguments parameter
      *
-     * @throws InvalidArgumentException If the argument is not a recognized keyword and cannot be parsed to an {@code ItemStack}.
+     * @throws InvalidArgumentException If the argument is not a recognized keyword and cannot be parsed to an {@link ItemStack}.
      */
     public ItemStack[] getItemStack(@Nullable CommandSender sender, String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
@@ -773,7 +775,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 }
             }
 
-            // generate result {@code ItemStack} array
+            // generate result {@link ItemStack} array
             ItemStack[] result = new ItemStack[wrappers.size()];
             int index = 0;
             for (MatchableItem wrapper : wrappers) {
@@ -810,7 +812,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 }
             }
 
-            // generate result {@code ItemStack} array.
+            // generate result {@link ItemStack} array.
             ItemStack[] result = new ItemStack[wrappers.size()];
             int index = 0;
             for (MatchableItem wrapper : wrappers) {
@@ -821,7 +823,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             return result; // finished
         }
 
-        // no keywords used, attempt to parse the argument into an {@code ItemStack} array.
+        // no keywords used, attempt to parse the argument into an {@link ItemStack} array.
         ItemStack[] stacks = null;
 
         try {
@@ -844,16 +846,16 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * <p>Possible values are "current" or "select"</p>
      *
      * <p>If the argument value is "current", the players current location is returned via
-     * the {@code LocationHandler}.</p>
+     * the {@link LocationResponse}.</p>
      *
      * <p>If the argument value is "select", the player is asked to click on the location
-     * to be selected and the value is return via the {@code LocationHandler}.</p>
+     * to be selected and the value is return via the {@link LocationResponse}.</p>
      *
-     * <p>If the {@CommandSender} is not a player the argument is always considered invalid.</p>
+     * <p>If the {@link CommandSender} is not a player, the argument is always considered invalid.</p>
      *
-     * @param sender           The {@code CommandSender} who executed the command
+     * @param sender           The {@link CommandSender} who executed the command
      * @param parameterName    The name of the arguments parameter
-     * @param locationHandler  The {@code LocationHandler} responsible for dealing with the return location.
+     * @param locationHandler  The {@link LocationResponse} responsible for dealing with the return location.
      *
      * @throws InvalidArgumentException If the sender is not a player, or the argument is not "current" or "select"
      */

@@ -33,8 +33,8 @@ import java.lang.annotation.Target;
 
 
 /**
- * Indicates a static final {@code String} field or an annotation
- * method that returns {@code String} is a candidate for localization.
+ * Indicates a static final {@link java.lang.String} field or an annotation
+ * method that returns {@link java.lang.String} is a candidate for localization.
  */
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD})

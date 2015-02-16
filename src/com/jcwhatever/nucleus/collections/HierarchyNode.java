@@ -29,9 +29,9 @@ import com.jcwhatever.nucleus.mixins.IHierarchyNode;
 import java.util.Collection;
 
 /**
- * A {@code TreeNode} for use with objects that implement {@code IHierarchyNode}.
+ * A {@link TreeNode} for use with objects that implement {@link IHierarchyNode}.
  *
- * <p>Automatically adds the {@code IHierarchyNode} children to the node.</p>
+ * <p>Automatically adds the {@link IHierarchyNode} children to the node.</p>
  */
 public class HierarchyNode<T extends IHierarchyNode<T>> extends TreeNode<T> {
 

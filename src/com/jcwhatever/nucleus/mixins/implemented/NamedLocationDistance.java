@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.Location;
 
 /**
- * A basic {@code INamedLocationDistance} implementation.
+ * A basic {@link INamedLocationDistance} implementation.
  */
 public class NamedLocationDistance implements INamedLocationDistance {
 	private INamedLocation _namedLocation;

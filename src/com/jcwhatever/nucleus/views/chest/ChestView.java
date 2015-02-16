@@ -82,7 +82,7 @@ public abstract class ChestView extends View {
     public abstract String getTitle();
 
     /**
-     * Get the views {@code ItemStackMatcher}.
+     * Get the views {@link ItemStackMatcher}.
      */
     public ItemStackMatcher getItemStackMatcher() {
         return _matcher;
@@ -157,9 +157,9 @@ public abstract class ChestView extends View {
     protected abstract void onShow(ViewOpenReason reason);
 
     /**
-     * Called to get an {@code Inventory} instance used to
+     * Called to get an {@link org.bukkit.inventory.Inventory} instance used to
      * open an inventory view to the player. Only called
-     * if the {@code Inventory} is not set in the constructor.
+     * if the {@link org.bukkit.inventory.Inventory} is not set in the constructor.
      */
     protected abstract Inventory createInventory();
 

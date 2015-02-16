@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.collections.wrap;
 import java.util.AbstractList;
 
 /**
- * Wraps an array with a {@code List} implementation.
+ * Wraps an array with a {@link List} implementation.
  */
 public class WrappedArrayList<E> extends AbstractList<E> {
 

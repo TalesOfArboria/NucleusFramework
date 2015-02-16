@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.utils.scoreboards;
 
 /**
  * Described the use of the scoreboard so the
- * {@code ScoreboardTracker} knows how the scoreboard
+ * {@link ScoreboardTracker} knows how the scoreboard
  * should be handled.
  */
 public enum ScoreboardLifespan {

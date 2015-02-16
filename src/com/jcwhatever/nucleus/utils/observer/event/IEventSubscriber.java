@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import javax.annotation.Nullable;
 
 /**
- * A type that subscribes to events received from an {@code IEventAgent}.
+ * A type that subscribes to events received from an {@link IEventAgent}.
  */
 public interface IEventSubscriber<E> extends ISubscriber, Comparable<IEventSubscriber<E>> {
 
@@ -44,7 +44,7 @@ public interface IEventSubscriber<E> extends ISubscriber, Comparable<IEventSubsc
     boolean isCancelIgnored();
 
     /**
-     * Called by an {@code IEventAgent} to notify the subscriber
+     * Called by an {@link IEventAgent} to notify the subscriber
      * of an event.
      *
      * @param source  The source of the event.

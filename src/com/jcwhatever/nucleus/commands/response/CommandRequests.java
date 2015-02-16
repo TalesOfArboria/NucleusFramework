@@ -97,7 +97,7 @@ public class CommandRequests {
     /**
      * Request a response from a player.
      *
-     * @param request  {@code ResponseRequest} containing info about the request.
+     * @param request  {@link ResponseRequest} containing info about the request.
      */
     public static void request(ResponseRequest request) {
         _requests.put(request.getCommandSender(), request);
@@ -111,7 +111,7 @@ public class CommandRequests {
      * @param sender        The command sender to make the request to.
      * @param responseType  The type of responses expected.
      *
-     * @return  {@code ResponseRequest} object.
+     * @return  {@link ResponseRequest} object.
      */
     public static ResponseRequest request(Plugin plugin, String context,
                                           CommandSender sender,

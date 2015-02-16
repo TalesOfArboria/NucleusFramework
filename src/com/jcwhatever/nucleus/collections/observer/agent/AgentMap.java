@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
  * A map of {@link ISubscriberAgent} which automatically removes agents
  * when they are disposed.
  *
- * <p>Assumes the agent is properly implemented and calls the {@code #unregister} method
+ * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unregister} method
  * of all {@link ISubscriber} instances that are observing it when it's disposed.</p>
  *
  * <p>The map has its own internal subscriber which is used to observe the agents in
@@ -128,7 +128,7 @@ public abstract class AgentMap<K, V extends ISubscriberAgent>
     }
 
     /**
-     * Same as {@code #put} except returns own instance
+     * Same as {@link #put} except returns own instance
      * for chaining.
      *
      * @param key    The key.

@@ -319,7 +319,7 @@ public final class TextUtils {
 
     /**
      * Search a collection of strings for valid candidates using an
-     * {@code EntryValidator} to validate.
+     * {@link IValidator} to validate.
      *
      * @param searchCandidates  The search candidates.
      * @param entryValidator    The entry validator.
@@ -849,7 +849,7 @@ public final class TextUtils {
      * <p>Color can be specified using {@link TextColor} enum names in curly brackets.
      * (i.e. {GREEN})</p>
      *
-     * @param template  An object whose {@code #toString} method yields the message template.
+     * @param template  An object whose {@link #toString} method yields the message template.
      * @param args      Optional format arguments.
      */
     public static String format(Object template, Object... args) {
@@ -867,7 +867,7 @@ public final class TextUtils {
      * (i.e. {GREEN})</p>
      *
      * @param settings  A custom set of settings to use.
-     * @param template  An object whose {@code #toString} method yields the message template.
+     * @param template  An object whose {@link #toString} method yields the message template.
      * @param args      Optional format arguments.
      */
     public static String format(TextFormatterSettings settings, Object template, Object... args) {
@@ -899,8 +899,8 @@ public final class TextUtils {
     }
 
     /**
-     * Creates a new {@code TextFormatterSettings} that contains the settings from the
-     * specified {@code TextFormatterSettings} and additionally formatters for the specified
+     * Creates a new {@link TextFormatterSettings} that contains the settings from the
+     * specified {@link TextFormatterSettings} and additionally formatters for the specified
      * plugin.
      */
     public static TextFormatterSettings getPluginFormatters(final Plugin plugin,
@@ -1124,7 +1124,7 @@ public final class TextUtils {
     }
 
     /**
-     * Parse the {@code UUID} from the supplied string.
+     * Parse the {@link java.util.UUID} from the supplied string.
      * If parsing fails, null is returned.
      *
      * @param string  The string to parse.
@@ -1143,7 +1143,7 @@ public final class TextUtils {
     }
 
     /**
-     * Parse the {@code UUID}'s from the supplied collection
+     * Parse the {@link java.util.UUID}'s from the supplied collection
      * of strings. If a string cannot be parsed, it is not
      * included in the results.
      *
@@ -1168,7 +1168,7 @@ public final class TextUtils {
     }
 
     /**
-     * Parse the {@code UUID}'s from the supplied string array.
+     * Parse the {@link java.util.UUID}'s from the supplied string array.
      * If a string cannot be parsed, it is not included in the
      * results..
      *

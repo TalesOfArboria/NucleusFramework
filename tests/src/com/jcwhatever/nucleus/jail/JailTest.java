@@ -80,7 +80,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure the {@code #imprison} method works properly, and that the
+     * Make sure the {@link #imprison} method works properly, and that the
      * prisoner is released after the specified duration.
      */
     @Test
@@ -100,7 +100,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@code #addTeleport} works properly.
+     * Make sure {@link #addTeleport} works properly.
      */
     @Test
     public void testAddTeleport() {
@@ -117,7 +117,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@code #removeTeleport} works properly.
+     * Make sure {@link #removeTeleport} works properly.
      */
     @Test
     public void testRemoveTeleport() {
@@ -142,7 +142,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@code #randomTeleport} method works properly.
+     * Make sure {@link #randomTeleport} method works properly.
      */
     @Test
     public void testGetRandomTeleport() {
@@ -172,7 +172,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@code #getTeleports} returns the correct results.
+     * Make sure {@link #getTeleports} returns the correct results.
      */
     @Test
     public void testGetTeleports() {
@@ -191,7 +191,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@code #getReleaseLocation} and {@code #setReleaseLocation} work properly
+     * Make sure {@link #getReleaseLocation} and {@link #setReleaseLocation} work properly
      * and test that player is sent to release location after being released.
      */
     @Test

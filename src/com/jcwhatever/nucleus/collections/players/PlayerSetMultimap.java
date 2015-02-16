@@ -34,7 +34,8 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 /**
- * A {@code SetMultimap} wrapper that stores elements using the player ID as key.
+ * A {@link com.google.common.collect.SetMultimap} wrapper that stores elements using
+ * the player ID as key.
  *
  * <p> When the player logs out, the entry is automatically removed.</p>
  *

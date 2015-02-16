@@ -2213,7 +2213,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      *
@@ -2230,7 +2230,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      */
@@ -2247,7 +2247,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      */
@@ -2264,7 +2264,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      */
@@ -2281,7 +2281,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      */
@@ -2298,7 +2298,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      */
@@ -2315,7 +2315,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      */
@@ -2332,7 +2332,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      */
@@ -2349,7 +2349,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Deque}.
+     * Convert an array to a {@link java.util.Deque}.
      *
      * @param array  The array to convert.
      */
@@ -2366,7 +2366,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      *
@@ -2382,7 +2382,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      *
@@ -2401,7 +2401,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      */
@@ -2420,7 +2420,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      */
@@ -2437,7 +2437,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      */
@@ -2454,7 +2454,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      */
@@ -2471,7 +2471,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      */
@@ -2488,7 +2488,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      */
@@ -2505,7 +2505,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      */
@@ -2522,7 +2522,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a {@code Set}.
+     * Convert an array to a {@link java.util.Set}.
      *
      * @param array  The array to convert.
      */

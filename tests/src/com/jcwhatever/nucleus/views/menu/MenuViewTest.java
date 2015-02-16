@@ -37,8 +37,8 @@ public class MenuViewTest extends AbstractViewTest {
     }
 
     /**
-     * Make sure {@code #onItemSelect} is invoked when a menu item is clicked
-     * and that the correct {@code MenuItem} is passed into the invoked method.
+     * Make sure {@link #onItemSelect} is invoked when a menu item is clicked
+     * and that the correct {@link MenuItem} is passed into the invoked method.
      */
     @Test
     public void testOnItemSelected() {

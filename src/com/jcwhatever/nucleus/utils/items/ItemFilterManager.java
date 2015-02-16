@@ -103,7 +103,7 @@ public class ItemFilterManager implements IPluginOwned {
      *
      * @param plugin             The owning plugin
      * @param dataNode           Data node to save and load settings.
-     * @param matchOperations    {@code ItemStackMatcher} bit matcher operations to use to match items
+     * @param matchOperations    {@link ItemStackMatcher} bit matcher operations to use to match items
      */
     public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode, byte matchOperations) {
         PreCon.notNull(plugin);
@@ -181,8 +181,8 @@ public class ItemFilterManager implements IPluginOwned {
 
     /**
      * Determine if the specified {code ItemStack} is valid.
-     * Checks to see if the collection contains a matching {@code ItemStack} as
-     * determined by the collections {@code ItemStackMatcher} and the filter mode.
+     * Checks to see if the collection contains a matching {@link org.bukkit.inventory.ItemStack} as
+     * determined by the collections {@link ItemStackMatcher} and the filter mode.
      *
      * @param item  The item to check.
      */

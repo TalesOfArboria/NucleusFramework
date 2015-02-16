@@ -51,18 +51,18 @@ import java.util.UUID;
 public interface IBankItem extends IPaginator<IBankItem>, Iterable<IBankItem> {
 
     /**
-     * A unique identifier for the account {@code IBankItem}. The id is only
+     * A unique identifier for the account {@link IBankItem}. The id is only
      * unique to the root item. All sub items share the same ID as their root.
      */
     UUID getId();
 
     /**
-     * Determine if the {@code IBankItem} is the root item.
+     * Determine if the {@link IBankItem} is the root item.
      */
     boolean isRootItem();
 
     /**
-     * Get the root item for the current {@code IBankItem}. If the
+     * Get the root item for the current {@link IBankItem}. If the
      * current items is the the master item, the current item is
      * returned.
      */
@@ -79,7 +79,7 @@ public interface IBankItem extends IPaginator<IBankItem>, Iterable<IBankItem> {
     int getAmount();
 
     /**
-     * Get the quantity held by the root {@code IBankItem}.
+     * Get the quantity held by the root {@link IBankItem}.
      */
     int getRootAmount();
 
@@ -89,21 +89,22 @@ public interface IBankItem extends IPaginator<IBankItem>, Iterable<IBankItem> {
     int getMaxStackSize();
 
     /**
-     * Get the total number of {@code ItemStack}'s that can be produced
-     * from the amount of items where each {@code ItemStack} is filled with
-     * the maximum amount of items that can be added.
+     * Get the total number of {@link org.bukkit.inventory.ItemStack}'s that
+     * can be produced from the amount of items where each
+     * {@link org.bukkit.inventory.ItemStack} is filled with the maximum
+     * amount of items that can be added.
      */
     int getTotalStacks();
 
     /**
      * Get sub items of the current item where each sub item represents an
-     * {@code ItemStack} up to the maximum stack size.
+     * {@link ItemStack} up to the maximum stack size.
      */
     List<IBankItem> getItems();
 
     /**
-     * Create a new {@code ItemStack} that is a duplicate of the {@code ItemStack}
-     * represented by the {@code IBankItem}.
+     * Create a new {@link org.bukkit.inventory.ItemStack} that is a duplicate
+     * of the {@link org.bukkit.inventory.ItemStack} represented by the {@link IBankItem}.
      *
      * @param amount  The amount.
      */

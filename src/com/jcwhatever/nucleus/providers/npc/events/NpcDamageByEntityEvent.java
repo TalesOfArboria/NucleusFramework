@@ -42,7 +42,7 @@ public class NpcDamageByEntityEvent extends NpcDamageEvent {
      * Constructor.
      *
      * @param npc    The NPC the event is for.
-     * @param event  The parent {@code EntityDamageByBlockEvent}.
+     * @param event  The parent {@link org.bukkit.event.entity.EntityDamageByBlockEvent}.
      */
     public NpcDamageByEntityEvent(INpc npc, EntityDamageByEntityEvent event) {
         super(npc, event);
@@ -64,7 +64,7 @@ public class NpcDamageByEntityEvent extends NpcDamageEvent {
     }
 
     /**
-     * Get the parent {@code EntityDamageByEntityEvent}.
+     * Get the parent {@link EntityDamageByEntityEvent}.
      */
     @Override
     public EntityDamageByEntityEvent getParentEvent() {

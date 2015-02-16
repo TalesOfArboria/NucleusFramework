@@ -38,8 +38,8 @@ public interface INpcFlockBehavior {
     /**
      * Get a vector to send the npc based on its flock.
      *
-     * @param npc    The {@code INpc} whose vector is being retrieved for.
-     * @param flock  The other {@code INpc}'s in the flock.
+     * @param npc    The {@link INpc} whose vector is being retrieved for.
+     * @param flock  The other {@link INpc}'s in the flock.
      */
     Vector getVector(INpc npc, Collection<INpc> flock);
 }

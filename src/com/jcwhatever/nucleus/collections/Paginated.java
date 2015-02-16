@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * An {@code IPaginator} implementation that wraps a {@code List} implementation.
+ * An {@link IPaginator} implementation that wraps a {@link java.util.List} implementation.
  */
 public class Paginated<E> extends ListWrapper<E> implements IPaginator<E> {
 

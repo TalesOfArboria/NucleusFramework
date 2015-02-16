@@ -35,7 +35,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Compares {@code ItemStack}'s to determine if they are the same based
+ * Compares {@link org.bukkit.inventory.ItemStack}'s to determine if they are the same based
  * on defined compare operations parameters.
  */
 public class ItemStackMatcher {
@@ -76,7 +76,7 @@ public class ItemStackMatcher {
     private static final Map<Byte, ItemStackMatcher> _custom = new HashMap<Byte, ItemStackMatcher>(35);
 
     /**
-     * Get the default singleton instance of the {@code ItemStackMatcher}.
+     * Get the default singleton instance of the {@link ItemStackMatcher}.
      * Matches by type and meta data.
      */
     public static ItemStackMatcher getDefault() {
@@ -84,7 +84,7 @@ public class ItemStackMatcher {
     }
 
     /**
-     * Get a singleton instance of an {@code ItemStackMatcher} that matches
+     * Get a singleton instance of an {@link ItemStackMatcher} that matches
      * by type, meta data, and durability.
      */
     public static ItemStackMatcher getTypeMetaDurability() {
@@ -100,7 +100,7 @@ public class ItemStackMatcher {
     }
 
     /**
-     * Get a singleton instance of a {@code ItemStackMatcher} with custom
+     * Get a singleton instance of a {@link ItemStackMatcher} with custom
      * matcher operations combinations defined.
      *
      * @param matchOperations  The matcher operations bit flags to use.

@@ -37,7 +37,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * Used to build a {@code PropertyDefinition} map.
+ * Used to build a {@link PropertyDefinition} map.
  */
 public class SettingsBuilder {
 
@@ -126,9 +126,9 @@ public class SettingsBuilder {
 
 
     /**
-     * Merge a collection of {@code PropertyDefinition} into the {@code DefinitionsBuilder}.
+     * Merge a collection of {@link PropertyDefinition} into the {@link SettingsBuilder}.
      *
-     * <p>If the {@code DefinitionsBuilder} already contains the property, it is not added.</p>
+     * <p>If the {@link SettingsBuilder} already contains the property, it is not added.</p>
      *
      * @param definitions  The collection of property definitions.
      */
@@ -146,7 +146,7 @@ public class SettingsBuilder {
     }
 
     /**
-     * Remove and prevent {@code PropertyDefinition}'s from being added.
+     * Remove and prevent {@link PropertyDefinition}'s from being added.
      *
      * <p>Useful before or after merging to prevent specific properties
      * from being added.</p>
@@ -165,7 +165,7 @@ public class SettingsBuilder {
     }
 
     /**
-     * Build a new map of {@code PropertyDefinitions}.
+     * Build a new map of {@link PropertyDefinition}'s.
      *
      * <p>The map is keyed to the property name.</p>
      */
@@ -178,7 +178,7 @@ public class SettingsBuilder {
     }
 
     /**
-     * Build a new settings manager using the {@code PropertyDefinitions}
+     * Build a new settings manager using the {@link PropertyDefinition}'s
      * that were set and the specified data node.
      *
      * @param dataNode  The data node the manager will manager.

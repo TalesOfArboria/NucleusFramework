@@ -43,7 +43,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * Container for a commands {@code ICommandInfo} annotation.
+ * Container for a commands {@link ICommandInfo} annotation.
  */
 public class CommandInfoContainer {
 

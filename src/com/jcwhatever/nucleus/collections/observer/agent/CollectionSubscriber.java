@@ -60,7 +60,7 @@ public abstract class CollectionSubscriber implements ISubscriber {
     }
 
     /**
-     * Invoked when an agent is removed from the {@code CollectionSubscriber} so a collection
+     * Invoked when an agent is removed from the {@link CollectionSubscriber} so a collection
      * can handle removing the appropriate element.
      *
      * @param agent  The removed agent.

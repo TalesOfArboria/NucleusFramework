@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Tracks entities and updates {@code TrackedEntity} objects.
+ * Tracks entities and updates {@link TrackedEntity} objects.
  */
 public final class EntityTracker implements Listener {
 
@@ -61,7 +61,7 @@ public final class EntityTracker implements Listener {
      *
      * @param entity  The entity to track.
      *
-     * @return  A new or cached {@code TrackedEntity} instance.
+     * @return  A new or cached {@link TrackedEntity} instance.
      */
     public TrackedEntity trackEntity(Entity entity) {
 
@@ -79,7 +79,7 @@ public final class EntityTracker implements Listener {
     }
 
     /**
-     * Called when a {@code TrackedEntity} is disposed so it can
+     * Called when a {@link TrackedEntity} is disposed so it can
      * be removed from the entity map.
      */
     void disposeEntity(TrackedEntity tracked) {

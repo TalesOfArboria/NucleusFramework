@@ -38,7 +38,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * An event agent that {@code IEventSubscriber}'s can register with.
+ * An event agent that {@link IEventSubscriber}'s can register with.
  */
 public class EventAgent implements IEventAgent, IDisposable {
 

@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.utils.text.ColoredCircularString;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 /**
- * An {@code IDynamicText} implementation that displays marquee
+ * An {@link IDynamicText} implementation that displays marquee
  * text which can scroll text from left to right or right to left.
  */
 public class MarqueeText implements IDynamicText {

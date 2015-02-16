@@ -118,7 +118,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
 
     /**
      * Get a module by the name specified in its
-     * {@code IModuleInfo} data object.
+     * {@link IModuleInfo} data object.
      */
     @Nullable
     public T getModule(String moduleName) {
@@ -128,7 +128,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Get a modules {@code IModuleInfo} data object.
+     * Get a modules {@link IModuleInfo} data object.
      */
     @Nullable
     public <I extends IModuleInfo> I getModuleInfo(T module) {
@@ -542,8 +542,8 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     /**
      * Get the name of the module class to load from the jar file.
      *
-     * <p>Only called when the {@code ClassLoadMethod} is {@code DIRECT}
-     * or {@code DIRECT_OR_SEARCH}.</p>
+     * <p>Only called when the {@link ClassLoadMethod} is {@link ClassLoadMethod#DIRECT}
+     * or {@link ClassLoadMethod#DIRECT_OR_SEARCH}.</p>
      *
      * @param jarFile  The jar file being loaded.
      *
@@ -552,7 +552,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     protected abstract String getModuleClassName(JarFile jarFile);
 
     /**
-     * Create a new instance of {@code IModuleInfo}
+     * Create a new instance of {@link IModuleInfo}
      * and fill with information about the specified
      * module.
      *

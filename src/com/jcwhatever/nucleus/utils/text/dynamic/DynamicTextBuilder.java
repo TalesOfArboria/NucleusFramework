@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Generates a dynamic text composite by appending text and {@Code IDynamicText}.
+ * Generates a dynamic text composite by appending text and {@link IDynamicText}.
  */
 public class DynamicTextBuilder {
 
@@ -73,7 +73,7 @@ public class DynamicTextBuilder {
     /**
      * Set the preferred interval the text is refreshed at.
      *
-     * <p>Overrides the interval of any {@code IDynamicText}
+     * <p>Overrides the interval of any {@link IDynamicText}
      * objects that are appended.</p>
      *
      * @param ticks  The refresh interval in ticks.
@@ -86,7 +86,7 @@ public class DynamicTextBuilder {
     }
 
     /**
-     * Build a new {@code IDynamicText} instance.
+     * Build a new {@link IDynamicText} instance.
      */
     public IDynamicText build() {
 

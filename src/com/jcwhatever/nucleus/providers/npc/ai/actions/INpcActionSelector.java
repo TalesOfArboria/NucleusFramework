@@ -41,7 +41,7 @@ public interface INpcActionSelector {
     INpc getNpc();
 
     /**
-     * Determine if the {@code INpcAction} the selector is for
+     * Determine if the {@link INpcAction} the selector is for
      * is finished.
      */
     boolean isFinished();
@@ -82,7 +82,7 @@ public interface INpcActionSelector {
      *
      * @param action  The action to run.
      *
-     * @return  The argument actions {@code INpcActionSelector}.
+     * @return  The argument actions {@link INpcActionSelector}.
      */
     INpcActionSelector run(INpcAction action);
 
@@ -91,7 +91,7 @@ public interface INpcActionSelector {
      *
      * @param action  The action to run.
      *
-     * @return  The argument actions {@code INpcActionSelector}.
+     * @return  The argument actions {@link INpcActionSelector}.
      */
     INpcActionSelector next(INpcAction action);
 }

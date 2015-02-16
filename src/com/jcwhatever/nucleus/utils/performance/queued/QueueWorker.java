@@ -43,7 +43,7 @@ public class QueueWorker {
     private static QueueWorker _globalWorker;
 
     /**
-     * Get the global singleton {@code QueueWorker} instance.
+     * Get the global singleton {@link QueueWorker} instance.
      */
     public static QueueWorker get() {
         if (_globalWorker == null)

@@ -15,10 +15,10 @@ public class IPaginatorTest {
 
     /**
      * Run the test from within another test, providing implementation
-     * of an {@code IPaginator}.
+     * of an {@link IPaginator}.
      *
      * <p>The collection of the paginator needs to be initialized for
-     * the test first using {@code #initforTest}.</p>
+     * the test first using {@link #initforTest}.</p>
      *
      * @param zero  An instance ith its page index set to 0.
      * @param one   An instance with its page index set to 1.
