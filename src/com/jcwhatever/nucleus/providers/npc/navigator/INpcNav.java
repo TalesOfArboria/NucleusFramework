@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.providers.npc.navigator;
 
 import com.jcwhatever.nucleus.providers.npc.INpc;
-import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -159,7 +159,7 @@ public interface INpcNav {
      *
      * @return  Self for chaining.
      */
-    INpcNav onNavStart(IUpdateSubscriber<INpc> subscriber);
+    INpcNav onNavStart(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attaches a subscriber to the navigator that is updated
@@ -169,7 +169,7 @@ public interface INpcNav {
      *
      * @return  Self for chaining.
      */
-    INpcNav onNavPause(IUpdateSubscriber<INpc> subscriber);
+    INpcNav onNavPause(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attaches a subscriber to the navigator that is updated
@@ -179,7 +179,7 @@ public interface INpcNav {
      *
      * @return  Self for chaining.
      */
-    INpcNav onNavCancel(IUpdateSubscriber<INpc> subscriber);
+    INpcNav onNavCancel(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attaches a subscriber to the navigator that is updated
@@ -189,7 +189,7 @@ public interface INpcNav {
      *
      * @return  Self for chaining.
      */
-    INpcNav onNavComplete(IUpdateSubscriber<INpc> subscriber);
+    INpcNav onNavComplete(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
      * Attaches a subscriber to the navigator that is updated
@@ -199,5 +199,5 @@ public interface INpcNav {
      *
      * @return  Self for chaining.
      */
-    INpcNav onNavTimeout(IUpdateSubscriber<INpc> subscriber);
+    INpcNav onNavTimeout(IScriptUpdateSubscriber<INpc> subscriber);
 }
