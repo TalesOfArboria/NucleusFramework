@@ -22,37 +22,31 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.npc.ai.goals;
-
-import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourPool;
+package com.jcwhatever.nucleus.providers.npc.ai;
 
 /**
- * Interface for an NPC's goal manager.
+ * Interface for a behaviour agent.
+ *
+ * <p>Used to run actions in the agent action pool and declare when the current
+ * behaviour is finished.</p>
  */
-public interface INpcGoals extends INpcBehaviourPool<INpcGoal> {
+public interface INpcBehaviourAgent {
 
     /**
-     * Add a goal.
+     * Get the NPC state.
+     */
+    INpcState getState();
+
+    /**
+     * Get the behaviour pool.
      *
-     * @param priority  The priority of the goal. A larger number is higher priority.
-     * @param goal      The goal to add.
-     *
-     * @return  Self for chaining.
+     * <p>The returned pool is the pool of child behaviours of the behaviour the
+     * agent is responsible for, not the pool the agent behaviour is part of.</p>
      */
-    INpcGoals add(int priority, INpcGoal goal);
+    INpcBehaviourPool getPool();
 
     /**
-     * Determine if goals are running.
+     * Ends the running behaviour.
      */
-    boolean isRunning();
-
-    /**
-     * Pause execution of goals.
-     */
-    INpcGoals pause();
-
-    /**
-     * Resume execution of goals.
-     */
-    INpcGoals resume();
+    void finish();
 }

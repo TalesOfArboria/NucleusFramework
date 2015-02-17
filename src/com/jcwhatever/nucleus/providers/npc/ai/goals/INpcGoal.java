@@ -24,17 +24,24 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai.goals;
 
-import com.jcwhatever.nucleus.providers.npc.ai.actions.INpcAction;
+import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
 
 /**
- * Interface for an NPC Goal
+ * Interface for an NPC Goal.
+ *
+ * <p>A goal is a top level behaviour with priority. Goals with higher priorities
+ * are selected to run over goals with lower priority. When 2 or more goals with
+ * the same priority are able to run, the goal with the least cost is selected.</p>
  */
-public interface INpcGoal extends INpcAction {
+public interface INpcGoal extends INpcBehaviour {
 
     /**
-     * Determine if the goal can be run.
+     * Invoked every tick while the goal is running.
      *
-     * @return  True to run the goal, otherwise false.
+     * @param agent  An {@link INpcGoalAgent} for use by the goal.
+     *
+     * @return  The action result.
      */
-    boolean canRun();
+    void run(INpcGoalAgent agent);
+
 }

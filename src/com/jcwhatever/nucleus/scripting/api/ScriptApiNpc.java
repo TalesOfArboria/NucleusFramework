@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
+import com.jcwhatever.nucleus.providers.npc.ai.actions.NpcScriptAction;
 import com.jcwhatever.nucleus.providers.npc.ai.goals.NpcScriptGoal;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
@@ -144,6 +145,13 @@ public class ScriptApiNpc extends NucleusScriptApi {
          */
         public NpcScriptGoal createGoal() {
             return new NpcScriptGoal();
+        }
+
+        /**
+         * Create a new {@link NpcScriptAction}.
+         */
+        public NpcScriptAction createAction() {
+            return new NpcScriptAction();
         }
 
         @Override

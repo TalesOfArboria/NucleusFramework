@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.providers.npc;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
 import com.jcwhatever.nucleus.providers.npc.events.NpcClickEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcDamageByBlockEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcDamageByEntityEvent;
@@ -37,9 +37,6 @@ import com.jcwhatever.nucleus.providers.npc.events.NpcLeftClickEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcRightClickEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent;
 import com.jcwhatever.nucleus.providers.npc.events.NpcTargetedEvent;
-import com.jcwhatever.nucleus.providers.npc.ai.goals.INpcGoals;
-import com.jcwhatever.nucleus.providers.npc.navigator.INpcNav;
-import com.jcwhatever.nucleus.providers.npc.traits.INpcTraits;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
@@ -51,7 +48,7 @@ import javax.annotation.Nullable;
 /**
  * Interface for an NPC.
  */
-public interface INpc extends INamedInsensitive, IMeta, IDisposable {
+public interface INpc extends INpcState, INamedInsensitive, IDisposable {
 
     /**
      * Get the NPC's owning registry.
@@ -70,19 +67,6 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
     String getNPCName();
 
     /**
-     * Get the NPC entity.
-     *
-     * @return  The {@link org.bukkit.entity.Entity} or null if not spawned.
-     */
-    @Nullable
-    Entity getEntity();
-
-    /**
-     * Determine if the NPC is spawned.
-     */
-    boolean isSpawned();
-
-    /**
      * Spawn the NPC in the specified location. If the NPC is already spawned,
      * the NPC is teleported.
      *
@@ -98,41 +82,6 @@ public interface INpc extends INamedInsensitive, IMeta, IDisposable {
      * @return  True if despawned, otherwise false.
      */
     boolean despawn();
-
-    /**
-     * Get the NPC entity location or the location the entity was add
-     * when last despawned. If the entity was never spawned, returns null.
-     */
-    @Nullable
-    Location getLocation();
-
-    /**
-     * Get the NPC entity location or the location the entity was add
-     * when last despawned. If the entity was never spawned, returns null.
-     *
-     * <p>Copies the result location values into the provided location instance.</p>
-     *
-     * @param location  The location to copy result values into.
-     *
-     * @return  The location that was provided as an argument.
-     */
-    Location getLocation(Location location);
-
-    /**
-     * Get the NPC's navigator.
-     */
-    INpcNav getNavigator();
-
-    /**
-     * Get the NPC's goal manager.
-     */
-    INpcGoals getGoals();
-
-    /**
-     * Get the NPC's trait manager.
-     * @return
-     */
-    INpcTraits getTraits();
 
     /**
      * Get the NPC vehicle the {@link INpc} is riding.

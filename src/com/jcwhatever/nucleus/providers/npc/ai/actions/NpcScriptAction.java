@@ -25,25 +25,58 @@
 package com.jcwhatever.nucleus.providers.npc.ai.actions;
 
 import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourAgent;
-import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
+import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
+import com.jcwhatever.nucleus.providers.npc.ai.NpcScriptBehaviour;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
- * Interface for an action an NPC can perform.
- *
- * <p>An action is a behaviour that runs in order to help achieve a goal.</p>
+ * An {@link INpcAction} implementation that allows scripts to attach implementation
+ * handlers via shorthand functions.
  */
-public interface INpcAction extends INpcBehaviour {
+public class NpcScriptAction extends NpcScriptBehaviour implements INpcAction {
+
+    private IOnRunHandler _onRunHandler;
+
+    @Override
+    public boolean canRun(INpcState state) {
+        return _onRunHandler != null && super.canRun(state);
+    }
+
+    @Override
+    public void run(INpcBehaviourAgent agent) {
+        if (_onRunHandler != null)
+            _onRunHandler.run(agent);
+        else
+            agent.finish();
+    }
 
     /**
-     * Run the action.
+     * Attach the run handler.
      *
-     * <p>Invoked once every tick until the action signals completion
-     * via the agent argument or current action execution changes.</p>
+     * @param handler  The run handler.
      *
-     * <p>Is not invoked if {@link INpcBehaviour#canRun} returns false or another action
-     * with a lower cost is run instead.</p>
-     *
-     * @param agent  An {@link INpcBehaviourAgent} exclusively for use by the action.
+     * @return  Self for chaining.
      */
-    void run(INpcBehaviourAgent agent);
+    public NpcScriptAction onRun(IOnRunHandler handler) {
+        PreCon.notNull(handler, "handler");
+
+        _onRunHandler = handler;
+
+        return this;
+    }
+
+    /**
+     * Run handler for use by a script. Supports
+     * shorthand functions.
+     */
+    public interface IOnRunHandler {
+
+        /**
+         * Invoked when the actions {@link INpcAction#run}
+         * method is invoked.
+         *
+         * @param agent  The goals agent.
+         */
+        void run(INpcBehaviourAgent agent);
+    }
 }

@@ -24,75 +24,29 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai.goals;
 
-import com.jcwhatever.nucleus.providers.npc.ai.actions.INpcActionSelector;
+import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
+import com.jcwhatever.nucleus.providers.npc.ai.NpcScriptBehaviour;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
- * A goal designed to be added from a script. Supports script
- * shorthand functions.
+ * An {@link INpcGoal} implementation that allows scripts to attach implementation
+ * handlers via shorthand functions.
  */
-public class NpcScriptGoal implements INpcGoal {
+public class NpcScriptGoal extends NpcScriptBehaviour implements INpcGoal {
 
-    private Runnable _onReset;
     private IOnRunHandler _onRunHandler;
-    private ICanRunHandler _canRunHandler;
-    private boolean _isTransient;
 
     @Override
-    public void reset() {
-        if (_onReset != null)
-            _onReset.run();
+    public boolean canRun(INpcState state) {
+        return _onRunHandler != null && super.canRun(state);
     }
 
     @Override
-    public void run(INpcActionSelector director) {
+    public void run(INpcGoalAgent agent) {
         if (_onRunHandler != null)
-            _onRunHandler.run(director);
+            _onRunHandler.run(agent);
         else
-            director.finish(null);
-    }
-
-    @Override
-    public boolean canRun() {
-        if (_canRunHandler != null && _canRunHandler.canRun()) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Determine if the goal is removed when it is finished.
-     *
-     * <p>Default value is false.</p>
-     */
-    public boolean isTransient() {
-        return _isTransient;
-    }
-
-    /**
-     * Set the transient flag on the goal.
-     *
-     * @param isTransient  True to remove the goal when it finishes, otherwise false.
-     *
-     * @return  Self for chaining.
-     */
-    public NpcScriptGoal setTransient(boolean isTransient) {
-        _isTransient = isTransient;
-        return this;
-    }
-
-    /**
-     * Attach the reset handler.
-     *
-     * @param runnable  The reset handler.
-     *
-     * @return  Self for chaining.
-     */
-    public NpcScriptGoal onReset(Runnable runnable) {
-        PreCon.notNull(runnable, "runnable");
-        _onReset = runnable;
-
-        return this;
+            agent.finish();
     }
 
     /**
@@ -111,40 +65,17 @@ public class NpcScriptGoal implements INpcGoal {
     }
 
     /**
-     * Attach the canRun handler.
-     *
-     * @param handler  The canRun handler.
-     *
-     * @return  Self for chaining.
-     */
-    public NpcScriptGoal onCanRun(ICanRunHandler handler) {
-        PreCon.notNull(handler, "handler");
-
-        _canRunHandler = handler;
-
-        return this;
-    }
-
-    /**
-     * canRun handler for use by a script. Supports
-     * shorthand functions.
-     */
-    public interface ICanRunHandler {
-        boolean canRun();
-    }
-
-    /**
      * run handler for use by a script. Supports
      * shorthand functions.
      */
     public interface IOnRunHandler {
 
         /**
-         * Invoked when the goals {@link com.jcwhatever.nucleus.providers.npc.ai.actions.INpcAction#run}
+         * Invoked when the goals {@link INpcGoal#run}
          * method is invoked.
          *
-         * @param selector  The {@link INpcActionSelector}.
+         * @param agent  The goals agent.
          */
-        void run(INpcActionSelector selector);
+        void run(INpcGoalAgent agent);
     }
 }

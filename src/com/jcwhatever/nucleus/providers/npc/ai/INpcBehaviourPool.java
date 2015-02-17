@@ -22,37 +22,50 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.npc.ai.goals;
+package com.jcwhatever.nucleus.providers.npc.ai;
 
-import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourPool;
+import com.jcwhatever.nucleus.providers.npc.INpc;
+
+import javax.annotation.Nullable;
 
 /**
- * Interface for an NPC's goal manager.
+ * Abstract implementation of a behaviour pool/collection.
+ *
+ * <p>The behaviour pool is used to select 1 of possibly many behaviours
+ * based on the cost of each behaviour or other factors determined by
+ * the implementation.</p>
  */
-public interface INpcGoals extends INpcBehaviourPool<INpcGoal> {
+public interface INpcBehaviourPool<T extends INpcBehaviour> {
 
     /**
-     * Add a goal.
+     * Get the NPC the behaviour pool is for.
+     */
+    INpc getNpc();
+
+    /**
+     * Add a behaviour to the pool.
      *
-     * @param priority  The priority of the goal. A larger number is higher priority.
-     * @param goal      The goal to add.
+     * @param behaviour  The behaviour.
      *
      * @return  Self for chaining.
      */
-    INpcGoals add(int priority, INpcGoal goal);
+    INpcBehaviourPool add(T behaviour);
 
     /**
-     * Determine if goals are running.
+     * Remove a behaviour from the pool.
+     *
+     * @param behaviour  The behaviour to remove.
+     *
+     * @return  True if found and removed, otherwise false.
      */
-    boolean isRunning();
+    @Nullable
+    boolean remove(T behaviour);
 
     /**
-     * Pause execution of goals.
+     * Clear all behaviours.
+     *
+     * @return  Self for chaining.
      */
-    INpcGoals pause();
+    INpcBehaviourPool clear();
 
-    /**
-     * Resume execution of goals.
-     */
-    INpcGoals resume();
 }

@@ -22,37 +22,41 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.npc.ai.goals;
-
-import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourPool;
+package com.jcwhatever.nucleus.providers.npc.ai;
 
 /**
- * Interface for an NPC's goal manager.
+ * Interface for an NPC behaviour.
+ *
+ * <p>A behaviour is selected to run from a pool/collection of behaviours
+ * based on if it can be run. Among the behaviours that can run, the behaviour
+ * with the least cost is selected.</p>
  */
-public interface INpcGoals extends INpcBehaviourPool<INpcGoal> {
+public interface INpcBehaviour {
 
     /**
-     * Add a goal.
+     * Invoke to reset the behaviour.
+     */
+    void reset();
+
+    /**
+     * Determine if the behaviour can be run.
      *
-     * @param priority  The priority of the goal. A larger number is higher priority.
-     * @param goal      The goal to add.
+     * <p>This is invoked before invoking {@link #getCost}</p>
      *
-     * @return  Self for chaining.
+     * @param state  The npc state.
+     *
+     * @return True if the action can be run, otherwise false. Returning true does not
+     * guarantee the action will be run.
      */
-    INpcGoals add(int priority, INpcGoal goal);
+    boolean canRun(INpcState state);
 
     /**
-     * Determine if goals are running.
+     * Get the cost of running the behaviour.
+     *
+     * <p>Invoked if {@link #canRun} returns true. Used to find the behaviour with
+     * the least cost to perform.</p>
+     *
+     * @param state  The npc state.
      */
-    boolean isRunning();
-
-    /**
-     * Pause execution of goals.
-     */
-    INpcGoals pause();
-
-    /**
-     * Resume execution of goals.
-     */
-    INpcGoals resume();
+    float getCost(INpcState state);
 }

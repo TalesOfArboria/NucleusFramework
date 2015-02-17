@@ -22,37 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.npc.ai.goals;
+package com.jcwhatever.nucleus.providers.npc.ai.actions;
 
 import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourPool;
+import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
 
 /**
- * Interface for an NPC's goal manager.
+ * A pool of {@link INpcAction} for a goal or action to use.
+ *
+ * <p>The pool is used to select one of many possible actions. The action chosen to run
+ * is based on the result of its {@link INpcBehaviour#canRun}
+ * method and the cost of running the action as determined by invoking
+ * {@link INpcBehaviour#getCost}.</p>
  */
-public interface INpcGoals extends INpcBehaviourPool<INpcGoal> {
-
-    /**
-     * Add a goal.
-     *
-     * @param priority  The priority of the goal. A larger number is higher priority.
-     * @param goal      The goal to add.
-     *
-     * @return  Self for chaining.
-     */
-    INpcGoals add(int priority, INpcGoal goal);
-
-    /**
-     * Determine if goals are running.
-     */
-    boolean isRunning();
-
-    /**
-     * Pause execution of goals.
-     */
-    INpcGoals pause();
-
-    /**
-     * Resume execution of goals.
-     */
-    INpcGoals resume();
+public interface INpcActionPool extends INpcBehaviourPool<INpcAction> {
 }

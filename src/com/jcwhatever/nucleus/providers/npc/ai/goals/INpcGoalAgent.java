@@ -24,35 +24,15 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai.goals;
 
-import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourPool;
+import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourAgent;
 
 /**
- * Interface for an NPC's goal manager.
+ * An implementation of an {@link INpcBehaviourAgent} for use with goals.
  */
-public interface INpcGoals extends INpcBehaviourPool<INpcGoal> {
+public interface INpcGoalAgent extends INpcBehaviourAgent {
 
     /**
-     * Add a goal.
-     *
-     * @param priority  The priority of the goal. A larger number is higher priority.
-     * @param goal      The goal to add.
-     *
-     * @return  Self for chaining.
+     * Finish the running goal and remove it.
      */
-    INpcGoals add(int priority, INpcGoal goal);
-
-    /**
-     * Determine if goals are running.
-     */
-    boolean isRunning();
-
-    /**
-     * Pause execution of goals.
-     */
-    INpcGoals pause();
-
-    /**
-     * Resume execution of goals.
-     */
-    INpcGoals resume();
+    void finishAndRemove();
 }
