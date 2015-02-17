@@ -33,6 +33,12 @@ package com.jcwhatever.nucleus.providers.npc.ai;
 public interface INpcBehaviourAgent {
 
     /**
+     * Get the number of times the agent has been run since the
+     * last time its behaviour was reset.
+     */
+    long getRunCount();
+
+    /**
      * Get the NPC state.
      */
     INpcState getState();

@@ -32,14 +32,14 @@ import com.jcwhatever.nucleus.utils.PreCon;
  */
 public abstract class NpcScriptBehaviour implements INpcBehaviour {
 
-    private Runnable _onReset;
+    private IResetHandler _onReset;
     private ICanRunHandler _canRunHandler;
     private ICostHandler _costHandler;
 
     @Override
-    public void reset() {
+    public void reset(INpcState state) {
         if (_onReset != null)
-            _onReset.run();
+            _onReset.reset(state);
     }
 
     @Override
@@ -58,13 +58,13 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
     /**
      * Attach the reset handler.
      *
-     * @param runnable  The reset handler.
+     * @param handler  The reset handler.
      *
      * @return  Self for chaining.
      */
-    public NpcScriptBehaviour onReset(Runnable runnable) {
-        PreCon.notNull(runnable, "runnable");
-        _onReset = runnable;
+    public NpcScriptBehaviour onReset(IResetHandler handler) {
+        PreCon.notNull(handler, "handler");
+        _onReset = handler;
 
         return this;
     }
@@ -97,6 +97,14 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
         _costHandler = handler;
 
         return this;
+    }
+
+    /**
+     * Reset handler for use by a script. Supports
+     * shorthand functions.
+     */
+    public interface IResetHandler {
+        void reset(INpcState state);
     }
 
     /**

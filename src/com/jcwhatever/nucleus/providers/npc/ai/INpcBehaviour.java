@@ -35,8 +35,10 @@ public interface INpcBehaviour {
 
     /**
      * Invoke to reset the behaviour.
+     *
+     * @param state  The npc state.
      */
-    void reset();
+    void reset(INpcState state);
 
     /**
      * Determine if the behaviour can be run.
