@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.providers.npc.INpc;
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of a behaviour pool/collection.
+ * A pool of behaviours.
  *
  * <p>The behaviour pool is used to select 1 of possibly many behaviours
  * based on the cost of each behaviour or other factors determined by
