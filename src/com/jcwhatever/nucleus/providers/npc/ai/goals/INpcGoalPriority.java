@@ -24,45 +24,17 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai.goals;
 
-import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourPool;
+import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
 
 /**
- * Interface for an NPC's goal manager.
+ * A type that can specify a goal priority.
  */
-public interface INpcGoals extends INpcBehaviourPool<INpcGoal> {
+public interface INpcGoalPriority {
 
     /**
-     * Add a goal.
+     * Get the goal priority for the specified {@link INpcState}.
      *
-     * @param priority  The priority of the goal. A larger number is higher priority.
-     * @param goal      The goal to add.
-     *
-     * @return  Self for chaining.
+     * @param state  The NPC state.
      */
-    INpcGoals add(int priority, INpcGoal goal);
-
-    /**
-     * Add a goal.
-     *
-     * @param priority  The priority provider of the goal.
-     * @param goal      The goal to add.
-     *
-     * @return  Self for chaining.
-     */
-    INpcGoals add(INpcGoalPriority priority, INpcGoal goal);
-
-    /**
-     * Determine if goals are running.
-     */
-    boolean isRunning();
-
-    /**
-     * Pause execution of goals.
-     */
-    INpcGoals pause();
-
-    /**
-     * Resume execution of goals.
-     */
-    INpcGoals resume();
+    int getPriority(INpcState state);
 }

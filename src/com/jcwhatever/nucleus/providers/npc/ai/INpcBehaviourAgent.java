@@ -43,6 +43,11 @@ public interface INpcBehaviourAgent extends INpcScriptEvents, INpcNavScriptEvent
     long getRunCount();
 
     /**
+     * Determine if the agent run count is 0.
+     */
+    boolean isFirstRun();
+
+    /**
      * Get the NPC state.
      */
     INpcState getState();
