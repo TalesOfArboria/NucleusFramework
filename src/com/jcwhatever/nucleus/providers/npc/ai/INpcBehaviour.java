@@ -61,4 +61,11 @@ public interface INpcBehaviour {
      * @param state  The npc state.
      */
     float getCost(INpcState state);
+
+    /**
+     * Invoked when the behaviour is paused.
+     *
+     * @param state  The npc state.
+     */
+    void pause(INpcState state);
 }

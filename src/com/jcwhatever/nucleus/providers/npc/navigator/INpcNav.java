@@ -25,7 +25,6 @@
 package com.jcwhatever.nucleus.providers.npc.navigator;
 
 import com.jcwhatever.nucleus.providers.npc.INpc;
-import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -35,7 +34,7 @@ import javax.annotation.Nullable;
 /**
  * Interface for an NPC's pathing manager.
  */
-public interface INpcNav {
+public interface INpcNav extends INpcNavScriptEvents {
 
     /**
      * Get the owning NPC.
@@ -150,54 +149,4 @@ public interface INpcNav {
      * @return  Self for chaining.
      */
     INpcNav setHostile(boolean isHostile);
-
-    /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever there is a navigator starts.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcNav onNavStart(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever the navigator is paused.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcNav onNavPause(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever the navigator is stopped.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcNav onNavCancel(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever the navigator completes.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcNav onNavComplete(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever the navigator times out (gets stuck).
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcNav onNavTimeout(IScriptUpdateSubscriber<INpc> subscriber);
 }

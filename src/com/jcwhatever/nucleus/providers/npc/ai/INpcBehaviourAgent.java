@@ -24,13 +24,17 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai;
 
+import com.jcwhatever.nucleus.providers.npc.INpcScriptEvents;
+import com.jcwhatever.nucleus.providers.npc.ai.actions.INpcAction;
+import com.jcwhatever.nucleus.providers.npc.navigator.INpcNavScriptEvents;
+
 /**
  * Interface for a behaviour agent.
  *
  * <p>Used to run actions in the agent action pool and declare when the current
  * behaviour is finished.</p>
  */
-public interface INpcBehaviourAgent {
+public interface INpcBehaviourAgent extends INpcScriptEvents, INpcNavScriptEvents {
 
     /**
      * Get the number of times the agent has been run since the
@@ -55,4 +59,44 @@ public interface INpcBehaviourAgent {
      * Ends the running behaviour.
      */
     void finish();
+
+    /**
+     * Create an action composed of multiple actions that run in parallel.
+     *
+     * <p>The parallel action does not finish until all child actions finish.</p>
+     *
+     * @param actions  The actions to include.
+     *
+     * @return  The parallel action.
+     */
+    INpcAction createParallelActions(INpcAction... actions);
+
+    /**
+     * Create an action composed of multiple actions that are run in parallel.
+     *
+     * <p>Similar to a parallel action except that the blended action finishes when
+     * any of the child actions finish.</p>
+     *
+     * @param actions  The actions to include.
+     *
+     * @return  The blended action.
+     */
+    INpcAction createBlendedActions(INpcAction... actions);
+
+    /**
+     * Create an action composed of multiple actions that run one after the other.
+     *
+     * <p>The serial action does not finish until all child actions finish.</p>
+     *
+     * <p>Child actions are run in order provided, one at a time. Each child
+     * action is run until it declares itself finished by invoking the
+     * {@link #finish} method, at which point the next action is run.</p>
+     *
+     * <p>If an action cannot run, it is skipped.</p>
+     *
+     * @param actions  The actions to include.
+     *
+     * @return  The serial action.
+     */
+    INpcAction createSerialActions(INpcAction... actions);
 }

@@ -43,6 +43,13 @@ public interface INpcBehaviourPool<T extends INpcBehaviour> {
     INpc getNpc();
 
     /**
+     * Reset all behaviours in the pool.
+     *
+     * @return  Self for chaining.
+     */
+    INpcBehaviourPool reset();
+
+    /**
      * Add a behaviour to the pool.
      *
      * @param behaviour  The behaviour.

@@ -36,6 +36,14 @@ public class NpcScriptGoal extends NpcScriptBehaviour implements INpcGoal {
 
     private IOnRunHandler _onRunHandler;
 
+    /**
+     * Returns the result of the handler added via the {@link #onCanRun} method.
+     *
+     * <p>If a handler was not provided, returns true so long as a run handler
+     * was added via the {@link #onRun(IOnRunHandler)} method.</p>
+     *
+     * <p>{@inheritDoc}</p>
+     */
     @Override
     public boolean canRun(INpcState state) {
         return _onRunHandler != null && super.canRun(state);

@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai.actions;
 
-import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourAgent;
 import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
 import com.jcwhatever.nucleus.providers.npc.ai.NpcScriptBehaviour;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -37,13 +36,21 @@ public class NpcScriptAction extends NpcScriptBehaviour implements INpcAction {
 
     private IOnRunHandler _onRunHandler;
 
+    /**
+     * Returns the result of the handler added via the {@link #onCanRun} method.
+     *
+     * <p>If a handler was not provided, returns true so long as a run handler
+     * was added via the {@link #run} method.</p>
+     *
+     * <p>{@inheritDoc}</p>
+     */
     @Override
     public boolean canRun(INpcState state) {
         return _onRunHandler != null && super.canRun(state);
     }
 
     @Override
-    public void run(INpcBehaviourAgent agent) {
+    public void run(INpcActionAgent agent) {
         if (_onRunHandler != null)
             _onRunHandler.run(agent);
         else
@@ -77,6 +84,6 @@ public class NpcScriptAction extends NpcScriptBehaviour implements INpcAction {
          *
          * @param agent  The goals agent.
          */
-        void run(INpcBehaviourAgent agent);
+        void run(INpcActionAgent agent);
     }
 }

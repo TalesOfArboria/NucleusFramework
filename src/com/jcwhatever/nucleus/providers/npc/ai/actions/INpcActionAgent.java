@@ -24,25 +24,10 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai.actions;
 
-import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
+import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviourAgent;
 
 /**
- * Interface for an action an NPC can perform.
- *
- * <p>An action is a behaviour that runs in order to help achieve a goal.</p>
+ * {@link INpcBehaviourAgent} for an {@link INpcAction}.
  */
-public interface INpcAction extends INpcBehaviour {
-
-    /**
-     * Run the action.
-     *
-     * <p>Invoked once every tick until the action signals completion
-     * via the agent argument or current action execution changes.</p>
-     *
-     * <p>Is not invoked if {@link INpcBehaviour#canRun} returns false or another action
-     * with a lower cost is run instead.</p>
-     *
-     * @param agent  An {@link INpcActionAgent} exclusively for use by the action.
-     */
-    void run(INpcActionAgent agent);
+public interface INpcActionAgent extends INpcBehaviourAgent {
 }

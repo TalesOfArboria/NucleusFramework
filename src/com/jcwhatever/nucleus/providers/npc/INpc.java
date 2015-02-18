@@ -27,18 +27,7 @@ package com.jcwhatever.nucleus.providers.npc;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
-import com.jcwhatever.nucleus.providers.npc.events.NpcClickEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDamageByBlockEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDamageByEntityEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDamageEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDeathEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDespawnEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcLeftClickEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcRightClickEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcTargetedEvent;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -48,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * Interface for an NPC.
  */
-public interface INpc extends INpcState, INamedInsensitive, IDisposable {
+public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, IDisposable {
 
     /**
      * Get the NPC's owning registry.
@@ -137,104 +126,4 @@ public interface INpc extends INpcState, INamedInsensitive, IDisposable {
      * @return  Self for chaining.
      */
     INpc lookTowards(Location location);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is spawned.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcSpawn(IScriptUpdateSubscriber<NpcSpawnEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is despawned.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcDespawn(IScriptUpdateSubscriber<NpcDespawnEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is clicked.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcClick(IScriptUpdateSubscriber<NpcClickEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is right clicked.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcRightClick(IScriptUpdateSubscriber<NpcRightClickEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is left click.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcLeftClick(IScriptUpdateSubscriber<NpcLeftClickEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is targeted by another entity.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcEntityTarget(IScriptUpdateSubscriber<NpcTargetedEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is damaged.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcDamage(IScriptUpdateSubscriber<NpcDamageEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is damaged by a block.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcDamageByBlock(IScriptUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is damaged by an entity.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcDamageByEntity(IScriptUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * dies.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpc onNpcDeath(IScriptUpdateSubscriber<NpcDeathEvent> subscriber);
 }

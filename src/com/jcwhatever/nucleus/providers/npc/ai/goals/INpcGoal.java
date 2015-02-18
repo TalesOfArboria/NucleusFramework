@@ -43,5 +43,4 @@ public interface INpcGoal extends INpcBehaviour {
      * @return  The action result.
      */
     void run(INpcGoalAgent agent);
-
 }

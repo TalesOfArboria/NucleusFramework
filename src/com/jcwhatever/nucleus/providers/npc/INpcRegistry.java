@@ -27,18 +27,8 @@ package com.jcwhatever.nucleus.providers.npc;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.providers.npc.events.NpcClickEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDamageByBlockEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDamageByEntityEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDamageEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDeathEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcDespawnEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcLeftClickEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcRightClickEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent;
-import com.jcwhatever.nucleus.providers.npc.events.NpcTargetedEvent;
+import com.jcwhatever.nucleus.providers.npc.navigator.INpcNavScriptEvents;
 import com.jcwhatever.nucleus.providers.npc.traits.INpcTraitTypeRegistry;
-import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -49,8 +39,8 @@ import javax.annotation.Nullable;
 /**
  * Interface for an NPC registry.
  */
-public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
-        INamedInsensitive, IDisposable {
+public interface INpcRegistry extends INpcTraitTypeRegistry, INpcScriptEvents, INpcNavScriptEvents,
+        IPluginOwned, INamedInsensitive, IDisposable {
 
     /**
      * Create a new NPC.
@@ -123,154 +113,4 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, IPluginOwned,
      */
     @Nullable
     INpc get(Entity entity);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry starts navigating.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNavStart(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry has its navigation paused.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNavPause(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry cancels navigation.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNavCancel(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry completes navigation.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNavComplete(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry gets stuck during navigation and times out.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNavTimeout(IScriptUpdateSubscriber<INpc> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is spawned.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcSpawn(IScriptUpdateSubscriber<NpcSpawnEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is despawned.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcDespawn(IScriptUpdateSubscriber<NpcDespawnEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is clicked.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcClick(IScriptUpdateSubscriber<NpcClickEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is right clicked.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcRightClick(IScriptUpdateSubscriber<NpcRightClickEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is left clicked.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcLeftClick(IScriptUpdateSubscriber<NpcLeftClickEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is targeted by another entity.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcEntityTarget(IScriptUpdateSubscriber<NpcTargetedEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is damaged.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcDamage(IScriptUpdateSubscriber<NpcDamageEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is damaged by a block.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcDamageByBlock(IScriptUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry is damaged by an entity.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcDamageByEntity(IScriptUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
-
-    /**
-     * Attach a subscriber to be updated whenever an {@link INpc} created
-     * by the registry dies.
-     *
-     * @param subscriber  The subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    INpcRegistry onNpcDeath(IScriptUpdateSubscriber<NpcDeathEvent> subscriber);
 }

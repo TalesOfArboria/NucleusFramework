@@ -35,6 +35,7 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
     private IResetHandler _onReset;
     private ICanRunHandler _canRunHandler;
     private ICostHandler _costHandler;
+    private IOnPauseHandler _pauseHandler;
 
     @Override
     public void reset(INpcState state) {
@@ -55,8 +56,16 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
         return _costHandler.getCost(state);
     }
 
+    @Override
+    public void pause(INpcState state) {
+        if (_pauseHandler == null)
+            return;
+
+        _pauseHandler.onPause(state);
+    }
+
     /**
-     * Attach the reset handler.
+     * Attach the reset handler. Optional.
      *
      * @param handler  The reset handler.
      *
@@ -70,7 +79,9 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
     }
 
     /**
-     * Attach the canRun handler.
+     * Attach the canRun handler. Optional.
+     *
+     * <p>{@link #canRun} returns true if not provided.</p>
      *
      * @param handler  The canRun handler.
      *
@@ -85,7 +96,9 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
     }
 
     /**
-     * Attach the onGetCost handler.
+     * Attach the onGetCost handler. Optional.
+     *
+     * <p>{@link #getCost} returns a value of 1.0f if not provided.</p>
      *
      * @param handler  The cost handler.
      *
@@ -95,6 +108,21 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
         PreCon.notNull(handler, "handler");
 
         _costHandler = handler;
+
+        return this;
+    }
+
+    /**
+     * Attach the onPause handler. Optional.
+     *
+     * @param handler  The pause handler.
+     *
+     * @return  Self for chaining.
+     */
+    public NpcScriptBehaviour onPause(IOnPauseHandler handler) {
+        PreCon.notNull(handler, "handler");
+
+        _pauseHandler = handler;
 
         return this;
     }
@@ -121,5 +149,13 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      */
     public interface ICostHandler {
         float getCost(INpcState state);
+    }
+
+    /**
+     * onPause handler for use by a script. Supports
+     * shorthand functions.
+     */
+    public interface IOnPauseHandler {
+        void onPause(INpcState state);
     }
 }
