@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 public class NpcScriptAction extends NpcScriptBehaviour implements INpcAction {
 
     private IOnRunHandler _onRunHandler;
+    private IOnFirstRun _firstRunHandler;
 
     /**
      * Returns the result of the handler added via the {@link #onCanRun} method.
@@ -50,11 +51,36 @@ public class NpcScriptAction extends NpcScriptBehaviour implements INpcAction {
     }
 
     @Override
+    public void firstRun(INpcActionAgent agent) {
+        if (_firstRunHandler == null)
+            return;
+
+        _firstRunHandler.onFirstRun(agent);
+    }
+
+    @Override
     public void run(INpcActionAgent agent) {
         if (_onRunHandler != null)
             _onRunHandler.run(agent);
         else
             agent.finish();
+    }
+
+    /**
+     * Attach the onFirstRun handler. Optional.
+     *
+     * <p>Invoked just before the first time the action is run.</p>
+     *
+     * @param handler  The firstRun handler.
+     *
+     * @return  Self for chaining.
+     */
+    public NpcScriptBehaviour onFirstRun(IOnFirstRun handler) {
+        PreCon.notNull(handler, "handler");
+
+        _firstRunHandler = handler;
+
+        return this;
     }
 
     /**
@@ -73,6 +99,20 @@ public class NpcScriptAction extends NpcScriptBehaviour implements INpcAction {
     }
 
     /**
+     * onFirstRun handler for use by a script. Supports
+     * shorthand functions.
+     */
+    public interface IOnFirstRun {
+
+        /**
+         * Invoked just before the action is run for the first time.
+         *
+         * @param agent  The actions agent.
+         */
+        void onFirstRun(INpcActionAgent agent);
+    }
+
+    /**
      * Run handler for use by a script. Supports
      * shorthand functions.
      */
@@ -82,7 +122,7 @@ public class NpcScriptAction extends NpcScriptBehaviour implements INpcAction {
          * Invoked when the actions {@link INpcAction#run}
          * method is invoked.
          *
-         * @param agent  The goals agent.
+         * @param agent  The actions agent.
          */
         void run(INpcActionAgent agent);
     }

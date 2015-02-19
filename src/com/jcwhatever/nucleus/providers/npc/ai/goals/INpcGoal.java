@@ -36,6 +36,13 @@ import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
 public interface INpcGoal extends INpcBehaviour {
 
     /**
+     * Invoked just before the behaviour is run for the first time.
+     *
+     * @param state  The npc state.
+     */
+    void firstRun(INpcGoalAgent state);
+
+    /**
      * Invoked every tick while the goal is running.
      *
      * @param agent  An {@link INpcGoalAgent} for use by the goal.

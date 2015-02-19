@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 public class NpcScriptGoal extends NpcScriptBehaviour implements INpcGoal {
 
     private IOnRunHandler _onRunHandler;
+    private IOnFirstRun _firstRunHandler;
 
     /**
      * Returns the result of the handler added via the {@link #onCanRun} method.
@@ -50,11 +51,36 @@ public class NpcScriptGoal extends NpcScriptBehaviour implements INpcGoal {
     }
 
     @Override
+    public void firstRun(INpcGoalAgent agent) {
+        if (_firstRunHandler == null)
+            return;
+
+        _firstRunHandler.onFirstRun(agent);
+    }
+
+    @Override
     public void run(INpcGoalAgent agent) {
         if (_onRunHandler != null)
             _onRunHandler.run(agent);
         else
             agent.finish();
+    }
+
+    /**
+     * Attach the onFirstRun handler. Optional.
+     *
+     * <p>Invoked the just before the first time the goal is run.</p>
+     *
+     * @param handler  The firstRun handler.
+     *
+     * @return  Self for chaining.
+     */
+    public NpcScriptBehaviour onFirstRun(IOnFirstRun handler) {
+        PreCon.notNull(handler, "handler");
+
+        _firstRunHandler = handler;
+
+        return this;
     }
 
     /**
@@ -70,6 +96,20 @@ public class NpcScriptGoal extends NpcScriptBehaviour implements INpcGoal {
         _onRunHandler = handler;
 
         return this;
+    }
+
+    /**
+     * onFirstRun handler for use by a script. Supports
+     * shorthand functions.
+     */
+    public interface IOnFirstRun {
+
+        /**
+         * Invoked just before the goal is run for the first time.
+         *
+         * @param agent  The goals agent.
+         */
+        void onFirstRun(INpcGoalAgent agent);
     }
 
     /**

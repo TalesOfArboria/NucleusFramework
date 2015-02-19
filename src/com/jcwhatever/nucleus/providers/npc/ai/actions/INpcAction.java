@@ -34,6 +34,13 @@ import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
 public interface INpcAction extends INpcBehaviour {
 
     /**
+     * Invoked just before the action is run for the first time.
+     *
+     * @param state  The npc state.
+     */
+    void firstRun(INpcActionAgent state);
+
+    /**
      * Run the action.
      *
      * <p>Invoked once every tick until the action signals completion
