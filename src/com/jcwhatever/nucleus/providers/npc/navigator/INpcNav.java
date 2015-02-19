@@ -42,9 +42,18 @@ public interface INpcNav extends INpcNavScriptEvents {
     INpc getNpc();
 
     /**
-     * Get the navigator settings.
+     * Get the navigator settings applied to all navigation targets.
      */
     INpcNavSettings getSettings();
+
+    /**
+     * Get the navigator settings for the current pathing target.
+     *
+     * <p>When a target is set, the current settings are the settings
+     * available from the method {@link #getSettings}. Changes to the
+     * current settings only last until the current navigation ends.</p>
+     */
+    INpcNavSettings getCurrentSettings();
 
     /**
      * Determine if the navigator is currently running,
