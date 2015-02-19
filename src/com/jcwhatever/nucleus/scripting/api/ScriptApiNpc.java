@@ -142,16 +142,22 @@ public class ScriptApiNpc extends NucleusScriptApi {
 
         /**
          * Create a new {@link NpcScriptGoal}.
+         *
+         * @param name  The name of the goal.
          */
-        public NpcScriptGoal createGoal() {
-            return new NpcScriptGoal();
+        public NpcScriptGoal createGoal(String name) {
+            PreCon.notNull(name);
+
+            return new NpcScriptGoal(name);
         }
 
         /**
          * Create a new {@link NpcScriptAction}.
+         *
+         * @param name  The name of the action.
          */
-        public NpcScriptAction createAction() {
-            return new NpcScriptAction();
+        public NpcScriptAction createAction(String name) {
+            return new NpcScriptAction(name);
         }
 
         @Override

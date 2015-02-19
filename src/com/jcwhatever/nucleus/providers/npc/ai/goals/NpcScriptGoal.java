@@ -38,6 +38,15 @@ public class NpcScriptGoal extends NpcScriptBehaviour implements INpcGoal {
     private IOnFirstRun _firstRunHandler;
 
     /**
+     * Constructor.
+     *
+     * @param goalName The name of the goal.
+     */
+    public NpcScriptGoal(String goalName) {
+        super(goalName);
+    }
+
+    /**
      * Returns the result of the handler added via the {@link #onCanRun} method.
      *
      * <p>If a handler was not provided, returns true so long as a run handler

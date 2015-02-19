@@ -38,6 +38,15 @@ public class NpcScriptAction extends NpcScriptBehaviour implements INpcAction {
     private IOnFirstRun _firstRunHandler;
 
     /**
+     * Constructor.
+     *
+     * @param actionName The name of the action.
+     */
+    public NpcScriptAction(String actionName) {
+        super(actionName);
+    }
+
+    /**
      * Returns the result of the handler added via the {@link #onCanRun} method.
      *
      * <p>If a handler was not provided, returns true so long as a run handler

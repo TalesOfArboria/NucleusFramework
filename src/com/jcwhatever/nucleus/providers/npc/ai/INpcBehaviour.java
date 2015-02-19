@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai;
 
+import com.jcwhatever.nucleus.mixins.INamed;
+
 /**
  * Interface for an NPC behaviour.
  *
@@ -31,7 +33,7 @@ package com.jcwhatever.nucleus.providers.npc.ai;
  * based on if it can be run. Among the behaviours that can run, the behaviour
  * with the least cost is selected.</p>
  */
-public interface INpcBehaviour {
+public interface INpcBehaviour extends INamed {
 
     /**
      * Invoke to reset the behaviour.

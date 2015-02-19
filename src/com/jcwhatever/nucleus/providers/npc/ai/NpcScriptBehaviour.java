@@ -32,10 +32,25 @@ import com.jcwhatever.nucleus.utils.PreCon;
  */
 public abstract class NpcScriptBehaviour implements INpcBehaviour {
 
+    private final String _name;
     private IResetHandler _onReset;
     private ICanRunHandler _canRunHandler;
     private ICostHandler _costHandler;
     private IOnPauseHandler _pauseHandler;
+
+    /**
+     * Constructor.
+     *
+     * @param behaviourName  The name of the behaviour.
+     */
+    public NpcScriptBehaviour (String behaviourName) {
+        _name = behaviourName;
+    }
+
+    @Override
+    public String getName() {
+        return _name;
+    }
 
     @Override
     public void reset(INpcState state) {

@@ -75,4 +75,34 @@ public interface INpcBehaviourPool<T extends INpcBehaviour> {
      */
     INpcBehaviourPool clear();
 
+    /**
+     * Run a behaviour without adding it.
+     *
+     * <p>Temporarily gives the behaviour highest priority until it finishes. When
+     * the behaviour finishes it is removed.</p>
+     *
+     * <p>If another goal is already running, that goal is paused.</p>
+     *
+     * @param behaviour  The behaviour to run.
+     *
+     * @return  Self for chaining.
+     */
+    INpcBehaviourPool run(T behaviour);
+
+    /**
+     * Select the behaviour to run from the current pool of goals.
+     *
+     * <p>Used to force a behaviour to run. Temporarily gives the
+     * behaviour highest priority until it finishes.</p>
+     *
+     * <p>If another behaviour is already running, that behaviour is paused.
+     * The behaviour will only be selected if its {@link INpcBehaviour#canRun} method
+     * returns true.</p>
+     *
+     * @param goalName  The name of the behaviour to select.
+     *
+     * @return  Self for chaining.
+     */
+    INpcBehaviourPool select(String goalName);
+
 }

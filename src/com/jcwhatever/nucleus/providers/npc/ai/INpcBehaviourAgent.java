@@ -70,11 +70,12 @@ public interface INpcBehaviourAgent extends INpcScriptEvents, INpcNavScriptEvent
      *
      * <p>The parallel action does not finish until all child actions finish.</p>
      *
+     * @param name     The name of the action.
      * @param actions  The actions to include.
      *
      * @return  The parallel action.
      */
-    INpcAction createParallelActions(INpcAction... actions);
+    INpcAction createParallelAction(String name, INpcAction... actions);
 
     /**
      * Create an action composed of multiple actions that are run in parallel.
@@ -82,11 +83,12 @@ public interface INpcBehaviourAgent extends INpcScriptEvents, INpcNavScriptEvent
      * <p>Similar to a parallel action except that the blended action finishes when
      * any of the child actions finish.</p>
      *
+     * @param name     The name of the action.
      * @param actions  The actions to include.
      *
      * @return  The blended action.
      */
-    INpcAction createBlendedActions(INpcAction... actions);
+    INpcAction createBlendedAction(String name, INpcAction... actions);
 
     /**
      * Create an action composed of multiple actions that run one after the other.
@@ -99,9 +101,10 @@ public interface INpcBehaviourAgent extends INpcScriptEvents, INpcNavScriptEvent
      *
      * <p>If an action cannot run, it is skipped.</p>
      *
+     * @param name     The name of the action.
      * @param actions  The actions to include.
      *
      * @return  The serial action.
      */
-    INpcAction createSerialActions(INpcAction... actions);
+    INpcAction createSerialAction(String name, INpcAction... actions);
 }
