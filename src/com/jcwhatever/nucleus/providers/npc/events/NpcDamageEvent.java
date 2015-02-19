@@ -40,7 +40,6 @@ public class NpcDamageEvent extends NpcEvent implements Cancellable, ICancellabl
     private static final HandlerList handlers = new HandlerList();
 
     private final EntityDamageEvent _event;
-    private boolean _isCancelled;
 
     /**
      * Constructor.
@@ -64,12 +63,12 @@ public class NpcDamageEvent extends NpcEvent implements Cancellable, ICancellabl
 
     @Override
     public boolean isCancelled() {
-        return _isCancelled;
+        return _event.isCancelled();
     }
 
     @Override
     public void setCancelled(boolean isCancelled) {
-        _isCancelled = isCancelled;
+        _event.setCancelled(isCancelled);
     }
 
     @Override
