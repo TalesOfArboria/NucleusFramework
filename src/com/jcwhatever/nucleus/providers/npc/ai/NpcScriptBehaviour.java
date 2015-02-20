@@ -30,12 +30,14 @@ import com.jcwhatever.nucleus.utils.PreCon;
  * An abstract {@link INpcBehaviour} implementation that allows scripts to attach implementation
  * handlers via shorthand functions.
  */
-public abstract class NpcScriptBehaviour implements INpcBehaviour {
+public abstract class NpcScriptBehaviour<A extends INpcBehaviourAgent> implements INpcBehaviour<A> {
 
     private final String _name;
-    private IResetHandler _onReset;
+    private IResetHandler _resetHandler;
     private ICanRunHandler _canRunHandler;
     private ICostHandler _costHandler;
+    private IOnRunHandler _runHandler;
+    private IOnFirstRun _firstRunHandler;
     private IOnPauseHandler _pauseHandler;
 
     /**
@@ -54,13 +56,13 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
 
     @Override
     public void reset(INpcState state) {
-        if (_onReset != null)
-            _onReset.reset(state);
+        if (_resetHandler != null)
+            _resetHandler.reset(state);
     }
 
     @Override
     public boolean canRun(INpcState state) {
-        return _canRunHandler == null || _canRunHandler.canRun(state);
+        return hasRunHandler() && (_canRunHandler == null || _canRunHandler.canRun(state));
     }
 
     @Override
@@ -72,11 +74,69 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
     }
 
     @Override
+    public void firstRun(A agent) {
+        if (_firstRunHandler == null)
+            return;
+
+        _firstRunHandler.onFirstRun(agent);
+    }
+
+    @Override
+    public void run(A agent) {
+        if (_runHandler != null)
+            _runHandler.run(agent);
+        else
+            agent.finish();
+    }
+
+    @Override
     public void pause(INpcState state) {
         if (_pauseHandler == null)
             return;
 
         _pauseHandler.onPause(state);
+    }
+
+    /**
+     * Determine if the reset handler is set.
+     */
+    public boolean hasResetHandler() {
+        return _resetHandler != null;
+    }
+
+    /**
+     * Determine if canRun handler is set.
+     */
+    public boolean hasCanRunHandler() {
+        return _canRunHandler != null;
+    }
+
+    /**
+     * Determine if getCost handler is set.
+     */
+    public boolean hasCostHandler() {
+        return _costHandler != null;
+    }
+
+    /**
+     * Determine if firstRun handler is set.
+     */
+    public boolean hasFirstRunHandler() {
+        return _firstRunHandler != null;
+    }
+
+    /**
+     * Determine if run handler is set.
+     */
+    public boolean hasRunHandler() {
+        return _runHandler != null;
+    }
+
+    /**
+     * Determine if pause handler is set.
+     */
+    public boolean hasPauseHandler() {
+        return _pauseHandler != null;
     }
 
     /**
@@ -86,9 +146,9 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      *
      * @return  Self for chaining.
      */
-    public NpcScriptBehaviour onReset(IResetHandler handler) {
+    public NpcScriptBehaviour<A> onReset(IResetHandler handler) {
         PreCon.notNull(handler, "handler");
-        _onReset = handler;
+        _resetHandler = handler;
 
         return this;
     }
@@ -102,7 +162,7 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      *
      * @return  Self for chaining.
      */
-    public NpcScriptBehaviour onCanRun(ICanRunHandler handler) {
+    public NpcScriptBehaviour<A> onCanRun(ICanRunHandler handler) {
         PreCon.notNull(handler, "handler");
 
         _canRunHandler = handler;
@@ -119,10 +179,42 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      *
      * @return  Self for chaining.
      */
-    public NpcScriptBehaviour onGetCost(ICostHandler handler) {
+    public NpcScriptBehaviour<A> onGetCost(ICostHandler handler) {
         PreCon.notNull(handler, "handler");
 
         _costHandler = handler;
+
+        return this;
+    }
+
+    /**
+     * Attach the onFirstRun handler. Optional.
+     *
+     * <p>Invoked the just before the first time the goal is run.</p>
+     *
+     * @param handler  The firstRun handler.
+     *
+     * @return  Self for chaining.
+     */
+    public NpcScriptBehaviour<A> onFirstRun(IOnFirstRun handler) {
+        PreCon.notNull(handler, "handler");
+
+        _firstRunHandler = handler;
+
+        return this;
+    }
+
+    /**
+     * Attach the run handler.
+     *
+     * @param handler  The run handler.
+     *
+     * @return  Self for chaining.
+     */
+    public NpcScriptBehaviour<A> onRun(IOnRunHandler handler) {
+        PreCon.notNull(handler, "handler");
+
+        _runHandler = handler;
 
         return this;
     }
@@ -134,7 +226,7 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      *
      * @return  Self for chaining.
      */
-    public NpcScriptBehaviour onPause(IOnPauseHandler handler) {
+    public NpcScriptBehaviour<A> onPause(IOnPauseHandler handler) {
         PreCon.notNull(handler, "handler");
 
         _pauseHandler = handler;
@@ -147,6 +239,12 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      * shorthand functions.
      */
     public interface IResetHandler {
+
+        /**
+         * Invoked when the behaviour is reset.
+         *
+         * @param state  The NPC state.
+         */
         void reset(INpcState state);
     }
 
@@ -155,6 +253,12 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      * shorthand functions.
      */
     public interface ICanRunHandler {
+
+        /**
+         * Invoked when the behaviour is paused.
+         *
+         * @param state  The NPC state.
+         */
         boolean canRun(INpcState state);
     }
 
@@ -163,7 +267,42 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      * shorthand functions.
      */
     public interface ICostHandler {
+
+        /**
+         * Invoked to get the cost of the behaviour.
+         *
+         * @param state  The NPC state.
+         */
         float getCost(INpcState state);
+    }
+
+    /**
+     * onFirstRun handler for use by a script. Supports
+     * shorthand functions.
+     */
+    public interface IOnFirstRun {
+
+        /**
+         * Invoked just before the goal is run for the first time.
+         *
+         * @param agent  The goals agent.
+         */
+        <A extends INpcBehaviourAgent> void onFirstRun(A agent);
+    }
+
+    /**
+     * run handler for use by a script. Supports
+     * shorthand functions.
+     */
+    public interface IOnRunHandler {
+
+        /**
+         * Invoked when the behaviours {@link#run}
+         * method is invoked.
+         *
+         * @param agent  The behaviour agent.
+         */
+        <A extends INpcBehaviourAgent> void run(A agent);
     }
 
     /**
@@ -171,6 +310,12 @@ public abstract class NpcScriptBehaviour implements INpcBehaviour {
      * shorthand functions.
      */
     public interface IOnPauseHandler {
+
+        /**
+         * Invoked when the behaviour is paused.
+         *
+         * @param state  The NPC state.
+         */
         void onPause(INpcState state);
     }
 }

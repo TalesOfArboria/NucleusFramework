@@ -32,8 +32,10 @@ import com.jcwhatever.nucleus.mixins.INamed;
  * <p>A behaviour is selected to run from a pool/collection of behaviours
  * based on if it can be run. Among the behaviours that can run, the behaviour
  * with the least cost is selected.</p>
+ *
+ * @param <A>  The behaviour agent type.
  */
-public interface INpcBehaviour extends INamed {
+public interface INpcBehaviour<A extends INpcBehaviourAgent> extends INamed {
 
     /**
      * Invoke to reset the behaviour.
@@ -70,4 +72,22 @@ public interface INpcBehaviour extends INamed {
      * @param state  The npc state.
      */
     void pause(INpcState state);
+
+    /**
+     * Invoked just before the behaviour is run for the first time.
+     *
+     * @param agent  The behaviours {@link INpcBehaviourAgent}.
+     */
+    void firstRun(A agent);
+
+    /**
+     * Run the action.
+     *
+     * <p>Invoked once every tick until the behaviour signals completion
+     * via the agent arguments {@link INpcBehaviourAgent#finish} method or
+     * current behaviour execution changes.</p>
+     *
+     * @param agent  An {@link INpcBehaviourAgent} exclusively for use by the behaviour.
+     */
+    void run(A agent);
 }

@@ -24,18 +24,13 @@
 
 package com.jcwhatever.nucleus.providers.npc.ai.goals;
 
-import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
 import com.jcwhatever.nucleus.providers.npc.ai.NpcScriptBehaviour;
-import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
  * An {@link INpcGoal} implementation that allows scripts to attach implementation
  * handlers via shorthand functions.
  */
-public class NpcScriptGoal extends NpcScriptBehaviour implements INpcGoal {
-
-    private IOnRunHandler _onRunHandler;
-    private IOnFirstRun _firstRunHandler;
+public class NpcScriptGoal extends NpcScriptBehaviour<INpcGoalAgent> implements INpcGoal {
 
     /**
      * Constructor.
@@ -44,95 +39,5 @@ public class NpcScriptGoal extends NpcScriptBehaviour implements INpcGoal {
      */
     public NpcScriptGoal(String goalName) {
         super(goalName);
-    }
-
-    /**
-     * Returns the result of the handler added via the {@link #onCanRun} method.
-     *
-     * <p>If a handler was not provided, returns true so long as a run handler
-     * was added via the {@link #onRun(IOnRunHandler)} method.</p>
-     *
-     * <p>{@inheritDoc}</p>
-     */
-    @Override
-    public boolean canRun(INpcState state) {
-        return _onRunHandler != null && super.canRun(state);
-    }
-
-    @Override
-    public void firstRun(INpcGoalAgent agent) {
-        if (_firstRunHandler == null)
-            return;
-
-        _firstRunHandler.onFirstRun(agent);
-    }
-
-    @Override
-    public void run(INpcGoalAgent agent) {
-        if (_onRunHandler != null)
-            _onRunHandler.run(agent);
-        else
-            agent.finish();
-    }
-
-    /**
-     * Attach the onFirstRun handler. Optional.
-     *
-     * <p>Invoked the just before the first time the goal is run.</p>
-     *
-     * @param handler  The firstRun handler.
-     *
-     * @return  Self for chaining.
-     */
-    public NpcScriptBehaviour onFirstRun(IOnFirstRun handler) {
-        PreCon.notNull(handler, "handler");
-
-        _firstRunHandler = handler;
-
-        return this;
-    }
-
-    /**
-     * Attach the run handler.
-     *
-     * @param handler  The run handler.
-     *
-     * @return  Self for chaining.
-     */
-    public NpcScriptGoal onRun(IOnRunHandler handler) {
-        PreCon.notNull(handler, "handler");
-
-        _onRunHandler = handler;
-
-        return this;
-    }
-
-    /**
-     * onFirstRun handler for use by a script. Supports
-     * shorthand functions.
-     */
-    public interface IOnFirstRun {
-
-        /**
-         * Invoked just before the goal is run for the first time.
-         *
-         * @param agent  The goals agent.
-         */
-        void onFirstRun(INpcGoalAgent agent);
-    }
-
-    /**
-     * run handler for use by a script. Supports
-     * shorthand functions.
-     */
-    public interface IOnRunHandler {
-
-        /**
-         * Invoked when the goals {@link INpcGoal#run}
-         * method is invoked.
-         *
-         * @param agent  The goals agent.
-         */
-        void run(INpcGoalAgent agent);
     }
 }

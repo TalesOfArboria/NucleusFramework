@@ -33,21 +33,5 @@ import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
  * are selected to run over goals with lower priority. When 2 or more goals with
  * the same priority are able to run, the goal with the least cost is selected.</p>
  */
-public interface INpcGoal extends INpcBehaviour {
-
-    /**
-     * Invoked just before the behaviour is run for the first time.
-     *
-     * @param state  The npc state.
-     */
-    void firstRun(INpcGoalAgent state);
-
-    /**
-     * Invoked every tick while the goal is running.
-     *
-     * @param agent  An {@link INpcGoalAgent} for use by the goal.
-     *
-     * @return  The action result.
-     */
-    void run(INpcGoalAgent agent);
+public interface INpcGoal extends INpcBehaviour<INpcGoalAgent> {
 }

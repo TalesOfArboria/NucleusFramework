@@ -31,25 +31,5 @@ import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
  *
  * <p>An action is a behaviour that runs in order to help achieve a goal.</p>
  */
-public interface INpcAction extends INpcBehaviour {
-
-    /**
-     * Invoked just before the action is run for the first time.
-     *
-     * @param state  The npc state.
-     */
-    void firstRun(INpcActionAgent state);
-
-    /**
-     * Run the action.
-     *
-     * <p>Invoked once every tick until the action signals completion
-     * via the agent argument or current action execution changes.</p>
-     *
-     * <p>Is not invoked if {@link INpcBehaviour#canRun} returns false or another action
-     * with a lower cost is run instead.</p>
-     *
-     * @param agent  An {@link INpcActionAgent} exclusively for use by the action.
-     */
-    void run(INpcActionAgent agent);
+public interface INpcAction extends INpcBehaviour<INpcActionAgent> {
 }
