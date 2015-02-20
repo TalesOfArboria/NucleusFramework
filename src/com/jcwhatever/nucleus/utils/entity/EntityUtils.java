@@ -25,10 +25,12 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
-import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -45,6 +47,9 @@ import javax.annotation.Nullable;
 public final class EntityUtils {
 
     private EntityUtils() {}
+
+    private static final Location SOURCE_ENTITY_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location TARGET_ENTITY_LOCATION = new Location(null, 0, 0, 0);
 
     static EntityTracker _entityTracker;
 
@@ -253,12 +258,17 @@ public final class EntityUtils {
         Entity closest = null;
         double closestDist = Double.MAX_VALUE;
 
+        Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATION);
+
         for (Entity entity : entities) {
             if (validator != null && !validator.isValid(entity))
                 continue;
 
-            double dist;
-            if ((dist = sourceEntity.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
+            Location targetLocation = getEntityLocation(entity, TARGET_ENTITY_LOCATION);
+
+            double dist = sourceLocation.distanceSquared(targetLocation);
+            if (dist < closestDist) {
+
                 closest = entity;
                 closestDist = dist;
             }
@@ -328,6 +338,8 @@ public final class EntityUtils {
         LivingEntity closest = null;
         double closestDist = Double.MAX_VALUE;
 
+        Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATION);
+
         for (Entity entity : entities) {
             if (!(entity instanceof LivingEntity))
                 continue;
@@ -337,8 +349,11 @@ public final class EntityUtils {
             if (validator != null && !validator.isValid(livingEntity))
                 continue;
 
-            double dist;
-            if ((dist = sourceEntity.getLocation().distanceSquared( entity.getLocation() )) < closestDist) {
+            Location targetLocation = getEntityLocation(entity, TARGET_ENTITY_LOCATION);
+
+            double dist = sourceLocation.distanceSquared(targetLocation);
+            if (dist < closestDist) {
+
                 closest = livingEntity;
                 closestDist = dist;
             }
@@ -348,13 +363,43 @@ public final class EntityUtils {
     }
 
     /**
-     * Returns a {@link TrackedEntity} object that automatically updates the encapsulated entity.
+     * Get the entities location. If the method is invoked from the primary thread, the result
+     * is returned in the provided output location, otherwise a new location object is returned.
+     *
+     * @param entity  The entity to get a location from.
+     * @param output  The output location.
+     *
+     * @return  The output location if invoked on primary thread, otherwise a new location object.
+     */
+    public static Location getEntityLocation(Entity entity, Location output) {
+        return Bukkit.isPrimaryThread()
+                ? entity.getLocation(output)
+                : entity.getLocation();
+    }
+
+    /**
+     * Get the entities location. If the method is invoked from the specified thread, the result
+     * is returned in the provided output location, otherwise a new location object is returned.
+     *
+     * @param entity  The entity to get a location from.
+     * @param output  The output location.
+     * @param thread  The thread to check.
+     *
+     * @return  The output location if invoked on primary thread, otherwise a new location object.
+     */
+    public static Location getEntityLocation(Entity entity, Location output, Thread thread) {
+        return Thread.currentThread().equals(thread)
+                ? entity.getLocation(output)
+                : entity.getLocation();
+    }
+
+    /**
+     * Returns a {@link TrackedEntity} object ensures you have the latest instance of an
+     * {@link org.bukkit.entity.Entity}.
      *
      * <p>This is used when an entity reference needs to be kept. Entity references are changed
      * whenever the entity is in a chunk that loads/unloads. The entity id can change and references
      * become outdated and no longer represent the intended entity.</p>
-     *
-     * <p>The {@link TrackedEntity} object ensures you have the latest instance of an entity.</p>
      *
      * @param entity  The entity to track.
      */

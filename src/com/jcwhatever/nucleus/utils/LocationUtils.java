@@ -25,17 +25,19 @@
 
 package com.jcwhatever.nucleus.utils;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.Vector;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -57,6 +59,71 @@ public final class LocationUtils {
             BlockFace.EAST,  BlockFace.EAST_SOUTH_EAST,  BlockFace.SOUTH_EAST, BlockFace.SOUTH_SOUTH_EAST,
             BlockFace.SOUTH
     };
+
+    private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
+
+    /**
+     * Copy the values from a source {@link org.bukkit.Location} to a destination
+     * {@link org.bukkit.Location}.
+     *
+     * @param source       The source location.
+     * @param destination  The destination location.
+     *
+     * @return  The destination location.
+     */
+    public static Location copy(Location source, Location destination) {
+        PreCon.notNull(source);
+        PreCon.notNull(destination);
+
+        destination.setWorld(source.getWorld());
+        destination.setX(source.getX());
+        destination.setY(source.getY());
+        destination.setZ(source.getZ());
+        destination.setYaw(source.getYaw());
+        destination.setPitch(source.getPitch());
+
+        return destination;
+    }
+
+    /**
+     * Copy the values from a source {@link org.bukkit.Location} to a destination
+     * {@link org.bukkit.util.Vector}.
+     *
+     * @param source       The source location.
+     * @param destination  The destination vector.
+     *
+     * @return  The destination vector.
+     */
+    public static Vector copy(Location source, Vector destination) {
+        PreCon.notNull(source);
+        PreCon.notNull(destination);
+
+        destination.setX(source.getX());
+        destination.setY(source.getY());
+        destination.setZ(source.getZ());
+
+        return destination;
+    }
+
+    /**
+     * Copy the values from a source {@link org.bukkit.util.Vector} to a destination
+     * {@link org.bukkit.util.Vector}.
+     *
+     * @param source       The source location.
+     * @param destination  The destination vector.
+     *
+     * @return  The destination vector.
+     */
+    public static Vector copy(Vector source, Vector destination) {
+        PreCon.notNull(source);
+        PreCon.notNull(destination);
+
+        destination.setX(source.getX());
+        destination.setY(source.getY());
+        destination.setZ(source.getZ());
+
+        return destination;
+    }
 
     /**
      * Get a location centered on the X and Z axis of the block
@@ -105,7 +172,9 @@ public final class LocationUtils {
         PreCon.notNull(entity);
         PreCon.notNull(location);
 
-        Location adjusted = getCenteredLocation(location);
+        Location adjusted = getCenteredLocation(location,
+                Bukkit.isPrimaryThread() ? CENTERED_LOCATION : new Location(null, 0, 0, 0));
+
         return entity.teleport(adjusted, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
@@ -155,8 +224,23 @@ public final class LocationUtils {
      * @return  A new {@link org.bukkit.Location} instance.
      */
     public static Location add(Location location, double x, double y, double z) {
-        location = location.clone();
-        return location.add(x, y, z);
+        return location.clone().add(x, y, z);
+    }
+
+    /**
+     * Add values to the locations coordinates without changing the coordinates
+     * in the provided location.
+     *
+     * @param location  The location.
+     * @param output    The location to put the results into.
+     * @param x         The value to add to the X coordinates.
+     * @param y         The value to add to the Y coordinates.
+     * @param z         The value to add to the Z coordinates.
+     *
+     * @return  The output location.
+     */
+    public static Location add(Location location, Location output, double x, double y, double z) {
+        return copy(location, output).add(x, y, z);
     }
 
     /**
@@ -270,18 +354,19 @@ public final class LocationUtils {
         if (parts.length != 3)
             return null;
 
-        Double x = parseDouble(parts[0]);
-        Double y = parseDouble(parts[1]);
-        Double z = parseDouble(parts[2]);
+        double x = TextUtils.parseDouble(parts[0], Double.MAX_VALUE);
+        double y = TextUtils.parseDouble(parts[1], Double.MAX_VALUE);
+        double z = TextUtils.parseDouble(parts[2], Double.MAX_VALUE);
 
-        if (x != null && y != null && z != null) {
+        if (x != Double.MAX_VALUE && y != Double.MAX_VALUE && z != Double.MAX_VALUE) {
             output.setWorld(world);
             output.setX(x);
             output.setY(y);
             output.setZ(z);
+            return output;
         }
 
-        return output;
+        return null;
     }
 
     /**
@@ -302,24 +387,24 @@ public final class LocationUtils {
         if (parts.length != 6)
             return null;
 
-        Double x = parseDouble(parts[0]);
-        if (x == null)
+        double x = TextUtils.parseDouble(parts[0], Double.MAX_VALUE);
+        if (x == Double.MAX_VALUE)
             return null;
 
-        Double y = parseDouble(parts[1]);
-        if (y == null)
+        double y = TextUtils.parseDouble(parts[1], Double.MAX_VALUE);
+        if (y == Double.MAX_VALUE)
             return null;
 
-        Double z = parseDouble(parts[2]);
-        if (z == null)
+        double z = TextUtils.parseDouble(parts[2], Double.MAX_VALUE);
+        if (z == Double.MAX_VALUE)
             return null;
 
-        Float yaw = parseFloat(parts[3]);
-        if (yaw == null)
+        float yaw = TextUtils.parseFloat(parts[3], Float.MAX_VALUE);
+        if (yaw == Float.MAX_VALUE)
             return null;
 
-        Float pitch = parseFloat(parts[4]);
-        if (pitch == null)
+        float pitch = TextUtils.parseFloat(parts[4], Float.MAX_VALUE);
+        if (pitch == Float.MAX_VALUE)
             return null;
 
         return new SyncLocation(parts[5], x, y, z, yaw, pitch);
@@ -397,15 +482,7 @@ public final class LocationUtils {
     public static BlockFace getBlockFacingYaw(Location location) {
         PreCon.notNull(location);
 
-        float yaw = location.getYaw() + 11.25f;
-
-        yaw = yaw < 0
-                ? 360 - (Math.abs(yaw) % 360)
-                : yaw % 360;
-
-        int i = (int)(yaw / 22.5);
-
-        return YAW_FACES[i];
+        return getBlockFacingYaw(location.getYaw());
     }
 
     /**
@@ -532,44 +609,8 @@ public final class LocationUtils {
         PreCon.notNull(axis);
         PreCon.notNull(location);
 
-        double x = location.getX();
-        double y = location.getY();
-        double z = location.getZ();
-
-        double centerX = axis.getX();
-        double centerY = axis.getY();
-        double centerZ = axis.getZ();
-
-        double translateX = x;
-        double translateY = y;
-        double translateZ = z;
-        double yaw = location.getYaw();
-
-        // rotate on X axis
-        if (Double.compare(rotationX, 0.0D) != 0) {
-            double rotX = Math.toRadians(rotationX);
-            translateY = rotateX(centerY, centerZ, y, z, rotX);
-            translateZ = rotateZ(centerY, centerZ, y, z, rotX);
-        }
-
-        // rotate on Y axis
-        if (Double.compare(rotationY, 0.0D) != 0) {
-            double rotY = Math.toRadians(rotationY);
-            translateX = rotateX(centerX, centerZ, x, z, rotY);
-            translateZ = rotateZ(centerX, centerZ, x, z, rotY);
-            yaw += rotationY;
-        }
-
-        // rotate on Z axis
-        if (Double.compare(rotationZ, 0.0D) != 0) {
-            double rotZ = Math.toRadians(rotationZ);
-            translateX = rotateX(centerX, centerY, x, y, rotZ);
-            translateY = rotateZ(centerX, centerY, x, y, rotZ);
-        }
-
-        return new Location(location.getWorld(),
-                translateX, translateY, translateZ,
-                (float)yaw, location.getPitch());
+        return rotate(axis, location, new Location(null, 0, 0, 0),
+                rotationX, rotationY, rotationZ);
     }
 
     /**
@@ -632,34 +673,6 @@ public final class LocationUtils {
         output.setPitch(location.getPitch());
 
         return output;
-    }
-
-    // helper to convert a string number to a double.
-    @Nullable
-    private static Double parseDouble(String s) {
-        s = s.trim();
-
-        try {
-            return s.indexOf('.') == -1
-                    ? Integer.parseInt(s)
-                    : Double.parseDouble(s);
-        }
-        catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    // helper to convert a string number to a float.
-    @Nullable
-    private static Float parseFloat(String s) {
-        try {
-            return s.indexOf('.') == -1
-                    ? Integer.parseInt(s)
-                    : Float.parseFloat(s.trim());
-        }
-        catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private static double rotateX(double centerA, double centerB, double a, double b, double rotation) {

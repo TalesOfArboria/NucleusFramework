@@ -54,10 +54,11 @@ import java.util.Set;
 public class PathAreaFinder<T extends IPathNode> {
 
     private final AStar<T> _pathValidator;
+    private final Location _start = new Location(null, 0, 0, 0);
 
     private Set<Location> _invalidNodes;
     private Set<Location> _validNodes;
-    private Location _start;
+
 
     /**
      * Constructor.
@@ -79,9 +80,7 @@ public class PathAreaFinder<T extends IPathNode> {
     public PathAreaResults search(Location start) {
         PreCon.notNull(start);
 
-        start = LocationUtils.getBlockLocation(start);
-
-        _start = start;
+        LocationUtils.getBlockLocation(start, _start);
 
         init();
 

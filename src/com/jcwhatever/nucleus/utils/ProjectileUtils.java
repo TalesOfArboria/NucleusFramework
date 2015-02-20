@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.utils;
 
+import com.jcwhatever.nucleus.utils.entity.EntityUtils;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
@@ -45,6 +47,7 @@ public final class ProjectileUtils {
      * Default gravity for ballistics
      */
     public static final double GRAVITY = 20.0D;
+    private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
 
     /**
      * Get projectile shooting source location for a living entity.
@@ -52,19 +55,32 @@ public final class ProjectileUtils {
      * @param from    The living entity.
      * @param target  The target location.
      */
-    public static Location getEntitySource(Entity from, Location target){
+    public static Location getEntitySource(Entity from, Location target) {
+        PreCon.notNull(from);
+        PreCon.notNull(target);
+
+        return getEntitySource(from, target, new Location(null, 0, 0, 0));
+    }
+
+    /**
+     * Get projectile shooting source location for a living entity.
+     *
+     * @param from    The living entity.
+     * @param target  The target location.
+     */
+    public static Location getEntitySource(Entity from, Location target, Location output) {
         PreCon.notNull(from);
         PreCon.notNull(target);
 
         Location location = from instanceof LivingEntity
-            ? ((LivingEntity) from).getEyeLocation()
-            : from.getLocation();
+                ? ((LivingEntity) from).getEyeLocation()
+                : EntityUtils.getEntityLocation(from, FROM_LOCATION);
 
-        Vector vector = target.clone().subtract(location).toVector();
+        Vector vector = LocationUtils.copy(target, output).subtract(location).toVector();
 
         vector = vector.normalize().multiply(0.5);
 
-        return location.add(vector);
+        return LocationUtils.copy(location, output).add(vector);
     }
 
     /**
@@ -76,6 +92,20 @@ public final class ProjectileUtils {
         PreCon.notNull(human);
 
         return human.getLocation().add(0, .33, 0);
+    }
+
+    /**
+     * Get the approx. heart position of a human entity.
+     *
+     * @param human  The human entity.
+     * @param output  The location to put the results into.
+     *
+     * @return  The output location.
+     */
+    public static Location getHeartLocation(HumanEntity human, Location output) {
+        PreCon.notNull(human);
+
+        return human.getLocation(output).add(0, .33, 0);
     }
 
     /**

@@ -44,7 +44,7 @@ public class InteriorFinder {
     private Set<Location> _invalidNodes;
     private Set<Location> _validNodes;
 
-    private Location _start;
+    private final Location _start = new Location(null, 0, 0, 0);
     private IRegionSelection _boundaries;
 
     /**
@@ -58,9 +58,8 @@ public class InteriorFinder {
         PreCon.notNull(start);
         PreCon.notNull(boundaries);
 
-        start = LocationUtils.getBlockLocation(start);
+        LocationUtils.getBlockLocation(start, _start);
 
-        _start = start;
         _boundaries = boundaries;
 
         init(boundaries);

@@ -60,6 +60,7 @@ import javax.annotation.Nullable;
  */
 public class FloatingItem implements IFloatingItem {
 
+    private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
     private static BukkitListener _listener;
 
     private final String _name;
@@ -296,7 +297,7 @@ public class FloatingItem implements IFloatingItem {
         if (_isDisposed)
             throw new RuntimeException("Cannot spawn a disposed item.");
 
-        location = location.clone();
+        location = location.clone(); // clone: prevent external changes from affecting the location
 
         FloatingItemSpawnEvent event = new FloatingItemSpawnEvent(this);
 
@@ -310,11 +311,11 @@ public class FloatingItem implements IFloatingItem {
 
         _isSpawned = true;
 
-        _currentLocation = location.clone(); // clone: prevent external changes from affecting the location
+        _currentLocation = location;
 
         // get corrected location
         final Location spawnLocation = _isCentered
-                ? LocationUtils.getCenteredLocation(location).add(0, 0.5, 0) // add y 0.5 to prevent falling through surface block
+                ? LocationUtils.getCenteredLocation(location, CENTERED_LOCATION).add(0, 0.5, 0) // add y 0.5 to prevent falling through surface block
                 : LocationUtils.add(location, 0, 0.5, 0);
 
         if (!location.getChunk().isLoaded()) {

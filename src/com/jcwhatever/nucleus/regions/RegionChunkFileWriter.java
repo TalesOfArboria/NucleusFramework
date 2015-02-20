@@ -112,6 +112,7 @@ public class RegionChunkFileWriter {
 
         // get entities from chunk
         Entity[] entities = chunk.getEntities();
+        Location entityLocation = new Location(null, 0, 0, 0);
 
         for (Entity entity : entities) {
 
@@ -121,10 +122,11 @@ public class RegionChunkFileWriter {
             if (!SerializableFurnitureEntity.isFurnitureEntity(entity))
                 continue;
 
-            Location entityLoc = entity.getLocation();
+            entity.getLocation(entityLocation);
 
             // make sure the entity is contained within the section
-            if (!_section.containsBlockCoords(entityLoc.getBlockX(), entityLoc.getBlockY(), entityLoc.getBlockZ()))
+            if (!_section.containsBlockCoords(
+                    entityLocation.getBlockX(), entityLocation.getBlockY(), entityLocation.getBlockZ()))
                 continue;
 
             _entities.add(new SerializableFurnitureEntity(entity));

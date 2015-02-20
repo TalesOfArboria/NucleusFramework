@@ -40,8 +40,8 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
     private final INodeCollection<AStarPathNode> _closedNodes = new AStarNodes();
     private final INodeCollection<AStarPathNode> _openNodes = new AStarNodes();
 
-    private Location _start;
-    private Location _end;
+    private final Location _start = new Location(null, 0, 0, 0);
+    private final Location _end = new Location(null, 0, 0, 0);
 
     /**
      * Get the start location of the most current path operation.
@@ -75,16 +75,8 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
 
         LinkedList<AStarPathNode> results = new LinkedList<>();
 
-        if (adjustment == LocationAdjustment.FIND_SURFACE) {
-            start = LocationUtils.findSurfaceBelow(start);
-            end = LocationUtils.findSurfaceBelow(end);
-        }
-
-        if (start == null || end == null)
+        if (!setLocations(start, end, adjustment))
             return results;
-
-        _start = start;
-        _end = end;
 
         AStarPathNode destination = searchDestination(start, end);
         if (destination == null)
@@ -116,16 +108,8 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
     @Override
     public int getPathDistance(Location start, Location end, LocationAdjustment adjustment) {
 
-        if (adjustment == LocationAdjustment.FIND_SURFACE) {
-            start = LocationUtils.findSurfaceBelow(start);
-            end = LocationUtils.findSurfaceBelow(end);
-        }
-
-        if (start == null || end == null)
+        if (!setLocations(start, end, adjustment))
             return -1;
-
-        _start = start;
-        _end = end;
 
         IPathNode destination = searchDestination(start, end);
         if (destination == null)
@@ -174,4 +158,20 @@ public class AStarPathFinder extends AStar<AStarPathNode> {
         return new AStarPathNode(parent, offsetX, offsetY, offsetZ);
     }
 
+    private boolean setLocations(Location start, Location end, LocationAdjustment adjustment) {
+
+        if (adjustment == LocationAdjustment.FIND_SURFACE) {
+            if (LocationUtils.findSurfaceBelow(start, _start) == null)
+                return false;
+
+            if (LocationUtils.findSurfaceBelow(end, _end) == null)
+                return false;
+        }
+        else {
+            LocationUtils.copy(start, _start);
+            LocationUtils.copy(end, _end);
+        }
+
+        return true;
+    }
 }
