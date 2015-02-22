@@ -158,4 +158,22 @@ public interface INpcNav extends INpcNavScriptEvents {
      * @return  Self for chaining.
      */
     INpcNav setHostile(boolean isHostile);
+
+    /**
+     * Add a runner that is invoked every tick while the NPC is navigating.
+     *
+     * @param runner  The runner to add.
+     *
+     * @return  Self for chaining.
+     */
+    INpcNav addRunner(INpcNavRunner runner);
+
+    /**
+     * Add a runner that is invoked every tick while the NPC is navigating.
+     *
+     * @param runner  The runner to add.
+     *
+     * @return  Self for chaining.
+     */
+    INpcNav removeRunner(INpcNavRunner runner);
 }
