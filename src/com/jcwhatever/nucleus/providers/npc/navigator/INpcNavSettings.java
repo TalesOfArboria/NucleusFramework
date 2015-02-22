@@ -24,10 +24,6 @@
 
 package com.jcwhatever.nucleus.providers.npc.navigator;
 
-import com.jcwhatever.nucleus.providers.npc.navigator.flock.INpcFlocker;
-
-import javax.annotation.Nullable;
-
 /**
  * Interface for an NPC's navigator settings.
  */
@@ -65,21 +61,6 @@ public interface INpcNavSettings {
      * @return  Self for chaining.
      */
     INpcNavSettings ignoreWater();
-
-    /**
-     * Get the navigator flock handler.
-     */
-    @Nullable
-    INpcFlocker getFlocker();
-
-    /**
-     * Set the navigator flock handler.
-     *
-     * @param flocker  The flock handler or null to remove flocking.
-     *
-     * @return  Self for chaining.
-     */
-    INpcNavSettings setFlocker(@Nullable INpcFlocker flocker);
 
     /**
      * Get the number of ticks to wait for an NPC to move before assuming it is stuck
