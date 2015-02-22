@@ -180,6 +180,17 @@ public interface INpcTraits {
     boolean has(String name);
 
     /**
+     * Determine if the NPC has a trait by the specified name and if so,
+     * is it enabled.
+     *
+     * @param name  The name of the trait to check.
+     *
+     * @return  True if the NPC has the trait and it is enabled. False if the NPC
+     * does not have the trait or the trait is disabled.
+     */
+    boolean isEnabled(String name);
+
+    /**
      * Remove a trait from the NPC.
      *
      * @param name  The name of the trait to remove.

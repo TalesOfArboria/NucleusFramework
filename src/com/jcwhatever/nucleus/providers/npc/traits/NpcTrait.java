@@ -45,6 +45,7 @@ public abstract class NpcTrait implements INamed, IDisposable {
     private final INpc _npc;
     private final NpcTraitType _type;
 
+    private boolean _isEnabled = true;
     private boolean _isDisposed;
 
     /**
@@ -92,6 +93,60 @@ public abstract class NpcTrait implements INamed, IDisposable {
      */
     public NpcTraitType getType() {
         return _type;
+    }
+
+    /**
+     * Determine if the trait is enabled.
+     */
+    public boolean isEnabled() {
+        return _isEnabled;
+    }
+
+    /**
+     * Set the traits enabled state.
+     *
+     * @param isEnabled  True to enable, false to disable.
+     *
+     * @return  Self for chaining.
+     */
+    public NpcTrait setEnabled(boolean isEnabled) {
+
+        if (isEnabled)
+            enable();
+        else
+            disable();
+
+        return this;
+    }
+
+    /**
+     * Enable the trait.
+     *
+     * @return  Self for chaining.
+     */
+    public NpcTrait enable() {
+
+        if (!_isEnabled) {
+            _isEnabled = true;
+            onEnable();
+        }
+
+        return this;
+    }
+
+    /**
+     * Disable the trait.
+     *
+     * @return  Self for chaining.
+     */
+    public NpcTrait disable() {
+
+        if (_isEnabled) {
+            _isEnabled = false;
+            onDisable();
+        }
+
+        return this;
     }
 
     /**
@@ -149,6 +204,16 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      */
     public void onDespawn() {}
+
+    /**
+     * Invoked when the trait is enabled.
+     */
+    protected void onEnable() {}
+
+    /**
+     * Invoked when the trait is disabled.
+     */
+    protected void onDisable() {}
 
     @Override
     public boolean isDisposed() {
