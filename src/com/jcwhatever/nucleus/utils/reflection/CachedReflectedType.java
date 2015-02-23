@@ -39,6 +39,11 @@ import javax.annotation.Nullable;
 
 /**
  * Stores globally available data about a class type.
+ *
+ * <p>Used internally to improve performance.</p>
+ *
+ * @see Reflection
+ * @see ReflectionUtils
  */
 public class CachedReflectedType {
 
@@ -58,8 +63,6 @@ public class CachedReflectedType {
 
     private final Multimap<String, Method> _staticMethods =
             MultimapBuilder.hashKeys(10).arrayListValues().build();
-
-
 
     /**
      * Constructor.

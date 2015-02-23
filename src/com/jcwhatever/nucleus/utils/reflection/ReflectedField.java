@@ -32,6 +32,12 @@ import javax.annotation.Nullable;
  * An encapsulated field.
  *
  * <p>Encapsulated fields are made accessible.</p>
+ *
+ * <p>An instance of this type can be obtained from {@link ReflectedInstance}.</p>
+ *
+ * @see ReflectedType
+ * @see Reflection
+ * @see ReflectionUtils
  */
 public class ReflectedField {
 

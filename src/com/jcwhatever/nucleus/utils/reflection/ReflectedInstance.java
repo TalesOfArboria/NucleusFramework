@@ -30,6 +30,12 @@ import java.util.Map;
 /**
  * Encapsulates an object instance and provides reflection
  * utilities.
+ *
+ * <p>An instance of this type can be obtained from {@link ReflectedType}.</p>
+ *
+ * @see ReflectedType
+ * @see Reflection
+ * @see ReflectionUtils
  */
 public class ReflectedInstance extends Instance {
 
@@ -48,7 +54,10 @@ public class ReflectedInstance extends Instance {
     /**
      * Get an instance field value.
      *
-     * @param fieldName  The name of the field.
+     * @param fieldName  The name of the field. If an alias is defined in the parent
+     *                   {@link ReflectedType}, the alias can be used.
+     *
+     * @see ReflectedType#fieldAlias
      */
     public Object get(String fieldName) {
         ReflectedField field = getReflectedType().getField(fieldName);
@@ -58,8 +67,11 @@ public class ReflectedInstance extends Instance {
     /**
      * Set an instance field value.
      *
-     * @param fieldName  The name of the field.
+     * @param fieldName  The name of the field. If an alias is defined in the parent
+     *                   {@link ReflectedType}, the alias can be used.
      * @param value      The value to set.
+     *
+     * @see ReflectedType#fieldAlias
      */
     public void set(String fieldName, Object value) {
         ReflectedField field = getReflectedType().getField(fieldName);

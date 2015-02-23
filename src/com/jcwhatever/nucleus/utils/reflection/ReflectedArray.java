@@ -30,6 +30,11 @@ import java.lang.reflect.Array;
 
 /**
  * Encapsulates an array and provides reflection utilities.
+ *
+ * <p>An instance of this type can be obtained from {@link ReflectedType}.</p>
+ *
+ * @see Reflection
+ * @see ReflectionUtils
  */
 public class ReflectedArray extends Instance {
 

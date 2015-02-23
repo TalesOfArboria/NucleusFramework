@@ -32,6 +32,12 @@ import java.util.Map;
 
 /**
  * Stores fields for a reflected instance.
+ *
+ * <p>An instance of this type can be obtained from {@link ReflectedInstance}.</p>
+ *
+ * @see ReflectedInstance
+ * @see Reflection
+ * @see ReflectionUtils
  */
 public class Fields {
 
@@ -46,7 +52,7 @@ public class Fields {
      * @param fields     The fields in the instance of the specified type.
      * @param instance   The instance the fields are from.
      */
-    public Fields(List<ReflectedField> fields, Object instance) {
+    Fields(List<ReflectedField> fields, Object instance) {
         PreCon.notNull(fields);
         PreCon.notNull(instance);
 

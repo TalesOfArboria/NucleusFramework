@@ -92,7 +92,8 @@ public class ReflectionUtils {
      * Create a new {@link Reflection} instance for the specified
      * NMS version.
      *
-     * @param nmsVersion  The nms version.
+     * @param nmsVersion  The nms version. This is the version package name
+     *                    used by the NMS classes. (i.e v1_8_R1)
      */
     public static Reflection newReflection(String nmsVersion) {
         return new Reflection(nmsVersion);

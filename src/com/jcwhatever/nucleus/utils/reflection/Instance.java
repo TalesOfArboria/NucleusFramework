@@ -29,6 +29,9 @@ import javax.annotation.Nullable;
 
 /**
  * Base implementation of an instance wrapper.
+ *
+ * @see ReflectedInstance
+ * @see ReflectedArray
  */
 public abstract class Instance {
 
@@ -62,12 +65,16 @@ public abstract class Instance {
     }
 
     /**
-     * Call a method on the instance using the provided arguments.
+     * Invoke a method on the instance using the provided arguments.
      *
-     * @param methodName  The name of the method to call.
+     * @param methodName  The name of the method to invoke. If an alias is defined in
+     *                    the parent {@link ReflectedType}, the alias can be used.
      * @param arguments   The arguments to pass into the method.
      *
      * @return  Null if the method returns null or void.
+     *
+     * @see ReflectedType#method
+     * @see ReflectedType#methodAlias
      */
     @Nullable
     public Object invoke(String methodName, Object... arguments) {
@@ -82,7 +89,7 @@ public abstract class Instance {
     }
 
     /**
-     * Called to make sure the instance is valid for the wrapper
+     * Invoked to make sure the instance is valid for the wrapper
      * and reflected type.
      *
      * @param type      The reflected type.

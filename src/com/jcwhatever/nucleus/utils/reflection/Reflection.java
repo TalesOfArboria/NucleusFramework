@@ -31,8 +31,10 @@ import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 /**
- * A reflection helper designed to handle a specific
- * NMS version.
+ * A reflection manager used for a specific NMS version.
+ *
+ * <p>Intended for use as a modular reflection system where reflection code for different
+ * NMS versions are kept separate and used as needed for the detected version.</p>
  */
 public class Reflection {
 
@@ -49,7 +51,8 @@ public class Reflection {
     /**
      * Constructor.
      *
-     * @param nmsVersion  The nms version the instance is for.
+     * @param nmsVersion  The nms version the instance is for. This is the version
+     *                    package name used by the NMS classes. (i.e v1_8_R1)
      */
     public Reflection(String nmsVersion) {
         PreCon.notNullOrEmpty(nmsVersion);
@@ -59,8 +62,6 @@ public class Reflection {
 
     /**
      * Get a {@link ReflectedType} instance from the specified class name.
-     *
-     * <p>Returns a cached version or a new version.</p>
      *
      * <p>For primitive types, use the primitive name ie "int".</p>
      *
