@@ -43,6 +43,10 @@ import java.util.UUID;
 
 /**
  * Tracks entities and updates {@link TrackedEntity} objects.
+ *
+ * <p>Used internally.</p>
+ *
+ * @see EntityUtils#trackEntity
  */
 public final class EntityTracker implements Listener {
 
@@ -79,7 +83,7 @@ public final class EntityTracker implements Listener {
     }
 
     /**
-     * Called when a {@link TrackedEntity} is disposed so it can
+     * Invoked when a {@link TrackedEntity} is disposed so it can
      * be removed from the entity map.
      */
     void disposeEntity(TrackedEntity tracked) {

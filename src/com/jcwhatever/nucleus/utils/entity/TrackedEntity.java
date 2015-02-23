@@ -24,11 +24,9 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
-import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
-import com.jcwhatever.nucleus.collections.observer.agent.AgentMap;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
+import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 import org.bukkit.World;
@@ -41,6 +39,8 @@ import java.util.UUID;
  *
  * <p>Entity objects are discarded when the chunk they are in is unloaded
  * making it unacceptable to hold long term references to the entity.</p>
+ *
+ * @see EntityUtils#trackEntity
  */
 public final class TrackedEntity {
 
@@ -49,10 +49,7 @@ public final class TrackedEntity {
     private World _world;
     private boolean _isDisposed;
 
-    private AgentMap<String, UpdateAgent<?>> _updateAgents = new AgentHashMap<String, UpdateAgent<?>>(3)
-                    .set("onUpdate", new UpdateAgent<Entity>())
-                    .set("onUnload", new UpdateAgent<ChunkInfo>())
-                    .set("onDeath", new UpdateAgent<Entity>());
+    private NamedUpdateAgents _updateAgents = new NamedUpdateAgents();
 
     /**
      * Constructor.
@@ -107,8 +104,7 @@ public final class TrackedEntity {
     public synchronized TrackedEntity onUnload(UpdateSubscriber<ChunkInfo> subscriber) {
         PreCon.notNull(subscriber);
 
-        UpdateAgent<?> subject = _updateAgents.get("onUnload");
-        subject.addSubscriber(subscriber);
+        _updateAgents.getAgent("onUnload").addSubscriber(subscriber);
 
         return this;
     }
@@ -118,13 +114,13 @@ public final class TrackedEntity {
      * updated.
      *
      * @param subscriber  The handler.
-     * @return
+     *
+     * @return  Self for chaining.
      */
     public synchronized TrackedEntity onUpdate(UpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
-        UpdateAgent<?> subject = _updateAgents.get("onUpdate");
-        subject.addSubscriber(subscriber);
+        _updateAgents.getAgent("onUpdate").addSubscriber(subscriber);
 
         return this;
     }
@@ -139,8 +135,7 @@ public final class TrackedEntity {
     public synchronized TrackedEntity onDeath(UpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
-        UpdateAgent<?> subject = _updateAgents.get("onDeath");
-        subject.addSubscriber(subscriber);
+        _updateAgents.getAgent("onDeath").addSubscriber(subscriber);
 
         return this;
     }
@@ -162,12 +157,10 @@ public final class TrackedEntity {
 
         _isDisposed = true;
 
-        @SuppressWarnings("unchecked")
-        UpdateAgent<Entity> deathSubject = (UpdateAgent<Entity>)_updateAgents.get("onDeath");
-        deathSubject.update(getEntity());
+        _updateAgents.update("onDeath", getEntity());
 
         _world = null;
-        _updateAgents.dispose();
+        _updateAgents.disposeAgents();
 
         EntityUtils._entityTracker.disposeEntity(this);
     }
@@ -177,9 +170,7 @@ public final class TrackedEntity {
      */
     synchronized void notifyChunkUnload(ChunkInfo info) {
 
-        @SuppressWarnings("unchecked")
-        UpdateAgent<ChunkInfo> subject = (UpdateAgent<ChunkInfo>)_updateAgents.get("onUnload");
-        subject.update(info);
+        _updateAgents.update("onUnload", info);
     }
 
     /**
@@ -191,8 +182,6 @@ public final class TrackedEntity {
 
         _recent = entity;
 
-        @SuppressWarnings("unchecked")
-        UpdateAgent<Entity> subject = (UpdateAgent<Entity>)_updateAgents.get("onUpdate");
-        subject.update(entity);
+        _updateAgents.update("onUpdate", entity);
     }
 }
