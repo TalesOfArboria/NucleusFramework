@@ -29,7 +29,11 @@ import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
+
+import org.bukkit.potion.PotionEffectType;
 
 /**
  * Abstract implementation of an NPC Trait.
@@ -125,12 +129,8 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * @return  Self for chaining.
      */
     public NpcTrait enable() {
-
-        if (!_isEnabled) {
-            _isEnabled = true;
-            onEnable();
-        }
-
+        _isEnabled = true;
+        onEnable();
         return this;
     }
 
@@ -140,12 +140,8 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * @return  Self for chaining.
      */
     public NpcTrait disable() {
-
-        if (_isEnabled) {
-            _isEnabled = false;
-            onDisable();
-        }
-
+        _isEnabled = false;
+        onDisable();
         return this;
     }
 
@@ -226,5 +222,66 @@ public abstract class NpcTrait implements INamed, IDisposable {
         getNpc().getTraits().remove(getName());
 
         _isDisposed = true;
+    }
+
+
+    /**
+     * Get an enum from an object. The object must be an instance of the
+     * enum or the name of the enum.
+     *
+     * @param name       The enum constant name.
+     * @param enumClass  The enum class.
+     *
+     * @param <T>  The enum type.
+     *
+     * @return  The enum constant.
+     */
+    protected <T extends Enum> T getEnum(Object name, Class<T> enumClass) {
+
+        if (name instanceof String) {
+
+            T result = (T)EnumUtils.searchEnum((String) name, enumClass);
+            if (result == null)
+                throw new IllegalArgumentException("Invalid enum constant name for type: " +
+                        enumClass.getName() +
+                        "\nValid values are: " +
+                        TextUtils.concat(enumClass.getEnumConstants(), ", "));
+
+            return result;
+        }
+        else if (enumClass.isInstance(name)) {
+            return enumClass.cast(name);
+        }
+        else {
+            throw new IllegalArgumentException("Invalid type provided. Unable to convert to type: "
+                    + enumClass.getName());
+        }
+    }
+
+    /**
+     * Get a {@link org.bukkit.potion.PotionEffectType} from an object. The object must be
+     * an instance of {@link org.bukkit.potion.PotionEffectType} or the name of the type.
+     *
+     * @param object  The potion effect type or name.
+     *
+     * @return  The potion effect type.
+     */
+    protected PotionEffectType getPotionEffectType(Object object) {
+
+        if (object instanceof String) {
+            String name = ((String)object).toUpperCase();
+
+            PotionEffectType type = PotionEffectType.getByName(name);
+            if (type == null)
+                throw new IllegalArgumentException(name + " is not a valid PotionEffectType.");
+
+            return type;
+        }
+        else if (object instanceof PotionEffectType) {
+            return (PotionEffectType)object;
+        }
+        else {
+            throw new IllegalArgumentException("Expected PotionEffectType or name of type.");
+        }
     }
 }
