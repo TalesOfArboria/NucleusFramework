@@ -35,12 +35,17 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.util.Set;
 
 /**
- * Base implementation of a scoreboard container.
+ * Wraps a {@link org.bukkit.scoreboard.Scoreboard} so that it can be tracked
+ * by {@link ScoreboardTracker}.
  *
- * <p>
- *     Scoreboards applied to a player are tracked. If another scoreboard is
- *     applied then removed, the previous scoreboard is applied.
- * </p>
+ * <p>Scoreboards applied to a player are tracked. If another scoreboard is applied
+ * then removed, the previous scoreboard is applied. This does not apply to transient
+ * scoreboards which are removed when another scoreboard is shown.</p>
+ *
+ * <p>When the scoreboard is no longer in use, call {@link #dispose} to unregister
+ * objectives and flag the {@link ManagedScoreboard} as disposed.</p>
+ *
+ * @see ScoreboardTracker
  */
 public class ManagedScoreboard implements IManagedScoreboard, IDisposable {
 
@@ -63,7 +68,7 @@ public class ManagedScoreboard implements IManagedScoreboard, IDisposable {
     }
 
     /**
-     * Get the scoreboard type.
+     * Get the scoreboard lifespan type.
      */
     @Override
     public ScoreboardLifespan getLifespan() {
@@ -81,23 +86,27 @@ public class ManagedScoreboard implements IManagedScoreboard, IDisposable {
     /**
      * Apply the scoreboard to the specified player.
      *
-     * @param p  The player.
+     * <p>Use this method instead of directly setting the scoreboard on the player.</p>
+     *
+     * @param player  The player to apply the scoreboard to.
      */
-    public void apply(Player p) {
-        PreCon.notNull(p);
+    public void apply(Player player) {
+        PreCon.notNull(player);
 
-        ScoreboardTracker.apply(p, this);
+        ScoreboardTracker.apply(player, this);
     }
 
     /**
      * Remove the scoreboard from the player.
      *
-     * @param p  The player.
+     * <p>Use this method instead of directly setting the scoreboard on the player.</p>
+     *
+     * @param player  The player.
      */
-    public void remove(Player p) {
-        PreCon.notNull(p);
+    public void remove(Player player) {
+        PreCon.notNull(player);
 
-        ScoreboardTracker.remove(p, this);
+        ScoreboardTracker.remove(player, this);
     }
 
     @Override
@@ -105,16 +114,12 @@ public class ManagedScoreboard implements IManagedScoreboard, IDisposable {
         return _isDisposed;
     }
 
-    /**
-     * Dispose the scoreboard.
-     */
     @Override
     public void dispose() {
         Set<Objective> objectives = _scoreboard.getObjectives();
         for (Objective objective : objectives) {
             objective.unregister();
         }
-
         _isDisposed = true;
     }
 }

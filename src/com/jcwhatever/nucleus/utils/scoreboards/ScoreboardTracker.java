@@ -40,9 +40,12 @@ import java.util.UUID;
  *
  * <p>Helps reduce plugin scoreboard conflicts by acting as the central
  * scoreboard manager. Each plugin can simply apply their scoreboards via
- * {@link ManagedScoreboard} and {@link ScoreboardTracker} ensures that when
+ * {@link ManagedScoreboard} or {@link ScoreboardTracker} to ensure that when
  * a plugin is done showing a scoreboard to a player, the previous scoreboard is
  * re-shown.</p>
+ *
+ * @see ManagedScoreboard
+ * @see IManagedScoreboard
  */
 public final class ScoreboardTracker {
 
@@ -56,7 +59,10 @@ public final class ScoreboardTracker {
     /**
      * Apply the scoreboard to the specified player.
      *
-     * @param player  The player.
+     * <p>Use this method instead of directly setting the scoreboard on the player.</p>
+     *
+     * @param player      The player.
+     * @param scoreboard  The scoreboard to apply.
      *
      * @return  True if applied or transient, false if already applied.
      */
@@ -104,12 +110,15 @@ public final class ScoreboardTracker {
      * Remove the scoreboard from the player.
      *
      * <p>Removes the scoreboard from the players view and removes the last
-     * occurrence of the instance from the tracked stack of scoreboards the
-     * player is viewing. If the removed scoreboard is the one the player
-     * is currently viewing and if there is a previous scoreboard in the stack,
-     * the previous scoreboard will be applied to the player automatically.</p>
+     * occurrence from the tracked stack of scoreboards the player is viewing.
+     * If the removed scoreboard is the one the player is currently viewing and if
+     * there is a previous scoreboard in the stack, the previous scoreboard will be
+     * applied to the player automatically.</p>
      *
-     * @param player  The player.
+     * <p>Use this method instead of directly setting the scoreboard on the player.</p>
+     *
+     * @param player      The player.
+     * @param scoreboard  The scoreboard to remove.
      */
     public static boolean remove(Player player, IManagedScoreboard scoreboard) {
         PreCon.notNull(player);

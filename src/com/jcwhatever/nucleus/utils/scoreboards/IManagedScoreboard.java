@@ -28,11 +28,13 @@ import org.bukkit.scoreboard.Scoreboard;
 
 /**
  * Interface for a managed scoreboard.
+ *
+ * @see ScoreboardTracker
  */
 public interface IManagedScoreboard {
 
     /**
-     * Get the scoreboard type.
+     * Determine how the scoreboards lifespan is handled.
      */
     ScoreboardLifespan getLifespan();
 
