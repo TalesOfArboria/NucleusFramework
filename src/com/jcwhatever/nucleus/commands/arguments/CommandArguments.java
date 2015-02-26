@@ -40,6 +40,7 @@ import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect;
+import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect.BlockSelectResult;
 import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect.PlayerBlockSelectHandler;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
@@ -887,16 +888,16 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             PlayerBlockSelect.query(p, new PlayerBlockSelectHandler() {
 
                 @Override
-                public boolean onBlockSelect(Player p, Block selectedBlock, Action clickAction) {
+                public BlockSelectResult onBlockSelect(Player player, Block selectedBlock, Action clickAction) {
 
                     Location location = selectedBlock.getLocation();
 
                     String message = NucLang.get("Location selected: {0} ", TextUtils.formatLocation(location, true));
-                    _msg.tell(p, message);
+                    _msg.tell(player, message);
 
-                    locationHandler.onLocationRetrieved(p, location);
+                    locationHandler.onLocationRetrieved(player, location);
 
-                    return true;
+                    return BlockSelectResult.FINISHED;
                 }
 
             });

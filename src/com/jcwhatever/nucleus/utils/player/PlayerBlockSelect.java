@@ -42,7 +42,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Utility to get a block selected by a player
+ * Utility to get a block selected by a player.
+ *
+ * <p>Can also be used to get a location.</p>
  */
 public final class PlayerBlockSelect implements Listener {
 
@@ -54,13 +56,41 @@ public final class PlayerBlockSelect implements Listener {
     private static PlayerBlockSelect _listener;
 
     /**
+     * Specifies the next action after the player selects a block.
+     */
+    public enum BlockSelectResult {
+        /**
+         * The block selection is finished.
+         */
+        FINISHED,
+        /**
+         * Continue query for another block selection.
+         */
+        CONTINUE
+    }
+
+    /**
+     * Determine if a player is currently being queried to select a block.
+     *
+     * @param player  The player to check.
+     */
+    public static boolean isSelecting(Player player) {
+        PreCon.notNull(player);
+
+        return _handlers.containsKey(player.getUniqueId());
+    }
+
+    /**
      * Wait for the player to click a block and run the handler.
      *
-     * @param p        The player.
+     * <p>No message is displayed to the player that they are being queried to
+     * select a block.</p>
+     *
+     * @param player   The player.
      * @param handler  The handler to run when the player selects a block.
      */
-    public static void query(Player p, PlayerBlockSelectHandler handler) {
-        PreCon.notNull(p);
+    public static void query(Player player, PlayerBlockSelectHandler handler) {
+        PreCon.notNull(player);
         PreCon.notNull(handler);
 
         // register event listener if its not already registered.
@@ -71,7 +101,20 @@ public final class PlayerBlockSelect implements Listener {
         }
 
         // place handler into map
-        _handlers.put(p.getUniqueId(), handler);
+        _handlers.put(player.getUniqueId(), handler);
+    }
+
+    /**
+     * Cancel a players block selection query.
+     *
+     * <p>No message is displayed to the player that the query has been cancelled.</p>
+     *
+     * @param player  The player to cancel.
+     */
+    public static void cancel(Player player) {
+        PreCon.notNull(player);
+
+        _handlers.remove(player.getUniqueId());
     }
 
     @EventHandler(priority= EventPriority.HIGHEST)
@@ -95,10 +138,10 @@ public final class PlayerBlockSelect implements Listener {
         // cancel event to prevent damage due to selection
         event.setCancelled(true);
 
-        boolean isSelectAccepted = action.onBlockSelect(
+        BlockSelectResult result = action.onBlockSelect(
                 event.getPlayer(), event.getClickedBlock(), event.getAction());
 
-        if (!isSelectAccepted) {
+        if (result == BlockSelectResult.CONTINUE) {
 
             // place handler back into map to try again
             _handlers.put(event.getPlayer().getUniqueId(), action);
@@ -109,7 +152,8 @@ public final class PlayerBlockSelect implements Listener {
      * A handler to call when the player selects a block.
      */
     public static abstract class PlayerBlockSelectHandler {
-        public abstract boolean onBlockSelect(Player p, Block selectedBlock, Action clickAction);
+        public abstract BlockSelectResult onBlockSelect(
+                Player player, Block selectedBlock, Action clickAction);
     }
 }
 
