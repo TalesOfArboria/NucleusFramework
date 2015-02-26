@@ -28,11 +28,11 @@ package com.jcwhatever.nucleus.messaging;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
-import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedHashSet;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.TimeScale;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 /**
@@ -55,7 +54,6 @@ import javax.annotation.Nullable;
  */
 public class Messenger implements IMessenger {
 
-    private static Pattern returnPattern = Pattern.compile("\r");
     private static Map<UUID, TimedHashSet<String>> _noSpamCache =
             new PlayerMap<TimedHashSet<String>>(Nucleus.getPlugin());
 
@@ -174,7 +172,7 @@ public class Messenger implements IMessenger {
             return true;
         }
 
-        String[] lines = returnPattern.split(message);
+        String[] lines = TextUtils.PATTERN_NEW_LINE.split(message);
 
         for (String line : lines) {
 
@@ -302,6 +300,5 @@ public class Messenger implements IMessenger {
 
         _logger.severe(_consolePrefix + TextUtils.format(message, params));
     }
-
 }
 
