@@ -81,6 +81,7 @@ public final class TextUtils {
     public static final Pattern PATTERN_UNDERSCORE = Pattern.compile("_");
     public static final Pattern PATTERN_DOUBLE_QUOTE = Pattern.compile("\"");
     public static final Pattern PATTERN_SINGLE_QUOTE = Pattern.compile("'");
+    public static final Pattern PATTERN_NEW_LINE = Pattern.compile("\n");
 
     public static final TextFormatterSettings TEXT_FORMATTER_SETTINGS = new TextFormatterSettings();
     public static final TextFormatter TEXT_FORMATTER = new TextFormatter(TEXT_FORMATTER_SETTINGS);
