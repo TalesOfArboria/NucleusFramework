@@ -63,6 +63,22 @@ public final class LocationUtils {
     private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
 
     /**
+     * Copy the values from a source {@link org.bukkit.Location} to a new
+     * {@link org.bukkit.Location}.
+     *
+     * @param source  The source location.
+     *
+     * @return  The new location.
+     */
+    public static Location copy(Location source) {
+        PreCon.notNull(source);
+
+        Location destination = new Location(null, 0, 0, 0);
+
+        return copy(source, destination);
+    }
+
+    /**
      * Copy the values from a source {@link org.bukkit.Location} to a destination
      * {@link org.bukkit.Location}.
      *
