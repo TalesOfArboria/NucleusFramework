@@ -26,12 +26,12 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.language.Localized;
-import com.jcwhatever.nucleus.utils.validate.IValidator;
-import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -326,7 +326,7 @@ public final class TextUtils {
      * @param entryValidator    The entry validator.
      */
     public static List<String> search(Collection<String> searchCandidates, IValidator<String> entryValidator) {
-        return Utils.search(searchCandidates, entryValidator);
+        return CollectionUtils.search(searchCandidates, entryValidator);
     }
 
     /**

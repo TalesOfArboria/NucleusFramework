@@ -25,17 +25,11 @@
 
 package com.jcwhatever.nucleus.utils;
 
-import com.jcwhatever.nucleus.utils.validate.IValidator;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
- * Generic utilities
+ * Generic utilities.
  */
 public final class Utils {
 
@@ -59,29 +53,5 @@ public final class Utils {
     public static void executeAsPlayer(Player p, String cmd) {
         p.performCommand(cmd);
     }
-
-    /**
-     * Search a collection for valid candidates using an
-     * {@link IValidator} to validate.
-     *
-     * @param searchCandidates  The search candidates.
-     * @param validator         The validator.
-     */
-    public static <T> List<T> search(Collection<T> searchCandidates, IValidator<T> validator) {
-        PreCon.notNull(searchCandidates);
-        PreCon.notNull(validator);
-
-        List<T> result = new ArrayList<>(searchCandidates.size());
-
-        for (T candidate : searchCandidates) {
-
-            if (validator.isValid(candidate)) {
-                result.add(candidate);
-            }
-        }
-
-        return result;
-    }
-
 }
 

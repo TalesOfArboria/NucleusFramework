@@ -47,6 +47,29 @@ public class CollectionUtils {
     private CollectionUtils() {}
 
     /**
+     * Search a collection for valid candidates using an
+     * {@link IValidator} to validate.
+     *
+     * @param searchCandidates  The search candidates.
+     * @param validator         The validator.
+     */
+    public static <T> List<T> search(Collection<T> searchCandidates, IValidator<T> validator) {
+        PreCon.notNull(searchCandidates);
+        PreCon.notNull(validator);
+
+        List<T> result = new ArrayList<>(searchCandidates.size());
+
+        for (T candidate : searchCandidates) {
+
+            if (validator.isValid(candidate)) {
+                result.add(candidate);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Removes all matching instances of a value from the specified
      * {@link com.google.common.collect.Multimap}.
      *
