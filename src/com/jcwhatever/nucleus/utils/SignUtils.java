@@ -37,7 +37,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Sign utilities
+ * Sign utilities.
  */
 public final class SignUtils {
 
@@ -51,13 +51,14 @@ public final class SignUtils {
      * @return  Null if the block is not a sign.
      */
     @Nullable
-    public static BlockFace getSignFacing(Block block) {
+    public static BlockFace getFacing(Block block) {
         PreCon.notNull(block);
 
         Sign sign = getSign(block);
         if (sign == null)
             return null;
-        return getSignFacing(sign);
+
+        return getFacing(sign);
     }
 
     /**
@@ -65,7 +66,7 @@ public final class SignUtils {
      *
      * @param sign  The sign to check.
      */
-    public static BlockFace getSignFacing(Sign sign) {
+    public static BlockFace getFacing(Sign sign) {
         PreCon.notNull(sign);
 
         MaterialData materialData = sign.getData();
@@ -84,12 +85,12 @@ public final class SignUtils {
      *
      * @return  True if the block is a sign and the direction is set.
      */
-    public static boolean setSignFacing(Block block, BlockFace face, boolean update) {
+    public static boolean setFacing(Block block, BlockFace face, boolean update) {
         PreCon.notNull(block);
         PreCon.notNull(face);
 
         Sign sign = getSign(block);
-        return sign != null && setSignFacing(sign, face, update);
+        return sign != null && setFacing(sign, face, update);
     }
 
     /**
@@ -99,9 +100,9 @@ public final class SignUtils {
      * @param face    The new facing direction.
      * @param update  True to update the block.
      *
-     * @return True if the sign is updated or true if update parameter is false.
+     * @return True if the sign is updated or true if update argument is false.
      */
-    public static boolean setSignFacing(Sign sign, BlockFace face, boolean update) {
+    public static boolean setFacing(Sign sign, BlockFace face, boolean update) {
         PreCon.notNull(sign);
         PreCon.notNull(face);
 
@@ -122,14 +123,14 @@ public final class SignUtils {
      * @return  Null if the block is not a sign.
      */
     @Nullable
-    public static BlockFace getSignAttachedFace(Block block) {
+    public static BlockFace getAttachedFace(Block block) {
         PreCon.notNull(block);
 
         Sign sign = getSign(block);
         if (sign == null)
             return null;
 
-        return getSignAttachedFace(sign);
+        return getAttachedFace(sign);
     }
 
     /**
@@ -137,7 +138,7 @@ public final class SignUtils {
      *
      * @param sign  The sign to check.
      */
-    public static BlockFace getSignAttachedFace(Sign sign) {
+    public static BlockFace getAttachedFace(Sign sign) {
         MaterialData materialData = sign.getData();
 
         org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)materialData;
@@ -151,7 +152,7 @@ public final class SignUtils {
      * @param type    The material type. Must be a sign type.
      * @param facing  The facing direction of the sign.
      */
-    public static MaterialData createSignData(Material type, BlockFace facing) {
+    public static MaterialData createData(Material type, BlockFace facing) {
         PreCon.notNull(type);
         PreCon.notNull(facing);
 
@@ -219,7 +220,7 @@ public final class SignUtils {
      * @return  Null if there is no sign adjacent.
      */
     @Nullable
-    public static Sign getAdjacentSign(Block source, BlockFace direction) {
+    public static Sign getAdjacent(Block source, BlockFace direction) {
         PreCon.notNull(source);
         PreCon.notNull(direction);
 
@@ -232,17 +233,18 @@ public final class SignUtils {
 
     /**
      * Gets all signs consecutively adjacent to the source block in the
-     * specified direction. Does not include source block in result.
+     * specified direction.
+     *
+     * <p>Does not include source block in result.</p>
      *
      * @param source     The block to look from.
      * @param direction  The direction to look.
-     * @return
      */
-    public static List<Sign> getAdjacentSigns(Block source, BlockFace direction) {
+    public static List<Sign> getAllAdjacent(Block source, BlockFace direction) {
         PreCon.notNull(source);
         PreCon.notNull(direction);
 
-        ArrayList<Sign> signs = new ArrayList<>(15);
+        List<Sign> signs = new ArrayList<>(15);
 
         BlockState state = source.getState();
         while ((state = state.getBlock().getRelative(direction).getState()) instanceof Sign) {
@@ -257,7 +259,7 @@ public final class SignUtils {
      *
      * @param sign  The sign to check.
      */
-    public static Block getSignAttachedBlock(Sign sign) {
+    public static Block getAttachedBlock(Sign sign) {
         PreCon.notNull(sign);
 
         org.bukkit.material.Sign matSign = (org.bukkit.material.Sign)sign.getBlock().getState().getData();
@@ -271,9 +273,11 @@ public final class SignUtils {
      *
      * @param source     The block to look from.
      * @param direction  The direction to look.
-     * @return
      */
-    public static int getSignCount(Block source, BlockFace direction) {
+    public static int getAdjacentCount(Block source, BlockFace direction) {
+        PreCon.notNull(source);
+        PreCon.notNull(direction);
+
         int i = 0;
         BlockState state = source.getState();
         while ((state = state.getBlock().getRelative(direction).getState()) instanceof Sign) {

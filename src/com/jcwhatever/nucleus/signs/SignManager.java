@@ -356,7 +356,7 @@ public class SignManager implements IPluginOwned {
 
                 final BlockState blockState = loc.getBlock().getState();
                 blockState.setType(type);
-                blockState.setData(SignUtils.createSignData(type, facing));
+                blockState.setData(SignUtils.createData(type, facing));
 
                 Sign sign = (Sign) blockState;
 
@@ -421,7 +421,7 @@ public class SignManager implements IPluginOwned {
 
             BlockState blockState = loc.getBlock().getState();
             blockState.setType(type);
-            blockState.setData(SignUtils.createSignData(type, facing));
+            blockState.setData(SignUtils.createData(type, facing));
             blockState.update(true);
 
             signInfo.push(new SignInfo(loc, line0, line1, line2, line3));
@@ -493,7 +493,7 @@ public class SignManager implements IPluginOwned {
             signNode.set("line2", event.getLine(2));
             signNode.set("line3", event.getLine(3));
             signNode.set("type", sign.getType().name());
-            signNode.set("direction", SignUtils.getSignFacing(sign).name());
+            signNode.set("direction", SignUtils.getFacing(sign).name());
             signNode.save();
         }
 
