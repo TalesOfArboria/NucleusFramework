@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Randomizing utilities
+ * Randomizing utilities.
  */
 public final class Rand {
 
@@ -74,8 +74,25 @@ public final class Rand {
     }
 
     /**
-     * Get a random integer equal to or between
-     * the specified minimum and maximum amount.
+     * Remove a random item from a list.
+     *
+     * @param items  The list to remove a random item from.
+     *
+     * @param <T>  The list generic type.
+     */
+    public static <T> T remove(List<T> items) {
+        PreCon.notNull(items);
+        PreCon.isValid(items.size() > 0);
+
+        if (items.size() == 1)
+            return items.remove(0);
+
+        return items.remove(getInt(items.size()));
+    }
+
+    /**
+     * Get a random integer equal to or between the specified minimum
+     * and maximum amount.
      *
      * @param min  The minimum result.
      * @param max  The maximum result.
@@ -164,7 +181,6 @@ public final class Rand {
         return getString(length, UNSAFE_CHARACTERS);
     }
 
-
     /**
      * Get a random string of characters using the specified
      * character pool.
@@ -187,7 +203,6 @@ public final class Rand {
         return sb.toString();
     }
 
-
     /**
      * Get a random boolean using the specified chance.
      * The maximum effective chance is 100.
@@ -196,6 +211,16 @@ public final class Rand {
      */
     public static boolean chance(int chance) {
         return chance >= 100 || chance > Rand.getInt(100);
+    }
+
+    /**
+     * Get a random boolean using the specified chance.
+     * The maximum effective chance is 1.0.
+     *
+     * @param chance  The chance of getting a result of true.
+     */
+    public static boolean chance(double chance) {
+        return chance >= 1.0D || chance > Rand.getDouble(1);
     }
 
     /**
