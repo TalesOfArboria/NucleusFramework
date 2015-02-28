@@ -122,6 +122,22 @@ public final class LocationUtils {
     }
 
     /**
+     * Copy the values from a source {@link org.bukkit.util.Vector} to a new
+     * {@link org.bukkit.util.Vector}.
+     *
+     * @param source       The source location.
+     *
+     * @return  The new vector.
+     */
+    public static Vector copy(Vector source) {
+        PreCon.notNull(source);
+
+        Vector vector = new Vector(0, 0, 0);
+
+        return copy(source, vector);
+    }
+
+    /**
      * Copy the values from a source {@link org.bukkit.util.Vector} to a destination
      * {@link org.bukkit.util.Vector}.
      *
@@ -399,6 +415,25 @@ public final class LocationUtils {
     public static SyncLocation parseLocation(String coordinates) {
         PreCon.notNull(coordinates);
 
+        SyncLocation location = new SyncLocation((World)null, 0, 0, 0);
+
+        return parseLocation(coordinates, location);
+    }
+
+    /**
+     * Parse a location from a formatted string.
+     * <p>
+     *     Format of string: x,y,z,yawF,pitchF,worldName
+     * </p>
+     *
+     * @param coordinates  The string coordinates.
+     *
+     * @return  A new {@link SyncLocation} or null if the string could not be parsed.
+     */
+    @Nullable
+    public static SyncLocation parseLocation(String coordinates, SyncLocation output) {
+        PreCon.notNull(coordinates);
+
         String[] parts =  TextUtils.PATTERN_COMMA.split(coordinates);
         if (parts.length != 6)
             return null;
@@ -423,7 +458,14 @@ public final class LocationUtils {
         if (pitch == Float.MAX_VALUE)
             return null;
 
-        return new SyncLocation(parts[5], x, y, z, yaw, pitch);
+        output.setWorld(parts[5]);
+        output.setX(x);
+        output.setY(y);
+        output.setZ(z);
+        output.setYaw(yaw);
+        output.setPitch(pitch);
+
+        return output;
     }
 
     /**
