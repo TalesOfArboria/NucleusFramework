@@ -163,6 +163,18 @@ public class SyncLocation extends Location {
     }
 
     /**
+     * Set the name of the world the location is in.
+     *
+     * @param worldName  The name of the world.
+     */
+    public void setWorld(@Nullable String worldName) {
+        synchronized (_sync) {
+            _worldName = worldName;
+            super.setWorld(null);
+        }
+    }
+
+    /**
      * Get the chunk the location is in.
      *
      * <p>Not thread safe.</p>
