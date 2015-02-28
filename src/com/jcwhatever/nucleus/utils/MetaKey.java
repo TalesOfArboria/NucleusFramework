@@ -31,6 +31,9 @@ import javax.annotation.Nullable;
 /**
  * A meta data key that is used as a singleton instance or as a wrapper to
  * an object that represents the key.
+ *
+ * @see IMeta
+ * @see MetaStore
  */
 public class MetaKey<V> {
 

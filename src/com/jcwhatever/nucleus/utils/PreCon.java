@@ -44,7 +44,7 @@ public final class PreCon {
      *
      * @param condition  The condition to test.
      *
-     * @throws java.lang.IllegalStateException
+     * @throws java.lang.IllegalStateException if condition is false.
      */
     public static void isValid(boolean condition) {
         isValid(condition, null);
@@ -57,7 +57,7 @@ public final class PreCon {
      * @param message    The exception message to use if the condition is false.
      * @param args       Optional message format arguments.
      *
-     * @throws java.lang.IllegalStateException
+     * @throws java.lang.IllegalStateException if condition is false.
      */
     public static void isValid(boolean condition, @Nullable String message, Object... args) {
         if (!condition) {
@@ -75,7 +75,7 @@ public final class PreCon {
      *
      * @param isSupported  The condition to test.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if isSupported is false.
      */
     public static void supported(boolean isSupported) {
         if (!isSupported)
@@ -89,7 +89,7 @@ public final class PreCon {
      * @param message      The exception message to use if the condition is false.
      * @param args         Optional message format arguments.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if isSupported is false.
      */
     public static void supported(boolean isSupported, String message, Object... args) {
         if (!isSupported)
@@ -101,7 +101,7 @@ public final class PreCon {
      *
      * @param value  The object to check.
      *
-     * @throws java.lang.NullPointerException
+     * @throws java.lang.NullPointerException if value is null.
      */
     public static void notNull(@Nullable Object value) {
         notNull(value, "a checked argument");
@@ -113,7 +113,7 @@ public final class PreCon {
      * @param value      The object to check.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.NullPointerException
+     * @throws java.lang.NullPointerException if value is null.
      */
     public static void notNull(@Nullable Object value, String paramName) {
         if (value == null) {
@@ -126,8 +126,8 @@ public final class PreCon {
      *
      * @param value  The string to check.
      *
-     * @throws java.lang.NullPointerException
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.NullPointerException      if value is null.
+     * @throws java.lang.IllegalArgumentException  if value is empty.
      */
     public static void notNullOrEmpty(@Nullable String value) {
         notNullOrEmpty(value, "a checked argument");
@@ -139,8 +139,8 @@ public final class PreCon {
      * @param value      The string to check.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.NullPointerException
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.NullPointerException      if value is null.
+     * @throws java.lang.IllegalArgumentException  if value is empty.
      */
     public static void notNullOrEmpty(@Nullable String value, String paramName) {
         PreCon.notNull(value, paramName);
@@ -152,10 +152,13 @@ public final class PreCon {
     /**
      * Ensures supplied string is a proper data node name.
      *
+     * <p>A valid node name is alphanumeric with no spaces and can only
+     * contain the symbols: - _</p>
+     *
      * @param nodeName  The name of the node.
      *
-     * @throws java.lang.NullPointerException
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.NullPointerException      if nodeName is null.
+     * @throws java.lang.IllegalArgumentException  if nodeName is not a valid node name.
      */
     public static void validNodeName(@Nullable String nodeName) {
         validNodeName(nodeName, "a checked argument");
@@ -164,11 +167,14 @@ public final class PreCon {
     /**
      * Ensures supplied string is a proper data node name.
      *
+     * <p>A valid node name is alphanumeric with no spaces and can only
+     * contain the symbols: - _</p>
+     *
      * @param nodeName   The name of the node.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.NullPointerException
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.NullPointerException      if nodeName is null.
+     * @throws java.lang.IllegalArgumentException  if nodeName is not a valid node name.
      */
     public static void validNodeName(@Nullable String nodeName, String paramName) {
         PreCon.notNullOrEmpty(nodeName, paramName);
@@ -182,10 +188,13 @@ public final class PreCon {
     /**
      * Ensures supplied string is a proper data node path.
      *
+     * <p>A valid node path is alphanumeric with no spaces and can only
+     * contain the symbols: - . _</p>
+     *
      * @param nodePath  The node path.
      *
-     * @throws java.lang.NullPointerException
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.NullPointerException      if nodePath is null.
+     * @throws java.lang.IllegalArgumentException  if nodePath is not a valid node path.
      */
     public static void validNodePath(@Nullable String nodePath) {
         validNodePath(nodePath, "a checked argument");
@@ -194,11 +203,14 @@ public final class PreCon {
     /**
      * Ensures supplied string is a proper data node path.
      *
+     * <p>A valid node path is alphanumeric with no spaces and can only
+     * contain the symbols: - . _</p>
+     *
      * @param nodePath   The node path.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.NullPointerException
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.NullPointerException      if nodePath is null.
+     * @throws java.lang.IllegalArgumentException  if nodePath is not a valid node path.
      */
     public static void validNodePath(@Nullable String nodePath, String paramName) {
         PreCon.notNull(nodePath, paramName);
@@ -214,7 +226,7 @@ public final class PreCon {
      *
      * @param number  The number to check.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is less than or equal to 0.
      */
     public static void greaterThanZero(long number) {
         greaterThanZero(number, "a checked argument");
@@ -226,7 +238,7 @@ public final class PreCon {
      * @param number     The number to check.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is less than or equal to 0.
      */
     public static void greaterThanZero(long number, String paramName) {
         if (number <= 0) {
@@ -239,7 +251,7 @@ public final class PreCon {
      *
      * @param number  The number to check.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is less than or equal to 0.
      */
     public static void greaterThanZero(double number) {
         greaterThanZero(number, "a checked argument");
@@ -251,7 +263,7 @@ public final class PreCon {
      * @param number     The number to check.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is less than or equal to 0.
      */
     public static void greaterThanZero(double number, String paramName) {
         if (number <= 0.0D) {
@@ -264,7 +276,7 @@ public final class PreCon {
      *
      * @param number  The number to check.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is less than 0.
      */
     public static void positiveNumber(long number) {
         positiveNumber(number, "a checked argument");
@@ -276,7 +288,7 @@ public final class PreCon {
      * @param number     The number to check.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is less than 0.
      */
     public static void positiveNumber(long number, String paramName) {
         if (number < 0) {
@@ -289,7 +301,7 @@ public final class PreCon {
      *
      * @param number  The number to check.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is less than 0.
      */
     public static void positiveNumber(double number) {
         positiveNumber(number, "a checked argument");
@@ -301,7 +313,7 @@ public final class PreCon {
      * @param number     The number to check.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is less than 0.
      */
     public static void positiveNumber(double number, String paramName) {
         if (number < 0.0D) {
@@ -315,7 +327,7 @@ public final class PreCon {
      * @param number  The number to check.
      * @param limit   The numbers limit.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is greater than or equal to limit.
      */
     public static void lessThan(long number, long limit) {
         lessThan(number, limit, "a checked argument");
@@ -328,7 +340,7 @@ public final class PreCon {
      * @param limit      The numbers limit.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is greater than or equal to limit.
      */
     public static void lessThan(long number, long limit, String paramName) {
         if (number >= limit) {
@@ -342,7 +354,7 @@ public final class PreCon {
      * @param number  The number to check.
      * @param limit   The numbers limit.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is greater than or equal to limit.
      */
     public static void lessThan (double number, double limit) {
         lessThan(number, limit, "a checked argument");
@@ -355,7 +367,7 @@ public final class PreCon {
      * @param limit      The numbers limit.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is greater than or equal to limit.
      */
     public static void lessThan (double number, double limit, String paramName) {
         if (number >= limit) {
@@ -369,7 +381,7 @@ public final class PreCon {
      * @param number  The number to check.
      * @param limit   The numbers limit.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is greater than limit.
      */
     public static void lessThanEqual (long number, long limit) {
         lessThanEqual(number, limit, "a checked argument");
@@ -382,7 +394,7 @@ public final class PreCon {
      * @param limit      The numbers limit.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is greater than limit.
      */
     public static void lessThanEqual (long number, long limit, String paramName) {
         if (number > limit) {
@@ -396,7 +408,7 @@ public final class PreCon {
      * @param number  The number to check.
      * @param limit   The numbers limit.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is greater than limit.
      */
     public static void lessThanEqual (double number, double limit) {
         lessThanEqual(number, limit, "a checked argument");
@@ -409,7 +421,7 @@ public final class PreCon {
      * @param limit      The numbers limit.
      * @param paramName  The name of the parameter being checked.
      *
-     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException  if number is greater than limit.
      */
     public static void lessThanEqual (double number, double limit, String paramName) {
         if (number > limit) {

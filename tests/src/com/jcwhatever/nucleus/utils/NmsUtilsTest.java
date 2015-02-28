@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R1.MockPlugin;
 import com.jcwhatever.nucleus.NucleusTest;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 
 import org.junit.Test;
 

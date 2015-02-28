@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.utils.nms;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;

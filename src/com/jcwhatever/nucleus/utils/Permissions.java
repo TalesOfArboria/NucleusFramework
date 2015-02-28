@@ -306,7 +306,7 @@ public final class Permissions {
      *
      * @return  True if the permission was removed.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
     public static boolean remove(Plugin plugin, CommandSender sender, World world, String permissionName) {
         return getWorldProvider().remove(plugin, sender, world, permissionName);
@@ -322,7 +322,7 @@ public final class Permissions {
      *
      * @return  True if the permission was removed.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
     public static boolean remove(Plugin plugin, CommandSender sender, World world, IPermission permission) {
         return getWorldProvider().remove(plugin, sender, world, permission.getName());
@@ -340,7 +340,7 @@ public final class Permissions {
      *
      * @return  True if the player was added.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
     public static boolean addGroup(Plugin plugin, CommandSender sender, String groupName) {
         return getGroupProvider().addGroup(plugin, sender, groupName);
@@ -356,7 +356,7 @@ public final class Permissions {
      *
      * @return  True if the player was added.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
     public static boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
         return getWorldGroupProvider().addGroup(plugin, sender, world, groupName);
@@ -371,7 +371,7 @@ public final class Permissions {
      *
      * @return  True if the player was removed.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
     public static boolean removeGroup(Plugin plugin, CommandSender sender, String groupName) {
         return getGroupProvider().removeGroup(plugin, sender, groupName);
@@ -387,7 +387,7 @@ public final class Permissions {
      *
      * @return  True if the player was removed.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
     public static boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
         return getWorldGroupProvider().removeGroup(plugin, sender, world, groupName);
@@ -399,7 +399,7 @@ public final class Permissions {
      * @param sender     The {@link org.bukkit.command.CommandSender} to check.
      * @param groupName  The name of the group.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
     public static boolean hasGroup(CommandSender sender, String groupName) {
         Collection<IPermissionGroup> groups = getGroups(sender);
@@ -417,7 +417,7 @@ public final class Permissions {
     /**
      * Get a string array of group permission names.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
     @Nullable
     public static Collection<IPermissionGroup> getGroups() {
@@ -429,7 +429,7 @@ public final class Permissions {
      *
      * @param sender  The {@link org.bukkit.command.CommandSender} to check.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
     public static Collection<IPermissionGroup> getGroups(CommandSender sender) {
         return getGroupProvider().getGroups(sender);
@@ -442,7 +442,7 @@ public final class Permissions {
      * @param sender  The {@link org.bukkit.command.CommandSender} to check.
      * @param world   The world.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
     public static Collection<IPermissionGroup> getGroups(CommandSender sender, World world) {
         return getWorldGroupProvider().getGroups(sender, world);
@@ -456,7 +456,7 @@ public final class Permissions {
      * @param plugin  The plugin fixing permission groups.
      * @param groups  The groups to fix.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
     public static void fixPermissionGroups(Plugin plugin, Collection<IPermissionGroup> groups) {
         PreCon.notNull(plugin);
@@ -479,7 +479,7 @@ public final class Permissions {
      * @param sender  The {@link org.bukkit.command.CommandSender} whose group permissions need to be checked.
      * @param groups  The groups to fix.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
     public static void fixPermissionGroups(Plugin plugin, CommandSender sender,
                                            Collection<IPermissionGroup> groups) {
@@ -533,7 +533,7 @@ public final class Permissions {
     /**
      * Get the group permissions provider.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
     public static IGroupPermissionsProvider getGroupProvider() {
         IGroupPermissionsProvider provider =
@@ -548,7 +548,7 @@ public final class Permissions {
     /**
      * Get the world group permissions provider.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
     public static IWorldGroupPermissionsProvider getWorldGroupProvider() {
         IWorldGroupPermissionsProvider provider =

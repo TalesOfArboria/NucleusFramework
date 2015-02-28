@@ -65,6 +65,8 @@ import javax.script.ScriptException;
 
 /**
  * Script utilities.
+ *
+ * @see com.jcwhatever.nucleus.Nucleus#getScriptManager
  */
 public final class ScriptUtils {
 
@@ -106,10 +108,10 @@ public final class ScriptUtils {
     /**
      * Load scripts from a script folder.
      *
-     * @param plugin             The scripts owning plugin.
-     * @param engineManager      The engine manager used to determine if a file type is a script.
-     * @param scriptFolder       The folder to find scripts in.
-     * @param traversal          The type of directory traversal used to find script files.
+     * @param plugin         The scripts owning plugin.
+     * @param engineManager  The engine manager used to determine if a file type is a script.
+     * @param scriptFolder   The folder to find scripts in.
+     * @param traversal      The type of directory traversal used to find script files.
      * @param scriptFactory  A script constructor to create new script instances.
      *
      * @param <T>  Script instance type.
@@ -121,17 +123,16 @@ public final class ScriptUtils {
                                                           IScriptFactory<T> scriptFactory) {
 
         return loadScripts(plugin, engineManager, scriptFolder, null, traversal, scriptFactory);
-
     }
 
     /**
      * Load scripts from a script folder.
      *
-     * @param plugin             The scripts owning plugin.
-     * @param engineManager      The engine manager used to determine if a file type is a script.
-     * @param scriptFolder       The folder to find scripts in.
-     * @param exclude            Optional file or folder to exclude.
-     * @param traversal          The type of directory traversal used to find script files.
+     * @param plugin         The scripts owning plugin.
+     * @param engineManager  The engine manager used to determine if a file type is a script.
+     * @param scriptFolder   The folder to find scripts in.
+     * @param exclude        Optional file or folder to exclude.
+     * @param traversal      The type of directory traversal used to find script files.
      * @param scriptFactory  A script constructor to create new script instances.
      *
      * @param <T>  Script instance type.
@@ -338,5 +339,4 @@ public final class ScriptUtils {
          */
         public T construct(String name, @Nullable File file, String type, String script);
     }
-
 }

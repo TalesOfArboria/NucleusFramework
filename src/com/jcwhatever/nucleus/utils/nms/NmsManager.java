@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.utils.nms;
 import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.collections.HashMapMap;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.NmsUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;

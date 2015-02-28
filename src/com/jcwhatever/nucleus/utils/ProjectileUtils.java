@@ -71,6 +71,7 @@ public final class ProjectileUtils {
     public static Location getEntitySource(Entity from, Location target, Location output) {
         PreCon.notNull(from);
         PreCon.notNull(target);
+        PreCon.notNull(output);
 
         Location location = from instanceof LivingEntity
                 ? ((LivingEntity) from).getEyeLocation()
