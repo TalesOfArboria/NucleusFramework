@@ -25,9 +25,10 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -193,9 +194,9 @@ public class ItemStackMatcher {
             if (stack1.getType() != stack2.getType())
                 return false;
 
-            MaterialExt ext = MaterialExt.from(stack1.getType());
+            Material type = stack1.getType();
 
-            if (!_matchMeta && (ext.usesColorData() || ext.usesSubMaterialData()) &&
+            if (!_matchMeta && (Materials.hasColorData(type) || Materials.hasSubMaterialData(type)) &&
                     !stack1.getData().equals(stack2.getData())) {
                 return false;
             }

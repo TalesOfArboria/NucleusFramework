@@ -25,12 +25,12 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackDeserializer;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Color;
@@ -191,8 +191,7 @@ public final class ItemStackUtils {
     public static boolean isRepairable(Material type) {
         PreCon.notNull(type);
 
-        MaterialExt material = MaterialExt.from(type);
-        return material != MaterialExt.UNKNOWN && material.isRepairable();
+        return Materials.isRepairable(type);
     }
 
     /**

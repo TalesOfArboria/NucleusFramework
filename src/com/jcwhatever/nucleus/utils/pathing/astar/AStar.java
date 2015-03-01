@@ -25,8 +25,8 @@
 
 package com.jcwhatever.nucleus.utils.pathing.astar;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -480,7 +480,7 @@ public abstract class AStar<T extends IPathNode> {
      */
     protected void invalidateColumn(boolean[][] columns, int x, int z, Material material) {
 
-        if (MaterialExt.isOpenable(material))
+        if (Materials.isOpenable(material))
             return;
 
         columns[x + 1][z + 1] = false;

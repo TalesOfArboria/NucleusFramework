@@ -26,7 +26,6 @@
 package com.jcwhatever.nucleus.utils.inventory;
 
 import com.jcwhatever.nucleus.utils.extended.ArmorType;
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
@@ -1060,12 +1059,11 @@ public final class InventoryUtils {
         PreCon.notNull(contents);
         PreCon.notNull(itemStack);
 
-        MaterialExt ext = MaterialExt.from(itemStack.getType());
-        if (ext.getMaxStackSize() == 0)
-            return 0;
-
         int totalSpace = 0;
-        int maxStackSize = ext.getMaxStackSize();
+        int maxStackSize = itemStack.getType().getMaxStackSize();
+
+        if (maxStackSize == 0)
+            return 0;
 
         for (ItemStack slotStack : contents) {
             if (slotStack == null || slotStack.getType() == Material.AIR) {

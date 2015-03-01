@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.nucleus.utils.extended.NamedMaterialData;
+import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Color;

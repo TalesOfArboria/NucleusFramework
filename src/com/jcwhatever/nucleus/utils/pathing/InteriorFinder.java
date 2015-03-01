@@ -25,10 +25,10 @@
 
 package com.jcwhatever.nucleus.utils.pathing;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -140,8 +140,8 @@ public class InteriorFinder {
                         Location diagX = node.clone().add(x, y, 0),
                                 diagZ = node.clone().add(0, y, z);
 
-                        if(!MaterialExt.isTransparent(diagX.getBlock().getType()) &&
-                                !MaterialExt.isTransparent(diagZ.getBlock().getType())) {
+                        if(!Materials.isTransparent(diagX.getBlock().getType()) &&
+                                !Materials.isTransparent(diagZ.getBlock().getType())) {
                             _invalidNodes.add(candidate);
                             columns[x + 1][z + 1] = false;
                             continue;
@@ -153,8 +153,8 @@ public class InteriorFinder {
                         Location middle = node.clone().add(0, y, 0),
                                 below = node.clone().add(x, 0, z);
 
-                        if (!MaterialExt.isTransparent(middle.getBlock().getType()) &&
-                                !MaterialExt.isTransparent(below.getBlock().getType())) {
+                        if (!Materials.isTransparent(middle.getBlock().getType()) &&
+                                !Materials.isTransparent(below.getBlock().getType())) {
                             continue;
                         }
                     }
@@ -165,9 +165,9 @@ public class InteriorFinder {
                                 adjac2 = node.clone().add(0, 0, z),
                                 middle = node.clone().add(0, y, 0);
 
-                        if (!MaterialExt.isTransparent(adjac1.getBlock().getType()) &&
-                                !MaterialExt.isTransparent(adjac2.getBlock().getType()) &&
-                                !MaterialExt.isTransparent(middle.getBlock().getType())) {
+                        if (!Materials.isTransparent(adjac1.getBlock().getType()) &&
+                                !Materials.isTransparent(adjac2.getBlock().getType()) &&
+                                !Materials.isTransparent(middle.getBlock().getType())) {
                             continue;
                         }
                     }

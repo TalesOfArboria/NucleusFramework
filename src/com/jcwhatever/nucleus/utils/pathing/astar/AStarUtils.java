@@ -25,9 +25,9 @@
 
 package com.jcwhatever.nucleus.utils.pathing.astar;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
-import com.jcwhatever.nucleus.utils.pathing.astar.AStar.DoorPathMode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.Materials;
+import com.jcwhatever.nucleus.utils.pathing.astar.AStar.DoorPathMode;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -101,7 +101,7 @@ public class AStarUtils {
             }
 
             // make sure block is transparent
-            if (!MaterialExt.isTransparent(above.getType())) {
+            if (!Materials.isTransparent(above.getType())) {
                 return false;
             }
         }

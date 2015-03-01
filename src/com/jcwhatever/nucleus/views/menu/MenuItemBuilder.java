@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.views.menu;
 
-import com.jcwhatever.nucleus.utils.extended.NamedMaterialData;
+import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;

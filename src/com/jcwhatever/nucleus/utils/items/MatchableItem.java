@@ -25,9 +25,9 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -45,7 +45,6 @@ import org.bukkit.inventory.ItemStack;
 public class MatchableItem {
 
     private ItemStack _itemStack;
-    private MaterialExt _materialExt;
     private ItemStackMatcher _comparer;
     private int _hash = -1;
 
@@ -87,14 +86,10 @@ public class MatchableItem {
     }
 
     /**
-     * Get the extended material type.
+     * Get the material type.
      */
-    public MaterialExt getMaterialExt() {
-        if (_materialExt == null) {
-            _materialExt = MaterialExt.from(_itemStack.getType());
-        }
-
-        return _materialExt;
+    public Material getMaterial() {
+        return _itemStack.getType();
     }
 
     /**

@@ -24,9 +24,9 @@
 
 package com.jcwhatever.nucleus.utils.items.serializer.metahandlers;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
@@ -50,12 +50,8 @@ public class ColorHandler implements IMetaHandler {
     public boolean canHandle(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        if (itemStack.getItemMeta() instanceof LeatherArmorMeta)
-            return true;
-
-        MaterialExt ext = MaterialExt.from(itemStack.getType());
-
-        return ext.usesColorData();
+        return itemStack.getItemMeta() instanceof LeatherArmorMeta ||
+                Materials.hasColorData(itemStack.getType());
     }
 
     @Override
@@ -140,10 +136,7 @@ public class ColorHandler implements IMetaHandler {
             return result;
         }
 
-        MaterialExt ext = MaterialExt.from(itemStack.getType());
-
-        if (ext.usesColorData()) {
-
+        if (Materials.hasColorData(itemStack.getType())) {
             result.add(new ItemMetaObject(getMetaName(), String.valueOf(itemStack.getDurability())));
         }
 

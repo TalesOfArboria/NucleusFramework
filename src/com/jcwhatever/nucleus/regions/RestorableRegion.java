@@ -27,14 +27,14 @@ package com.jcwhatever.nucleus.regions;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
-import com.jcwhatever.nucleus.utils.extended.serializable.SerializableBlockEntity;
-import com.jcwhatever.nucleus.utils.extended.serializable.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.RegionChunkFileLoader.LoadType;
 import com.jcwhatever.nucleus.regions.data.ChunkBlockInfo;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.extended.serializable.SerializableBlockEntity;
+import com.jcwhatever.nucleus.utils.extended.serializable.SerializableFurnitureEntity;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.result.Result;
@@ -466,8 +466,7 @@ public abstract class RestorableRegion extends BuildableRegion {
                 ChunkBlockInfo info = blockInfo.remove();
 
                 // skip multi-blocks and restore afterwards
-                MaterialExt ext = MaterialExt.from(info.getMaterial());
-                if (ext.isMultiBlock()) {
+                if (Materials.isMultiBlock(info.getMaterial())) {
                     multiBlocks.add(info);
                     continue;
                 }
@@ -554,9 +553,7 @@ public abstract class RestorableRegion extends BuildableRegion {
 
             state.update(true);
         }
-
     }
-
 
     /**
      * Restore block entities from file

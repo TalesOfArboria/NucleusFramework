@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.extended;
+package com.jcwhatever.nucleus.utils.materials;
 
 import com.jcwhatever.nucleus.collections.MultiBiMap;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -34,13 +34,68 @@ import org.bukkit.material.MaterialData;
 import javax.annotation.Nullable;
 
 /**
- * Get MaterialData based on string name of material or alternate name.
+ * Get {@link org.bukkit.material.MaterialData} based on name of material or alternate name.
  */
 public final class NamedMaterialData {
 
     private NamedMaterialData(){}
 
-    private static MultiBiMap<String, MaterialData> _alternateNames = new MultiBiMap<String, MaterialData>();
+    private static MultiBiMap<String, MaterialData> _alternateNames =
+            new MultiBiMap<String, MaterialData>();
+
+    /**
+     * Get {@link org.bukkit.material.MaterialData} using the
+     * material name.
+     *
+     * @param materialName  The name of the material or alternate name.
+     *
+     * @return  The {@link org.bukkit.material.MaterialData} or null if not found.
+     */
+    @Nullable
+    public static MaterialData get(String materialName) {
+        PreCon.notNull(materialName);
+
+        String str = materialName.toUpperCase();
+
+        if (str.startsWith("MINECRAFT:"))
+            str = str.substring(10);
+
+        // check for standard enum value
+        try {
+            Material material = Material.valueOf(str);
+            if (material != null)
+                return new MaterialData(material);
+        }
+        catch (Exception ignore) {}
+
+        // check for alternate value
+        MaterialData data = _alternateNames.getValue(str);
+        if (data == null) {
+            return null;
+        }
+        return data.clone();
+    }
+
+    /**
+     * Get the name of the specified {@link org.bukkit.material.MaterialData} using
+     * the most descriptive available name.
+     *
+     * @param materialData  The material data to get a name for.
+     */
+    public static String get(MaterialData materialData) {
+        PreCon.notNull(materialData);
+
+        String name = _alternateNames.getKey(materialData);
+
+        if (name == null) {
+            String result = materialData.getItemType().name();
+            if (materialData.getData() != 0)
+                result += ":" + materialData.getData();
+            return result;
+        } else {
+            return name;
+        }
+    }
 
     static {
         _alternateNames
@@ -155,45 +210,5 @@ public final class NamedMaterialData {
                 .add("ORANGE_DYE", new MaterialData(Material.INK_SACK, (byte) 14))
                 .add("WHITE_DYE", new MaterialData(Material.INK_SACK, (byte) 15))
                 .add("BONE_MEAL", new MaterialData(Material.INK_SACK, (byte) 15));
-    }
-
-    @Nullable
-    public static MaterialData get(String materialName) {
-        PreCon.notNull(materialName);
-
-        String str = materialName.toUpperCase();
-
-        if (str.startsWith("MINECRAFT:"))
-            str = str.substring(10);
-
-        // check for standard enum value
-        try {
-            Material material = Material.valueOf(str);
-            if (material != null)
-                return new MaterialData(material);
-        }
-        catch (Exception ignore) {}
-
-        // check for alternate value
-        MaterialData data = _alternateNames.getValue(str);
-        if (data == null) {
-            return null;
-        }
-        return data.clone();
-    }
-
-    public static String get(MaterialData materialData) {
-        PreCon.notNull(materialData);
-
-        String name = _alternateNames.getKey(materialData);
-
-        if (name == null) {
-            String result = materialData.getItemType().name();
-            if (materialData.getData() != 0)
-                result += ":" + materialData.getData();
-            return result;
-        } else {
-            return name;
-        }
     }
 }

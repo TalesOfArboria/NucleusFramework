@@ -25,8 +25,8 @@
 
 package com.jcwhatever.nucleus.utils.pathing.astar;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -243,7 +243,7 @@ public class AStarPathNode implements IPathNode {
      */
     @Override
     public boolean isTransparent() {
-        return MaterialExt.isTransparent(getMaterial());
+        return Materials.isTransparent(getMaterial());
     }
 
     /**
@@ -251,7 +251,7 @@ public class AStarPathNode implements IPathNode {
      */
     @Override
     public boolean isSurface() {
-        return MaterialExt.isSurface(getMaterial());
+        return Materials.isSurface(getMaterial());
     }
 
     @Override

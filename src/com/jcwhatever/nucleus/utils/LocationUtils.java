@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
@@ -595,13 +595,13 @@ public final class LocationUtils {
 
         getBlockLocation(searchLoc, output);
 
-        if (!MaterialExt.isTransparent(output.getBlock().getType()))
+        if (!Materials.isTransparent(output.getBlock().getType()))
             return searchLoc;
 
         output.add(0, -1, 0);
         Block current = searchLoc.getBlock();
 
-        while (!MaterialExt.isSurface(current.getType())) {
+        while (!Materials.isSurface(current.getType())) {
             output.add(0, -1, 0);
             current = output.getBlock();
 

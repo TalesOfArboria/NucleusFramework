@@ -25,13 +25,13 @@
 
 package com.jcwhatever.nucleus.utils.pathing;
 
-import com.jcwhatever.nucleus.utils.extended.MaterialExt;
+import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.pathing.astar.AStar;
 import com.jcwhatever.nucleus.utils.pathing.astar.AStar.LocationAdjustment;
 import com.jcwhatever.nucleus.utils.pathing.astar.AStarUtils;
 import com.jcwhatever.nucleus.utils.pathing.astar.IPathNode;
-import com.jcwhatever.nucleus.utils.LocationUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -167,7 +167,7 @@ public class PathAreaFinder<T extends IPathNode> {
                     if (!isValid(candidate)) {
 
                         // invalidate column if material is NOT transparent
-                        if (!MaterialExt.isTransparent(candidate.getBlock().getType())) {
+                        if (!Materials.isTransparent(candidate.getBlock().getType())) {
                             columns[x + 1][z + 1] = false;
                         }
 
@@ -200,7 +200,7 @@ public class PathAreaFinder<T extends IPathNode> {
         Material material = block.getType();
 
         // check if block is a surface
-        if (!MaterialExt.isSurface(material))
+        if (!Materials.isSurface(material))
             return false;
 
         // check head room
