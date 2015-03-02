@@ -106,7 +106,7 @@ public class ItemStackMatcher {
      *
      * @param matchOperations  The matcher operations bit flags to use.
      */
-    public static synchronized ItemStackMatcher getCustom(byte matchOperations) {
+    public static synchronized ItemStackMatcher get(byte matchOperations) {
         ItemStackMatcher comparer = _custom.get(matchOperations);
         if (comparer == null) {
             comparer = new ItemStackMatcher(matchOperations);
@@ -222,5 +222,4 @@ public class ItemStackMatcher {
 
         return true;
     }
-
 }

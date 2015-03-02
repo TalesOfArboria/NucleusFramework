@@ -86,7 +86,7 @@ public class ScriptApiInventory extends NucleusScriptApi {
          * @param operations  The compare operations to perform.
          */
         public ItemStackMatcher getComparer(byte operations) {
-            return ItemStackMatcher.getCustom(operations);
+            return ItemStackMatcher.get(operations);
         }
 
         /**
