@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.extended.serializable;
+package com.jcwhatever.nucleus.utils.file;
 
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;

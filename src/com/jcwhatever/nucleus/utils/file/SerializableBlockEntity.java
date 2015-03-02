@@ -23,13 +23,10 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.extended.serializable;
+package com.jcwhatever.nucleus.utils.file;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
-import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
