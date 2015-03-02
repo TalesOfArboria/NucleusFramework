@@ -24,8 +24,9 @@
 
 package com.jcwhatever.nucleus.utils.items.equipper;
 
-import com.jcwhatever.nucleus.utils.extended.ArmorType;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.MaterialProperty;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -36,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Default equipper to use when an equipper is not registered
@@ -56,25 +58,27 @@ public class DefaultEquipper implements IEntityEquipper {
 
             if (entity instanceof HumanEntity) {
 
-                ArmorType armorType = ArmorType.getType(item);
+                Set<MaterialProperty> properties = Materials.getProperties(item.getType());
 
-                switch (armorType) {
-                    case HELMET:
+                if (properties.contains(MaterialProperty.ARMOR)) {
+
+                    if (properties.contains(MaterialProperty.HELMET)) {
                         equipment.setHelmet(item);
-                        break;
-                    case CHESTPLATE:
+                    }
+                    else if (properties.contains(MaterialProperty.CHESTPLATE)) {
                         equipment.setChestplate(item);
-                        break;
-                    case LEGGINGS:
+                    }
+                    else if (properties.contains(MaterialProperty.LEGGINGS)) {
                         equipment.setLeggings(item);
-                        break;
-                    case BOOTS:
+                    }
+                    else if (properties.contains(MaterialProperty.BOOTS)) {
                         equipment.setBoots(item);
-                        break;
-                    default:
-                        equipment.setItemInHand(item);
-                        break;
+                    }
                 }
+                else {
+                    equipment.setItemInHand(item);
+                }
+
             } else {
                 equipment.setItemInHand(item);
             }

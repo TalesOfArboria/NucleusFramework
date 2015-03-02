@@ -30,9 +30,10 @@ import com.jcwhatever.nucleus.events.kits.GiveKitEvent;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.extended.ArmorType;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
+import com.jcwhatever.nucleus.utils.materials.MaterialProperty;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -47,6 +48,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -371,32 +373,26 @@ public class Kit implements IKit {
         while (iterator.hasNext()) {
             ItemStack item = iterator.next();
 
-            ArmorType type = ArmorType.getType(item);
-            switch (type) {
-                case HELMET:
-                    if (helmet == null) {
-                        helmet = item;
-                        iterator.remove();
-                    }
-                    break;
-                case CHESTPLATE:
-                    if (chestplate == null) {
-                        chestplate = item;
-                        iterator.remove();
-                    }
-                    break;
-                case LEGGINGS:
-                    if (leggings == null) {
-                        leggings = item;
-                        iterator.remove();
-                    }
-                    break;
-                case BOOTS:
-                    if (boots == null) {
-                        boots = item;
-                        iterator.remove();
-                    }
-                    break;
+            Set<MaterialProperty> properties = Materials.getProperties(item.getType());
+
+            if (properties.contains(MaterialProperty.ARMOR)) {
+
+                if (properties.contains(MaterialProperty.HELMET)) {
+                    helmet = item;
+                    iterator.remove();
+                }
+                else if (properties.contains(MaterialProperty.CHESTPLATE)) {
+                    chestplate = item;
+                    iterator.remove();
+                }
+                else if (properties.contains(MaterialProperty.LEGGINGS)) {
+                    leggings = item;
+                    iterator.remove();
+                }
+                else if (properties.contains(MaterialProperty.BOOTS)) {
+                    boots = item;
+                    iterator.remove();
+                }
             }
 
             if (helmet != null && chestplate != null && leggings != null && boots != null)
@@ -462,38 +458,30 @@ public class Kit implements IKit {
         while (iterator.hasNext()) {
             ItemStack item = iterator.next();
 
-            switch (ArmorType.getType(item)) {
-                case HELMET:
-                    if (comparer.isMatch(item, _armor[0])) {
-                        setHelmet(null);
-                        armorFlags[0] = true;
-                        iterator.remove();
-                    }
-                    break;
+            Set<MaterialProperty> properties = Materials.getProperties(item.getType());
 
-                case CHESTPLATE:
-                    if (comparer.isMatch(item, _armor[1])) {
-                        setChestplate(null);
-                        armorFlags[1] = true;
-                        iterator.remove();
-                    }
-                    break;
+            if (properties.contains(MaterialProperty.ARMOR)) {
+                int index;
 
-                case LEGGINGS:
-                    if (comparer.isMatch(item, _armor[2])) {
-                        setLeggings(null);
-                        armorFlags[2] = true;
-                        iterator.remove();
-                    }
-                    break;
+                if (properties.contains(MaterialProperty.HELMET)) {
+                    setHelmet(null);
+                    index = 0;
+                } else if (properties.contains(MaterialProperty.CHESTPLATE)) {
+                    setChestplate(null);
+                    index = 1;
+                } else if (properties.contains(MaterialProperty.LEGGINGS)) {
+                    setLeggings(null);
+                    index = 2;
+                } else if (properties.contains(MaterialProperty.BOOTS)) {
+                    setBoots(null);
+                    index = 3;
+                }
+                else {
+                    continue;
+                }
 
-                case BOOTS:
-                    if (comparer.isMatch(item, _armor[3])) {
-                        setBoots(null);
-                        armorFlags[3] = true;
-                        iterator.remove();
-                    }
-                    break;
+                armorFlags[index] = true;
+                iterator.remove();
             }
 
             if (armorFlags[0] && armorFlags[1] && armorFlags[2] && armorFlags[3])

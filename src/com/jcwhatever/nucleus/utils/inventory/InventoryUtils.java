@@ -25,10 +25,11 @@
 
 package com.jcwhatever.nucleus.utils.inventory;
 
-import com.jcwhatever.nucleus.utils.extended.ArmorType;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.materials.MaterialProperty;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -40,6 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Provides static methods to help with inventories of {@link org.bukkit.inventory.ItemStack}'s.
@@ -413,19 +415,27 @@ public final class InventoryUtils {
         if (inventory instanceof PlayerInventory) {
             PlayerInventory playerInventory = (PlayerInventory)inventory;
 
-            ArmorType type = ArmorType.getType(itemStack);
+            Set<MaterialProperty> properties = Materials.getProperties(itemStack.getType());
 
-            if (type == ArmorType.HELMET && matcher.isMatch(playerInventory.getHelmet(), itemStack))
-                return true;
+            if (properties.contains(MaterialProperty.ARMOR)) {
 
-            if (type == ArmorType.CHESTPLATE && matcher.isMatch(playerInventory.getChestplate(), itemStack))
-                return true;
-
-            if (type == ArmorType.LEGGINGS && matcher.isMatch(playerInventory.getLeggings(), itemStack))
-                return true;
-
-            if (type == ArmorType.BOOTS && matcher.isMatch(playerInventory.getBoots(), itemStack))
-                return true;
+                if (properties.contains(MaterialProperty.HELMET) &&
+                        matcher.isMatch(playerInventory.getHelmet(), itemStack)) {
+                    return true;
+                }
+                else if (properties.contains(MaterialProperty.CHESTPLATE) &&
+                        matcher.isMatch(playerInventory.getChestplate(), itemStack)) {
+                    return true;
+                }
+                else if (properties.contains(MaterialProperty.LEGGINGS) &&
+                        matcher.isMatch(playerInventory.getLeggings(), itemStack)) {
+                    return true;
+                }
+                else if (properties.contains(MaterialProperty.BOOTS) &&
+                        matcher.isMatch(playerInventory.getBoots(), itemStack)) {
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -840,26 +850,34 @@ public final class InventoryUtils {
         if (qtyLeft > 0 && inventory instanceof PlayerInventory) {
             PlayerInventory playerInventory = (PlayerInventory)inventory;
 
-            ArmorType armorType = ArmorType.getType(itemStack);
+            Set<MaterialProperty> properties = Materials.getProperties(itemStack.getType());
 
-            if (armorType == ArmorType.HELMET && matcher.isMatch(playerInventory.getHelmet(), itemStack)) {
-                results.add(playerInventory.getHelmet());
-                playerInventory.setHelmet(null);
-            }
+            if (properties.contains(MaterialProperty.ARMOR)) {
 
-            if (armorType == ArmorType.CHESTPLATE && matcher.isMatch(playerInventory.getChestplate(), itemStack)) {
-                results.add(playerInventory.getChestplate());
-                playerInventory.setChestplate(null);
-            }
+                if (properties.contains(MaterialProperty.HELMET) &&
+                        matcher.isMatch(playerInventory.getHelmet(), itemStack)) {
 
-            if (armorType == ArmorType.LEGGINGS && matcher.isMatch(playerInventory.getLeggings(), itemStack)) {
-                results.add(playerInventory.getLeggings());
-                playerInventory.setLeggings(null);
-            }
+                    results.add(playerInventory.getHelmet());
+                    playerInventory.setHelmet(null);
+                }
+                else if (properties.contains(MaterialProperty.CHESTPLATE) &&
+                        matcher.isMatch(playerInventory.getChestplate(), itemStack)) {
 
-            if (armorType == ArmorType.BOOTS && matcher.isMatch(playerInventory.getBoots(), itemStack)) {
-                results.add(playerInventory.getBoots());
-                playerInventory.setLeggings(null);
+                    results.add(playerInventory.getChestplate());
+                    playerInventory.setChestplate(null);
+                }
+                else if (properties.contains(MaterialProperty.LEGGINGS) &&
+                        matcher.isMatch(playerInventory.getLeggings(), itemStack)) {
+
+                    results.add(playerInventory.getLeggings());
+                    playerInventory.setLeggings(null);
+                }
+                else if (properties.contains(MaterialProperty.BOOTS) &&
+                        matcher.isMatch(playerInventory.getBoots(), itemStack)) {
+
+                    results.add(playerInventory.getBoots());
+                    playerInventory.setLeggings(null);
+                }
             }
         }
 
@@ -1109,19 +1127,27 @@ public final class InventoryUtils {
         if (inventory instanceof PlayerInventory) {
             PlayerInventory playerInventory = (PlayerInventory)inventory;
 
-            ArmorType type = ArmorType.getType(itemStack);
+            Set<MaterialProperty> properties = Materials.getProperties(itemStack.getType());
 
-            if (type == ArmorType.HELMET && matcher.isMatch(playerInventory.getHelmet(), itemStack))
-                count++;
+            if (properties.contains(MaterialProperty.ARMOR)) {
 
-            if (type == ArmorType.CHESTPLATE && matcher.isMatch(playerInventory.getChestplate(), itemStack))
-                count++;
-
-            if (type == ArmorType.LEGGINGS && matcher.isMatch(playerInventory.getLeggings(), itemStack))
-                count++;
-
-            if (type == ArmorType.BOOTS && matcher.isMatch(playerInventory.getBoots(), itemStack))
-                count++;
+                if (properties.contains(MaterialProperty.HELMET) &&
+                        matcher.isMatch(playerInventory.getHelmet(), itemStack)) {
+                    count++;
+                }
+                else if (properties.contains(MaterialProperty.CHESTPLATE) &&
+                        matcher.isMatch(playerInventory.getChestplate(), itemStack)) {
+                    count++;
+                }
+                else if (properties.contains(MaterialProperty.LEGGINGS) &&
+                        matcher.isMatch(playerInventory.getLeggings(), itemStack)) {
+                    count++;
+                }
+                else if (properties.contains(MaterialProperty.BOOTS) &&
+                        matcher.isMatch(playerInventory.getBoots(), itemStack)) {
+                    count++;
+                }
+            }
         }
 
         return count;

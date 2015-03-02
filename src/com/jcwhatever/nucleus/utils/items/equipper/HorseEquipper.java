@@ -24,8 +24,9 @@
 
 package com.jcwhatever.nucleus.utils.items.equipper;
 
-import com.jcwhatever.nucleus.utils.extended.ArmorType;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.materials.MaterialProperty;
+import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -59,12 +60,13 @@ public class HorseEquipper implements IEntityEquipper {
             inventory.setSaddle(item);
         }
         else {
-            ArmorType armorType = ArmorType.getType(item);
 
-            if (armorType != ArmorType.HORSE_ARMOR)
+            if (Materials.hasProperty(material, MaterialProperty.HORSE_ARMOR)) {
+                inventory.setArmor(item);
+            }
+            else {
                 return false;
-
-            inventory.setArmor(item);
+            }
         }
 
         return true;
