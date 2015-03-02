@@ -41,7 +41,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Inventory builder.
+ * {@link org.bukkit.inventory.Inventory} builder.
  */
 public class InventoryBuilder {
 
@@ -94,7 +94,8 @@ public class InventoryBuilder {
      * Set the number of rows to show.
      *
      * @param rows  The number of rows.
-     * @return
+     *
+     * @return  Self for chaining.
      */
     public InventoryBuilder rows(int rows) {
         PreCon.positiveNumber(rows, "rows");
@@ -106,10 +107,17 @@ public class InventoryBuilder {
     }
 
     /**
-     * Set the layout template. Each character in a string represents an item stack slot.
-     * The string can be no more than 9 characters as this is the max column size. The
-     * character '0' denotes the slot is empty. Each string provided represents 1 row. No
-     * more than 6 strings can be provided as this is the max row size.
+     * Set the layout template.
+     *
+     * <p>Each character in a string represents an item stack slot.</p>
+     *
+     * <p>The string can be no more than 9 characters as this is the max column size.</p>
+     *
+     * <p>The character '0' denotes the slot is empty.</p>
+     *
+     * <p>Each string provided represents 1 row.</p>
+     *
+     * <p>No more than 6 strings can be provided as this is the max row size.</p>
      *
      * @param template  The layout template.
      *
@@ -141,9 +149,10 @@ public class InventoryBuilder {
     }
 
     /**
-     * Assign an {@link org.bukkit.inventory.ItemStack} to a layout character. When
-     * parsing the layout template, the {@link org.bukkit.inventory.ItemStack} will
-     * be placed into the inventory whenever the specified layout character is encountered.
+     * Assign an {@link org.bukkit.inventory.ItemStack} to a layout character.
+     *
+     * <p>When parsing the layout template, the {@link org.bukkit.inventory.ItemStack} will
+     * be placed into the inventory whenever the specified layout character is encountered.</p>
      *
      * @param layoutChar  The layout character.
      * @param itemStack   The {@link org.bukkit.inventory.ItemStack} to assign.
@@ -161,9 +170,11 @@ public class InventoryBuilder {
     }
 
     /**
-     * Set the inventory items. If no template is specified, the
+     * Set the inventory items.
+     *
+     * <p>If no template is specified, the
      * items will be added in linear order until there is no more room or there
-     * are no more items left.
+     * are no more items left.</p>
      *
      * <p>If a layout template is used, these items are added in linear order
      * whenever a character in the template is not registered for a specific
@@ -182,9 +193,10 @@ public class InventoryBuilder {
     }
 
     /**
-     * Set inventory items. If no template is specified, the
-     * items will be added in linear order until there is no more room or there
-     * are no more items left.
+     * Set inventory items.
+     *
+     * <p>If no template is specified, the items will be added in linear order
+     * until there is no more room or there are no more items left.</p>
      *
      * <p>If a layout template is used, these items are added in linear order
      * whenever a character in the template is not registered for a specific

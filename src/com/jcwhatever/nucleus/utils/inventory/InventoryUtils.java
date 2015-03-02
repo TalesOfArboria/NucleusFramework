@@ -595,7 +595,6 @@ public final class InventoryUtils {
         return items.toArray(new ItemStack[items.size()]);
     }
 
-
     /**
      * Remove specified items from the the {@link org.bukkit.inventory.ItemStack} array.
      *

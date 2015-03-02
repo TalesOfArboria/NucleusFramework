@@ -40,14 +40,14 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Takes a snapshot of an chest.
+ * Takes a snapshot of an {@link org.bukkit.inventory.Inventory}.
  */
 public class InventorySnapshot {
 
-    private Map<MatchableItem, Item> _itemMap = new HashMap<MatchableItem, Item>(6 * 9);
-    private ItemStack[] _items;
-    private ItemStack[] _snapshot;
-    private ItemStackMatcher _comparer;
+    private final Map<MatchableItem, Item> _itemMap = new HashMap<MatchableItem, Item>(6 * 9);
+    private final ItemStack[] _items;
+    private final ItemStack[] _snapshot;
+    private final ItemStackMatcher _comparer;
 
     /**
      * Constructor.
@@ -57,9 +57,7 @@ public class InventorySnapshot {
      * @param inventory  The chest to snapshot.
      */
     public InventorySnapshot(Inventory inventory) {
-        PreCon.notNull(inventory);
-
-        init(inventory, ItemStackMatcher.getDefault());
+        this(inventory, ItemStackMatcher.getDefault());
     }
 
     /**
@@ -72,7 +70,33 @@ public class InventorySnapshot {
         PreCon.notNull(inventory);
         PreCon.notNull(matcher );
 
-        init(inventory, matcher );
+        ItemStack[] itemStacks = inventory.getContents();
+        List<ItemStack> items = new ArrayList<ItemStack>(itemStacks.length);
+        _snapshot = new ItemStack[itemStacks.length];
+        _comparer = matcher ;
+
+        for (int i=0; i < itemStacks.length; i++) {
+            ItemStack itemStack = itemStacks[i];
+
+            if (itemStack == null || itemStack.getType() == Material.AIR)
+                continue;
+
+            ItemStack clone = itemStack.clone();
+            _snapshot[i] = clone;
+
+            Item item = _itemMap.get(new Item(clone).matchableItem);
+            if (item != null) {
+                item.qty += clone.getAmount();
+            }
+            else {
+                item = new Item(clone);
+                _itemMap.put(item.matchableItem, item);
+            }
+
+            items.add(clone);
+        }
+
+        _items = items.toArray(new ItemStack[items.size()]);
     }
 
     /**
@@ -109,12 +133,12 @@ public class InventorySnapshot {
      * Get the amount of items in the snapshot that
      * match the specified wrapped item.
      *
-     * @param wrapper  The wrapper with the item to check.
+     * @param matchable  The wrapper with the item to check.
      */
-    public int getAmount (MatchableItem wrapper) {
-        PreCon.notNull(wrapper);
+    public int getAmount(MatchableItem matchable) {
+        PreCon.notNull(matchable);
 
-        Item item = _itemMap.get(wrapper);
+        Item item = _itemMap.get(matchable);
 
         if (item == null)
             return 0;
@@ -125,7 +149,7 @@ public class InventorySnapshot {
     /**
      * Get all {@link MatchableItem}'s created from the snapshot.
      */
-    public List<MatchableItem> getWrappers () {
+    public List<MatchableItem> getMatchable() {
         return new ArrayList<MatchableItem>(_itemMap.keySet());
     }
 
@@ -135,47 +159,15 @@ public class InventorySnapshot {
      * <p>Does not return the snapshot, just the consolidated items
      * found in it.</p>
      */
-    public ItemStack[] getItemStacks () {
+    public ItemStack[] getItemStacks() {
         return _items.clone();
     }
 
     /**
-     * Get the snapshot {@link ItemStack} array.
+     * Get the snapshot {@link org.bukkit.inventory.ItemStack} array.
      */
     public ItemStack[] getSnapshot() {
         return _snapshot.clone();
-    }
-
-    // init, take snapshot
-    private void init(Inventory inventory, ItemStackMatcher matcher ) {
-
-        ItemStack[] itemStacks = inventory.getContents();
-        List<ItemStack> items = new ArrayList<ItemStack>(itemStacks.length);
-        _snapshot = new ItemStack[itemStacks.length];
-        _comparer = matcher ;
-
-        for (int i=0; i < itemStacks.length; i++) {
-            ItemStack itemStack = itemStacks[i];
-
-            if (itemStack == null || itemStack.getType() == Material.AIR)
-                continue;
-
-            ItemStack clone = itemStack.clone();
-            _snapshot[i] = clone;
-
-            Item item = _itemMap.get(new Item(clone).matchableItem);
-            if (item != null) {
-                item.qty += clone.getAmount();
-            }
-            else {
-                item = new Item(clone);
-                _itemMap.put(item.matchableItem, item);
-            }
-
-            items.add(clone);
-        }
-
-        _items = items.toArray(new ItemStack[items.size()]);
     }
 
     private class Item {
