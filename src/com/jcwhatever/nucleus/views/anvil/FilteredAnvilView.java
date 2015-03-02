@@ -133,7 +133,7 @@ public class FilteredAnvilView extends AnvilView {
             if (filter == null)
                 return;
 
-            if (!filter.isValidItem(repaired)) {
+            if (!filter.isValid(repaired)) {
                 InventoryView invView = current.getInventoryView();
                 if (invView != null) {
                     ItemStack stack = repaired.clone();

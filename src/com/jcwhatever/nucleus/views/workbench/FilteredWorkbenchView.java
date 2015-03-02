@@ -121,7 +121,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
             if (filter == null)
                 return;
 
-            if (!filter.isValidItem(result)) {
+            if (!filter.isValid(result)) {
                 InventoryView invView = event.getView();
                 if (invView != null) {
                     ItemStack stack = result.clone();
@@ -144,7 +144,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
 
             ItemStack result = event.getRecipe().getResult();
 
-            if (!filter.isValidItem(result)) {
+            if (!filter.isValid(result)) {
                 tellNoCraftMessage(workbench);
                 event.setCancelled(true);
             }

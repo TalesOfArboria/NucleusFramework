@@ -53,13 +53,13 @@ public class ItemFilterManager implements IPluginOwned {
 
     private final Plugin _plugin;
     private final IDataNode _dataNode;
+    private final ItemStackMatcher _matcher;
+    private final Map<MatchableItem, MatchableItem> _filterItems = new HashMap<>(6 * 9);
 
     private FilterPolicy _filter = FilterPolicy.WHITELIST;
-    private ItemStackMatcher _matcher;
-    private final Map<MatchableItem, MatchableItem> _filterItems = new HashMap<MatchableItem, MatchableItem>(6 * 9);
 
     /**
-     * Validation filtering mode
+     * Validation filtering policy.
      */
     public enum FilterPolicy {
         WHITELIST,
@@ -85,66 +85,42 @@ public class ItemFilterManager implements IPluginOwned {
     /**
      * Constructor.
      *
-     * @param plugin    Owning plugin
+     * <p>Uses default {@link ItemStackMatcher}.</p>
+     *
+     * @param plugin    The owning plugin.
      * @param dataNode  Data node to save and load settings.
      */
     public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode) {
-        PreCon.notNull(plugin);
-
-        _plugin = plugin;
-        _dataNode = dataNode;
-        _matcher = ItemStackMatcher.getDefault();
-
-        loadSettings();
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param plugin             The owning plugin
-     * @param dataNode           Data node to save and load settings.
-     * @param matchOperations    {@link ItemStackMatcher} bit matcher operations to use to match items
-     */
-    public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode, byte matchOperations) {
-        PreCon.notNull(plugin);
-
-        _plugin = plugin;
-        _dataNode = dataNode;
-        _matcher = new ItemStackMatcher(matchOperations);
-
-        loadSettings();
+        this(plugin, dataNode, ItemStackMatcher.getDefault());
     }
 
     /**
      * Constructor.
      *
      * @param plugin    The owning plugin
-     * @param dataNode  Data node to save and load settings.
+     * @param dataNode  The data node to save and load settings from.
      * @param matcher   The {@link ItemStackMatcher} to use to match items.
      */
     public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode, ItemStackMatcher matcher) {
         PreCon.notNull(plugin);
-        PreCon.notNull(matcher );
+        PreCon.notNull(matcher);
 
         _plugin = plugin;
         _dataNode = dataNode;
         _matcher = matcher ;
 
-        loadSettings();
+        load();
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
     }
 
     /**
-     * Get the filter mode used for validating items.
+     * Get the filter policy used for validating items.
      */
-    public FilterPolicy getFilterPolicy() {
+    public FilterPolicy getPolicy() {
         return _filter;
     }
 
@@ -153,23 +129,15 @@ public class ItemFilterManager implements IPluginOwned {
      *
      * @param filter  The filter policy.
      */
-    public void setMode(FilterPolicy filter) {
+    public void setPolicy(FilterPolicy filter) {
         PreCon.notNull(filter);
 
         _filter = filter;
 
         if (_dataNode != null) {
-            _dataNode.set("mode", filter);
+            _dataNode.set("policy", filter);
             _dataNode.save();
         }
-    }
-
-
-    /**
-     * Get the compare operations bit flags.
-     */
-    public byte getCompareOperations() {
-        return _matcher.getMatcherOperations();
     }
 
     /**
@@ -180,13 +148,14 @@ public class ItemFilterManager implements IPluginOwned {
     }
 
     /**
-     * Determine if the specified {code ItemStack} is valid.
-     * Checks to see if the collection contains a matching {@link org.bukkit.inventory.ItemStack} as
-     * determined by the collections {@link ItemStackMatcher} and the filter mode.
+     * Determine if the specified {@link org.bukkit.inventory.ItemStack} is valid.
+     *
+     * <p>Checks to see if the collection contains a matching {@link org.bukkit.inventory.ItemStack} as
+     * determined by the collections {@link ItemStackMatcher} and the filter policy.</p>
      *
      * @param item  The item to check.
      */
-    public boolean isValidItem(ItemStack item) {
+    public boolean isValid(ItemStack item) {
         PreCon.notNull(item);
 
         MatchableItem wrapper = _filterItems.get(new MatchableItem(item, _matcher));
@@ -197,9 +166,9 @@ public class ItemFilterManager implements IPluginOwned {
     }
 
     /**
-     * Get a new set of wrapped items from the collection.
+     * Get the set of matchable items from the collection.
      */
-    public Set<MatchableItem> getItems() {
+    public Set<MatchableItem> getMatchable() {
         return CollectionUtils.unmodifiableSet(_filterItems.keySet());
     }
 
@@ -208,12 +177,12 @@ public class ItemFilterManager implements IPluginOwned {
      *
      * @param itemStack  The item to add.
      */
-    public boolean addItem(ItemStack itemStack) {
+    public boolean add(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
         MatchableItem wrapper = new MatchableItem(itemStack, _matcher);
         if (_filterItems.put(wrapper, wrapper) != null) {
-            saveFilterItems();
+            save();
             return true;
         }
         return false;
@@ -224,7 +193,7 @@ public class ItemFilterManager implements IPluginOwned {
      *
      * @param itemStacks  The items to add.
      */
-    public boolean addItems(ItemStack[] itemStacks) {
+    public boolean add(ItemStack[] itemStacks) {
         PreCon.notNull(itemStacks);
 
         for (ItemStack stack : itemStacks) {
@@ -232,7 +201,7 @@ public class ItemFilterManager implements IPluginOwned {
             _filterItems.put(wrapper, wrapper);
         }
 
-        saveFilterItems();
+        save();
 
         return true;
     }
@@ -242,11 +211,11 @@ public class ItemFilterManager implements IPluginOwned {
      *
      * @param itemStack  The item to remove.
      */
-    public boolean removeItem(ItemStack itemStack) {
+    public boolean remove(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
         if (_filterItems.remove(new MatchableItem(itemStack, _matcher)) != null) {
-            saveFilterItems();
+            save();
             return true;
         }
         return false;
@@ -257,14 +226,14 @@ public class ItemFilterManager implements IPluginOwned {
      *
      * @param itemStacks  The items to remove.
      */
-    public boolean removeItems(ItemStack[] itemStacks) {
+    public boolean remove(ItemStack[] itemStacks) {
         PreCon.notNull(itemStacks);
 
         for (ItemStack stack : itemStacks) {
             _filterItems.remove(new MatchableItem(stack, _matcher));
         }
 
-        saveFilterItems();
+        save();
 
         return true;
     }
@@ -272,7 +241,7 @@ public class ItemFilterManager implements IPluginOwned {
     /**
      * Remove all items from the collection.
      */
-    public boolean clearItems() {
+    public boolean clear() {
         _filterItems.clear();
 
         if (_dataNode != null) {
@@ -282,8 +251,7 @@ public class ItemFilterManager implements IPluginOwned {
         return true;
     }
 
-
-    private void saveFilterItems() {
+    private void save() {
         if (_dataNode == null)
             return;
 
@@ -299,7 +267,7 @@ public class ItemFilterManager implements IPluginOwned {
         _dataNode.save();
     }
 
-    private void loadSettings() {
+    private void load() {
         if (_dataNode == null)
             return;
 
@@ -315,6 +283,4 @@ public class ItemFilterManager implements IPluginOwned {
             }
         }
     }
-
-
 }
