@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.utils.items.serializer.ItemStackDeserializer;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.utils.materials.Materials;
+import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Color;
@@ -75,6 +76,57 @@ public final class ItemStackUtils {
          * the display name is not set.
          */
         OPTIONAL
+    }
+
+    /**
+     * Convert an object to an {@link org.bukkit.inventory.ItemStack} if possible.
+     *
+     * <p>The following are valid arguments that can be converted:</p>
+     * <ul>
+     *     <li>{@link org.bukkit.inventory.ItemStack}</li>
+     *     <li>{@link org.bukkit.Material}</li>
+     *     <li>{@link org.bukkit.material.MaterialData}</li>
+     *     <li>The name or alternate name of a material. Valid names
+     *     are from {@link NamedMaterialData}.</li>
+     *     <li>A serialized item stack string.</li>
+     * </ul>
+     *
+     * @param object  The object to retrieve an {@link org.bukkit.inventory.ItemStack} from.
+     *
+     * @return  An {@link org.bukkit.inventory.ItemStack} or null if failed.
+     */
+    public static ItemStack getItemStack(Object object) {
+
+        if (object instanceof ItemStack) {
+            return (ItemStack) object;
+        }
+        else if (object instanceof String) {
+
+            String str = (String)object;
+
+            MaterialData data = NamedMaterialData.get(str);
+            if (data != null)
+                return data.toItemStack();
+
+            try {
+                ItemStack[] itemStacks = parse(str);
+
+                if (itemStacks == null || itemStacks.length == 0)
+                    return null;
+
+                return itemStacks[0];
+            } catch (InvalidItemStackStringException e) {
+                return null;
+            }
+        }
+        else if (object instanceof Material) {
+            return new ItemStack((Material)object);
+        }
+        else if (object instanceof MaterialData) {
+            return ((MaterialData)object).toItemStack();
+        }
+
+        return null;
     }
 
     /**
