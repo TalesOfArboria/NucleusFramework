@@ -71,6 +71,10 @@ public abstract class MenuView extends ChestView {
      * Get the currently registered {@link MenuItem}'s.
      */
     public List<MenuItem> getMenuItems() {
+
+        if (_inventory == null)
+            return CollectionUtils.unmodifiableList(MenuItem.class);
+
         return CollectionUtils.unmodifiableList(_inventory.getMenuItems());
     }
 
