@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.views.menu;
 
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -88,14 +90,25 @@ public class MenuItemBuilder {
     /**
      * Constructor.
      *
-     * @param materialName  The name of the material.
+     * @param materialName  The name of the material or serialized item stack string.
      */
     public MenuItemBuilder(String materialName) {
         PreCon.notNullOrEmpty(materialName);
 
         _materialData = NamedMaterialData.get(materialName);
-        if (_materialData == null)
+        if (_materialData == null) {
+            try {
+                // try parsing serialized item stack
+                ItemStack[] itemStacks = ItemStackUtils.parse(materialName);
+                if (itemStacks != null && itemStacks.length == 1) {
+                    _itemStack = itemStacks[0];
+                    return;
+                }
+
+            } catch (InvalidItemStackStringException ignore) {}
+
             throw new RuntimeException(materialName + " is not a recognized material.");
+        }
     }
 
     /**
