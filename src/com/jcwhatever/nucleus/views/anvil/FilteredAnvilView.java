@@ -120,7 +120,7 @@ public class FilteredAnvilView extends AnvilView {
             if (session == null)
                 return;
 
-            View current = session.getCurrentView();
+            View current = session.getCurrent();
             if (current == null)
                 return;
 

@@ -85,7 +85,7 @@ public class PaginatorViewTest extends AbstractViewTest {
         assertEquals(2, view.getSelectedPage());
 
         // make sure paginator closes itself when page is selected
-        assertEquals(null, _session.getCurrentView());
+        assertEquals(null, _session.getCurrent());
     }
 
     @Nullable

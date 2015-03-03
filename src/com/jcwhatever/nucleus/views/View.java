@@ -168,7 +168,7 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     boolean close(ViewCloseReason reason) {
         PreCon.notNull(reason);
 
-        if (_session.getCurrentView() != this)
+        if (_session.getCurrent() != this)
             return false;
 
         _recentCloseReason = reason;

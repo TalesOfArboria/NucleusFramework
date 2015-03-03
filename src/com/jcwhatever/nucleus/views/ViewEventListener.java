@@ -94,7 +94,7 @@ class ViewEventListener extends EventListener {
         }
 
         // get the current session view.
-        View currentView = session.getCurrentView();
+        View currentView = session.getCurrent();
         if (currentView == null)
             throw new AssertionError();
 
@@ -103,14 +103,14 @@ class ViewEventListener extends EventListener {
             // Player pressed escape to go back to the previous view.
             case ESCAPE:
                 session.escaped();
-                if (session.getCurrentView() != null) {
-                    openView(ViewOpenReason.PREV, session.getCurrentView());
+                if (session.getCurrent() != null) {
+                    openView(ViewOpenReason.PREV, session.getCurrent());
                 }
                 break;
 
             // Called to go back to the previous view.
             case PREV:
-                View prevView = session.getPrevView();
+                View prevView = session.getPrev();
                 if (prevView != null) {
                     openView(ViewOpenReason.PREV, prevView);
                 }
@@ -123,7 +123,7 @@ class ViewEventListener extends EventListener {
 
             // Closing the current view to open the next view.
             case NEXT:
-                View nextView = session.getNextView();
+                View nextView = session.getNext();
                 if (nextView != null) {
                     openView(ViewOpenReason.NEXT, nextView);
                 }

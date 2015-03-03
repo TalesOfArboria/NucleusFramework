@@ -87,7 +87,7 @@ class ChestEventListener extends EventListener {
             return;
 
         // get current chest view instance
-        View current = session.getCurrentView();
+        View current = session.getCurrent();
         if (!(current instanceof ChestView))
             return;
 

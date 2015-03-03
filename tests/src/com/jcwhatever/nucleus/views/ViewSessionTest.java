@@ -56,7 +56,7 @@ public class ViewSessionTest {
     @Test
     public void testPreviousWithNoView() {
 
-        assertEquals(null, _session.getCurrentView());
+        assertEquals(null, _session.getCurrent());
 
         try {
             _session.previous();
@@ -75,9 +75,9 @@ public class ViewSessionTest {
         WorkbenchView view2 = new WorkbenchView(plugin);
 
         // baseline test: No views have been opened
-        assertEquals(null, _session.getCurrentView());
-        assertEquals(null, _session.getPrevView());
-        assertEquals(null, _session.getNextView());
+        assertEquals(null, _session.getCurrent());
+        assertEquals(null, _session.getPrev());
+        assertEquals(null, _session.getNext());
 
         // show view1 to player
         _session.next(view1);
@@ -86,19 +86,19 @@ public class ViewSessionTest {
         // make sure player sees view1
         assertEquals(view1.getInventoryView(), player.getOpenInventory());
 
-        assertEquals(view1, _session.getCurrentView()); // make sure view1 is the current reported view
-        assertEquals(null, _session.getPrevView());
-        assertEquals(null, _session.getNextView());
-        assertEquals(view1, _session.getLastView()); // make sure view1 is the reported last/final view
+        assertEquals(view1, _session.getCurrent()); // make sure view1 is the current reported view
+        assertEquals(null, _session.getPrev());
+        assertEquals(null, _session.getNext());
+        assertEquals(view1, _session.getLast()); // make sure view1 is the reported last/final view
 
         // show view 2 to player
         _session.next(view2);
         BukkitTester.pause(2);
 
-        assertEquals(view2, _session.getCurrentView()); // make sure view2 is the current reported view
-        assertEquals(view1, _session.getPrevView()); // make sure view1 is the reported previous view
-        assertEquals(null, _session.getNextView());
-        assertEquals(view2, _session.getLastView()); // make sure view2 is the reported last/final view
+        assertEquals(view2, _session.getCurrent()); // make sure view2 is the current reported view
+        assertEquals(view1, _session.getPrev()); // make sure view1 is the reported previous view
+        assertEquals(null, _session.getNext());
+        assertEquals(view2, _session.getLast()); // make sure view2 is the reported last/final view
     }
 
     /**
@@ -117,19 +117,19 @@ public class ViewSessionTest {
         BukkitTester.pause(4);
 
         // baseline test: Reported views should be correct
-        assertEquals(view2, _session.getCurrentView());
-        assertEquals(view1, _session.getPrevView());
-        assertEquals(null, _session.getNextView());
-        assertEquals(view2, _session.getLastView());
+        assertEquals(view2, _session.getCurrent());
+        assertEquals(view1, _session.getPrev());
+        assertEquals(null, _session.getNext());
+        assertEquals(view2, _session.getLast());
 
         // close view2 and show view1 to the player
         _session.previous();
         BukkitTester.pause(2);
 
-        assertEquals(view1, _session.getCurrentView()); // make sure view1 is the current reported view
-        assertEquals(null, _session.getPrevView());
-        assertEquals(view2, _session.getNextView()); // make sure view2 is the reported next view
-        assertEquals(view2, _session.getLastView()); // make sure view2 is the reported last/final view
+        assertEquals(view1, _session.getCurrent()); // make sure view1 is the current reported view
+        assertEquals(null, _session.getPrev());
+        assertEquals(view2, _session.getNext()); // make sure view2 is the reported next view
+        assertEquals(view2, _session.getLast()); // make sure view2 is the reported last/final view
 
         // close view1 (ends/disposes session)
         _session.previous();
@@ -138,9 +138,9 @@ public class ViewSessionTest {
         // session should be disposed from closing first view,
         // all values cleared.
         assertEquals(true, _session.isDisposed());
-        assertEquals(null, _session.getCurrentView());
-        assertEquals(null, _session.getPrevView());
-        assertEquals(null, _session.getNextView());
+        assertEquals(null, _session.getCurrent());
+        assertEquals(null, _session.getPrev());
+        assertEquals(null, _session.getNext());
     }
 
     /**
@@ -156,20 +156,20 @@ public class ViewSessionTest {
         BukkitTester.pause(2);
 
         // baseline test : Reported views should be correct
-        assertEquals(view1, _session.getCurrentView());
-        assertEquals(null, _session.getPrevView());
-        assertEquals(null, _session.getNextView());
-        assertEquals(view1, _session.getLastView());
+        assertEquals(view1, _session.getCurrent());
+        assertEquals(null, _session.getPrev());
+        assertEquals(null, _session.getNext());
+        assertEquals(view1, _session.getLast());
 
         // refresh the view (Close and re-open)
         _session.refresh();
         BukkitTester.pause(2);
 
         // reported views should be the same as before
-        assertEquals(view1, _session.getCurrentView());
-        assertEquals(null, _session.getPrevView());
-        assertEquals(null, _session.getNextView());
-        assertEquals(view1, _session.getLastView());
+        assertEquals(view1, _session.getCurrent());
+        assertEquals(null, _session.getPrev());
+        assertEquals(null, _session.getNext());
+        assertEquals(view1, _session.getLast());
     }
 
     /**

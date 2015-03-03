@@ -134,12 +134,33 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     }
 
     /**
+     * Determine if the view session contains the specified
+     * {@link View}.
+     *
+     * @param view  The view to check.
+     */
+    public boolean contains(View view) {
+        PreCon.notNull(view);
+
+        ViewContainer container = _first;
+        while (container != null) {
+
+            if (container.view.equals(view))
+                return true;
+
+            container = container.next;
+        }
+
+        return false;
+    }
+
+    /**
      * Get the view instance the player is currently looking at.
      *
      * @return  Null if the player is not looking at any views in the session.
      */
     @Nullable
-    public View getCurrentView() {
+    public View getCurrent() {
         if (_current == null)
             return null;
 
@@ -153,7 +174,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * current view.
      */
     @Nullable
-    public View getPrevView() {
+    public View getPrev() {
         if (_current == null || _current.prev == null)
             return null;
 
@@ -167,7 +188,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * no current view.
      */
     @Nullable
-    public View getNextView() {
+    public View getNext() {
         if (_current == null || _current.next == null)
             return null;
 
@@ -180,7 +201,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * @return Null if there are no views.
      */
     @Nullable
-    public View getFirstView() {
+    public View getFirst() {
 
         if (_current == null)
             return null;
@@ -200,7 +221,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * @return Null if there are no views.
      */
     @Nullable
-    public View getLastView() {
+    public View getLast() {
 
         if (_current == null)
             return null;
@@ -245,10 +266,10 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
                     if (_current == null) {
                         dispose();
                     }
-                    agent.success(getCurrentView());
+                    agent.success(getCurrent());
                 }
                 else {
-                    agent.cancel(getCurrentView());
+                    agent.cancel(getCurrent());
                 }
             }
         });
@@ -304,7 +325,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
                 @Override
                 public void run() {
                     if (_current.view.open(ViewOpenReason.FIRST)) {
-                        agent.success(getCurrentView());
+                        agent.success(getCurrent());
                     }
                     else {
                         _first = null;
@@ -329,11 +350,11 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
                     if (_current.view.close(ViewCloseReason.NEXT)) {
 
                         _current = current;
-                        agent.success(getCurrentView());
+                        agent.success(getCurrent());
                     }
                     else {
                         prev.next = origNext;
-                        agent.cancel(getCurrentView());
+                        agent.cancel(getCurrent());
                     }
                 }
             });
@@ -358,7 +379,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
 
         final FutureResultAgent<View> agent = new FutureResultAgent<>();
 
-        final View view = getCurrentView();
+        final View view = getCurrent();
         if (view == null) {
             return agent.cancel(null, "No current view to refresh.");
         }
