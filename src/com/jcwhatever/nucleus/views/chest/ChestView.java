@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.views.chest;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
@@ -123,7 +124,8 @@ public abstract class ChestView extends View {
         if (_inventory.getType() != getInventoryType())
             throw new RuntimeException("Incorrect inventory type.");
 
-        _inventoryView = getPlayer().openInventory(_inventory);
+        _inventoryView = getPlayer().openInventory(
+                Utils.unwrap(_inventory, Inventory.class));
 
         onShow(reason);
 

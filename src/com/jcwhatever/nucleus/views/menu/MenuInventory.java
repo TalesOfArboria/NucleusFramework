@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.views.menu;
 
+import com.jcwhatever.nucleus.mixins.IWrapper;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -40,9 +42,14 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * An inventory for a menu.
+ * An {@link org.bukkit.inventory.Inventory} wrapper.
+ *
+ * <p>Note that CraftBukkit methods that accept {@link org.bukkit.inventory.Inventory}
+ * instances cast them to CraftInventory. If an instance to a Bukkit method, use
+ * {@link com.jcwhatever.nucleus.utils.Utils#unwrap} or invoke {@link #getHandle} to
+ * get the CraftInventory instance.</p>
  */
-public class MenuInventory implements Inventory {
+public class MenuInventory implements Inventory, IWrapper<Inventory> {
 
     private final Map<Integer, MenuItem> _menuItemMap;
     private final Inventory _inventory;
@@ -54,7 +61,15 @@ public class MenuInventory implements Inventory {
                 : Bukkit.createInventory(inventoryHolder, slots);
 
         _menuItemMap = new HashMap<>(slots);
+    }
 
+    /**
+     * Get encapsulated {@link org.bukkit.inventory.Inventory}
+     * which is a CraftBukkit instance.
+     */
+    @Override
+    public Inventory getHandle() {
+        return _inventory;
     }
 
     /**
