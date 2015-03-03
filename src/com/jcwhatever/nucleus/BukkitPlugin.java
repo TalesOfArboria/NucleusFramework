@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.internal.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.jail.InternalJailManager;
+import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
@@ -175,6 +176,8 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _eventManager = new InternalEventManager(this);
         _scriptApiRepo = new InternalScriptApiRepo();
+
+        InternalLeashTracker.registerListener();
 
         _scriptEngineManager = new NucleusScriptEngineManager();
         _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);

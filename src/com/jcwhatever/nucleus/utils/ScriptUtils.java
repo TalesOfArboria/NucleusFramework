@@ -43,6 +43,7 @@ import com.jcwhatever.nucleus.scripting.api.ScriptApiRand;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiScheduler;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiSounds;
 import com.jcwhatever.nucleus.scripting.api.ScriptApiTitles;
+import com.jcwhatever.nucleus.scripting.api.views.ScriptApiMenuView;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
@@ -101,6 +102,7 @@ public final class ScriptUtils {
         api.add(new ScriptApiTitles(plugin));
         api.add(new ScriptApiActionBar(plugin));
         api.add(new ScriptApiNpc(plugin));
+        api.add(new ScriptApiMenuView(plugin));
 
         return api;
     }
