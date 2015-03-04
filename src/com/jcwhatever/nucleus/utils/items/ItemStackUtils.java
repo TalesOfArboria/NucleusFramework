@@ -97,36 +97,40 @@ public final class ItemStackUtils {
      */
     public static ItemStack getItemStack(Object object) {
 
+        ItemStack result = null;
+
         if (object instanceof ItemStack) {
-            return (ItemStack) object;
+            result = (ItemStack) object;
         }
         else if (object instanceof String) {
 
             String str = (String)object;
 
             MaterialData data = NamedMaterialData.get(str);
-            if (data != null)
-                return data.toItemStack();
+            if (data != null) {
+                result = data.toItemStack();
+            }
+            else {
+                try {
+                    ItemStack[] itemStacks = parse(str);
 
-            try {
-                ItemStack[] itemStacks = parse(str);
-
-                if (itemStacks == null || itemStacks.length == 0)
-                    return null;
-
-                return itemStacks[0];
-            } catch (InvalidItemStackStringException e) {
-                return null;
+                    if (itemStacks != null && itemStacks.length > 0)
+                        result = itemStacks[0];
+                } catch (InvalidItemStackStringException ignore) {}
             }
         }
         else if (object instanceof Material) {
-            return new ItemStack((Material)object);
+            result = new ItemStack((Material)object);
         }
         else if (object instanceof MaterialData) {
-            return ((MaterialData)object).toItemStack();
+            result = ((MaterialData)object).toItemStack();
         }
 
-        return null;
+        if (result != null && result.getAmount() <= 0)  {
+            result.setAmount(1);
+        }
+
+        return result;
     }
 
     /**
