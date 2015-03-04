@@ -51,7 +51,7 @@ public class ScriptApiInclude extends NucleusScriptApi {
     private final File _includeFolder;
 
     /**
-     * Constructor. Automatically adds variable to script.
+     * Constructor.
      *
      * @param plugin The owning plugin
      */

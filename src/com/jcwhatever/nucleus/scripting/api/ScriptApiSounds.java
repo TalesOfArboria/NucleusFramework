@@ -50,7 +50,7 @@ public class ScriptApiSounds extends NucleusScriptApi {
     private ApiObject _api;
 
     /**
-     * Constructor. Automatically adds variable to script.
+     * Constructor.
      *
      * @param plugin The owning plugin
      */

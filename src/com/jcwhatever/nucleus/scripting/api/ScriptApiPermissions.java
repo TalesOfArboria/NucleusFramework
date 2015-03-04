@@ -45,7 +45,7 @@ public class ScriptApiPermissions extends NucleusScriptApi {
     private static ApiObject _api;
 
     /**
-     * Constructor. Automatically adds variable to script.
+     * Constructor.
      *
      * @param plugin The owning plugin
      */

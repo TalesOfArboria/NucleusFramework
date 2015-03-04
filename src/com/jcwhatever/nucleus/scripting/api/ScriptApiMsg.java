@@ -49,7 +49,7 @@ public class ScriptApiMsg extends NucleusScriptApi {
     private final IMessenger _messenger;
 
     /**
-     * Constructor. Automatically adds variable to script.
+     * Constructor.
      *
      * @param plugin The owning plugin
      */
