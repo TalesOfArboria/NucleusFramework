@@ -417,6 +417,16 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
         ViewEventListener.unregister(this);
         _sessionMap.remove(_player.getUniqueId());
 
+        if (_current != null) {
+
+            ViewContainer current = _current;
+
+            while (current != null) {
+                current.view.onDispose();
+                current = current.prev;
+            }
+        }
+
         _player.closeInventory();
 
         _isDisposed = true;

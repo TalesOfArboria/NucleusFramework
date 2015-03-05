@@ -209,4 +209,9 @@ public abstract class View implements IPluginOwned, IPlayerReference {
      * @param reason  The reason the view was closed.
      */
     protected void onClose(ViewCloseReason reason) {}
+
+    /**
+     * Invoked when the {@link ViewSession} is disposed.
+     */
+    protected void onDispose() {}
 }

@@ -141,8 +141,13 @@ public abstract class ChestView extends View {
         }
     }
 
+    @Override
+    protected void onDispose() {
+        ChestEventListener.unregister(this);
+    }
+
     /**
-     * Called when the view is being opened but before the inventory
+     * Invoked when the view is being opened but before the inventory
      * is created.
      *
      * @param reason  The reason the view is being opened.
@@ -159,25 +164,24 @@ public abstract class ChestView extends View {
     protected abstract void onShow(ViewOpenReason reason);
 
     /**
-     * Called to get an {@link org.bukkit.inventory.Inventory} instance used to
+     * Invoked to get an {@link org.bukkit.inventory.Inventory} instance used to
      * open an inventory view to the player. Only called
      * if the {@link org.bukkit.inventory.Inventory} is not set in the constructor.
      */
     protected abstract Inventory createInventory();
 
     /**
-     * Called when an item is placed in an chest slot.
+     * Invoked when an item is placed in an chest slot.
      */
     protected abstract ChestEventAction onItemsPlaced (ChestEventInfo eventInfo);
 
     /**
-     * Called when an item is picked up from an chest slot.
+     * Invoked when an item is picked up from an chest slot.
      */
     protected abstract ChestEventAction onItemsPickup (ChestEventInfo eventInfo);
 
     /**
-     * Called when an item is dropped outside the chest view.
+     * Invoked when an item is dropped outside the chest view.
      */
     protected abstract ChestEventAction onItemsDropped (ChestEventInfo eventInfo);
-
 }
