@@ -39,7 +39,7 @@ import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
 
 import org.bukkit.plugin.Plugin;
 
@@ -88,7 +88,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     private static final int JANITOR_INITIAL_DELAY_TICKS = Rand.getInt(1, 9);
 
     private static final Map<TimedMultimap, Void> _instances = new WeakHashMap<>(10);
-    private static ScheduledTask _janitor;
+    private static IScheduledTask _janitor;
 
     private final Plugin _plugin;
     private final Multimap<K, V> _map;

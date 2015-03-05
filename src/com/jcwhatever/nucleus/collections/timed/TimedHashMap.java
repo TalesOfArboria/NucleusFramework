@@ -38,7 +38,7 @@ import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
 
 import org.bukkit.plugin.Plugin;
 
@@ -86,7 +86,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
     private static final int JANITOR_INITIAL_DELAY_TICKS = Rand.getInt(1, 5);
 
     private final static Map<TimedHashMap, Void> _instances = new WeakHashMap<>(10);
-    private static ScheduledTask _janitor;
+    private static IScheduledTask _janitor;
 
     private final Plugin _plugin;
     private final Map<K, DateEntry<K, V>> _map;

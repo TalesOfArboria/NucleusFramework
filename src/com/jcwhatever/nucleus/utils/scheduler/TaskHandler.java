@@ -24,10 +24,6 @@
 
 package com.jcwhatever.nucleus.utils.scheduler;
 
-/* 
- * 
- */
-
 import javax.annotation.Nullable;
 
 /**
@@ -36,7 +32,7 @@ import javax.annotation.Nullable;
  */
 public abstract class TaskHandler implements Runnable {
 
-    private ScheduledTask _task;
+    private IScheduledTask _task;
     private TaskHandler _child;
     private TaskHandler _parent;
 
@@ -67,10 +63,10 @@ public abstract class TaskHandler implements Runnable {
     }
 
     /**
-     * Get the {@link ScheduledTask} of the task handler
+     * Get the {@link IScheduledTask} of the task handler
      */
     @Nullable
-    public ScheduledTask getTask() {
+    public IScheduledTask getTask() {
         return _task;
     }
 
@@ -78,57 +74,21 @@ public abstract class TaskHandler implements Runnable {
      * Cancel the task.
      */
     public void cancelTask() {
-        if (_task != null)
+        if (_task != null) {
             _task.cancel();
-    }
-
-    /**
-     * Called when the task is cancelled.
-     */
-    protected void onCancel() {}
-
-    /**
-     * Set the task as cancelled.
-     */
-    void setCancelled() {
+            onCancel();
+            _task = null;
+        }
         cancelUp();
         cancelDown();
     }
 
     /**
-     * Set the parent and its parents
-     * as cancelled.
-     */
-    void cancelUp() {
-        if (_task != null) {
-            onCancel();
-            _task = null;
-        }
-
-        if (_parent != null) {
-            _parent.cancelUp();
-        }
-    }
-
-    /**
-     * Set the children and their children
-     * as cancelled.
-     */
-    void cancelDown() {
-        if (_task != null) {
-            onCancel();
-            _task = null;
-        }
-
-        if (_child != null) {
-            _child.cancelDown();
-        }
-    }
-
-    /**
      * Set the scheduled task.
+     *
+     * <p>Used by the {@link ITaskScheduler} implementation.</p>
      */
-    void setTask(ScheduledTask task) {
+    public void setTask(IScheduledTask task) {
         if (_task != null)
             throw new RuntimeException("A TaskHandler cannot be in more than 1 scheduled task at a time.");
 
@@ -136,6 +96,33 @@ public abstract class TaskHandler implements Runnable {
 
         if (_child != null) {
             _child.setTask(task);
+        }
+    }
+
+    /**
+     * Invoked when the task is cancelled.
+     *
+     * <p>Intended for optional override.</p>
+     */
+    protected void onCancel() {}
+
+    /*
+     * Set the parent and its parents
+     * as cancelled.
+     */
+    private void cancelUp() {
+        if (_parent != null) {
+            _parent.cancelUp();
+        }
+    }
+
+    /*
+     * Set the children and their children
+     * as cancelled.
+     */
+    private void cancelDown() {
+        if (_child != null) {
+            _child.cancelDown();
         }
     }
 }

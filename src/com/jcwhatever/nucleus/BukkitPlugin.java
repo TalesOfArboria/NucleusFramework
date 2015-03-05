@@ -42,7 +42,7 @@ import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.scripting.NucleusScriptEngineManager;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
-import com.jcwhatever.nucleus.utils.scheduler.BukkitTaskScheduler;
+import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
@@ -127,7 +127,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     protected void onPreEnable() {
         Nucleus._hasEnabled = true;
 
-        _scheduler = new BukkitTaskScheduler();
+        _scheduler = new InternalTaskScheduler();
 
         _providerManager = new InternalProviderManager();
         ProviderLoader providerLoader = new ProviderLoader(_providerManager);

@@ -24,12 +24,12 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
-import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
@@ -68,7 +68,7 @@ public class ScriptApiScheduler extends NucleusScriptApi {
     public static class ApiObject implements IScriptApiObject {
 
         private final Plugin _plugin;
-        private Set<ScheduledTask> _taskReferences = new HashSet<>(25);
+        private Set<IScheduledTask> _taskReferences = new HashSet<>(25);
         private boolean _isDisposed;
 
         ApiObject(Plugin plugin) {
@@ -83,9 +83,9 @@ public class ScriptApiScheduler extends NucleusScriptApi {
         @Override
         public void dispose() {
 
-            List<ScheduledTask> tasks = new ArrayList<>(_taskReferences);
+            List<IScheduledTask> tasks = new ArrayList<>(_taskReferences);
 
-            for (ScheduledTask task : tasks) {
+            for (IScheduledTask task : tasks) {
                 task.cancel();
             }
 
@@ -105,9 +105,9 @@ public class ScriptApiScheduler extends NucleusScriptApi {
          * @param delay     The number of ticks to wait before running the task.
          * @param runnable  The {@link java.lang.Runnable} to run later.
          *
-         * @return  A {@link ScheduledTask} instance to keep track of the task.
+         * @return  A {@link IScheduledTask} instance to keep track of the task.
          */
-        public ScheduledTask runTaskLater(int delay, final Runnable runnable) {
+        public IScheduledTask runTaskLater(int delay, final Runnable runnable) {
             PreCon.notNull(runnable);
 
             TaskHandler handler = new TaskHandler() {
@@ -121,13 +121,13 @@ public class ScriptApiScheduler extends NucleusScriptApi {
 
                     // remove task from reference collection if a script
                     // cancels the task
-                    ScheduledTask task = getTask();
+                    IScheduledTask task = getTask();
                     if (task != null)
                         _taskReferences.remove(task);
                 }
             };
 
-            ScheduledTask task = Scheduler.runTaskLater(_plugin, delay, handler);
+            IScheduledTask task = Scheduler.runTaskLater(_plugin, delay, handler);
 
             // add reference so it can be cancelled if api is disposed
             _taskReferences.add(task);
@@ -147,9 +147,9 @@ public class ScriptApiScheduler extends NucleusScriptApi {
          * @param repeatDelay   The number of ticks to wait between each repeat of the task.
          * @param runnable      The {@link java.lang.Runnable} to run later.
          *
-         * @return  A {@link ScheduledTask} instance to keep track of the task.
+         * @return  A {@link IScheduledTask} instance to keep track of the task.
          */
-        public ScheduledTask runTaskRepeat(int initialDelay, int repeatDelay, final Runnable runnable) {
+        public IScheduledTask runTaskRepeat(int initialDelay, int repeatDelay, final Runnable runnable) {
             PreCon.notNull(runnable);
 
             TaskHandler handler = new TaskHandler() {
@@ -163,13 +163,13 @@ public class ScriptApiScheduler extends NucleusScriptApi {
 
                     // remove task from reference collection if a script
                     // cancels the task
-                    ScheduledTask task = getTask();
+                    IScheduledTask task = getTask();
                     if (task != null)
                         _taskReferences.remove(task);
                 }
             };
 
-            ScheduledTask task = Scheduler.runTaskRepeat(_plugin, initialDelay, repeatDelay, handler);
+            IScheduledTask task = Scheduler.runTaskRepeat(_plugin, initialDelay, repeatDelay, handler);
 
             // add reference so it can be cancelled if api is disposed
             _taskReferences.add(task);

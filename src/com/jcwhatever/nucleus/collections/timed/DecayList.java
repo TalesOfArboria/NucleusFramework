@@ -26,13 +26,13 @@
 package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.TimeScale;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
-import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
@@ -65,10 +65,10 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
     private int _decay;
 
     // task that removes items at interval.
-    private transient ScheduledTask _decayTask;
+    private transient IScheduledTask _decayTask;
 
     // task that initiates the repeating decay task.
-    private transient ScheduledTask _resetRotTask;
+    private transient IScheduledTask _resetRotTask;
 
     // removes a single item from the list when run.
     private transient Rot _rot;

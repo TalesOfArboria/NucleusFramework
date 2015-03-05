@@ -38,7 +38,7 @@ import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.Seriali
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -100,7 +100,7 @@ public class YamlDataNode extends AbstractDataNode {
     private final AgentMultimap<IDataNode, FutureResultAgent<IDataNode>> _saveAgents;
     private final BatchTracker _batch;
     private volatile boolean _isLoaded;
-    private volatile ScheduledTask _saveTask;
+    private volatile IScheduledTask _saveTask;
     protected String _yamlString;
     protected File _file;
 

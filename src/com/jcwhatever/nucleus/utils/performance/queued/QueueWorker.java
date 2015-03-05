@@ -26,10 +26,10 @@
 package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
-import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -56,7 +56,7 @@ public class QueueWorker {
     private final Worker _worker;
 
     private QueueTask _currentTask;
-    private ScheduledTask _workerTask;
+    private IScheduledTask _workerTask;
 
     private QueueWorker() {
         _worker = new Worker();

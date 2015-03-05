@@ -28,6 +28,9 @@ import org.bukkit.plugin.Plugin;
 
 /**
  * Represents a task scheduler.
+ *
+ * @see com.jcwhatever.nucleus.utils.Scheduler
+ * @see com.jcwhatever.nucleus.Nucleus#getScheduler
  */
 public interface ITaskScheduler {
 
@@ -41,9 +44,9 @@ public interface ITaskScheduler {
      * @param plugin    The owning plugin.
      * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  An {@link IScheduledTask} instance to keep track of the task.
      */
-    ScheduledTask runTaskLater(Plugin plugin, Runnable runnable);
+    IScheduledTask runTaskLater(Plugin plugin, Runnable runnable);
 
     /**
      * Run a task after a specified number of ticks have elapsed.
@@ -56,9 +59,9 @@ public interface ITaskScheduler {
      * @param ticks     The number of ticks to wait before running the task.
      * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    ScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable);
+    IScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable);
 
     /**
      * Run a task on a new asynchronous thread after a specified number
@@ -72,9 +75,9 @@ public interface ITaskScheduler {
      * @param ticks     The number of ticks to wait before running the task.
      * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    ScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable);
+    IScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable);
 
     /**
      * Run a task on a repeating schedule after a specified number of ticks
@@ -89,9 +92,9 @@ public interface ITaskScheduler {
      * @param repeatTicks  The number of ticks to wait between each repeat of the task.
      * @param runnable     The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    ScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
+    IScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
 
     /**
      * Run a task on a new asynchronous repeating schedule after a specified number
@@ -107,9 +110,9 @@ public interface ITaskScheduler {
      * @param repeatTicks  The number of ticks to wait between each repeat of the task.
      * @param runnable     The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    ScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
+    IScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
 
     /**
      * Run a task on the main thread at the next available chance.

@@ -25,9 +25,9 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
-import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IDependantRunnable;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
@@ -51,7 +51,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
     private final Watcher _watcher = new Watcher();
     private final int _timeoutSeconds;
 
-    private ScheduledTask _watcherTask;
+    private IScheduledTask _watcherTask;
     private Date _endTime;
 
     /**

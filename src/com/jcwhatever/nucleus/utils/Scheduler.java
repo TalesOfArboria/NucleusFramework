@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
 
 import org.bukkit.plugin.Plugin;
 
@@ -48,9 +48,9 @@ public final class Scheduler {
      * @param plugin    The owning plugin.
      * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskLater(Plugin plugin, Runnable runnable) {
+    public static IScheduledTask runTaskLater(Plugin plugin, Runnable runnable) {
         return Nucleus.getScheduler().runTaskLater(plugin, runnable);
     }
 
@@ -65,9 +65,9 @@ public final class Scheduler {
      * @param ticks     The number of ticks to wait before running the task.
      * @param runnable  The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable) {
+    public static IScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskLater(plugin, ticks, runnable);
     }
 
@@ -83,9 +83,9 @@ public final class Scheduler {
      * @param ticks     The number of ticks to wait before running the task.
      * @param runnable  The {@link Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable) {
+    public static IScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskLaterAsync(plugin, ticks, runnable);
     }
 
@@ -102,9 +102,9 @@ public final class Scheduler {
      * @param repeatTicks  The number of ticks to wait between each repeat of the task.
      * @param runnable     The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
+    public static IScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskRepeat(plugin, startTicks, repeatTicks, runnable);
     }
 
@@ -122,9 +122,9 @@ public final class Scheduler {
      * @param repeatTicks  The number of ticks to wait between each repeat of the task.
      * @param runnable     The {@link java.lang.Runnable} to run later.
      *
-     * @return  A {@link ScheduledTask} instance to keep track of the task.
+     * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    public static ScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
+    public static IScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskRepeatAsync(plugin, startTicks, repeatTicks, runnable);
     }
 

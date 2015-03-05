@@ -22,15 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.scheduler;
+package com.jcwhatever.nucleus.internal.scheduler;
+
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
 import org.bukkit.scheduler.BukkitTask;
 
 /**
- * Return object to keep reference to
- * scheduled tasks.
+ * Internal {@link IScheduledTask} implementation.
  */
-public class ScheduledTask {
+public class InternalScheduledTask implements IScheduledTask {
 
     protected BukkitTask _task;
     protected Runnable _runnable;
@@ -44,7 +46,7 @@ public class ScheduledTask {
      * @param task         The Bukkit task.
      * @param isRepeating  Determine if the task is repeating.
      */
-    public ScheduledTask(Runnable runnable, BukkitTask task, boolean isRepeating) {
+    public InternalScheduledTask(Runnable runnable, BukkitTask task, boolean isRepeating) {
         _runnable = runnable;
         _task = task;
         _isRepeating = isRepeating;
@@ -67,40 +69,32 @@ public class ScheduledTask {
         return (T)_task;
     }
 
-    /**
-     * Get the runnable that the task runs.
-     */
+    @Override
     public Runnable getRunnable() {
         return _runnable;
     }
 
-    /**
-     * Determine if the cancel method was called
-     * on the task.
-     */
+    @Override
     public boolean isCancelled() {
         return _isCancelled;
     }
 
-    /**
-     * Determine if the scheduled task is a repeating
-     * task.
-     */
+    @Override
     public boolean isRepeating() {
         return _isRepeating;
     }
 
-    /**
-     * Cancels the scheduled task.
-     * <p>If the task is already cancelled or has
-     * already executed, nothing happens.</p>
-     */
+    @Override
     public void cancel() {
+
+        if (_isCancelled)
+            return;
+
         _isCancelled = true;
         _task.cancel();
 
         if (_runnable instanceof TaskHandler) {
-            ((TaskHandler) _runnable).setCancelled();
+            ((TaskHandler) _runnable).cancelTask();
         }
     }
 }

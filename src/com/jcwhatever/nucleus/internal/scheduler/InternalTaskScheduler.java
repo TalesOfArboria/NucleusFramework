@@ -22,9 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.scheduler;
+package com.jcwhatever.nucleus.internal.scheduler;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -36,57 +38,57 @@ import java.util.concurrent.Callable;
  * Uses Bukkits Task Scheduler and adds use of TaskHandlers which
  * add functionality.
  */
-public class BukkitTaskScheduler implements ITaskScheduler{
+public class InternalTaskScheduler implements ITaskScheduler {
 
     @Override
-    public ScheduledTask runTaskLater(Plugin plugin, Runnable runnable) {
+    public IScheduledTask runTaskLater(Plugin plugin, Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
 
         BukkitTask task = Bukkit.getScheduler().runTask(plugin, runnable);
-        return new ScheduledTask(runnable, task, false);
+        return new InternalScheduledTask(runnable, task, false);
     }
 
     @Override
-    public ScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable) {
+    public IScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
         PreCon.positiveNumber(ticks);
 
         BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, runnable, ticks);
-        return new ScheduledTask(runnable, task, false);
+        return new InternalScheduledTask(runnable, task, false);
     }
 
     @Override
-    public ScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable) {
+    public IScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
         PreCon.positiveNumber(ticks);
 
         BukkitTask task = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, runnable, ticks);
-        return new ScheduledTask(runnable, task, false);
+        return new InternalScheduledTask(runnable, task, false);
     }
 
     @Override
-    public ScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
+    public IScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
         PreCon.positiveNumber(startTicks);
         PreCon.positiveNumber(repeatTicks);
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, runnable, startTicks, repeatTicks);
-        return new ScheduledTask(runnable, task, true);
+        return new InternalScheduledTask(runnable, task, true);
     }
 
     @Override
-    public ScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
+    public IScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
         PreCon.positiveNumber(startTicks);
         PreCon.positiveNumber(repeatTicks);
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, startTicks, repeatTicks);
-        return new ScheduledTask(runnable, task, true);
+        return new InternalScheduledTask(runnable, task, true);
     }
 
     @Override

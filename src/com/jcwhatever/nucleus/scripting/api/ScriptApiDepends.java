@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.scheduler.ScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
 import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -65,7 +65,7 @@ public class ScriptApiDepends extends NucleusScriptApi {
     public static class ApiObject implements IScriptApiObject {
 
         private List<DependsWrapper> _wrappers = new ArrayList<>(10);
-        private ScheduledTask _task;
+        private IScheduledTask _task;
         private boolean _isDisposed;
 
         @Override
