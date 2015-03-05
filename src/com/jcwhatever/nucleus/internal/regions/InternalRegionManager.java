@@ -560,9 +560,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                                     // check if player was not previously in region
                                     if (!cachedRegions.contains(region)) {
 
-                                        onPlayerEnter(region, worldPlayer.player, reason);
-
                                         cachedRegions.add(region);
+                                        onPlayerEnter(region, worldPlayer.player, reason);
                                     }
                                 }
                             }
@@ -576,10 +575,9 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                                     // check if player was previously in region
                                     if (!inRegions.contains(region)) {
 
+                                        iterator.remove();
                                         onPlayerLeave(region, worldPlayer.player,
                                                 location.getReason());
-
-                                        iterator.remove();
                                     }
                                 }
                             }

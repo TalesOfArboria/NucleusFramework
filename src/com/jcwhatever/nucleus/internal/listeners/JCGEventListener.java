@@ -57,6 +57,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
@@ -141,8 +142,10 @@ public final class JCGEventListener implements Listener {
 			PlayList.clearQueue(event.getPlayer());
 		}
 
-		_regionManager
-				.updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.TELEPORT);
+        if (event.getCause() != TeleportCause.UNKNOWN) {
+            _regionManager
+                    .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.TELEPORT);
+        }
 	}
 
 	@EventHandler(priority=EventPriority.NORMAL)
