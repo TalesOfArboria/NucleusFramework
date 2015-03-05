@@ -604,7 +604,9 @@ public class YamlDataNode extends AbstractDataNode {
 
                 IDataNodeSerializable serializable = (IDataNodeSerializable)value;
 
-                serializable.serialize(getNode(keyPath));
+                IDataNode dataNode = getNode(keyPath);
+                dataNode.clear();
+                serializable.serialize(dataNode);
 
                 return true;
             }
@@ -680,6 +682,9 @@ public class YamlDataNode extends AbstractDataNode {
         PreCon.notNull(nodePath);
 
         String fullPath = getFullPath(nodePath);
+        if (fullPath.isEmpty())
+            return getRoot();
+
         YamlDataNode node = getRoot()._cachedNodes.get(fullPath);
         if (node == null) {
             node = new YamlDataNode(getRoot(), fullPath);

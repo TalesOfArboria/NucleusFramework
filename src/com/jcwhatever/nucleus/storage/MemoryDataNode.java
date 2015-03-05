@@ -153,6 +153,9 @@ public class MemoryDataNode extends AbstractDataNode {
     @Override
     public IDataNode getNode(String nodePath) {
         TreeEntryNode<String, Object> treeNode = getNodeFromPath(nodePath, true);
+        if (treeNode == _node)
+            return this;
+
         return new MemoryDataNode(_rootStorage, getFullPath(nodePath), treeNode);
     }
 
@@ -228,15 +231,17 @@ public class MemoryDataNode extends AbstractDataNode {
 
         markDirty();
 
-        if (value != null) {
+        if (value instanceof IDataNodeSerializable) {
+            removeNode(keyPath);
+            IDataNode node = getNode(keyPath);
+            IDataNodeSerializable serializable = (IDataNodeSerializable)value;
+            serializable.serialize(node);
+        }
+        else if (value != null) {
             setNodeFromPath(keyPath, value);
         } else {
-            TreeEntryNode<String, Object> treeNode = getNodeFromPath(keyPath, false);
-            if (treeNode == null)
+            if (!removeNode(keyPath))
                 return false;
-
-            //noinspection ConstantConditions
-            treeNode.getParent().removeChild(treeNode);
         }
         return true;
     }
@@ -293,6 +298,22 @@ public class MemoryDataNode extends AbstractDataNode {
         node.clearChildren();
 
         return node;
+    }
+
+    protected boolean removeNode(String keyPath) {
+        TreeEntryNode<String, Object> treeNode = getNodeFromPath(keyPath, false);
+        if (treeNode == null)
+            return false;
+
+        if (treeNode == _node) {
+            treeNode.clearChildren();
+        }
+        else {
+            //noinspection ConstantConditions
+            treeNode.getParent().removeChild(treeNode);
+        }
+
+        return true;
     }
 
     protected String getPath(TreeEntryNode<String, Object> node) {

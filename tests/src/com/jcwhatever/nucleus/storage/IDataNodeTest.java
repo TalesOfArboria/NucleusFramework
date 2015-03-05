@@ -1005,7 +1005,7 @@ public abstract class IDataNodeTest {
     }
 
     /**
-     * Make sure {@link #getDefaultAutoSave} does not return {@link DEFAULT}.
+     * Make sure {@link IDataNode#getDefaultAutoSaveMode} does not return {@link AutoSaveMode#DEFAULT}.
      */
     @Test
     public void testDefaultAutoSave() {
@@ -1014,8 +1014,78 @@ public abstract class IDataNodeTest {
         assertNotEquals(AutoSaveMode.DEFAULT, dataNode.getDefaultAutoSaveMode());
     }
 
+    /**
+     * Make sure saving an {@link IDataNodeSerializable} instance works.
+     */
+    @Test
+    public void testIDataNodeSerializable() {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        SerializeTest1 test1 = new SerializeTest1();
+        dataNode.set("serialize", test1);
+        assertEquals("test", dataNode.getString("serialize.test1"));
+        assertNotNull(dataNode.getSerializable("serialize", SerializeTest1.class));
+
+        // check nodes created from test 1 are cleared
+        SerializeTest2 test2 = new SerializeTest2();
+        dataNode.set("serialize", test2);
+        assertEquals("test", dataNode.getString("serialize.test2"));
+        assertEquals(null, dataNode.getString("serialize.test1"));
+        assertNotNull(dataNode.getSerializable("serialize", SerializeTest2.class));
+    }
+
+    @Test
+    public void testAllowEmptyKeyPathInSerializable() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        SerializeTest1 test1 = new SerializeTest1();
+        dataNode.set("", test1);
+        assertEquals("test", dataNode.getString("test1"));
+        assertNotNull(dataNode.getSerializable("", SerializeTest1.class));
+    }
+
+    @Test
+    public void testAllowEmptyKeyPathInGetNode() throws Exception {
+
+        IDataNode dataNode = _generator.generateRoot();
+
+        assertEquals(dataNode, dataNode.getNode(""));
+    }
+
     public enum TestEnum {
         CONSTANT
+    }
+
+    private static class SerializeTest1 implements IDataNodeSerializable {
+
+        private SerializeTest1() {}
+
+        @Override
+        public void serialize(IDataNode dataNode) {
+            dataNode.set("test1", "test");
+        }
+
+        @Override
+        public void deserialize(IDataNode dataNode) throws DeserializeException {
+            assertEquals("test", dataNode.getString("test1"));
+        }
+    }
+
+    private static class SerializeTest2 implements IDataNodeSerializable {
+
+        private SerializeTest2() {}
+
+        @Override
+        public void serialize(IDataNode dataNode) {
+            dataNode.set("test2", "test");
+        }
+
+        @Override
+        public void deserialize(IDataNode dataNode) throws DeserializeException {
+            assertEquals("test", dataNode.getString("test2"));
+        }
     }
 
 }
