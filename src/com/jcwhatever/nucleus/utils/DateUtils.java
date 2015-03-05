@@ -262,7 +262,7 @@ public final class DateUtils {
     }
 
     /**
-     * Add days to the specified date and return a new
+     * Add days (24 hour increments) to the specified date and return a new
      * {@link java.util.Date} object.
      *
      * @param date    The date to modify.
@@ -271,7 +271,7 @@ public final class DateUtils {
     public static Date addDays(Date date, int amount) {
         PreCon.notNull(date);
 
-        return add(date, Calendar.DAY_OF_MONTH, amount);
+        return add(date, Calendar.HOUR_OF_DAY, amount * 24);
     }
 
     /**
