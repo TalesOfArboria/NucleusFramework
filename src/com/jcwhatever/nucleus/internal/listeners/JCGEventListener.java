@@ -100,7 +100,7 @@ public final class JCGEventListener implements Listener {
 		Nucleus.getMessengerFactory().tellImportant(p);
 
         _regionManager
-                .updatePlayerLocation(p, p.getLocation(), RegionReason.JOIN_SERVER);
+                .updatePlayerLocation(p, RegionReason.JOIN_SERVER);
 	}
 
 	@EventHandler(priority=EventPriority.LOW)
