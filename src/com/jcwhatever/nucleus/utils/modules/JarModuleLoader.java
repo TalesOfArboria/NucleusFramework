@@ -169,16 +169,21 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
 
         for (Class<T> clazz : moduleClasses) {
 
-            // create instance of module
-            T instance = instantiateModule(clazz);
-            if (instance == null)
-                continue;
+            try {
+                // create instance of module
+                T instance = instantiateModule(clazz);
+                if (instance == null)
+                    continue;
 
-            IModuleInfo moduleInfo = createModuleInfo(instance);
-            if (moduleInfo == null)
-                continue;
+                IModuleInfo moduleInfo = createModuleInfo(instance);
+                if (moduleInfo == null)
+                    continue;
 
-            addModule(moduleInfo, instance);
+                addModule(moduleInfo, instance);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
