@@ -41,20 +41,33 @@ import java.util.List;
  */
 class PlayerLocationCache {
 
-    private final List<CachedLocation> _locationPool = new ArrayList<>(20);
+    private final List<CachedLocation> _locationPool = new ArrayList<>(100);
     private final LinkedList<CachedLocation> _cached = new LinkedList<>();
+    private final PlayerLocations _removed = new PlayerLocations();
 
-    private int _poolIndex = 0;
-    private int _minIndex = 0;
-    private PlayerLocations _removed;
+    private volatile boolean _isRemovedDiscarded = true;
+
+    // The index location to check for an unused pooled location.
+    private volatile int _poolIndex = 0;
+
+    // the min index the _poolIndex can be reset to, values below are in use
+    // by PlayerLocations (_removed) instance.
+    private volatile int _minIndex = 0;
 
     /**
      * Determine if the cache is empty.
      */
     public boolean isEmpty() {
-        if (_cached.isEmpty()) {
 
-            if (_removed == null)
+        boolean isEmpty;
+
+        synchronized (_cached) {
+            isEmpty = _cached.isEmpty();
+        }
+
+        if (isEmpty) {
+
+            if (_isRemovedDiscarded)
                 _minIndex = 0;
 
             _poolIndex = _minIndex;
@@ -69,7 +82,9 @@ class PlayerLocationCache {
      */
     public void clear() {
         _poolIndex = _minIndex;
-        _cached.clear();
+        synchronized (_cached) {
+            _cached.clear();
+        }
     }
 
     /**
@@ -82,23 +97,32 @@ class PlayerLocationCache {
      */
     public Location add(RegionReason reason) {
         CachedLocation location = getPooledLocation(reason);
-        _cached.addLast(location);
+        synchronized (_cached) {
+            _cached.addLast(location);
+        }
         return location;
+    }
+
+    /**
+     * Determine if {@link #canRemoveAll} can be invoked.
+     */
+    public boolean canRemoveAll() {
+        return _isRemovedDiscarded;
     }
 
     /**
      * Remove all cached locations and return them in a {@link PlayerLocations} instance.
      *
      * <p>Since locations are reused from a pool, only one {@link PlayerLocations} instance
-     * can exist per {@link PlayerLocationCache} at one time. The current instance must be
-     * discarded before another one can be created.</p>
+     * can be used per {@link PlayerLocationCache} at one time. The current instance must be
+     * discarded before {@link #removeAll} can be invoked again.</p>
      */
     public PlayerLocations removeAll() {
-        if (_removed != null)
-            throw new IllegalStateException("Only one snapshot can exist per PlayerLocationCache.");
+        if (!_isRemovedDiscarded)
+            throw new IllegalStateException("The PlayerLocations instance is already in use.");
 
+        _removed.fill();
         _minIndex = _poolIndex;
-        _removed = new PlayerLocations();
         clear();
 
         return _removed;
@@ -109,34 +133,40 @@ class PlayerLocationCache {
      */
     private CachedLocation getPooledLocation(RegionReason reason) {
 
-        if (_poolIndex >= _locationPool.size()) {
+        synchronized (_locationPool) {
 
-            // add a new location to the pool (expand pool)
-            CachedLocation location = new CachedLocation(reason);
-            _locationPool.add(location);
-            return location;
+            if (_poolIndex >= _locationPool.size()) {
+
+                // add a new location to the pool (expand pool)
+                CachedLocation location = new CachedLocation(reason);
+                _locationPool.add(location);
+                return location;
+            }
+
+            // use a location from the pool
+            CachedLocation result = _locationPool.get(_poolIndex);
+            result.reason = reason;
+            _poolIndex++;
+
+            return result;
         }
-
-        // use a location from the pool
-        CachedLocation result = _locationPool.get(_poolIndex);
-        result.reason = reason;
-        _poolIndex++;
-
-        return result;
     }
 
     /**
      * Holds cached locations removed from the parent cache.
      *
-     * <p>There can only be a single instance in use to prevent
-     * conflicts with pool locations which are recycled.</p>
+     * <p>Can only be used for one operation at a time.</p>
      */
     class PlayerLocations {
 
-        private LinkedList<CachedLocation> locations;
+        private LinkedList<CachedLocation> locations = new LinkedList<>();
 
-        PlayerLocations() {
-            locations = new LinkedList<>(_cached);
+        void fill() {
+            _isRemovedDiscarded = false;
+            locations.clear();
+            synchronized (_cached) {
+                locations.addAll(_cached);
+            }
         }
 
         /**
@@ -158,7 +188,7 @@ class PlayerLocationCache {
          */
         public void discard() {
             _minIndex = 0;
-            _removed = null;
+            _isRemovedDiscarded = true;
         }
     }
 

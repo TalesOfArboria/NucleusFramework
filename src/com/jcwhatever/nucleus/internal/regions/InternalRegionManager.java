@@ -682,7 +682,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                     continue;
 
                 PlayerLocationCache locations = manager.getPlayerLocations(p.getUniqueId());
-                if (locations.isEmpty())
+                if (locations.isEmpty() || !locations.canRemoveAll())
                     continue;
 
                 WorldPlayer worldPlayer = new WorldPlayer(p, locations.removeAll());
