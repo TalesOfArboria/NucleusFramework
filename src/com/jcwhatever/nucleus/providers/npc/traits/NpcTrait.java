@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.potion.PotionEffectType;
@@ -240,7 +241,20 @@ public abstract class NpcTrait implements INamed, IDisposable {
 
         if (name instanceof String) {
 
-            T result = (T)EnumUtils.searchEnum((String) name, enumClass);
+            String str = (String) name;
+
+            if (str.equals(".random")) {
+                T[] constants = enumClass.getEnumConstants();
+                return Rand.get(constants);
+            } else if (str.startsWith(".oneOf:")) {
+
+                str = str.substring(7);
+
+                String[] options = TextUtils.PATTERN_COMMA.split(str);
+                str = Rand.get(options).trim();
+            }
+
+            T result = (T) EnumUtils.searchEnum(str, enumClass);
             if (result == null)
                 throw new IllegalArgumentException("Invalid enum constant name for type: " +
                         enumClass.getName() +
