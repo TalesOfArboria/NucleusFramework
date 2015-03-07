@@ -1216,10 +1216,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     private String getRawArgument(String parameterName) {
 
         CommandArgument param = _parseResults.getArgMap().get(parameterName);
-        if (param == null) {
-            throw new RuntimeException("A parameter named '" + parameterName +
-                    "' is not defined by the command: " + _command.getClass().getName());
-        }
+        if (param == null)
+            return null;
 
         return param.getValue();
     }
