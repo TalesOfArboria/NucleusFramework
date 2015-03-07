@@ -195,11 +195,22 @@ public class MenuItem extends ItemStack implements IMeta {
      * Remove a click event callback from the menu item.
      *
      * @param runnable The callback to remove.
+     *
      * @return True if found and removed.
      */
     public boolean removeOnClick(Runnable runnable) {
         return _onClick != null &&
                 _onClick.remove(runnable);
+    }
+
+    /**
+     * Clear all click event callbacks.
+     */
+    public void clearOnClick() {
+        if (_onClick == null)
+            return;
+
+        _onClick.clear();
     }
 
     /**

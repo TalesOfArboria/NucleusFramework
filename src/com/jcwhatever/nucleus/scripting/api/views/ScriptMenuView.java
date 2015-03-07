@@ -176,12 +176,7 @@ public class ScriptMenuView extends MenuView implements IDisposable {
         List<MenuItem> menuItems = new ArrayList<>(getMenuItems());
 
         for (MenuItem menuItem : menuItems) {
-            List<Runnable> runnables = new ArrayList<>(menuItem.getOnClick());
-
-            for (Runnable runnable : runnables) {
-                menuItem.removeOnClick(runnable);
-            }
-            removeMenuItem(menuItem);
+            menuItem.clearOnClick();
         }
 
         _menuItems.clear();
