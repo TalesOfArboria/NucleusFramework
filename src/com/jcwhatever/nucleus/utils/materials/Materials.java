@@ -334,6 +334,16 @@ public class Materials {
     }
 
     /**
+     * Determine if a material is a tool.
+     *
+     * @param material The {@link org.bukkit.Material} to check.
+     * @see MaterialProperty#TOOL
+     */
+    public static boolean isTool(Material material) {
+        return hasProperty(material, MaterialProperty.TOOL);
+    }
+
+    /**
      * Determine if a material is a mining tool.
      *
      * @param material  The {@link org.bukkit.Material} to check.
@@ -841,7 +851,7 @@ public class Materials {
 
         add(Material.CARROT_STICK,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.CAULDRON,
@@ -1040,7 +1050,7 @@ public class Materials {
         add(Material.DIAMOND_AXE,
                 MaterialProperty.DIAMOND_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.AXE,
                 MaterialProperty.CRAFTABLE);
 
@@ -1080,7 +1090,7 @@ public class Materials {
         add(Material.DIAMOND_HOE,
                 MaterialProperty.DIAMOND_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.HOE,
                 MaterialProperty.CRAFTABLE);
 
@@ -1100,6 +1110,7 @@ public class Materials {
         add(Material.DIAMOND_PICKAXE,
                 MaterialProperty.DIAMOND_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.PICKAXE,
                 MaterialProperty.CRAFTABLE);
@@ -1107,6 +1118,7 @@ public class Materials {
         add(Material.DIAMOND_SPADE,
                 MaterialProperty.DIAMOND_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.SHOVEL,
                 MaterialProperty.CRAFTABLE);
@@ -1242,14 +1254,14 @@ public class Materials {
 
         add(Material.FISHING_ROD,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.FLINT);
 
         add(Material.FLINT_AND_STEEL,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.FLOWER_POT,
@@ -1288,7 +1300,7 @@ public class Materials {
         add(Material.GOLD_AXE,
                 MaterialProperty.GOLD_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.AXE,
                 MaterialProperty.CRAFTABLE);
 
@@ -1329,7 +1341,7 @@ public class Materials {
         add(Material.GOLD_HOE,
                 MaterialProperty.GOLD_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.HOE,
                 MaterialProperty.CRAFTABLE);
 
@@ -1358,6 +1370,7 @@ public class Materials {
         add(Material.GOLD_PICKAXE,
                 MaterialProperty.GOLD_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.PICKAXE,
                 MaterialProperty.CRAFTABLE);
@@ -1377,6 +1390,7 @@ public class Materials {
         add(Material.GOLD_SPADE,
                 MaterialProperty.GOLD_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.SHOVEL,
                 MaterialProperty.CRAFTABLE);
@@ -1453,7 +1467,7 @@ public class Materials {
         add(Material.IRON_AXE,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.AXE,
                 MaterialProperty.CRAFTABLE);
 
@@ -1516,7 +1530,7 @@ public class Materials {
         add(Material.IRON_HOE,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.HOE,
                 MaterialProperty.CRAFTABLE);
 
@@ -1541,6 +1555,7 @@ public class Materials {
         add(Material.IRON_PICKAXE,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.PICKAXE,
                 MaterialProperty.CRAFTABLE);
@@ -1558,6 +1573,7 @@ public class Materials {
         add(Material.IRON_SPADE,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.SHOVEL,
                 MaterialProperty.CRAFTABLE);
@@ -2084,7 +2100,7 @@ public class Materials {
 
         add(Material.SHEARS,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.SIGN,
@@ -2241,7 +2257,7 @@ public class Materials {
         add(Material.STONE_AXE,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.AXE,
                 MaterialProperty.CRAFTABLE);
 
@@ -2258,13 +2274,14 @@ public class Materials {
         add(Material.STONE_HOE,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.HOE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.STONE_PICKAXE,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.PICKAXE,
                 MaterialProperty.CRAFTABLE);
@@ -2289,6 +2306,7 @@ public class Materials {
         add(Material.STONE_SPADE,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.SHOVEL,
                 MaterialProperty.CRAFTABLE);
@@ -2403,7 +2421,7 @@ public class Materials {
         add(Material.WOOD_AXE,
                 MaterialProperty.REPAIRABLE,
                 MaterialProperty.WOOD_BASED,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.AXE,
                 MaterialProperty.CRAFTABLE);
 
@@ -2432,12 +2450,13 @@ public class Materials {
         add(Material.WOOD_HOE,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.REPAIRABLE,
-                MaterialProperty.MINING_TOOL,
+                MaterialProperty.TOOL,
                 MaterialProperty.HOE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.WOOD_PICKAXE,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.PICKAXE,
                 MaterialProperty.CRAFTABLE);
@@ -2455,6 +2474,7 @@ public class Materials {
         add(Material.WOOD_SPADE,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.REPAIRABLE,
+                MaterialProperty.TOOL,
                 MaterialProperty.MINING_TOOL,
                 MaterialProperty.SHOVEL,
                 MaterialProperty.CRAFTABLE);

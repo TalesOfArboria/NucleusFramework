@@ -95,7 +95,11 @@ public class MaterialProperty implements INamedInsensitive {
      */
     public static final MaterialProperty WEAPON = new MaterialProperty("Weapon");
     /**
-     * The material is a tool. (i.e shovel)
+     * The material is a tool.
+     */
+    public static final MaterialProperty TOOL = new MaterialProperty("Tool");
+    /**
+     * The material is a mining tool. (i.e shovel, pickaxe)
      */
     public static final MaterialProperty MINING_TOOL = new MaterialProperty("Mining_Tool");
     /**
