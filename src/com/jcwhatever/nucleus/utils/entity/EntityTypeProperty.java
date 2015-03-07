@@ -90,6 +90,18 @@ public class EntityTypeProperty implements INamedInsensitive {
      * The entity is a boss.
      */
     public static final EntityTypeProperty BOSS = new EntityTypeProperty("Boss");
+    /**
+     * The entity is an animal.
+     * <p/>
+     * <p>Refers to generally non-hostile mobs that represent real life creatures.</p>
+     */
+    public static final EntityTypeProperty ANIMAL = new EntityTypeProperty("Animal");
+    /**
+     * The entity is a monster.
+     * <p/>
+     * <p>Refers to any living mob that is hostile and/or non-natural.</p>
+     */
+    public static final EntityTypeProperty MONSTER = new EntityTypeProperty("Monster");
 
     private final String _name;
     private final String _searchName;

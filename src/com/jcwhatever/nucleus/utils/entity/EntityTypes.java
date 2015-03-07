@@ -301,6 +301,26 @@ public class EntityTypes {
         return hasProperty(type, EntityTypeProperty.BOSS);
     }
 
+    /**
+     * Determine if the entity type is an animal.
+     *
+     * @param type The {@link org.bukkit.entity.EntityType} to check.
+     * @see EntityTypeProperty#ANIMAL
+     */
+    public static boolean isAnimal(EntityType type) {
+        return hasProperty(type, EntityTypeProperty.ANIMAL);
+    }
+
+    /**
+     * Determine if the entity type is a monster.
+     *
+     * @param type The {@link org.bukkit.entity.EntityType} to check.
+     * @see EntityTypeProperty#MONSTER
+     */
+    public static boolean isMonster(EntityType type) {
+        return hasProperty(type, EntityTypeProperty.MONSTER);
+    }
+
     private static void add(EntityType type, EntityTypeProperty... properties) {
         _properties.putAll(type, Arrays.asList(properties));
         for (EntityTypeProperty property : properties) {
@@ -316,10 +336,12 @@ public class EntityTypes {
                 EntityTypeProperty.PROJECTILE);
 
         add(EntityType.BAT,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.FLY);
 
         add(EntityType.BLAZE,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.FLY,
@@ -329,22 +351,26 @@ public class EntityTypes {
                 EntityTypeProperty.SWIM);
 
         add(EntityType.CAVE_SPIDER,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.CLIMB,
                 EntityTypeProperty.WALK);
 
         add(EntityType.CHICKEN,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.COMPLEX_PART);
 
         add(EntityType.COW,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.CREEPER,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.EXPLODE,
@@ -358,6 +384,7 @@ public class EntityTypes {
         add(EntityType.ENDER_CRYSTAL);
 
         add(EntityType.ENDER_DRAGON,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.FLY,
@@ -369,6 +396,7 @@ public class EntityTypes {
         add(EntityType.ENDER_SIGNAL);
 
         add(EntityType.ENDERMAN,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE_AGRO,
                 EntityTypeProperty.TELEPORT,
@@ -387,22 +415,26 @@ public class EntityTypes {
         add(EntityType.FISHING_HOOK);
 
         add(EntityType.GHAST,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.FLY,
                 EntityTypeProperty.SHOOT);
 
         add(EntityType.GIANT,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.GUARDIAN,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.SWIM);
 
         add(EntityType.HORSE,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.RIDE,
                 EntityTypeProperty.SADDLE,
@@ -421,6 +453,7 @@ public class EntityTypes {
                 EntityTypeProperty.PROJECTILE);
 
         add(EntityType.MAGMA_CUBE,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.WALK);
@@ -439,21 +472,25 @@ public class EntityTypes {
         add(EntityType.MINECART_TNT);
 
         add(EntityType.MUSHROOM_COW,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.OCELOT,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.PAINTING);
 
         add(EntityType.PIG,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.RIDE,
                 EntityTypeProperty.SADDLE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.PIG_ZOMBIE,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE_AGRO,
                 EntityTypeProperty.WALK);
@@ -464,25 +501,30 @@ public class EntityTypes {
                 EntityTypeProperty.EXPLODE);
 
         add(EntityType.RABBIT,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.SHEEP,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.SILVERFISH,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.WALK);
 
         add(EntityType.SKELETON,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.SHOOT,
                 EntityTypeProperty.WALK);
 
         add(EntityType.SLIME,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.WALK);
@@ -507,6 +549,7 @@ public class EntityTypes {
                 EntityTypeProperty.PROJECTILE);
 
         add(EntityType.SQUID,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.SWIM);
 
@@ -528,6 +571,7 @@ public class EntityTypes {
                 EntityTypeProperty.WALK);
 
         add(EntityType.WITHER,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.SHOOT,
@@ -538,11 +582,13 @@ public class EntityTypes {
                 EntityTypeProperty.PROJECTILE);
 
         add(EntityType.WOLF,
+                EntityTypeProperty.ANIMAL,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE_AGRO,
                 EntityTypeProperty.WALK);
 
         add(EntityType.ZOMBIE,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
                 EntityTypeProperty.WALK);
