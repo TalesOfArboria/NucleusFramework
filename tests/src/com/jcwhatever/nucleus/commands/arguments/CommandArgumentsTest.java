@@ -46,6 +46,13 @@ public class CommandArgumentsTest {
                 argument != null ? new String[] { argument } : new String[0]);
     }
 
+    // Get arguments for a command that has 1 flag argument
+    private CommandArguments getFlagArguments(boolean hasFlag) throws CommandException {
+        return getArguments(new CommandInfoBuilder("dummy")
+                        .flags("flag").build(),
+                hasFlag ? new String[]{"--flag"} : new String[0]);
+    }
+
     public enum TestEnum {
         CONSTANT
     }
@@ -252,6 +259,13 @@ public class CommandArgumentsTest {
             throw new AssertionError("InvalidArgumentException expected.");
         }
         catch (InvalidArgumentException ignore) {}
+
+        // test flags
+        args = getFlagArguments(true);
+        Assert.assertEquals(true, args.getBoolean("flag"));
+
+        args = getFlagArguments(false);
+        Assert.assertEquals(false, args.getBoolean("flag"));
     }
 
     @Test

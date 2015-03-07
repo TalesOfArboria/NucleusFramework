@@ -299,21 +299,16 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     public boolean getBoolean(String parameterName) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
+        Boolean flag = _parseResults.getFlag(parameterName);
+        if (flag != null)
+            return flag;
+
         // get the raw argument
         String arg = getRawArgument(parameterName);
 
         // make sure the argument was provided
-        if (arg == null) {
-
-            Boolean flag = _parseResults.getFlag(parameterName);
-
-            if (flag == null) {
-                invalidArg(parameterName, ArgumentValueType.BOOLEAN);
-            }
-            else {
-                return flag;
-            }
-        }
+        if (arg == null)
+            invalidArg(parameterName, ArgumentValueType.BOOLEAN);
 
         // get boolean based on value
         arg = arg.toLowerCase();
@@ -1216,8 +1211,10 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     private String getRawArgument(String parameterName) {
 
         CommandArgument param = _parseResults.getArgMap().get(parameterName);
-        if (param == null)
-            return null;
+        if (param == null) {
+            throw new RuntimeException("A parameter named '" + parameterName +
+                    "' is not defined by the command: " + _command.getClass().getName());
+        }
 
         return param.getValue();
     }
