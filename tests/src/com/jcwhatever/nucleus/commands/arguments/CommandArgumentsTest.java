@@ -1,5 +1,7 @@
 package com.jcwhatever.nucleus.commands.arguments;
 
+import static org.junit.Assert.assertEquals;
+
 import com.jcwhatever.bukkit.v1_8_R1.MockPlayer;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.commands.CommandInfo;
@@ -8,6 +10,7 @@ import com.jcwhatever.nucleus.commands.DummyCommand.CommandInfoBuilder;
 import com.jcwhatever.nucleus.commands.DummyDispatcher;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
 
 import org.bukkit.Material;
@@ -46,6 +49,17 @@ public class CommandArgumentsTest {
                 argument != null ? new String[] { argument } : new String[0]);
     }
 
+    // Get arguments for a command that has 1 required static parameter "param1",
+    // 1 optional static param "param2" and 1 flag "flag".
+    private CommandArguments getMixedOptionalArguments(String argument1, String argument2, boolean flag)
+            throws CommandException {
+
+        return getArguments(new CommandInfoBuilder("dummy")
+                        .staticParams("param1", "param2=optional")
+                        .flags("flag").build(),
+                ArrayUtils.removeNull(new String[]{argument1, argument2, flag ? "--flag" : null}));
+    }
+
     // Get arguments for a command that has 1 flag argument
     private CommandArguments getFlagArguments(boolean hasFlag) throws CommandException {
         return getArguments(new CommandInfoBuilder("dummy")
@@ -81,7 +95,7 @@ public class CommandArgumentsTest {
                 "arg1", "arg2");
 
         // returns the number of static parameters, not arguments
-        Assert.assertEquals(2, args.staticSize());
+        assertEquals(2, args.staticSize());
 
 
         args = getArguments(new CommandInfoBuilder("dummy")
@@ -89,7 +103,7 @@ public class CommandArgumentsTest {
                 "arg1");
 
         // returns the number of static parameters, not arguments
-        Assert.assertEquals(2, args.staticSize());
+        assertEquals(2, args.staticSize());
     }
 
     @Test
@@ -100,7 +114,7 @@ public class CommandArgumentsTest {
                 "-param1", "arg1", "-param2", "arg2");
 
         // returns the number of floating parameters, not arguments
-        Assert.assertEquals(2, args.floatingSize());
+        assertEquals(2, args.floatingSize());
 
 
         args = getArguments(new CommandInfoBuilder("dummy")
@@ -108,7 +122,7 @@ public class CommandArgumentsTest {
                 "-param1", "arg1");
 
         // returns the number of floating parameters, not arguments
-        Assert.assertEquals(2, args.floatingSize());
+        assertEquals(2, args.floatingSize());
     }
 
     @Test
@@ -119,8 +133,8 @@ public class CommandArgumentsTest {
                         .floatingParams("param2").build(),
                 "arg1", "-param2", "arg2");
 
-        Assert.assertEquals("arg1", args.get("param1").getValue());
-        Assert.assertEquals("arg2", args.get("param2").getValue());
+        assertEquals("arg1", args.get("param1").getValue());
+        assertEquals("arg2", args.get("param2").getValue());
     }
 
     @Test
@@ -132,9 +146,9 @@ public class CommandArgumentsTest {
 
         Iterator<CommandArgument> iterator = args.iterator();
 
-        Assert.assertEquals("arg1", iterator.next().getValue());
-        Assert.assertEquals("arg2", iterator.next().getValue());
-        Assert.assertEquals(false, iterator.hasNext());
+        assertEquals("arg1", iterator.next().getValue());
+        assertEquals("arg2", iterator.next().getValue());
+        assertEquals(false, iterator.hasNext());
     }
 
     @Test
@@ -143,7 +157,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("validName");
 
         // should not throw any exceptions
-        Assert.assertEquals("validName", args.getName("param1"));
+        assertEquals("validName", args.getName("param1"));
 
         // ------------
 
@@ -194,7 +208,7 @@ public class CommandArgumentsTest {
     public void testGetString() throws Exception {
         CommandArguments args = getParseArguments("string");
 
-        Assert.assertEquals("string", args.getString("param1"));
+        assertEquals("string", args.getString("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -210,35 +224,35 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("true");
-        Assert.assertEquals(true, args.getBoolean("param1"));
+        assertEquals(true, args.getBoolean("param1"));
 
         args = getParseArguments("yes");
-        Assert.assertEquals(true, args.getBoolean("param1"));
+        assertEquals(true, args.getBoolean("param1"));
 
         args = getParseArguments("allow");
-        Assert.assertEquals(true, args.getBoolean("param1"));
+        assertEquals(true, args.getBoolean("param1"));
 
         args = getParseArguments("on");
-        Assert.assertEquals(true, args.getBoolean("param1"));
+        assertEquals(true, args.getBoolean("param1"));
 
         args = getParseArguments("1");
-        Assert.assertEquals(true, args.getBoolean("param1"));
+        assertEquals(true, args.getBoolean("param1"));
 
 
         args = getParseArguments("false");
-        Assert.assertEquals(false, args.getBoolean("param1"));
+        assertEquals(false, args.getBoolean("param1"));
 
         args = getParseArguments("no");
-        Assert.assertEquals(false, args.getBoolean("param1"));
+        assertEquals(false, args.getBoolean("param1"));
 
         args = getParseArguments("deny");
-        Assert.assertEquals(false, args.getBoolean("param1"));
+        assertEquals(false, args.getBoolean("param1"));
 
         args = getParseArguments("off");
-        Assert.assertEquals(false, args.getBoolean("param1"));
+        assertEquals(false, args.getBoolean("param1"));
 
         args = getParseArguments("0");
-        Assert.assertEquals(false, args.getBoolean("param1"));
+        assertEquals(false, args.getBoolean("param1"));
 
         // ------------
 
@@ -262,10 +276,10 @@ public class CommandArgumentsTest {
 
         // test flags
         args = getFlagArguments(true);
-        Assert.assertEquals(true, args.getBoolean("flag"));
+        assertEquals(true, args.getBoolean("flag"));
 
         args = getFlagArguments(false);
-        Assert.assertEquals(false, args.getBoolean("flag"));
+        assertEquals(false, args.getBoolean("flag"));
     }
 
     @Test
@@ -274,7 +288,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("c");
 
         // should not throw any exceptions
-        Assert.assertEquals('c', args.getChar("param1"));
+        assertEquals('c', args.getChar("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -301,7 +315,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("10");
 
         // should not throw any exceptions
-        Assert.assertEquals((byte)10, args.getByte("param1"));
+        assertEquals((byte) 10, args.getByte("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -339,7 +353,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("10");
 
         // should not throw any exceptions
-        Assert.assertEquals(10, args.getShort("param1"));
+        assertEquals(10, args.getShort("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -378,7 +392,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("10");
 
         // should not throw any exceptions
-        Assert.assertEquals(10, args.getInteger("param1"));
+        assertEquals(10, args.getInteger("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -416,7 +430,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("10");
 
         // should not throw any exceptions
-        Assert.assertEquals(10, args.getLong("param1"));
+        assertEquals(10, args.getLong("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -454,7 +468,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("10.0");
 
         // should not throw any exceptions
-        Assert.assertEquals(10.0D, args.getFloat("param1"), 0.0D);
+        assertEquals(10.0D, args.getFloat("param1"), 0.0D);
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -481,7 +495,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("10.0");
 
         // should not throw any exceptions
-        Assert.assertEquals(10.0D, args.getFloat("param1"), 0.0D);
+        assertEquals(10.0D, args.getFloat("param1"), 0.0D);
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -507,7 +521,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("10.0%");
 
         // should not throw any exceptions
-        Assert.assertEquals(10.0D, args.getPercent("param1"), 0.0D);
+        assertEquals(10.0D, args.getPercent("param1"), 0.0D);
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -579,7 +593,7 @@ public class CommandArgumentsTest {
         CommandArguments args = getParseArguments("constant");
 
         // should not throw any exceptions
-        Assert.assertEquals(TestEnum.CONSTANT, args.getEnum("param1", TestEnum.class));
+        assertEquals(TestEnum.CONSTANT, args.getEnum("param1", TestEnum.class));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -606,10 +620,10 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getOptionalArguments("value");
-        Assert.assertEquals(false, args.isDefaultValue("param1"));
+        assertEquals(false, args.isDefaultValue("param1"));
 
         args = getOptionalArguments(null);
-        Assert.assertEquals(true, args.isDefaultValue("param1"));
+        assertEquals(true, args.isDefaultValue("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -626,34 +640,34 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("true");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("allow");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("yes");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("on");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("false");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("deny");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("0");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("no");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("off");
-        Assert.assertEquals(true, args.hasBoolean("param1"));
+        assertEquals(true, args.hasBoolean("param1"));
 
         args = getParseArguments("notABoolean");
-        Assert.assertEquals(false, args.hasBoolean("param1"));
+        assertEquals(false, args.hasBoolean("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -671,10 +685,10 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("s");
-        Assert.assertEquals(true, args.hasChar("param1"));
+        assertEquals(true, args.hasChar("param1"));
 
         args = getParseArguments("notAChar");
-        Assert.assertEquals(false, args.hasChar("param1"));
+        assertEquals(false, args.hasChar("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -691,10 +705,10 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("10");
-        Assert.assertEquals(true, args.hasByte("param1"));
+        assertEquals(true, args.hasByte("param1"));
 
         args = getParseArguments("notAByte");
-        Assert.assertEquals(false, args.hasByte("param1"));
+        assertEquals(false, args.hasByte("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -711,10 +725,10 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("10");
-        Assert.assertEquals(true, args.hasShort("param1"));
+        assertEquals(true, args.hasShort("param1"));
 
         args = getParseArguments("notAShort");
-        Assert.assertEquals(false, args.hasShort("param1"));
+        assertEquals(false, args.hasShort("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -731,10 +745,10 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("10");
-        Assert.assertEquals(true, args.hasInteger("param1"));
+        assertEquals(true, args.hasInteger("param1"));
 
         args = getParseArguments("notAnInt");
-        Assert.assertEquals(false, args.hasInteger("param1"));
+        assertEquals(false, args.hasInteger("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -751,13 +765,13 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("10.0");
-        Assert.assertEquals(true, args.hasFloat("param1"));
+        assertEquals(true, args.hasFloat("param1"));
 
         args = getParseArguments("10");
-        Assert.assertEquals(true, args.hasFloat("param1"));
+        assertEquals(true, args.hasFloat("param1"));
 
         args = getParseArguments("notAFloat");
-        Assert.assertEquals(false, args.hasFloat("param1"));
+        assertEquals(false, args.hasFloat("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -775,13 +789,13 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("10.0");
-        Assert.assertEquals(true, args.hasDouble("param1"));
+        assertEquals(true, args.hasDouble("param1"));
 
         args = getParseArguments("10");
-        Assert.assertEquals(true, args.hasDouble("param1"));
+        assertEquals(true, args.hasDouble("param1"));
 
         args = getParseArguments("notADouble");
-        Assert.assertEquals(false, args.hasDouble("param1"));
+        assertEquals(false, args.hasDouble("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -797,16 +811,16 @@ public class CommandArgumentsTest {
         CommandArguments args;
 
         args = getParseArguments("wood");
-        Assert.assertEquals(true, args.hasItemStack("param1"));
+        assertEquals(true, args.hasItemStack("param1"));
 
         args = getParseArguments("wood,wood");
-        Assert.assertEquals(true, args.hasItemStack("param1"));
+        assertEquals(true, args.hasItemStack("param1"));
 
         args = getParseArguments("wood,wood;5");
-        Assert.assertEquals(true, args.hasItemStack("param1"));
+        assertEquals(true, args.hasItemStack("param1"));
 
         args = getParseArguments("notAnItemStack");
-        Assert.assertEquals(false, args.hasItemStack("param1"));
+        assertEquals(false, args.hasItemStack("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -823,19 +837,19 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("10.0%");
-        Assert.assertEquals(true, args.hasPercent("param1"));
+        assertEquals(true, args.hasPercent("param1"));
 
         args = getParseArguments("10%");
-        Assert.assertEquals(true, args.hasPercent("param1"));
+        assertEquals(true, args.hasPercent("param1"));
 
         args = getParseArguments("10.0");
-        Assert.assertEquals(true, args.hasPercent("param1"));
+        assertEquals(true, args.hasPercent("param1"));
 
         args = getParseArguments("10");
-        Assert.assertEquals(true, args.hasPercent("param1"));
+        assertEquals(true, args.hasPercent("param1"));
 
         args = getParseArguments("notAPercent");
-        Assert.assertEquals(false, args.hasPercent("param1"));
+        assertEquals(false, args.hasPercent("param1"));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -852,10 +866,10 @@ public class CommandArgumentsTest {
 
         // should not throw any exceptions
         args = getParseArguments("constant");
-        Assert.assertEquals(true, args.hasEnum("param1", TestEnum.class));
+        assertEquals(true, args.hasEnum("param1", TestEnum.class));
 
         args = getParseArguments("notAValidConstant");
-        Assert.assertEquals(false, args.hasEnum("param1", TestEnum.class));
+        assertEquals(false, args.hasEnum("param1", TestEnum.class));
 
         // check for runtime exception, invalid parameter name specified
         try {
@@ -863,5 +877,31 @@ public class CommandArgumentsTest {
             throw new AssertionError("RuntimeException expected.");
         }
         catch (RuntimeException ignore) {}
+    }
+
+    @Test
+    public void testMixedArgTypes() throws Exception {
+
+        CommandArguments args;
+
+        args = getMixedOptionalArguments("arg1", "arg2", true);
+        assertEquals("arg1", args.getString("param1"));
+        assertEquals("arg2", args.getString("param2"));
+        assertEquals(true, args.getBoolean("flag"));
+
+        args = getMixedOptionalArguments("arg1", "arg2", false);
+        assertEquals("arg1", args.getString("param1"));
+        assertEquals("arg2", args.getString("param2"));
+        assertEquals(false, args.getBoolean("flag"));
+
+        args = getMixedOptionalArguments("arg1", null, false);
+        assertEquals("arg1", args.getString("param1"));
+        assertEquals("optional", args.getString("param2"));
+        assertEquals(false, args.getBoolean("flag"));
+
+        args = getMixedOptionalArguments("arg1", null, true);
+        assertEquals("arg1", args.getString("param1"));
+        assertEquals("optional", args.getString("param2"));
+        assertEquals(true, args.getBoolean("flag"));
     }
 }

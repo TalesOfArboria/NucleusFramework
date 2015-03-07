@@ -96,13 +96,13 @@ public class ArgumentParser {
     // parse arguments for static parameters
     private void parseStaticArgs(AbstractCommand command,
                                  ArgumentParseResults results,
-                                 Deque<CommandParameter> parameterList,
+                                 Deque<CommandParameter> staticParameters,
                                  Deque<String> arguments)
             throws CommandException {
 
-        while (!parameterList.isEmpty()) {
+        while (!staticParameters.isEmpty()) {
 
-            CommandParameter parameter = parameterList.removeFirst();
+            CommandParameter parameter = staticParameters.removeFirst();
 
             String name = parameter.getName();
             String value = null;
@@ -119,7 +119,7 @@ public class ArgumentParser {
 
                     // If there are still more static parameters, it means this
                     // is not the last parameter and the value is incorrect.
-                    if (!parameterList.isEmpty()) {
+                    if (!staticParameters.isEmpty()) {
                         CommandException.invalidArgument(command, parameter.getName());
                     }
 
@@ -133,7 +133,6 @@ public class ArgumentParser {
                     // this is the end of the loop.
                     else {
                         arguments.addFirst(arg);
-                        return;
                     }
                 }
                 else {
