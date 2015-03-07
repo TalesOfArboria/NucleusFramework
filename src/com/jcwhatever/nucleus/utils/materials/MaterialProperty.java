@@ -51,6 +51,18 @@ public class MaterialProperty implements INamedInsensitive {
      */
     public static final MaterialProperty REDSTONE = new MaterialProperty("Redstone");
     /**
+     * The material can be interacted with by a player to create a redstone current (i.e. button or lever)
+     */
+    public static final MaterialProperty REDSTONE_SWITCH = new MaterialProperty("Redstone_Switch");
+    /**
+     * The material is a button.
+     */
+    public static final MaterialProperty BUTTON = new MaterialProperty("Button");
+    /**
+     * The material is a pressure plate.
+     */
+    public static final MaterialProperty PRESSURE_PLATE = new MaterialProperty("Pressure_Plate");
+    /**
      * The material is wearable.
      */
     public static final MaterialProperty WEARABLE = new MaterialProperty("Wearable");
@@ -83,9 +95,59 @@ public class MaterialProperty implements INamedInsensitive {
      */
     public static final MaterialProperty WEAPON = new MaterialProperty("Weapon");
     /**
-     * The material is a tool.
+     * The material is a tool. (i.e shovel)
      */
-    public static final MaterialProperty TOOL = new MaterialProperty("Tool");
+    public static final MaterialProperty MINING_TOOL = new MaterialProperty("Mining_Tool");
+    /**
+     * The material is a shovel.
+     */
+    public static final MaterialProperty SHOVEL = new MaterialProperty("Shovel");
+    /**
+     * The material is a hoe.
+     */
+    public static final MaterialProperty HOE = new MaterialProperty("Hoe");
+    /**
+     * The material is an axe.
+     */
+    public static final MaterialProperty AXE = new MaterialProperty("Axe");
+    /**
+     * The material is a pickaxe.
+     */
+    public static final MaterialProperty PICKAXE = new MaterialProperty("Pickaxe");
+    /**
+     * The material is based on wood. That is that the materials primary component is wood
+     * (i.e. Wooden Sword)
+     */
+    public static final MaterialProperty WOOD_BASED = new MaterialProperty("Wood_Based");
+    /**
+     * The material is based on stone or cobblestone. That is that the materials primary
+     * component is stone or cobblestone. (i.e. Stone pickaxe)
+     */
+    public static final MaterialProperty STONE_BASED = new MaterialProperty("Stone_Based");
+    /**
+     * The material is based on iron. That is that the materials primary component is iron
+     * (i.e. Iron Shovel)
+     */
+    public static final MaterialProperty IRON_BASED = new MaterialProperty("Iron_Based");
+    /**
+     * The material is based on gold. That is that the materials primary component is gold
+     * (i.e. Gold Axe)
+     */
+    public static final MaterialProperty GOLD_BASED = new MaterialProperty("Gold_Based");
+    /**
+     * The material is based on leather. That is that the materials primary component is leather
+     * (i.e. Leather leggings)
+     */
+    public static final MaterialProperty LEATHER_BASED = new MaterialProperty("Leather_Based");
+    /**
+     * The material is based on diamond. That is that the materials primary component is diamond
+     * (i.e Diamond helmet).
+     */
+    public static final MaterialProperty DIAMOND_BASED = new MaterialProperty("Diamond_Based");
+    /**
+     * The material is based on quarts.
+     */
+    public static final MaterialProperty QUARTZ_BASED = new MaterialProperty("Quartz_Based");
     /**
      * The material can be placed by a player in at least 1 game mode type.
      */
@@ -127,6 +189,10 @@ public class MaterialProperty implements INamedInsensitive {
      */
     public static final MaterialProperty BLOCK = new MaterialProperty("Block");
     /**
+     * The material is stairs.
+     */
+    public static final MaterialProperty STAIRS = new MaterialProperty("Stairs");
+    /**
      * The material consists of more than 1 block (i.e. door)
      */
     public static final MaterialProperty MULTI_BLOCK = new MaterialProperty("MultiBlock");
@@ -140,6 +206,18 @@ public class MaterialProperty implements INamedInsensitive {
      * The material is a boundary that can be opened (i.e. door)
      */
     public static final MaterialProperty OPENABLE_BOUNDARY = new MaterialProperty("Openable_Boundary");
+    /**
+     * The material is a double block door.
+     */
+    public static final MaterialProperty DOOR = new MaterialProperty("Door");
+    /**
+     * The material is a fence gate.
+     */
+    public static final MaterialProperty FENCE_GATE = new MaterialProperty("Fence_Gate");
+    /**
+     * The material is a trap door.
+     */
+    public static final MaterialProperty TRAPDOOR = new MaterialProperty("Trap_Door");
     /**
      * The material is a solid surface that players can walk on.
      */
