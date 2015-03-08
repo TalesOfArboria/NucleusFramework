@@ -561,7 +561,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @throws InvalidArgumentException  If the argument is not parsable into a float value.
      */
     public float getFloat(String parameterName) throws InvalidArgumentException {
-        return getFloat(parameterName, Float.MIN_VALUE, Float.MAX_VALUE);
+        return getFloat(parameterName, -Float.MIN_NORMAL, Float.MAX_VALUE);
     }
 
     /**
@@ -610,7 +610,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * @throws InvalidArgumentException  If the argument is not parsable into a double value.
      */
     public double getDouble(String parameterName) throws InvalidArgumentException {
-        return getDouble(parameterName, Double.MIN_VALUE, Double.MAX_VALUE);
+        return getDouble(parameterName, -Double.MIN_NORMAL, Double.MAX_VALUE);
     }
 
     /**
