@@ -57,7 +57,7 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
     }
 
     /**
-     * Called to load an object from the data node.
+     * Invoked to load an object from the data node.
      *
      * @param name      The name of the object.
      * @param itemNode  The data node it is stored on.
@@ -68,7 +68,7 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
     protected abstract T load(String name, IDataNode itemNode);
 
     /**
-     * Called to save an object to its data node.
+     * Invoked to save an object to its data node.
      *
      * @param item      The object to save.
      * @param itemNode  The data node to save its properties to.
@@ -78,7 +78,7 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
     @Override
     protected boolean onAdd(T added) {
         if (_dataNode != null) {
-            IDataNode dataNode = getNode(added.getName());
+            IDataNode dataNode = getNode(getName(added));
             save(added, dataNode);
             dataNode.save();
         }
@@ -88,19 +88,19 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
     @Override
     protected void onRemove(T removed) {
         if (_dataNode != null) {
-            IDataNode dataNode = getNode(removed.getName());
+            IDataNode dataNode = getNode(getName(removed));
             dataNode.remove();
             dataNode.save();
         }
     }
 
     /**
-     * Called after settings are loaded.
+     * Invoked after settings are loaded.
      */
     protected void onLoad() {}
 
     /**
-     * Called to get the data node for an item.
+     * Invoked to get the data node for an item.
      *
      * @param name  The name of the item.
      */
@@ -110,7 +110,7 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
     }
 
     /**
-     * Called to load managed objects from the data node.
+     * Invoked to load managed objects from the data node.
      */
     protected void load() {
         if (_dataNode == null)
