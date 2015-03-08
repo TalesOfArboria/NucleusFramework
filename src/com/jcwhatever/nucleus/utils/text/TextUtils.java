@@ -81,7 +81,7 @@ public final class TextUtils {
     public static final Pattern PATTERN_UNDERSCORE = Pattern.compile("_");
     public static final Pattern PATTERN_DOUBLE_QUOTE = Pattern.compile("\"");
     public static final Pattern PATTERN_SINGLE_QUOTE = Pattern.compile("'");
-    public static final Pattern PATTERN_NEW_LINE = Pattern.compile("\n");
+    public static final Pattern PATTERN_NEW_LINE = Pattern.compile("\r\n|\r|\n");
 
     public static final TextFormatterSettings TEXT_FORMATTER_SETTINGS = new TextFormatterSettings();
     public static final TextFormatter TEXT_FORMATTER = new TextFormatter(TEXT_FORMATTER_SETTINGS);
@@ -130,7 +130,7 @@ public final class TextUtils {
     }
 
     /**
-     * Specify case sensitivity
+     * Specify case sensitivity.
      */
     public enum CaseSensitivity {
         /**
@@ -141,6 +141,30 @@ public final class TextUtils {
          * Ignore case, case insensitive.
          */
         IGNORE_CASE
+    }
+
+    /**
+     * Specify optional title case parsing options.
+     */
+    public enum TitleCaseOption {
+        /**
+         * Forces casing. All letters are lower cased unless they are the
+         * first letter of a word larger than 3 characters.
+         */
+        FORCE_CASING,
+        /**
+         * Forces words whose length is less than or equal to 3 characters
+         * to start with an upper case letter.
+         */
+        CASE_SMALL_WORDS,
+        /**
+         * Remove underscores and replace them with spaces.
+         */
+        REMOVE_UNDERSCORE,
+        /**
+         * Use all options.
+         */
+        ALL
     }
 
     /**
@@ -445,20 +469,52 @@ public final class TextUtils {
     }
 
     /**
-     * Converts the casing of the supplied string
-     * for use as a title.
+     * Converts the casing of the supplied string for use as a title.
      *
-     * @param s  The string to modify
+     * <p>The normal operation is to change the first letter of every word over
+     * 3 characters in length to upper case.</p>
+     *
+     * <p>Additional operations can be added.</p>
+     *
+     * @param text     The string to modify
+     * @param options  Parsing options.
      */
-    public static String titleCase(String s) {
-        PreCon.notNull(s);
+    public static String titleCase(String text, TitleCaseOption... options) {
+        PreCon.notNull(text);
 
-        if (s.length() < 2) {
-            return s;
+        if (text.length() < 2) {
+            return text;
         }
 
-        String[] words = PATTERN_SPACE.split(s);
-        StringBuilder resultSB = new StringBuilder(s.length() + 10);
+        boolean forceCasing = false;
+        boolean removeUnderscores = false;
+        boolean caseSmallWords = false;
+
+        for (TitleCaseOption option : options) {
+            switch (option) {
+                case ALL:
+                    forceCasing = true;
+                    removeUnderscores = true;
+                    caseSmallWords = true;
+                    break;
+                case FORCE_CASING:
+                    forceCasing = true;
+                    break;
+                case REMOVE_UNDERSCORE:
+                    removeUnderscores = true;
+                    break;
+                case CASE_SMALL_WORDS:
+                    caseSmallWords = true;
+                    break;
+            }
+        }
+
+        if (removeUnderscores) {
+            text = text.replace('_', ' ');
+        }
+
+        String[] words = PATTERN_SPACE.split(text);
+        StringBuilder resultSB = new StringBuilder(text.length() + 10);
 
         for (int i=0; i < words.length; i++) {
 
@@ -466,12 +522,18 @@ public final class TextUtils {
                 resultSB.append(' ');
 
             String word = words[i];
-            if (word.length() <= 3) {
-                resultSB.append(word);
-            } else {
+            String firstLetter = word.substring(0, 1);
 
-                String firstLetter = word.substring(0, 1).toUpperCase();
-                resultSB.append(firstLetter);
+            if (caseSmallWords || word.length() > 3) {
+                firstLetter = firstLetter.toUpperCase();
+            } else if (forceCasing) {
+                firstLetter = firstLetter.toLowerCase();
+            }
+
+            resultSB.append(firstLetter);
+            if (forceCasing) {
+                resultSB.append(word.substring(1, word.length()).toLowerCase());
+            } else {
                 resultSB.append(word.subSequence(1, word.length()));
             }
         }
