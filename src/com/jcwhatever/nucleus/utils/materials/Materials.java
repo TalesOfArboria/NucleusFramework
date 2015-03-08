@@ -1211,7 +1211,9 @@ public class Materials {
         add(Material.ENDER_PEARL,
                 MaterialProperty.THROWABLE);
 
-        add(Material.ENDER_PORTAL);
+        add(Material.ENDER_PORTAL,
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT);
 
         add(Material.ENDER_PORTAL_FRAME,
                 MaterialProperty.SURFACE);
@@ -1866,7 +1868,8 @@ public class Materials {
                 MaterialProperty.FOOD);
 
         add(Material.PORTAL,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT);
 
         add(Material.POTATO,
                 MaterialProperty.BLOCK);
