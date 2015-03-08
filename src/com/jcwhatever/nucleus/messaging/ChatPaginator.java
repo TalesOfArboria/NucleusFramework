@@ -26,8 +26,9 @@
 package com.jcwhatever.nucleus.messaging;
 
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.language.Localizable;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.command.CommandSender;
@@ -41,12 +42,16 @@ import javax.annotation.Nullable;
 /**
  * Chat list paginator.
  */
-public class ChatPaginator {
+public class ChatPaginator implements IPluginOwned {
 
-    @Localizable static final String _HEADER = "----------------------------------------\r" +
-            "{AQUA}{0} {GRAY}(Page {1: current page} of {2: total pages})";
+    @Localizable
+    static final String _HEADER =
+            "----------------------------------------\n" +
+            "{AQUA}{0: title} {GRAY}(Page {1: current page} of {2: total pages})";
 
-    @Localizable static final String _FOOTER = "----------------------------------------";
+    @Localizable
+    static final String _FOOTER =
+            "----------------------------------------";
 
     private final Plugin _plugin;
     private final IMessenger _msg;
@@ -60,40 +65,41 @@ public class ChatPaginator {
     /**
      * Constructor.
      *
-     * <p>
-     *     6 items per page, default header and footer.
-     * </p>
+     * <p>6 items per page, no title</p>
      *
      * @param plugin  The owning plugin.
      */
     public ChatPaginator(Plugin plugin) {
-        PreCon.notNull(plugin);
-
-        _plugin = plugin;
-        _msg = MessengerFactory.get(plugin);
+        this(plugin, 6, "");
     }
 
     /**
      * Constructor.
      *
-     * <p>No header or footer.</p>
+     * <p>No title.</p>
      *
      * @param plugin        The owning plugin.
      * @param itemsPerPage  Number of items to show per page.
      */
     public ChatPaginator(Plugin plugin, int itemsPerPage) {
-        PreCon.notNull(plugin);
-        PreCon.greaterThanZero(itemsPerPage);
-
-        _plugin = plugin;
-        _msg = MessengerFactory.get(plugin);
-        _itemsPerPage = itemsPerPage;
+        this(plugin, itemsPerPage, "");
     }
 
     /**
      * Constructor.
      *
-     * <p>6 items per page, default header and footer.</p>
+     * <p>6 items per page.</p>
+     *
+     * @param plugin  The owning plugin.
+     * @param title   The title to insert into the header.
+     * @param args    Optional title format args.
+     */
+    public ChatPaginator(Plugin plugin, String title, Object... args) {
+        this(plugin, 6, title, args);
+    }
+
+    /**
+     * Constructor.
      *
      * @param plugin        The owning plugin.
      * @param itemsPerPage  Number of items to show per page.
@@ -102,71 +108,17 @@ public class ChatPaginator {
      */
     public ChatPaginator(Plugin plugin, int itemsPerPage, String title, Object... args) {
         PreCon.notNull(title);
-
-        _plugin = plugin;
-        _msg = MessengerFactory.get(plugin);
-        _itemsPerPage = itemsPerPage;
-        _title = TextUtils.format(title, args);
-    }
-
-    /**
-     * Constructor.
-     *
-     * <p>6 items per page.</p>
-     * <p>
-     *     Header format uses numbers in braces to insert title, current page and total pages:<br />
-     *     {0} = title<br />
-     *     {1} = current page<br />
-     *     {2} = total pages
-     * </p>
-     *
-     * @param plugin        The owning plugin.
-     * @param headerFormat  The header format.
-     * @param footerFormat  The footer format.
-     * @param title         The title to insert into the header.
-     * @param args          Optional title format args.
-     */
-    public ChatPaginator(Plugin plugin, Object headerFormat, Object footerFormat,
-                         String title, Object... args) {
-        this(plugin, 5, headerFormat, footerFormat, title, args);
-    }
-
-    /**
-     * Constructor.
-     *
-     * <p>
-     *     Header format uses numbers in braces to insert title, current page and total pages:<br />
-     *     {0} = title<br />
-     *     {1} = current page<br />
-     *     {2} = total pages
-     * </p>
-     *
-     * @param plugin        The owning plugin.
-     * @param itemsPerPage  Number of items to show per page.
-     * @param headerFormat  The header format.
-     * @param footerFormat  The footer format.
-     * @param title         The title to insert into the header.
-     * @param args          Optional title format args.
-     */
-    public ChatPaginator(Plugin plugin, int itemsPerPage,
-                         Object headerFormat, Object footerFormat,
-                         String title, Object... args) {
-        PreCon.notNull(headerFormat);
-        PreCon.notNull(footerFormat);
-        PreCon.notNull(title);
         PreCon.notNull(args);
 
         _plugin = plugin;
         _msg = MessengerFactory.get(plugin);
         _itemsPerPage = itemsPerPage;
-        _headerFormat = headerFormat.toString();
-        _footerFormat = footerFormat.toString();
+        _headerFormat = _HEADER;
+        _footerFormat = _FOOTER;
         _title = TextUtils.format(title, args);
     }
 
-    /**
-     * Get the owning plugin.
-     */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }
@@ -177,6 +129,38 @@ public class ChatPaginator {
     @Nullable
     public String getTitle() {
         return _title;
+    }
+
+    /**
+     * Set the header text/format.
+     * <p/>
+     * <p>Header format uses numbers in braces to insert title, current page and total pages:</p>
+     * <ul>
+     * <li>{0} = title</li>
+     * <li>{1} = current page</li>
+     * <li>{2} = total pages</li>
+     * </ul>
+     *
+     * @param header The header text.
+     */
+    public void setHeader(@Nullable String header) {
+        _headerFormat = header;
+    }
+
+    /**
+     * Set the footer text/format.
+     * <p/>
+     * <p>Footer format uses numbers in braces to insert title, current page and total pages:</p>
+     * <ul>
+     * <li>{0} = title</li>
+     * <li>{1} = current page</li>
+     * <li>{2} = total pages</li>
+     * </ul>
+     *
+     * @param footer The footer text.
+     */
+    public void setFooter(@Nullable String footer) {
+        _footerFormat = footer;
     }
 
     /**
@@ -199,8 +183,10 @@ public class ChatPaginator {
      * Add an item with a format that overrides the item format used when
      * displaying the paginator.
      *
-     * @param format      The format that applies to the item.
-     * @param args        The object arguments inserted into the item format.
+     * @param format  The format that applies to the item. See
+     *                {@link com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate}
+     *                for ready-made formats.
+     * @param args    The object arguments inserted into the item format.
      */
     public void addFormatted(Object format, Object...args) {
         PreCon.notNull(format);
@@ -241,7 +227,10 @@ public class ChatPaginator {
      *
      * @param sender  The command sender to display the page to.
      * @param page    The page to display.
-     * @param format  The format that applies to the items on the page.
+     * @param format  The format that applies to the items on the page. See
+     *                {@link TextUtils.FormatTemplate}
+     *                for ready-made formats.
+     *
      */
     public void show(CommandSender sender, int page, Object format) {
         PreCon.notNull(sender);
@@ -253,7 +242,7 @@ public class ChatPaginator {
 
         String header = _headerFormat != null
                 ? NucLang.get(_plugin, _headerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
-                : NucLang.get(_HEADER, _title, Math.max(1, page), Math.max(1, totalPages));
+                : "";
 
         if (!header.isEmpty())
             _msg.tell(sender, header);
@@ -284,7 +273,7 @@ public class ChatPaginator {
 
         String footer = _footerFormat != null
                 ? NucLang.get(_plugin, _footerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
-                : NucLang.get(_FOOTER, _title, Math.max(1, page), Math.max(1, totalPages));
+                : "";
 
         if (!footer.isEmpty())
             _msg.tell(sender, footer);
@@ -293,7 +282,7 @@ public class ChatPaginator {
     /*
      * Used to store formatting information for a single item.
      */
-    private static final class PreFormattedLine {
+    protected static class PreFormattedLine {
         public final String format;
         public final Object[] arguments;
 
