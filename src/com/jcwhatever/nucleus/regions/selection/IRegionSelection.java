@@ -74,26 +74,82 @@ public interface IRegionSelection {
      *
      * <p>Note: If the location is set but the world it's for is not
      * loaded, the World value of location may be null.</p>
+     *
+     * @return The location or null if not set.
      */
+    @Nullable
     Location getP1();
 
     /**
-     * Get the cuboid regions seconds point location.
+     * Copy the cuboid regions first point location values to the specified location.
+     * <p/>
+     * <p>Note: If the location is set but the world it's for is not
+     * loaded, the World value of location may be null.</p>
+     *
+     * @param location The location to put the results into.
+     * @return The location passed in as an argument or null if not set.
+     */
+    @Nullable
+    Location getP1(Location location);
+
+    /**
+     * Get the cuboid regions second point location.
      *
      * <p>Note: If the location is set but the world it's for is not
      * loaded, the World value of location may be null.</p>
+     *
+     * @return The location or null if not set.
      */
+    @Nullable
     Location getP2();
 
     /**
-     * Get the cuboid regions lower point location.
+     * Copy the cuboid regions second point location values to the specified location.
+     * <p/>
+     * <p>Note: If the location is set but the world it's for is not
+     * loaded, the World value of location may be null.</p>
+     *
+     * @param location The location to put the results into.
+     * @return The location passed in as an argument or null if not set.
      */
+    @Nullable
+    Location getP2(Location location);
+
+    /**
+     * Get the cuboid regions lower point location.
+     *
+     * @return The location or null if not set.
+     */
+    @Nullable
     Location getLowerPoint();
 
     /**
-     * Get the cuboid regions upper point location.
+     * Copy the cuboid regions lower point location values into the specified location.
+     *
+     * @param location  The location to put the results into.
+     *
+     * @return The location passed in as an argument or null if location not set.
      */
+    @Nullable
+    Location getLowerPoint(Location location);
+
+    /**
+     * Get the cuboid regions upper point location.
+     *
+     * @return The location or null if not set.
+     */
+    @Nullable
     Location getUpperPoint();
+
+    /**
+     * Copy the cuboid regions upper point location values into the specified location.
+     *
+     * @param location  The location to put the results into.
+     *
+     * @return The location passed in as an argument or null if no location set.
+     */
+    @Nullable
+    Location getUpperPoint(Location location);
 
     /**
      * Get the smallest X axis coordinates
@@ -171,8 +227,21 @@ public interface IRegionSelection {
 
     /**
      * Get the center location of the region.
+     *
+     * @return The center location or null if region is undefined.
      */
+    @Nullable
     Location getCenter();
+
+    /**
+     * Copy the center location values of the region into the specified location.
+     *
+     * @param location  The location to put the results into.
+     *
+     * @return The location passed in as an argument or null if region is undefined.
+     */
+    @Nullable
+    Location getCenter(Location location);
 
     /**
      * Get the smallest X axis coordinates from the chunks

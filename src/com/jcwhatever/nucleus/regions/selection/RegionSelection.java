@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -156,6 +157,17 @@ public class RegionSelection implements IRegionSelection {
 
     @Override
     @Nullable
+    public Location getP1(Location location) {
+        PreCon.notNull(location);
+
+        if (_p1 == null)
+            return null;
+
+        return LocationUtils.copy(_p1, location);
+    }
+
+    @Override
+    @Nullable
     public final Location getP2() {
         if (_p2 == null)
             return null;
@@ -163,6 +175,17 @@ public class RegionSelection implements IRegionSelection {
         synchronized (_sync) {
             return _p2.getBukkitLocation();
         }
+    }
+
+    @Override
+    @Nullable
+    public Location getP2(Location location) {
+        PreCon.notNull(location);
+
+        if (_p2 == null)
+            return null;
+
+        return LocationUtils.copy(_p2, location);
     }
 
     @Override
@@ -176,11 +199,32 @@ public class RegionSelection implements IRegionSelection {
 
     @Override
     @Nullable
+    public Location getLowerPoint(Location location) {
+        PreCon.notNull(location);
+
+        if (_lowerPoint == null)
+            return null;
+
+        return LocationUtils.copy(_lowerPoint, location);
+    }
+
+    @Override
+    @Nullable
     public final Location getUpperPoint() {
         if (_upperPoint == null)
             return null;
 
         return _upperPoint.getBukkitLocation();
+    }
+
+    @Override
+    public Location getUpperPoint(Location location) {
+        PreCon.notNull(location);
+
+        if (_upperPoint == null)
+            return null;
+
+        return LocationUtils.copy(_upperPoint, location);
     }
 
     @Override
@@ -253,7 +297,19 @@ public class RegionSelection implements IRegionSelection {
     public final Location getCenter() {
         if (_center == null)
             return null;
-        return _center.clone();
+
+        return LocationUtils.copy(_center);
+    }
+
+    @Override
+    @Nullable
+    public Location getCenter(Location location) {
+        PreCon.notNull(location);
+
+        if (_center == null)
+            return null;
+
+        return LocationUtils.copy(_center, location);
     }
 
     @Override
@@ -495,9 +551,9 @@ public class RegionSelection implements IRegionSelection {
             _volume = _xWidth * _zWidth * _yHeight;
 
             if (getWorld() != null) {
-                double xCenter = _startX + (_xBlockWidth / 2.0D);
-                double yCenter = _startY + (_yBlockHeight / 2.0D);
-                double zCenter = _startZ + (_zBlockWidth / 2.0D);
+                double xCenter = (double) _startX + (_xBlockWidth / 2.0D);
+                double yCenter = (double) _startY + (_yBlockHeight / 2.0D);
+                double zCenter = (double) _startZ + (_zBlockWidth / 2.0D);
 
                 _center = new Location(getWorld(), xCenter, yCenter, zCenter);
             }

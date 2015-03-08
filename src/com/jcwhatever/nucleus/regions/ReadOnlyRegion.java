@@ -127,10 +127,22 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
         return _region.getP1();
     }
 
+    @Nullable
+    @Override
+    public Location getP1(Location location) {
+        return _region.getP1(location);
+    }
+
     @Override
     @Nullable
     public Location getP2 () {
         return _region.getP2();
+    }
+
+    @Nullable
+    @Override
+    public Location getP2(Location location) {
+        return _region.getP2(location);
     }
 
     @Override
@@ -139,10 +151,22 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
         return _region.getLowerPoint();
     }
 
+    @Nullable
+    @Override
+    public Location getLowerPoint(Location location) {
+        return _region.getLowerPoint(location);
+    }
+
     @Override
     @Nullable
     public Location getUpperPoint () {
         return _region.getUpperPoint();
+    }
+
+    @Nullable
+    @Override
+    public Location getUpperPoint(Location location) {
+        return _region.getUpperPoint(location);
     }
 
     @Override
@@ -280,6 +304,12 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     @Nullable
     public Location getCenter () {
         return _region.getCenter();
+    }
+
+    @Nullable
+    @Override
+    public Location getCenter(Location location) {
+        return _region.getCenter(location);
     }
 
     @Override
