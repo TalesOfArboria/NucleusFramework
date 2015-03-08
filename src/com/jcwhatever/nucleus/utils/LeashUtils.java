@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LeashHitch;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -48,18 +49,8 @@ public class LeashUtils {
     public static boolean isLeashed(Entity entity) {
         PreCon.notNull(entity);
 
-        return InternalLeashTracker.isLeashed(entity);
-    }
-
-    /**
-     * Determine if an entity is hitched.
-     *
-     * @param entity  The {@link org.bukkit.entity.Entity} to check.
-     */
-    public static boolean isHitched(Entity entity) {
-        PreCon.notNull(entity);
-
-        return InternalLeashTracker.isHitched(entity);
+        return entity instanceof LivingEntity &&
+                ((LivingEntity) entity).isLeashed();
     }
 
     /**
@@ -74,6 +65,17 @@ public class LeashUtils {
     }
 
     /**
+     * Determine if an entity is hitched.
+     *
+     * @param entity The {@link org.bukkit.entity.Entity} to check.
+     */
+    public static boolean isHitched(Entity entity) {
+        PreCon.notNull(entity);
+
+        return getHitch(entity) != null;
+    }
+
+    /**
      * Get the {@link org.bukkit.entity.LeashHitch} of a leashed entity.
      *
      * @param entity  The {@link org.bukkit.entity.Entity} to check.
@@ -85,7 +87,20 @@ public class LeashUtils {
     public static LeashHitch getHitch(Entity entity) {
         PreCon.notNull(entity);
 
-        return InternalLeashTracker.getHitch(entity);
+        if (!(entity instanceof LivingEntity))
+            return null;
+
+        LivingEntity living = (LivingEntity) entity;
+
+        if (!living.isLeashed())
+            return null;
+
+        Entity leash = living.getLeashHolder();
+
+        if (leash instanceof LeashHitch)
+            return (LeashHitch) leash;
+
+        return null;
     }
 
     /**
@@ -100,6 +115,18 @@ public class LeashUtils {
     public static Player getLeashedTo(Entity entity) {
         PreCon.notNull(entity);
 
-        return InternalLeashTracker.getLeashedTo(entity);
+        if (!(entity instanceof LivingEntity))
+            return null;
+
+        LivingEntity livingEntity = (LivingEntity) entity;
+        if (!livingEntity.isLeashed())
+            return null;
+
+        Entity holder = livingEntity.getLeashHolder();
+
+        if (holder instanceof Player)
+            return (Player) holder;
+
+        return null;
     }
 }

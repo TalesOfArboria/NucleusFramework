@@ -32,13 +32,12 @@ import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
@@ -60,7 +59,6 @@ public class InternalLeashTracker implements Listener {
 
     private static final Map<UUID, Set<Entity>> _playerMap = new HashMap<>(35);
     private static final Map<Entity, UUID> _entityMap = new WeakHashMap<>(55);
-    private static final Map<Entity, LeashHitch> _hitchMap = new WeakHashMap<>(55);
 
     /**
      * Get all entities currently leashed to the player.
@@ -92,41 +90,6 @@ public class InternalLeashTracker implements Listener {
 
             return CollectionUtils.unmodifiableSet(result);
         }
-    }
-
-    /**
-     * Determine if an entity is leashed to a player or hitch.
-     *
-     * @param entity  The {@link org.bukkit.entity.Entity} to check.
-     */
-    public static boolean isLeashed(Entity entity) {
-        return _entityMap.containsKey(entity) || _hitchMap.containsKey(entity);
-    }
-
-    /**
-     * Determine if an entity is hitched.
-     *
-     * @param entity  The {@link org.bukkit.entity.Entity} to check.
-     */
-    public static boolean isHitched(Entity entity) {
-        PreCon.notNull(entity);
-
-        return _hitchMap.containsKey(entity);
-    }
-
-    /**
-     * Get the {@link org.bukkit.entity.LeashHitch} of a leashed entity.
-     *
-     * @param entity  The {@link org.bukkit.entity.Entity} to check.
-     *
-     * @return  The {@link org.bukkit.entity.LeashHitch} or null if the entity
-     * is not leashed or is leashed to a player.
-     */
-    @Nullable
-    public static LeashHitch getHitch(Entity entity) {
-        PreCon.notNull(entity);
-
-        return _hitchMap.get(entity);
     }
 
     /**
@@ -177,21 +140,12 @@ public class InternalLeashTracker implements Listener {
             addPlayerLeash(playerId, event.getEntity());
         else {
             removePlayerLeash(playerId, event.getEntity());
-
-            if (leashHolder instanceof LeashHitch) {
-                _hitchMap.put(event.getEntity(), (LeashHitch)leashHolder);
-            }
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerUnleash(PlayerUnleashEntityEvent event) {
         removePlayerLeash(event.getPlayer().getUniqueId(), event.getEntity());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    private void onEntityUnleash(EntityUnleashEvent event) {
-        _hitchMap.remove(event.getEntity());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -202,6 +156,19 @@ public class InternalLeashTracker implements Listener {
             return;
 
         _playerMap.remove(playerId);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    private void onCreatureSpawn(CreatureSpawnEvent event) {
+
+        if (!event.getEntity().isLeashed())
+            return;
+
+        Entity leashHolder = event.getEntity().getLeashHolder();
+
+        if (leashHolder instanceof Player) {
+            addPlayerLeash(leashHolder.getUniqueId(), event.getEntity());
+        }
     }
 
     private void addPlayerLeash(UUID playerId, Entity leashed) {
