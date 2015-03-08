@@ -563,10 +563,6 @@ public final class LocationUtils {
     /**
      * Find a surface block (solid block that can be walked on) location below the provided
      * search location.
-     * <p>
-     *     If the search location is a surface block, the search location
-     *     is returned.
-     * </p>
      *
      * @param searchLoc  The search location.
      *
@@ -580,10 +576,6 @@ public final class LocationUtils {
     /**
      * Find a surface block (solid block that can be walked on) location below the provided
      * search location.
-     * <p>
-     *     If the search location is a surface block, the search location
-     *     is returned.
-     * </p>
      *
      * @param searchLoc  The search location.
      *
@@ -593,10 +585,15 @@ public final class LocationUtils {
     public static Location findSurfaceBelow(Location searchLoc, Location output) {
         PreCon.notNull(searchLoc);
 
-        getBlockLocation(searchLoc, output);
+        output.setWorld(searchLoc.getWorld());
+        output.setX(searchLoc.getX());
+        output.setY(searchLoc.getBlockY());
+        output.setZ(searchLoc.getZ());
+        output.setYaw(searchLoc.getYaw());
+        output.setPitch(searchLoc.getPitch());
 
         if (!Materials.isTransparent(output.getBlock().getType()))
-            return searchLoc;
+            return output;
 
         output.add(0, -1, 0);
         Block current = searchLoc.getBlock();
