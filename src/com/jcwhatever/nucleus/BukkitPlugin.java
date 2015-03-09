@@ -51,6 +51,8 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import javax.script.ScriptEngineManager;
 
 /**
@@ -87,6 +89,14 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         // allow script engines to find nucleus classes
         Thread.currentThread().setContextClassLoader(getClassLoader());
+
+        // init rhino javascript engine if present
+        try {
+            initRhinoClassLoader();
+        } catch (ClassNotFoundException | NoSuchMethodException |
+                IllegalAccessException | InvocationTargetException ignore) {
+            // rhino not found
+        }
     }
 
     /**
@@ -213,6 +223,47 @@ public final class BukkitPlugin extends NucleusPlugin {
                 plugin._isEnabled = false;
                 Bukkit.getPluginManager().disablePlugin(plugin);
             }
+        }
+    }
+
+    /*
+     * Init class loader into global factory.
+     * Reflection used to prevent compile issues with "internal" package.
+     *
+     * Equivalent code:
+     *
+     * ContextFactory factory = ContextFactory.getGlobal();
+     * ClassLoader loader = Nucleus.class.getClassLoader();
+     *
+     * if (loader == null) {
+     *      factory.initApplicationClassLoader(loader);
+     * }
+     */
+    private void initRhinoClassLoader() throws ClassNotFoundException,
+            NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Class<?> contextFactoryClass = Class.forName("sun.org.mozilla.javascript.internal.ContextFactory");
+
+        Method getGlobal = contextFactoryClass.getDeclaredMethod("getGlobal");
+        getGlobal.setAccessible(true);
+
+        ClassLoader classLoader = Nucleus.class.getClassLoader();
+
+        Object contextFactory = getGlobal.invoke(null);
+
+        Method getApplicationClassLoader = contextFactoryClass.getDeclaredMethod(
+                "getApplicationClassLoader");
+        getApplicationClassLoader.setAccessible(true);
+
+        ClassLoader current = (ClassLoader) getApplicationClassLoader.invoke(contextFactory);
+
+        if (current == null) {
+
+            Method initApplicationClassLoader = contextFactoryClass.getDeclaredMethod(
+                    "initApplicationClassLoader", ClassLoader.class);
+            initApplicationClassLoader.setAccessible(true);
+
+            initApplicationClassLoader.invoke(contextFactory, classLoader);
         }
     }
 }

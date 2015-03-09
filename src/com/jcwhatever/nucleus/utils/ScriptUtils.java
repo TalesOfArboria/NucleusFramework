@@ -297,13 +297,16 @@ public final class ScriptUtils {
         File file = script.getFile();
 
         String filename = file != null ? file.getName() : "<unknown>";
+        String engineName = engine.getFactory().getEngineName();
+        boolean isNashorn = engineName.contains("Nashorn");
 
+        engine.put(ScriptEngine.FILENAME, filename);
         context.setAttribute(ScriptEngine.FILENAME, filename, ScriptContext.ENGINE_SCOPE);
 
         Object result;
 
         try {
-            if (engine.getFactory().getEngineName().equals("Oracle Nashorn")) {
+            if (isNashorn) {
 
                 context.setAttribute("script", script.getScript(), ScriptContext.ENGINE_SCOPE);
                 context.setAttribute("scriptName", filename, ScriptContext.ENGINE_SCOPE);
