@@ -52,6 +52,6 @@ public class ScriptUpdateSubscriber<A> extends UpdateSubscriber<A> {
 
     @Override
     public void on(A argument) {
-        _scriptSubscriber.on(argument);
+        _scriptSubscriber.on(argument, this);
     }
 }

@@ -53,6 +53,6 @@ public class ScriptEventSubscriber<E> extends EventSubscriber<E> {
 
     @Override
     public void onEvent(@Nullable Object caller, E event) {
-        _scriptSubscriber.onEvent(event);
+        _scriptSubscriber.onEvent(event, this);
     }
 }

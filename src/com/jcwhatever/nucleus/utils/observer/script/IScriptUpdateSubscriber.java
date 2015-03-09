@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.utils.observer.script;
 
+import com.jcwhatever.nucleus.mixins.IDisposable;
+
 /**
  * An interface that can be easily created by script engines
  * from a script function.
@@ -32,5 +34,13 @@ package com.jcwhatever.nucleus.utils.observer.script;
  * {@link com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber}.</p>
  */
 public interface IScriptUpdateSubscriber<A> {
-    void on(A argument);
+
+    /**
+     * Invoked when an update that is subscribed to happens.
+     *
+     * @param argument The update argument.
+     * @param handle   The scripts subscribers {@link IDisposable} wrapper which
+     *                 can be used to un-subscribe.
+     */
+    void on(A argument, IDisposable handle);
 }
