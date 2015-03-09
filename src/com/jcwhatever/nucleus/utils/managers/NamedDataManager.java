@@ -78,7 +78,7 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
     @Override
     protected boolean onAdd(T added) {
         if (_dataNode != null) {
-            IDataNode dataNode = getNode(getName(added));
+            IDataNode dataNode = getNode(added.getName());
             save(added, dataNode);
             dataNode.save();
         }
@@ -88,7 +88,7 @@ public abstract class NamedDataManager<T extends INamed>  extends NamedManager<T
     @Override
     protected void onRemove(T removed) {
         if (_dataNode != null) {
-            IDataNode dataNode = getNode(getName(removed));
+            IDataNode dataNode = getNode(removed.getName());
             dataNode.remove();
             dataNode.save();
         }
