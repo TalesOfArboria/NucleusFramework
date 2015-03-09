@@ -542,6 +542,7 @@ public class EntityTypes {
         add(EntityType.SPIDER,
                 EntityTypeProperty.ALIVE,
                 EntityTypeProperty.HOSTILE,
+                EntityTypeProperty.MONSTER,
                 EntityTypeProperty.CLIMB,
                 EntityTypeProperty.WALK);
 
