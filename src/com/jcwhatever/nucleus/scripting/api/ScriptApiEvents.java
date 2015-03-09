@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;
+import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -87,7 +88,6 @@ public class ScriptApiEvents extends NucleusScriptApi {
         private final Plugin _plugin;
         private final List<RegisteredBukkitEvent> _registeredBukkit = new ArrayList<>(10);
         private final Deque<ISubscriber> _subscribers = new SubscriberLinkedList<>();
-        private Listener _dummyBukkitListener = new Listener() {};
         private boolean _isDisposed;
 
         ApiObject(Plugin plugin) {
@@ -107,7 +107,6 @@ public class ScriptApiEvents extends NucleusScriptApi {
                 registered._handlerList.unregister(registered._registeredListener);
             }
             _registeredBukkit.clear();
-            _dummyBukkitListener = new Listener() {};
 
             // unregister nucleus event handlers
             while (!_subscribers.isEmpty()) {
@@ -165,7 +164,7 @@ public class ScriptApiEvents extends NucleusScriptApi {
          * Register NucleusFramework event.
          */
         private boolean registerNucleusEvent(Class<?> event, String priority, boolean ignoreCancelled,
-                                             final IScriptEventSubscriber handler) {
+                                             final IScriptEventSubscriber<?> handler) {
 
             EventSubscriberPriority eventPriority = EventSubscriberPriority.NORMAL;
 
@@ -175,7 +174,7 @@ public class ScriptApiEvents extends NucleusScriptApi {
                 e.printStackTrace();
             }
 
-            ScriptEventSubscriber subscriber = new ScriptEventSubscriber(handler);
+            ScriptEventSubscriber subscriber = new ScriptEventSubscriber<>(handler);
             subscriber.setPriority(eventPriority);
             subscriber.setCancelIgnored(ignoreCancelled);
 
@@ -214,15 +213,33 @@ public class ScriptApiEvents extends NucleusScriptApi {
                 return false;
 
             final HandlerList handlerList = (HandlerList)result;
+            final Listener dummyListener = new Listener() {};
 
-            EventExecutor eventExecutor = new EventExecutor() {
+            final EventExecutor eventExecutor = new EventExecutor() {
+
+                boolean isDisposed = false;
+
                 @Override
                 public void execute(Listener listener, Event event) throws EventException {
-                    handler.onEvent(event);
+
+                    //noinspection unchecked
+                    handler.onEvent(event, new IDisposable() {
+
+                        @Override
+                        public boolean isDisposed() {
+                            return isDisposed;
+                        }
+
+                        @Override
+                        public void dispose() {
+                            isDisposed = true;
+                            handlerList.unregister(dummyListener);
+                        }
+                    });
                 }
             };
 
-            RegisteredListener registeredListener = new RegisteredListener(_dummyBukkitListener,
+            RegisteredListener registeredListener = new RegisteredListener(dummyListener,
                     eventExecutor, eventPriority, _plugin, ignoreCancelled);
 
             handlerList.register(registeredListener);
