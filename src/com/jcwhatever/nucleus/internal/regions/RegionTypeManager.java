@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.internal.regions;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.collections.RegionSet;
-import com.jcwhatever.nucleus.regions.data.OrderedRegions;
+import com.jcwhatever.nucleus.regions.collections.EventOrderedRegions;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -49,7 +49,7 @@ import java.util.Set;
 public class RegionTypeManager<R extends IRegion> {
 
     // Player watcher regions chunk map. String key is chunk coordinates.
-    private final Map<String, OrderedRegions<R>> _listenerRegionsMap = new HashMap<>(10);
+    private final Map<String, EventOrderedRegions<R>> _listenerRegionsMap = new HashMap<>(10);
 
     // All regions chunk map. String key is chunk coordinates
     private final Map<String, Set<R>> _allRegionsMap = new HashMap<>(15);
@@ -268,8 +268,8 @@ public class RegionTypeManager<R extends IRegion> {
 
             Iterator<R> iterator;
 
-            iterator = regions instanceof OrderedRegions
-                    ? ((OrderedRegions<R>) regions).iterator(priorityType)
+            iterator = regions instanceof EventOrderedRegions
+                    ? ((EventOrderedRegions<R>) regions).iterator(priorityType)
                     : regions.iterator();
 
             while (iterator.hasNext()) {
@@ -316,9 +316,9 @@ public class RegionTypeManager<R extends IRegion> {
                     if (region.isEventListener()) {
 
                         // add to listener regions map
-                        OrderedRegions<R> regions = _listenerRegionsMap.get(key);
+                        EventOrderedRegions<R> regions = _listenerRegionsMap.get(key);
                         if (regions == null) {
-                            regions = new OrderedRegions<R>(5);
+                            regions = new EventOrderedRegions<R>(5);
                             _listenerRegionsMap.put(key, regions);
                         }
                         regions.add(region);

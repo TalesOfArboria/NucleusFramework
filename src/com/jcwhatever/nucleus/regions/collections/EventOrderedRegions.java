@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.data;
+package com.jcwhatever.nucleus.regions.collections;
 
 import com.jcwhatever.nucleus.regions.IRegionComparable;
 import com.jcwhatever.nucleus.regions.options.RegionPriority;
@@ -47,18 +47,23 @@ import java.util.Set;
  * <p>If only the {@link java.util.Set} implemented methods are used, the collection
  * performance should remain nearly the same as a {@link java.util.HashSet}.</p>
  */
-public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
+public class EventOrderedRegions<E extends IRegionComparable> implements Set<E> {
 
+    // primary hash set
     private final Set<E> _hashSet;
-    private List<E> _enterlist;
-    private List<E> _leavelist;
+
+    // enter event sorted list cache
+    private List<E> _enterList;
     private boolean _isEnterSorted;
+
+    // leave event sorted list cache
+    private List<E> _leaveList;
     private boolean _isLeaveSorted;
 
     /**
      * Constructor.
      */
-    public OrderedRegions() {
+    public EventOrderedRegions() {
         this(10);
     }
 
@@ -67,7 +72,7 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
      *
      * @param size  The initial capacity.
      */
-    public OrderedRegions(int size) {
+    public EventOrderedRegions(int size) {
         _hashSet = new HashSet<>(size);
     }
 
@@ -126,16 +131,16 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
                     // enter list removed
                     case ENTER:
                         // now remove from leave list
-                        if (_leavelist != null) {
-                            _leavelist.remove(_current);
+                        if (_leaveList != null) {
+                            _leaveList.remove(_current);
                         }
                         break;
 
                     // leave list removed
                     case LEAVE:
                         // now remove from enter list
-                        if (_enterlist != null) {
-                            _enterlist.remove(_current);
+                        if (_enterList != null) {
+                            _enterList.remove(_current);
                         }
                         break;
                     default:
@@ -197,12 +202,12 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
 
         if (_hashSet.add(entry)) {
 
-            if (_enterlist != null) {
-                _enterlist.add(entry);
+            if (_enterList != null) {
+                _enterList.add(entry);
             }
 
-            if (_leavelist != null) {
-                _leavelist.add(entry);
+            if (_leaveList != null) {
+                _leaveList.add(entry);
             }
 
             _isEnterSorted = false;
@@ -219,14 +224,14 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
         //noinspection SuspiciousMethodCalls
         if (_hashSet.remove(obj)) {
 
-            if (_enterlist != null) {
+            if (_enterList != null) {
                 //noinspection SuspiciousMethodCalls
-                _enterlist.remove(obj);
+                _enterList.remove(obj);
             }
 
-            if (_leavelist != null) {
+            if (_leaveList != null) {
                 //noinspection SuspiciousMethodCalls
-                _leavelist.remove(obj);
+                _leaveList.remove(obj);
             }
             return true;
         }
@@ -256,12 +261,12 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
         PreCon.notNull(collection);
 
         if (_hashSet.retainAll(collection)) {
-            if (_enterlist != null) {
-                _enterlist.retainAll(collection);
+            if (_enterList != null) {
+                _enterList.retainAll(collection);
             }
 
-            if (_leavelist != null) {
-                _leavelist.retainAll(collection);
+            if (_leaveList != null) {
+                _leaveList.retainAll(collection);
             }
 
             return true;
@@ -285,11 +290,11 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
     public void clear() {
         _hashSet.clear();
 
-        if (_enterlist != null)
-            _enterlist.clear();
+        if (_enterList != null)
+            _enterList.clear();
 
-        if (_leavelist != null)
-            _leavelist.clear();
+        if (_leaveList != null)
+            _leaveList.clear();
     }
 
     /**
@@ -336,16 +341,16 @@ public class OrderedRegions<E extends IRegionComparable> implements Set<E> {
         switch (priorityType) {
 
             case ENTER:
-                if (_enterlist == null) {
-                    _enterlist = new ArrayList<>(_hashSet);
+                if (_enterList == null) {
+                    _enterList = new ArrayList<>(_hashSet);
                 }
-                return _enterlist;
+                return _enterList;
 
             case LEAVE:
-                if (_leavelist == null) {
-                    _leavelist = new ArrayList<>(_hashSet);
+                if (_leaveList == null) {
+                    _leaveList = new ArrayList<>(_hashSet);
                 }
-                return _leavelist;
+                return _leaveList;
 
             default:
                 throw new AssertionError();

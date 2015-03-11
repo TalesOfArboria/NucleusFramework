@@ -69,6 +69,11 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     }
 
     @Override
+    public int getPriority() {
+        return _region.getPriority();
+    }
+
+    @Override
     public RegionPriority getPriority(PriorityType priorityType) {
         return _region.getPriority(priorityType);
     }

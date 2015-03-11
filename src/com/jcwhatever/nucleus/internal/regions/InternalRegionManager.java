@@ -36,7 +36,7 @@ import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.IRegionEventListener;
 import com.jcwhatever.nucleus.regions.ReadOnlyRegion;
-import com.jcwhatever.nucleus.regions.data.OrderedRegions;
+import com.jcwhatever.nucleus.regions.collections.EventOrderedRegions;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
@@ -86,7 +86,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     private final ElementCounter<World> _listenerWorlds = new ElementCounter<>(RemovalPolicy.REMOVE);
 
     // cached regions the player was detected in during last player watcher cycle.
-    private final Map<UUID, OrderedRegions<IRegion>> _playerCacheMap;
+    private final Map<UUID, EventOrderedRegions<IRegion>> _playerCacheMap;
 
     // locations the player was detected in between player watcher cycles.
     private final Map<UUID, PlayerLocationCache> _playerLocationCache;
@@ -187,7 +187,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
         synchronized (_sync) {
 
-            OrderedRegions<IRegion> regions = _playerCacheMap.remove(player.getUniqueId());
+            EventOrderedRegions<IRegion> regions = _playerCacheMap.remove(player.getUniqueId());
 
             if (regions == null)
                 return;
@@ -515,7 +515,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
         private final Object _sync;
         private final Collection<WorldPlayers> _worldPlayers;
-        private final Map<UUID, OrderedRegions<IRegion>> _playerCacheMap;
+        private final Map<UUID, EventOrderedRegions<IRegion>> _playerCacheMap;
         private final InternalRegionManager _manager;
 
         PlayerWatcherAsync(InternalRegionManager manager, Collection<WorldPlayers> worldPlayers) {
@@ -541,10 +541,10 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                         UUID playerId = worldPlayer.player.getUniqueId();
 
                         // get regions the player is in (cached from previous check)
-                        OrderedRegions<IRegion> cachedRegions = _playerCacheMap.get(playerId);
+                        EventOrderedRegions<IRegion> cachedRegions = _playerCacheMap.get(playerId);
 
                         if (cachedRegions == null) {
-                            cachedRegions = new OrderedRegions<>(7);
+                            cachedRegions = new EventOrderedRegions<>(7);
                             _playerCacheMap.put(playerId, cachedRegions);
                         }
 
