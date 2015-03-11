@@ -251,7 +251,7 @@ public class EventOrderedRegions<E extends IRegionComparable> implements Set<E> 
 
         boolean isModified = false;
         for (E entry : collection) {
-            isModified = isModified || add(entry);
+            isModified = add(entry) || isModified;
         }
         return isModified;
     }
@@ -281,7 +281,7 @@ public class EventOrderedRegions<E extends IRegionComparable> implements Set<E> 
 
         boolean isModified = false;
         for (Object entry : collection) {
-            isModified = isModified || remove(entry);
+            isModified = remove(entry) || isModified;
         }
         return isModified;
     }
