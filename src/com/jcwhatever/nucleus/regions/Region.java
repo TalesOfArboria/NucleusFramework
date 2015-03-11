@@ -126,25 +126,16 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
     }
 
-    /**
-     * Get the name of the region.
-     */
     @Override
     public final String getName() {
         return _name;
     }
 
-    /**
-     * Get the name of the region in lower case.
-     */
     @Override
     public final String getSearchName() {
         return _searchName;
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public final Plugin getPlugin() {
         return _plugin;
@@ -158,10 +149,11 @@ public abstract class Region extends RegionSelection implements IRegion {
         return _dataNode;
     }
 
-    /**
-     * Get the regions priority when handling player
-     * entering region.
-     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
     @Override
     public RegionPriority getPriority(PriorityType priorityType) {
         PreCon.notNull(priorityType);
@@ -176,44 +168,27 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
     }
 
-    /**
-     * Used to determine if the region subscribes to player events.
-     */
     @Override
     public final boolean isEventListener() {
         return _isEventListener || !_eventHandlers.isEmpty();
     }
 
-    /**
-     * Get the regions event listener.
-     */
     @Override
     public final IRegionEventListener getEventListener() {
         return _eventListener;
     }
 
-    /**
-     * Get the id of the region owner.
-     */
     @Override
     @Nullable
     public final UUID getOwnerId() {
         return _ownerId;
     }
 
-    /**
-     * Determine if the region has an owner.
-     */
     @Override
     public final boolean hasOwner() {
         return _ownerId != null;
     }
 
-    /**
-     * Set the regions owner.
-     *
-     * @param ownerId  The id of the new owner.
-     */
     @Override
     public final boolean setOwner(@Nullable UUID ownerId) {
 
@@ -240,14 +215,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         return true;
     }
 
-    /**
-     * Set the regions cuboid point coordinates.
-     *
-     * <p>Saves to the regions data node if it has one.</p>
-     *
-     * @param p1  The first point location.
-     * @param p2  The second point location.
-     */
     @Override
     public final void setCoords(Location p1, Location p2) {
         PreCon.notNull(p1);
@@ -269,11 +236,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         onCoordsChanged(getP1(), getP2());
     }
 
-    /**
-     * Add a transient region event handler.
-     *
-     * @param handler  The handler to add.
-     */
     @Override
     public boolean addEventHandler(IRegionEventHandler handler) {
         PreCon.notNull(handler);
@@ -290,11 +252,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         return false;
     }
 
-    /**
-     * Remove a transient event handler.
-     *
-     * @param handler  The handler to remove.
-     */
     @Override
     public boolean removeEventHandler(IRegionEventHandler handler) {
         PreCon.notNull(handler);
@@ -310,11 +267,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         return false;
     }
 
-    /**
-     * Determine if the region contains the specified material.
-     *
-     * @param material  The material to search for.
-     */
     @Override
     public final boolean contains(Material material) {
 
@@ -348,12 +300,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
     }
 
-    /**
-     * Get all locations that have a block of the specified material
-     * within the region.
-     *
-     * @param material  The material to search for.
-     */
     @Override
     public final LinkedList<Location> find(Material material) {
 
@@ -388,9 +334,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
     }
 
-    /**
-     * Refresh all chunks the region is in.
-     */
     @Override
     public final void refreshChunks() {
         World world = getWorld();
@@ -405,11 +348,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
     }
 
-    /**
-     * Remove entities from the region.
-     *
-     * @param entityTypes  The entity types to remove.
-     */
     @Override
     public final void removeEntities(Class<?>... entityTypes) {
 
@@ -441,13 +379,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
     }
 
-    /**
-     * Get a meta data value from the region.
-     *
-     * @param key  The meta key.
-     *
-     * @param <T>  The expected value type.
-     */
     @Override
     public <T> T getMeta(MetaKey<T> key) {
         PreCon.notNull(key);
@@ -458,11 +389,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         return item;
     }
 
-    /**
-     * Get a meta object from the region.
-     *
-     * @param key  The meta key.
-     */
     @Override
     public Object getMetaObject(Object key) {
         PreCon.notNull(key);
@@ -470,12 +396,6 @@ public abstract class Region extends RegionSelection implements IRegion {
         return _meta.get(key);
     }
 
-    /**
-     * Set a meta object value in the region.
-     *
-     * @param key    The meta key.
-     * @param value  The meta value.
-     */
     @Override
     public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
         if (value == null) {
@@ -486,26 +406,16 @@ public abstract class Region extends RegionSelection implements IRegion {
         _meta.put(key, value);
     }
 
-    /**
-     * Get the class of the region.
-     */
     @Override
     public Class<? extends IRegion> getRegionClass() {
         return getClass();
     }
 
-    /**
-     * Determine if the region has been disposed.
-     */
     @Override
     public final boolean isDisposed() {
         return _isDisposed;
     }
 
-    /**
-     * Dispose the region by releasing resources and
-     * un-registering it from the central region manager.
-     */
     @Override
     public final void dispose() {
         regionManager().unregister(this);
@@ -514,6 +424,19 @@ public abstract class Region extends RegionSelection implements IRegion {
         onDispose();
 
         _isDisposed = true;
+    }
+
+    @Override
+    public int hashCode() {
+        return _name.hashCode();
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        synchronized (_sync) {
+            return this == obj;
+        }
     }
 
     /**
@@ -709,19 +632,6 @@ public abstract class Region extends RegionSelection implements IRegion {
 
     private InternalRegionManager regionManager() {
         return (InternalRegionManager) Nucleus.getRegionManager();
-    }
-
-    @Override
-    public int hashCode() {
-        return _name.hashCode();
-    }
-
-
-    @Override
-    public boolean equals(Object obj) {
-        synchronized (_sync) {
-            return this == obj;
-        }
     }
 
     private static class RegionListener implements IRegionEventListener {

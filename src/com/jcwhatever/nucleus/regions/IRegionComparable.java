@@ -25,13 +25,20 @@
 package com.jcwhatever.nucleus.regions;
 
 
+import com.jcwhatever.nucleus.mixins.IPrioritizable;
 import com.jcwhatever.nucleus.regions.options.RegionPriority;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 
 /**
  * Represents an object that has region handling priorities.
  */
-public interface IRegionComparable {
+public interface IRegionComparable extends IPrioritizable {
+
+    /**
+     * Get the sorting priority of the region.
+     */
+    @Override
+    int getPriority();
 
     /**
      * Get the regions priority when handling player
