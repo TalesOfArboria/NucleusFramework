@@ -24,7 +24,8 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.regions.Region.RegionPriority;
+
+import com.jcwhatever.nucleus.regions.options.RegionPriority;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

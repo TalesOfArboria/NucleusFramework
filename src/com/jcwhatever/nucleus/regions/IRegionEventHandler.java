@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.regions.Region.EnterRegionReason;
-import com.jcwhatever.nucleus.regions.Region.LeaveRegionReason;
+import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
+import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 
 import org.bukkit.entity.Player;
 

@@ -29,6 +29,10 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.regions.RegionOwnerChangedEvent;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
+import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
+import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
+import com.jcwhatever.nucleus.regions.options.RegionPriority;
+import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.MetaKey;
@@ -88,136 +92,6 @@ public abstract class Region extends RegionSelection implements IRegion {
     private UUID _ownerId;
     private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
     private List<IRegionEventHandler> _eventHandlers = new ArrayList<>(10);
-
-    /**
-     * The priority/order the region is handled by the
-     * region manager in relation to other regions.
-     */
-    public enum RegionPriority {
-        /**
-         * The last to be handled.
-         */
-        LAST      (4),
-        /**
-         * Low priority. Handled second to last.
-         */
-        LOW       (3),
-        /**
-         * Normal priority.
-         */
-        DEFAULT   (2),
-        /**
-         * High priority. Handled second.
-         */
-        HIGH      (1),
-        /**
-         * Highest priority. Handled first.
-         */
-        FIRST     (0);
-
-        private final int _order;
-
-        RegionPriority(int order) {
-            _order = order;
-        }
-
-        /**
-         * Get a sort order index number.
-         */
-        public int getSortOrder() {
-            return _order;
-        }
-    }
-
-    /**
-     * Type of region priority.
-     */
-    public enum PriorityType {
-        ENTER,
-        LEAVE
-    }
-
-    /**
-     * Reasons a player enters a region.
-     */
-    public enum EnterRegionReason {
-        /**
-         * The player moved into the region.
-         */
-        MOVE,
-        /**
-         * The player teleported into the region.
-         */
-        TELEPORT,
-        /**
-         * The player respawned into the region.
-         */
-        RESPAWN,
-        /**
-         * The player joined the server and
-         * spawned into the region.
-         */
-        JOIN_SERVER
-    }
-
-    /**
-     * Reasons a player leaves a region.
-     */
-    public enum LeaveRegionReason {
-        /**
-         * The player moved out of the region.
-         */
-        MOVE,
-        /**
-         * The player teleported out of the region.
-         */
-        TELEPORT,
-        /**
-         * The player died in the region.
-         */
-        DEAD,
-        /**
-         * The player left the server while
-         * in the region.
-         */
-        QUIT_SERVER
-    }
-
-    /**
-     * For internal use.
-     */
-    public enum RegionReason {
-        MOVE        (EnterRegionReason.MOVE,        LeaveRegionReason.MOVE),
-        DEAD        (null,                          LeaveRegionReason.DEAD),
-        TELEPORT    (EnterRegionReason.TELEPORT,    LeaveRegionReason.TELEPORT),
-        RESPAWN     (EnterRegionReason.RESPAWN,     LeaveRegionReason.DEAD),
-        JOIN_SERVER (EnterRegionReason.JOIN_SERVER, null),
-        QUIT_SERVER (null,                          LeaveRegionReason.QUIT_SERVER);
-
-        private final EnterRegionReason _enter;
-        private final LeaveRegionReason _leave;
-
-        RegionReason(EnterRegionReason enter, LeaveRegionReason leave) {
-            _enter = enter;
-            _leave = leave;
-        }
-
-        /**
-         * Get the enter reason equivalent.
-         */
-        @Nullable
-        public EnterRegionReason getEnterReason() {
-            return _enter;
-        }
-
-        /**
-         * Get the leave reason equivalent.
-         */
-        @Nullable
-        public LeaveRegionReason getLeaveReason() {
-            return _leave;
-        }
-    }
 
     /**
      * Constructor

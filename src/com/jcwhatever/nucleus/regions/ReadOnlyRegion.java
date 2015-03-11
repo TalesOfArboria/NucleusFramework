@@ -26,11 +26,11 @@
 package com.jcwhatever.nucleus.regions;
 
 import com.jcwhatever.nucleus.mixins.IReadOnly;
-import com.jcwhatever.nucleus.regions.Region.PriorityType;
-import com.jcwhatever.nucleus.regions.Region.RegionPriority;
 import com.jcwhatever.nucleus.regions.data.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
+import com.jcwhatever.nucleus.regions.options.RegionPriority;
+import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 

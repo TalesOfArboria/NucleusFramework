@@ -22,32 +22,27 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions;
-
-import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
-import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
-
-import org.bukkit.entity.Player;
+package com.jcwhatever.nucleus.regions.options;
 
 /**
- * Interface for an object provided by a region to notify it
- * of region related events.
+ * Reasons a player enters a region.
  */
-public interface IRegionEventListener {
-
+public enum EnterRegionReason {
     /**
-     * Called when a player enters the region.
-     *
-     * @param player  The player that entered the region.
-     * @param reason  The reason the player entered the region.
+     * The player moved into the region.
      */
-    void onPlayerEnter (Player player, EnterRegionReason reason);
-
+    MOVE,
     /**
-     * Called when a player leaves the region.
-     *
-     * @param player  The player that left the region.
-     * @param reason  The reason the player left the region.
+     * The player teleported into the region.
      */
-    void onPlayerLeave (Player player, LeaveRegionReason reason);
+    TELEPORT,
+    /**
+     * The player respawned into the region.
+     */
+    RESPAWN,
+    /**
+     * The player joined the server and
+     * spawned into the region.
+     */
+    JOIN_SERVER
 }

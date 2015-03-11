@@ -24,8 +24,9 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.regions.Region.PriorityType;
-import com.jcwhatever.nucleus.regions.Region.RegionPriority;
+
+import com.jcwhatever.nucleus.regions.options.RegionPriority;
+import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 
 /**
  * Represents an object that has region handling priorities.

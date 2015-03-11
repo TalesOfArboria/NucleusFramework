@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.regions;
 
-import com.jcwhatever.nucleus.regions.Region.RegionReason;
+import com.jcwhatever.nucleus.regions.options.RegionPriority.RegionReason;
 
 import org.bukkit.Location;
 

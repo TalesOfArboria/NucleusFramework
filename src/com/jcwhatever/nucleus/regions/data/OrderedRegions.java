@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.regions.data;
 
 import com.jcwhatever.nucleus.regions.IRegionComparable;
-import com.jcwhatever.nucleus.regions.Region.PriorityType;
-import com.jcwhatever.nucleus.regions.Region.RegionPriority;
+import com.jcwhatever.nucleus.regions.options.RegionPriority;
+import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.ArrayList;

@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.regions.Region.PriorityType;
+import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
