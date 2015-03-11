@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.regions;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.IRegion;
+import com.jcwhatever.nucleus.regions.collections.RegionSet;
 import com.jcwhatever.nucleus.regions.data.OrderedRegions;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
@@ -37,7 +38,6 @@ import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +55,7 @@ public class RegionTypeManager<R extends IRegion> {
     private final Map<String, Set<R>> _allRegionsMap = new HashMap<>(15);
 
     // hash set of all registered regions
-    private final Set<R> _regions = new HashSet<>(10);
+    private final Set<R> _regions = new RegionSet<>(10, false);
 
     // synchronization object
     private final Object _sync = new Object();
@@ -330,7 +330,7 @@ public class RegionTypeManager<R extends IRegion> {
                     // add to all regions map
                     Set<R> regions = _allRegionsMap.get(key);
                     if (regions == null) {
-                        regions = new HashSet<>(5);
+                        regions = new RegionSet<>(5, false);
                         _allRegionsMap.put(key, regions);
                     }
                     regions.add(region);
