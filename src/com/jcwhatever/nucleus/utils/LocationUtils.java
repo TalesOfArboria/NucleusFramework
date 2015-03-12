@@ -651,6 +651,38 @@ public final class LocationUtils {
     }
 
     /**
+     * Determine if a target location is within the specified radius of a source location.
+     *
+     * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
+     *
+     * @param sourceLocation  The source {@link org.bukkit.Location}.
+     * @param targetLocation  The target {@link org.bukkit.Location}.
+     * @param radiusX         The x-axis radius.
+     * @param radiusY         The y-axis radius.
+     * @param radiusZ         The z-axis radius.
+     */
+    public static boolean isInRange(Location sourceLocation, Location targetLocation,
+                                          double radiusX, double radiusY, double radiusZ) {
+        PreCon.notNull(sourceLocation);
+        PreCon.notNull(targetLocation);
+        PreCon.positiveNumber(radiusX);
+        PreCon.positiveNumber(radiusY);
+        PreCon.positiveNumber(radiusZ);
+
+        if (Double.compare(radiusX, radiusZ) == 0 &&
+                Double.compare(radiusY, radiusZ) == 0) {
+            return sourceLocation.distanceSquared(targetLocation) <= radiusX * radiusX;
+        }
+        else {
+            double deltaX = Math.abs(sourceLocation.getX() - targetLocation.getX());
+            double deltaY = Math.abs(sourceLocation.getY() - targetLocation.getY());
+            double deltaZ = Math.abs(sourceLocation.getZ() - targetLocation.getZ());
+
+            return deltaX <= radiusX && deltaY <= radiusY && deltaZ <= radiusZ;
+        }
+    }
+
+    /**
      * Rotate a location around an axis location.
      *
      * @param axis       The axis location.
