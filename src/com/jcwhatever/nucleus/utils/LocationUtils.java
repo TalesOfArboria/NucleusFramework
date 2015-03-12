@@ -755,7 +755,7 @@ public final class LocationUtils {
                 ? yaw % 360
                 : 180 + (180 - (Math.abs(yaw) % 180));
 
-        double radianYaw = Math.toRadians(yaw);
+        double radianYaw = Math.toRadians(-yaw);
 
         double x = Math.sin(radianYaw) * distance;
         double z = Math.cos(radianYaw) * distance;
@@ -786,7 +786,7 @@ public final class LocationUtils {
 
         double angle = Math.atan2(deltaY, deltaX);
 
-        return (float)Math.toDegrees(angle);
+        return -(float)Math.toDegrees(angle);
     }
 
     /**
