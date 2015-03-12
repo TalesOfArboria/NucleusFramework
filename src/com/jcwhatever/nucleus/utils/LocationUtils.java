@@ -683,6 +683,92 @@ public final class LocationUtils {
     }
 
     /**
+     * Get a {@link org.bukkit.Location} that is a specified distance from a source location
+     * using the source locations yaw angle to determine the direction of the new location
+     * from the source location.
+     *
+     * <p>The new points Y coordinates are the same as the source location.</p>
+     *
+     * @param source    The source location.
+     * @param distance  The distance from the source location.
+     *
+     * @return  A new {@link org.bukkit.Location}.
+     */
+    public static Location getYawLocation(Location source, double distance) {
+        return getYawLocation(source, distance, source.getYaw(), new Location(null, 0, 0, 0));
+    }
+
+    /**
+     * Get a {@link org.bukkit.Location} that is a specified distance from a source location
+     * using the source locations yaw angle to determine the direction of the new location
+     * from the source location.
+     *
+     * <p>The new points Y coordinates are the same as the source location.</p>
+     *
+     * @param source    The source location.
+     * @param distance  The distance from the source location.
+     * @param output    The {@link org.bukkit.Location} to output the results into.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    public static Location getYawLocation(Location source, double distance, Location output) {
+        return getYawLocation(source, distance, source.getYaw(), output);
+    }
+
+    /**
+     * Get a {@link org.bukkit.Location} that is a specified distance from a source location
+     * using the specified yaw angle to determine the direction of the new location
+     * from the source location.
+     *
+     * <p>The new points Y coordinates are the same as the source location.</p>
+     *
+     * @param source    The source location.
+     * @param distance  The distance from the source location.
+     * @param yaw       The minecraft yaw angle (-180 to 180).
+     *
+     * @return  A new {@link org.bukkit.Location}.
+     */
+    public static Location getYawLocation(Location source, double distance, float yaw) {
+        return getYawLocation(source, distance, yaw, new Location(null, 0, 0, 0));
+    }
+
+    /**
+     * Get a {@link org.bukkit.Location} that is a specified distance from a source location
+     * using the specified yaw angle to determine the direction of the new location
+     * from the source location.
+     *
+     * <p>The new points Y coordinates are the same as the source location.</p>
+     *
+     * @param source    The source location.
+     * @param distance  The distance from the source location.
+     * @param yaw       The minecraft yaw angle (-180 to 180).
+     * @param output    The {@link org.bukkit.Location} to output the result into.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    public static Location getYawLocation(Location source, double distance,
+                                       float yaw, Location output) {
+
+        yaw = yaw >= 0
+                ? yaw % 360
+                : 180 + (180 - (Math.abs(yaw) % 180));
+
+        double radianYaw = Math.toRadians(yaw);
+
+        double x = Math.sin(radianYaw) * distance;
+        double z = Math.cos(radianYaw) * distance;
+
+        output.setWorld(source.getWorld());
+        output.setX(source.getX() + x);
+        output.setY(source.getY());
+        output.setZ(source.getZ() + z);
+        output.setYaw(source.getYaw());
+        output.setPitch(source.getPitch());
+
+        return output;
+    }
+
+    /**
      * Rotate a location around an axis location.
      *
      * @param axis       The axis location.
