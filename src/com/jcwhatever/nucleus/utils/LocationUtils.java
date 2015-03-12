@@ -748,6 +748,8 @@ public final class LocationUtils {
      */
     public static Location getYawLocation(Location source, double distance,
                                        float yaw, Location output) {
+        PreCon.notNull(source);
+        PreCon.notNull(output);
 
         yaw = yaw >= 0
                 ? yaw % 360
@@ -766,6 +768,25 @@ public final class LocationUtils {
         output.setPitch(source.getPitch());
 
         return output;
+    }
+
+    /**
+     * Get the Minecraft yaw angle from the source location towards the target location.
+     *
+     * @param source  The source {@link org.bukkit.Location}.
+     * @param target  The target {@link org.bukkit.Location}.
+     */
+    public static float getYawAngle(Location source, Location target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        // Y and X to prevent ide warnings on Math.atan2
+        double deltaY = target.getX() - source.getX();
+        double deltaX = target.getZ() - source.getZ();
+
+        double angle = Math.atan2(deltaY, deltaX);
+
+        return (float)Math.toDegrees(angle);
     }
 
     /**
