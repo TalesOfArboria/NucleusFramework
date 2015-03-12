@@ -116,14 +116,14 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
      *
      * @return  Self for chaining.
      */
-    INpc lookAt(Entity entity);
+    INpc lookEntity(Entity entity);
 
     /**
-     * Make the NPC face a location.
+     * Make the NPC face a {@link org.bukkit.Location}.
      *
      * @param location  The location to face.
      *
      * @return  Self for chaining.
      */
-    INpc lookTowards(Location location);
+    INpc lookLocation(Location location);
 }
