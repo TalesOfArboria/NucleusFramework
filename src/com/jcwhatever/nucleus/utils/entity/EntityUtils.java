@@ -267,9 +267,9 @@ public final class EntityUtils {
      * @param validator     The validator used to determine if an entity is a candidate.
      */
     @Nullable
-    public static Entity getClosestEntity(Entity sourceEntity,
+    public static Entity getClosestEntity(final Entity sourceEntity,
                                           double radiusX, double radiusY, double radiusZ,
-                                          @Nullable IValidator<Entity> validator) {
+                                          @Nullable final IValidator<Entity> validator) {
         PreCon.notNull(sourceEntity);
         PreCon.positiveNumber(radiusX);
         PreCon.positiveNumber(radiusY);
@@ -278,7 +278,13 @@ public final class EntityUtils {
         Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATION);
         List<Entity> entities = sourceEntity.getNearbyEntities(radiusX, radiusY, radiusZ);
 
-        return getClosestEntity(sourceLocation, entities, validator);
+        return getClosestEntity(sourceLocation, entities, new IValidator<Entity>() {
+            @Override
+            public boolean isValid(Entity entity) {
+                return !entity.equals(sourceEntity) &&
+                        (validator == null || validator.isValid(entity));
+            }
+        });
     }
 
     /**
@@ -290,8 +296,8 @@ public final class EntityUtils {
      */
     @Nullable
     public static Entity getClosestEntity(Location sourceLocation,
-                                           List<Entity> entities,
-                                           @Nullable IValidator<Entity> validator) {
+                                          List<Entity> entities,
+                                          @Nullable IValidator<Entity> validator) {
         PreCon.notNull(sourceLocation);
         PreCon.notNull(entities);
 
@@ -377,13 +383,20 @@ public final class EntityUtils {
      * @param validator     The validator used to determine if a living entity is a candidate.
      */
     @Nullable
-    public static LivingEntity getClosestLivingEntity(Entity sourceEntity,
+    public static LivingEntity getClosestLivingEntity(final Entity sourceEntity,
                                                       double radiusX, double radiusY, double radiusZ,
                                                       @Nullable final IValidator<LivingEntity> validator) {
         PreCon.notNull(sourceEntity);
 
         Location sourceLocation = getEntityLocation(sourceEntity, SOURCE_ENTITY_LOCATION);
-        return getClosestLivingEntity(sourceLocation, radiusX, radiusY, radiusZ, validator);
+        return getClosestLivingEntity(sourceLocation, radiusX, radiusY, radiusZ,
+                new IValidator<LivingEntity>() {
+                    @Override
+                    public boolean isValid(LivingEntity entity) {
+                        return !entity.equals(sourceEntity) &&
+                                (validator == null || validator.isValid(entity));
+                    }
+                });
     }
 
     /**
@@ -473,7 +486,7 @@ public final class EntityUtils {
      */
     @Nullable
     public static LivingEntity getClosestLivingEntity(Location sourceLocation, List<Entity> entities,
-                                                       @Nullable IValidator<LivingEntity> validator) {
+                                                      @Nullable IValidator<LivingEntity> validator) {
         PreCon.notNull(sourceLocation);
         PreCon.notNull(entities);
 
