@@ -537,10 +537,10 @@ public final class LocationUtils {
      *
      * @param location  The location to convert.
      */
-    public static BlockFace getBlockFacingYaw(Location location) {
+    public static BlockFace getYawBlockFace(Location location) {
         PreCon.notNull(location);
 
-        return getBlockFacingYaw(location.getYaw());
+        return getYawBlockFace(location.getYaw());
     }
 
     /**
@@ -548,7 +548,7 @@ public final class LocationUtils {
      *
      * @param yaw  The yaw angle to convert.
      */
-    public static BlockFace getBlockFacingYaw(float yaw) {
+    public static BlockFace getYawBlockFace(float yaw) {
 
         yaw = yaw + 11.25f;
         yaw = yaw < 0

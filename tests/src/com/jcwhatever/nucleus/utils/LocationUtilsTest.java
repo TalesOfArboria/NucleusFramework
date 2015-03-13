@@ -167,58 +167,58 @@ public class LocationUtilsTest {
         Location location = new Location(null, 0, 0, 0, 0, 0);
 
         location.setYaw(-22f);
-        assertEquals(BlockFace.SOUTH_SOUTH_EAST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.SOUTH_SOUTH_EAST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(0);
-        assertEquals(BlockFace.SOUTH, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.SOUTH, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(22f);
-        assertEquals(BlockFace.SOUTH_SOUTH_WEST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.SOUTH_SOUTH_WEST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(45f);
-        assertEquals(BlockFace.SOUTH_WEST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.SOUTH_WEST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(68f);
-        assertEquals(BlockFace.WEST_SOUTH_WEST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.WEST_SOUTH_WEST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(90f);
-        assertEquals(BlockFace.WEST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.WEST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(112f);
-        assertEquals(BlockFace.WEST_NORTH_WEST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.WEST_NORTH_WEST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(134f);
-        assertEquals(BlockFace.NORTH_WEST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.NORTH_WEST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(158f);
-        assertEquals(BlockFace.NORTH_NORTH_WEST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.NORTH_NORTH_WEST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(180f);
-        assertEquals(BlockFace.NORTH, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.NORTH, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(202f);
-        assertEquals(BlockFace.NORTH_NORTH_EAST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.NORTH_NORTH_EAST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(224f);
-        assertEquals(BlockFace.NORTH_EAST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.NORTH_EAST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(248f);
-        assertEquals(BlockFace.EAST_NORTH_EAST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.EAST_NORTH_EAST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(270f);
-        assertEquals(BlockFace.EAST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.EAST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(292f);
-        assertEquals(BlockFace.EAST_SOUTH_EAST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.EAST_SOUTH_EAST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(314f);
-        assertEquals(BlockFace.SOUTH_EAST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.SOUTH_EAST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(336f);
-        assertEquals(BlockFace.SOUTH_SOUTH_EAST, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.SOUTH_SOUTH_EAST, LocationUtils.getYawBlockFace(location));
 
         location.setYaw(358f);
-        assertEquals(BlockFace.SOUTH, LocationUtils.getBlockFacingYaw(location));
+        assertEquals(BlockFace.SOUTH, LocationUtils.getYawBlockFace(location));
     }
 
     @Test
