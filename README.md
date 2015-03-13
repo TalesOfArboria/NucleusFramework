@@ -1,7 +1,11 @@
 NucleusFramework for Spigot 1.8
 ==================
 
-A plugin framework and rapid development library for Bukkit/Spigot. Developed concurrently with the Tales of Arboria server allowing the framework to solve real world development and administrative problems. Currently under development, expect breaking changes.
+A plugin framework and rapid development library for Bukkit/Spigot. Developed concurrently with the Tales of Arboria server allowing the framework to solve real world development and administrative problems.
+
+Currently under development, expect breaking changes.
+
+Compatible with Spigot for 1.8.1 through 1.8.3
 
 _Coders like versatility. Server operators like stability. Users like usability._
 
@@ -55,7 +59,7 @@ You can include the latest NucleusFramework snapshot as a Maven dependency with 
         <dependency>
             <groupId>com.jcwhatever.bukkit</groupId>
             <artifactId>NucleusFramework</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>0.3-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
