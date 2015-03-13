@@ -32,8 +32,8 @@ public class NmsUtilsTest {
     @Test
     public void testIsVersionCompatible() throws Exception {
 
-        assertEquals(true, NmsUtils.isVersionCompatible("v1_8_R1"));
-        assertEquals(false, NmsUtils.isVersionCompatible("v1_8_R2"));
+        assertEquals(true, NmsUtils.isVersionCompatible("v1_8_R2"));
+        assertEquals(false, NmsUtils.isVersionCompatible("v1_8_R3"));
         assertEquals(false, NmsUtils.isVersionCompatible("v1_9_R1"));
         assertEquals(false, NmsUtils.isVersionCompatible("v2_8_R1"));
         assertEquals(false, NmsUtils.isVersionCompatible("1_8_R1"));
