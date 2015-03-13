@@ -68,7 +68,7 @@ public final class LocationUtils {
      *
      * @param source  The source location.
      *
-     * @return  The new location.
+     * @return  A new {@link org.bukkit.Location}.
      */
     public static Location copy(Location source) {
         PreCon.notNull(source);
@@ -85,7 +85,7 @@ public final class LocationUtils {
      * @param source       The source location.
      * @param destination  The destination location.
      *
-     * @return  The destination location.
+     * @return  The destination {@link org.bukkit.Location}.
      */
     public static Location copy(Location source, Location destination) {
         PreCon.notNull(source);
@@ -108,7 +108,7 @@ public final class LocationUtils {
      * @param source       The source location.
      * @param destination  The destination vector.
      *
-     * @return  The destination vector.
+     * @return  The destination {@link org.bukkit.util.Vector}.
      */
     public static Vector copy(Location source, Vector destination) {
         PreCon.notNull(source);
@@ -125,9 +125,9 @@ public final class LocationUtils {
      * Copy the values from a source {@link org.bukkit.util.Vector} to a new
      * {@link org.bukkit.util.Vector}.
      *
-     * @param source       The source location.
+     * @param source  The source location.
      *
-     * @return  The new vector.
+     * @return  A new {@link org.bukkit.util.Vector}.
      */
     public static Vector copy(Vector source) {
         PreCon.notNull(source);
@@ -144,7 +144,7 @@ public final class LocationUtils {
      * @param source       The source location.
      * @param destination  The destination vector.
      *
-     * @return  The destination vector.
+     * @return  The destination {@link org.bukkit.util.Vector}.
      */
     public static Vector copy(Vector source, Vector destination) {
         PreCon.notNull(source);
@@ -158,44 +158,44 @@ public final class LocationUtils {
     }
 
     /**
-     * Get a location centered on the X and Z axis of the block
-     * represented by the provided location.
+     * Copy a source {@link org.bukkit.Location} and center the X and Z coordinates of the
+     * copy to the source locations block.
      *
-     * @param location  The location.
+     * @param source  The source location.
      *
      * @return  A new {@link org.bukkit.Location} containing the result.
      */
-    public static Location getCenteredLocation(Location location) {
-        PreCon.notNull(location);
+    public static Location getCenteredLocation(Location source) {
+        PreCon.notNull(source);
 
-        return getCenteredLocation(location, new Location(null, 0, 0, 0));
+        return getCenteredLocation(source, new Location(null, 0, 0, 0));
     }
 
     /**
-     * Get a location centered on the X and Z axis of the block
-     * represented by the provided location.
+     * Copy a source {@link org.bukkit.Location} to an output {@link org.bukkit.Location} and
+     * center the X and Z coordinates of the output to the source locations block.
      *
-     * @param location  The location.
-     * @param output    The location to put the results into.
+     * @param source  The source location.
+     * @param output  The location to put the results into.
      *
-     * @return  The output location.
+     * @return  The output {@link org.bukkit.Location}.
      */
-    public static Location getCenteredLocation(Location location, Location output) {
-        PreCon.notNull(location);
+    public static Location getCenteredLocation(Location source, Location output) {
+        PreCon.notNull(source);
 
-        output.setWorld(location.getWorld());
-        output.setX(location.getBlockX() + 0.5);
-        output.setY(location.getY());
-        output.setZ(location.getBlockZ() + 0.5);
-        output.setYaw(location.getYaw());
-        output.setPitch(location.getPitch());
+        output.setWorld(source.getWorld());
+        output.setX(source.getBlockX() + 0.5);
+        output.setY(source.getY());
+        output.setZ(source.getBlockZ() + 0.5);
+        output.setYaw(source.getYaw());
+        output.setPitch(source.getPitch());
 
         return output;
     }
 
     /**
-     * Teleport an entity to the location centered on the
-     * X and Z axis.
+     * Teleport an entity to a {@link org.bukkit.Location} centered on the X and Z
+     * axis of the locations block.
      *
      * @param entity    The entity to teleport.
      * @param location  The teleport location.
@@ -211,100 +211,114 @@ public final class LocationUtils {
     }
 
     /**
-     * Convert a location into a block location (remove numbers to the right of the floating point value)
-     * and remove the yaw and pitch values.
+     * Copy a source {@link org.bukkit.Location} and change coordinate values to block
+     * coordinates in the copy.
      *
-     * @param location  The location to convert.
+     * <p>Removes yaw and pitch values, converts coordinates to whole numbers.</p>
+     *
+     * @param source  The source location.
      *
      * @return  A new {@link org.bukkit.Location} containing the result.
      */
-    public static Location getBlockLocation(Location location) {
-        PreCon.notNull(location);
+    public static Location getBlockLocation(Location source) {
+        PreCon.notNull(source);
 
-        return getBlockLocation(location, new Location(null, 0, 0, 0));
+        return getBlockLocation(source, new Location(null, 0, 0, 0));
     }
 
     /**
-     * Convert a location into a block location (remove numbers to the right of the floating point value)
-     * and remove the yaw and pitch values.
+     * Copy a source {@link org.bukkit.Location} to an output location and change coordinate
+     * values to block coordinates in the output.
      *
-     * @param location  The location to convert.
-     * @param output    The location to put the results into.
+     * <p>Removes yaw and pitch values, converts coordinates to whole numbers.</p>
      *
-     * @return  The output location.
+     * @param source  The source location.
+     * @param output  The location to put the results into.
+     *
+     * @return  The output {@link org.bukkit.Location}.
      */
-    public static Location getBlockLocation(Location location, Location output) {
-        PreCon.notNull(location);
+    public static Location getBlockLocation(Location source, Location output) {
+        PreCon.notNull(source);
+        PreCon.notNull(output);
 
-        output.setWorld(location.getWorld());
-        output.setX(location.getBlockX());
-        output.setY(location.getBlockY());
-        output.setZ(location.getBlockZ());
+        output.setWorld(source.getWorld());
+        output.setX(source.getBlockX());
+        output.setY(source.getBlockY());
+        output.setZ(source.getBlockZ());
+        output.setYaw(0);
+        output.setPitch(0);
 
         return output;
     }
 
     /**
-     * Add values to the locations coordinates without changing the coordinates
-     * in the provided location.
+     * Copy a source {@link org.bukkit.Location} and add values to the copy without changing
+     * the original {@link org.bukkit.Location}.
      *
-     * @param location  The location.
-     * @param x         The value to add to the X coordinates.
-     * @param y         The value to add to the Y coordinates.
-     * @param z         The value to add to the Z coordinates.
+     * @param source  The source location.
+     * @param x       The value to add to the X coordinates.
+     * @param y       The value to add to the Y coordinates.
+     * @param z       The value to add to the Z coordinates.
      *
-     * @return  A new {@link org.bukkit.Location} instance.
+     * @return  A new {@link org.bukkit.Location}.
      */
-    public static Location add(Location location, double x, double y, double z) {
-        return location.clone().add(x, y, z);
+    public static Location add(Location source, double x, double y, double z) {
+        return source.clone().add(x, y, z);
     }
 
     /**
-     * Add values to the locations coordinates without changing the coordinates
-     * in the provided location.
+     * Copy a source {@link org.bukkit.Location} to an output location and add values to the
+     * output without changing the original {@link org.bukkit.Location}.
      *
-     * @param location  The location.
-     * @param output    The location to put the results into.
-     * @param x         The value to add to the X coordinates.
-     * @param y         The value to add to the Y coordinates.
-     * @param z         The value to add to the Z coordinates.
+     * @param source  The source location.
+     * @param output  The location to put the results into.
+     * @param x       The value to add to the X coordinates.
+     * @param y       The value to add to the Y coordinates.
+     * @param z       The value to add to the Z coordinates.
      *
-     * @return  The output location.
+     * @return  The output {@link org.bukkit.Location}.
      */
-    public static Location add(Location location, Location output, double x, double y, double z) {
-        return copy(location, output).add(x, y, z);
+    public static Location add(Location source, Location output, double x, double y, double z) {
+        return copy(source, output).add(x, y, z);
     }
 
     /**
-     * Add noise to a location. Changes to another point within the specified
-     * radius of the original location randomly.
+     * Copy a source {@link org.bukkit.Location} and add noise to the copy.
      *
-     * @param location  The location.
-     * @param radiusX   The max radius on the X axis.
-     * @param radiusY   The max radius on the Y axis.
-     * @param radiusZ   The max radius on the Z axis.
+     * <p>Translates the location to another random location within the specified
+     * radius of the source location randomly.</p>
+     *
+     * @param source   The location.
+     * @param radiusX  The max radius on the X axis.
+     * @param radiusY  The max radius on the Y axis.
+     * @param radiusZ  The max radius on the Z axis.
+     *
+     * @return  A new {@link org.bukkit.Location}.
      */
-    public static Location addNoise(Location location, double radiusX, double radiusY, double radiusZ) {
-        PreCon.notNull(location);
+    public static Location addNoise(Location source, double radiusX, double radiusY, double radiusZ) {
+        PreCon.notNull(source);
 
-        return addNoise(location, location.clone(), radiusX, radiusY, radiusZ);
+        return addNoise(source, source.clone(), radiusX, radiusY, radiusZ);
     }
 
     /**
-     * Add noise to a location. Changes to another point within the specified
-     * radius of the original location randomly.
+     * Copy a source {@link org.bukkit.Location} to an output location and add noise
+     * to the output.
      *
-     * @param location  The location.
-     * @param output    The location to put the results into.
-     * @param radiusX   The max radius on the X axis.
-     * @param radiusY   The max radius on the Y axis.
-     * @param radiusZ   The max radius on the Z axis.
+     * <p>Translates the location to another random location within the specified
+     * radius of the source location randomly.</p>
      *
-     * @return  The output location.
+     * @param source   The location.
+     * @param output   The location to put the results into.
+     * @param radiusX  The max radius on the X axis.
+     * @param radiusY  The max radius on the Y axis.
+     * @param radiusZ  The max radius on the Z axis.
+     *
+     * @return  The output {@link org.bukkit.Location}.
      */
-    public static Location addNoise(Location location, Location output,
+    public static Location addNoise(Location source, Location output,
                                     double radiusX, double radiusY, double radiusZ) {
-        PreCon.notNull(location);
+        PreCon.notNull(source);
         PreCon.notNull(output);
         PreCon.positiveNumber(radiusX);
         PreCon.positiveNumber(radiusY);
@@ -331,7 +345,9 @@ public final class LocationUtils {
 
     /**
      * Determine if 2 locations can be considered the same using the specified
-     * precision. The precision is used as: location1 is about the same as location2 +/- precision.
+     * precision.
+     *
+     * <p>The precision is used as: location1 is about the same as location2 +/- precision.</p>
      *
      * @param location1  The first location to compare.
      * @param location2  The second location to compare.
@@ -340,6 +356,7 @@ public final class LocationUtils {
     public static boolean isLocationMatch(Location location1, Location location2, double precision) {
         PreCon.notNull(location1);
         PreCon.notNull(location2);
+        PreCon.positiveNumber(precision);
 
         double xDelta = Math.abs(location1.getX() - location2.getX());
         double zDelta = Math.abs(location1.getZ() - location2.getZ());
@@ -349,10 +366,9 @@ public final class LocationUtils {
     }
 
     /**
-     * Parse a location from a formatted string.
-     * <p>
-     *     Format of string : x,y,z
-     * </p>
+     * Parse a {@link org.bukkit.Location} from a formatted string.
+     *
+     * <p>Format of string : x,y,z</p>
      *
      * @param world        The world the location is for.
      * @param coordinates  The string coordinates.
@@ -365,16 +381,15 @@ public final class LocationUtils {
     }
 
     /**
-     * Parse a location from a formatted string.
-     * <p>
-     *     Format of string : x,y,z
-     * </p>
+     * Parse a {@link org.bukkit.Location} from a formatted string.
+     *
+     * <p>Format of string : x,y,z</p>
      *
      * @param output       The location place the results in.
      * @param world        The world the location is for.
      * @param coordinates  The string coordinates.
      *
-     * @return  The output location or null if a location could not be parsed.
+     * @return  The output {@link org.bukkit.Location} or null if a location could not be parsed.
      */
     @Nullable
     public static Location parseSimpleLocation(Location output, World world, String coordinates) {
@@ -402,10 +417,9 @@ public final class LocationUtils {
     }
 
     /**
-     * Parse a location from a formatted string.
-     * <p>
-     *     Format of string: x,y,z,yawF,pitchF,worldName
-     * </p>
+     * Parse a {@link org.bukkit.Location} from a formatted string.
+     *
+     * <p>Format of string: x,y,z,yawF,pitchF,worldName</p>
      *
      * @param coordinates  The string coordinates.
      *
@@ -422,9 +436,8 @@ public final class LocationUtils {
 
     /**
      * Parse a location from a formatted string.
-     * <p>
-     *     Format of string: x,y,z,yawF,pitchF,worldName
-     * </p>
+     *
+     * <p>Format of string: x,y,z,yawF,pitchF,worldName</p>
      *
      * @param coordinates  The string coordinates.
      *
@@ -470,9 +483,9 @@ public final class LocationUtils {
 
     /**
      * Parse the world name from a from a location formatted string.
-     * <p>
-     *     Format of string: x,y,z,yawF,pitchF,worldName
-     * </p>
+     *
+     * <p>Format of string: x,y,z,yawF,pitchF,worldName</p>
+     *
      * <p>Useful when the world the location is for is not loaded and
      * the name is needed.</p>
      *
@@ -492,7 +505,7 @@ public final class LocationUtils {
     }
 
     /**
-     * Convert a location to a parsable string.
+     * Convert a {@link org.bukkit.Location} to a parsable string.
      *
      * @param location  The location to convert.
      */
@@ -504,7 +517,7 @@ public final class LocationUtils {
     }
 
     /**
-     * Convert a location to a parsable string.
+     * Convert a {@link org.bukkit.Location} to a parsable string.
      *
      * @param location             The location to convert.
      * @param floatingPointPlaces  The number of places in the floating point values.
@@ -561,42 +574,44 @@ public final class LocationUtils {
     }
 
     /**
-     * Find a surface block (solid block that can be walked on) location below the provided
-     * search location.
+     * Find a surface block (solid block that can be walked on) {@link org.bukkit.Location}
+     * below the provided search location.
      *
-     * @param searchLoc  The search location.
+     * @param source  The source location.
      *
-     * @return  A new {@link org.bukkit.Location} or null if the search reaches below 0 on the Y axis.
+     * @return  A new {@link org.bukkit.Location} or null if the search reaches below 0 on
+     * the Y axis.
      */
     @Nullable
-    public static Location findSurfaceBelow(Location searchLoc) {
-        return findSurfaceBelow(searchLoc, new Location(null, 0, 0, 0));
+    public static Location findSurfaceBelow(Location source) {
+        return findSurfaceBelow(source, new Location(null, 0, 0, 0));
     }
 
     /**
-     * Find a surface block (solid block that can be walked on) location below the provided
-     * search location.
+     * Find a surface block (solid block that can be walked on) {@link org.bukkit.Location}
+     * below the specified source location.
      *
-     * @param searchLoc  The search location.
+     * @param source  The source location.
      *
-     * @return  The output location or null if the search reaches below 0 on the Y axis.
+     * @return  The output {@link org.bukkit.Location} or null if the search reaches below
+     * 0 on the Y axis.
      */
     @Nullable
-    public static Location findSurfaceBelow(Location searchLoc, Location output) {
-        PreCon.notNull(searchLoc);
+    public static Location findSurfaceBelow(Location source, Location output) {
+        PreCon.notNull(source);
 
-        output.setWorld(searchLoc.getWorld());
-        output.setX(searchLoc.getX());
-        output.setY(searchLoc.getBlockY());
-        output.setZ(searchLoc.getZ());
-        output.setYaw(searchLoc.getYaw());
-        output.setPitch(searchLoc.getPitch());
+        output.setWorld(source.getWorld());
+        output.setX(source.getX());
+        output.setY(source.getBlockY());
+        output.setZ(source.getZ());
+        output.setYaw(source.getYaw());
+        output.setPitch(source.getPitch());
 
         if (!Materials.isTransparent(output.getBlock().getType()))
             return output;
 
         output.add(0, -1, 0);
-        Block current = searchLoc.getBlock();
+        Block current = source.getBlock();
 
         while (!Materials.isSurface(current.getType())) {
             output.add(0, -1, 0);
@@ -610,27 +625,27 @@ public final class LocationUtils {
     }
 
     /**
-     * Get the location closest to the specified player.
+     * Get the {@link org.bukkit.Location} closest to the specified source location.
      *
-     * @param sourceLocation  The location source to search from.
-     * @param locations       The location candidates.
+     * @param source     The source location.
+     * @param locations  The location candidates.
      */
     @Nullable
-    public static Location getClosestLocation(Location sourceLocation, Collection<Location> locations) {
-        return getClosestLocation(sourceLocation, locations, null);
+    public static Location getClosestLocation(Location source, Collection<Location> locations) {
+        return getClosestLocation(source, locations, null);
     }
 
     /**
-     * Get the location closest to the specified player.
+     * Get the {@link org.bukkit.Location} closest to the specified source location.
      *
-     * @param sourceLocation  The location source to search from.
-     * @param locations       The location candidates.
-     * @param validator       The validator used to determine if a location is a candidate.
+     * @param source     The source location.
+     * @param locations  The location candidates.
+     * @param validator  The validator used to determine if a location is a candidate.
      */
     @Nullable
-    public static Location getClosestLocation(Location sourceLocation, Collection<Location> locations,
+    public static Location getClosestLocation(Location source, Collection<Location> locations,
                                               @Nullable IValidator<Location> validator) {
-        PreCon.notNull(sourceLocation);
+        PreCon.notNull(source);
         PreCon.notNull(locations);
 
         Location closest = null;
@@ -641,7 +656,7 @@ public final class LocationUtils {
                 continue;
 
             double dist;
-            if ((dist = sourceLocation.distanceSquared(loc)) < closestDist) {
+            if ((dist = source.distanceSquared(loc)) < closestDist) {
                 closest = loc;
                 closestDist = dist;
             }
@@ -651,32 +666,33 @@ public final class LocationUtils {
     }
 
     /**
-     * Determine if a target location is within the specified radius of a source location.
+     * Determine if a target {@link org.bukkit.Location} is within the specified radius of
+     * a source location.
      *
      * <p>If all radius values are equal, the radius is spherical. Otherwise the radius is cuboid.</p>
      *
-     * @param sourceLocation  The source {@link org.bukkit.Location}.
-     * @param targetLocation  The target {@link org.bukkit.Location}.
-     * @param radiusX         The x-axis radius.
-     * @param radiusY         The y-axis radius.
-     * @param radiusZ         The z-axis radius.
+     * @param source   The source {@link org.bukkit.Location}.
+     * @param target   The target {@link org.bukkit.Location}.
+     * @param radiusX  The x-axis radius.
+     * @param radiusY  The y-axis radius.
+     * @param radiusZ  The z-axis radius.
      */
-    public static boolean isInRange(Location sourceLocation, Location targetLocation,
+    public static boolean isInRange(Location source, Location target,
                                           double radiusX, double radiusY, double radiusZ) {
-        PreCon.notNull(sourceLocation);
-        PreCon.notNull(targetLocation);
+        PreCon.notNull(source);
+        PreCon.notNull(target);
         PreCon.positiveNumber(radiusX);
         PreCon.positiveNumber(radiusY);
         PreCon.positiveNumber(radiusZ);
 
         if (Double.compare(radiusX, radiusZ) == 0 &&
                 Double.compare(radiusY, radiusZ) == 0) {
-            return sourceLocation.distanceSquared(targetLocation) <= radiusX * radiusX;
+            return source.distanceSquared(target) <= radiusX * radiusX;
         }
         else {
-            double deltaX = Math.abs(sourceLocation.getX() - targetLocation.getX());
-            double deltaY = Math.abs(sourceLocation.getY() - targetLocation.getY());
-            double deltaZ = Math.abs(sourceLocation.getZ() - targetLocation.getZ());
+            double deltaX = Math.abs(source.getX() - target.getX());
+            double deltaY = Math.abs(source.getY() - target.getY());
+            double deltaZ = Math.abs(source.getZ() - target.getZ());
 
             return deltaX <= radiusX && deltaY <= radiusY && deltaZ <= radiusZ;
         }
@@ -790,7 +806,7 @@ public final class LocationUtils {
     }
 
     /**
-     * Rotate a location around an axis location.
+     * Rotate a {@link org.bukkit.Location} around an axis {@link org.bukkit.Location}.
      *
      * @param axis       The axis location.
      * @param location   The location to move.
@@ -808,7 +824,7 @@ public final class LocationUtils {
     }
 
     /**
-     * Rotate a location around an axis location.
+     * Rotate a {@link org.bukkit.Location} around an axis {@link org.bukkit.Location}.
      *
      * @param axis       The axis location.
      * @param location   The location to move.
