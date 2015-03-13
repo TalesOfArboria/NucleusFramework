@@ -182,6 +182,7 @@ public final class LocationUtils {
      */
     public static Location getCenteredLocation(Location source, Location output) {
         PreCon.notNull(source);
+        PreCon.notNull(output);
 
         output.setWorld(source.getWorld());
         output.setX(source.getBlockX() + 0.5);
@@ -263,7 +264,7 @@ public final class LocationUtils {
      * @return  A new {@link org.bukkit.Location}.
      */
     public static Location add(Location source, double x, double y, double z) {
-        return source.clone().add(x, y, z);
+        return add(source, x, y, z, new Location(null, 0, 0, 0));
     }
 
     /**
@@ -271,14 +272,14 @@ public final class LocationUtils {
      * output without changing the original {@link org.bukkit.Location}.
      *
      * @param source  The source location.
-     * @param output  The location to put the results into.
      * @param x       The value to add to the X coordinates.
      * @param y       The value to add to the Y coordinates.
      * @param z       The value to add to the Z coordinates.
+     * @param output  The location to put the results into.
      *
      * @return  The output {@link org.bukkit.Location}.
      */
-    public static Location add(Location source, Location output, double x, double y, double z) {
+    public static Location add(Location source, double x, double y, double z, Location output) {
         return copy(source, output).add(x, y, z);
     }
 
@@ -298,7 +299,7 @@ public final class LocationUtils {
     public static Location addNoise(Location source, double radiusX, double radiusY, double radiusZ) {
         PreCon.notNull(source);
 
-        return addNoise(source, source.clone(), radiusX, radiusY, radiusZ);
+        return addNoise(source, radiusX, radiusY, radiusZ, new Location(null, 0, 0, 0));
     }
 
     /**
@@ -309,20 +310,21 @@ public final class LocationUtils {
      * radius of the source location randomly.</p>
      *
      * @param source   The location.
-     * @param output   The location to put the results into.
      * @param radiusX  The max radius on the X axis.
      * @param radiusY  The max radius on the Y axis.
      * @param radiusZ  The max radius on the Z axis.
+     * @param output   The location to put the results into.
      *
      * @return  The output {@link org.bukkit.Location}.
      */
-    public static Location addNoise(Location source, Location output,
-                                    double radiusX, double radiusY, double radiusZ) {
+    public static Location addNoise(Location source,
+                                    double radiusX, double radiusY, double radiusZ,
+                                    Location output) {
         PreCon.notNull(source);
-        PreCon.notNull(output);
         PreCon.positiveNumber(radiusX);
         PreCon.positiveNumber(radiusY);
         PreCon.positiveNumber(radiusZ);
+        PreCon.notNull(output);
 
         double noiseX = 0;
         double noiseY = 0;
@@ -340,7 +342,7 @@ public final class LocationUtils {
             noiseZ = Rand.getDouble(radiusZ * 2) - radiusZ;
         }
 
-        return output.add(noiseX, noiseY, noiseZ);
+        return copy(source, output).add(noiseX, noiseY, noiseZ);
     }
 
     /**
@@ -377,7 +379,7 @@ public final class LocationUtils {
      */
     @Nullable
     public static Location parseSimpleLocation(World world, String coordinates) {
-        return parseSimpleLocation(new Location(null, 0, 0, 0), world, coordinates);
+        return parseSimpleLocation(world, coordinates, new Location(null, 0, 0, 0));
     }
 
     /**
@@ -385,14 +387,14 @@ public final class LocationUtils {
      *
      * <p>Format of string : x,y,z</p>
      *
-     * @param output       The location place the results in.
      * @param world        The world the location is for.
      * @param coordinates  The string coordinates.
+     * @param output       The location place the results in.
      *
      * @return  The output {@link org.bukkit.Location} or null if a location could not be parsed.
      */
     @Nullable
-    public static Location parseSimpleLocation(Location output, World world, String coordinates) {
+    public static Location parseSimpleLocation(World world, String coordinates, Location output) {
         PreCon.notNull(output);
         PreCon.notNull(world);
         PreCon.notNull(coordinates);
@@ -599,6 +601,7 @@ public final class LocationUtils {
     @Nullable
     public static Location findSurfaceBelow(Location source, Location output) {
         PreCon.notNull(source);
+        PreCon.notNull(output);
 
         output.setWorld(source.getWorld());
         output.setX(source.getX());
@@ -819,8 +822,8 @@ public final class LocationUtils {
         PreCon.notNull(axis);
         PreCon.notNull(location);
 
-        return rotate(axis, location, new Location(null, 0, 0, 0),
-                rotationX, rotationY, rotationZ);
+        return rotate(axis, location, rotationX, rotationY, rotationZ,
+                new Location(null, 0, 0, 0));
     }
 
     /**
@@ -828,17 +831,19 @@ public final class LocationUtils {
      *
      * @param axis       The axis location.
      * @param location   The location to move.
-     * @param output     The location to put results into.
      * @param rotationX  The rotation around the X axis in degrees.
      * @param rotationY  The rotation around the Y axis in degrees.
      * @param rotationZ  The rotation around the Z axis in degrees.
+     * @param output     The location to put results into.
      *
      * @return  The output location.
      */
-    public static Location rotate(Location axis, Location location, Location output,
-                                  double rotationX, double rotationY, double rotationZ) {
+    public static Location rotate(Location axis, Location location,
+                                  double rotationX, double rotationY, double rotationZ,
+                                  Location output) {
         PreCon.notNull(axis);
         PreCon.notNull(location);
+        PreCon.notNull(output);
 
         double x = location.getX();
         double y = location.getY();
