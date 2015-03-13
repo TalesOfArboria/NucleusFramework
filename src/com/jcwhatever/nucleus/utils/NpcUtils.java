@@ -28,7 +28,6 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
-import com.jcwhatever.nucleus.storage.IDataNode;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
@@ -65,22 +64,6 @@ public class NpcUtils {
     @Nullable
     public static INpcRegistry createRegistry(Plugin plugin, String name) {
         return provider().createRegistry(plugin, name);
-    }
-
-    /**
-     * Create a registry from and stored to a specified {@link IDataNode}.
-     *
-     * @param plugin   The owning plugin.
-     * @param name     The name of the registry unique to the owning plugin.
-     * @param dataNode The data node of the registry.
-     *
-     * @return The new or existing registry or null if failed.
-     *
-     * @throws java.lang.UnsupportedOperationException if {@link #hasProvider} returns false.
-     */
-    @Nullable
-    public static INpcRegistry createRegistry(Plugin plugin, String name, IDataNode dataNode) {
-        return provider().createRegistry(plugin, name, dataNode);
     }
 
     /**

@@ -28,7 +28,6 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
-import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
@@ -159,16 +158,6 @@ public abstract class NpcTrait implements INamed, IDisposable {
     public boolean canRun() {
         return this instanceof Runnable;
     }
-
-    /**
-     * Save the trait to a dedicated data node.
-     */
-    public void save(IDataNode dataNode) {}
-
-    /**
-     * Load trait settings from a dedicated data node.
-     */
-    public void load(IDataNode dataNode) {}
 
     /**
      * Invoked when the trait is added to an {@link INpc}.

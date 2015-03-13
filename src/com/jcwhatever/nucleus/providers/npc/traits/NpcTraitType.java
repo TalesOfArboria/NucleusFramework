@@ -86,12 +86,6 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
 
         NpcTrait trait = createTrait(npc);
 
-        INpcTraits traits = copyFrom != null
-                ? copyFrom.getTraits()
-                : npc.getTraits();
-
-        trait.load(traits.getTraitNode(trait));
-
         npc.getTraits().add(trait);
 
         return trait;

@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.providers.npc;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
-import com.jcwhatever.nucleus.storage.IDataNode;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -43,11 +42,6 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
      * Get the NPC's owning registry.
      */
     INpcRegistry getRegistry();
-
-    /**
-     * Get the NPC's data node.
-     */
-    IDataNode getDataNode();
 
     /**
      * Get the NPC's non-unique name. This is the name displayed

@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.providers.npc;
 
 import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.npc.traits.INpcTraitTypeRegistry;
-import com.jcwhatever.nucleus.storage.IDataNode;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
@@ -50,18 +49,6 @@ public interface INpcProvider extends IProvider, INpcTraitTypeRegistry {
      */
     @Nullable
     INpcRegistry createRegistry(Plugin plugin, String name);
-
-    /**
-     * Create a registry from and stored to a specified {@link IDataNode}.
-     *
-     * @param plugin    The owning plugin.
-     * @param name      The name of the registry unique to the owning plugin.
-     * @param dataNode  The data node of the registry.
-     *
-     * @return  The new or existing registry or null if failed.
-     */
-    @Nullable
-    INpcRegistry createRegistry(Plugin plugin, String name, IDataNode dataNode);
 
     /**
      * Determine if an entity is an NPC.
