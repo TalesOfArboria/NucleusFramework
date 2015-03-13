@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.internal.providers.bankitems;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
+import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsAccount;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsAccountTest;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;

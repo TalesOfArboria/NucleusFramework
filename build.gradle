@@ -23,7 +23,7 @@ ext.jcBuildSettings = [
 // provided dependencies (provided by the runtime environment)
         providedDependsFiles : null,
         providedDepends : [
-                'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT',
+                'org.spigotmc:spigot-api:1.8.3-R0.1-SNAPSHOT',
                 'com.sk89q:WorldEdit:SNAPSHOT',
                 'net.milkbowl.vault:Vault:1.5.2',
                 'com.google.code.findbugs:jsr305:3.0.0'
@@ -51,14 +51,14 @@ ext.jcBuildSettings = [
         testDepends : [
                 'junit:junit:4.+',
                 'org.easetech:easytest-core:1.3.1',
-                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT',
-                'org.spigotmc:unmapped-spigot:1.8-R0.1-SNAPSHOT'
+                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R2-SNAPSHOT',
+                'org.spigotmc:remapped-spigot:1.8.3-R0.1'
         ],
         testRuntimeDepends : null,
 
 // dependencies that should always be downloaded (cached for 30 seconds)
         snapshotDepends : [
-                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R1-SNAPSHOT'
+                'com.jcwhatever.bukkit:BukkitTestMock:1.8.R2-SNAPSHOT'
         ],
 
 // source directory

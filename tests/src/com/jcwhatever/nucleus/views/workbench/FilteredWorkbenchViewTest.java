@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views.workbench;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
+import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
 import com.jcwhatever.nucleus.views.AbstractViewTest;

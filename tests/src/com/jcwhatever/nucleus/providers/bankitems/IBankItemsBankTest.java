@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.providers.bankitems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
+import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 
 import org.bukkit.entity.Player;

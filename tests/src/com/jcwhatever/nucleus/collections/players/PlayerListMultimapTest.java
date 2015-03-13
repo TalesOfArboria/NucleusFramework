@@ -1,7 +1,7 @@
 package com.jcwhatever.nucleus.collections.players;
 
 import com.google.common.collect.Multimap;
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
+import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.collections.java.MultimapRunnable;
 
 import org.bukkit.entity.Player;

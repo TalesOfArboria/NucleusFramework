@@ -149,7 +149,7 @@ public class NmsManager implements IPluginOwned {
         Constructor<? extends INmsHandler> constructor = getConstructor(handlerClass);
         if (constructor == null) {
             throw new RuntimeException("Failed to instantiate an instance of " +
-                    "INonApiHandler because a suitable constructor was not found.");
+                    "INmsHandler because a suitable constructor was not found.");
         }
 
         try {

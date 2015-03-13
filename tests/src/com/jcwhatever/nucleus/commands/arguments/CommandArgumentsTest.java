@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.commands.arguments;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.MockPlayer;
+import com.jcwhatever.bukkit.v1_8_R2.MockPlayer;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.DummyCommand;

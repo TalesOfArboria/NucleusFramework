@@ -3,12 +3,12 @@ package com.jcwhatever.nucleus.utils.reflection;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
+import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.junit.Test;
 
-import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R2.EntityLiving;
 
 public class ReflectionTest {
 

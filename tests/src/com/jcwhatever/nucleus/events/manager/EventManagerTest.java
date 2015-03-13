@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.MockPlugin;
+import com.jcwhatever.bukkit.v1_8_R2.MockPlugin;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.utils.observer.event.EventSubscriber;

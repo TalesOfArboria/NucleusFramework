@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.storage;
 
-import com.jcwhatever.bukkit.v1_8_R1.MockPlugin;
+import com.jcwhatever.bukkit.v1_8_R2.MockPlugin;
 
 import org.bukkit.plugin.Plugin;
 

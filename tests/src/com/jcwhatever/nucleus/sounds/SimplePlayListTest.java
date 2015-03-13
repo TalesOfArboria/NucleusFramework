@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
+import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.sounds.playlist.PlayList.PlayerSoundQueue;
 import com.jcwhatever.nucleus.sounds.playlist.SimplePlayList;

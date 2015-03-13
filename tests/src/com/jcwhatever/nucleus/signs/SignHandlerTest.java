@@ -2,8 +2,8 @@ package com.jcwhatever.nucleus.signs;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
-import com.jcwhatever.bukkit.v1_8_R1.MockWorld;
+import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
+import com.jcwhatever.bukkit.v1_8_R2.MockWorld;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
 

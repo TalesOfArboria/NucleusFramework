@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.utils.file;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R1.BukkitTester;
+import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.regions.data.SyncLocation;
 
 import org.bukkit.Location;
