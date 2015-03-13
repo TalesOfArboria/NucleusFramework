@@ -118,8 +118,10 @@ public class RegionSet<E extends IRegion> extends SetWrapper<E> {
     protected Comparator<E> getComparator() {
         return new Comparator<E>() {
             @Override
-            public int compare(E o1, E o2) {
-                return Integer.compare(o1.getPriority(), o2.getPriority());
+            public int compare(E region1, E region2) {
+
+                // sort regions with highest priority (highest value) first
+                return Integer.compare(region2.getPriority(), region1.getPriority());
             }
         };
     }
