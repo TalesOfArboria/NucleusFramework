@@ -91,13 +91,33 @@ public class NpcDespawnEvent extends NpcEvent implements Cancellable, ICancellab
         return _reason;
     }
 
-    @Override
-    public boolean isCancelled() {
-        return _isCancelled;
+    /**
+     * Determine if the event can be cancelled.
+     *
+     * <p>Event is only cancellable if the reason for despawn is
+     * {@link NpcDespawnReason#INVOKED}.</p>
+     */
+    public boolean isCancellable() {
+        return _reason == NpcDespawnReason.INVOKED;
     }
 
     @Override
+    public boolean isCancelled() {
+        return isCancellable() && _isCancelled;
+    }
+
+    /**
+     * Set the cancelled state.
+     *
+     * <p>Check the {@link #isCancellable} method returns true
+     * before using.</p>
+     *
+     * @param isCancelled  True to cancel.
+     */
+    @Override
     public void setCancelled(boolean isCancelled) {
+        PreCon.isValid(isCancellable(), "Event is not cancellable");
+
         _isCancelled = isCancelled;
     }
 
