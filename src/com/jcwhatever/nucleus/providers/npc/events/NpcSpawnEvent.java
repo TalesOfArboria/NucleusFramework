@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.providers.npc.events;
 
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.providers.npc.INpc;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -37,15 +38,49 @@ public class NpcSpawnEvent extends NpcEvent implements Cancellable, ICancellable
 
     private static final HandlerList handlers = new HandlerList();
 
+    private final NpcSpawnReason _reason;
     private boolean _isCancelled;
+
+    /**
+     * Specifies a reason for an NPC to spawn.
+     */
+    public enum NpcSpawnReason {
+        /**
+         * The NPC was invoked to spawn by a plugin or script.
+         */
+        INVOKED,
+        /**
+         * The NPC is being respawned.
+         */
+        RESPAWN,
+        /**
+         * The NPC is being respawned due to the chunk that its in being loaded.
+         */
+        CHUNK_LOAD,
+        /**
+         * The NPC is being respawned due to the world that its in being loaded.
+         */
+        WORLD_LOAD
+    }
 
     /**
      * Constructor.
      *
      * @param npc  The NPC the event is for.
      */
-    public NpcSpawnEvent(INpc npc) {
+    public NpcSpawnEvent(INpc npc, NpcSpawnReason reason) {
         super(npc);
+
+        PreCon.notNull(reason);
+
+        _reason = reason;
+    }
+
+    /**
+     * Get the reason the NPC is being spawned.
+     */
+    public NpcSpawnReason getReason() {
+        return _reason;
     }
 
     @Override

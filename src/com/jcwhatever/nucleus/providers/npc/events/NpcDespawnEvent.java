@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.providers.npc.events;
 
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.providers.npc.INpc;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -37,15 +38,57 @@ public class NpcDespawnEvent extends NpcEvent implements Cancellable, ICancellab
 
     private static final HandlerList handlers = new HandlerList();
 
+    private final NpcDespawnReason _reason;
     private boolean _isCancelled;
+
+    /**
+     * Specifies a reason for the NPC being despawned.
+     */
+    public enum NpcDespawnReason {
+        /**
+         * The NPC was invoked to despawn by a plugin or script.
+         */
+        INVOKED,
+        /**
+         * The NPC is being respawned.
+         */
+        RESPAWN,
+        /**
+         * The NPC's spawned entity has died.
+         */
+        DEATH,
+        /**
+         * The chunk the NPC is in has unloaded.
+         */
+        CHUNK_UNLOAD,
+        /**
+         * The world the NPC is in has unloaded.
+         */
+        WORLD_UNLOAD,
+        /**
+         * The NPC is being disposed.
+         */
+        DISPOSED
+    }
 
     /**
      * Constructor.
      *
      * @param npc  The NPC the event is for.
      */
-    public NpcDespawnEvent(INpc npc) {
+    public NpcDespawnEvent(INpc npc, NpcDespawnReason reason) {
         super(npc);
+
+        PreCon.notNull(reason);
+
+        _reason = reason;
+    }
+
+    /**
+     * Get the reason the NPC was despawned.
+     */
+    public NpcDespawnReason getReason() {
+        return _reason;
     }
 
     @Override
