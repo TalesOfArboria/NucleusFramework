@@ -28,7 +28,9 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -63,7 +65,9 @@ public class UpdateAgent<A> implements IUpdateAgent<A>, IDisposable {
         if (isDisposed())
             throw new RuntimeException("Cannot use a disposed UpdateSubject");
 
-        for (ISubscriber subscriber : subscribers()) {
+        List<ISubscriber> list = new ArrayList<>(subscribers());
+
+        for (ISubscriber subscriber : list) {
 
             if (subscriber instanceof IUpdateSubscriber) {
 

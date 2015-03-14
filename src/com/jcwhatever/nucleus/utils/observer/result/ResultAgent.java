@@ -28,6 +28,9 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.SubscriberAgent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A basic implementation of a {@link IResultAgent} used to allow a
  * result producer to send results to the agents subscribers.
@@ -59,7 +62,9 @@ public class ResultAgent<R> extends SubscriberAgent implements IResultAgent<R> {
 
     protected void sendResultOnly(Result<R> result) {
 
-        for (ISubscriber subscriber : subscribers()) {
+        List<ISubscriber> list = new ArrayList<>(subscribers());
+
+        for (ISubscriber subscriber : list) {
             if (subscriber instanceof ResultSubscriber) {
                 ((ResultSubscriber<R>) subscriber).onResult(result);
             }
@@ -68,7 +73,9 @@ public class ResultAgent<R> extends SubscriberAgent implements IResultAgent<R> {
 
     protected void sendSuccess(Result<R> result) {
 
-        for (ISubscriber subscriber : subscribers()) {
+        List<ISubscriber> list = new ArrayList<>(subscribers());
+
+        for (ISubscriber subscriber : list) {
             if (subscriber instanceof ResultSubscriber) {
                 ((ResultSubscriber<R>) subscriber).onSuccess(result);
             }
@@ -77,7 +84,9 @@ public class ResultAgent<R> extends SubscriberAgent implements IResultAgent<R> {
 
     protected void sendError(Result<R> result) {
 
-        for (ISubscriber subscriber : subscribers()) {
+        List<ISubscriber> list = new ArrayList<>(subscribers());
+
+        for (ISubscriber subscriber : list) {
             if (subscriber instanceof ResultSubscriber) {
                 ((ResultSubscriber<R>) subscriber).onError(result);
             }
@@ -86,7 +95,9 @@ public class ResultAgent<R> extends SubscriberAgent implements IResultAgent<R> {
 
     protected void sendCancel(Result<R> result) {
 
-        for (ISubscriber subscriber : subscribers()) {
+        List<ISubscriber> list = new ArrayList<>(subscribers());
+
+        for (ISubscriber subscriber : list) {
             if (subscriber instanceof ResultSubscriber) {
                 ((ResultSubscriber<R>) subscriber).onCancel(result);
             }
