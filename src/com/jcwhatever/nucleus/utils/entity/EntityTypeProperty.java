@@ -24,15 +24,19 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
+
+import org.bukkit.plugin.Plugin;
 
 /**
  * Represents a property of an {@link org.bukkit.entity.EntityType}.
  *
  * @see EntityTypes
  */
-public class EntityTypeProperty implements INamedInsensitive {
+public class EntityTypeProperty implements INamedInsensitive, IPluginOwned {
 
     /**
      * The entity can fly.
@@ -103,14 +107,58 @@ public class EntityTypeProperty implements INamedInsensitive {
      */
     public static final EntityTypeProperty MONSTER = new EntityTypeProperty("Monster");
 
+    /**
+     * Get a temporary {@link EntityTypeProperty} used to lookup a property from a map.
+     *
+     * @param name  The property type name.
+     */
+    static EntityTypeProperty forLookup(String name) {
+        return new EntityTypeProperty(name);
+    }
+
+    private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
+    private final boolean _isDefault;
 
-    public EntityTypeProperty(String name) {
+    /**
+     * Private constructor for default property types.
+     */
+    private EntityTypeProperty(String name) {
         PreCon.notNullOrEmpty(name);
 
+        _plugin = Nucleus.getPlugin();
         _name = name;
         _searchName = name.toLowerCase();
+        _isDefault = true;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin  The property types owning plugin.
+     * @param name    The property types name, unique to the plugin.
+     */
+    public EntityTypeProperty(Plugin plugin, String name) {
+        PreCon.notNull(plugin);
+        PreCon.notNullOrEmpty(name);
+
+        _plugin = plugin;
+        _name = plugin.getName() + ':' + name;
+        _searchName = _name.toLowerCase();
+        _isDefault = false;
+    }
+
+    /**
+     * Determine if the property is a default property type.
+     */
+    public boolean isDefaultProperty() {
+        return _isDefault;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     @Override

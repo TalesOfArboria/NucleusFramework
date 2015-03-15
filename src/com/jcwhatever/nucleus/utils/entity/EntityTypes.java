@@ -61,7 +61,7 @@ public class EntityTypes {
         PreCon.notNull(type);
         PreCon.notNull(propertyName);
 
-        return hasProperty(type, new EntityTypeProperty(propertyName));
+        return hasProperty(type, EntityTypeProperty.forLookup(propertyName));
     }
 
     /**
@@ -319,6 +319,29 @@ public class EntityTypes {
      */
     public static boolean isMonster(EntityType type) {
         return hasProperty(type, EntityTypeProperty.MONSTER);
+    }
+
+    /**
+     * Register custom {@link EntityTypeProperty}'s for the specified
+     * {@link org.bukkit.entity.EntityType}.
+     *
+     * @param type        The {@link org.bukkit.entity.EntityType}.
+     * @param properties  The {@link EntityTypeProperty}'s to register.
+     */
+    public static void register(EntityType type, EntityTypeProperty... properties) {
+        PreCon.notNull(type);
+
+        if (properties == null || properties.length == 0)
+            return;
+
+        // make sure a default property type is not being registered.
+        for (EntityTypeProperty property : properties) {
+            if (property.isDefaultProperty()) {
+                throw new IllegalArgumentException("Cannot register a default property type.");
+            }
+        }
+
+        add(type, properties);
     }
 
     private static void add(EntityType type, EntityTypeProperty... properties) {
