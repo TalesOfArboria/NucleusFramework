@@ -37,6 +37,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1253,6 +1254,39 @@ public final class TextUtils {
             results.add(id);
         }
         return results;
+    }
+
+    /**
+     * Print an array of {@link java.lang.StackTraceElement} to an {@link java.lang.Appendable}.
+     *
+     * @param stackTrace  The stack trace to append.
+     * @param appendable  The output to print to.
+     *
+     * @throws java.io.IOException if the {@link Appendable} throws the exception.
+     */
+    public static void printStackTrace(StackTraceElement[] stackTrace, Appendable appendable)
+            throws IOException {
+
+        PreCon.notNull(stackTrace);
+        PreCon.notNull(appendable);
+
+        for (StackTraceElement element : stackTrace) {
+
+            if (element.getClassName().equals("java.lang.Thread") &&
+                    element.getMethodName().equals("getStackTrace")) {
+                continue; // skip call to getStackTrace
+            }
+
+            appendable.append("    at ");
+            appendable.append(element.getClassName());
+            appendable.append('.');
+            appendable.append(element.getMethodName());
+            appendable.append(" (");
+            appendable.append(element.getFileName());
+            appendable.append(':');
+            appendable.append(String.valueOf(element.getLineNumber()));
+            appendable.append(")\n");
+        }
     }
 }
 
