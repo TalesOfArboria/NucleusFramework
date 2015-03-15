@@ -66,182 +66,182 @@ import org.bukkit.inventory.ItemStack;
 
 public final class JCGEventListener implements Listener {
 
-	private final InternalRegionManager _regionManager;
+    private final InternalRegionManager _regionManager;
 
-	public JCGEventListener(InternalRegionManager regionManager) {
-		_regionManager = regionManager;
-	}
+    public JCGEventListener(InternalRegionManager regionManager) {
+        _regionManager = regionManager;
+    }
 
-	@EventHandler
-	private void onPluginDisable(PluginDisableEvent event) {
+    @EventHandler
+    private void onPluginDisable(PluginDisableEvent event) {
 
-		// unregister all event handlers associated with the plugin
-		EventManager.unregisterPlugin(event.getPlugin());
+        // unregister all event handlers associated with the plugin
+        EventManager.unregisterPlugin(event.getPlugin());
 
-		if (Nucleus.getPlugin().isEnabled()) {
-			Nucleus.getScriptApiRepo().unregisterPlugin(event.getPlugin());
-		}
-	}
+        if (Nucleus.getPlugin().isEnabled()) {
+            Nucleus.getScriptApiRepo().unregisterPlugin(event.getPlugin());
+        }
+    }
 
-	@EventHandler(priority=EventPriority.HIGHEST)
-	private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+    @EventHandler(priority=EventPriority.HIGHEST)
+    private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 
-		if (CommandRequests.onResponse(event.getPlayer(), event.getMessage())) {
-			event.setCancelled(true);
-		}
-	}
+        if (CommandRequests.onResponse(event.getPlayer(), event.getMessage())) {
+            event.setCancelled(true);
+        }
+    }
 
-	@EventHandler(priority=EventPriority.LOWEST)
-	private void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority=EventPriority.LOWEST)
+    private void onPlayerJoin(PlayerJoinEvent event) {
 
-		final Player p = event.getPlayer();
+        final Player p = event.getPlayer();
 
-		// tell player missed important messages
-		Nucleus.getMessengerFactory().tellImportant(p);
+        // tell player missed important messages
+        Nucleus.getMessengerFactory().tellImportant(p);
 
         _regionManager
                 .updatePlayerLocation(p, RegionReason.JOIN_SERVER);
-	}
+    }
 
-	@EventHandler(priority=EventPriority.LOW)
-	private void onPlayerMove(PlayerMoveEvent event) {
-		_regionManager
-				.updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.MOVE);
-	}
+    @EventHandler(priority=EventPriority.LOW)
+    private void onPlayerMove(PlayerMoveEvent event) {
+        _regionManager
+                .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.MOVE);
+    }
 
-	@EventHandler(priority=EventPriority.MONITOR)
-	private void onPlayerDeath(PlayerDeathEvent event) {
+    @EventHandler(priority=EventPriority.MONITOR)
+    private void onPlayerDeath(PlayerDeathEvent event) {
 
-		if (event.getEntity().getHealth() > 0)
-			return;
+        if (event.getEntity().getHealth() > 0)
+            return;
 
-		_regionManager
-				.updatePlayerLocation(event.getEntity(), LeaveRegionReason.DEAD);
-	}
+        _regionManager
+                .updatePlayerLocation(event.getEntity(), LeaveRegionReason.DEAD);
+    }
 
-	@EventHandler(priority=EventPriority.MONITOR)
-	private void onPlayerRespawn(PlayerRespawnEvent event) {
-		_regionManager
-				.updatePlayerLocation(event.getPlayer(), event.getRespawnLocation(), RegionReason.RESPAWN);
-	}
+    @EventHandler(priority=EventPriority.MONITOR)
+    private void onPlayerRespawn(PlayerRespawnEvent event) {
+        _regionManager
+                .updatePlayerLocation(event.getPlayer(), event.getRespawnLocation(), RegionReason.RESPAWN);
+    }
 
-	@EventHandler(priority=EventPriority.LOWEST) // first priority
-	private void onPlayerQuit(PlayerQuitEvent event) {
-		PlayList.clearQueue(event.getPlayer());
+    @EventHandler(priority=EventPriority.LOWEST) // first priority
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        PlayList.clearQueue(event.getPlayer());
 
-		_regionManager
-				.updatePlayerLocation(event.getPlayer(), LeaveRegionReason.QUIT_SERVER);
-	}
+        _regionManager
+                .updatePlayerLocation(event.getPlayer(), LeaveRegionReason.QUIT_SERVER);
+    }
 
-	@EventHandler(priority=EventPriority.MONITOR)
-	private void onPlayerTeleport(PlayerTeleportEvent event) {
+    @EventHandler(priority=EventPriority.MONITOR)
+    private void onPlayerTeleport(PlayerTeleportEvent event) {
 
         if (event.getFrom() == null || event.getTo() == null)
             return;
 
-		// player teleporting to a different world
-		if (!event.getFrom().getWorld().equals(event.getTo().getWorld())) {
+        // player teleporting to a different world
+        if (!event.getFrom().getWorld().equals(event.getTo().getWorld())) {
 
-			PlayList.clearQueue(event.getPlayer());
-		}
+            PlayList.clearQueue(event.getPlayer());
+        }
 
         if (event.getCause() != TeleportCause.UNKNOWN) {
             _regionManager
                     .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.TELEPORT);
         }
-	}
+    }
 
-	@EventHandler(priority=EventPriority.NORMAL)
-	private void onPlayerInteract(PlayerInteractEvent event) {
+    @EventHandler(priority=EventPriority.NORMAL)
+    private void onPlayerInteract(PlayerInteractEvent event) {
 
-		if (!event.hasBlock()) {
-			return;
-		}
+        if (!event.hasBlock()) {
+            return;
+        }
 
-		Block clicked = event.getClickedBlock();
+        Block clicked = event.getClickedBlock();
 
-		// Signs
-		if (clicked != null && (clicked.getType() == Material.WALL_SIGN
-				|| clicked.getType() == Material.SIGN_POST)) {
+        // Signs
+        if (clicked != null && (clicked.getType() == Material.WALL_SIGN
+                || clicked.getType() == Material.SIGN_POST)) {
 
-			Action action = event.getAction();
-			BlockState signState = clicked.getState();
+            Action action = event.getAction();
+            BlockState signState = clicked.getState();
 
-			if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK)
-				return;
+            if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK)
+                return;
 
-			if (!(signState instanceof Sign))
-				return;
+            if (!(signState instanceof Sign))
+                return;
 
-			Sign sign = (Sign)signState;
-			SignInteractEvent signInteractEvent = new SignInteractEvent(event, sign);
-			Nucleus.getEventManager().callBukkit(this, signInteractEvent);
-		}
-	}
+            Sign sign = (Sign)signState;
+            SignInteractEvent signInteractEvent = new SignInteractEvent(event, sign);
+            Nucleus.getEventManager().callBukkit(this, signInteractEvent);
+        }
+    }
 
-	@EventHandler(priority=EventPriority.NORMAL)
-	private void onInventoryClick(InventoryClickEvent event) {
-		if (event.isCancelled())
-			return;
+    @EventHandler(priority=EventPriority.NORMAL)
+    private void onInventoryClick(InventoryClickEvent event) {
+        if (event.isCancelled())
+            return;
 
-		HumanEntity entity = event.getWhoClicked();
+        HumanEntity entity = event.getWhoClicked();
 
-		if (!(entity instanceof Player))
-			return;
+        if (!(entity instanceof Player))
+            return;
 
-		Player p = (Player)entity;
+        Player p = (Player)entity;
 
-		Inventory inventory = event.getInventory();
-		if (!(inventory instanceof AnvilInventory))
-			return;
+        Inventory inventory = event.getInventory();
+        if (!(inventory instanceof AnvilInventory))
+            return;
 
-		AnvilInventory anvilInventory = (AnvilInventory)inventory;
-		InventoryView view = event.getView();
-		int rawSlot = event.getRawSlot();
+        AnvilInventory anvilInventory = (AnvilInventory)inventory;
+        InventoryView view = event.getView();
+        int rawSlot = event.getRawSlot();
 
-		if (rawSlot != view.convertSlot(rawSlot) || rawSlot != 2)
-			return;
+        if (rawSlot != view.convertSlot(rawSlot) || rawSlot != 2)
+            return;
 
-		ItemStack resultItem = anvilInventory.getItem(2);
-		if (resultItem == null)
-			return;
+        ItemStack resultItem = anvilInventory.getItem(2);
+        if (resultItem == null)
+            return;
 
-		ItemStack slot1 = anvilInventory.getItem(0);
+        ItemStack slot1 = anvilInventory.getItem(0);
 
-		// check for rename
-		String originalName = slot1 != null
-				? ItemStackUtils.getDisplayName(slot1, DisplayNameResult.OPTIONAL)
-				: null;
+        // check for rename
+        String originalName = slot1 != null
+                ? ItemStackUtils.getDisplayName(slot1, DisplayNameResult.OPTIONAL)
+                : null;
 
-		String newName = ItemStackUtils.getDisplayName(resultItem, DisplayNameResult.OPTIONAL);
+        String newName = ItemStackUtils.getDisplayName(resultItem, DisplayNameResult.OPTIONAL);
 
-		if (newName != null && !newName.equals(originalName)) {
+        if (newName != null && !newName.equals(originalName)) {
 
-			AnvilItemRenameEvent renameEvent = new AnvilItemRenameEvent(
-					p, anvilInventory, resultItem, newName, originalName);
+            AnvilItemRenameEvent renameEvent = new AnvilItemRenameEvent(
+                    p, anvilInventory, resultItem, newName, originalName);
 
-			Nucleus.getEventManager().callBukkit(this, renameEvent);
+            Nucleus.getEventManager().callBukkit(this, renameEvent);
 
-			if (renameEvent.isCancelled()) {
-				event.setCancelled(true);
-				return;
-			}
+            if (renameEvent.isCancelled()) {
+                event.setCancelled(true);
+                return;
+            }
 
-			ItemStackUtils.setDisplayName(resultItem, renameEvent.getNewName());
-		}
+            ItemStackUtils.setDisplayName(resultItem, renameEvent.getNewName());
+        }
 
-		// check for repair
-		short startDurability = slot1 != null ? slot1.getDurability() : Short.MAX_VALUE;
-		short resultDurability = resultItem.getDurability();
+        // check for repair
+        short startDurability = slot1 != null ? slot1.getDurability() : Short.MAX_VALUE;
+        short resultDurability = resultItem.getDurability();
 
-		if (resultDurability > startDurability) {
-			AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
+        if (resultDurability > startDurability) {
+            AnvilItemRepairEvent repairEvent = new AnvilItemRepairEvent(p, anvilInventory, resultItem);
 
-			Nucleus.getEventManager().callBukkit(this, repairEvent);
+            Nucleus.getEventManager().callBukkit(this, repairEvent);
 
-			if (repairEvent.isCancelled()) {
-				event.setCancelled(true);
-			}
-		}
-	}
+            if (repairEvent.isCancelled()) {
+                event.setCancelled(true);
+            }
+        }
+    }
 }
