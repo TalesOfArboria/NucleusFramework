@@ -24,14 +24,18 @@
 
 package com.jcwhatever.nucleus.internal.scheduler;
 
+import com.jcwhatever.nucleus.NucleusPlugin;
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
 /**
@@ -45,8 +49,16 @@ public class InternalTaskScheduler implements ITaskScheduler {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
 
-        BukkitTask task = Bukkit.getScheduler().runTask(plugin, runnable);
-        return new InternalScheduledTask(runnable, task, false);
+        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        if (!plugin.isEnabled()) {
+            pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
+            return task;
+        }
+
+        BukkitTask bukkitTask = Bukkit.getScheduler().runTask(plugin, runnable);
+        task.setBukkitTask(bukkitTask);
+
+        return task;
     }
 
     @Override
@@ -55,8 +67,16 @@ public class InternalTaskScheduler implements ITaskScheduler {
         PreCon.notNull(runnable);
         PreCon.positiveNumber(ticks);
 
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, runnable, ticks);
-        return new InternalScheduledTask(runnable, task, false);
+        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        if (!plugin.isEnabled()) {
+            pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
+            return task;
+        }
+
+        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(plugin, runnable, ticks);
+        task.setBukkitTask(bukkitTask);
+
+        return task;
     }
 
     @Override
@@ -65,8 +85,16 @@ public class InternalTaskScheduler implements ITaskScheduler {
         PreCon.notNull(runnable);
         PreCon.positiveNumber(ticks);
 
-        BukkitTask task = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, runnable, ticks);
-        return new InternalScheduledTask(runnable, task, false);
+        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        if (!plugin.isEnabled()) {
+            pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
+            return task;
+        }
+
+        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, runnable, ticks);
+        task.setBukkitTask(bukkitTask);
+
+        return task;
     }
 
     @Override
@@ -76,8 +104,16 @@ public class InternalTaskScheduler implements ITaskScheduler {
         PreCon.positiveNumber(startTicks);
         PreCon.positiveNumber(repeatTicks);
 
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, runnable, startTicks, repeatTicks);
-        return new InternalScheduledTask(runnable, task, true);
+        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        if (!plugin.isEnabled()) {
+            pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
+            return task;
+        }
+
+        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, runnable, startTicks, repeatTicks);
+        task.setBukkitTask(bukkitTask);
+
+        return task;
     }
 
     @Override
@@ -87,8 +123,17 @@ public class InternalTaskScheduler implements ITaskScheduler {
         PreCon.positiveNumber(startTicks);
         PreCon.positiveNumber(repeatTicks);
 
-        BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, startTicks, repeatTicks);
-        return new InternalScheduledTask(runnable, task, true);
+        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        if (!plugin.isEnabled()) {
+            pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
+            return task;
+        }
+
+        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                plugin, runnable, startTicks, repeatTicks);
+        task.setBukkitTask(bukkitTask);
+
+        return task;
     }
 
     @Override
@@ -106,6 +151,22 @@ public class InternalTaskScheduler implements ITaskScheduler {
         PreCon.notNull(runnable);
 
         Bukkit.getScheduler().runTaskLater(plugin, new DelayedSyncTask(plugin, runnable), ticks);
+    }
+
+    private void pluginDisabledMessage(Plugin plugin, StackTraceElement[] stackTrace) {
+
+        if (plugin instanceof NucleusPlugin && !((NucleusPlugin) plugin).isDebugging())
+            return;
+
+        StringBuilder sb = new StringBuilder(stackTrace.length * 30);
+
+        try {
+            TextUtils.printStackTrace(stackTrace, sb);
+        } catch (IOException ignore) {
+            // exception not possible with StringBuilder
+        }
+
+        NucMsg.debug(plugin, "Attempted to schedule task while plugin disabled.\n{0}", sb.toString());
     }
 
     private static class SyncTask implements Callable<Void> {

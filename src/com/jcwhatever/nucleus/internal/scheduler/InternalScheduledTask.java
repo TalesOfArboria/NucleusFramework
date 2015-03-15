@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.scheduler;
 
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
 import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
@@ -43,12 +44,10 @@ public class InternalScheduledTask implements IScheduledTask {
      * Constructor.
      *
      * @param runnable     The scheduled task handler.
-     * @param task         The Bukkit task.
      * @param isRepeating  Determine if the task is repeating.
      */
-    public InternalScheduledTask(Runnable runnable, BukkitTask task, boolean isRepeating) {
+    public InternalScheduledTask(Runnable runnable, boolean isRepeating) {
         _runnable = runnable;
-        _task = task;
         _isRepeating = isRepeating;
 
         if (runnable instanceof TaskHandler) {
@@ -59,6 +58,15 @@ public class InternalScheduledTask implements IScheduledTask {
 
             ((TaskHandler) runnable).setTask(this);
         }
+    }
+
+    /**
+     * Set the {@link org.bukkit.scheduler.BukkitTask}.
+     */
+    public void setBukkitTask(BukkitTask task) {
+        PreCon.notNull(task);
+
+        _task = task;
     }
 
     /**
@@ -76,7 +84,7 @@ public class InternalScheduledTask implements IScheduledTask {
 
     @Override
     public boolean isCancelled() {
-        return _isCancelled;
+        return _task == null || _isCancelled;
     }
 
     @Override
@@ -91,7 +99,8 @@ public class InternalScheduledTask implements IScheduledTask {
             return;
 
         _isCancelled = true;
-        _task.cancel();
+        if (_task != null)
+            _task.cancel();
 
         if (_runnable instanceof TaskHandler) {
             ((TaskHandler) _runnable).cancelTask();
