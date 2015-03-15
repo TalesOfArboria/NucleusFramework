@@ -44,6 +44,26 @@ public interface INpcNavSettings {
     INpcNavSettings setSpeed(double speed);
 
     /**
+     * Get the target tolerance.
+     *
+     * <p>This is the radius around the NPC target destination that the
+     * NPC must be within in order to consider the path completed.</p>
+     */
+    double getTolerance();
+
+    /**
+     * Set the target tolerance.
+     *
+     * <p>This is the radius around the NPC target destination that the
+     * NPC must be within in order to consider the path completed.</p>
+     *
+     * @param tolerance  The radius tolerance.
+     *
+     * @return  Self for chaining.
+     */
+    INpcNavSettings setTolerance(double tolerance);
+
+    /**
      * Determine if the NPC avoids water.
      */
     boolean avoidsWater();
