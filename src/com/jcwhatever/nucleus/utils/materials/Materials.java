@@ -61,7 +61,7 @@ public class Materials {
         PreCon.notNull(material);
         PreCon.notNull(propertyName);
 
-        return hasProperty(material, new MaterialProperty(propertyName));
+        return hasProperty(material, MaterialProperty.forLookup(propertyName));
     }
 
     /**
@@ -633,6 +633,29 @@ public class Materials {
      */
     public static boolean hasSubMaterialData(Material material) {
         return hasProperty(material, MaterialProperty.SUB_MATERIAL_DATA);
+    }
+
+    /**
+     * Register custom {@link MaterialProperty}'s for the specified
+     * {@link org.bukkit.Material}.
+     *
+     * @param material    The {@link org.bukkit.Material}.
+     * @param properties  The {@link MaterialProperty}'s to register.
+     */
+    public static void register(Material material, MaterialProperty... properties) {
+        PreCon.notNull(material);
+
+        if (properties == null || properties.length == 0)
+            return;
+
+        // make sure a default property type is not being registered.
+        for (MaterialProperty property : properties) {
+            if (property.isDefaultProperty()) {
+                throw new IllegalArgumentException("Cannot register a default property type.");
+            }
+        }
+
+        add(material, properties);
     }
 
     private static void add(Material material, MaterialProperty... properties) {

@@ -24,15 +24,19 @@
 
 package com.jcwhatever.nucleus.utils.materials;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
+
+import org.bukkit.plugin.Plugin;
 
 /**
  * Represents a property of a {@link org.bukkit.Material}.
  *
  * @see Materials
  */
-public class MaterialProperty implements INamedInsensitive {
+public class MaterialProperty implements INamedInsensitive, IPluginOwned {
 
     /**
      * The materials byte meta data represents its color.
@@ -227,14 +231,58 @@ public class MaterialProperty implements INamedInsensitive {
      */
     public static final MaterialProperty SURFACE = new MaterialProperty("Surface");
 
+    /**
+     * Get a temporary {@link MaterialProperty} used to lookup a property from a map.
+     *
+     * @param name  The full property name.
+     */
+    static MaterialProperty forLookup(String name) {
+        return new MaterialProperty(name);
+    }
+
+    private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
+    private final boolean _isDefault;
 
-    public MaterialProperty(String name) {
-        PreCon.notNullOrEmpty(name);
+    /**
+     * Private constructor for default and lookup properties.
+     */
+    private MaterialProperty(String name) {
+        PreCon.notNull(name);
 
+        _plugin = Nucleus.getPlugin();
         _name = name;
         _searchName = name.toLowerCase();
+        _isDefault = true;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param plugin  The properties owning plugin.
+     * @param name    The name of the property, unique to the plugin.
+     */
+    public MaterialProperty(Plugin plugin, String name) {
+        PreCon.notNull(plugin);
+        PreCon.notNullOrEmpty(name);
+
+        _plugin = plugin;
+        _name = plugin.getName() + ':' + name;
+        _searchName = _name.toLowerCase();
+        _isDefault = false;
+    }
+
+    /**
+     * Determine if the property is a default property.
+     */
+    public boolean isDefaultProperty() {
+        return _isDefault;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
     }
 
     @Override
