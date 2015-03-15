@@ -136,6 +136,9 @@ public final class JCGEventListener implements Listener {
 	@EventHandler(priority=EventPriority.MONITOR)
 	private void onPlayerTeleport(PlayerTeleportEvent event) {
 
+        if (event.getFrom() == null || event.getTo() == null)
+            return;
+
 		// player teleporting to a different world
 		if (!event.getFrom().getWorld().equals(event.getTo().getWorld())) {
 
