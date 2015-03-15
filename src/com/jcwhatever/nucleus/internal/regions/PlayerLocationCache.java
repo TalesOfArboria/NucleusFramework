@@ -98,6 +98,11 @@ class PlayerLocationCache {
     public Location add(RegionReason reason) {
         CachedLocation location = getPooledLocation(reason);
         synchronized (_cached) {
+
+            if (reason == RegionReason.JOIN_SERVER ||
+                    reason == RegionReason.TELEPORT) {
+                clear();
+            }
             _cached.addLast(location);
         }
         return location;

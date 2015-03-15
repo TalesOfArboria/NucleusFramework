@@ -99,6 +99,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     // IDs of players that have joined within a region and have not yet moved.
     private Set<UUID> _joined = new HashSet<>(10);
 
+    private boolean _isWatcherRunning;
+
     /**
      * Constructor
      *
@@ -113,7 +115,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
         _playerCacheMap = new PlayerMap<>(plugin);
         _playerLocationCache = new PlayerMap<>(plugin);
-        Scheduler.runTaskRepeat(plugin,  3, 3, new PlayerWatcher(this));
+        Scheduler.runTaskRepeat(plugin,  2, 2, new PlayerWatcher(this));
     }
 
     /**
@@ -478,6 +480,9 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         @Override
         public void run() {
 
+            if (_manager._isWatcherRunning)
+                return;
+
             List<World> worlds = new ArrayList<World>(_manager._listenerWorlds.getElements());
 
             final List<WorldPlayers> worldPlayers = new ArrayList<WorldPlayers>(worlds.size());
@@ -501,8 +506,11 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
             }
 
             // end if there are no players in region worlds
-            if (worldPlayers.isEmpty())
+            if (worldPlayers.isEmpty()) {
                 return;
+            }
+
+            _manager._isWatcherRunning = true;
 
             Scheduler.runTaskLaterAsync(Nucleus.getPlugin(), 1, new PlayerWatcherAsync(_manager, worldPlayers));
         }
@@ -615,6 +623,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                 } // END synchronized
 
             } // END for (WorldPlayers
+
+            _manager._isWatcherRunning = false;
 
         } // END run()
 
