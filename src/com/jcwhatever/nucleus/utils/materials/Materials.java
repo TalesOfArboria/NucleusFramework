@@ -667,10 +667,11 @@ public class Materials {
 
     static {
         add(Material.ACACIA_DOOR,
+                MaterialProperty.BLOCK,
+                MaterialProperty.MULTI_BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.DOOR,
-                MaterialProperty.MULTI_BLOCK,
                 MaterialProperty.REDSTONE);
 
         add(Material.ACACIA_DOOR_ITEM,
@@ -682,11 +683,13 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.ACACIA_FENCE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.ACACIA_FENCE_GATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
@@ -696,6 +699,8 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.ACACIA_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.DIRECTIONAL_DATA,
@@ -704,15 +709,19 @@ public class Materials {
                 MaterialProperty.SURFACE);
 
         add(Material.ACTIVATOR_RAIL,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.AIR,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT);
 
         add(Material.ANVIL,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.GUI,
                 MaterialProperty.CRAFTABLE,
@@ -738,6 +747,7 @@ public class Materials {
                 MaterialProperty.PLACEABLE); // item
 
         add(Material.BEACON,
+                MaterialProperty.BLOCK,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.GUI,
                 MaterialProperty.CRAFTABLE,
@@ -748,13 +758,16 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.BED_BLOCK,
+                MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE);
 
         add(Material.BEDROCK,
+                MaterialProperty.BLOCK,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.SURFACE);
 
         add(Material.BIRCH_DOOR,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.DOOR,
@@ -770,11 +783,13 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.BIRCH_FENCE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.BIRCH_FENCE_GATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.FENCE_GATE,
@@ -783,6 +798,7 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.BIRCH_WOOD_STAIRS,
+                MaterialProperty.BLOCK,
                 MaterialProperty.STAIRS,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.DIRECTIONAL_DATA,
@@ -793,8 +809,6 @@ public class Materials {
 
         add(Material.BLAZE_POWDER,
                 MaterialProperty.CRAFTABLE);
-
-        add(Material.BLAZE_POWDER);
 
         add(Material.BOAT,
                 MaterialProperty.CRAFTABLE);
@@ -808,6 +822,7 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.BOOKSHELF,
+                MaterialProperty.BLOCK,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.SURFACE);
@@ -824,6 +839,7 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.BREWING_STAND,
+                MaterialProperty.BLOCK,
                 MaterialProperty.GUI);
 
         add(Material.BREWING_STAND_ITEM,
@@ -833,6 +849,7 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.BRICK_STAIRS,
+                MaterialProperty.BLOCK,
                 MaterialProperty.STAIRS,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
@@ -840,6 +857,7 @@ public class Materials {
                 MaterialProperty.SURFACE);
 
         add(Material.BROWN_MUSHROOM,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE);
 
@@ -847,10 +865,13 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.BURNING_FURNACE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.SURFACE);
 
         add(Material.CACTUS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE);
 
         add(Material.CAKE,
@@ -858,16 +879,19 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.CAKE_BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.BLOCK);
 
         add(Material.CARPET,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.MULTI_COLOR_DATA,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.CARROT,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT);
 
         add(Material.CARROT_ITEM,
                 MaterialProperty.PLACEABLE);
@@ -909,17 +933,18 @@ public class Materials {
                 MaterialProperty.LEGGINGS);
 
         add(Material.CHEST,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.INVENTORY,
                 MaterialProperty.GUI,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.CLAY,
-                MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.CLAY_BALL,
                 MaterialProperty.CRAFTABLE);
@@ -932,45 +957,46 @@ public class Materials {
 
         add(Material.COAL_BLOCK,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.COAL_ORE,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.ORE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.ORE);
 
         add(Material.COBBLE_WALL,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.COBBLESTONE,
-                MaterialProperty.STONE_BASED,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.STONE_BASED,
+                MaterialProperty.PLACEABLE);
 
         add(Material.COBBLESTONE_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.COCOA);
 
         add(Material.COMMAND,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.GUI,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.GUI);
 
         add(Material.COMMAND_MINECART);
 
@@ -1006,6 +1032,7 @@ public class Materials {
                 MaterialProperty.SURFACE);
 
         add(Material.DARK_OAK_DOOR,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.DOOR,
@@ -1021,39 +1048,39 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.DARK_OAK_FENCE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.DARK_OAK_FENCE_GATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.FENCE_GATE,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.REDSTONE);
 
         add(Material.DARK_OAK_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.DAYLIGHT_DETECTOR,
+                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.DAYLIGHT_DETECTOR_INVERTED,
+                MaterialProperty.BLOCK,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE);
 
         add(Material.DEAD_BUSH,
@@ -1061,10 +1088,10 @@ public class Materials {
                 MaterialProperty.TRANSPARENT);
 
         add(Material.DETECTOR_RAIL,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.DIAMOND,
@@ -1082,6 +1109,8 @@ public class Materials {
                 MaterialProperty.HORSE_ARMOR);
 
         add(Material.DIAMOND_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.DIAMOND_BASED,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
@@ -1126,6 +1155,8 @@ public class Materials {
                 MaterialProperty.LEGGINGS);
 
         add(Material.DIAMOND_ORE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.DIAMOND_BASED,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.ORE);
@@ -1158,21 +1189,25 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.DIODE_BLOCK_OFF,
+                MaterialProperty.BLOCK,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.REDSTONE);
 
         add(Material.DIODE_BLOCK_ON,
+                MaterialProperty.BLOCK,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.REDSTONE);
 
         add(Material.DIRT,
+                MaterialProperty.BLOCK,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.SURFACE);
 
         add(Material.DISPENSER,
+                MaterialProperty.BLOCK,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.INVENTORY,
                 MaterialProperty.GUI,
@@ -1181,17 +1216,20 @@ public class Materials {
                 MaterialProperty.SURFACE);
 
         add(Material.DOUBLE_PLANT,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.MULTI_BLOCK,
                 MaterialProperty.SUB_MATERIAL_DATA);
 
         add(Material.DOUBLE_STEP,
+                MaterialProperty.BLOCK,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.SURFACE);
 
         add(Material.DRAGON_EGG);
 
         add(Material.DROPPER,
+                MaterialProperty.BLOCK,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.INVENTORY,
                 MaterialProperty.GUI,
@@ -1205,11 +1243,13 @@ public class Materials {
         add(Material.EMERALD);
 
         add(Material.EMERALD_BLOCK,
+                MaterialProperty.BLOCK,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.SURFACE);
 
         add(Material.EMERALD_ORE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.ORE,
                 MaterialProperty.SURFACE);
@@ -1219,11 +1259,14 @@ public class Materials {
         add(Material.ENCHANTED_BOOK);
 
         add(Material.ENCHANTMENT_TABLE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.GUI);
 
         add(Material.ENDER_CHEST,
+                MaterialProperty.BLOCK,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE,
@@ -1239,9 +1282,12 @@ public class Materials {
                 MaterialProperty.TRANSPARENT);
 
         add(Material.ENDER_PORTAL_FRAME,
+                MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE);
 
-        add(Material.ENDER_STONE);
+        add(Material.ENDER_STONE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE);
 
         add(Material.EXP_BOTTLE,
                 MaterialProperty.THROWABLE);
@@ -1266,7 +1312,9 @@ public class Materials {
 
         add(Material.FERMENTED_SPIDER_EYE);
 
-        add(Material.FIRE);
+        add(Material.FIRE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT);
 
         add(Material.FIREBALL,
                 MaterialProperty.THROWABLE);
@@ -1305,8 +1353,9 @@ public class Materials {
         add(Material.GHAST_TEAR);
 
         add(Material.GLASS,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.GLASS_BOTTLE,
@@ -1317,8 +1366,9 @@ public class Materials {
                 MaterialProperty.SURFACE);
 
         add(Material.GLOWSTONE,
-                MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.GLOWSTONE_DUST);
 
@@ -1334,9 +1384,10 @@ public class Materials {
                 MaterialProperty.HORSE_ARMOR);
 
         add(Material.GOLD_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.GOLD_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.GOLD_BOOTS,
@@ -1387,9 +1438,10 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.GOLD_ORE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.GOLD_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.ORE);
 
         add(Material.GOLD_PICKAXE,
@@ -1401,10 +1453,10 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.GOLD_PLATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.GOLD_BASED,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.REDSTONE_SWITCH,
                 MaterialProperty.PRESSURE_PLATE,
@@ -1438,15 +1490,15 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.GRASS,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.GRAVEL,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.GRAVITY,
-                MaterialProperty.PLACEABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.PLACEABLE);
 
         add(Material.GREEN_RECORD);
 
@@ -1456,16 +1508,18 @@ public class Materials {
 
         add(Material.HARD_CLAY,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE);
 
         add(Material.HAY_BLOCK,
                 MaterialProperty.BLOCK,
-                MaterialProperty.PLACEABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.HOPPER,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.INVENTORY,
                 MaterialProperty.GUI,
@@ -1482,8 +1536,9 @@ public class Materials {
                 MaterialProperty.SURFACE);
 
         add(Material.ICE,
-                MaterialProperty.PLACEABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.INK_SACK,
                 MaterialProperty.MULTI_COLOR_DATA,
@@ -1501,9 +1556,10 @@ public class Materials {
                 MaterialProperty.HORSE_ARMOR);
 
         add(Material.IRON_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.IRON_BOOTS,
@@ -1526,12 +1582,13 @@ public class Materials {
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.DOOR,
-                MaterialProperty.MULTI_BLOCK,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.IRON_DOOR_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.MULTI_BLOCK,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.DOOR,
@@ -1539,9 +1596,9 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.IRON_FENCE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.IRON_HELMET,
@@ -1572,9 +1629,10 @@ public class Materials {
                 MaterialProperty.LEGGINGS);
 
         add(Material.IRON_ORE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.ORE);
 
         add(Material.IRON_PICKAXE,
@@ -1586,10 +1644,10 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.IRON_PLATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.REDSTONE_SWITCH,
                 MaterialProperty.PRESSURE_PLATE,
@@ -1610,11 +1668,12 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.IRON_TRAPDOOR,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.IRON_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.TRAPDOOR,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.REDSTONE);
 
@@ -1623,18 +1682,19 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.JACK_O_LANTERN,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.WEARABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.WEARABLE);
 
         add(Material.JUKEBOX,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.JUNGLE_DOOR,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.DOOR,
@@ -1650,48 +1710,48 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.JUNGLE_FENCE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.JUNGLE_FENCE_GATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.FENCE_GATE,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE,
                 MaterialProperty.REDSTONE);
 
         add(Material.JUNGLE_WOOD_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.LADDER,
+                MaterialProperty.BLOCK,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.LAPIS_BLOCK,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.LAPIS_ORE,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.ORE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.ORE);
 
         add(Material.LAVA,
                 MaterialProperty.BLOCK,
@@ -1737,37 +1797,43 @@ public class Materials {
                 MaterialProperty.LEGGINGS);
 
         add(Material.LEAVES,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.BLOCK);
 
         add(Material.LEAVES_2,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.BLOCK);
 
         add(Material.LEVER,
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.REDSTONE_SWITCH,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.LOG,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.BLOCK);
 
         add(Material.LOG_2,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
-                MaterialProperty.PLACEABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.PLACEABLE);
 
         add(Material.LONG_GRASS,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.SUB_MATERIAL_DATA);
 
@@ -1778,9 +1844,9 @@ public class Materials {
         add(Material.MELON);
 
         add(Material.MELON_BLOCK,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.MELON_SEEDS);
 
@@ -1798,10 +1864,10 @@ public class Materials {
         add(Material.MONSTER_EGGS);
 
         add(Material.MOSSY_COBBLESTONE,
-                MaterialProperty.STONE_BASED,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.STONE_BASED,
+                MaterialProperty.PLACEABLE);
 
         add(Material.MUSHROOM_SOUP,
                 MaterialProperty.FOOD,
@@ -1811,9 +1877,9 @@ public class Materials {
                 MaterialProperty.FOOD);
 
         add(Material.MYCEL,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.NAME_TAG);
 
@@ -1825,16 +1891,16 @@ public class Materials {
                 MaterialProperty.PLACEABLE);
 
         add(Material.NETHER_BRICK_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.NETHER_FENCE,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.NETHER_STALK); // Nether wart item
@@ -1842,28 +1908,31 @@ public class Materials {
         add(Material.NETHER_STAR);
 
         add(Material.NETHER_WARTS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
+                MaterialProperty.PLACEABLE);
+
+        add(Material.NETHERRACK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK);
 
-        add(Material.NETHERRACK,
-                MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
-
         add(Material.NOTE_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.OBSIDIAN,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.PACKED_ICE,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE);
 
         add(Material.PAINTING,
                 MaterialProperty.PLACEABLE,
@@ -1895,7 +1964,8 @@ public class Materials {
                 MaterialProperty.TRANSPARENT);
 
         add(Material.POTATO,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT);
 
         add(Material.POTATO_ITEM,
                 MaterialProperty.FOOD);
@@ -1905,9 +1975,9 @@ public class Materials {
         add(Material.POWERED_MINECART);
 
         add(Material.POWERED_RAIL,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.CRAFTABLE);
 
@@ -1918,6 +1988,8 @@ public class Materials {
         add(Material.PRISMARINE_SHARD);
 
         add(Material.PUMPKIN,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE);
 
         add(Material.PUMPKIN_PIE,
@@ -1931,28 +2003,28 @@ public class Materials {
                 MaterialProperty.QUARTZ_BASED);
 
         add(Material.QUARTZ_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.QUARTZ_BASED,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.QUARTZ_ORE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.QUARTZ_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.ORE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.ORE);
 
         add(Material.QUARTZ_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.QUARTZ_BASED,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.RABBIT);
 
@@ -1965,9 +2037,9 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.RAILS,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.RAW_BEEF,
@@ -2005,34 +2077,35 @@ public class Materials {
                 MaterialProperty.TRANSPARENT);
 
         add(Material.RED_ROSE,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.SUB_MATERIAL_DATA);
 
         add(Material.RED_SANDSTONE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.RED_SANDSTONE_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.REDSTONE,
                 MaterialProperty.PLACEABLE);
 
         add(Material.REDSTONE_BLOCK,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.REDSTONE,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.REDSTONE_COMPARATOR,
                 MaterialProperty.PLACEABLE,
@@ -2040,46 +2113,47 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.REDSTONE_COMPARATOR_OFF,
-                MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.REDSTONE);
 
         add(Material.REDSTONE_COMPARATOR_ON,
-                MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.REDSTONE);
 
         add(Material.REDSTONE_LAMP_OFF,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.REDSTONE,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.REDSTONE_LAMP_ON,
-                MaterialProperty.REDSTONE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.REDSTONE);
 
         add(Material.REDSTONE_ORE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE);
 
         add(Material.REDSTONE_TORCH_OFF,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.REDSTONE_TORCH_ON,
-                MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.REDSTONE);
 
         add(Material.REDSTONE_WIRE,
-                MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.REDSTONE);
 
         add(Material.ROTTEN_FLESH,
@@ -2088,37 +2162,38 @@ public class Materials {
         add(Material.SADDLE);
 
         add(Material.SAND,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.GRAVITY,
-                MaterialProperty.SURFACE);
+                MaterialProperty.GRAVITY);
 
         add(Material.SANDSTONE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.SANDSTONE_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.SAPLING,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE);
 
         add(Material.SEA_LANTERN,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.SEEDS,
                 MaterialProperty.SUB_MATERIAL_DATA,
@@ -2134,8 +2209,8 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.SIGN_POST,
-                MaterialProperty.TRANSPARENT,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT);
 
         add(Material.SKULL,
                 MaterialProperty.BLOCK);
@@ -2147,33 +2222,33 @@ public class Materials {
         add(Material.SLIME_BALL);
 
         add(Material.SMOOTH_BRICK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.SMOOTH_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.SNOW,
-                MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE);
 
         add(Material.SNOW_BALL,
                 MaterialProperty.THROWABLE);
 
         add(Material.SNOW_BLOCK,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.SOIL,
                 MaterialProperty.BLOCK,
@@ -2181,6 +2256,7 @@ public class Materials {
 
         add(Material.SOUL_SAND,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE);
 
         add(Material.SPECKLED_MELON); // Glistering Melon
@@ -2188,12 +2264,13 @@ public class Materials {
         add(Material.SPIDER_EYE);
 
         add(Material.SPONGE,
-                MaterialProperty.SUB_MATERIAL_DATA,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.SUB_MATERIAL_DATA,
+                MaterialProperty.PLACEABLE);
 
         add(Material.SPRUCE_DOOR,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.DOOR,
@@ -2209,11 +2286,13 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.SPRUCE_FENCE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.SPRUCE_FENCE_GATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.FENCE_GATE,
@@ -2223,6 +2302,7 @@ public class Materials {
                 MaterialProperty.REDSTONE);
 
         add(Material.SPRUCE_WOOD_STAIRS,
+                MaterialProperty.BLOCK,
                 MaterialProperty.STAIRS,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.DIRECTIONAL_DATA,
@@ -2233,52 +2313,52 @@ public class Materials {
                 MaterialProperty.SURFACE);
 
         add(Material.STAINED_CLAY,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.MULTI_COLOR_DATA,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.STAINED_GLASS,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.MULTI_COLOR_DATA,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.STAINED_GLASS_PANE,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.MULTI_COLOR_DATA,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.STANDING_BANNER,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT);
 
         add(Material.STATIONARY_LAVA,
                 MaterialProperty.BLOCK);
 
         add(Material.STATIONARY_WATER,
-                MaterialProperty.BLOCK,
-                MaterialProperty.TRANSPARENT);
+                MaterialProperty.BLOCK);
 
         add(Material.STEP,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.SUB_MATERIAL_DATA,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.STICK);
 
         add(Material.STONE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.SUB_MATERIAL_DATA,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.STONE_AXE,
                 MaterialProperty.STONE_BASED,
@@ -2288,9 +2368,9 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.STONE_BUTTON,
+                MaterialProperty.BLOCK,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.REDSTONE_SWITCH,
@@ -2313,21 +2393,21 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.STONE_PLATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.REDSTONE_SWITCH,
                 MaterialProperty.PRESSURE_PLATE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.STONE_SLAB2,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STONE_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.STONE_SPADE,
                 MaterialProperty.STONE_BASED,
@@ -2353,38 +2433,43 @@ public class Materials {
                 MaterialProperty.PLACEABLE);
 
         add(Material.SUGAR_CANE_BLOCK,
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK);
 
         add(Material.SULPHUR); // gunpowder
 
         add(Material.THIN_GLASS,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
+                MaterialProperty.CRAFTABLE);
 
         add(Material.TNT,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.TORCH,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.TRAP_DOOR,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.TRAPDOOR,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.TRAPPED_CHEST,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.REDSTONE_SWITCH,
                 MaterialProperty.INVENTORY,
@@ -2396,16 +2481,20 @@ public class Materials {
                 MaterialProperty.TRANSPARENT);
 
         add(Material.TRIPWIRE_HOOK,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.VINE,
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE);
 
         add(Material.WALL_BANNER,
-                MaterialProperty.BLOCK);
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT);
 
         add(Material.WALL_SIGN,
                 MaterialProperty.BLOCK,
@@ -2415,34 +2504,32 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.WATER,
-                MaterialProperty.BLOCK,
-                MaterialProperty.TRANSPARENT);
+                MaterialProperty.BLOCK);
 
         add(Material.WATER_BUCKET);
 
         add(Material.WATER_LILY,
-                MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK,
                 MaterialProperty.SURFACE,
                 MaterialProperty.PLACEABLE);
 
         add(Material.WEB,
-                MaterialProperty.TRANSPARENT,
                 MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE);
 
         add(Material.WHEAT,
+                MaterialProperty.BLOCK,
                 MaterialProperty.TRANSPARENT,
-                MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK);
+                MaterialProperty.PLACEABLE);
 
         add(Material.WOOD,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.WOOD_AXE,
                 MaterialProperty.REPAIRABLE,
@@ -2452,6 +2539,8 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.WOOD_BUTTON,
+                MaterialProperty.BLOCK,
+                MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.REDSTONE,
@@ -2468,10 +2557,10 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.WOOD_DOUBLE_STEP,
-                MaterialProperty.WOOD_BASED,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SUB_MATERIAL_DATA,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.WOOD_BASED,
+                MaterialProperty.SUB_MATERIAL_DATA);
 
         add(Material.WOOD_HOE,
                 MaterialProperty.WOOD_BASED,
@@ -2488,10 +2577,10 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.WOOD_PLATE,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.TRANSPARENT,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.BLOCK,
                 MaterialProperty.REDSTONE,
                 MaterialProperty.REDSTONE_SWITCH,
                 MaterialProperty.PRESSURE_PLATE,
@@ -2506,18 +2595,19 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.WOOD_STAIRS,
+                MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
                 MaterialProperty.STAIRS,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.DIRECTIONAL_DATA,
                 MaterialProperty.PLACEABLE,
-                MaterialProperty.CRAFTABLE,
-                MaterialProperty.SURFACE);
+                MaterialProperty.CRAFTABLE);
 
         add(Material.WOOD_STEP,
-                MaterialProperty.WOOD_BASED,
-                MaterialProperty.SUB_MATERIAL_DATA,
                 MaterialProperty.BLOCK,
-                MaterialProperty.SURFACE);
+                MaterialProperty.SURFACE,
+                MaterialProperty.WOOD_BASED,
+                MaterialProperty.SUB_MATERIAL_DATA);
 
         add(Material.WOOD_SWORD,
                 MaterialProperty.WOOD_BASED,
@@ -2526,6 +2616,7 @@ public class Materials {
                 MaterialProperty.CRAFTABLE);
 
         add(Material.WOODEN_DOOR,
+                MaterialProperty.BLOCK,
                 MaterialProperty.WOOD_BASED,
                 MaterialProperty.OPENABLE_BOUNDARY,
                 MaterialProperty.DOOR,
@@ -2533,17 +2624,18 @@ public class Materials {
                 MaterialProperty.REDSTONE);// block
 
         add(Material.WOOL,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.MULTI_COLOR_DATA,
                 MaterialProperty.CRAFTABLE);
 
         add(Material.WORKBENCH,
-                MaterialProperty.PLACEABLE,
                 MaterialProperty.BLOCK,
+                MaterialProperty.SURFACE,
+                MaterialProperty.PLACEABLE,
                 MaterialProperty.CRAFTABLE,
-                MaterialProperty.GUI,
-                MaterialProperty.SURFACE);
+                MaterialProperty.GUI);
 
         add(Material.WRITTEN_BOOK,
                 MaterialProperty.GUI);
