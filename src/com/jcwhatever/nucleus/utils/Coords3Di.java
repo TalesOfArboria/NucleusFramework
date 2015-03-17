@@ -109,9 +109,9 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
     }
 
     /**
-     * Private constructor for serialization.
+     * Protected constructor for serialization.
      */
-    private Coords3Di() {}
+    protected Coords3Di() {}
 
     /**
      * Get the X coordinates.
@@ -339,6 +339,17 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " { x:" + _x + ", y:" + _y + ", z:" + _z + '}';
+    }
+
+    protected void deserialize(int x, int y, int z) {
+        if (_x == 0 && _y == 0 && _z == 0) {
+            _x = x;
+            _y = y;
+            _z = z;
+        }
+        else {
+            throw new IllegalStateException("Coords3Di is immutable.");
+        }
     }
 }
 

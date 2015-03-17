@@ -483,9 +483,9 @@ public abstract class RestorableRegion extends BuildableRegion {
             while (!multiBlocks.isEmpty()) {
                 ChunkBlockInfo info = multiBlocks.remove();
 
-                int x = info.getChunkBlockX();
+                int x = info.getX();
                 int y = info.getY();
-                int z = info.getChunkBlockZ();
+                int z = info.getZ();
 
                 String lowerKey = getKey(x, y - 1, z);
                 Collection<ChunkBlockInfo> lowerBlock = _placedMultiBlocks.get(lowerKey);
@@ -541,9 +541,9 @@ public abstract class RestorableRegion extends BuildableRegion {
          */
         private void restoreBlock(ChunkBlockInfo info) {
 
-            int x = info.getChunkBlockX();
+            int x = info.getX();
             int y = info.getY();
-            int z = info.getChunkBlockZ();
+            int z = info.getZ();
 
             Block block = chunk.getBlock(x, y, z);
             BlockState state = block.getState();

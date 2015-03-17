@@ -24,12 +24,11 @@
 
 package com.jcwhatever.nucleus.regions.data;
 
+import com.jcwhatever.nucleus.storage.DeserializeException;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.Coords2Di;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
-import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
-import com.jcwhatever.nucleus.storage.DeserializeException;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -40,12 +39,9 @@ import javax.annotation.Nullable;
 /**
  * Contains information about a chunk.
  */
-public class ChunkInfo implements IChunkInfo, IDataNodeSerializable, IBinarySerializable {
+public class ChunkInfo extends Coords2Di implements IChunkInfo {
 
     private WorldInfo _world;
-    private int _x;
-    private int _z;
-    private int _hash;
 
     /**
      * Constructor.
@@ -76,39 +72,22 @@ public class ChunkInfo implements IChunkInfo, IDataNodeSerializable, IBinarySeri
      * @param z      The chunk Z coordinates.
      */
     public ChunkInfo(WorldInfo world, int x, int z) {
+        super(x, z);
         _world = world;
-        _x = x;
-        _z = z;
-        _hash = _world.hashCode() ^ _x ^ _z;
     }
 
     /**
-     * Get the world the chunk is in.
+     * Protected constructor for serialization.
      */
+    protected ChunkInfo() {
+        super();
+    }
+
     @Override
     public WorldInfo getWorld() {
         return _world;
     }
 
-    /**
-     * Get the chunk X coordinates.
-     */
-    @Override
-    public int getX() {
-        return _x;
-    }
-
-    /**
-     * Get the chunk Z coordinates.
-     */
-    @Override
-    public int getZ() {
-        return _z;
-    }
-
-    /**
-     * Get the chunk.
-     */
     @Override
     @Nullable
     public Chunk getChunk() {
@@ -116,22 +95,22 @@ public class ChunkInfo implements IChunkInfo, IDataNodeSerializable, IBinarySeri
         if (world == null)
             return null;
 
-        return world.getChunkAt(_x, _z);
+        return world.getChunkAt(getX(), getZ());
     }
 
     @Override
     public int hashCode() {
-        return _hash;
+        return _world.hashCode() ^ getX() ^ getZ();
     }
 
     @Override
     public boolean equals(Object obj) {
 
-        if (obj instanceof ChunkInfo) {
-            ChunkInfo other = (ChunkInfo)obj;
+        if (obj instanceof IChunkInfo) {
+            IChunkInfo other = (IChunkInfo)obj;
 
-            return other._world.getName().equals(_world.getName()) &&
-                    other._x == _x && other._z == _z;
+            return other.getWorld().getName().equals(_world.getName()) &&
+                    other.getX() == getX() && other.getZ() == getZ();
         }
 
         return false;
@@ -140,23 +119,19 @@ public class ChunkInfo implements IChunkInfo, IDataNodeSerializable, IBinarySeri
     @Override
     public void serialize(IDataNode dataNode) {
         dataNode.set("world", _world);
-        dataNode.set("x", _x);
-        dataNode.set("z", _z);
+        super.serialize(dataNode);
     }
 
     @Override
     public void deserialize(IDataNode dataNode) throws DeserializeException {
         _world = dataNode.getSerializable("world", WorldInfo.class);
-        _x = dataNode.getInteger("x");
-        _z = dataNode.getInteger("z");
-        _hash = _world.hashCode() ^ _x ^ _z;
+        super.deserialize(dataNode);
     }
 
     @Override
     public void serializeToBytes(NucleusByteWriter writer) throws IOException {
         writer.write(_world);
-        writer.write(_x);
-        writer.write(_z);
+        super.serializeToBytes(writer);
     }
 
     @Override
@@ -165,9 +140,12 @@ public class ChunkInfo implements IChunkInfo, IDataNodeSerializable, IBinarySeri
         if (_world == null)
             throw new RuntimeException("Failed to deserialize world info.");
 
-        _x = reader.getInteger();
-        _z = reader.getInteger();
-        _hash = _world.hashCode() ^ _x ^ _z;
+        super.deserializeFromBytes(reader);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " { world:" + _world.getName() + ", x:" + getX() + ", z:" + getZ() + '}';
     }
 }
 

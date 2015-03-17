@@ -66,7 +66,7 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
 
     /**
      * Constructor.
-     * <p/>
+     *
      * <p>Clones values from source coordinates.</p>
      *
      * @param source The source coordinates.
@@ -77,14 +77,8 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
     }
 
     /**
-     * Private constructor for serialization.
-     */
-    private Coords2Di() {
-    }
-
-    /**
      * Constructor.
-     * <p/>
+     *
      * <p>Clones values from source coordinates and adds delta values.</p>
      *
      * @param source The source coordinates.
@@ -95,6 +89,11 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
         _x = source._x + deltaX;
         _z = source._z + deltaZ;
     }
+
+    /**
+     * Protected constructor for serialization.
+     */
+    protected Coords2Di() {}
 
     /**
      * Get the X coordinates.
@@ -264,5 +263,15 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " { x:" + _x + ", z:" + _z + '}';
+    }
+
+    protected void deserialize(int x, int z) {
+        if (_x == 0 && _z == 0) {
+            _x = x;
+            _z = z;
+        }
+        else {
+            throw new IllegalStateException("Coords2Di is immutable.");
+        }
     }
 }

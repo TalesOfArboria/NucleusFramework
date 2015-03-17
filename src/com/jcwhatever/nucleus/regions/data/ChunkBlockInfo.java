@@ -24,26 +24,24 @@
 
 package com.jcwhatever.nucleus.regions.data;
 
+import com.jcwhatever.nucleus.storage.DeserializeException;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.Coords3Di;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
-import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
-import com.jcwhatever.nucleus.storage.DeserializeException;
 
+import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 import java.io.IOException;
 
 /**
  * Data object to hold information about a single block
  */
-public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBlockInfo>,
-        IDataNodeSerializable, IBinarySerializable {
-
-    private int _x;
-    private int _y;
-    private int _z;
+public final class ChunkBlockInfo extends Coords3Di
+        implements IChunkBlockInfo, Comparable<ChunkBlockInfo> {
 
     private Material _material;
     private int _data;
@@ -61,104 +59,54 @@ public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBl
      */
     public ChunkBlockInfo(int chunkBlockX, int y, int chunkBlockZ, Material material,
                           int data, int light, int skylight) {
-        _x = chunkBlockX;
-        _y = y;
-        _z = chunkBlockZ;
+        super(chunkBlockX, y, chunkBlockZ);
         _material = material;
         _data = data;
         _light = light;
         _skylight = skylight;
     }
 
-    /**
-     * Get the block material.
-     */
     @Override
     public Material getMaterial() {
         return _material;
     }
 
-    /**
-     * Get the blocks meta data.
-     */
     @Override
     public int getData() {
         return _data;
     }
 
-    /**
-     * Get the blocks emitted light.
-     */
     @Override
     public int getEmittedLight() {
         return _light;
     }
 
-    /**
-     * Get the amount of skylight on the block.
-     */
     @Override
     public int getSkylight() {
         return _skylight;
     }
 
     /**
-     * Get the blocks X coordinates relative to its chunk.
+     * Get the {@link org.bukkit.block.Block} represented by this coordinates in
+     * the specified {@link org.bukkit.Chunk}.
+     *
+     * @param chunk  The chunk to get the block from.
      */
-    @Override
-    public int getChunkBlockX() {
-        return _x;
+    public Block getBlock(Chunk chunk) {
+        PreCon.notNull(chunk);
+
+        return chunk.getBlock(getX(), getY(), getZ());
     }
 
-    /**
-     * Get the blocks Y coordinates.
-     */
-    @Override
-    public int getY() {
-        return _y;
-    }
-
-    /**
-     * Get the Blocks Z coordinates relative to its chunk.
-     */
-    @Override
-    public int getChunkBlockZ() {
-        return _z;
-    }
-
-    @Override
-    public int hashCode() {
-        return _x ^ _y ^ _z;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (obj instanceof ChunkBlockInfo) {
-            ChunkBlockInfo other = (ChunkBlockInfo)obj;
-
-            return other._x == _x &&
-                    other._y == _y &&
-                    other._z == _z;
-        }
-
-        return false;
-    }
-
-    /**
-     * Sort by Y coordinates. Lowest to Highest
-     */
     @Override
     public int compareTo(ChunkBlockInfo o) {
         //noinspection SuspiciousNameCombination
-        return Integer.compare(this._y, o._y);
+        return Integer.compare(this.getY(), o.getY());
     }
 
     @Override
     public void serialize(IDataNode dataNode) {
-        dataNode.set("x", _x);
-        dataNode.set("y", _y);
-        dataNode.set("z", _z);
+        super.serialize(dataNode);
         dataNode.set("material", _material);
         dataNode.set("meta", _data);
         dataNode.set("light", _light);
@@ -167,9 +115,7 @@ public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBl
 
     @Override
     public void deserialize(IDataNode dataNode) throws DeserializeException {
-        _x = dataNode.getInteger("x");
-        _y = dataNode.getInteger("y");
-        _z = dataNode.getInteger("z");
+        super.deserialize(dataNode);
         _material = dataNode.getEnum("material", Material.class);
         _data = dataNode.getInteger("meta");
         _light = dataNode.getInteger("light");
@@ -178,8 +124,8 @@ public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBl
 
     @Override
     public void serializeToBytes(NucleusByteWriter writer) throws IOException {
-        writer.write((byte)((_x << 4) | (_y & 0xF)));
-        writer.write((short)_y);
+        writer.write((byte)((getX() << 4) | (getY() & 0xF)));
+        writer.write((short)getY());
         writer.write(_material);
         writer.write((byte)_data);
         writer.write((byte)((_light << 4) | (_skylight & 0xF)));
@@ -188,10 +134,9 @@ public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBl
     @Override
     public void deserializeFromBytes(NucleusByteReader reader) throws IOException, ClassNotFoundException, InstantiationException {
         int xz = reader.getByte();
-        _x = xz >> 4;
-        _z = xz & 0xF;
-
-        _y = reader.getShort();
+        int x = xz >> 4;
+        int z = xz & 0xF;
+        int y = reader.getShort();
         _material = reader.getEnum(Material.class);
         _data = reader.getByte();
 
@@ -199,5 +144,17 @@ public final class ChunkBlockInfo implements IChunkBlockInfo, Comparable<ChunkBl
 
         _light = ls >> 4;
         _skylight = ls & 0xF;
+
+        deserialize(x, y, z);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() +
+                " { x:" + getX() + ", z:" + getZ() +
+                ", material:" + _material.name() +
+                ", data:" + _data +
+                ", light:" + _light +
+                ", skylight: " + _skylight + '}';
     }
 }

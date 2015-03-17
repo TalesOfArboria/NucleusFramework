@@ -81,9 +81,9 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
     }
 
     /**
-     * Private constructor for serialization.
+     * Protected constructor for serialization.
      */
-    private Coords2D() {}
+    protected Coords2D() {}
 
     /**
      * Constructor.
@@ -285,6 +285,16 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " { x:" + _x + ", z:" + _z + '}';
+    }
+
+    protected void deserialize(double x, double z) {
+        if (_x == 0 && _z == 0) {
+            _x = x;
+            _z = z;
+        }
+        else {
+            throw new IllegalStateException("Coords2D is immutable.");
+        }
     }
 
     private void fillFloorValues() {

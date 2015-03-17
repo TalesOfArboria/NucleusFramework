@@ -54,7 +54,7 @@ public interface IChunkBlockInfo {
     /**
      * Get the blocks X coordinates relative to its chunk.
      */
-    int getChunkBlockX();
+    int getX();
 
     /**
      * Get the blocks Y coordinates.
@@ -64,5 +64,5 @@ public interface IChunkBlockInfo {
     /**
      * Get the Blocks Z coordinates relative to its chunk.
      */
-    int getChunkBlockZ();
+    int getZ();
 }
