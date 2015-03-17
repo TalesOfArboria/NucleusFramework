@@ -23,22 +23,20 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.pathing;
+package com.jcwhatever.nucleus.utils.astar;
 
+import com.jcwhatever.nucleus.utils.Coords3D;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.astar.AStarResult.AStarResultStatus;
+import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeContainer;
 import com.jcwhatever.nucleus.utils.materials.Materials;
-import com.jcwhatever.nucleus.utils.pathing.astar.AStar;
-import com.jcwhatever.nucleus.utils.pathing.astar.AStar.LocationAdjustment;
-import com.jcwhatever.nucleus.utils.pathing.astar.AStarUtils;
-import com.jcwhatever.nucleus.utils.pathing.astar.IPathNode;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -50,26 +48,10 @@ import java.util.Set;
  * A-Star pathing in real time for validation purposes.</p>
  *
  * <p> Uses a provided AStar implementation for final validation of destinations. </p>
+ *
+ * <p>Not intended for real-time use.</p>
  */
-public class PathAreaFinder<T extends IPathNode> {
-
-    private final AStar<T> _pathValidator;
-    private final Location _start = new Location(null, 0, 0, 0);
-
-    private Set<Location> _invalidNodes;
-    private Set<Location> _validNodes;
-
-
-    /**
-     * Constructor.
-     *
-     * @param pathValidator  AStar implementation which provides settings and path validation.
-     */
-    public PathAreaFinder(AStar<T> pathValidator) {
-        PreCon.notNull(pathValidator);
-
-        _pathValidator = pathValidator;
-    }
+public class PathAreaFinder {
 
     /**
      * Search for valid path destinations around the specified
@@ -77,41 +59,29 @@ public class PathAreaFinder<T extends IPathNode> {
      *
      * @param start  The path start location.
      */
-    public PathAreaResults search(Location start) {
+    public PathAreaResults search(AStar astar, Location start) {
         PreCon.notNull(start);
 
-        LocationUtils.getBlockLocation(start, _start);
+        start = LocationUtils.getBlockLocation(start);
+        LocationUtils.findSurfaceBelow(start, start);
 
-        init();
+        FinderContext context = new FinderContext(astar, start);
 
         // Add start node to open nodes
-        _validNodes.add(start);
+        context.validNodes.add(start);
 
         // Add valid adjacent nodes to open list
-        searchAdjacent(start);
+        searchAdjacent(context, start);
 
-        // validate paths against AStar implementation.
-        Iterator<Location> iterator = _validNodes.iterator();
-        while(iterator.hasNext()) {
-            Location location = iterator.next();
-
-            if (location.equals(start))
-                continue;
-
-            int pathDistance = _pathValidator.getPathDistance(start, location, LocationAdjustment.FIND_SURFACE);
-            if (pathDistance == -1)
-                iterator.remove();
-        }
-
-        return new PathAreaResults(_validNodes, _invalidNodes);
+        return new PathAreaResults(context);
     }
 
     /*
      * Search for valid nodes adjacent to the specified node.
      */
-    private void searchAdjacent(Location node) {
+    private void searchAdjacent(FinderContext context, Location node) {
 
-        byte dropHeight = (byte)(-_pathValidator.getMaxDropHeight());
+        byte dropHeight = (byte)(-context.astar.getMaxDropHeight());
 
         // column validations, work from top down, skip columns that are false
         boolean[][] columns = new boolean[][] {
@@ -131,24 +101,24 @@ public class PathAreaFinder<T extends IPathNode> {
                     Location candidate = node.clone().add(x, y, z);
 
                     // check if candidate is already checked
-                    if (_invalidNodes.contains(candidate) || _validNodes.contains(candidate)) {
+                    if (context.invalidNodes.contains(candidate) || context.validNodes.contains(candidate)) {
                         continue;
                     }
 
-                    int xRange = Math.abs(_start.getBlockX() - node.getBlockX());
-                    int yRange = Math.abs(_start.getBlockY() - node.getBlockY());
-                    int zRange = Math.abs(_start.getBlockZ() - node.getBlockZ());
+                    int xRange = Math.abs(context.start.getBlockX() - node.getBlockX());
+                    int yRange = Math.abs(context.start.getBlockY() - node.getBlockY());
+                    int zRange = Math.abs(context.start.getBlockZ() - node.getBlockZ());
 
                     // check x & z range
-                    if ((_pathValidator.getMaxRange() - xRange < 0) ||
-                            (_pathValidator.getMaxRange() - zRange < 0)) {
+                    if ((context.astar.getRange() - xRange < 0) ||
+                            (context.astar.getRange() - zRange < 0)) {
 
                         columns[x + 1][z + 1] = false;
                         continue;
                     }
 
                     // check y range
-                    if ((_pathValidator.getMaxRange() - yRange < 0)) {
+                    if ((context.astar.getRange() - yRange < 0)) {
                         continue;
                     }
 
@@ -157,14 +127,14 @@ public class PathAreaFinder<T extends IPathNode> {
                         Location diagX = node.clone().add(x, y, (short)0),
                                 diagZ = node.clone().add((short)0, y, z);
 
-                        if(!isValid(diagX) && !isValid(diagZ)) {
+                        if(!isValid(context, diagX) && !isValid(context, diagZ)) {
                             columns[x + 1][z + 1] = false;
                             continue;
                         }
                     }
 
                     // check candidate to see if its valid
-                    if (!isValid(candidate)) {
+                    if (!isValid(context, candidate)) {
 
                         // invalidate column if material is NOT transparent
                         if (!Materials.isTransparent(candidate.getBlock().getType())) {
@@ -174,9 +144,9 @@ public class PathAreaFinder<T extends IPathNode> {
                         continue;
                     }
 
-                    _validNodes.add(candidate);
+                    context.validNodes.add(candidate);
 
-                    searchAdjacent(candidate);
+                    searchAdjacent(context, candidate);
 
                 }
             }
@@ -184,27 +154,15 @@ public class PathAreaFinder<T extends IPathNode> {
     }
 
     /*
-     * Initialize hash sets
-     */
-    private void init() {
-        int maxRange = _pathValidator.getMaxRange();
-        _validNodes = new HashSet<Location>(maxRange * maxRange * maxRange);
-        _invalidNodes = new HashSet<Location>(maxRange * maxRange * maxRange);
-    }
-
-    /*
      *  Determine if a node is a valid location.
      */
-    private boolean isValid(Location loc) {
+    private boolean isValid(FinderContext context, Location loc) {
+
         Block block = loc.getBlock();
         Material material = block.getType();
 
         // check if block is a surface
-        if (!Materials.isSurface(material))
-            return false;
-
-        // check head room
-        return AStarUtils.hasRoomForEntity(loc, _pathValidator.getEntityHeight(), _pathValidator.getDoorPathMode());
+        return Materials.isSurface(material) && context.search(loc).getStatus() == AStarResultStatus.RESOLVED;
     }
 
     /**
@@ -217,12 +175,11 @@ public class PathAreaFinder<T extends IPathNode> {
         /**
          * Constructor.
          *
-         * @param validDestinations    Valid destination locations.
-         * @param invalidDestinations  Invalid destionation locations.
+         * @param context  The path search context.
          */
-        PathAreaResults (Set<Location> validDestinations, Set<Location> invalidDestinations) {
-            _valid = validDestinations;
-            _invalid = invalidDestinations;
+        PathAreaResults (FinderContext context) {
+            _valid = context.validNodes;
+            _invalid = context.invalidNodes;
         }
 
         /**
@@ -237,6 +194,28 @@ public class PathAreaFinder<T extends IPathNode> {
          */
         public Set<Location> getInvalid() {
             return _invalid;
+        }
+    }
+
+    private static class FinderContext {
+        AStar astar;
+        Location start;
+        Set<Location> invalidNodes;
+        Set<Location> validNodes;
+
+        FinderContext(AStar astar, Location start) {
+            this.astar = astar;
+            this.start = start;
+
+            double range = astar.getRange();
+
+            this.invalidNodes = new HashSet<Location>((int)(range * range * range));
+            this.validNodes = new HashSet<Location>((int)(range * range * range));
+        }
+
+        AStarResult search(Location location) {
+            return astar.search(Coords3D.fromLocation(start), Coords3D.fromLocation(location),
+                    new AStarNodeContainer(astar.getExaminer()));
         }
     }
 

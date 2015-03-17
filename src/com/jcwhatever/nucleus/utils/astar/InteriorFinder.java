@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.pathing;
+package com.jcwhatever.nucleus.utils.astar;
 
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.utils.LocationUtils;
@@ -37,55 +37,43 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Gets air block locations inside an enclosed space
+ * Gets air block locations inside an enclosed space.
  */
 public class InteriorFinder {
-
-    private Set<Location> _invalidNodes;
-    private Set<Location> _validNodes;
-
-    private final Location _start = new Location(null, 0, 0, 0);
-    private IRegionSelection _boundaries;
 
     /**
      * Search for air blocks within a region without moving
      * outside of structural boundaries.
      *
+     * <p>The structure must be completely enclosed with no block open to the exterior.</p>
+     *
+     * <p>Does not search through doors even if they are open.</p>
+     *
      * @param start       The location to start the search from.
-     * @param boundaries  The region boundaries to prevent searching forever.
+     * @param boundaries  The region boundaries to prevent searching endlessly into the world.
      */
     public InteriorResults searchInterior(Location start, IRegionSelection boundaries) {
         PreCon.notNull(start);
         PreCon.notNull(boundaries);
 
-        LocationUtils.getBlockLocation(start, _start);
+        start = LocationUtils.getBlockLocation(start);
 
-        _boundaries = boundaries;
+        FinderContext context = new FinderContext(start, boundaries);
 
-        init(boundaries);
+        // Add start node to valid nodes
+        context.validNodes.add(start);
 
-        // Add start node to open nodes
-        _validNodes.add(start);
+        // Add valid adjacent nodes to valid nodes list
+        searchAdjacent(context, start);
 
-        // Add valid adjacent nodes to open list
-        searchAdjacent(start);
-
-        return new InteriorResults(_validNodes);
-    }
-
-    /*
-     *  Initialize hash sets using the volume of the boundaries region.
-     */
-    private void init(IRegionSelection boundaries) {
-        _validNodes = new HashSet<Location>((int)boundaries.getVolume());
-        _invalidNodes = new HashSet<Location>((int)boundaries.getVolume());
+        return new InteriorResults(context);
     }
 
     /*
      * Search adjacent locations around the specified location
      * and add valid and invalid locations to their respective map.
      */
-    private void searchAdjacent(Location node) {
+    protected void searchAdjacent(FinderContext context, Location node) {
 
         // column validations, work from top down, skip columns that are false
         boolean[][] columns = new boolean[][] {
@@ -94,7 +82,7 @@ public class InteriorFinder {
                 { true, true,  true }
         };
 
-        boolean isBelowStart = node.getBlockY() <= _start.getBlockY();
+        boolean isBelowStart = node.getBlockY() <= context.start.getBlockY();
 
         byte yStart =  (byte)(isBelowStart ? 1 : -1);
 
@@ -109,12 +97,12 @@ public class InteriorFinder {
                     Location candidate = node.clone().add(x, y, z);
 
                     // check if candidate is already considered
-                    if (_invalidNodes.contains(candidate)) {
+                    if (context.invalidNodes.contains(candidate)) {
                         columns[x + 1][z + 1] = false;
                         continue;
                     }
 
-                    if (_validNodes.contains(candidate)) {
+                    if (context.validNodes.contains(candidate)) {
                         continue;
                     }
 
@@ -123,14 +111,14 @@ public class InteriorFinder {
                     }
 
                     // make sure candidate is within boundaries
-                    if (!_boundaries.contains(candidate)) {
-                        _invalidNodes.add(candidate);
+                    if (!context.boundaries.contains(candidate)) {
+                        context.invalidNodes.add(candidate);
                         continue;
                     }
 
                     // make sure candidate is air
                     if (candidate.getBlock().getType() != Material.AIR) {
-                        _invalidNodes.add(candidate);
+                        context.invalidNodes.add(candidate);
                         columns[x + 1][z + 1] = false;
                         continue;
                     }
@@ -142,7 +130,8 @@ public class InteriorFinder {
 
                         if(!Materials.isTransparent(diagX.getBlock().getType()) &&
                                 !Materials.isTransparent(diagZ.getBlock().getType())) {
-                            _invalidNodes.add(candidate);
+
+                            context.invalidNodes.add(candidate);
                             columns[x + 1][z + 1] = false;
                             continue;
                         }
@@ -172,9 +161,9 @@ public class InteriorFinder {
                         }
                     }
 
-                    _validNodes.add(candidate);
+                    context.validNodes.add(candidate);
 
-                    searchAdjacent(candidate);
+                    searchAdjacent(context, candidate);
 
                 }
             }
@@ -191,17 +180,15 @@ public class InteriorFinder {
 
         /**
          * Constructor.
-         *
-         * @param air  Air locations found.
          */
-        InteriorResults (Set<Location> air) {
-            _air = air;
+        InteriorResults (FinderContext context) {
+            _air = context.validNodes;
         }
 
         /**
          * Get the location results.
          */
-        public Set<Location> getNodes() {
+        public Set<Location> getInterior() {
             return _air;
         }
 
@@ -211,6 +198,20 @@ public class InteriorFinder {
         public int getVolume() {
             return _air.size();
         }
+    }
 
+    private static class FinderContext {
+
+        final Location start;
+        final IRegionSelection boundaries;
+        final Set<Location> invalidNodes;
+        final Set<Location> validNodes;
+
+        FinderContext(Location start, IRegionSelection boundaries) {
+            this.start = start;
+            this.boundaries = boundaries;
+            this.validNodes = new HashSet<Location>((int)boundaries.getVolume());
+            this.invalidNodes = new HashSet<Location>((int)boundaries.getVolume());
+        }
     }
 }
