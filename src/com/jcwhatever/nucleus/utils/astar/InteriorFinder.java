@@ -112,7 +112,6 @@ public class InteriorFinder {
 
                     // make sure candidate is within boundaries
                     if (!context.boundaries.contains(candidate)) {
-                        context.invalidNodes.add(candidate);
                         continue;
                     }
 
