@@ -192,14 +192,14 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
      *
      * @param coords  The other coordinates.
      */
-    public Coords3D getDelta(Coords3Di coords) {
+    public Coords3Di getDelta(Coords3Di coords) {
         PreCon.notNull(coords);
 
-        double deltaX = getX() - coords.getX();
-        double deltaY = getY() - coords.getY();
-        double deltaZ = getZ() - coords.getZ();
+        int deltaX = getX() - coords.getX();
+        int deltaY = getY() - coords.getY();
+        int deltaZ = getZ() - coords.getZ();
 
-        return new Coords3D(deltaX, deltaY, deltaZ);
+        return new Coords3Di(deltaX, deltaY, deltaZ);
     }
 
     /**
