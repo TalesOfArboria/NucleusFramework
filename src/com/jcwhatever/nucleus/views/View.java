@@ -191,6 +191,8 @@ public abstract class View implements IPluginOwned, IPlayerReference {
             throw new RuntimeException("A view instance can only be used for a single view session.");
 
         _session = session;
+
+        onViewSessionSet(session);
     }
 
     /**
@@ -209,6 +211,13 @@ public abstract class View implements IPluginOwned, IPlayerReference {
      * @param reason  The reason the view was closed.
      */
     protected void onClose(ViewCloseReason reason) {}
+
+    /**
+     * Invoked after the view session is set.
+     *
+     * @param session  The view session that is set.
+     */
+    protected void onViewSessionSet(ViewSession session) {}
 
     /**
      * Invoked when the {@link ViewSession} is disposed.
