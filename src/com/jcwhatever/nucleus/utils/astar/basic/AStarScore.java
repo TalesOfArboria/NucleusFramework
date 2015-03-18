@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar.basic;
 
-import com.jcwhatever.nucleus.utils.Coords3D;
+import com.jcwhatever.nucleus.utils.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarNode;
 import com.jcwhatever.nucleus.utils.astar.IAStarScore;
@@ -116,12 +116,12 @@ public class AStarScore implements IAStarScore {
 
         while ((parentNode = getParentNode(currentNode)) != null) {
 
-            Coords3D parent = parentNode.getCoords();
-            Coords3D current = currentNode.getCoords();
+            Coords3Di parent = parentNode.getCoords();
+            Coords3Di current = currentNode.getCoords();
 
-            double deltaX = Math.abs(current.getX() - parent.getX());
-            double deltaY = Math.abs(current.getY() - parent.getY());
-            double deltaZ = Math.abs(current.getZ() - parent.getZ());
+            int deltaX = Math.abs(current.getX() - parent.getX());
+            int deltaY = Math.abs(current.getY() - parent.getY());
+            int deltaZ = Math.abs(current.getZ() - parent.getZ());
 
             if (deltaX == 1 && deltaY == 1 && deltaZ == 1) {
                 g += 0.7;

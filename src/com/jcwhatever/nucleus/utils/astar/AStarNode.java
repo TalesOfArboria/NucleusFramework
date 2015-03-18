@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.Coords3D;
+import com.jcwhatever.nucleus.utils.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import javax.annotation.Nullable;
@@ -37,10 +37,10 @@ import javax.annotation.Nullable;
 public class AStarNode implements Comparable<AStarNode> {
 
     private final AStarContext _context;
-    private final Coords3D _coords;
-    private final double _offsetX;
-    private final double _offsetY;
-    private final double _offsetZ;
+    private final Coords3Di _coords;
+    private final int _offsetX;
+    private final int _offsetY;
+    private final int _offsetZ;
 
     private AStarNode _parentNode;
     private IAStarScore _score;
@@ -51,7 +51,7 @@ public class AStarNode implements Comparable<AStarNode> {
      * @param context      The search context.
      * @param startCoords  The node coordinates.
      */
-    public AStarNode(AStarContext context, Coords3D startCoords) {
+    public AStarNode(AStarContext context, Coords3Di startCoords) {
         PreCon.notNull(context);
 
         _context = context;
@@ -72,7 +72,7 @@ public class AStarNode implements Comparable<AStarNode> {
     /**
      * Get the nodes coordinates.
      */
-    public Coords3D getCoords() {
+    public Coords3Di getCoords() {
         return _coords;
     }
 
@@ -118,8 +118,8 @@ public class AStarNode implements Comparable<AStarNode> {
     public boolean isAdjacent(AStarNode node) {
         PreCon.notNull(node);
 
-        return Math.abs(node.getCoords().getFloorX() - getCoords().getFloorX()) <= 1 &&
-                Math.abs(node.getCoords().getFloorZ() - getCoords().getFloorZ()) <= 1;
+        return Math.abs(node.getCoords().getX() - getCoords().getX()) <= 1 &&
+                Math.abs(node.getCoords().getZ() - getCoords().getZ()) <= 1;
     }
 
     /**
@@ -129,8 +129,8 @@ public class AStarNode implements Comparable<AStarNode> {
      * @param offsetY  The Y axis offset from the current node.
      * @param offsetZ  The Z axis offset from the current node.
      */
-    public AStarNode getRelative(double offsetX, double offsetY, double offsetZ) {
-        Coords3D coords = new Coords3D(_coords, offsetX, offsetY, offsetZ);
+    public AStarNode getRelative(int offsetX, int offsetY, int offsetZ) {
+        Coords3Di coords = new Coords3Di(_coords, offsetX, offsetY, offsetZ);
         return new AStarNode(_context, coords);
     }
 

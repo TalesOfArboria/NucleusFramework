@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.Coords3D;
+import com.jcwhatever.nucleus.utils.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarResult.AStarResultStatus;
 import com.jcwhatever.nucleus.utils.astar.IAStarExaminer.PathableResult;
@@ -38,7 +38,7 @@ public class AStar {
 
     private final IAStarExaminer _examiner;
     private double _range = 18;
-    private double _maxDropHeight = 5;
+    private int _maxDropHeight = 5;
     private long _maxIterations = -1;
 
     /**
@@ -85,7 +85,7 @@ public class AStar {
     /**
      * Get the max drop height.
      */
-    public double getMaxDropHeight() {
+    public int getMaxDropHeight() {
         return _maxDropHeight;
     }
 
@@ -94,7 +94,7 @@ public class AStar {
      *
      * @param height  The max height.
      */
-    public void setMaxDropHeight(double height) {
+    public void setMaxDropHeight(int height) {
         _maxDropHeight = height;
     }
 
@@ -123,7 +123,7 @@ public class AStar {
      * @param destination  The destination coordinates.
      * @param container    The node container to use.
      */
-    public AStarResult search(Coords3D start, Coords3D destination, IAStarNodeContainer container) {
+    public AStarResult search(Coords3Di start, Coords3Di destination, IAStarNodeContainer container) {
         PreCon.notNull(start);
         PreCon.notNull(destination);
 
@@ -183,7 +183,7 @@ public class AStar {
                 { true, true,  true }
         };
 
-        int dropHeight = -(int)getMaxDropHeight();
+        int dropHeight = -getMaxDropHeight();
 
         for (byte y = 1; y >= dropHeight; y--) {
             for (byte x = -1; x <= 1; x++) {

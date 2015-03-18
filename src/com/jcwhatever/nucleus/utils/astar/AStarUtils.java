@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.Coords3D;
+import com.jcwhatever.nucleus.utils.Coords3Di;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeContainer;
@@ -80,7 +80,7 @@ public class AStarUtils {
         start = LocationUtils.getBlockLocation(start);
         destination = LocationUtils.getBlockLocation(destination);
 
-        return astar.search(Coords3D.fromLocation(start), Coords3D.fromLocation(destination),
+        return astar.search(Coords3Di.fromLocation(start), Coords3Di.fromLocation(destination),
                 new AStarNodeContainer(astar.getExaminer()));
     }
 
@@ -113,7 +113,7 @@ public class AStarUtils {
         LocationUtils.findSurfaceBelow(start, start);
         LocationUtils.findSurfaceBelow(destination, destination);
 
-        return astar.search(Coords3D.fromLocation(start), Coords3D.fromLocation(destination),
+        return astar.search(Coords3Di.fromLocation(start), Coords3Di.fromLocation(destination),
                 new AStarNodeContainer(astar.getExaminer()));
     }
  }

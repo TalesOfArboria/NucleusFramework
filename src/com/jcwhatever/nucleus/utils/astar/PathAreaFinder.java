@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.Coords3D;
+import com.jcwhatever.nucleus.utils.Coords3Di;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarResult.AStarResultStatus;
@@ -214,7 +214,7 @@ public class PathAreaFinder {
         }
 
         AStarResult search(Location location) {
-            return astar.search(Coords3D.fromLocation(start), Coords3D.fromLocation(location),
+            return astar.search(Coords3Di.fromLocation(start), Coords3Di.fromLocation(location),
                     new AStarNodeContainer(astar.getExaminer()));
         }
     }

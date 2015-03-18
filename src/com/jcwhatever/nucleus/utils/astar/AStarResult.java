@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.Coords3D;
+import com.jcwhatever.nucleus.utils.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.LinkedList;
@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  */
 public class AStarResult {
 
-    private final LinkedList<Coords3D> _nodes = new LinkedList<>();
+    private final LinkedList<Coords3Di> _nodes = new LinkedList<>();
     private final AStarResultStatus _status;
 
     /**
@@ -98,7 +98,7 @@ public class AStarResult {
 
             while (current != null) {
 
-                Coords3D coords = getCoords(current);
+                Coords3Di coords = getCoords(current);
 
                 _nodes.addFirst(coords);
 
@@ -138,7 +138,7 @@ public class AStarResult {
     /**
      * Remove and return the next node coordinate in the result.
      */
-    public Coords3D remove() {
+    public Coords3Di remove() {
         return _nodes.removeFirst();
     }
 
@@ -150,7 +150,7 @@ public class AStarResult {
      * <p>Removing a coordinate using {@link #remove} also removes the coordinates
      * from the returned values.</p>
      */
-    public List<Coords3D> values() {
+    public List<Coords3Di> values() {
         return _nodes;
     }
 
@@ -173,9 +173,9 @@ public class AStarResult {
     /**
      * Invoked to get adjusted coordinate from a node.
      */
-    protected Coords3D getCoords(AStarNode node) {
+    protected Coords3Di getCoords(AStarNode node) {
         // add 1 to y coordinates to adjust for entity pathing.
-        Coords3D current = node.getCoords();
-        return new Coords3D(current, 0, 1, 0);
+        Coords3Di current = node.getCoords();
+        return new Coords3Di(current, 0, 1, 0);
     }
 }

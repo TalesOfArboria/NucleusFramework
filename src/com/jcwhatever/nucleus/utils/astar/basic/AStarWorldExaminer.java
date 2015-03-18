@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar.basic;
 
-import com.jcwhatever.nucleus.utils.Coords3D;
+import com.jcwhatever.nucleus.utils.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarContext;
 import com.jcwhatever.nucleus.utils.astar.AStarNode;
@@ -157,13 +157,13 @@ public class AStarWorldExaminer implements IAStarExaminer {
         if (container.isClosed(to))
             return PathableResult.INVALID_POINT;
 
-        Coords3D parent = from.getCoords();
-        Coords3D candidate = to.getCoords();
+        Coords3Di parent = from.getCoords();
+        Coords3Di candidate = to.getCoords();
 
-        Coords3D delta = candidate.getDelta(parent);
-        int x = delta.getFloorX();
-        int y = delta.getFloorY();
-        int z = delta.getFloorZ();
+        Coords3Di delta = candidate.getDelta(parent);
+        int x = delta.getX();
+        int y = delta.getY();
+        int z = delta.getZ();
 
         Material material = candidate.getBlock(_world).getType();
 
