@@ -94,6 +94,9 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     // store managers for individual region types.
     private final Map<Class<? extends IRegion>, RegionTypeManager<?>> _managers = new HashMap<>(15);
 
+    // store regions by lookup name. lookup name is: PluginName:RegionName
+    private final Map<String, IRegion> _regionNameMap = new HashMap<>(35);
+
     private final Object _sync = new Object();
 
     // IDs of players that have joined within a region and have not yet moved.
@@ -216,6 +219,12 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     public <T extends IRegion> boolean hasRegion(World world, int x, int y, int z, Class<T> regionClass) {
         RegionTypeManager<T> manager = getManager(regionClass, false);
         return manager != null && manager.hasRegion(world, x, y, z);
+    }
+
+    @Nullable
+    @Override
+    public IRegion getRegion(Plugin plugin, String name) {
+        return _regionNameMap.get(getLookupName(plugin, name));
     }
 
     @Override
@@ -379,6 +388,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
         ReadOnlyRegion readOnlyRegion = new ReadOnlyRegion(region);
         super.register(readOnlyRegion);
+
+        _regionNameMap.put(getLookupName(region.getPlugin(), region), readOnlyRegion);
     }
 
     @Override
@@ -396,6 +407,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
         ReadOnlyRegion readOnlyRegion = new ReadOnlyRegion(region);
         super.unregister(readOnlyRegion);
+
+        _regionNameMap.remove(getLookupName(region.getPlugin(), region));
     }
 
     @Override
@@ -464,6 +477,20 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         }
 
         return manager;
+    }
+
+    /*
+     * Get a regions lookup name.
+     */
+    private String getLookupName(Plugin plugin, IRegion region) {
+        return plugin.getName() + ':' + region.getSearchName();
+    }
+
+    /*
+     * Get a regions lookup name.
+     */
+    private String getLookupName(Plugin plugin, String name) {
+        return plugin.getName() + ':' + name.toLowerCase();
     }
 
     /*

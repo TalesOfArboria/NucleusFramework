@@ -30,8 +30,10 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Global region manager interface
@@ -63,6 +65,18 @@ public interface IGlobalRegionManager {
      * @param regionClass  The class of the region type to check.
      */
     <T extends IRegion> boolean hasRegion(World world, int x, int y, int z, Class<T> regionClass);
+
+    /**
+     * Get a region created by the specified {@link org.bukkit.plugin.Plugin} with
+     * the specified name.
+     *
+     * @param plugin  The regions owning plugin.
+     * @param name    The name of the region.
+     *
+     * @return  The {@link IRegion} or null if not found.
+     */
+    @Nullable
+    IRegion getRegion(Plugin plugin, String name);
 
     /**
      * Get a list of regions that contain the specified location.
