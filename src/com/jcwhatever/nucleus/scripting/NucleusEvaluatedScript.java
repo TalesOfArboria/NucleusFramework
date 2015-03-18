@@ -128,9 +128,18 @@ public class NucleusEvaluatedScript implements IEvaluatedScript {
         PreCon.notNull(scriptApi);
         PreCon.notNullOrEmpty(variableName);
 
+        IScriptApiObject apiObject = scriptApi.getApiObject(this);
+        if (apiObject == null) {
+            NucMsg.debug("Failed to retrieve IScriptApiObject from script api '{0}' " +
+                    "for use by plugin named '{1}' assigned to variable name '{2}'.",
+                    scriptApi.getVariableName(),
+                    scriptApi.getPlugin().getName(),
+                    variableName);
+            return;
+        }
+
         _scriptApis.put(scriptApi.getVariableName(), scriptApi);
 
-        IScriptApiObject apiObject = scriptApi.getApiObject(this);
         //_engine.put(variableName, apiObject);
         getContext().setAttribute(variableName, apiObject, ScriptContext.ENGINE_SCOPE);
 
