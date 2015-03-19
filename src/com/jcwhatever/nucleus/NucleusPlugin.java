@@ -151,18 +151,21 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
 
     @Override
     public final void onEnable() {
-        onPreEnable();
 
-        loadDataNode();
+        onPreEnable();
 
         _messenger = MessengerFactory.get(this);
         _anonMessenger = MessengerFactory.getAnon(this);
+
+        loadDataNode();
 
         _languageManager = new LanguageManager(this);
         Nucleus.registerPlugin(this);
 
         if (!(this instanceof BukkitPlugin))
             _enabled.add(this);
+
+        onPostPreEnable();
     }
 
     @Override
@@ -173,26 +176,33 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     }
 
     /**
-     * Called when the plugin is instantiated.
+     * Invoked when the plugin is instantiated.
      */
     protected void onInit() {
         // do nothing
     }
 
     /**
-     * Called before the plugin config is loaded.
+     * Invoked before the plugin config is loaded.
      */
     protected void onPreEnable() {
         // do nothing
     }
 
     /**
-     * Called when the plugin is enabled.
+     * Invoked after the plugin config is loaded but before it is enabled.
+     */
+    protected void onPostPreEnable() {
+        // do nothing
+    }
+
+    /**
+     * Invoked when the plugin is enabled.
      */
     protected abstract void onEnablePlugin();
 
     /**
-     * Called when the plugin is disabled.
+     * Invoked when the plugin is disabled.
      */
     protected abstract void onDisablePlugin();
 

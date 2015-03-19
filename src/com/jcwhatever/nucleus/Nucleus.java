@@ -60,16 +60,12 @@ public final class Nucleus {
 
     private Nucleus() {}
 
-    private static final String ERROR_NOT_ENABLED = "NucleusFramework is not enabled yet.";
+    private static final String ERROR_NOT_READY = "NucleusFramework is not ready yet.";
 
     private static Map<String, NucleusPlugin> _pluginNameMap = new HashMap<>(25);
     private static Map<Class<? extends NucleusPlugin>, NucleusPlugin> _pluginClassMap = new HashMap<>(25);
 
     static BukkitPlugin _plugin;
-
-    // flag to prevent dependent plugins from using NucleusFramework before
-    // it is ready.
-    static boolean _hasEnabled;
 
     /**
      * Get the NucleusFramework plugin instance.
@@ -79,10 +75,10 @@ public final class Nucleus {
     }
 
     /**
-     * Determine if NucleusFramework is enabled.
+     * Determine if NucleusFramework is enabled and fully loaded.
      */
-    public static boolean isEnabled() {
-        return _plugin != null && _plugin.isEnabled();
+    public static boolean isLoaded() {
+        return _plugin != null && _plugin.isLoaded();
     }
 
     /**
@@ -130,7 +126,7 @@ public final class Nucleus {
      * Get the global event manager.
      */
     public static EventManager getEventManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._eventManager != null, ERROR_NOT_READY);
 
         return _plugin._eventManager;
     }
@@ -139,7 +135,7 @@ public final class Nucleus {
      * Get the default task scheduler.
      */
     public static ITaskScheduler getScheduler() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._scheduler != null, ERROR_NOT_READY);
 
         return _plugin._scheduler;
     }
@@ -148,7 +144,7 @@ public final class Nucleus {
      * Get the global Region Manager.
      */
     public static IGlobalRegionManager getRegionManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._regionManager != null, ERROR_NOT_READY);
 
         return _plugin._regionManager;
     }
@@ -157,7 +153,7 @@ public final class Nucleus {
      * Get the default Jail Manager.
      */
     public static IJailManager getJailManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._jailManager != null, ERROR_NOT_READY);
 
         return _plugin._jailManager;
     }
@@ -166,7 +162,7 @@ public final class Nucleus {
      * Get the default jail.
      */
     public static Jail getDefaultJail() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._jailManager != null, ERROR_NOT_READY);
 
         return _plugin._jailManager.getJail(Nucleus.getPlugin(), "default");
     }
@@ -175,7 +171,7 @@ public final class Nucleus {
      * Get the default entity equipper manager.
      */
     public static EntityEquipperManager getEquipperManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._equipperManager != null, ERROR_NOT_READY);
 
         return _plugin._equipperManager;
     }
@@ -187,7 +183,7 @@ public final class Nucleus {
      * instances that are used globally.</p>
      */
     public static ScriptEngineManager getScriptEngineManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._scriptEngineManager != null, ERROR_NOT_READY);
 
         return _plugin._scriptEngineManager;
     }
@@ -196,7 +192,7 @@ public final class Nucleus {
      * Get the default script manager.
      */
     public static ScriptManager<IScript, IEvaluatedScript> getScriptManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._scriptManager != null, ERROR_NOT_READY);
 
         return _plugin._scriptManager;
     }
@@ -208,7 +204,7 @@ public final class Nucleus {
      * @param entityType  The entity type
      */
     public static IEntityEquipper getEquipper(EntityType entityType) {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._equipperManager != null, ERROR_NOT_READY);
 
         return _plugin._equipperManager.getEquipper(entityType);
     }
@@ -217,7 +213,7 @@ public final class Nucleus {
      * Get the default kit manager.
      */
     public static KitManager getKitManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._kitManager != null, ERROR_NOT_READY);
 
         return _plugin._kitManager;
     }
@@ -226,7 +222,6 @@ public final class Nucleus {
      * Get the default messenger factory instance.
      */
     public static MessengerFactory getMessengerFactory() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
 
         if (_plugin._messengerFactory == null)
             _plugin._messengerFactory = new InternalMessengerFactory(_plugin);
@@ -238,7 +233,7 @@ public final class Nucleus {
      * Get the Script API Repository.
      */
     public static ScriptApiRepo getScriptApiRepo() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._scriptApiRepo != null, ERROR_NOT_READY);
 
         return _plugin._scriptApiRepo;
     }
@@ -247,7 +242,7 @@ public final class Nucleus {
      * Get NucleusFramework's internal command handler.
      */
     public static NucleusCommandDispatcher getCommandHandler() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._commandHandler != null, ERROR_NOT_READY);
 
         return _plugin._commandHandler;
     }
@@ -256,7 +251,7 @@ public final class Nucleus {
      * Get NucleusFramework's internal NMS manager.
      */
     public static NmsManager getNmsManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._nmsManager != null, ERROR_NOT_READY);
 
         return _plugin._nmsManager;
     }
@@ -265,7 +260,7 @@ public final class Nucleus {
      * Get the provider manager.
      */
     public static IProviderManager getProviderManager() {
-        PreCon.isValid(_hasEnabled, ERROR_NOT_ENABLED);
+        PreCon.isValid(_plugin._providerManager != null, ERROR_NOT_READY);
 
         return _plugin._providerManager;
     }

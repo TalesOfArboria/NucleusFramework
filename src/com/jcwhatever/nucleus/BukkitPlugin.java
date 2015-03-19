@@ -25,24 +25,24 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.internal.InternalEventManager;
+import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.jail.InternalJailManager;
-import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
+import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
 import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
-import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.scripting.NucleusScriptEngineManager;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
-import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
+import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
@@ -135,20 +135,48 @@ public final class BukkitPlugin extends NucleusPlugin {
 
     @Override
     protected void onPreEnable() {
-        Nucleus._hasEnabled = true;
 
         _scheduler = new InternalTaskScheduler();
 
         _providerManager = new InternalProviderManager();
         ProviderLoader providerLoader = new ProviderLoader(_providerManager);
         providerLoader.loadModules();
+
+        _eventManager = new InternalEventManager(this);
+        _scriptApiRepo = new InternalScriptApiRepo();
+
+        _regionManager = new InternalRegionManager(this);
+        _equipperManager = new EntityEquipperManager();
+    }
+
+    @Override
+    protected void onPostPreEnable() {
+
+        _nmsManager = new InternalNmsManager();
+        _commandHandler = new NucleusCommandDispatcher();
+
+        _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
+        _jailManager.loadSettings();
+
+        _kitManager = new KitManager(this, getDataNode().getNode("kits"));
+
+        _scriptEngineManager = new NucleusScriptEngineManager();
+        _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
+        _scriptEngineLoader.loadModules();
     }
 
     @Override
     protected void onEnablePlugin() {
 
-        _nmsManager = new InternalNmsManager();
-        _commandHandler = new NucleusCommandDispatcher();
+        InternalLeashTracker.registerListener();
+
+        registerEventListeners(new JCGEventListener(_regionManager));
+        registerCommands(_commandHandler);
+
+        loadScriptManager();
+
+        // initialize player tracker
+        PlayerTracker.get();
     }
 
     @Override
@@ -183,31 +211,6 @@ public final class BukkitPlugin extends NucleusPlugin {
         _isModulesReady = true;
 
         onEnablePlugin();
-
-        _eventManager = new InternalEventManager(this);
-        _scriptApiRepo = new InternalScriptApiRepo();
-
-        InternalLeashTracker.registerListener();
-
-        _scriptEngineManager = new NucleusScriptEngineManager();
-        _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
-        _scriptEngineLoader.loadModules();
-
-        _kitManager = new KitManager(this, getDataNode().getNode("kits"));
-
-        _regionManager = new InternalRegionManager(this);
-        _equipperManager = new EntityEquipperManager();
-
-        _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
-        _jailManager.loadSettings();
-
-        registerEventListeners(new JCGEventListener(_regionManager));
-        registerCommands(_commandHandler);
-
-        loadScriptManager();
-
-        // initialize player tracker
-        PlayerTracker.get();
 
         // enable Nucleus plugins
         for (NucleusPlugin plugin : NucleusPlugin._enabled) {
