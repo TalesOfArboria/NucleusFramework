@@ -122,7 +122,7 @@ public abstract class AbstractCommand
     }
 
     /**
-     * Get the commands {@link ICommandInfo} annotation.
+     * Get the commands {@link CommandInfoContainer}.
      */
     public CommandInfoContainer getInfo() {
         return _info;
@@ -644,7 +644,7 @@ public abstract class AbstractCommand
      *
      * @param p  The player
      *
-     * @return  {@link AreaSelection} object that defines the selection.
+     * @return  {@link IRegionSelection} object that defines the selection.
      */
     @Nullable
     protected IRegionSelection getRegionSelection(Player p) {
