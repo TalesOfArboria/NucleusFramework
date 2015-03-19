@@ -27,13 +27,14 @@ package com.jcwhatever.nucleus.utils;
 import com.google.common.collect.Multimap;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
+import java.util.AbstractList;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
@@ -394,199 +395,24 @@ public class CollectionUtils {
         }
     }
 
-    public static final List UNMODIFIABLE_EMPTY_LIST = new List() {
+    public static final List UNMODIFIABLE_EMPTY_LIST = new AbstractList() {
 
         @Override
         public int size() {
             return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return true;
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return false;
-        }
-
-        @Override
-        public Iterator iterator() {
-            return new Iterator() {
-                @Override
-                public boolean hasNext() {
-                    return false;
-                }
-
-                @Override
-                public Object next() {
-                    return null;
-                }
-
-                @Override
-                public void remove() {
-
-                }
-            };
-        }
-
-        @Override
-        public Object[] toArray() {
-            return new Object[0];
-        }
-
-        @Override
-        public boolean add(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean addAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean addAll(int index, Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void clear() {
-            throw new UnsupportedOperationException();
         }
 
         @Override
         public Object get(int index) {
             throw new UnsupportedOperationException();
         }
-
-        @Override
-        public Object set(int index, Object element) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void add(int index, Object element) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object remove(int index) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int indexOf(Object o) {
-            return -1;
-        }
-
-        @Override
-        public int lastIndexOf(Object o) {
-            return -1;
-        }
-
-        @Override
-        public ListIterator listIterator() {
-            return listIterator(0);
-        }
-
-        @Override
-        public ListIterator listIterator(int index) {
-            return new ListIterator() {
-                @Override
-                public boolean hasNext() {
-                    return false;
-                }
-
-                @Override
-                public Object next() {
-                    return null;
-                }
-
-                @Override
-                public boolean hasPrevious() {
-                    return false;
-                }
-
-                @Override
-                public Object previous() {
-                    return null;
-                }
-
-                @Override
-                public int nextIndex() {
-                    return 0;
-                }
-
-                @Override
-                public int previousIndex() {
-                    return 0;
-                }
-
-                @Override
-                public void remove() {
-
-                }
-
-                @Override
-                public void set(Object o) {
-
-                }
-
-                @Override
-                public void add(Object o) {
-
-                }
-            };
-        }
-
-        @Override
-        public List subList(int fromIndex, int toIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean retainAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean removeAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean containsAll(Collection c) {
-            return false;
-        }
-
-        @Override
-        public Object[] toArray(Object[] a) {
-            return a;
-        }
     };
 
-    public static final Set UNMODIFIABLE_EMPTY_SET = new Set() {
+    public static final Set UNMODIFIABLE_EMPTY_SET = new AbstractSet() {
 
         @Override
         public int size() {
             return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return true;
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return false;
         }
 
         @Override
@@ -607,51 +433,6 @@ public class CollectionUtils {
 
                 }
             };
-        }
-
-        @Override
-        public Object[] toArray() {
-            return new Object[0];
-        }
-
-        @Override
-        public boolean add(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean addAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean removeAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean retainAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean containsAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object[] toArray(Object[] a) {
-            return a;
         }
     };
 }
