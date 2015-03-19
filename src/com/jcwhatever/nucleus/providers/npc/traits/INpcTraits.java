@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.npc.traits;
 
-import com.jcwhatever.nucleus.kits.IKit;
+import com.jcwhatever.nucleus.utils.kits.IKit;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 
 import org.bukkit.entity.EntityType;

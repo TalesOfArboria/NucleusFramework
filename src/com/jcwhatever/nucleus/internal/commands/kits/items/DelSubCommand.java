@@ -31,9 +31,9 @@ import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.kits.IKit;
-import com.jcwhatever.nucleus.kits.IModifiableKit;
-import com.jcwhatever.nucleus.kits.KitManager;
+import com.jcwhatever.nucleus.utils.kits.IKit;
+import com.jcwhatever.nucleus.utils.kits.IModifiableKit;
+import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;

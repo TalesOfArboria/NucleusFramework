@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.events.kits;
 
-import com.jcwhatever.nucleus.kits.IKit;
+import com.jcwhatever.nucleus.utils.kits.IKit;
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.utils.PreCon;
 

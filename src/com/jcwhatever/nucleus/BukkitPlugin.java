@@ -37,7 +37,7 @@ import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
-import com.jcwhatever.nucleus.kits.KitManager;
+import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.scripting.NucleusScriptEngineManager;
 import com.jcwhatever.nucleus.utils.ScriptUtils;

@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.kits;
+package com.jcwhatever.nucleus.utils.kits;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.kits.GiveKitEvent;

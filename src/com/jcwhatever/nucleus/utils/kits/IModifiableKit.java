@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.kits;
+package com.jcwhatever.nucleus.utils.kits;
 
 import org.bukkit.inventory.ItemStack;
 

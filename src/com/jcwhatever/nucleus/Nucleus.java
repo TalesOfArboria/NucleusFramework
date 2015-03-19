@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.InternalMessengerFactory;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
-import com.jcwhatever.nucleus.kits.KitManager;
+import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.nucleus.jail.IJailManager;

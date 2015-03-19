@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.kits;
+package com.jcwhatever.nucleus.utils.kits;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
