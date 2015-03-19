@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.regions.data.SyncLocation;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.language.Localizable;
@@ -63,6 +64,13 @@ public final class TextUtils {
     @Localizable static final String _FORMAT_TEMPLATE_ITEM = "{YELLOW}{0}";
     @Localizable static final String _FORMAT_TEMPLATE_DEFINITION = "{GOLD}{0}{AQUA} - {GRAY}{1}";
     @Localizable static final String _FORMAT_TEMPLATE_ITEM_DESCRIPTION = "{YELLOW}{0}{AQUA} - {GRAY}{1}";
+    @Localizable static final String _LOCATION_FORMAT_COLOR =
+            "{LIGHT_PURPLE}X:{YELLOW}{0: x}{WHITE}, " +
+                    "{LIGHT_PURPLE}Y:{YELLOW}{1: y}{WHITE}, " +
+                    "{LIGHT_PURPLE}Z:{YELLOW}{2: x}{WHITE}, " +
+                    "{LIGHT_PURPLE}W:{YELLOW}{3: world}";
+    @Localizable static final String _LOCATION_FORMAT =
+            "X:{0: x}, Y:{1: y}, Z:{2: x}, W:{3: world}";
 
     public static final Pattern PATTERN_DOT = Pattern.compile("\\.");
     public static final Pattern PATTERN_COMMA = Pattern.compile(",");
@@ -810,19 +818,21 @@ public final class TextUtils {
         if (loc == null)
             return "null";
 
-        DecimalFormat format = new DecimalFormat("###.##");
-        //noinspection IfMayBeConditional
-        if (addColor) {
-            return ChatColor.LIGHT_PURPLE + "X:" + ChatColor.YELLOW + format.format(loc.getX()) +
-                    ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "Y:" + ChatColor.YELLOW + format.format(loc.getY()) +
-                    ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "Z:" + ChatColor.YELLOW + format.format(loc.getZ()) +
-                    ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE + "WORLD:" + ChatColor.YELLOW + loc.getWorld().getName();
-        } else {
-            return "X:" + format.format(loc.getX()) +
-                    ", Y:" + format.format(loc.getY()) +
-                    ", Z:" + format.format(loc.getZ()) +
-                    ", WORLD:" + loc.getWorld().getName();
+        String worldName;
+
+        if (loc.getWorld() == null) {
+            worldName = loc instanceof SyncLocation ? ((SyncLocation) loc).getWorldName() : "null";
         }
+        else {
+            worldName = loc.getWorld().getName();
+        }
+
+        DecimalFormat format = new DecimalFormat("###.##");
+        return TextUtils.format(addColor ? _LOCATION_FORMAT_COLOR : _LOCATION_FORMAT,
+                format.format(loc.getX()),
+                format.format(loc.getY()),
+                format.format(loc.getZ()),
+                worldName);
     }
 
     /**
