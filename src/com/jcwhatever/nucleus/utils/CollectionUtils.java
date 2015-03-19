@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -67,6 +68,80 @@ public class CollectionUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Search a collection for elements that contain the specified text search term.
+     *
+     * <p>Collection is ordered by best matches. Best match is based on case sensitivity match,
+     * the index position of the text, and alphabetical sorting.</p>
+     *
+     * <p>The search term is matched against the elements {@link Object#toString} result.</p>
+     *
+     * @param candidates  A collection of candidate elements to search.
+     * @param searchTerm  The text to match.
+     *
+     * @param <T>  The element type.
+     */
+    public static <T> List<T> textSearch(Collection<T> candidates, String searchTerm) {
+        return textSearch(candidates, searchTerm, new ISearchTextGetter<T>() {
+            @Override
+            public String getText(T element) {
+                return element.toString();
+            }
+        });
+    }
+
+    /**
+     * Search a collection for elements that contain the specified text search term.
+     *
+     * <p>Collection is ordered by best matches. Best match is based on case sensitivity match,
+     * the index position of the text, and alphabetical sorting.</p>
+     *
+     * @param candidates  A collection of candidate elements to search.
+     * @param searchTerm  The text to match.
+     * @param textGetter  A {@link ISearchTextGetter} to get text to match against from elements.
+     *
+     * @param <T>  The element type.
+     */
+    public static <T> List<T> textSearch(Collection<T> candidates, String searchTerm,
+                                  ISearchTextGetter<T> textGetter) {
+        PreCon.notNull(candidates);
+        PreCon.notNull(searchTerm);
+        PreCon.notNull(textGetter);
+
+        PriorityQueue<WeightedSearchResult<T>> queue = new PriorityQueue<>(candidates.size());
+
+        String caseSearch = searchTerm.toUpperCase();
+
+        for (T candidate : candidates) {
+
+            String text = textGetter.getText(candidate);
+            if (text == null)
+                continue;
+
+            int weight = text.indexOf(searchTerm);
+            if (weight == -1) {
+
+                String caseText = text.toUpperCase();
+                weight = caseText.indexOf(caseSearch);
+                if (weight == -1) {
+                    continue;
+                }
+                else {
+                    weight++; // increase weight of non-case matching
+                }
+            }
+
+            queue.add(new WeightedSearchResult<T>(weight, candidate, text));
+        }
+
+        List<T> results = new ArrayList<>(queue.size());
+        while (!queue.isEmpty()) {
+            results.add(queue.remove().item);
+        }
+
+        return results;
     }
 
     /**
@@ -281,6 +356,42 @@ public class CollectionUtils {
         Set<E> set = (Set<E>)UNMODIFIABLE_EMPTY_SET;
 
         return set;
+    }
+
+    /**
+     * Interface used for {@link CollectionUtils#textSearch} method.
+     */
+    public interface ISearchTextGetter<T> {
+
+        /**
+         * Get the text to match against from an element.
+         *
+         * @param element  The element to get text from.
+         */
+        String getText(T element);
+    }
+
+    private static class WeightedSearchResult<T> implements Comparable<WeightedSearchResult<T>> {
+        int weight;
+        T item;
+        String text;
+
+        WeightedSearchResult(int weight, T item, String text) {
+            this.weight = weight;
+            this.item = item;
+            this.text = text;
+        }
+
+        @Override
+        public int compareTo(WeightedSearchResult<T> o) {
+
+            int result = Integer.compare(weight, o.weight);
+
+            if (result == 0)
+                result = text.compareTo(o.text);
+
+            return result;
+        }
     }
 
     public static final List UNMODIFIABLE_EMPTY_LIST = new List() {
