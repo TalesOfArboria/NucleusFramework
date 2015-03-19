@@ -36,7 +36,7 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.RegionReason;
 import com.jcwhatever.nucleus.sounds.playlist.PlayList;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameResult;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -210,10 +210,10 @@ public final class JCGEventListener implements Listener {
 
         // check for rename
         String originalName = slot1 != null
-                ? ItemStackUtils.getDisplayName(slot1, DisplayNameResult.OPTIONAL)
+                ? ItemStackUtils.getDisplayName(slot1, DisplayNameOption.OPTIONAL)
                 : null;
 
-        String newName = ItemStackUtils.getDisplayName(resultItem, DisplayNameResult.OPTIONAL);
+        String newName = ItemStackUtils.getDisplayName(resultItem, DisplayNameOption.OPTIONAL);
 
         if (newName != null && !newName.equals(originalName)) {
 

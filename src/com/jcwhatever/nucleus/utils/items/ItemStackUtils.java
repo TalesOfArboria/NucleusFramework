@@ -63,7 +63,7 @@ public final class ItemStackUtils {
      * Used to specify if a display name for an item
      * stack is required or optional.
      */
-    public enum DisplayNameResult {
+    public enum DisplayNameOption {
         /**
          * Name is required and the items material name
          * can be used as a substitute if a display name
@@ -288,7 +288,7 @@ public final class ItemStackUtils {
      * @param nameResult  Specify how a missing display name should be returned.
      */
     @Nullable
-    public static String getDisplayName(ItemStack stack, DisplayNameResult nameResult) {
+    public static String getDisplayName(ItemStack stack, DisplayNameOption nameResult) {
         PreCon.notNull(stack);
 
         ItemMeta meta = stack.getItemMeta();

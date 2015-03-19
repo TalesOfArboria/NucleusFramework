@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameResult;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -77,7 +77,7 @@ public class MenuItem extends ItemStack implements IMeta {
      */
     @Nullable
     public String getTitle() {
-        return ItemStackUtils.getDisplayName(this, DisplayNameResult.OPTIONAL);
+        return ItemStackUtils.getDisplayName(this, DisplayNameOption.OPTIONAL);
     }
 
     /**
