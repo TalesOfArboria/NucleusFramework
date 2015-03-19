@@ -229,28 +229,6 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Determine if an item stack represents a repairable item.
-     *
-     * @param stack  The item stack.
-     */
-    public static boolean isRepairable(ItemStack stack) {
-        PreCon.notNull(stack);
-
-        return isRepairable(stack.getType());
-    }
-
-    /**
-     * Determine if a material type represents a repairable item.
-     *
-     * @param type  The item stack material.
-     */
-    public static boolean isRepairable(Material type) {
-        PreCon.notNull(type);
-
-        return Materials.isRepairable(type);
-    }
-
-    /**
      * Repair an item stack
      *
      * @param item  The item stack.
@@ -258,7 +236,7 @@ public final class ItemStackUtils {
     public static void repair(ItemStack item) {
         PreCon.notNull(item);
 
-        if (!isRepairable(item))
+        if (!Materials.isRepairable(item.getType()))
             return;
 
         item.setDurability((short)0);

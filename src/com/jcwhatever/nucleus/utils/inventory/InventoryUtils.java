@@ -1027,7 +1027,7 @@ public final class InventoryUtils {
         PreCon.notNull(contents);
 
         for (ItemStack stack : contents) {
-            if (stack == null || !ItemStackUtils.isRepairable(stack))
+            if (stack == null || !Materials.isRepairable(stack.getType()))
                 continue;
 
             stack.setDurability((short) -32768);
