@@ -836,36 +836,6 @@ public final class TextUtils {
     }
 
     /**
-     * Determine if specified character is an english vowel.
-     *
-     * @param ch  The character to check
-     */
-    public static boolean isVowel(char ch) {
-        return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' ||
-                ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U';
-    }
-
-    public static String getIndefiniteArticle(String following, boolean lowercase) {
-        PreCon.notNull(following);
-        PreCon.notNull(following);
-
-        following = following.trim();
-
-        if (following.isEmpty())
-            return following;
-
-        return getIndefiniteArticle(following.charAt(0), lowercase);
-    }
-
-    public static String getIndefiniteArticle(char following, boolean lowercase) {
-        if (lowercase) {
-            return isVowel(following) ? "an" : "a";
-        }
-
-        return isVowel(following) ? "An" : "A";
-    }
-
-    /**
      * Format text string by replacing placeholders with the information
      * about the specified plugin.
      *
