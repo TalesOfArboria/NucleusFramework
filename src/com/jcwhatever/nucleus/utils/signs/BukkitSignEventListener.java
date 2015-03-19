@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.signs;
+package com.jcwhatever.nucleus.utils.signs;
 
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import org.bukkit.Material;

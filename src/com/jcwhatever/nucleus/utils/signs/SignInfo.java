@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.signs;
+package com.jcwhatever.nucleus.utils.signs;
 
 import org.bukkit.Location;
 

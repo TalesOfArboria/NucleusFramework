@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.signs;
+package com.jcwhatever.nucleus.utils.signs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

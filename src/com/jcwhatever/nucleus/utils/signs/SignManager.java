@@ -23,16 +23,16 @@
  */
 
 
-package com.jcwhatever.nucleus.signs;
+package com.jcwhatever.nucleus.utils.signs;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.signs.SignHandler.SignBreakResult;
-import com.jcwhatever.nucleus.signs.SignHandler.SignClickResult;
-import com.jcwhatever.nucleus.signs.SignHandler.SignChangeResult;
+import com.jcwhatever.nucleus.utils.signs.SignHandler.SignBreakResult;
+import com.jcwhatever.nucleus.utils.signs.SignHandler.SignClickResult;
+import com.jcwhatever.nucleus.utils.signs.SignHandler.SignChangeResult;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;

@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.signs;
+package com.jcwhatever.nucleus.utils.signs;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

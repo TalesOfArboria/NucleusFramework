@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.signs;
+package com.jcwhatever.nucleus.utils.signs;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
