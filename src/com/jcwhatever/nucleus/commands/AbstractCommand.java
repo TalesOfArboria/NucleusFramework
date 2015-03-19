@@ -652,6 +652,27 @@ public abstract class AbstractCommand
     }
 
     /**
+     * Create a new {@link ChatPaginator}.
+     *
+     * @param title  The paginator title.
+     * @param args   The paginator title format arguments.
+     */
+    protected ChatPaginator createPagin(String title, Object... args) {
+        return _dispatcher.getUtils().createPagin(title, args);
+    }
+
+    /**
+     * Create a new {@link ChatPaginator}.
+     *
+     * @param itemsPerPage  The number of items per page.
+     * @param title         The paginator title.
+     * @param args          The paginator title format arguments.
+     */
+    protected ChatPaginator createPagin(int itemsPerPage, String title, Object... args) {
+        return _dispatcher.getUtils().createPagin(itemsPerPage, title, args);
+    }
+
+    /**
      * Clear a setting from a settings manager back to it's default value.
      * Handles error and success messages.
      *

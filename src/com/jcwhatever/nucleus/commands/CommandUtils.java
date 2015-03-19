@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.commands.arguments.LocationResponse;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
@@ -223,6 +224,27 @@ public class CommandUtils implements IPluginOwned {
         }
 
         return selection;
+    }
+
+    /**
+     * Create a new {@link ChatPaginator}.
+     *
+     * @param title  The paginator title.
+     * @param args   The paginator title format arguments.
+     */
+    public ChatPaginator createPagin(String title, Object... args) {
+        return createPagin(6, title, args);
+    }
+
+    /**
+     * Create a new {@link ChatPaginator}.
+     *
+     * @param itemsPerPage  The number of items per page.
+     * @param title         The paginator title.
+     * @param args          The paginator title format arguments.
+     */
+    public ChatPaginator createPagin(int itemsPerPage, String title, Object... args) {
+        return new ChatPaginator(_plugin, itemsPerPage, title, args);
     }
 
     /**
