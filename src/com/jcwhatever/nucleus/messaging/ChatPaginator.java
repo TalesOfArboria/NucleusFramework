@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.messaging;
 
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
@@ -44,14 +45,19 @@ import javax.annotation.Nullable;
  */
 public class ChatPaginator implements IPluginOwned {
 
-    @Localizable
-    static final String _HEADER =
+    @Localizable static final String _HEADER =
             "----------------------------------------\n" +
             "{AQUA}{0: title} {GRAY}(Page {1: current page} of {2: total pages})";
 
-    @Localizable
-    static final String _FOOTER =
+    @Localizable static final String _FOOTER =
             "----------------------------------------";
+
+    @Localizable static final String _SEARCH_HEADER = _HEADER +
+            "\n{ITALIC}{LIGHT_PURPLE}Search: '{3: search term}'";
+
+    @Localizable static final String _NO_ITEMS = "No items to display.";
+
+    @Localizable static final String _PAGE_NOT_FOUND = "Page {0: page} was not found.";
 
     private final Plugin _plugin;
     private final IMessenger _msg;
@@ -60,7 +66,9 @@ public class ChatPaginator implements IPluginOwned {
     protected int _itemsPerPage = 6;
     protected String _headerFormat;
     protected String _footerFormat;
+    protected String _searchHeaderFormat;
     protected String _title;
+    protected String _searchTerm;
 
     /**
      * Constructor.
@@ -115,6 +123,7 @@ public class ChatPaginator implements IPluginOwned {
         _itemsPerPage = itemsPerPage;
         _headerFormat = _HEADER;
         _footerFormat = _FOOTER;
+        _searchHeaderFormat = _SEARCH_HEADER;
         _title = TextUtils.format(title, args);
     }
 
@@ -132,13 +141,23 @@ public class ChatPaginator implements IPluginOwned {
     }
 
     /**
+     * Get the header text/format.
+     *
+     * @return  The header or null if none.
+     */
+    @Nullable
+    public String getHeader() {
+        return _headerFormat;
+    }
+
+    /**
      * Set the header text/format.
-     * <p/>
+     *
      * <p>Header format uses numbers in braces to insert title, current page and total pages:</p>
      * <ul>
-     * <li>{0} = title</li>
-     * <li>{1} = current page</li>
-     * <li>{2} = total pages</li>
+     *      <li>{0} = title</li>
+     *      <li>{1} = current page</li>
+     *      <li>{2} = total pages</li>
      * </ul>
      *
      * @param header The header text.
@@ -148,19 +167,76 @@ public class ChatPaginator implements IPluginOwned {
     }
 
     /**
+     * Get the footer text/format.
+     *
+     * @return  The footer or null if none.
+     */
+    @Nullable
+    public String getFooter() {
+        return _footerFormat;
+    }
+
+    /**
      * Set the footer text/format.
-     * <p/>
+     *
      * <p>Footer format uses numbers in braces to insert title, current page and total pages:</p>
      * <ul>
-     * <li>{0} = title</li>
-     * <li>{1} = current page</li>
-     * <li>{2} = total pages</li>
+     *      <li>{0} = title</li>
+     *      <li>{1} = current page</li>
+     *      <li>{2} = total pages</li>
      * </ul>
      *
      * @param footer The footer text.
      */
     public void setFooter(@Nullable String footer) {
         _footerFormat = footer;
+    }
+
+
+    /**
+     * Get the search header text/format.
+     *
+     * @return  The search header or null if none.
+     */
+    @Nullable
+    public String getSearchHeader() {
+        return _searchHeaderFormat;
+    }
+
+    /**
+     * Set the search header text/format.
+     *
+     * <p>Footer format uses numbers in braces to insert title, current page and total pages:</p>
+     * <ul>
+     *      <li>{0} = title</li>
+     *      <li>{1} = current page</li>
+     *      <li>{2} = total pages</li>
+     *      <li>{3} = search term</li>
+     * </ul>
+     *
+     * @param searchHeader  The search header text.
+     */
+    public void setSearchHeader(@Nullable String searchHeader) {
+        _searchHeaderFormat = searchHeader;
+    }
+
+    /**
+     * Get the search filter term.
+     *
+     * @return  The search filter term or null if not set.
+     */
+    @Nullable
+    public String getSearchTerm() {
+        return _searchTerm;
+    }
+
+    /**
+     * Set the search filter term.
+     *
+     * @param searchTerm  The search text or null to remove search term.
+     */
+    public void setSearchTerm(@Nullable String searchTerm) {
+        _searchTerm = searchTerm;
     }
 
     /**
@@ -220,6 +296,20 @@ public class ChatPaginator implements IPluginOwned {
     }
 
     /**
+     * Get the total number of pages given the specified format.
+     *
+     * @param format  The format.
+     */
+    public int getTotalPages(Object format) {
+
+        int totalItems;
+
+        totalItems = _searchTerm == null ? _printList.size() : getSearchLines(format).size();
+
+        return (int) Math.ceil((double) totalItems / _itemsPerPage);
+    }
+
+    /**
      * Show a page of the paginator to a {@link org.bukkit.command.CommandSender}.
      *
      * <p>The format argument only applies to items that are not added with a
@@ -238,48 +328,121 @@ public class ChatPaginator implements IPluginOwned {
 
         page = page > 0 ? page : 1;
 
-        int totalPages = (int)Math.ceil((double)_printList.size() / _itemsPerPage);
+        int totalPages = getTotalPages(format);
 
-        String header = _headerFormat != null
-                ? NucLang.get(_plugin, _headerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
-                : "";
-
+        String header = getFormattedHeader(page, totalPages);
         if (!header.isEmpty())
             _msg.tell(sender, header);
 
         if (page < 1 || page > totalPages) {
             if (page == 1) {
-                _msg.tell(sender, "No items to display.");
+                _msg.tell(sender, NucLang.get(getPlugin(), _NO_ITEMS));
             }
             else {
-                _msg.tell(sender, "Page " + page + " was not found.");
+                _msg.tell(sender, NucLang.get(getPlugin(), _PAGE_NOT_FOUND, page));
             }
+        }
+        else if (_searchTerm == null) {
+            showAll(sender, page, format);
         }
         else {
-
-            int start = page * _itemsPerPage - _itemsPerPage;
-            int end = Math.min(start + _itemsPerPage - 1, _printList.size() - 1);
-
-            for (int i = start; i <= end; ++i) {
-                Object[] line = _printList.get(i);
-                if (line.length == 1 && line[0] instanceof PreFormattedLine) {
-                    PreFormattedLine preformatted = (PreFormattedLine) line[0];
-                    _msg.tell(sender, preformatted.format, preformatted.arguments);
-                } else {
-                    _msg.tell(sender, format, line);
-                }
-            }
+            showSearch(sender, page, format);
         }
 
-        String footer = _footerFormat != null
-                ? NucLang.get(_plugin, _footerFormat, _title, Math.max(1, page), Math.max(1, totalPages))
-                : "";
-
+        String footer = getFormattedFooter(page, totalPages);
         if (!footer.isEmpty())
             _msg.tell(sender, footer);
     }
 
+    /**
+     * Show all lines from a page.
+     */
+    protected void showAll(CommandSender sender, int page, Object format) {
+
+        int start = page * _itemsPerPage - _itemsPerPage;
+        int end = Math.min(start + _itemsPerPage - 1, _printList.size() - 1);
+
+        for (int i = start; i <= end; ++i) {
+            Object[] arguments = _printList.get(i);
+
+            Object localFormat = format;
+
+            if (arguments.length == 1 && arguments[0] instanceof PreFormattedLine) {
+                PreFormattedLine preFormatted = (PreFormattedLine) arguments[0];
+                localFormat = preFormatted.format;
+                arguments = preFormatted.arguments;
+            }
+
+            _msg.tell(sender, localFormat, arguments);
+        }
+    }
+
+    /**
+     * Show lines from search filtered results.
+     */
+    protected void showSearch(CommandSender sender, int page, Object format) {
+
+        List<String> lines = getSearchLines(format);
+
+        int start = page * _itemsPerPage - _itemsPerPage;
+        int end = Math.min(start + _itemsPerPage - 1, lines.size() - 1);
+
+        for (int i = start; i <= end; ++i) {
+            _msg.tell(sender, lines.get(i));
+        }
+    }
+
     /*
+     * Get all formatted pagin lines filtered by the current search term.
+     */
+    protected List<String> getSearchLines(Object format) {
+
+        List<String> lines = new ArrayList<>(_printList.size());
+
+        for (Object[] arguments : _printList) {
+
+            Object localFormat = format;
+            Object[] localArgs = arguments;
+
+            if (arguments.length == 1 && arguments[0] instanceof PreFormattedLine) {
+                PreFormattedLine preformatted = (PreFormattedLine) arguments[0];
+                localFormat = preformatted.format;
+                localArgs = preformatted.arguments;
+            }
+
+            lines.add(TextUtils.format(localFormat, localArgs));
+        }
+
+        return CollectionUtils.textSearch(lines, _searchTerm);
+    }
+
+    /**
+     * Get the header to use and format it.
+     */
+    protected String getFormattedHeader(int page, int totalPages) {
+
+        String format = _searchTerm != null ? _searchHeaderFormat : _headerFormat;
+
+        if (format == null || format.isEmpty())
+            return "";
+
+        return NucLang.get(_plugin, format,
+                _title, Math.max(1, page), Math.max(1, totalPages), _searchTerm);
+    }
+
+    /**
+     * Get the footer to use and format it.
+     */
+    protected String getFormattedFooter(int page, int totalPages) {
+
+        if (_footerFormat == null || _footerFormat.isEmpty())
+            return "";
+
+        return NucLang.get(_plugin, _footerFormat,
+                _title, Math.max(1, page), Math.max(1, totalPages), _searchTerm);
+    }
+
+    /**
      * Used to store formatting information for a single item.
      */
     protected static class PreFormattedLine {
@@ -291,5 +454,4 @@ public class ChatPaginator implements IPluginOwned {
             this.arguments = arguments;
         }
     }
-
 }
