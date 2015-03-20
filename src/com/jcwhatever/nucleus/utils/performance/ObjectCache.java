@@ -30,22 +30,16 @@ import javax.annotation.Nullable;
 
 /**
  * Caches an object instance.
- * <p>
- *     Useful when an operation is required to do lengthy
- *     operations and external caching of the results is not possible.
- * </p>
- * <p>
- *     Can be used to cache an object for a specified amount of time.
- * </p>
- * <p>
- *     The {@link CacheObject} instance hash code and equals match the set value.
- *     These values change when the cached object expires. It is not recommended
- *     to use the {@link CacheObject} as a hash key.
- * </p>
+ *
+ * <p>Can be used to cache an object for a specified amount of time.</p>
+ *
+ * <p>The {@link ObjectCache} instance hash code and equals match the set value. These
+ * values change when the cached object expires. It is not recommended to use the
+ * {@link ObjectCache} as a hash key.</p>
  *
  * @param <V>  The value type.
  */
-public class CacheObject<V> extends ExpiringCache {
+public class ObjectCache<V> extends ExpiringCache {
 
     private V _value;
     private boolean _hasValue = false;
@@ -55,7 +49,7 @@ public class CacheObject<V> extends ExpiringCache {
      *
      * <p>Unlimited cache value lifespan.</p>
      */
-    public CacheObject() {
+    public ObjectCache() {
         this(-1, TimeScale.TICKS);
     }
 
@@ -65,7 +59,7 @@ public class CacheObject<V> extends ExpiringCache {
      * @param lifespan   The cached value lifespan.
      * @param timeScale  The lifespan time scale.
      */
-    public CacheObject(int lifespan, TimeScale timeScale) {
+    public ObjectCache(int lifespan, TimeScale timeScale) {
         super(lifespan, timeScale);
     }
 
@@ -121,8 +115,8 @@ public class CacheObject<V> extends ExpiringCache {
         if (_value == null)
             return false;
 
-        if (obj instanceof CacheObject)
-            return _value.equals(((CacheObject) obj)._value);
+        if (obj instanceof ObjectCache)
+            return _value.equals(((ObjectCache) obj)._value);
 
         return _value.equals(obj);
     }

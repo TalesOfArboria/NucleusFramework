@@ -30,8 +30,8 @@ import com.jcwhatever.nucleus.utils.DateUtils;
 import java.util.Date;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Abstract implementation of a cache that expires.
  */
 public abstract class ExpiringCache {
 
@@ -123,5 +123,4 @@ public abstract class ExpiringCache {
         }
         return null;
     }
-
 }
