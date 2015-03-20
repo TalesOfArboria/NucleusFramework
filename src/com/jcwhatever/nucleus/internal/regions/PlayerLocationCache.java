@@ -189,9 +189,9 @@ class PlayerLocationCache {
         }
 
         /**
-         * Discard the snapshot so another can be created.
+         * Recycle the snapshot.
          */
-        public void discard() {
+        public void recycle() {
             _minIndex = 0;
             _isRemovedDiscarded = true;
         }
