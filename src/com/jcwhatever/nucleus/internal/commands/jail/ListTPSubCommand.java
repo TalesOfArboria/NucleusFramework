@@ -31,9 +31,9 @@ import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.jail.Jail;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
-import com.jcwhatever.nucleus.mixins.INamedLocation;
+import com.jcwhatever.nucleus.utils.NamedLocation;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
 
 import org.bukkit.command.CommandSender;
@@ -60,16 +60,15 @@ public final class ListTPSubCommand extends AbstractCommand {
 
         Jail jailManager = Nucleus.getDefaultJail();
 
-        List<INamedLocation> locations = jailManager.getTeleports();
+        List<NamedLocation> locations = jailManager.getTeleports();
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 6, _PAGINATOR_TITLE);
 
-        for (INamedLocation loc : locations) {
+        for (NamedLocation loc : locations) {
             pagin.add(loc.getName());
         }
 
         pagin.show(sender, page, FormatTemplate.LIST_ITEM);
     }
-
 }
 

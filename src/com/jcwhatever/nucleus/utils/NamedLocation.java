@@ -23,35 +23,70 @@
  */
 
 
-package com.jcwhatever.nucleus.mixins.implemented;
+package com.jcwhatever.nucleus.utils;
 
-import com.jcwhatever.nucleus.mixins.INamedLocation;
-import com.jcwhatever.nucleus.mixins.INamedLocationDistance;
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
 /**
  * A basic named location implementation.
  */
-public class NamedLocation implements INamedLocation {
+public class NamedLocation extends Location implements INamedInsensitive {
 
 	private String _name;
 	private String _searchName;
-	private Location _location;
-	
+
+    /**
+     * Constructor.
+     *
+     * @param name      The name of the location.
+     * @param location  The location to copy values from.
+     */
 	public NamedLocation(String name, Location location) {
-		PreCon.notNullOrEmpty(name);
-		PreCon.notNull(location);
-		
-		_name = name;
-		_location = location;
+        this(name, location.getWorld(),
+                location.getX(), location.getY(), location.getZ(),
+                location.getYaw(), location.getPitch());
 	}
-	
+
+    /**
+     * Constructor.
+     *
+     * @param name   The name of the location.
+     * @param world  The world.
+     * @param x      The x coordinates.
+     * @param y      The y coordinates.
+     * @param z      The z coordinates.
+     */
+    public NamedLocation(String name, World world, double x, double y, double z) {
+        this(name, world, x, y, z, 0.0f, 0.0f);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param name   The name of the location.
+     * @param world  The world.
+     * @param x      The x coordinates.
+     * @param y      The y coordinates.
+     * @param z      The z coordinates.
+     * @param yaw    The yaw angle.
+     * @param pitch  The pitch angle.
+     */
+    public NamedLocation(String name, World world, double x, double y, double z, float yaw, float pitch) {
+        super(world, x, y, z, yaw, pitch);
+
+        PreCon.notNullOrEmpty(name);
+
+        _name = name;
+    }
+
 	@Override
 	public String getName() {
 		return _name;
 	}
+
 	@Override
 	public String getSearchName() {
 		if (_searchName == null)
@@ -59,14 +94,4 @@ public class NamedLocation implements INamedLocation {
 		
 		return _searchName;
 	}
-	@Override
-	public Location getLocation() {
-		return _location;
-	}
-	
-	@Override
-	public INamedLocationDistance getDistance(Location location) {
-		return new NamedLocationDistance(this, location);
-	}
-	
 }

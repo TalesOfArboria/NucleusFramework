@@ -32,8 +32,8 @@ import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.jail.Jail;
+import com.jcwhatever.nucleus.utils.NamedLocation;
 import com.jcwhatever.nucleus.utils.language.Localizable;
-import com.jcwhatever.nucleus.mixins.INamedLocation;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -67,7 +67,7 @@ public final class AddTPSubCommand extends AbstractCommand {
 
         Jail jail = Nucleus.getDefaultJail();
 
-        INamedLocation current = jail.getTeleport(name);
+        NamedLocation current = jail.getTeleport(name);
         if (current != null) {
             tellError(sender, NucLang.get(_DUPLICATE_NAME, name));
             return; // finished

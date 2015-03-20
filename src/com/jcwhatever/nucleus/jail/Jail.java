@@ -29,9 +29,8 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.mixins.INamedLocation;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.mixins.implemented.NamedLocation;
+import com.jcwhatever.nucleus.utils.NamedLocation;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
@@ -59,7 +58,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
     private String _name;
     private IDataNode _dataNode;
     private JailBounds _bounds;
-    private Map<String, INamedLocation> _jailLocations = new HashMap<>(10);
+    private Map<String, NamedLocation> _jailLocations = new HashMap<>(10);
     private Location _releaseLocation;
 
     /**
@@ -187,7 +186,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         PreCon.isValid(TextUtils.isValidName(name));
 
         // make sure the name is not already in use
-        INamedLocation location = _jailLocations.get(name.toLowerCase());
+        NamedLocation location = _jailLocations.get(name.toLowerCase());
         if (location != null)
             return false;
 
@@ -211,7 +210,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
     public boolean removeTeleport(String name) {
         PreCon.notNullOrEmpty(name);
 
-        INamedLocation location = _jailLocations.remove(name.toLowerCase());
+        NamedLocation location = _jailLocations.remove(name.toLowerCase());
         if (location == null)
             return false;
 
@@ -228,11 +227,11 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
     @Nullable
     public Location getRandomTeleport() {
 
-        List<INamedLocation> locations = new ArrayList<>(_jailLocations.values());
+        List<NamedLocation> locations = new ArrayList<>(_jailLocations.values());
         if (locations.isEmpty())
             return null;
 
-        return Rand.get(locations).getLocation();
+        return Rand.get(locations);
     }
 
     /**
@@ -241,7 +240,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
      * @param name  The name of the location.
      */
     @Nullable
-    public INamedLocation getTeleport(String name) {
+    public NamedLocation getTeleport(String name) {
         PreCon.notNullOrEmpty(name);
 
         return _jailLocations.get(name.toLowerCase());
@@ -250,7 +249,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
     /**
      * Get all jail teleport locations.
      */
-    public List<INamedLocation> getTeleports() {
+    public List<NamedLocation> getTeleports() {
         return new ArrayList<>(_jailLocations.values());
     }
 

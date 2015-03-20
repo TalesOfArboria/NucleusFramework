@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
-import com.jcwhatever.nucleus.mixins.INamedLocation;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
+import com.jcwhatever.nucleus.utils.NamedLocation;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
 import org.bukkit.Location;
@@ -80,7 +80,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure the {@link #imprison} method works properly, and that the
+     * Make sure the {@link Jail#imprison} method works properly, and that the
      * prisoner is released after the specified duration.
      */
     @Test
@@ -100,7 +100,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@link #addTeleport} works properly.
+     * Make sure {@link Jail#addTeleport} works properly.
      */
     @Test
     public void testAddTeleport() {
@@ -109,15 +109,15 @@ public class JailTest {
 
         assertEquals(true, _jail.addTeleport("addTeleportTest", location));
 
-        INamedLocation namedLocation = _jail.getTeleport("addTeleportTest");
+        NamedLocation namedLocation = _jail.getTeleport("addTeleportTest");
 
         assertTrue(namedLocation != null);
         assertEquals("addTeleportTest", namedLocation.getName());
-        assertEquals(location, namedLocation.getLocation());
+        assertEquals(location, namedLocation);
     }
 
     /**
-     * Make sure {@link #removeTeleport} works properly.
+     * Make sure {@link Jail#removeTeleport} works properly.
      */
     @Test
     public void testRemoveTeleport() {
@@ -126,12 +126,12 @@ public class JailTest {
 
         assertEquals(true, _jail.addTeleport("remTeleportTest", location));
 
-        INamedLocation namedLocation = _jail.getTeleport("remTeleportTest");
+        NamedLocation namedLocation = _jail.getTeleport("remTeleportTest");
 
         // baseline test : make sure the location is added
         assertTrue(namedLocation != null);
         assertEquals("remTeleportTest", namedLocation.getName());
-        assertEquals(location, namedLocation.getLocation());
+        assertEquals(location, namedLocation);
 
         // test remove
         assertEquals(true, _jail.removeTeleport("remTeleportTest"));
@@ -142,7 +142,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@link #randomTeleport} method works properly.
+     * Make sure {@link Jail#getRandomTeleport} method works properly.
      */
     @Test
     public void testGetRandomTeleport() {
@@ -172,7 +172,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@link #getTeleports} returns the correct results.
+     * Make sure {@link Jail#getTeleports} returns the correct results.
      */
     @Test
     public void testGetTeleports() {
@@ -183,7 +183,7 @@ public class JailTest {
         _jail.addTeleport("randomTest1", location1);
         _jail.addTeleport("randomTest2", location2);
 
-        List<INamedLocation> teleports = _jail.getTeleports();
+        List<NamedLocation> teleports = _jail.getTeleports();
 
         assertEquals(2, teleports.size());
         assertEquals("randomTest1", teleports.get(0).getName());
@@ -191,7 +191,7 @@ public class JailTest {
     }
 
     /**
-     * Make sure {@link #getReleaseLocation} and {@link #setReleaseLocation} work properly
+     * Make sure {@link Jail#getReleaseLocation} and {@link Jail#setReleaseLocation} work properly
      * and test that player is sent to release location after being released.
      */
     @Test
