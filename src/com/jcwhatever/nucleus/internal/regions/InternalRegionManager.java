@@ -44,6 +44,7 @@ import com.jcwhatever.nucleus.regions.options.RegionPriority.RegionReason;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.NpcUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
@@ -715,7 +716,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
             List<WorldPlayer> worldPlayers = new ArrayList<WorldPlayer>(players.size());
             for (Player p : players) {
 
-                if (p.hasMetadata("NPC"))
+                if (NpcUtils.isNpc(p))
                     continue;
 
                 PlayerLocationCache locations = manager.getPlayerLocations(p.getUniqueId());

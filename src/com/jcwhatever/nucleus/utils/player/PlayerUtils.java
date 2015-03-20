@@ -28,10 +28,10 @@ package com.jcwhatever.nucleus.utils.player;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
-import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -322,16 +322,11 @@ public final class PlayerUtils {
                     if (!(entity instanceof Player))
                         continue;
 
-                    if (entity.hasMetadata("NPC"))
+                    if (validator != null && validator.isValid((Player) entity))
                         continue;
 
-                    if (validator != null && validator.isValid((Player)entity))
-                        continue;
-
-                    players.add((Player)entity);
-
+                    players.add((Player) entity);
                 }
-
             }
         }
 
