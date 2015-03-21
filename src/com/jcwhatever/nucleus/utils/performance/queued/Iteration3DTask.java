@@ -30,12 +30,13 @@ import com.jcwhatever.nucleus.utils.Scheduler;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Abstract queue worker task designed to add functionality
- * to an implementation making it easier to iterate over 3D 
- * coordinates in a cuboid area.
+ * Abstract implementation of a {@link QueueTask} designed to make it easier to
+ * perform iterative tasks over 3D arrays/coordinates.
+ *
+ * <p>Iterative tasks can be broken up into segments which are performed like individual
+ * tasks; run in consecutive order with a delay between each segment run.</p>
  *
  * <p>Note: The 3D data is iterated from smallest value to largest value.</p>
- *
  */
 public abstract class Iteration3DTask extends QueueTask {
 
@@ -183,57 +184,49 @@ public abstract class Iteration3DTask extends QueueTask {
     }
 
     /**
-     * Called for each 3D value set that is iterated over.
+     * Invoked for each 3D value set that is iterated over.
      *
-     * @param x  The current x value
-     * @param y  The current y value
-     * @param z  The current z value
+     * @param x  The current x value.
+     * @param y  The current y value.
+     * @param z  The current z value.
      */
     protected abstract void onIterateItem(final int x, final int y, final int z);
 
     /**
-     * Called when the task is first run.
+     * Invoked before the task is first run.
      *
-     * <p>Implementation can optionally override this to perform
-     * actions when the task begins.</p>
-     *
-     * <p>Always invoked from the primary thread.</p>
+     * <p>Intended for optional override.</p>
      */
     protected void onIterateBegin() {}
 
     /**
-     * Called when iteration begins on a new segment of the iteration.
+     * Invoked before iteration begins on a new segment.
      *
-     * <p>Implementation can optionally override this to perform
-     * actions when a segment begins.</p>     
+     * <p>Intended for optional override.</p>
      *
-     * @param x  The current x value
-     * @param y  The current y value
-     * @param z  The current z value
+     * @param x  The current x value.
+     * @param y  The current y value.
+     * @param z  The current z value.
      */
     protected void onSegmentStart(int x, int y, int z) {}
 
     /**
-     * Called when iteration over a segment ends.
+     * Invoked after iteration over a segment ends.
      *
-     * <p>Implementation can optionally override this to perform
-     * actions when a segment ends.</p>
+     * <p>Intended for optional override.</p>
      *
-     * @param x  The ending x value
-     * @param y  The ending y value
-     * @param z  The ending z value
+     * @param x  The ending x value.
+     * @param y  The ending y value.
+     * @param z  The ending z value.
      */
     protected void onSegmentEnd(int x, int y, int z) {}
 
     /**
-     * Called just before the task finishes.
+     * Invoked just before the task finishes.
      *
-     * <p>Implementation can optionally override this to perform
-     * actions before a task finishes.</p>
+     * <p>Intended for optional override.</p>
      */
     protected void onPreComplete() {}
-
-
 
     // The worker that performs the iterations
     private class Iterator3D implements Runnable {

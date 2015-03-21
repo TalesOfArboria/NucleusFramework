@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.utils.performance.queued;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -38,13 +39,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A project that accepts tasks to be completed in
- * synchronous order.
+ * A project that accepts tasks to be completed in synchronous order.
  *
- * <p>
- *     A project is a task and therefore can be added to
- *     other projects.
- * </p>
+ * <p>A project is a {@link QueueTask} and therefore can be added to other projects.</p>
+ *
+ * @see QueueTask
+ * @see QueueWorker
  */
 public class QueueProject extends QueueTask {
 
@@ -95,7 +95,7 @@ public class QueueProject extends QueueTask {
      *
      * @param tasks  The tasks to add.
      */
-    public void addTasks(Collection<QueueTask> tasks) {
+    public void addTasks(Collection<? extends QueueTask> tasks) {
         PreCon.notNull(tasks);
 
         for (QueueTask task : tasks)
@@ -105,13 +105,13 @@ public class QueueProject extends QueueTask {
     /**
      * Get all tasks in the project.
      *
-     * <p>
-     *     Do no call while the task is running.
-     * </p>
+     * <p>Do not invoke while the task is running. Check {@link #isRunning} first.</p>
+     *
+     * @throws java.lang.IllegalStateException if the project is running.
      */
     public List<QueueTask> getTasks() {
         if (isRunning())
-            throw new IllegalAccessError("Cannot retrieve tasks while the project is running.");
+            throw new IllegalStateException("Cannot retrieve tasks while the project is running.");
 
         return new ArrayList<QueueTask>(_tasks);
     }
@@ -123,8 +123,8 @@ public class QueueProject extends QueueTask {
     }
 
     /**
-     * Called by child tasks to notify project
-     * that the state of the child has changed.
+     * Invoked by child tasks to notify project that the state of the
+     * child has changed.
      */
     void update(QueueTask task) {
 
@@ -158,8 +158,7 @@ public class QueueProject extends QueueTask {
     }
 
     /**
-     * Runnable implementation responsible for
-     * running project tasks.
+     * Runnable implementation responsible for running project tasks.
      */
     private class ProjectManager implements Runnable {
 
@@ -191,26 +190,35 @@ public class QueueProject extends QueueTask {
 
                 switch (_currentTask.getConcurrency()) {
                     case MAIN_THREAD:
-                        Scheduler.runTaskSync(_currentTask.getPlugin(), new Runnable() {
+                        if (!Bukkit.isPrimaryThread()) {
 
-                            @Override
-                            public void run() {
-                                _currentTask.run();
-                            }
-                        });
-                        break;
+                            Scheduler.runTaskSync(_currentTask.getPlugin(), new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    _currentTask.run();
+                                }
+                            });
+                            break;
+                        }
+                        // fall through
 
                     case CURRENT_THREAD:
                         _currentTask.run();
                         break;
 
                     case ASYNC:
-                        Scheduler.runTaskLaterAsync(_currentTask.getPlugin(), 1, new Runnable() {
-                            @Override
-                            public void run() {
-                                _currentTask.run();
-                            }
-                        });
+                        if (Bukkit.isPrimaryThread()) {
+                            Scheduler.runTaskLaterAsync(_currentTask.getPlugin(), 1, new Runnable() {
+                                @Override
+                                public void run() {
+                                    _currentTask.run();
+                                }
+                            });
+                        }
+                        else {
+                            _currentTask.run();
+                        }
                         break;
                 }
             }

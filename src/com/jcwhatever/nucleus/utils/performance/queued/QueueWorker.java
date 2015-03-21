@@ -35,10 +35,17 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 /**
- * Ensures large tasks/operations happen in
- * synchronous order, even if the task is asynchronous.
+ *
+ * A static utility to run {@link QueueTask}'s and {@link QueueProject}'s in synchronous order,
+ * if if the task is asynchronous.
+ *
+ * <p>Ensures large lag inducing operations are not performed at the same time, even if the operations are from
+ * different plugins. Pause time is given between operations.</p>
+ *
+ * @see QueueTask
+ * @see QueueProject
  */
-public class QueueWorker {
+public final class QueueWorker {
 
     private static QueueWorker _globalWorker;
 
@@ -135,6 +142,7 @@ public class QueueWorker {
 
                 switch (_currentTask.getConcurrency()) {
                     case MAIN_THREAD:
+                        // already on main thread
                         // fall through
 
                     case CURRENT_THREAD:

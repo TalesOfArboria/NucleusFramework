@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils.performance.queued;
 
 /**
- * Specifies the preferred method of running a queue task.
+ * Specifies the preferred method of running a {@link QueueTask}.
  */
 public enum TaskConcurrency {
     /**
@@ -35,12 +35,12 @@ public enum TaskConcurrency {
     MAIN_THREAD,
 
     /**
-     * The task should be run on the current thread.
+     * The task should be run on whichever thread is current.
      */
     CURRENT_THREAD,
 
     /**
-     * The task should be run on a new asynchronous thread.
+     * The task should be run on an asynchronous thread.
      */
     ASYNC
 }

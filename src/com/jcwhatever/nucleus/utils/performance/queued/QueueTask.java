@@ -37,8 +37,11 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 
 /**
- * Abstract class that worker tasks should extend so
- * that they can be used by {@link QueueWorker}.
+ * Abstract class that worker tasks should extend so that they can be used
+ * by {@link QueueWorker} or in a {@link QueueProject}.
+ *
+ * <p>Note that the implementation should invoke {@link #complete} when the operation
+ * it performs is completed successfully or {@link #fail} if the operation failed.</p>
  */
 public abstract class QueueTask implements IPluginOwned, Runnable {
 
@@ -119,7 +122,7 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
     }
 
     /**
-     * Call to cancel the task. Does not guarantee the task will end
+     * Invoke to cancel the task. Does not guarantee the task will end
      * immediately.
      *
      * @param reason  Optional message describing the reason the task was cancelled.
@@ -149,9 +152,6 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
         return _resultAgent.getFuture();
     }
 
-    /**
-     * Run the task.
-     */
     @Override
     public final void run() {
         if (_isRunning)
@@ -163,15 +163,41 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
             onRun();
     }
 
+    /**
+     * Invoked when the task is run.
+     */
     protected abstract void onRun();
 
+    /**
+     * Invoked if the task is completed successfully.
+     *
+     * <p>Intended for optional override.</p>
+     */
     protected void onComplete() {}
+
+    /**
+     * Invoked if the task fails.
+     *
+     * <p>Intended for optional override.</p>
+     */
     protected void onFail() {}
+
+    /**
+     * Invoked if the task is cancelled.
+     *
+     * <p>Intended for optional override.</p>
+     */
     protected void onCancel() {}
+
+    /**
+     * Invoked when the task is ended for any reason.
+     *
+     * <p>Intended for optional override.</p>
+     */
     protected void onEnd() {}
 
     /**
-     * Call when the task is completed successfully.
+     * Implementation should invoke this if the task is completed successfully.
      */
     protected final Future<QueueTask> complete() {
 
@@ -194,7 +220,7 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
     }
 
     /**
-     * Call when the task fails.
+     * Implementation should invoke this if the task fails.
      *
      * @param reason  Optional message describing the reason the task failed.
      * @param args    Optional message format arguments.
@@ -231,5 +257,4 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
 
         _parent = project;
     }
-
 }

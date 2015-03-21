@@ -30,8 +30,11 @@ import com.jcwhatever.nucleus.utils.Scheduler;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Abstract queue worker task designed to add functionality
- * to an implementation making it easier to perform iterative tasks.
+ * Abstract implementation of a {@link QueueTask} designed to make it easier to
+ * perform iterative tasks.
+ *
+ * <p>Iterative tasks can be broken up into segments which are performed like individual
+ * tasks; run in consecutive order with a delay between each segment run.</p>
  */
 public abstract class IterationTask extends QueueTask {
 
@@ -106,39 +109,41 @@ public abstract class IterationTask extends QueueTask {
     }
 
     /**
-     * Called at each iteration.
+     * Invoked at each iteration.
      *
      * @param index  The current iteration index
      */
     protected abstract void onIterateItem(int index);
 
     /**
-     * Called when the task begins.
-     *
-     * <p>Always invoked from primary thread.</p>
+     * Invoked when the task begins.
      */
     protected void onIterateBegin() {}
 
     /**
-     * Called before the first iteration of a segment.
+     * Invoked before the first iteration of a segment.
      *
-     * @param index  The current iteration index
+     * <p>Intended for optional override.</p>
+     *
+     * @param index  The current iteration index.
      */
     protected void onSegmentStart(int index) {}
 
     /**
-     * Called after the last iteration of a segment.
+     * Invoked after the last iteration of a segment.
      *
-     * @param index  The current iteration index
+     * <p>Intended for optional override.</p>
+     *
+     * @param index  The current iteration index.
      */
     protected void onSegmentEnd(int index) {}
 
     /**
-     * Called just before the task finishes.
+     * Invoked just before the task finishes.
+     *
+     * <p>Intended for optional override.</p>
      */
     protected void onPreFinish() {}
-
-
 
     // the worker responsible for iterating
     private class Worker implements Runnable {
