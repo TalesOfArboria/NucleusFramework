@@ -25,13 +25,13 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.jail.Jail;
+import com.jcwhatever.nucleus.providers.jail.IJail;
+import com.jcwhatever.nucleus.utils.Jails;
 import com.jcwhatever.nucleus.utils.NamedLocation;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
@@ -56,7 +56,7 @@ public final class DelTPSubCommand extends AbstractCommand {
 
         String name = args.getName("name");
 
-        Jail jail = Nucleus.getDefaultJail();
+        IJail jail = Jails.getServerJail();
 
         NamedLocation current = jail.getTeleport(name);
         if (current == null) {

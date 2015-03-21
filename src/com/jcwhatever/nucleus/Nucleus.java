@@ -28,21 +28,19 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.InternalMessengerFactory;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
-import com.jcwhatever.nucleus.utils.kits.KitManager;
-import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
-import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
-import com.jcwhatever.nucleus.jail.IJailManager;
-import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.messaging.MessengerFactory;
-import com.jcwhatever.nucleus.utils.nms.NmsManager;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
-import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.IScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiRepo;
 import com.jcwhatever.nucleus.scripting.ScriptManager;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
+import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
+import com.jcwhatever.nucleus.utils.kits.KitManager;
+import com.jcwhatever.nucleus.utils.nms.NmsManager;
+import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 
 import org.bukkit.entity.EntityType;
 
@@ -147,24 +145,6 @@ public final class Nucleus {
         PreCon.isValid(_plugin._regionManager != null, ERROR_NOT_READY);
 
         return _plugin._regionManager;
-    }
-
-    /**
-     * Get the default Jail Manager.
-     */
-    public static IJailManager getJailManager() {
-        PreCon.isValid(_plugin._jailManager != null, ERROR_NOT_READY);
-
-        return _plugin._jailManager;
-    }
-
-    /**
-     * Get the default jail.
-     */
-    public static Jail getDefaultJail() {
-        PreCon.isValid(_plugin._jailManager != null, ERROR_NOT_READY);
-
-        return _plugin._jailManager.getJail(Nucleus.getPlugin(), "default");
     }
 
     /**

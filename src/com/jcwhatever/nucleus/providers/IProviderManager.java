@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.providers;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
+import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 
@@ -114,4 +115,9 @@ public interface IProviderManager {
      */
     @Nullable
     INpcProvider getNpcProvider();
+
+    /**
+     * Get the jail provider.
+     */
+    IJailProvider getJailProvider();
 }

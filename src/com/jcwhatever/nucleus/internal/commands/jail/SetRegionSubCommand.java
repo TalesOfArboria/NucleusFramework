@@ -25,13 +25,13 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.jail.Jail;
+import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
+import com.jcwhatever.nucleus.utils.Jails;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,9 +53,9 @@ public final class SetRegionSubCommand extends AbstractCommand {
         if (sel == null)
             return; // finish
         
-        Jail jail = Nucleus.getDefaultJail();
+        IJail jail = Jails.getServerJail();
 
-        jail.getJailBounds().setCoords(sel.getP1(), sel.getP2());
+        jail.getRegion().setCoords(sel.getP1(), sel.getP2());
 
         tellSuccess(sender, "Default Jail region set to your current region selection.");
     }

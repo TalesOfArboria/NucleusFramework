@@ -30,15 +30,16 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.jail.Jail;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
+import com.jcwhatever.nucleus.providers.jail.IJail;
+import com.jcwhatever.nucleus.utils.Jails;
 import com.jcwhatever.nucleus.utils.NamedLocation;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
 
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
+import java.util.Collection;
 
 @CommandInfo(
         parent="jail",
@@ -58,9 +59,9 @@ public final class ListTPSubCommand extends AbstractCommand {
 
         int page = args.getInteger("page");
 
-        Jail jailManager = Nucleus.getDefaultJail();
+        IJail jail = Jails.getServerJail();
 
-        List<NamedLocation> locations = jailManager.getTeleports();
+        Collection<NamedLocation> locations = jail.getTeleports();
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 6, _PAGINATOR_TITLE);
 

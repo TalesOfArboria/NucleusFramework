@@ -25,13 +25,13 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.jail.JailSession;
+import com.jcwhatever.nucleus.providers.jail.IJailSession;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
+import com.jcwhatever.nucleus.utils.Jails;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -93,7 +93,7 @@ public class ScriptApiJail extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return Nucleus.getDefaultJail().imprison(p, minutes, TimeScale.MINUTES) != null;
+            return Jails.getServerJail().imprison(p, minutes, TimeScale.MINUTES) != null;
         }
 
         /**
@@ -109,7 +109,7 @@ public class ScriptApiJail extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            JailSession session = Nucleus.getJailManager().getSession(p.getUniqueId());
+            IJailSession session = Jails.getSession(p.getUniqueId());
             if (session == null || session.isExpired() || session.isReleased())
                 return false;
 
@@ -128,7 +128,7 @@ public class ScriptApiJail extends NucleusScriptApi {
             Player p = PlayerUtils.getPlayer(player);
             PreCon.notNull(p);
 
-            return Nucleus.getJailManager().isPrisoner(p.getUniqueId());
+            return Jails.isPrisoner(p.getUniqueId());
         }
     }
 

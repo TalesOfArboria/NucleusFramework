@@ -22,12 +22,9 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.internal.providers.jail;
 
-package com.jcwhatever.nucleus.jail;
-
-import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.IMeta;
+import com.jcwhatever.nucleus.providers.jail.IJailSession;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -37,27 +34,20 @@ import java.util.Date;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-/**
- * Represents a players session in a jail.
+/*
+ * 
  */
-public final class JailSession implements IMeta, IDisposable {
+public class NucleusJailSession implements IJailSession {
 
-    private final Jail _jail;
+    private final NucleusJail _jail;
     private final UUID _playerId;
     private final MetaStore _meta = new MetaStore();
+
     private Date _expires;
     private Location _releaseLocation;
-
     private boolean _isReleased;
 
-    /**
-     * Constructor.
-     *
-     * @param jail      The owning jail manager.
-     * @param playerId  The id of the player.
-     * @param expires   The time the jail session will expire. (Player release date)
-     */
-    public JailSession(Jail jail, UUID playerId, Date expires) {
+    NucleusJailSession(NucleusJail jail, UUID playerId, Date expires) {
         PreCon.notNull(jail);
         PreCon.notNull(playerId);
         PreCon.notNull(expires);
@@ -65,69 +55,49 @@ public final class JailSession implements IMeta, IDisposable {
         _jail = jail;
         _playerId = playerId;
         _expires = expires;
-        _releaseLocation = jail.getReleaseLocation();
     }
 
-    /**
-     * Get the owning jail.
-     */
-    public Jail getJail() {
+    @Override
+    public NucleusJail getJail() {
         return _jail;
     }
 
-    /**
-     * Get the id of the player.
-     */
+    @Override
     public UUID getPlayerId() {
         return _playerId;
     }
 
-    /**
-     * Get the session expiration date.
-     */
+    @Override
     public Date getExpiration() {
         if (_jail.isDisposed())
-           _expires = null;
+            _expires = null;
 
         return _expires != null ? _expires : new Date();
     }
 
-    /**
-     * Determine if the player has been released
-     * by the warden.
-     */
-    public boolean isReleased () {
+    @Override
+    public boolean isReleased() {
         return _isReleased;
     }
 
-    /**
-     * Determine if the session is expired.
-     */
+    @Override
     public boolean isExpired() {
         return _expires == null || _expires.compareTo(new Date()) <= 0;
     }
 
-    /**
-     * Release the player from jail.
-     */
+    @Override
     public boolean release() {
         dispose();
-        return Nucleus.getJailManager().release(_playerId);
+        return _jail.getProvider().release(_playerId);
     }
 
-    /**
-     * Get the location the player is released at.
-     */
     @Nullable
+    @Override
     public Location getReleaseLocation() {
         return _releaseLocation;
     }
 
-    /**
-     * Set the release location.
-     *
-     * @param location  The location.
-     */
+    @Override
     public void setReleaseLocation(Location location) {
         PreCon.notNull(location);
 

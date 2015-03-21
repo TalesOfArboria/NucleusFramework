@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.providers;
 import com.jcwhatever.nucleus.BukkitPlugin;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
+import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.utils.DependencyRunner;
 import com.jcwhatever.nucleus.utils.DependencyRunner.DependencyStatus;
@@ -111,7 +112,7 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
                 List<IProvider> providers = getModules();
 
-                _manager._isProvidersLoading = true;
+                _manager.setLoading(true);
 
                 for (IProvider provider : providers) {
 
@@ -137,24 +138,29 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
                     }
                     else if (provider instanceof INpcProvider) {
 
-                        _manager.setNpcProvider((INpcProvider)provider);
+                        _manager.setNpcProvider((INpcProvider) provider);
+                    }
+                    else if (provider instanceof IJailProvider) {
+
+                        _manager.setJailProvider((IJailProvider) provider);
                     }
                     else {
                         removeModule(provider.getName());
                     }
                 }
 
+                _manager.setLoading(false);
+
                 _manager.getStorageProvider().onEnable();
                 _manager.getPermissionsProvider().onEnable();
                 _manager.getRegionSelectionProvider().onEnable();
                 _manager.getEconomyProvider().onEnable();
                 _manager.getBankItemsProvider().onEnable();
+                _manager.getJailProvider().onEnable();
 
                 INpcProvider npcProvider = _manager.getNpcProvider();
                 if (npcProvider != null)
                     npcProvider.onEnable();
-
-                _manager._isProvidersLoading = false;
 
                 ((BukkitPlugin)Nucleus.getPlugin()).notifyProvidersReady();
             }

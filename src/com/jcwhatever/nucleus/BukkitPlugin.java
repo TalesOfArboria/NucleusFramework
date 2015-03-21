@@ -30,7 +30,6 @@ import com.jcwhatever.nucleus.internal.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
-import com.jcwhatever.nucleus.internal.jail.InternalJailManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
@@ -67,7 +66,6 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalScriptApiRepo _scriptApiRepo;
     InternalNmsManager _nmsManager;
 
-    InternalJailManager _jailManager;
     EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -154,9 +152,6 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _nmsManager = new InternalNmsManager();
         _commandHandler = new NucleusCommandDispatcher();
-
-        _jailManager = new InternalJailManager(getDataNode().getNode("jail"));
-        _jailManager.loadSettings();
 
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
 

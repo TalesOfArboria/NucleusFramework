@@ -25,14 +25,14 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.jail.Jail;
-import com.jcwhatever.nucleus.jail.JailSession;
+import com.jcwhatever.nucleus.providers.jail.IJail;
+import com.jcwhatever.nucleus.providers.jail.IJailSession;
+import com.jcwhatever.nucleus.utils.Jails;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -68,10 +68,10 @@ public final class SendSubCommand extends AbstractCommand {
             return; // finish
         }
         
-        Jail jail = Nucleus.getDefaultJail();
-        JailSession jailSession = jail.imprison(player, minutes, TimeScale.MINUTES);
+        IJail jail = Jails.getServerJail();
+        IJailSession session = jail.imprison(player, minutes, TimeScale.MINUTES);
         
-        if (jailSession == null) {
+        if (session == null) {
             tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }

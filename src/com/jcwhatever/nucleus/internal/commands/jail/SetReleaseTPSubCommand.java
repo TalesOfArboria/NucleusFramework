@@ -25,13 +25,12 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.jail.Jail;
+import com.jcwhatever.nucleus.utils.Jails;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.Location;
@@ -58,8 +57,7 @@ public final class SetReleaseTPSubCommand extends AbstractCommand {
 
         Location loc = p.getLocation();
 
-        Jail jail = Nucleus.getDefaultJail();
-        jail.setReleaseLocation(loc);
+        Jails.getServerJail().setReleaseLocation(loc);
 
         tellSuccess(sender, NucLang.get(_SUCCESS));
     }

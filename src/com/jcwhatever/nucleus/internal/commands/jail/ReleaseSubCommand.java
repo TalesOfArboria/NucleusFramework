@@ -25,13 +25,13 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.jail.JailSession;
+import com.jcwhatever.nucleus.providers.jail.IJailSession;
+import com.jcwhatever.nucleus.utils.Jails;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
@@ -65,7 +65,7 @@ public final class ReleaseSubCommand extends AbstractCommand {
             return; // finish
         }
         
-        JailSession jailSession = Nucleus.getJailManager().getSession(playerId);
+        IJailSession jailSession = Jails.getSession(playerId);
         
         if (jailSession == null) {
             tellError(sender, NucLang.get(_PLAYER_NOT_IMPRISONED, playerName));

@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.internal.providers.economy.NucleusEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyBankProvider;
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.friends.NucleusFriendsProvider;
+import com.jcwhatever.nucleus.internal.providers.jail.NucleusJailProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.BukkitProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.VaultProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvider;
@@ -46,6 +47,7 @@ import com.jcwhatever.nucleus.providers.economy.EconomyWrapper;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
+import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
@@ -75,7 +77,7 @@ public final class InternalProviderManager implements IProviderManager {
     private volatile IEconomyProvider _economy;
     private volatile IBankItemsProvider _bankItems;
     private volatile INpcProvider _npc;
-
+    private volatile IJailProvider _jail;
     private volatile IStorageProvider _defaultStorage;
 
     private final YamlStorageProvider _yamlStorage = new YamlStorageProvider();
@@ -86,22 +88,10 @@ public final class InternalProviderManager implements IProviderManager {
     // keyed to provider name
     private final Map<String, IStorageProvider> _storageProviders = new HashMap<>(10);
 
-    boolean _isProvidersLoading;
+    private boolean _isProvidersLoading;
 
     public InternalProviderManager() {
         _storageProviders.put(_yamlStorage.getName().toLowerCase(), _yamlStorage);
-
-        _regionSelect = WorldEditSelectionProvider.isWorldEditInstalled()
-                ? new WorldEditSelectionProvider()
-                : new NucleusSelectionProvider();
-
-        _economy = VaultEconomyProvider.hasVaultEconomy()
-                ? VaultEconomyBankProvider.hasBankEconomy()
-                    ? new VaultEconomyBankProvider()
-                    : new VaultEconomyProvider()
-                : new NucleusEconomyProvider(Nucleus.getPlugin());
-
-        _playerLookup = new InternalPlayerLookupProvider(Nucleus.getPlugin());
     }
 
     @Override
@@ -280,6 +270,17 @@ public final class InternalProviderManager implements IProviderManager {
         _npc = provider;
     }
 
+    @Override
+    public IJailProvider getJailProvider() {
+        return _jail;
+    }
+
+    public void setJailProvider(IJailProvider provider) {
+        PreCon.notNull(provider);
+
+        _jail = provider;
+    }
+
     public void registerStorageProvider(IStorageProvider storageProvider) {
         PreCon.notNull(storageProvider);
         PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");
@@ -296,6 +297,33 @@ public final class InternalProviderManager implements IProviderManager {
             for (String pluginName : pluginNames) {
                 _pluginStorage.put(pluginName.toLowerCase(), storageProvider);
             }
+        }
+    }
+
+    void setLoading(boolean isLoading) {
+        _isProvidersLoading = isLoading;
+
+        if (!isLoading) {
+            if (_jail == null) {
+                _jail = new NucleusJailProvider();
+            }
+
+            if (_regionSelect == null) {
+                _regionSelect = WorldEditSelectionProvider.isWorldEditInstalled()
+                        ? new WorldEditSelectionProvider()
+                        : new NucleusSelectionProvider();
+            }
+
+            if (_economy == null) {
+                _economy = VaultEconomyProvider.hasVaultEconomy()
+                        ? VaultEconomyBankProvider.hasBankEconomy()
+                            ? new VaultEconomyBankProvider()
+                            : new VaultEconomyProvider()
+                        : new NucleusEconomyProvider(Nucleus.getPlugin());
+            }
+
+            if (_playerLookup == null)
+                _playerLookup = new InternalPlayerLookupProvider(Nucleus.getPlugin());
         }
     }
 

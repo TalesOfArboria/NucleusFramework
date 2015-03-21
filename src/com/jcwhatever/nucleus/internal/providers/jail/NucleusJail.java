@@ -22,18 +22,19 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.jail;
+package com.jcwhatever.nucleus.internal.providers.jail;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.NamedLocation;
+import com.jcwhatever.nucleus.providers.jail.IJail;
+import com.jcwhatever.nucleus.providers.jail.IJailSession;
+import com.jcwhatever.nucleus.regions.Region;
+import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.NamedLocation;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
+import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -43,90 +44,72 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-/**
- * A player jail.
+/*
+ * 
  */
-public class Jail implements IPluginOwned, INamed, IDisposable {
+public class NucleusJail implements IJail {
 
+    private final NucleusJailProvider _provider;
     private final Plugin _plugin;
-    private String _name;
-    private IDataNode _dataNode;
-    private JailBounds _bounds;
-    private Map<String, NamedLocation> _jailLocations = new HashMap<>(10);
-    private Location _releaseLocation;
+    private final String _name;
+    private final String _searchName;
+    private final IDataNode _dataNode;
+    private final Bounds _bounds;
+    private final Map<String, NamedLocation> _jailLocations = new HashMap<>(10);
 
-    /**
-     * Constructor.
-     *
-     * @param plugin    The owning plugin.
-     * @param name      The name of the jail.
-     * @param dataNode  The jails data node.
-     */
-    public Jail(Plugin plugin, String name, IDataNode dataNode) {
+    private Location _releaseLocation;
+    private boolean _isDisposed;
+
+    NucleusJail(NucleusJailProvider provider, Plugin plugin, String name, IDataNode dataNode) {
+        PreCon.notNull(provider);
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
-        PreCon.notNull(dataNode);
 
+        _provider = provider;
         _plugin = plugin;
         _name = name;
+        _searchName = name.toLowerCase();
         _dataNode = dataNode;
-        _bounds = new JailBounds(_plugin, this, _name, _dataNode.getNode("bounds"));
-
-        load();
-
-        Nucleus.getJailManager().registerJail(this);
+        _bounds = new Bounds(plugin, name, dataNode.getNode("bounds"));
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
     }
 
-    /**
-     * Get the name of the jail.
-     */
     @Override
     public String getName() {
         return _name;
     }
 
-    /**
-     * Imprison a player in the jail.
-     *
-     * @param player     The player to imprison.
-     * @param duration   The duration to imprison the player for.
-     * @param timeScale  The time scale of the specified duration.
-     *
-     * @return Null if failed to imprison player.
-     */
+    @Override
+    public String getSearchName() {
+        return _searchName;
+    }
+
     @Nullable
-    public JailSession imprison(Player player, int duration, TimeScale timeScale) {
+    @Override
+    public IJailSession imprison(Player player, int duration, TimeScale timeScale) {
         PreCon.greaterThanZero(duration);
         PreCon.notNull(timeScale);
 
         return imprison(player, new Date(System.currentTimeMillis() + (duration * timeScale.getTimeFactor())));
     }
 
-    /**
-     * Imprison a player in the jail.
-     *
-     * @param player   The player to imprison.
-     * @param expires  The date and time the session will expire. (prisoner release date)
-     *
-     * @return Null if failed to imprison player.
-     */
     @Nullable
-    public JailSession imprison(Player player, Date expires) {
+    @Override
+    public IJailSession imprison(Player player, Date expires) {
         PreCon.notNull(player);
+
+        checkDisposed();
 
         // teleport player to jail
         Location teleport = getRandomTeleport();
@@ -142,8 +125,7 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         }
 
         // register session
-        JailSession session = Nucleus.getJailManager().registerJailSession(
-                this, player.getUniqueId(), expires);
+        IJailSession session = _provider.createSession(this, player.getUniqueId(), expires);
 
         if (session == null)
             return null;
@@ -154,61 +136,53 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         return session;
     }
 
-    /**
-     * Determine if a player is a prisoner of the jail.
-     *
-     * @param p  The player to check.
-     */
-    public boolean isPrisoner(Player p) {
-        JailSession session = Nucleus.getJailManager().getSession(p.getUniqueId());
-        return !(session == null || session.isReleased()) &&
-                session.getJail() == this;
+    @Override
+    public boolean isPrisoner(Player player) {
+        PreCon.notNull(player);
+
+        IJailSession session = _provider.getSession(player.getUniqueId());
+        return session != null && session.getJail().equals(this);
     }
 
-    /**
-     * Get the bounding region of the jail.
-     */
-    public JailBounds getJailBounds() {
+    @Override
+    public Bounds getRegion() {
         return _bounds;
     }
 
-    /**
-     * Add a location the player can be teleported to when imprisoned.
-     *
-     * @param name      The name of the location.
-     * @param teleport  The teleport location.
-     *
-     * @return  True if the new teleport was added. Will fail if the name is in use.
-     */
+    @Override
     public boolean addTeleport(String name, Location teleport) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(teleport);
         PreCon.isValid(TextUtils.isValidName(name));
 
+        return addTeleport(new NamedLocation(name, teleport));
+    }
+
+    @Override
+    public boolean addTeleport(NamedLocation teleport) {
+        PreCon.notNull(teleport);
+
+        checkDisposed();
+
         // make sure the name is not already in use
-        NamedLocation location = _jailLocations.get(name.toLowerCase());
+        NamedLocation location = _jailLocations.get(teleport.getSearchName());
         if (location != null)
             return false;
 
-        location = new NamedLocation(name, teleport);
-        _jailLocations.put(name.toLowerCase(), location);
+        _jailLocations.put(teleport.getSearchName(), teleport);
 
         IDataNode teleportNode = _dataNode.getNode("teleport");
-        teleportNode.set(name, teleport);
+        teleportNode.set(teleport.getSearchName(), teleport);
         _dataNode.save();
 
         return true;
     }
 
-    /**
-     * Remove a jail teleport location.
-     *
-     * @param name  The name of the location.
-     *
-     * @return  True if found and removed.
-     */
+    @Override
     public boolean removeTeleport(String name) {
         PreCon.notNullOrEmpty(name);
+
+        checkDisposed();
 
         NamedLocation location = _jailLocations.remove(name.toLowerCase());
         if (location == null)
@@ -221,12 +195,9 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         return true;
     }
 
-    /**
-     * Get a random jail teleport location.
-     */
     @Nullable
-    public Location getRandomTeleport() {
-
+    @Override
+    public NamedLocation getRandomTeleport() {
         List<NamedLocation> locations = new ArrayList<>(_jailLocations.values());
         if (locations.isEmpty())
             return null;
@@ -234,32 +205,22 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
         return Rand.get(locations);
     }
 
-    /**
-     * Get a jail teleport location by name.
-     *
-     * @param name  The name of the location.
-     */
     @Nullable
+    @Override
     public NamedLocation getTeleport(String name) {
         PreCon.notNullOrEmpty(name);
 
         return _jailLocations.get(name.toLowerCase());
     }
 
-    /**
-     * Get all jail teleport locations.
-     */
-    public List<NamedLocation> getTeleports() {
+    @Override
+    public Collection<NamedLocation> getTeleports() {
         return new ArrayList<>(_jailLocations.values());
     }
 
-    /**
-     * Get the location a player is teleported to when
-     * released.
-     */
     @Nullable
+    @Override
     public Location getReleaseLocation() {
-
         if (_releaseLocation == null && _bounds.getWorld() != null) {
             return _bounds.getWorld().getSpawnLocation();
         }
@@ -269,15 +230,11 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
                 : null;
     }
 
-    /**
-     * Set the location a player is teleported to when
-     * released.
-     *
-     * @param location  The release location.
-     */
+    @Override
     public void setReleaseLocation(@Nullable Location location) {
-
         _releaseLocation = location;
+
+        checkDisposed();
 
         _dataNode.set("release-location", location);
         _dataNode.save();
@@ -285,33 +242,80 @@ public class Jail implements IPluginOwned, INamed, IDisposable {
 
     @Override
     public boolean isDisposed() {
-        return false;
+        return _isDisposed;
     }
 
     @Override
     public void dispose() {
-        Nucleus.getJailManager().unregisterJail(this);
+
+        if (this.equals(_provider.getServerJail()))
+            throw new IllegalStateException("Cannot dispose server jail.");
+
+        _provider.removeJail(this);
+
+        _dataNode.remove();
+        _dataNode.save();
+
+        _isDisposed = true;
     }
 
-    // load settings from data node
-    protected void load() {
+    NucleusJailProvider getProvider() {
+        return _provider;
+    }
 
-        _jailLocations.clear();
+    private void checkDisposed() {
+        if (_isDisposed)
+            throw new IllegalStateException("Cannot use a disposed jail.");
+    }
 
-        _releaseLocation = _dataNode.getLocation("release-location");
+    public class Bounds extends Region {
 
-        // Load jail teleport locations
-        IDataNode teleportNode = _dataNode.getNode("teleport");
+        /**
+         * Constructor
+         *
+         * @param plugin
+         * @param name
+         * @param dataNode
+         */
+        public Bounds(Plugin plugin, String name, @Nullable IDataNode dataNode) {
+            super(plugin, name, dataNode);
+        }
 
-        for(IDataNode node : teleportNode) {
+        /**
+         * Determine if the {@link #onPlayerLeave} method can be called.
+         *
+         * @param player  The player leaving the region.
+         */
+        @Override
+        protected boolean canDoPlayerLeave(Player player, LeaveRegionReason reason) {
+            PreCon.notNull(player);
 
-            String teleportName = node.getName();
+            return reason != LeaveRegionReason.QUIT_SERVER && isPrisoner(player);
+        }
 
-            Location location = teleportNode.getLocation(teleportName);
-            if (location == null)
-                continue;
+        /**
+         * Prevent imprisoned players from leaving the jail region.
+         *
+         * @param player  The player leaving the region.
+         */
+        @Override
+        protected void onPlayerLeave (final Player player, LeaveRegionReason reason) {
+            PreCon.notNull(player);
 
-            _jailLocations.put(teleportName.toLowerCase(), new NamedLocation(teleportName, location));
+            Scheduler.runTaskLater(Nucleus.getPlugin(), 10, new Runnable() {
+                @Override
+                public void run() {
+
+                    // prevent player from leaving jail
+                    Location tpLocation = getRandomTeleport();
+
+                    if (tpLocation == null)
+                        tpLocation = getCenter();
+
+                    player.teleport(tpLocation);
+                }
+            });
+
         }
     }
 }

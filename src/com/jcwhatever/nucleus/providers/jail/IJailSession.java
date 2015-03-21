@@ -22,40 +22,62 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.providers.jail;
 
-package com.jcwhatever.nucleus.internal.commands.jail;
+import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.mixins.IMeta;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.providers.jail.IJail;
-import com.jcwhatever.nucleus.utils.Jails;
-import com.jcwhatever.nucleus.utils.language.Localizable;
+import org.bukkit.Location;
 
-import org.bukkit.command.CommandSender;
+import java.util.Date;
+import java.util.UUID;
+import javax.annotation.Nullable;
 
+/**
+ * Interface for a jail session.
+ */
+public interface IJailSession extends IMeta, IDisposable {
 
-@CommandInfo(
-        parent="jail",
-        command="clearreleasetp",
-        description="Clear location where players are teleported when they are released from the default jail.")
+    /**
+     * Get the sessions owning jail.
+     */
+    public IJail getJail();
 
-public final class ClearReleaseTPSubCommand extends AbstractCommand {
+    /**
+     * Get the id of the imprisoned player.
+     */
+    UUID getPlayerId();
 
-    @Localizable static final String _SUCCESS = "Default Jail release location cleared.";
+    /**
+     * Get the session expiration date.
+     */
+    Date getExpiration();
 
-    @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    /**
+     * Determine if the player has been released from the session.
+     */
+    boolean isReleased ();
 
-        CommandException.checkNotConsole(this, sender);
-        
-        IJail jail = Jails.getServerJail();
-        jail.setReleaseLocation(null);
+    /**
+     * Determine if the session is expired.
+     */
+    boolean isExpired();
 
-        tellSuccess(sender, NucLang.get(_SUCCESS));
-    }
+    /**
+     * Release the player from the session.
+     */
+    boolean release();
 
+    /**
+     * Get the location the player is released at.
+     */
+    @Nullable
+    Location getReleaseLocation();
+
+    /**
+     * Set the release location.
+     *
+     * @param location  The location.
+     */
+    void setReleaseLocation(Location location);
 }
-
