@@ -28,7 +28,7 @@ public class MockMenuView extends MenuView {
     protected List<MenuItem> createMenuItems() {
 
         return ArrayUtils.asList(
-                menuItem = new MenuItem(0, new ItemStack(Material.WOOD), null, null));
+                menuItem = new MenuItem(0, new ItemStack(Material.WOOD)));
     }
 
     @Override

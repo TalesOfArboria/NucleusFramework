@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.regions.options.RegionPriority;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
-import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Chunk;
@@ -107,6 +107,11 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     @Override
     public boolean setOwner(@Nullable UUID ownerId) {
         return _region.setOwner(ownerId);
+    }
+
+    @Override
+    public MetaStore getMeta() {
+        return _region.getMeta();
     }
 
     @Override
@@ -340,22 +345,6 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     @Override
     public RegionShape getShape() {
         return _region.getShape();
-    }
-
-    @Override
-    public <T> T getMeta (MetaKey<T> key) {
-        return _region.getMeta(key);
-    }
-
-    @Nullable
-    @Override
-    public Object getMetaObject(Object key) {
-        return _region.getMetaObject(key);
-    }
-
-    @Override
-    public <T> void setMeta (MetaKey<T> key, @Nullable T value) {
-        _region.setMeta(key, value);
     }
 
     @Override

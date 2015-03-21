@@ -378,7 +378,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         }
 
         if (region instanceof ReadOnlyRegion) {
-            region = region.getMeta(REGION_HANDLE);
+            region = region.getMeta().get(REGION_HANDLE);
 
             if (region == null) {
                 throw new RuntimeException("ReadOnlyRegions handle has no meta reference to itself.");

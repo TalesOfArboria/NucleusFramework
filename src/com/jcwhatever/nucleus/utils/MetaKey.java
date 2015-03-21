@@ -32,6 +32,10 @@ import javax.annotation.Nullable;
  * A meta data key that is used as a singleton instance or as a wrapper to
  * an object that represents the key.
  *
+ * <p>Used to enforce value type within an IDE as well as create meta keys that
+ * cannot be accidentally used by external code or to prevent public access to a
+ * meta value in an otherwise publicly accessible {@link MetaStore}.</p>
+ *
  * @see IMeta
  * @see MetaStore
  */
@@ -72,29 +76,6 @@ public class MetaKey<V> {
      */
     public Class<V> getValueClass() {
         return _type;
-    }
-
-    /**
-     * Get the meta value represented by the key
-     * from the specified meta store.
-     *
-     * @param meta  The meta store.
-     *
-     * @return  Null if the value is not present or is not the correct type.
-     */
-    @Nullable
-    public V getValue(IMeta meta) {
-        PreCon.notNull(meta);
-
-        Object value = meta.getMetaObject(this);
-        if (value == null)
-            return null;
-
-        if (_type.isAssignableFrom(value.getClass())) {
-            return _type.cast(value);
-        }
-
-        return null;
     }
 
     @Override

@@ -219,6 +219,17 @@ public class MenuItemBuilder {
                                       @Nullable Map<Object, Object> meta,
                                       @Nullable List<Runnable> onClick) {
 
-        return new MenuItem(slot, itemStack, meta, onClick);
+        MenuItem menuItem = new MenuItem(slot, itemStack);
+
+        if (meta != null)
+            menuItem.getMeta().copyAll(meta);
+
+        if (onClick != null) {
+            for (Runnable runnable : onClick) {
+                menuItem.onClick(runnable);
+            }
+        }
+
+        return menuItem;
     }
 }

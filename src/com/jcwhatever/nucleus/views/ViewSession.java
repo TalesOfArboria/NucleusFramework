@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
-import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
@@ -38,7 +38,6 @@ import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -93,7 +92,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     }
 
     private final Player _player;
-    private final Map<Object, Object> _meta = new HashMap<>(10);
+    private final MetaStore _meta = new MetaStore();
     private final Block _sessionBlock;
 
     protected ViewContainer _first;
@@ -432,38 +431,9 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
         _isDisposed = true;
     }
 
-    @Nullable
     @Override
-    public <T> T getMeta(MetaKey<T> key) {
-        PreCon.notNull(key);
-
-        @SuppressWarnings("unchecked")
-        T item = (T)_meta.get(key);
-
-        return item;
-    }
-
-    @Nullable
-    @Override
-    public Object getMetaObject(Object key) {
-        PreCon.notNull(key);
-
-        return _meta.get(key);
-    }
-
-    @Override
-    public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
-        PreCon.notNull(key);
-
-        if (_isDisposed)
-            throw new RuntimeException("Cannot use a disposed ViewSession.");
-
-        if (value == null) {
-            _meta.remove(key);
-        }
-        else {
-            _meta.put(key, value);
-        }
+    public MetaStore getMeta() {
+        return _meta;
     }
 
     @Override

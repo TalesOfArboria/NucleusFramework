@@ -35,7 +35,7 @@ import com.jcwhatever.nucleus.regions.options.RegionPriority;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -54,7 +54,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +82,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     private final String _searchName;
     private final IDataNode _dataNode;
     private final IRegionEventListener _eventListener;
+    private final MetaStore _meta = new MetaStore();
 
     private RegionPriority _enterPriority = RegionPriority.DEFAULT;
     private RegionPriority _leavePriority = RegionPriority.DEFAULT;
@@ -90,7 +90,6 @@ public abstract class Region extends RegionSelection implements IRegion {
     private boolean _isEventListener;
     private boolean _isDisposed;
     private UUID _ownerId;
-    private Map<Object, Object> _meta = new HashMap<Object, Object>(30);
     private List<IRegionEventHandler> _eventHandlers = new ArrayList<>(10);
 
     /**
@@ -100,7 +99,7 @@ public abstract class Region extends RegionSelection implements IRegion {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
 
-        setMeta(InternalRegionManager.REGION_HANDLE, this);
+        _meta.set(InternalRegionManager.REGION_HANDLE, this);
         _eventListener = new RegionListener(this);
 
         _name = name;
@@ -234,6 +233,11 @@ public abstract class Region extends RegionSelection implements IRegion {
         }
 
         onCoordsChanged(getP1(), getP2());
+    }
+
+    @Override
+    public MetaStore getMeta() {
+        return _meta;
     }
 
     @Override
@@ -377,33 +381,6 @@ public abstract class Region extends RegionSelection implements IRegion {
             }
             _sync.notifyAll();
         }
-    }
-
-    @Override
-    public <T> T getMeta(MetaKey<T> key) {
-        PreCon.notNull(key);
-
-        @SuppressWarnings("unchecked")
-        T item = (T)_meta.get(key);
-
-        return item;
-    }
-
-    @Override
-    public Object getMetaObject(Object key) {
-        PreCon.notNull(key);
-
-        return _meta.get(key);
-    }
-
-    @Override
-    public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
-        if (value == null) {
-            _meta.remove(key);
-            return;
-        }
-
-        _meta.put(key, value);
     }
 
     @Override

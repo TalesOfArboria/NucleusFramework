@@ -32,7 +32,6 @@ import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.sounds.ResourceSound;
 import com.jcwhatever.nucleus.sounds.SoundManager;
 import com.jcwhatever.nucleus.sounds.SoundSettings;
-import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
@@ -383,21 +382,9 @@ public abstract class PlayList implements IPluginOwned {
             return _settings;
         }
 
-        @Nullable
         @Override
-        public <T> T getMeta(MetaKey<T> key) {
-            return _meta.getMeta(key);
-        }
-
-        @Nullable
-        @Override
-        public Object getMetaObject(Object key) {
-            return _meta.getMetaObject(key);
-        }
-
-        @Override
-        public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
-            _meta.setMeta(key, value);
+        public MetaStore getMeta() {
+            return _meta;
         }
 
         /**

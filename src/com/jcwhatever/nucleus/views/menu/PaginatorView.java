@@ -163,7 +163,7 @@ public class PaginatorView extends MenuView {
     @Override
     protected void onItemSelect(MenuItem menuItem) {
 
-        Integer selectedPage = menuItem.getMeta(SELECTED_PAGE);
+        Integer selectedPage = menuItem.getMeta().get(SELECTED_PAGE);
         if (selectedPage == null)
             throw new AssertionError();
 

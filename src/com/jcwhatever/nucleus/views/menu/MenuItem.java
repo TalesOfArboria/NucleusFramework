@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.views.menu;
 
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
@@ -36,9 +36,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
@@ -47,17 +45,34 @@ import javax.annotation.Nullable;
 public class MenuItem extends ItemStack implements IMeta {
 
     private final int _slot;
-    private Map<Object, Object> _meta;
+    private final MetaStore _meta = new MetaStore();
     private List<Runnable> _onClick;
 
-    public MenuItem(int slot, ItemStack itemStack,
-                         @Nullable Map<Object, Object> meta,
-                         @Nullable List<Runnable> onClick) {
+    /**
+     * Constructor.
+     *
+     * @param slot       The inventory slot the items belongs in.
+     * @param itemStack  The {@link org.bukkit.inventory.ItemStack}.
+     */
+    public MenuItem(int slot, ItemStack itemStack) {
         super(itemStack);
 
         _slot = slot;
-        _meta = meta;
-        _onClick = onClick;
+    }
+
+    /**
+     * Constructor.
+     *
+     * <p>Copies an existing menu item.</p>
+     *
+     * @param menuItem  The menu item to copy.
+     */
+    public MenuItem(MenuItem menuItem) {
+        super(menuItem.clone());
+
+        _slot = menuItem._slot;
+        _onClick = menuItem._onClick;
+        _meta.copyAll(menuItem);
     }
 
     /**
@@ -213,68 +228,13 @@ public class MenuItem extends ItemStack implements IMeta {
         _onClick.clear();
     }
 
-    /**
-     * Get a meta value from the menu items meta store.
-     *
-     * @param key The meta key.
-     * @param <T> The meta value type.
-     * @return Null if not found.
-     */
-    @Nullable
     @Override
-    public <T> T getMeta(MetaKey<T> key) {
-        PreCon.notNull(key);
-
-        @SuppressWarnings("unchecked")
-        T value = (T) getMetaMap().get(key);
-
-        return value;
-    }
-
-    /**
-     * Get a meta value from the menu items meta store.
-     *
-     * @param key The meta key.
-     * @return Null if not found.
-     */
-    @Nullable
-    @Override
-    public Object getMetaObject(Object key) {
-        PreCon.notNull(key);
-
-        return getMetaMap().get(key);
-    }
-
-    /**
-     * Set a meta value in the menu items meta store.
-     *
-     * @param key   The meta key.
-     * @param value The meta value.
-     * @param <T>   The meta value type.
-     */
-    @Override
-    public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
-        PreCon.notNull(key);
-
-        if (value == null)
-            getMetaMap().remove(key);
-        else
-            getMetaMap().put(key, value);
+    public MetaStore getMeta() {
+        return _meta;
     }
 
     @Override
     public MenuItem clone() {
-        ItemStack cloneStack = super.clone();
-
-        return new MenuItem(_slot, cloneStack,
-                _meta != null ? new HashMap<>(_meta) : null,
-                _onClick != null ? new ArrayList<>(_onClick) : null);
-    }
-
-    // get the meta map and instantiate if not already instantiated.
-    private Map<Object, Object> getMetaMap() {
-        if (_meta == null)
-            _meta = new HashMap<Object, Object>(10);
-        return _meta;
+        return new MenuItem(this);
     }
 }

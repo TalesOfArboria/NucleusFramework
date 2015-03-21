@@ -60,7 +60,7 @@ public class MenuItemBuilderTest {
         MetaKey<String> metaKey = new MetaKey<String>(String.class);
 
         MenuItem menuItem = new MenuItemBuilder(Material.STONE).meta(metaKey, "val").build(0);
-        assertEquals("val", menuItem.getMeta(metaKey));
+        assertEquals("val", menuItem.getMeta().get(metaKey));
     }
 
     /**

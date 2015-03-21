@@ -334,7 +334,7 @@ public final class InternalJailManager implements IJailManager {
 
                     long releaseMinutes = DateUtils.getDeltaMinutes(now, session.getExpiration(), TimeRound.ROUND_UP);
 
-                    Long lastMessageMin = session.getMeta(RELEASE_MESSAGE_META);
+                    Long lastMessageMin = session.getMeta().get(RELEASE_MESSAGE_META);
                     if (lastMessageMin == null ||
                             (lastMessageMin != releaseMinutes &&
                                     (releaseMinutes <= 5 || releaseMinutes % 10 == 0))) {
@@ -345,7 +345,7 @@ public final class InternalJailManager implements IJailManager {
                             NucMsg.tellAnon(p, NucLang.get(_RELEASE_TIME, releaseMinutes));
                         }
 
-                        session.setMeta(RELEASE_MESSAGE_META, releaseMinutes);
+                        session.getMeta().set(RELEASE_MESSAGE_META, releaseMinutes);
                     }
                 }
             }

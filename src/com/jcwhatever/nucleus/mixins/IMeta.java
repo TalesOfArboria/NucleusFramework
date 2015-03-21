@@ -24,9 +24,7 @@
 
 package com.jcwhatever.nucleus.mixins;
 
-import com.jcwhatever.nucleus.utils.MetaKey;
-
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.utils.MetaStore;
 
 /**
  * A mixin to define a type that contains meta data.
@@ -34,28 +32,7 @@ import javax.annotation.Nullable;
 public interface IMeta {
 
     /**
-     * Get a meta value.
-     *
-     * @param key  The meta key.
-     *
-     * @param <T>  The expected value type.
+     * Get the meta storage.
      */
-    @Nullable
-    <T> T getMeta(MetaKey<T> key);
-
-    /**
-     * Get a meta value as an object.
-     *
-     * @param key  The meta key.
-     */
-    @Nullable
-    Object getMetaObject(Object key);
-
-    /**
-     * Set a meta value.
-     *
-     * @param key    The meta key.
-     * @param value  The meta value.
-     */
-    <T> void setMeta(MetaKey<T> key, @Nullable T value);
+    MetaStore getMeta();
 }

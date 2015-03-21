@@ -28,7 +28,6 @@ package com.jcwhatever.nucleus.jail;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.IMeta;
-import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -136,6 +135,11 @@ public final class JailSession implements IMeta, IDisposable {
     }
 
     @Override
+    public MetaStore getMeta() {
+        return _meta;
+    }
+
+    @Override
     public boolean isDisposed() {
         return _isReleased;
     }
@@ -144,22 +148,5 @@ public final class JailSession implements IMeta, IDisposable {
     public void dispose() {
         _isReleased = true;
         _expires = null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getMeta(MetaKey<T> key) {
-        return _meta.getMeta(key);
-    }
-
-    @Nullable
-    @Override
-    public Object getMetaObject(Object key) {
-        return _meta.getMetaObject(key);
-    }
-
-    @Override
-    public <T> void setMeta(MetaKey<T> key, @Nullable T value) {
-        _meta.setMeta(key, value);
     }
 }
