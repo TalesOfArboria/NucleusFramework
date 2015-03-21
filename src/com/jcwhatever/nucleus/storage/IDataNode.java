@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import org.bukkit.Location;

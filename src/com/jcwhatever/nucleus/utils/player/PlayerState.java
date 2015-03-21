@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 

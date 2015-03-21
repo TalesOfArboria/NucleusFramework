@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.utils;
 
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 
 import org.bukkit.Location;

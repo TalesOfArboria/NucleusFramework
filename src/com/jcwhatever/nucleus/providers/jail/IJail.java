@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.regions.Region;
-import com.jcwhatever.nucleus.utils.NamedLocation;
+import com.jcwhatever.nucleus.utils.coords.NamedLocation;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
 import org.bukkit.Location;

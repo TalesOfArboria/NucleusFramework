@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.regions;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.regions.RegionOwnerChangedEvent;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
-import com.jcwhatever.nucleus.regions.data.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionPriority;

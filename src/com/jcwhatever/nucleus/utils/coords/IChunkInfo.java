@@ -22,34 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.data;
+package com.jcwhatever.nucleus.utils.coords;
 
-import org.bukkit.World.Environment;
+import org.bukkit.Chunk;
 
-import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
- * An object that contains info about a world.
+ * Object that contains info about a chunk.
  */
-public interface IWorldInfo {
+public interface IChunkInfo {
 
     /**
-     * Get the world unique ID.
+     * Get the world the chunk is in.
      */
-    public UUID getId();
+    WorldInfo getWorld();
 
     /**
-     * Get the world name.
+     * Get the chunk X coordinates.
      */
-    public String getName();
+    int getX();
 
     /**
-     * Get the world environment type.
+     * Get the chunk Z coordinates.
      */
-    public Environment getEnvironment();
+    int getZ();
 
     /**
-     * Determine if the world is loaded.
+     * Get the chunk.
      */
-    public boolean isLoaded();
+    @Nullable
+    public Chunk getChunk();
 }

@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

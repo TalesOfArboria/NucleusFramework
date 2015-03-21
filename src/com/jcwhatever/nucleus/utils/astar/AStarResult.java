@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.LinkedList;

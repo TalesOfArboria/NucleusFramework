@@ -29,7 +29,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemPickUpEvent;
-import com.jcwhatever.nucleus.regions.data.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;

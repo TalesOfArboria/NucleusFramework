@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.data;
+package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 

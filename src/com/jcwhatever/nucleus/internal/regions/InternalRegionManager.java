@@ -42,7 +42,7 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.RegionReason;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.NpcUtils;
 import com.jcwhatever.nucleus.utils.PreCon;

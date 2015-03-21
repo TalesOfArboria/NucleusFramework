@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils.text;
 
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.language.Localizable;

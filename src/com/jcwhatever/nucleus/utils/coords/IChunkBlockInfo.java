@@ -22,35 +22,47 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.data;
+package com.jcwhatever.nucleus.utils.coords;
 
-import org.bukkit.Chunk;
+import org.bukkit.Material;
 
-import javax.annotation.Nullable;
-
-/**
- * Object that contains info about a chunk.
+/*
+ * An object that contains data about a single block within a chunk.
  */
-public interface IChunkInfo {
+public interface IChunkBlockInfo {
 
     /**
-     * Get the world the chunk is in.
+     * Get the block material.
      */
-    WorldInfo getWorld();
+    Material getMaterial();
 
     /**
-     * Get the chunk X coordinates.
+     * Get the blocks meta data.
+     */
+    int getData();
+
+    /**
+     * Get the blocks emitted light.
+     */
+    int getEmittedLight();
+
+    /**
+     * Get the amount of skylight on the block.
+     */
+    int getSkylight();
+
+    /**
+     * Get the blocks X coordinates relative to its chunk.
      */
     int getX();
 
     /**
-     * Get the chunk Z coordinates.
+     * Get the blocks Y coordinates.
      */
-    int getZ();
+    int getY();
 
     /**
-     * Get the chunk.
+     * Get the Blocks Z coordinates relative to its chunk.
      */
-    @Nullable
-    public Chunk getChunk();
+    int getZ();
 }

@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar.basic;
 
-import com.jcwhatever.nucleus.utils.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarNode;
 import com.jcwhatever.nucleus.utils.astar.IAStarScore;

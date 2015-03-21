@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;

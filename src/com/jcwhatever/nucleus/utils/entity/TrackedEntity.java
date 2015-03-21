@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
-import com.jcwhatever.nucleus.regions.data.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;

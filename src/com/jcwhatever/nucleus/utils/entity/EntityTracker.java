@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.utils.entity;
 
 import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.regions.data.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;

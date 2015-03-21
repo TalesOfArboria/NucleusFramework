@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils.astar;
 
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 

@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemDespawnEvent;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemSpawnEvent;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.entity.TrackedEntity;

@@ -25,10 +25,10 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.collections.wrap.ConversionIteratorWrapper;
-import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.EnumUtils;
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;

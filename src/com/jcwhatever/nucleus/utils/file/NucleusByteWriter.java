@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.file;
 
-import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;

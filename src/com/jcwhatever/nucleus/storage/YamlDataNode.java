@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.collections.observer.agent.AgentSetMultimap;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.BatchTracker;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;

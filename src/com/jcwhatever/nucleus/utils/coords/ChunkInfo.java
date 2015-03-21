@@ -22,11 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.data;
+package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.Coords2Di;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 

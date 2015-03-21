@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 

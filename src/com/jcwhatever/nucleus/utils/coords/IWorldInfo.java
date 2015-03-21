@@ -22,47 +22,34 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.data;
+package com.jcwhatever.nucleus.utils.coords;
 
-import org.bukkit.Material;
+import org.bukkit.World.Environment;
 
-/*
- * An object that contains data about a single block within a chunk.
+import java.util.UUID;
+
+/**
+ * An object that contains info about a world.
  */
-public interface IChunkBlockInfo {
+public interface IWorldInfo {
 
     /**
-     * Get the block material.
+     * Get the world unique ID.
      */
-    Material getMaterial();
+    public UUID getId();
 
     /**
-     * Get the blocks meta data.
+     * Get the world name.
      */
-    int getData();
+    public String getName();
 
     /**
-     * Get the blocks emitted light.
+     * Get the world environment type.
      */
-    int getEmittedLight();
+    public Environment getEnvironment();
 
     /**
-     * Get the amount of skylight on the block.
+     * Determine if the world is loaded.
      */
-    int getSkylight();
-
-    /**
-     * Get the blocks X coordinates relative to its chunk.
-     */
-    int getX();
-
-    /**
-     * Get the blocks Y coordinates.
-     */
-    int getY();
-
-    /**
-     * Get the Blocks Z coordinates relative to its chunk.
-     */
-    int getZ();
+    public boolean isLoaded();
 }

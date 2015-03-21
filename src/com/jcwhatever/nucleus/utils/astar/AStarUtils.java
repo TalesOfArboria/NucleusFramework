@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.Coords3Di;
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeContainer;
 import com.jcwhatever.nucleus.utils.astar.basic.AStarWorldExaminer;

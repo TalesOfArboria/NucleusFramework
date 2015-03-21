@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.providers.jail.IJailSession;
 import com.jcwhatever.nucleus.regions.Region;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.NamedLocation;
+import com.jcwhatever.nucleus.utils.coords.NamedLocation;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;

@@ -7,6 +7,7 @@ import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R2.MockEntity;
 import com.jcwhatever.bukkit.v1_8_R2.MockWorld;
 import com.jcwhatever.nucleus.NucleusTest;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.Location;

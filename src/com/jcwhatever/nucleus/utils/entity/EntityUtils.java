@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
-import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 

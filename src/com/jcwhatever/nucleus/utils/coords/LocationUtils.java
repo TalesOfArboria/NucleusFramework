@@ -23,9 +23,10 @@
  */
 
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.utils.coords;
 
-import com.jcwhatever.nucleus.regions.data.SyncLocation;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;

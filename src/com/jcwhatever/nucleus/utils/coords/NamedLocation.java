@@ -23,9 +23,10 @@
  */
 
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;
 import org.bukkit.World;
