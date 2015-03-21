@@ -155,6 +155,7 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
         // check if the item is marked for disposal
         if (dispose) {
             item.dispose();
+            node.remove();
             return null;
         }
 
