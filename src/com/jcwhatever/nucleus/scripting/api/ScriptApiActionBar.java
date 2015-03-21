@@ -24,9 +24,9 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
-import com.jcwhatever.nucleus.actionbar.ActionBar;
-import com.jcwhatever.nucleus.actionbar.PersistentActionBar;
-import com.jcwhatever.nucleus.actionbar.TimedActionBar;
+import com.jcwhatever.nucleus.utils.actionbar.ActionBar;
+import com.jcwhatever.nucleus.utils.actionbar.PersistentActionBar;
+import com.jcwhatever.nucleus.utils.actionbar.TimedActionBar;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;

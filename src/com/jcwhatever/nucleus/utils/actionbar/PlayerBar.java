@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.actionbar;
+package com.jcwhatever.nucleus.utils.actionbar;
 
 import com.jcwhatever.nucleus.utils.TimeScale;
 
