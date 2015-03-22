@@ -215,7 +215,7 @@ public class ArgumentParser {
 
             for (CommandParameter param : parameters) {
                 if (param.hasDefaultValue()) {
-                    CommandArgument commandArgument = new CommandArgument(param, param.getDefaultValue());
+                    CommandArgument commandArgument = new CommandArgument(param, null);
                     results.getFloatingArgs().add(commandArgument);
                     results.getArgMap().put(param.getName(), commandArgument);
                 } else {
