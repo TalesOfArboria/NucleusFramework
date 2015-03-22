@@ -111,6 +111,9 @@ public class CollectionUtils {
         PreCon.notNull(searchTerm);
         PreCon.notNull(textGetter);
 
+        if (candidates.size() == 0)
+            return new ArrayList<>(0);
+
         PriorityQueue<WeightedSearchResult<T>> queue = new PriorityQueue<>(candidates.size());
 
         String caseSearch = searchTerm.toUpperCase();
