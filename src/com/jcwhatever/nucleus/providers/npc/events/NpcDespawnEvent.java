@@ -95,10 +95,11 @@ public class NpcDespawnEvent extends NpcEvent implements Cancellable, ICancellab
      * Determine if the event can be cancelled.
      *
      * <p>Event is only cancellable if the reason for despawn is
-     * {@link NpcDespawnReason#INVOKED}.</p>
+     * {@link NpcDespawnReason#INVOKED} or {@link NpcDespawnReason#CHUNK_UNLOAD}.</p>
      */
     public boolean isCancellable() {
-        return _reason == NpcDespawnReason.INVOKED;
+        return _reason == NpcDespawnReason.INVOKED ||
+                _reason == NpcDespawnReason.CHUNK_UNLOAD;
     }
 
     @Override
