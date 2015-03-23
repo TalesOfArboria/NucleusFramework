@@ -28,6 +28,8 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
+import com.jcwhatever.nucleus.providers.npc.events.NpcDespawnEvent.NpcDespawnReason;
+import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent.NpcSpawnReason;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -206,7 +208,7 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * <p>This is invoked by the external implementations of the
      * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      */
-    public void onSpawn() {}
+    public void onSpawn(NpcSpawnReason reason) {}
 
     /**
      * Invoked when the traits NPC is despawned.
@@ -214,7 +216,7 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * <p>This is invoked by the external implementations of the
      * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      */
-    public void onDespawn() {}
+    public void onDespawn(NpcDespawnReason reason) {}
 
     /**
      * Invoked when the trait is enabled.
