@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.providers.npc;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
+import com.jcwhatever.nucleus.storage.IDataNode;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -120,4 +121,13 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
      * @return  Self for chaining.
      */
     INpc lookLocation(Location location);
+
+    /**
+     * Save the {@link INpc} to a data node.
+     *
+     * @param dataNode  The data node to save to.
+     *
+     * @return  True if the {@link INpc} was saved.
+     */
+    boolean save(IDataNode dataNode);
 }

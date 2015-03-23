@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.npc.navigator.INpcNavScriptEvents;
 import com.jcwhatever.nucleus.providers.npc.traits.INpcTraitTypeRegistry;
+import com.jcwhatever.nucleus.storage.IDataNode;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -87,6 +88,34 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, INpcScriptEvents, I
      */
     @Nullable
     INpc create(String npcName, String type);
+
+    /**
+     * Load an {@link INpc} from a data node.
+     *
+     * @param dataNode  The data node to load the NPC from.
+     *
+     * @return  The loaded {@link INpc} or null if failed.
+     */
+    @Nullable
+    INpc load(IDataNode dataNode);
+
+    /**
+     * Load all {@link INpc}'s from a data node.
+     *
+     * @param dataNode  The data node to load from.
+     *
+     * @return  True if successful, otherwise false.
+     */
+    boolean loadAll(IDataNode dataNode);
+
+    /**
+     * Save all {@link INpc}'s to a data node.
+     *
+     * @param dataNode  The data node to save to.
+     *
+     * @return  True if successful, otherwise false.
+     */
+    boolean saveAll(IDataNode dataNode);
 
     /**
      * Get all un-disposed {@link INpc}'s in the registry.
