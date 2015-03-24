@@ -821,16 +821,16 @@ public final class LocationUtils {
     }
 
     /**
-     * Ensure a pitch angle is between -90 and 90 degrees.
+     * Ensure a pitch angle is no more than 90 degrees and no less than -90 degrees.
      *
-     * @param pitch  The pitch angle to clamp.
+     * @param pitch  The pitch angle to limit.
      *
-     * @return Clamped pitch angle.
+     * @return Limited pitch angle.
      */
-    public static float clampPitch(float pitch) {
+    public static float limitPitch(float pitch) {
         return pitch >= 0
-                ? ((90 + pitch) % 180) - 90
-                : 90 - ((Math.abs(pitch) + 90) % 180);
+                ? Math.min(90, pitch)
+                : Math.max(-90, pitch);
     }
 
     /**
