@@ -140,6 +140,9 @@ public class MetaStore {
     public MetaStore copyAll(IMeta meta) {
         PreCon.notNull(meta);
 
+        if (meta.getMeta()._meta == null)
+            return this;
+
         return copyAll(meta.getMeta()._meta);
     }
 
@@ -152,6 +155,9 @@ public class MetaStore {
      */
     public MetaStore copyAll(MetaStore metaStore) {
         PreCon.notNull(metaStore);
+
+        if (metaStore._meta == null)
+            return this;
 
         return copyAll(metaStore._meta);
     }
