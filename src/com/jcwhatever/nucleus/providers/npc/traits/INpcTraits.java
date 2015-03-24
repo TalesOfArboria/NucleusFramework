@@ -44,23 +44,18 @@ public interface INpcTraits {
     INpc getNpc();
 
     /**
-     * Determine if the NPC is invulnerable to damage.
+     * Determine if the NPC is vulnerable to damage.
      */
-    boolean isInvulnerable();
+    boolean isVulnerable();
 
     /**
      * Make the NPC invulnerable to damage.
      *
-     * @return  Self for chaining.
-     */
-    INpcTraits invulnerable();
-
-    /**
-     * Make the NPC vulnerable to damage.
+     * @param isVulnerable  True to make the Npc vulnerable to damage, otherwise false.
      *
      * @return  Self for chaining.
      */
-    INpcTraits vulnerable();
+    INpcTraits setVulnerable(boolean isVulnerable);
 
     /**
      * Get the NPC entity type.
