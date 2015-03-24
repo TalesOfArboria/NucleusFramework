@@ -131,6 +131,8 @@ public interface INpcTraits {
     /**
      * Add a new trait to the NPC.
      *
+     * <p>If the trait is already added, the existing instance is returned.</p>
+     *
      * @param name  The name of the trait type to add. The trait type must be registered with
      *              the NPC provider or the NPC's registry.
      *
