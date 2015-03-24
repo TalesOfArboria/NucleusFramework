@@ -68,7 +68,7 @@ public class MenuItem extends ItemStack implements IMeta {
      * @param menuItem  The menu item to copy.
      */
     public MenuItem(MenuItem menuItem) {
-        super(menuItem.clone());
+        super(menuItem);
 
         _slot = menuItem._slot;
         _onClick = menuItem._onClick;
