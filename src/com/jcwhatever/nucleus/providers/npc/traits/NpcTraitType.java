@@ -80,7 +80,7 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
      *
      * @return  The newly created instance or the one the NPC already had.
      */
-    public NpcTrait attachTrait(INpc npc) {
+    public NpcTrait addToNpc(INpc npc) {
         PreCon.notNull(npc);
 
         if (npc.getRegistry().get(getName()) == null)
