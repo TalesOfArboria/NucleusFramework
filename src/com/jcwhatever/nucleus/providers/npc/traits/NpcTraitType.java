@@ -30,6 +30,8 @@ import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import org.bukkit.plugin.Plugin;
+
 import javax.annotation.Nullable;
 
 /**
@@ -38,7 +40,30 @@ import javax.annotation.Nullable;
  */
 public abstract class NpcTraitType implements INamed, IPluginOwned {
 
-    private String _lookupName;
+    private final Plugin _plugin;
+    private final String _name;
+    private final String _lookupName;
+
+    public NpcTraitType(Plugin plugin, String name) {
+        PreCon.notNull(plugin);
+        PreCon.notNullOrEmpty(name);
+
+        _plugin = plugin;
+        _name = name;
+        _lookupName = getPlugin() == Nucleus.getPlugin()
+                ? getName()
+                : getPlugin().getName() + ':' + getName();
+    }
+
+    @Override
+    public final Plugin getPlugin() {
+        return _plugin;
+    }
+
+    @Override
+    public final String getName() {
+        return _name;
+    }
 
     /**
      * Get the trait types lookup name.
@@ -46,14 +71,6 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
      * <p>This is the name used to reference the trait.</p>
      */
     public final String getLookupName() {
-
-        if (_lookupName == null) {
-
-            _lookupName = getPlugin() == Nucleus.getPlugin()
-                    ? getName()
-                    : getPlugin().getName() + ':' + getName();
-        }
-
         return _lookupName;
     }
 
