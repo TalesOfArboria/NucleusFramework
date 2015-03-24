@@ -771,9 +771,7 @@ public final class LocationUtils {
         PreCon.notNull(source);
         PreCon.notNull(output);
 
-        yaw = yaw >= 0
-                ? yaw % 360
-                : 180 + (180 - (Math.abs(yaw) % 180));
+        yaw = clampYaw(yaw);
 
         double radianYaw = Math.toRadians(-yaw);
 
@@ -807,6 +805,32 @@ public final class LocationUtils {
         double angle = Math.atan2(deltaY, deltaX);
 
         return -(float)Math.toDegrees(angle);
+    }
+
+    /**
+     * Ensure a yaw angle is between -180 and 180 degrees.
+     *
+     * @param yaw  The yaw angle to clamp.
+     *
+     * @return Clamped yaw angle.
+     */
+    public static float clampYaw(float yaw) {
+        return yaw >= 0
+                ? ((180 + yaw) % 360) - 180
+                : 180 - ((Math.abs(yaw) + 180) % 360);
+    }
+
+    /**
+     * Ensure a pitch angle is between -90 and 90 degrees.
+     *
+     * @param pitch  The pitch angle to clamp.
+     *
+     * @return Clamped pitch angle.
+     */
+    public static float clampPitch(float pitch) {
+        return pitch >= 0
+                ? ((90 + pitch) % 180) - 90
+                : 90 - ((Math.abs(pitch) + 90) % 180);
     }
 
     /**
