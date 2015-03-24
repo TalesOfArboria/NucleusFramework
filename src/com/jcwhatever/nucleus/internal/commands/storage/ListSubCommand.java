@@ -75,7 +75,7 @@ public final class ListSubCommand extends AbstractCommand {
 
             IStorageProvider storageProvider = Nucleus.getProviderManager().getStorageProvider(plugin);
 
-            tell(sender, _PLUGIN_PROVIDER, plugin.getName(), storageProvider.getName());
+            tell(sender, _PLUGIN_PROVIDER, plugin.getName(), storageProvider.getInfo().getName());
             return;
         }
 
@@ -84,13 +84,13 @@ public final class ListSubCommand extends AbstractCommand {
         List<IStorageProvider> providers = Nucleus.getProviderManager().getStorageProviders();
         IStorageProvider defaultProvider = Nucleus.getProviderManager().getStorageProvider();
 
-        pagin.addFormatted(FormatTemplate.LIST_ITEM_DESCRIPTION, defaultProvider.getName(), _LABEL_DEFAULT);
+        pagin.addFormatted(FormatTemplate.LIST_ITEM_DESCRIPTION, defaultProvider.getInfo().getName(), _LABEL_DEFAULT);
 
         for (IStorageProvider provider : providers) {
             if (provider == defaultProvider)
                 continue;
 
-            pagin.add(provider.getName());
+            pagin.add(provider.getInfo().getName());
         }
 
         pagin.show(sender, page, FormatTemplate.LIST_ITEM);

@@ -29,6 +29,8 @@ import javax.annotation.Nullable;
 
 /**
  * Interface for a player lookup provider.
+ *
+ * <p>Should be implemented by a type that extends {@link Provider}.</p>
  */
 public interface IPlayerLookupProvider extends IProvider {
 

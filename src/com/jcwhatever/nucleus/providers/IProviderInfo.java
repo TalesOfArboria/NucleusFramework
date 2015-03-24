@@ -22,44 +22,45 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers.economy;
+package com.jcwhatever.nucleus.providers;
 
-import com.jcwhatever.nucleus.providers.IProvider;
+import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 
-import java.util.UUID;
+import java.util.List;
 
 /**
- * Interface for an economy provider.
- *
- * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
+ * Information about an {@link IProvider}.
  */
-public interface IEconomyProvider extends IProvider {
+public interface IProviderInfo extends INamedInsensitive {
 
     /**
-     * Get the currency of the provider. The provider currency
-     * conversion factor is 1.0
+     * Get the module version as a displayable string.
      */
-    ICurrency getCurrency();
+    public String getVersion();
 
     /**
-     * Get a global economy account.
-     *
-     * @param playerId  The ID of the account owner.
+     * Get the logical version of the module.
      */
-    IAccount getAccount(UUID playerId);
+    public int getLogicalVersion();
 
     /**
-     * Get an object used to run a transaction. Used to prevent or
-     * minimize the chance of account balances being
-     * incorrect should 1 or more operations in the
-     * transaction fail.
+     * Get the modules description.
      */
-    IEconomyTransaction createTransaction();
+    public String getDescription();
 
     /**
-     * Get the underlying economy provider if the
-     * provider is wrapped. Otherwise, the handle is
-     * the {@link IEconomyProvider} instance.
+     * Get the class name of the module.
      */
-    Object getHandle();
+    public String getModuleClassName();
+
+    /**
+     * Get the names of Bukkit plugins the module depends on.
+     */
+    public List<String> getBukkitDepends();
+
+    /**
+     * Get the names of Bukkit plugins the module can depend on but
+     * does not require.
+     */
+    public List<String> getBukkitSoftDepends();
 }

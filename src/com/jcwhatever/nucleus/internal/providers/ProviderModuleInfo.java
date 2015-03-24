@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.internal.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.providers.IProviderInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.modules.YamlModuleInfo;
@@ -39,7 +40,7 @@ import java.util.jar.JarFile;
 /**
  * Module info for a provider.
  */
-public class ProviderModuleInfo extends YamlModuleInfo {
+public class ProviderModuleInfo extends YamlModuleInfo implements IProviderInfo {
 
     private String _version;
     private int _logicalVersion;
@@ -57,45 +58,32 @@ public class ProviderModuleInfo extends YamlModuleInfo {
         super(Nucleus.getPlugin(), "provider.yml", jarFile);
     }
 
-    /**
-     * Get the module version as a displayable string..
-     */
+    @Override
     public String getVersion() {
         return _version;
     }
 
-    /**
-     * Get the logical version of the module.
-     */
+    @Override
     public int getLogicalVersion() {
         return _logicalVersion;
     }
 
-    /**
-     * Get the modules description.
-     */
+    @Override
     public String getDescription() {
         return _description;
     }
 
-    /**
-     * Get the class name of the module.
-     */
+    @Override
     public String getModuleClassName() {
         return _moduleClassName;
     }
 
-    /**
-     * Get the names of Bukkit plugins the module depends on.
-     */
+    @Override
     public List<String> getBukkitDepends() {
         return Collections.unmodifiableList(_bukkitDepends);
     }
 
-    /**
-     * Get the names of Bukkit plugins the module can depend on but
-     * does not require.
-     */
+    @Override
     public List<String> getBukkitSoftDepends() {
         return Collections.unmodifiableList(_bukkitSoftDepends);
     }

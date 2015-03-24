@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.internal.providers.bankitems;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsAccount;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsBank;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
@@ -44,7 +46,7 @@ import javax.annotation.Nullable;
 /**
  * Nucleus implementation of {@link IBankItemsProvider}.
  */
-public class BankItemsProvider implements IBankItemsProvider {
+public class BankItemsProvider extends Provider implements IBankItemsProvider {
 
     private final TimedHashMap<UUID, BankItemsAccount> _globalAccounts =
             new TimedHashMap<>(Nucleus.getPlugin(), 25, 10, TimeScale.MINUTES);
@@ -56,38 +58,11 @@ public class BankItemsProvider implements IBankItemsProvider {
      * Constructor.
      */
     public BankItemsProvider() {
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusBankItems", "Default bank items provider."));
+
         _bankNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bankitems.banks"));
         load();
-    }
-
-    @Override
-    public String getName() {
-        return "NucleusBankItems";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
     }
 
     @Override

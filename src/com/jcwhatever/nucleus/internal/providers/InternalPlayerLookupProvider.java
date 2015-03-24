@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.providers;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.providers.IPlayerLookupProvider;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -46,43 +47,15 @@ import javax.annotation.Nullable;
 /**
  * Nucleus frameworks default player lookup provider
  */
-public final class InternalPlayerLookupProvider implements IPlayerLookupProvider {
+public final class InternalPlayerLookupProvider extends Provider implements IPlayerLookupProvider {
 
     private final Object _dataSync = new Object();
     private volatile IDataNode _nameData;
 
     public InternalPlayerLookupProvider(Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(new BukkitEventListener(), plugin);
-    }
-
-    @Override
-    public String getName() {
-        return "NucleusPlayerLookup";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusPlayerLookup", "Default player lookup provider."));
     }
 
     @Nullable

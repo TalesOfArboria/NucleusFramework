@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.internal.providers.permissions;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.permissions.IPermission;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.utils.BatchTracker;
@@ -44,7 +45,7 @@ import java.util.Set;
 /**
  * Abstract implementation of a permissions handler
  */
-public abstract class AbstractPermissionsProvider implements IPermissionsProvider {
+public abstract class AbstractPermissionsProvider extends Provider implements IPermissionsProvider {
 
     private static final BatchTracker _batch = new BatchTracker();
     private static Set<Permission> _toRecalculate = new HashSet<>(1000);

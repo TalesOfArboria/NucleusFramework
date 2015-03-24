@@ -25,6 +25,8 @@
 package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.google.common.collect.MapMaker;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
@@ -43,7 +45,7 @@ import java.util.UUID;
 /**
  * Vault economy provider.
  */
-public class VaultEconomyProvider implements IEconomyProvider {
+public class VaultEconomyProvider extends Provider implements IEconomyProvider {
 
     public static boolean hasVaultEconomy() {
 
@@ -61,34 +63,9 @@ public class VaultEconomyProvider implements IEconomyProvider {
     private Economy _economy;
     private VaultCurrency _currency;
 
-    @Override
-    public String getName() {
-        return "VaultEconomy";
-    }
-
-    @Override
-    public String getVersion() {
-        return Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
+    public VaultEconomyProvider() {
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "VaultEconomy", "Vault economy provider."));
     }
 
     @Override

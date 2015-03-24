@@ -36,6 +36,8 @@ import javax.annotation.Nullable;
  * NPC Provider interface.
  *
  * <p>Represents a simple NPC provider for use primarily in a scripted environment.</p>
+ *
+ * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
  */
 public interface INpcProvider extends IProvider, INpcTraitTypeRegistry {
 

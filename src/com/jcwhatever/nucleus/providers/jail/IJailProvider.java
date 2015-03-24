@@ -34,6 +34,8 @@ import javax.annotation.Nullable;
 
 /**
  * Interface for a jail provider.
+ *
+ * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
  */
 public interface IJailProvider extends IProvider {
 

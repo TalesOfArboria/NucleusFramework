@@ -28,11 +28,13 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.Bukkit;
@@ -41,7 +43,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -56,7 +57,7 @@ import javax.annotation.Nullable;
  * NucleusFramework's default selection provider when no other
  * provider is available.
  */
-public final class NucleusSelectionProvider implements IRegionSelectProvider {
+public final class NucleusSelectionProvider extends Provider implements IRegionSelectProvider {
 
     @Localizable
     static final String _P1_SELECTED =
@@ -68,38 +69,16 @@ public final class NucleusSelectionProvider implements IRegionSelectProvider {
     private final Map<UUID, Location> _p1Selections = new PlayerMap<>(Nucleus.getPlugin());
     private final Map<UUID, Location> _p2Selections = new PlayerMap<>(Nucleus.getPlugin());
 
-    private BukkitEventListener _listener;
     private final Object _sync = new Object();
 
-    @Override
-    public String getName() {
-        return "NucleusRegionSelector";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
+    public NucleusSelectionProvider() {
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusRegionSelector", "Default region selection provider."));
     }
 
     @Override
     public void onEnable() {
-        _listener = new BukkitEventListener();
-        Bukkit.getPluginManager().registerEvents(_listener, Nucleus.getPlugin());
-    }
-
-    @Override
-    public void onDisable() {
-        HandlerList.unregisterAll(_listener);
+        Bukkit.getPluginManager().registerEvents(new BukkitEventListener(), Nucleus.getPlugin());
     }
 
     @Nullable

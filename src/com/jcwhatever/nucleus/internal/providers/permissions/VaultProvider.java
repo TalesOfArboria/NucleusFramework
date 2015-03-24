@@ -25,7 +25,7 @@
 
 package com.jcwhatever.nucleus.internal.providers.permissions;
 
-import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 
 import org.bukkit.Bukkit;
@@ -74,42 +74,16 @@ public class VaultProvider extends AbstractPermissionsProvider {
      * Constructor.
      */
     public VaultProvider() {
+
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusVaultPermissions", "Default Vault permissions provider."));
+
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
                 .getRegistration(net.milkbowl.vault.permission.Permission.class);
 
         if (permissionProvider != null) {
             _perms = permissionProvider.getProvider();
         }
-    }
-
-    @Override
-    public String getName() {
-        return "Vault";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
     }
 
     @Override

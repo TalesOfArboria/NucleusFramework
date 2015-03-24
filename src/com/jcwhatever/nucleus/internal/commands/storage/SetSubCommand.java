@@ -74,7 +74,7 @@ public final class SetSubCommand extends AbstractCommand {
 
         Nucleus.getProviderManager().setStorageProvider(plugin, provider);
 
-        tellSuccess(sender, NucLang.get(_SUCCESS, plugin.getName(), provider.getName()));
+        tellSuccess(sender, NucLang.get(_SUCCESS, plugin.getName(), provider.getInfo().getName()));
     }
 }
 

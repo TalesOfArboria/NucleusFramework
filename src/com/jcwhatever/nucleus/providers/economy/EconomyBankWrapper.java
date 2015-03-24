@@ -114,36 +114,6 @@ public class EconomyBankWrapper extends EconomyWrapper implements IBankEconomyPr
         return _provider.deleteBank(bankName);
     }
 
-    @Override
-    public String getName() {
-        return _provider.getName();
-    }
-
-    @Override
-    public String getVersion() {
-        return _provider.getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return _provider.getLogicalVersion();
-    }
-
-    @Override
-    public void onRegister() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onEnable() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onDisable() {
-        throw new UnsupportedOperationException();
-    }
-
     public static class BankWrapper implements IBank {
 
         private final IBank _bank;

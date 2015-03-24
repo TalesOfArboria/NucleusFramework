@@ -24,8 +24,9 @@
 
 package com.jcwhatever.nucleus.internal.providers.storage;
 
-import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
@@ -38,36 +39,11 @@ import java.io.File;
 /**
  * Yaml file data storage.
  */
-public final class YamlStorageProvider implements IStorageProvider {
+public final class YamlStorageProvider extends Provider implements IStorageProvider {
 
-    @Override
-    public String getName() {
-        return "Yaml";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
+    public YamlStorageProvider() {
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusYaml", "Default YAML based storage provider."));
     }
 
     @Override

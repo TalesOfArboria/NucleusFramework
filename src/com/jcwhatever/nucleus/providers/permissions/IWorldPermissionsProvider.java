@@ -30,6 +30,8 @@ import org.bukkit.plugin.Plugin;
 
 /**
  * A permissions provider with World permissions support.
+ *
+ * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
  */
 public interface IWorldPermissionsProvider extends IPermissionsProvider {
 

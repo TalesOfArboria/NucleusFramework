@@ -27,6 +27,8 @@ package com.jcwhatever.nucleus.internal.providers.jail;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.jail.IJailSession;
@@ -68,7 +70,7 @@ import javax.annotation.Nullable;
 /*
  * 
  */
-public class NucleusJailProvider implements IJailProvider{
+public class NucleusJailProvider extends Provider implements IJailProvider{
 
     @Localizable static final String _RELEASE_TIME = "Release in {0} minutes.";
 
@@ -82,24 +84,9 @@ public class NucleusJailProvider implements IJailProvider{
     private Warden _warden = new Warden();
     private NucleusJail _serverJail;
 
-    @Override
-    public String getName() {
-        return "NucleusJailProvider";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-
+    public NucleusJailProvider() {
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusJails", "Default jail provider."));
     }
 
     @Override

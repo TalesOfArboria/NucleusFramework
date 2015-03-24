@@ -26,6 +26,8 @@ package com.jcwhatever.nucleus.internal.providers.economy;
 
 import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
@@ -50,7 +52,7 @@ import javax.annotation.Nullable;
 /**
  * NucleusFramework's simple economy provider
  */
-public final class NucleusEconomyProvider implements IBankEconomyProvider {
+public final class NucleusEconomyProvider extends Provider implements IBankEconomyProvider {
 
     private final Plugin _plugin;
     private final IDataNode _globalAccountNode;
@@ -67,6 +69,9 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
     public NucleusEconomyProvider(Plugin plugin) {
         PreCon.notNull(plugin);
 
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusEconomy", "Default economy provider."));
+
         IDataNode dataNode = new YamlDataNode(plugin, new DataPath("economy.config"));
         _globalAccountNode = new YamlDataNode(plugin, new DataPath("economy.global"));
         _plugin = plugin;
@@ -80,36 +85,6 @@ public final class NucleusEconomyProvider implements IBankEconomyProvider {
         DecimalFormat formatter = new DecimalFormat(decimalFormat);
 
         _currency = new NucleusCurrency(singular, plural, 1.0D, formatTemplate, formatter);
-    }
-
-    @Override
-    public String getName() {
-        return "NucleusEconomy";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
     }
 
     @Override

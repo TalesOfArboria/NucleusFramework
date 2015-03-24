@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.providers.permissions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
 import com.jcwhatever.nucleus.providers.permissions.IPermission;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
@@ -66,6 +67,9 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
      */
     public BukkitProvider() {
 
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusBukkitPerms", "Default Bukkit permissions provider."));
+
         // get permissions data node
         _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bukkit-permissions"));
         _dataNode.load();
@@ -75,36 +79,6 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
             _bukkitListener = new PermissionListener();
             Bukkit.getPluginManager().registerEvents(_bukkitListener, Nucleus.getPlugin());
         }
-    }
-
-    @Override
-    public String getName() {
-        return "Bukkit";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
     }
 
     @Override

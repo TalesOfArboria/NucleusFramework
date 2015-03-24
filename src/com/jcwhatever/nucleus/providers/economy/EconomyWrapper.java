@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.providers.economy;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.economy.EconDepositEvent;
 import com.jcwhatever.nucleus.events.economy.EconWithdrawEvent;
+import com.jcwhatever.nucleus.providers.IProviderInfo;
 import com.jcwhatever.nucleus.providers.economy.EconomyBankWrapper.BankWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -50,36 +51,6 @@ public class EconomyWrapper implements IEconomyProvider {
         PreCon.notNull(provider);
 
         _provider = provider;
-    }
-
-    @Override
-    public String getName() {
-        return _provider.getName();
-    }
-
-    @Override
-    public String getVersion() {
-        return _provider.getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return _provider.getLogicalVersion();
-    }
-
-    @Override
-    public void onRegister() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onEnable() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onDisable() {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -108,6 +79,31 @@ public class EconomyWrapper implements IEconomyProvider {
     @Override
     public IEconomyProvider getHandle() {
         return _provider;
+    }
+
+    @Override
+    public IProviderInfo getInfo() {
+        return _provider.getInfo();
+    }
+
+    @Override
+    public void setInfo(IProviderInfo info) {
+        _provider.setInfo(info);
+    }
+
+    @Override
+    public void registerTypes() {
+        _provider.registerTypes();
+    }
+
+    @Override
+    public void enable() {
+        _provider.enable();
+    }
+
+    @Override
+    public void disable() {
+        _provider.disable();
     }
 
     public static class AccountWrapper implements IAccount {

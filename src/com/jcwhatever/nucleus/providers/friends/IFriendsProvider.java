@@ -32,6 +32,8 @@ import javax.annotation.Nullable;
 
 /**
  * Interface for a friend management provider.
+ *
+ * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
  */
 public interface IFriendsProvider extends IProvider {
 

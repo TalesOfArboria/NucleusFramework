@@ -26,24 +26,18 @@ package com.jcwhatever.nucleus.internal.providers;
 
 import com.jcwhatever.nucleus.BukkitPlugin;
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
-import com.jcwhatever.nucleus.providers.jail.IJailProvider;
-import com.jcwhatever.nucleus.providers.npc.INpcProvider;
+import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.utils.DependencyRunner;
 import com.jcwhatever.nucleus.utils.DependencyRunner.DependencyStatus;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IDependantRunnable;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IFinishHandler;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 import com.jcwhatever.nucleus.utils.modules.ClassLoadMethod;
 import com.jcwhatever.nucleus.utils.modules.IModuleInfo;
 import com.jcwhatever.nucleus.utils.modules.JarModuleLoader;
-import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
-import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
-import com.jcwhatever.nucleus.providers.IProvider;
-import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
-import com.jcwhatever.nucleus.providers.IStorageProvider;
-import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
-import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -57,7 +51,7 @@ import javax.annotation.Nullable;
 /**
  * Loads provider modules from /plugins/NucleusFramework/providers folder
  */
-public final class ProviderLoader extends JarModuleLoader<IProvider> {
+public final class ProviderLoader extends JarModuleLoader<Provider> {
 
     private final InternalProviderManager _manager;
     private final File _folder;
@@ -67,13 +61,11 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
     // keyed to module class name
     private final Map<String, ProviderModuleInfo> _moduleInfoMap = new HashMap<>(10);
 
-    private boolean _isReady;
-
     /**
      * Constructor.
      */
     public ProviderLoader(InternalProviderManager providerManager) {
-        super(Nucleus.getPlugin(), IProvider.class);
+        super(Nucleus.getPlugin(), Provider.class);
 
         PreCon.notNull(providerManager);
 
@@ -110,57 +102,20 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
             @Override
             public void onFinish(List<IDependantRunnable> notRun) {
 
-                List<IProvider> providers = getModules();
+                List<Provider> providers = getModules();
 
                 _manager.setLoading(true);
 
-                for (IProvider provider : providers) {
+                for (Provider provider : providers) {
 
-                    if (provider instanceof IStorageProvider) {
-
-                        _manager.registerStorageProvider((IStorageProvider) provider);
-                    }
-                    else if (provider instanceof IPermissionsProvider) {
-
-                        _manager.setPermissionsProvider((IPermissionsProvider) provider);
-                    }
-                    else if (provider instanceof IRegionSelectProvider) {
-
-                        _manager.setRegionSelectionProvider((IRegionSelectProvider) provider);
-                    }
-                    else if (provider instanceof IEconomyProvider) {
-
-                        _manager.setEconomyProvider((IEconomyProvider) provider);
-                    }
-                    else if (provider instanceof IBankItemsProvider) {
-
-                        _manager.setBankItemsProvider((IBankItemsProvider) provider);
-                    }
-                    else if (provider instanceof INpcProvider) {
-
-                        _manager.setNpcProvider((INpcProvider) provider);
-                    }
-                    else if (provider instanceof IJailProvider) {
-
-                        _manager.setJailProvider((IJailProvider) provider);
-                    }
-                    else {
-                        removeModule(provider.getName());
+                    if (!_manager.addProvider(provider)) {
+                        NucMsg.debug("Failed to add service provider: '{0}'", provider.getInfo().getName());
+                        removeModule(provider.getInfo().getName());
                     }
                 }
 
                 _manager.setLoading(false);
-
-                _manager.getStorageProvider().onEnable();
-                _manager.getPermissionsProvider().onEnable();
-                _manager.getRegionSelectionProvider().onEnable();
-                _manager.getEconomyProvider().onEnable();
-                _manager.getBankItemsProvider().onEnable();
-                _manager.getJailProvider().onEnable();
-
-                INpcProvider npcProvider = _manager.getNpcProvider();
-                if (npcProvider != null)
-                    npcProvider.onEnable();
+                _manager.enableProviders();
 
                 ((BukkitPlugin)Nucleus.getPlugin()).notifyProvidersReady();
             }
@@ -189,21 +144,21 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
     @Nullable
     @Override
-    protected IModuleInfo createModuleInfo(final IProvider moduleInstance) {
+    protected IModuleInfo createModuleInfo(Provider moduleInstance) {
         return _moduleInfoMap.get(moduleInstance.getClass().getCanonicalName());
     }
 
     @Nullable
     @Override
-    protected IProvider instantiateModule(Class<IProvider> clazz) {
+    protected Provider instantiateModule(Class<Provider> clazz) {
 
-        final IProvider instance;
+        final Provider instance;
         final ProviderModuleInfo info = _moduleInfoMap.get(clazz.getCanonicalName());
         if (info == null)
             return null;
 
         try {
-            Constructor<IProvider> constructor = clazz.getDeclaredConstructor();
+            Constructor<Provider> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             instance = constructor.newInstance();
         } catch (NoSuchMethodException | InvocationTargetException |
@@ -212,6 +167,7 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
             return null;
         }
 
+        instance.setInfo(info);
         _depend.add(new IDependantRunnable() {
 
             @Override
@@ -232,7 +188,7 @@ public final class ProviderLoader extends JarModuleLoader<IProvider> {
 
             @Override
             public void run() {
-                instance.onRegister();
+                // do nothing
             }
         });
 

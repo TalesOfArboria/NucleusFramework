@@ -33,6 +33,8 @@ import javax.annotation.Nullable;
 
 /**
  * A permissions provider that supports world group permissions.
+ *
+ * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
  */
 public interface IWorldGroupPermissionsProvider extends IPermissionsProvider {
 

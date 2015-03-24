@@ -31,6 +31,8 @@ import java.util.Collection;
 
 /**
  * A permissions provider with support for group permissions.
+ *
+ * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
  */
 public interface IGroupPermissionsProvider extends IPermissionsProvider {
 

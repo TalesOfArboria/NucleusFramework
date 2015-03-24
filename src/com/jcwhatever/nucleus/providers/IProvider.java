@@ -24,43 +24,41 @@
 
 package com.jcwhatever.nucleus.providers;
 
-import com.jcwhatever.nucleus.mixins.INamed;
-
 /**
  * Basic interface for a NucleusFramework service provider.
  */
-public interface IProvider extends INamed {
+public interface IProvider {
 
     /**
-     * Get the providers name.
+     * Get info about the provider.
      */
-    @Override
-    String getName();
+    IProviderInfo getInfo();
 
     /**
-     * Get the providers version.
+     * Invoked to set the providers info.
+     *
+     * <p>For internal use.</p>
      */
-    String getVersion();
+    void setInfo(IProviderInfo info);
 
     /**
-     * Get the providers logical version.
+     * Invoked to register provider supplied types.
+     *
+     * <p>For internal use.</p>
      */
-    int getLogicalVersion();
+    void registerTypes();
 
     /**
-     * Invoked when it is time for the provider to
-     * register any types that may be used by other plugins
-     * and/or providers.
+     * Invoked to enable the provider.
+     *
+     * <p>For internal use.</p>
      */
-    void onRegister();
-
-    /**
-     * Invoked when the provider is enabled.
-     */
-    void onEnable();
+    void enable();
 
     /**
      * Invoked when the provider is disabled.
+     *
+     * <p>For internal use.</p>
      */
-    void onDisable();
+    void disable();
 }

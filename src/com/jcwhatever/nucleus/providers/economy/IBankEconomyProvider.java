@@ -30,6 +30,8 @@ import javax.annotation.Nullable;
 
 /**
  * An economy provider that supports banks.
+ *
+ * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
  */
 public interface IBankEconomyProvider extends IEconomyProvider {
 

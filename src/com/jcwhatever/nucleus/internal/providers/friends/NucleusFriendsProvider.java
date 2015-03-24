@@ -27,6 +27,8 @@ package com.jcwhatever.nucleus.internal.providers.friends;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.friends.FriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
@@ -47,41 +49,16 @@ import javax.annotation.Nullable;
 /**
  * Nucleus implementation of {@link IFriendsProvider}.
  */
-public class NucleusFriendsProvider implements IFriendsProvider {
+public class NucleusFriendsProvider extends Provider implements IFriendsProvider {
 
     private final Map<UUID, FriendInfo> _friends = new TimedHashMap<>(
             Nucleus.getPlugin(), 15, 30, TimeScale.MINUTES);
 
     private final Object _sync = new Object();
 
-    @Override
-    public String getName() {
-        return "NucleusFriendProvider";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
+    public NucleusFriendsProvider() {
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "NucleusFriends", "Default friends provider."));
     }
 
     @Override

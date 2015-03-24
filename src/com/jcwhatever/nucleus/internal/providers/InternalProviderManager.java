@@ -38,6 +38,7 @@ import com.jcwhatever.nucleus.internal.providers.selection.WorldEditSelectionPro
 import com.jcwhatever.nucleus.internal.providers.storage.YamlStorageProvider;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.providers.IPlayerLookupProvider;
+import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
@@ -59,8 +60,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -69,6 +72,8 @@ import javax.annotation.Nullable;
 public final class InternalProviderManager implements IProviderManager {
 
     private IDataNode _dataNode;
+
+    private Set<IProvider> _providers = new HashSet<>(25);
 
     private volatile IPlayerLookupProvider _playerLookup;
     private volatile IFriendsProvider _friends;
@@ -91,19 +96,92 @@ public final class InternalProviderManager implements IProviderManager {
     private boolean _isProvidersLoading;
 
     public InternalProviderManager() {
-        _storageProviders.put(_yamlStorage.getName().toLowerCase(), _yamlStorage);
+        _storageProviders.put(_yamlStorage.getInfo().getSearchName(), _yamlStorage);
+    }
+
+    public void enableProviders() {
+
+        for (IProvider provider : _providers) {
+            provider.registerTypes();
+        }
+
+        for (IProvider provider : _providers) {
+            provider.enable();
+        }
+    }
+
+    public boolean addProvider(IProvider provider) {
+        PreCon.notNull(provider);
+        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
+
+        boolean isAdded = false;
+
+        if (provider instanceof IPlayerLookupProvider) {
+            remove(_playerLookup);
+            _playerLookup = add(provider);
+            isAdded = true;
+        }
+
+        if (provider instanceof IFriendsProvider) {
+            remove(_friends);
+            _friends = add(provider);
+            isAdded = true;
+        }
+
+        if (provider instanceof IPermissionsProvider) {
+            remove(_permissions);
+            _permissions = add(provider);
+            isAdded = true;
+        }
+
+        if (provider instanceof IRegionSelectProvider) {
+            remove(_regionSelect);
+            _regionSelect = add(provider);
+            isAdded = true;
+        }
+
+        if (provider instanceof IBankItemsProvider) {
+            remove(_bankItems);
+            _bankItems = add(_bankItems);
+            isAdded = true;
+        }
+
+        if (provider instanceof IEconomyProvider) {
+            remove(_economy);
+            add(_economy);
+            _economy = provider instanceof EconomyWrapper
+                    ? (IEconomyProvider)provider
+                    : provider instanceof IBankEconomyProvider
+                    ? new EconomyBankWrapper((IBankEconomyProvider)provider)
+                    : new EconomyWrapper((IEconomyProvider)provider);
+            isAdded = true;
+        }
+
+        if (provider instanceof IStorageProvider) {
+            remove(_defaultStorage);
+            _defaultStorage = add(provider);
+            registerStorageProvider((IStorageProvider) provider);
+            isAdded = true;
+        }
+
+        if (provider instanceof INpcProvider) {
+            remove(_npc);
+            _npc = add(provider);
+            isAdded = true;
+        }
+
+        if (provider instanceof IJailProvider) {
+            remove(_jail);
+            _jail = add(provider);
+            isAdded = true;
+        }
+
+        return isAdded;
     }
 
     @Override
     public IPlayerLookupProvider getPlayerLookupProvider() {
         return _playerLookup;
-    }
-
-    public void setPlayerLookupProvider(IPlayerLookupProvider lookupProvider) {
-        PreCon.notNull(lookupProvider);
-        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
-
-        _playerLookup = lookupProvider;
     }
 
     @Override
@@ -112,13 +190,6 @@ public final class InternalProviderManager implements IProviderManager {
             _friends = new NucleusFriendsProvider();
 
         return _friends;
-    }
-
-    public void setFriendsProvider(IFriendsProvider provider) {
-        PreCon.notNull(provider);
-        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
-
-        _friends = provider;
     }
 
     @Override
@@ -131,27 +202,9 @@ public final class InternalProviderManager implements IProviderManager {
         return _permissions;
     }
 
-    public void setPermissionsProvider(IPermissionsProvider permissionsProvider) {
-        PreCon.notNull(permissionsProvider);
-        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
-
-        _permissions = permissionsProvider;
-    }
-
     @Override
     public IRegionSelectProvider getRegionSelectionProvider() {
         return _regionSelect;
-    }
-
-    public void setRegionSelectionProvider(IRegionSelectProvider provider) {
-        PreCon.notNull(provider);
-        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
-
-        if (_regionSelect instanceof IDisposable && provider != _regionSelect) {
-            ((IDisposable)_regionSelect).dispose();
-        }
-
-        _regionSelect = provider;
     }
 
     @Override
@@ -163,54 +216,25 @@ public final class InternalProviderManager implements IProviderManager {
         return _bankItems;
     }
 
-    public void setBankItemsProvider(IBankItemsProvider provider) {
-        PreCon.notNull(provider);
-        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
-
-        _bankItems = provider;
-    }
-
     @Override
     public IEconomyProvider getEconomyProvider() {
         return _economy;
     }
 
-    public void setEconomyProvider(IEconomyProvider provider) {
-        PreCon.notNull(provider);
-        PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");
+    @Nullable
+    @Override
+    public INpcProvider getNpcProvider() {
+        return _npc;
+    }
 
-        if (_economy instanceof IDisposable && provider != _economy) {
-            ((IDisposable)_economy).dispose();
-        }
-
-        IDisposable disposable = (IDisposable) (provider instanceof EconomyWrapper
-                ? ((EconomyWrapper) provider).getHandle()
-                : provider);
-
-        if (disposable != null)
-            disposable.dispose();
-
-        _economy = provider instanceof EconomyWrapper
-                ? provider
-                : provider instanceof IBankEconomyProvider
-                ? new EconomyBankWrapper((IBankEconomyProvider)provider)
-                : new EconomyWrapper(provider);
+    @Override
+    public IJailProvider getJailProvider() {
+        return _jail;
     }
 
     @Override
     public IStorageProvider getStorageProvider() {
         return _defaultStorage != null ? _defaultStorage : _yamlStorage;
-    }
-
-    public void setStorageProvider(IStorageProvider storageProvider) {
-        PreCon.notNull(storageProvider);
-        PreCon.isValid(_isProvidersLoading, "Cannot set providers outside of provider load time.");
-
-        if (_defaultStorage instanceof IDisposable && storageProvider != _defaultStorage) {
-            ((IDisposable) _defaultStorage).dispose();
-        }
-
-        _defaultStorage = storageProvider;
     }
 
     @Override
@@ -233,13 +257,13 @@ public final class InternalProviderManager implements IProviderManager {
 
         synchronized (_pluginStorage) {
 
-            List<String> pluginNames = dataNode.getStringList(storageProvider.getName(),
+            List<String> pluginNames = dataNode.getStringList(storageProvider.getInfo().getName(),
                     new ArrayList<String>(5));
 
             assert pluginNames != null;
 
             pluginNames.add(plugin.getName());
-            dataNode.set(storageProvider.getName(), pluginNames);
+            dataNode.set(storageProvider.getInfo().getName(), pluginNames);
         }
 
         dataNode.save();
@@ -258,41 +282,19 @@ public final class InternalProviderManager implements IProviderManager {
         return new ArrayList<>(_storageProviders.values());
     }
 
-    @Nullable
-    @Override
-    public INpcProvider getNpcProvider() {
-        return _npc;
-    }
-
-    public void setNpcProvider(INpcProvider provider) {
-        PreCon.notNull(provider);
-
-        _npc = provider;
-    }
-
-    @Override
-    public IJailProvider getJailProvider() {
-        return _jail;
-    }
-
-    public void setJailProvider(IJailProvider provider) {
-        PreCon.notNull(provider);
-
-        _jail = provider;
-    }
-
     public void registerStorageProvider(IStorageProvider storageProvider) {
         PreCon.notNull(storageProvider);
-        PreCon.isValid(_isProvidersLoading, "Cannot register providers outside of provider load time.");
 
-        IStorageProvider previous = _storageProviders.put(storageProvider.getName().toLowerCase(), storageProvider);
+        IStorageProvider previous = _storageProviders.put(
+                storageProvider.getInfo().getSearchName(), storageProvider);
+
         if (previous instanceof IDisposable && previous != storageProvider) {
             ((IDisposable) previous).dispose();
         }
 
         IDataNode dataNode = getDataNode().getNode("storage");
 
-        List<String> pluginNames = dataNode.getStringList(storageProvider.getName(), null);
+        List<String> pluginNames = dataNode.getStringList(storageProvider.getInfo().getName(), null);
         if (pluginNames != null) {
             for (String pluginName : pluginNames) {
                 _pluginStorage.put(pluginName.toLowerCase(), storageProvider);
@@ -303,6 +305,7 @@ public final class InternalProviderManager implements IProviderManager {
     void setLoading(boolean isLoading) {
         _isProvidersLoading = isLoading;
 
+        // set default providers
         if (!isLoading) {
             if (_jail == null) {
                 _jail = new NucleusJailProvider();
@@ -332,5 +335,20 @@ public final class InternalProviderManager implements IProviderManager {
             _dataNode = new YamlDataNode(Nucleus.getPlugin(), new DataPath("providers"));
         }
         return _dataNode;
+    }
+
+    private void remove(@Nullable IProvider provider) {
+        if (provider != null) {
+            _providers.remove(provider);
+        }
+    }
+
+    private <T extends IProvider> T add(IProvider provider) {
+        _providers.add(provider);
+
+        @SuppressWarnings("unchecked")
+        T cast = (T)provider;
+
+        return cast;
     }
 }

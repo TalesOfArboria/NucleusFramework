@@ -24,8 +24,9 @@
 
 package com.jcwhatever.nucleus.internal.providers.selection;
 
-import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
+import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -44,7 +45,7 @@ import javax.annotation.Nullable;
 /**
  * WorldEdit region selection provider
  */
-public final class WorldEditSelectionProvider implements IRegionSelectProvider {
+public final class WorldEditSelectionProvider extends Provider implements IRegionSelectProvider {
 
     private static Boolean _isWorldEditInstalled = null;
     private static Plugin _wePlugin;
@@ -61,34 +62,9 @@ public final class WorldEditSelectionProvider implements IRegionSelectProvider {
 
     private final Object _sync = new Object();
 
-    @Override
-    public String getName() {
-        return "WorldEdit";
-    }
-
-    @Override
-    public String getVersion() {
-        return Nucleus.getPlugin().getDescription().getVersion();
-    }
-
-    @Override
-    public int getLogicalVersion() {
-        return 0;
-    }
-
-    @Override
-    public void onRegister() {
-        // do nothing
-    }
-
-    @Override
-    public void onEnable() {
-        // do nothing
-    }
-
-    @Override
-    public void onDisable() {
-        // do nothing
+    public WorldEditSelectionProvider() {
+        setInfo(new InternalProviderInfo(this.getClass(),
+                "WorldEdit", "WorldEdit region selection provider."));
     }
 
     @Override
@@ -137,6 +113,9 @@ public final class WorldEditSelectionProvider implements IRegionSelectProvider {
 
         Location p1 = selection.getP1();
         Location p2 = selection.getP2();
+
+        assert p1 != null;
+        assert p2 != null;
 
         if (!p1.getWorld().equals(p2.getWorld())) {
             return false;
