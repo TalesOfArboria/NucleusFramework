@@ -194,7 +194,7 @@ public class AStarWorldExaminer implements IAStarExaminer {
 
             // prevent walking through corners
             if (!isXValid || !isZValid) {
-                return PathableResult.INVALID_POINT;
+                return PathableResult.INVALID_COLUMN;
             }
         }
 
