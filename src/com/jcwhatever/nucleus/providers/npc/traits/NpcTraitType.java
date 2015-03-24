@@ -32,8 +32,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
-
 /**
  * NPC Trait provider. Represents a single type of trait. Used to create
  * instances of the trait type for specific {@link INpc} instances.
@@ -83,19 +81,6 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
      * @return  The newly created instance or the one the NPC already had.
      */
     public NpcTrait attachTrait(INpc npc) {
-        return attachTrait(npc, null);
-    }
-
-    /**
-     * Create a new instance of the trait for a specific {@link INpc}
-     * instance, copy the settings from another trait, and attach it.
-     *
-     * @param npc       The npc instance.
-     * @param copyFrom  The {@link INpc} to copy settings from into the new trait instance.
-     *
-     * @return  The newly created instance or the one the NPC already had.
-     */
-    public NpcTrait attachTrait(INpc npc, @Nullable INpc copyFrom) {
         PreCon.notNull(npc);
 
         if (npc.getRegistry().get(getName()) == null)
