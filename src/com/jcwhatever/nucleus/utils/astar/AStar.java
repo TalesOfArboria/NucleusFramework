@@ -24,10 +24,10 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarResult.AStarResultStatus;
 import com.jcwhatever.nucleus.utils.astar.IAStarExaminer.PathableResult;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 
 /**
  * A-Star based pathfinder engine.
@@ -38,7 +38,7 @@ public class AStar {
 
     private final IAStarExaminer _examiner;
     private double _range = 18;
-    private int _maxDropHeight = 5;
+    private int _maxDropHeight = 4;
     private long _maxIterations = -1;
 
     /**
@@ -174,8 +174,6 @@ public class AStar {
      */
     protected void openAdjacent(AStarNode node) {
 
-        AStarContext context = node.getContext();
-
         // column validations, work from top down, skip columns that are false
         boolean[][] columns = new boolean[][] {
                 { true, true,  true },
@@ -189,33 +187,48 @@ public class AStar {
             for (byte x = -1; x <= 1; x++) {
                 for (byte z = -1; z <= 1; z++) {
 
-                    if (!columns[x + 1][z + 1])
-                        continue;
-
-                    // get instance of candidate node
-                    AStarNode candidate = node.getRelative(x, y, z);
-
-                    // check range
-                    if (candidate.getCoords().distanceSquared(
-                            context.getStartCoords()) > getRangeSquared()) {
-                        columns[x + 1][z + 1] = false;
-                        continue;
-                    }
-
-                    PathableResult result = getExaminer().isPathable(node, candidate);
-
-                    switch (result) {
-                        case INVALID_COLUMN:
-                            columns[x + 1][z + 1] = false;
-                            // fall through
-                        case INVALID_POINT:
-                            continue;
-                        case VALID:
-                            context.getContainer().open(node, candidate);
-                            break;
-                    }
+                    openCandidate(node, x, y, z, columns);
                 }
             }
+        }
+    }
+
+    /**
+     * Invoked to check a node candidate and, if valid, open it.
+     *
+     * @param parent   The parent path node.
+     * @param x        The relative X position from the parent.
+     * @param y        The relative Y position from the parent.
+     * @param z        The relative Z position from the parent.
+     * @param columns  Column validation array. A 3x3 array of booleans.
+     */
+    protected void openCandidate(AStarNode parent, int x, int y, int z, boolean[][] columns) {
+
+        if (!columns[x + 1][z + 1])
+            return;
+
+        // get instance of candidate node
+        AStarNode candidate = parent.getRelative(x, y, z);
+        AStarContext context = parent.getContext();
+
+        // check range
+        if (candidate.getCoords().distanceSquared(
+                context.getStartCoords()) > getRangeSquared()) {
+            columns[x + 1][z + 1] = false;
+            return;
+        }
+
+        PathableResult result = getExaminer().isPathable(parent, candidate);
+
+        switch (result) {
+            case VALID:
+                context.getContainer().open(parent, candidate);
+                // fall through, don't check columns where a valid node was already found.
+            case INVALID_COLUMN:
+                columns[x + 1][z + 1] = false;
+                // fall through
+            case INVALID_POINT:
+                break;
         }
     }
 }
