@@ -72,6 +72,8 @@ import javax.annotation.Nullable;
  */
 public class NucleusJailProvider extends Provider implements IJailProvider{
 
+    public static final String NAME = "NucleusJails";
+
     @Localizable static final String _RELEASE_TIME = "Release in {0} minutes.";
 
     private static final MetaKey<Long> RELEASE_MESSAGE_META = new MetaKey<>(Long.class);
@@ -86,7 +88,7 @@ public class NucleusJailProvider extends Provider implements IJailProvider{
 
     public NucleusJailProvider() {
         setInfo(new InternalProviderInfo(this.getClass(),
-                "NucleusJails", "Default jail provider."));
+                NAME, "Default jail provider."));
     }
 
     @Override

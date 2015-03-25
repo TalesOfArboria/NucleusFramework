@@ -41,9 +41,11 @@ import java.io.File;
  */
 public final class YamlStorageProvider extends Provider implements IStorageProvider {
 
+    public static final String NAME = "NucleusYAML";
+
     public YamlStorageProvider() {
         setInfo(new InternalProviderInfo(this.getClass(),
-                "NucleusYaml", "Default YAML based storage provider."));
+                NAME, "Default YAML based storage provider."));
     }
 
     @Override

@@ -51,6 +51,8 @@ import javax.annotation.Nullable;
  */
 public class NucleusFriendsProvider extends Provider implements IFriendsProvider {
 
+    public static final String NAME = "NucleusFriends";
+
     private final Map<UUID, FriendInfo> _friends = new TimedHashMap<>(
             Nucleus.getPlugin(), 15, 30, TimeScale.MINUTES);
 

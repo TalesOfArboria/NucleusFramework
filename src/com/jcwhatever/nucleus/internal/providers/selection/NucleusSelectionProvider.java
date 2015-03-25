@@ -59,8 +59,9 @@ import javax.annotation.Nullable;
  */
 public final class NucleusSelectionProvider extends Provider implements IRegionSelectProvider {
 
-    @Localizable
-    static final String _P1_SELECTED =
+    public static final String NAME = "NucleusRegionSelector";
+
+    @Localizable static final String _P1_SELECTED =
             "{DARK_PURPLE}P1 region point selected:\n{DARK_PURPLE}{0: location}";
 
     @Localizable static final String _P2_SELECTED =
@@ -73,7 +74,7 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
 
     public NucleusSelectionProvider() {
         setInfo(new InternalProviderInfo(this.getClass(),
-                "NucleusRegionSelector", "Default region selection provider."));
+                NAME, "Default region selection provider."));
     }
 
     @Override

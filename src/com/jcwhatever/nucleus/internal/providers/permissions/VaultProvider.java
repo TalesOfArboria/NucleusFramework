@@ -43,6 +43,8 @@ import javax.annotation.Nullable;
  */
 public class VaultProvider extends AbstractPermissionsProvider {
 
+    public static final String NAME = "VaultPermissions";
+
     protected Permission _perms = null;
 
     public static boolean hasVaultPermissions() {
@@ -76,7 +78,7 @@ public class VaultProvider extends AbstractPermissionsProvider {
     public VaultProvider() {
 
         setInfo(new InternalProviderInfo(this.getClass(),
-                "NucleusVaultPermissions", "Default Vault permissions provider."));
+                NAME, "Default Vault permissions provider."));
 
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
                 .getRegistration(net.milkbowl.vault.permission.Permission.class);

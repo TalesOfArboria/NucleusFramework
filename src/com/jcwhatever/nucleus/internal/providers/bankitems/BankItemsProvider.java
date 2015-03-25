@@ -48,6 +48,8 @@ import javax.annotation.Nullable;
  */
 public class BankItemsProvider extends Provider implements IBankItemsProvider {
 
+    public static final String NAME = "NucleusBankItems";
+
     private final TimedHashMap<UUID, BankItemsAccount> _globalAccounts =
             new TimedHashMap<>(Nucleus.getPlugin(), 25, 10, TimeScale.MINUTES);
 
@@ -59,7 +61,7 @@ public class BankItemsProvider extends Provider implements IBankItemsProvider {
      */
     public BankItemsProvider() {
         setInfo(new InternalProviderInfo(this.getClass(),
-                "NucleusBankItems", "Default bank items provider."));
+                NAME, "Default bank items provider."));
 
         _bankNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bankitems.banks"));
         load();

@@ -47,6 +47,8 @@ import javax.annotation.Nullable;
  */
 public final class WorldEditSelectionProvider extends Provider implements IRegionSelectProvider {
 
+    public static final String NAME = "WorldEdit";
+
     private static Boolean _isWorldEditInstalled = null;
     private static Plugin _wePlugin;
 
@@ -64,7 +66,7 @@ public final class WorldEditSelectionProvider extends Provider implements IRegio
 
     public WorldEditSelectionProvider() {
         setInfo(new InternalProviderInfo(this.getClass(),
-                "WorldEdit", "WorldEdit region selection provider."));
+                NAME, "WorldEdit region selection provider."));
     }
 
     @Override

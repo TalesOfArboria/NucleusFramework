@@ -47,6 +47,8 @@ import java.util.UUID;
  */
 public class VaultEconomyProvider extends Provider implements IEconomyProvider {
 
+    public static final String NAME = "VaultEconomy";
+
     public static boolean hasVaultEconomy() {
 
         Plugin vault = Bukkit.getPluginManager().getPlugin("Vault");
@@ -65,7 +67,7 @@ public class VaultEconomyProvider extends Provider implements IEconomyProvider {
 
     public VaultEconomyProvider() {
         setInfo(new InternalProviderInfo(this.getClass(),
-                "VaultEconomy", "Vault economy provider."));
+                NAME, "Vault economy provider."));
     }
 
     @Override

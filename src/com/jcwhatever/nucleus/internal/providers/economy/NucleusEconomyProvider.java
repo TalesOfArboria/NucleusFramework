@@ -54,6 +54,8 @@ import javax.annotation.Nullable;
  */
 public final class NucleusEconomyProvider extends Provider implements IBankEconomyProvider {
 
+    public static final String NAME = "NucleusEconomy";
+
     private final Plugin _plugin;
     private final IDataNode _globalAccountNode;
 
@@ -70,7 +72,7 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
         PreCon.notNull(plugin);
 
         setInfo(new InternalProviderInfo(this.getClass(),
-                "NucleusEconomy", "Default economy provider."));
+                NAME, "Default economy provider."));
 
         IDataNode dataNode = new YamlDataNode(plugin, new DataPath("economy.config"));
         _globalAccountNode = new YamlDataNode(plugin, new DataPath("economy.global"));

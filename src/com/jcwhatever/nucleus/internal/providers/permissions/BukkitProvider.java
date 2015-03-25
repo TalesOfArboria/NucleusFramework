@@ -57,6 +57,8 @@ import javax.annotation.Nullable;
  */
 public final class BukkitProvider extends AbstractPermissionsProvider {
 
+    public static final String NAME = "NucleusBukkitPerms";
+
     private static Map<UUID, PermissionAttachment> _transient = new PlayerMap<PermissionAttachment>(Nucleus.getPlugin());
     private static Listener _bukkitListener;
 
@@ -68,7 +70,7 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
     public BukkitProvider() {
 
         setInfo(new InternalProviderInfo(this.getClass(),
-                "NucleusBukkitPerms", "Default Bukkit permissions provider."));
+                NAME, "Default Bukkit permissions provider."));
 
         // get permissions data node
         _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bukkit-permissions"));

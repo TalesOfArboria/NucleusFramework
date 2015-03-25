@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 
 import org.bukkit.plugin.Plugin;
 
+import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -40,6 +41,31 @@ import javax.annotation.Nullable;
  * Interface for the provider manager.
  */
 public interface IProviderManager {
+
+    /**
+     * Set the preferred provider implementation to use for the specified provider interface.
+     *
+     * <p>Allows setting which provider to use when multiple providers are available for
+     * a specific API.</p>
+     *
+     * <p>A server restart is required for settings to take effect.</p>
+     *
+     * @param apiType       The provider interface class.
+     * @param providerName  The name of the provider. Null to clear preferred.
+     *
+     * @return  True if successful, otherwise false.
+     */
+    boolean setPreferred(Class<? extends IProvider> apiType, @Nullable String providerName);
+
+    /**
+     * Get the preferred provider implementation for the specified provider interface.
+     *
+     * @param apiType  The provider interface class.
+     *
+     * @return  The name of the provider or null if preferred not set.
+     */
+    @Nullable
+    String getPreferred(Class<? extends IProvider> apiType);
 
     /**
      * Get the player lookup provider.
@@ -120,4 +146,19 @@ public interface IProviderManager {
      * Get the jail provider.
      */
     IJailProvider getJailProvider();
+
+    /**
+     * Get the names of all providers that were loaded.
+     *
+     * <p>Includes the names of providers that were not used.</p>
+     */
+    Collection<String> getAllProviderNames();
+
+    /**
+     * Get the names of all providers that can be used for the specified
+     * service provider API type.
+     *
+     * @param apiType  The API type.
+     */
+    Collection<String> getProviderNames(Class<? extends IProvider> apiType);
 }
