@@ -44,6 +44,7 @@ import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
+import com.jcwhatever.nucleus.providers.ProviderType;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.EconomyBankWrapper;
 import com.jcwhatever.nucleus.providers.economy.EconomyWrapper;
@@ -77,9 +78,9 @@ public final class InternalProviderManager implements IProviderManager {
     private IDataNode _dataNode;
 
     // names of all providers that were found
-    private Map<String, String> _providerNames = new HashMap<>(25);
-    private Multimap<String, String> _providerNamesByApi =
-            MultimapBuilder.hashKeys().hashSetValues().build();
+    private Map<String, ProviderInfo> _providerInfo = new HashMap<>(25);
+    private Multimap<ProviderType, String> _providerNamesByApi =
+            MultimapBuilder.enumKeys(ProviderType.class).hashSetValues().build();
 
     // primary providers in use
     private Set<IProvider> _providers = new HashSet<>(25);
@@ -106,29 +107,30 @@ public final class InternalProviderManager implements IProviderManager {
 
     public InternalProviderManager() {
         _storageProviders.put(_yamlStorage.getInfo().getSearchName(), _yamlStorage);
+        _defaultStorage = _yamlStorage;
 
         // register names of default providers
-        addName(BankItemsProvider.NAME, IBankItemsProvider.class);
-        addName(NucleusEconomyProvider.NAME, IEconomyProvider.class);
-        addName(VaultEconomyProvider.NAME, IEconomyProvider.class);
-        addName(NucleusFriendsProvider.NAME, IFriendsProvider.class);
-        addName(NucleusJailProvider.NAME, IJailProvider.class);
-        addName(BukkitProvider.NAME, IPermissionsProvider.class);
-        addName(VaultProvider.NAME, IPermissionsProvider.class);
-        addName(NucleusSelectionProvider.NAME, IRegionSelectProvider.class);
-        addName(WorldEditSelectionProvider.NAME, IRegionSelectProvider.class);
-        addName(YamlStorageProvider.NAME, IStorageProvider.class);
+        addName(BankItemsProvider.NAME, ProviderType.BANK_ITEMS);
+        addName(NucleusEconomyProvider.NAME, ProviderType.ECONOMY);
+        addName(VaultEconomyProvider.NAME, ProviderType.ECONOMY);
+        addName(NucleusFriendsProvider.NAME, ProviderType.FRIENDS);
+        addName(NucleusJailProvider.NAME, ProviderType.JAIL);
+        addName(BukkitProvider.NAME, ProviderType.PERMISSIONS);
+        addName(VaultProvider.NAME, ProviderType.PERMISSIONS);
+        addName(NucleusSelectionProvider.NAME, ProviderType.REGION_SELECT);
+        addName(WorldEditSelectionProvider.NAME, ProviderType.REGION_SELECT);
+        addName(YamlStorageProvider.NAME, ProviderType.STORAGE);
 
         _dataNode = new YamlDataNode(Nucleus.getPlugin(), new DataPath("providers"));
 
         // setup preferred internal bank items
-        String prefBankItems = getPreferred(IBankItemsProvider.class);
+        String prefBankItems = getPreferred(ProviderType.BANK_ITEMS);
         if (BankItemsProvider.NAME.equalsIgnoreCase(prefBankItems)) {
             _bankItems = add(new BankItemsProvider());
         }
 
         // setup preferred internal economy
-        String prefEcon = getPreferred(IEconomyProvider.class);
+        String prefEcon = getPreferred(ProviderType.ECONOMY);
         if (NucleusEconomyProvider.NAME.equalsIgnoreCase(prefEcon)) {
             _economy = add(new NucleusEconomyProvider(Nucleus.getPlugin()));
         }
@@ -140,19 +142,19 @@ public final class InternalProviderManager implements IProviderManager {
         }
 
         // setup preferred internal friends
-        String prefFriends = getPreferred(IFriendsProvider.class);
+        String prefFriends = getPreferred(ProviderType.FRIENDS);
         if (NucleusFriendsProvider.NAME.equalsIgnoreCase(prefFriends)) {
             _friends = add(new NucleusFriendsProvider());
         }
 
         // setup preferred internal jail
-        String prefJail = getPreferred(IJailProvider.class);
+        String prefJail = getPreferred(ProviderType.JAIL);
         if (NucleusJailProvider.NAME.equalsIgnoreCase(prefJail)) {
             _jail = add(new NucleusJailProvider());
         }
 
         // setup preferred internal permissions
-        String prefPerm = getPreferred(IPermissionsProvider.class);
+        String prefPerm = getPreferred(ProviderType.PERMISSIONS);
         if (BukkitProvider.NAME.equalsIgnoreCase(prefPerm)) {
             _permissions = add(new BukkitProvider());
         }
@@ -161,7 +163,7 @@ public final class InternalProviderManager implements IProviderManager {
         }
 
         // setup preferred internal region selection
-        String prefSelect = getPreferred(IRegionSelectProvider.class);
+        String prefSelect = getPreferred(ProviderType.REGION_SELECT);
         if (NucleusSelectionProvider.NAME.equalsIgnoreCase(prefSelect) &&
                 !WorldEditSelectionProvider.isWorldEditInstalled()) {
             _regionSelect = add(new NucleusSelectionProvider());
@@ -200,48 +202,48 @@ public final class InternalProviderManager implements IProviderManager {
         boolean isAdded = false;
 
         if (provider instanceof IPlayerLookupProvider) {
-            addName(provider, IPlayerLookupProvider.class);
-            if (remove(_playerLookup, IPlayerLookupProvider.class)) {
+            addName(provider, ProviderType.PLAYER_LOOKUP);
+            if (remove(_playerLookup, ProviderType.PLAYER_LOOKUP)) {
                 _playerLookup = add(provider);
                 isAdded = true;
             }
         }
 
         if (provider instanceof IFriendsProvider) {
-            addName(provider, IFriendsProvider.class);
-            if (remove(_friends, IFriendsProvider.class)) {
+            addName(provider, ProviderType.FRIENDS);
+            if (remove(_friends, ProviderType.FRIENDS)) {
                 _friends = add(provider);
                 isAdded = true;
             }
         }
 
         if (provider instanceof IPermissionsProvider) {
-            addName(provider, IPermissionsProvider.class);
-            if (remove(_permissions, IPermissionsProvider.class)) {
+            addName(provider, ProviderType.PERMISSIONS);
+            if (remove(_permissions, ProviderType.PERMISSIONS)) {
                 _permissions = add(provider);
                 isAdded = true;
             }
         }
 
         if (provider instanceof IRegionSelectProvider) {
-            addName(provider, IRegionSelectProvider.class);
-            if (remove(_regionSelect, IRegionSelectProvider.class)) {
+            addName(provider, ProviderType.REGION_SELECT);
+            if (remove(_regionSelect, ProviderType.REGION_SELECT)) {
                 _regionSelect = add(provider);
                 isAdded = true;
             }
         }
 
         if (provider instanceof IBankItemsProvider) {
-            addName(provider, IBankItemsProvider.class);
-            if (remove(_bankItems, IBankItemsProvider.class)) {
+            addName(provider, ProviderType.BANK_ITEMS);
+            if (remove(_bankItems, ProviderType.BANK_ITEMS)) {
                 _bankItems = add(_bankItems);
                 isAdded = true;
             }
         }
 
         if (provider instanceof IEconomyProvider) {
-            addName(provider, IEconomyProvider.class);
-            if (remove(_economy, IEconomyProvider.class)) {
+            addName(provider, ProviderType.ECONOMY);
+            if (remove(_economy, ProviderType.ECONOMY)) {
                 add(_economy);
                 _economy = provider instanceof EconomyWrapper
                         ? (IEconomyProvider) provider
@@ -253,8 +255,8 @@ public final class InternalProviderManager implements IProviderManager {
         }
 
         if (provider instanceof IStorageProvider) {
-            addName(provider, IStorageProvider.class);
-            if (remove(_defaultStorage, IStorageProvider.class)) {
+            addName(provider, ProviderType.STORAGE);
+            if (remove(_defaultStorage, ProviderType.STORAGE)) {
                 _defaultStorage = add(provider);
             }
             registerStorageProvider((IStorageProvider) provider);
@@ -262,16 +264,16 @@ public final class InternalProviderManager implements IProviderManager {
         }
 
         if (provider instanceof INpcProvider) {
-            addName(provider, INpcProvider.class);
-            if (remove(_npc, INpcProvider.class)) {
+            addName(provider, ProviderType.NPC);
+            if (remove(_npc, ProviderType.NPC)) {
                 _npc = add(provider);
                 isAdded = true;
             }
         }
 
         if (provider instanceof IJailProvider) {
-            addName(provider, IJailProvider.class);
-            if (remove(_jail, IJailProvider.class)) {
+            addName(provider, ProviderType.JAIL);
+            if (remove(_jail, ProviderType.JAIL)) {
                 _jail = add(provider);
                 isAdded = true;
             }
@@ -281,12 +283,10 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
-    public boolean setPreferred(Class<? extends IProvider> apiType, @Nullable String providerName) {
-        PreCon.notNull(apiType);
-        PreCon.isValid(isProviderInterface(apiType),
-                "Invalid service provider API class specified for parameter 'apiType'.");
+    public boolean setPreferred(ProviderType providerType, @Nullable String providerName) {
+        PreCon.notNull(providerType);
 
-        _dataNode.set("preferred." + apiType.getSimpleName(), providerName);
+        _dataNode.set("preferred." + providerType.getName(), providerName);
         _dataNode.save();
 
         return true;
@@ -294,12 +294,69 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Nullable
     @Override
-    public String getPreferred(Class<? extends IProvider> apiType) {
-        PreCon.notNull(apiType);
-        PreCon.isValid(isProviderInterface(apiType),
-                "Invalid service provider API class specified for parameter 'apiType'.");
+    public String getPreferred(ProviderType providerType) {
+        PreCon.notNull(providerType);
 
-        return _dataNode.getString("preferred." + apiType.getSimpleName());
+        return _dataNode.getString("preferred." + providerType.getName());
+    }
+
+    @Override
+    public <T extends IProvider> T getProvider(ProviderType providerType) {
+        PreCon.notNull(providerType);
+
+        @SuppressWarnings("unchecked")
+        Class<T> apiType = (Class<T>)providerType.getApiType();
+
+        IProvider provider;
+
+        switch (providerType) {
+            case PLAYER_LOOKUP:
+                provider = _playerLookup;
+                break;
+            case PERMISSIONS:
+                provider = _permissions;
+                break;
+            case REGION_SELECT:
+                provider = _regionSelect;
+                break;
+            case BANK_ITEMS:
+                provider = _bankItems;
+                break;
+            case ECONOMY:
+                provider = _economy;
+                break;
+            case STORAGE:
+                provider = _defaultStorage;
+                break;
+            case FRIENDS:
+                provider = _friends;
+                break;
+            case NPC:
+                provider = _npc;
+                break;
+            case JAIL:
+                provider = _jail;
+                break;
+            default:
+                throw new AssertionError();
+        }
+
+        if (provider == null)
+            return null;
+
+        return apiType.cast(provider);
+    }
+
+    @Nullable
+    @Override
+    public ProviderType getProviderType(String name) {
+        PreCon.notNull(name);
+
+        ProviderInfo info = _providerInfo.get(name.toLowerCase());
+        if (info == null)
+            return null;
+
+        return info.type;
     }
 
     @Override
@@ -407,16 +464,19 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Override
     public Collection<String> getAllProviderNames() {
-        return new ArrayList<>(_providerNames.values());
+
+        List<String> names = new ArrayList<>(_providerInfo.size());
+        for (ProviderInfo info : _providerInfo.values())
+            names.add(info.name);
+
+        return names;
     }
 
     @Override
-    public Collection<String> getProviderNames(Class<? extends IProvider> apiType) {
-        PreCon.notNull(apiType);
-        PreCon.isValid(isProviderInterface(apiType),
-                "Invalid service provider API class specified for parameter 'apiType'.");
+    public Collection<String> getProviderNames(ProviderType type) {
+        PreCon.notNull(type);
 
-        return new HashSet<>(_providerNamesByApi.get(apiType.getSimpleName()));
+        return new HashSet<>(_providerNamesByApi.get(type));
     }
 
     public void registerStorageProvider(IStorageProvider storageProvider) {
@@ -464,16 +524,22 @@ public final class InternalProviderManager implements IProviderManager {
 
             if (_playerLookup == null)
                 _playerLookup = new InternalPlayerLookupProvider(Nucleus.getPlugin());
+
+            if (_bankItems == null)
+                _bankItems = new BankItemsProvider();
+
+            if (_friends == null)
+                _friends = new NucleusFriendsProvider();
         }
     }
 
     // remove provider from primary list, returns true unless specified provider is the
     // preferred provider, in which case the provider is not removed.
-    private boolean remove(@Nullable IProvider provider, Class<? extends IProvider> apiType) {
+    private boolean remove(@Nullable IProvider provider, ProviderType providerType) {
         if (provider == null)
             return true;
 
-        String preferred = _dataNode.getString("preferred." + apiType.getSimpleName());
+        String preferred = _dataNode.getString("preferred." + providerType.getName());
         if (preferred != null && provider.getInfo().getSearchName().equals(preferred))
             return false;
 
@@ -490,25 +556,31 @@ public final class InternalProviderManager implements IProviderManager {
         return cast;
     }
 
-    private void addName(IProvider provider, Class<? extends IProvider> api) {
-        _providerNames.put(provider.getInfo().getSearchName(), provider.getInfo().getName());
-        _providerNamesByApi.put(api.getSimpleName(), provider.getInfo().getName());
+    private void addName(IProvider provider, ProviderType type) {
+        _providerInfo.put(provider.getInfo().getSearchName(), new ProviderInfo(provider, type));
+        _providerNamesByApi.put(type, provider.getInfo().getName());
     }
 
-    private void addName(String name, Class<?extends IProvider> api) {
-        _providerNames.put(name.toLowerCase(), name);
-        _providerNamesByApi.put(api.getSimpleName(), name);
+    private void addName(String name, ProviderType type) {
+        _providerInfo.put(name.toLowerCase(), new ProviderInfo(name, type));
+        _providerNamesByApi.put(type, name);
     }
 
-    private boolean isProviderInterface(Class<?> providerInterface) {
-        return providerInterface.equals(IPlayerLookupProvider.class) ||
-                providerInterface.equals(IFriendsProvider.class) ||
-                providerInterface.equals(IPermissionsProvider.class) ||
-                providerInterface.equals(IRegionSelectProvider.class) ||
-                providerInterface.equals(IBankItemsProvider.class) ||
-                providerInterface.equals(IEconomyProvider.class) ||
-                providerInterface.equals(IStorageProvider.class) ||
-                providerInterface.equals(INpcProvider.class) ||
-                providerInterface.equals(IJailProvider.class);
+    private static class ProviderInfo {
+        String name;
+        String version;
+        ProviderType type;
+
+        ProviderInfo(IProvider provider, ProviderType type) {
+            this.name = provider.getInfo().getName();
+            this.version = provider.getInfo().getVersion();
+            this.type = type;
+        }
+
+        ProviderInfo(String name, ProviderType type) {
+            this.name = name;
+            this.version = Nucleus.getPlugin().getDescription().getVersion();
+            this.type = type;
+        }
     }
 }

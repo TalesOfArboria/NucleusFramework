@@ -50,22 +50,45 @@ public interface IProviderManager {
      *
      * <p>A server restart is required for settings to take effect.</p>
      *
-     * @param apiType       The provider interface class.
+     * @param providerType  The service provider type.
      * @param providerName  The name of the provider. Null to clear preferred.
      *
      * @return  True if successful, otherwise false.
      */
-    boolean setPreferred(Class<? extends IProvider> apiType, @Nullable String providerName);
+    boolean setPreferred(ProviderType providerType, @Nullable String providerName);
 
     /**
-     * Get the preferred provider implementation for the specified provider interface.
+     * Get the name of the preferred provider implementation for the specified
+     * provider type.
      *
-     * @param apiType  The provider interface class.
+     * @param providerType  The service provider type.
      *
      * @return  The name of the provider or null if preferred not set.
      */
     @Nullable
-    String getPreferred(Class<? extends IProvider> apiType);
+    String getPreferred(ProviderType providerType);
+
+    /**
+     * Get the provider instance used for the specified service provider type.
+     *
+     * @param providerType  The service provider type.
+     *
+     * @param <T>  The provider type.
+     *
+     * @return  The provider or null if none.
+     */
+    @Nullable
+    <T extends IProvider> T getProvider(ProviderType providerType);
+
+    /**
+     * Get the API type of the specified service provider.
+     *
+     * @param name  The name of the service provider
+     *
+     * @return  The API type or null if not found.
+     */
+    @Nullable
+    ProviderType getProviderType(String name);
 
     /**
      * Get the player lookup provider.
@@ -158,7 +181,7 @@ public interface IProviderManager {
      * Get the names of all providers that can be used for the specified
      * service provider API type.
      *
-     * @param apiType  The API type.
+     * @param providerType  The provider API type.
      */
-    Collection<String> getProviderNames(Class<? extends IProvider> apiType);
+    Collection<String> getProviderNames(ProviderType providerType);
 }

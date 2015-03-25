@@ -32,6 +32,7 @@ import com.jcwhatever.nucleus.internal.commands.friends.NFriendsCommand;
 import com.jcwhatever.nucleus.internal.commands.jail.JailCommand;
 import com.jcwhatever.nucleus.internal.commands.kits.KitsCommand;
 import com.jcwhatever.nucleus.internal.commands.plugins.PluginsCommand;
+import com.jcwhatever.nucleus.internal.commands.providers.ProvidersCommand;
 import com.jcwhatever.nucleus.internal.commands.scripts.ScriptsCommand;
 import com.jcwhatever.nucleus.internal.commands.storage.StorageCommand;
 
@@ -48,6 +49,7 @@ public final class NucleusCommandDispatcher extends CommandDispatcher {
         registerCommand(JailCommand.class);
         registerCommand(KitsCommand.class);
         registerCommand(PluginsCommand.class);
+        registerCommand(ProvidersCommand.class);
         registerCommand(ScriptsCommand.class);
         registerCommand(StorageCommand.class);
     }
