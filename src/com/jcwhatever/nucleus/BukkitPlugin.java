@@ -76,6 +76,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     ScriptEngineLoader _scriptEngineLoader;
 
     boolean _isModulesReady;
+    boolean _isTest;
 
     /**
      * Constructor.
@@ -105,6 +106,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         super(loader, description, dataFolder, file);
 
         Nucleus._plugin = this;
+        _isTest = true;
     }
 
     /**
@@ -136,7 +138,7 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _scheduler = new InternalTaskScheduler();
 
-        _providerManager = new InternalProviderManager();
+        _providerManager = new InternalProviderManager(_isTest);
         ProviderLoader providerLoader = new ProviderLoader(_providerManager);
         providerLoader.loadModules();
 

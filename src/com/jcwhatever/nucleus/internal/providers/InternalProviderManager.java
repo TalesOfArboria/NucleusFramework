@@ -56,6 +56,7 @@ import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.MemoryDataNode;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -105,7 +106,7 @@ public final class InternalProviderManager implements IProviderManager {
 
     private boolean _isProvidersLoading;
 
-    public InternalProviderManager() {
+    public InternalProviderManager(boolean isTest) {
         _storageProviders.put(_yamlStorage.getInfo().getSearchName(), _yamlStorage);
         _defaultStorage = _yamlStorage;
 
@@ -121,7 +122,9 @@ public final class InternalProviderManager implements IProviderManager {
         addName(WorldEditSelectionProvider.NAME, ProviderType.REGION_SELECT);
         addName(YamlStorageProvider.NAME, ProviderType.STORAGE);
 
-        _dataNode = new YamlDataNode(Nucleus.getPlugin(), new DataPath("providers"));
+        _dataNode = isTest
+                ? new MemoryDataNode(Nucleus.getPlugin())
+                : new YamlDataNode(Nucleus.getPlugin(), new DataPath("providers"));
 
         // setup preferred internal bank items
         String prefBankItems = getPreferred(ProviderType.BANK_ITEMS);
