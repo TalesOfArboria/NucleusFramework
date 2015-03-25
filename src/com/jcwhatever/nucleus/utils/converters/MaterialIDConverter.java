@@ -25,47 +25,26 @@
 
 package com.jcwhatever.nucleus.utils.converters;
 
+import org.bukkit.material.MaterialData;
+
+import javax.annotation.Nullable;
+
 /**
- * A wrapper for a {@link ValueConverter} instance that reverses the
- * convert and unconvert methods.
- *
- * @param <F>  The parent {@link ValueConverter}'s unconvert return value type
- * @param <T>  The parent {@link ValueConverter}'s convert return value type
+ * Converts a value to {@link org.bukkit.material.MaterialData} using {@link MaterialDataConverter}
+ * to material ID.
  */
-public class ReversedConverter<F, T> extends ValueConverter<F, T> {
+public class MaterialIDConverter extends Converter<Integer> {
 
-    private ValueConverter<T, F> _parentConverter;
+    protected MaterialIDConverter() {}
 
-    /**
-     * Constructor.
-     *
-     * @param parentConverter  The parent converter to wrap.
-     */
-    ReversedConverter(ValueConverter<T, F> parentConverter) {
-        _parentConverter = parentConverter;
-    }
-
-    /**
-     * Convert using the parent converters unconvert method.
-     */
+    @Nullable
     @Override
-    protected F onConvert(Object value) {
-        return callUnconvert(_parentConverter, value);
-    }
+    protected Integer onConvert(@Nullable Object value) {
 
-    /**
-     * Unconvert using the parent converters convert method.
-     */
-    @Override
-    protected T onUnconvert(Object value) {
-        return callConvert(_parentConverter, value);
-    }
+        MaterialData data = callConvert(Converters.MATERIAL_DATA, value);
+        if (data == null)
+            return null;
 
-    /**
-     * Get the wrapped parent value converter.
-     */
-    public ValueConverter<T, F> getParent() {
-        return _parentConverter;
+        return data.getItemType().getId();
     }
-
 }

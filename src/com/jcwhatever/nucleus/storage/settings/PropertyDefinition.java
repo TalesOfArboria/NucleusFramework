@@ -24,9 +24,9 @@
 
 package com.jcwhatever.nucleus.storage.settings;
 
-import com.jcwhatever.nucleus.utils.converters.ValueConverter;
-import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.converters.Converter;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import javax.annotation.Nullable;
 
@@ -42,7 +42,8 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
     private final boolean _hasDefaultValue;
     private final Object _defaultValue;
 
-    private ValueConverter<?, ?> _converter;
+    private Converter<?> _converter;
+    private Converter<?> _unconverter;
     private IValidator<Object> _validator;
 
     /**
@@ -142,7 +143,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
      * @return  Null if not set.
      */
     @Nullable
-    public ValueConverter<?, ?> getValueConverter() {
+    public Converter<?> getConverter() {
         return _converter;
     }
 
@@ -151,8 +152,27 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
      *
      * @param converter  The value converter.
      */
-    public void setValueConverter(@Nullable ValueConverter<?, ?> converter) {
+    public void setConverter(@Nullable Converter<?> converter) {
         _converter = converter;
+    }
+
+    /**
+     * Get the value unconverter, if any.
+     *
+     * @return  Null if not set.
+     */
+    @Nullable
+    public Converter<?> getUnconverter() {
+        return _converter;
+    }
+
+    /**
+     * Set the value unconverter.
+     *
+     * @param converter  The value converter.
+     */
+    public void setUnconverter(@Nullable Converter<?> converter) {
+        _unconverter = converter;
     }
 
     /**

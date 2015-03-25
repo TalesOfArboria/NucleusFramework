@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.items.serializer;
 
-import com.jcwhatever.nucleus.utils.converters.ValueConverters;
+import com.jcwhatever.nucleus.utils.converters.Converters;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
@@ -121,11 +121,7 @@ public class ItemStackDeserializer {
         if (rawMaterial.isEmpty())
             return null;
 
-        material = ValueConverters.ITEM_NAME_MATERIAL.convert(rawMaterial);
-        if (material == null) {
-            material = ValueConverters.ITEM_MATERIAL_ID.unconvert(rawMaterial);
-        }
-
+        material = Converters.MATERIAL.convert(rawMaterial);
         if (material == null) {
             throw new InvalidItemStackStringException(_itemString);
         }
@@ -146,7 +142,7 @@ public class ItemStackDeserializer {
         }
 
         // handle special cases
-        if (material == Material.POTION && (potion = ValueConverters.POTION_ID.convert(data)) != null) {
+        if (material == Material.POTION && (potion = Converters.POTION.convert(data)) != null) {
             stack = potion.toItemStack(amount);
         }
         else {

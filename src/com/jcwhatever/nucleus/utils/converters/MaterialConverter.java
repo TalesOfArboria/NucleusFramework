@@ -22,63 +22,43 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.utils.converters;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import javax.annotation.Nullable;
+
 /**
- * Converts a material name to a bukkit material
+ * Converts {@link java.lang.Number} as material ID, {@link org.bukkit.inventory.ItemStack} or
+ * a {@link java.lang.String} that can be converted to {@link MaterialData} via
+ * {@link MaterialDataConverter} to {@link org.bukkit.Material}.
  */
-public class ItemNameMaterialConverter extends ValueConverter<Material, String> {
+public class MaterialConverter extends Converter<Material> {
 
-    ItemNameMaterialConverter() {}
+    protected MaterialConverter() {}
 
-    /**
-     * Converts a string name of the the material constant name into a
-     * Bukkit Material enum. Also accepts the Minecraft item id as a string.
-     */
+    @Nullable
     @Override
-    protected Material onConvert(Object value) {
-        if (value instanceof Material) {
-            return (Material)value;
+    protected Material onConvert(@Nullable Object value) {
+
+        Integer id = 0;
+
+        if (value instanceof Number) {
+            id = ((Number)value).intValue();
+        }
+        else if (value instanceof ItemStack) {
+            return ((ItemStack)value).getType();
         }
         else if (value instanceof String) {
+            MaterialData data = callConvert(Converters.MATERIAL_DATA, value);
+            if (data == null)
+                return null;
 
-            String name = ((String)value).toUpperCase();
-
-            try {
-                return Material.valueOf(name);
-            }
-            catch (Exception e) {
-
-                // Sender check not needed:
-                MaterialData data = callUnconvert(ValueConverters.ITEM_NAME_MATERIALDATA, name);
-
-                if (data == null)
-                    return null;
-
-                return data.getItemType();
-            }
+            return data.getItemType();
         }
-        else {
 
-            return callUnconvert(ValueConverters.ITEM_MATERIAL_ID, value);
-        }
+        return Material.getMaterial(id);
     }
-
-
-    /**
-     * Converts a Bukkit material enum into a string representation.
-     */
-    @Override
-    protected String onUnconvert(Object value) {
-        if (value instanceof Material) {
-            return ((Material)value).name();
-        }
-
-        return null;
-    }
-
 }

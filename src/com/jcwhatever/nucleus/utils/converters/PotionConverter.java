@@ -22,50 +22,39 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.utils.converters;
 
-import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import org.bukkit.material.MaterialData;
+import org.bukkit.potion.Potion;
+
+import javax.annotation.Nullable;
 
 /**
- * Converts between a Bukkit Material enum constant name as a string to MaterialData.
- * Also includes non Bukkit Material enum names.
+ * Converts a {@link java.lang.String} representation of a potion ID or a {@link java.lang.Number}
+ * to {@link org.bukkit.potion.Potion}.
  */
-public class ItemNameMaterialDataConverter extends ValueConverter<String, MaterialData> {
+public class PotionConverter extends Converter<Potion> {
 
-    ItemNameMaterialDataConverter() {}
+    protected PotionConverter() {}
 
-    /**
-     * Convert MaterialData, ItemStack, BlockState, or Block into
-     * a Material Name string.
-     */
+    @Nullable
     @Override
-    protected String onConvert(Object value) {
-        MaterialData data;
-        if (value instanceof MaterialData) {
-            data = (MaterialData)value;
-        }
-        else {
-            return null;
-        }
-
-        return NamedMaterialData.get(data);
-    }
-
-    /**
-     * Gets MaterialData from a Material constant name string.
-     */
-    @Override
-    protected MaterialData onUnconvert(Object value) {
+    protected Potion onConvert(@Nullable Object value) {
 
         if (value instanceof String) {
+            value = TextUtils.parseShort((String) value, Short.MIN_VALUE);
+            if (value == new Short(Short.MIN_VALUE))
+                return null;
+        }
+        else if (value instanceof Number) {
+            value = ((Number)value).shortValue();
+        }
 
-            return NamedMaterialData.get((String)value);
+        if (value instanceof Short) {
+            return Potion.fromDamage((Short) value);
         }
 
         return null;
     }
-
 }

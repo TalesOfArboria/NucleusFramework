@@ -24,15 +24,15 @@
 
 package com.jcwhatever.nucleus.storage.settings;
 
-import com.jcwhatever.nucleus.utils.converters.ValueConverter;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.EnumUtils;
-import com.jcwhatever.nucleus.utils.validate.IValidator;
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.converters.Converter;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -99,7 +99,7 @@ public class SettingsManager implements ISettingsManager {
         if (definition == null)
             return false;
 
-        ValueConverter<?, ?> converter = definition.getValueConverter();
+        Converter<?> converter = definition.getConverter();
         if (converter != null) {
             value = converter.convert(value);
         }
@@ -238,9 +238,9 @@ public class SettingsManager implements ISettingsManager {
         if (result == null)
             return null;
 
-        if (definition.getValueConverter() != null) {
+        if (definition.getUnconverter() != null) {
             @SuppressWarnings("unchecked")
-            T unconverted = (T)definition.getValueConverter().unconvert(result);
+            T unconverted = (T)definition.getUnconverter().convert(result);
             return unconverted;
         }
 

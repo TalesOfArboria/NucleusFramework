@@ -22,38 +22,27 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.utils.converters;
 
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.Potion;
+
+import org.bukkit.ChatColor;
 
 import javax.annotation.Nullable;
 
 /**
- * Converts a {@link org.bukkit.inventory.ItemStack} or {@link org.bukkit.potion.Potion}
- * to potion ID.
+ * Converts chat color codes in a {@link java.lang.String} that use the '&' character to
+ * valid chat color codes.
  */
-public class PotionIDConverter extends Converter<Short> {
+public class AltColorConverter extends Converter<String> {
 
-    protected PotionIDConverter() {}
+    protected AltColorConverter() {}
 
     @Nullable
     @Override
-    protected Short onConvert(@Nullable Object value) {
+    protected String onConvert(@Nullable Object value) {
+        if (!(value instanceof String))
+            return null;
 
-        if (value instanceof ItemStack) {
-            Potion potion = Potion.fromItemStack((ItemStack)value);
-            if (potion == null)
-                return null;
-
-            return potion.toDamageValue();
-        }
-
-        if (value instanceof Potion) {
-            Potion potion = (Potion)value;
-            return potion.toDamageValue();
-        }
-        return 8192;
+        return ChatColor.translateAlternateColorCodes('&', (String) value);
     }
 }

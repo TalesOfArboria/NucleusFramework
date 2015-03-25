@@ -24,10 +24,10 @@
 
 package com.jcwhatever.nucleus.storage.settings;
 
-import com.jcwhatever.nucleus.utils.converters.ValueConverter;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.validate.IValidator;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.converters.Converter;
+import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -90,15 +90,17 @@ public class SettingsBuilder {
      *
      * @return  Self for chaining.
      */
-    public SettingsBuilder setValueConverter(String propertyName, ValueConverter<?, ?> converter) {
+    public SettingsBuilder setConverters(String propertyName, Converter<?> converter, Converter<?> unconverter) {
         PreCon.notNullOrEmpty(propertyName);
         PreCon.notNull(converter);
+        PreCon.notNull(unconverter);
 
         PropertyDefinition definition = _definitions.get(propertyName);
         if (definition == null)
             throw new RuntimeException("A property named '" + propertyName + "' has not been set yet.");
 
-        definition.setValueConverter(converter);
+        definition.setConverter(converter);
+        definition.setUnconverter(unconverter);
 
         return this;
     }

@@ -25,35 +25,40 @@
 
 package com.jcwhatever.nucleus.utils.converters;
 
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.Potion;
+public class Converters {
 
-import javax.annotation.Nullable;
+    /**
+     * Converts between a Potion and potion id.
+     */
+    public static final PotionIDConverter POTION_ID = new PotionIDConverter();
 
-/**
- * Converts a {@link org.bukkit.inventory.ItemStack} or {@link org.bukkit.potion.Potion}
- * to potion ID.
- */
-public class PotionIDConverter extends Converter<Short> {
+    /**
+     * Converts between a Potion and potion id.
+     */
+    public static final PotionConverter POTION = new PotionConverter();
 
-    protected PotionIDConverter() {}
+    /**
+     * Convert between Minecraft material ID's and Bukkit Material enum.
+     */
+    public static final MaterialIDConverter MATERIAL_ID = new MaterialIDConverter();
 
-    @Nullable
-    @Override
-    protected Short onConvert(@Nullable Object value) {
+    /**
+     * Convert between Minecraft material ID's and Bukkit Material enum.
+     */
+    public static final MaterialConverter MATERIAL = new MaterialConverter();
 
-        if (value instanceof ItemStack) {
-            Potion potion = Potion.fromItemStack((ItemStack)value);
-            if (potion == null)
-                return null;
+    /**
+     * Convert between Minecraft material ID's and Bukkit Material enum.
+     */
+    public static final MaterialDataConverter MATERIAL_DATA = new MaterialDataConverter();
 
-            return potion.toDamageValue();
-        }
+    /**
+     * Convert chat color codes that use the '&' character to valid chat color codes.
+     */
+    public static final AltColorConverter ALT_COLOR = new AltColorConverter();
 
-        if (value instanceof Potion) {
-            Potion potion = (Potion)value;
-            return potion.toDamageValue();
-        }
-        return 8192;
-    }
+    /**
+     * Convert between chat color codes that use the valid chat color codes to '&'.
+     */
+    public static final DeAltColorConverter DE_ALT_COLOR = new DeAltColorConverter();
 }

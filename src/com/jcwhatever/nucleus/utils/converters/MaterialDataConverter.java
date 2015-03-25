@@ -22,52 +22,45 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.utils.converters;
 
-import com.jcwhatever.nucleus.utils.text.TextFormat;
+import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import javax.annotation.Nullable;
 
 /**
- * Convert between chat color codes that use the '&' character and valid chat color codes.
+ * Converts {@link org.bukkit.inventory.ItemStack} or {@link java.lang.String} representation of a
+ * material ID or material name to {@link org.bukkit.material.MaterialData}.
  */
-public class AlternativeChatColorConverter extends ValueConverter<String, String> {
+public class MaterialDataConverter extends Converter<MaterialData> {
 
-    AlternativeChatColorConverter() {}
+    protected MaterialDataConverter() {}
 
-    /**
-     * Convert chat color codes in a string that use the '&' character into valid chat color codes.
-     *
-     * @param value  The string to convert
-     *
-     * @return Null if a string is not provided.
-     */
-    @Override
     @Nullable
-    protected String onConvert(Object value) {
-        if (!(value instanceof String))
-            return null;
-
-        return ChatColor.translateAlternateColorCodes('&', (String)value);
-    }
-
-    /**
-     * Convert valid chat color codes in a string into '&' codes;
-     *
-     * @param value  The string to convert
-     *
-     * @return  Null if a string is not provided.
-     */
     @Override
-    @Nullable
-    protected String onUnconvert(Object value) {
-        if (!(value instanceof String))
-            return null;
+    protected MaterialData onConvert(@Nullable Object value) {
 
-        return ((String)value).replaceAll(String.valueOf(TextFormat.CHAR), "&");
+        if (value instanceof MaterialData) {
+            return (MaterialData)value;
+        }
+        else if (value instanceof String) {
+
+            int id = TextUtils.parseInt((String)value, Integer.MIN_VALUE);
+            if (id != Integer.MIN_VALUE) {
+                Material material = Material.getMaterial(id);
+                return new MaterialData(material);
+            }
+
+            return NamedMaterialData.get((String) value);
+        }
+        else if (value instanceof ItemStack) {
+            return ((ItemStack)value).getData();
+        }
+        return null;
     }
-
 }

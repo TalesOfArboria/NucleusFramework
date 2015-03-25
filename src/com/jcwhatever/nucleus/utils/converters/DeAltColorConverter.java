@@ -22,34 +22,25 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.utils.converters;
 
-public class ValueConverters {
+import com.jcwhatever.nucleus.utils.text.TextFormat;
 
-    /**
-     * Converts between a Potion and potion id.
-     */
-    public static final PotionIDConverter POTION_ID = new PotionIDConverter();
+import javax.annotation.Nullable;
 
-    /**
-     * Convert between Minecraft material ID's and Bukkit Material enum.
-     */
-    public static final ItemMaterialIDConverter ITEM_MATERIAL_ID = new ItemMaterialIDConverter();
+/**
+ * Converts valid chat color codes in a {@link java.lang.String} to use the '&' character.
+ */
+public class DeAltColorConverter extends Converter<String> {
 
-    /**
-     * Convert between chat color codes that use the '&' character and valid chat color codes.
-     */
-    public static final AlternativeChatColorConverter ALT_CHAT_COLOR = new AlternativeChatColorConverter();
+    protected DeAltColorConverter() {}
 
-    /**
-     * Converts a material name to a bukkit material
-     */
-    public static final ItemNameMaterialConverter ITEM_NAME_MATERIAL = new ItemNameMaterialConverter();
+    @Nullable
+    @Override
+    protected String onConvert(@Nullable Object value) {
+        if (!(value instanceof String))
+            return null;
 
-    /**
-     * Converts between a Bukkit Material enum constant name as a string to MaterialData.
-     * Also includes non Bukkit Material enum names.
-     */
-    public static final ItemNameMaterialDataConverter ITEM_NAME_MATERIALDATA = new ItemNameMaterialDataConverter();
+        return ((String)value).replaceAll(String.valueOf(TextFormat.CHAR), "&");
+    }
 }
