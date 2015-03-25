@@ -24,19 +24,19 @@
 
 package com.jcwhatever.nucleus.commands;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.CommandParser.ParsedCommand;
 import com.jcwhatever.nucleus.commands.CommandParser.ParsedTabComplete;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.Permissions;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.command.Command;
@@ -88,7 +88,7 @@ public class CommandDispatcher implements
         _plugin = plugin;
 
         _rootCommands = new CommandCollection();
-        _msg = MessengerFactory.create(plugin);
+        _msg = Nucleus.getMessengerFactory().create(plugin);
         _utils = new CommandUtils(plugin);
         _usageGenerator = new UsageGenerator();
 

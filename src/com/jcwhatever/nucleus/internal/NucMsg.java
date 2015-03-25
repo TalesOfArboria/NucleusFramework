@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.internal;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -153,7 +152,7 @@ public final class NucMsg {
     }
 
     private static IMessenger msg(Plugin plugin) {
-        return MessengerFactory.get(plugin);
+        return Nucleus.getMessengerFactory().get(plugin);
     }
 
     private static IMessenger anonMsg() {

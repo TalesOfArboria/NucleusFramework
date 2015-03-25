@@ -97,7 +97,7 @@ public final class JCGEventListener implements Listener {
         final Player p = event.getPlayer();
 
         // tell player missed important messages
-        Nucleus.getMessengerFactory().tellImportant(p);
+        Nucleus.getMessengerFactory().tellImportant(p, true);
 
         _regionManager
                 .updatePlayerLocation(p, RegionReason.JOIN_SERVER);

@@ -22,18 +22,52 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal;
+package com.jcwhatever.nucleus.messaging;
 
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
-
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-/**
- * Internal messenger factory
- */
-public final class InternalMessengerFactory extends MessengerFactory {
+import javax.annotation.Nullable;
 
-    public InternalMessengerFactory(Plugin plugin) {
-        super(plugin);
-    }
+/**
+ * Generates {@link IMessenger} implementation instances.
+ */
+public interface IMessengerFactory {
+
+    /**
+     * Gets or creates a singleton instance of a messenger
+     * for the specified plugin.
+     *
+     * @param plugin  The plugin.
+     */
+    IMessenger get(Plugin plugin);
+
+    /**
+     * Get a singleton messenger that has no chat prefix.
+     */
+    IMessenger getAnon(Plugin plugin);
+
+    /**
+     * Create a new messenger instance.
+     *
+     * @param plugin  The owning plugin.
+     */
+    IMessenger create(Plugin plugin);
+
+    /**
+     * Create a new messenger instance.
+     *
+     * @param plugin        The owning plugin.
+     * @param prefixObject  The object to create a prefix from.
+     */
+    IMessenger create(Plugin plugin, @Nullable Object prefixObject);
+
+    /**
+     * Display stored important messages for the specified player to the
+     * specified player.
+     *
+     * @param player         The player.
+     * @param clearMessages  True to clear messages after displaying, otherwise false.
+     */
+    void tellImportant(Player player, boolean clearMessages);
 }

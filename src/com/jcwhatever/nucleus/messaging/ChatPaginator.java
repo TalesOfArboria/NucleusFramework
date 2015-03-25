@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.messaging;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
@@ -119,7 +120,7 @@ public class ChatPaginator implements IPluginOwned {
         PreCon.notNull(args);
 
         _plugin = plugin;
-        _msg = MessengerFactory.get(plugin);
+        _msg = Nucleus.getMessengerFactory().get(plugin);
         _itemsPerPage = itemsPerPage;
         _headerFormat = _HEADER;
         _footerFormat = _FOOTER;

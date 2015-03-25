@@ -37,7 +37,7 @@ import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
 import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
+import com.jcwhatever.nucleus.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.scripting.NucleusScriptEngineManager;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
@@ -71,7 +71,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     ScriptEngineManager _scriptEngineManager;
     KitManager _kitManager;
     NucleusCommandDispatcher _commandHandler;
-    MessengerFactory _messengerFactory;
+    IMessengerFactory _messengerFactory;
 
     ScriptEngineLoader _scriptEngineLoader;
 

@@ -25,27 +25,28 @@
 
 package com.jcwhatever.nucleus.commands.arguments;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.commands.exceptions.DuplicateArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidParameterException;
-import com.jcwhatever.nucleus.commands.exceptions.DuplicateArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.messaging.IMessenger;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.EnumUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.MatchableItem;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
-import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect;
 import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect.BlockSelectResult;
 import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect.PlayerBlockSelectHandler;
-import com.jcwhatever.nucleus.utils.EnumUtils;
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
@@ -119,7 +120,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         _plugin = command.getPlugin();
         _command = command;
-        _msg = MessengerFactory.get(_plugin);
+        _msg = Nucleus.getMessengerFactory().get(_plugin);
         _paramDescriptions = command.getInfo().getParamDescriptions();
 
 

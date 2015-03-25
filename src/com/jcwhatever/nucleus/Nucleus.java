@@ -26,9 +26,9 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.events.manager.EventManager;
-import com.jcwhatever.nucleus.internal.InternalMessengerFactory;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
+import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
+import com.jcwhatever.nucleus.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
@@ -201,10 +201,10 @@ public final class Nucleus {
     /**
      * Get the default messenger factory instance.
      */
-    public static MessengerFactory getMessengerFactory() {
+    public static IMessengerFactory getMessengerFactory() {
 
         if (_plugin._messengerFactory == null)
-            _plugin._messengerFactory = new InternalMessengerFactory(_plugin);
+            _plugin._messengerFactory = new InternalMessengerFactory();
 
         return _plugin._messengerFactory;
     }

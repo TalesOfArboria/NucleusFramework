@@ -28,7 +28,6 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.commands.CommandDispatcher;
 import com.jcwhatever.nucleus.messaging.IChatPrefixed;
 import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -154,8 +153,8 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
 
         onPreEnable();
 
-        _messenger = MessengerFactory.get(this);
-        _anonMessenger = MessengerFactory.getAnon(this);
+        _messenger = Nucleus.getMessengerFactory().get(this);
+        _anonMessenger = Nucleus.getMessengerFactory().getAnon(this);
 
         loadDataNode();
 

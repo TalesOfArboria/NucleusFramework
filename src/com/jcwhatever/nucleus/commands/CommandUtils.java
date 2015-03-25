@@ -31,9 +31,7 @@ import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
@@ -41,6 +39,7 @@ import com.jcwhatever.nucleus.storage.settings.ISettingsManager;
 import com.jcwhatever.nucleus.storage.settings.PropertyDefinition;
 import com.jcwhatever.nucleus.storage.settings.PropertyValueType;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -105,7 +104,7 @@ public class CommandUtils implements IPluginOwned {
      */
     public CommandUtils (Plugin plugin) {
         _plugin = plugin;
-        _msg = MessengerFactory.create(plugin);
+        _msg = Nucleus.getMessengerFactory().create(plugin);
     }
 
     /**

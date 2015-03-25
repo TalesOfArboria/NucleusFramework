@@ -25,13 +25,14 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.scripting.ScriptApiInfo;
-import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -56,7 +57,7 @@ public class ScriptApiMsg extends NucleusScriptApi {
     public ScriptApiMsg(Plugin plugin) {
         super(plugin);
 
-        _messenger = MessengerFactory.create(plugin, null);
+        _messenger = Nucleus.getMessengerFactory().create(plugin, null);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class ScriptApiMsg extends NucleusScriptApi {
          * @param prefix  The prefix.
          */
         public void setChatPrefix(@Nullable Object prefix) {
-            _chatPrefix = MessengerFactory.getChatPrefix(prefix);
+            _chatPrefix = InternalMessengerFactory.getChatPrefix(prefix);
         }
 
         /**

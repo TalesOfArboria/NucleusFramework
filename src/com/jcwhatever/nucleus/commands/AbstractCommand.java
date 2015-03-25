@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.commands;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
@@ -34,16 +35,15 @@ import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescription;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.MessengerFactory;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.permissions.IPermission;
-import com.jcwhatever.nucleus.utils.Permissions;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.storage.settings.ISettingsManager;
+import com.jcwhatever.nucleus.utils.Permissions;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
 
@@ -550,7 +550,7 @@ public abstract class AbstractCommand
             return;
 
         _dispatcher = dispatcher;
-        _msg = MessengerFactory.create(dispatcher.getPlugin());
+        _msg = Nucleus.getMessengerFactory().create(dispatcher.getPlugin());
 
         _info = new CommandInfoContainer(this, rootCommand);
 
