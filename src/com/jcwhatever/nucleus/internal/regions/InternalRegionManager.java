@@ -170,7 +170,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
             return;
 
         // ignore NPC's
-        if (player.hasMetadata("NPC"))
+        if (NpcUtils.isNpc(player))
             return;
 
         if (!_listenerWorlds.contains(player.getWorld()))
@@ -191,7 +191,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     public void updatePlayerLocation(Player player, LeaveRegionReason reason) {
 
         // ignore NPC's
-        if (player.hasMetadata("NPC"))
+        if (NpcUtils.isNpc(player))
             return;
 
         synchronized (_sync) {
