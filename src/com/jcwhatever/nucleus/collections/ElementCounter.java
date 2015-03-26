@@ -373,7 +373,7 @@ public class ElementCounter<E> implements Iterable<ElementCount<E>> {
         }
 
         // place value in cache
-        _current = element;
+        _current = counter.element;
         _currentCounter = counter;
 
         return counter.count;
