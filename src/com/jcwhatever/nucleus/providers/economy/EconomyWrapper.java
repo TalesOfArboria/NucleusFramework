@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.providers.economy;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.economy.EconDepositEvent;
-import com.jcwhatever.nucleus.events.economy.EconWithdrawEvent;
+import com.jcwhatever.nucleus.providers.economy.events.EconDepositEvent;
+import com.jcwhatever.nucleus.providers.economy.events.EconWithdrawEvent;
 import com.jcwhatever.nucleus.providers.IProviderInfo;
 import com.jcwhatever.nucleus.providers.economy.EconomyBankWrapper.BankWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;

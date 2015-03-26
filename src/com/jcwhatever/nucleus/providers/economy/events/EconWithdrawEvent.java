@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.events.economy;
+package com.jcwhatever.nucleus.providers.economy.events;
 
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -32,12 +32,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when money is deposited into an account using NucleusFramework's EconomyUtils
+ * Called when money is withdrawn from an account using NucleusFramework.
  */
-public class EconDepositEvent extends Event {
-	
+public class EconWithdrawEvent extends Event {
+
 	private static final HandlerList handlers = new HandlerList();
-	
+
 	private final IAccount _account;
 	private final double _originalAmount;
 	private double _amount;
@@ -45,10 +45,10 @@ public class EconDepositEvent extends Event {
 	/**
 	 * Constructor.
 	 *
-	 * @param account  The account receiving the deposit.
-	 * @param amount   The amount being deposited.
+	 * @param account  The account being withdrawn from.
+	 * @param amount   The amount being withdrawn.
 	 */
-	public EconDepositEvent(IAccount account, double amount) {
+	public EconWithdrawEvent(IAccount account, double amount) {
 		PreCon.notNull(account);
 
 		_account = account;
@@ -57,14 +57,14 @@ public class EconDepositEvent extends Event {
 	}
 
 	/**
-	 * Get the account that is receiving the deposit.
+	 * Get the account that is being withdrawn from.
 	 */
 	public IAccount getAccount() {
 		return _account;
 	}
 
 	/**
-	 * Get the amount being deposited when the event
+	 * Get the amount being withdrawn when the event
 	 * was first called.
 	 */
 	public double getOriginalAmount() {
@@ -72,15 +72,16 @@ public class EconDepositEvent extends Event {
 	}
 
 	/**
-	 * Get the amount being deposited.
+	 * Get the amount being withdrawn.
 	 */
 	public double getAmount() {
 		return _amount;
 	}
 
 	/**
-	 * Set the amount being deposited.
-	 * @param amount
+	 * Set the amount being withdrawn.
+	 * .
+	 * @param amount  The positive amount.
 	 */
 	public void setAmount(double amount) {
 		PreCon.positiveNumber(amount);
@@ -89,11 +90,11 @@ public class EconDepositEvent extends Event {
 	}
 
 	@Override
-    public HandlerList getHandlers() {
-	    return handlers;
+	public HandlerList getHandlers() {
+		return handlers;
 	}
-	 
+
 	public static HandlerList getHandlerList() {
-	    return handlers;
+		return handlers;
 	}
 }
