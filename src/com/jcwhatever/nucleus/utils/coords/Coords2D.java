@@ -53,10 +53,7 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
 
     private double _x;
     private double _z;
-
-    private boolean _hasFloorValues;
-    private int _floorX;
-    private int _floorZ;
+    private boolean _isImmutable;
 
     /**
      * Constructor.
@@ -67,6 +64,7 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
     public Coords2D(double x, double z) {
         _x = x;
         _z = z;
+        seal();
     }
 
     /**
@@ -77,14 +75,8 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
      * @param source  The source coordinates.
      */
     public Coords2D(Coords2D source) {
-        _x = source._x;
-        _z = source._z;
+        this(source._x, source._z);
     }
-
-    /**
-     * Protected constructor for serialization.
-     */
-    protected Coords2D() {}
 
     /**
      * Constructor.
@@ -96,8 +88,19 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
      * @param deltaZ  The Z coordinate values to add to the source coordinates.
      */
     public Coords2D(Coords2D source, double deltaX, double deltaZ) {
-        _x = source._x + deltaX;
-        _z = source._z + deltaZ;
+        this(source._x + deltaX, source._z + deltaZ);
+    }
+
+    /**
+     * Protected constructor for serialization.
+     */
+    protected Coords2D() {}
+
+    /**
+     * Determine if object is immutable.
+     */
+    public boolean isImmutable() {
+        return _isImmutable;
     }
 
     /**
@@ -118,18 +121,14 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
      * Get the X coordinate as a floored integer whole number.
      */
     public int getFloorX() {
-        fillFloorValues();
-
-        return _floorX;
+        return getFloorValue(_x);
     }
 
     /**
      * Get the Z coordinate as a floored integer whole number.
      */
     public int getFloorZ() {
-        fillFloorValues();
-
-        return _floorZ;
+        return getFloorValue(_z);
     }
 
     /**
@@ -198,6 +197,27 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
     }
 
     /**
+     * Create delta coordinates by subtracting other coordinates from
+     * this coordinates.
+     *
+     * @param coords  The other coordinates.
+     * @param output  The {@link MutableCoords2D} to put the results into.
+     *
+     * @return  The output {@link MutableCoords2D}.
+     */
+    public MutableCoords2D getDelta(Coords2D coords, MutableCoords2D output) {
+        PreCon.notNull(coords);
+
+        double deltaX = getX() - coords.getX();
+        double deltaZ = getZ() - coords.getZ();
+
+        output.setX(deltaX);
+        output.setZ(deltaZ);
+
+        return output;
+    }
+
+    /**
      * Get a {@link org.bukkit.Chunk} from the specified {@link org.bukkit.World}
      * at the coordinates represented by the {@link Coords2D} instance.
      *
@@ -247,6 +267,7 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
     public void deserialize(IDataNode dataNode) throws DeserializeException {
         _x = dataNode.getDouble("x");
         _z = dataNode.getDouble("z");
+        seal();
     }
 
     @Override
@@ -261,6 +282,7 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
 
         _x = reader.getDouble();
         _z = reader.getDouble();
+        seal();
     }
 
     @Override
@@ -288,31 +310,53 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
         return getClass().getSimpleName() + " { x:" + _x + ", z:" + _z + '}';
     }
 
-    protected void deserialize(double x, double z) {
-        if (_x == 0 && _z == 0) {
-            _x = x;
-            _z = z;
-        }
-        else {
-            throw new IllegalStateException("Coords2D is immutable.");
-        }
+    /**
+     * Set the X coordinate.
+     *
+     * @param x  The X coordinate.
+     *
+     * @throws java.lang.IllegalStateException if the object is immutable.
+     */
+    protected void setX(double x) {
+        if (_isImmutable)
+            throw new IllegalStateException("Coordinate is immutable.");
+
+        _x = x;
     }
 
-    private void fillFloorValues() {
-        if (_hasFloorValues)
-            return;
+    /**
+     * Set the Z coordinate.
+     *
+     * @param z  The Z coordinate.
+     *
+     * @throws java.lang.IllegalStateException if the object is immutable.
+     */
+    protected void setZ(double z) {
+        if (_isImmutable)
+            throw new IllegalStateException("Coordinate is immutable.");
 
-        _hasFloorValues = true;
-
-        _floorX = getFloorValue(_x);
-        _floorZ = getFloorValue(_z);
+        _z = z;
     }
 
-    private int getFloorValue(double value) {
-        int floor = (int)value;
-        return (double)floor == value
+    /**
+     * Invoked to make the object immutable.
+     */
+    protected void seal() {
+        _isImmutable = true;
+    }
+
+    /**
+     * Calculate a floor value.
+     *
+     * @param value  The value to floor.
+     *
+     * @return  The floored value.
+     */
+    protected int getFloorValue(double value) {
+        int floor = (int) value;
+        return (double) floor == value
                 ? floor
-                : floor - (int)(Double.doubleToRawLongBits(value) >>> 63);
+                : floor - (int) (Double.doubleToRawLongBits(value) >>> 63);
     }
 }
 

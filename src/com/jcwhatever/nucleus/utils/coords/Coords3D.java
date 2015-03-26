@@ -26,9 +26,7 @@ package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 
@@ -43,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * 3D immutable coordinates with no {@link org.bukkit.World} context.
  */
-public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
+public class Coords3D extends Coords2D {
 
     /**
      * Get {@link Coords3D} from a {@link org.bukkit.Location}.
@@ -63,14 +61,8 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
         return new Coords3D(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    private double _x;
     private double _y;
-    private double _z;
-
-    private boolean _hasFloorValues;
-    private int _floorX;
-    private int _floorY;
-    private int _floorZ;
+    private boolean _canSeal;
 
     /**
      * Constructor.
@@ -80,9 +72,10 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
      * @param z  The z coordinates.
      */
     public Coords3D(double x, double y, double z) {
-        _x = x;
+        super(x, z);
         _y = y;
-        _z = z;
+        _canSeal = true;
+        seal();
     }
 
     /**
@@ -93,9 +86,7 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
      * @param source  The source coordinates.
      */
     public Coords3D(Coords3D source) {
-        _x = source._x;
-        _y = source._y;
-        _z = source._z;
+        this(source.getX(), source._y, source.getZ());
     }
 
     /**
@@ -109,22 +100,13 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
      * @param deltaZ  The Z coordinate values to add to the source coordinates.
      */
     public Coords3D(Coords3D source, double deltaX, double deltaY, double deltaZ) {
-        _x = source._x + deltaX;
-        _y = source._y + deltaY;
-        _z = source._z + deltaZ;
+        this(source.getX() + deltaX, source._y + deltaY, source.getZ() + deltaZ);
     }
 
     /**
      * Protected constructor for serialization.
      */
     protected Coords3D() {}
-
-    /**
-     * Get the X coordinates.
-     */
-    public double getX() {
-        return _x;
-    }
 
     /**
      * Get the Y coordinates.
@@ -134,37 +116,10 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
     }
 
     /**
-     * Get the Z coordinates.
-     */
-    public double getZ() {
-        return _z;
-    }
-
-    /**
-     * Get the X coordinate as a floored integer whole number.
-     */
-    public int getFloorX() {
-        fillFloorValues();
-
-        return _floorX;
-    }
-
-    /**
      * Get the Y coordinate as a floored integer whole number.
      */
     public int getFloorY() {
-        fillFloorValues();
-
-        return _floorY;
-    }
-
-    /**
-     * Get the Z coordinate as a floored integer whole number.
-     */
-    public int getFloorZ() {
-        fillFloorValues();
-
-        return _floorZ;
+        return getFloorValue(_y);
     }
 
     /**
@@ -197,9 +152,9 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
     public double distanceSquared(Coords3D coords) {
         PreCon.notNull(coords);
 
-        double deltaX = coords._x - _x;
+        double deltaX = coords.getX() - getX();
         double deltaY = coords._y - _y;
-        double deltaZ = coords._z - _z;
+        double deltaZ = coords.getZ() - getZ();
 
         return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
     }
@@ -212,9 +167,9 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
     public double distanceSquared(Coords3Di coords) {
         PreCon.notNull(coords);
 
-        double deltaX = coords.getX() - _x;
+        double deltaX = coords.getX() - getX();
         double deltaY = coords.getY() - _y;
-        double deltaZ = coords.getZ() - _z;
+        double deltaZ = coords.getZ() - getZ();
 
         return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
     }
@@ -266,9 +221,9 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
     public Location toLocation(Location output) {
         PreCon.notNull(output);
 
-        output.setX(_x);
+        output.setX(getX());
         output.setY(_y);
-        output.setZ(_z);
+        output.setZ(getZ());
         return output;
     }
 
@@ -287,9 +242,9 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
      * @return  The output location.
      */
     public Vector toVector(Vector output) {
-        output.setX(_x);
+        output.setX(getX());
         output.setY(_y);
-        output.setZ(_z);
+        output.setZ(getZ());
         return output;
     }
 
@@ -309,48 +264,39 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
         return new Coords2D(getX(), getZ());
     }
 
-    /**
-     * Create a new {@link Coords2Di} using the coordinate values.
-     *
-     * <p>Drops the Y coordinate.</p>
-     */
-    public Coords2Di to2Di() {
-        return new Coords2Di(getFloorX(), getFloorZ());
-    }
-
     @Override
     public void serialize(IDataNode dataNode) {
-        dataNode.set("x", _x);
+        super.serialize(dataNode);
         dataNode.set("y", _y);
-        dataNode.set("z", _z);
     }
 
     @Override
     public void deserialize(IDataNode dataNode) throws DeserializeException {
-        _x = dataNode.getDouble("x");
+        super.deserialize(dataNode);
         _y = dataNode.getDouble("y");
-        _z = dataNode.getDouble("z");
+        _canSeal = true;
+        seal();
     }
 
     @Override
     public void serializeToBytes(NucleusByteWriter writer) throws IOException {
-        writer.write(_x);
+        super.serializeToBytes(writer);
         writer.write(_y);
-        writer.write(_z);
     }
 
     @Override
     public void deserializeFromBytes(NucleusByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException {
 
-        _x = reader.getDouble();
+        super.deserializeFromBytes(reader);
         _y = reader.getDouble();
-        _z = reader.getDouble();
+        _canSeal = true;
+        seal();
     }
 
     @Override
     public int hashCode() {
-        return (int)_x ^ (int)_y ^ (int)_z;
+        return super.hashCode() ^ (int)_y;
     }
 
     @Override
@@ -361,9 +307,9 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
         if (obj instanceof Coords3D) {
             Coords3D other = (Coords3D)obj;
 
-            return other._x == _x &&
+            return other.getX() == getX() &&
                     other._y == _y &&
-                    other._z == _z;
+                    other.getZ() == getZ();
         }
 
         return false;
@@ -371,35 +317,26 @@ public class Coords3D implements IDataNodeSerializable, IBinarySerializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " { x:" + _x + ", y:" + _y + ", z:" + _z + '}';
+        return getClass().getSimpleName() + " { x:" + getX() + ", y:" + _y + ", z:" + getZ() + '}';
     }
 
-    protected void deserialize(double x, double y, double z) {
-        if (_x == 0 && _y == 0 && _z == 0) {
-            _x = x;
-            _y = y;
-            _z = z;
-        }
-        else {
+    /**
+     * Set the Y coordinate.
+     *
+     * @param y  The Y coordinate.
+     *
+     * @throws java.lang.IllegalStateException if the object is immutable.
+     */
+    protected void setY(double y) {
+        if (isImmutable())
             throw new IllegalStateException("Coords3D is immutable.");
-        }
+
+        _y = y;
     }
 
-    private void fillFloorValues() {
-        if (_hasFloorValues)
-            return;
-
-        _hasFloorValues = true;
-
-        _floorX = getFloorValue(_x);
-        _floorY = getFloorValue(_y);
-        _floorZ = getFloorValue(_z);
-    }
-
-    private int getFloorValue(double value) {
-        int floor = (int)value;
-        return (double)floor == value
-                ? floor
-                : floor - (int)(Double.doubleToRawLongBits(value) >>> 63);
+    @Override
+    protected void seal() {
+        if (_canSeal)
+            super.seal();
     }
 }

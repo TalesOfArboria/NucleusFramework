@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ import java.io.IOException;
 /**
  * 2D immutable integer coordinates.
  */
-public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
+public class Coords2Di implements IDataNodeSerializable, IBinarySerializable {
 
     /**
      * Get a {@link Coords2Di} from a {@link org.bukkit.Chunk}.
@@ -48,11 +49,50 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
      * @param chunk The chunk to convert.
      */
     public static Coords2Di fromChunk(Chunk chunk) {
+        PreCon.notNull(chunk);
+
         return new Coords2Di(chunk.getX(), chunk.getZ());
+    }
+
+    /**
+     * Get chunk coordinates from a location.
+     *
+     * @param location  The location.
+     */
+    public static Coords2Di getChunkCoords(Location location) {
+        PreCon.notNull(location);
+
+        int x = (int)Math.floor(location.getX() / 16);
+        int z = (int)Math.floor(location.getZ() / 16);
+
+        return new Coords2Di(x, z);
+    }
+
+    /**
+     * Get chunk coordinates from a location and copy the result into an output
+     * {@link MutableCoords2Di}.
+     *
+     * @param location  The location.
+     * @param output    The output {@link MutableCoords2Di}.
+     *
+     * @return  The output {@link MutableCoords2Di}.
+     */
+    public static MutableCoords2Di getChunkCoords(Location location, MutableCoords2Di output) {
+        PreCon.notNull(location);
+        PreCon.notNull(output);
+
+        int x = (int)Math.floor(location.getX() / 16);
+        int z = (int)Math.floor(location.getZ() / 16);
+
+        output.setX(x);
+        output.setZ(z);
+
+        return output;
     }
 
     private int _x;
     private int _z;
+    private boolean _isImmutable;
 
     /**
      * Constructor.
@@ -63,6 +103,7 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
     public Coords2Di(int x, int z) {
         _x = x;
         _z = z;
+        seal();
     }
 
     /**
@@ -73,8 +114,7 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
      * @param source The source coordinates.
      */
     public Coords2Di(Coords2Di source) {
-        _x = source._x;
-        _z = source._z;
+        this(source._x, source._z);
     }
 
     /**
@@ -87,14 +127,20 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
      * @param deltaZ The Z coordinate values to add to the source coordinates.
      */
     public Coords2Di(Coords2Di source, int deltaX, int deltaZ) {
-        _x = source._x + deltaX;
-        _z = source._z + deltaZ;
+        this(source._x + deltaX, source._z + deltaZ);
     }
 
     /**
      * Protected constructor for serialization.
      */
     protected Coords2Di() {}
+
+    /**
+     * Determine if the object is immutable.
+     */
+    public final boolean isImmutable() {
+        return _isImmutable;
+    }
 
     /**
      * Get the X coordinates.
@@ -166,13 +212,32 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
      *
      * @param coords The other coordinates.
      */
-    public Coords2D getDelta(Coords2Di coords) {
+    public Coords2Di getDelta(Coords2Di coords) {
         PreCon.notNull(coords);
 
-        double deltaX = getX() - coords.getX();
-        double deltaZ = getZ() - coords.getZ();
+        int deltaX = getX() - coords.getX();
+        int deltaZ = getZ() - coords.getZ();
 
-        return new Coords2D(deltaX, deltaZ);
+        return new Coords2Di(deltaX, deltaZ);
+    }
+
+    /**
+     * Create delta coordinates by subtracting other coordinates from
+     * this coordinates.
+     *
+     * @param coords  The other coordinates.
+     * @param output  The {@link MutableCoords2Di} to put the result into.
+     */
+    public MutableCoords2Di getDelta(Coords2Di coords, MutableCoords2Di output) {
+        PreCon.notNull(coords);
+
+        int deltaX = getX() - coords.getX();
+        int deltaZ = getZ() - coords.getZ();
+
+        output.setX(deltaX);
+        output.setZ(deltaZ);
+
+        return output;
     }
 
     /**
@@ -225,6 +290,7 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
     public void deserialize(IDataNode dataNode) throws DeserializeException {
         _x = dataNode.getInteger("x");
         _z = dataNode.getInteger("z");
+        seal();
     }
 
     @Override
@@ -239,6 +305,7 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
 
         _x = reader.getInteger();
         _z = reader.getInteger();
+        seal();
     }
 
     @Override
@@ -266,13 +333,38 @@ public class Coords2Di  implements IDataNodeSerializable, IBinarySerializable {
         return getClass().getSimpleName() + " { x:" + _x + ", z:" + _z + '}';
     }
 
-    protected void deserialize(int x, int z) {
-        if (_x == 0 && _z == 0) {
-            _x = x;
-            _z = z;
-        }
-        else {
-            throw new IllegalStateException("Coords2Di is immutable.");
-        }
+    /**
+     * Set the X coordinate.
+     *
+     * @param x  The X coordinate.
+     *
+     * @throws java.lang.IllegalStateException if the object is immutable.
+     */
+    protected void setX(int x) {
+        if (_isImmutable)
+            throw new IllegalStateException("Coordinate is immutable.");
+
+        _x = x;
+    }
+
+    /**
+     * Set the Z coordinate.
+     *
+     * @param z  The Z coordinate.
+     *
+     * @throws java.lang.IllegalStateException if the object is immutable.
+     */
+    protected void setZ(int z) {
+        if (_isImmutable)
+            throw new IllegalStateException("Coordinate is immutable.");
+
+        _z = z;
+    }
+
+    /**
+     * Invoked to make the object immutable.
+     */
+    protected void seal() {
+        _isImmutable = true;
     }
 }

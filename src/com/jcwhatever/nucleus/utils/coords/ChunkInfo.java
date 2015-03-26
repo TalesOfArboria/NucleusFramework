@@ -134,7 +134,9 @@ public class ChunkInfo extends Coords2Di implements IChunkInfo {
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader) throws IOException, ClassNotFoundException, InstantiationException {
+    public void deserializeFromBytes(NucleusByteReader reader)
+            throws IOException, ClassNotFoundException, InstantiationException {
+
         _world = reader.getBinarySerializable(WorldInfo.class);
         if (_world == null)
             throw new RuntimeException("Failed to deserialize world info.");
@@ -144,7 +146,8 @@ public class ChunkInfo extends Coords2Di implements IChunkInfo {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " { world:" + _world.getName() + ", x:" + getX() + ", z:" + getZ() + '}';
+        return getClass().getSimpleName() +
+                " { world:" + _world.getName() + ", x:" + getX() + ", z:" + getZ() + '}';
     }
 }
 

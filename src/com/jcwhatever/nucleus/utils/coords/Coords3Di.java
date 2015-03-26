@@ -26,9 +26,7 @@ package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 
@@ -43,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * 3D immutable integer coordinates with no {@link org.bukkit.World} context.
  */
-public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
+public class Coords3Di extends Coords2Di {
 
     /**
      * Get {@link Coords3Di} from a {@link org.bukkit.Location}.
@@ -63,9 +61,8 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
         return new Coords3Di(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
     }
 
-    private int _x;
     private int _y;
-    private int _z;
+    private boolean _canSeal;
 
     /**
      * Constructor.
@@ -75,9 +72,10 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
      * @param z  The z coordinates.
      */
     public Coords3Di(int x, int y, int z) {
-        _x = x;
+        super(x, z);
         _y = y;
-        _z = z;
+        _canSeal = true;
+        seal();
     }
 
     /**
@@ -88,9 +86,7 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
      * @param source  The source coordinates.
      */
     public Coords3Di(Coords3Di source) {
-        _x = source._x;
-        _y = source._y;
-        _z = source._z;
+        this(source.getX(), source._y, source.getZ());
     }
 
     /**
@@ -104,9 +100,7 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
      * @param deltaZ  The Z coordinate values to add to the source coordinates.
      */
     public Coords3Di(Coords3Di source, int deltaX, int deltaY, int deltaZ) {
-        _x = source._x + deltaX;
-        _y = source._y + deltaY;
-        _z = source._z + deltaZ;
+        this(source.getX() + deltaX, source._y + deltaY, source.getZ() + deltaZ);
     }
 
     /**
@@ -115,24 +109,10 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
     protected Coords3Di() {}
 
     /**
-     * Get the X coordinates.
-     */
-    public int getX() {
-        return _x;
-    }
-
-    /**
      * Get the Y coordinates.
      */
     public int getY() {
         return _y;
-    }
-
-    /**
-     * Get the Z coordinates.
-     */
-    public int getZ() {
-        return _z;
     }
 
     /**
@@ -165,9 +145,9 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
     public double distanceSquared(Coords3D coords) {
         PreCon.notNull(coords);
 
-        double deltaX = coords.getX() - _x;
+        double deltaX = coords.getX() - getX();
         double deltaY = coords.getY() - _y;
-        double deltaZ = coords.getZ() - _z;
+        double deltaZ = coords.getZ() - getZ();
 
         return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
     }
@@ -180,9 +160,9 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
     public double distanceSquared(Coords3Di coords) {
         PreCon.notNull(coords);
 
-        double deltaX = coords._x - _x;
+        double deltaX = coords.getX() - getX();
         double deltaY = coords._y - _y;
-        double deltaZ = coords._z - _z;
+        double deltaZ = coords.getZ() - getZ();
 
         return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
     }
@@ -201,6 +181,30 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
         int deltaZ = getZ() - coords.getZ();
 
         return new Coords3Di(deltaX, deltaY, deltaZ);
+    }
+
+    /**
+     * Create delta coordinates by subtracting other coordinates from
+     * this coordinates.
+     *
+     * @param coords  The other coordinates.
+     * @param output  The {@link MutableCoords3Di} to put the results into.
+     *
+     * @return  The output {@link MutableCoords3Di}.
+     */
+    public MutableCoords3Di getDelta(Coords3Di coords, MutableCoords3Di output) {
+        PreCon.notNull(coords);
+        PreCon.notNull(output);
+
+        int deltaX = getX() - coords.getX();
+        int deltaY = getY() - coords.getY();
+        int deltaZ = getZ() - coords.getZ();
+
+        output.setX(deltaX);
+        output.setY(deltaY);
+        output.setZ(deltaZ);
+
+        return output;
     }
 
     /**
@@ -234,9 +238,9 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
     public Location toLocation(Location output) {
         PreCon.notNull(output);
 
-        output.setX(_x);
+        output.setX(getX());
         output.setY(_y);
-        output.setZ(_z);
+        output.setZ(getZ());
         return output;
     }
 
@@ -255,9 +259,9 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
      * @return  The output location.
      */
     public Vector toVector(Vector output) {
-        output.setX(_x);
+        output.setX(getX());
         output.setY(_y);
-        output.setZ(_z);
+        output.setZ(getZ());
         return output;
     }
 
@@ -266,15 +270,6 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
      */
     public Coords3D to3D() {
         return new Coords3D(getX(), getY(), getZ());
-    }
-
-    /**
-     * Create a new {@link Coords2D} using the coordinate values.
-     *
-     * <p>Drops the Y coordinate.</p>
-     */
-    public Coords2D to2D() {
-        return new Coords2D(getX(), getZ());
     }
 
     /**
@@ -288,37 +283,37 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
 
     @Override
     public void serialize(IDataNode dataNode) {
-        dataNode.set("x", _x);
+        super.serialize(dataNode);
         dataNode.set("y", _y);
-        dataNode.set("z", _z);
     }
 
     @Override
     public void deserialize(IDataNode dataNode) throws DeserializeException {
-        _x = dataNode.getInteger("x");
+        super.deserialize(dataNode);
         _y = dataNode.getInteger("y");
-        _z = dataNode.getInteger("z");
+        _canSeal = true;
+        seal();
     }
 
     @Override
     public void serializeToBytes(NucleusByteWriter writer) throws IOException {
-        writer.write(_x);
+        super.serializeToBytes(writer);
         writer.write(_y);
-        writer.write(_z);
     }
 
     @Override
     public void deserializeFromBytes(NucleusByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException {
 
-        _x = reader.getInteger();
+        super.deserializeFromBytes(reader);
         _y = reader.getInteger();
-        _z = reader.getInteger();
+        _canSeal = true;
+        seal();
     }
 
     @Override
     public int hashCode() {
-        return _x ^ _y ^ _z;
+        return super.hashCode() ^ _y;
     }
 
     @Override
@@ -329,9 +324,9 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
         if (obj instanceof Coords3Di) {
             Coords3Di other = (Coords3Di)obj;
 
-            return other._x == _x &&
+            return other.getX() == getX() &&
                     other._y == _y &&
-                    other._z == _z;
+                    other.getZ() == getZ();
         }
 
         return false;
@@ -339,18 +334,30 @@ public class Coords3Di  implements IDataNodeSerializable, IBinarySerializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " { x:" + _x + ", y:" + _y + ", z:" + _z + '}';
+        return getClass().getSimpleName() + " { x:" + getX() + ", y:" + _y + ", z:" + getZ() + '}';
     }
 
-    protected void deserialize(int x, int y, int z) {
-        if (_x == 0 && _y == 0 && _z == 0) {
-            _x = x;
-            _y = y;
-            _z = z;
-        }
-        else {
-            throw new IllegalStateException("Coords3Di is immutable.");
-        }
+    /**
+     * Set the Y coordinate.
+     *
+     * @param y  The Y coordinate.
+     *
+     * @throws java.lang.IllegalStateException if the object is immutable.
+     */
+    protected void setY(int y) {
+        if (isImmutable())
+            throw new IllegalStateException("Coordinate is immutable.");
+
+        _y = y;
+    }
+
+    /**
+     * Invoked to make the object immutable.
+     */
+    @Override
+    protected void seal() {
+        if (_canSeal)
+            super.seal();
     }
 }
 

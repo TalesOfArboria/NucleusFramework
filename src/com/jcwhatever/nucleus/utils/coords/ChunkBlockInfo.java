@@ -144,7 +144,10 @@ public final class ChunkBlockInfo extends Coords3Di
         _light = ls >> 4;
         _skylight = ls & 0xF;
 
-        deserialize(x, y, z);
+        setX(x);
+        setY(y);
+        setZ(z);
+        seal();
     }
 
     @Override
