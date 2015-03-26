@@ -334,7 +334,7 @@ public final class InternalScriptManager implements IScriptManager {
                 return new SAPI_Titles();
             }
         }));
-        _api.add(new SimpleScriptApi(plugin, "actionBar", new IApiObjectCreator() {
+        _api.add(new SimpleScriptApi(plugin, "actionBars", new IApiObjectCreator() {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
                 return new SAPI_ActionBar();
@@ -346,7 +346,7 @@ public final class InternalScriptManager implements IScriptManager {
                 return new SAPI_NpcProvider(plugin);
             }
         }));
-        _api.add(new SimpleScriptApi(plugin, "menuView", new IApiObjectCreator() {
+        _api.add(new SimpleScriptApi(plugin, "menuViews", new IApiObjectCreator() {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
                 return new SAPI_MenuView(plugin);
