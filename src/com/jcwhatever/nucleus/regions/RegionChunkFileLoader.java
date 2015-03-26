@@ -119,7 +119,7 @@ public final class RegionChunkFileLoader {
      */
     public LinkedList<ChunkBlockInfo> getBlockInfo() {
         if (_isLoading)
-            throw new IllegalAccessError("Cannot access block info while data " +
+            throw new IllegalStateException("Cannot access block info while data " +
                     "is being loaded from file.");
 
         return _blockInfo;
@@ -132,7 +132,7 @@ public final class RegionChunkFileLoader {
      */
     public LinkedList<SerializableBlockEntity> getBlockEntityInfo() {
         if (_isLoading)
-            throw new IllegalAccessError("Cannot access block entity info while " +
+            throw new IllegalStateException("Cannot access block entity info while " +
                     "data is being loaded from file.");
 
         return _blockEntities;
@@ -145,7 +145,7 @@ public final class RegionChunkFileLoader {
      */
     public LinkedList<SerializableFurnitureEntity> getFurnitureEntityInfo() {
         if (_isLoading)
-            throw new IllegalAccessError("Cannot access furniture entity " +
+            throw new IllegalStateException("Cannot access furniture entity " +
                     "info while data is being loaded from file.");
 
         return _entities;
