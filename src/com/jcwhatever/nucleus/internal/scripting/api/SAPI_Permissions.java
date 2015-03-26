@@ -23,49 +23,47 @@
  */
 
 
-package com.jcwhatever.nucleus.scripting;
+package com.jcwhatever.nucleus.internal.scripting.api;
 
-import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.utils.Permissions;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
-import java.io.File;
-import java.util.Collection;
-import javax.annotation.Nullable;
+import org.bukkit.entity.Player;
 
 /**
- * A data object that holds information and source for a script
- * which can be evaluated.
+ * Provide scripts with api access to resource sounds.
  */
-public interface IScript extends INamed {
+public class SAPI_Permissions implements IDisposable {
 
-    /**
-     * Get the name of the script.
-     */
+    private boolean _isDisposed;
+
     @Override
-    String getName();
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    @Override
+    public void dispose() {
+        _isDisposed = true;
+    }
 
     /**
-     * Get the file the script is from.
+     * Determine if a player has the specified permission.
      *
-     * @return Null if script is not from a file.
-     */
-    @Nullable
-    File getFile();
-
-    /**
-     * Get the script source.
-     */
-    String getScript();
-
-    /**
-     * Get the script type.
-     */
-    String getType();
-
-    /**
-     * Evaluate the script.
+     * @param player          The player.
+     * @param permissionName  The name of the permission.
      *
-     * @param apiCollection  The API to include.
+     * @return  True if the player has the permission.
      */
-    @Nullable
-    IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection);
+    public boolean has(Object player, String permissionName) {
+        PreCon.notNull(player);
+        PreCon.notNullOrEmpty(permissionName);
+
+        Player p = PlayerUtils.getPlayer(player);
+        PreCon.notNull(p);
+
+        return Permissions.has(p, permissionName);
+    }
 }

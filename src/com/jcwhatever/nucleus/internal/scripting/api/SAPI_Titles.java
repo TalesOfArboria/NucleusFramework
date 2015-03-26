@@ -22,50 +22,44 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.internal.scripting.api;
 
-package com.jcwhatever.nucleus.scripting;
+import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.titles.ITitle;
+import com.jcwhatever.nucleus.utils.titles.Title;
 
-import com.jcwhatever.nucleus.mixins.INamed;
-
-import java.io.File;
-import java.util.Collection;
 import javax.annotation.Nullable;
 
-/**
- * A data object that holds information and source for a script
- * which can be evaluated.
- */
-public interface IScript extends INamed {
+public class SAPI_Titles implements IDisposable {
 
-    /**
-     * Get the name of the script.
-     */
+    private boolean _isDisposed;
+
     @Override
-    String getName();
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    @Override
+    public void dispose() {
+        _isDisposed = true;
+    }
 
     /**
-     * Get the file the script is from.
+     * Create a new transient title object to display to players.
      *
-     * @return Null if script is not from a file.
+     * @param title         The title text.
+     * @param subTitle      Optional sub title text.
+     * @param fadeInTicks   The time spent fading in.
+     * @param stayTicks     The time spent being displayed.
+     * @param fadeOutTicks  The time spent fading out.
      */
-    @Nullable
-    File getFile();
+    public ITitle create(String title, @Nullable String subTitle,
+                         int fadeInTicks, int stayTicks, int fadeOutTicks) {
 
-    /**
-     * Get the script source.
-     */
-    String getScript();
+        PreCon.notNullOrEmpty(title);
 
-    /**
-     * Get the script type.
-     */
-    String getType();
-
-    /**
-     * Evaluate the script.
-     *
-     * @param apiCollection  The API to include.
-     */
-    @Nullable
-    IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection);
+        return new Title(title, subTitle,
+                fadeInTicks, stayTicks, fadeOutTicks);
+    }
 }

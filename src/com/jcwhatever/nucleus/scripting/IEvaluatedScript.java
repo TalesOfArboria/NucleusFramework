@@ -26,7 +26,6 @@
 package com.jcwhatever.nucleus.scripting;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.scripting.api.IScriptApi;
 
 import java.util.List;
 import javax.annotation.Nullable;

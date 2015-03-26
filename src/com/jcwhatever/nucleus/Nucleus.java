@@ -31,10 +31,8 @@ import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
 import com.jcwhatever.nucleus.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
-import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
-import com.jcwhatever.nucleus.scripting.IScript;
-import com.jcwhatever.nucleus.scripting.ScriptApiRepo;
-import com.jcwhatever.nucleus.scripting.ScriptManager;
+import com.jcwhatever.nucleus.scripting.IScriptApiRepo;
+import com.jcwhatever.nucleus.scripting.IScriptManager;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
@@ -171,10 +169,19 @@ public final class Nucleus {
     /**
      * Get the default script manager.
      */
-    public static ScriptManager<IScript, IEvaluatedScript> getScriptManager() {
+    public static IScriptManager getScriptManager() {
         PreCon.isValid(_plugin._scriptManager != null, ERROR_NOT_READY);
 
         return _plugin._scriptManager;
+    }
+
+    /**
+     * Get the Script API Repository.
+     */
+    public static IScriptApiRepo getScriptApiRepo() {
+        PreCon.isValid(_plugin._scriptApiRepo != null, ERROR_NOT_READY);
+
+        return _plugin._scriptApiRepo;
     }
 
     /**
@@ -207,15 +214,6 @@ public final class Nucleus {
             _plugin._messengerFactory = new InternalMessengerFactory();
 
         return _plugin._messengerFactory;
-    }
-
-    /**
-     * Get the Script API Repository.
-     */
-    public static ScriptApiRepo getScriptApiRepo() {
-        PreCon.isValid(_plugin._scriptApiRepo != null, ERROR_NOT_READY);
-
-        return _plugin._scriptApiRepo;
     }
 
     /**

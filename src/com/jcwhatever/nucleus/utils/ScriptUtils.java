@@ -26,24 +26,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.scripting.IScript;
-import com.jcwhatever.nucleus.scripting.ScriptManager;
-import com.jcwhatever.nucleus.scripting.api.IScriptApi;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiActionBar;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiDepends;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiEconomy;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiEvents;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiInclude;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiInventory;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiItemBank;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiJail;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiMsg;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiNpc;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiPermissions;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiRand;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiScheduler;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiSounds;
-import com.jcwhatever.nucleus.scripting.api.ScriptApiTitles;
-import com.jcwhatever.nucleus.scripting.api.views.ScriptApiMenuView;
+import com.jcwhatever.nucleus.scripting.IScriptFactory;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
@@ -76,38 +59,6 @@ public final class ScriptUtils {
     private static final Pattern PATTERN_LEADING_DOT = Pattern.compile("^\\.");
 
     /**
-     * Get new instances of the default script API.
-     *
-     * @param plugin   The owning plugin.
-     * @param manager  The requesting {@link ScriptManager}.
-     */
-    public static List<IScriptApi> getDefaultApi(Plugin plugin, ScriptManager manager) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(manager);
-
-        List<IScriptApi> api = new ArrayList<>(15);
-
-        api.add(new ScriptApiEconomy(plugin));
-        api.add(new ScriptApiEvents(plugin));
-        api.add(new ScriptApiInventory(plugin));
-        api.add(new ScriptApiItemBank(plugin));
-        api.add(new ScriptApiJail(plugin));
-        api.add(new ScriptApiMsg(plugin));
-        api.add(new ScriptApiPermissions(plugin));
-        api.add(new ScriptApiSounds(plugin));
-        api.add(new ScriptApiDepends(plugin));
-        api.add(new ScriptApiRand(plugin));
-        api.add(new ScriptApiScheduler(plugin));
-        api.add(new ScriptApiInclude(plugin, manager));
-        api.add(new ScriptApiTitles(plugin));
-        api.add(new ScriptApiActionBar(plugin));
-        api.add(new ScriptApiNpc(plugin));
-        api.add(new ScriptApiMenuView(plugin));
-
-        return api;
-    }
-
-    /**
      * Load scripts from a script folder.
      *
      * @param plugin         The scripts owning plugin.
@@ -115,14 +66,12 @@ public final class ScriptUtils {
      * @param scriptFolder   The folder to find scripts in.
      * @param traversal      The type of directory traversal used to find script files.
      * @param scriptFactory  A script constructor to create new script instances.
-     *
-     * @param <T>  Script instance type.
      */
-    public static <T extends IScript> List<T> loadScripts(Plugin plugin,
-                                                          ScriptEngineManager engineManager,
-                                                          File scriptFolder,
-                                                          DirectoryTraversal traversal,
-                                                          IScriptFactory<T> scriptFactory) {
+    public static List<IScript> loadScripts(Plugin plugin,
+                                            ScriptEngineManager engineManager,
+                                            File scriptFolder,
+                                            DirectoryTraversal traversal,
+                                            IScriptFactory scriptFactory) {
 
         return loadScripts(plugin, engineManager, scriptFolder, null, traversal, scriptFactory);
     }
@@ -137,14 +86,13 @@ public final class ScriptUtils {
      * @param traversal      The type of directory traversal used to find script files.
      * @param scriptFactory  A script constructor to create new script instances.
      *
-     * @param <T>  Script instance type.
      */
-    public static <T extends IScript> List<T> loadScripts(Plugin plugin,
-                                                          ScriptEngineManager engineManager,
-                                                          File scriptFolder,
-                                                          @Nullable File exclude,
-                                                          DirectoryTraversal traversal,
-                                                          IScriptFactory<T> scriptFactory) {
+    public static List<IScript> loadScripts(Plugin plugin,
+                                            ScriptEngineManager engineManager,
+                                            File scriptFolder,
+                                            @Nullable File exclude,
+                                            DirectoryTraversal traversal,
+                                            IScriptFactory scriptFactory) {
         PreCon.notNull(plugin);
         PreCon.notNull(scriptFolder);
         PreCon.isValid(scriptFolder.isDirectory());
@@ -153,7 +101,7 @@ public final class ScriptUtils {
             return new ArrayList<>(0);
 
         List<File> scriptFiles = FileUtils.getFiles(scriptFolder, traversal);
-        List<T> result = new ArrayList<>(scriptFiles.size());
+        List<IScript> result = new ArrayList<>(scriptFiles.size());
 
         for (File file : scriptFiles) {
 
@@ -184,7 +132,7 @@ public final class ScriptUtils {
 
                 reader.close();
 
-                T script = scriptFactory.construct(name, file, type, buffer.toString());
+                IScript script = scriptFactory.construct(name, file, type, buffer.toString());
                 if (script != null)
                     result.add(script);
 
@@ -204,15 +152,13 @@ public final class ScriptUtils {
      * @param scriptFile         The script file.
      * @param scriptFactory  A script constructor used to create new script instances.
      *
-     * @param <T>  Script instance type.
-     *
      * @return Null if the file is not found or there is an error opening or reading from it.
      */
     @Nullable
-    public static <T extends IScript> T loadScript(Plugin plugin,
-                                                   File scriptFolder,
-                                                   File scriptFile,
-                                                   IScriptFactory<T> scriptFactory) {
+    public static IScript loadScript(Plugin plugin,
+                                     File scriptFolder,
+                                     File scriptFile,
+                                     IScriptFactory scriptFactory) {
         PreCon.notNull(plugin);
         PreCon.notNull(scriptFolder);
         PreCon.notNull(scriptFile);
@@ -325,23 +271,5 @@ public final class ScriptUtils {
             e.printStackTrace();
             return new Result<Object>(false);
         }
-    }
-
-    /**
-     * Script factory to create a new {@link IScript} instance.
-     *
-     * @param <T>  The instance type.
-     */
-    public static interface IScriptFactory<T extends IScript> {
-
-        /**
-         * Called to get a new {@link IScript} instance.
-         *
-         * @param name      The name of the script.
-         * @param file      Optional file of the script.
-         * @param type      The script type. (script file extension)
-         * @param script    The script.
-         */
-        public T construct(String name, @Nullable File file, String type, String script);
     }
 }

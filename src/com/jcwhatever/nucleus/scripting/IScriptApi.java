@@ -25,47 +25,28 @@
 
 package com.jcwhatever.nucleus.scripting;
 
+import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 
-import java.io.File;
-import java.util.Collection;
-import javax.annotation.Nullable;
+import org.bukkit.plugin.Plugin;
 
 /**
- * A data object that holds information and source for a script
- * which can be evaluated.
+ * Represents a script API object factory.
+ *
+ * <p>Used to retrieve an API object which is inserted into a script using
+ * a specified variable name.</p>
+ *
+ * @see SimpleScriptApi
+ * @see IScriptApiRepo
  */
-public interface IScript extends INamed {
+public interface IScriptApi extends IPluginOwned, INamed {
 
     /**
-     * Get the name of the script.
-     */
-    @Override
-    String getName();
-
-    /**
-     * Get the file the script is from.
+     * Create a new instance of the API object for a specific script and plugin.
      *
-     * @return Null if script is not from a file.
+     * @param plugin  The plugin the API is being instantiated for.
+     * @param script  The script the API is being instantiated for.
      */
-    @Nullable
-    File getFile();
-
-    /**
-     * Get the script source.
-     */
-    String getScript();
-
-    /**
-     * Get the script type.
-     */
-    String getType();
-
-    /**
-     * Evaluate the script.
-     *
-     * @param apiCollection  The API to include.
-     */
-    @Nullable
-    IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection);
+    public IDisposable createApi(Plugin plugin, IEvaluatedScript script);
 }

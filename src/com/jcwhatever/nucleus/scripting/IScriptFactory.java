@@ -22,50 +22,25 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.scripting;
 
-import com.jcwhatever.nucleus.mixins.INamed;
-
 import java.io.File;
-import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * A data object that holds information and source for a script
- * which can be evaluated.
+ * Script factory to create new {@link IScript} instances.
+ *
+ * @see IScriptManager#getScriptFactory
  */
-public interface IScript extends INamed {
+public interface IScriptFactory {
 
     /**
-     * Get the name of the script.
-     */
-    @Override
-    String getName();
-
-    /**
-     * Get the file the script is from.
+     * Invoked to get a new {@link IScript} instance.
      *
-     * @return Null if script is not from a file.
+     * @param name      The name of the script.
+     * @param file      Optional file of the script.
+     * @param type      The script type. (script file extension)
+     * @param script    The script.
      */
-    @Nullable
-    File getFile();
-
-    /**
-     * Get the script source.
-     */
-    String getScript();
-
-    /**
-     * Get the script type.
-     */
-    String getType();
-
-    /**
-     * Evaluate the script.
-     *
-     * @param apiCollection  The API to include.
-     */
-    @Nullable
-    IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection);
+    public IScript construct(String name, @Nullable File file, String type, String script);
 }

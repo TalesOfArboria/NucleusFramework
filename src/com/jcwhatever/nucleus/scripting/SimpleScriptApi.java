@@ -25,47 +25,52 @@
 
 package com.jcwhatever.nucleus.scripting;
 
-import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.utils.PreCon;
 
-import java.io.File;
-import java.util.Collection;
-import javax.annotation.Nullable;
+import org.bukkit.plugin.Plugin;
 
 /**
- * A data object that holds information and source for a script
- * which can be evaluated.
+ * Abstract implementation of a script API.
  */
-public interface IScript extends INamed {
+public class SimpleScriptApi implements IScriptApi {
+
+    private final Plugin _plugin;
+    private final String _name;
+    private final IApiObjectCreator _creator;
 
     /**
-     * Get the name of the script.
+     * Constructor.
+     *
+     * @param plugin   The owning plugin
+     * @param name     The name of the API. Also used as the default script variable name.
+     * @param creator  Use to create new instances of the API object.
      */
+    public SimpleScriptApi(Plugin plugin, String name, IApiObjectCreator creator) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(creator);
+
+        _plugin = plugin;
+        _name = name;
+        _creator = creator;
+    }
+
     @Override
-    String getName();
+    public final Plugin getPlugin() {
+        return _plugin;
+    }
 
-    /**
-     * Get the file the script is from.
-     *
-     * @return Null if script is not from a file.
-     */
-    @Nullable
-    File getFile();
+    @Override
+    public String getName() {
+        return _name;
+    }
 
-    /**
-     * Get the script source.
-     */
-    String getScript();
+    @Override
+    public IDisposable createApi(Plugin plugin, IEvaluatedScript script) {
+        return _creator.create(plugin, script);
+    }
 
-    /**
-     * Get the script type.
-     */
-    String getType();
-
-    /**
-     * Evaluate the script.
-     *
-     * @param apiCollection  The API to include.
-     */
-    @Nullable
-    IEvaluatedScript evaluate(@Nullable Collection<? extends IScriptApi> apiCollection);
+    public interface IApiObjectCreator {
+        IDisposable create(Plugin plugin, IEvaluatedScript script);
+    }
 }

@@ -26,8 +26,6 @@ package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.internal.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
-import com.jcwhatever.nucleus.internal.InternalScriptApiRepo;
-import com.jcwhatever.nucleus.internal.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
@@ -36,10 +34,11 @@ import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
+import com.jcwhatever.nucleus.internal.scripting.InternalScriptApiRepo;
+import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineManager;
+import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.nucleus.messaging.IMessengerFactory;
-import com.jcwhatever.nucleus.scripting.NucleusScriptEngineManager;
-import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
@@ -157,7 +156,7 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _kitManager = new KitManager(this, getDataNode().getNode("kits"));
 
-        _scriptEngineManager = new NucleusScriptEngineManager();
+        _scriptEngineManager = new InternalScriptEngineManager();
         _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
         _scriptEngineLoader.loadModules();
     }
@@ -192,8 +191,7 @@ public final class BukkitPlugin extends NucleusPlugin {
             throw new RuntimeException("Failed to create script folder.");
         }
 
-        _scriptManager = new InternalScriptManager(this, scriptFolder);
-        _scriptManager.addScriptApi(ScriptUtils.getDefaultApi(this, _scriptManager));
+        _scriptManager = new InternalScriptManager(scriptFolder);
         _scriptManager.reload();
     }
 
