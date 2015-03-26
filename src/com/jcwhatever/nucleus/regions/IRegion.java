@@ -29,6 +29,9 @@ import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPlayerOwnable;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.mixins.IPrioritizable;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 
 import org.bukkit.Location;
@@ -47,7 +50,7 @@ import javax.annotation.Nullable;
  * {@link RestorableRegion} or {@link MultiSnapshotRegion}.</p>
  */
 public interface IRegion extends IRegionSelection, INamedInsensitive,
-        IPlayerOwnable, IRegionComparable, IPluginOwned, IMeta, IDisposable {
+        IPlayerOwnable, IPrioritizable, IPluginOwned, IMeta, IDisposable {
 
     /**
      * Get the owning plugin.
@@ -73,6 +76,12 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
     @Override
     @Nullable
     UUID getOwnerId();
+
+    /**
+     * Get the sorting priority of the region.
+     */
+    @Override
+    int getPriority();
 
     /**
      * Determine if the region has a player owner.
@@ -128,6 +137,14 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
      * Get the regions event listener.
      */
     IRegionEventListener getEventListener();
+
+    /**
+     * Get the regions priority when handling player
+     * entering or leaving region.
+     *
+     * @param priorityType  The priority type.
+     */
+    RegionEventPriority getEventPriority(PriorityType priorityType);
 
     /**
      * Add a transient event handler to the region.

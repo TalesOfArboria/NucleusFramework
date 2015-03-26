@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.regions;
 
-import com.jcwhatever.nucleus.regions.IRegionComparable;
+import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -47,7 +47,7 @@ import java.util.Set;
  * <p>If only the {@link java.util.Set} implemented methods are used, the collection
  * performance should remain nearly the same as a {@link java.util.HashSet}.</p>
  */
-public class EventOrderedRegions<E extends IRegionComparable> implements Set<E> {
+public class EventOrderedRegions<E extends IRegion> implements Set<E> {
 
     // primary hash set
     private final Set<E> _hashSet;
