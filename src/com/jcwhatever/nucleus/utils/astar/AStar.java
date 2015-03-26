@@ -39,7 +39,7 @@ public class AStar {
     private final IAStarExaminer _examiner;
     private double _range = 18;
     private int _maxDropHeight = 4;
-    private long _maxIterations = -1;
+    private long _maxIterations = 8500;
 
     /**
      * Constructor.
