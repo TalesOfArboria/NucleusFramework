@@ -37,6 +37,7 @@ import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Msg;
 import com.jcwhatever.nucleus.internal.scripting.api.SAPI_NpcProvider;
 import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Permissions;
 import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Rand;
+import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Regions;
 import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Scheduler;
 import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Sounds;
 import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Titles;
@@ -349,6 +350,12 @@ public final class InternalScriptManager implements IScriptManager {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
                 return new SAPI_MenuView(plugin);
+            }
+        }));
+        _api.add(new SimpleScriptApi(plugin, "regions", new IApiObjectCreator() {
+            @Override
+            public IDisposable create(Plugin plugin, IEvaluatedScript script) {
+                return new SAPI_Regions();
             }
         }));
     }
