@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.regions;
 
 
 import com.jcwhatever.nucleus.mixins.IPrioritizable;
-import com.jcwhatever.nucleus.regions.options.RegionPriority;
-import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 
 /**
  * Represents an object that has region handling priorities.
@@ -46,5 +46,5 @@ public interface IRegionComparable extends IPrioritizable {
      *
      * @param priorityType  The priority type.
      */
-    RegionPriority getPriority(PriorityType priorityType);
+    RegionEventPriority getEventPriority(PriorityType priorityType);
 }

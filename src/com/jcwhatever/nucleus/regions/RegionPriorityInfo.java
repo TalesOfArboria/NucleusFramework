@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.regions;
 
 
-import com.jcwhatever.nucleus.regions.options.RegionPriority;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -53,7 +53,7 @@ public @interface RegionPriorityInfo {
      * <p>Determines the order that the region is handled when a
      * player enters more than 1 region at the same time.</p>
      */
-    RegionPriority enter() default RegionPriority.DEFAULT;
+    RegionEventPriority enter() default RegionEventPriority.DEFAULT;
 
     /**
      * The priority of the region when a player leaves.
@@ -61,5 +61,5 @@ public @interface RegionPriorityInfo {
      * <p>Determines the order that the region is handled when a
      * player leaves more than 1 region at the same time.</p>
      */
-    RegionPriority leave() default RegionPriority.DEFAULT;
+    RegionEventPriority leave() default RegionEventPriority.DEFAULT;
 }

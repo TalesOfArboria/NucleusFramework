@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.mixins.IReadOnly;
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
-import com.jcwhatever.nucleus.regions.options.RegionPriority;
-import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -74,8 +74,8 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     }
 
     @Override
-    public RegionPriority getPriority(PriorityType priorityType) {
-        return _region.getPriority(priorityType);
+    public RegionEventPriority getEventPriority(PriorityType priorityType) {
+        return _region.getEventPriority(priorityType);
     }
 
     @Override

@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.regions.options;
  * The priority/order the region is handled by the
  * region manager in relation to other regions.
  */
-public enum RegionPriority {
+public enum RegionEventPriority {
     /**
      * The last to be handled.
      */
@@ -52,7 +52,7 @@ public enum RegionPriority {
 
     private final int _order;
 
-    RegionPriority(int order) {
+    RegionEventPriority(int order) {
         _order = order;
     }
 

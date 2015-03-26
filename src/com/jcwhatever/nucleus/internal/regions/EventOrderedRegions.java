@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.internal.regions;
 
 import com.jcwhatever.nucleus.regions.IRegionComparable;
-import com.jcwhatever.nucleus.regions.options.RegionPriority;
-import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.ArrayList;
@@ -328,8 +328,8 @@ public class EventOrderedRegions<E extends IRegionComparable> implements Set<E> 
         Collections.sort(list, new Comparator<E>() {
             @Override
             public int compare(E o1, E o2) {
-                RegionPriority p1 = o1.getPriority(priorityType);
-                RegionPriority p2 = o2.getPriority(priorityType);
+                RegionEventPriority p1 = o1.getEventPriority(priorityType);
+                RegionEventPriority p2 = o2.getEventPriority(priorityType);
 
                 return Integer.compare(p1.getSortOrder(), p2.getSortOrder());
             }

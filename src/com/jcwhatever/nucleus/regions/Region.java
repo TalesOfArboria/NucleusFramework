@@ -31,8 +31,8 @@ import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
-import com.jcwhatever.nucleus.regions.options.RegionPriority;
-import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
+import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.MetaStore;
@@ -84,8 +84,8 @@ public abstract class Region extends RegionSelection implements IRegion {
     private final IRegionEventListener _eventListener;
     private final MetaStore _meta = new MetaStore();
 
-    private RegionPriority _enterPriority = RegionPriority.DEFAULT;
-    private RegionPriority _leavePriority = RegionPriority.DEFAULT;
+    private RegionEventPriority _enterPriority = RegionEventPriority.DEFAULT;
+    private RegionEventPriority _leavePriority = RegionEventPriority.DEFAULT;
 
     private boolean _isEventListener;
     private boolean _isDisposed;
@@ -154,7 +154,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     @Override
-    public RegionPriority getPriority(PriorityType priorityType) {
+    public RegionEventPriority getEventPriority(PriorityType priorityType) {
         PreCon.notNull(priorityType);
 
         switch (priorityType) {
@@ -466,8 +466,8 @@ public abstract class Region extends RegionSelection implements IRegion {
         initCoords(p1, p2);
 
         _ownerId = dataNode.getUUID("owner-id");
-        _enterPriority = dataNode.getEnum("region-enter-priority", _enterPriority, RegionPriority.class);
-        _leavePriority = dataNode.getEnum("region-leave-priority", _leavePriority, RegionPriority.class);
+        _enterPriority = dataNode.getEnum("region-enter-priority", _enterPriority, RegionEventPriority.class);
+        _leavePriority = dataNode.getEnum("region-leave-priority", _leavePriority, RegionEventPriority.class);
     }
 
     /*
