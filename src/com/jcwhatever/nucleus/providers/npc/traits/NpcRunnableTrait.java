@@ -57,13 +57,17 @@ public abstract class NpcRunnableTrait extends NpcTrait implements Runnable {
      * Set the interval in ticks that the trait is run at.
      *
      * @param interval  The interval in ticks. Must be greater than 0.
+     *
+     * @return  Self for chaining.
      */
-    public void setInterval(int interval) {
+    public NpcRunnableTrait setInterval(int interval) {
         PreCon.greaterThanZero(interval);
 
         _interval = interval;
         if (_currentInterval > interval)
             _currentInterval = interval;
+
+        return this;
     }
 
     @Override
