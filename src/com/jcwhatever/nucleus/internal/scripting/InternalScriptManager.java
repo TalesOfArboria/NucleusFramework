@@ -52,6 +52,7 @@ import com.jcwhatever.nucleus.scripting.IScriptManager;
 import com.jcwhatever.nucleus.scripting.SimpleScriptApi;
 import com.jcwhatever.nucleus.scripting.SimpleScriptApi.IApiObjectCreator;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 
@@ -167,6 +168,14 @@ public final class InternalScriptManager implements IScriptManager {
     public void reload() {
         loadScripts();
         evaluate();
+
+        Scheduler.runTaskLater(Nucleus.getPlugin(), 20, new Runnable() {
+            @Override
+            public void run() {
+                // remove long lived objects
+                System.gc();
+            }
+        });
     }
 
     @Override
