@@ -70,7 +70,7 @@ public final class GiveSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        if (!Economy.deposit(playerId, amount)) {
+        if (Economy.deposit(playerId, amount) == null) {
             tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }

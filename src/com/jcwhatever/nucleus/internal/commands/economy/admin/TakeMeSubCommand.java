@@ -59,7 +59,7 @@ public final class TakeMeSubCommand extends AbstractCommand {
         UUID playerId = ((Player)sender).getUniqueId();
         double amount = args.getDouble("amount");
 
-        if (!Economy.withdraw(playerId, amount)) {
+        if (Economy.withdraw(playerId, amount) == null) {
             tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }

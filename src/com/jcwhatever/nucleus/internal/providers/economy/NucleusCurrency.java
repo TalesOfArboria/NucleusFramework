@@ -41,7 +41,8 @@ public class NucleusCurrency implements ICurrency {
     private final double _factor;
     private final DecimalFormat _formatter;
 
-    public NucleusCurrency(String singular, String plural, double factor, String formatTemplate, DecimalFormat formatter) {
+    public NucleusCurrency(String singular, String plural, double factor,
+                           String formatTemplate, DecimalFormat formatter) {
         PreCon.notNull(singular);
         PreCon.notNull(plural);
         PreCon.notNull(formatTemplate);

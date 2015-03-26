@@ -26,13 +26,14 @@
 package com.jcwhatever.nucleus.providers.economy.events;
 
 import com.jcwhatever.nucleus.providers.economy.IAccount;
+import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when money is deposited into an account using NucleusFramework's EconomyUtils
+ * Called when money is deposited into an account.
  */
 public class EconDepositEvent extends Event {
 	
@@ -40,20 +41,26 @@ public class EconDepositEvent extends Event {
 	
 	private final IAccount _account;
 	private final double _originalAmount;
+    private final ICurrency _currency;
 	private double _amount;
+    private double _convertedAmount;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param account  The account receiving the deposit.
-	 * @param amount   The amount being deposited.
+	 * @param account   The account receiving the deposit.
+	 * @param amount    The amount being deposited.
+     * @param currency  The currency of the amount.
 	 */
-	public EconDepositEvent(IAccount account, double amount) {
+	public EconDepositEvent(IAccount account, double amount, ICurrency currency) {
 		PreCon.notNull(account);
+        PreCon.notNull(currency);
 
 		_account = account;
 		_originalAmount = amount;
-		_amount = amount;
+        _currency = currency;
+        _amount = amount;
+        _convertedAmount = amount * currency.getConversionFactor();
 	}
 
 	/**
@@ -78,14 +85,30 @@ public class EconDepositEvent extends Event {
 		return _amount;
 	}
 
+    /**
+     * Get the amount converted to the base currency.
+     */
+    public double getConvertedAmount() {
+        return _convertedAmount;
+    }
+
+    /**
+     * Get the currency of the amount.
+     */
+    public ICurrency getCurrency() {
+        return _currency;
+    }
+
 	/**
 	 * Set the amount being deposited.
+     *
 	 * @param amount
 	 */
 	public void setAmount(double amount) {
 		PreCon.positiveNumber(amount);
 
 		_amount = amount;
+        _convertedAmount = amount * _currency.getConversionFactor();
 	}
 
 	@Override

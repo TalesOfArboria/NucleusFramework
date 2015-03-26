@@ -66,9 +66,9 @@ public interface IAccount {
      *                amount is assumed to be the economy providers
      *                currency.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount deposited or null if failed.
      */
-    boolean deposit(double amount);
+    Double deposit(double amount);
 
     /**
      * Deposit into the account.
@@ -76,9 +76,9 @@ public interface IAccount {
      * @param amount    The amount to deposit.
      * @param currency  The currency of the amount to deposit.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount deposited or null if failed.
      */
-    boolean deposit(double amount, ICurrency currency);
+    Double deposit(double amount, ICurrency currency);
 
     /**
      * Withdraw from the account.
@@ -91,9 +91,9 @@ public interface IAccount {
      *                currency of the amount is assumed to be the
      *                economy providers currency.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount withdrawn or null if failed.
      */
-    boolean withdraw(double amount);
+    Double withdraw(double amount);
 
 
     /**
@@ -106,9 +106,9 @@ public interface IAccount {
      * @param amount   The amount to withdraw from the account.
      * @param currency The currency of the amount to withdraw.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount withdrawn or null if failed.
      */
-    boolean withdraw(double amount, ICurrency currency);
+    Double withdraw(double amount, ICurrency currency);
 
     /**
      * Get the underlying account object if the

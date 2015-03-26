@@ -198,9 +198,9 @@ public final class Economy {
      * @param playerId  The id of the player to give money to.
      * @param amount    The amount to give the player.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount deposited or null if failed.
      */
-    public static boolean deposit(UUID playerId, double amount) {
+    public static Double deposit(UUID playerId, double amount) {
         return deposit(playerId, amount, getCurrency());
     }
 
@@ -213,13 +213,16 @@ public final class Economy {
      *
      * @return  True if the operation is successful.
      */
-    public static boolean deposit(UUID playerId, double amount, ICurrency currency) {
+    public static Double deposit(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
 
         IAccount account = getProvider().getAccount(playerId);
-        return account != null && account.deposit(amount, currency);
+        if (account == null)
+            return null;
+
+        return account.deposit(amount, currency);
     }
 
     /**
@@ -229,9 +232,9 @@ public final class Economy {
      * @param playerId  The id of the player to take money from.
      * @param amount    The amount to take.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount withdrawn or null if failed.
      */
-    public static boolean withdraw(UUID playerId, double amount) {
+    public static Double withdraw(UUID playerId, double amount) {
         return withdraw(playerId, amount, getCurrency());
     }
 
@@ -242,15 +245,18 @@ public final class Economy {
      * @param amount    The amount to take.
      * @param currency  The currency of the amount.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount withdrawn or null if failed.
      */
-    public static boolean withdraw(UUID playerId, double amount, ICurrency currency) {
+    public static Double withdraw(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
 
         IAccount account = getProvider().getAccount(playerId);
-        return account != null && account.withdraw(amount, currency);
+        if (account == null)
+            return null;
+
+        return account.withdraw(amount, currency);
     }
 
     /**
@@ -265,7 +271,7 @@ public final class Economy {
      *
      * @return  True if the operation is successful.
      */
-    public static boolean depositOrWithdraw(UUID playerId, double amount) {
+    public static Double depositOrWithdraw(UUID playerId, double amount) {
         return depositOrWithdraw(playerId, amount, getCurrency());
     }
 
@@ -278,12 +284,26 @@ public final class Economy {
      * @param playerId  The id of the player.
      * @param amount    The amount to deposit or withdraw.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount deposited or withdrawn or null if failed.
      */
-    public static boolean depositOrWithdraw(UUID playerId, double amount, ICurrency currency) {
+    public static Double depositOrWithdraw(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
-        return Double.compare(amount, 0.0D) == 0 ||
-                (amount < 0 ? withdraw(playerId, amount, currency) : deposit(playerId, amount, currency));
+
+        if (Double.compare(amount, 0.0D) == 0)
+            return 0.0D;
+
+        if (amount > 0)
+            return deposit(playerId, amount, currency);
+
+        if (amount < 0) {
+            Double withdrawn = withdraw(playerId, amount, currency);
+            if (withdrawn == null)
+                return null;
+
+            return -withdrawn;
+        }
+
+        return null;
     }
 
     /**
@@ -296,9 +316,9 @@ public final class Economy {
      * @param account  The account.
      * @param amount   The amount to deposit or withdraw.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount deposited or withdrawn or null if failed.
      */
-    public static boolean depositOrWithdraw(IAccount account, double amount) {
+    public static Double depositOrWithdraw(IAccount account, double amount) {
         return depositOrWithdraw(account, amount, getCurrency());
     }
 
@@ -312,12 +332,27 @@ public final class Economy {
      * @param amount    The amount to deposit or withdraw.
      * @param currency  The currency of the amount.
      *
-     * @return  True if the operation is successful.
+     * @return  The amount deposited or withdrawn or null if failed.
      */
-    public static boolean depositOrWithdraw(IAccount account, double amount, ICurrency currency) {
+    public static Double depositOrWithdraw(IAccount account, double amount, ICurrency currency) {
         PreCon.notNull(account);
-        return Double.compare(amount, 0.0D) == 0 ||
-                (amount < 0 ? account.withdraw(amount, currency) : account.deposit(amount, currency));
+        PreCon.notNull(currency);
+
+        if (Double.compare(amount, 0.0D) == 0)
+            return 0.0D;
+
+        if (amount > 0)
+            return account.deposit(amount, currency);
+
+        if (amount < 0) {
+            Double withdrawn = account.withdraw(amount, currency);
+            if (withdrawn == null)
+                return null;
+
+            return -withdrawn;
+        }
+
+        return null;
     }
 
     /**

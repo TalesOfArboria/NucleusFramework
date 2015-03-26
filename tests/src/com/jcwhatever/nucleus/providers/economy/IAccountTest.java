@@ -1,6 +1,8 @@
 package com.jcwhatever.nucleus.providers.economy;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -32,7 +34,7 @@ public class IAccountTest {
 
         UUID playerId = _account.getPlayerId();
 
-        Assert.assertEquals(_ownerId, playerId);
+        assertEquals(_ownerId, playerId);
     }
 
     @Test
@@ -40,7 +42,7 @@ public class IAccountTest {
 
         IBank bank = _account.getBank();
 
-        Assert.assertEquals(_bank, bank);
+        assertEquals(_bank, bank);
     }
 
     @Test
@@ -50,7 +52,7 @@ public class IAccountTest {
 
         _account.deposit(10);
 
-        Assert.assertEquals(balance + 10, _account.getBalance(), 0.0D);
+        assertEquals(balance + 10, _account.getBalance(), 0.0D);
 
     }
 
@@ -59,11 +61,12 @@ public class IAccountTest {
 
         double balance = _account.getBalance();
 
-        boolean result = _account.deposit(10);
+        Double result = _account.deposit(10);
 
-        Assert.assertEquals(true, result);
+        assertNotNull(result);
+        assertEquals(10.0D, result, 0.0D);
 
-        Assert.assertEquals(balance + 10, _account.getBalance(), 0.0D);
+        assertEquals(balance + 10, _account.getBalance(), 0.0D);
     }
 
     @Test
@@ -71,13 +74,14 @@ public class IAccountTest {
 
         double balance = _account.getBalance();
 
-        boolean result = _account.deposit(10);
-        Assert.assertEquals(true, result);
-        Assert.assertEquals(balance + 10, _account.getBalance(), 0.0D);
+        Double result = _account.deposit(10);
+        assertNotNull(result);
+        assertEquals(10.0D, result, 0.0D);
+        assertEquals(balance + 10, _account.getBalance(), 0.0D);
 
         result = _account.withdraw(5);
-        Assert.assertEquals(true, result);
-        Assert.assertEquals(balance + 5, _account.getBalance(), 0.0D);
+        assertNotNull(result);
+        assertEquals(5.0D, result, 0.0D);
+        assertEquals(balance + 5, _account.getBalance(), 0.0D);
     }
-
 }

@@ -46,9 +46,6 @@ import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.IStorageProvider;
 import com.jcwhatever.nucleus.providers.ProviderType;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
-import com.jcwhatever.nucleus.providers.economy.EconomyBankWrapper;
-import com.jcwhatever.nucleus.providers.economy.EconomyWrapper;
-import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 import com.jcwhatever.nucleus.providers.jail.IJailProvider;
@@ -248,11 +245,7 @@ public final class InternalProviderManager implements IProviderManager {
             addName(provider, ProviderType.ECONOMY);
             if (remove(_economy, ProviderType.ECONOMY)) {
                 add(_economy);
-                _economy = provider instanceof EconomyWrapper
-                        ? (IEconomyProvider) provider
-                        : provider instanceof IBankEconomyProvider
-                        ? new EconomyBankWrapper((IBankEconomyProvider) provider)
-                        : new EconomyWrapper((IEconomyProvider) provider);
+                _economy = (IEconomyProvider)provider;
                 isAdded = true;
             }
         }

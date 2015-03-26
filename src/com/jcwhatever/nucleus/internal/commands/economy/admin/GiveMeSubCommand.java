@@ -59,7 +59,7 @@ public final class GiveMeSubCommand extends AbstractCommand {
         UUID playerId = ((Player)sender).getUniqueId();
         double amount = args.getDouble("amount");
 
-        if (!Economy.deposit(playerId, amount)) {
+        if (Economy.deposit(playerId, amount) == null) {
             tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }

@@ -48,9 +48,11 @@ public class VaultBank implements IBank {
 
     private final String _name;
     private final Economy _economy;
+    private final VaultEconomyProvider _provider;
     private Result<UUID> _ownerId;
 
-    public VaultBank(String name, Economy economy) {
+    public VaultBank(VaultEconomyProvider provider, String name, Economy economy) {
+        _provider = provider;
         _name = name;
         _economy = economy;
     }
@@ -126,7 +128,7 @@ public class VaultBank implements IBank {
         if (!hasAccount(playerId))
             return null;
 
-        return new VaultAccount(playerId, this, _economy);
+        return new VaultAccount(_provider, playerId, this, _economy);
     }
 
     /**
@@ -141,7 +143,7 @@ public class VaultBank implements IBank {
 
         for (Player player : players) {
             if (hasAccount(player.getUniqueId()))
-                accounts.add(new VaultAccount(player.getUniqueId(), this, _economy));
+                accounts.add(new VaultAccount(_provider, player.getUniqueId(), this, _economy));
         }
 
         return Collections.unmodifiableList(accounts);
@@ -154,7 +156,7 @@ public class VaultBank implements IBank {
         if (!_economy.createPlayerAccount(Bukkit.getOfflinePlayer(playerId), _name))
             return null;
 
-        return new VaultAccount(playerId, this, _economy);
+        return new VaultAccount(_provider, playerId, this, _economy);
     }
 
     /**

@@ -84,7 +84,7 @@ public class VaultEconomyProvider extends Provider implements IEconomyProvider {
 
         VaultAccount account = _accounts.get(playerId);
         if (account == null) {
-            account = new VaultAccount(playerId, null, getEconomy());
+            account = new VaultAccount(this, playerId, null, getEconomy());
             _accounts.put(playerId, account);
         }
 

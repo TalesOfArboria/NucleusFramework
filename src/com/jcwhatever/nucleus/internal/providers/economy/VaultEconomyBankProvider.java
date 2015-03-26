@@ -61,7 +61,7 @@ public class VaultEconomyBankProvider extends VaultEconomyProvider implements IB
         List<IBank> banks = new ArrayList<>(bankNames.size());
 
         for (String bankName : bankNames) {
-            banks.add(new VaultBank(bankName, getEconomy()));
+            banks.add(new VaultBank(this, bankName, getEconomy()));
         }
 
         return Collections.unmodifiableList(banks);
@@ -76,7 +76,7 @@ public class VaultEconomyBankProvider extends VaultEconomyProvider implements IB
         if (response.type != ResponseType.SUCCESS)
             return null;
 
-        return new VaultBank(bankName, getEconomy());
+        return new VaultBank(this, bankName, getEconomy());
     }
 
     @Nullable
@@ -97,7 +97,7 @@ public class VaultEconomyBankProvider extends VaultEconomyProvider implements IB
         if (response.type != ResponseType.SUCCESS)
             return null;
 
-        return new VaultBank(bankName, getEconomy());
+        return new VaultBank(this, bankName, getEconomy());
     }
 
     @Override

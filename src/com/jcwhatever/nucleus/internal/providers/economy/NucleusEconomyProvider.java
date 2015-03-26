@@ -102,7 +102,8 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
             NucleusAccount account = _accounts.get(playerId);
 
             if (account == null) {
-                account = new NucleusAccount(playerId, null, _globalAccountNode.getNode(playerId.toString()));
+                account = new NucleusAccount(
+                        this, playerId, null, _globalAccountNode.getNode(playerId.toString()));
                 _accounts.put(playerId, account);
             }
 
@@ -156,7 +157,7 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
 
         IDataNode node = new YamlDataNode(Nucleus.getPlugin(), new DataPath("economy.accounts." + bankName));
 
-        NucleusBank bank = new NucleusBank(bankName, playerId, node);
+        NucleusBank bank = new NucleusBank(this, bankName, playerId, node);
 
         synchronized (_bankSync) {
             _banks.put(bankName, bank);

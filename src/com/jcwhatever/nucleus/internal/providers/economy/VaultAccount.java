@@ -24,9 +24,12 @@
 
 package com.jcwhatever.nucleus.internal.providers.economy;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
+import com.jcwhatever.nucleus.providers.economy.events.EconDepositEvent;
+import com.jcwhatever.nucleus.providers.economy.events.EconWithdrawEvent;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
@@ -42,11 +45,13 @@ import javax.annotation.Nullable;
  */
 public final class VaultAccount implements IAccount {
 
+    private final VaultEconomyProvider _provider;
     private final UUID _playerId;
     private final VaultBank _bank;
     private final Economy _economy;
 
-    VaultAccount(UUID ownerId, @Nullable VaultBank bank, Economy economy) {
+    VaultAccount(VaultEconomyProvider provider, UUID ownerId, @Nullable VaultBank bank, Economy economy) {
+        _provider = provider;
         _playerId = ownerId;
         _economy = economy;
         _bank = bank;
@@ -74,31 +79,51 @@ public final class VaultAccount implements IAccount {
     }
 
     @Override
-    public boolean deposit(double amount) {
+    public Double deposit(double amount) {
         PreCon.positiveNumber(amount);
+
+        return deposit(amount, _provider.getCurrency());
+    }
+
+    @Override
+    public Double deposit(double amount, ICurrency currency) {
+
+        EconDepositEvent event = new EconDepositEvent(this, amount, currency);
+        Nucleus.getEventManager().callBukkit(this, event);
+
+        amount = event.getConvertedAmount();
 
         EconomyResponse response = _economy.depositPlayer(Bukkit.getOfflinePlayer(_playerId), amount);
 
-        return response.transactionSuccess();
+        if (!response.transactionSuccess())
+            return null;
+
+        return amount;
     }
 
     @Override
-    public boolean deposit(double amount, ICurrency currency) {
-        return deposit(amount * currency.getConversionFactor());
-    }
-
-    @Override
-    public boolean withdraw(double amount) {
+    public Double withdraw(double amount) {
         PreCon.positiveNumber(amount);
+
+        return withdraw(amount, _provider.getCurrency());
+    }
+
+    @Override
+    public Double withdraw(double amount, ICurrency currency) {
+
+        EconWithdrawEvent event = new EconWithdrawEvent(this, amount, currency);
+        Nucleus.getEventManager().callBukkit(this, event);
+
+        amount = event.getConvertedAmount();
+        if (amount == 0)
+            return amount;
 
         EconomyResponse response = _economy.withdrawPlayer(Bukkit.getOfflinePlayer(_playerId), amount);
 
-        return response.transactionSuccess();
-    }
+        if (!response.transactionSuccess())
+            return null;
 
-    @Override
-    public boolean withdraw(double amount, ICurrency currency) {
-        return withdraw(amount * currency.getConversionFactor());
+        return amount;
     }
 
     @Override

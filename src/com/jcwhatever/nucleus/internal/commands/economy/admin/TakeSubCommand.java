@@ -65,7 +65,7 @@ public final class TakeSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        if (!Economy.withdraw(playerId, amount)) {
+        if (Economy.withdraw(playerId, amount) == null) {
             tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }

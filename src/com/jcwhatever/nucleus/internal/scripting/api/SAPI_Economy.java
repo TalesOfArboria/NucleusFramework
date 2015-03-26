@@ -107,9 +107,9 @@ public class SAPI_Economy implements IDisposable {
      * @param player  The player.
      * @param amount  The amount to give.
      *
-     * @return  True if successful
+     * @return  The amount deposited or null if failed.
      */
-    public boolean deposit(Object player, double amount) {
+    public Double deposit(Object player, double amount) {
         PreCon.notNull(player);
 
         Player p = PlayerUtils.getPlayer(player);
@@ -125,9 +125,9 @@ public class SAPI_Economy implements IDisposable {
      * @param amount    The amount to give.
      * @param currency  The currency of the amount.
      *
-     * @return  True if successful
+     * @return  The amount deposited or null if failed.
      */
-    public boolean depositCurrency(Object player, double amount, ICurrency currency) {
+    public Double depositCurrency(Object player, double amount, ICurrency currency) {
         PreCon.notNull(player);
 
         Player p = PlayerUtils.getPlayer(player);
@@ -142,9 +142,9 @@ public class SAPI_Economy implements IDisposable {
      * @param player  The player.
      * @param amount  The amount to take.
      *
-     * @return  True if successful
+     * @return  The amount withdrawn or null if failed.
      */
-    public boolean withdraw(Object player, double amount) {
+    public Double withdraw(Object player, double amount) {
         PreCon.notNull(player);
 
         Player p = PlayerUtils.getPlayer(player);
@@ -159,9 +159,9 @@ public class SAPI_Economy implements IDisposable {
      * @param player  The player.
      * @param amount  The amount to take.
      *
-     * @return  True if successful
+     * @return  The amount withdrawn or null if failed.
      */
-    public boolean withdrawCurrency(Object player, double amount, ICurrency currency) {
+    public Double withdrawCurrency(Object player, double amount, ICurrency currency) {
         PreCon.notNull(player);
 
         Player p = PlayerUtils.getPlayer(player);

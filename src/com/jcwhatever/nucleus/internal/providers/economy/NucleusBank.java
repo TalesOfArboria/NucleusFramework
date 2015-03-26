@@ -47,17 +47,24 @@ public final class NucleusBank implements IBank {
     private final UUID _ownerId;
     private final IDataNode _dataNode;
     private final Map<UUID, IAccount> _accounts = new HashMap<>(5);
+    private final NucleusEconomyProvider _provider;
 
     private double _balance;
 
-    NucleusBank(String name, @Nullable UUID ownerId, IDataNode dataNode) {
+    NucleusBank(NucleusEconomyProvider provider, String name,
+                @Nullable UUID ownerId, IDataNode dataNode) {
         _name = name;
         _ownerId = ownerId;
         _dataNode = dataNode;
+        _provider = provider;
     }
 
     public IDataNode getDataNode() {
         return _dataNode;
+    }
+
+    public NucleusEconomyProvider getProvider() {
+        return _provider;
     }
 
     @Override
@@ -113,7 +120,8 @@ public final class NucleusBank implements IBank {
         if (hasAccount(playerId))
             return null;
 
-        NucleusAccount account = new NucleusAccount(playerId, this, _dataNode.getNode(playerId.toString()));
+        NucleusAccount account = new NucleusAccount(
+                _provider, playerId, this, _dataNode.getNode(playerId.toString()));
 
         _accounts.put(playerId, account);
 
@@ -149,7 +157,8 @@ public final class NucleusBank implements IBank {
             if (playerId == null)
                 continue;
 
-            NucleusAccount account = new NucleusAccount(playerId, this, dataNode);
+            NucleusAccount account = new NucleusAccount(
+                    _provider, playerId, this, dataNode);
 
             _balance += account.getBalance();
 

@@ -188,13 +188,13 @@ public class NucleusTransaction implements IEconomyTransaction {
 
         for (Entry<IAccount, Double> entry : accounts) {
             if (type == OperationType.DEPOSIT) {
-                if (!entry.getKey().deposit(entry.getValue())) {
+                if (entry.getKey().deposit(entry.getValue()) == null) {
                     throw new TransactionFailException(entry.getKey(),
                             "Failed to deposit amount: " + entry.getValue());
                 }
             }
             else {
-                if (!entry.getKey().withdraw(entry.getValue())) {
+                if (entry.getKey().withdraw(entry.getValue()) == null) {
                     throw new TransactionFailException(entry.getKey(),
                             "Failed to withdraw amount: " + entry.getValue());
                 }
@@ -213,7 +213,7 @@ public class NucleusTransaction implements IEconomyTransaction {
             Double amount = entry.getValue();
 
             if (type == OperationType.DEPOSIT) {
-                if (!entry.getKey().withdraw(entry.getValue())) {
+                if (entry.getKey().withdraw(entry.getValue()) == null) {
 
                     NucMsg.severe("Failed to undo transaction deposit. " +
                                     "Bank: {0}, Account: {1}, Deposit amount: {2}",
@@ -221,7 +221,7 @@ public class NucleusTransaction implements IEconomyTransaction {
                 }
             }
             else {
-                if (!entry.getKey().deposit(entry.getValue())) {
+                if (entry.getKey().deposit(entry.getValue()) == null) {
 
                     NucMsg.severe("Failed to undo transaction withdrawal. " +
                                     "Bank: {0}, Account: {1}, Withdrawal amount: {2}",

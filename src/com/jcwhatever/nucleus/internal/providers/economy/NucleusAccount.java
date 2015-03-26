@@ -24,9 +24,12 @@
 
 package com.jcwhatever.nucleus.internal.providers.economy;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
+import com.jcwhatever.nucleus.providers.economy.events.EconDepositEvent;
+import com.jcwhatever.nucleus.providers.economy.events.EconWithdrawEvent;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -40,11 +43,14 @@ public final class NucleusAccount implements IAccount {
 
     private final UUID _playerId;
     private final NucleusBank _bank;
+    private final NucleusEconomyProvider _provider;
     private final IDataNode _dataNode;
 
     private double _balance;
 
-    NucleusAccount(UUID playerId, @Nullable NucleusBank bank, IDataNode dataNode) {
+    NucleusAccount(NucleusEconomyProvider provider,
+                   UUID playerId, @Nullable NucleusBank bank, IDataNode dataNode) {
+        _provider = provider;
         _playerId = playerId;
         _bank = bank;
         _dataNode = dataNode;
@@ -74,13 +80,24 @@ public final class NucleusAccount implements IAccount {
     }
 
     @Override
-    public synchronized boolean deposit(double amount) {
+    public Double deposit(double amount) {
+        return deposit(amount, _provider.getCurrency());
+    }
+
+    @Override
+    public synchronized Double deposit(double amount, ICurrency currency) {
         PreCon.positiveNumber(amount);
+        PreCon.notNull(currency);
+
+        EconDepositEvent event = new EconDepositEvent(this, amount, currency);
+        Nucleus.getEventManager().callBukkit(this, event);
+
+        amount = event.getAmount() * currency.getConversionFactor();
 
         if (amount == 0)
-            return true;
+            return amount;
 
-        _balance += amount;
+        _balance += event.getAmount();
 
         if (_bank != null) {
             _bank.incrementBalance(amount);
@@ -89,20 +106,28 @@ public final class NucleusAccount implements IAccount {
         _dataNode.set("balance", _balance);
         _dataNode.save();
 
-        return true;
+        return amount;
     }
 
     @Override
-    public boolean deposit(double amount, ICurrency currency) {
-        return deposit(amount * currency.getConversionFactor());
-    }
-
-    @Override
-    public synchronized boolean withdraw(double amount) {
+    public Double withdraw(double amount) {
         PreCon.positiveNumber(amount);
 
+        return withdraw(amount, _provider.getCurrency());
+    }
+
+    @Override
+    public synchronized Double withdraw(double amount, ICurrency currency) {
+        PreCon.positiveNumber(amount);
+        PreCon.notNull(currency);
+
+        EconWithdrawEvent event = new EconWithdrawEvent(this, amount, currency);
+        Nucleus.getEventManager().callBukkit(this, event);
+
+        amount = event.getConvertedAmount();
+
         if (amount == 0)
-            return true;
+            return amount;
 
         _balance -= amount;
 
@@ -112,12 +137,8 @@ public final class NucleusAccount implements IAccount {
 
         _dataNode.set("balance", _balance);
         _dataNode.save();
-        return true;
-    }
 
-    @Override
-    public boolean withdraw(double amount, ICurrency currency) {
-        return withdraw(amount * currency.getConversionFactor());
+        return amount;
     }
 
     @Override
