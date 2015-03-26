@@ -24,8 +24,6 @@
 
 package com.jcwhatever.nucleus.internal.regions;
 
-import com.jcwhatever.nucleus.regions.options.RegionPriority.RegionReason;
-
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -95,12 +93,12 @@ class PlayerLocationCache {
      *
      * @param reason  The reason the location is being added.
      */
-    public Location add(RegionReason reason) {
+    public Location add(RegionEventReason reason) {
         CachedLocation location = getPooledLocation(reason);
         synchronized (_cached) {
 
-            if (reason == RegionReason.JOIN_SERVER ||
-                    reason == RegionReason.TELEPORT) {
+            if (reason == RegionEventReason.JOIN_SERVER ||
+                    reason == RegionEventReason.TELEPORT) {
                 clear();
             }
             _cached.addLast(location);
@@ -136,7 +134,7 @@ class PlayerLocationCache {
     /*
      * Get an available location from the pool of locations.
      */
-    private CachedLocation getPooledLocation(RegionReason reason) {
+    private CachedLocation getPooledLocation(RegionEventReason reason) {
 
         synchronized (_locationPool) {
 
@@ -203,9 +201,9 @@ class PlayerLocationCache {
      */
     static class CachedLocation extends Location {
 
-        RegionReason reason;
+        RegionEventReason reason;
 
-        CachedLocation(RegionReason reason) {
+        CachedLocation(RegionEventReason reason) {
             super(null, 0, 0, 0);
 
             this.reason = reason;
@@ -214,7 +212,7 @@ class PlayerLocationCache {
         /**
          * Get the reason the location was added.
          */
-        public RegionReason getReason() {
+        public RegionEventReason getReason() {
             return reason;
         }
     }

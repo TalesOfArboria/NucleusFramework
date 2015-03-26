@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
-import com.jcwhatever.nucleus.regions.options.RegionPriority.RegionReason;
+import com.jcwhatever.nucleus.regions.options.RegionPriority.RegionEventReason;
 import com.jcwhatever.nucleus.sounds.playlist.PlayList;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
@@ -100,13 +100,13 @@ public final class JCGEventListener implements Listener {
         Nucleus.getMessengerFactory().tellImportant(p, true);
 
         _regionManager
-                .updatePlayerLocation(p, RegionReason.JOIN_SERVER);
+                .updatePlayerLocation(p, RegionEventReason.JOIN_SERVER);
     }
 
     @EventHandler(priority=EventPriority.LOW)
     private void onPlayerMove(PlayerMoveEvent event) {
         _regionManager
-                .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.MOVE);
+                .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionEventReason.MOVE);
     }
 
     @EventHandler(priority=EventPriority.MONITOR)
@@ -122,7 +122,7 @@ public final class JCGEventListener implements Listener {
     @EventHandler(priority=EventPriority.MONITOR)
     private void onPlayerRespawn(PlayerRespawnEvent event) {
         _regionManager
-                .updatePlayerLocation(event.getPlayer(), event.getRespawnLocation(), RegionReason.RESPAWN);
+                .updatePlayerLocation(event.getPlayer(), event.getRespawnLocation(), RegionEventReason.RESPAWN);
     }
 
     @EventHandler(priority=EventPriority.LOWEST) // first priority
@@ -147,7 +147,7 @@ public final class JCGEventListener implements Listener {
 
         if (event.getCause() != TeleportCause.UNKNOWN) {
             _regionManager
-                    .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionReason.TELEPORT);
+                    .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionEventReason.TELEPORT);
         }
     }
 

@@ -39,13 +39,12 @@ import com.jcwhatever.nucleus.regions.ReadOnlyRegion;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
-import com.jcwhatever.nucleus.regions.options.RegionPriority.RegionReason;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.NpcUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -134,7 +133,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
      * @param player  The player.
      * @param reason  The reason that will be used if the player enters a region.
      */
-    public void updatePlayerLocation(Player player, RegionReason reason) {
+    public void updatePlayerLocation(Player player, RegionEventReason reason) {
         PreCon.notNull(player);
         PreCon.notNull(reason);
 
@@ -161,7 +160,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
      * @param location  The location to add.
      * @param reason    The reason that will be used if the player enters a region.
      */
-    public void updatePlayerLocation(Player player, Location location, RegionReason reason) {
+    public void updatePlayerLocation(Player player, Location location, RegionEventReason reason) {
         PreCon.notNull(player);
         PreCon.notNull(reason);
 
@@ -587,7 +586,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                     while (!worldPlayer.locations.isEmpty()) {
                         CachedLocation location = worldPlayer.locations.remove();
 
-                        if (location.getReason() == RegionReason.JOIN_SERVER) {
+                        if (location.getReason() == RegionEventReason.JOIN_SERVER) {
                             // add player to _join set.
                             _joined.add(playerId);
 
@@ -598,7 +597,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
                         boolean isJoining = _joined.contains(playerId);
 
-                        if (isJoining && location.getReason() != RegionReason.MOVE) {
+                        if (isJoining && location.getReason() != RegionEventReason.MOVE) {
                             // ignore all other reasons until joined player moves
                             continue;
                         }
@@ -610,8 +609,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                         if (!inRegions.isEmpty()) {
 
                             // get enter reason
-                            RegionReason reason = isJoining && _joined.remove(playerId)
-                                    ? RegionReason.JOIN_SERVER
+                            RegionEventReason reason = isJoining && _joined.remove(playerId)
+                                    ? RegionEventReason.JOIN_SERVER
                                     : location.getReason();
 
                             for (IRegion region : inRegions) {
@@ -656,7 +655,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         /*
          * Executes doPlayerEnter method in the specified region on the main thread.
          */
-        private void onPlayerEnter(final IRegion region, final Player p, RegionReason reason) {
+        private void onPlayerEnter(final IRegion region, final Player p, RegionEventReason reason) {
 
             final EnterRegionReason enterReason = reason.getEnterReason();
             if (enterReason == null)
@@ -679,7 +678,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         /*
          * Executes doPlayerLeave method in the specified region on the main thread.
          */
-        private void onPlayerLeave(final IRegion region, final Player p, RegionReason reason) {
+        private void onPlayerLeave(final IRegion region, final Player p, RegionEventReason reason) {
 
             final LeaveRegionReason leaveReason = reason.getLeaveReason();
             if (leaveReason == null)

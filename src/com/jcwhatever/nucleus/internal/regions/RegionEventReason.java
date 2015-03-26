@@ -22,52 +22,42 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.options;
+package com.jcwhatever.nucleus.internal.regions;
 
-/**
- * The priority/order the region is handled by the
- * region manager in relation to other regions.
- */
-public enum RegionPriority {
-    /**
-     * The last to be handled.
-     */
-    LAST      (4),
-    /**
-     * Low priority. Handled second to last.
-     */
-    LOW       (3),
-    /**
-     * Normal priority.
-     */
-    DEFAULT   (2),
-    /**
-     * High priority. Handled second.
-     */
-    HIGH      (1),
-    /**
-     * Highest priority. Handled first.
-     */
-    FIRST     (0);
+import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
+import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 
-    private final int _order;
+import javax.annotation.Nullable;
 
-    RegionPriority(int order) {
-        _order = order;
+public enum RegionEventReason {
+    MOVE        (EnterRegionReason.MOVE,        LeaveRegionReason.MOVE),
+    DEAD        (null,                          LeaveRegionReason.DEAD),
+    TELEPORT    (EnterRegionReason.TELEPORT,    LeaveRegionReason.TELEPORT),
+    RESPAWN     (EnterRegionReason.RESPAWN,     LeaveRegionReason.DEAD),
+    JOIN_SERVER (EnterRegionReason.JOIN_SERVER, null),
+    QUIT_SERVER (null,                          LeaveRegionReason.QUIT_SERVER);
+
+    private final EnterRegionReason _enter;
+    private final LeaveRegionReason _leave;
+
+    RegionEventReason(EnterRegionReason enter, LeaveRegionReason leave) {
+        _enter = enter;
+        _leave = leave;
     }
 
     /**
-     * Get a sort order index number.
+     * Get the enter reason equivalent.
      */
-    public int getSortOrder() {
-        return _order;
+    @Nullable
+    public EnterRegionReason getEnterReason() {
+        return _enter;
     }
 
     /**
-     * Type of region priority.
+     * Get the leave reason equivalent.
      */
-    public enum PriorityType {
-        ENTER,
-        LEAVE
+    @Nullable
+    public LeaveRegionReason getLeaveReason() {
+        return _leave;
     }
 }
