@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.collections;
+package com.jcwhatever.nucleus.internal.regions;
 
 import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
 import com.jcwhatever.nucleus.regions.IRegion;

@@ -26,8 +26,6 @@ package com.jcwhatever.nucleus.internal.regions;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.IRegion;
-import com.jcwhatever.nucleus.regions.collections.RegionSet;
-import com.jcwhatever.nucleus.regions.collections.EventOrderedRegions;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;

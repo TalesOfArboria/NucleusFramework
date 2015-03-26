@@ -36,7 +36,6 @@ import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.IRegionEventListener;
 import com.jcwhatever.nucleus.regions.ReadOnlyRegion;
-import com.jcwhatever.nucleus.regions.collections.EventOrderedRegions;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionPriority.PriorityType;
