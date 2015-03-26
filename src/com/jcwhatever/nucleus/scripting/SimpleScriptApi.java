@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Abstract implementation of a script API.
+ * Simple implementation of a script API.
  */
 public class SimpleScriptApi implements IScriptApi {
 
@@ -44,7 +44,7 @@ public class SimpleScriptApi implements IScriptApi {
      *
      * @param plugin   The owning plugin
      * @param name     The name of the API. Also used as the default script variable name.
-     * @param creator  Use to create new instances of the API object.
+     * @param creator  Use to create new instances of the disposable API object.
      */
     public SimpleScriptApi(Plugin plugin, String name, IApiObjectCreator creator) {
         PreCon.notNull(plugin);
