@@ -160,10 +160,9 @@ public class AStarWorldExaminer implements IAStarExaminer {
         Coords3Di parent = from.getCoords();
         Coords3Di candidate = to.getCoords();
 
-        Coords3Di delta = candidate.getDelta(parent);
-        int x = delta.getX();
-        int y = delta.getY();
-        int z = delta.getZ();
+        int x = candidate.getX() - parent.getX();
+        int y = candidate.getY() - parent.getY();
+        int z = candidate.getZ() - parent.getZ();
 
         Material material = candidate.getBlock(_world).getType();
 
