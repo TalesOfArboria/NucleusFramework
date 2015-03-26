@@ -292,11 +292,11 @@ public final class PlayerUtils {
      * @param loc          The location to check.
      * @param chunkRadius  The chunk radius to check in.
      */
-    public static List<Player> getClosestPlayers(Location loc, int chunkRadius) {
+    public static List<Player> getNearbyPlayers(Location loc, int chunkRadius) {
         PreCon.notNull(loc);
         PreCon.greaterThanZero(chunkRadius);
 
-        return getClosestPlayers(loc, chunkRadius, null);
+        return getNearbyPlayers(loc, chunkRadius, null);
     }
 
     /**
@@ -306,8 +306,8 @@ public final class PlayerUtils {
      * @param chunkRadius  The chunk radius to check in.
      * @param validator    A validator used to validate if a player is a candidate to return.
      */
-    public static List<Player> getClosestPlayers(Location loc, int chunkRadius,
-                                                 @Nullable IValidator<Player> validator) {
+    public static List<Player> getNearbyPlayers(Location loc, int chunkRadius,
+                                                @Nullable IValidator<Player> validator) {
         PreCon.notNull(loc);
         PreCon.greaterThanZero(chunkRadius);
 
