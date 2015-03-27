@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.providers.npc.traits;
 
-import com.jcwhatever.nucleus.providers.npc.INpc;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 /**
@@ -39,11 +38,10 @@ public abstract class NpcRunnableTrait extends NpcTrait implements Runnable {
     /**
      * Constructor.
      *
-     * @param npc  The NPC the trait is for.
      * @param type The parent type that instantiated the trait.
      */
-    public NpcRunnableTrait(INpc npc, NpcTraitType type) {
-        super(npc, type);
+    public NpcRunnableTrait(NpcTraitType type) {
+        super(type);
     }
 
     /**

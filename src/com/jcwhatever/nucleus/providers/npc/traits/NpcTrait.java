@@ -46,60 +46,74 @@ import org.bukkit.potion.PotionEffectType;
  * <p>The {@link NpcTrait} can optionally implement the {@link java.lang.Runnable}
  * interface. If this is the case, the {@link java.lang.Runnable#run} method is called
  * every tick while the NPC is spawned so long as {@link #canRun} returns true.</p>
+ *
+ * <p>The trait may also be reused for a different Npc. The trait is only ever used for
+ * one Npc at a time, but can be reused for a different NPC once its current NPC is disposed.
+ * If the trait cannot be reused, override the {@link #isReusable} method and return false.</p>
+ *
+ * <p>Whenever the trait is assigned to an {@link INpc}, the {@link #onAdd} method is invoked. This
+ * method is intended for optional override and passes the new {@link INpc} as argument.</p>
  */
 public abstract class NpcTrait implements INamed, IDisposable {
 
-    private final INpc _npc;
     private final NpcTraitType _type;
 
+    private INpc _npc;
     private boolean _isEnabled = true;
     private boolean _isDisposed;
 
     /**
      * Constructor.
      *
-     * @param npc       The NPC the trait is for.
-     * @param type      The parent type that instantiated the trait.
+     * @param type  The parent type that instantiated the trait.
      */
-    public NpcTrait(INpc npc, NpcTraitType type) {
-        PreCon.notNull(npc);
-        PreCon.notNull(type);
+    public NpcTrait(NpcTraitType type) {
+        PreCon.notNull(type, "type");
 
-        _npc = npc;
         _type = type;
     }
 
     @Override
-    public String getName() {
+    public final String getName() {
         return _type.getName();
     }
 
     /**
      * Get the traits lookup name.
      */
-    public String getLookupName() {
+    public final String getLookupName() {
         return _type.getLookupName();
     }
 
     /**
      * Get the NPC the trait was instantiated for.
      */
-    public INpc getNpc() {
+    public final INpc getNpc() {
         return _npc;
     }
 
     /**
      * Get the registry of the NPC the trait was instantiated for.
      */
-    public INpcRegistry getRegistry() {
+    public final INpcRegistry getRegistry() {
         return _npc.getRegistry();
     }
 
     /**
      * Get the trait type.
      */
-    public NpcTraitType getType() {
+    public final NpcTraitType getType() {
         return _type;
+    }
+
+    /**
+     * Determine if the trait can be reused for a different NPC after its current
+     * NPC is disposed.
+     *
+     * @return  Returns true. Override to change to false.
+     */
+    public boolean isReusable() {
+        return true;
     }
 
     /**
@@ -186,61 +200,99 @@ public abstract class NpcTrait implements INamed, IDisposable {
         PreCon.notNull(dataNode);
     }
 
+    @Override
+    public final boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * <p>Note that the trait may be un-disposed if the provider reuses it.
+     * This can be detected by overriding {@link #onAdd}.</p>
+     */
+    @Override
+    public final void dispose() {
+
+        if (_isDisposed)
+            return;
+
+        INpc npc = getNpc();
+        if (npc != null) {
+            getNpc().getTraits().remove(getName());
+
+            onRemove();
+            onDispose();
+        }
+
+        _isDisposed = true;
+    }
+
     /**
      * Invoked when the trait is added to an {@link INpc}.
      *
      * <p>This is invoked by the external implementations of the
      * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param npc  The npc that trait is being added to.
      */
-    public void onAdd() {}
+    protected void onAdd(INpc npc) {}
 
     /**
      * Invoked when the trait is removed from an {@link INpc}.
      *
      * <p>This is invoked by the external implementations of the
      * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
+     *
+     * <p>Intended for optional override.</p>
      */
-    public void onRemove() {}
+    protected void onRemove() {}
 
     /**
      * Invoked when traits NPC is spawned.
      *
      * <p>This is invoked by the external implementations of the
      * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
+     *
+     * <p>Intended for optional override.</p>
      */
-    public void onSpawn(NpcSpawnReason reason) {}
+    protected void onSpawn(NpcSpawnReason reason) {}
 
     /**
      * Invoked when the traits NPC is despawned.
      *
      * <p>This is invoked by the external implementations of the
      * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
+     *
+     * <p>Intended for optional override.</p>
      */
-    public void onDespawn(NpcDespawnReason reason) {}
+    protected void onDespawn(NpcDespawnReason reason) {}
 
     /**
      * Invoked when the trait is enabled.
+     *
+     * <p>Intended for optional override.</p>
      */
     protected void onEnable() {}
 
     /**
      * Invoked when the trait is disabled.
+     *
+     * <p>Intended for optional override.</p>
      */
     protected void onDisable() {}
 
-    @Override
-    public boolean isDisposed() {
-        return _isDisposed;
-    }
-
-    @Override
-    public void dispose() {
-
-        getNpc().getTraits().remove(getName());
-
-        _isDisposed = true;
-    }
-
+    /**
+     * Invoked when the trait is disposed.
+     *
+     * <p>Intended for optional override</p>
+     *
+     * <p>Note that the trait may be un-disposed if the provider reuses it.
+     * This can be detected by overriding {@link #onAdd}.</p>
+     */
+    protected void onDispose() {}
 
     /**
      * Get an enum from an object. The object must be an instance of the
@@ -313,5 +365,20 @@ public abstract class NpcTrait implements INamed, IDisposable {
         else {
             throw new IllegalArgumentException("Expected PotionEffectType or name of type.");
         }
+    }
+
+    /**
+     * Initialize the trait or re-init.
+     *
+     * @param npc  The NPC the trait is added to.
+     */
+    void init(INpc npc) {
+
+        if (!isReusable() && _npc != null)
+            throw new IllegalStateException("Trait  is not reusable.");
+
+        _isDisposed = false;
+        _npc = npc;
+        onAdd(npc);
     }
 }

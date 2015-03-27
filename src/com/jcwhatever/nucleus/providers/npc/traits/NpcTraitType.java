@@ -28,6 +28,8 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.npc.INpc;
+import com.jcwhatever.nucleus.providers.npc.events.NpcDespawnEvent.NpcDespawnReason;
+import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent.NpcSpawnReason;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
@@ -42,6 +44,14 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
     private final String _name;
     private final String _lookupName;
 
+    private NpcTraitRegistration _registration;
+
+    /**
+     * Constructor.
+     *
+     * @param plugin  The owning plugin.
+     * @param name    The name of the trait.
+     */
     public NpcTraitType(Plugin plugin, String name) {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
@@ -76,6 +86,10 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
      * Create a new instance of the trait for a specific
      * {@link INpc} instance and attach it.
      *
+     * <p>Attempts to add a pooled trait from the provider. If one is not available or
+     * the provider does not implement trait pooling, a new trait is created by invoking
+     * {@link #createTrait}.</p>
+     *
      * @param npc  The npc instance.
      *
      * @return  The newly created instance or the one the NPC already had.
@@ -86,17 +100,111 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
         if (npc.getRegistry().get(getName()) == null)
             npc.getRegistry().registerTrait(this);
 
-        NpcTrait trait = createTrait(npc);
-
-        npc.getTraits().add(trait);
+        // add pooled trait
+        NpcTrait trait = npc.getTraits().addPooled(this);
+        if (trait == null) {
+            // create new trait
+            trait = createTrait(npc);
+            npc.getTraits().add(trait);
+        }
 
         return trait;
     }
 
     /**
+     * Determine if the trait is registered with the NPC provider.
+     */
+    public final boolean isRegistered() {
+        return _registration != null;
+    }
+
+    /**
+     * Invoked by the NPC provider when the trait is registered.
+     *
+     * <p>For NPC provider use only.</p>
+     *
+     * @param registration  The providers registration.
+     */
+    public final void onRegister(NpcTraitRegistration registration) {
+        PreCon.notNull(registration);
+        PreCon.isValid(_registration == null, "Trait already registered.");
+
+        _registration = registration;
+    }
+
+    /**
      * Invoked to create a new instance of the trait for an {@link INpc}.
      *
-     * @param npc  The {@link INpc} to create the trait for.
+     * @param npc  The {@link INpc} to initially create the trait for. A reference to the argument
+     *             should not be held in the returned NpcTrait. It should only be used to make initial
+     *             trait setup decisions. Use the traits {@link NpcTrait#getNpc} method to get the
+     *             traits NPC or the {@link INpc} argument in the {@link NpcTrait#onAdd} method.
      */
     protected abstract NpcTrait createTrait(INpc npc);
+
+    /**
+     * Used by the provider to access protected trait methods.
+     */
+    public static class NpcTraitRegistration {
+
+        /**
+         * Invoked by the provider when the trait is added to an NPC.
+         *
+         * @param npc    The NPC.
+         * @param trait  The trait being added.
+         */
+        public void onAdd(INpc npc, NpcTrait trait) {
+            PreCon.notNull(npc);
+            PreCon.notNull(trait);
+
+            checkRegistration(trait);
+            trait.init(npc);
+        }
+
+        /**
+         * Invoked by the provider when the trait is removed from an NPC.
+         *
+         * @param trait  The trait being removed.
+         */
+        public void onRemove(NpcTrait trait) {
+            PreCon.notNull(trait);
+
+            checkRegistration(trait);
+            trait.onRemove();
+        }
+
+        /**
+         * Invoked by the provider when the NPC the trait is added to is spawned.
+         *
+         * @param trait   The trait.
+         * @param reason  The reason the NPC is spawning.
+         */
+        public void onSpawn(NpcTrait trait, NpcSpawnReason reason) {
+            PreCon.notNull(reason);
+
+            checkRegistration(trait);
+            trait.onSpawn(reason);
+        }
+
+        /**
+         * Invoked by the provider when the NPC the trait is added to is despawned.
+         *
+         * @param trait   The trait.
+         * @param reason  The reason the NPC is despawning.
+         */
+        public void onDespawn(NpcTrait trait, NpcDespawnReason reason) {
+            PreCon.notNull(trait);
+            PreCon.notNull(reason);
+
+            checkRegistration(trait);
+            trait.onDespawn(reason);
+        }
+
+        private void checkRegistration(NpcTrait trait) {
+
+            NpcTraitRegistration registration = trait.getType()._registration;
+            if (registration != null && registration != this)
+                throw new IllegalStateException("Registration mismatch.");
+        }
+    }
 }
