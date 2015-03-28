@@ -264,6 +264,37 @@ public class Coords3D extends Coords2D {
         return new Coords2D(getX(), getZ());
     }
 
+    /**
+     * Copy values to an output {@link org.bukkit.Location}.
+     *
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    @Override
+    public Location copyTo(Location output) {
+        PreCon.notNull(output);
+
+        output.setY(_y);
+        return super.copyTo(output);
+    }
+
+    /**
+     * Copy values to an output {@link org.bukkit.Location}.
+     *
+     * @param world   The {@link org.bukkit.World} to put into the output {@link org.bukkit.Location}.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    @Override
+    public Location copyTo(@Nullable World world, Location output) {
+        PreCon.notNull(output);
+
+        output.setY(_y);
+        return super.copyTo(world, output);
+    }
+
     @Override
     public void serialize(IDataNode dataNode) {
         super.serialize(dataNode);

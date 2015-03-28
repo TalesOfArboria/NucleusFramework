@@ -37,6 +37,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.io.IOException;
+import javax.annotation.Nullable;
 
 /**
  * 2D immutable integer coordinates.
@@ -278,6 +279,38 @@ public class Coords2Di implements IDataNodeSerializable, IBinarySerializable {
      */
     public Coords3Di to3Di(int y) {
         return new Coords3Di(getX(), y, getZ());
+    }
+
+    /**
+     * Copy the X and Z values to an output {@link org.bukkit.Location}.
+     *
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    public Location copyTo(Location output) {
+        PreCon.notNull(output);
+
+        output.setX(_x);
+        output.setZ(_z);
+        return output;
+    }
+
+    /**
+     * Copy the X and Z values to an output {@link org.bukkit.Location}.
+     *
+     * @param world   The {@link org.bukkit.World} to put into the output {@link org.bukkit.Location}.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    public Location copyTo(@Nullable World world, Location output) {
+        PreCon.notNull(output);
+
+        output.setWorld(world);
+        output.setX(_x);
+        output.setZ(_z);
+        return output;
     }
 
     @Override
