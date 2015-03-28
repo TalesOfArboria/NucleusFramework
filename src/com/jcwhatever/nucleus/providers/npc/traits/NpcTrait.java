@@ -220,9 +220,6 @@ public abstract class NpcTrait implements INamed, IDisposable {
         INpc npc = getNpc();
         if (npc != null) {
             getNpc().getTraits().remove(getName());
-
-            onRemove();
-            onDispose();
         }
 
         _isDisposed = true;
@@ -241,7 +238,8 @@ public abstract class NpcTrait implements INamed, IDisposable {
     protected void onAdd(INpc npc) {}
 
     /**
-     * Invoked when the trait is removed from an {@link INpc}.
+     * Invoked when the trait is removed from an {@link INpc} and/or
+     * disposed.
      *
      * <p>This is invoked by the external implementations of the
      * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
@@ -283,16 +281,6 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * <p>Intended for optional override.</p>
      */
     protected void onDisable() {}
-
-    /**
-     * Invoked when the trait is disposed.
-     *
-     * <p>Intended for optional override</p>
-     *
-     * <p>Note that the trait may be un-disposed if the provider reuses it.
-     * This can be detected by overriding {@link #onAdd}.</p>
-     */
-    protected void onDispose() {}
 
     /**
      * Get an enum from an object. The object must be an instance of the
