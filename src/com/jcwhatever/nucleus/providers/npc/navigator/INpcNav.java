@@ -103,6 +103,17 @@ public interface INpcNav extends INpcNavScriptEvents {
     Location getTargetLocation();
 
     /**
+     * Copy the values of the current target as a location into an output
+     * {@link org.bukkit.Location}.
+     *
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location} null if there is no target.
+     */
+    @Nullable
+    Location getTargetLocation(Location output);
+
+    /**
      * Get the current target entity.
      *
      * @return  The current target entity or null if there is no target
