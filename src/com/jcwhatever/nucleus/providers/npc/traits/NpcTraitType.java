@@ -34,6 +34,8 @@ import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
+
 /**
  * NPC Trait provider. Represents a single type of trait. Used to create
  * instances of the trait type for specific {@link INpc} instances.
@@ -101,7 +103,7 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
             npc.getRegistry().registerTrait(this);
 
         // add pooled trait
-        NpcTrait trait = npc.getTraits().addPooled(this);
+        NpcTrait trait = _registration.addPooled(this, npc);
         if (trait == null) {
             // create new trait
             trait = createTrait(npc);
@@ -145,7 +147,7 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
     /**
      * Used by the provider to access protected trait methods.
      */
-    public static class NpcTraitRegistration {
+    public static abstract class NpcTraitRegistration {
 
         /**
          * Invoked by the provider when the trait is added to an NPC.
@@ -199,6 +201,19 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
             checkRegistration(trait);
             trait.onDespawn(reason);
         }
+
+        /**
+         * Invoked to add a pooled {@link NpcTrait} instance from the NPC provider to
+         * the specified {@link INpc}.
+         *
+         * @param type  The trait type of the required trait instance.
+         * @param npc   The npc to add the trait to.
+         *
+         * @return  The added {@link NpcTrait} instance or null if type was not found or
+         * NPC provider does not implement trait pooling.
+         */
+        @Nullable
+        protected abstract NpcTrait addPooled(NpcTraitType type, INpc npc);
 
         private void checkRegistration(NpcTrait trait) {
 

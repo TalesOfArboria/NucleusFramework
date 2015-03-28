@@ -151,17 +151,6 @@ public interface INpcTraits {
     INpcTraits add(NpcTrait trait);
 
     /**
-     * Add a pooled reusable {@link NpcTrait} to the NPC of the specified type.
-     *
-     * @param trait  The trait type instance.
-     *
-     * @return  The pooled instance that was added, null if a pooled instance is not
-     * available or the provider does not support trait pooling.
-     */
-    @Nullable
-    NpcTrait addPooled(NpcTraitType trait);
-
-    /**
      * Get a trait from the NPC by trait type name.
      *
      * @param name  The name of the trait type.
