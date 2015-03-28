@@ -36,6 +36,13 @@ public class MutableCoords3Di extends Coords3Di {
 
     /**
      * Constructor.
+     */
+    public MutableCoords3Di() {
+        super(0, 0, 0);
+    }
+
+    /**
+     * Constructor.
      *
      * @param x  The x coordinates.
      * @param y  The y coordinates.

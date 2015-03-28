@@ -36,6 +36,13 @@ public class MutableCoords3D extends Coords3D {
 
     /**
      * Constructor.
+     */
+    public MutableCoords3D() {
+        super(0, 0, 0);
+    }
+
+    /**
+     * Constructor.
      *
      * @param x  The x coordinates.
      * @param y  The y coordinates.

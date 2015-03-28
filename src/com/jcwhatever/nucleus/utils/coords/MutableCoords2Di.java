@@ -37,6 +37,13 @@ public class MutableCoords2Di extends Coords2Di {
 
     /**
      * Constructor.
+     */
+    public MutableCoords2Di() {
+        super(0, 0);
+    }
+
+    /**
+     * Constructor.
      *
      * @param x The x coordinates.
      * @param z The z coordinates.
