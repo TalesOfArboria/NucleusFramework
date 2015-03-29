@@ -172,7 +172,17 @@ public final class PlayerTracker {
             if (event.isCancelled())
                 return;
 
-            if (event.getTo().getWorld().equals(event.getFrom().getWorld()))
+            if (event.getTo() == null) {
+                NucMsg.warning("Teleport using a null destination location detected.");
+                return;
+            }
+
+            if (event.getTo().getWorld() == null) {
+                NucMsg.warning("Teleport using a null world in destination location detected.");
+                return;
+            }
+
+            if (event.getFrom() != null && event.getTo().getWorld().equals(event.getFrom().getWorld()))
                 return;
 
             synchronized (_sync) {
