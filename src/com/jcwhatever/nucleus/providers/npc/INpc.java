@@ -52,13 +52,13 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
 
     /**
      * Spawn the NPC in the specified location. If the NPC is already spawned,
-     * the NPC is teleported.
+     * no action is taken.
      *
      * @param location  The location to spawn or teleport the NPC.
      *
-     * @return  Self for chaining.
+     * @return  True if the NPC was spawned, otherwise false.
      */
-    INpc spawn(Location location);
+    boolean spawn(Location location);
 
     /**
      * Despawn the NPC.
