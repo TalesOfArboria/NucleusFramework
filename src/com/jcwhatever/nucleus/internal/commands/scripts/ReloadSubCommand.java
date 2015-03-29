@@ -29,21 +29,57 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
+import com.jcwhatever.nucleus.scripting.IScript;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
         parent="scripts",
         command = "reload",
-        description = "Reload scripts.")
+        staticParams = {"scriptName="},
+        description = "Reload scripts.",
+
+        paramDescriptions = {
+                "scriptName= Optional. The name of the script to reload. Omit to reload all scripts."
+        })
 
 public final class ReloadSubCommand extends AbstractCommand {
+
+    @Localizable static final String _RELOAD_ALL = "Scripts reloaded.";
+    @Localizable static final String _RELOAD_ONE = "Script '{0: script name}' reloaded.";
+    @Localizable static final String _SCRIPT_NOT_FOUND = "A script named '{0: script name}' was not found.";
+    @Localizable static final String _FAILED = "Failed to reload script named '{0: script name}'.";
 
     @Override
     public void execute (CommandSender sender, CommandArguments args) throws InvalidArgumentException {
 
-        Nucleus.getScriptManager().reload();
 
-        tellSuccess(sender, "Scripts reloaded.");
+        if (args.isDefaultValue("scriptName")) {
+            Nucleus.getScriptManager().reload();
+
+            tellSuccess(sender, NucLang.get(_RELOAD_ALL));
+        }
+        else {
+
+            String scriptName = args.getString("scriptName");
+
+            InternalScriptManager manager = (InternalScriptManager)Nucleus.getScriptManager();
+
+            IScript script = manager.getScript(scriptName);
+            if (script == null) {
+                tellError(sender, NucLang.get(_SCRIPT_NOT_FOUND, scriptName));
+                return; // finish
+            }
+
+            if (!manager.reload(scriptName)) {
+                tellError(sender, NucLang.get(_FAILED, scriptName));
+                return; // finish
+            }
+
+            tellSuccess(sender, NucLang.get(_RELOAD_ONE, scriptName));
+        }
     }
 }

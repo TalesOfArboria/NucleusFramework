@@ -151,17 +151,48 @@ public final class InternalScriptManager implements IScriptManager {
     public void evaluate() {
 
         for (IScript script : _scripts.values()) {
-
-            IEvaluatedScript current = _evaluated.remove(script.getName().toLowerCase());
-            if (current != null)
-                current.dispose();
-
-            IEvaluatedScript evaluated = script.evaluate(_api);
-            if (evaluated == null)
-                continue;
-
-            _evaluated.put(script.getName().toLowerCase(), evaluated);
+            evaluate(script);
         }
+    }
+
+    /**
+     * Evaluates a script.
+     *
+     * <p>Ensures the <em>evaluated</em> script is stored by the manager.</p>
+     */
+    public boolean evaluate(IScript script) {
+
+        IEvaluatedScript current = _evaluated.remove(script.getName().toLowerCase());
+        if (current != null)
+            current.dispose();
+
+        IEvaluatedScript evaluated = script.evaluate(_api);
+        if (evaluated == null)
+            return false;
+
+        _evaluated.put(script.getName().toLowerCase(), evaluated);
+
+        return true;
+    }
+
+    public boolean reload(String scriptName) {
+        PreCon.notNullOrEmpty(scriptName);
+
+        IScript script = getScript(scriptName);
+        if (script == null)
+            return false;
+
+        if (script.getFile() != null) {
+            script = ScriptUtils.loadScript(Nucleus.getPlugin(),
+                    _scriptFolder, script.getFile(), getScriptFactory());
+            if (script == null)
+                return false;
+
+            _scripts.put(script.getName().toLowerCase(), script);
+        }
+
+        evaluate(script);
+        return true;
     }
 
     @Override
