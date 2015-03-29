@@ -62,6 +62,7 @@ public final class LocationUtils {
     };
 
     private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
+    private static final MutableCoords2Di CHUNK_COORDS = new MutableCoords2Di();
 
     /**
      * Copy the values from a source {@link org.bukkit.Location} to a new
@@ -913,6 +914,54 @@ public final class LocationUtils {
         output.setPitch(location.getPitch());
 
         return output;
+    }
+
+    /**
+     * Determine if the {@link org.bukkit.Chunk} at the specified {@link org.bukkit.Location} and all
+     * chunks within the specified radius around it are loaded.
+     *
+     * @param location  The {@link org.bukkit.Location} to check.
+     * @param radius    The radius to check.
+     *
+     * @return  True if all chunks within the radius are loaded, otherwise false.
+     */
+    public static boolean isNearbyChunksLoaded(Location location, int radius) {
+        Coords2Di chunkCoords = Bukkit.isPrimaryThread()
+                ? Coords2Di.getChunkCoords(location, CHUNK_COORDS)
+                : Coords2Di.getChunkCoords(location);
+
+        return isNearbyChunksLoaded(location.getWorld(), chunkCoords.getX(), chunkCoords.getZ(), radius);
+    }
+
+    /**
+     * Determine if the {@link org.bukkit.Chunk} at the specified coordinates and all
+     * chunks within the specified radius around it are loaded.
+     *
+     * @param world   The {@link org.bukkit.World} to check in.
+     * @param chunkX  The X coordinates of the chunk.
+     * @param chunkZ  The Z coordinates of the chunk.
+     * @param radius  The radius to check.
+     *
+     * @return  True if all chunks within the radius are loaded, otherwise false.
+     */
+    public static boolean isNearbyChunksLoaded(World world, int chunkX, int chunkZ, int radius) {
+        PreCon.notNull(world);
+        PreCon.positiveNumber(radius);
+
+        int startX = chunkX - radius;
+        int startZ = chunkZ - radius;
+        int endX = chunkX + radius;
+        int endZ = chunkZ + radius;
+
+        for (int x = startX; x <= endX; x++) {
+            for (int z = startZ; z <= endZ; z++) {
+                if (!world.isChunkLoaded(x, z)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private static double rotateX(double centerA, double centerB, double a, double b, double rotation) {
