@@ -55,42 +55,6 @@ public class Coords2Di implements IDataNodeSerializable, IBinarySerializable {
         return new Coords2Di(chunk.getX(), chunk.getZ());
     }
 
-    /**
-     * Get chunk coordinates from a location.
-     *
-     * @param location  The location.
-     */
-    public static Coords2Di getChunkCoords(Location location) {
-        PreCon.notNull(location);
-
-        int x = (int)Math.floor(location.getX() / 16);
-        int z = (int)Math.floor(location.getZ() / 16);
-
-        return new Coords2Di(x, z);
-    }
-
-    /**
-     * Get chunk coordinates from a location and copy the result into an output
-     * {@link MutableCoords2Di}.
-     *
-     * @param location  The location.
-     * @param output    The output {@link MutableCoords2Di}.
-     *
-     * @return  The output {@link MutableCoords2Di}.
-     */
-    public static MutableCoords2Di getChunkCoords(Location location, MutableCoords2Di output) {
-        PreCon.notNull(location);
-        PreCon.notNull(output);
-
-        int x = (int)Math.floor(location.getX() / 16);
-        int z = (int)Math.floor(location.getZ() / 16);
-
-        output.setX(x);
-        output.setZ(z);
-
-        return output;
-    }
-
     private int _x;
     private int _z;
     private boolean _isImmutable;
