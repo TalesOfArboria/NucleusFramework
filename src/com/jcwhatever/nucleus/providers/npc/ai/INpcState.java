@@ -66,8 +66,9 @@ public interface INpcState {
      *
      * @param location  The location to copy result values into.
      *
-     * @return  The location that was provided as an argument.
+     * @return  The location that was provided as an argument or null if the entity was never spawned.
      */
+    @Nullable
     Location getLocation(Location location);
 
     /**
@@ -82,7 +83,6 @@ public interface INpcState {
 
     /**
      * Get the NPC's trait manager.
-     * @return
      */
     INpcTraits getTraits();
 
@@ -90,7 +90,6 @@ public interface INpcState {
      * Get a stored meta state object.
      *
      * @param key  The meta key.
-     * @return
      */
     Object getMeta(String key);
 
