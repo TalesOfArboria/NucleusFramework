@@ -276,7 +276,7 @@ public class MaterialProperty implements INamedInsensitive, IPluginOwned {
     /**
      * Determine if the property is a default property.
      */
-    public boolean isDefaultProperty() {
+    public final boolean isDefaultProperty() {
         return _isDefault;
     }
 

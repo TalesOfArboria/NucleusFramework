@@ -152,7 +152,7 @@ public class EntityTypeProperty implements INamedInsensitive, IPluginOwned {
     /**
      * Determine if the property is a default property type.
      */
-    public boolean isDefaultProperty() {
+    public final boolean isDefaultProperty() {
         return _isDefault;
     }
 
