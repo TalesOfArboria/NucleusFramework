@@ -47,7 +47,7 @@ public interface INpcNavSettings {
      * Get the target tolerance.
      *
      * <p>This is the radius around the NPC target destination that the
-     * NPC must be within in order to consider the path completed.</p>
+     * NPC must be within in order to consider the target reached.</p>
      */
     double getTolerance();
 
@@ -55,7 +55,7 @@ public interface INpcNavSettings {
      * Set the target tolerance.
      *
      * <p>This is the radius around the NPC target destination that the
-     * NPC must be within in order to consider the path completed.</p>
+     * NPC must be within in order to consider the target reached.</p>
      *
      * @param tolerance  The radius tolerance.
      *
@@ -69,18 +69,13 @@ public interface INpcNavSettings {
     boolean avoidsWater();
 
     /**
-     * Make the NPC path to avoid water.
+     * Change the "avoid water" setting
+     *
+     * @param avoidsWater  True to avoid water, otherwise false.
      *
      * @return  Self for chaining.
      */
-    INpcNavSettings avoidWater();
-
-    /**
-     * Make the NPC path to ignore/not-avoid water.
-     *
-     * @return  Self for chaining.
-     */
-    INpcNavSettings ignoreWater();
+    INpcNavSettings setAvoidsWater(boolean avoidsWater);
 
     /**
      * Get the number of ticks to wait for an NPC to move before assuming it is stuck
