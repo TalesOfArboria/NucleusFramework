@@ -24,11 +24,15 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkUtils;
+import com.jcwhatever.nucleus.utils.coords.Coords2Di;
+import com.jcwhatever.nucleus.utils.coords.MutableCoords2Di;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
@@ -49,7 +53,9 @@ public final class TrackedEntity {
     private World _world;
     private boolean _isDisposed;
 
-    private NamedUpdateAgents _updateAgents = new NamedUpdateAgents();
+    private final NamedUpdateAgents _updateAgents = new NamedUpdateAgents();
+    private final Location _entityLocation = new Location(null, 0, 0, 0);
+    private final MutableCoords2Di _currentChunk = new MutableCoords2Di();
 
     /**
      * Constructor.
@@ -90,7 +96,11 @@ public final class TrackedEntity {
      * is loaded.
      */
     public synchronized boolean isChunkLoaded() {
-        return _recent.getLocation().getChunk().isLoaded();//ent_isChunkLoaded;
+
+        Location location = _recent.getLocation(_entityLocation);
+        Coords2Di chunk = ChunkUtils.getChunkCoords(location, _currentChunk);
+
+        return _world.isChunkLoaded(chunk.getX(), chunk.getZ());
     }
 
     /**
@@ -181,6 +191,7 @@ public final class TrackedEntity {
     synchronized void updateEntity(Entity entity) {
 
         _recent = entity;
+        _world = entity.getWorld();
 
         _updateAgents.update("onUpdate", entity);
     }
