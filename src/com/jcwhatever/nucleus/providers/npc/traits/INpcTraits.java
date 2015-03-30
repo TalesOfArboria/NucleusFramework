@@ -49,7 +49,7 @@ public interface INpcTraits {
     boolean isVulnerable();
 
     /**
-     * Make the NPC invulnerable to damage.
+     * Change the NPC vulnerability setting.
      *
      * @param isVulnerable  True to make the Npc vulnerable to damage, otherwise false.
      *
@@ -72,22 +72,20 @@ public interface INpcTraits {
     INpcTraits setType(EntityType type);
 
     /**
-     * Get the name of the player skin.
+     * Get the name of the skin to use.
      *
-     * <p>If a custom skin is not set or the NPC is not
-     * capable of having a custom skin set, then the NPC's name
-     * is returned.</p>
+     * <p>If a custom skin is not set or the NPC is not capable of having a
+     * custom skin set, then the NPC's name is returned.</p>
      *
-     * @return  The name of the player skin.
+     * @return  The name of the skin in use.
      */
     String getSkinName();
 
     /**
-     * Set the skin name of the NPC. This has no effect if the NPC
-     * is not capable of using a player skin.
+     * Set the skin name of the NPC. This has no effect if the NPC is not capable
+     * of having its skin changed.
      *
-     * @param skinName  The name of the player whose skin is to be used.
-     *                  Null to remove custom skin.
+     * @param skinName  The name of the skin to use. Null to remove custom skin.
      *
      * @return  Self for chaining.
      */
@@ -102,8 +100,8 @@ public interface INpcTraits {
     IKit getKit();
 
     /**
-     * Set the kit the NPC is spawned with. If the NPC is already
-     * spawned, the kit is also applied to the spawned entity.
+     * Set the kit the NPC is spawned with. If the NPC is already spawned, the kit
+     * is also applied to the spawned entity.
      *
      * @param kit  The {@link IKit} or null to remove kit.
      *
@@ -114,8 +112,8 @@ public interface INpcTraits {
     /**
      * Set the kit using the name of the kit.
      *
-     * <p>Generally, the kit is pulled from the Nucleus kit manager,
-     * however the provider implementation may differ.</p>
+     * <p>Generally, the kit is pulled from the Nucleus kit manager, however the provider
+     * implementation may differ.</p>
      *
      * @param kitName  The name of the kit or null to remove.
      *
@@ -125,6 +123,8 @@ public interface INpcTraits {
 
     /**
      * Get all of the NPC's traits.
+     *
+     * <p>The collection returned cannot be used to modify the internal collection.</p>
      */
     Collection<NpcTrait> all();
 
@@ -143,6 +143,8 @@ public interface INpcTraits {
 
     /**
      * Add a new trait to the NPC.
+     *
+     * <p>If a trait of the same type is already added, no action is taken.</p>
      *
      * @param trait  The trait instance.
      *

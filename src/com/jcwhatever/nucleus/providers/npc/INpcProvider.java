@@ -53,7 +53,7 @@ public interface INpcProvider extends IProvider, INpcTraitTypeRegistry {
     INpcRegistry createRegistry(Plugin plugin, String name);
 
     /**
-     * Determine if an entity is an NPC.
+     * Determine if an entity is an NPC of the provider.
      *
      * @param entity  The {@link org.bukkit.entity.Entity} to check.
      */

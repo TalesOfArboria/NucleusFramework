@@ -37,7 +37,8 @@ public interface INpcNavRunnerAgent {
     INpc getNpc();
 
     /**
-     * Remove the agents {@link INpcNavRunner} from the NPC.
+     * Remove the agents {@link INpcNavRunner} from the NPC returned
+     * by {@link #getNpc}.
      */
     void remove();
 }

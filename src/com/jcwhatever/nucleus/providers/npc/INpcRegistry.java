@@ -119,13 +119,15 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, INpcScriptEvents, I
 
     /**
      * Get all un-disposed {@link INpc}'s in the registry.
+     *
+     * <p>The collection returned does not modify the registry.</p>
      */
     Collection<INpc> all();
 
     /**
-     * Get an {@link INpc} from the registry by its unique name.
+     * Get an {@link INpc} from the registry by its lookup name.
      *
-     * @param name  The unique name.
+     * @param name  The lookup name.
      *
      * @return  The {@link INpc} instance or null if not found.
      */
@@ -133,12 +135,12 @@ public interface INpcRegistry extends INpcTraitTypeRegistry, INpcScriptEvents, I
     INpc get(String name);
 
     /**
-     * Get an {@link INpc} from the registry by its spawned
-     * {@link Entity} instance.
+     * Get an {@link INpc} from the registry by its spawned {@link Entity} instance.
      *
      * @param entity  The entity to check.
      *
-     * @return  The {@link INpc} instance or null if not found.
+     * @return  The {@link INpc} instance or null if not found or the entity NPC is not
+     * from the registry.
      */
     @Nullable
     INpc get(Entity entity);

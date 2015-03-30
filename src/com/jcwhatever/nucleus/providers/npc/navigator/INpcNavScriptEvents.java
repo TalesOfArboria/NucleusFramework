@@ -39,8 +39,7 @@ import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 public interface INpcNavScriptEvents {
 
     /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever there is a navigator starts.
+     * Attaches a subscriber that is updated whenever a navigator starts running.
      *
      * @param subscriber  The subscriber.
      *
@@ -49,8 +48,7 @@ public interface INpcNavScriptEvents {
     INpcNavScriptEvents onNavStart(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever the navigator is paused.
+     * Attaches a subscriber that is updated whenever a navigator is paused.
      *
      * @param subscriber  The subscriber.
      *
@@ -59,8 +57,7 @@ public interface INpcNavScriptEvents {
     INpcNavScriptEvents onNavPause(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever the navigator is stopped.
+     * Attaches a subscriber that is updated whenever the navigator is stopped.
      *
      * @param subscriber  The subscriber.
      *
@@ -69,8 +66,7 @@ public interface INpcNavScriptEvents {
     INpcNavScriptEvents onNavCancel(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever the navigator completes.
+     * Attaches a subscriber that is updated whenever the navigator completes.
      *
      * @param subscriber  The subscriber.
      *
@@ -79,8 +75,7 @@ public interface INpcNavScriptEvents {
     INpcNavScriptEvents onNavComplete(IScriptUpdateSubscriber<INpc> subscriber);
 
     /**
-     * Attaches a subscriber to the navigator that is updated
-     * whenever the navigator times out (gets stuck).
+     * Attaches a subscriber that is updated whenever the navigator times out (gets stuck).
      *
      * @param subscriber  The subscriber.
      *

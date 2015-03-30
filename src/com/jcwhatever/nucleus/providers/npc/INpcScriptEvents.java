@@ -41,15 +41,14 @@ import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
  *
  * <p>The implementing type represents the scope of the subscription. For example,
  * a subscriber attached to a {@link INpcRegistry} will receive updates
- * for all NPC's created by the registry whereas a subscriber attached to a
+ * for all NPC's created by the registry whereas a subscriber attached to an
  * {@link INpc} will receive updates only for the NPC it is attached to and only
  * for the lifetime of the NPC.</p>
  */
 public interface INpcScriptEvents {
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is spawned.
+     * Attach a subscriber to be updated when an {@link INpc} is spawned.
      *
      * @param subscriber  The subscriber.
      *
@@ -58,8 +57,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcSpawn(IScriptUpdateSubscriber<NpcSpawnEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is despawned.
+     * Attach a subscriber to be updated when an {@link INpc} is despawned.
      *
      * @param subscriber  The subscriber.
      *
@@ -68,8 +66,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcDespawn(IScriptUpdateSubscriber<NpcDespawnEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is clicked.
+     * Attach a subscriber to be updated when an {@link INpc} is clicked.
      *
      * @param subscriber  The subscriber.
      *
@@ -78,8 +75,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcClick(IScriptUpdateSubscriber<NpcClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is right clicked.
+     * Attach a subscriber to be updated when an {@link INpc} is right clicked.
      *
      * @param subscriber  The subscriber.
      *
@@ -88,8 +84,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcRightClick(IScriptUpdateSubscriber<NpcRightClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is left click.
+     * Attach a subscriber to be updated when an {@link INpc} is left clicked.
      *
      * @param subscriber  The subscriber.
      *
@@ -98,8 +93,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcLeftClick(IScriptUpdateSubscriber<NpcLeftClickEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is targeted by another entity.
+     * Attach a subscriber to be updated when an {@link INpc} is targeted by another entity.
      *
      * @param subscriber  The subscriber.
      *
@@ -108,8 +102,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcEntityTarget(IScriptUpdateSubscriber<NpcTargetedEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is damaged.
+     * Attach a subscriber to be updated when an {@link INpc} is damaged.
      *
      * @param subscriber  The subscriber.
      *
@@ -118,8 +111,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcDamage(IScriptUpdateSubscriber<NpcDamageEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is damaged by a block.
+     * Attach a subscriber to be updated when an {@link INpc} is damaged by a block.
      *
      * @param subscriber  The subscriber.
      *
@@ -128,8 +120,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcDamageByBlock(IScriptUpdateSubscriber<NpcDamageByBlockEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * is damaged by an entity.
+     * Attach a subscriber to be updated when an {@link INpc} is damaged by an entity.
      *
      * @param subscriber  The subscriber.
      *
@@ -138,8 +129,7 @@ public interface INpcScriptEvents {
     INpcScriptEvents onNpcDamageByEntity(IScriptUpdateSubscriber<NpcDamageByEntityEvent> subscriber);
 
     /**
-     * Attach a subscriber to be updated when the {@link INpc}
-     * dies.
+     * Attach a subscriber to be updated when an {@link INpc} dies.
      *
      * @param subscriber  The subscriber.
      *

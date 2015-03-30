@@ -32,12 +32,13 @@ import com.jcwhatever.nucleus.providers.npc.INpc;
 public interface INpcNavTimeout {
 
     /**
-     * Determine if the navigation should be cancelled due to the
-     * navigation timeout.
+     * Determine if the navigation should be cancelled due to the navigation timeout.
      *
-     * @param npc  The NPC who is stuck.
+     * <p>Actions can be performed when invoked to try to "unstuck" the NPC.</p>
      *
-     * @return  True to cancel navigation, false to continue
+     * @param npc  The NPC that is stuck.
+     *
+     * @return  True to cancel navigation, false to continue.
      */
     boolean shouldCancel(INpc npc);
 }

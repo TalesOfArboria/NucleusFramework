@@ -27,7 +27,10 @@ package com.jcwhatever.nucleus.providers.npc.navigator;
 /**
  * A runner that can be invoked while an NPC is navigating.
  *
- * <p>Attach to an NPC via its {@link INpcNav}.</p>
+ * <p>Attach to an NPC via its {@link INpcNav#addRunner} method.</p>
+ *
+ * <p>The runner can remove itself from the NPC by invoking
+ * {@link INpcNavRunnerAgent#remove}</p>
  */
 public interface INpcNavRunner {
 

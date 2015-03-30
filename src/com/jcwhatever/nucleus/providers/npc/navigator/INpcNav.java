@@ -49,34 +49,37 @@ public interface INpcNav extends INpcNavScriptEvents {
     /**
      * Get the navigator settings for the current pathing target.
      *
-     * <p>When a target is set, the current settings are the settings
-     * available from the method {@link #getSettings}. Changes to the
-     * current settings only last until the current navigation ends.</p>
+     * <p>When a target is set, the current settings are the settings available from
+     * the method {@link #getSettings}. Changes to the current settings only last until
+     * the current navigation ends.</p>
+     *
+     * <p>Current settings are used to make adjustments to the settings that are transient.
+     * Use the non-current settings from {@link #getSettings} to retrieve base settings.</p>
      */
     INpcNavSettings getCurrentSettings();
 
     /**
-     * Determine if the navigator is currently running,
-     * that is, that the NPC is currently pathing towards
-     * a destination.
+     * Determine if the navigator is currently running, that is, that the NPC is currently
+     * pathing towards a target.
      */
     boolean isRunning();
 
     /**
-     * Determine if the intention towards the current
-     * pathing target is hostile.
+     * Determine if the intention towards the current pathing target is hostile.
+     *
+     * <p>Hostility primarily effects {@link org.bukkit.entity.Entity} targets.</p>
      */
     boolean isHostile();
 
     /**
-     * Determine if navigation targets are send to the
-     * NPC vehicle, if any.
+     * Determine if navigation targets are sent to the NPC vehicle, if any.
+     *
+     * <p>If true, any targets set are forwarded to the NPC's NPC vehicle.</p>
      */
     boolean isVehicleProxy();
 
     /**
-     * Set the flag for sending navigation targets to the
-     * NPC vehicle, if any.
+     * Set the flag for sending navigation targets to the NPC vehicle, if any.
      *
      * @param isProxy  True to send nav targets to NPC vehicle, otherwise false.
      *
@@ -125,12 +128,16 @@ public interface INpcNav extends INpcNavScriptEvents {
     /**
      * Start navigating using the current settings and target.
      *
+     * <p>If the navigator is already running, no action is taken.</p>
+     *
      * @return  Self for chaining.
      */
     INpcNav start();
 
     /**
      * Pause the navigator. The navigator will resume when {@link #start} is invoked.
+     *
+     * <p>If the navigator is already paused, no action is taken.</p>
      *
      * @return  Self for chaining.
      */
@@ -139,12 +146,16 @@ public interface INpcNav extends INpcNavScriptEvents {
     /**
      * Stop the navigator and clear all path state.
      *
+     * <p>If the navigator is already cancelled, no action is taken.</p>
+     *
      * @return  Self for chaining.
      */
     INpcNav cancel();
 
     /**
      * Set the current target location.
+     *
+     * <p>Setting the target starts navigation.</p>
      *
      * @param location  The location.
      *
@@ -154,6 +165,8 @@ public interface INpcNav extends INpcNavScriptEvents {
 
     /**
      * Set the current target entity.
+     *
+     * <p>Setting the target starts navigation.</p>
      *
      * @param entity  The entity.
      *

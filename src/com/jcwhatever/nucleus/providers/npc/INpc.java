@@ -45,23 +45,27 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
     INpcRegistry getRegistry();
 
     /**
-     * Get the NPC's non-unique name. This is the name displayed
+     * Get the NPC's personal name. This is the name displayed
      * above the NPC entity.
      */
     String getNPCName();
 
     /**
      * Spawn the NPC in the specified location. If the NPC is already spawned,
-     * no action is taken.
+     * the NPC is teleported to the new location.
+     *
+     * <p>If the NPC is teleported, no NPC spawn events are called.</p>
      *
      * @param location  The location to spawn or teleport the NPC.
      *
-     * @return  True if the NPC was spawned, otherwise false.
+     * @return  True if the NPC was spawned or teleported, otherwise false.
      */
     boolean spawn(Location location);
 
     /**
      * Despawn the NPC.
+     *
+     * <p>If the NPC is already despawned, no action is taken.</p>
      *
      * @return  True if despawned, otherwise false.
      */
@@ -71,7 +75,7 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
      * Get the NPC vehicle the {@link INpc} is riding.
      *
      * @return  The {@link INpc} vehicle or null if there is no vehicle or the vehicle
-     * is not an {@link INpc}.
+     * is not an {@link INpc} of the provider.
      */
     @Nullable
     INpc getNPCVehicle();
@@ -80,7 +84,7 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
      * Get the NPC passenger of the {@link INpc}.
      *
      * @return  The {@link INpc} passenger or null if there is no passenger or the the passenger
-     * is not an {@link INpc}.
+     * is not an {@link INpc} of the provider.
      */
     @Nullable
     INpc getNPCPassenger();
@@ -107,6 +111,8 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
     /**
      * Make the NPC face the specified {@link Entity}.
      *
+     * <p>If the entity is not in the same world or not alive, no action is taken.</p>
+     *
      * @param entity  The entity to look at.
      *
      * @return  Self for chaining.
@@ -115,6 +121,8 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
 
     /**
      * Make the NPC face a {@link org.bukkit.Location}.
+     *
+     * <p>If the location is not in the same world, no action is taken.</p>
      *
      * @param location  The location to face.
      *
