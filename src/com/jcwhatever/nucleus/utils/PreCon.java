@@ -272,6 +272,56 @@ public final class PreCon {
     }
 
     /**
+     * Ensures supplied number is greater than limit.
+     *
+     * @param number  The number to check.
+     *
+     * @throws java.lang.IllegalArgumentException  if number is less than or equal to limit.
+     */
+    public static void greaterThan(long number, long limit) {
+        greaterThan(number, limit, "a checked argument");
+    }
+
+    /**
+     * Ensures supplied number is greater than a specified limit.
+     *
+     * @param number     The number to check.
+     * @param paramName  The name of the parameter being checked.
+     *
+     * @throws java.lang.IllegalArgumentException  if number is less than or equal to limit.
+     */
+    public static void greaterThan(long number, long limit, String paramName) {
+        if (number <= limit) {
+            badArg("Value of {0} must be greater than {1}. Is {2}.", paramName, limit, number);
+        }
+    }
+
+    /**
+     * Ensures supplied number is greater than a specified limit.
+     *
+     * @param number  The number to check.
+     *
+     * @throws java.lang.IllegalArgumentException  if number is less than or equal to limit.
+     */
+    public static void greaterThan(double number, double limit) {
+        greaterThan(number, limit, "a checked argument");
+    }
+
+    /**
+     * Ensures supplied number is greater than limit.
+     *
+     * @param number     The number to check.
+     * @param paramName  The name of the parameter being checked.
+     *
+     * @throws java.lang.IllegalArgumentException  if number is less than or equal to limit.
+     */
+    public static void greaterThan(double number, double limit, String paramName) {
+        if (number <= limit) {
+            badArg("The value of {0} must be greater than {1}. Is {2}.", paramName, limit, number);
+        }
+    }
+
+    /**
      * Ensures supplied number is a positive number.
      *
      * @param number  The number to check.
