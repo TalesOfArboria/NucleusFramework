@@ -25,20 +25,19 @@
 package com.jcwhatever.nucleus.internal.sounds;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
 import com.jcwhatever.nucleus.collections.timed.TimedArrayList;
 import com.jcwhatever.nucleus.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.nucleus.events.sounds.ResourceSoundEndEvent;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
-import com.jcwhatever.nucleus.sounds.types.EffectSound;
 import com.jcwhatever.nucleus.sounds.ISoundContext;
 import com.jcwhatever.nucleus.sounds.ISoundManager;
+import com.jcwhatever.nucleus.sounds.SoundSettings;
+import com.jcwhatever.nucleus.sounds.Transcript;
+import com.jcwhatever.nucleus.sounds.types.EffectSound;
 import com.jcwhatever.nucleus.sounds.types.MusicDiskSound;
 import com.jcwhatever.nucleus.sounds.types.MusicSound;
 import com.jcwhatever.nucleus.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.sounds.SoundSettings;
-import com.jcwhatever.nucleus.sounds.Transcript;
 import com.jcwhatever.nucleus.sounds.types.VoiceSound;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
@@ -48,6 +47,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
@@ -180,8 +180,7 @@ public class InternalSoundManager implements ISoundManager {
         if (event.isCancelled())
             return context.setFinished();
 
-        INmsSoundEffectHandler nmsHandler = Nucleus.getNmsManager()
-                .getNmsHandler(NmsHandlers.SOUND_EFFECT.name());
+        INmsSoundEffectHandler nmsHandler = NmsUtils.getSoundEffectHandler();
 
         // run play sound command
         for (Location location : settings.getLocations()) {

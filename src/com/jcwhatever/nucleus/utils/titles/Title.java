@@ -24,11 +24,10 @@
 
 package com.jcwhatever.nucleus.utils.titles;
 
-import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
-import com.jcwhatever.nucleus.utils.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Utils;
+import com.jcwhatever.nucleus.utils.nms.INmsTitleHandler;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 import com.jcwhatever.nucleus.utils.text.TextComponents;
 
@@ -140,7 +139,7 @@ public class Title implements ITitle {
     public void showTo(Player p) {
         PreCon.notNull(p);
 
-        INmsTitleHandler titleHandler = Nucleus.getNmsManager().getNmsHandler(NmsHandlers.TITLES.name());
+        INmsTitleHandler titleHandler = NmsUtils.getTitleHandler();
         if (titleHandler != null) {
 
             titleHandler.send(p, _title, _subTitle, _fadeInTime, _stayTime, _fadeOutTime);

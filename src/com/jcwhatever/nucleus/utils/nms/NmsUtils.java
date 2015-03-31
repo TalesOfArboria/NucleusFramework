@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.utils.nms;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -34,6 +35,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * Reflection utilities.
@@ -115,6 +117,50 @@ public final class NmsUtils {
         }
 
         return true;
+    }
+
+    /**
+     * Get NucleusFrameworks internal action bar handler.
+     *
+     * @return  The action bar handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsActionBarHandler getActionBarHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.ACTION_BAR);
+    }
+
+    /**
+     * Get NucleusFrameworks internal list header/footer handler.
+     *
+     * @return  The list header/footer handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsListHeaderFooterHandler getListHeaderFooterHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.LIST_HEADER_FOOTER);
+    }
+
+    /**
+     * Get NucleusFramework's internal sound effect handler.
+     *
+     * @return  The sound effect handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsSoundEffectHandler getSoundEffectHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.SOUND_EFFECT);
+    }
+
+    /**
+     * Get NucleusFramework's internal title handler.
+     *
+     * @return  The title handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    @Nullable
+    public static INmsTitleHandler getTitleHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.TITLES);
     }
 
     // load the the craft package version from NucleusFramework's config

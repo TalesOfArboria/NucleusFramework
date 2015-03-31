@@ -25,7 +25,6 @@
 package com.jcwhatever.nucleus.utils.actionbar;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
 import com.jcwhatever.nucleus.collections.SetMap;
 import com.jcwhatever.nucleus.collections.WeakHashSetMap;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
@@ -34,6 +33,7 @@ import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.nms.INmsActionBarHandler;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.Bukkit;
@@ -68,7 +68,7 @@ class BarSender implements Runnable {
     static volatile BarSender _instance;
 
     static {
-        _nmsHandler = Nucleus.getNmsManager().getNmsHandler(NmsHandlers.ACTION_BAR.name());
+        _nmsHandler = NmsUtils.getActionBarHandler();
 
         if (_nmsHandler == null) {
             NucMsg.debug("Failed to get Action Bar NMS handler.");

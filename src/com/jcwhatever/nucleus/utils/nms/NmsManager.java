@@ -126,7 +126,7 @@ public class NmsManager implements IPluginOwned {
      * @return  Null if not found.
      */
     @Nullable
-    public synchronized <T extends INmsHandler> T getNmsHandler(String name) {
+    public synchronized <T extends INmsHandler> T getHandler(String name) {
 
         INmsHandler handler = _nmsHandlers.get(name);
         if (handler != null) {
