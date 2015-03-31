@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.providers.friends;
 import com.jcwhatever.nucleus.providers.IProvider;
 
 import java.util.Collection;
-import java.util.UUID;
+import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -38,53 +38,84 @@ import javax.annotation.Nullable;
 public interface IFriendsProvider extends IProvider {
 
     /**
-     * Get friends of the specified player.
-     *
-     * @param playerId  The ID of the player.
+     * Get the default friendship context.
      */
-    Collection<IFriend> getFriends(UUID playerId);
+    IFriendsContext getDefaultContext();
 
     /**
-     * Get the friend object that represents the friend relationship
-     * of the specified player to the specified friend player.
+     * Create a transient context that is not stored.
      *
-     * @param playerId  The ID of the player to get the friend for.
-     * @param friendId  The ID of the players friend.
-     *
-     * @return  The friend or null if the player is not friends with the specified friend.
+     * @return  The new transient context or null if failed.
      */
     @Nullable
-    IFriend getFriend(UUID playerId, UUID friendId);
+    IFriendsContext createTransientContext();
 
     /**
-     * Determine if the specified friend is in the specified
-     * players friend list.
+     * Creates a new named friendship context.
      *
-     * @param playerId  The ID of the player whose friend list is to be checked.
-     * @param friendId  The ID of the player to check.
+     * @param name  The name of the context.
+     *
+     * @return  The new named context or null if failed.
      */
-    boolean isFriend(UUID playerId, UUID friendId);
+    @Nullable
+    IFriendsContext createContext(String name);
 
     /**
-     * Add a friend to the specified player. If the specified friend
-     * is already a friend of the player, the existing friend is
-     * returned.
+     * Get a named friendship context.
      *
-     * @param playerId  The ID of the player to add a friend to.
-     * @param friendId  The ID of the player to become friends with.
-     * @param level     The level of friendship.
+     * @param name  The name of the context.
      *
-     * @return  The new or current {@link IFriend} object.
+     * @return  The context or null if not found.
      */
-    IFriend addFriend(UUID playerId, UUID friendId, FriendLevel level);
+    @Nullable
+    IFriendsContext getContext(String name);
 
     /**
-     * Remove a friend from the specified player.
-     *
-     * @param playerId  The ID of the player that the friend is being removed from.
-     * @param friendId  The ID of the player friend being removed.
-     *
-     * @return  True if the friend was found and removed.
+     * Get all friendship contexts.
      */
-    boolean removeFriend(UUID playerId, UUID friendId);
+    Collection<IFriendsContext> getContexts();
+
+    /**
+     * Remove a named context.
+     *
+     * @param name  The name of the context.
+     *
+     * @return  True if found and removed, otherwise false.
+     */
+    boolean removeContext(String name);
+
+    /**
+     * Get the available registered friend levels from lowest
+     * level to highest level.
+     */
+    List<IFriendLevel> getLevels();
+
+    /**
+     * Get a friend level by name.
+     *
+     * @param name  The case insensitive name of the level.
+     *
+     * @return  The level or null if not found.
+     */
+    @Nullable
+    IFriendLevel getLevel(String name);
+
+    /**
+     * Register a friendship level.
+     *
+     * @param level  The level to register.
+     *
+     * @return  True if the level was registered, false if a level with
+     * the name is already registered.
+     */
+    boolean registerLevel(IFriendLevel level);
+
+    /**
+     * Unregister a friendship level.
+     *
+     * @param level  The level to remove.
+     *
+     * @return  True if the level was found and removed, otherwise false.
+     */
+    boolean unregisterLevel(IFriendLevel level);
 }

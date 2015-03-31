@@ -28,17 +28,17 @@ public abstract class IFriendsProviderTest {
 
         IFriendsProvider provider = createProvider();
 
-        Collection<IFriend> friends = provider.getFriends(_player.getUniqueId());
+        Collection<IFriend> friends = provider.getDefaultContext().getAll(_player.getUniqueId());
         assertEquals(0, friends.size());
 
-        provider.addFriend(_player.getUniqueId(), _friend1.getUniqueId(), FriendLevel.CASUAL);
+        provider.getDefaultContext().add(_player.getUniqueId(), _friend1.getUniqueId(), FriendLevels.CASUAL);
 
-        friends = provider.getFriends(_player.getUniqueId());
+        friends = provider.getDefaultContext().getAll(_player.getUniqueId());
         assertEquals(1, friends.size());
 
-        provider.removeFriend(_player.getUniqueId(), _friend1.getUniqueId());
+        provider.getDefaultContext().remove(_player.getUniqueId(), _friend1.getUniqueId());
 
-        friends = provider.getFriends(_player.getUniqueId());
+        friends = provider.getDefaultContext().getAll(_player.getUniqueId());
         assertEquals(0, friends.size());
     }
 }

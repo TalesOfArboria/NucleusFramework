@@ -24,25 +24,17 @@
 
 package com.jcwhatever.nucleus.providers.friends;
 
+import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+
 /**
- * Specifies the level of a friend relationship. Used by plugins to
- * determine how much access a friend should have in relation to
- * a players "property".
+ * Interface for a level of friendship.
  */
-public enum FriendLevel {
+public interface IFriendLevel extends INamedInsensitive {
+
     /**
-     * A friend with minimal interaction permissions in relation
-     * to the players "property".
+     * The level of friendship.
+     *
+     * <p>A higher value is a closer relationship.</p>
      */
-    CASUAL,
-    /**
-     * A friend with normal interaction permissions in relation
-     * to the players "property".
-     */
-    GOOD,
-    /**
-     * A friend with near equal interaction permissions in relation
-     * to the players "property".
-     */
-    BEST
+    int getRawLevel();
 }

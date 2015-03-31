@@ -67,8 +67,7 @@ public final class DelSubCommand extends AbstractCommand {
 
         Player player = (Player)sender;
 
-
-        if (!Friends.removeFriend(player, friendId)) {
+        if (!Friends.remove(player, friendId)) {
             tellError(sender, NucLang.get(_NOT_FRIEND, name));
             return; // finish
         }

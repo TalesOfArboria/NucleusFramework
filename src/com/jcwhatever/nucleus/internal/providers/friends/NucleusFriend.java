@@ -24,23 +24,16 @@
 
 package com.jcwhatever.nucleus.internal.providers.friends;
 
-import com.google.common.collect.MultimapBuilder.SetMultimapBuilder;
-import com.google.common.collect.SetMultimap;
-import com.jcwhatever.nucleus.providers.friends.FriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
+import com.jcwhatever.nucleus.providers.friends.IFriendLevel;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Result;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
-import org.bukkit.plugin.Plugin;
-
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -49,32 +42,33 @@ import javax.annotation.Nullable;
  */
 public class NucleusFriend implements IFriend {
 
-    private final UUID _friendOfId;
+    private final UUID _sourceId;
     private final UUID _friendId;
     private final IDataNode _dataNode;
     private final Date _befriendDate;
-    private final NucleusFriendsProvider _provider;
-    private final SetMultimap<String, String> _permissions =
-            SetMultimapBuilder.hashKeys().hashSetValues().build();
+    private final InternalFriendsContext _context;
     private final Object _sync = new Object();
 
-    private Result<IFriend> _mutualFriend;
     private String _name;
-    private FriendLevel _level;
+    private Map<Class<? extends IFriendLevel>, IFriendLevel> _classLevelMap;
+    private IFriendLevel _level;
+    private int _rawLevel;
+    private Result<IFriend> _mutualFriend;
+
     private volatile boolean _isValid = true;
 
     /**
      * Constructor.
      *
-     * @param provider  The parent friend provider.
-     * @param friendOf  The ID of the player the friend instance is for.
+     * @param context  The parent friend provider.
+     * @param sourceId  The ID of the player the friend instance is for.
      * @param friendId  The ID of the player friend.
      * @param dataNode  The friend data node.
      */
-    NucleusFriend(NucleusFriendsProvider provider, UUID friendOf, UUID friendId, IDataNode dataNode) {
+    NucleusFriend(InternalFriendsContext context, UUID sourceId, UUID friendId, IDataNode dataNode) {
 
-        _provider = provider;
-        _friendOfId = friendOf;
+        _context = context;
+        _sourceId = sourceId;
         _friendId = friendId;
         _dataNode = dataNode;
 
@@ -83,16 +77,16 @@ public class NucleusFriend implements IFriend {
             since = System.currentTimeMillis();
 
         _befriendDate = new Date(since);
-        _level = dataNode.getEnum("level", FriendLevel.CASUAL, FriendLevel.class);
+        _rawLevel = dataNode.getInteger("level", 0);
     }
 
     @Override
-    public UUID getFriendOfId() {
-        return _friendOfId;
+    public UUID getSourceId() {
+        return _sourceId;
     }
 
     @Override
-    public UUID getPlayerId() {
+    public UUID getFriendId() {
         return _friendId;
     }
 
@@ -124,7 +118,7 @@ public class NucleusFriend implements IFriend {
                 if (_mutualFriend != null)
                     return _mutualFriend.getResult();
 
-                IFriend friend = _provider.getFriend(_friendId, _friendOfId);
+                IFriend friend = _context.get(_friendId, _sourceId);
                 _mutualFriend = new Result<IFriend>(true, friend);
             }
         }
@@ -132,111 +126,65 @@ public class NucleusFriend implements IFriend {
         return _mutualFriend.getResult();
     }
 
+    @Nullable
     @Override
-    public FriendLevel getLevel() {
+    public <T extends IFriendLevel> T getLevel(Class<T> levelClass) {
+
+        if (_classLevelMap != null) {
+
+            IFriendLevel level = _classLevelMap.get(levelClass);
+            if (level != null) {
+                @SuppressWarnings("unchecked")
+                T result = (T) level;
+                return result;
+            }
+        }
+
+        T level = _context.getProvider().getClosestBelowLevel(levelClass, _rawLevel);
+        if (level == null)
+            return null;
+
+        if (_classLevelMap == null)
+            _classLevelMap = new HashMap<>(7);
+
+        _classLevelMap.put(levelClass, level);
+
+        return level;
+    }
+
+    @Nullable
+    @Override
+    public IFriendLevel getLevel() {
+        if (_level != null)
+            return _level;
+
+        _level = _context.getProvider().getClosestBelowLevel(_rawLevel);
         return _level;
     }
 
     @Override
-    public void setLevel(FriendLevel level) {
+    public int getRawLevel() {
+        return _rawLevel;
+    }
+
+    @Override
+    public void setRawLevel(int level) {
         PreCon.notNull(level);
 
-        _level = level;
+        _rawLevel = level;
 
         _dataNode.set("level", level);
         _dataNode.save();
-    }
 
-    @Override
-    public Set<String> getFlags(Plugin plugin) {
-        PreCon.notNull(plugin);
+        if (_classLevelMap != null)
+            _classLevelMap.clear();
 
-        loadPermissions(plugin);
-
-        synchronized (_sync) {
-            return Collections.unmodifiableSet(_permissions.get(plugin.getName()));
-        }
-    }
-
-    @Override
-    public boolean addFlag(Plugin plugin, String flagName) {
-        PreCon.notNull(plugin);
-        PreCon.notNullOrEmpty(flagName);
-
-        loadPermissions(plugin);
-
-        Set<String> permissions;
-
-        synchronized (_sync) {
-            permissions = new HashSet<>(_permissions.get(plugin.getName()));
-            if (!permissions.add(flagName))
-                return false;
-        }
-
-        IDataNode permNode = _dataNode.getNode("perms");
-
-        permNode.set(plugin.getName(), permissions);
-        permNode.save();
-
-        synchronized (_sync) {
-            _permissions.put(plugin.getName(), flagName);
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean removeFlag(Plugin plugin, String flagName) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(flagName);
-
-        loadPermissions(plugin);
-
-        Set<String> permissions;
-
-        synchronized (_sync) {
-            permissions = new HashSet<>(_permissions.get(plugin.getName()));
-            if (!permissions.remove(flagName))
-                return false;
-        }
-
-        IDataNode permNode = _dataNode.getNode("perms");
-
-        permNode.set(plugin.getName(), permissions);
-        permNode.save();
-
-        synchronized (_sync) {
-            _permissions.remove(plugin.getName(), flagName);
-        }
-
-        return true;
+        _level = null;
     }
 
     public void unFriend() {
         _dataNode.remove();
         _dataNode.save();
         _isValid = false;
-    }
-
-    private void loadPermissions(Plugin plugin) {
-
-        if (!_isValid)
-            return;
-
-        synchronized (_sync) {
-            if (_permissions.containsKey(plugin.getName()))
-                return;
-        }
-
-        IDataNode permNode = _dataNode.getNode("perms");
-
-        List<String> permissions = permNode.getStringList(plugin.getName(),
-                CollectionUtils.unmodifiableList(String.class));
-
-        assert permissions != null;
-
-        synchronized (_sync) {
-            _permissions.putAll(plugin.getName(), permissions);
-        }
     }
 }

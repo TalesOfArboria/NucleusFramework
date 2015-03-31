@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.friends.FriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
+import com.jcwhatever.nucleus.providers.friends.IFriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 
 import org.bukkit.entity.Player;
@@ -36,7 +36,8 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Static methods for accessing the Friends provider.
+ * Static convenience methods for accessing the Friends providers
+ * default context.
  */
 public class Friends {
 
@@ -47,10 +48,10 @@ public class Friends {
      *
      * @param player  The player.
      */
-    public static Collection<IFriend> getFriends(Player player) {
+    public static Collection<IFriend> getAll(Player player) {
         PreCon.notNull(player);
 
-        return provider().getFriends(player.getUniqueId());
+        return provider().getDefaultContext().getAll(player.getUniqueId());
     }
 
     /**
@@ -58,8 +59,8 @@ public class Friends {
      *
      * @param playerId  The ID of the player.
      */
-    public static Collection<IFriend> getFriends(UUID playerId) {
-        return provider().getFriends(playerId);
+    public static Collection<IFriend> getAll(UUID playerId) {
+        return provider().getDefaultContext().getAll(playerId);
     }
 
     /**
@@ -70,7 +71,7 @@ public class Friends {
      * @param friendId  The ID of the player to check.
      */
     public static boolean isFriend(UUID playerId, UUID friendId){
-        return provider().isFriend(playerId, friendId);
+        return provider().getDefaultContext().isFriend(playerId, friendId);
     }
 
     /**
@@ -81,7 +82,7 @@ public class Friends {
      * @param friendId  The ID of the player to check.
      */
     public static boolean isFriend(Player player, UUID friendId){
-        return provider().isFriend(player.getUniqueId(), friendId);
+        return provider().getDefaultContext().isFriend(player.getUniqueId(), friendId);
     }
 
     /**
@@ -92,7 +93,7 @@ public class Friends {
      * @param friend    The player to check.
      */
     public static boolean isFriend(UUID playerId, Player friend){
-        return provider().isFriend(playerId, friend.getUniqueId());
+        return provider().getDefaultContext().isFriend(playerId, friend.getUniqueId());
     }
 
     /**
@@ -103,7 +104,7 @@ public class Friends {
      * @param friend    The player to check.
      */
     public static boolean isFriend(Player player, Player friend){
-        return provider().isFriend(player.getUniqueId(), friend.getUniqueId());
+        return provider().getDefaultContext().isFriend(player.getUniqueId(), friend.getUniqueId());
     }
 
     /**
@@ -116,8 +117,8 @@ public class Friends {
      * @return  The friend or null if the player is not friends with the specified friend.
      */
     @Nullable
-    public static IFriend getFriend(UUID playerId, UUID friendId) {
-        return provider().getFriend(playerId, friendId);
+    public static IFriend get(UUID playerId, UUID friendId) {
+        return provider().getDefaultContext().get(playerId, friendId);
     }
 
     /**
@@ -130,8 +131,8 @@ public class Friends {
      * @return  The friend or null if the player is not friends with the specified friend.
      */
     @Nullable
-    public static IFriend getFriend(Player player, UUID friendId) {
-        return provider().getFriend(player.getUniqueId(), friendId);
+    public static IFriend get(Player player, UUID friendId) {
+        return provider().getDefaultContext().get(player.getUniqueId(), friendId);
     }
 
     /**
@@ -144,8 +145,8 @@ public class Friends {
      * @return  The friend or null if the player is not friends with the specified friend.
      */
     @Nullable
-    public static IFriend getFriend(UUID playerId, Player friend) {
-        return provider().getFriend(playerId, friend.getUniqueId());
+    public static IFriend get(UUID playerId, Player friend) {
+        return provider().getDefaultContext().get(playerId, friend.getUniqueId());
     }
 
     /**
@@ -158,8 +159,8 @@ public class Friends {
      * @return  The friend or null if the player is not friends with the specified friend.
      */
     @Nullable
-    public static IFriend getFriend(Player player, Player friend) {
-        return provider().getFriend(player.getUniqueId(), friend.getUniqueId());
+    public static IFriend get(Player player, Player friend) {
+        return provider().getDefaultContext().get(player.getUniqueId(), friend.getUniqueId());
     }
 
     /**
@@ -173,8 +174,23 @@ public class Friends {
      *
      * @return  The new or current {@link IFriend} object.
      */
-    public static IFriend addFriend(UUID playerId, UUID friendId, FriendLevel level) {
-        return provider().addFriend(playerId, friendId, level);
+    public static IFriend add(UUID playerId, UUID friendId, IFriendLevel level) {
+        return provider().getDefaultContext().add(playerId, friendId, level);
+    }
+
+    /**
+     * Add a friend to the specified player. If the specified friend
+     * is already a friend of the player, the existing friend is
+     * returned.
+     *
+     * @param playerId  The ID of the player to add a friend to.
+     * @param friendId  The ID of the player to become friends with.
+     * @param rawLevel  The raw value level of friendship.
+     *
+     * @return  The new or current {@link IFriend} object.
+     */
+    public static IFriend add(UUID playerId, UUID friendId, int rawLevel) {
+        return provider().getDefaultContext().add(playerId, friendId, rawLevel);
     }
 
     /**
@@ -188,8 +204,23 @@ public class Friends {
      *
      * @return  The new or current {@link IFriend} object.
      */
-    public static IFriend addFriend(Player player, UUID friendId, FriendLevel level) {
-        return provider().addFriend(player.getUniqueId(), friendId, level);
+    public static IFriend add(Player player, UUID friendId, IFriendLevel level) {
+        return provider().getDefaultContext().add(player.getUniqueId(), friendId, level);
+    }
+
+    /**
+     * Add a friend to the specified player. If the specified friend
+     * is already a friend of the player, the existing friend is
+     * returned.
+     *
+     * @param player    The player to add a friend to.
+     * @param friendId  The ID of the player to become friends with.
+     * @param rawLevel  The raw value level of friendship.
+     *
+     * @return  The new or current {@link IFriend} object.
+     */
+    public static IFriend add(Player player, UUID friendId, int rawLevel) {
+        return provider().getDefaultContext().add(player.getUniqueId(), friendId, rawLevel);
     }
 
     /**
@@ -203,8 +234,23 @@ public class Friends {
      *
      * @return  The new or current {@link IFriend} object.
      */
-    public static IFriend addFriend(UUID playerId, Player friend, FriendLevel level) {
-        return provider().addFriend(playerId, friend.getUniqueId(), level);
+    public static IFriend add(UUID playerId, Player friend, IFriendLevel level) {
+        return provider().getDefaultContext().add(playerId, friend.getUniqueId(), level);
+    }
+
+    /**
+     * Add a friend to the specified player. If the specified friend
+     * is already a friend of the player, the existing friend is
+     * returned.
+     *
+     * @param playerId  The ID of the player to add a friend to.
+     * @param friend    The player to become friends with.
+     * @param rawLevel  The raw value level of friendship.
+     *
+     * @return  The new or current {@link IFriend} object.
+     */
+    public static IFriend add(UUID playerId, Player friend, int rawLevel) {
+        return provider().getDefaultContext().add(playerId, friend.getUniqueId(), rawLevel);
     }
 
     /**
@@ -218,8 +264,23 @@ public class Friends {
      *
      * @return  The new or current {@link IFriend} object.
      */
-    public static IFriend addFriend(Player player, Player friend, FriendLevel level) {
-        return provider().addFriend(player.getUniqueId(), friend.getUniqueId(), level);
+    public static IFriend add(Player player, Player friend, IFriendLevel level) {
+        return provider().getDefaultContext().add(player.getUniqueId(), friend.getUniqueId(), level);
+    }
+
+    /**
+     * Add a friend to the specified player. If the specified friend
+     * is already a friend of the player, the existing friend is
+     * returned.
+     *
+     * @param player    The player to add a friend to.
+     * @param friend    The player to become friends with.
+     * @param rawLevel  The raw value level of friendship.
+     *
+     * @return  The new or current {@link IFriend} object.
+     */
+    public static IFriend add(Player player, Player friend, int rawLevel) {
+        return provider().getDefaultContext().add(player.getUniqueId(), friend.getUniqueId(), rawLevel);
     }
 
     /**
@@ -230,8 +291,8 @@ public class Friends {
      *
      * @return  True if the friend was found and removed.
      */
-    public static boolean removeFriend(UUID playerId, UUID friendId) {
-        return provider().removeFriend(playerId, friendId);
+    public static boolean remove(UUID playerId, UUID friendId) {
+        return provider().getDefaultContext().remove(playerId, friendId);
     }
 
     /**
@@ -242,8 +303,8 @@ public class Friends {
      *
      * @return  True if the friend was found and removed.
      */
-    public static boolean removeFriend(Player player, UUID friendId) {
-        return provider().removeFriend(player.getUniqueId(), friendId);
+    public static boolean remove(Player player, UUID friendId) {
+        return provider().getDefaultContext().remove(player.getUniqueId(), friendId);
     }
 
     /**
@@ -254,8 +315,8 @@ public class Friends {
      *
      * @return  True if the friend was found and removed.
      */
-    public static boolean removeFriend(UUID playerId, Player friend) {
-        return provider().removeFriend(playerId, friend.getUniqueId());
+    public static boolean remove(UUID playerId, Player friend) {
+        return provider().getDefaultContext().remove(playerId, friend.getUniqueId());
     }
 
     /**
@@ -266,8 +327,8 @@ public class Friends {
      *
      * @return  True if the friend was found and removed.
      */
-    public static boolean removeFriend(Player player, Player friend) {
-        return provider().removeFriend(player.getUniqueId(), friend.getUniqueId());
+    public static boolean remove(Player player, Player friend) {
+        return provider().getDefaultContext().remove(player.getUniqueId(), friend.getUniqueId());
     }
 
     private static IFriendsProvider provider() {

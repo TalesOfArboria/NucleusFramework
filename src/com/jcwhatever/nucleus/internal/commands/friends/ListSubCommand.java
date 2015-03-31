@@ -32,6 +32,7 @@ import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
+import com.jcwhatever.nucleus.providers.friends.IFriendLevel;
 import com.jcwhatever.nucleus.utils.Friends;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
@@ -63,12 +64,13 @@ public final class ListSubCommand extends AbstractCommand {
 
         Player player = (Player)sender;
 
-        Collection<IFriend> friends = Friends.getFriends(player);
+        Collection<IFriend> friends = Friends.getAll(player);
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
 
         for (IFriend friend : friends) {
-            pagin.add(friend.getName());
+            IFriendLevel level = friend.getLevel();
+            pagin.add(friend.getName(), level == null ? friend.getRawLevel() : level.getName());
         }
 
         pagin.show(sender, page, FormatTemplate.LIST_ITEM);

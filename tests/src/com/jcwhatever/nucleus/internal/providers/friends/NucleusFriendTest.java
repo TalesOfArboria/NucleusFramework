@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.internal.providers.friends;
 
-import com.jcwhatever.nucleus.providers.friends.FriendLevel;
+import com.jcwhatever.nucleus.providers.friends.FriendLevels;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
 import com.jcwhatever.nucleus.providers.friends.IFriendTest;
 
@@ -12,6 +12,6 @@ public class NucleusFriendTest extends IFriendTest {
 
     @Override
     protected IFriend createFriend(UUID playerId, UUID friendId) {
-        return provider.addFriend(playerId, friendId, FriendLevel.CASUAL);
+        return provider.getDefaultContext().add(playerId, friendId, FriendLevels.CASUAL);
     }
 }

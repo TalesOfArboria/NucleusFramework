@@ -24,10 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.friends;
 
-import org.bukkit.plugin.Plugin;
-
 import java.util.Date;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -42,14 +39,14 @@ import javax.annotation.Nullable;
 public interface IFriend {
 
     /**
-     * Get the ID of the player that the friend player is a friend of.
+     * Get the ID of the player that the instance was generated for.
      */
-    UUID getFriendOfId();
+    UUID getSourceId();
 
     /**
      * Get the ID of the friend player.
      */
-    UUID getPlayerId();
+    UUID getFriendId();
 
     /**
      * Get the players name.
@@ -57,7 +54,7 @@ public interface IFriend {
     String getName();
 
     /**
-     * Get the date/time that the friend-of befriended the friend player.
+     * Get the date/time that the friend was befriended.
      */
     Date getBefriendDate();
 
@@ -68,50 +65,47 @@ public interface IFriend {
     boolean isValid();
 
     /**
-     * Get the {@link IFriend} object is the mutual friendship between the
-     * two players. (Friend-of player and friend player). Returns null if the
-     * friendship is not mutual.
+     * Get the reverse {@link IFriend} instance that exists if the friendship is mutual.
+     *
+     * <p>This is equivalent to invoking {@link IFriendsContext#get} using the
+     * {@link #getFriendId()} as the playerId argument and {@link #getSourceId} as the
+     * friendId argument.</p>
+     *
+     * @return  The reverse {@link IFriend} instance or null if the friendship is not mutual.
      */
     @Nullable
     IFriend getMutualFriend();
 
     /**
      * Get the level of friendship.
+     *
+     * <p>Attempts to get the registered {@link IFriendLevel} instance of the specified type.</p>
+     *
+     * @return  The nearest {@link IFriendLevel} instance that matches the specified type and
+     * is identical to or lower than the raw friendship level.
      */
-    FriendLevel getLevel();
+    @Nullable
+    <T extends IFriendLevel> T getLevel(Class<T> levelClass);
 
     /**
-     * Set the level of friendship.
+     * Get the level of friendship.
+     *
+     * @return  The nearest {@link IFriendLevel} instance that is identical or lower than the
+     * raw friendship level.
+     */
+    IFriendLevel getLevel();
+
+    /**
+     * Get the level of friendship.
+     *
+     * <p>Higher values indicate a higher level of friendship. (closer relationship)</p>
+     */
+    int getRawLevel();
+
+    /**
+     * Set the raw level of friendship.
      *
      * @param level  The level.
      */
-    void setLevel(FriendLevel level);
-
-    /**
-     * Get flags added by a specific plugin. Flags are provided by the plugins for their
-     * own use and allow plugins to attach boolean data to the friend.
-     *
-     * @param plugin  The plugin to get flags for.
-     */
-    Set<String> getFlags(Plugin plugin);
-
-    /**
-     * Add a flag to the friend.
-     *
-     * @param plugin    The plugin that owns the permission.
-     * @param flagName  The flag to add.
-     *
-     * @return  True if the flags were modified.
-     */
-    boolean addFlag(Plugin plugin, String flagName);
-
-    /**
-     * Remove a flag from the friend.
-     *
-     * @param plugin    The plugin that owns the flag.
-     * @param flagName  The permission to remove.
-     *
-     * @return  True if the flags were modified.
-     */
-    boolean removeFlag(Plugin plugin, String flagName);
+    void setRawLevel(int level);
 }

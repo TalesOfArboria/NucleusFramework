@@ -24,13 +24,14 @@
 
 package com.jcwhatever.nucleus.internal.commands.friends;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.providers.friends.FriendLevel;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
+import com.jcwhatever.nucleus.providers.friends.IFriendLevel;
 import com.jcwhatever.nucleus.utils.Friends;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -48,12 +49,13 @@ import java.util.UUID;
         paramDescriptions = {
                 "friendName= The name of player to add as a friend.",
                 "level= Optional. The level of friendship. Possible values " +
-                        "are 'casual', 'good', or 'best'. Default is 'casual'."
+                        "are 'casual', 'good', or 'best'. Default is 'casual'. A number value can also be used."
         },
         permissionDefault = PermissionDefault.TRUE)
 
 public final class AddSubCommand extends AbstractCommand {
 
+    @Localizable static final String _LEVEL_NOT_FOUND = "A friend level named '{0}' was not found.";
     @Localizable static final String _PLAYER_NOT_FOUND = "A player named '{0: friend name}' was not found.";
     @Localizable static final String _ALREADY_FRIEND = "Player '{0}' is already in your friends list.";
     @Localizable static final String _SUCCESS =  "Player '{0}' added to your friends list.";
@@ -63,8 +65,25 @@ public final class AddSubCommand extends AbstractCommand {
 
         CommandException.checkNotConsole(this, sender);
 
-        String name = args.getString("friendName");
-        FriendLevel level = args.getEnum("level", FriendLevel.class);
+        String name = null;
+        int rawLevel;
+
+        if (args.hasInteger("level")) {
+            rawLevel = args.getInteger("level");
+        }
+        else {
+            
+            String levelName = args.getString("level");
+
+            IFriendLevel level = Nucleus.getProviderManager().getFriendsProvider().getLevel(levelName);
+            if (level == null) {
+                tellError(sender, NucLang.get(_LEVEL_NOT_FOUND, levelName));
+                return; // finish
+            }
+
+            name = level.getName();
+            rawLevel = level.getRawLevel();
+        }
 
         UUID friendId = PlayerUtils.getPlayerId(name);
         if (friendId == null) {
@@ -74,13 +93,13 @@ public final class AddSubCommand extends AbstractCommand {
 
         Player player = (Player)sender;
 
-        IFriend friend = Friends.getFriend(player, friendId);
+        IFriend friend = Friends.get(player, friendId);
         if (friend != null) {
             tell(sender, NucLang.get(_ALREADY_FRIEND, friend.getName()));
             return; // finish
         }
 
-        Friends.addFriend(player, friendId, level);
+        Friends.add(player, friendId, rawLevel);
 
         tellSuccess(sender, NucLang.get(_SUCCESS, name));
     }
