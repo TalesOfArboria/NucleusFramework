@@ -38,6 +38,7 @@ import com.jcwhatever.nucleus.internal.scripting.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineManager;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
+import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
 import com.jcwhatever.nucleus.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.kits.KitManager;
@@ -63,6 +64,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalRegionManager _regionManager;
     InternalScriptManager _scriptManager;
     InternalScriptApiRepo _scriptApiRepo;
+    InternalSoundManager _soundManager;
     InternalNmsManager _nmsManager;
 
     EntityEquipperManager _equipperManager;
@@ -146,6 +148,8 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _regionManager = new InternalRegionManager(this);
         _equipperManager = new EntityEquipperManager();
+
+        _soundManager = new InternalSoundManager();
     }
 
     @Override

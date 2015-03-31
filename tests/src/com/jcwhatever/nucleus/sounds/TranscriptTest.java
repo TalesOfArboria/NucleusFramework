@@ -45,12 +45,10 @@ public class TranscriptTest {
 
         YamlDataNode dataNode = new YamlDataNode(plugin, yml);
         dataNode.load();
-
-        SoundManager.load(dataNode);
     }
 
     /**
-     * Make sure {@link #getRawTranscript} returns the correct value.
+     * Make sure {@link Transcript#getRawTranscript} returns the correct value.
      */
     @Test
     public void testGetRawTranscript() throws Exception {
@@ -61,7 +59,7 @@ public class TranscriptTest {
     }
 
     /**
-     * Make sure {@link #getParagraphs} returns the correct values.
+     * Make sure {@link Transcript#getParagraphs} returns the correct values.
      */
     @Test
     public void testGetParagraphs() throws Exception {
@@ -79,7 +77,7 @@ public class TranscriptTest {
     }
 
     /**
-     * Make sure {@link #run} works correctly.
+     * Make sure {@link Transcript#run} works correctly.
      */
     @Test
     public void testRun() throws Exception {

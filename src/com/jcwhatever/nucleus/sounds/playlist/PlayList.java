@@ -29,13 +29,15 @@ import com.jcwhatever.nucleus.events.sounds.PlayListLoopEvent;
 import com.jcwhatever.nucleus.events.sounds.PlayListTrackChangeEvent;
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.sounds.ResourceSound;
-import com.jcwhatever.nucleus.sounds.SoundManager;
+import com.jcwhatever.nucleus.sounds.ISoundContext;
+import com.jcwhatever.nucleus.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.result.Result;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -191,8 +193,8 @@ public abstract class PlayList implements IPluginOwned {
                     return;
                 }
 
-                SoundManager.playSound(_plugin, player, sound, settings, null)
-                        .onFinish(new TrackChanger(player, queue));
+                Nucleus.getSoundManager().playSound(_plugin, player, sound, settings, null)
+                        .onSuccess(new TrackChanger(player, queue));
             }
         });
 
@@ -504,7 +506,7 @@ public abstract class PlayList implements IPluginOwned {
     /**
      * Task to ensure the next song in the player queue is played.
      */
-    private class TrackChanger implements Runnable {
+    private class TrackChanger extends FutureSubscriber<ISoundContext> {
 
         private final WeakReference<Player> _player;
         private final PlayerSoundQueue _soundQueue;
@@ -515,7 +517,7 @@ public abstract class PlayList implements IPluginOwned {
         }
 
         @Override
-        public void run() {
+        public void on(Result<ISoundContext> result) {
 
             Player player = _player.get();
             if (player == null)
@@ -532,7 +534,9 @@ public abstract class PlayList implements IPluginOwned {
                 return;
             }
 
-            SoundManager.playSound(_plugin, player, sound, _soundQueue.getSettings(), null).onFinish(this);
+            Nucleus.getSoundManager()
+                    .playSound(_plugin, player, sound, _soundQueue.getSettings(), null)
+                    .onSuccess(this);
         }
 
         private void removeNow(Player player) {

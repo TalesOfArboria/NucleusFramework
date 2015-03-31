@@ -22,29 +22,27 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.internal.sounds;
 
-package com.jcwhatever.nucleus.sounds;
-
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.sounds.ISoundContext;
+import com.jcwhatever.nucleus.sounds.SoundSettings;
+import com.jcwhatever.nucleus.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import org.bukkit.entity.Player;
 
-import java.util.LinkedList;
-
 /**
- * Represents the currently playing song for a player.
+ * Nucleus implementation of {@link ISoundContext}.
  */
-public final class Playing {
-
-    private LinkedList<Runnable> _onFinish;
+public class InternalSoundContext implements ISoundContext {
 
     private final Player _player;
     private final ResourceSound _sound;
     private final SoundSettings _settings;
-    private final SoundFuture _future;
+    private final FutureResultAgent<ISoundContext> _agent = new FutureResultAgent<>();
 
     private boolean _isFinished;
-
 
     /**
      * Constructor.
@@ -52,89 +50,40 @@ public final class Playing {
      * @param player    The player.
      * @param sound     The sound the player hears.
      */
-    Playing(Player player, ResourceSound sound, SoundSettings settings) {
+    InternalSoundContext(Player player, ResourceSound sound, SoundSettings settings) {
         _player = player;
         _sound = sound;
         _settings = settings;
-        _future = new SoundFuture();
     }
 
-    /**
-     * Get the player.
-     */
+    @Override
     public Player getPlayer() {
         return _player;
     }
 
-    /**
-     * Get the resource sound the player hears.
-     */
+    @Override
     public ResourceSound getResourceSound() {
         return _sound;
     }
 
-    /**
-     * Get the location of the sound.
-     */
+    @Override
     public SoundSettings getSettings() {
         return _settings;
     }
 
-    /**
-     * Determine if the sound is finished playing.
-     */
+    @Override
     public boolean isFinished() {
         return _isFinished;
     }
 
-    /**
-     * Get a future used to run a callback
-     * when the sound is finished.
-     * @return
-     */
-    public SoundFuture getFuture() {
-        return _future;
+    @Override
+    public Future<ISoundContext> getFuture() {
+        return _agent.getFuture();
     }
 
-    /**
-     * Mark the sound as finished.
-     */
-    SoundFuture setFinished() {
+    Future<ISoundContext> setFinished() {
         _isFinished = true;
 
-        if (_onFinish == null)
-            return _future;
-
-        while (!_onFinish.isEmpty()) {
-            _onFinish.removeFirst().run();
-        }
-
-        return _future;
-    }
-
-    /**
-     * A future used to add callbacks that are
-     * run when the sound is finished playing.
-     */
-    public class SoundFuture {
-
-        /**
-         * Add a callback to run when the sound is finished.
-         *
-         * @param callback  The callback to run.
-         */
-        public void onFinish(Runnable callback) {
-            PreCon.notNull(callback);
-
-            if (_isFinished) {
-                callback.run();
-                return;
-            }
-
-            if (_onFinish == null)
-                _onFinish = new LinkedList<>();
-
-            _onFinish.add(callback);
-        }
+        return _agent.success(this);
     }
 }

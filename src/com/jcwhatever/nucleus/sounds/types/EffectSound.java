@@ -23,33 +23,21 @@
  */
 
 
-package com.jcwhatever.nucleus.sounds;
+package com.jcwhatever.nucleus.sounds.types;
 
 import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
- * A resource sound that represents voice/dialog.
+ * A resource sound that represents a sound effect.
  */
-public class VoiceSound extends ResourceSound {
-
-    private final Transcript _transcript;
+public class EffectSound extends ResourceSound {
 
     /**
      * Constructor.
      *
-     * @param dataNode  The resource sounds data node.
+     * @param dataNode  The sound effect data node.
      */
-    public VoiceSound(IDataNode dataNode) {
+    public EffectSound(IDataNode dataNode) {
         super(dataNode);
-
-        String transcript = dataNode.getString("transcript", "");
-        _transcript = new Transcript(transcript);
-    }
-
-    /**
-     * Get the sounds {@link Transcript} object.
-     */
-    public final Transcript getTranscript() {
-        return _transcript;
     }
 }

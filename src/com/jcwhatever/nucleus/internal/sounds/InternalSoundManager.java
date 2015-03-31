@@ -22,8 +22,7 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.sounds;
+package com.jcwhatever.nucleus.internal.sounds;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.Nucleus.NmsHandlers;
@@ -32,7 +31,15 @@ import com.jcwhatever.nucleus.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.nucleus.events.sounds.ResourceSoundEndEvent;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
-import com.jcwhatever.nucleus.sounds.Playing.SoundFuture;
+import com.jcwhatever.nucleus.sounds.types.EffectSound;
+import com.jcwhatever.nucleus.sounds.ISoundContext;
+import com.jcwhatever.nucleus.sounds.ISoundManager;
+import com.jcwhatever.nucleus.sounds.types.MusicDiskSound;
+import com.jcwhatever.nucleus.sounds.types.MusicSound;
+import com.jcwhatever.nucleus.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.sounds.SoundSettings;
+import com.jcwhatever.nucleus.sounds.Transcript;
+import com.jcwhatever.nucleus.sounds.types.VoiceSound;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -41,6 +48,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 import org.bukkit.Location;
@@ -49,6 +57,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,47 +65,35 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Manages resource sounds globally.
+ * Nucleus implementation of {@link ISoundManager}.
  */
-public final class SoundManager {
+public class InternalSoundManager implements ISoundManager {
 
-    private SoundManager() {}
+    private final Map<UUID, TimedArrayList<ISoundContext>> _playing = new HashMap<>(100);
+    private Map<String, ResourceSound> _sounds;
 
-    private static final Map<UUID, TimedArrayList<Playing>> _playing = new HashMap<>(100);
-    private static Map<String, ResourceSound> _sounds;
-
-    static {
+    public InternalSoundManager() {
         IDataNode dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("resource-sounds"));
         dataNode.load();
 
         load(dataNode);
     }
 
-    /**
-     * Get a resource sound by name.
-     *
-     * @param name  The name of the sound.
-     */
+    @Override
     @Nullable
-    public static ResourceSound getSound(String name) {
+    public ResourceSound getSound(String name) {
         PreCon.notNull(name);
 
         return _sounds.get(name.toLowerCase());
     }
 
-    /**
-     * Get all resource sounds.
-     */
-    public static List<ResourceSound> getSounds() {
-        return CollectionUtils.unmodifiableList(_sounds.values());
+    @Override
+    public Collection<ResourceSound> getSounds() {
+        return Collections.unmodifiableCollection(_sounds.values());
     }
 
-    /**
-     * Get resource sounds by type.
-     *
-     * @param type  The type to look for.
-     */
-    public static <T extends ResourceSound> List<T> getSounds(Class<T> type) {
+    @Override
+    public <T extends ResourceSound> Collection<T> getSounds(Class<T> type) {
         PreCon.notNull(type);
 
         List<T> results = new ArrayList<>(_sounds.size());
@@ -112,18 +109,14 @@ public final class SoundManager {
             }
         }
 
-        return CollectionUtils.unmodifiableList(results);
+        return Collections.unmodifiableCollection(results);
     }
 
-    /**
-     * Get the resource sounds being played to the specified player.
-     *
-     * @param player  The player to check.
-     */
-    public static List<ResourceSound> getSounds(Player player) {
+    @Override
+    public Collection<ResourceSound> getSounds(Player player) {
         PreCon.notNull(player);
 
-        List<Playing> playing = _playing.get(player.getUniqueId());
+        List<ISoundContext> playing = _playing.get(player.getUniqueId());
 
         if (playing == null || playing.isEmpty())
             return CollectionUtils.unmodifiableList();
@@ -132,7 +125,7 @@ public final class SoundManager {
 
         //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (playing) {
-            for (Playing play : playing) {
+            for (ISoundContext play : playing) {
                 result.add(play.getResourceSound());
             }
         }
@@ -140,16 +133,11 @@ public final class SoundManager {
         return CollectionUtils.unmodifiableList(result);
     }
 
-    /**
-     * Get information about the resource sounds being played
-     * for the specified player.
-     *
-     * @param player  The player to check.
-     */
-    public static List<Playing> getPlaying(Player player) {
+    @Override
+    public Collection<ISoundContext> getContexts(Player player) {
         PreCon.notNull(player);
 
-        List<Playing> playing = _playing.get(player.getUniqueId());
+        List<ISoundContext> playing = _playing.get(player.getUniqueId());
 
         if (playing == null || playing.isEmpty())
             return CollectionUtils.unmodifiableList();
@@ -157,50 +145,21 @@ public final class SoundManager {
         return CollectionUtils.unmodifiableList(playing);
     }
 
-    /**
-     * Play a resource sound to a player at the players location.
-     *
-     * @param plugin  The requesting plugin.
-     * @param p       The player who will hear the sound.
-     * @param sound   The resource sound to play.
-     *
-     * @return  A future used to run a callback when the sound is finished playing.
-     */
-    public static SoundFuture playSound(Plugin plugin, Player p, ResourceSound sound) {
-        return playSound(plugin, p, sound, new SoundSettings(), null);
+    @Override
+    public Future<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound) {
+        return playSound(plugin, player, sound, new SoundSettings(), null);
     }
 
-    /**
-     * Play a resource sound to a player.
-     *
-     * @param plugin    The requesting plugin.
-     * @param p         The player who will hear the sound.
-     * @param sound     The resource sound to play.
-     * @param settings  The settings to use.
-     *
-     * @return  A future used to run a callback when the sound is finished playing.
-     */
-    public static SoundFuture playSound(Plugin plugin, final Player p, ResourceSound sound,
-                                   SoundSettings settings) {
-        return playSound(plugin, p, sound, settings, null);
+    @Override
+    public Future<ISoundContext> playSound(Plugin plugin, final Player playing, ResourceSound sound,
+                                        SoundSettings settings) {
+        return playSound(plugin, playing, sound, settings, null);
     }
 
-    /**
-     * Play a resource sound to a player.
-     *
-     * @param plugin             The requesting plugin.
-     * @param p                  The player who will hear the sound.
-     * @param sound              The resource sound to play.
-     * @param settings           The settings to use to play the sound. The settings are cloned
-     *                           within the method. If the setting has no locations, the players
-     *                           location is used.
-     * @param transcriptViewers  Players who will see the sound transcript, if any.
-     *
-     * @return  A future used to run a callback when the sound is finished playing.
-     */
-    public static SoundFuture playSound(final Plugin plugin, Player p, ResourceSound sound,
-                                   SoundSettings settings,
-                                   final @Nullable Collection<Player> transcriptViewers) {
+    @Override
+    public Future<ISoundContext> playSound(final Plugin plugin, Player p, ResourceSound sound,
+                                        SoundSettings settings,
+                                        final @Nullable Collection<Player> transcriptViewers) {
         PreCon.notNull(plugin);
         PreCon.notNull(sound);
         PreCon.notNull(settings);
@@ -211,7 +170,7 @@ public final class SoundManager {
         if (!settings.hasLocations())
             settings.addLocations(p.getLocation());
 
-        Playing playing = new Playing(p, sound, settings);
+        InternalSoundContext context = new InternalSoundContext(p, sound, settings);
 
         // run event
         PlayResourceSoundEvent event = new PlayResourceSoundEvent(p, sound, settings);
@@ -219,7 +178,7 @@ public final class SoundManager {
 
         // see if the event was cancelled
         if (event.isCancelled())
-            return playing.setFinished();
+            return context.setFinished();
 
         INmsSoundEffectHandler nmsHandler = Nucleus.getNmsManager()
                 .getNmsHandler(NmsHandlers.SOUND_EFFECT.name());
@@ -246,30 +205,30 @@ public final class SoundManager {
         }
 
         // get timed list to store playing object in.
-        TimedArrayList<Playing> currentPlaying = _playing.get(p.getUniqueId());
+        TimedArrayList<ISoundContext> currentPlaying = _playing.get(p.getUniqueId());
 
         if (currentPlaying == null) {
 
             // create timed list for player and add a subscriber to handle sounds ending.
-            currentPlaying = new TimedArrayList<Playing>(Nucleus.getPlugin(), 3)
-            .onLifespanEnd(new UpdateSubscriber<Playing>() {
-                @Override
-                public void on(Playing item) {
+            currentPlaying = new TimedArrayList<ISoundContext>(Nucleus.getPlugin(), 3)
+                    .onLifespanEnd(new UpdateSubscriber<ISoundContext>() {
+                        @Override
+                        public void on(ISoundContext item) {
 
-                    item.setFinished();
+                            ((InternalSoundContext)item).setFinished();
 
-                    ResourceSoundEndEvent event = new ResourceSoundEndEvent(item.getPlayer(),
-                            item.getResourceSound(), item.getSettings());
+                            ResourceSoundEndEvent event = new ResourceSoundEndEvent(item.getPlayer(),
+                                    item.getResourceSound(), item.getSettings());
 
-                    Nucleus.getEventManager().callBukkit(this, event);
-                }
-            });
+                            Nucleus.getEventManager().callBukkit(this, event);
+                        }
+                    });
 
             _playing.put(p.getUniqueId(), currentPlaying);
         }
 
         // add playing sound to timed list, will expire when the song ends.
-        currentPlaying.add(playing, sound.getDurationTicks(), TimeScale.TICKS);
+        currentPlaying.add(context, sound.getDurationTicks(), TimeScale.TICKS);
 
         // display transcript to players if the sound is a voice
         // sound and transcript viewers are provided.
@@ -293,7 +252,7 @@ public final class SoundManager {
             }
         }
 
-        return playing.getFuture();
+        return context.getFuture();
     }
 
     /*
@@ -309,7 +268,7 @@ public final class SoundManager {
     /*
      * Load resource sounds
      */
-    static void load(IDataNode dataNode) {
+    void load(IDataNode dataNode) {
 
         _sounds = new HashMap<>(dataNode.size());
 
@@ -353,5 +312,4 @@ public final class SoundManager {
                 throw new RuntimeException("Invalid sound type in resource sounds: " + type);
         }
     }
-
 }

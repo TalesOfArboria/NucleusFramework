@@ -22,22 +22,41 @@
  * THE SOFTWARE.
  */
 
-
 package com.jcwhatever.nucleus.sounds;
 
-import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+
+import org.bukkit.entity.Player;
 
 /**
- * A resource sound that represents a sound effect.
+ * Interface for an object that represents the context of a single sound playing
+ * to a player.
  */
-public class EffectSound extends ResourceSound {
+public interface ISoundContext {
 
     /**
-     * Constructor.
-     *
-     * @param dataNode  The sound effect data node.
+     * Get the player the sound context is for.
      */
-    public EffectSound(IDataNode dataNode) {
-        super(dataNode);
-    }
+    Player getPlayer();
+
+    /**
+     * Get the resource sound of the context.
+     */
+    ResourceSound getResourceSound();
+
+    /**
+     * Get the sound settings.
+     */
+    SoundSettings getSettings();
+
+    /**
+     * Determine if the sound is finished playing.
+     */
+    boolean isFinished();
+
+    /**
+     * Get a future used to run a success callback when the sound is finished.
+     */
+    Future<ISoundContext> getFuture();
 }

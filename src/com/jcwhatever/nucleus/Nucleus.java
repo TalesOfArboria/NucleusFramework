@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.scripting.IScriptApiRepo;
 import com.jcwhatever.nucleus.scripting.IScriptManager;
+import com.jcwhatever.nucleus.sounds.ISoundManager;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
@@ -203,6 +204,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._kitManager != null, ERROR_NOT_READY);
 
         return _plugin._kitManager;
+    }
+
+    /**
+     * Get the global resource sound manager.
+     */
+    public static ISoundManager getSoundManager() {
+        PreCon.isValid(_plugin._soundManager != null, ERROR_NOT_READY);
+
+        return _plugin._soundManager;
     }
 
     /**
