@@ -29,10 +29,12 @@ import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
-import com.jcwhatever.nucleus.providers.economy.TransactionFailException;
+import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.utils.Economy;
+import com.jcwhatever.nucleus.utils.language.Localizable;
+import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.result.Result;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -73,14 +75,14 @@ public final class SendSubCommand extends AbstractCommand {
             "Sent {0: currency amount} to player '{1: player name}'. New Balance is {2: account balance}";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(final CommandSender sender, CommandArguments args) throws CommandException {
 
         CommandException.checkNotConsole(this, sender);
 
         Player player = (Player)sender;
 
-        String receiverName = args.getName("playerName");
-        double amount = args.getDouble("amount");
+        final String receiverName = args.getName("playerName");
+        final double amount = args.getDouble("amount");
 
         UUID receiverId = PlayerUtils.getPlayerId(receiverName);
         if (receiverId == null) {
@@ -88,7 +90,7 @@ public final class SendSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        IAccount account = Economy.getAccount(player.getUniqueId());
+        final IAccount account = Economy.getAccount(player.getUniqueId());
         if (account == null) {
             tellError(sender, NucLang.get(_NO_SEND_ACCOUNT));
             return; //finish
@@ -106,13 +108,19 @@ public final class SendSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        try {
-            Economy.transfer(account, receiverAccount, amount);
-        } catch (TransactionFailException e) {
-            tellError(sender, NucLang.get(_FAILED));
-            return; // finish
-        }
-
-        tellSuccess(sender, NucLang.get(_SUCCESS, Economy.getCurrency().format(amount), receiverName, account.getBalance()));
+        Economy.transfer(account, receiverAccount, amount)
+                .onError(new FutureSubscriber<IEconomyTransaction>() {
+                    @Override
+                    public void on(Result<IEconomyTransaction> result) {
+                        tellError(sender, NucLang.get(_FAILED));
+                    }
+                })
+                .onSuccess(new FutureSubscriber<IEconomyTransaction>() {
+                    @Override
+                    public void on(Result<IEconomyTransaction> result) {
+                        tellSuccess(sender, NucLang.get(_SUCCESS,
+                                Economy.getCurrency().format(amount), receiverName, account.getBalance()));
+                    }
+                });
     }
 }

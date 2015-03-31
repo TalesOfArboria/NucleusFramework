@@ -29,6 +29,8 @@ import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Result;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -37,10 +39,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -121,8 +120,8 @@ public class VaultBank implements IBank {
         return response.type == ResponseType.SUCCESS;
     }
 
-    @Nullable
     @Override
+    @Nullable
     public IAccount getAccount(UUID playerId) {
 
         if (!hasAccount(playerId))
@@ -131,25 +130,6 @@ public class VaultBank implements IBank {
         return new VaultAccount(_provider, playerId, this, _economy);
     }
 
-    /**
-     * Because Vault does not provide an equivalent method, this method
-     * only returns accounts of players that are currently online.
-     */
-    @Override
-    public List<IAccount> getAccounts() {
-
-        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        List<IAccount> accounts = new ArrayList<>(players.size());
-
-        for (Player player : players) {
-            if (hasAccount(player.getUniqueId()))
-                accounts.add(new VaultAccount(_provider, player.getUniqueId(), this, _economy));
-        }
-
-        return Collections.unmodifiableList(accounts);
-    }
-
-    @Nullable
     @Override
     public IAccount createAccount(UUID playerId) {
 
@@ -163,8 +143,8 @@ public class VaultBank implements IBank {
      * Cannot delete a vault bank account.
      */
     @Override
-    public boolean deleteAccount(UUID playerId) {
-        return false;
+    public Future<Void> deleteAccount(UUID playerId) {
+        return new FutureResultAgent<Void>().error(null, "Vault accounts cannot be deleted.");
     }
 
     @Override

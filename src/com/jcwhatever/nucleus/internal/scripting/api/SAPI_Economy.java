@@ -106,16 +106,14 @@ public class SAPI_Economy implements IDisposable {
      *
      * @param player  The player.
      * @param amount  The amount to give.
-     *
-     * @return  The amount deposited or null if failed.
      */
-    public Double deposit(Object player, double amount) {
+    public void deposit(Object player, double amount) {
         PreCon.notNull(player);
 
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        return Economy.deposit(p.getUniqueId(), amount);
+        Economy.deposit(p.getUniqueId(), amount);
     }
 
     /**
@@ -124,16 +122,14 @@ public class SAPI_Economy implements IDisposable {
      * @param player    The player.
      * @param amount    The amount to give.
      * @param currency  The currency of the amount.
-     *
-     * @return  The amount deposited or null if failed.
      */
-    public Double depositCurrency(Object player, double amount, ICurrency currency) {
+    public void depositCurrency(Object player, double amount, ICurrency currency) {
         PreCon.notNull(player);
 
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        return Economy.deposit(p.getUniqueId(), amount, currency);
+        Economy.deposit(p.getUniqueId(), amount, currency);
     }
 
     /**
@@ -141,16 +137,14 @@ public class SAPI_Economy implements IDisposable {
      *
      * @param player  The player.
      * @param amount  The amount to take.
-     *
-     * @return  The amount withdrawn or null if failed.
      */
-    public Double withdraw(Object player, double amount) {
+    public void withdraw(Object player, double amount) {
         PreCon.notNull(player);
 
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        return Economy.withdraw(p.getUniqueId(), amount);
+        Economy.withdraw(p.getUniqueId(), amount);
     }
 
     /**
@@ -158,16 +152,14 @@ public class SAPI_Economy implements IDisposable {
      *
      * @param player  The player.
      * @param amount  The amount to take.
-     *
-     * @return  The amount withdrawn or null if failed.
      */
-    public Double withdrawCurrency(Object player, double amount, ICurrency currency) {
+    public void withdrawCurrency(Object player, double amount, ICurrency currency) {
         PreCon.notNull(player);
 
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        return Economy.withdraw(p.getUniqueId(), amount, currency);
+        Economy.withdraw(p.getUniqueId(), amount, currency);
     }
 
     /**

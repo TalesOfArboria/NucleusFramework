@@ -32,7 +32,8 @@ import com.jcwhatever.nucleus.providers.economy.IBankEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
-import com.jcwhatever.nucleus.providers.economy.TransactionFailException;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import java.util.List;
 import java.util.UUID;
@@ -114,12 +115,12 @@ public final class Economy {
      * @param receiverPlayerId  The id of the player who is receiving money
      * @param amount            The amount of money to transfer.
      *
-     * @throws TransactionFailException if the transaction fails. All economy operations
-     * performed during the transfer are undone.
+     * @return  A {@link Future} that returns the result of the transaction.
      */
-    public static void transfer(UUID giverPlayerId, UUID receiverPlayerId, double amount)
-            throws TransactionFailException {
-        transfer(giverPlayerId, receiverPlayerId, amount, getCurrency());
+    public static Future<IEconomyTransaction> transfer(
+            UUID giverPlayerId, UUID receiverPlayerId, double amount) {
+
+        return transfer(giverPlayerId, receiverPlayerId, amount, getCurrency());
     }
 
     /**
@@ -129,41 +130,45 @@ public final class Economy {
      * @param receiverPlayerId  The id of the player who is receiving money
      * @param amount            The amount of money to transfer.
      *
-     * @throws TransactionFailException if the transaction fails. All economy operations
-     * performed during the transfer are undone.
+     * @return  A {@link Future} that returns the result of the transaction.
      */
-    public static void transfer(UUID giverPlayerId, UUID receiverPlayerId, double amount, ICurrency currency)
-                throws TransactionFailException {
+    public static Future<IEconomyTransaction> transfer(
+            UUID giverPlayerId, UUID receiverPlayerId, double amount, ICurrency currency) {
+
         PreCon.notNull(giverPlayerId);
         PreCon.notNull(receiverPlayerId);
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
 
         IAccount fromAccount = getProvider().getAccount(giverPlayerId);
-        if (fromAccount == null)
-            throw new TransactionFailException(null, "Failed to find giving players account.");
+        if (fromAccount == null) {
+            return new FutureResultAgent<IEconomyTransaction>()
+                    .error(null, "Failed to find giving players account.");
+        }
 
         IAccount toAccount = getProvider().getAccount(receiverPlayerId);
-        if (toAccount == null)
-            throw new TransactionFailException(null, "Failed to find receiving players account.");
+        if (toAccount == null) {
+            return new FutureResultAgent<IEconomyTransaction>()
+                    .error(null, "Failed to find receiving players account.");
+        }
 
-        transfer(fromAccount, toAccount, amount, currency);
+        return transfer(fromAccount, toAccount, amount, currency);
     }
 
     /**
      * Transfer money between two accounts. The currency of the amount
-     * transferred is the economy providers currency.
+     * transferred is the economy providers default currency.
      *
      * @param fromAccount  The account to transfer money out of.
      * @param toAccount    The account to transfer money into.
      * @param amount       The amount to transfer.
      *
-     * @throws TransactionFailException if the transaction fails. All economy operations
-     * performed during the transfer are undone.
+     * @return  A {@link Future} that returns the result of the transaction.
      */
-    public static void transfer(IAccount fromAccount, IAccount toAccount, double amount)
-            throws TransactionFailException {
-        transfer(fromAccount, toAccount, amount, getCurrency());
+    public static Future<IEconomyTransaction> transfer(
+            IAccount fromAccount, IAccount toAccount, double amount) {
+
+        return transfer(fromAccount, toAccount, amount, getCurrency());
     }
 
     /**
@@ -174,11 +179,11 @@ public final class Economy {
      * @param amount       The amount to transfer.
      * @param currency     The currency of the amount.
      *
-     * @throws TransactionFailException if the transaction fails. All economy operations
-     * performed during the transfer are undone.
+     * @return  A {@link Future} that returns the result of the transaction.
      */
-    public static void transfer(IAccount fromAccount, IAccount toAccount, double amount, ICurrency currency)
-                throws TransactionFailException {
+    public static Future<IEconomyTransaction> transfer(
+            IAccount fromAccount, IAccount toAccount, double amount, ICurrency currency) {
+
         PreCon.notNull(fromAccount);
         PreCon.notNull(toAccount);
         PreCon.positiveNumber(amount);
@@ -188,7 +193,7 @@ public final class Economy {
 
         transaction.withdraw(fromAccount, amount, currency);
         transaction.deposit(toAccount, amount, currency);
-        transaction.execute();
+        return transaction.commit();
     }
 
     /**
@@ -198,9 +203,9 @@ public final class Economy {
      * @param playerId  The id of the player to give money to.
      * @param amount    The amount to give the player.
      *
-     * @return  The amount deposited or null if failed.
+     * @return  A {@link Future} to retrieve the result of the transaction.
      */
-    public static Double deposit(UUID playerId, double amount) {
+    public static Future<IEconomyTransaction> deposit(UUID playerId, double amount) {
         return deposit(playerId, amount, getCurrency());
     }
 
@@ -211,18 +216,23 @@ public final class Economy {
      * @param amount    The amount to give the player.
      * @param currency  The currency of the amount.
      *
-     * @return  True if the operation is successful.
+     * @return  A {@link Future} to retrieve the result of the transaction.
      */
-    public static Double deposit(UUID playerId, double amount, ICurrency currency) {
+    public static Future<IEconomyTransaction> deposit(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
 
         IAccount account = getProvider().getAccount(playerId);
-        if (account == null)
-            return null;
+        if (account == null) {
+            return new FutureResultAgent<IEconomyTransaction>()
+                    .error(null, "Failed to retrieve account " + playerId);
+        }
 
-        return account.deposit(amount, currency);
+        IEconomyTransaction transaction = getProvider().createTransaction();
+        transaction.deposit(account, amount, currency);
+
+        return transaction.commit();
     }
 
     /**
@@ -232,9 +242,9 @@ public final class Economy {
      * @param playerId  The id of the player to take money from.
      * @param amount    The amount to take.
      *
-     * @return  The amount withdrawn or null if failed.
+     * @return  A {@link Future} to retrieve the result of the transaction.
      */
-    public static Double withdraw(UUID playerId, double amount) {
+    public static Future<IEconomyTransaction> withdraw(UUID playerId, double amount) {
         return withdraw(playerId, amount, getCurrency());
     }
 
@@ -245,65 +255,72 @@ public final class Economy {
      * @param amount    The amount to take.
      * @param currency  The currency of the amount.
      *
-     * @return  The amount withdrawn or null if failed.
+     * @return  A {@link Future} to retrieve the result of the transaction.
      */
-    public static Double withdraw(UUID playerId, double amount, ICurrency currency) {
+    public static Future<IEconomyTransaction> withdraw(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
 
         IAccount account = getProvider().getAccount(playerId);
-        if (account == null)
-            return null;
-
-        return account.withdraw(amount, currency);
-    }
-
-    /**
-     * Deposit or withdraw money from a players global account
-     * depending on the value provided. The currency of the amount
-     * is the economy providers currency.
-     *
-     * <p>Positive values are deposited, negative values are withdrawn.</p>
-     *
-     * @param playerId  The id of the player.
-     * @param amount    The amount to deposit or withdraw.
-     *
-     * @return  True if the operation is successful.
-     */
-    public static Double depositOrWithdraw(UUID playerId, double amount) {
-        return depositOrWithdraw(playerId, amount, getCurrency());
-    }
-
-    /**
-     * Deposit or withdraw money from a players global account
-     * depending on the value provided.
-     *
-     * <p>Positive values are deposited, negative values are withdrawn.</p>
-     *
-     * @param playerId  The id of the player.
-     * @param amount    The amount to deposit or withdraw.
-     *
-     * @return  The amount deposited or withdrawn or null if failed.
-     */
-    public static Double depositOrWithdraw(UUID playerId, double amount, ICurrency currency) {
-        PreCon.notNull(playerId);
-
-        if (Double.compare(amount, 0.0D) == 0)
-            return 0.0D;
-
-        if (amount > 0)
-            return deposit(playerId, amount, currency);
-
-        if (amount < 0) {
-            Double withdrawn = withdraw(playerId, amount, currency);
-            if (withdrawn == null)
-                return null;
-
-            return -withdrawn;
+        if (account == null) {
+            return new FutureResultAgent<IEconomyTransaction>()
+                    .error(null, "Failed to retrieve account for " + playerId);
         }
 
-        return null;
+        IEconomyTransaction transaction = getProvider().createTransaction();
+
+        transaction.withdraw(account, amount, currency);
+
+        return transaction.commit();
+    }
+
+    /**
+     * Deposit or withdraw money from a players global account depending on the value provided.
+     * The currency of the amount is the economy providers default currency.
+     *
+     * <p>Positive values are deposited, negative values are withdrawn.</p>
+     *
+     * @param playerId  The id of the player.
+     * @param amount    The amount to deposit or withdraw.
+     *
+     * @return  A {@link Future} to retrieve the result of the transaction.
+     */
+    public static Future<IEconomyTransaction> depositOrWithdraw(UUID playerId, double amount) {
+        PreCon.notNull(playerId);
+
+        IAccount account = getProvider().getAccount(playerId);
+        if (account == null) {
+            return new FutureResultAgent<IEconomyTransaction>()
+                    .error(null, "Failed to find account for " + playerId);
+        }
+
+        return depositOrWithdraw(account, amount, getCurrency());
+    }
+
+    /**
+     * Deposit or withdraw money from a players global account depending on the value provided.
+     *
+     * <p>Positive values are deposited, negative values are withdrawn.</p>
+     *
+     * @param playerId  The id of the player.
+     * @param amount    The amount to deposit or withdraw.
+     *
+     * @return  A {@link Future} to retrieve the result of the transaction.
+     */
+    public static Future<IEconomyTransaction> depositOrWithdraw(
+            UUID playerId, double amount, ICurrency currency) {
+
+        PreCon.notNull(playerId);
+        PreCon.notNull(currency);
+
+        IAccount account = getProvider().getAccount(playerId);
+        if (account == null) {
+            return new FutureResultAgent<IEconomyTransaction>()
+                    .error(null, "Failed to find account for " + playerId);
+        }
+
+        return depositOrWithdraw(account, amount, currency);
     }
 
     /**
@@ -316,9 +333,9 @@ public final class Economy {
      * @param account  The account.
      * @param amount   The amount to deposit or withdraw.
      *
-     * @return  The amount deposited or withdrawn or null if failed.
+     * @return  A {@link Future} to retrieve the result of the transaction.
      */
-    public static Double depositOrWithdraw(IAccount account, double amount) {
+    public static Future<IEconomyTransaction> depositOrWithdraw(IAccount account, double amount) {
         return depositOrWithdraw(account, amount, getCurrency());
     }
 
@@ -332,27 +349,23 @@ public final class Economy {
      * @param amount    The amount to deposit or withdraw.
      * @param currency  The currency of the amount.
      *
-     * @return  The amount deposited or withdrawn or null if failed.
+     * @return  A {@link Future} to retrieve the result of the transaction.
      */
-    public static Double depositOrWithdraw(IAccount account, double amount, ICurrency currency) {
+    public static Future<IEconomyTransaction> depositOrWithdraw(
+            IAccount account, double amount, ICurrency currency) {
+
         PreCon.notNull(account);
         PreCon.notNull(currency);
 
-        if (Double.compare(amount, 0.0D) == 0)
-            return 0.0D;
+        IEconomyTransaction transaction = getProvider().createTransaction();
 
-        if (amount > 0)
-            return account.deposit(amount, currency);
-
-        if (amount < 0) {
-            Double withdrawn = account.withdraw(amount, currency);
-            if (withdrawn == null)
-                return null;
-
-            return -withdrawn;
+        if (amount >= 0) {
+            transaction.deposit(account, amount, currency);
+        } else if (amount < 0) {
+            transaction.withdraw(account, -amount, currency);
         }
 
-        return null;
+        return transaction.commit();
     }
 
     /**

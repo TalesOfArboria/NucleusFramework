@@ -28,8 +28,9 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
-import com.jcwhatever.nucleus.providers.economy.TransactionFailException;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,22 +42,43 @@ import java.util.Set;
  * NucleusFrameworks {@link IEconomyTransaction} transaction implementation.
  *
  * <p>Does not support multiple currency balances.</p>
+ *
+ * <p>Only works with {@link NucleusAccount} or {@link VaultAccount}.</p>
  */
 public class NucleusTransaction implements IEconomyTransaction {
 
-    private Map<IAccount, Double> _balanceDelta = new HashMap<>(5);
-    private boolean _isExecuted;
+    private final Map<IAccount, Double> _balanceDelta = new HashMap<>(5);
+    private boolean _isCommitted;
 
     @Override
-    public synchronized boolean isExecuted() {
-        return _isExecuted;
+    public synchronized boolean isCommitted() {
+        return _isCommitted;
+    }
+
+    @Override
+    public double getDelta(IAccount account) {
+        PreCon.notNull(account);
+
+        Double delta = _balanceDelta.get(account);
+        if (delta == null)
+            return 0;
+
+        return delta;
+    }
+
+    @Override
+    public double getDelta(IAccount account, ICurrency currency) {
+        PreCon.notNull(account);
+        PreCon.notNull(currency);
+
+        double delta = getDelta(account);
+
+        return delta * currency.getConversionFactor();
     }
 
     @Override
     public synchronized double getBalance(IAccount account) {
         PreCon.notNull(account);
-
-        checkExecuted();
 
         Double delta = _balanceDelta.get(account);
         if (delta == null)
@@ -75,7 +97,7 @@ public class NucleusTransaction implements IEconomyTransaction {
         PreCon.notNull(account);
         PreCon.positiveNumber(amount);
 
-        checkExecuted();
+        checkCommitted();
 
         Double delta = _balanceDelta.get(account);
         if (delta == null) {
@@ -99,7 +121,7 @@ public class NucleusTransaction implements IEconomyTransaction {
         PreCon.notNull(account);
         PreCon.positiveNumber(amount);
 
-        checkExecuted();
+        checkCommitted();
 
         Double delta = _balanceDelta.get(account);
         if (delta == null) {
@@ -122,16 +144,16 @@ public class NucleusTransaction implements IEconomyTransaction {
     }
 
     @Override
-    public synchronized void execute() throws TransactionFailException {
-        execute(false);
+    public synchronized Future<IEconomyTransaction> commit() {
+        return commit(false);
     }
 
     @Override
-    public synchronized void execute(boolean force) throws TransactionFailException {
+    public synchronized Future<IEconomyTransaction> commit(boolean force) {
 
-        checkExecuted();
+        checkCommitted();
 
-        _isExecuted = true;
+        _isCommitted = true;
 
         Set<Entry<IAccount, Double>> accounts = _balanceDelta.entrySet();
 
@@ -157,59 +179,64 @@ public class NucleusTransaction implements IEconomyTransaction {
                 withdraw.put(account, Math.abs(delta));
 
                 if (!force && account.getBalance() + delta < 0) {
-                    throw new TransactionFailException(account, "Account does not have sufficient funds.");
+                    return new FutureResultAgent<IEconomyTransaction>()
+                            .error(this, "Account does not have sufficient funds.");
                 }
             }
         }
 
-        execute(deposit, withdraw);
+        return commit(deposit, withdraw);
     }
 
-    private void execute(Map<IAccount, Double> deposits, Map<IAccount, Double> withdrawals)
-            throws TransactionFailException {
+    private Future<IEconomyTransaction> commit(
+            Map<IAccount, Double> deposits, final Map<IAccount, Double> withdrawals) {
 
-        Map<IAccount, Double> deposited = new HashMap<>(3);
-        Map<IAccount, Double> withdrawn = new HashMap<>(3);
+        final Map<IAccount, Double> deposited = new HashMap<>(7);
+        final Map<IAccount, Double> withdrawn = new HashMap<>(7);
 
-        try {
-            performOps(deposits, deposited, OperationType.DEPOSIT);
-        }
-        catch (TransactionFailException e) {
+        final FutureResultAgent<IEconomyTransaction> agent = new FutureResultAgent<>();
+
+        if (!performOps(deposits, deposited, OperationType.DEPOSIT, agent)) {
             undoOps(deposited, OperationType.DEPOSIT);
-            throw e;
+            return agent.getFuture();
         }
 
-        try {
-            performOps(withdrawals, withdrawn, OperationType.WITHDRAW);
-        }
-        catch (TransactionFailException e) {
+        if (!performOps(withdrawals, withdrawn, OperationType.WITHDRAW, agent)) {
             undoOps(withdrawn, OperationType.WITHDRAW);
             undoOps(deposited, OperationType.DEPOSIT);
-            throw e;
+            return agent.getFuture();
         }
+
+        return agent.success(this, "Transaction Success.");
     }
 
-    private void performOps(Map<IAccount, Double> operations,
-                         Map<IAccount, Double> performed, OperationType type)
-            throws TransactionFailException {
+    private boolean performOps(Map<IAccount, Double> operations,
+                         Map<IAccount, Double> performed, OperationType type,
+                            FutureResultAgent<IEconomyTransaction> agent) {
 
         Set<Entry<IAccount, Double>> accounts = operations.entrySet();
 
         for (Entry<IAccount, Double> entry : accounts) {
             if (type == OperationType.DEPOSIT) {
-                if (entry.getKey().deposit(entry.getValue()) == null) {
-                    throw new TransactionFailException(entry.getKey(),
-                            "Failed to deposit amount: " + entry.getValue());
+
+                if (accountDeposit(entry.getKey(), entry.getValue()) == null) {
+                    agent.error(this, "Failed to deposit amount: "
+                                    + entry.getValue() + " into account: " + entry.getKey());
+                    return false;
                 }
             }
             else {
-                if (entry.getKey().withdraw(entry.getValue()) == null) {
-                    throw new TransactionFailException(entry.getKey(),
-                            "Failed to withdraw amount: " + entry.getValue());
+
+                if (accountWithdraw(entry.getKey(), entry.getValue()) == null) {
+                    agent.error(this, "Failed to withdraw amount: "
+                                    + entry.getValue() + " into account: " + entry.getKey());
+                    return false;
                 }
             }
             performed.put(entry.getKey(), entry.getValue());
         }
+
+        return true;
     }
 
     private void undoOps(Map<IAccount, Double> performed, OperationType type) {
@@ -222,7 +249,7 @@ public class NucleusTransaction implements IEconomyTransaction {
             Double amount = entry.getValue();
 
             if (type == OperationType.DEPOSIT) {
-                if (entry.getKey().withdraw(entry.getValue()) == null) {
+                if (accountWithdraw(entry.getKey(), entry.getValue()) == null) {
 
                     NucMsg.severe("Failed to undo transaction deposit. " +
                                     "Bank: {0}, Account: {1}, Deposit amount: {2}",
@@ -230,7 +257,7 @@ public class NucleusTransaction implements IEconomyTransaction {
                 }
             }
             else {
-                if (entry.getKey().deposit(entry.getValue()) == null) {
+                if (accountDeposit(entry.getKey(), entry.getValue()) == null) {
 
                     NucMsg.severe("Failed to undo transaction withdrawal. " +
                                     "Bank: {0}, Account: {1}, Withdrawal amount: {2}",
@@ -240,15 +267,33 @@ public class NucleusTransaction implements IEconomyTransaction {
         }
     }
 
+    private Double accountWithdraw(IAccount account, double amount) {
+        if (account instanceof NucleusAccount)
+            return ((NucleusAccount) account).withdraw(amount);
+        else if (account instanceof VaultAccount)
+            return ((VaultAccount) account).withdraw(amount);
+        else
+            throw new IllegalArgumentException("account must be an instance of NucleusAccount or VaultAccount.");
+    }
+
+    private Double accountDeposit(IAccount account, double amount) {
+        if (account instanceof NucleusAccount)
+            return ((NucleusAccount) account).deposit(amount);
+        else if (account instanceof VaultAccount)
+            return ((VaultAccount) account).deposit(amount);
+        else
+            throw new IllegalArgumentException("account must be an instance of NucleusAccount or VaultAccount.");
+    }
+
     private String getBankName(IAccount account) {
         return account.getBank() != null
                 ? account.getBank().getName()
                 : "<global>";
     }
 
-    private void checkExecuted() {
-        if (_isExecuted)
-            throw new IllegalStateException("Cannot use a transaction after it's been executed.");
+    private void checkCommitted() {
+        if (_isCommitted)
+            throw new IllegalStateException("Cannot use a transaction after it's been committed.");
     }
 
     private enum OperationType {

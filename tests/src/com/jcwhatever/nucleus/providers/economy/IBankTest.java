@@ -25,7 +25,6 @@ public class IBankTest {
         testHasAccount();
         testGetAccount();
         testCreateAccount();
-        testDeleteAccount();
     }
 
     @Test
@@ -78,21 +77,5 @@ public class IBankTest {
         Assert.assertEquals(_accountOwnerId, account.getPlayerId());
 
         new IAccountTest(account, _bank, _accountOwnerId).run();
-    }
-
-    @Test
-    public void testDeleteAccount() throws Exception {
-
-        IAccount account = _bank.getAccount(_accountOwnerId);
-        Assert.assertNotNull(account);
-
-        boolean result = _bank.deleteAccount(_accountOwnerId);
-        Assert.assertEquals(true, result);
-
-        boolean isDeleted = !_bank.hasAccount(_accountOwnerId);
-        Assert.assertEquals(true, isDeleted);
-
-        account = _bank.getAccount(_accountOwnerId);
-        Assert.assertNull(account);
     }
 }

@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -49,8 +51,10 @@ public interface IAccount {
     IBank getBank();
 
     /**
-     * Get the players balance. The currency of the amount
-     * returned is the economy providers default currency.
+     * Get the players balance. The currency of the amount returned is the economy
+     * providers default currency.
+     *
+     * @return The balance. Providers that use databases may return a locally cached value.
      */
     double getBalance();
 
@@ -67,76 +71,44 @@ public interface IAccount {
      * a new balance for the currency or simply convert the default balance to the currency.</p>
      *
      * @param currency  The currency to convert the result to.
+     *
+     * @return  The balance. Providers that use databases may return a locally cached value.
      */
     double getBalance(ICurrency currency);
 
     /**
-     * Deposit an amount of the providers default currency into the account.
+     * Get the account balance. The currency of the amount returned is the economy
+     * providers default currency.
      *
-     * @param amount  The amount to deposit. The currency of the amount is assumed to be
-     *                the economy providers default currency.
+     * <p>For providers that use a database, this returns the balance as read from the database.
+     * For providers that use disk based storage, this is effectively the same as invoking
+     * {@link #getBalance}.</p>
      *
-     * @return  The amount deposited or null if failed.
+     * @return  A {@link Future} containing the balance result.
      */
-    Double deposit(double amount);
+    Future<Double> getLatestBalance();
 
     /**
-     * Deposit an amount of the specified currency into the account.
+     * Get the players balance in the specified currency.
      *
-     * <p>The amount deposited depends on how the provider chooses to implement currency.
-     * If the provider only stores the balance for a single currency, the deposited amount is
-     * converted to the default currency. The provider may also store multiple currency balances
-     * in which case the amount is deposited into the balance for the specified currency.</p>
+     * <p>For providers that use a database, this returns the balance as read from the database.
+     * For providers that use disk based storage, this is effectively the same as invoking
+     * {@link #getBalance}.</p>
      *
-     * <p>If the provider does not recognize the specified currency, it may choose to create a
-     * new balance for it or simply convert the amount to the default currency.</p>.
+     * <p>The value returned depends on how the provider chooses to implement currency.
+     * If the provider only stores the balance for a single currency, the returned value is
+     * the balance of the default currency converted to the specified currency. The provider may
+     * also store multiple currency balances in which case the returned value is the balance
+     * for the specified currency.</p>
      *
      * <p>If the provider does not recognize the specified currency, it may choose to create
      * a new balance for the currency or simply convert the default balance to the currency.</p>
      *
-     * @param amount    The amount to deposit.
-     * @param currency  The currency of the amount to deposit.
+     * @param currency  The currency to convert the result to.
      *
-     * @return  The amount deposited or null if failed.
+     * @return  A {@link Future} containing the balance result.
      */
-    Double deposit(double amount, ICurrency currency);
-
-    /**
-     * Withdraw an amount of the default currency from the account.
-     *
-     * <p>Allowing negative balances is implementation specific. Do not assume the operation
-     * will fail if the account has insufficient funds. Check the balance first if allowing a
-     * negative balance is not the intention.</p>
-     *
-     * @param amount  The amount to withdraw from the account. The
-     *                currency of the amount is assumed to be the
-     *                economy providers currency.
-     *
-     * @return  The amount withdrawn or null if failed.
-     */
-    Double withdraw(double amount);
-
-    /**
-     * Withdraw an amount of the default currency from the account.
-     *
-     * <p>Allowing negative balances is implementation specific. Do not assume the operation
-     * will fail if the account has insufficient funds. Check the balance first if allowing a
-     * negative balance is not the intention.</p>
-     *
-     * <p>The amount withdrawn depends on how the provider chooses to implement currency.
-     * If the provider only stores the balance for a single currency, the withdrawn amount is
-     * converted to the default currency. The provider may also store multiple currency balances
-     * in which case the amount is withdrawn from the balance for the specified currency.</p>
-     *
-     * <p>If the provider does not recognize the specified currency, it may choose to create a
-     * new balance for it, fail, or simply convert the amount to the default currency.</p>.
-     *
-     * @param amount   The amount to withdraw from the account.
-     * @param currency The currency of the amount to withdraw.
-     *
-     * @return  The amount withdrawn or null if failed.
-     */
-    Double withdraw(double amount, ICurrency currency);
+    Future<Double> getLatestBalance(ICurrency currency);
 
     /**
      * Get the underlying account object if the object is wrapped. Otherwise, the handle is

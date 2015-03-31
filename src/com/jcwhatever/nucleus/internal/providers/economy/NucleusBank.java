@@ -29,11 +29,11 @@ import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -107,11 +107,6 @@ public final class NucleusBank implements IBank {
         return _accounts.get(playerId);
     }
 
-    @Override
-    public synchronized List<IAccount> getAccounts() {
-        return new ArrayList<>(_accounts.values());
-    }
-
     @Nullable
     @Override
     public synchronized IAccount createAccount(UUID playerId) {
@@ -129,12 +124,12 @@ public final class NucleusBank implements IBank {
     }
 
     @Override
-    public synchronized boolean deleteAccount(UUID playerId) {
+    public synchronized Future<Void> deleteAccount(UUID playerId) {
         PreCon.notNull(playerId);
 
         IAccount account = _accounts.remove(playerId);
         if (account == null)
-            return false;
+            return new FutureResultAgent<Void>().error(null, "Account not found");
 
         _balance -= account.getBalance();
 
@@ -142,7 +137,7 @@ public final class NucleusBank implements IBank {
         node.remove();
         node.save();
 
-        return true;
+        return new FutureResultAgent<Void>().success(null, "Account deleted.");
     }
 
     @Override

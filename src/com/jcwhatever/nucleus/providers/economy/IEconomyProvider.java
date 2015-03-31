@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.providers.economy;
 import com.jcwhatever.nucleus.providers.IProvider;
 
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Interface for an economy provider.
@@ -46,7 +47,10 @@ public interface IEconomyProvider extends IProvider {
      * Get a global economy account.
      *
      * @param playerId  The ID of the account owner.
+     *
+     * @return The account or null if failed to retrieve.
      */
+    @Nullable
     IAccount getAccount(UUID playerId);
 
     /**

@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.providers.economy;
 
 import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -55,6 +55,8 @@ public interface IBank extends INamed {
      *
      * <p>If the provider implements multiple balances for multiple currencies, this only returns
      * the sum of the balances of the default currency.</p>
+     *
+     * @return The balance. Providers that use a database may return a locally cached value.</p>
      */
     double getBalance();
 
@@ -73,6 +75,8 @@ public interface IBank extends INamed {
      * a new balance for the currency or simply convert the default balance to the currency.</p>
      *
      * @param currency  The currency of the amount to return.
+     *
+     * @return The balance. Providers that use a database may return a locally cached value.</p>
      */
     double getBalance(ICurrency currency);
 
@@ -80,6 +84,8 @@ public interface IBank extends INamed {
      * Determine if the specified player has an account with the bank.
      *
      * @param playerId  The Minecraft ID of the player.
+     *
+     * @return True if the player has an account, otherwise false.
      */
     boolean hasAccount(UUID playerId);
 
@@ -88,22 +94,17 @@ public interface IBank extends INamed {
      *
      * @param playerId  The Minecraft ID of the account owner.
      *
-     * @return  Null if the account was not found.
+     * @return  The account or null if not found.
      */
     @Nullable
     IAccount getAccount(UUID playerId);
-
-    /**
-     * Get all bank accounts.
-     */
-    List<IAccount> getAccounts();
 
     /**
      * Create a bank account.
      *
      * @param playerId  The Minecraft ID of the account owner.
      *
-     * @return  Null if the account was not created.
+     * @return  The account or null if failed.
      */
     @Nullable
     IAccount createAccount(UUID playerId);
@@ -113,9 +114,9 @@ public interface IBank extends INamed {
      *
      * @param playerId  The Minecraft ID of the account owner.
      *
-     * @return  True if the account was found and deleted.
+     * @return  A future indicating the result of the account deletion.
      */
-    boolean deleteAccount(UUID playerId);
+    Future<Void> deleteAccount(UUID playerId);
 
     /**
      * Get the underlying bank object if the object is wrapped. Otherwise,

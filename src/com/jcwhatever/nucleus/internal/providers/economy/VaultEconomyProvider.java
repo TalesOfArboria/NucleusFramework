@@ -41,6 +41,7 @@ import net.milkbowl.vault.economy.Economy;
 
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Vault economy provider.
@@ -79,6 +80,7 @@ public class VaultEconomyProvider extends Provider implements IEconomyProvider {
     }
 
     @Override
+    @Nullable
     public IAccount getAccount(UUID playerId) {
         PreCon.notNull(playerId);
 

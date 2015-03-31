@@ -32,6 +32,8 @@ import com.jcwhatever.nucleus.providers.economy.events.EconDepositEvent;
 import com.jcwhatever.nucleus.providers.economy.events.EconWithdrawEvent;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -80,11 +82,21 @@ public final class NucleusAccount implements IAccount {
     }
 
     @Override
+    public Future<Double> getLatestBalance() {
+        return new FutureResultAgent<Double>().success(getBalance());
+    }
+
+    @Override
+    public Future<Double> getLatestBalance(ICurrency currency) {
+        return new FutureResultAgent<Double>().success(getBalance(currency));
+    }
+
+    @Nullable
     public Double deposit(double amount) {
         return deposit(amount, _provider.getCurrency());
     }
 
-    @Override
+    @Nullable
     public synchronized Double deposit(double amount, ICurrency currency) {
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
@@ -109,14 +121,14 @@ public final class NucleusAccount implements IAccount {
         return amount;
     }
 
-    @Override
+    @Nullable
     public Double withdraw(double amount) {
         PreCon.positiveNumber(amount);
 
         return withdraw(amount, _provider.getCurrency());
     }
 
-    @Override
+    @Nullable
     public synchronized Double withdraw(double amount, ICurrency currency) {
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
