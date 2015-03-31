@@ -833,6 +833,10 @@ span.mlabel {
 	vertical-align: middle;
 }
 
+span.mlabel.abstract {
+    background-color: #96089a;
+}
+
 span.mlabel.protected {
     background-color: #0f9d11;
 }

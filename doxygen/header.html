@@ -19,27 +19,6 @@
         $search
         $mathjax
         $extrastylesheet
-
-        <script type="text/javascript">
-            $(function() {
-                $(".mlabel:contains('protected')").addClass("protected");
-                $(".mlabel:contains('static')").addClass("static");
-                $(".icon:contains('N')").addClass("namespace");
-                $(".icon:contains('C')").addClass("clazz");
-
-                $(".directory .arrow").each(function() {
-                    var click = this.onclick;
-
-                    if (click) {
-                        $(this).siblings(".icona")
-                            .on("click", click)
-                            .css("cursor", "pointer");
-                    }
-                });
-            });
-
-        </script>
-
     </head>
     <body>
         <nav class="navbar navbar-default" role="navigation">

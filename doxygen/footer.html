@@ -22,5 +22,66 @@ $generatedby &#160;<a href="http://www.doxygen.org/index.html">
 </a> $doxygenversion
 </small></address>
 <!--END !GENERATE_TREEVIEW-->
+
+<script type="text/javascript">
+        
+            function setCookie(cname, cvalue, exdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays*24*60*60*1000));
+                var expires = "expires="+d.toUTCString();
+                document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
+            }
+            
+            function getCookie(cname) {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1);
+                    if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+                }
+                return "";
+            }
+        
+            $(function() {
+                $(".mlabel:contains('abstract')").addClass("abstract");
+                $(".mlabel:contains('protected')").addClass("protected");
+                $(".mlabel:contains('static')").addClass("static");
+                $(".icon:contains('N')").addClass("namespace");
+                $(".icon:contains('C')").addClass("clazz");
+                
+                $(".directory .arrow").each(function() {
+                    var click = this.onclick;
+                    var arrow = this;
+                    var folderId = arrow.id.replace("arr_", "");
+                    
+                    var id = arrow.id.replace("arr_", "");
+                    var isOpen = $('#row_' + id + '0_').css('display') != 'none'
+                    var arrowCookie = getCookie(id);
+                    if ((arrowCookie == "open" && !isOpen) ||
+                        (arrowCookie == "close" && isOpen)) {
+                        toggleFolder(id);
+                    }
+                                        
+                    var newClick = this.onclick = function (e) {
+                        click(e);
+                            var id = arrow.id.replace("arr_", "");
+                            if ($('#row_' + id + '0_').css('display') == 'none') {
+                                setCookie(id, "close", 1);
+                            }
+                            else {
+                                setCookie(id, "open", 1);
+                            }
+                    }
+
+                    if (click) {
+                        $(this).siblings(".icona")
+                            .on("click", newClick)
+                            .css("cursor", "pointer");
+                    }
+                });
+            });
+
+        </script>
 </body>
 </html>
