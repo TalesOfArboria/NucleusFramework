@@ -268,7 +268,7 @@ public class InternalSoundManager implements ISoundManager {
     /*
      * Load resource sounds
      */
-    void load(IDataNode dataNode) {
+    public void load(IDataNode dataNode) {
 
         _sounds = new HashMap<>(dataNode.size());
 

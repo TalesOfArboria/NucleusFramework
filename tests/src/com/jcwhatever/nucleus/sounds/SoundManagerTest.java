@@ -1,11 +1,13 @@
 package com.jcwhatever.nucleus.sounds;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
+import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
 import com.jcwhatever.nucleus.sounds.types.EffectSound;
 import com.jcwhatever.nucleus.sounds.types.MusicSound;
 import com.jcwhatever.nucleus.sounds.types.ResourceSound;
@@ -42,6 +44,8 @@ public class SoundManagerTest {
 
         YamlDataNode dataNode = new YamlDataNode(plugin, yml);
         dataNode.load();
+
+        ((InternalSoundManager)Nucleus.getSoundManager()).load(dataNode);
     }
 
     /**
@@ -51,7 +55,7 @@ public class SoundManagerTest {
     public void testGetSounds() throws Exception {
 
         Collection<ResourceSound> sounds = Nucleus.getSoundManager().getSounds();
-
+        assertNotNull(sounds);
         assertEquals(6, sounds.size());
     }
 
@@ -62,14 +66,20 @@ public class SoundManagerTest {
     public void testGetSound() throws Exception {
 
         ResourceSound sound =Nucleus.getSoundManager().getSound("music1");
+        assertNotNull(sound);
+
         assertTrue(sound instanceof MusicSound);
         assertEquals("music1", sound.getName());
 
         sound = Nucleus.getSoundManager().getSound("voice2");
+        assertNotNull(sound);
+
         assertTrue(sound instanceof VoiceSound);
         assertEquals("voice2", sound.getName());
 
         sound = Nucleus.getSoundManager().getSound("effect1");
+        assertNotNull(sound);
+
         assertTrue(sound instanceof EffectSound);
         assertEquals("effect1", sound.getName());
     }
@@ -86,6 +96,7 @@ public class SoundManagerTest {
         assertEquals(0, sounds.size());
 
         ResourceSound sound = Nucleus.getSoundManager().getSound("voice1");
+        assertNotNull(sound);
 
         // play sound and make sure it is returned
         Nucleus.getSoundManager().playSound(_plugin, _player, sound, _settings);
@@ -127,6 +138,8 @@ public class SoundManagerTest {
         assertEquals(0, playing.size());
 
         ResourceSound sound = Nucleus.getSoundManager().getSound("effect1");
+        assertNotNull(sound);
+
         Nucleus.getSoundManager().playSound(_plugin, _player, sound, _settings);
 
         // play sound and check if it is returned
