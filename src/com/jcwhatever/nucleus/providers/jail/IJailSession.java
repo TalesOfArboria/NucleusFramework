@@ -41,15 +41,17 @@ public interface IJailSession extends IMeta, IDisposable {
     /**
      * Get the sessions owning jail.
      */
-    public IJail getJail();
+    IJail getJail();
 
     /**
-     * Get the id of the imprisoned player.
+     * Get the Minecraft ID of the imprisoned player.
      */
     UUID getPlayerId();
 
     /**
      * Get the session expiration date.
+     *
+     * <p>This is when the player will be or was released from prison.</p>
      */
     Date getExpiration();
 
@@ -64,12 +66,18 @@ public interface IJailSession extends IMeta, IDisposable {
     boolean isExpired();
 
     /**
-     * Release the player from the session.
+     * Release the player from the prison session.
      */
     boolean release();
 
     /**
-     * Get the location the player is released at.
+     * Get the location the player should be released at.
+     *
+     * <p>Provides a higher specificity of location than the release location specified
+     * in {@link IJail#getReleaseLocation}.</p>
+     *
+     * @return  The release location or null if a specific location is not set. If null, the location
+     * specified in {@link IJail#getReleaseLocation} should be used.
      */
     @Nullable
     Location getReleaseLocation();
@@ -77,7 +85,7 @@ public interface IJailSession extends IMeta, IDisposable {
     /**
      * Set the release location.
      *
-     * @param location  The location.
+     * @param location  The location to send the player when released.
      */
     void setReleaseLocation(Location location);
 }

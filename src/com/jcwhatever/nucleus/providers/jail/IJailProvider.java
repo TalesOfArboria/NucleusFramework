@@ -41,6 +41,8 @@ public interface IJailProvider extends IProvider {
 
     /**
      * Get the servers default jail.
+     *
+     * <p>This is the recommended jail to use under most circumstances.</p>
      */
     IJail getServerJail();
 
@@ -74,7 +76,7 @@ public interface IJailProvider extends IProvider {
     /**
      * Get the jail session for a specified player.
      *
-     * @param playerId  The ID of the player.
+     * @param playerId  The Minecraft ID of the player.
      *
      * @return  The jail session or null if the player is not imprisoned.
      */
@@ -89,14 +91,14 @@ public interface IJailProvider extends IProvider {
     /**
      * Determine if a player is imprisoned in any registered jails.
      *
-     * @param playerId  The ID of the player to check.
+     * @param playerId  The Minecraft ID of the player to check.
      */
     boolean isPrisoner(UUID playerId);
 
     /**
      * Release a player from their current imprisonment session.
      *
-     * @param playerId  The ID of the player to release.
+     * @param playerId  The Minecraft ID of the player to release.
      *
      * @return  True if released, false if release failed or player is not imprisoned.
      */

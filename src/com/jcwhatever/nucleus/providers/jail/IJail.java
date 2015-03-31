@@ -50,7 +50,7 @@ public interface IJail extends IPluginOwned, INamedInsensitive, IDisposable {
      * @param duration   The duration to imprison the player for.
      * @param timeScale  The time scale of the specified duration.
      *
-     * @return Null if failed to imprison player.
+     * @return  Null if failed to imprison player.
      */
     @Nullable
     IJailSession imprison(Player player, int duration, TimeScale timeScale);
@@ -61,7 +61,7 @@ public interface IJail extends IPluginOwned, INamedInsensitive, IDisposable {
      * @param player   The player to imprison.
      * @param expires  The date and time the session will expire. (prisoner release date)
      *
-     * @return Null if failed to imprison player.
+     * @return  Null if failed to imprison player.
      */
     @Nullable
     IJailSession imprison(Player player, Date expires);
@@ -69,12 +69,14 @@ public interface IJail extends IPluginOwned, INamedInsensitive, IDisposable {
     /**
      * Determine if a player is a prisoner of the jail.
      *
-     * @param p  The player to check.
+     * @param player  The player to check.
      */
-    boolean isPrisoner(Player p);
+    boolean isPrisoner(Player player);
 
     /**
      * Get the bounding region of the jail.
+     *
+     * <p>This is the region that imprisoned players cannot leave.</p>
      */
     Region getRegion();
 
@@ -84,7 +86,8 @@ public interface IJail extends IPluginOwned, INamedInsensitive, IDisposable {
      * @param name      The name of the location.
      * @param teleport  The teleport location.
      *
-     * @return  True if the new teleport was added. Will fail if the name is in use.
+     * @return  True if the new teleport was added. False if failed. Reasons for failure
+     * may include: The name is already in use; The location is not inside the jails regions.
      */
     boolean addTeleport(String name, Location teleport);
 
@@ -93,21 +96,25 @@ public interface IJail extends IPluginOwned, INamedInsensitive, IDisposable {
      *
      * @param teleport  The teleport location.
      *
-     * @return  True if the new teleport was added. Will fail if the name is in use.
+     * @return  True if the new teleport was added. False if failed. Reasons for failure may
+     * include: The name is already in use; The location is not inside the jails regions.
      */
     boolean addTeleport(NamedLocation teleport);
 
     /**
      * Remove a jail teleport location.
      *
-     * @param name  The name of the location.
+     * @param name  The name of the location to remove.
      *
-     * @return  True if found and removed.
+     * @return  True if found and removed, otherwise false.
      */
     boolean removeTeleport(String name);
 
     /**
      * Get a random jail teleport location.
+     *
+     * @return  A randomly chosen teleport location or null if there
+     * are no teleport locations added to the jail.
      */
     @Nullable
     NamedLocation getRandomTeleport();
@@ -116,27 +123,30 @@ public interface IJail extends IPluginOwned, INamedInsensitive, IDisposable {
      * Get a jail teleport location by name.
      *
      * @param name  The name of the location.
+     *
+     * @return  The teleport location or null if not found.
      */
     @Nullable
     NamedLocation getTeleport(String name);
 
     /**
-     * Get all jail teleport locations.
+     * Get all teleport locations.
      */
     Collection<NamedLocation> getTeleports();
 
     /**
-     * Get the location a player is teleported to when
-     * released.
+     * Get the location a player is teleported to when released.
+     *
+     * @return  The release location or null if not set. How players are released when no
+     * release location is specified is provider implementation specific.
      */
     @Nullable
     Location getReleaseLocation();
 
     /**
-     * Set the location a player is teleported to when
-     * released.
+     * Set the location a player is teleported to when released.
      *
-     * @param location  The release location.
+     * @param location  The release location or null to remove.
      */
     void setReleaseLocation(@Nullable Location location);
 }
