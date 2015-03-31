@@ -71,8 +71,7 @@ public class EconDepositEvent extends Event {
 	}
 
 	/**
-	 * Get the amount being deposited when the event
-	 * was first called.
+	 * Get the amount being deposited when the event was first called.
 	 */
 	public double getOriginalAmount() {
 		return _originalAmount;
@@ -86,7 +85,7 @@ public class EconDepositEvent extends Event {
 	}
 
     /**
-     * Get the amount converted to the base currency.
+     * Get the amount converted to the providers default currency.
      */
     public double getConvertedAmount() {
         return _convertedAmount;
@@ -101,8 +100,10 @@ public class EconDepositEvent extends Event {
 
 	/**
 	 * Set the amount being deposited.
+	 *
+	 * <p>The value of the amount should correspond to the currency of the event.</p>
      *
-	 * @param amount
+	 * @param amount The amount to deposit.
 	 */
 	public void setAmount(double amount) {
 		PreCon.positiveNumber(amount);

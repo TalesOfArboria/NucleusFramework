@@ -32,6 +32,9 @@ import javax.annotation.Nullable;
 
 /**
  * Interface for an economy bank.
+ *
+ * <p>Depending on implementation, a bank may support multiple balances of each currency or
+ * a single balance convertible to different currencies.</p>
  */
 public interface IBank extends INamed {
 
@@ -44,30 +47,46 @@ public interface IBank extends INamed {
     UUID getOwnerId();
 
     /**
-     * Get the bank balance. The currency of the amount
-     * returned is the economy providers currency.
+     * Get the bank balance.
+     *
+     * <p>The bank balance is the sum of the balances of all accounts held by the bank.</p>
+     *
+     * <p>The currency of the amount returned is the economy providers default currency.</p>
+     *
+     * <p>If the provider implements multiple balances for multiple currencies, this only returns
+     * the sum of the balances of the default currency.</p>
      */
     double getBalance();
 
     /**
      * Get the bank balance.
      *
+     * <p>The bank balance is the sum of the balances of all accounts held by the bank.</p>
+     *
+     * <p>The value returned depends on how the provider chooses to implement currency.
+     * If the provider only stores the balance for a single currency, the returned value is
+     * the balance of the default currency converted to the specified currency. The provider may
+     * also store multiple currency balances in which case the returned value is the balance
+     * for the specified currency.</p>
+     *
+     * <p>If the provider does not recognize the specified currency, it may choose to create
+     * a new balance for the currency or simply convert the default balance to the currency.</p>
+     *
      * @param currency  The currency of the amount to return.
      */
     double getBalance(ICurrency currency);
 
     /**
-     * Determine if the specified player has
-     * an account with the bank.
+     * Determine if the specified player has an account with the bank.
      *
-     * @param playerId  The ID of the player.
+     * @param playerId  The Minecraft ID of the player.
      */
     boolean hasAccount(UUID playerId);
 
     /**
      * Get a player account from the bank.
      *
-     * @param playerId  The ID of the account owner.
+     * @param playerId  The Minecraft ID of the account owner.
      *
      * @return  Null if the account was not found.
      */
@@ -82,7 +101,7 @@ public interface IBank extends INamed {
     /**
      * Create a bank account.
      *
-     * @param playerId  The ID of the account owner.
+     * @param playerId  The Minecraft ID of the account owner.
      *
      * @return  Null if the account was not created.
      */
@@ -92,16 +111,15 @@ public interface IBank extends INamed {
     /**
      * Delete a bank account.
      *
-     * @param playerId  The ID of the account owner.
+     * @param playerId  The Minecraft ID of the account owner.
      *
      * @return  True if the account was found and deleted.
      */
     boolean deleteAccount(UUID playerId);
 
     /**
-     * Get the underlying bank object if the
-     * object is wrapped. Otherwise, the handle is
-     * the {@link IBank} instance.
+     * Get the underlying bank object if the object is wrapped. Otherwise,
+     * the handle is the {@link IBank} instance.
      */
     Object getHandle();
 }

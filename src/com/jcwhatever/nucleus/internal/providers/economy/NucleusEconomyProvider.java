@@ -151,7 +151,7 @@ public final class NucleusEconomyProvider extends Provider implements IBankEcono
 
         synchronized (_bankSync) {
             if (_banks.containsKey(bankName)) {
-                throw new RuntimeException("The specified bank already exists: " + bankName);
+                return null;
             }
         }
 

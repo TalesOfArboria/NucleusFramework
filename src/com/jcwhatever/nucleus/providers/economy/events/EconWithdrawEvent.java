@@ -42,9 +42,9 @@ public class EconWithdrawEvent extends Event {
 	private final IAccount _account;
 	private final double _originalAmount;
     private final ICurrency _currency;
+
 	private double _amount;
     private double _convertedAmount;
-
 
 	/**
 	 * Constructor.
@@ -71,8 +71,7 @@ public class EconWithdrawEvent extends Event {
 	}
 
 	/**
-	 * Get the amount being withdrawn when the event
-	 * was first called.
+	 * Get the amount being withdrawn when the event was first called.
 	 */
 	public double getOriginalAmount() {
 		return _originalAmount;
@@ -86,7 +85,7 @@ public class EconWithdrawEvent extends Event {
 	}
 
     /**
-     * Get the amount converted to the base currency.
+     * Get the amount converted to the providers default currency.
      */
     public double getConvertedAmount() {
         return _convertedAmount;
@@ -101,7 +100,9 @@ public class EconWithdrawEvent extends Event {
 
 	/**
 	 * Set the amount being withdrawn.
-	 * .
+	 *
+	 * <p>The value of the amount should correspond to the currency of the event.</p>
+	 *
 	 * @param amount  The positive amount.
 	 */
 	public void setAmount(double amount) {

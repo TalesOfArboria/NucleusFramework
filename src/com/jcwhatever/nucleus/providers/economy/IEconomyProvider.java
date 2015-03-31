@@ -36,8 +36,9 @@ import java.util.UUID;
 public interface IEconomyProvider extends IProvider {
 
     /**
-     * Get the currency of the provider. The provider currency
-     * conversion factor is 1.0
+     * Get the default currency of the provider.
+     *
+     * <p>The default currency conversion factor is 1.0</p>
      */
     ICurrency getCurrency();
 
@@ -49,16 +50,15 @@ public interface IEconomyProvider extends IProvider {
     IAccount getAccount(UUID playerId);
 
     /**
-     * Get an object used to run a transaction. Used to prevent or
-     * minimize the chance of account balances being
-     * incorrect should 1 or more operations in the
-     * transaction fail.
+     * Get an object used to run a transaction.
+     *
+     * <p>A transaction is used to prevent or minimize the chance of account balances being
+     * incorrect should 1 or more operations in the transaction fail.</p>
      */
     IEconomyTransaction createTransaction();
 
     /**
-     * Get the underlying economy provider if the
-     * provider is wrapped. Otherwise, the handle is
+     * Get the underlying economy provider if the provider is wrapped. Otherwise, the handle is
      * the {@link IEconomyProvider} instance.
      */
     Object getHandle();

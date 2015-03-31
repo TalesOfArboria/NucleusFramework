@@ -39,6 +39,8 @@ import java.util.Set;
 
 /**
  * NucleusFrameworks {@link IEconomyTransaction} transaction implementation.
+ *
+ * <p>Does not support multiple currency balances.</p>
  */
 public class NucleusTransaction implements IEconomyTransaction {
 
@@ -52,6 +54,10 @@ public class NucleusTransaction implements IEconomyTransaction {
 
     @Override
     public synchronized double getBalance(IAccount account) {
+        PreCon.notNull(account);
+
+        checkExecuted();
+
         Double delta = _balanceDelta.get(account);
         if (delta == null)
             return account.getBalance();
@@ -68,6 +74,8 @@ public class NucleusTransaction implements IEconomyTransaction {
     public synchronized boolean deposit(IAccount account, double amount) {
         PreCon.notNull(account);
         PreCon.positiveNumber(amount);
+
+        checkExecuted();
 
         Double delta = _balanceDelta.get(account);
         if (delta == null) {
@@ -90,6 +98,8 @@ public class NucleusTransaction implements IEconomyTransaction {
     public synchronized boolean withdraw(IAccount account, double amount) {
         PreCon.notNull(account);
         PreCon.positiveNumber(amount);
+
+        checkExecuted();
 
         Double delta = _balanceDelta.get(account);
         if (delta == null) {
@@ -119,8 +129,7 @@ public class NucleusTransaction implements IEconomyTransaction {
     @Override
     public synchronized void execute(boolean force) throws TransactionFailException {
 
-        if (_isExecuted)
-            throw new RuntimeException("Cannot execute an instance of a transaction more than once.");
+        checkExecuted();
 
         _isExecuted = true;
 
@@ -235,6 +244,11 @@ public class NucleusTransaction implements IEconomyTransaction {
         return account.getBank() != null
                 ? account.getBank().getName()
                 : "<global>";
+    }
+
+    private void checkExecuted() {
+        if (_isExecuted)
+            throw new IllegalStateException("Cannot use a transaction after it's been executed.");
     }
 
     private enum OperationType {

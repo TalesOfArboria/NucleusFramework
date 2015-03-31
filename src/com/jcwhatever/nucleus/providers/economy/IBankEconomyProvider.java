@@ -31,7 +31,11 @@ import javax.annotation.Nullable;
 /**
  * An economy provider that supports banks.
  *
+ * <p>A provider that supports banks should implement this instead of {@link IEconomyProvider}.</p>
+ *
  * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
+ *
+ * @see IEconomyProvider
  */
 public interface IBankEconomyProvider extends IEconomyProvider {
 
@@ -56,8 +60,6 @@ public interface IBankEconomyProvider extends IEconomyProvider {
      * @param bankName  The name of the bank.
      *
      * @return  Null if the bank was not created.
-     *
-     * @throws java.lang.RuntimeException  if the bank already exists.
      */
     @Nullable
     IBank createBank(String bankName);
@@ -69,8 +71,6 @@ public interface IBankEconomyProvider extends IEconomyProvider {
      * @param playerId  The ID of the bank owner.
      *
      * @return  Null if the bank was not created.
-     *
-     * @throws java.lang.RuntimeException  if the bank already exists.
      */
     @Nullable
     IBank createBank(String bankName, UUID playerId);

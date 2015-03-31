@@ -32,9 +32,15 @@ import javax.annotation.Nullable;
  */
 public class TransactionFailException extends Exception {
 
-    private IAccount _account;
-    private String _message;
+    private final IAccount _account;
+    private final String _message;
 
+    /**
+     * Constructor.
+     *
+     * @param account  The account the transaction was processing when it failed.
+     * @param message  The failure message.
+     */
     public TransactionFailException (@Nullable IAccount account, String message) {
         PreCon.notNull(message);
 
@@ -57,5 +63,4 @@ public class TransactionFailException extends Exception {
     public String getMessage() {
         return _message;
     }
-
 }

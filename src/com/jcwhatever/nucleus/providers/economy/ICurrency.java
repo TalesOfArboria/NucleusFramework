@@ -32,13 +32,13 @@ public interface ICurrency {
     /**
      * Specifies how a currency name is used.
      */
-    public enum CurrencyNoun {
+    enum CurrencyNoun {
         SINGULAR,
         PLURAL
     }
 
     /**
-     * Format an amount into a string using the economy settings.
+     * Format an amount into a string that represents the currency.
      *
      * @param amount  The amount to format.
      */
@@ -52,14 +52,15 @@ public interface ICurrency {
     String getName(CurrencyNoun noun);
 
     /**
-     * Get the conversion factor from the
-     * stored currency amount.
+     * Get the conversion factor from the stored currency amount.
+     *
+     * <p>This is the factor to apply to convert the amount to the default currency
+     * value whose factor is 1.0</p>
      */
     double getConversionFactor();
 
     /**
-     * Convert an amount of the specified currency to
-     * the current currency.
+     * Convert an amount of the specified currency to the current currency.
      *
      * @param amount    The amount to convert.
      * @param currency  The currency of the amount.
