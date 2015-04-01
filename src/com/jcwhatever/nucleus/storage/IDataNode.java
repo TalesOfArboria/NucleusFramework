@@ -263,10 +263,6 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
 
     /**
      * Get all node key values in the node including sub node key values.
-     *
-     * <p>This method is included for compatibility with external data types that need to be wrapped
-     * or converted. Some implementations may need to block while they retrieve all values. For this
-     * reason it is recommended you <em>avoid using this method</em>.</p>
      */
     Map<String, Object> getAllValues();
 
