@@ -46,6 +46,10 @@ public class BatchTracker {
      * End a batch operation.
      */
     public int end() {
+
+        if (_batchOperations.intValue() == 0)
+            throw new IllegalStateException("There are no batch operations running.");
+
         return _batchOperations.decrementAndGet();
     }
 
