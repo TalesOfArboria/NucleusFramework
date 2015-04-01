@@ -42,6 +42,9 @@ import java.util.Set;
 /**
  * Default equipper to use when an equipper is not registered
  * for an entity type.
+ *
+ * @see EntityEquipperManager
+ * @see IEntityEquipper
  */
 public class DefaultEquipper implements IEntityEquipper {
 

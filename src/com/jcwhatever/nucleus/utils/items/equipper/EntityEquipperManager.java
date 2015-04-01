@@ -40,6 +40,9 @@ public class EntityEquipperManager {
     private final IEntityEquipper DEFAULT_EQUIPPER = new DefaultEquipper();
     private final Map<EntityType, IEntityEquipper> _equippers = new EnumMap<>(EntityType.class);
 
+    /**
+     * Constructor.
+     */
     public EntityEquipperManager() {
         registerEquipper(EntityType.HORSE, new HorseEquipper());
     }
@@ -48,7 +51,7 @@ public class EntityEquipperManager {
      * Register an equipper instance.
      *
      * @param type      The entity type the equipper is for.
-     * @param equipper  The equipper.
+     * @param equipper  The equipper or null to remove.
      */
     public void registerEquipper(EntityType type, @Nullable IEntityEquipper equipper) {
         PreCon.notNull(type);

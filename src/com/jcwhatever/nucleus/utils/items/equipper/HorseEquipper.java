@@ -39,6 +39,9 @@ import java.util.List;
 
 /**
  * Equipper used for Horse entities.
+ *
+ * @see EntityEquipperManager
+ * @see IEntityEquipper
  */
 public class HorseEquipper implements IEntityEquipper {
 
