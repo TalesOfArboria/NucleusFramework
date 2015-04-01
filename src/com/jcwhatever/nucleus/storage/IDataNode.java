@@ -31,7 +31,6 @@ import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.List;
@@ -41,24 +40,18 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Represents a key/value data storage node
+ * Represents a key/value data storage node.
  */
 public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
 
     /**
      * Specifies auto save settings for an {@link IDataNode}.
      */
-    public enum AutoSaveMode {
+    enum AutoSaveMode {
         DEFAULT,
         DISABLED,
         ENABLED
     }
-
-    /**
-     * The owning plugin.
-     */
-    @Override
-    Plugin getPlugin();
 
     /**
      * Determine if the data is loaded.
@@ -79,12 +72,13 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
 
     /**
      * Get the root node.
+     *
+     * @return  The root node or self if the instance is the root node.
      */
     IDataNode getRoot();
 
     /**
-     * Determine if the {@link IDataNode} is
-     * the root node.
+     * Determine if the {@link IDataNode} is the root node.
      */
     boolean isRoot();
 
@@ -122,8 +116,13 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     /**
      * Save the data.
      *
+     * <p>The implementation should save on an async thread if saving causes blocking.</p>
+     *
+     * <p>This method is expected to prevent excessive saving. If save is called multiple times
+     * in a row within a short amount of time, the save operation should only be completed once.</p>
+     *
      * @return  A future object to get the results with. The result is the
-     * data node that {@link #save} was invoked from.
+     * data node that {@link #save} method was invoked from.
      */
     Future<IDataNode> save();
 
@@ -176,6 +175,9 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
 
     /**
      * Get the number of direct child data nodes.
+     *
+     * <p>Direct child nodes are the immediate children of the node and do
+     * not include children of the immediate children.</p>
      */
     int size();
 
@@ -197,12 +199,17 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
 
     /**
      * Get the names of the direct child nodes.
+     *
+     * <p>Direct child nodes are the immediate children of the node and do
+     * not include children of the immediate children.</p>
      */
     Set<String> getSubNodeNames();
 
     /**
-     * Get the names of the direct child nodes
-     * of the specified child node.
+     * Get the names of the direct child nodes of the specified child node.
+     *
+     * <p>Direct child nodes are the immediate children of the node and do
+     * not include children of the immediate children.</p>
      *
      * @param nodePath  The relative path of the child node.
      */
@@ -231,25 +238,35 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      * Set the value of a node key.
      *
      * @param keyPath  The name or relative path and name of the key to set.
-     * @param value    The value to set.
+     * @param value    The value to set. The accepted values may differ with different implementations.
+     *                 The values set should be value types that the interface allows retrieval of. If
+     *                 not, the return value should be checked and a fall back used if the implementation
+     *                 is unable to set the value.
      *
-     * @return  True if the value was successfully set.
+     * @return  True if the value was successfully set, otherwise false.
      */
     boolean set(String keyPath, @Nullable Object value);
 
     /**
-     * Get the value of a node key.
+     * Get the raw value of a node key.
      *
-     * @param keyPath  The name or relative path and name of the key to set.
+     * <p>Different implementations may store values in different ways and may return unexpected values.
+     * For instance a number may be stored as a string in one implementation and as a number in another.
+     * For this reason it is recommended you <em>avoid using this method</em>.</p>
      *
-     * @return Null of the key is not found.
+     * @param keyPath  The name or relative path and name of the key.
+     *
+     * @return The value or null if the key is not found.
      */
     @Nullable
     Object get(String keyPath);
 
     /**
-     * Get all node key values in the node including
-     * sub node key values.
+     * Get all node key values in the node including sub node key values.
+     *
+     * <p>This method is included for compatibility with external data types that need to be wrapped
+     * or converted. Some implementations may need to block while they retrieve all values. For this
+     * reason it is recommended you <em>avoid using this method</em>.</p>
      */
     Map<String, Object> getAllValues();
 
@@ -486,29 +503,4 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      */
     @Nullable
     List<String> getStringList(String keyPath, @Nullable List<String> def);
-
-    /**
-     * Run a batch operation on the node that prevents
-     * saving the data.
-     *
-     * <p>
-     *     The data is saved once the batch operation completes.
-     * </p>
-     *
-     * @param batch  The batch operation handler.
-     */
-    void runBatchOperation(DataBatchOperation batch);
-
-    /**
-     * Run a batch operation on the node that prevents
-     * saving the data.
-     *
-     * <p>
-     *     The data is NOT saved once the batch operation completes.
-     * </p>
-     *
-     * @param batch  The batch operation handler.
-     */
-    void preventSave(DataBatchOperation batch);
-
 }

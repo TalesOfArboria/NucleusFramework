@@ -29,4 +29,20 @@ package com.jcwhatever.nucleus.storage;
  * unable to deserialize data from the provided {@link IDataNode}.
  */
 public class DeserializeException extends Exception {
+
+    private final String _message;
+
+    /**
+     * Constructor.
+     *
+     * @param message  The error message.
+     */
+    public DeserializeException(String message) {
+        _message = message;
+    }
+
+    @Override
+    public String getMessage() {
+        return _message;
+    }
 }

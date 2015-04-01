@@ -31,8 +31,7 @@ import com.jcwhatever.nucleus.providers.IStorageProvider;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Utility class to reduce the amount of code needed
- * to get a data storage node.
+ * Static convenience class for accessing the storage provider.
  */
 public final class DataStorage {
 
@@ -41,20 +40,18 @@ public final class DataStorage {
     private static boolean _isTransientOnly;
 
     /**
-     * Remove data storage.
+     * Determine if a data store exists.
      *
      * @param plugin  The owning plugin.
      * @param path    Storage path.
-     *
-     * @return  True if successful.
      */
-    public static boolean remove(Plugin plugin, DataPath path) {
+    public static boolean has(Plugin plugin, DataPath path) {
 
         if (_isTransientOnly)
-            return true;
+            return false;
 
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
-        return provider.remove(plugin, path);
+        return provider.has(plugin, path);
     }
 
     /**
@@ -73,18 +70,20 @@ public final class DataStorage {
     }
 
     /**
-     * Determine if a data store exists.
+     * Remove data storage.
      *
      * @param plugin  The owning plugin.
      * @param path    Storage path.
+     *
+     * @return  True if successful.
      */
-    public static boolean has(Plugin plugin, DataPath path) {
+    public static boolean remove(Plugin plugin, DataPath path) {
 
         if (_isTransientOnly)
-            return false;
+            return true;
 
         IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
-        return provider.has(plugin, path);
+        return provider.remove(plugin, path);
     }
 
     /**

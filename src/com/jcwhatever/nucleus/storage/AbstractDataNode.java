@@ -452,7 +452,8 @@ public abstract class AbstractDataNode implements IDataNode {
             Constructor<T> constructor = typeClass.getDeclaredConstructor();
             constructor.setAccessible(true);
             instance = constructor.newInstance();
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (InstantiationException | NoSuchMethodException |
+                InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
 
             throw new RuntimeException("Failed to instantiate IDataNodeSerializable object. " +

@@ -36,29 +36,20 @@ import javax.annotation.Nullable;
  * An interface for a settings manager used to manage an objects settings using
  * predefined properties.
  *
- * <p>Useful for dynamically changing settings.</p>
- *
- * <p>
- *     An example would be having multiple class types with each having its own set
- *     of settings and new types can be added with different settings. Using a settings
- *     manager makes it easier to dynamically parse available settings to display to
- *     a user and make changes without having to hard code methods of changing the
- *     settings for each type.
- * </p>
+ * <p>Allows dynamically retrieving and changing possible settings.</p>
  */
 public interface ISettingsManager {
 
     /**
-     * Get an immutable map of {@link PropertyDefinition}'s
-     * that the settings manager manages.
+     * Get an immutable map of {@link PropertyDefinition}'s that the settings
+     * manager manages.
      *
      * <p>The map is keyed to the property names.</p>
      */
     Map<String, PropertyDefinition> getDefinitions();
 
     /**
-     * Determine if a property name is a valid
-     * setting name.
+     * Determine if a property name is a valid setting name.
      *
      * @param propertyName  The property name to check.
      */
@@ -68,8 +59,11 @@ public interface ISettingsManager {
      * Set the value of a property.
      *
      * @param propertyName  The property name.
-     * @param value         The value to set.
-     * @return
+     * @param value         The value to set. The value must be the type defined by the properties
+     *                      {@link PropertyDefinition} or a type that the properties optional converter
+     *                      can convert.
+     *
+     * @return  True if the value was set, otherwise false.
      */
     boolean set(String propertyName, @Nullable Object value);
 
@@ -86,8 +80,8 @@ public interface ISettingsManager {
     <T> T get(String propertyName);
 
     /**
-     * Get the value of a property and un-convert it using the
-     * property's converter.
+     * Get the value of a property and un-convert it using the property's converter,
+     * if any.
      *
      * <p>If there is no converter, the raw value is returned.</p>
      *
@@ -105,7 +99,7 @@ public interface ISettingsManager {
      *
      * @param propertyName  The name of the property.
      *
-     * @return The value or false.
+     * @return The value or false if the type was not found or is not a boolean.
      */
     boolean getBoolean(String propertyName);
 
@@ -114,7 +108,7 @@ public interface ISettingsManager {
      *
      * @param propertyName  The name of the property.
      *
-     * @return  The value or 0.
+     * @return  The value or 0 if the type was not found or is not an int.
      */
     int getInteger(String propertyName);
 
@@ -123,7 +117,7 @@ public interface ISettingsManager {
      *
      * @param propertyName  The name of the property.
      *
-     * @return  The value or 0;
+     * @return  The value or 0 if the type was not found or is not a long.
      */
     long getLong(String propertyName);
 
@@ -132,7 +126,7 @@ public interface ISettingsManager {
      *
      * @param propertyName  The name of the property.
      *
-     * @return  The value or 0.
+     * @return  The value or 0 if the type was not found or is not a double.
      */
     double getDouble(String propertyName);
 
@@ -141,7 +135,7 @@ public interface ISettingsManager {
      *
      * @param propertyName  The name of the property.
      *
-     * @return  The value or null.
+     * @return  The value or null if not found or the type is not a {@link String}.
      */
     @Nullable
     String getString(String propertyName);
@@ -151,7 +145,7 @@ public interface ISettingsManager {
      *
      * @param propertyName  The name of the property.
      *
-     * @return  The value or null.
+     * @return  The value or null if not found or the type is not a {@link Location}.
      */
     @Nullable
     Location getLocation(String propertyName);
@@ -161,7 +155,7 @@ public interface ISettingsManager {
      *
      * @param propertyName  The name of the property.
      *
-     * @return  The value or null.
+     * @return  The value or null if not found or the type is not an {@link ItemStack[]}.
      */
     @Nullable
     ItemStack[] getItemStacks(String propertyName);
@@ -171,7 +165,7 @@ public interface ISettingsManager {
      *
      * @param propertyName  The name of the property.
      *
-     * @return  The value or null.
+     * @return  The value or null if not found or the type is not a {@link UUID}.
      */
     @Nullable
     UUID getUUID(String propertyName);
@@ -184,22 +178,8 @@ public interface ISettingsManager {
      *
      * @param <T>  The enum type.
      *
-     * @return  The value or null.
+     * @return  The value or null if not found or the type is not an enum.
      */
     @Nullable
     <T extends Enum<T>> T getEnum(String propertyName, Class<T> type);
-
-    /**
-     * Add a callback that runs when a setting is changed.
-     *
-     * @param runnable  The callback runnable to run.
-     */
-    void onSettingsChanged(Runnable runnable);
-
-    /**
-     * Remove a callback that runs when a setting is changed.
-     *
-     * @param runnable  The callback runnable to remove.
-     */
-    void removeOnSettingsChanged(Runnable runnable);
 }

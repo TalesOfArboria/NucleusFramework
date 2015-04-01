@@ -246,17 +246,6 @@ public class MemoryDataNode extends AbstractDataNode {
         return true;
     }
 
-    @Override
-    public void runBatchOperation(DataBatchOperation batch) {
-        batch.run(this);
-        saveSync();
-    }
-
-    @Override
-    public void preventSave(DataBatchOperation batch) {
-        batch.run(this);
-    }
-
     @Nullable
     protected TreeEntryNode<String, Object> getNodeFromPath(String nodePath, boolean create) {
 

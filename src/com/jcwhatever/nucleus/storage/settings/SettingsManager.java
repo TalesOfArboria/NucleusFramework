@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.storage.settings;
 
+import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -31,16 +32,16 @@ import com.jcwhatever.nucleus.utils.converters.Converter;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
+import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -48,11 +49,12 @@ import javax.annotation.Nullable;
 /**
  * An implementation of {@link ISettingsManager}.
  */
-public class SettingsManager implements ISettingsManager {
+public class SettingsManager implements ISettingsManager, IDisposable {
 
     private final IDataNode _dataNode;
+    private final NamedUpdateAgents _agents = new NamedUpdateAgents();
     private Map<String, PropertyDefinition> _definitions;
-    private List<Runnable> _onChanged;
+    private boolean _isDisposed;
 
     /**
      * Constructor.
@@ -107,11 +109,8 @@ public class SettingsManager implements ISettingsManager {
         IValidator<Object> validator = definition.getValidator();
         if (!(validator != null && !validator.isValid(value)) && _dataNode.set(propertyName, value)) {
 
-            if (_onChanged != null) {
-                for (Runnable callback : _onChanged) {
-                    callback.run();
-                }
-            }
+            if (_agents.hasAgent("onChange"))
+                _agents.update("onChange", new PropertyValue(this, definition, value));
 
             return true;
         }
@@ -287,7 +286,7 @@ public class SettingsManager implements ISettingsManager {
     public String getString(String propertyName) {
         PreCon.notNull(propertyName);
 
-        return _dataNode.getString(propertyName, (String)getDefaultValue(propertyName));
+        return _dataNode.getString(propertyName, (String) getDefaultValue(propertyName));
     }
 
     @Nullable
@@ -295,7 +294,7 @@ public class SettingsManager implements ISettingsManager {
     public Location getLocation(String propertyName) {
         PreCon.notNull(propertyName);
 
-        return _dataNode.getLocation(propertyName, (Location)getDefaultValue(propertyName));
+        return _dataNode.getLocation(propertyName, (Location) getDefaultValue(propertyName));
     }
 
     @Nullable
@@ -303,7 +302,7 @@ public class SettingsManager implements ISettingsManager {
     public ItemStack[] getItemStacks(String propertyName) {
         PreCon.notNull(propertyName);
 
-        return _dataNode.getItemStacks(propertyName, (ItemStack[])getDefaultValue(propertyName));
+        return _dataNode.getItemStacks(propertyName, (ItemStack[]) getDefaultValue(propertyName));
     }
 
     @Nullable
@@ -311,7 +310,7 @@ public class SettingsManager implements ISettingsManager {
     public UUID getUUID(String propertyName) {
         PreCon.notNull(propertyName);
 
-        return _dataNode.getUUID(propertyName, (UUID)getDefaultValue(propertyName));
+        return _dataNode.getUUID(propertyName, (UUID) getDefaultValue(propertyName));
     }
 
     @Nullable
@@ -327,21 +326,27 @@ public class SettingsManager implements ISettingsManager {
     }
 
     @Override
-    public void onSettingsChanged(Runnable runnable) {
-        PreCon.notNull(runnable);
-
-        if (_onChanged == null)
-            _onChanged = new ArrayList<>(5);
-
-        _onChanged.add(runnable);
+    public boolean isDisposed() {
+        return _isDisposed;
     }
 
     @Override
-    public void removeOnSettingsChanged(Runnable runnable) {
-        PreCon.notNull(runnable);
+    public void dispose() {
 
-        if (_onChanged != null)
-            _onChanged.remove(runnable);
+        _isDisposed = true;
+
+        _agents.disposeAgents();
+    }
+
+    /**
+     * Add a subscriber that is updated whenever a setting is changed.
+     *
+     * @param subscriber  The subscriber to add.
+     */
+    public void onChange(IUpdateSubscriber<PropertyValue> subscriber) {
+        PreCon.notNull(subscriber);
+
+        _agents.getAgent("onChange").addSubscriber(subscriber);
     }
 
     @Nullable
@@ -354,5 +359,21 @@ public class SettingsManager implements ISettingsManager {
         T result = (T)definition.getDefaultValue();
 
         return result;
+    }
+
+    /**
+     * Contains a property and a value for the property.
+     */
+    public static class PropertyValue {
+
+        public final SettingsManager manager;
+        public final PropertyDefinition definition;
+        public final Object value;
+
+        PropertyValue(SettingsManager manager, PropertyDefinition definition, @Nullable Object value) {
+            this.manager = manager;
+            this.definition = definition;
+            this.value = value;
+        }
     }
 }

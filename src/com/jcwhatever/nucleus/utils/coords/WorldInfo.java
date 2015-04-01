@@ -170,7 +170,8 @@ public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IBinarySeri
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader) throws IOException, ClassNotFoundException, InstantiationException {
+    public void deserializeFromBytes(NucleusByteReader reader) throws
+            IOException, ClassNotFoundException, InstantiationException {
         _id = reader.getUUID();
         _worldName = reader.getSmallString();
         _environment = reader.getEnum(Environment.class);
@@ -178,7 +179,7 @@ public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IBinarySeri
 
     private void checkDeserialized(Object object) throws DeserializeException {
         if (object == null) {
-            throw new DeserializeException();
+            throw new DeserializeException("Failed to retrieve required data from data node.");
         }
     }
 }

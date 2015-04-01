@@ -28,11 +28,10 @@ package com.jcwhatever.nucleus.storage;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentMultimap;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentSetMultimap;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.BatchTracker;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
@@ -98,7 +97,6 @@ public class YamlDataNode extends AbstractDataNode {
     private final ConfigurationSection _section;
     private final Map<String, YamlDataNode> _cachedNodes;
     private final AgentMultimap<IDataNode, FutureResultAgent<IDataNode>> _saveAgents;
-    private final BatchTracker _batch;
     private volatile boolean _isLoaded;
     private volatile IScheduledTask _saveTask;
     protected String _yamlString;
@@ -175,7 +173,6 @@ public class YamlDataNode extends AbstractDataNode {
         _section = yaml;
         _root = this;
         _saveAgents = new AgentSetMultimap<>();
-        _batch = new BatchTracker();
         _cachedNodes = new HashMap<>(10);
     }
 
@@ -191,7 +188,6 @@ public class YamlDataNode extends AbstractDataNode {
         _section = null;
         _plugin = root.getPlugin();
         _saveAgents = null;
-        _batch = null;
         _cachedNodes = null;
     }
 
@@ -290,9 +286,6 @@ public class YamlDataNode extends AbstractDataNode {
 
         YamlConfiguration yaml = (YamlConfiguration)_section;
 
-        if (_batch.isRunning())
-            return false;
-
         boolean isSaved;
 
         _write.lock();
@@ -333,7 +326,7 @@ public class YamlDataNode extends AbstractDataNode {
         getRoot()._saveAgents.put(this, agent);
 
         // check that 1 or more batch operations are not in progress.
-        if (getRoot()._batch.isRunning() || getRoot()._saveTask != null) {
+        if (getRoot()._saveTask != null) {
             return agent.getFuture();
         }
 
@@ -345,7 +338,8 @@ public class YamlDataNode extends AbstractDataNode {
                 public void run() {
 
                     final boolean isSaved = saveSync();
-                    final Collection<FutureResultAgent<IDataNode>> agents = getRoot()._saveAgents.removeAll(YamlDataNode.this);
+                    final Collection<FutureResultAgent<IDataNode>> agents =
+                            getRoot()._saveAgents.removeAll(YamlDataNode.this);
 
                     getRoot()._saveTask = null;
 
@@ -474,43 +468,6 @@ public class YamlDataNode extends AbstractDataNode {
         }
         finally {
             getRoot()._read.unlock();
-        }
-    }
-
-    @Override
-    public void runBatchOperation(DataBatchOperation batch) {
-
-        runBatchOperation(batch, this);
-    }
-
-    void runBatchOperation(final DataBatchOperation batch, IDataNode dataNode) {
-
-        getRoot()._write.lock();
-        try {
-            getRoot()._batch.start();
-            batch.run(dataNode);
-            getRoot()._batch.end();
-
-            if (!getRoot()._batch.isRunning()) {
-                save();
-            }
-        }
-        finally {
-            getRoot()._write.unlock();
-        }
-
-    }
-
-    @Override
-    public void preventSave(DataBatchOperation batch) {
-        getRoot()._write.lock();
-        try {
-            getRoot()._batch.start();
-            batch.run(this);
-            getRoot()._batch.end();
-        }
-        finally {
-            getRoot()._write.unlock();
         }
     }
 

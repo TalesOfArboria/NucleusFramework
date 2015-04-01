@@ -49,7 +49,6 @@ public class DataPath {
      *
      * <p>ie /plugins/MyPlugin/someDirectory/data.yml = someDirectory.data</p>
      *
-     *
      * @param path The data file path.
      */
     public DataPath(String path) {

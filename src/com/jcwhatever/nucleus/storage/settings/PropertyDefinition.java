@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.storage.settings;
 
+import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.converters.Converter;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
@@ -33,7 +34,7 @@ import javax.annotation.Nullable;
 /**
  * A definition of a possible configuration property.
  */
-public class PropertyDefinition implements Comparable<PropertyDefinition> {
+public class PropertyDefinition implements INamed, Comparable<PropertyDefinition> {
 
     private final String _name;
     private final PropertyValueType _type;
@@ -96,9 +97,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
         }
     }
 
-    /**
-     * Get the property name.
-     */
+    @Override
     public String getName() {
         return _name;
     }
@@ -120,8 +119,9 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
     /**
      * Get the default value.
      *
-     * <p>Use {@link #hasDefaultValue} to check first.
-     * Default value may be null.</p>
+     * <p>Use {@link #hasDefaultValue} to check first. Default value may be null.</p>
+     *
+     * @return  The default value (which may be null) or null if there is no default value.
      */
     @Nullable
     public Object getDefaultValue() {
@@ -140,7 +140,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
     /**
      * Get the value converter, if any.
      *
-     * @return  Null if not set.
+     * @return  The converter or null if not set.
      */
     @Nullable
     public Converter<?> getConverter() {
@@ -150,7 +150,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
     /**
      * Set the value converter.
      *
-     * @param converter  The value converter.
+     * @param converter  The value converter or null to remove.
      */
     public void setConverter(@Nullable Converter<?> converter) {
         _converter = converter;
@@ -159,17 +159,17 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
     /**
      * Get the value unconverter, if any.
      *
-     * @return  Null if not set.
+     * @return  The converter or null if not set.
      */
     @Nullable
     public Converter<?> getUnconverter() {
-        return _converter;
+        return _unconverter;
     }
 
     /**
      * Set the value unconverter.
      *
-     * @param converter  The value converter.
+     * @param converter  The value converter or null to remove.
      */
     public void setUnconverter(@Nullable Converter<?> converter) {
         _unconverter = converter;
@@ -177,6 +177,8 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
 
     /**
      * Get the value validator.
+     *
+     * @return  The validator or null if not set.
      */
     @Nullable
     public IValidator<Object> getValidator() {
@@ -186,7 +188,9 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
     /**
      * Set the value validator.
      *
-     * @param validator  The value validator.
+     * <p>Used to validate a value before setting the property.</p>
+     *
+     * @param validator  The value validator or null to remove.
      */
     public void setValidator(@Nullable IValidator<Object> validator) {
         _validator = validator;
@@ -202,6 +206,7 @@ public class PropertyDefinition implements Comparable<PropertyDefinition> {
         return _name.hashCode() ^ _type.hashCode() ^ _description.hashCode();
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof PropertyDefinition) {
             PropertyDefinition def = (PropertyDefinition)obj;

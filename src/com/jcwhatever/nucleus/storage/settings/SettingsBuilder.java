@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 public class SettingsBuilder {
 
     private final Map<String, PropertyDefinition> _definitions = new HashMap<>(10);
-    private Set<String> _banned = new HashSet<>(10);
+    private final Set<String> _banned = new HashSet<>(10);
 
     /**
      * Set a new property definition.
@@ -89,6 +89,8 @@ public class SettingsBuilder {
      * @param converter     The converter to set.
      *
      * @return  Self for chaining.
+     *
+     * @throws IllegalStateException if the specified property has not been set.
      */
     public SettingsBuilder setConverters(String propertyName, Converter<?> converter, Converter<?> unconverter) {
         PreCon.notNullOrEmpty(propertyName);
@@ -97,7 +99,7 @@ public class SettingsBuilder {
 
         PropertyDefinition definition = _definitions.get(propertyName);
         if (definition == null)
-            throw new RuntimeException("A property named '" + propertyName + "' has not been set yet.");
+            throw new IllegalStateException("A property named '" + propertyName + "' has not been set yet.");
 
         definition.setConverter(converter);
         definition.setUnconverter(unconverter);
@@ -112,6 +114,8 @@ public class SettingsBuilder {
      * @param validator     The validator to set.
      *
      * @return  Self for chaining.
+     *
+     * @throws IllegalStateException if the specified property has not been set.
      */
     public SettingsBuilder setValidator(String propertyName, IValidator<Object> validator) {
         PreCon.notNullOrEmpty(propertyName);
@@ -119,18 +123,19 @@ public class SettingsBuilder {
 
         PropertyDefinition definition = _definitions.get(propertyName);
         if (definition == null)
-            throw new RuntimeException("A property named '" + propertyName + "' has not been set yet.");
+            throw new IllegalStateException("A property named '" + propertyName + "' has not been set yet.");
 
         definition.setValidator(validator);
 
         return this;
     }
 
-
     /**
      * Merge a collection of {@link PropertyDefinition} into the {@link SettingsBuilder}.
      *
      * <p>If the {@link SettingsBuilder} already contains the property, it is not added.</p>
+     *
+     * <p>If a property has been "banned", it is not added.</p>
      *
      * @param definitions  The collection of property definitions.
      */
@@ -171,7 +176,7 @@ public class SettingsBuilder {
      *
      * <p>The map is keyed to the property name.</p>
      */
-    public Map<String, PropertyDefinition> buildDefinitions() {
+    public Map<String, PropertyDefinition> build() {
 
         Map<String, PropertyDefinition> map = new HashMap<>(_definitions.size());
         map.putAll(_definitions);
@@ -180,13 +185,13 @@ public class SettingsBuilder {
     }
 
     /**
-     * Build a new settings manager using the {@link PropertyDefinition}'s
-     * that were set and the specified data node.
+     * Build a new map of {@link PropertyDefinition}'s and create a
+     * new {@link SettingsManager} to hold the definitions.
      *
-     * @param dataNode  The data node the manager will manager.
+     * @param dataNode  The data node the manager will manage.
      */
     public SettingsManager buildManager(IDataNode dataNode) {
-        Map<String, PropertyDefinition> map = buildDefinitions();
+        Map<String, PropertyDefinition> map = build();
         return new SettingsManager(dataNode, map);
     }
 }

@@ -26,8 +26,7 @@
 package com.jcwhatever.nucleus.storage.settings;
 
 /**
- * Mixin interface that defines a class as
- * implementing a settings manager.
+ * Mixin interface that defines a class as implementing a settings manager.
  */
 public interface ISettable {
 
