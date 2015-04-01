@@ -305,13 +305,13 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
     }
 
     @Override
-    public void serializeToBytes(NucleusByteWriter writer) throws IOException {
+    public void serialize(NucleusByteWriter writer) throws IOException {
         writer.write(_x);
         writer.write(_z);
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader)
+    public void deserialize(NucleusByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException {
 
         _x = reader.getDouble();

@@ -122,7 +122,7 @@ public final class ChunkBlockInfo extends Coords3Di
     }
 
     @Override
-    public void serializeToBytes(NucleusByteWriter writer) throws IOException {
+    public void serialize(NucleusByteWriter writer) throws IOException {
         writer.write((byte)((getX() << 4) | (getY() & 0xF)));
         writer.write((short)getY());
         writer.write(_material);
@@ -131,7 +131,7 @@ public final class ChunkBlockInfo extends Coords3Di
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader) throws IOException, ClassNotFoundException, InstantiationException {
+    public void deserialize(NucleusByteReader reader) throws IOException, ClassNotFoundException, InstantiationException {
         int xz = reader.getByte();
         int x = xz >> 4;
         int z = xz & 0xF;

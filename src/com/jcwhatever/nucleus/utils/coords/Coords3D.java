@@ -310,16 +310,16 @@ public class Coords3D extends Coords2D {
     }
 
     @Override
-    public void serializeToBytes(NucleusByteWriter writer) throws IOException {
-        super.serializeToBytes(writer);
+    public void serialize(NucleusByteWriter writer) throws IOException {
+        super.serialize(writer);
         writer.write(_y);
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader)
+    public void deserialize(NucleusByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException {
 
-        super.deserializeFromBytes(reader);
+        super.deserialize(reader);
         _y = reader.getDouble();
         _canSeal = true;
         seal();

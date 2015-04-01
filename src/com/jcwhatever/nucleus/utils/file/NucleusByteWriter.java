@@ -54,14 +54,14 @@ import javax.annotation.Nullable;
  */
 public class NucleusByteWriter extends OutputStream {
 
+    private static final byte[] BOOLEAN_FLAGS = new byte[] { 1, 2, 4, 8, 16, 32, 64 };
+
     private final OutputStream _stream;
     private final byte[] _buffer = new byte[64];
     private long _bytesWritten = 0;
 
     private int _booleanCount = 0;
     private byte[] _booleanBuffer = new byte[1];
-    private final byte[] _booleanFlags = new byte[] { 1, 2, 4, 8, 16, 32, 64 };
-
 
     /**
      * Constructor.
@@ -82,8 +82,9 @@ public class NucleusByteWriter extends OutputStream {
     /**
      * Write a boolean value.
      *
-     * <p>Booleans written sequentially are written as bits into the current byte. When the byte runs out of bits,
-     * the next bit is written to the next byte.</p>
+     * <p>Booleans written sequentially are written as bits into the current byte. When the byte
+     * runs out of bits, the next bit is written to the next byte. Because of this, 7 boolean
+     * values written sequentially use only 1 byte of space in the stream instead of 7 bytes.</p>
      *
      * <p>Bytes that store the boolean values do not share their bits with other data types.</p>
      *
@@ -98,7 +99,7 @@ public class NucleusByteWriter extends OutputStream {
         }
 
         if (booleanValue) {
-            _booleanBuffer[0] |= _booleanFlags[_booleanCount];
+            _booleanBuffer[0] |= BOOLEAN_FLAGS[_booleanCount];
         }
 
         _booleanCount++;
@@ -318,7 +319,7 @@ public class NucleusByteWriter extends OutputStream {
         }
         // handle empty text
         else if (text.length() == 0) {
-            write(0);
+            write((short)0);
             return;
         }
 
@@ -476,16 +477,18 @@ public class NucleusByteWriter extends OutputStream {
      * <p>Writes the item stack as follows:</p>
      * <ul>
      *     <li>Boolean (bit or byte depending on the data structure) indicating
-     *         if the item stack is null. 0 = null. (See {@link #getBoolean})</li>
+     *         if the item stack is null. 0 = null. (See {@link #write(boolean)})</li>
      *     <li>Material - Enum (See {@link #write(Enum)})</li>
      *     <li>Durability - Short (See {@link #write(int)})</li>
      *     <li>Meta count - Integer (See {@link #write(int)})</li>
      *     <li>Meta collection</li>
      * </ul>
      *
-     * <p>Meta is written as follows:</p>
+     * <p>Meta is written first with an integer to indicate the number of
+     * meta elements followed by the elements, each with the following format:</p>
      * <ul>
-     *     <li>Meta Name - UTF-8 String preceded with a byte to indicate length.</li>
+     *     <li>Meta Name - UTF-8 String preceded with a byte to indicate length.
+     *     (See {@link #writeSmallString(String)}</li>
      *     <li>Meta Data - UTF-16 String (See {@link #write(String)})</li>
      * </ul>
      *
@@ -537,7 +540,7 @@ public class NucleusByteWriter extends OutputStream {
         if (object == null)
             return;
 
-        object.serializeToBytes(this);
+        object.serialize(this);
     }
 
     /**

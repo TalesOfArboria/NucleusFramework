@@ -209,7 +209,7 @@ public class SerializableBlockEntity implements IBinarySerializable {
 
 
     @Override
-    public void serializeToBytes(NucleusByteWriter writer) throws IOException {
+    public void serialize(NucleusByteWriter writer) throws IOException {
 
         if (getLocation() == null || getMaterial() == null)
             throw new RuntimeException("No data to serialize.");
@@ -279,7 +279,7 @@ public class SerializableBlockEntity implements IBinarySerializable {
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader) throws IOException {
+    public void deserialize(NucleusByteReader reader) throws IOException {
 
         _location = reader.getLocation();
         _material = reader.getEnum(Material.class);

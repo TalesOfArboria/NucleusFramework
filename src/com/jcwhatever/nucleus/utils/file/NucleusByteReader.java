@@ -55,13 +55,14 @@ import javax.annotation.Nullable;
  */
 public class NucleusByteReader extends InputStream {
 
+    private static final byte[] BOOLEAN_FLAGS = new byte[] { 1, 2, 4, 8, 16, 32, 64 };
+
     private final InputStream _stream;
     private final byte[] _buffer = new byte[1024];
     private long _bytesRead = 0;
 
     private int _booleanReadCount = 7; // resets to 7
     private byte[] _booleanBuffer = new byte[1];
-    private final byte[] _booleanFlags = new byte[] { 1, 2, 4, 8, 16, 32, 64 };
 
     /**
      * Constructor.
@@ -107,8 +108,8 @@ public class NucleusByteReader extends InputStream {
     /**
      * Get a boolean.
      *
-     * <p>Booleans read sequentially are read as bits from the current byte. When the byte runs out of bits,
-     * the next bit is read from the next byte.</p>
+     * <p>Booleans read sequentially are read as bits from the current byte. When the byte
+     * runs out of bits, the next bit is read from the next byte.</p>
      *
      * <p>Bytes that store boolean values do not share bits with other data types.</p>
      *
@@ -121,7 +122,8 @@ public class NucleusByteReader extends InputStream {
             _booleanReadCount = 0;
         }
 
-        boolean result = (_booleanBuffer[0] & _booleanFlags[_booleanReadCount]) == _booleanFlags[_booleanReadCount];
+        boolean result = (_booleanBuffer[0] & BOOLEAN_FLAGS[_booleanReadCount])
+                == BOOLEAN_FLAGS[_booleanReadCount];
 
         _booleanReadCount++;
 
@@ -350,16 +352,18 @@ public class NucleusByteReader extends InputStream {
      * to indicate the number of bytes in the array.</p>
      *
      * @throws IOException
-     *
-     * @throws RuntimeException If the string value from the stream is null or empty.
-     * @throws NumberFormatException If the value from the stream cannot be parsed to a float.
      */
     public float getFloat() throws IOException {
         String str = getSmallString();
         if (str == null || str.isEmpty())
-            throw new RuntimeException("Failed to read float value.");
+            throw new IOException("Failed to read float value.");
 
-        return Float.parseFloat(str);
+        try {
+            return Float.parseFloat(str);
+        }
+        catch (NumberFormatException e) {
+            throw new IOException("Failed to parse data to float value.");
+        }
     }
 
     /**
@@ -369,16 +373,18 @@ public class NucleusByteReader extends InputStream {
      * to indicate the number of bytes in the array.</p>
      *
      * @throws IOException
-     *
-     * @throws RuntimeException If the double value from the stream is null or empty.
-     * @throws NumberFormatException If the value from the stream cannot be parsed to a double.
      */
     public double getDouble() throws IOException {
         String str = getSmallString();
         if (str == null || str.isEmpty())
-            throw new RuntimeException("Failed to read double value.");
+            throw new IOException("Failed to read double value.");
 
-        return Double.parseDouble(str);
+        try {
+            return Double.parseDouble(str);
+        }
+        catch (NumberFormatException e) {
+            throw new IOException("Failed to parse data to double value.");
+        }
     }
 
     /**
@@ -393,21 +399,19 @@ public class NucleusByteReader extends InputStream {
      * @param <T>  The enum type.
      *
      * @throws IOException
-     *
-     * @throws RuntimeException If the enum value from the stream is null.
-     * @throws IllegalStateException If the enum value is not valid for the specified enum type.
      */
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
         String constantName = getSmallString();
         if (constantName == null) {
-            throw new RuntimeException(
+            throw new IOException(
                     "Could not find an enum: " + enumClass.getName());
         }
 
         T e = EnumUtils.getEnum(constantName, enumClass);
         if (e == null) {
-            throw new IllegalStateException(
-                    "The enum name retrieved is not a valid constant name for enum type: " + enumClass.getName());
+            throw new IOException(
+                    "The enum name retrieved is not a valid constant name for " +
+                            "enum type: " + enumClass.getName());
         }
 
         return e;
@@ -441,10 +445,6 @@ public class NucleusByteReader extends InputStream {
      *     <li>The Yaw value - Double (See {@link #getDouble})</li>
      *     <li>The Pitch value - Double (See {@link #getDouble})</li>
      * </ul>
-     *
-     * <p>If not invoked from the main thread, the {@link org.bukkit.Location}'s
-     * {@link org.bukkit.World} value is null since it's not safe to lookup a Bukkit
-     * world from a thread other than the main thread.</p>
      *
      * @throws IOException
      */
@@ -496,8 +496,6 @@ public class NucleusByteReader extends InputStream {
      * </ul>
      *
      * @throws IOException
-     *
-     * @throws RuntimeException If fail to read meta
      */
     @Nullable
     public ItemStack getItemStack() throws IOException {
@@ -519,11 +517,11 @@ public class NucleusByteReader extends InputStream {
 
             String metaName = getSmallString();
             if (metaName == null)
-                throw new RuntimeException("Failed to read meta name of entry #" + i);
+                throw new IOException("Failed to read meta name of entry #" + i);
 
             String metaData = getString(StandardCharsets.UTF_16);
             if (metaData == null)
-                throw new RuntimeException("Failed to read meta data of entry #" + i);
+                throw new IOException("Failed to read meta data of entry #" + i);
 
             IMetaHandler handler = ItemMetaHandlerManager.getHandler(metaName);
             if (handler == null)
@@ -552,8 +550,8 @@ public class NucleusByteReader extends InputStream {
      * @throws Exception
      */
     @Nullable
-    public <T extends IBinarySerializable> T getBinarySerializable(Class<T> objectClass) throws IOException,
-            InstantiationException {
+    public <T extends IBinarySerializable> T getBinarySerializable(Class<T> objectClass)
+            throws IOException, InstantiationException {
 
         PreCon.notNull(objectClass);
 
@@ -568,7 +566,7 @@ public class NucleusByteReader extends InputStream {
             constructor.setAccessible(true);
 
             object = constructor.newInstance();
-            object.deserializeFromBytes(this);
+            object.deserialize(this);
 
         } catch (NoSuchMethodException | IllegalAccessException | ClassNotFoundException |
                 InvocationTargetException | InstantiationException e) {
@@ -597,7 +595,8 @@ public class NucleusByteReader extends InputStream {
      * @throws ClassNotFoundException
      */
     @Nullable
-    public <T extends Serializable> T getObject(Class<T> objectClass) throws IOException, ClassNotFoundException {
+    public <T extends Serializable> T getObject(Class<T> objectClass)
+            throws IOException, ClassNotFoundException {
         PreCon.notNull(objectClass);
 
         boolean isNull = !getBoolean();
@@ -611,8 +610,10 @@ public class NucleusByteReader extends InputStream {
 
         Object object = objectStream.readObject();
 
-        if (!object.getClass().isAssignableFrom(objectClass))
-            throw new ClassNotFoundException("The object returned by the stream is not of the specified class: " + objectClass.getName());
+        if (!object.getClass().isAssignableFrom(objectClass)) {
+            throw new ClassNotFoundException("The object returned by the stream is not of the " +
+                    "specified class: " + objectClass.getName());
+        }
 
         return objectClass.cast(object);
     }

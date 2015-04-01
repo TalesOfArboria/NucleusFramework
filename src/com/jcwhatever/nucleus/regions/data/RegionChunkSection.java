@@ -351,7 +351,7 @@ public class RegionChunkSection implements IBinarySerializable {
     }
 
     @Override
-    public void serializeToBytes(NucleusByteWriter writer) throws IOException {
+    public void serialize(NucleusByteWriter writer) throws IOException {
         PreCon.notNull(writer);
 
         writer.write(_p1);
@@ -362,7 +362,7 @@ public class RegionChunkSection implements IBinarySerializable {
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader) throws IOException, InstantiationException {
+    public void deserialize(NucleusByteReader reader) throws IOException, InstantiationException {
         PreCon.notNull(reader);
 
         Location p1 = reader.getLocation();

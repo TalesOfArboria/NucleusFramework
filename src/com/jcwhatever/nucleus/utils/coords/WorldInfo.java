@@ -163,14 +163,14 @@ public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IBinarySeri
     }
 
     @Override
-    public void serializeToBytes(NucleusByteWriter writer) throws IOException {
+    public void serialize(NucleusByteWriter writer) throws IOException {
         writer.write(_id);
         writer.writeSmallString(_worldName);
         writer.write(_environment);
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader) throws
+    public void deserialize(NucleusByteReader reader) throws
             IOException, ClassNotFoundException, InstantiationException {
         _id = reader.getUUID();
         _worldName = reader.getSmallString();

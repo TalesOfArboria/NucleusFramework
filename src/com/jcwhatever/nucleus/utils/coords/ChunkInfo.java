@@ -128,20 +128,20 @@ public class ChunkInfo extends Coords2Di implements IChunkInfo {
     }
 
     @Override
-    public void serializeToBytes(NucleusByteWriter writer) throws IOException {
+    public void serialize(NucleusByteWriter writer) throws IOException {
         writer.write(_world);
-        super.serializeToBytes(writer);
+        super.serialize(writer);
     }
 
     @Override
-    public void deserializeFromBytes(NucleusByteReader reader)
+    public void deserialize(NucleusByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException {
 
         _world = reader.getBinarySerializable(WorldInfo.class);
         if (_world == null)
             throw new RuntimeException("Failed to deserialize world info.");
 
-        super.deserializeFromBytes(reader);
+        super.deserialize(reader);
     }
 
     @Override
