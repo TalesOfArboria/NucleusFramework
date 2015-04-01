@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.permissions;
 
-import org.bukkit.command.CommandSender;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
@@ -32,7 +32,12 @@ import java.util.Collection;
 /**
  * A permissions provider with support for group permissions.
  *
+ * <p>A provider that supports group permissions should implement this interface. The
+ * interface is a mixin and can be used with other economy provider interfaces as needed.</p>
+ *
  * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
+ *
+ * @see IPermissionsProvider
  */
 public interface IGroupPermissionsProvider extends IPermissionsProvider {
 
@@ -40,23 +45,23 @@ public interface IGroupPermissionsProvider extends IPermissionsProvider {
      * Add a player to a group permission.
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param sender          The player to add to the group.
+     * @param player     The player to add to the group.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
      */
-    boolean addGroup(Plugin plugin, CommandSender sender, String groupName);
+    boolean addGroup(Plugin plugin, OfflinePlayer player, String groupName);
 
     /**
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param sender          The player to remove from the group.
+     * @param player     The player to remove from the group.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
      */
-    boolean removeGroup(Plugin plugin, CommandSender sender, String groupName);
+    boolean removeGroup(Plugin plugin, OfflinePlayer player, String groupName);
 
     /**
      * Get a string array of group permission names.
@@ -66,7 +71,7 @@ public interface IGroupPermissionsProvider extends IPermissionsProvider {
     /**
      * Get a string array of groups the specified player is in.
      *
-     * @param sender  The player to check.
+     * @param player  The player to check.
      */
-    Collection<IPermissionGroup> getGroups(CommandSender sender);
+    Collection<IPermissionGroup> getGroups(OfflinePlayer player);
 }

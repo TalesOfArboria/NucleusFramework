@@ -33,8 +33,8 @@ import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyBankProvide
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.friends.NucleusFriendsProvider;
 import com.jcwhatever.nucleus.internal.providers.jail.NucleusJailProvider;
-import com.jcwhatever.nucleus.internal.providers.permissions.BukkitProvider;
-import com.jcwhatever.nucleus.internal.providers.permissions.VaultProvider;
+import com.jcwhatever.nucleus.internal.providers.permissions.bukkit.BukkitProvider;
+import com.jcwhatever.nucleus.internal.providers.permissions.vault.VaultProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.WorldEditSelectionProvider;
 import com.jcwhatever.nucleus.internal.providers.storage.YamlStorageProvider;

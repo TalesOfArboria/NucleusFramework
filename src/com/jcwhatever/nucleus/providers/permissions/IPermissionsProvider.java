@@ -26,16 +26,27 @@ package com.jcwhatever.nucleus.providers.permissions;
 
 import com.jcwhatever.nucleus.providers.IProvider;
 
-import org.bukkit.command.CommandSender;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
+
 /**
  * Interface for a permissions provider implementation.
  *
+ * <p>This is the interface that a permissions provider must implement. Other permission provider
+ * interfaces are used to define additional functionality and can be optionally implemented in
+ * addition to this interface.</p>
+ *
  * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
+ *
+ * @see IWorldPermissionsProvider
+ * @see IGroupPermissionsProvider
+ * @see IWorldGroupPermissionsProvider
+ * @see com.jcwhatever.nucleus.utils.Permissions
  */
 public interface IPermissionsProvider extends IProvider {
 
@@ -64,27 +75,14 @@ public interface IPermissionsProvider extends IProvider {
     void unregister(IPermission permission);
 
     /**
-     * Add a parent permission to a permission.
+     * Run a batch operations of permissions.
      *
-     * @param child   The child permission.
-     * @param parent  The parent permission.
-     * @param value   The permission value.
+     * <p>Many permissions being registered and or having parents set should be
+     * done inside of a batch operation to potentially improve performance.</p>
+     *
+     * @param operations  The runnable that runs the permissions operations.
      */
-    void addParent(IPermission child, IPermission parent, boolean value);
-
-    /**
-     * Run a batch operations of permissions. Many permissions being registered and or
-     * having parents set should be done inside of a batch operation.
-     *
-     * <p>
-     *     Improves performance if possible by attempting to prevent permission recalculations
-     *     after each permission change.
-     * </p>
-     *
-     * @param recalculate  True to recalculate permissions when the batch operation is finished.
-     * @param operations   The runnable that runs the permissions operations.
-     */
-    void runBatchOperation(boolean recalculate, Runnable operations);
+    void runBatchOperation(Runnable operations);
 
     /**
      * Get a permission by name.
@@ -97,54 +95,54 @@ public interface IPermissionsProvider extends IProvider {
     /**
      * Determine if the player has permission.
      *
-     * @param sender               The player to check.
+     * @param player          The player to check.
      * @param permissionName  The name of the permission.
      */
-    boolean has(CommandSender sender, String permissionName);
+    boolean has(OfflinePlayer player, String permissionName);
 
     /**
      * Add a transient permission to a player.
      *
      * @param plugin          The plugin adding the transient permission.
-     * @param sender               The player to add the permission to.
+     * @param player          The player to add the permission to.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    boolean addTransient(Plugin plugin, CommandSender sender, String permissionName);
+    boolean addTransient(Plugin plugin, Player player, String permissionName);
 
     /**
      * Remove a transient permission from a player.
      *
      * @param plugin          The plugin that added the transient permission.
-     * @param sender               The player to remove the permission from.
+     * @param player          The player to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    boolean removeTransient(Plugin plugin, CommandSender sender, String permissionName);
+    boolean removeTransient(Plugin plugin, Player player, String permissionName);
 
     /**
      * Add a permission to a player.
      *
      * @param plugin          The plugin adding the permission.
-     * @param sender               The player to add the permission to.
+     * @param player          The player to add the permission to.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    boolean add(Plugin plugin, CommandSender sender, String permissionName);
+    boolean add(Plugin plugin, OfflinePlayer player, String permissionName);
 
     /**
      * Remove a players permission.
      *
      * @param plugin          The plugin removing the permission.
-     * @param sender               The player to remove the permission from.
+     * @param player          The player to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    boolean remove(Plugin plugin, CommandSender sender, String permissionName);
+    boolean remove(Plugin plugin, OfflinePlayer player, String permissionName);
 
     /**
      * Get the underlying permissions provider.

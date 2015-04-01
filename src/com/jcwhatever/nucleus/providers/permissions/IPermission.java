@@ -60,8 +60,7 @@ public interface IPermission extends INamed {
     void addParent(String name, boolean isAllowed);
 
     /**
-     * Get the permission children names  and
-     * permission value map.
+     * Get the permission children names and permission value map.
      */
     Map<String, Boolean> getChildren();
 

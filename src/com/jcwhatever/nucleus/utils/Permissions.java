@@ -34,14 +34,13 @@ import com.jcwhatever.nucleus.providers.permissions.IWorldGroupPermissionsProvid
 import com.jcwhatever.nucleus.providers.permissions.IWorldPermissionsProvider;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
@@ -105,30 +104,15 @@ public final class Permissions {
     }
 
     /**
-     * Add a parent permission to a child permission.
+     * Run a batch operations of permissions.
      *
-     * @param child   The child permission.
-     * @param parent  The parent permission.
-     * @param value   The permission value.
-     */
-    public static void addParent(IPermission child, IPermission parent, boolean value) {
-        getProvider().addParent(child, parent, value);
-    }
-
-    /**
-     * Run a batch operations of permissions. Many permissions being registered and or
-     * having parents set should be done inside of a batch operation.
+     * <p>Many permissions being registered and or having parents set should be done
+     * inside of a batch operation to potentially improve performance.</p>
      *
-     * <p>
-     *     Improves performance if possible by attempting to prevent permission recalculations
-     *     after each permission change.
-     * </p>
-     *
-     * @param recalculate  True to recalculate permissions when the batch operation is finished.
      * @param operations   The runnable that runs the permissions operations.
      */
-    public static void runBatchOperation(boolean recalculate, Runnable operations) {
-        getProvider().runBatchOperation(recalculate, operations);
+    public static void runBatchOperation(Runnable operations) {
+        getProvider().runBatchOperation(operations);
     }
 
     /**
@@ -144,163 +128,151 @@ public final class Permissions {
     /**
      * Determine if the player has permission.
      *
-     * @param sender          The {@link org.bukkit.command.CommandSender} to check.
+     * @param player          The player to check.
      * @param permissionName  The name of the permission.
      */
-    public static boolean has(CommandSender sender, String permissionName) {
-        return getProvider().has(sender, permissionName);
+    public static boolean has(OfflinePlayer player, String permissionName) {
+        return getProvider().has(player, permissionName);
     }
 
     /**
      * Determine if the player has permission.
      *
-     * @param sender      The {@link org.bukkit.command.CommandSender} to check.
+     * @param player      The player to check.
      * @param permission  The permission.
      */
-    public static boolean has(CommandSender sender, IPermission permission) {
-        return getProvider().has(sender, permission.getName());
+    public static boolean has(OfflinePlayer player, IPermission permission) {
+        return getProvider().has(player, permission.getName());
     }
 
     /**
      * Determine if the player has permission in the specified world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
      *
-     * @param sender          The {@link org.bukkit.command.CommandSender} to check.
+     * @param player          The player to check.
      * @param world           The world to check.
      * @param permissionName  The name of the permission.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if the provider does not support permission by world.
      */
-    public static boolean has(CommandSender sender, World world, String permissionName) {
-        return getWorldProvider().has(sender, world, permissionName);
+    public static boolean has(OfflinePlayer player, World world, String permissionName) {
+        return getWorldProvider().has(player, world, permissionName);
     }
 
     /**
      * Add a transient permission to a player.
      *
      * @param plugin          The plugin adding the transient permission.
-     * @param sender          The {@link org.bukkit.command.CommandSender} to add the permission to..
+     * @param player          The player to add the permission to.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    public static boolean addTransient(Plugin plugin, CommandSender sender, String permissionName) {
-        return getProvider().addTransient(plugin, sender, permissionName);
+    public static boolean addTransient(Plugin plugin, Player player, String permissionName) {
+        return getProvider().addTransient(plugin, player, permissionName);
     }
 
     /**
      * Remove a transient permission from a player.
      *
      * @param plugin          The plugin that added the transient permission.
-     * @param sender          The {@link org.bukkit.command.CommandSender} to remove the permission from.
+     * @param player          The player to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    public static boolean removeTransient(Plugin plugin, CommandSender sender, String permissionName) {
-        return getProvider().removeTransient(plugin, sender, permissionName);
+    public static boolean removeTransient(Plugin plugin, Player player, String permissionName) {
+        return getProvider().removeTransient(plugin, player, permissionName);
     }
 
     /**
      * Add a permission to a player.
      *
      * @param plugin          The plugin adding the permission.
-     * @param sender          The {@link org.bukkit.command.CommandSender} to add the permission to.
+     * @param player          The player to add the permission to.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    public static boolean add(Plugin plugin, CommandSender sender, String permissionName) {
-        return getProvider().add(plugin, sender, permissionName);
+    public static boolean add(Plugin plugin, OfflinePlayer player, String permissionName) {
+        return getProvider().add(plugin, player, permissionName);
     }
 
     /**
      * Add a permission to a player.
      *
      * @param plugin      The plugin adding the permission.
-     * @param sender      The {@link org.bukkit.command.CommandSender} to add the permission to.
+     * @param player      The player to add the permission to.
      * @param permission  The permission.
      *
      * @return  True if the permission was added.
      */
-    public static boolean add(Plugin plugin, CommandSender sender, IPermission permission) {
-        return getProvider().add(plugin, sender, permission.getName());
+    public static boolean add(Plugin plugin, OfflinePlayer player, IPermission permission) {
+        return getProvider().add(plugin, player, permission.getName());
     }
 
     /**
      * Add a permission to a player when in a specific world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
      *
      * @param plugin          The plugin adding the permission.
-     * @param sender          The {@link org.bukkit.command.CommandSender} to add the permission to.
+     * @param player          The player to add the permission to.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if the provider does not support permissions by world.
      */
-    public static boolean add(Plugin plugin, CommandSender sender, World world, String permissionName) {
-        return getWorldProvider().add(plugin, sender, world, permissionName);
+    public static boolean add(Plugin plugin, OfflinePlayer player, World world, String permissionName) {
+        return getWorldProvider().add(plugin, player, world, permissionName);
     }
 
     /**
      * Add a permission to a player when in a specific world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
      *
      * @param plugin      The plugin adding the permission.
-     * @param sender      The {@link org.bukkit.command.CommandSender} to check.
+     * @param player      The player to check.
      * @param world       The world.
      * @param permission  The permission.
      *
      * @return  True if the permission was added.
      *
-     * @throws java.lang.UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException if the provider does not support permissions by world.
      */
-    public static boolean add(Plugin plugin, CommandSender sender, World world, IPermission permission) {
-        return getWorldProvider().add(plugin, sender, world, permission.getName());
+    public static boolean add(Plugin plugin, OfflinePlayer player, World world, IPermission permission) {
+        return getWorldProvider().add(plugin, player, world, permission.getName());
     }
 
     /**
      * Remove a players permission.
      *
      * @param plugin          The plugin removing the permission.
-     * @param sender          The {@link org.bukkit.command.CommandSender} to remove the permission from.
+     * @param player          The player to remove the permission from.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    public static boolean remove(Plugin plugin, CommandSender sender, String permissionName) {
-        return getProvider().remove(plugin, sender, permissionName);
+    public static boolean remove(Plugin plugin, OfflinePlayer player, String permissionName) {
+        return getProvider().remove(plugin, player, permissionName);
     }
 
     /**
      * Remove a players permission.
      *
      * @param plugin      The plugin removing the permission.
-     * @param sender      The {@link org.bukkit.command.CommandSender} to remove the permission from.
+     * @param player      The player to remove the permission from.
      * @param permission  The permission.
      *
      * @return  True if the permission was removed.
      */
-    public static boolean remove(Plugin plugin, Player sender, IPermission permission) {
-        return getProvider().remove(plugin, sender, permission.getName());
+    public static boolean remove(Plugin plugin, OfflinePlayer player, IPermission permission) {
+        return getProvider().remove(plugin, player, permission.getName());
     }
 
     /**
      * Remove a players permission in a world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
      *
      * @param plugin          The plugin removing the permission.
-     * @param sender          The {@link org.bukkit.command.CommandSender} to remove the permission from.
+     * @param player          The player to remove the permission from.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
@@ -308,15 +280,15 @@ public final class Permissions {
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
-    public static boolean remove(Plugin plugin, CommandSender sender, World world, String permissionName) {
-        return getWorldProvider().remove(plugin, sender, world, permissionName);
+    public static boolean remove(Plugin plugin, OfflinePlayer player, World world, String permissionName) {
+        return getWorldProvider().remove(plugin, player, world, permissionName);
     }
 
     /**
      * Remove a players permission in a world.
      *
      * @param plugin      The plugin removing the permission.
-     * @param sender      The {@link org.bukkit.command.CommandSender} to remove the permission from.
+     * @param player      The player to remove the permission from.
      * @param world       The world.
      * @param permission  The permission.
      *
@@ -324,33 +296,30 @@ public final class Permissions {
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
-    public static boolean remove(Plugin plugin, CommandSender sender, World world, IPermission permission) {
-        return getWorldProvider().remove(plugin, sender, world, permission.getName());
+    public static boolean remove(Plugin plugin, OfflinePlayer player, World world, IPermission permission) {
+        return getWorldProvider().remove(plugin, player, world, permission.getName());
     }
 
     /**
      * Add a player to a group permission.
-     * <p>
-     *     Not all implementations support group permissions.
-     * </p>
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param sender     The {@link org.bukkit.command.CommandSender} to add to the group.
+     * @param player     The player to add to the group.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
-    public static boolean addGroup(Plugin plugin, CommandSender sender, String groupName) {
-        return getGroupProvider().addGroup(plugin, sender, groupName);
+    public static boolean addGroup(Plugin plugin, OfflinePlayer player, String groupName) {
+        return getGroupProvider().addGroup(plugin, player, groupName);
     }
 
     /**
      * Add a player to a group permission in the specified world.
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param sender     The {@link org.bukkit.command.CommandSender} to add to the group.
+     * @param player     The player to add to the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
@@ -358,30 +327,30 @@ public final class Permissions {
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
-    public static boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return getWorldGroupProvider().addGroup(plugin, sender, world, groupName);
+    public static boolean addGroup(Plugin plugin, OfflinePlayer player, World world, String groupName) {
+        return getWorldGroupProvider().addGroup(plugin, player, world, groupName);
     }
 
     /**
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param sender     The {@link org.bukkit.command.CommandSender} to remove from the group..
+     * @param player     The player to remove from the group.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
-    public static boolean removeGroup(Plugin plugin, CommandSender sender, String groupName) {
-        return getGroupProvider().removeGroup(plugin, sender, groupName);
+    public static boolean removeGroup(Plugin plugin, OfflinePlayer player, String groupName) {
+        return getGroupProvider().removeGroup(plugin, player, groupName);
     }
 
     /**
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param sender     The {@link org.bukkit.command.CommandSender} to remove from the group.
+     * @param player     The player to remove from the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
@@ -389,20 +358,20 @@ public final class Permissions {
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
-    public static boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName) {
-        return getWorldGroupProvider().removeGroup(plugin, sender, world, groupName);
+    public static boolean removeGroup(Plugin plugin, OfflinePlayer player, World world, String groupName) {
+        return getWorldGroupProvider().removeGroup(plugin, player, world, groupName);
     }
 
     /**
      * Determine if a player has group permission.
      *
-     * @param sender     The {@link org.bukkit.command.CommandSender} to check.
+     * @param player     The player to check.
      * @param groupName  The name of the group.
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
-    public static boolean hasGroup(CommandSender sender, String groupName) {
-        Collection<IPermissionGroup> groups = getGroups(sender);
+    public static boolean hasGroup(OfflinePlayer player, String groupName) {
+        Collection<IPermissionGroup> groups = getGroups(player);
         if (groups.isEmpty())
             return false;
 
@@ -427,25 +396,25 @@ public final class Permissions {
     /**
      * Get a string array of groups the specified player is in.
      *
-     * @param sender  The {@link org.bukkit.command.CommandSender} to check.
+     * @param player  The player to check.
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
-    public static Collection<IPermissionGroup> getGroups(CommandSender sender) {
-        return getGroupProvider().getGroups(sender);
+    public static Collection<IPermissionGroup> getGroups(OfflinePlayer player) {
+        return getGroupProvider().getGroups(player);
     }
 
     /**
      * Get a string array of groups the specified player is in while
      * in the specified world.
      *
-     * @param sender  The {@link org.bukkit.command.CommandSender} to check.
+     * @param player  The player to check.
      * @param world   The world.
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have world group support.
      */
-    public static Collection<IPermissionGroup> getGroups(CommandSender sender, World world) {
-        return getWorldGroupProvider().getGroups(sender, world);
+    public static Collection<IPermissionGroup> getGroups(OfflinePlayer player, World world) {
+        return getWorldGroupProvider().getGroups(player, world);
     }
 
     /**
@@ -476,34 +445,32 @@ public final class Permissions {
      * if they are able to have them as specified by the permission group instances provided.
      *
      * @param plugin  The plugin fixing permission groups.
-     * @param sender  The {@link org.bukkit.command.CommandSender} whose group permissions need to be checked.
+     * @param player  The player whose group permissions need to be checked.
      * @param groups  The groups to fix.
      *
      * @throws java.lang.UnsupportedOperationException if permissions provider does not have group support.
      */
-    public static void fixPermissionGroups(Plugin plugin, CommandSender sender,
+    public static void fixPermissionGroups(Plugin plugin, OfflinePlayer player,
                                            Collection<IPermissionGroup> groups) {
         PreCon.notNull(plugin);
-        PreCon.notNull(sender);
+        PreCon.notNull(player);
         PreCon.notNull(groups);
 
         if (!hasGroupSupport())
             return;
 
-        if (!(sender instanceof Player))
+        if (!(player instanceof Player))
             return;
 
-        UUID playerId = ((Player)sender).getUniqueId();
-
         for (IPermissionGroup group : groups) {
-            boolean canAssign = group.canAssign(playerId);
-            boolean hasGroup = hasGroup(sender, group.getName());
+            boolean canAssign = group.canAssign(player);
+            boolean hasGroup = hasGroup(player, group.getName());
 
             if (!canAssign && hasGroup) {
-                removeGroup(plugin, sender, group.getName());
+                removeGroup(plugin, player, group.getName());
             }
             else if (canAssign && !hasGroup) {
-                addGroup(plugin, sender, group.getName());
+                addGroup(plugin, player, group.getName());
             }
         }
     }

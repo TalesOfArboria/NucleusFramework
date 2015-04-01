@@ -23,11 +23,12 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.providers.permissions;
+package com.jcwhatever.nucleus.internal.providers.permissions.bukkit;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
+import com.jcwhatever.nucleus.internal.providers.permissions.AbstractPermissionsProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermission;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;
@@ -36,7 +37,7 @@ import com.jcwhatever.nucleus.utils.Permissions;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -50,7 +51,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * Basic Bukkit permissions handler
@@ -59,10 +59,8 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
 
     public static final String NAME = "NucleusBukkitPerms";
 
-    private static Map<UUID, PermissionAttachment> _transient = new PlayerMap<PermissionAttachment>(Nucleus.getPlugin());
-    private static Listener _bukkitListener;
-
-    private IDataNode _dataNode;
+    private final Map<UUID, PermissionAttachment> _transient = new PlayerMap<>(Nucleus.getPlugin());
+    private final IDataNode _dataNode;
 
     /**
      * Constructor.
@@ -76,105 +74,87 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
         _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("bukkit-permissions"));
         _dataNode.load();
 
-        // initialize bukkit listener if its not already initialized
-        if (_bukkitListener == null) {
-            _bukkitListener = new PermissionListener();
-            Bukkit.getPluginManager().registerEvents(_bukkitListener, Nucleus.getPlugin());
-        }
+        Bukkit.getPluginManager().registerEvents(new PermissionListener(this), Nucleus.getPlugin());
     }
 
     @Override
-    public boolean has(CommandSender sender, String permissionName) {
-        PreCon.notNull(sender);
+    public boolean has(OfflinePlayer player, String permissionName) {
+        PreCon.notNull(player);
         PreCon.notNullOrEmpty(permissionName);
 
-        return sender.hasPermission(permissionName);
+        return player instanceof Player && ((Player) player).hasPermission(permissionName);
     }
 
     @Override
-    public boolean addTransient(Plugin plugin, CommandSender sender, String permissionName) {
+    public boolean addTransient(Plugin plugin, Player player, String permissionName) {
         PreCon.notNull(plugin);
-        PreCon.notNull(sender);
+        PreCon.notNull(player);
         PreCon.notNullOrEmpty(permissionName);
-
-        Player p = getPlayer(sender);
-        if (p == null)
-            return false;
 
         IPermission perm = Permissions.get(permissionName);
         if (perm == null)
             return false;
 
-        PermissionAttachment attachment = _transient.get(p.getUniqueId());
+        PermissionAttachment attachment = _transient.get(player.getUniqueId());
         if (attachment == null) {
-            attachment = sender.addAttachment(plugin);
-            _transient.put(p.getUniqueId(), attachment);
+            attachment = player.addAttachment(plugin);
+            _transient.put(player.getUniqueId(), attachment);
         }
 
+        assert perm.getHandle() != null;
         attachment.setPermission((Permission)perm.getHandle(), true);
 
         return true;
     }
 
     @Override
-    public boolean removeTransient(Plugin plugin, CommandSender sender, String permissionName) {
+    public boolean removeTransient(Plugin plugin, Player player, String permissionName) {
         PreCon.notNull(plugin);
-        PreCon.notNull(sender);
+        PreCon.notNull(player);
         PreCon.notNullOrEmpty(permissionName);
-
-        Player p = getPlayer(sender);
-        if (p == null)
-            return false;
 
         IPermission perm = Permissions.get(permissionName);
         if (perm == null)
             return false;
 
-        PermissionAttachment attachment = _transient.get(p.getUniqueId());
+        PermissionAttachment attachment = _transient.get(player.getUniqueId());
         if (attachment == null) {
             return false;
         }
 
-        attachment.setPermission((Permission)perm.getHandle(), false);
+        assert perm.getHandle() != null;
+        attachment.setPermission((Permission) perm.getHandle(), false);
 
         return true;
     }
 
     @Override
-    public boolean add(Plugin plugin, CommandSender sender, String permissionName) {
+    public boolean add(Plugin plugin, OfflinePlayer player, String permissionName) {
         PreCon.notNull(plugin);
-        PreCon.notNull(sender);
+        PreCon.notNull(player);
         PreCon.notNullOrEmpty(permissionName);
 
-        Player p = getPlayer(sender);
-        if (p == null)
-            return false;
-
-        String pid = p.getUniqueId().toString() + '.' + plugin.getName();
+        String pid = player.getUniqueId().toString() + '.' + plugin.getName();
 
         List<String> permissions = _dataNode.getStringList(pid, null);
         if (permissions == null)
-            permissions = new ArrayList<String>(30);
+            permissions = new ArrayList<String>(25);
 
         permissions.add(permissionName);
 
         _dataNode.set(pid, permissions);
         _dataNode.save();
 
-        return addTransient(plugin, sender, permissionName);
+        return !(player instanceof Player) || addTransient(plugin, (Player) player, permissionName);
     }
 
     @Override
-    public boolean remove(Plugin plugin, CommandSender sender, String permissionName) {
+    public boolean remove(Plugin plugin, OfflinePlayer player, String permissionName) {
         PreCon.notNull(plugin);
-        PreCon.notNull(sender);
+        PreCon.notNull(player);
         PreCon.notNullOrEmpty(permissionName);
 
-        Player p = getPlayer(sender);
-        if (p == null)
-            return false;
-
-        String pid = p.getUniqueId().toString() + '.' + plugin.getName();
+        String pid = player.getUniqueId().toString() + '.' + plugin.getName();
 
         List<String> permissions = _dataNode.getStringList(pid, null);
         if (permissions == null)
@@ -183,28 +163,26 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
         permissions.remove(permissionName);
 
         _dataNode.set(pid, permissions);
+        _dataNode.save();
 
-        return removeTransient(plugin, sender, permissionName);
+        return !(player instanceof Player) || removeTransient(plugin, (Player) player, permissionName);
     }
 
-    @Nullable
     @Override
     public Object getHandle() {
-        return null;
-    }
-
-    @Nullable
-    private Player getPlayer(CommandSender sender) {
-        if (!(sender instanceof Player))
-            return null;
-
-        return (Player)sender;
+        return this;
     }
 
     /**
      * Bukkit event listener
      */
     private static class PermissionListener implements Listener {
+
+        private BukkitProvider _provider;
+
+        PermissionListener(BukkitProvider provider) {
+            _provider = provider;
+        }
 
         /**
          * Add permissions on player join.
@@ -216,11 +194,8 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
 
             // give permissions
 
-            BukkitProvider perms = (BukkitProvider)
-                    Nucleus.getProviderManager().getPermissionsProvider();
-
             // get players permission data node
-            IDataNode playerNode = perms._dataNode.getNode(p.getUniqueId().toString());
+            IDataNode playerNode = _provider._dataNode.getNode(p.getUniqueId().toString());
 
             // get the names of the plugins that have set permissions on the player.
             for (IDataNode node : playerNode) {
@@ -239,11 +214,9 @@ public final class BukkitProvider extends AbstractPermissionsProvider {
                 // add permissions to player
                 for (String permission : permissions) {
                     // add permissions as transient to prevent re-saving them
-                    Permissions.addTransient(plugin, p, permission);
+                    _provider.addTransient(plugin, p, permission);
                 }
             }
         }
-
     }
-
 }

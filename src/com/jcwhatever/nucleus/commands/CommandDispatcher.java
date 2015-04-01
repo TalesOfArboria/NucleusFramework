@@ -43,6 +43,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -147,7 +148,7 @@ public class CommandDispatcher implements
         String[] rawArguments = parsed.getArguments();
 
         // Check if the player has permissions to run the command
-        if (!Permissions.has(sender, command.getPermission().getName())) {
+        if (sender instanceof Player && !Permissions.has((Player)sender, command.getPermission().getName())) {
             _utils.tellError(sender, NucLang.get(_ACCESS_DENIED));
             return true;
         }

@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.providers.permissions;
+package com.jcwhatever.nucleus.internal.providers.permissions.vault;
 
 import com.jcwhatever.nucleus.providers.permissions.IPermissionGroup;
+import com.jcwhatever.nucleus.utils.PreCon;
 
-import java.util.UUID;
-import javax.annotation.Nullable;
+import org.bukkit.OfflinePlayer;
 
-public class VaultGroupPermission implements IPermissionGroup {
+public class VaultGroupPermission implements IPermissionGroup, Comparable<IPermissionGroup> {
 
     private String _name;
 
@@ -39,15 +39,16 @@ public class VaultGroupPermission implements IPermissionGroup {
 
     @Override
     public String getName() {
-        return null;
+        return _name;
     }
 
     @Override
-    public boolean canAssign(UUID playerId) {
+    public boolean canAssign(OfflinePlayer player) {
+        PreCon.notNull(player);
+
         return true;
     }
 
-    @Nullable
     @Override
     public Object getHandle() {
         return this;

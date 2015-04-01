@@ -24,56 +24,52 @@
 
 package com.jcwhatever.nucleus.providers.permissions;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 /**
  * A permissions provider with World permissions support.
  *
+ * <p>A provider that supports permissions per world should implement this interface. The
+ * interface is a mixin and can be used with other economy provider interfaces as needed.</p>
+ *
  * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
+ *
+ * @see IPermissionsProvider
  */
 public interface IWorldPermissionsProvider extends IPermissionsProvider {
 
     /**
      * Determine if the player has permission in the specified world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
      *
-     * @param sender               The player to check.
+     * @param player          The player to check.
      * @param world           The world to check.
      * @param permissionName  The name of the permission.
      */
-    boolean has(CommandSender sender, World world, String permissionName);
+    boolean has(OfflinePlayer player, World world, String permissionName);
 
     /**
      * Add a permission to a player when in a specific world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
      *
      * @param plugin          The plugin adding the permission.
-     * @param sender               The player to add the permission to.
+     * @param player          The player to add the permission to.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was added.
      */
-    boolean add(Plugin plugin, CommandSender sender, World world, String permissionName);
+    boolean add(Plugin plugin, OfflinePlayer player, World world, String permissionName);
 
     /**
      * Remove a players permission in a world.
-     * <p>
-     *     Not all permission implementations will support permissions by world.
-     * </p>
      *
      * @param plugin          The plugin removing the permission.
-     * @param sender               The player to remove the permission from.
+     * @param player          The player to remove the permission from.
      * @param world           The world.
      * @param permissionName  The name of the permission.
      *
      * @return  True if the permission was removed.
      */
-    boolean remove(Plugin plugin, CommandSender sender, World world, String permissionName);
+    boolean remove(Plugin plugin, OfflinePlayer player, World world, String permissionName);
 }

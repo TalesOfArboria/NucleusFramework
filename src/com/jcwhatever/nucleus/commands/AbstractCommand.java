@@ -589,7 +589,7 @@ public abstract class AbstractCommand
     protected boolean isHelpVisible(CommandSender sender) {
 
         // determine if the CommandSender has permission to use the command
-        if (!Permissions.has(sender, getPermission().getName()))
+        if (sender instanceof Player && !Permissions.has((Player)sender, getPermission().getName()))
             return false;
 
         // determine if the commands is visible in help

@@ -23,24 +23,35 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.providers.permissions;
+package com.jcwhatever.nucleus.internal.providers.permissions.bukkit;
 
 import com.jcwhatever.nucleus.providers.permissions.IPermission;
+import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Container for Bukkits {@link Permission} permission.
  */
 public final class SuperPermission implements IPermission {
 
-    private Permission _permission;
+    private final IPermissionsProvider _provider;
+    private final Permission _permission;
+    private final FastPermissions _fastPerms;
 
-    public SuperPermission(Permission permission) {
+    public SuperPermission(IPermissionsProvider provider,
+                           Permission permission, @Nullable FastPermissions fastPerms) {
+        PreCon.notNull(provider);
+        PreCon.notNull(permission);
+
+        _provider = provider;
         _permission = permission;
+        _fastPerms = fastPerms;
     }
 
     @Override
@@ -50,12 +61,31 @@ public final class SuperPermission implements IPermission {
 
     @Override
     public void addParent(IPermission permission, boolean isAllowed) {
-        _permission.addParent((Permission)permission.getHandle(), isAllowed);
+        PreCon.notNull(permission);
+
+        assert permission.getHandle() != null;
+
+        if (_fastPerms == null) {
+            _permission.addParent((Permission) permission.getHandle(), isAllowed);
+        }
+        else {
+            _fastPerms.addParent(_permission, (Permission)permission.getHandle(), isAllowed);
+        }
     }
 
     @Override
     public void addParent(String name, boolean isAllowed) {
-        _permission.addParent(name, isAllowed);
+        PreCon.notNull(name);
+
+        if (_fastPerms == null) {
+            _permission.addParent(name, isAllowed);
+        } else {
+            IPermission permission = _provider.get(name);
+            if (permission == null)
+                throw new IllegalArgumentException("Permission named '" + name + "' not found.");
+
+            addParent(permission, isAllowed);
+        }
     }
 
     @Override
@@ -70,16 +100,19 @@ public final class SuperPermission implements IPermission {
 
     @Override
     public void setDefault(PermissionDefault value) {
+        PreCon.notNull(value);
+
         _permission.setDefault(value);
     }
 
     @Override
+    @Nullable
     public String getDescription() {
         return _permission.getDescription();
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         _permission.setDescription(description);
     }
 
@@ -104,5 +137,4 @@ public final class SuperPermission implements IPermission {
 
         return false;
     }
-
 }

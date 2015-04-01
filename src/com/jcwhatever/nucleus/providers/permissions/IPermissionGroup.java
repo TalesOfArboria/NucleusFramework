@@ -27,13 +27,14 @@ package com.jcwhatever.nucleus.providers.permissions;
 
 import com.jcwhatever.nucleus.mixins.INamed;
 
-import java.util.UUID;
+import org.bukkit.OfflinePlayer;
+
 import javax.annotation.Nullable;
 
 /**
  * Represents a permissions group.
  */
-public interface IPermissionGroup extends INamed, Comparable<IPermissionGroup> {
+public interface IPermissionGroup extends INamed {
 
     /**
      * Get the name of the permissions group.
@@ -44,9 +45,9 @@ public interface IPermissionGroup extends INamed, Comparable<IPermissionGroup> {
     /**
      * Determine if the permissions group can be assigned to the specified player.
      *
-     * @param playerId  The id of the player.
+     * @param player  The player to check.
      */
-    boolean canAssign(UUID playerId);
+    boolean canAssign(OfflinePlayer player);
 
     /**
      * Get the underlying permission object.

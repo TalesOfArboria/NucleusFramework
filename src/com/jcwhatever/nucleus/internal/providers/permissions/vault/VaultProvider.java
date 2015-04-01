@@ -23,12 +23,15 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.providers.permissions;
+package com.jcwhatever.nucleus.internal.providers.permissions.vault;
 
 import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
+import com.jcwhatever.nucleus.internal.providers.permissions.AbstractPermissionsProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -47,6 +50,9 @@ public class VaultProvider extends AbstractPermissionsProvider {
 
     protected Permission _perms = null;
 
+    /**
+     * Determine if a Vault permissions provider is installed.
+     */
     public static boolean hasVaultPermissions() {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("Vault");
         if (plugin == null)
@@ -58,6 +64,12 @@ public class VaultProvider extends AbstractPermissionsProvider {
         return permissionProvider != null && permissionProvider.getProvider() != null;
     }
 
+    /**
+     * Create a new instance of a {@link VaultProvider}.
+     *
+     * <p>Detects if the Vault provider supports groups and returns the
+     * appropriate implementation.</p>
+     */
     public static IPermissionsProvider getVaultProvider() {
 
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
@@ -89,35 +101,49 @@ public class VaultProvider extends AbstractPermissionsProvider {
     }
 
     @Override
-    public boolean has(CommandSender sender, String permissionName) {
-        return _perms.has(sender, permissionName);
+    public boolean has(OfflinePlayer player, String permissionName) {
+        PreCon.notNull(player);
+        PreCon.notNull(permissionName);
+
+        return player instanceof Player && _perms.has((Player) player, permissionName);
     }
 
     @Override
-    public boolean addTransient(Plugin plugin, CommandSender sender, String permissionName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerAddTransient(p, permissionName);
+    public boolean addTransient(Plugin plugin, Player player, String permissionName) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(player);
+        PreCon.notNull(permissionName);
+
+        return _perms.playerAddTransient(player, permissionName);
     }
 
     @Override
-    public boolean removeTransient(Plugin plugin, CommandSender sender, String permissionName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerRemoveTransient(p, permissionName);
+    public boolean removeTransient(Plugin plugin, Player player, String permissionName) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(player);
+        PreCon.notNull(permissionName);
+
+        return _perms.playerRemoveTransient(player, permissionName);
     }
 
     @Override
-    public boolean add(Plugin plugin, CommandSender sender, String permissionName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerAdd(p, permissionName);
+    public boolean add(Plugin plugin, OfflinePlayer player, String permissionName) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(player);
+        PreCon.notNull(permissionName);
+
+        return player instanceof Player && _perms.playerAdd((Player) player, permissionName);
     }
 
     @Override
-    public boolean remove(Plugin plugin, CommandSender sender, String permissionName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerRemove(p, permissionName);
+    public boolean remove(Plugin plugin, OfflinePlayer player, String permissionName) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(player);
+        PreCon.notNull(permissionName);
+
+        return player instanceof Player && _perms.playerRemove((Player) player, permissionName);
     }
 
-    @Nullable
     @Override
     public Object getHandle() {
         return _perms;

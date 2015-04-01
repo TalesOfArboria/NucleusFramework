@@ -22,13 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.providers.permissions;
+package com.jcwhatever.nucleus.internal.providers.permissions.vault;
 
 import com.jcwhatever.nucleus.collections.wrap.WrappedArrayList;
 import com.jcwhatever.nucleus.providers.permissions.IGroupPermissionsProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionGroup;
+import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.command.CommandSender;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -40,15 +41,21 @@ import java.util.Collection;
 public class VaultGroupProvider extends VaultProvider implements IGroupPermissionsProvider {
 
     @Override
-    public boolean addGroup(Plugin plugin, CommandSender sender, String groupName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerAddGroup(p, groupName);
+    public boolean addGroup(Plugin plugin, OfflinePlayer player, String groupName) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(player);
+        PreCon.notNull(groupName);
+
+        return player instanceof Player && _perms.playerAddGroup((Player) player, groupName);
     }
 
     @Override
-    public boolean removeGroup(Plugin plugin, CommandSender sender, String groupName) {
-        Player p = getPlayer(sender);
-        return p != null && _perms.playerRemoveGroup(p, groupName);
+    public boolean removeGroup(Plugin plugin, OfflinePlayer player, String groupName) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(player);
+        PreCon.notNull(groupName);
+
+        return player instanceof Player && _perms.playerRemoveGroup((Player) player, groupName);
     }
 
     @Override
@@ -66,13 +73,13 @@ public class VaultGroupProvider extends VaultProvider implements IGroupPermissio
     }
 
     @Override
-    public Collection<IPermissionGroup> getGroups(CommandSender sender) {
+    public Collection<IPermissionGroup> getGroups(OfflinePlayer player) {
+        PreCon.notNull(player);
 
-        Player p = getPlayer(sender);
-        if (p == null)
+        if (!(player instanceof Player))
             return new WrappedArrayList<>(new IPermissionGroup[0]);
 
-        String[] groupNames = _perms.getPlayerGroups(p);
+        String[] groupNames = _perms.getPlayerGroups((Player)player);
 
         IPermissionGroup[] array = new IPermissionGroup[groupNames.length];
 
@@ -82,6 +89,4 @@ public class VaultGroupProvider extends VaultProvider implements IGroupPermissio
 
         return new WrappedArrayList<>(array);
     }
-
-
 }

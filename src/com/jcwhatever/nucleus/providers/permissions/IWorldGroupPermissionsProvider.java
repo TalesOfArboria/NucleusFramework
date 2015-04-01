@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.providers.permissions;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
@@ -34,7 +34,12 @@ import javax.annotation.Nullable;
 /**
  * A permissions provider that supports world group permissions.
  *
+ * <p>A provider that supports group permissions per world should implement this interface. The
+ * interface is a mixin and can be used with other economy provider interfaces as needed.</p>
+ *
  * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
+ *
+ * @see IPermissionsProvider
  */
 public interface IWorldGroupPermissionsProvider extends IPermissionsProvider {
 
@@ -42,33 +47,33 @@ public interface IWorldGroupPermissionsProvider extends IPermissionsProvider {
      * Add a player to a group permission in the specified world.
      *
      * @param plugin     The plugin adding the player to the group.
-     * @param sender          The player to add to the group.
+     * @param player     The player to add to the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was added.
      */
-    boolean addGroup(Plugin plugin, CommandSender sender, World world, String groupName);
+    boolean addGroup(Plugin plugin, OfflinePlayer player, World world, String groupName);
 
     /**
      * Remove a player from a group permission.
      *
      * @param plugin     The plugin removing the player from the group.
-     * @param sender          The player to remove from the group.
+     * @param player     The player to remove from the group.
      * @param world      The world.
      * @param groupName  The name of the group.
      *
      * @return  True if the player was removed.
      */
-    boolean removeGroup(Plugin plugin, CommandSender sender, World world, String groupName);
+    boolean removeGroup(Plugin plugin, OfflinePlayer player, World world, String groupName);
 
     /**
      * Get a string array of groups the specified player is in while
      * in the specified world.
      *
-     * @param sender      The player to check.
-     * @param world  The world.
+     * @param player  The player to check.
+     * @param world   The world.
      */
     @Nullable
-    Collection<IPermissionGroup> getGroups(CommandSender sender, World world);
+    Collection<IPermissionGroup> getGroups(OfflinePlayer player, World world);
 }
