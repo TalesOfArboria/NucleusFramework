@@ -38,7 +38,7 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of a view.
+ * Abstract implementation of all views.
  */
 public abstract class View implements IPluginOwned, IPlayerReference {
 
@@ -56,17 +56,11 @@ public abstract class View implements IPluginOwned, IPlayerReference {
         _plugin = plugin;
     }
 
-    /**
-     * Get the views owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
     }
 
-    /**
-     * Get the player the view is for.
-     */
     @Override
     public Player getPlayer() {
         return _session.getPlayer();
@@ -85,18 +79,18 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     }
 
     /**
-     * Get the view instances Bukkit {@link org.bukkit.inventory.InventoryView}.
+     * Get the view instances {@link org.bukkit.inventory.InventoryView}.
      *
-     * @return Null if the view has not been shown yet or
+     * @return  The inventory view or null if the view has not been shown yet or
      * does not have an {@link org.bukkit.inventory.InventoryView}.
      */
     @Nullable
     public abstract InventoryView getInventoryView();
 
     /**
-     * Get the view instances Bukkit {@link org.bukkit.inventory.Inventory}.
+     * Get the view instances {@link org.bukkit.inventory.Inventory}.
      *
-     * @return Null if the inventory has been set yet or
+     * @return  The inventory or null if the inventory hasn't been set yet or
      * the view does not have an inventory.
      */
     @Nullable
@@ -112,35 +106,34 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     public abstract boolean isInventoryViewable();
 
     /**
-     * Get the most reason the view was closed.
+     * Get the most recent reason the view was closed.
      *
      * <p>Used by {@link ViewEventListener} to determine how
      * to handle the {@link org.bukkit.event.inventory.InventoryCloseEvent}.</p>
      */
-    public ViewCloseReason getCloseReason() {
+    ViewCloseReason getCloseReason() {
         return _recentCloseReason;
     }
 
     /**
      * Reset the close reason back to {@link ViewCloseReason#ESCAPE}.
      *
-     * <p>Used by {@link ViewEventListener} to reset
-     * the views close reason after handling its
+     * <p>Used by {@link ViewEventListener} to reset the views close reason after handling its
      * {@link org.bukkit.event.inventory.InventoryCloseEvent}.</p>
      */
-    public void resetCloseReason() {
+    void resetCloseReason() {
         _recentCloseReason = ViewCloseReason.ESCAPE;
     }
 
     /**
      * Open the view and show to the view session player.
      *
-     * <p>Should not be called. Use {@link ViewSession}'s
-     * {@link ViewSession#next} or {@link ViewSession#previous} methods.</p>
+     * <p>Should not be invoked directly. Use {@link ViewSession}'s {@link ViewSession#next} or
+     * {@link ViewSession#previous} methods.</p>
      *
      * @param reason  The reason the view is being opened.
      *
-     * @return  True if successful.
+     * @return  True if successful, otherwise false.
      */
     boolean open(final ViewOpenReason reason) {
         PreCon.notNull(reason);
@@ -158,8 +151,8 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     /**
      * Close the view.
      *
-     * <p>Should not be called. Use {@link ViewSession}'s
-     * {@link ViewSession#next} or {@link ViewSession#previous} methods instead.</p>
+     * <p>Should not be invoked directly. Use {@link ViewSession}'s {@link ViewSession#next} or
+     * {@link ViewSession#previous} methods instead.</p>
      *
      * @param reason  The reason the view is being closed.
      *
@@ -188,7 +181,7 @@ public abstract class View implements IPluginOwned, IPlayerReference {
         PreCon.notNull(session);
 
         if (_session != null && _session != session)
-            throw new RuntimeException("A view instance can only be used for a single view session.");
+            throw new IllegalStateException("A view instance can only be used for a single view session.");
 
         _session = session;
 
@@ -196,7 +189,7 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     }
 
     /**
-     * Called when the view needs to be opened.
+     * Invoked when the view needs to be opened.
      *
      * <p>This method should handle creating the inventory and
      * inventory view and showing them to the player.</p>

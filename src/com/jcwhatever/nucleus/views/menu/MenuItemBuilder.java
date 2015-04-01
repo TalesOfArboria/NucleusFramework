@@ -178,19 +178,33 @@ public class MenuItemBuilder {
         return this;
     }
 
-    public MenuItemBuilder onClick(Runnable onClick) {
+    /**
+     * Add an onClick handler to the menu item.
+     *
+     * @param onClick  The onClick handler.
+     *
+     * @return  Self for chaining.
+     */
+    public MenuItemBuilder onClick(final Runnable onClick) {
         PreCon.notNull(onClick);
 
         if (_onClick == null)
             _onClick = new ArrayList<>(3);
 
-        _onClick.add(onClick);
+        // encapsulate handler to prevent exceptions caused by script objects
+        // that do not have a hashCode or equals method.
+        _onClick.add(new Runnable() {
+            @Override
+            public void run() {
+                onClick.run();
+            }
+        });
 
         return this;
     }
 
     /**
-     * Build and return a new {@Code MenuItem}.
+     * Build and return a new {@link MenuItem}.
      *
      * @param slot  The inventory slot the menu item will be placed in.
      */

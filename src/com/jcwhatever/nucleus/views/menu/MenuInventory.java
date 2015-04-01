@@ -45,8 +45,8 @@ import javax.annotation.Nullable;
  * An {@link org.bukkit.inventory.Inventory} wrapper.
  *
  * <p>Note that CraftBukkit methods that accept {@link org.bukkit.inventory.Inventory}
- * instances cast them to CraftInventory. If an instance to a Bukkit method, use
- * {@link com.jcwhatever.nucleus.utils.Utils#unwrap} or invoke {@link #getHandle} to
+ * instances cast them to CraftInventory. If the instance is to be passed to a Bukkit method,
+ * use {@link com.jcwhatever.nucleus.utils.Utils#unwrap} or invoke {@link #getHandle} to
  * get the CraftInventory instance.</p>
  */
 public class MenuInventory implements Inventory, IWrapper<Inventory> {

@@ -25,15 +25,17 @@
 package com.jcwhatever.nucleus.views.workbench;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.manager.EventMethod;
-import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -46,13 +48,15 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
- * A workbench view that can allow or deny specific items to be crafted.
+ * A workbench view that can allow or deny specific items from being crafted.
  */
 public class FilteredWorkbenchView extends WorkbenchView {
 
-    @Localizable
-    static final String _NOT_CRAFTABLE_LORE = "{RED}Not craftable here.";
-    @Localizable static final String _NOT_CRAFTABLE_CHAT = "{RED}You can't craft this item here.";
+    @Localizable static final String _NOT_CRAFTABLE_LORE =
+            "{RED}Not craftable here.";
+
+    @Localizable static final String _NOT_CRAFTABLE_CHAT =
+            "{RED}You can't craft this item here.";
 
     private static AnvilEventListener _eventListener;
     private static Map<InventoryView, FilteredWorkbenchView> _viewMap = new WeakHashMap<>(10);
@@ -84,8 +88,8 @@ public class FilteredWorkbenchView extends WorkbenchView {
         if (super.openView(reason)) {
 
             if (_eventListener == null) {
-                _eventListener = new AnvilEventListener(Nucleus.getPlugin());
-                Nucleus.getEventManager().register(_eventListener);
+                _eventListener = new AnvilEventListener();
+                Bukkit.getPluginManager().registerEvents(_eventListener, Nucleus.getPlugin());
             }
 
             InventoryView inventory = getInventoryView();
@@ -100,15 +104,28 @@ public class FilteredWorkbenchView extends WorkbenchView {
     }
 
     /**
+     * Invoked to get the craft deny message displayed in item lore.
+     */
+    protected String getDenyLore() {
+        return NucLang.get(_NOT_CRAFTABLE_LORE);
+    }
+
+    /**
+     * Invoked to get the craft deny message displayed in chat.
+     *
+     * @return  The message or null to show no message.
+     */
+    @Nullable
+    protected String getDenyChat() {
+        return NucLang.get(_NOT_CRAFTABLE_CHAT);
+    }
+
+    /**
      * Anvil event listener
      */
-    private static class AnvilEventListener extends EventListener {
+    private static class AnvilEventListener implements Listener {
 
-        public AnvilEventListener(Plugin plugin) {
-            super(plugin);
-        }
-
-        @EventMethod
+        @EventHandler
         private void onPrepareItemCraft(PrepareItemCraftEvent event) {
 
             FilteredWorkbenchView workbench = _viewMap.get(event.getView());
@@ -125,13 +142,13 @@ public class FilteredWorkbenchView extends WorkbenchView {
                 InventoryView invView = event.getView();
                 if (invView != null) {
                     ItemStack stack = result.clone();
-                    ItemStackUtils.setLore(stack, NucLang.get(workbench.getPlugin(), _NOT_CRAFTABLE_LORE));
+                    ItemStackUtils.setLore(stack, workbench.getDenyLore());
                     invView.setItem(0, stack);
                 }
             }
         }
 
-        @EventMethod
+        @EventHandler(priority = EventPriority.HIGHEST)
         private void onCraftItem(CraftItemEvent event) {
 
             FilteredWorkbenchView workbench = _viewMap.get(event.getView());
@@ -150,15 +167,19 @@ public class FilteredWorkbenchView extends WorkbenchView {
             }
         }
 
-        @EventMethod
+        @EventHandler
         private void onNucleusDisable(PluginDisableEvent event) {
             if (event.getPlugin() == Nucleus.getPlugin())
                 _eventListener = null;
         }
 
         private void tellNoCraftMessage(FilteredWorkbenchView view) {
-            NucMsg.tellNoSpam(view.getPlugin(), view.getPlayer(),
-                    NucLang.get(view.getPlugin(), _NOT_CRAFTABLE_CHAT));
+
+            String message = view.getDenyChat();
+            if (message == null || message.isEmpty())
+                return;
+
+            NucMsg.tellNoSpam(view.getPlugin(), view.getPlayer(), message);
         }
     }
 }

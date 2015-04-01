@@ -42,7 +42,7 @@ public enum ViewOpenReason {
 
     /**
      * The view was previously opened but the next view was opened.
-     * The next view was closed and now the view is being re-opened..
+     * The next view was closed and now the view is being re-opened.
      */
     PREV,
 

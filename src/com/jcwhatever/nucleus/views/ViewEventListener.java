@@ -37,16 +37,14 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * Common view event Listener that works in conjunction with
- * {@link ViewSession}.
+ * {@link View} event listener that works in conjunction with {@link ViewSession}.
  */
 class ViewEventListener extends EventListener {
 
     private static ViewEventListener _instance;
 
     /**
-     * Used to register a view session so events can be
-     * handled on its behalf.
+     * Used to register a view session so events can be handled on its behalf.
      *
      * @param session  The session to register
      */
@@ -60,8 +58,7 @@ class ViewEventListener extends EventListener {
     }
 
     /**
-     * Used to unregister a view session when it no longer
-     * needs view events handled.
+     * Used to unregister a view session when it no longer needs view events handled.
      *
      * @param session  The session to unregister.
      */
@@ -90,7 +87,7 @@ class ViewEventListener extends EventListener {
 
         // A disposed session should not be in the sessions map
         if (session.isDisposed()) {
-            throw new RuntimeException("A view session that is disposed is still registered.");
+            throw new IllegalStateException("A view session that is disposed is still registered.");
         }
 
         // get the current session view.

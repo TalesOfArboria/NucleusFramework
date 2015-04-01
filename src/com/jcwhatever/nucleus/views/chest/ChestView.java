@@ -157,7 +157,7 @@ public abstract class ChestView extends View {
     protected boolean onPreShow(ViewOpenReason reason) { return true; }
 
     /**
-     * Called after the view is opened.
+     * Invoked after the view is opened.
      *
      * @param reason  The view open reason.
      */
@@ -165,8 +165,8 @@ public abstract class ChestView extends View {
 
     /**
      * Invoked to get an {@link org.bukkit.inventory.Inventory} instance used to
-     * open an inventory view to the player. Only called
-     * if the {@link org.bukkit.inventory.Inventory} is not set in the constructor.
+     * open an inventory view to the player. Only invoked if the
+     * {@link org.bukkit.inventory.Inventory} is not set in the constructor.
      */
     protected abstract Inventory createInventory();
 

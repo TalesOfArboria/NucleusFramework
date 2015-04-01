@@ -179,30 +179,4 @@ public class MenuItemTest {
         // make sure the items on click runnables ran
         assertEquals(true, _isOnClickRun);
     }
-
-    /**
-     * Make sure the on-click callbacks are removed properly.
-     */
-    @Test
-    public void testRemoveOnClick() throws Exception {
-
-        Runnable runnable  = new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        };
-
-        MenuItem menuItem = new MenuItemBuilder(Material.STONE)
-                .title("test")
-                .onClick(runnable)
-                .build(0);
-
-
-        assertEquals(1, menuItem.getOnClick().size());
-
-        menuItem.removeOnClick(runnable);
-
-        assertEquals(0, menuItem.getOnClick().size());
-    }
 }

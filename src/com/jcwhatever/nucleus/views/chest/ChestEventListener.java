@@ -26,17 +26,17 @@ package com.jcwhatever.nucleus.views.chest;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.manager.EventMethod;
-import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewSession;
 import com.jcwhatever.nucleus.views.chest.ChestEventInfo.ItemStackSource;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -44,13 +44,9 @@ import java.util.WeakHashMap;
 /**
  * Listens to events related to the {@link ChestView}.
  */
-class ChestEventListener extends EventListener {
+class ChestEventListener implements Listener {
 
     private static ChestEventListener _instance;
-
-    public ChestEventListener(Plugin plugin) {
-        super(plugin);
-    }
 
     /**
      * Register a {@link ChestView} instance so its events can be handled.
@@ -58,8 +54,8 @@ class ChestEventListener extends EventListener {
     static void register(ChestView view) {
 
         if (_instance == null) {
-            _instance = new ChestEventListener(Nucleus.getPlugin());
-            Nucleus.getEventManager().register(_instance);
+            _instance = new ChestEventListener();
+            Bukkit.getPluginManager().registerEvents(_instance, Nucleus.getPlugin());
         }
 
         _instance._chestSessionMap.put(view.getPlayer(), view.getViewSession());

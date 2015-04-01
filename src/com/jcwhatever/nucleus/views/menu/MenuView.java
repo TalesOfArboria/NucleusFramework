@@ -39,7 +39,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of a {@link ChestView} used as a menu.
+ * Abstract implementation of a {@link ChestView} for use as a menu.
  */
 public abstract class MenuView extends ChestView {
 
@@ -49,10 +49,10 @@ public abstract class MenuView extends ChestView {
      * Constructor.
      *
      * @param plugin     The owning plugin.
-     * @param comparer   An item stack comparer.
+     * @param matcher    An item stack matcher.
      */
-    protected MenuView(Plugin plugin, @Nullable ItemStackMatcher comparer) {
-        super(plugin, comparer);
+    protected MenuView(Plugin plugin, @Nullable ItemStackMatcher matcher) {
+        super(plugin, matcher);
     }
 
     /**
@@ -60,11 +60,11 @@ public abstract class MenuView extends ChestView {
      *
      * @param plugin     The owning plugin.
      * @param inventory  The menu inventory.
-     * @param comparer   An item stack comparer.
+     * @param matcher    An item stack matcher.
      */
     protected MenuView(Plugin plugin, MenuInventory inventory,
-                       @Nullable ItemStackMatcher comparer) {
-        super(plugin, inventory, comparer);
+                       @Nullable ItemStackMatcher matcher) {
+        super(plugin, inventory, matcher);
     }
 
     /**
@@ -186,8 +186,7 @@ public abstract class MenuView extends ChestView {
     }
 
     /**
-     * Get the number of slots needed for the {@link Inventory}
-     * instance.
+     * Get the number of slots needed for the {@link Inventory} instance.
      */
     protected int getSlotsRequired(List<MenuItem> menuItems) {
         int maxSlot = menuItems.size();
@@ -204,14 +203,13 @@ public abstract class MenuView extends ChestView {
     }
 
     /**
-     * Called to get a list of {@link MenuItem}'s to initially register and
+     * Invoked to get a list of {@link MenuItem}'s to initially register and
      * fill the {@link org.bukkit.inventory.Inventory} after it is created.
      */
     protected abstract List<MenuItem> createMenuItems();
 
     /**
-     * Called when a menu item in the inventory view is clicked
-     * by the player.
+     * Invoked when a menu item in the inventory view is clicked by the player.
      *
      * @param menuItem  The clicked menu item.
      */

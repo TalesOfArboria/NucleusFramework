@@ -44,11 +44,10 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * A session that tracks and provides session context data
- * to view instances.
+ * A session that tracks and provides session context data to view instances.
  *
- * <p>Not thread safe. {@link ViewSession} should always be
- * invoked from the main thread.</p>
+ * <p>Not thread safe. {@link ViewSession} should always be invoked from the
+ * main thread.</p>
  */
 public final class ViewSession implements IMeta, Iterable<View>, IPlayerReference, IDisposable {
 
@@ -57,18 +56,18 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Get a players current view session.
      *
-     * @param p  The player to check.
+     * @param player  The player to check.
      *
-     * @return  Null if the player does not have a view session.
+     * @return  The view session or null if the player does not have one.
      */
     @Nullable
-    public static ViewSession getCurrent(Player p) {
-        ViewSession session = _sessionMap.get(p.getUniqueId());
+    public static ViewSession getCurrent(Player player) {
+        ViewSession session = _sessionMap.get(player.getUniqueId());
         if (session == null)
             return null;
 
         if (session.isDisposed()) {
-            _sessionMap.remove(p.getUniqueId());
+            _sessionMap.remove(player.getUniqueId());
             return null;
         }
 
@@ -76,16 +75,16 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     }
 
     /**
-     * Get the players current view session or create a new one.
+     * Get a players current view session or create a new one.
      *
-     * @param p             The player.
+     * @param player        The player.
      * @param sessionBlock  The session block to use if a new session is created.
      */
-    public static ViewSession get(Player p, @Nullable Block sessionBlock) {
-        ViewSession session = getCurrent(p);
+    public static ViewSession get(Player player, @Nullable Block sessionBlock) {
+        ViewSession session = getCurrent(player);
         if (session == null || session.isDisposed()) {
-            session = new ViewSession(p, sessionBlock);
-            _sessionMap.put(p.getUniqueId(), session);
+            session = new ViewSession(player, sessionBlock);
+            _sessionMap.put(player.getUniqueId(), session);
         }
 
         return session;
@@ -121,9 +120,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     }
 
     /**
-     * Get the block that is the source of the
-     * view session. This is normally the block that
-     * a player clicks in order to open the view.
+     * Get the block that is the source of the view session. This is normally
+     * the block that a player clicks in order to open the view.
      *
      * @return  Null if a block did not start the session.
      */
@@ -133,8 +131,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     }
 
     /**
-     * Determine if the view session contains the specified
-     * {@link View}.
+     * Determine if the view session contains the specified {@link View}.
      *
      * @param view  The view to check.
      */
@@ -242,7 +239,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * <p>There is a 1 tick delay before the previous view is shown. The
      * state of the view will reflect the previous state until then.</p>
      *
-     * @return A future that will return the result once it has completed. Possible
+     * @return  A future that will return the result once it has completed. Possible
      * outcomes are success or cancel.
      *
      * @throws java.lang.IllegalStateException if there is no current view.
@@ -252,7 +249,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
             throw new IllegalStateException();
 
         if (_isDisposed)
-            throw new RuntimeException("Cannot use a disposed ViewSession.");
+            throw new IllegalStateException("Cannot use a disposed ViewSession.");
 
         final FutureResultAgent<View> agent = new FutureResultAgent<>();
 
@@ -277,9 +274,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     }
 
     /**
-     * Called to indicate a menu was escaped.
-     * The same as calling back except the view
-     * is not called to close.
+     * Called to indicate a menu was escaped. The same as calling back except the
+     * view is not called to close.
      */
     @Nullable
     void escaped() {
@@ -297,19 +293,19 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Show the next view.
      *
-     * <p>There is a 1 tick delay before the view is actually
-     * opened. The state of the view may be inaccurate until then.</p>
+     * <p>There is a 1 tick delay before the view is actually* opened. The state of
+     * the view may be inaccurate until then.</p>
      *
      * @param view  The view instance to display next.
      *
-     * @return A future that will return the result of the operation once
+     * @return  A future that will return the result of the operation once
      * it has completed. Possible outcomes are success or cancel.
      */
     public Future<View> next(final View view) {
         PreCon.notNull(view);
 
         if (_isDisposed)
-            throw new RuntimeException("Cannot use a disposed ViewSession.");
+            throw new IllegalStateException("Cannot use a disposed ViewSession.");
 
         final FutureResultAgent<View> agent = new FutureResultAgent<>();
 
@@ -365,16 +361,16 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Close and re-open the current view.
      *
-     * <p>There is a 1-2 tick delay before the view refresh
-     * is complete. The state of the view will be inaccurate until then.</p>
+     * <p>There is a 1-2 tick delay before the view refresh is complete. The state
+     * of the view will be inaccurate until then.</p>
      *
-     * @return A future that will return the result of the operation once
+     * @return  A future that will return the result of the operation once
      * it has completed. Possible outcomes are success, error or cancel.
      */
     public Future<View> refresh() {
 
         if (_isDisposed)
-            throw new RuntimeException("Cannot use a disposed ViewSession.");
+            throw new IllegalStateException("Cannot use a disposed ViewSession.");
 
         final FutureResultAgent<View> agent = new FutureResultAgent<>();
 
@@ -460,12 +456,12 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
         };
     }
 
-    protected static class ViewContainer {
+    private static class ViewContainer {
         final View view;
         final ViewContainer prev;
         ViewContainer next;
 
-        protected ViewContainer(View view, @Nullable ViewContainer prev,
+        ViewContainer(View view, @Nullable ViewContainer prev,
                                 @Nullable ViewContainer next) {
             this.view = view;
             this.prev = prev;

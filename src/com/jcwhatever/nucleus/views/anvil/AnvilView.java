@@ -60,7 +60,7 @@ public class AnvilView extends View {
     protected boolean openView(ViewOpenReason reason) {
         Block block = getViewSession().getSessionBlock();
         if (block == null || block.getType() != Material.ANVIL) {
-            throw new RuntimeException("Anvil Views must have an anvil source block.");
+            throw new IllegalStateException("Anvil Views must have an anvil source block.");
         }
 
         Location loc = block.getLocation();

@@ -27,18 +27,21 @@ package com.jcwhatever.nucleus.views.anvil;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
-import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.views.View;
-import com.jcwhatever.nucleus.views.ViewSession;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
+import com.jcwhatever.nucleus.views.ViewSession;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -52,7 +55,8 @@ import javax.annotation.Nullable;
  */
 public class FilteredAnvilView extends AnvilView {
 
-    @Localizable static final String _NOT_REPAIRABLE = "{RED}Not repairable here.";
+    @Localizable static final String _NOT_REPAIRABLE =
+            "{RED}Not repairable here.";
 
     private static AnvilEventListener _eventListener;
     private static Map<Entity, ViewSession> _anvilMap = new WeakHashMap<>(20);
@@ -71,8 +75,8 @@ public class FilteredAnvilView extends AnvilView {
         _filterManager = filterManager;
 
         if (_eventListener == null) {
-            _eventListener = new AnvilEventListener(Nucleus.getPlugin());
-            Nucleus.getEventManager().register(_eventListener);
+            _eventListener = new AnvilEventListener();
+            Bukkit.getPluginManager().registerEvents(_eventListener, Nucleus.getPlugin());
         }
     }
 
@@ -98,18 +102,23 @@ public class FilteredAnvilView extends AnvilView {
     }
 
     /**
+     * Invoked to get the craft deny message.
+     */
+    protected String getDenyMessage() {
+        return NucLang.get(_NOT_REPAIRABLE);
+    }
+
+    /**
      * Anvil event listener.
      */
-    static class AnvilEventListener extends EventListener {
+    static class AnvilEventListener implements Listener {
 
-        public AnvilEventListener(Plugin plugin) {
-            super(plugin);
-        }
-
+        @EventHandler(priority = EventPriority.MONITOR)
         private void onAnvilItemRepair(AnvilItemRepairEvent event) {
             check(event.getPlayer(), event.getItem());
         }
 
+        @EventHandler(priority = EventPriority.MONITOR)
         private void onAnvilItemRename(AnvilItemRenameEvent event) {
             check(event.getPlayer(), event.getItem());
         }
@@ -137,11 +146,10 @@ public class FilteredAnvilView extends AnvilView {
                 InventoryView invView = current.getInventoryView();
                 if (invView != null) {
                     ItemStack stack = repaired.clone();
-                    ItemStackUtils.setLore(stack, NucLang.get(_NOT_REPAIRABLE));
+                    ItemStackUtils.setLore(stack, view.getDenyMessage());
                     invView.setItem(0, stack);
                 }
             }
         }
-
     }
 }

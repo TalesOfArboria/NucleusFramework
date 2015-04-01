@@ -57,7 +57,7 @@ public class PaginatorView extends MenuView {
 
     /**
      * Show the paginator view if the specified paginator has more than 1 page.
-     * Otherwise show the next page.
+     * Otherwise show the next view.
      *
      * <p>If the paginator view is shown, selecting a page will cause the next view
      * to open.</p>
@@ -89,23 +89,28 @@ public class PaginatorView extends MenuView {
     /**
      * Constructor.
      *
-     * @param comparer   The item stack comparer.
+     * @param plugin     The owning plugin.
+     * @param paginator  The paginator of the view.
+     * @param matcher    The item stack matcher.
      */
     public PaginatorView(Plugin plugin, IPaginator paginator,
-                         @Nullable ItemStackMatcher comparer) {
-        this(plugin, paginator, null, comparer);
+                         @Nullable ItemStackMatcher matcher) {
+        this(plugin, paginator, null, matcher);
     }
 
     /**
      * Constructor.
      *
-     * @param comparer   The item stack comparer.
+     * @param plugin     The owning plugin.
+     * @param nextView   The nextView to open when a page is selected.
+     * @param paginator  The paginator of the view.
+     * @param matcher    The item stack matcher.
      */
     public PaginatorView(Plugin plugin, IPaginator paginator,
                          @Nullable View nextView,
-                         @Nullable ItemStackMatcher comparer) {
+                         @Nullable ItemStackMatcher matcher) {
 
-        super(plugin, comparer);
+        super(plugin, matcher);
 
         PreCon.notNull(paginator);
 

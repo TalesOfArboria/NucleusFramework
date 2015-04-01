@@ -76,8 +76,7 @@ public class MenuItem extends ItemStack implements IMeta {
     }
 
     /**
-     * Get the inventory slot index the item is
-     * assigned to.
+     * Get the inventory slot index the item is assigned to.
      */
     public int getSlot() {
         return _slot;
@@ -85,10 +84,10 @@ public class MenuItem extends ItemStack implements IMeta {
 
     /**
      * Get the menu item title.
-     * <p/>
+     *
      * <p>This is used as the item stacks display name.</p>
      *
-     * @return Null if not set.
+     * @return  The title or null if not set.
      */
     @Nullable
     public String getTitle() {
@@ -96,9 +95,22 @@ public class MenuItem extends ItemStack implements IMeta {
     }
 
     /**
+     * Set the menu item title.
+     *
+     * <p>This is used for the item stacks display name.</p>
+     *
+     * @param title The menu item title.
+     */
+    public void setTitle(@Nullable String title) {
+        ItemStackUtils.setDisplayName(this, title);
+    }
+
+    /**
      * Get the menu item description.
-     * <p/>
+     *
      * <p>This is used as the item stacks lore.</p>
+     *
+     * @return  The description or null if not set.
      */
     @Nullable
     public String getDescription() {
@@ -107,17 +119,6 @@ public class MenuItem extends ItemStack implements IMeta {
             return null;
 
         return lore.get(0);
-    }
-
-    /**
-     * Set the menu item title.
-     * <p/>
-     * <p>This is used for the item stacks display name.</p>
-     *
-     * @param title The menu item title.
-     */
-    public void setTitle(@Nullable String title) {
-        ItemStackUtils.setDisplayName(this, title);
     }
 
     /**
@@ -139,10 +140,9 @@ public class MenuItem extends ItemStack implements IMeta {
     }
 
     /**
-     * Determine if the menu item is set in the
-     * specified menu view.
+     * Determine if the menu item is set in the specified menu view.
      *
-     * @param menuView The menu view.
+     * @param menuView  The menu view.
      */
     public boolean isVisible(MenuView menuView) {
         PreCon.notNull(menuView);
@@ -183,10 +183,9 @@ public class MenuItem extends ItemStack implements IMeta {
     }
 
     /**
-     * Get a new list of all click callbacks attached
-     * to the menu item.
+     * Get a new list of all click callbacks attached to the menu item.
      */
-    public List<Runnable> getOnClick() {
+    List<Runnable> getOnClick() {
         if (_onClick == null)
             return CollectionUtils.unmodifiableList();
 
@@ -199,23 +198,18 @@ public class MenuItem extends ItemStack implements IMeta {
      *
      * @param runnable The callback to add.
      */
-    public void onClick(Runnable runnable) {
+    public void onClick(final Runnable runnable) {
         if (_onClick == null)
             _onClick = new ArrayList<>(3);
 
-        _onClick.add(runnable);
-    }
-
-    /**
-     * Remove a click event callback from the menu item.
-     *
-     * @param runnable The callback to remove.
-     *
-     * @return True if found and removed.
-     */
-    public boolean removeOnClick(Runnable runnable) {
-        return _onClick != null &&
-                _onClick.remove(runnable);
+        // encapsulate runnable to prevent exceptions caused by script objects
+        // that do not have a equals or hashCode method.
+        _onClick.add(new Runnable() {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        });
     }
 
     /**
