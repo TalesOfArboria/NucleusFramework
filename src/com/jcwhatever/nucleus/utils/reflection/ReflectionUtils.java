@@ -28,7 +28,9 @@ import com.google.common.collect.ImmutableMap;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -138,6 +140,33 @@ public class ReflectionUtils {
         }
 
         return componentType;
+    }
+
+    /**
+     * Remove the final modifier from a field.
+     *
+     * @param field  The field.
+     *
+     * @return  True if successful, otherwise false.
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    public static boolean removeFinal(Field field) {
+        PreCon.notNull(field);
+
+        field.setAccessible(true);
+
+        try {
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            return true;
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
