@@ -23,9 +23,9 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.language;
+package com.jcwhatever.nucleus.utils.language.parser;
 
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.utils.language.InvalidLocalizedTextException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Parsed language localization data.

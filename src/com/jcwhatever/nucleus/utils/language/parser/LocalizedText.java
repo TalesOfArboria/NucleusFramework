@@ -23,42 +23,61 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.language;
+package com.jcwhatever.nucleus.utils.language.parser;
 
-import java.io.InputStream;
-import java.util.List;
+import com.jcwhatever.nucleus.utils.PreCon;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Parsed language key file data.
+ * Represents a single line from a language file.
  */
-public class LanguageKeys extends Language {
+public class LocalizedText {
+
+    private static final Pattern PATTERN_ESCAPED_NEW_LINE = Pattern.compile("\\n");
+
+    private final int _index;
+    private final String _text;
 
     /**
      * Constructor.
      *
-     * @param keyStream  The key file stream.
+     * @param index  The key index.
+     * @param text   The text.
      */
-    public LanguageKeys(InputStream keyStream) {
-        super(keyStream);
+    public LocalizedText(int index, String text) {
+        PreCon.notNull(text);
+
+        _index = index;
+
+        Matcher matcher = PATTERN_ESCAPED_NEW_LINE.matcher(text);
+        _text = matcher.replaceAll("\n");
     }
 
     /**
-     * Determine if a language's versions are compatible.
-     *
-     * @param language  The language to check.
+     * Get the key index.
      */
-    public boolean isCompatible(Language language) {
+    public int getIndex() {
+        return _index;
+    }
 
-        List<String> versions = language.getVersions();
+    /**
+     * Get the text.
+     */
+    public String getText() {
+        return _text;
+    }
 
-        if (versions.isEmpty())
-            return false;
+    @Override
+    public int hashCode() {
+        return _index;
+    }
 
-        for (String version : versions) {
-            if (!isValidVersion(version))
-                return false;
-        }
+    @Override
+    public boolean equals(Object obj) {
 
-        return true;
+        return obj instanceof LocalizedText &&
+                ((LocalizedText) obj).getIndex() == _index;
     }
 }

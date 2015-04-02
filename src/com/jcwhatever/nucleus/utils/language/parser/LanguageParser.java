@@ -23,8 +23,9 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.language;
+package com.jcwhatever.nucleus.utils.language.parser;
 
+import com.jcwhatever.nucleus.utils.language.InvalidLocalizedTextException;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import java.io.IOException;
@@ -147,5 +148,4 @@ public class LanguageParser {
         String text = line.substring(angleIndex + 2, line.length());
         return new LocalizedText(index, text);
     }
-
 }
