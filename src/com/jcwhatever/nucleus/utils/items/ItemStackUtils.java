@@ -381,7 +381,7 @@ public final class ItemStackUtils {
      * @param stack         The item stack to add enchantments to.
      * @param enchantments  Enchantments to add
      */
-    public static void addEnchantments(ItemStack stack, Collection<EnchantmentWrapper> enchantments) {
+    public static void addEnchantments(ItemStack stack, Collection<EnchantmentLevel> enchantments) {
         PreCon.notNull(stack);
         PreCon.notNull(enchantments);
 
@@ -391,14 +391,14 @@ public final class ItemStackUtils {
         if (meta instanceof EnchantmentStorageMeta) {
             EnchantmentStorageMeta storage = (EnchantmentStorageMeta)meta;
 
-            for (EnchantmentWrapper enchant : enchantments) {
+            for (EnchantmentLevel enchant : enchantments) {
                 storage.addStoredEnchant(enchant.getEnchantment(), enchant.getLevel(), true);
             }
 
             stack.setItemMeta(storage);
         }
         else {
-            for (EnchantmentWrapper enchant : enchantments) {
+            for (EnchantmentLevel enchant : enchantments) {
                 stack.addUnsafeEnchantment(enchant.getEnchantment(), enchant.getLevel());
             }
         }
@@ -408,9 +408,9 @@ public final class ItemStackUtils {
      * Add an enchantment to an item.
      *
      * @param stack    The item stack.
-     * @param enchant  The {@link EnchantmentWrapper} containing enchantment info.
+     * @param enchant  The {@link EnchantmentLevel} containing enchantment info.
      */
-    public static void addEnchantment(ItemStack stack, EnchantmentWrapper enchant) {
+    public static void addEnchantment(ItemStack stack, EnchantmentLevel enchant) {
         PreCon.notNull(stack);
         PreCon.notNull(enchant);
 
@@ -467,7 +467,7 @@ public final class ItemStackUtils {
 
     /**
      * Removes an enchantment from an item and returns an
-     * {@link EnchantmentWrapper} containing the enchantment
+     * {@link EnchantmentLevel} containing the enchantment
      * and enchantment level before it was removed.
      *
      * @param stack            The item stack.
@@ -476,7 +476,7 @@ public final class ItemStackUtils {
      * @return  Null if the enchantment name is not found or the item did not have the enchantment.
      */
     @Nullable
-    public static EnchantmentWrapper removeEnchantment(ItemStack stack, String enchantmentName) {
+    public static EnchantmentLevel removeEnchantment(ItemStack stack, String enchantmentName) {
         PreCon.notNull(stack);
         PreCon.notNullOrEmpty(enchantmentName);
 
@@ -489,7 +489,7 @@ public final class ItemStackUtils {
 
     /**
      * Removes an enchantment from an item and returns an
-     * {@link EnchantmentWrapper} containing the enchantment
+     * {@link EnchantmentLevel} containing the enchantment
      * and enchantment level before it was removed.
      *
      * @param stack        The item stack.
@@ -498,7 +498,7 @@ public final class ItemStackUtils {
      * @return  Null if the item did not have the enchantment
      */
     @Nullable
-    public static EnchantmentWrapper removeEnchantment(ItemStack stack, Enchantment enchantment) {
+    public static EnchantmentLevel removeEnchantment(ItemStack stack, Enchantment enchantment) {
         PreCon.notNull(stack);
         PreCon.notNull(enchantment);
 
@@ -507,7 +507,7 @@ public final class ItemStackUtils {
 
         int level = stack.removeEnchantment(enchantment);
 
-        return new EnchantmentWrapper(enchantment, level);
+        return new EnchantmentLevel(level, enchantment);
     }
 
     /**

@@ -49,7 +49,7 @@ public class ItemStackBuilder {
     private Short _durability;
     private String _display;
     private List<String> _lore;
-    private List<EnchantmentWrapper> _enchantments;
+    private List<EnchantmentLevel> _enchantments;
     private Color _color;
 
     /**
@@ -185,7 +185,7 @@ public class ItemStackBuilder {
         if (_enchantments == null)
             _enchantments = new ArrayList<>(15);
 
-        _enchantments.add(new EnchantmentWrapper(enchantment, level));
+        _enchantments.add(new EnchantmentLevel(level, enchantment));
 
         return this;
     }
@@ -275,7 +275,7 @@ public class ItemStackBuilder {
 
         if (_enchantments != null) {
 
-            for (EnchantmentWrapper wrapper : _enchantments) {
+            for (EnchantmentLevel wrapper : _enchantments) {
                 itemStack.addUnsafeEnchantment(wrapper.getEnchantment(), wrapper.getLevel());
             }
         }

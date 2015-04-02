@@ -32,10 +32,10 @@ import org.bukkit.enchantments.Enchantment;
 /**
  * A wrapper to hold an Enchantment as well as its level.
  */
-public class EnchantmentWrapper {
+public class EnchantmentLevel {
 
-    private final Enchantment _enchantment;
     private final int _level;
+    private final Enchantment _enchantment;
 
     /**
      * Constructor.
@@ -43,7 +43,7 @@ public class EnchantmentWrapper {
      * @param enchant  The enchantment.
      * @param level    The enchantment level.
      */
-    public EnchantmentWrapper (Enchantment enchant, int level) {
+    public EnchantmentLevel(int level, Enchantment enchant) {
         PreCon.notNull(enchant);
 
         _enchantment = enchant;
@@ -63,5 +63,4 @@ public class EnchantmentWrapper {
     public int getLevel() {
         return _level;
     }
-
 }
