@@ -24,9 +24,10 @@
 
 package com.jcwhatever.nucleus.utils.items.serializer;
 
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlers;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.ChatColor;
@@ -41,26 +42,28 @@ import java.util.regex.Matcher;
 /**
  * Serializes {@link org.bukkit.inventory.ItemStack}'s into a string.
  *
+ * <p>Add {@link ItemStack}'s to serialize them into the buffer. The result can be obtained
+ * by invoking the instances {@link #toString} method or the results can be appended to a
+ * {@link java.lang.StringBuilder} provided in the constructor.</p>
  * <p>
- *     Add item stacks to serialize them. The result can be obtained
- *     by calling the instances {@link #toString} method or the results
- *     can be appended to a {@link java.lang.StringBuilder} provided in the
- *     constructor.
+ *     Output Format:<br />
+ *     MaterialName1[:ByteData][;Amount][{ metaName1: "metaValue1", metaName2: "metaValue2" }],
+ *     MaterialName2...
  * </p>
- * <p>
- *     Output Format:
- *     MaterialName1[:ByteData][;Amount][{ metaName1: "metaValue1", metaName2: "metaValue2" }], MaterialName2...
- * </p>
+ *
+ * @see ItemStackDeserializer
+ * @see ItemMetaHandlers
  */
 public class ItemStackSerializer {
 
-    private StringBuilder _buffy;
+    private final StringBuilder _buffer;
+    private final ItemMetaHandlers _metaHandlers;
     private int _itemsAppended = 0;
     private SerializerOutputType _outputType = SerializerOutputType.RAW;
 
     /**
-     * Used to specify if item stacks serialized to string
-     * should have color formatting inserted.
+     * Used to specify if items serialized to string should have color
+     * formatting inserted.
      */
     public enum SerializerOutputType {
         RAW,
@@ -70,14 +73,12 @@ public class ItemStackSerializer {
     /**
      * Constructor.
      *
-     * <p>
-     *     Raw output type.
-     * </p>
+     * <p>Raw output type.</p>
      *
      * @param size  The initial buffer size
      */
     public ItemStackSerializer(int size) {
-        _buffy = new StringBuilder(size);
+        this(size, ItemMetaHandlers.getGlobal(), SerializerOutputType.RAW);
     }
 
     /**
@@ -87,31 +88,85 @@ public class ItemStackSerializer {
      * @param outputType  The output type.
      */
     public ItemStackSerializer(int size, SerializerOutputType outputType) {
-        _buffy = new StringBuilder(size);
+        this(size, ItemMetaHandlers.getGlobal(), outputType);
+    }
+
+    /**
+     * Constructor.
+     *
+     * <p>Raw output type.</p>
+     *
+     * @param buffer  The {@link java.lang.StringBuilder} to append the results to.
+     */
+    public ItemStackSerializer(StringBuilder buffer) {
+        this(buffer, ItemMetaHandlers.getGlobal(), SerializerOutputType.RAW);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param buffer      The The {@link java.lang.StringBuilder} to append the results to.
+     * @param outputType  The output type.
+     */
+    public ItemStackSerializer(StringBuilder buffer, SerializerOutputType outputType) {
+        this(buffer, ItemMetaHandlers.getGlobal(), outputType);
+    }
+
+    /**
+     * Constructor.
+     *
+     * <p>Raw output type.</p>
+     *
+     * @param size          The initial buffer size
+     * @param metaHandlers  The {@link ItemMetaHandlers} to use.
+     */
+    public ItemStackSerializer(int size, ItemMetaHandlers metaHandlers) {
+        this(size, metaHandlers, SerializerOutputType.RAW);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param size          The initial buffer size.
+     * @param metaHandlers  The {@link ItemMetaHandlers} to use.
+     * @param outputType    The output type.
+     */
+    public ItemStackSerializer(int size, ItemMetaHandlers metaHandlers, SerializerOutputType outputType) {
+        PreCon.notNull(metaHandlers);
+        PreCon.notNull(outputType);
+
+        _buffer = new StringBuilder(size);
+        _metaHandlers = metaHandlers;
         _outputType = outputType;
     }
 
     /**
      * Constructor.
      *
-     * <p>
-     *     Raw output type.
-     * </p>
+     * <p>Raw output type.</p>
      *
-     * @param buffy  The {@link java.lang.StringBuilder} to append the results to.
+     * @param buffer  The {@link java.lang.StringBuilder} to append the results to.
+     * @param metaHandlers  The {@link ItemMetaHandlers} to use.
      */
-    public ItemStackSerializer(StringBuilder buffy) {
-        _buffy = buffy;
+    public ItemStackSerializer(StringBuilder buffer, ItemMetaHandlers metaHandlers) {
+        this(buffer, metaHandlers, SerializerOutputType.RAW);
     }
 
     /**
      * Constructor.
      *
-     * @param buffy       The The {@link java.lang.StringBuilder} to append the results to.
-     * @param outputType  The output type.
+     * @param buffer        The {@link java.lang.StringBuilder} to append the results to.
+     * @param metaHandlers  The {@link ItemMetaHandlers} to use.
+     * @param outputType    The output type.
      */
-    public ItemStackSerializer(StringBuilder buffy, SerializerOutputType outputType) {
-        _buffy = buffy;
+    public ItemStackSerializer(StringBuilder buffer, ItemMetaHandlers metaHandlers,
+                               SerializerOutputType outputType) {
+        PreCon.notNull(buffer);
+        PreCon.notNull(metaHandlers);
+        PreCon.notNull(outputType);
+
+        _buffer = buffer;
+        _metaHandlers = metaHandlers;
         _outputType = outputType;
     }
 
@@ -121,13 +176,15 @@ public class ItemStackSerializer {
      *
      * @param stack  The {@link org.bukkit.inventory.ItemStack} to serialize.
      *
-     * @return Self
+     * @return Self for chaining.
      */
-    public <T extends ItemStack> ItemStackSerializer append(T stack) {
-        if (_itemsAppended > 0)
-            _buffy.append(", ");
+    public ItemStackSerializer append(ItemStack stack) {
+        PreCon.notNull(stack);
 
-        appendItemStackString(_buffy, stack, _outputType);
+        if (_itemsAppended > 0)
+            _buffer.append(", ");
+
+        appendItemStackString(_buffer, stack, _outputType);
         _itemsAppended++;
         return this;
     }
@@ -138,7 +195,7 @@ public class ItemStackSerializer {
      *
      * @param stacks  The {@link org.bukkit.inventory.ItemStack}'s to serialize.
      *
-     * @return  Self
+     * @return  Self for chaining.
      */
     public ItemStackSerializer appendAll(Collection<? extends ItemStack> stacks) {
         for (ItemStack stack : stacks) {
@@ -155,7 +212,7 @@ public class ItemStackSerializer {
      *
      * @param <T>  The ItemStack type
      *
-     * @return  Self
+     * @return  Self for chaining.
      */
     public <T extends ItemStack> ItemStackSerializer appendAll(T[] stacks) {
         for (ItemStack stack : stacks) {
@@ -165,9 +222,9 @@ public class ItemStackSerializer {
     }
 
     /**
-     * Get the number of {@link org.bukkit.inventory.ItemStacks} serialized.
+     * Get the number of {@link org.bukkit.inventory.ItemStack}'s serialized.
      */
-    public int getTotalItems() {
+    public int size() {
         return _itemsAppended;
     }
 
@@ -176,13 +233,14 @@ public class ItemStackSerializer {
      */
     @Override
     public String toString() {
-        return _buffy.toString();
+        return _buffer.toString();
     }
 
     /*
      * Serialize an item stack to a string and append to buffer.
      */
-    private static void appendItemStackString(StringBuilder buffy, ItemStack stack, SerializerOutputType outputType) {
+    private void appendItemStackString(StringBuilder buffy, ItemStack stack,
+                                              SerializerOutputType outputType) {
 
         if (stack == null) {
             stack = new ItemStack(Material.AIR, -1);
@@ -214,7 +272,6 @@ public class ItemStackSerializer {
 
         // quantity
 
-
         if (stack.getAmount() != 1) {
             buffy.append(';');
 
@@ -224,9 +281,9 @@ public class ItemStackSerializer {
             buffy.append(stack.getAmount());
         }
 
-        List<IMetaHandler> handlers = ItemMetaHandlerManager.getHandlers();
+        List<IMetaHandler> handlers = _metaHandlers.getHandlers();
 
-        List<ItemMetaObject> metaObjects = new ArrayList<>(10);
+        List<ItemMetaValue> metaObjects = new ArrayList<>(10);
 
         for (IMetaHandler handler : handlers) {
             metaObjects.addAll(handler.getMeta(stack));
@@ -237,7 +294,7 @@ public class ItemStackSerializer {
 
             for (int i=0, last = metaObjects.size() - 1; i < metaObjects.size(); i++) {
 
-                ItemMetaObject meta = metaObjects.get(i);
+                ItemMetaValue meta = metaObjects.get(i);
 
                 buffy.append(meta.getName());
 
@@ -257,6 +314,4 @@ public class ItemStackSerializer {
             buffy.append('}');
         }
     }
-
-
 }

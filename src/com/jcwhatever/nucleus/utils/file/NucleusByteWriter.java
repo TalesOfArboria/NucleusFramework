@@ -27,8 +27,8 @@ package com.jcwhatever.nucleus.utils.file;
 
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlers;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;
@@ -507,9 +507,9 @@ public class NucleusByteWriter extends OutputStream {
         write((int)itemStack.getDurability());
         write(itemStack.getAmount());
 
-        List<IMetaHandler> handlers = ItemMetaHandlerManager.getHandlers();
+        List<IMetaHandler> handlers = ItemMetaHandlers.getGlobal().getHandlers();
 
-        List<ItemMetaObject> metaObjects = new ArrayList<>(10);
+        List<ItemMetaValue> metaObjects = new ArrayList<>(10);
 
         for (IMetaHandler handler : handlers) {
             metaObjects.addAll(handler.getMeta(itemStack));
@@ -517,7 +517,7 @@ public class NucleusByteWriter extends OutputStream {
 
         write(metaObjects.size());
 
-        for (ItemMetaObject metaObject : metaObjects) {
+        for (ItemMetaValue metaObject : metaObjects) {
             writeSmallString(metaObject.getName());
             write(metaObject.getRawData(), StandardCharsets.UTF_16);
         }

@@ -36,8 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles item color meta, as a byte number [0-15], the name of the color,
- * or in the case of leather, the RGB hex value.
+ * Handles {@link org.bukkit.inventory.ItemStack} color meta, as a byte number [0-15],
+ * the name of the color, or in the case of leather, the RGB hex value.
+ *
+ * @see ItemMetaHandlers
  */
 public class ColorHandler implements IMetaHandler {
 
@@ -55,7 +57,7 @@ public class ColorHandler implements IMetaHandler {
     }
 
     @Override
-    public boolean apply(ItemStack itemStack, ItemMetaObject meta) {
+    public boolean apply(ItemStack itemStack, ItemMetaValue meta) {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
@@ -118,10 +120,10 @@ public class ColorHandler implements IMetaHandler {
     }
 
     @Override
-    public List<ItemMetaObject> getMeta(ItemStack itemStack) {
+    public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        List<ItemMetaObject> result = new ArrayList<>(1);
+        List<ItemMetaValue> result = new ArrayList<>(1);
 
         if (itemStack.getItemMeta() instanceof LeatherArmorMeta) {
 
@@ -131,13 +133,13 @@ public class ColorHandler implements IMetaHandler {
 
             String code = '#' + Integer.toHexString(color.asRGB());
 
-            result.add(new ItemMetaObject(getMetaName(), code));
+            result.add(new ItemMetaValue(getMetaName(), code));
 
             return result;
         }
 
         if (Materials.hasColorData(itemStack.getType())) {
-            result.add(new ItemMetaObject(getMetaName(), String.valueOf(itemStack.getDurability())));
+            result.add(new ItemMetaValue(getMetaName(), String.valueOf(itemStack.getDurability())));
         }
 
         return result;

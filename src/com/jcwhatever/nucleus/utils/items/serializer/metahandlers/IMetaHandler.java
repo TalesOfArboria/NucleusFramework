@@ -32,13 +32,15 @@ import java.util.List;
  * Interface for an implementation that can apply and retrieve
  * specific meta from an {@link org.bukkit.inventory.ItemStack} for use by a
  * serializer/deserializer.
+ *
+ * @see ItemMetaHandlers
  */
 public interface IMetaHandler {
 
     /**
      * Get the name of the meta that is handled.
      */
-    public String getMetaName();
+    String getMetaName();
 
     /**
      * Determine if the meta handler can get meta from the
@@ -46,7 +48,7 @@ public interface IMetaHandler {
      *
      * @param itemStack  The item stack to check.
      */
-    public boolean canHandle(ItemStack itemStack);
+    boolean canHandle(ItemStack itemStack);
 
     /**
      * Apply the meta to the item stack. The name of the meta must
@@ -57,14 +59,17 @@ public interface IMetaHandler {
      *
      * @return  True if successful.
      */
-    public boolean apply(ItemStack itemStack, ItemMetaObject meta);
+    boolean apply(ItemStack itemStack, ItemMetaValue meta);
 
     /**
-     * Get the item meta object for the item stack.
+     * Get the item meta values for the item stack.
+     *
+     * <p>If the meta handler supports more than 1 meta entry of itself,
+     * multiple values can be returned.</p>
      *
      * @param itemStack  The item stack to get meta from.
      *
-     * @return  empty if unable to retrieve meta.
+     * @return  The meta values. Empty if unable to retrieve meta.
      */
-    public List<ItemMetaObject> getMeta(ItemStack itemStack);
+    List<ItemMetaValue> getMeta(ItemStack itemStack);
 }

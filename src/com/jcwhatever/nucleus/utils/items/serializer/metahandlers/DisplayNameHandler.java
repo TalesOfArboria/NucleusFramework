@@ -34,7 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles item display name meta.
+ * Handles {@link org.bukkit.inventory.ItemStack} display name meta.
+ *
+ * @see ItemMetaHandlers
  */
 public class DisplayNameHandler implements IMetaHandler {
 
@@ -52,7 +54,7 @@ public class DisplayNameHandler implements IMetaHandler {
     }
 
     @Override
-    public boolean apply(ItemStack itemStack, ItemMetaObject meta) {
+    public boolean apply(ItemStack itemStack, ItemMetaValue meta) {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
@@ -65,16 +67,16 @@ public class DisplayNameHandler implements IMetaHandler {
     }
 
     @Override
-    public List<ItemMetaObject> getMeta(ItemStack itemStack) {
+    public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null || !meta.hasDisplayName())
             return new ArrayList<>(0);
 
-        List<ItemMetaObject> result = new ArrayList<>(1);
+        List<ItemMetaValue> result = new ArrayList<>(1);
 
-        result.add(new ItemMetaObject(getMetaName(), meta.getDisplayName()));
+        result.add(new ItemMetaValue(getMetaName(), meta.getDisplayName()));
 
         return result;
     }

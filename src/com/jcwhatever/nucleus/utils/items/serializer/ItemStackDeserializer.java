@@ -25,9 +25,9 @@
 package com.jcwhatever.nucleus.utils.items.serializer;
 
 import com.jcwhatever.nucleus.utils.converters.Converters;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlers;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Material;
@@ -46,29 +46,46 @@ import javax.annotation.Nullable;
  * <p>
  *     Format: MaterialName[:ByteData][;Amount][{ metaName1: "metaValue1", metaName2: "metaValue2" }]
  * </p>
+ *
+ * @see ItemStackSerializer
+ * @see ItemMetaHandlers
  */
 public class ItemStackDeserializer {
 
     private final String _itemString;
+    private final ItemMetaHandlers _metaHandlers;
     private StringBuilder _buffer;
     private int _index = 0;
     private List<ItemStack> _results = new LinkedList<>();
 
-
     /**
      * Constructor.
      *
-     * @param itemString  The string to parse. The string must represent a one or more
+     * @param itemString  The string to parse. The string must represent one or more
      *                    {@link org.bukkit.inventory.ItemStack}'s
      *
      * @throws InvalidItemStackStringException
      */
     public ItemStackDeserializer(String itemString) throws InvalidItemStackStringException {
+        this(ItemMetaHandlers.getGlobal(), itemString);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param itemString  The string to parse. The string must represent one or more
+     *                    {@link org.bukkit.inventory.ItemStack}'s
+     *
+     * @throws InvalidItemStackStringException
+     */
+    public ItemStackDeserializer(ItemMetaHandlers metaHandlers, String itemString)
+            throws InvalidItemStackStringException {
+        PreCon.notNull(metaHandlers);
         PreCon.notNull(itemString);
 
+        _metaHandlers = metaHandlers;
         _itemString = itemString;
         _buffer = new StringBuilder(itemString.length());
-
 
         while (canParse()) {
             ItemStack item = parseItemStack();
@@ -115,7 +132,7 @@ public class ItemStackDeserializer {
         short data = 0;
         int amount = 1;
         Potion potion;
-        List<ItemMetaObject> metaObjects = new ArrayList<>(15);
+        List<ItemMetaValue> metaObjects = new ArrayList<>(15);
 
         String rawMaterial = parseMaterial();
         if (rawMaterial.isEmpty())
@@ -151,9 +168,9 @@ public class ItemStackDeserializer {
             stack.setDurability(data);
         }
 
-        for (ItemMetaObject meta : metaObjects) {
+        for (ItemMetaValue meta : metaObjects) {
 
-            IMetaHandler handler = ItemMetaHandlerManager.getHandler(meta.getName());
+            IMetaHandler handler = _metaHandlers.getHandler(meta.getName());
             if (handler == null)
                 continue;
 
@@ -263,7 +280,7 @@ public class ItemStackDeserializer {
     /*
      * Parse extra meta data
      */
-    private void parseMeta(Collection<ItemMetaObject> metaObjects) throws InvalidItemStackStringException {
+    private void parseMeta(Collection<ItemMetaValue> metaObjects) throws InvalidItemStackStringException {
 
         while (canParse()) {
 
@@ -273,7 +290,7 @@ public class ItemStackDeserializer {
 
             String metaValue = parseMetaValue();
 
-            metaObjects.add(new ItemMetaObject(metaName, metaValue));
+            metaObjects.add(new ItemMetaValue(metaName, metaValue));
         }
     }
 
@@ -386,8 +403,7 @@ public class ItemStackDeserializer {
     }
 
     /*
-     * Get the next character and increment
-     * the index position.
+     * Get the next character and increment the index position.
      */
     private char next() {
         char ch = _itemString.charAt(_index);
@@ -396,8 +412,8 @@ public class ItemStackDeserializer {
     }
 
     /*
-     * Get a character forward from the current position
-     * without incrementing the index;
+     * Get a character forward from the current position without incrementing
+     * the index.
      */
     private char peek(int amount) {
         return _itemString.charAt(_index + amount);
@@ -414,5 +430,4 @@ public class ItemStackDeserializer {
                 break;
         }
     }
-
 }

@@ -35,6 +35,8 @@ import java.util.List;
 
 /**
  * Handles {@link org.bukkit.inventory.ItemStack} lore meta.
+ *
+ * @see ItemMetaHandlers
  */
 public class LoreHandler implements IMetaHandler {
 
@@ -52,7 +54,7 @@ public class LoreHandler implements IMetaHandler {
     }
 
     @Override
-    public boolean apply(ItemStack itemStack, ItemMetaObject meta) {
+    public boolean apply(ItemStack itemStack, ItemMetaValue meta) {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
@@ -79,7 +81,7 @@ public class LoreHandler implements IMetaHandler {
     }
 
     @Override
-    public List<ItemMetaObject> getMeta(ItemStack itemStack) {
+    public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
         ItemMeta meta = itemStack.getItemMeta();
@@ -90,10 +92,10 @@ public class LoreHandler implements IMetaHandler {
         if (lore == null || lore.isEmpty())
             return new ArrayList<>(0);
 
-        List<ItemMetaObject> result = new ArrayList<>(1);
+        List<ItemMetaValue> result = new ArrayList<>(1);
 
         for (String line : lore) {
-            result.add(new ItemMetaObject(getMetaName(), line));
+            result.add(new ItemMetaValue(getMetaName(), line));
         }
 
         return result;

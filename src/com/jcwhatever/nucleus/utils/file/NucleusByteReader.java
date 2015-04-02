@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlerManager;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaObject;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlers;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -523,11 +523,11 @@ public class NucleusByteReader extends InputStream {
             if (metaData == null)
                 throw new IOException("Failed to read meta data of entry #" + i);
 
-            IMetaHandler handler = ItemMetaHandlerManager.getHandler(metaName);
+            IMetaHandler handler = ItemMetaHandlers.getGlobal().getHandler(metaName);
             if (handler == null)
                 continue;
 
-            ItemMetaObject meta = new ItemMetaObject(metaName, metaData);
+            ItemMetaValue meta = new ItemMetaValue(metaName, metaData);
 
             handler.apply(result, meta);
         }

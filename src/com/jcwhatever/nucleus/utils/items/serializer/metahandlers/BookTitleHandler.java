@@ -34,7 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles a book items title meta.
+ * Handles a book {@link org.bukkit.inventory.ItemStack} title meta.
+ *
+ * @see ItemMetaHandlers
  */
 public class BookTitleHandler implements IMetaHandler {
 
@@ -52,7 +54,7 @@ public class BookTitleHandler implements IMetaHandler {
     }
 
     @Override
-    public boolean apply(ItemStack itemStack, ItemMetaObject meta) {
+    public boolean apply(ItemStack itemStack, ItemMetaValue meta) {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
@@ -70,10 +72,10 @@ public class BookTitleHandler implements IMetaHandler {
     }
 
     @Override
-    public List<ItemMetaObject> getMeta(ItemStack itemStack) {
+    public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        List<ItemMetaObject> result = new ArrayList<>(1);
+        List<ItemMetaValue> result = new ArrayList<>(1);
 
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (!(itemMeta instanceof BookMeta))
@@ -81,7 +83,7 @@ public class BookTitleHandler implements IMetaHandler {
 
         BookMeta bookMeta = (BookMeta)itemMeta;
 
-        result.add(new ItemMetaObject(getMetaName(), bookMeta.getTitle()));
+        result.add(new ItemMetaValue(getMetaName(), bookMeta.getTitle()));
 
         itemStack.setItemMeta(bookMeta);
 

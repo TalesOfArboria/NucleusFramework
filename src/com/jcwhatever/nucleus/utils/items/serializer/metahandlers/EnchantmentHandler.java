@@ -35,7 +35,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Handles item enchantment meta.
+ * Handles {@link org.bukkit.inventory.ItemStack} enchantment meta.
+ *
+ * @see ItemMetaHandlers
  */
 public class EnchantmentHandler implements IMetaHandler {
 
@@ -52,7 +54,7 @@ public class EnchantmentHandler implements IMetaHandler {
     }
 
     @Override
-    public boolean apply(ItemStack itemStack, ItemMetaObject meta) {
+    public boolean apply(ItemStack itemStack, ItemMetaValue meta) {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
@@ -78,7 +80,7 @@ public class EnchantmentHandler implements IMetaHandler {
     }
 
     @Override
-    public List<ItemMetaObject> getMeta(ItemStack itemStack) {
+    public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
         int totalEnchants = itemStack.getEnchantments().size();
@@ -86,13 +88,13 @@ public class EnchantmentHandler implements IMetaHandler {
         if (totalEnchants == 0)
             return new ArrayList<>(0);
 
-        List<ItemMetaObject> results = new ArrayList<>(totalEnchants);
+        List<ItemMetaValue> results = new ArrayList<>(totalEnchants);
         Set<Enchantment> enchantments = itemStack.getEnchantments().keySet();
 
         for (Enchantment enchant: enchantments) {
             int level = itemStack.getEnchantmentLevel(enchant);
 
-            results.add(new ItemMetaObject(getMetaName(), enchant.getName() + ':' + level));
+            results.add(new ItemMetaValue(getMetaName(), enchant.getName() + ':' + level));
         }
 
         return results;

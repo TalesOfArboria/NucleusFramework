@@ -35,7 +35,12 @@ import java.util.List;
 
 /**
  * Handles a books page meta. Each page reference is a single page.
- * (i.e 3 pages require 3 "bookPage" parameters)
+ * (i.e 3 pages require 3 "bookPage" meta entries)
+ *
+ * <p>Each meta entry represents a page sequentially.
+ * (i.e. The first meta entry is page 1)</p>
+ *
+ * @see ItemMetaHandlers
  */
 public class BookPageHandler implements IMetaHandler {
 
@@ -53,7 +58,7 @@ public class BookPageHandler implements IMetaHandler {
     }
 
     @Override
-    public boolean apply(ItemStack itemStack, ItemMetaObject meta) {
+    public boolean apply(ItemStack itemStack, ItemMetaValue meta) {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
@@ -85,7 +90,7 @@ public class BookPageHandler implements IMetaHandler {
     }
 
     @Override
-    public List<ItemMetaObject> getMeta(ItemStack itemStack) {
+    public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -99,10 +104,10 @@ public class BookPageHandler implements IMetaHandler {
         if (pages == null || pages.isEmpty())
             return new ArrayList<>(0);
 
-        List<ItemMetaObject> result = new ArrayList<>(pages.size());
+        List<ItemMetaValue> result = new ArrayList<>(pages.size());
 
         for (String page : pages) {
-            result.add(new ItemMetaObject(getMetaName(), page));
+            result.add(new ItemMetaValue(getMetaName(), page));
         }
 
         itemStack.setItemMeta(bookMeta);
