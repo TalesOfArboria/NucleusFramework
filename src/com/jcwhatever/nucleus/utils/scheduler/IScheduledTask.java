@@ -32,25 +32,23 @@ public interface IScheduledTask {
     /**
      * Get the runnable that the task runs.
      */
-    public Runnable getRunnable();
+    Runnable getRunnable();
 
     /**
-     * Determine if the cancel method was called
-     * on the task.
+     * Determine if the cancel method was invoked on the task.
      */
-    public boolean isCancelled();
+    boolean isCancelled();
 
     /**
-     * Determine if the scheduled task is a repeating
-     * task.
+     * Determine if the scheduled task is a repeating task.
      */
-    public boolean isRepeating();
+    boolean isRepeating();
 
     /**
      * Cancels the scheduled task.
      *
-     * <p>If the task is already cancelled or has
-     * already executed, nothing happens.</p>
+     * <p>If the task is already cancelled or has already executed,
+     * nothing happens.</p>
      */
-    public void cancel();
+    void cancel();
 }

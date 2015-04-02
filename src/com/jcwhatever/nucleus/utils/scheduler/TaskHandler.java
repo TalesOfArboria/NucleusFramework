@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 
 /**
  * A task handler {@link java.lang.Runnable} with the ability to cancel itself
- * and run optional code if it is cancelled.
+ * and run optional code if it's cancelled.
  */
 public abstract class TaskHandler implements Runnable {
 
@@ -46,12 +46,12 @@ public abstract class TaskHandler implements Runnable {
      *
      * <p>Adds TaskHandler as a child.</p>
      *
-     * <p>You must still call the child task handlers run method manually.</p>
+     * <p>The child task handler is not run in conjunction with the task. The purpose of a
+     * parent/child relationship is to cancel all child and parent tasks when any of the tasks
+     * in the relationship are cancelled.</p>
      *
-     * <p>Calling cancelTask method also calls cancelTask on the child
-     * method if it's a {@link TaskHandler} instance.</p>
-     *
-     * <p>Calling cancelTask method on the child also calls cancelTask method.</p>
+     * <p>Invoking {@link #cancelTask} method also invokes {@link #cancelTask} on the child
+     * instance method.</p>
      *
      * @param child  The child task handler.
      */
@@ -86,11 +86,11 @@ public abstract class TaskHandler implements Runnable {
     /**
      * Set the scheduled task.
      *
-     * <p>Used by the {@link ITaskScheduler} implementation.</p>
+     * <p>For use by the {@link ITaskScheduler} implementation.</p>
      */
     public void setTask(IScheduledTask task) {
         if (_task != null)
-            throw new RuntimeException("A TaskHandler cannot be in more than 1 scheduled task at a time.");
+            throw new IllegalStateException("A TaskHandler cannot be in more than 1 scheduled task at a time.");
 
         _task = task;
 
@@ -107,8 +107,7 @@ public abstract class TaskHandler implements Runnable {
     protected void onCancel() {}
 
     /*
-     * Set the parent and its parents
-     * as cancelled.
+     * Set the parent and its parents as cancelled.
      */
     private void cancelUp() {
         if (_parent != null) {
@@ -117,8 +116,7 @@ public abstract class TaskHandler implements Runnable {
     }
 
     /*
-     * Set the children and their children
-     * as cancelled.
+     * Set the children and their children as cancelled.
      */
     private void cancelDown() {
         if (_child != null) {
