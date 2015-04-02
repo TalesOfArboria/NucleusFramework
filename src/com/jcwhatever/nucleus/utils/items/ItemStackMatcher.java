@@ -78,7 +78,8 @@ public class ItemStackMatcher {
 
     /**
      * Get the default singleton instance of the {@link ItemStackMatcher}.
-     * Matches by type and meta data.
+     *
+     * <p>Matches by type and meta data.</p>
      */
     public static ItemStackMatcher getDefault() {
         return _default;
@@ -104,7 +105,7 @@ public class ItemStackMatcher {
      * Get a singleton instance of a {@link ItemStackMatcher} with custom
      * matcher operations combinations defined.
      *
-     * @param matchOperations  The matcher operations bit flags to use.
+     * @param matchOperations  The matcher operationss bit flags to use.
      */
     public static synchronized ItemStackMatcher get(byte matchOperations) {
         ItemStackMatcher comparer = _custom.get(matchOperations);
@@ -174,7 +175,7 @@ public class ItemStackMatcher {
 
     /**
      * Determine if two stacks are the same based on the properties
-     * the matcher matches..
+     * the matcher matches.
      *
      * @param stack1  The first item stack to compare.
      * @param stack2  The second item stack to compare.
@@ -208,8 +209,10 @@ public class ItemStackMatcher {
             if (stack1.hasItemMeta() != stack2.hasItemMeta())
                 return false;
 
-            if (stack1.hasItemMeta() && !Bukkit.getItemFactory().equals(stack1.getItemMeta(), stack2.getItemMeta()))
+            if (stack1.hasItemMeta() && !Bukkit.getItemFactory().equals(
+                    stack1.getItemMeta(), stack2.getItemMeta())) {
                 return false;
+            }
         }
 
         // compare durability
