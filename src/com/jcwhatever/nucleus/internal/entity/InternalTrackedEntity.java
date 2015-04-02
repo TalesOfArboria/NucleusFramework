@@ -22,13 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.entity;
+package com.jcwhatever.nucleus.internal.entity;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.utils.coords.ChunkUtils;
 import com.jcwhatever.nucleus.utils.coords.Coords2Di;
 import com.jcwhatever.nucleus.utils.coords.MutableCoords2Di;
+import com.jcwhatever.nucleus.utils.entity.EntityUtils;
+import com.jcwhatever.nucleus.utils.entity.ITrackedEntity;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
@@ -46,9 +48,10 @@ import java.util.UUID;
  *
  * @see EntityUtils#trackEntity
  */
-public final class TrackedEntity {
+public final class InternalTrackedEntity implements ITrackedEntity {
 
     private final UUID _uuid;
+    private final InternalEntityTracker _tracker;
     private Entity _recent;
     private World _world;
     private boolean _isDisposed;
@@ -62,10 +65,12 @@ public final class TrackedEntity {
      *
      * @param entity  The entity to track.
      */
-    TrackedEntity(Entity entity) {
+    InternalTrackedEntity(InternalEntityTracker tracker, Entity entity) {
+        PreCon.notNull(tracker);
         PreCon.notNull(entity);
 
         _uuid = entity.getUniqueId();
+        _tracker = tracker;
         _world = entity.getWorld();
         _recent = entity;
     }
@@ -73,6 +78,7 @@ public final class TrackedEntity {
     /**
      * The entities unique id.
      */
+    @Override
     public UUID getUniqueId() {
         return _uuid;
     }
@@ -80,6 +86,7 @@ public final class TrackedEntity {
     /**
      * Get the most recent entity instance.
      */
+    @Override
     public synchronized Entity getEntity() {
         return _recent;
     }
@@ -87,6 +94,7 @@ public final class TrackedEntity {
     /**
      * Get the world the entity is in.
      */
+    @Override
     public synchronized World getWorld() {
         return _world;
     }
@@ -95,6 +103,7 @@ public final class TrackedEntity {
      * Determine if the chunk the entity is in
      * is loaded.
      */
+    @Override
     public synchronized boolean isChunkLoaded() {
 
         Location location = _recent.getLocation(_entityLocation);
@@ -111,7 +120,8 @@ public final class TrackedEntity {
      *
      * @return  Self for chaining.
      */
-    public synchronized TrackedEntity onUnload(UpdateSubscriber<ChunkInfo> subscriber) {
+    @Override
+    public synchronized InternalTrackedEntity onUnload(UpdateSubscriber<ChunkInfo> subscriber) {
         PreCon.notNull(subscriber);
 
         _updateAgents.getAgent("onUnload").addSubscriber(subscriber);
@@ -127,7 +137,8 @@ public final class TrackedEntity {
      *
      * @return  Self for chaining.
      */
-    public synchronized TrackedEntity onUpdate(UpdateSubscriber<Entity> subscriber) {
+    @Override
+    public synchronized InternalTrackedEntity onUpdate(UpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
         _updateAgents.getAgent("onUpdate").addSubscriber(subscriber);
@@ -142,7 +153,8 @@ public final class TrackedEntity {
      *
      * @return  Self for chaining.
      */
-    public synchronized TrackedEntity onDeath(UpdateSubscriber<Entity> subscriber) {
+    @Override
+    public synchronized InternalTrackedEntity onDeath(UpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
         _updateAgents.getAgent("onDeath").addSubscriber(subscriber);
@@ -153,6 +165,7 @@ public final class TrackedEntity {
     /**
      * Determine if the tracked object is disposed.
      */
+    @Override
     public synchronized boolean isDisposed() {
         return _isDisposed;
     }
@@ -172,7 +185,7 @@ public final class TrackedEntity {
         _world = null;
         _updateAgents.disposeAgents();
 
-        EntityUtils._entityTracker.disposeEntity(this);
+        _tracker.disposeEntity(this);
     }
 
     /**

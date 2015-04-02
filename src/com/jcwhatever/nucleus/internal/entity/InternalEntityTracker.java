@@ -22,11 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.entity;
+package com.jcwhatever.nucleus.internal.entity;
 
 import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.entity.EntityUtils;
+import com.jcwhatever.nucleus.utils.entity.IEntityTracker;
+import com.jcwhatever.nucleus.utils.entity.ITrackedEntity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -42,21 +45,19 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Tracks entities and updates {@link TrackedEntity} objects.
- *
- * <p>Used internally.</p>
+ * Tracks entities and updates {@link InternalTrackedEntity} objects.
  *
  * @see EntityUtils#trackEntity
  */
-public final class EntityTracker implements Listener {
+public final class InternalEntityTracker implements IEntityTracker, Listener {
 
-    private Map<UUID, TrackedEntity> _entities = new MapMaker().concurrencyLevel(3).initialCapacity(25).makeMap();
+    private Map<UUID, InternalTrackedEntity> _entities = new MapMaker().concurrencyLevel(3)
+            .initialCapacity(25).makeMap();
 
     /**
      * Constructor.
      */
-    EntityTracker() {
-
+    public InternalEntityTracker() {
         Bukkit.getPluginManager().registerEvents(this, Nucleus.getPlugin());
     }
 
@@ -65,28 +66,29 @@ public final class EntityTracker implements Listener {
      *
      * @param entity  The entity to track.
      *
-     * @return  A new or cached {@link TrackedEntity} instance.
+     * @return  A new or cached {@link InternalTrackedEntity} instance.
      */
-    public TrackedEntity trackEntity(Entity entity) {
+    @Override
+    public InternalTrackedEntity trackEntity(Entity entity) {
 
         if (entity instanceof Player)
             throw new IllegalArgumentException("Player entities cannot be tracked.");
 
-        TrackedEntity tracked = _entities.get(entity.getUniqueId());
+        InternalTrackedEntity tracked = _entities.get(entity.getUniqueId());
         if (tracked != null && !tracked.isDisposed())
             return tracked;
 
-        tracked = new TrackedEntity(entity);
+        tracked = new InternalTrackedEntity(this, entity);
         _entities.put(entity.getUniqueId(), tracked);
 
         return tracked;
     }
 
     /**
-     * Invoked when a {@link TrackedEntity} is disposed so it can
+     * Invoked when a {@link InternalTrackedEntity} is disposed so it can
      * be removed from the entity map.
      */
-    void disposeEntity(TrackedEntity tracked) {
+    void disposeEntity(InternalTrackedEntity tracked) {
         _entities.remove(tracked.getUniqueId());
     }
 
@@ -104,7 +106,7 @@ public final class EntityTracker implements Listener {
 
         for (Entity entity : entities) {
 
-            TrackedEntity tracked = _entities.get(entity.getUniqueId());
+            InternalTrackedEntity tracked = _entities.get(entity.getUniqueId());
             if (tracked == null || isDisposed(tracked))
                 continue;
 
@@ -123,7 +125,7 @@ public final class EntityTracker implements Listener {
 
         for (Entity entity : entities) {
 
-            TrackedEntity tracked = _entities.get(entity.getUniqueId());
+            InternalTrackedEntity tracked = _entities.get(entity.getUniqueId());
             if (tracked == null || isDisposed(tracked))
                 continue;
 
@@ -141,7 +143,7 @@ public final class EntityTracker implements Listener {
         if (Double.compare(event.getEntity().getHealth(), 0.0D) != 0)
             return;
 
-        TrackedEntity tracked = _entities.remove(event.getEntity().getUniqueId());
+        InternalTrackedEntity tracked = _entities.remove(event.getEntity().getUniqueId());
         if (tracked == null || tracked.isDisposed())
             return;
 
@@ -149,7 +151,7 @@ public final class EntityTracker implements Listener {
         tracked.dispose();
     }
 
-    private boolean isDisposed(TrackedEntity tracked) {
+    private boolean isDisposed(ITrackedEntity tracked) {
         if (tracked.isDisposed()) {
             _entities.remove(tracked.getUniqueId());
             return true;

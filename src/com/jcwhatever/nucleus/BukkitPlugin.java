@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.internal.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
+import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
@@ -68,6 +69,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalSoundManager _soundManager;
     InternalNmsManager _nmsManager;
     InternalSignManager _signManager;
+    InternalEntityTracker _entityTracker;
 
     EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
@@ -151,6 +153,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _equipperManager = new EntityEquipperManager();
         _soundManager = new InternalSoundManager();
         _signManager = new InternalSignManager();
+        _entityTracker = new InternalEntityTracker();
     }
 
     @Override

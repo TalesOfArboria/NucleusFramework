@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.scripting.IScriptApiRepo;
 import com.jcwhatever.nucleus.scripting.IScriptManager;
 import com.jcwhatever.nucleus.sounds.ISoundManager;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.entity.IEntityTracker;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.nucleus.utils.kits.KitManager;
@@ -118,6 +119,15 @@ public final class Nucleus {
      */
     public static List<NucleusPlugin> getNucleusPlugins() {
         return new ArrayList<>(_pluginNameMap.values());
+    }
+
+    /**
+     * Get the global entity tracker.
+     */
+    public static IEntityTracker getEntityTracker() {
+        PreCon.isValid(_plugin._entityTracker != null, ERROR_NOT_READY);
+
+        return _plugin._entityTracker;
     }
 
     /**

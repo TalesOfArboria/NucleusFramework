@@ -30,10 +30,10 @@ import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemDespawnEvent;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemSpawnEvent;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
-import com.jcwhatever.nucleus.utils.entity.TrackedEntity;
+import com.jcwhatever.nucleus.utils.entity.ITrackedEntity;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
@@ -69,7 +69,7 @@ public class FloatingItem implements IFloatingItem {
     private final IDataNode _dataNode;
 
     private UUID _entityId;
-    private TrackedEntity _trackedEntity;
+    private ITrackedEntity _trackedEntity;
     private boolean _canPickup;
     private boolean _isCentered = true;
     private int _respawnTimeSeconds = 20;

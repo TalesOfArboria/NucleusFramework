@@ -25,8 +25,9 @@
 
 package com.jcwhatever.nucleus.utils.entity;
 
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.Bukkit;
@@ -53,8 +54,6 @@ public final class EntityUtils {
     private static final Location SOURCE_ENTITY_LOCATION = new Location(null, 0, 0, 0);
     private static final Location TARGET_ENTITY_LOCATION = new Location(null, 0, 0, 0);
     private static final Location NEARBY_ENTITY_LOCATION = new Location(null, 0, 0, 0);
-
-    static EntityTracker _entityTracker;
 
     /**
      * Find an {@link org.bukkit.entity.Entity} in a {@link org.bukkit.World}
@@ -648,7 +647,7 @@ public final class EntityUtils {
     }
 
     /**
-     * Returns a {@link TrackedEntity} object ensures you have the latest instance of an
+     * Returns a {@link ITrackedEntity} object used to get the latest instance of an
      * {@link org.bukkit.entity.Entity}.
      *
      * <p>This is used when an entity reference needs to be kept. Entity references are changed
@@ -657,14 +656,10 @@ public final class EntityUtils {
      *
      * @param entity  The entity to track.
      */
-    public static TrackedEntity trackEntity(Entity entity) {
+    public static ITrackedEntity trackEntity(Entity entity) {
         PreCon.notNull(entity);
 
-        if (_entityTracker == null) {
-            _entityTracker = new EntityTracker();
-        }
-
-        return _entityTracker.trackEntity(entity);
+        return Nucleus.getEntityTracker().trackEntity(entity);
     }
 
     private static int getStartChunk(double center, double radius) {
