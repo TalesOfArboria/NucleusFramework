@@ -80,7 +80,6 @@ public class MenuItemBuilderTest {
         List<Runnable> onClicks = menuItem.getOnClick();
 
         assertEquals(1, onClicks.size());
-        assertEquals(runnable, onClicks.get(0));
     }
 
     /**

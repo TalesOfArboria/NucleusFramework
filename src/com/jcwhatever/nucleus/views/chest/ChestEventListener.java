@@ -25,7 +25,6 @@
 package com.jcwhatever.nucleus.views.chest;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.manager.EventMethod;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewSession;
@@ -33,6 +32,7 @@ import com.jcwhatever.nucleus.views.chest.ChestEventInfo.ItemStackSource;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -75,7 +75,7 @@ class ChestEventListener implements Listener {
     /*
      * Inventory Click Event
      */
-    @EventMethod
+    @EventHandler
     private void onInventoryClick(InventoryClickEvent event) {
 
         ViewSession session = _chestSessionMap.get(event.getWhoClicked());
@@ -187,7 +187,7 @@ class ChestEventListener implements Listener {
     /*
      * Reset listener instance if NucleusFramework is disabled (i.e Server reset)
      */
-    @EventMethod
+    @EventHandler
     private void onNucleusDisabled(PluginDisableEvent event) {
         if (event.getPlugin() == Nucleus.getPlugin())
             _instance = null;
