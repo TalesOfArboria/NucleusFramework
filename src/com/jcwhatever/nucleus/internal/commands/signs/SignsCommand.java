@@ -23,25 +23,21 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.signs;
+package com.jcwhatever.nucleus.internal.commands.signs;
 
-import org.bukkit.Location;
+import com.jcwhatever.nucleus.commands.AbstractCommand;
+import com.jcwhatever.nucleus.commands.CommandInfo;
 
-class SignInfo {
+@CommandInfo(
+        command="signs",
+        description="View sign information.")
 
-    private final String[] _lines;
-    private final Location _location;
+public class SignsCommand extends AbstractCommand {
 
-    SignInfo(Location location, String...lines) {
-        _location = location;
-        _lines = lines;
-    }
+    public SignsCommand() {
+        super();
 
-    public String[] getLines() {
-        return _lines;
-    }
-
-    public Location getLocation() {
-        return _location;
+        registerCommand(TypesSubCommand.class);
+        registerCommand(UsageSubCommand.class);
     }
 }

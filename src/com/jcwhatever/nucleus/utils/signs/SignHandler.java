@@ -27,6 +27,9 @@ package com.jcwhatever.nucleus.utils.signs;
 
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -36,17 +39,20 @@ import org.bukkit.plugin.Plugin;
 import java.util.regex.Matcher;
 
 /**
- * Handles actions for a specific sign type.
+ * Abstract sign handler for signs of a specific type.
  */
 public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
 
     private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
+
     private String _displayName;
+    private SignHandlerRegistration _registration;
+    private IDataNode _dataNode;
 
     /**
-     * Specify the result of a sign change event.
+     * Specify the result of handling a sign change event.
      */
     public enum SignChangeResult {
         /**
@@ -59,13 +65,31 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
         INVALID
     }
 
+    /**
+     * Specify the result of handling a sign click event.
+     */
     public enum SignClickResult {
+        /**
+         * The event was handled.
+         */
         HANDLED,
+        /**
+         * The event was ignored.
+         */
         IGNORED
     }
 
+    /**
+     * Specify the result of handling a sign break event.
+     */
     public enum SignBreakResult {
+        /**
+         * Allow the sign to be broken.
+         */
         ALLOW,
+        /**
+         * Prevent the sign from being broken.
+         */
         DENY
     }
 
@@ -73,37 +97,28 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
      * Constructor.
      *
      * @param plugin  The owning plugin.
-     * @param name    The name of the sign (Used in the sign header)
+     * @param name    The name of the sign (Used in the sign header). Must be a valid name.
+     *                Starts with a letter, alphanumerics only. Underscores allowed.
      */
     public SignHandler(Plugin plugin, String name) {
         PreCon.notNull(plugin);
-        PreCon.notNullOrEmpty(name);
+        PreCon.validNodeName(name);
 
         _plugin = plugin;
         _name = name;
         _searchName = name.toLowerCase();
     }
 
-    /**
-     * The owning plugin.
-     */
     @Override
     public final Plugin getPlugin() {
         return _plugin;
     }
 
-    /**
-     * The name of the sign handler, must be a valid name.
-     * Starts with a letter, alphanumerics only. Underscores allowed.
-     */
     @Override
     public final String getName() {
         return _name;
     }
 
-    /**
-     * Get the sign handler name in all lower case.
-     */
     @Override
     public final String getSearchName() {
         return _searchName;
@@ -133,54 +148,111 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
     public abstract String getDescription();
 
     /**
-     * Get a string array describing sign usage. Each element of
-     * the array represents a line on the sign. There must be 4 elements
-     * in the array.
+     * Get a string array describing sign usage.
+     *
+     * <p>Each element of the array represents a line on the sign. There must be exactly 4 elements
+     * in the array.</p>
      */
     public abstract String[] getUsage();
 
     /**
-     * Invoked when a sign handled by the sign handler is
-     * loaded from the sign manager data node.
+     * Invoked by the internal {@link ISignManager} implementation when the handler is registered.
+     *
+     * @param registration  The internal managers registration object.
+     */
+    public final void onRegister(SignHandlerRegistration registration) {
+        PreCon.notNull(registration);
+        PreCon.isValid(_registration == null, "Already registered.");
+
+        _registration = registration;
+    }
+
+    /**
+     * Invoked when a sign handled by the sign handler is loaded from the
+     * {@link ISignManager} data node.
      *
      * @param sign  The loaded sign encapsulated.
      */
-    protected abstract void onSignLoad(SignContainer sign);
+    protected abstract void onSignLoad(ISignContainer sign);
 
     /**
-     * Invoked when a sign handled by the sign handler is
-     * changed/created.
+     * Invoked when a sign handled by the sign handler is changed/created.
      *
-     * @param p     The player who changed/created the sign.
-     * @param sign  The encapsulated sign.
+     * @param player  The {@link Player} who changed/created the sign.
+     * @param sign    The encapsulated {@link org.bukkit.block.Sign}.
      *
-     * @return  {@literal VALID} if the change is valid/allowed, otherwise {@literal INVALID}.
+     * @return  {@link SignChangeResult#VALID} if the change is valid/allowed,
+     * otherwise {@link SignChangeResult#INVALID}.
      */
-    protected abstract SignChangeResult onSignChange(Player p, SignContainer sign);
+    protected abstract SignChangeResult onSignChange(Player player, ISignContainer sign);
 
     /**
-     * Invoked when a sign handled by the sign handler is
-     * clicked on by a player.
+     * Invoked when a sign handled by the sign handler is clicked on by a
+     * {@link Player}.
      *
-     * @param p     The player who clicked the sign.
-     * @param sign  The encapsulated sign.
+     * @param player  The {@link Player} who clicked the sign.
+     * @param sign    The encapsulated {@link org.bukkit.block.Sign}.
      *
-     * @return  {@literal HANDLED} if the click was valid and handled,
-     * otherwise {@literal CANCEL}.
+     * @return  {@link SignClickResult#HANDLED} if the click was valid and handled,
+     * otherwise {@link SignClickResult#IGNORED}.
      */
-    protected abstract SignClickResult onSignClick(Player p, SignContainer sign);
+    protected abstract SignClickResult onSignClick(Player player, ISignContainer sign);
 
     /**
-     * Invoked when a sign handled by the sign handler is
-     * broken by a player. Sign break is only invoked when the
-     * player is capable of breaking a sign instantly. (i.e creative mode)
-     * Therefore the sign cannot be broken unless the player is capable of
+     * Invoked when a sign handled by the sign handler is broken by a {@link Player}.
+     * Sign break is only invoked when the player is capable of breaking a sign instantly.
+     * (i.e creative mode) The sign cannot be broken unless the player is capable of
      * instant break.
      *
-     * @param p     The player who is breaking the sign.
-     * @param sign  The encapsulated sign.
+     * @param player  The {@link Player} who is breaking the sign.
+     * @param sign    The encapsulated {@link org.bukkit.block.Sign}.
      *
-     * @return  {@literal ALLOW} if the break is allowed, otherwise {@literal DENY}.
+     * @return  {@link SignBreakResult#ALLOW} if the break is allowed, otherwise
+     * {@link SignBreakResult#DENY}.
      */
-    protected abstract SignBreakResult onSignBreak(Player p, SignContainer sign);
+    protected abstract SignBreakResult onSignBreak(Player player, ISignContainer sign);
+
+    /**
+     * Used internally to access protected methods.
+     */
+    public static class SignHandlerRegistration {
+
+        public void signLoad(SignHandler handler, ISignContainer sign) {
+            PreCon.notNull(handler);
+            PreCon.isValid(handler._registration == this, "Invalid registration.");
+
+            handler.onSignLoad(sign);
+        }
+
+        public SignChangeResult signChange(SignHandler handler, Player player, ISignContainer sign) {
+            PreCon.notNull(handler);
+            PreCon.isValid(handler._registration == this, "Invalid registration.");
+
+            return handler.onSignChange(player, sign);
+        }
+
+        public SignClickResult signClick(SignHandler handler, Player player, ISignContainer sign) {
+            PreCon.notNull(handler);
+            PreCon.isValid(handler._registration == this, "Invalid registration.");
+
+            return handler.onSignClick(player, sign);
+        }
+
+        public SignBreakResult signBreak(SignHandler handler, Player player, ISignContainer sign) {
+            PreCon.notNull(handler);
+            PreCon.isValid(handler._registration == this, "Invalid registration.");
+
+            return handler.onSignBreak(player, sign);
+        }
+
+        public IDataNode getDataNode(SignHandler handler) {
+            PreCon.notNull(handler);
+            PreCon.isValid(handler._registration == this, "Invalid registration.");
+
+            if (handler._dataNode == null)
+                handler._dataNode = DataStorage.get(handler.getPlugin(), new DataPath("nucleus.signs"));
+
+            return handler._dataNode;
+        }
+    }
 }

@@ -23,9 +23,10 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.signs;
+package com.jcwhatever.nucleus.internal.signs;
 
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
+
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -35,12 +36,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
-import java.util.List;
-
 /**
- * Global Bukkit event listener for {@link SignManager} instances.
+ * Global Bukkit event listener for {@link InternalSignManager} instances.
  */
-final class BukkitSignEventListener implements Listener {
+class BukkitListener implements Listener {
+
+    private final InternalSignManager _manager;
+
+    BukkitListener(InternalSignManager manager) {
+        _manager = manager;
+    }
 
     @EventHandler(priority=EventPriority.NORMAL)
     private void onSignChange(SignChangeEvent event) {
@@ -48,13 +53,7 @@ final class BukkitSignEventListener implements Listener {
         BlockState state = event.getBlock().getState();
         Sign sign = (Sign)state;
 
-        List<SignManager> managers = SignManager.getManagers();
-
-        // find the sign manager that handles the sign.
-        for (SignManager manager : managers) {
-            if (manager.signChange(sign, event))
-                break;
-        }
+        _manager.signChange(sign, event);
     }
 
     @EventHandler(priority=EventPriority.HIGHEST)
@@ -70,13 +69,7 @@ final class BukkitSignEventListener implements Listener {
             BlockState state = event.getBlock().getState();
             Sign sign = (Sign)state;
 
-            List<SignManager> managers = SignManager.getManagers();
-
-            // find the sign manager that handles the sign.
-            for (SignManager manager : managers) {
-                if (manager.signBreak(sign, event))
-                    break;
-            }
+            _manager.signBreak(sign, event);
         }
 
     }
@@ -84,12 +77,6 @@ final class BukkitSignEventListener implements Listener {
     @EventHandler(priority=EventPriority.NORMAL)
     private void onSignInteract(SignInteractEvent event) {
 
-        List<SignManager> managers = SignManager.getManagers();
-
-        // find the sign manager that handles the sign.
-        for (SignManager manager : managers) {
-            if (manager.signClick(event))
-                break;
-        }
+        _manager.signClick(event);
     }
 }

@@ -23,7 +23,10 @@
  */
 
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.utils.signs;
+
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -42,6 +45,36 @@ import javax.annotation.Nullable;
 public final class SignUtils {
 
     private SignUtils() {}
+
+    /**
+     * Register a {@link SignHandler} implementation to be used
+     * by the global {@link ISignManager}.
+     *
+     * @param handler  The handler to register.
+     *
+     * @return  True if the handler was registered, otherwise false.
+     *
+     * @see ISignManager#registerHandler
+     * @see Nucleus#getSignManager
+     */
+    public static boolean registerHandler(SignHandler handler) {
+        return Nucleus.getSignManager().registerHandler(handler);
+    }
+
+    /**
+     * Unregister a {@link SignHandler} implementation to be used
+     * by the global {@link ISignManager}.
+     *
+     * @param handler  The handler to unregister.
+     *
+     * @return  True if the handler was found and unregistered, otherwise false.
+     *
+     * @see ISignManager#unregisterHandler
+     * @see Nucleus#getSignManager
+     */
+    public static boolean unregisterHandler(SignHandler handler) {
+        return Nucleus.getSignManager().unregisterHandler(handler.getName());
+    }
 
     /**
      * Get the facing direction of a sign.
@@ -120,7 +153,7 @@ public final class SignUtils {
      *
      * @param block  The block that is a sign.
      *
-     * @return  Null if the block is not a sign.
+     * @return  The {@link BlockFace} or null if the block is not a sign.
      */
     @Nullable
     public static BlockFace getAttachedFace(Block block) {
@@ -200,7 +233,7 @@ public final class SignUtils {
      *
      * @param block  The block that is a sign.
      *
-     * @return  Null if the block is not a sign.
+     * @return  The {@link Sign} or null if the block is not a sign.
      */
     @Nullable
     public static Sign getSign(Block block) {
@@ -211,13 +244,13 @@ public final class SignUtils {
     }
 
     /**
-     * Get the sign adjacent of the provided block in the specified
+     * Get the {@link Sign} adjacent of the provided block in the specified
      * direction.
      *
      * @param source     The block to look from.
      * @param direction  The direction to look.
      *
-     * @return  Null if there is no sign adjacent.
+     * @return  The adjacent {@link Sign} or null if there is no sign adjacent.
      */
     @Nullable
     public static Sign getAdjacent(Block source, BlockFace direction) {
@@ -292,7 +325,7 @@ public final class SignUtils {
      *
      * @param sign  The outdated sign block state.
      *
-     * @return  Null if the block is no longer a sign.
+     * @return  The most recent {@link Sign} instance or null if the block is no longer a sign.
      */
     @Nullable
     public static Sign getRecent(Sign sign) {

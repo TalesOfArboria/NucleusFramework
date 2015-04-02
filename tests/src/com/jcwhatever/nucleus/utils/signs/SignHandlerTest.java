@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R2.MockWorld;
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
+import com.jcwhatever.nucleus.internal.signs.InternalSignManager;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
 
 import org.bukkit.GameMode;
@@ -23,7 +25,7 @@ public class SignHandlerTest {
 
     static Plugin _plugin;
     static MockSignHandler _signHandler;
-    static SignManager _signManager;
+    static ISignManager _signManager;
 
     MockWorld _world = BukkitTester.world("signHandlerWorld");
     Player _player = BukkitTester.login("dummy");
@@ -37,13 +39,13 @@ public class SignHandlerTest {
         BukkitTester.pause(10);
         _plugin = BukkitTester.mockPlugin("Plugin");
         _signHandler = new MockSignHandler(_plugin);
-        _signManager = new SignManager(_plugin, new MemoryDataNode(_plugin));
-        _signManager.registerSignType(_signHandler);
+        _signManager = Nucleus.getSignManager();
+        _signManager.registerHandler(_signHandler);
     }
 
     @AfterClass
     public static void deInit() {
-        _signManager.unregisterSignType(_signHandler.getName());
+        _signManager.unregisterHandler(_signHandler.getName());
     }
 
     /**

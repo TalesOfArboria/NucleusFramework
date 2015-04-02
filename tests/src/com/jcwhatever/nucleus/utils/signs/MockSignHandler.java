@@ -11,20 +11,20 @@ public class MockSignHandler extends SignHandler {
     public SignChangeResult signChangeResponse = SignChangeResult.VALID;
     public int signChangeCount = 0;
     public Player lastChangePlayer;
-    public SignContainer lastChangeContainer;
+    public ISignContainer lastChangeContainer;
 
     public SignClickResult signClickResponse = SignClickResult.HANDLED;
     public int signClickCount = 0;
     public Player lastClickPlayer;
-    public SignContainer lastClickContainer;
+    public ISignContainer lastClickContainer;
 
     public SignBreakResult signBreakResponse = SignBreakResult.ALLOW;
     public int signBreakCount = 0;
     public Player lastBreakPlayer;
-    public SignContainer lastBreakContainer;
+    public ISignContainer lastBreakContainer;
 
     public int signLoadCount = 0;
-    public SignContainer lastSignLoadContainer;
+    public ISignContainer lastSignLoadContainer;
 
     public MockSignHandler(Plugin plugin) {
         super(plugin, "Sign_Name");
@@ -51,30 +51,30 @@ public class MockSignHandler extends SignHandler {
     }
 
     @Override
-    protected void onSignLoad(SignContainer sign) {
+    protected void onSignLoad(ISignContainer sign) {
         signLoadCount++;
         lastSignLoadContainer = sign;
     }
 
     @Override
-    protected SignChangeResult onSignChange(Player p, SignContainer sign) {
-        lastChangePlayer = p;
+    protected SignChangeResult onSignChange(Player player, ISignContainer sign) {
+        lastChangePlayer = player;
         lastChangeContainer = sign;
         signChangeCount++;
         return signChangeResponse;
     }
 
     @Override
-    protected SignClickResult onSignClick(Player p, SignContainer sign) {
-        lastClickPlayer = p;
+    protected SignClickResult onSignClick(Player player, ISignContainer sign) {
+        lastClickPlayer = player;
         lastClickContainer = sign;
         signClickCount++;
         return signClickResponse;
     }
 
     @Override
-    protected SignBreakResult onSignBreak(Player p, SignContainer sign) {
-        lastBreakPlayer = p;
+    protected SignBreakResult onSignBreak(Player player, ISignContainer sign) {
+        lastBreakPlayer = player;
         lastBreakContainer = sign;
         signBreakCount++;
         return signBreakResponse;

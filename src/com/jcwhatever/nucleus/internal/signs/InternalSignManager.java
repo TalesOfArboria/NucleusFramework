@@ -1,43 +1,20 @@
-/*
- * This file is part of NucleusFramework for Bukkit, licensed under the MIT License (MIT).
- *
- * Copyright (c) JCThePants (www.jcwhatever.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-
-package com.jcwhatever.nucleus.utils.signs;
+package com.jcwhatever.nucleus.internal.signs;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.signs.SignHandler.SignBreakResult;
-import com.jcwhatever.nucleus.utils.signs.SignHandler.SignClickResult;
-import com.jcwhatever.nucleus.utils.signs.SignHandler.SignChangeResult;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.SignUtils;
+import com.jcwhatever.nucleus.utils.signs.SignUtils;
+import com.jcwhatever.nucleus.utils.signs.ISignContainer;
+import com.jcwhatever.nucleus.utils.signs.ISignManager;
+import com.jcwhatever.nucleus.utils.signs.SignHandler;
+import com.jcwhatever.nucleus.utils.signs.SignHandler.SignBreakResult;
+import com.jcwhatever.nucleus.utils.signs.SignHandler.SignChangeResult;
+import com.jcwhatever.nucleus.utils.signs.SignHandler.SignClickResult;
+import com.jcwhatever.nucleus.utils.signs.SignHandler.SignHandlerRegistration;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
@@ -50,7 +27,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,7 +35,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -67,21 +42,10 @@ import javax.annotation.Nullable;
 /**
  * Manages handled signs.
  */
-public class SignManager implements IPluginOwned {
+public class InternalSignManager implements ISignManager {
 
     private static final Pattern PATTERN_HEADER_STRIPPER = Pattern.compile("[\\[\\]]");
-
-    // keyed to sign name
-    private static final Map<String, SignHandler> _signHandlerMap = new HashMap<>(30);
-    private static final Map<SignManager, Void> _managers = new WeakHashMap<>(30);
-    private static BukkitSignEventListener _listener;
-
-    /**
-     * Get all {@link SignManager} instances.
-     */
-    public static List<SignManager> getManagers() {
-        return new ArrayList<>(_managers.keySet());
-    }
+    private static final SignHandlerRegistration REGISTRATION = new SignHandlerRegistration();
 
     /**
      * Get the data node name of a sign based on its location.
@@ -102,62 +66,24 @@ public class SignManager implements IPluginOwned {
                 worldName;
     }
 
-    private final Plugin _plugin;
-    private final IDataNode _dataNode;
-    private final Map<String, SignHandler> _localHandlerMap = new HashMap<>(10);
-    private final Map<Location, IDataNode> _signNodes;
+    // keyed to sign name
+    private final Map<String, SignHandler> _handlerMap = new HashMap<>(30);
 
     /**
      * Constructor.
-     *
-     * @param plugin    The owning plugin.
-     * @param dataNode  The config data node.
      */
-    public SignManager(Plugin plugin, IDataNode dataNode) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(dataNode);
+    public InternalSignManager() {
 
-        _plugin = plugin;
-        _dataNode = dataNode;
-        _signNodes = new TimedHashMap<>(plugin, 30, 20 * 60);
-
-        _managers.put(this, null);
-
-        if (_listener == null) {
-            _listener = new BukkitSignEventListener();
-            Bukkit.getPluginManager().registerEvents(_listener, Nucleus.getPlugin());
-        }
+        Bukkit.getPluginManager().registerEvents(new BukkitListener(this), Nucleus.getPlugin());
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
-    public Plugin getPlugin() {
-        return _plugin;
-    }
-
-    /**
-     * Get the managers data node.
-     */
-    public IDataNode getDataNode() {
-        return _dataNode;
-    }
-
-    /**
-     * Register a sign handler.
-     *
-     * @param signHandler  The sign handler to register.
-     *
-     * @return  True if registered, false if a sign handler with the same name is already registered or there is
-     * a problem with the sign handler.
-     */
-    public boolean registerSignType(SignHandler signHandler) {
+    public boolean registerHandler(SignHandler signHandler) {
         PreCon.notNull(signHandler);
 
-        SignHandler current = _signHandlerMap.get(signHandler.getSearchName());
+        SignHandler current = _handlerMap.get(signHandler.getSearchName());
         if (current != null) {
-            NucMsg.warning(_plugin,
+            NucMsg.warning(
                     "Failed to register sign handler. A sign named '{0}' is already " +
                             "registered by plugin '{1}'.",
                     current.getName(), current.getPlugin().getName());
@@ -166,94 +92,71 @@ public class SignManager implements IPluginOwned {
         }
 
         if (signHandler.getName() == null || signHandler.getName().isEmpty()) {
-            throw new RuntimeException("Failed to register sign handler because it has " +
+            throw new IllegalArgumentException("Failed to register sign handler because it has " +
                     "no name.");
         }
 
         if (!TextUtils.isValidName(signHandler.getName())) {
-            throw new RuntimeException("Failed to register sign handler because it has " +
+            throw new IllegalArgumentException("Failed to register sign handler because it has " +
                     "an invalid name: " + signHandler.getName());
         }
 
         if (signHandler.getPlugin() == null) {
-            throw new RuntimeException("Failed to register sign handler because it " +
+            throw new IllegalArgumentException("Failed to register sign handler because it " +
                     "did not return an owning plugin.");
         }
 
-        if (!signHandler.getPlugin().equals(_plugin)) {
-            throw new RuntimeException("Failed to register sign handler because its " +
-                    "owning plugin is not the same as the sign manager plugin.");
-        }
-
         if (signHandler.getUsage() == null) {
-            throw new RuntimeException("Failed to register sign because it's usage " +
+            throw new IllegalArgumentException("Failed to register sign because it's usage " +
                     "returns null.");
         }
 
         if (signHandler.getUsage().length != 4) {
-            throw new RuntimeException("Failed to register sign because it's usage " +
+            throw new IllegalArgumentException("Failed to register sign because it's usage " +
                     "array has an incorrect number of elements.");
         }
 
-        _signHandlerMap.put(signHandler.getSearchName(), signHandler);
-        _localHandlerMap.put(signHandler.getSearchName(), signHandler);
+        signHandler.onRegister(REGISTRATION);
+        _handlerMap.put(signHandler.getSearchName(), signHandler);
 
         loadSigns(signHandler);
         return true;
     }
 
-    /**
-     * Unregister a sign handler.
-     *
-     * @param name  The sign handler name.
-     *
-     * @return  True if found and unregistered.
-     */
-    public boolean unregisterSignType(String name) {
+    @Override
+    public boolean unregisterHandler(String name) {
         PreCon.notNull(name);
 
-        SignHandler current = _localHandlerMap.remove(name.toLowerCase());
+        SignHandler current = _handlerMap.remove(name.toLowerCase());
         if (current == null)
             return false;
 
-        _signHandlerMap.remove(current.getSearchName());
         return true;
     }
 
-    /**
-     * Get a sign handler by name.
-     *
-     * @param name  The name.
-     */
+    @Override
     public SignHandler getSignHandler(String name) {
         PreCon.notNull(name);
 
-        return _localHandlerMap.get(name.toLowerCase());
+        return _handlerMap.get(name.toLowerCase());
     }
 
-    /**
-     * Get all sign handlers.
-     */
+    @Override
     public Collection<SignHandler> getSignHandlers() {
-        return Collections.unmodifiableCollection(_localHandlerMap.values());
+        return Collections.unmodifiableCollection(_handlerMap.values());
     }
 
-    /**
-     * Get all signs saved to the config handled by the specified
-     * sign handler.
-     *
-     * @param signHandlerName  The name of the sign handler.
-     */
-    public List<SignContainer> getSigns(String signHandlerName) {
+    @Override
+    public List<ISignContainer> getSigns(String signHandlerName) {
         PreCon.notNullOrEmpty(signHandlerName);
 
-        SignHandler handler = _localHandlerMap.get(signHandlerName.toLowerCase());
+        SignHandler handler = _handlerMap.get(signHandlerName.toLowerCase());
         if (handler == null)
             return CollectionUtils.unmodifiableList();
 
-        IDataNode handlerNode = _dataNode.getNode(handler.getName());
+        IDataNode handlerNode = getHandlerNode(handler);
 
-        List<SignContainer> signs = new ArrayList<>(handlerNode.size());
+        List<ISignContainer> signs = new ArrayList<>(handlerNode.size());
 
         for (IDataNode signNode : handlerNode) {
 
@@ -261,27 +164,20 @@ public class SignManager implements IPluginOwned {
             if (location == null)
                 continue;
 
-            SignContainer container = new SignContainer(_plugin, location, signNode);
+            ISignContainer container = new InternalSignContainer(location, signNode);
 
             signs.add(container);
         }
 
         return Collections.unmodifiableList(signs);
     }
-
-    /**
-     * Get the text lines for a handled sign from the config.
-     *
-     * @param sign  The sign to check.
-     *
-     * @return  Null if no handler or sign is found in config.
-     */
+    @Override
     @Nullable
     public String[] getSavedLines(Sign sign) {
         PreCon.notNull(sign);
 
         String handlerName = getSignHandlerName(sign.getLine(0));
-        SignHandler handler = _localHandlerMap.get(handlerName);
+        SignHandler handler = _handlerMap.get(handlerName);
         if (handler == null)
             return null;
 
@@ -294,31 +190,21 @@ public class SignManager implements IPluginOwned {
         };
     }
 
-    /**
-     * Restore a sign from the specified sign handler at the specified location
-     * using config settings.
-     *
-     * <p>The sign is restored after a 1 tick scheduled delay.</p>
-     *
-     * @param signHandlerName  The name of the sign handler.
-     * @param location         The location of the sign.
-     *
-     * @return  True if completed.
-     */
+    @Override
     public boolean restoreSign (String signHandlerName, Location location) {
         PreCon.notNullOrEmpty(signHandlerName);
         PreCon.notNull(location);
 
-        SignHandler handler = _localHandlerMap.get(signHandlerName.toLowerCase());
+        SignHandler handler = _handlerMap.get(signHandlerName.toLowerCase());
         if (handler == null) {
-            NucMsg.warning(_plugin,
+            NucMsg.warning(
                     "Failed to restore sign because a sign handler named '{0}' was not found for it.",
                     signHandlerName);
             return false;
         }
 
         String signName = getSignNodeName(location);
-        IDataNode handlerNode = _dataNode.getNode(handler.getName());
+        IDataNode handlerNode = getHandlerNode(handler);
         if (!handlerNode.hasNode(signName))
             return false;
 
@@ -326,19 +212,22 @@ public class SignManager implements IPluginOwned {
 
         final Location loc = signNode.getLocation("location");
         if (loc == null) {
-            NucMsg.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
+            NucMsg.warning(handler.getPlugin(),
+                    "Failed to restore sign because it's missing its location config property.");
             return false;
         }
 
         final Material type = signNode.getEnum("type", null, Material.class);
         if (type == null) {
-            NucMsg.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
+            NucMsg.warning(handler.getPlugin(),
+                    "Failed to restore sign because it's missing its type config property.");
             return false;
         }
 
         final BlockFace facing = signNode.getEnum("direction", null, BlockFace.class);
         if (facing == null) {
-            NucMsg.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
+            NucMsg.warning(handler.getPlugin(),
+                    "Failed to restore sign because it's missing its direction config property.");
             return false;
         }
 
@@ -349,7 +238,7 @@ public class SignManager implements IPluginOwned {
 
         loc.getBlock().setType(type);
 
-        Scheduler.runTaskLater(_plugin, 1, new Runnable() {
+        Scheduler.runTaskLater(Nucleus.getPlugin(), new Runnable() {
 
             @Override
             public void run() {
@@ -371,46 +260,41 @@ public class SignManager implements IPluginOwned {
         return true;
     }
 
-    /**
-     * Restore signs from the specified sign handler using config settings.
-     *
-     * <p>The sign is restored after a 1 tick scheduled delay.</p>
-     *
-     * @param signHandlerName  The name of the sign handler.
-     *
-     * @return  True if restore completed.
-     */
+    @Override
     public boolean restoreSigns (String signHandlerName) {
         PreCon.notNullOrEmpty(signHandlerName);
 
-        SignHandler handler = _localHandlerMap.get(signHandlerName.toLowerCase());
+        SignHandler handler = _handlerMap.get(signHandlerName.toLowerCase());
         if (handler == null) {
-            NucMsg.warning(_plugin,
+            NucMsg.warning(
                     "Failed to restore signs because a sign handler named '{0}' was not found.",
                     signHandlerName);
             return false;
         }
 
-        IDataNode handlerNode = _dataNode.getNode(handler.getName());
+        IDataNode handlerNode = getHandlerNode(handler);
         final LinkedList<SignInfo> signInfo = new LinkedList<>();
 
         for (IDataNode signNode : handlerNode) {
 
             Location loc = signNode.getLocation("location");
             if (loc == null) {
-                NucMsg.warning(_plugin, "Failed to restore sign because it's missing its location config property.");
+                NucMsg.warning(handler.getPlugin(),
+                        "Failed to restore sign because it's missing its location config property.");
                 continue;
             }
 
             Material type = signNode.getEnum("type", null, Material.class);
             if (type == null) {
-                NucMsg.warning(_plugin, "Failed to restore sign because it's missing its type config property.");
+                NucMsg.warning(handler.getPlugin(),
+                        "Failed to restore sign because it's missing its type config property.");
                 continue;
             }
 
             BlockFace facing = signNode.getEnum("direction", null, BlockFace.class);
             if (facing == null) {
-                NucMsg.warning(_plugin, "Failed to restore sign because it's missing its direction config property.");
+                NucMsg.warning(handler.getPlugin(),
+                        "Failed to restore sign because it's missing its direction config property.");
                 continue;
             }
 
@@ -435,10 +319,10 @@ public class SignManager implements IPluginOwned {
                 while (!signInfo.isEmpty()) {
                     SignInfo s = signInfo.pop();
 
-                    BlockState state = s.getLocation().getBlock().getState();
+                    BlockState state = s.location.getBlock().getState();
                     Sign sign = (Sign) state;
 
-                    SignUtils.setLines(sign, s.getLines());
+                    SignUtils.setLines(sign, s.lines);
                     sign.update(true);
                 }
             }
@@ -447,7 +331,6 @@ public class SignManager implements IPluginOwned {
 
         return true;
     }
-
 
     /**
      * Invoke when a sign is changed/created.
@@ -460,7 +343,7 @@ public class SignManager implements IPluginOwned {
     boolean signChange(Sign sign, SignChangeEvent event) {
 
         String signName = getSignHandlerName(event.getLine(0));
-        SignHandler handler = _localHandlerMap.get(signName);
+        SignHandler handler = _handlerMap.get(signName);
         if (handler == null)
             return false;
 
@@ -469,11 +352,12 @@ public class SignManager implements IPluginOwned {
         event.setLine(2, ChatColor.translateAlternateColorCodes('&', event.getLine(2)));
         event.setLine(3, ChatColor.translateAlternateColorCodes('&', event.getLine(3)));
 
-        IDataNode signNode = _dataNode.getNode(handler.getName() + '.' + getSignNodeName(sign.getLocation()));
+        IDataNode signNode = getSignNode(handler, sign.getLocation());
 
-        SignChangeResult result = handler.onSignChange(
+        SignChangeResult result = REGISTRATION.signChange(
+                handler,
                 event.getPlayer(),
-                new SignContainer(_plugin, sign.getLocation(), signNode, event));
+                new InternalSignContainer(sign.getLocation(), signNode, event));
 
         if (result == null)
             throw new RuntimeException("A SignEventResult must be returned from SignHandler#onSignChange.");
@@ -510,15 +394,16 @@ public class SignManager implements IPluginOwned {
     boolean signClick(SignInteractEvent event) {
 
         String signName = getSignHandlerName(event.getSign().getLine(0));
-        SignHandler handler = _localHandlerMap.get(signName);
+        SignHandler handler = _handlerMap.get(signName);
         if (handler == null)
             return false;
 
         IDataNode signNode = getSignNode(handler, event.getSign().getLocation());
 
-        SignClickResult result = handler.onSignClick(
+        SignClickResult result = REGISTRATION.signClick(
+                handler,
                 event.getPlayer(),
-                new SignContainer(_plugin, event.getSign().getLocation(), signNode));
+                new InternalSignContainer(event.getSign().getLocation(), signNode));
 
         if (result == null)
             throw new RuntimeException("A SignClickResult must be returned from SignHandler#onSignClick.");
@@ -542,15 +427,16 @@ public class SignManager implements IPluginOwned {
     boolean signBreak(Sign sign, BlockBreakEvent event) {
 
         String signName = getSignHandlerName(sign.getLine(0));
-        SignHandler handler = _localHandlerMap.get(signName);
+        SignHandler handler = _handlerMap.get(signName);
         if (handler == null)
             return false;
 
         IDataNode signNode = getSignNode(handler, sign.getLocation());
 
-        SignBreakResult result = handler.onSignBreak(
+        SignBreakResult result = REGISTRATION.signBreak(
+                handler,
                 event.getPlayer(),
-                new SignContainer(_plugin, sign.getLocation(), signNode));
+                new InternalSignContainer(sign.getLocation(), signNode));
 
         if (result == null)
             throw new RuntimeException("A SignEventResult must be returned from SignHandler#onSignBreak.");
@@ -566,12 +452,11 @@ public class SignManager implements IPluginOwned {
         return true;
     }
 
-
     // load signs for the specified handler from
     // config and pass into handler.
     private void loadSigns(SignHandler handler) {
 
-        IDataNode handlerNode = _dataNode.getNode(handler.getName());
+        IDataNode handlerNode = getHandlerNode(handler);
 
         for (IDataNode signNode : handlerNode) {
 
@@ -583,23 +468,21 @@ public class SignManager implements IPluginOwned {
             if (sign == null)
                 continue;
 
-            handler.onSignLoad(new SignContainer(_plugin, sign.getLocation(), signNode));
+            REGISTRATION.signLoad(handler, new InternalSignContainer(sign.getLocation(), signNode));
         }
     }
-
 
     // get a data node for a sign, assumes sign is
     // already validated to the specified handler
     private IDataNode getSignNode(SignHandler handler, Location signLocation) {
 
-        IDataNode dataNode = _signNodes.get(signLocation);
-        if (dataNode != null)
-            return dataNode;
+        IDataNode handlerNode = getHandlerNode(handler);
+        return handlerNode.getNode(getSignNodeName(signLocation));
+    }
 
-        dataNode = _dataNode.getNode(handler.getName() + '.' + getSignNodeName(signLocation));
-        _signNodes.put(signLocation, dataNode);
-
-        return dataNode;
+    private IDataNode getHandlerNode(SignHandler handler) {
+        IDataNode pluginNode = REGISTRATION.getDataNode(handler);
+        return pluginNode.getNode(handler.getName());
     }
 
     // Get the sign handler name from the
@@ -617,5 +500,16 @@ public class SignManager implements IPluginOwned {
 
         Matcher spaceMatcher = TextUtils.PATTERN_SPACE.matcher(header);
         return spaceMatcher.replaceAll("_");
+    }
+
+    static class SignInfo {
+
+        final String[] lines;
+        final Location location;
+
+        SignInfo(Location location, String...lines) {
+            this.location = location;
+            this.lines = lines;
+        }
     }
 }

@@ -7,8 +7,8 @@ import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R2.MockWorld;
 import com.jcwhatever.bukkit.v1_8_R2.blocks.MockBlock;
 import com.jcwhatever.bukkit.v1_8_R2.blocks.MockSign;
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
-import com.jcwhatever.nucleus.storage.MemoryDataNode;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Tests {@link SignManager}.
+ * Tests Nucleus {@link ISignManager} implementation.
  */
 public class SignManagerTest {
 
@@ -36,7 +36,7 @@ public class SignManagerTest {
     Player _player = BukkitTester.login("signManagerPlayer");
     MockSignHandler _signHandler = new MockSignHandler(_plugin);
 
-    SignManager _signManager;
+    ISignManager _signManager;
 
     /**
      * Make sure Nucleus and Bukkit are initialized.
@@ -48,43 +48,14 @@ public class SignManagerTest {
 
     @Before
     public void before() {
-        _signManager = new SignManager(_plugin, new MemoryDataNode(_plugin));
-        _signManager.registerSignType(_signHandler);
+        _signManager = Nucleus.getSignManager();
+        _signManager.registerHandler(_signHandler);
         _signHandler.reset();
     }
 
     @After
     public void after() {
-        _signManager.unregisterSignType(_signHandler.getName());
-    }
-
-
-    /**
-     * Make sure static method {@link #getManagers} returns the correct value.
-     */
-    @Test
-    public void testGetManagers() throws Exception {
-
-        List<SignManager> signManagers = SignManager.getManagers();
-
-        int size = signManagers.size();
-
-        SignManager signManager = new SignManager(_plugin, new MemoryDataNode(_plugin));
-
-        signManagers = SignManager.getManagers();
-        assertEquals(size + 1, signManagers.size());
-        assertTrue(signManagers.contains(signManager));
-    }
-
-    /**
-     * Make sure static method {@link #getSignNodeName} returns the correct value.
-     */
-    @Test
-    public void testGetSignNodeName() throws Exception {
-
-        Location location = new Location(_world, 0, 0, 0);
-
-        assertEquals("sign0_0_0_signManagerWorld", SignManager.getSignNodeName(location));
+        _signManager.unregisterHandler(_signHandler.getName());
     }
 
     /**
@@ -99,7 +70,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@link #getSignHandler} returns the correct value.
+     * Make sure {@link ISignManager#getSignHandler} returns the correct value.
      */
     @Test
     public void testGetSignHandler() throws Exception {
@@ -110,13 +81,13 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@link #getSigns} returns the correct value.
+     * Make sure {@link ISignManager#getSigns} returns the correct value.
      */
     @Test
     public void testGetSigns() throws Exception {
 
         // baseline test: should be no signs
-        List<SignContainer> signs = _signManager.getSigns(_signHandler.getName());
+        List<ISignContainer> signs = _signManager.getSigns(_signHandler.getName());
         assertEquals(0, signs.size());
 
         // place a new sign
@@ -128,7 +99,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@link #getSavedLines} returns the correct value.
+     * Make sure {@link ISignManager#getSavedLines} returns the correct value.
      */
     @Test
     public void testGetSavedLines() throws Exception {
@@ -148,7 +119,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@link #restoreSign} works correctly.
+     * Make sure {@link ISignManager#restoreSign} works correctly.
      */
     @Test
     public void testRestoreSign() throws Exception {
@@ -177,7 +148,7 @@ public class SignManagerTest {
     }
 
     /**
-     * Make sure {@link #restoreSigns} works correctly.
+     * Make sure {@link ISignManager#restoreSigns} works correctly.
      */
     @Test
     public void testRestoreSigns() throws Exception {
@@ -221,7 +192,7 @@ public class SignManagerTest {
 
     /**
      * Make sure change sign event is handled properly when
-     * player is in {@link GameMode.SURVIVAL}.
+     * player is in {@link GameMode#SURVIVAL}.
      */
     @Test
     public void testSignChangeSurvival() throws Exception {
@@ -231,7 +202,7 @@ public class SignManagerTest {
 
     /**
      * Make sure change sign event is handled properly when
-     * player is in {@link GameMode.CREATIVE}.
+     * player is in {@link GameMode#CREATIVE}.
      */
     @Test
     public void testSignChangeCreative() throws Exception {
@@ -254,7 +225,7 @@ public class SignManagerTest {
 
     /**
      * Make sure sign click event is handled properly when player
-     * is in {@link GameMode.SURVIVAL}.
+     * is in {@link GameMode#SURVIVAL}.
      */
     @Test
     public void testSignClickSurvival() throws Exception {
@@ -264,7 +235,7 @@ public class SignManagerTest {
 
     /**
      * Make sure sign click event is handled properly when player
-     * is in {@link GameMode.CREATIVE}.
+     * is in {@link GameMode#CREATIVE}.
      */
     @Test
     public void testSignClickCreative() throws Exception {
@@ -297,7 +268,7 @@ public class SignManagerTest {
 
     /**
      * Make sure sign break event is handled properly when
-     * player is in {@link GameMode.SURVIVAL}.
+     * player is in {@link GameMode#SURVIVAL}.
      */
     @Test
     public void testSignBreakSurvival() throws Exception {
@@ -310,7 +281,7 @@ public class SignManagerTest {
 
     /**
      * Make sure sign break event is handled properly when
-     * player is in {@link GameMode.CREATIVE}.
+     * player is in {@link GameMode#CREATIVE}.
      */
     @Test
     public void testSignBreakCreative() throws Exception {

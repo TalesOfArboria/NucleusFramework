@@ -40,6 +40,7 @@ import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
+import com.jcwhatever.nucleus.utils.signs.ISignManager;
 
 import org.bukkit.entity.EntityType;
 
@@ -183,6 +184,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._scriptApiRepo != null, ERROR_NOT_READY);
 
         return _plugin._scriptApiRepo;
+    }
+
+    /**
+     * Get the global sign manager.
+     */
+    public static ISignManager getSignManager() {
+        PreCon.isValid(_plugin._signManager != null, ERROR_NOT_READY);
+
+        return _plugin._signManager;
     }
 
     /**
