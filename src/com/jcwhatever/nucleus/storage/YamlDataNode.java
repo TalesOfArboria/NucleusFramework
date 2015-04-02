@@ -539,7 +539,7 @@ public class YamlDataNode extends AbstractDataNode {
                 value = String.valueOf(value);
             }
             else if (value instanceof Location) {
-                value = LocationUtils.locationToString((Location) value, 3);
+                value = LocationUtils.serialize((Location) value, 3);
             }
             else if (value instanceof ItemStack) {
                 value = ItemStackUtils.serialize((ItemStack) value, SerializerOutputType.RAW);

@@ -147,7 +147,7 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
                 }
 
                 if (!p1.equals(previous)) {
-                    NucMsg.tell(player, NucLang.get(_P1_SELECTED, LocationUtils.locationToString(p1, 2)));
+                    NucMsg.tell(player, NucLang.get(_P1_SELECTED, LocationUtils.serialize(p1, 2)));
                 }
                 event.setCancelled(true);
             }
@@ -161,7 +161,7 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
                 }
 
                 if (!p2.equals(previous)) {
-                    NucMsg.tell(player, NucLang.get(_P2_SELECTED, LocationUtils.locationToString(p2, 2)));
+                    NucMsg.tell(player, NucLang.get(_P2_SELECTED, LocationUtils.serialize(p2, 2)));
                 }
                 event.setCancelled(true);
             }

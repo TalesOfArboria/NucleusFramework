@@ -512,7 +512,7 @@ public final class LocationUtils {
      *
      * @param location  The location to convert.
      */
-    public static String locationToString(Location location) {
+    public static String serialize(Location location) {
         PreCon.notNull(location);
 
         return String.valueOf(location.getX()) + ',' + location.getY() + ',' + location.getZ() +
@@ -525,7 +525,7 @@ public final class LocationUtils {
      * @param location             The location to convert.
      * @param floatingPointPlaces  The number of places in the floating point values.
      */
-    public static String locationToString(Location location, int floatingPointPlaces) {
+    public static String serialize(Location location, int floatingPointPlaces) {
         PreCon.notNull(location);
         PreCon.positiveNumber(floatingPointPlaces);
 
