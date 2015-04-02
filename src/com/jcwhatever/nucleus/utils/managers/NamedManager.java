@@ -41,28 +41,18 @@ import javax.annotation.Nullable;
  * call the protected {@link #add} method from your implementation
  * to add a new item.</p>
  */
-public abstract class NamedManager<T extends INamed> {
+public abstract class NamedManager<T extends INamed> implements INamedManager<T> {
 
     protected Map<String, T> _map = new HashMap<>(15);
 
-    /**
-     * Determine if the manager contains an item.
-     *
-     * @param name  The name of the item.
-     */
+    @Override
     public boolean contains(String name) {
         PreCon.notNull(name);
 
         return _map.containsKey(getName(name));
     }
 
-    /**
-     * Get an item by name.
-     *
-     * @param name  The name of the item.
-     *
-     * @return  Null if the item was not found.
-     */
+    @Override
     @Nullable
     public T get(String name) {
         PreCon.notNull(name);
@@ -70,20 +60,12 @@ public abstract class NamedManager<T extends INamed> {
         return _map.get(getName(name));
     }
 
-    /**
-     * Get all managed items.
-     */
+    @Override
     public Collection<T> getAll() {
         return Collections.unmodifiableCollection(_map.values());
     }
 
-    /**
-     * Remove an item.
-     *
-     * @param name  The name of the item.
-     *
-     * @return  True if found and removed.
-     */
+    @Override
     public boolean remove(String name) {
         PreCon.notNull(name);
 
@@ -97,14 +79,14 @@ public abstract class NamedManager<T extends INamed> {
     }
 
     /**
-     * Called when an item is removed.
+     * Invoked when an item is removed.
      *
      * @param removed  The removed item.
      */
     protected void onRemove(T removed) {}
 
     /**
-     * Called when an item is added.
+     * Invoked when an item is added.
      *
      * @param added  The added item.
      */
