@@ -45,37 +45,35 @@ import org.bukkit.inventory.ItemStack;
 public class MatchableItem {
 
     private ItemStack _itemStack;
-    private ItemStackMatcher _comparer;
+    private ItemStackMatcher _matcher;
     private int _hash = -1;
 
     /**
      * Constructor.
      *
-     * <p>
-     *     Uses the default {@link ItemStackMatcher}.
-     * </p>
+     * <p>Uses the default {@link ItemStackMatcher}.</p>
      *
-     * @param itemStack  The item stack to encapsulate.
+     * @param itemStack  The {@link ItemStack} to encapsulate.
      */
     public MatchableItem(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
         _itemStack = itemStack;
-        _comparer = ItemStackMatcher.getDefault();
+        _matcher = ItemStackMatcher.getDefault();
     }
 
     /**
      * Constructor.
      *
-     * @param itemStack  The item stack to encapsulate.
-     * @param matcher    The matcher  to use.
+     * @param itemStack  The {@link ItemStack} to encapsulate.
+     * @param matcher    The matcher to use.
      */
     public MatchableItem(ItemStack itemStack, ItemStackMatcher matcher) {
         PreCon.notNull(itemStack);
         PreCon.notNull(matcher );
 
         _itemStack = itemStack;
-        _comparer = matcher ;
+        this._matcher = matcher ;
     }
 
     /**
@@ -93,17 +91,10 @@ public class MatchableItem {
     }
 
     /**
-     * Get the compare operations of the {@link ItemStackMatcher}.
-     */
-    public byte getCompareOperations() {
-        return _comparer.getMatcherOperations();
-    }
-
-    /**
      * Get the {@link ItemStackMatcher}.
      */
     public ItemStackMatcher getItemStackMatcher() {
-        return _comparer;
+        return _matcher;
     }
 
     @Override
@@ -119,12 +110,12 @@ public class MatchableItem {
     @Override
     public boolean equals(Object o) {
         if (o instanceof ItemStack) {
-            return _comparer.isMatch(_itemStack, (ItemStack) o);
+            return _matcher.isMatch(_itemStack, (ItemStack) o);
         }
         else if (o instanceof MatchableItem) {
             MatchableItem wrapper = (MatchableItem)o;
 
-            return _comparer.isMatch(_itemStack, wrapper.getItem());
+            return _matcher.isMatch(_itemStack, wrapper.getItem());
         }
 
         return false;
