@@ -36,8 +36,6 @@ import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -48,20 +46,23 @@ import org.bukkit.material.MaterialData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 /**
- * Item stack utilities
+ * {@link ItemStack} utilities.
  */
 public final class ItemStackUtils {
+
+    private static final Pattern PATTERN_REPLACE_UNDERSCORE = Pattern.compile("_", Pattern.LITERAL);
 
     private ItemStackUtils() {}
 
     public static final ItemStack AIR = new ItemStack(Material.AIR);
 
     /**
-     * Used to specify if a display name for an item
-     * stack is required or optional.
+     * Used to specify if a display name for an {@link ItemStack}
+     * is required or optional.
      */
     public enum DisplayNameOption {
         /**
@@ -79,21 +80,21 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Convert an object to an {@link org.bukkit.inventory.ItemStack} if possible.
+     * Convert an object to an {@link ItemStack} if possible.
      *
      * <p>The following are valid arguments that can be converted:</p>
      * <ul>
-     *     <li>{@link org.bukkit.inventory.ItemStack}</li>
-     *     <li>{@link org.bukkit.Material}</li>
-     *     <li>{@link org.bukkit.material.MaterialData}</li>
+     *     <li>{@link ItemStack}</li>
+     *     <li>{@link Material}</li>
+     *     <li>{@link MaterialData}</li>
      *     <li>The name or alternate name of a material. Valid names
      *     are from {@link NamedMaterialData}.</li>
-     *     <li>A serialized item stack string.</li>
+     *     <li>A item stack string serialized by {@link ItemStackSerializer}.</li>
      * </ul>
      *
-     * @param object  The object to retrieve an {@link org.bukkit.inventory.ItemStack} from.
+     * @param object  The object to retrieve an {@link ItemStack} from.
      *
-     * @return  An {@link org.bukkit.inventory.ItemStack} or null if failed.
+     * @return  An {@link ItemStack} or null if failed.
      */
     public static ItemStack getItemStack(Object object) {
 
@@ -134,47 +135,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Set the specified block material and data
-     * to the material and data represented by
-     * the ItemStack.
+     * Set the lore on an {@link ItemStack}.
      *
-     * @param block  The block to set.
-     */
-    public static void setBlock(Block block, ItemStack stack) {
-        PreCon.notNull(block);
-        PreCon.notNull(stack);
-
-        if (block.getType() != stack.getType())
-            block.setType(stack.getType());
-
-        if (block.getData() != stack.getData().getData())
-            block.setData(stack.getData().getData());
-    }
-
-    /**
-     * Set the specified block material and data
-     * to the material and data represented by
-     * the MaterialData.
-     *
-     * @param block The block to set.
-     */
-    public static void setBlock(Block block, MaterialData data) {
-        PreCon.notNull(block);
-        PreCon.notNull(data);
-
-        BlockState state = block.getState();
-        state.setType(data.getItemType());
-        state.update(true);
-
-        state = block.getState();
-        state.setData(data.clone());
-        state.update(true);
-    }
-
-    /**
-     * Set the lore on an item stack.
-     *
-     * @param stack  The item stack.
+     * @param stack  The {@link ItemStack}.
      * @param lore   The lore to set.
      */
     public static void setLore(ItemStack stack, @Nullable List<String> lore) {
@@ -190,7 +153,7 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Set the lore on an item stack.
+     * Set the lore on an {@link ItemStack}.
      *
      * @param stack  The item stack.
      * @param lore   The lore to set.
@@ -213,9 +176,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Gets the lore from an item stack.
+     * Gets the lore from an {@link ItemStack}.
      *
-     * @param stack  The item stack.
+     * @param stack  The {@link ItemStack}.
      */
     @Nullable
     public static List<String> getLore(ItemStack stack) {
@@ -243,9 +206,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Repair an array of items.
+     * Repair an array of {@link ItemStack}.
      *
-     * @param items The array of items to repair.
+     * @param items The array of {@link ItemStack} to repair.
      */
     public static void repair(ItemStack[] items) {
         PreCon.notNull(items);
@@ -259,10 +222,10 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Gets the display name of an item stack. Returns empty string
-     * if the item has no display name.
+     * Gets the display name of an {@link ItemStack}. Returns empty string if
+     * the item has no display name.
      *
-     * @param stack       The item stack to get a display name from.
+     * @param stack       The {@link ItemStack} to get a display name from.
      * @param nameResult  Specify how a missing display name should be returned.
      */
     @Nullable
@@ -274,8 +237,9 @@ public final class ItemStackUtils {
 
             switch (nameResult) {
                 case REQUIRED:
-                    String alternate = stack.getType().name().toLowerCase().replace("_", " ");
-                    return TextUtils.titleCase(alternate);
+                    String materialName = NamedMaterialData.get(stack.getData()).toLowerCase();
+                    String spaced = PATTERN_REPLACE_UNDERSCORE.matcher(materialName).replaceAll(" ");
+                    return TextUtils.titleCase(spaced);
 
                 case OPTIONAL:
                     // fall through
@@ -289,9 +253,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Sets the display name of an item stack.
+     * Sets the display name of an {@link ItemStack}.
      *
-     * @param stack        The item stack.
+     * @param stack        The {@link ItemStack}.
      * @param displayName  The display name.
      */
     public static void setDisplayName(ItemStack stack, @Nullable String displayName) {
@@ -303,7 +267,7 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Sets 32 bit Color of an item, if possible.
+     * Sets 32 bit color of an {@link ItemStack}, if possible.
      *
      * @param item   The item stack.
      * @param red    The red component
@@ -319,7 +283,7 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Sets RGB Color of an item, if possible.
+     * Sets RGB Color of an {@link ItemStack}, if possible.
      *
      * @param item   The item stack.
      * @param color  The 32 bit RGB integer color.
@@ -333,9 +297,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Sets Color of an item, if possible.
+     * Sets RGB color of an {@link ItemStack}, if possible.
      *
-     * @param item   The item stack.
+     * @param item   The {@link ItemStack}.
      * @param color  The color to set.
      *
      * @return  True if color changed.
@@ -356,11 +320,11 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Gets the 32-bit color of an item if it has any.
+     * Gets the 32-bit color of an {@link ItemStack} if it has any.
      *
-     * @param item  The item stack.
+     * @param item  The {@link ItemStack}.
      *
-     * @return Null if item does not have 32-bit color.
+     * @return The {@link Color} or null if item does not have 32-bit color.
      */
     @Nullable
     public static Color getColor(ItemStack item) {
@@ -376,9 +340,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Add enchantments to an item.
+     * Add enchantments to an {@link ItemStack}.
      *
-     * @param stack         The item stack to add enchantments to.
+     * @param stack         The {@link ItemStack} to add enchantments to.
      * @param enchantments  Enchantments to add
      */
     public static void addEnchantments(ItemStack stack, Collection<EnchantmentLevel> enchantments) {
@@ -405,9 +369,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Add an enchantment to an item.
+     * Add an enchantment to an {@link ItemStack}.
      *
-     * @param stack    The item stack.
+     * @param stack    The {@link ItemStack}.
      * @param enchant  The {@link EnchantmentLevel} containing enchantment info.
      */
     public static void addEnchantment(ItemStack stack, EnchantmentLevel enchant) {
@@ -418,13 +382,13 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Add an enchantment to an item.
+     * Add an enchantment to an {@link ItemStack}.
      *
-     * @param stack        The item stack.
+     * @param stack        The {@link ItemStack}.
      * @param enchantName  The enchantment to add.
      * @param level        The enchantment level.
      *
-     * @return True if the enchantName was found and applied.
+     * @return True if the enchantName was found and applied, otherwise false.
      */
     public static boolean addEnchantment(ItemStack stack, String enchantName, int level) {
         PreCon.notNull(stack);
@@ -441,7 +405,7 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Add an enchantment to an item.
+     * Add an enchantment to an {@link ItemStack}.
      *
      * @param stack    The item stack.
      * @param enchant  The enchantment to add.
@@ -466,9 +430,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Removes an enchantment from an item and returns an
-     * {@link EnchantmentLevel} containing the enchantment
-     * and enchantment level before it was removed.
+     * Removes an enchantment from an {@link ItemStack} and returns an
+     * {@link EnchantmentLevel} containing the enchantment and enchantment
+     * level before it was removed.
      *
      * @param stack            The item stack.
      * @param enchantmentName  The name of the enchantment to remove.
@@ -488,9 +452,9 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Removes an enchantment from an item and returns an
-     * {@link EnchantmentLevel} containing the enchantment
-     * and enchantment level before it was removed.
+     * Removes an enchantment from an {@link ItemStack} and returns an
+     * {@link EnchantmentLevel} containing the enchantment and enchantment
+     * level before it was removed.
      *
      * @param stack        The item stack.
      * @param enchantment  The enchantment to remove.
@@ -511,13 +475,16 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Parses item stack string to {@link ItemStack} array.
+     * Parses serialized item string to {@link ItemStack} array.
      *
-     * @param itemString  The item stack string.
+     * @param itemString  The {@link ItemStack} string to parse.
      *
-     * @throws com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException
+     * @throws InvalidItemStackStringException
      *
      * @return  Null if the string could not be parsed.
+     *
+     * @see ItemStackSerializer
+     * @see ItemStackDeserializer
      */
     @Nullable
     public static ItemStack[] parse(String itemString) throws InvalidItemStackStringException {
@@ -533,11 +500,11 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Serialize a collection of item stacks into a string.
+     * Serialize a collection of {@link ItemStack} into a string.
      *
-     * @param stacks  The item stack collection.
+     * @param stacks  The {@link ItemStack} collection.
      */
-    public static String serializeToString(Collection<ItemStack> stacks, SerializerOutputType outputType) {
+    public static String serialize(Collection<ItemStack> stacks, SerializerOutputType outputType) {
         PreCon.notNull(stacks);
         PreCon.notNull(outputType);
 
@@ -545,11 +512,11 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Serialize an item stack array into a string.
+     * Serialize an {@link ItemStack} array into a string.
      *
-     * @param stacks  The item stacks to serialize.
+     * @param stacks  The {@link ItemStack}'s to serialize.
      */
-    public static String serializeToString(ItemStack[] stacks, SerializerOutputType outputType) {
+    public static String serialize(ItemStack[] stacks, SerializerOutputType outputType) {
         PreCon.notNull(stacks);
         PreCon.notNull(outputType);
 
@@ -557,15 +524,14 @@ public final class ItemStackUtils {
     }
 
     /**
-     * Serialize an item stack into a string.
+     * Serialize an {@link ItemStack} into a string.
      *
-     * @param stack  The item stack.
+     * @param stack  The {@link ItemStack}.
      */
-    public static String serializeToString(ItemStack stack, SerializerOutputType outputType) {
+    public static String serialize(ItemStack stack, SerializerOutputType outputType) {
         PreCon.notNull(stack);
         PreCon.notNull(outputType);
 
         return new ItemStackSerializer(40, outputType).append(stack).toString();
     }
-
 }

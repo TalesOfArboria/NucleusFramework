@@ -542,7 +542,7 @@ public class YamlDataNode extends AbstractDataNode {
                 value = LocationUtils.locationToString((Location) value, 3);
             }
             else if (value instanceof ItemStack) {
-                value = ItemStackUtils.serializeToString((ItemStack) value, SerializerOutputType.RAW);
+                value = ItemStackUtils.serialize((ItemStack) value, SerializerOutputType.RAW);
             }
             else if (value instanceof ItemStack[]) {
                 ItemStack[] stored = ((ItemStack[]) value).clone();
@@ -551,7 +551,7 @@ public class YamlDataNode extends AbstractDataNode {
                         stored[i] = stored[i].clone();
                     }
                 }
-                value = ItemStackUtils.serializeToString((ItemStack[]) value, SerializerOutputType.RAW);
+                value = ItemStackUtils.serialize((ItemStack[]) value, SerializerOutputType.RAW);
             }
             else if (value instanceof Enum<?>) {
                 Enum<?> e = (Enum<?>) value;

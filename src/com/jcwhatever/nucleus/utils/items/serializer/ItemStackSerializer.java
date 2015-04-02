@@ -25,9 +25,9 @@
 package com.jcwhatever.nucleus.utils.items.serializer;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
 import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlers;
+import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.ChatColor;
@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
+import javax.annotation.Nullable;
 
 /**
  * Serializes {@link org.bukkit.inventory.ItemStack}'s into a string.
@@ -239,7 +240,7 @@ public class ItemStackSerializer {
     /*
      * Serialize an item stack to a string and append to buffer.
      */
-    private void appendItemStackString(StringBuilder buffy, ItemStack stack,
+    private void appendItemStackString(StringBuilder buffy, @Nullable ItemStack stack,
                                               SerializerOutputType outputType) {
 
         if (stack == null) {

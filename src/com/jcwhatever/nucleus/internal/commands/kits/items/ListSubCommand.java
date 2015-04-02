@@ -90,7 +90,7 @@ public final class ListSubCommand extends AbstractCommand {
                 if (item == null)
                     continue;
 
-                pagin.add(ItemStackUtils.serializeToString(item, SerializerOutputType.COLOR));
+                pagin.add(ItemStackUtils.serialize(item, SerializerOutputType.COLOR));
             }
         }
 
@@ -104,7 +104,7 @@ public final class ListSubCommand extends AbstractCommand {
         else {
 
             for (ItemStack item : items) {
-                pagin.add(ItemStackUtils.serializeToString(item, SerializerOutputType.COLOR));
+                pagin.add(ItemStackUtils.serialize(item, SerializerOutputType.COLOR));
             }
         }
 
