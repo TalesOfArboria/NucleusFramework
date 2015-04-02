@@ -63,14 +63,14 @@ public final class InternalNmsManager extends NmsManager {
     public InternalNmsManager() {
         super(Nucleus.getPlugin());
 
-        registerNmsHandler("v1_8_R1", TITLES, NmsTitleHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", ACTION_BAR, NmsActionBarHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler_v1_8_R1.class);
-        registerNmsHandler("v1_8_R1", SOUND_EFFECT, NmsSoundEffectHandler_v1_8_R1.class);
+        registerHandler("v1_8_R1", TITLES, NmsTitleHandler_v1_8_R1.class);
+        registerHandler("v1_8_R1", ACTION_BAR, NmsActionBarHandler_v1_8_R1.class);
+        registerHandler("v1_8_R1", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler_v1_8_R1.class);
+        registerHandler("v1_8_R1", SOUND_EFFECT, NmsSoundEffectHandler_v1_8_R1.class);
 
-        registerNmsHandler("v1_8_R2", TITLES, NmsTitleHandler_v1_8_R2.class);
-        registerNmsHandler("v1_8_R2", ACTION_BAR, NmsActionBarHandler_v1_8_R2.class);
-        registerNmsHandler("v1_8_R2", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler_v1_8_R2.class);
-        registerNmsHandler("v1_8_R2", SOUND_EFFECT, NmsSoundEffectHandler_v1_8_R2.class);
+        registerHandler("v1_8_R2", TITLES, NmsTitleHandler_v1_8_R2.class);
+        registerHandler("v1_8_R2", ACTION_BAR, NmsActionBarHandler_v1_8_R2.class);
+        registerHandler("v1_8_R2", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler_v1_8_R2.class);
+        registerHandler("v1_8_R2", SOUND_EFFECT, NmsSoundEffectHandler_v1_8_R2.class);
     }
 }

@@ -27,9 +27,12 @@ package com.jcwhatever.nucleus.utils.nms;
 import org.bukkit.entity.Player;
 
 /**
- * Interface for NucleusFramework's Minecraft Action Bar handler which
- * can be retrieved from NucleusFramework's NmsManager under the
- * name "ACTION_BAR".
+ * Interface for NucleusFramework's Minecraft Action Bar handler.
+ *
+ * @see NmsUtils
+ * @see com.jcwhatever.nucleus.utils.actionbar.ActionBar
+ * @see com.jcwhatever.nucleus.utils.actionbar.PersistentActionBar
+ * @see com.jcwhatever.nucleus.utils.actionbar.TimedActionBar
  */
 public interface INmsActionBarHandler extends INmsHandler {
 

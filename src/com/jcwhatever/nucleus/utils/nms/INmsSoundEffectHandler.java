@@ -27,9 +27,9 @@ package com.jcwhatever.nucleus.utils.nms;
 import org.bukkit.entity.Player;
 
 /**
- * Interface for NucleusFramework's Minecraft Named Sound Effect handler which
- * can be retrieved from NucleusFramework's NmsManager under the
- * name "SOUND_EFFECT".
+ * Interface for NucleusFramework's Minecraft Named Sound Effect handler.
+ *
+ * @see NmsUtils
  */
 public interface INmsSoundEffectHandler extends INmsHandler {
 

@@ -27,9 +27,9 @@ package com.jcwhatever.nucleus.utils.nms;
 import org.bukkit.entity.Player;
 
 /**
- * Interface for NucleusFramework's Minecraft List Header and Footer handler which
- * can be retrieved from NucleusFramework's NmsManager under the
- * name "LIST_HEADER_FOOTER".
+ * Interface for NucleusFramework's Minecraft List Header and Footer handler.
+ *
+ * @see NmsUtils
  */
 public interface INmsListHeaderFooterHandler extends INmsHandler {
 

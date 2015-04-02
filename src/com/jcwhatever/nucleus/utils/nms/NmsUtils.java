@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 /**
- * Reflection utilities.
+ * NMS utilities.
  */
 public final class NmsUtils {
 
@@ -60,8 +60,8 @@ public final class NmsUtils {
     }
 
     /**
-     * Determine if one of the provided NMS package versions
-     * is compatible with the current NMS package version.
+     * Determine if one of the provided NMS package versions is compatible with the
+     * current NMS package version.
      *
      * @param versions  The versions to check.
      */
@@ -103,7 +103,8 @@ public final class NmsUtils {
                     NucMsg.warning(plugin, "Plugin {0} is not compatible with NMS version {1}.",
                             plugin.getName(), getNmsVersion());
 
-                    NucMsg.warning(plugin, "enforce-nms-version has been set to false in the plugins config.");
+                    NucMsg.warning(plugin, "enforce-nms-version has been set to " +
+                            "false in the plugins config.");
                     return true;
                 }
             }

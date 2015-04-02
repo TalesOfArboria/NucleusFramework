@@ -39,6 +39,8 @@ import javax.annotation.Nullable;
 
 /**
  * Manages NMS code.
+ *
+ * @see INmsHandler
  */
 public class NmsManager implements IPluginOwned {
 
@@ -69,8 +71,10 @@ public class NmsManager implements IPluginOwned {
     }
 
     /**
-     * Constructor. Disables plugin if the current NMS version
-     * is not compatible.
+     * Constructor.
+     *
+     * <p>Disables plugin if the current NMS version is not compatible with the
+     * specified versions.</p>
      *
      * @param plugin              The owning plugin.
      * @param compatibleVersions  Compatible NMS package versions.
@@ -87,18 +91,14 @@ public class NmsManager implements IPluginOwned {
         NmsUtils.enforceNmsVersion(plugin, compatibleVersions);
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
     }
 
     /**
-     * Get the NMS package version the manager is operating
-     * under. This is normally the current NMS package version
-     * but may be different if overridden by a server operator.
+     * Get the NMS package version the manager is operating under. This is normally
+     * the current NMS package version.
      */
     public String getNmsVersion() {
         return _nmsVersion;
@@ -111,8 +111,8 @@ public class NmsManager implements IPluginOwned {
      * @param name          The name of the handler.
      * @param handlerClass  The handler class.
      */
-    public synchronized void registerNmsHandler(String nmsVersion, String name,
-                                                Class<? extends INmsHandler> handlerClass) {
+    public synchronized void registerHandler(String nmsVersion, String name,
+                                             Class<? extends INmsHandler> handlerClass) {
         _nmsHandlerClasses.put(nmsVersion, name, handlerClass);
     }
 
@@ -149,7 +149,7 @@ public class NmsManager implements IPluginOwned {
         Constructor<? extends INmsHandler> constructor = getConstructor(handlerClass);
         if (constructor == null) {
             throw new RuntimeException("Failed to instantiate an instance of " +
-                    "INmsHandler because a suitable constructor was not found.");
+                    handlerClass.getName() + " because a suitable constructor was not found.");
         }
 
         try {

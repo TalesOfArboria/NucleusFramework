@@ -26,12 +26,21 @@ package com.jcwhatever.nucleus.utils.nms;
 
 /**
  * Interface for a type that uses NMS and CraftBukkit code.
+ *
+ * <p>The handler is required to have an empty constructor for use with
+ * {@link NmsManager}.</p>
  */
 public interface INmsHandler {
 
     /**
-     * Determine if the NMS handler is working and available. If the NMS handler
-     * fails for some reason, this should return false.
+     * Determine if the NMS handler is working and available.
+     *
+     * <p>Returns false if the NMS handler fails and the error is not transient or the
+     * handler knows in advance that it will not work with the current configuration.</p>
+     *
+     * <p>Note that the handler is not run at all unless it is registered to be compatible
+     * with the currently running NMS version. Therefore there is no need to check the NMS
+     * version.</p>
      */
     boolean isAvailable();
 }
