@@ -130,6 +130,11 @@ public class InternalEvaluatedScript implements IEvaluatedScript {
         PreCon.notNull(scriptApi);
         PreCon.notNullOrEmpty(variableName);
 
+        if (_scriptApis.containsKey(scriptApi.getName())) {
+            NucMsg.debug("A script api named '{0}' is already added.", scriptApi.getName());
+            return;
+        }
+
         IDisposable apiObject = scriptApi.createApi(Nucleus.getPlugin(), this);
         if (apiObject == null) {
             NucMsg.debug("Failed to retrieve IScriptApiObject from script api '{0}' " +
