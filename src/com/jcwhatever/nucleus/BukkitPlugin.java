@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
+import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
@@ -70,6 +71,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalNmsManager _nmsManager;
     InternalSignManager _signManager;
     InternalEntityTracker _entityTracker;
+    InternalFloatingItemManager _floatingItemManager;
 
     EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
@@ -167,6 +169,8 @@ public final class BukkitPlugin extends NucleusPlugin {
         _scriptEngineManager = new InternalScriptEngineManager();
         _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
         _scriptEngineLoader.loadModules();
+
+        _floatingItemManager = new InternalFloatingItemManager();
     }
 
     @Override

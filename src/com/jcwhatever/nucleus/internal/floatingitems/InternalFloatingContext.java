@@ -22,13 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.floatingitems;
+package com.jcwhatever.nucleus.internal.floatingitems;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 import com.jcwhatever.nucleus.utils.managers.NamedInsensitiveDataManager;
 
 import org.bukkit.Location;
@@ -37,70 +36,35 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-/**
- * Manages floating items.
+/*
+ * 
  */
-public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingItem> implements IPluginOwned {
+public class InternalFloatingContext extends NamedInsensitiveDataManager<IFloatingItem> {
 
-    private final Plugin _plugin;
+    private Plugin _plugin;
 
     /**
      * Constructor.
      *
      * @param plugin    The owning plugin.
-     * @param dataNode  The node where items are saved.
+     * @param dataNode  The data node.
      */
-    public FloatingItemManager(Plugin plugin, IDataNode dataNode) {
-        this(plugin, dataNode, true);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param plugin     The owning plugin.
-     * @param dataNode   sThe node where items are saved.
-     * @param loadItems  True to load items from the data node during the constructor.
-     */
-    public FloatingItemManager(Plugin plugin, IDataNode dataNode, boolean loadItems) {
+    protected InternalFloatingContext(Plugin plugin, IDataNode dataNode) {
         super(dataNode, false);
-        PreCon.notNull(plugin);
-        PreCon.notNull(dataNode);
 
         _plugin = plugin;
 
-        if (loadItems)
-            load();
+        load();
     }
 
-    @Override
-    public Plugin getPlugin() {
-        return _plugin;
-    }
-
-    /**
-     * Add a new floating item.
-     *
-     * @param name       The name of the item.
-     * @param itemStack  The {@link org.bukkit.inventory.ItemStack}.
-     *
-     * @return  The created {@link IFloatingItem} or null if the name already exists.
-     */
     @Nullable
     public IFloatingItem add(String name, ItemStack itemStack) {
         return add(name, itemStack, null);
     }
 
-    /**
-     * Add a new floating item.
-     *
-     * @param name       The name of the item.
-     * @param itemStack  The {@link org.bukkit.inventory.ItemStack}.
-     * @param location   Optional initial location to set.
-     *
-     * @return  The created {@link IFloatingItem} or null if the name already exists.
-     */
     @Nullable
-    public IFloatingItem add(String name, ItemStack itemStack, @Nullable Location location) {
+    public IFloatingItem add(String name, ItemStack itemStack,
+                             @Nullable Location location) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(itemStack);
 
@@ -117,19 +81,6 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
         add(item);
 
         return item;
-    }
-
-    /**
-     * Called to create a new instance of a floating item.
-     *
-     * @param name      The name.
-     * @param item      The {@link org.bukkit.inventory.ItemStack}.
-     * @param location  Optional initial location.
-     * @param dataNode  The items data node.
-     */
-    protected IFloatingItem createFloatingItem(String name, ItemStack item,
-                                            @Nullable Location location, IDataNode dataNode) {
-        return new FloatingItem(name, item, location, dataNode);
     }
 
     @Nullable
@@ -171,7 +122,7 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
     @Override
     protected void onRemove(IFloatingItem removed) {
 
-        if (Nucleus.getPlugin().isEnabled()) {
+        if (_plugin.isEnabled()) {
             removed.dispose();
             super.onRemove(removed);
         }
@@ -180,5 +131,13 @@ public class FloatingItemManager extends NamedInsensitiveDataManager<IFloatingIt
             node.set("dispose", true);
             node.saveSync();
         }
+    }
+
+    /*
+     * Invoked to create a new instance of a floating item.
+     */
+    private IFloatingItem createFloatingItem(String name, ItemStack item,
+                                             @Nullable Location location, IDataNode dataNode) {
+        return new InternalFloatingItem(_plugin, name, item, location, dataNode);
     }
 }

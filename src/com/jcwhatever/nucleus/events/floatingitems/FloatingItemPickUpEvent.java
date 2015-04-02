@@ -25,8 +25,8 @@
 
 package com.jcwhatever.nucleus.events.floatingitems;
 
-import com.jcwhatever.nucleus.utils.floatingitems.FloatingItem;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -40,7 +40,7 @@ public class FloatingItemPickUpEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private final FloatingItem _item;
+    private final IFloatingItem _item;
     private final Player _player;
     private boolean _isCancelled;
 
@@ -50,7 +50,7 @@ public class FloatingItemPickUpEvent extends Event implements Cancellable {
      * @param item    The item being despawned.
      * @param player  The player picking up the item.
      */
-    public FloatingItemPickUpEvent(FloatingItem item, Player player) {
+    public FloatingItemPickUpEvent(IFloatingItem item, Player player) {
         PreCon.notNull(item);
         PreCon.notNull(player);
 
@@ -61,7 +61,7 @@ public class FloatingItemPickUpEvent extends Event implements Cancellable {
     /**
      * Get the floating item that is being despawned.
      */
-    public FloatingItem getFloatingItem() {
+    public IFloatingItem getFloatingItem() {
         return _item;
     }
 

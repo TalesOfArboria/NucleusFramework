@@ -23,20 +23,23 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.floatingitems;
+package com.jcwhatever.nucleus.internal.floatingitems;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.CircularQueue;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemPickUpEvent;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
@@ -52,31 +55,37 @@ import java.util.UUID;
 
 class BukkitListener implements Listener {
 
-    private Map<UUID, FloatingItem> _floatingItems = new HashMap<>(100);
+    private Map<UUID, InternalFloatingItem> _floatingItems = new HashMap<>(100);
 
-    private Multimap<ChunkInfo, FloatingItem> _chunkMap =
+    private Multimap<ChunkInfo, InternalFloatingItem> _chunkMap =
             MultimapBuilder.hashKeys(100).hashSetValues(5).build();
 
-    void register(FloatingItem item) {
+    private Respawner _respawner = new Respawner();
+
+    BukkitListener() {
+        Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, 1, _respawner);
+    }
+
+    void register(InternalFloatingItem item) {
         PreCon.notNull(item);
 
         _floatingItems.put(item.getUniqueId(), item);
     }
 
-    void unregister(FloatingItem item) {
+    void unregister(InternalFloatingItem item) {
         PreCon.notNull(item);
 
         _floatingItems.remove(item.getUniqueId());
     }
 
-    void registerPendingSpawn(FloatingItem item) {
+    void registerPendingSpawn(InternalFloatingItem item) {
         PreCon.notNull(item);
         PreCon.notNull(item.getLocation());
 
         _chunkMap.put(new ChunkInfo(item.getLocation().getChunk()), item);
     }
 
-    void unregisterPendingSpawn(FloatingItem item) {
+    void unregisterPendingSpawn(InternalFloatingItem item) {
         PreCon.notNull(item);
 
         CollectionUtils.removeValue(_chunkMap, item);
@@ -85,18 +94,19 @@ class BukkitListener implements Listener {
     @EventHandler
     private void onChunkLoad(ChunkLoadEvent event) {
 
-        Collection<FloatingItem> items = _chunkMap.removeAll(new ChunkInfo(event.getChunk()));
+        Collection<InternalFloatingItem> items =
+                _chunkMap.removeAll(new ChunkInfo(event.getChunk()));
 
-        for (FloatingItem item : items) {
+        for (InternalFloatingItem item : items) {
             if (item.getLocation() != null)
                 item.spawn(item.getLocation());
         }
     }
 
     @EventHandler
-    private void onPlayerPickup(PlayerPickupItemEvent event) {
+    private void onPlayerTryPickup(PlayerPickupItemEvent event) {
 
-        final FloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
+        final InternalFloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
         if (item == null)
             return;
 
@@ -120,9 +130,6 @@ class BukkitListener implements Listener {
 
         event.setCancelled(fiEvent.isCancelled());
 
-        // call items pickup event callback handlers
-        item.onPickup(event.getPlayer(), event.isCancelled());
-
         // check for cancelled event.
         if (event.isCancelled()) {
 
@@ -135,23 +142,25 @@ class BukkitListener implements Listener {
         final Location location = item.getLocation();
 
         if (location != null) {
-            // schedule respawn
-            Scheduler.runTaskLater(Nucleus.getPlugin(), item.getRespawnTimeSeconds() * 20, new Runnable() {
-                @Override
-                public void run() {
-                    if (item.isDisposed())
-                        return;
-
-                    item.spawn(location);
-                }
-            });
+            _respawner.queue.add(new RespawnEntry(item, item.getRespawnTimeSeconds() * 1000));
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    private void onPlayerPickup(PlayerPickupItemEvent event) {
+
+        final InternalFloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
+        if (item == null)
+            return;
+
+        // call items pickup event callback handlers
+        item.onPickup(event.getPlayer());
     }
 
     @EventHandler
     private void onItemDespawn(ItemDespawnEvent event) {
 
-        final FloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
+        final InternalFloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
         if (item == null)
             return;
 
@@ -164,13 +173,50 @@ class BukkitListener implements Listener {
         if (event.getEntity().getType() != EntityType.DROPPED_ITEM)
             return;
 
-        final FloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
+        final InternalFloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
         if (item == null)
             return;
 
         if (item.isSpawned()) {
             event.setDamage(0.0D);
             event.setCancelled(true);
+        }
+    }
+
+    private static class Respawner implements Runnable {
+
+        CircularQueue<RespawnEntry> queue = new CircularQueue<>();
+
+        @Override
+        public void run() {
+
+            int size = queue.size();
+
+            for (int i=0; i < size; i++) {
+
+                RespawnEntry entry = queue.peekFirst();
+                assert entry != null;
+
+                if (entry.item.isDisposed() || entry.time <= System.currentTimeMillis()) {
+                    queue.removeFirst();
+
+                    if (!entry.item.isDisposed()) {
+                        entry.item.spawn();
+                    }
+                }
+                else {
+                    queue.next();
+                }
+            }
+        }
+    }
+
+    private static class RespawnEntry {
+        long time;
+        IFloatingItem item;
+        RespawnEntry(IFloatingItem item, long time) {
+            this.item = item;
+            this.time = time;
         }
     }
 }

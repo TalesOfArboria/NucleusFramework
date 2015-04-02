@@ -25,18 +25,19 @@
 
 package com.jcwhatever.nucleus.scripting.api;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.floatingitems.FloatingItem;
-import com.jcwhatever.nucleus.utils.floatingitems.FloatingItemManager;
 import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.script.ScriptUpdateSubscriber;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -45,23 +46,12 @@ import javax.annotation.Nullable;
 /**
  * Gives scripts access to floating items.
  *
- * @see FloatingItem
- * @see FloatingItemManager
+ * @see IFloatingItem
  */
 public class SAPI_FloatingItems implements IDisposable {
 
     private final Deque<ISubscriber> _subscribers = new SubscriberLinkedList<>();
-    private final FloatingItemManager _manager;
     private boolean _isDisposed;
-
-    /**
-     * Constructor.
-     *
-     * @param manager  The floating item manager.
-     */
-    public SAPI_FloatingItems(FloatingItemManager manager) {
-        _manager = manager;
-    }
 
     @Override
     public boolean isDisposed() {
@@ -81,44 +71,60 @@ public class SAPI_FloatingItems implements IDisposable {
 
     /**
      * Get all floating items.
+     *
+     * @param pluginName  The name of the plugin context.
      */
-    public Collection<IFloatingItem> getItems() {
-        return _manager.getAll();
+    public Collection<IFloatingItem> getItems(String pluginName) {
+        PreCon.notNullOrEmpty(pluginName);
+
+        Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+        PreCon.isValid(plugin != null, "plugin not found.");
+
+        return Nucleus.getFloatingItems().getAll(plugin);
     }
 
     /**
      * Get a floating item by name.
      *
-     * @param name  The name of the floating item.
+     * @param pluginName  The name of the plugin context.
+     * @param name        The name of the floating item.
      *
      * @return  Null if not found.
      */
     @Nullable
-    public IFloatingItem getItem(String name) {
-        PreCon.notNullOrEmpty(name);
+    public IFloatingItem getItem(String pluginName, String name) {
+        PreCon.notNullOrEmpty(pluginName, "pluginName");
+        PreCon.notNullOrEmpty(name, "name");
 
-        return _manager.get(name);
+        Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+        PreCon.isValid(plugin != null, "plugin not found.");
+
+        return Nucleus.getFloatingItems().get(plugin, name);
     }
 
     /**
      * Add an item pickup handler.
      *
-     * @param name      The name of the floating item.
-     * @param callback  The callback to run when the item is picked up.
+     * @param pluginName  The name of the plugin context.
+     * @param name        The name of the floating item.
+     * @param callback    The callback to run when the item is picked up.
      */
-    public void onPickup(String name, final IScriptUpdateSubscriber<Player> callback) {
-        PreCon.notNullOrEmpty(name);
-        PreCon.notNull(callback);
+    public void onPickup(String pluginName, String name,
+                         IScriptUpdateSubscriber<Player> callback) {
 
-        IFloatingItem item = _manager.get(name);
-        PreCon.notNull(item);
+        PreCon.notNullOrEmpty(pluginName, "pluginName");
+        PreCon.notNullOrEmpty(name, "name");
+        PreCon.notNull(callback, "callback");
 
-        if (!(item instanceof FloatingItem))
-            return;
+        Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+        PreCon.isValid(plugin != null, "plugin not found.");
+
+        IFloatingItem item = Nucleus.getFloatingItems().get(plugin, name);
+        PreCon.isValid(item != null, "floating item not found.");
 
         ScriptUpdateSubscriber<Player> subscriber = new ScriptUpdateSubscriber<>(callback);
 
-        ((FloatingItem) item).onPickup(subscriber);
+        item.onPickup(subscriber);
 
         _subscribers.add(subscriber);
     }
@@ -126,44 +132,52 @@ public class SAPI_FloatingItems implements IDisposable {
     /**
      * Add an item spawn handler.
      *
-     * @param name      The name of the floating item.
-     * @param callback  The callback to run when the item is spawned.
+     * @param pluginName  The name of the plugin context.
+     * @param name        The name of the floating item.
+     * @param callback    The callback to run when the item is spawned.
      */
-    public void onSpawn(String name, IScriptUpdateSubscriber<Entity> callback) {
-        PreCon.notNullOrEmpty(name);
-        PreCon.notNull(callback);
+    public void onSpawn(String pluginName, String name,
+                        IScriptUpdateSubscriber<Entity> callback) {
 
-        IFloatingItem item = _manager.get(name);
-        PreCon.notNull(item);
+        PreCon.notNullOrEmpty(pluginName, "pluginName");
+        PreCon.notNullOrEmpty(name, "name");
+        PreCon.notNull(callback, "callback");
 
-        if (!(item instanceof FloatingItem))
-            return;
+        Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+        PreCon.isValid(plugin != null, "plugin not found.");
+
+        IFloatingItem item = Nucleus.getFloatingItems().get(plugin, name);
+        PreCon.isValid(item != null, "floating item not found.");
 
         ScriptUpdateSubscriber<Entity> subscriber = new ScriptUpdateSubscriber<>(callback);
 
-        ((FloatingItem) item).onSpawn(subscriber);
+        item.onSpawn(subscriber);
         _subscribers.add(subscriber);
     }
 
     /**
      * Add an item despawn handler.
      *
-     * @param name      The name of the floating item.
-     * @param callback  The callback to run when the item is despawned.
+     * @param pluginName  The name of the plugin context.
+     * @param name        The name of the floating item.
+     * @param callback    The callback to run when the item is despawned.
      */
-    public void onDespawn(String name, IScriptUpdateSubscriber<Entity> callback) {
-        PreCon.notNullOrEmpty(name);
-        PreCon.notNull(callback);
+    public void onDespawn(String pluginName, String name,
+                          IScriptUpdateSubscriber<Entity> callback) {
 
-        IFloatingItem item = _manager.get(name);
-        PreCon.notNull(item);
+        PreCon.notNullOrEmpty(pluginName, "pluginName");
+        PreCon.notNullOrEmpty(name, "name");
+        PreCon.notNull(callback, "callback");
 
-        if (!(item instanceof FloatingItem))
-            return;
+        Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+        PreCon.isValid(plugin != null, "plugin not found.");
+
+        IFloatingItem item = Nucleus.getFloatingItems().get(plugin, name);
+        PreCon.isValid(item != null, "floating item not found.");
 
         ScriptUpdateSubscriber<Entity> subscriber = new ScriptUpdateSubscriber<>(callback);
 
-        ((FloatingItem) item).onDespawn(subscriber);
+        item.onDespawn(subscriber);
         _subscribers.add(subscriber);
     }
 }

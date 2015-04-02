@@ -24,9 +24,11 @@
 
 package com.jcwhatever.nucleus.utils.floatingitems;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
-import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -38,77 +40,83 @@ import javax.annotation.Nullable;
 
 /**
  * A dropped item.
+ *
+ * @see IFloatingItemManager
+ * @see Nucleus#getFloatingItems
  */
-public interface IFloatingItem extends INamedInsensitive, IDisposable {
-
-    /**
-     * Get the floating {@link org.bukkit.inventory.ItemStack}.
-     */
-    public ItemStack getItem();
+public interface IFloatingItem extends IPluginOwned, INamedInsensitive, IDisposable {
 
     /**
      * Get the entities unique id.
      */
-    public UUID getUniqueId();
+    UUID getUniqueId();
+
+    /**
+     * Get the floating {@link org.bukkit.inventory.ItemStack}.
+     */
+    ItemStack getItem();
 
     /**
      * Get the current item entity.
      *
-     * @return  Null if not spawned.
+     * @return  The {@link Entity} or null if not spawned.
      */
     @Nullable
-    public Entity getEntity();
+    Entity getEntity();
 
     /**
-     * Get the floating items data node, if any.
+     * Determine if the item is spawned.
      */
-    @Nullable
-    public IDataNode getDataNode();
-
-    /**
-     * Determine if the item is spawned as an entity.
-     */
-    public boolean isSpawned();
+    boolean isSpawned();
 
     /**
      * Get the location of the floating item.
      *
-     * @return  Null if no location is set yet.
+     * @return  The {@link Location} or null if a location isn't set yet.
      */
     @Nullable
-    public Location getLocation();
+    Location getLocation();
 
     /**
-     * Determine if the item can be picked up.
+     * Copy the values of the items location to the output {@link Location}.
+     *
+     * @param output  The output {@link Location}.
+     *
+     * @return  The output {@link Location} or null if a location isn't set yet.
      */
-    public boolean canPickup();
+    @Nullable
+    Location getLocation(Location output);
 
     /**
-     * Set if the item can be picked up.
+     * Determine if the item can be picked up by players.
+     */
+    boolean canPickup();
+
+    /**
+     * Set if the item can be picked up by players.
      *
      * @param canPickup  True to allow players to pickup the item.
      */
-    public void setCanPickup(boolean canPickup);
+    void setCanPickup(boolean canPickup);
 
     /**
-     * Determine if the item is spawned centered within
-     * the block at the spawn location.
+     * Determine if the item is spawned centered within the block at
+     * the spawn location.
      */
-    public boolean isCentered();
+    boolean isCentered();
 
     /**
-     * Set item spawned centered within the block
-     * at the spawn location.
+     * Set item spawned centered within the block at the spawn location.
      *
-     * @param isCentered  True to center.
+     * @param isCentered  True to center, false to use exact location.
      */
-    public void setCentered(boolean isCentered);
+    void setCentered(boolean isCentered);
 
     /**
      * Get the number of seconds before the item is respawned
      * after being picked up.
      */
-    public int getRespawnTimeSeconds();
+    int getRespawnTimeSeconds();
 
     /**
      * Set the number of seconds before the item is respawned
@@ -116,27 +124,66 @@ public interface IFloatingItem extends INamedInsensitive, IDisposable {
      *
      * @param seconds  The number of seconds.
      */
-    public void setRespawnTimeSeconds(int seconds);
+    void setRespawnTimeSeconds(int seconds);
 
     /**
-     * Spawn the floating item entity.
+     * Spawn the floating item entity at the current location.
+     *
+     * @return True if the item was spawned, false if failed or a location
+     * is not set yet.
      */
-    public boolean spawn();
+    boolean spawn();
 
     /**
-     * Spawn the floating item entity.
+     * Spawn the floating item entity at a location.
+     *
+     * @param location  The location to spawn the item at.
+     *
+     * @return  True if the item was spawned, otherwise false.
      */
-    public boolean spawn(Location location);
+    boolean spawn(Location location);
 
     /**
      * Despawn the floating item entity.
+     *
+     * <p>The items spawn location is retained.</p>
+     *
+     * @return  True if the item was despawned, otherwise false.
      */
-    public boolean despawn();
+    boolean despawn();
 
     /**
      * Give a copy of the item to a player.
      *
-     * @param p  The player.
+     * @param player  The player.
      */
-    public boolean give(Player p);
+    boolean give(Player player);
+
+    /**
+     * Get updated when the item is spawned.
+     *
+     * @param subscriber  The update subscriber.
+     *
+     * @return  Self for chaining.
+     */
+    IFloatingItem onSpawn(IUpdateSubscriber<Entity> subscriber);
+
+    /**
+     * Get updated when the item is despawned.
+     *
+     * @param subscriber  The update subscriber.
+     *
+     * @return  Self for chaining.
+     */
+    IFloatingItem onDespawn(IUpdateSubscriber<Entity> subscriber);
+
+    /**
+     * Get updated when the item is picked up by a player.
+     *
+     * @param subscriber  The update subscriber. The subscriber will receive the player
+     *                    that was detected picking up the item.
+     *
+     * @return  Self for chaining.
+     */
+    IFloatingItem onPickup(IUpdateSubscriber<Player> subscriber);
 }

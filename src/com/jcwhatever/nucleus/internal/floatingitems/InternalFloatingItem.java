@@ -22,11 +22,9 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.utils.floatingitems;
+package com.jcwhatever.nucleus.internal.floatingitems;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemDespawnEvent;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemSpawnEvent;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -34,9 +32,10 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.entity.ITrackedEntity;
+import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
-import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
+import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,6 +44,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
@@ -58,11 +58,12 @@ import javax.annotation.Nullable;
  * Without the data node, expect left over items that can be picked
  * up after server restarts or crashes.</p>
  */
-public class FloatingItem implements IFloatingItem {
+public class InternalFloatingItem implements IFloatingItem {
 
     private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
     private static BukkitListener _listener;
 
+    private final Plugin _plugin;
     private final String _name;
     private final String _searchName;
     private final ItemStack _item;
@@ -78,21 +79,7 @@ public class FloatingItem implements IFloatingItem {
     private boolean _isDisposed;
     private Location _currentLocation;
 
-    private AgentHashMap<String, UpdateAgent> _updateAgents =
-            new AgentHashMap<String, UpdateAgent>()
-                    .set("onPickup", new UpdateAgent<Player>())
-                    .set("onSpawn", new UpdateAgent<Entity>())
-                    .set("onDespawn", new UpdateAgent<Entity>());
-
-    /**
-     * Constructor.
-     *
-     * @param name      The unique name of the item.
-     * @param item      The item.
-     */
-    public FloatingItem(String name, ItemStack item) {
-        this(name, item, null, null);
-    }
+    private NamedUpdateAgents _agents = new NamedUpdateAgents();
 
     /**
      * Constructor.
@@ -100,25 +87,19 @@ public class FloatingItem implements IFloatingItem {
      * @param name             The unique name of the item.
      * @param item             The item.
      * @param initialLocation  Optional initial location of the item.
+     * @param dataNode         Data node to store item settings in.
      */
-    public FloatingItem(String name, ItemStack item, @Nullable Location initialLocation) {
-        this(name, item, initialLocation, null);
-    }
+    public InternalFloatingItem(Plugin plugin,
+                                String name, ItemStack item,
+                                @Nullable Location initialLocation,
+                                IDataNode dataNode) {
 
-    /**
-     * Constructor.
-     *
-     * @param name             The unique name of the item.
-     * @param item             The item.
-     * @param initialLocation  Optional initial location of the item.
-     * @param dataNode         Optional data node to store item settings in.
-     */
-    public FloatingItem(String name, ItemStack item, @Nullable Location initialLocation,
-                        @Nullable IDataNode dataNode) {
-
+        PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
         PreCon.notNull(item);
+        PreCon.notNull(dataNode);
 
+        _plugin = plugin;
         _name = name;
         _searchName = name.toLowerCase();
         _item = item;
@@ -134,9 +115,16 @@ public class FloatingItem implements IFloatingItem {
         loadSettings();
     }
 
-    /**
-     * Get the floating items name.
-     */
+    @Override
+    public Plugin getPlugin() {
+        return _plugin;
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return _entityId;
+    }
+
     @Override
     public String getName() {
         return _name;
@@ -147,27 +135,11 @@ public class FloatingItem implements IFloatingItem {
         return _searchName;
     }
 
-    /**
-     * Get the floating item.
-     */
     @Override
     public ItemStack getItem() {
         return _item.clone();
     }
 
-    /**
-     * Get the entities unique id.
-     */
-    @Override
-    public UUID getUniqueId() {
-        return _entityId;
-    }
-
-    /**
-     * Get the current item entity.
-     *
-     * @return  Null if not spawned.
-     */
     @Override
     @Nullable
     public Entity getEntity() {
@@ -181,115 +153,72 @@ public class FloatingItem implements IFloatingItem {
     /**
      * Get the floating items data node, if any.
      */
-    @Override
     @Nullable
     public IDataNode getDataNode() {
         return _dataNode;
     }
 
-    /**
-     * Determine if the item is spawned as an entity.
-     */
     @Override
     public boolean isSpawned() {
         return _isSpawned;
     }
 
-    /**
-     * Get the location of the floating item.
-     *
-     * @return  Null if no location is set yet.
-     */
     @Override
     @Nullable
     public Location getLocation() {
-        return _currentLocation;
+        return getLocation(new Location(null, 0, 0, 0));
     }
 
-    /**
-     * Determine if the item can be picked up.
-     */
+    @Nullable
+    @Override
+    public Location getLocation(Location output) {
+        return LocationUtils.copy(_currentLocation, output);
+    }
+
     @Override
     public boolean canPickup() {
         return _canPickup;
     }
 
-    /**
-     * Set if the item can be picked up.
-     *
-     * @param canPickup  True to allow players to pickup the item.
-     */
     @Override
     public void setCanPickup(boolean canPickup) {
         _canPickup = canPickup;
 
-        if (_dataNode != null) {
-            _dataNode.set("can-pickup", canPickup);
-            _dataNode.save();
-        }
+        _dataNode.set("can-pickup", canPickup);
+        _dataNode.save();
     }
 
-    /**
-     * Determine if the item is spawned centered within
-     * the block at the spawn location.
-     */
     @Override
     public boolean isCentered() {
         return _isCentered;
     }
 
-    /**
-     * Set item spawned centered within the block
-     * at the spawn location.
-     *
-     * @param isCentered  True to center.
-     */
     @Override
     public void setCentered(boolean isCentered) {
         _isCentered = isCentered;
 
-        if (_dataNode != null) {
-            _dataNode.set("is-centered", isCentered);
-            _dataNode.save();
-        }
+        _dataNode.set("is-centered", isCentered);
+        _dataNode.save();
     }
 
-    /**
-     * Get the number of seconds before the item is respawned
-     * after being picked up.
-     */
     @Override
     public int getRespawnTimeSeconds() {
         return _respawnTimeSeconds;
     }
 
-    /**
-     * Set the number of seconds before the item is respawned
-     * after being picked up.
-     *
-     * @param seconds  The number of seconds.
-     */
     @Override
     public void setRespawnTimeSeconds(int seconds) {
         _respawnTimeSeconds = seconds;
 
-        if (_dataNode != null) {
-            _dataNode.set("respawn-time-seconds", seconds);
-            _dataNode.save();
-        }
+        _dataNode.set("respawn-time-seconds", seconds);
+        _dataNode.save();
     }
 
-    /**
-     * Spawn the floating item entity.
-     */
     @Override
     public boolean spawn() {
         return _currentLocation != null && spawn(_currentLocation);
     }
 
-    /**
-     * Spawn the floating item entity.
-     */
     @Override
     public boolean spawn(Location location) {
         PreCon.notNull(location);
@@ -338,24 +267,16 @@ public class FloatingItem implements IFloatingItem {
         meta.setDisplayName(_entityId.toString());
         item.getItemStack().setItemMeta(meta);
 
-        if (_dataNode != null) {
-            _dataNode.set("location", location);
-            _dataNode.set("is-spawned", true);
-            _dataNode.set("entity-id", _entityId);
-            _dataNode.save();
-        }
+        _dataNode.set("location", location);
+        _dataNode.set("is-spawned", true);
+        _dataNode.set("entity-id", _entityId);
+        _dataNode.save();
 
-        // notify onSpawn subscribers
-        @SuppressWarnings("unchecked")
-        UpdateAgent<Entity> agent = _updateAgents.get("onSpawn");
-        agent.update(entity);
+        _agents.update("onSpawn", entity);
 
         return true;
     }
 
-    /**
-     * Despawn the floating item entity.
-     */
     @Override
     public boolean despawn() {
 
@@ -382,41 +303,32 @@ public class FloatingItem implements IFloatingItem {
         _trackedEntity = null;
         _entityId = null;
 
-        if (_dataNode != null) {
-            _dataNode.set("is-spawned", false);
 
-            if (Nucleus.getPlugin().isEnabled())
-                _dataNode.set("entity-id", null);
+        _dataNode.set("is-spawned", false);
 
-            _dataNode.save();
+        if (_plugin.isEnabled()) {
+            _dataNode.set("entity-id", null);
         }
 
-        @SuppressWarnings("unchecked")
-        UpdateAgent<Entity> agent = _updateAgents.get("onDespawn");
-        agent.update(entity);
+        _dataNode.save();
+
+
+        _agents.update("onDespawn", entity);
 
         return true;
     }
 
-    /**
-     * Give a copy of the item to a player.
-     *
-     * @param p  The player.
-     */
     @Override
-    public boolean give(Player p) {
-        PreCon.notNull(p);
+    public boolean give(Player player) {
+        PreCon.notNull(player);
 
-        if (!InventoryUtils.hasRoom(p.getInventory(), _item))
+        if (!InventoryUtils.hasRoom(player.getInventory(), _item))
             return false;
 
-        p.getInventory().addItem(_item.clone());
+        player.getInventory().addItem(_item.clone());
         return true;
     }
 
-    /**
-     * Determine if the floating item has been disposed.
-     */
     @Override
     public boolean isDisposed() {
         return _isDisposed;
@@ -429,74 +341,39 @@ public class FloatingItem implements IFloatingItem {
         _isDisposed = true;
     }
 
-    /**
-     * Get updated when the item is spawned.
-     *
-     * @param subscriber  The update subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    public FloatingItem onSpawn(IUpdateSubscriber<Entity> subscriber) {
+    @Override
+    public InternalFloatingItem onSpawn(IUpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
-        _updateAgents.get("onSpawn").register(subscriber);
+        _agents.getAgent("onSpawn").register(subscriber);
 
         return this;
     }
 
-    /**
-     * Get updated when the item is despawned.
-     *
-     * @param subscriber  The update subscriber.
-     *
-     * @return  Self for chaining.
-     */
-    public FloatingItem onDespawn(IUpdateSubscriber<Entity> subscriber) {
+    @Override
+    public InternalFloatingItem onDespawn(IUpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
-        _updateAgents.get("onDespawn").register(subscriber);
+        _agents.getAgent("onDespawn").register(subscriber);
 
         return this;
     }
 
-    /**
-     * Get updated when the item is picked up by a player.
-     *
-     * <p>Is updated event if the player is prevented from
-     * picking up the item.</p>
-     *
-     * @param subscriber  The update subscriber. The subscriber will receive the player
-     *                    that was detected picking up the item.
-     *
-     * @return  Self for chaining.
-     */
-    public FloatingItem onPickup(IUpdateSubscriber<Player> subscriber) {
+    @Override
+    public InternalFloatingItem onPickup(IUpdateSubscriber<Player> subscriber) {
         PreCon.notNull(subscriber);
 
-        _updateAgents.get("onPickup").register(subscriber);
+        _agents.getAgent("onPickup").register(subscriber);
 
         return this;
     }
 
-    /**
-     * Called after the items data node settings are loaded
-     *
-     * @param dataNode  The items data node.
-     */
-    protected void onLoadSettings(@SuppressWarnings("unused") IDataNode dataNode) {
-        // do nothing
-    }
+    void onPickup(Player p) {
 
-    void onPickup(Player p, boolean isCancelled) {
-
-        @SuppressWarnings("unchecked")
-        UpdateAgent<Player> agent = _updateAgents.get("onPickup");
-        agent.update(p);
+        _agents.update("onPickup", p);
     }
 
     private void loadSettings() {
-        if (_dataNode == null)
-            return;
 
         _canPickup = _dataNode.getBoolean("can-pickup", _canPickup);
         _isCentered = _dataNode.getBoolean("is-centered", _isCentered);
@@ -526,7 +403,6 @@ public class FloatingItem implements IFloatingItem {
         else {
             _isSpawned = false;
         }
-
-        onLoadSettings(_dataNode);
     }
 }
+

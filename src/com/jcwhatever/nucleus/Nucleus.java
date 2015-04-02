@@ -36,6 +36,7 @@ import com.jcwhatever.nucleus.scripting.IScriptManager;
 import com.jcwhatever.nucleus.sounds.ISoundManager;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.entity.IEntityTracker;
+import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItemManager;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.nucleus.utils.kits.KitManager;
@@ -137,6 +138,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._eventManager != null, ERROR_NOT_READY);
 
         return _plugin._eventManager;
+    }
+
+    /**
+     * Get the global floating item manager.
+     */
+    public static IFloatingItemManager getFloatingItems() {
+        PreCon.isValid(_plugin._floatingItemManager != null, ERROR_NOT_READY);
+
+        return _plugin._floatingItemManager;
     }
 
     /**
