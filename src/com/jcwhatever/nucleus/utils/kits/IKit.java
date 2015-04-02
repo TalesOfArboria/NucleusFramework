@@ -34,7 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 
 /**
- * A kit of items that can be given (or taken) from a player.
+ * A kit of items that can be given (or taken) from an entity.
  */
 public interface IKit extends INamedInsensitive, IPluginOwned {
 
@@ -68,7 +68,11 @@ public interface IKit extends INamedInsensitive, IPluginOwned {
     ItemStack[] getItems();
 
     /**
-     * Gets the kit armor items as an a new array.
+     * Gets the kit armor items (for human entity) as an a new array.
+     *
+     * <p>The array size always has 4 elements. Starting from index 0 the items are
+     * helmet, chestplate, leggings, boots. If any of the items is not present in
+     * the kit then the value of the element is null.</p>
      */
     ItemStack[] getArmor();
 

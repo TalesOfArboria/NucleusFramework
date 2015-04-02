@@ -30,7 +30,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * A kit that can be modified.
+ * An {@link IKit} that can be modified.
  */
 public interface IModifiableKit extends IKit {
 
@@ -67,14 +67,14 @@ public interface IModifiableKit extends IKit {
      *
      * @param items  The items to add.
      */
-    public void addItems(ItemStack... items);
+    void addItems(ItemStack... items);
 
     /**
      * Add a collection of non-armor slot items to the kit.
      *
      * @param items  The items to add.
      */
-    public void addItems(Collection<ItemStack> items);
+    void addItems(Collection<ItemStack> items);
 
     /**
      * Remove 1 or more non-armor slot items from the kit.
@@ -83,7 +83,7 @@ public interface IModifiableKit extends IKit {
      *
      * @return  True if any of the items were removed.
      */
-    public boolean removeItems(ItemStack... items);
+    boolean removeItems(ItemStack... items);
 
     /**
      * Remove 1 or more non-armor slot items from the kit.
@@ -92,21 +92,21 @@ public interface IModifiableKit extends IKit {
      *
      * @return  True if any of the items were removed.
      */
-    public boolean removeItems(Collection<ItemStack> items);
+    boolean removeItems(Collection<ItemStack> items);
 
     /**
      * Add an array of armor or non-armor slot items to the kit.
      *
      * @param items  The items to add.
      */
-    public void addAnyItems(ItemStack... items);
+    void addAnyItems(ItemStack... items);
 
     /**
      * Add a collection of armor or non-armor slot items to the kit.
      *
      * @param items  The items to add.
      */
-    public void addAnyItems(Collection<ItemStack> items);
+    void addAnyItems(Collection<ItemStack> items);
 
     /**
      * Remove 1 or more items from the kit, armor or non-armor.
@@ -115,19 +115,19 @@ public interface IModifiableKit extends IKit {
      *
      * @return  True if any of the items were removed.
      */
-    public boolean removeAnyItems(ItemStack... items);
+    boolean removeAnyItems(ItemStack... items);
 
     /**
-     * Remove 1 or more non-armor slot items from the kit.
+     * Remove 1 or more items from the kit, armor or non-armor.
      *
      * @param items  The items to remove.
      *
      * @return  True if any of the items were removed.
      */
-    public boolean removeAnyItems(Collection<ItemStack> items);
+    boolean removeAnyItems(Collection<ItemStack> items);
 
     /**
      * Save the modified kit.
      */
-    public boolean save();
+    boolean save();
 }

@@ -36,13 +36,13 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 
 /**
- * Manages player kits.
+ * Manages equipment kits.
  */
 public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPluginOwned {
 
     private final Plugin _plugin;
 
-    /**True to load data from the data node during the constructor.
+    /**
      * Constructor.
      *
      * @param plugin    The owning plugin.
@@ -98,9 +98,10 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
      * Get an {@link IModifiableKit} instance for the
      * given git.
      *
-     * @param kit  The kit to modify.
+     * @param kit  The {@link IKit} to modify.
      *
-     * @return  The modifiable kit or null if the manager does not own the kit.
+     * @return  The modifiable kit or null if the manager does not own the kit or does not
+     * allow modifying the kit.
      */
     public IModifiableKit modifyKit(IKit kit) {
         PreCon.notNull(kit);
@@ -114,9 +115,9 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
     }
 
     /**
-     * Create a new {@link IKit} instance.
+     * Invoked to create a new {@link IKit} instance.
      *
-     * @param kitName  The name of the kit.
+     * @param kitName  The name of the {@link IKit}.
      */
     protected IKit createKit(String kitName) {
         return new Kit(_plugin, kitName);

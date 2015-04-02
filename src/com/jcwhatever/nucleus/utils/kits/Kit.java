@@ -52,7 +52,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * A kit of inventory items that can be given to a player.
+ * An implementation of {@link IKit}.
  */
 public class Kit implements IKit {
 
@@ -79,69 +79,45 @@ public class Kit implements IKit {
         _items = new ArrayList<ItemStack>(15);
     }
 
-    /**
-     * Get the owning plugin
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
     }
 
-    /**
-     * Get the name of the kit.
-     */
     @Override
     public String getName() {
         return _name;
     }
 
-    /**
-     * Get the name of the kit in lowercase.
-     */
     @Override
     public String getSearchName() {
         return _searchName;
     }
 
-    /**
-     * Get the kit helmet, if any.
-     */
     @Override
     @Nullable
     public ItemStack getHelmet() {
         return _armor[0] != null ? _armor[0].clone() : null;
     }
 
-    /**
-     * Get the kit chest plate, if any.
-     */
     @Override
     @Nullable
     public ItemStack getChestplate() {
         return _armor[1] != null ? _armor[1].clone() : null;
     }
 
-    /**
-     * Get the kit leggings, if any.
-     */
     @Override
     @Nullable
     public ItemStack getLeggings() {
         return _armor[2] != null ? _armor[2].clone() : null;
     }
 
-    /**
-     * Gets the kit boots, if any.
-     */
     @Override
     @Nullable
     public ItemStack getBoots() {
         return _armor[3] != null ? _armor[3].clone() : null;
     }
 
-    /**
-     * Gets a new array of non-armor items in the kit.
-     */
     @Override
     public ItemStack[] getItems() {
 
@@ -153,13 +129,6 @@ public class Kit implements IKit {
         return array;
     }
 
-    /**
-     * Gets the kit armor items as an a new array.
-     *
-     * <p>The array always has 4 elements. Starting from index 0 the items are
-     * helmet, chestplate, leggings, boots. If any of the items is not present in
-     * the kit then the value of the element is null.</p>
-     */
     @Override
     public ItemStack[] getArmor() {
 
@@ -419,8 +388,8 @@ public class Kit implements IKit {
     /**
      * Remove an item from the kit, armor or non-armor.
      *
-     * @param items {ItemStack}
-     * @return {Boolean} - True if removed.
+     * @param items  The {@link ItemStack}'s to remove.
+     * @return  True if 1 or more items was removed, otherwise false.
      */
     protected boolean removeItems(ItemStack... items) {
         PreCon.notNull(items);
@@ -441,16 +410,15 @@ public class Kit implements IKit {
     /**
      * Remove an item from the kit, armor or non-armor.
      *
-     * @param items {ItemStack}
-     * @return {Boolean} - True if removed.
+     * @param items  The {@link ItemStack}'s to remove.
+     *
+     * @return  True if at least 1 of the items was found and removed, otherwise false.
      */
     protected boolean removeAnyItems(ItemStack... items) {
         PreCon.notNull(items);
 
         List<ItemStack> clone = new ArrayList<>(items.length);
         Collections.addAll(clone, items);
-
-        ItemStackMatcher comparer = ItemStackMatcher.getDefault();
 
         boolean[] armorFlags = new boolean[4];
 
