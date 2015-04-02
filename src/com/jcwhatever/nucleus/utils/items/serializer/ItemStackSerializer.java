@@ -175,18 +175,19 @@ public class ItemStackSerializer {
      * Serialize an {@link org.bukkit.inventory.ItemStack} and append the results to
      * the current results.
      *
-     * @param stack  The {@link org.bukkit.inventory.ItemStack} to serialize.
+     * @param stack  The {@link org.bukkit.inventory.ItemStack} to serialize. Null values
+     *               are converted to {@link Material#AIR} with an amount of -1.
      *
      * @return Self for chaining.
      */
-    public ItemStackSerializer append(ItemStack stack) {
-        PreCon.notNull(stack);
+    public ItemStackSerializer append(@Nullable ItemStack stack) {
 
         if (_itemsAppended > 0)
             _buffer.append(", ");
 
         appendItemStackString(_buffer, stack, _outputType);
         _itemsAppended++;
+
         return this;
     }
 
@@ -241,7 +242,7 @@ public class ItemStackSerializer {
      * Serialize an item stack to a string and append to buffer.
      */
     private void appendItemStackString(StringBuilder buffy, @Nullable ItemStack stack,
-                                              SerializerOutputType outputType) {
+                                       SerializerOutputType outputType) {
 
         if (stack == null) {
             stack = new ItemStack(Material.AIR, -1);
