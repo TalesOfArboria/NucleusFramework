@@ -78,13 +78,17 @@ public class ItemStackBuilder {
      * Constructor.
      *
      * @param itemName  The name of the material.
+     *
+     * @throws IllegalArgumentException if the item name is not recognized.
+     *
+     * @see NamedMaterialData
      */
     public ItemStackBuilder(String itemName) {
         PreCon.notNullOrEmpty(itemName);
 
         _materialData = NamedMaterialData.get(itemName);
         if (_materialData == null)
-            throw new RuntimeException(itemName + " is not a recognized material.");
+            throw new IllegalArgumentException(itemName + " is not a recognized material.");
     }
 
     /**
@@ -197,13 +201,15 @@ public class ItemStackBuilder {
      * @param enchantmentName  The enchantment name.
      *
      * @return  Self for chaining.
+     *
+     * @throws IllegalArgumentException if the enchantment name is not recognized.
      */
     public ItemStackBuilder enchant(int level, String enchantmentName) {
         PreCon.notNull(enchantmentName);
 
         Enchantment enchantment = Enchantment.getByName(enchantmentName);
         if (enchantment == null)
-            throw new RuntimeException("Cannot find an enchantment named " + enchantmentName);
+            throw new IllegalArgumentException("Cannot find an enchantment named " + enchantmentName);
 
         return enchant(level, enchantment);
     }
@@ -211,7 +217,7 @@ public class ItemStackBuilder {
     /**
      * Set the RGB color.
      *
-     * <p>Not all items can have their color set.</p>
+     * <p>Not all items can have RGB color set.</p>
      *
      * @param color  The color.
      *
@@ -227,7 +233,7 @@ public class ItemStackBuilder {
     /**
      * Set the RGB color.
      *
-     * <p>Not all items can have their color set.</p>
+     * <p>Not all items can have RGB color set.</p>
      *
      * @param red    The red component.
      * @param green  The green component.
@@ -243,7 +249,7 @@ public class ItemStackBuilder {
     /**
      * Set the RGB color.
      *
-     * <p>Not all items can have their color set.</p>
+     * <p>Not all items can have RGB color set.</p>
      *
      * @param rgb  The rgb integer.
      *
@@ -256,7 +262,7 @@ public class ItemStackBuilder {
     }
 
     /**
-     * Build and return a new {@Code ItemStack}.
+     * Build and return a new {@link ItemStack}.
      */
     public ItemStack build() {
 
