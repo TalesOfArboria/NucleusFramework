@@ -284,7 +284,12 @@ public final class InternalScriptManager implements IScriptManager {
      */
     private void clearEvaluated() {
         for (IEvaluatedScript evaluated : _evaluated.values()) {
-            evaluated.dispose();
+            try {
+                evaluated.dispose();
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
 
         _evaluated.clear();
