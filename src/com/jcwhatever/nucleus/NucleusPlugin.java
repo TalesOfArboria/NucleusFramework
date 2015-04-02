@@ -171,7 +171,13 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     public final void onDisable() {
 
         Nucleus.unregisterPlugin(this);
-        onDisablePlugin();
+
+        try {
+            onDisablePlugin();
+        }
+        catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     /**
