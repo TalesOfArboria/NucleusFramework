@@ -34,17 +34,16 @@ import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -58,27 +57,11 @@ public final class PlayerUtils {
     private PlayerUtils() {}
 
     /**
-     * Determine if a player is online.
+     * Get the time the {@link Player} logged in for the current session.
      *
-     * @param p  The player to check.
-     */
-    public static boolean isOnline(Player p) {
-        PreCon.notNull(p);
-
-        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        for (Player plyr : players) {
-            if (plyr.getUniqueId().equals(p.getUniqueId()))
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * Get the time the player logged in for the current session.
+     * @param player  The {@link Player} to check.
      *
-     * @param player  The player to check.
-     *
-     * @return  Null if the player is not logged in.
+     * @return  The {@link Date} or null if the player is not logged in.
      */
     @Nullable
     public static Date getLoginDate(Player player) {
@@ -86,11 +69,11 @@ public final class PlayerUtils {
     }
 
     /**
-     * Get the time the player last changed worlds in the current session.
+     * Get the time the {@link Player} last changed worlds in the current session.
      *
-     * @param player  The player to check.
+     * @param player  The {@link Player} to check.
      *
-     * @return  Null if the player is not logged in.
+     * @return  The {@link Date} or null if the player is not logged in.
      */
     @Nullable
     public static Date getLastWorldChangeDate(Player player) {
@@ -98,33 +81,35 @@ public final class PlayerUtils {
     }
 
     /**
-     * Get the number of milliseconds the player has been on
+     * Get the number of milliseconds the {@link Player} has been on
      * the server during the current login session.
      *
-     * @param player  The player to check.
+     * @param player  The {@link Player} to check.
      *
-     * @return  0 if the player is not online.
+     * @return  0 if the {@link Player} is not online.
      */
     public static long getSessionTime(Player player) {
         return PlayerTracker.get().getSessionTime(player);
     }
 
     /**
-     * Get the number of milliseconds the player has been in
+     * Get the number of milliseconds the {@link Player} has been in
      * the world they are currently in.
      *
-     * @param player  The player to check.
+     * @param player  The {@link Player} to check.
      *
-     * @return 0 if the player is not online.
+     * @return 0 if the {@link Player} is not online.
      */
     public static long getWorldSessionTime(Player player) {
         return PlayerTracker.get().getWorldSessionTime(player);
     }
 
     /**
-     * Get an online player by name.
+     * Get an online {@link Player} by name.
      *
-     * @param playerName  The name of the player.
+     * @param playerName  The name of the {@link Player}.
+     *
+     * @return  The {@link Player} or null if not online.
      */
     @Nullable
     public static Player getPlayer(String playerName) {
@@ -138,9 +123,11 @@ public final class PlayerUtils {
     }
 
     /**
-     * Get an online player by Id.
+     * Get an online {@link Player} by ID.
      *
-     * @param playerId  The id of the player.
+     * @param playerId  The ID of the {@link Player}.
+     *
+     * @return  The {@link Player} or null if not online.
      */
     @Nullable
     public static Player getPlayer(UUID playerId) {
@@ -150,9 +137,9 @@ public final class PlayerUtils {
     }
 
     /**
-     * Get player instance from provided object.
+     * Get {@link Player} instance from provided object.
      *
-     * <p>Attempts to retrieve the player object from one of the following
+     * <p>Attempts to retrieve the {@link Player} object from one of the following
      * types of objects:</p>
      *
      * <ul>
@@ -162,7 +149,9 @@ public final class PlayerUtils {
      *     <li>{@link java.lang.String} (player name)</li>
      * </ul>
      *
-     * @param player  The object that represents a player.
+     * @param player  The object that represents a {@link Player}.
+     *
+     * @return  The {@link Player} or null if not found.
      */
     @Nullable
     public static Player getPlayer(Object player) {
@@ -183,9 +172,9 @@ public final class PlayerUtils {
     }
 
     /**
-     * Gets player Id from provided object.
+     * Gets player ID from provided object.
      *
-     * <p>Attempts to retrieve the player object from one of the following
+     * <p>Attempts to retrieve the {@link Player} object from one of the following
      * types of objects:</p>
      *
      * <ul>
@@ -197,7 +186,7 @@ public final class PlayerUtils {
      *
      * @param player  The object to get the player ID from.
      *
-     * @return Null if not found
+     * @return The players ID or null if not found.
      */
     @Nullable
     public static UUID getPlayerId(Object player) {
@@ -224,15 +213,14 @@ public final class PlayerUtils {
     }
 
     /**
-     * Gets player Id from name using stored id to name map if
+     * Gets player ID from name using stored ID to name map if
      * the player is not online.
      *
-     * <p>Will return an id if the player is not online but
-     * has note logged in before.</p>
+     * <p>Uses the player lookup provider.</p>
      *
-     * @param playerName  The name of the player
+     * @param playerName  The name of the player.
      *
-     * @return Null if not found
+     * @return The player ID or null if not found.
      */
     @Nullable
     public static UUID getPlayerId(String playerName) {
@@ -240,13 +228,13 @@ public final class PlayerUtils {
     }
 
     /**
-     * Get the name of a player from the player Id.
+     * Get the name of a player from the player ID.
      *
-     * <p>Checks the NucleusFramework map of player names to player Id's</p>
+     * <p>Uses the player lookup provider.</p>
      *
-     * @param playerId  The id of the player.
+     * @param playerId  The ID of the player.
      *
-     * @return  Null if a record was not found.
+     * @return  The players name or null if a record was not found.
      */
     @Nullable
     public static String getPlayerName(UUID playerId) {
@@ -267,56 +255,68 @@ public final class PlayerUtils {
      *     <li>Fall distance set to 0</li>
      * </ul>
      *
-     * @param p  The player.
+     * @param player  The {@link Player}.
      */
-    public static void resetPlayer(Player p) {
-        PreCon.notNull(p);
+    public static void resetPlayer(Player player) {
+        PreCon.notNull(player);
 
-        InventoryUtils.clearAll(p.getInventory());
+        InventoryUtils.clearAll(player.getInventory());
 
-        p.setGameMode(GameMode.SURVIVAL);
-        p.getActivePotionEffects().clear();
-        p.setHealth(p.getMaxHealth());
-        p.setFoodLevel(20);
-        p.setLevel(0);
-        p.setExp(0);
-        p.setFlying(false);
-        p.setAllowFlight(false);
-        p.setFireTicks(0);
-        p.setFallDistance(0);
+        player.setGameMode(GameMode.SURVIVAL);
+        player.getActivePotionEffects().clear();
+        player.setHealth(player.getMaxHealth());
+        player.setFoodLevel(20);
+        player.setLevel(0);
+        player.setExp(0);
+        player.setFlying(false);
+        player.setAllowFlight(false);
+        player.setFireTicks(0);
+        player.setFallDistance(0);
     }
 
     /**
-     * Get a list of players that are near the specified location.
+     * Get a list of {@link Player}'s that are near the specified {@link Location}.
      *
-     * @param loc          The location to check.
+     * @param loc          The {@link Location} to check.
      * @param chunkRadius  The chunk radius to check in.
      */
     public static List<Player> getNearbyPlayers(Location loc, int chunkRadius) {
         PreCon.notNull(loc);
-        PreCon.greaterThanZero(chunkRadius);
+        PreCon.positiveNumber(chunkRadius);
 
         return getNearbyPlayers(loc, chunkRadius, null);
     }
 
     /**
-     * Get a list of players that are near the specified location.
+     * Get a list of {@link Player}'s that are near the specified {@link Location}.
      *
-     * @param loc          The location to check.
+     * @param loc          The {@link Location} to check.
      * @param chunkRadius  The chunk radius to check in.
      * @param validator    A validator used to validate if a player is a candidate to return.
      */
     public static List<Player> getNearbyPlayers(Location loc, int chunkRadius,
                                                 @Nullable IValidator<Player> validator) {
-        PreCon.notNull(loc);
-        PreCon.greaterThanZero(chunkRadius);
+        PreCon.notNull(loc, "loc");
+        PreCon.notNull(loc.getWorld(), "loc world");
+        PreCon.positiveNumber(chunkRadius, "chunkRadius");
 
-        Chunk chunk = loc.getChunk();
-        List<Player> players = new ArrayList<Player>(20);
+        World world = loc.getWorld();
+
+        int chunkX = (int)Math.floor(loc.getX() / 16);
+        int chunkZ = (int)Math.floor(loc.getZ() / 16);
+
+        if (!world.isChunkLoaded(chunkX, chunkZ))
+            return new ArrayList<>(0);
+
+        List<Player> players = new ArrayList<Player>((chunkRadius + 1) * 7);
 
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                Entity[] entities = chunk.getWorld().getChunkAt(chunk.getX() + x, chunk.getZ() + z).getEntities();
+
+                if (!world.isChunkLoaded(chunkX + x, chunkZ + z))
+                    continue;
+
+                Entity[] entities = world.getChunkAt(chunkX + x, chunkZ + z).getEntities();
 
                 for (Entity entity : entities) {
                     if (!(entity instanceof Player))
@@ -334,19 +334,21 @@ public final class PlayerUtils {
     }
 
     /**
-     * Iterates over blocks in the direction the player is looking
-     * until the max distance is reached or a block that isn't
-     * {@link org.bukkit.Material#AIR} is found.
+     * Iterates over blocks in the direction the player is looking until the
+     * max distance is reached or a block that isn't {@link org.bukkit.Material#AIR}
+     * is found.
      *
-     * @param p            The player.
+     * @param player       The {@link Player}.
      * @param maxDistance  The max distance to search.
+     *
+     * @return  The {@link Block} that was found or null if the max distance was reached.
      */
     @Nullable
-    public static Block getTargetBlock(Player p, int maxDistance) {
-        PreCon.notNull(p);
+    public static Block getTargetBlock(Player player, int maxDistance) {
+        PreCon.notNull(player);
         PreCon.positiveNumber(maxDistance);
 
-        BlockIterator bit = new BlockIterator(p, maxDistance);
+        BlockIterator bit = new BlockIterator(player, maxDistance);
         Block next;
         while(bit.hasNext())
         {
