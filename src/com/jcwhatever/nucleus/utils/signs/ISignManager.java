@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.utils.signs;
 
+import com.jcwhatever.nucleus.Nucleus;
+
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 
@@ -33,6 +35,8 @@ import javax.annotation.Nullable;
 
 /**
  * Interface for the global sign manager.
+ *
+ * @see Nucleus#getSignManager
  */
 public interface ISignManager {
 

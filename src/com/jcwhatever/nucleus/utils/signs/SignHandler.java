@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.utils.signs;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.DataPath;
@@ -40,6 +41,11 @@ import java.util.regex.Matcher;
 
 /**
  * Abstract sign handler for signs of a specific type.
+ *
+ * @see ISignManager
+ * @see Nucleus#getSignManager
+ * @see SignUtils#registerHandler(SignHandler)
+ * @see SignUtils#unregisterHandler(SignHandler)
  */
 public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
 

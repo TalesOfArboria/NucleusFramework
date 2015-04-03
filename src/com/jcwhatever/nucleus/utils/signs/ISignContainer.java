@@ -36,6 +36,8 @@ import javax.annotation.Nullable;
  *
  * <p>Used to pass signs into {@link SignHandler} event methods and allow
  * retrieving and saving from the signs data node.</p>
+ *
+ * @see ISignManager
  */
 public interface ISignContainer {
 
