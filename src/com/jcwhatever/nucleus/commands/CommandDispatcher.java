@@ -71,7 +71,7 @@ public class CommandDispatcher implements
 
 
     private final Plugin _plugin;
-    private AboutCommand _defaultRoot;
+    private AbstractCommand _defaultRoot;
     private CommandCollection _rootCommands;
     private final IMessenger _msg;
     private final Set<String> _pluginCommands;
@@ -205,7 +205,7 @@ public class CommandDispatcher implements
     }
 
     /**
-     * Called by bukkit when a command is tab completed.
+     * Invoked by Bukkit when a command is tab completed.
      */
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String s, String[] args) {
@@ -324,7 +324,7 @@ public class CommandDispatcher implements
     }
 
     /**
-     * Called after initialization when the command dispatcher
+     * Invoked after initialization when the command dispatcher
      * is ready to accept command registrations.
      *
      * <p>Intended to be overridden by a class that extends
