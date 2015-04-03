@@ -28,7 +28,6 @@ _Coders like versatility. Server operators like stability. Users like usability.
 
 ## Plugins using NucleusFramework
  * [PV-Star](https://github.com/JCThePants/PV-Star) - Extensible arena framework.
- * [NucleusCitizens](https://github.com/JCThePants/NucleusCitizens) - Extends Nucleus functionality to include script API support for [Citizens2](https://github.com/CitizensDev/Citizens2) plugin.
  * [TPRegions](https://github.com/JCThePants/TPRegions) - Portal and region teleport.
  * [PhantomPackets](https://github.com/JCThePants/PhantomPackets) - Sets viewable regions and entities to specific players.
  * [ArborianQuests](https://github.com/JCThePants/ArborianQuests) - Quest scripting plugin.
@@ -59,7 +58,7 @@ You can include the latest NucleusFramework snapshot as a Maven dependency with 
         <dependency>
             <groupId>com.jcwhatever.bukkit</groupId>
             <artifactId>NucleusFramework</artifactId>
-            <version>0.3-SNAPSHOT</version>
+            <version>0.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

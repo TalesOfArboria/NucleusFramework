@@ -4,7 +4,7 @@
 ext.jcBuildSettings = [
         projectName : 'NucleusFramework',
         majorVersion : '0',
-        minorVersion : '3',
+        minorVersion : '4',
         buildBy : null, // auto filled
         buildNumber : null, // auto filled when using teamcity
         mainClass : null,
