@@ -36,7 +36,7 @@ import com.jcwhatever.nucleus.scripting.IScriptManager;
 import com.jcwhatever.nucleus.sounds.ISoundManager;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
-import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItemManager;
+import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItemManager;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerialization;
