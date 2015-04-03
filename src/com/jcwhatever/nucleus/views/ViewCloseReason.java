@@ -36,19 +36,16 @@ public enum ViewCloseReason {
      * the default value in views.</p>
      */
     ESCAPE,
-
     /**
      * The view was called upon to close so the previous
      * view can be shown.
      */
     PREV,
-
     /**
      * The view was called upon to close so the next view
      * can be shown.
      */
     NEXT,
-
     /**
      * The view was called upon to close so it can re-open.
      */

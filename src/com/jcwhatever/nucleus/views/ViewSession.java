@@ -94,8 +94,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     private final MetaStore _meta = new MetaStore();
     private final Block _sessionBlock;
 
-    protected ViewContainer _first;
-    protected ViewContainer _current;
+    private ViewContainer _first;
+    private ViewContainer _current;
     private boolean _isDisposed;
 
     /**
@@ -123,7 +123,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * Get the block that is the source of the view session. This is normally
      * the block that a player clicks in order to open the view.
      *
-     * @return  Null if a block did not start the session.
+     * @return  The {@link Block} or null if a block did not start the session.
      */
     @Nullable
     public Block getSessionBlock() {
@@ -153,7 +153,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Get the view instance the player is currently looking at.
      *
-     * @return  Null if the player is not looking at any views in the session.
+     * @return  The current {@link View} or null if the player is not looking at
+     * any views in the session.
      */
     @Nullable
     public View getCurrent() {
@@ -166,8 +167,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Get the previous view, if any.
      *
-     * @return  Null if the current view is the first view or there is no
-     * current view.
+     * @return  The previous {@link View} or null if the current view is the first
+     * view or there is no current view.
      */
     @Nullable
     public View getPrev() {
@@ -180,8 +181,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Get the next view, if any.
      *
-     * @return  Null if the current view is the last view or there is
-     * no current view.
+     * @return The next {@link View} or null if the current view is the last view or
+     * there is no current view.
      */
     @Nullable
     public View getNext() {
@@ -194,7 +195,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Get the first view, if any.
      *
-     * @return Null if there are no views.
+     * @return The first {@link View} or null if there are no views.
      */
     @Nullable
     public View getFirst() {
@@ -214,7 +215,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     /**
      * Get the last view, if any.
      *
-     * @return Null if there are no views.
+     * @return The last {@link View} or null if there are no views.
      */
     @Nullable
     public View getLast() {
@@ -242,11 +243,12 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * @return  A future that will return the result once it has completed. Possible
      * outcomes are success or cancel.
      *
-     * @throws java.lang.IllegalStateException if there is no current view.
+     * @throws java.lang.IllegalStateException if there is no current view or the view
+     * session is disposed.
      */
     public Future<View> previous() {
         if (_current == null)
-            throw new IllegalStateException();
+            throw new IllegalStateException("No previous view.");
 
         if (_isDisposed)
             throw new IllegalStateException("Cannot use a disposed ViewSession.");
@@ -274,8 +276,10 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
     }
 
     /**
-     * Called to indicate a menu was escaped. The same as calling back except the
-     * view is not called to close.
+     * Invoked to indicate a menu was escaped.
+     *
+     * <p>The same as invoking {@link #previous} except the {@link View} is not
+     * invoked to close.</p>
      */
     @Nullable
     void escaped() {
@@ -300,6 +304,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      *
      * @return  A future that will return the result of the operation once
      * it has completed. Possible outcomes are success or cancel.
+     *
+     * @throws IllegalStateException if the view session is disposed.
      */
     public Future<View> next(final View view) {
         PreCon.notNull(view);
@@ -366,6 +372,8 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      *
      * @return  A future that will return the result of the operation once
      * it has completed. Possible outcomes are success, error or cancel.
+     *
+     * @throws IllegalStateException if the view session is disposed.
      */
     public Future<View> refresh() {
 

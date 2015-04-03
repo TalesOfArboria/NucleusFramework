@@ -38,19 +38,21 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation of all views.
+ * Abstract implementation for all views.
  */
 public abstract class View implements IPluginOwned, IPlayerReference {
 
     private final Plugin _plugin;
-    private ViewSession _session;
 
+    private ViewSession _session;
     private ViewCloseReason _recentCloseReason = ViewCloseReason.ESCAPE;
 
     /**
      * Constructor.
+     *
+     * @param plugin  The owning plugin.
      */
-    protected View(Plugin plugin) {
+    public View(Plugin plugin) {
         PreCon.notNull(plugin);
 
         _plugin = plugin;

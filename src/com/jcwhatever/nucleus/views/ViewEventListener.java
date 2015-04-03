@@ -25,11 +25,12 @@
 package com.jcwhatever.nucleus.views;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.manager.EventMethod;
-import com.jcwhatever.nucleus.events.manager.EventListener;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 
@@ -39,7 +40,7 @@ import java.util.WeakHashMap;
 /**
  * {@link View} event listener that works in conjunction with {@link ViewSession}.
  */
-class ViewEventListener extends EventListener {
+class ViewEventListener implements Listener {
 
     private static ViewEventListener _instance;
 
@@ -51,7 +52,7 @@ class ViewEventListener extends EventListener {
     static void register(ViewSession session) {
         if (_instance == null) {
             _instance = new ViewEventListener();
-            Nucleus.getEventManager().register(_instance);
+            Bukkit.getPluginManager().registerEvents(_instance, Nucleus.getPlugin());
         }
 
         _instance._sessions.put(session.getPlayer(), session);
@@ -69,16 +70,8 @@ class ViewEventListener extends EventListener {
 
     private Map<Entity, ViewSession> _sessions = new WeakHashMap<>(25);
 
-    /**
-     * Constructor.
-     */
-    ViewEventListener() {
-        super(Nucleus.getPlugin());
-        _instance = this;
-    }
-
     // Handle view closing.
-    @EventMethod
+    @EventHandler
     private void onInventoryClose(InventoryCloseEvent event) {
 
         ViewSession session = _sessions.get(event.getPlayer());
@@ -135,7 +128,7 @@ class ViewEventListener extends EventListener {
     }
 
     // reset static instance field if NucleusFramework is disabled. (i.e. reload server)
-    @EventMethod
+    @EventHandler
     private void onNucleusDisabled(PluginDisableEvent event) {
         if (event.getPlugin() == Nucleus.getPlugin())
             _instance = null;
