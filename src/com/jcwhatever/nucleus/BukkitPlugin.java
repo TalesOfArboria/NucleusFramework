@@ -43,7 +43,7 @@ import com.jcwhatever.nucleus.internal.scoreboards.InternalScoreboardTracker;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineManager;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
-import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
+import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineLoader;
 import com.jcwhatever.nucleus.internal.signs.InternalSignManager;
 import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
@@ -84,7 +84,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     NucleusCommandDispatcher _commandHandler;
     IMessengerFactory _messengerFactory;
 
-    ScriptEngineLoader _scriptEngineLoader;
+    InternalScriptEngineLoader _scriptEngineLoader;
 
     boolean _isModulesReady;
     boolean _isTest;
@@ -171,7 +171,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _commandHandler = new NucleusCommandDispatcher();
 
         _scriptEngineManager = new InternalScriptEngineManager();
-        _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
+        _scriptEngineLoader = new InternalScriptEngineLoader(_scriptEngineManager);
         _scriptEngineLoader.loadModules();
 
         _floatingItemManager = new InternalFloatingItemManager();

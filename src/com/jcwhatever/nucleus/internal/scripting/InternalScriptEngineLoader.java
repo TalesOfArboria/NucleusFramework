@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
-public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactory> {
+public final class InternalScriptEngineLoader extends JarModuleLoader<ScriptEngineFactory> {
 
     private final ScriptEngineManager _engineManager;
     private final File _engineFolder;
@@ -48,7 +48,7 @@ public final class ScriptEngineLoader extends JarModuleLoader<ScriptEngineFactor
     /**
      * Constructor.
      */
-    public ScriptEngineLoader(ScriptEngineManager engineManager) {
+    public InternalScriptEngineLoader(ScriptEngineManager engineManager) {
         super(Nucleus.getPlugin(), ScriptEngineFactory.class);
 
         _engineManager = engineManager;
