@@ -26,8 +26,8 @@
 package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.utils.Scheduler;
-import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
-import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
+import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 

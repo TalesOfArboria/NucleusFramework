@@ -26,7 +26,8 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
@@ -41,7 +42,7 @@ public final class Scheduler {
     /**
      * Run a task later.
      *
-     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * <p>A {@link TaskHandler} instance can be used in place
      * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
      * handler and to run optional code if the task is cancelled.</p>
      *
@@ -57,7 +58,7 @@ public final class Scheduler {
     /**
      * Run a task after a specified number of ticks have elapsed.
      *
-     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * <p>A {@link TaskHandler} instance can be used in place
      * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
      * handler and to run optional code if the task is cancelled.</p>
      *
@@ -75,7 +76,7 @@ public final class Scheduler {
      * Run a task on a new asynchronous thread after a specified number
      * of ticks have elapsed.
      *
-     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * <p>A {@link TaskHandler} instance can be used in place
      * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
      * handler and to run optional code if the task is cancelled.</p>
      *
@@ -93,7 +94,7 @@ public final class Scheduler {
      * Run a task on a repeating schedule after a specified number of ticks
      * have elapsed and repeating after the specified repeat ticks have elapsed.
      *
-     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * <p>A {@link TaskHandler} instance can be used in place
      * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
      * handler and to run optional code if the task is cancelled.</p>
      *
@@ -113,7 +114,7 @@ public final class Scheduler {
      * of ticks have elapsed and repeating after the specified repeat ticks have
      * elapsed.
      *
-     * <p>A {@link com.jcwhatever.nucleus.utils.scheduler.TaskHandler} instance can be used in place
+     * <p>A {@link TaskHandler} instance can be used in place
      * of a {@link java.lang.Runnable} to add the ability to cancel the task from within the task
      * handler and to run optional code if the task is cancelled.</p>
      *

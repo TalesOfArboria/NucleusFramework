@@ -36,7 +36,7 @@ import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
-import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
