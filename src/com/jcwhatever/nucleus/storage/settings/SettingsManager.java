@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.converters.Converter;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 import com.jcwhatever.nucleus.utils.text.TextUtils;

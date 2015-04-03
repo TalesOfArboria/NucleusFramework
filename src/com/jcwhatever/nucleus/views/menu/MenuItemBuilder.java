@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.views.menu;
 
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;

@@ -24,10 +24,10 @@
 
 package com.jcwhatever.nucleus.internal.items;
 
-import com.jcwhatever.nucleus.utils.items.serializer.IItemStackDeserializer;
-import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerialization;
-import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerializer;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackDeserializer;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerializer;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 
 /**
  * Internal implementation of {@link IItemStackSerialization}.

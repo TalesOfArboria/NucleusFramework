@@ -27,9 +27,9 @@ package com.jcwhatever.nucleus.utils.items;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.serializer.IItemStackDeserializer;
-import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerializer;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackDeserializer;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerializer;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.text.TextUtils;

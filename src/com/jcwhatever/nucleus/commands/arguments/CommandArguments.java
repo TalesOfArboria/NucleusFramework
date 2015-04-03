@@ -41,7 +41,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.MatchableItem;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect;
 import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect.BlockSelectResult;
 import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect.PlayerBlockSelectHandler;

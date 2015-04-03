@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Location;

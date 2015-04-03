@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer;
+package com.jcwhatever.nucleus.managed.items.serializer;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

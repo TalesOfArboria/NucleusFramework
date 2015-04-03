@@ -39,7 +39,7 @@ import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
 import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItemManager;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
-import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerialization;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardTracker;

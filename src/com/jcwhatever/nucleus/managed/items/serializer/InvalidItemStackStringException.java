@@ -22,30 +22,23 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer;
-
-import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
+package com.jcwhatever.nucleus.managed.items.serializer;
 
 /**
- * Interface for an ItemStack deserializer.
+ * Thrown if the {@link IItemStackDeserializer} fails to deserialize a string.
  *
- * @see IItemStackSerialization
+ * @see IItemStackDeserializer
  */
-public interface IItemStackDeserializer {
+public class InvalidItemStackStringException extends Exception {
 
-    /**
-     * Copy the results into an output {@link List}.
-     *
-     * @param output  The output {@link List}.
-     *
-     * @return  The
-     */
-    List<ItemStack> getResults(List<ItemStack> output);
+    private final String _itemStackString;
 
-    /**
-     * Get {@link org.bukkit.inventory.ItemStack} results as an array.
-     */
-    ItemStack[] getArray();
+    public InvalidItemStackStringException(String itemStackString) {
+        _itemStackString = itemStackString;
+    }
+
+    @Override
+    public String getMessage() {
+        return "Failed to parse and deserialize item stack string: " + _itemStackString;
+    }
 }

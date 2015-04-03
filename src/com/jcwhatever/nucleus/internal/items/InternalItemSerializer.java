@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.internal.items;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerializer;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerializer;
 import com.jcwhatever.nucleus.internal.items.meta.IMetaHandler;
 import com.jcwhatever.nucleus.internal.items.meta.ItemMetaHandlers;
 import com.jcwhatever.nucleus.internal.items.meta.ItemMetaValue;

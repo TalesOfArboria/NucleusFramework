@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer;
+package com.jcwhatever.nucleus.managed.items.serializer;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;

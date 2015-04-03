@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.internal.items.meta.ItemMetaHandlers;
 import com.jcwhatever.nucleus.internal.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.converters.Converters;
-import com.jcwhatever.nucleus.utils.items.serializer.IItemStackDeserializer;
-import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackDeserializer;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
