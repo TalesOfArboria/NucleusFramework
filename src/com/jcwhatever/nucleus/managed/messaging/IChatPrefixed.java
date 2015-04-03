@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.messaging;
+package com.jcwhatever.nucleus.managed.messaging;
 
 /**
  * Interface for a type that can be passed into {@link IMessenger}

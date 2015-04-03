@@ -25,9 +25,9 @@
 package com.jcwhatever.nucleus.internal.messenger;
 
 import com.jcwhatever.nucleus.NucleusPlugin;
-import com.jcwhatever.nucleus.messaging.IChatPrefixed;
-import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.IMessengerFactory;
+import com.jcwhatever.nucleus.managed.messaging.IChatPrefixed;
+import com.jcwhatever.nucleus.managed.messaging.IMessenger;
+import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;

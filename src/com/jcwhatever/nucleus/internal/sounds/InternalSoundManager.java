@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.collections.timed.TimedArrayList;
 import com.jcwhatever.nucleus.events.sounds.PlayResourceSoundEvent;
 import com.jcwhatever.nucleus.events.sounds.ResourceSoundEndEvent;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
+import com.jcwhatever.nucleus.managed.messaging.IMessenger.LineWrapping;
 import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
 import com.jcwhatever.nucleus.managed.sounds.ISoundManager;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;

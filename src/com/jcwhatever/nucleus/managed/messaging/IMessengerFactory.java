@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.messaging;
+package com.jcwhatever.nucleus.managed.messaging;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;

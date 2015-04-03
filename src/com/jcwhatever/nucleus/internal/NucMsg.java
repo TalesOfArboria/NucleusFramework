@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.internal;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
+import com.jcwhatever.nucleus.managed.messaging.IMessenger;
+import com.jcwhatever.nucleus.managed.messaging.IMessenger.LineWrapping;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

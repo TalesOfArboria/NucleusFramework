@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.messaging;
+package com.jcwhatever.nucleus.managed.messaging;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;

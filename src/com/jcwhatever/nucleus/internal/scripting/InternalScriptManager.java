@@ -42,7 +42,7 @@ import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Scheduler;
 import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Sounds;
 import com.jcwhatever.nucleus.internal.scripting.api.SAPI_Titles;
 import com.jcwhatever.nucleus.internal.scripting.api.views.SAPI_MenuView;
-import com.jcwhatever.nucleus.messaging.IMessenger;
+import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.managed.scripting.IScript;

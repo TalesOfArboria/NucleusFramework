@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.messaging;
+package com.jcwhatever.nucleus.managed.messaging;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 

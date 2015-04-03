@@ -26,8 +26,8 @@
 package com.jcwhatever.nucleus.internal.scripting.api;
 
 import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
-import com.jcwhatever.nucleus.messaging.IMessenger;
-import com.jcwhatever.nucleus.messaging.IMessenger.LineWrapping;
+import com.jcwhatever.nucleus.managed.messaging.IMessenger;
+import com.jcwhatever.nucleus.managed.messaging.IMessenger.LineWrapping;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
