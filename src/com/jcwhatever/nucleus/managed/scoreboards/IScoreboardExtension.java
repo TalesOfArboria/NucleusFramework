@@ -22,24 +22,30 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.scoreboards;
+package com.jcwhatever.nucleus.managed.scoreboards;
 
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.entity.Player;
 
 /**
- * Interface for a managed scoreboard.
+ * Used to add functionality to {@link IManagedScoreboard}.
  *
- * @see ScoreboardTracker
+ * @see IManagedScoreboard
  */
-public interface IManagedScoreboard {
+public interface IScoreboardExtension {
 
     /**
-     * Determine how the scoreboards lifespan is handled.
+     * Invoked after a managed scoreboard is applied to a player.
+     *
+     * @param player      The player.
+     * @param scoreboard  The managed scoreboard that was applied.
      */
-    ScoreboardLifespan getLifespan();
+    void onApply(Player player, IManagedScoreboard scoreboard);
 
     /**
-     * Get the encapsulated scoreboard.
+     * Invoked after a managed scoreboard is removed from a player.
+     *
+     * @param player      The player.
+     * @param scoreboard  The managed scoreboard that was removed.
      */
-    Scoreboard getScoreboard();
+    void onRemove(Player player, IManagedScoreboard scoreboard);
 }

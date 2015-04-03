@@ -22,104 +22,63 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.utils.scoreboards;
+package com.jcwhatever.nucleus.managed.scoreboards;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
-
-import java.util.Set;
 
 /**
  * Wraps a {@link org.bukkit.scoreboard.Scoreboard} so that it can be tracked
- * by {@link ScoreboardTracker}.
+ * by an {@link IScoreboardTracker}.
  *
  * <p>Scoreboards applied to a player are tracked. If another scoreboard is applied
  * then removed, the previous scoreboard is applied. This does not apply to transient
  * scoreboards which are removed when another scoreboard is shown.</p>
  *
- * <p>When the scoreboard is no longer in use, call {@link #dispose} to unregister
- * objectives and flag the {@link ManagedScoreboard} as disposed.</p>
+ * <p>When the scoreboard is no longer in use, invoked the {@link #dispose} method to
+ * unregister objectives and flag the {@link IManagedScoreboard} as disposed.</p>
  *
- * @see ScoreboardTracker
+ * @see IScoreboardTracker
  */
-public class ManagedScoreboard implements IManagedScoreboard, IDisposable {
-
-    private final ScoreboardLifespan _lifespan;
-    private final Scoreboard _scoreboard;
-    private boolean _isDisposed;
+public interface IManagedScoreboard extends IDisposable {
 
     /**
-     * Constructor.
-     *
-     * @param lifespan    The lifespan type
-     * @param scoreboard  The scoreboard to manage.
+     * Determine how the scoreboards lifespan is handled.
      */
-    public ManagedScoreboard(ScoreboardLifespan lifespan, Scoreboard scoreboard) {
-        PreCon.notNull(lifespan);
-        PreCon.notNull(scoreboard);
-
-        _lifespan = lifespan;
-        _scoreboard = scoreboard;
-    }
-
-    /**
-     * Get the scoreboard lifespan type.
-     */
-    @Override
-    public ScoreboardLifespan getLifespan() {
-        return _lifespan;
-    }
+    ScoreboardLifespan getLifespan();
 
     /**
      * Get the encapsulated scoreboard.
      */
-    @Override
-    public final Scoreboard getScoreboard() {
-        return _scoreboard;
-    }
+    Scoreboard getScoreboard();
 
     /**
      * Apply the scoreboard to the specified player.
      *
      * <p>Use this method instead of directly setting the scoreboard on the player.</p>
      *
-     * @param player  The player to apply the scoreboard to.
+     * @param player  The player.
+     *
+     * @return  True if applied or transient, false if already applied.
      */
-    public void apply(Player player) {
-        PreCon.notNull(player);
-
-        ScoreboardTracker.apply(player, this);
-    }
+    boolean apply(Player player);
 
     /**
      * Remove the scoreboard from the player.
      *
+     * <p>Removes the scoreboard from the players view and removes the last
+     * occurrence from the tracked stack of scoreboards the player is viewing.
+     * If the removed scoreboard is the one the player is currently viewing and if
+     * there is a previous scoreboard in the stack, the previous scoreboard will be
+     * applied to the player automatically.</p>
+     *
      * <p>Use this method instead of directly setting the scoreboard on the player.</p>
      *
      * @param player  The player.
+     *
+     * @return  True if found and removed, otherwise false.
      */
-    public void remove(Player player) {
-        PreCon.notNull(player);
-
-        ScoreboardTracker.remove(player, this);
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return _isDisposed;
-    }
-
-    @Override
-    public void dispose() {
-        Set<Objective> objectives = _scoreboard.getObjectives();
-        for (Objective objective : objectives) {
-            objective.unregister();
-        }
-        _isDisposed = true;
-    }
+    boolean remove(Player player);
 }

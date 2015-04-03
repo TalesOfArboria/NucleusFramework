@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.scoreboards;
+package com.jcwhatever.nucleus.managed.scoreboards;
 
 /**
  * Described the use of the scoreboard so the
@@ -30,10 +30,10 @@ package com.jcwhatever.nucleus.utils.scoreboards;
  * should be handled.
  *
  * @see IManagedScoreboard
- * @see ManagedScoreboard
- * @see ScoreboardTracker
+ * @see IScoreboardTracker
  */
 public enum ScoreboardLifespan {
+
     /**
      * The scoreboard is not persisted. If the player views another scoreboard,
      * the transient scoreboard is discarded.

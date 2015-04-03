@@ -42,6 +42,7 @@ import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardTracker;
 import com.jcwhatever.nucleus.utils.signs.ISignManager;
 
 import org.bukkit.entity.EntityType;
@@ -166,6 +167,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._scheduler != null, ERROR_NOT_READY);
 
         return _plugin._scheduler;
+    }
+
+    /**
+     * Get the global scoreboard tracker.
+     */
+    public static IScoreboardTracker getScoreboardTracker() {
+        PreCon.isValid(_plugin._scoreboardTracker != null, ERROR_NOT_READY);
+
+        return _plugin._scoreboardTracker;
     }
 
     /**

@@ -22,11 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.scoreboards;
+package com.jcwhatever.nucleus.internal.scoreboards;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardTracker;
+import com.jcwhatever.nucleus.managed.scoreboards.ScoreboardLifespan;
 
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -34,27 +38,31 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
- * Tracks the scoreboards that players have viewed so they can be re-shown.
- *
- * <p>Helps reduce plugin scoreboard conflicts by acting as the central
- * scoreboard manager. Each plugin can simply apply their scoreboards via
- * {@link ManagedScoreboard} or {@link ScoreboardTracker} to ensure that when
- * a plugin is done showing a scoreboard to a player, the previous scoreboard is
- * re-shown.</p>
- *
- * @see ManagedScoreboard
- * @see IManagedScoreboard
+ * Internal implementation of {@link IScoreboardTracker}.
  */
-public final class ScoreboardTracker {
+public class InternalScoreboardTracker implements IScoreboardTracker {
 
-    private ScoreboardTracker() {}
-
-    private static final Map<UUID, PlayerScoreboards> _playerMap =
+    private final Map<UUID, PlayerScoreboards> _playerMap =
             new PlayerMap<PlayerScoreboards>(Nucleus.getPlugin(), 35);
 
-    private static final Object _sync = new Object();
+    private final Object _sync = new Object();
+
+    @Override
+    public IManagedScoreboard manage(Scoreboard scoreboard, ScoreboardLifespan lifespan) {
+        return manage(scoreboard, lifespan, null);
+    }
+
+    @Override
+    public IManagedScoreboard manage(Scoreboard scoreboard, ScoreboardLifespan lifespan,
+                                     @Nullable IScoreboardExtension extension) {
+        PreCon.notNull(scoreboard);
+        PreCon.notNull(lifespan);
+
+        return new InternalManagedScoreboard(this, scoreboard, lifespan, extension);
+    }
 
     /**
      * Apply the scoreboard to the specified player.
@@ -66,7 +74,7 @@ public final class ScoreboardTracker {
      *
      * @return  True if applied or transient, false if already applied.
      */
-    public static boolean apply(Player player, IManagedScoreboard scoreboard) {
+    public boolean apply(Player player, IManagedScoreboard scoreboard) {
         PreCon.notNull(player);
         PreCon.notNull(scoreboard);
 
@@ -120,7 +128,7 @@ public final class ScoreboardTracker {
      * @param player      The player.
      * @param scoreboard  The scoreboard to remove.
      */
-    public static boolean remove(Player player, IManagedScoreboard scoreboard) {
+    public boolean remove(Player player, IManagedScoreboard scoreboard) {
         PreCon.notNull(player);
         PreCon.notNull(scoreboard);
 
@@ -171,7 +179,7 @@ public final class ScoreboardTracker {
         }
     }
 
-    private static void setScoreboard(Player player, Scoreboard scoreboard) {
+    private void setScoreboard(Player player, Scoreboard scoreboard) {
         player.setScoreboard(scoreboard);
     }
 

@@ -37,6 +37,7 @@ import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
+import com.jcwhatever.nucleus.internal.scoreboards.InternalScoreboardTracker;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineManager;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
@@ -73,6 +74,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalEntityTracker _entityTracker;
     InternalFloatingItemManager _floatingItemManager;
     InternalItemSerializationManager _itemSerialization;
+    InternalScoreboardTracker _scoreboardTracker;
 
     EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
@@ -107,8 +109,7 @@ public final class BukkitPlugin extends NucleusPlugin {
 
     /**
      * Constructor for testing.
-     *
-     */
+    */
     protected BukkitPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
 
@@ -144,6 +145,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     protected void onPreEnable() {
 
         _itemSerialization = new InternalItemSerializationManager();
+        _scoreboardTracker = new InternalScoreboardTracker();
         _scheduler = new InternalTaskScheduler();
 
         _providerManager = new InternalProviderManager(_isTest);
