@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 
 /**
  * Stores context info related to a specific A-Star path search.
@@ -53,6 +53,7 @@ public class AStarContext {
      */
     public AStarContext(AStar astar, IAStarNodeContainer container,
                         Coords3Di startCoords, Coords3Di destinationCoords) {
+
         PreCon.notNull(astar);
         PreCon.notNull(container);
         PreCon.notNull(startCoords);
@@ -62,8 +63,8 @@ public class AStarContext {
         _container = container;
         _startCoords = startCoords;
         _destinationCoords = destinationCoords;
-        _start = new AStarNode(this, startCoords);
-        _destination = new AStarNode(this, destinationCoords);
+        _start = container.getNodeFactory().createNode(this, startCoords);
+        _destination = container.getNodeFactory().createNode(this, destinationCoords);
     }
 
     /**

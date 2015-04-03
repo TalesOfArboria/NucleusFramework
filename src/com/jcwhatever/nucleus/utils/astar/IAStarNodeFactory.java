@@ -24,69 +24,40 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 
 /**
- * A-Star node container.
- *
- * @see AStar
- * @see AStar#search
+ * A factory to instantiate new {@link AStarNode} instances.
  */
-public interface IAStarNodeContainer {
+public interface IAStarNodeFactory {
 
     /**
-     * Reset the node container for reuse.
-     */
-    void reset();
-
-    /**
-     * Get the {@link IAStarNodeFactory} implementation to use
-     * for the container.
-     */
-    IAStarNodeFactory getNodeFactory();
-
-    /**
-     * Get the number of open nodes.
-     */
-    int openSize();
-
-    /**
-     * Get the number of closed nodes.
-     */
-    int closeSize();
-
-    /**
-     * Open a node using the specified parent.
+     * Create a new {@link AStarNode}.
      *
-     * @param parent  The parent node.
-     * @param node    The node to open.
+     * @param context  The node context.
+     * @param x        The X coordinates.
+     * @param y        The Y coordinates.
+     * @param z        The Z coordinates.
      */
-    void open(@Nullable AStarNode parent, AStarNode node);
+    AStarNode createNode(AStarContext context, int x, int y, int z);
 
     /**
-     * Determine if a node is open.
+     * Create a new {@link AStarNode}.
      *
-     * @param node  The node to check.
+     * @param context  The node context.
+     * @param coords   The node coordinates.
      */
-    boolean isOpen(AStarNode node);
+    AStarNode createNode(AStarContext context, Coords3Di coords);
 
     /**
-     * Determine if a node is closed.
+     * Create a new {@link AStarNode}.
      *
-     * @param node  The node to check.
+     * @param context  The node context.
+     * @param parent   The parent node to get base coordinates from.
+     * @param offsetX  The X axis offset from the parent X axis coordinates.
+     * @param offsetY  The Y axis offset from the parent Y axis coordinates.
+     * @param offsetZ  The Z axis offset from the parent Z axis coordinates.
      */
-    boolean isClosed(AStarNode node);
-
-    /**
-     * Determine if a node is open or closed.
-     *
-     * @param node  The node to check.
-     */
-    boolean contains(AStarNode node);
-
-    /**
-     * Close the best open node and return.
-     */
-    @Nullable
-    AStarNode closeBest();
+    AStarNode createNode(AStarContext context, AStarNode parent,
+                         int offsetX, int offsetY, int offsetZ);
 }

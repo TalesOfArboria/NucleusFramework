@@ -215,7 +215,7 @@ public class PathAreaFinder {
 
         AStarResult search(Location location) {
             return astar.search(Coords3Di.fromLocation(start), Coords3Di.fromLocation(location),
-                    new AStarNodeContainer(astar.getExaminer()));
+                    new AStarNodeContainer());
         }
     }
 

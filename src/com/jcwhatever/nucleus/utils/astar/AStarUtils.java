@@ -24,11 +24,12 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeContainer;
+import com.jcwhatever.nucleus.utils.astar.basic.AStarNodeFactory;
 import com.jcwhatever.nucleus.utils.astar.basic.AStarWorldExaminer;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -38,12 +39,13 @@ import org.bukkit.World;
  *
  * @see AStar
  */
-public class AStarUtils {
+public final class AStarUtils {
 
     private AStarUtils() {}
 
     /**
-     * Create a new {@link AStar} instance that uses an {@link AStarWorldExaminer}.
+     * Create a new {@link AStar} instance that uses an {@link AStarWorldExaminer}
+     * and {@link AStarNodeFactory}.
      *
      * @param world  The {@link org.bukkit.World} the examiner is for.
      *
@@ -53,7 +55,8 @@ public class AStarUtils {
         PreCon.notNull(world);
 
         AStarWorldExaminer examiner = new AStarWorldExaminer(world);
-        return new AStar(examiner);
+        AStarNodeFactory factory = new AStarNodeFactory();
+        return new AStar(examiner, factory);
     }
 
     /**
@@ -81,7 +84,7 @@ public class AStarUtils {
         destination = LocationUtils.getBlockLocation(destination);
 
         return astar.search(Coords3Di.fromLocation(start), Coords3Di.fromLocation(destination),
-                new AStarNodeContainer(astar.getExaminer()));
+                new AStarNodeContainer());
     }
 
     /**
@@ -114,6 +117,6 @@ public class AStarUtils {
         LocationUtils.findSurfaceBelow(destination, destination);
 
         return astar.search(Coords3Di.fromLocation(start), Coords3Di.fromLocation(destination),
-                new AStarNodeContainer(astar.getExaminer()));
+                new AStarNodeContainer());
     }
- }
+}

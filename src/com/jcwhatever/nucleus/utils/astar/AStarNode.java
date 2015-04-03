@@ -36,11 +36,11 @@ import javax.annotation.Nullable;
  */
 public class AStarNode implements Comparable<AStarNode> {
 
-    private final AStarContext _context;
-    private final Coords3Di _coords;
-    private final int _offsetX;
-    private final int _offsetY;
-    private final int _offsetZ;
+    private AStarContext _context;
+    private Coords3Di _coords;
+    private int _offsetX;
+    private int _offsetY;
+    private int _offsetZ;
 
     private AStarNode _parentNode;
     private IAStarScore _score;
@@ -49,17 +49,13 @@ public class AStarNode implements Comparable<AStarNode> {
      * Constructor.
      *
      * @param context      The search context.
-     * @param startCoords  The node coordinates.
+     * @param coords  The node coordinates.
      */
-    public AStarNode(AStarContext context, Coords3Di startCoords) {
+    public AStarNode(AStarContext context, Coords3Di coords) {
         PreCon.notNull(context);
+        PreCon.notNull(coords);
 
-        _context = context;
-        _coords = startCoords;
-        _parentNode = null;
-        _offsetX = startCoords.getX() - context.getStartCoords().getX();
-        _offsetY = startCoords.getY() - context.getStartCoords().getY();
-        _offsetZ = startCoords.getZ() - context.getStartCoords().getZ();
+        init(context, coords);
     }
 
     /**
@@ -118,8 +114,10 @@ public class AStarNode implements Comparable<AStarNode> {
     public boolean isAdjacent(AStarNode node) {
         PreCon.notNull(node);
 
-        return Math.abs(node.getCoords().getX() - getCoords().getX()) <= 1 &&
-                Math.abs(node.getCoords().getZ() - getCoords().getZ()) <= 1;
+        Coords3Di coords = node.getCoords();
+
+        return Math.abs(coords.getX() - _coords.getX()) <= 1 &&
+                Math.abs(coords.getZ() - _coords.getZ()) <= 1;
     }
 
     /**
@@ -130,8 +128,8 @@ public class AStarNode implements Comparable<AStarNode> {
      * @param offsetZ  The Z axis offset from the current node.
      */
     public AStarNode getRelative(int offsetX, int offsetY, int offsetZ) {
-        Coords3Di coords = new Coords3Di(_coords, offsetX, offsetY, offsetZ);
-        return new AStarNode(_context, coords);
+        return _context.getContainer().getNodeFactory().createNode(
+                _context, this, offsetX, offsetY, offsetZ);
     }
 
     @Override
@@ -164,5 +162,32 @@ public class AStarNode implements Comparable<AStarNode> {
                     _offsetZ == node._offsetZ;
         }
         return false;
+    }
+
+    /**
+     * Initialize the node.
+     *
+     * @param context  The node context.
+     * @param coords   The node coords.
+     */
+    protected void init(@Nullable AStarContext context, @Nullable Coords3Di coords) {
+
+        _context = context;
+        _coords = coords;
+        _parentNode = null;
+
+        if (context != null && coords != null) {
+            _offsetX = coords.getX() - context.getStartCoords().getX();
+            _offsetY = coords.getY() - context.getStartCoords().getY();
+            _offsetZ = coords.getZ() - context.getStartCoords().getZ();
+        }
+        else {
+            _offsetX = 0;
+            _offsetY = 0;
+            _offsetZ = 0;
+        }
+
+        _parentNode = null;
+        _score = null;
     }
 }

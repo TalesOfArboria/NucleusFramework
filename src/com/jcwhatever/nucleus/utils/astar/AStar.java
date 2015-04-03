@@ -37,6 +37,7 @@ import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 public class AStar {
 
     private final IAStarExaminer _examiner;
+
     private double _range = 18;
     private int _maxDropHeight = 4;
     private long _maxIterations = 8500;
@@ -46,7 +47,7 @@ public class AStar {
      *
      * @param examiner  The engines examiner.
      */
-    public AStar(IAStarExaminer examiner) {
+    public AStar(IAStarExaminer examiner, IAStarNodeFactory factory) {
         PreCon.notNull(examiner);
 
         _examiner = examiner;
@@ -130,6 +131,8 @@ public class AStar {
         if (start.distanceSquared(destination) >
                 getRangeSquared())
             return new AStarResult(AStarResultStatus.RANGE_EXCEEDED);
+
+        container.reset();
 
         AStarContext context = new AStarContext(this, container, start, destination);
         AStarNode startNode = new AStarNode(context, start);

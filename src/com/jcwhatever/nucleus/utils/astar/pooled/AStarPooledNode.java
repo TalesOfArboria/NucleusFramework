@@ -22,71 +22,32 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar;
+package com.jcwhatever.nucleus.utils.astar.pooled;
 
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.utils.astar.AStarContext;
+import com.jcwhatever.nucleus.utils.astar.AStarNode;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 
 /**
- * A-Star node container.
+ * An {@link AStarNode} for use with {@link AStarPooledNodeFactory}.
  *
- * @see AStar
- * @see AStar#search
+ * <p>See documentation in {@link AStarPooledNodeFactory} for more information about
+ * the problems of using pooling.</p>
  */
-public interface IAStarNodeContainer {
+public class AStarPooledNode extends AStarNode {
 
     /**
-     * Reset the node container for reuse.
-     */
-    void reset();
-
-    /**
-     * Get the {@link IAStarNodeFactory} implementation to use
-     * for the container.
-     */
-    IAStarNodeFactory getNodeFactory();
-
-    /**
-     * Get the number of open nodes.
-     */
-    int openSize();
-
-    /**
-     * Get the number of closed nodes.
-     */
-    int closeSize();
-
-    /**
-     * Open a node using the specified parent.
+     * Constructor.
      *
-     * @param parent  The parent node.
-     * @param node    The node to open.
+     * @param context     The search context.
+     * @param startCoords The node coordinates.
      */
-    void open(@Nullable AStarNode parent, AStarNode node);
+    public AStarPooledNode(AStarContext context, Coords3Di startCoords) {
+        super(context, startCoords);
+    }
 
-    /**
-     * Determine if a node is open.
-     *
-     * @param node  The node to check.
-     */
-    boolean isOpen(AStarNode node);
-
-    /**
-     * Determine if a node is closed.
-     *
-     * @param node  The node to check.
-     */
-    boolean isClosed(AStarNode node);
-
-    /**
-     * Determine if a node is open or closed.
-     *
-     * @param node  The node to check.
-     */
-    boolean contains(AStarNode node);
-
-    /**
-     * Close the best open node and return.
-     */
-    @Nullable
-    AStarNode closeBest();
+    @Override
+    protected void init(AStarContext context, Coords3Di startCoords) {
+        super.init(context, startCoords);
+    }
 }

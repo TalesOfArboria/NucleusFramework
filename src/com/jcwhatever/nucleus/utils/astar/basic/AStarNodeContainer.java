@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.utils.astar.basic;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarNode;
-import com.jcwhatever.nucleus.utils.astar.IAStarExaminer;
 import com.jcwhatever.nucleus.utils.astar.IAStarNodeContainer;
+import com.jcwhatever.nucleus.utils.astar.IAStarNodeFactory;
 import com.jcwhatever.nucleus.utils.astar.IAStarScore;
 
 import java.util.HashSet;
@@ -40,14 +40,23 @@ import javax.annotation.Nullable;
  */
 public class AStarNodeContainer implements IAStarNodeContainer {
 
-    private final IAStarExaminer _examiner;
     private final TreeMap<AStarNode, AStarNode> _open = new TreeMap<>();
     private final Set<AStarNode> _closed = new HashSet<>(35);
 
-    public AStarNodeContainer(IAStarExaminer examiner) {
-        PreCon.notNull(examiner);
+    private AStarNodeFactory _nodeFactory;
 
-        _examiner = examiner;
+    @Override
+    public void reset() {
+        _open.clear();
+        _closed.clear();
+    }
+
+    @Override
+    public IAStarNodeFactory getNodeFactory() {
+        if (_nodeFactory == null)
+            _nodeFactory = new AStarNodeFactory();
+
+        return _nodeFactory;
     }
 
     @Override
@@ -64,7 +73,10 @@ public class AStarNodeContainer implements IAStarNodeContainer {
     public void open(@Nullable AStarNode parent, AStarNode node) {
         PreCon.notNull(node);
 
-        IAStarScore score = _examiner.getScore(parent, node);
+        if (parent != null && !parent.getContext().equals(node.getContext()))
+            throw new IllegalArgumentException("parent and node arguments are from different contexts.");
+
+        IAStarScore score = node.getContext().getAstar().getExaminer().getScore(parent, node);
 
         AStarNode open = _open.remove(node);
         if (open != null) {
@@ -111,5 +123,19 @@ public class AStarNodeContainer implements IAStarNodeContainer {
         _closed.add(node);
 
         return node;
+    }
+
+    /**
+     * Get a direct reference to the open maps key set.
+     */
+    protected Set<AStarNode> getOpenKeySet() {
+        return _open.keySet();
+    }
+
+    /**
+     * Get a direct reference to the closed set.
+     */
+    protected Set<AStarNode> getClosed() {
+        return _closed;
     }
 }
