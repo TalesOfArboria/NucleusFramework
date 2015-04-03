@@ -26,14 +26,13 @@
 package com.jcwhatever.nucleus.commands.response;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 public class ResponseType {
 
@@ -47,8 +46,6 @@ public class ResponseType {
     @Localizable static final String _DENY = "deny";
     @Localizable static final String _CONFIRM = "confirm";
 
-    private static Map<String, ResponseType> _typeMap = new HashMap<>(9);
-
     public static final ResponseType YES = new ResponseType(_YES);
     public static final ResponseType NO = new ResponseType(_NO);
     public static final ResponseType ACCEPT = new ResponseType(_ACCEPT);
@@ -59,15 +56,24 @@ public class ResponseType {
     public static final ResponseType DENY = new ResponseType(_DENY);
     public static final ResponseType CONFIRM = new ResponseType(_CONFIRM);
 
-    public static int totalTypes() {
-        return 9;
-    }
+    private static Map<String, ResponseType> _typeMap =
+            new ImmutableMap.Builder<String, ResponseType>()
+            .put(YES.getCommandName(), YES)
+            .put(NO.getCommandName(), NO)
+            .put(ACCEPT.getCommandName(), ACCEPT)
+            .put(DECLINE.getCommandName(), DECLINE)
+            .put(OK.getCommandName(), OK)
+            .put(CANCEL.getCommandName(), CANCEL)
+            .put(ALLOW.getCommandName(), ALLOW)
+            .put(DENY.getCommandName(), DENY)
+            .put(CONFIRM.getCommandName(), CONFIRM)
+            .build();
 
     private String _commandName;
 
-    ResponseType (String commandName) {
+    public ResponseType (String commandName) {
+        PreCon.notNullOrEmpty(commandName);
         _commandName = commandName;
-        _typeMap.put(commandName, this);
     }
 
     @Localized
@@ -75,24 +81,24 @@ public class ResponseType {
         return NucLang.get(_commandName);
     }
 
-    @Nullable
     public static ResponseType from(String commandName) {
         PreCon.notNullOrEmpty(commandName);
 
         ResponseType responseType = _typeMap.get(commandName.toLowerCase());
+        if (responseType != null)
+            return responseType;
 
-        if (responseType == null) {
-            // make sure its not in another language
-            for (ResponseType type : _typeMap.values()) {
-
-                if (type.getCommandName().equalsIgnoreCase(commandName)) {
-                    responseType = type;
-                    break;
-                }
-            }
-        }
-
-        return responseType;
+        return new ResponseType(commandName);
     }
 
+    @Override
+    public int hashCode() {
+        return _commandName.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ResponseType &&
+                ((ResponseType) obj)._commandName.equalsIgnoreCase(_commandName);
+    }
 }

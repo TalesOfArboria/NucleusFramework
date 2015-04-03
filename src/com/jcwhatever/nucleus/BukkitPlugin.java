@@ -39,6 +39,7 @@ import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
+import com.jcwhatever.nucleus.internal.response.InternalResponseRequestor;
 import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
 import com.jcwhatever.nucleus.internal.scoreboards.InternalScoreboardTracker;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptApiRepo;
@@ -81,6 +82,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalEquipperManager _equipperManager;
     InternalLeashTracker _leashTracker;
     InternalBlockSelector _blockSelector;
+    InternalResponseRequestor _responseRequestor;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -164,6 +166,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _signManager = new InternalSignManager();
         _entityTracker = new InternalEntityTracker();
         _blockSelector = new InternalBlockSelector();
+        _responseRequestor = new InternalResponseRequestor();
     }
 
     @Override

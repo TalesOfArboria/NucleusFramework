@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus;
 
+import com.jcwhatever.nucleus.commands.response.IResponseRequestor;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
 import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
@@ -232,6 +233,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._regionManager != null, ERROR_NOT_READY);
 
         return _plugin._regionManager;
+    }
+
+    /**
+     * Get the global command response requestor.
+     */
+    public static IResponseRequestor getResponseRequestor() {
+        PreCon.isValid(_plugin._responseRequestor != null, ERROR_NOT_READY);
+
+        return _plugin._responseRequestor;
     }
 
     /**

@@ -26,15 +26,14 @@
 package com.jcwhatever.nucleus.internal.listeners;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.commands.response.CommandRequests;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.regions.RegionEventReason;
-import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.managed.sounds.playlist.PlayList;
+import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils.DisplayNameOption;
 
@@ -50,7 +49,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -80,14 +78,6 @@ public final class JCGEventListener implements Listener {
 
         if (Nucleus.getPlugin().isEnabled()) {
             Nucleus.getScriptApiRepo().unregisterPlugin(event.getPlugin());
-        }
-    }
-
-    @EventHandler(priority=EventPriority.HIGHEST)
-    private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-
-        if (CommandRequests.onResponse(event.getPlayer(), event.getMessage())) {
-            event.setCancelled(true);
         }
     }
 
