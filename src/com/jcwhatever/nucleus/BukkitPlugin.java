@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.internal.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
-import com.jcwhatever.nucleus.internal.PlayerTracker;
+import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
 import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
@@ -188,7 +188,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         loadScriptManager();
 
         // initialize player tracker
-        PlayerTracker.get();
+        InternalPlayerTracker.get();
     }
 
     @Override

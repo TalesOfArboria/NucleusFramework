@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils.player;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.internal.PlayerTracker;
+import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
@@ -65,7 +65,7 @@ public final class PlayerUtils {
      */
     @Nullable
     public static Date getLoginDate(Player player) {
-        return PlayerTracker.get().getLoginDate(player);
+        return InternalPlayerTracker.get().getLoginDate(player);
     }
 
     /**
@@ -77,7 +77,7 @@ public final class PlayerUtils {
      */
     @Nullable
     public static Date getLastWorldChangeDate(Player player) {
-        return PlayerTracker.get().getLastWorldChangeDate(player);
+        return InternalPlayerTracker.get().getLastWorldChangeDate(player);
     }
 
     /**
@@ -89,7 +89,7 @@ public final class PlayerUtils {
      * @return  0 if the {@link Player} is not online.
      */
     public static long getSessionTime(Player player) {
-        return PlayerTracker.get().getSessionTime(player);
+        return InternalPlayerTracker.get().getSessionTime(player);
     }
 
     /**
@@ -101,7 +101,7 @@ public final class PlayerUtils {
      * @return 0 if the {@link Player} is not online.
      */
     public static long getWorldSessionTime(Player player) {
-        return PlayerTracker.get().getWorldSessionTime(player);
+        return InternalPlayerTracker.get().getWorldSessionTime(player);
     }
 
     /**

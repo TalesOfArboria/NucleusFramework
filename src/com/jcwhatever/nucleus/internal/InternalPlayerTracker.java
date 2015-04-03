@@ -47,13 +47,13 @@ import javax.annotation.Nullable;
 /**
  * Tracks useful information about players.
  */
-public final class PlayerTracker {
+public final class InternalPlayerTracker {
 
-    private static PlayerTracker _instance;
+    private static InternalPlayerTracker _instance;
 
-    public static PlayerTracker get() {
+    public static InternalPlayerTracker get() {
         if (_instance == null)
-            _instance = new PlayerTracker();
+            _instance = new InternalPlayerTracker();
 
         return _instance;
     }
@@ -65,7 +65,7 @@ public final class PlayerTracker {
     /**
      * Private Constructor.
      */
-    private PlayerTracker() {
+    private InternalPlayerTracker() {
         Bukkit.getPluginManager().registerEvents(new EventListener(), Nucleus.getPlugin());
     }
 
@@ -197,5 +197,4 @@ public final class PlayerTracker {
             }
         }
     }
-
 }
