@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.managed.entity;
 
 import org.bukkit.entity.Entity;
 
-/*
- * 
+/**
+ * Interface for global entity tracker.
  */
 public interface IEntityTracker {
 
@@ -36,7 +36,7 @@ public interface IEntityTracker {
      *
      * @param entity  The entity to track.
      *
-     * @return  A new or cached {@link TrackedEntity} instance.
+     * @return  A new or cached {@link ITrackedEntity} instance.
      */
     ITrackedEntity trackEntity(Entity entity);
 }
