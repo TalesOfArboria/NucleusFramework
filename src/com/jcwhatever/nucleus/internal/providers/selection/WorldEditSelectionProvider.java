@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.internal.providers.selection;
 
 import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
-import com.jcwhatever.nucleus.providers.IRegionSelectProvider;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
