@@ -40,7 +40,7 @@ import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvi
 import com.jcwhatever.nucleus.internal.providers.selection.WorldEditSelectionProvider;
 import com.jcwhatever.nucleus.internal.providers.storage.YamlStorageProvider;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.providers.IPlayerLookupProvider;
+import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.providers.IRegionSelectProvider;

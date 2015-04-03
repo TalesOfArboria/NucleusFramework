@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.internal.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.providers.IPlayerLookupProvider;
+import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.DataStorage;

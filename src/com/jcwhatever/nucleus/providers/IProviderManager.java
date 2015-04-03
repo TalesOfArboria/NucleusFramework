@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.kits.IKitProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
+import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 
 import org.bukkit.plugin.Plugin;
 

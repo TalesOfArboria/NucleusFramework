@@ -22,7 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers;
+package com.jcwhatever.nucleus.providers.playerlookup;
+
+import com.jcwhatever.nucleus.providers.IProvider;
+import com.jcwhatever.nucleus.providers.Provider;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
