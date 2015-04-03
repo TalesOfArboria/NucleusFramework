@@ -22,9 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.entity;
+package com.jcwhatever.nucleus.managed.entity;
 
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 import org.bukkit.World;

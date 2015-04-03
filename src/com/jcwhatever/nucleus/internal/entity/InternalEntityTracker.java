@@ -28,8 +28,8 @@ import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
-import com.jcwhatever.nucleus.utils.entity.IEntityTracker;
-import com.jcwhatever.nucleus.utils.entity.ITrackedEntity;
+import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
+import com.jcwhatever.nucleus.managed.entity.ITrackedEntity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;

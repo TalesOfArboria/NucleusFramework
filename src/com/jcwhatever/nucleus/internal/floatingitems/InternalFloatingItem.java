@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
-import com.jcwhatever.nucleus.utils.entity.ITrackedEntity;
+import com.jcwhatever.nucleus.managed.entity.ITrackedEntity;
 import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItem;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;

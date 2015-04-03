@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.utils.coords.ChunkUtils;
 import com.jcwhatever.nucleus.utils.coords.Coords2Di;
 import com.jcwhatever.nucleus.utils.coords.MutableCoords2Di;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
-import com.jcwhatever.nucleus.utils.entity.ITrackedEntity;
+import com.jcwhatever.nucleus.managed.entity.ITrackedEntity;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 

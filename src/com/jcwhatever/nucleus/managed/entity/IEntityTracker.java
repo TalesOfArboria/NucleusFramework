@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.entity;
+package com.jcwhatever.nucleus.managed.entity;
 
 import org.bukkit.entity.Entity;
 
