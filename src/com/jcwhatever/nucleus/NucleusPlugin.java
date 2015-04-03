@@ -74,7 +74,8 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     /**
      * Constructor for testing.
      */
-    protected NucleusPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    protected NucleusPlugin(JavaPluginLoader loader, PluginDescriptionFile description,
+                            File dataFolder, File file) {
         super(loader, description, dataFolder, file);
 
         _isTesting = true;
@@ -87,6 +88,13 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
      */
     public final boolean isDebugging() {
         return _isDebugging;
+    }
+
+    /**
+     * Determine if the plugin is being tested.
+     */
+    public final boolean isTesting() {
+        return _isTesting;
     }
 
     /**
