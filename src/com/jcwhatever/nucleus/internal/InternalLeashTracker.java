@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.WeakHashSet;
+import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -53,19 +54,19 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
- * Tracks entities leashed to players.
+ * Internal implementation of {@link ILeashTracker}.
  */
-public class InternalLeashTracker implements Listener {
+public class InternalLeashTracker implements ILeashTracker, Listener {
 
-    private static final Map<UUID, Set<Entity>> _playerMap = new HashMap<>(35);
-    private static final Map<Entity, UUID> _entityMap = new WeakHashMap<>(55);
+    private final Map<UUID, Set<Entity>> _playerMap = new HashMap<>(35);
+    private final Map<Entity, UUID> _entityMap = new WeakHashMap<>(55);
 
-    /**
-     * Get all entities currently leashed to the player.
-     *
-     * @param player  The player to check.
-     */
-    public static Collection<Entity> getLeashed(Player player) {
+    public InternalLeashTracker() {
+        Bukkit.getPluginManager().registerEvents(this, Nucleus.getPlugin());
+    }
+
+    @Override
+    public Collection<Entity> getLeashed(Player player) {
         PreCon.notNull(player);
 
         synchronized (_playerMap) {
@@ -92,31 +93,13 @@ public class InternalLeashTracker implements Listener {
         }
     }
 
-    /**
-     * Get the player an {@link org.bukkit.entity.Entity} is leashed to.
-     *
-     * @param entity  The {@link org.bukkit.entity.Entity} to check.
-     *
-     * @return  The {@link org.bukkit.entity.Player} the entity is leashed to
-     * or null if the entity is not leashed or is leashed to a hitch.
-     */
+    @Override
     @Nullable
-    public static Player getLeashedTo(Entity entity) {
+    public Player getLeashedTo(Entity entity) {
         UUID playerId = _entityMap.get(entity);
 
         return PlayerUtils.getPlayer(playerId);
     }
-
-    /**
-     * Perform initial Bukkit listener registration.
-     */
-    public static void registerListener() {
-        _playerMap.clear();
-        _entityMap.clear();
-        Bukkit.getPluginManager().registerEvents(new InternalLeashTracker(), Nucleus.getPlugin());
-    }
-
-    private InternalLeashTracker() {}
 
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPlayerQuit(PlayerQuitEvent event) {

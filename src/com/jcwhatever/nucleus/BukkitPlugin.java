@@ -78,6 +78,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalScoreboardTracker _scoreboardTracker;
     InternalLanguageManager _languageManager;
     InternalEquipperManager _equipperManager;
+    InternalLeashTracker _leashTracker;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -151,6 +152,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _equipperManager = new InternalEquipperManager();
         _scoreboardTracker = new InternalScoreboardTracker();
         _scheduler = new InternalTaskScheduler();
+        _leashTracker = new InternalLeashTracker();
 
         _providerManager = new InternalProviderManager(_isTest);
         ProviderLoader providerLoader = new ProviderLoader(_providerManager);
@@ -179,8 +181,6 @@ public final class BukkitPlugin extends NucleusPlugin {
 
     @Override
     protected void onEnablePlugin() {
-
-        InternalLeashTracker.registerListener();
 
         registerEventListeners(new JCGEventListener(_regionManager));
         registerCommands(_commandHandler);

@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.managed.language.ILanguageManager;
+import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardTracker;
@@ -166,6 +167,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._itemSerialization != null, ERROR_NOT_READY);
 
         return _plugin._languageManager;
+    }
+
+    /**
+     * Get the global leash tracker.
+     */
+    public static ILeashTracker getLeashTracker() {
+        PreCon.isValid(_plugin._leashTracker != null, ERROR_NOT_READY);
+
+        return _plugin._leashTracker;
     }
 
     /**

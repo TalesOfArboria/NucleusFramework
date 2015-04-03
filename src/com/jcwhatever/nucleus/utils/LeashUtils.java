@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils;
 
-import com.jcwhatever.nucleus.internal.InternalLeashTracker;
+import com.jcwhatever.nucleus.Nucleus;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LeashHitch;
@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * Leash (Lead) utilities.
  */
-public class LeashUtils {
+public final class LeashUtils {
 
     private LeashUtils() {}
 
@@ -61,7 +61,7 @@ public class LeashUtils {
     public static Collection<Entity> getLeashed(Player player) {
         PreCon.notNull(player);
 
-        return InternalLeashTracker.getLeashed(player);
+        return Nucleus.getLeashTracker().getLeashed(player);
     }
 
     /**
