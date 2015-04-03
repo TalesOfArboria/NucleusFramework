@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 import com.jcwhatever.nucleus.providers.jail.IJailProvider;
+import com.jcwhatever.nucleus.providers.kits.IKitProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -46,6 +47,7 @@ public enum ProviderType implements INamedInsensitive {
     ECONOMY       ("Economy",      IEconomyProvider.class),
     FRIENDS       ("Friends",      IFriendsProvider.class),
     JAIL          ("Jail",         IJailProvider.class),
+    KITS          ("Kits",         IKitProvider.class),
     NPC           ("NPC",          INpcProvider.class),
     PERMISSIONS   ("Permissions",  IPermissionsProvider.class),
     PLAYER_LOOKUP ("PlayerLookup", IPlayerLookupProvider.class),
@@ -54,7 +56,6 @@ public enum ProviderType implements INamedInsensitive {
 
     private static Map<Class<? extends IProvider>, ProviderType> _typeMap;
     private static Map<String, ProviderType> _nameMap;
-
 
     /**
      * Get the {@link ProviderType} from the specified service provider API interface class.

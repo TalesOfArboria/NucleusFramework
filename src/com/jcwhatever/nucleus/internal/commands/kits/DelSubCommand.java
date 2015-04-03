@@ -25,14 +25,13 @@
 
 package com.jcwhatever.nucleus.internal.commands.kits;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.kits.IKit;
-import com.jcwhatever.nucleus.utils.kits.KitManager;
+import com.jcwhatever.nucleus.providers.kits.IKit;
+import com.jcwhatever.nucleus.utils.Kits;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;
@@ -58,15 +57,13 @@ public final class DelSubCommand extends AbstractCommand {
 
         String kitName = args.getName("kitName");
 
-        KitManager manager = Nucleus.getKitManager();
-
-        IKit kit = manager.get(kitName);
+        IKit kit = Kits.get(kitName);
         if (kit == null) {
             tellError(sender, NucLang.get(_KIT_NOT_FOUND, kitName));
             return; // finish
         }
 
-        if (!manager.remove(kitName)) {
+        if (!Kits.remove(kitName)) {
             tellError(sender, NucLang.get(_FAILED));
             return; // finish
         }

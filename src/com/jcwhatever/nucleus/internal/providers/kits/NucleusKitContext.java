@@ -22,10 +22,12 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.utils.kits;
+package com.jcwhatever.nucleus.internal.providers.kits;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.providers.kits.IKit;
+import com.jcwhatever.nucleus.providers.kits.IKitContext;
+import com.jcwhatever.nucleus.providers.kits.IModifiableKit;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.managers.NamedInsensitiveDataManager;
@@ -35,10 +37,11 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-/**
- * Manages equipment kits.
+/*
+ *
  */
-public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPluginOwned {
+public class NucleusKitContext extends NamedInsensitiveDataManager<IKit>
+        implements IKitContext, IPluginOwned {
 
     private final Plugin _plugin;
 
@@ -48,7 +51,7 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
      * @param plugin    The owning plugin.
      * @param dataNode  Config section settings to store and retrieve kit information.
      */
-    public KitManager(Plugin plugin, @Nullable IDataNode dataNode) {
+    public NucleusKitContext(Plugin plugin, @Nullable IDataNode dataNode) {
         this(plugin, dataNode, true);
     }
 
@@ -59,7 +62,7 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
      * @param dataNode  Config section settings to store and retrieve kit information.
      * @param loadKits  True to load kits from the data node during the constructor.
      */
-    public KitManager(Plugin plugin, @Nullable IDataNode dataNode, boolean loadKits) {
+    public NucleusKitContext(Plugin plugin, @Nullable IDataNode dataNode, boolean loadKits) {
         super(dataNode, false);
         PreCon.notNull(plugin);
 
@@ -74,13 +77,7 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
         return _plugin;
     }
 
-    /**
-     * Creates a new kit.
-     *
-     * @param name  The name of the kit.
-     *
-     * @return Returns the created kit or null if the kit name already exists.
-     */
+    @Override
     public IKit add(String name) {
         PreCon.notNullOrEmpty(name);
         PreCon.validNodeName(name);
@@ -88,21 +85,13 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
         if (contains(name))
             return null;
 
-        IKit kit = createKit(name);
+        IKit kit = new NucleusKit(this, name);
         add(kit);
 
         return kit;
     }
 
-    /**
-     * Get an {@link IModifiableKit} instance for the
-     * given git.
-     *
-     * @param kit  The {@link IKit} to modify.
-     *
-     * @return  The modifiable kit or null if the manager does not own the kit or does not
-     * allow modifying the kit.
-     */
+    @Override
     public IModifiableKit modifyKit(IKit kit) {
         PreCon.notNull(kit);
 
@@ -114,35 +103,12 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
         return getModifiableKit(kit);
     }
 
-    /**
-     * Invoked to create a new {@link IKit} instance.
-     *
-     * @param kitName  The name of the {@link IKit}.
-     */
-    protected IKit createKit(String kitName) {
-        return new Kit(_plugin, kitName);
-    }
-
-    /**
-     * Get a {@link IModifiableKit} used to modify the contents
-     * of the specified {@link IKit}.
-     *
-     * @param kit  The kit to modify.
-     *
-     * @return  Null if the kit cannot be modified.
-     */
-    protected IModifiableKit getModifiableKit(IKit kit) {
-        if (kit instanceof Kit) {
-            return new KitModifier(this, (Kit)kit);
-        }
-        return null;
-    }
-
     @Nullable
     @Override
     protected IKit load(String name, IDataNode kitNode) {
-        IKit kit = createKit(name);
+        IKit kit = new NucleusKit(this, name);
         IModifiableKit modKit = getModifiableKit(kit);
+        assert modKit != null;
 
         ItemStack[] items = kitNode.getItemStacks("items");
         ItemStack[] armor = kitNode.getItemStacks("armor");
@@ -170,6 +136,21 @@ public class KitManager extends NamedInsensitiveDataManager<IKit> implements IPl
         IDataNode dataNode = _dataNode.getNode(getName(item));
         save(item, dataNode);
         dataNode.save();
+    }
+
+    /**
+     * Get a {@link IModifiableKit} used to modify the contents
+     * of the specified {@link IKit}.
+     *
+     * @param kit  The kit to modify.
+     *
+     * @return  Null if the kit cannot be modified.
+     */
+    private IModifiableKit getModifiableKit(IKit kit) {
+        if (kit instanceof NucleusKit) {
+            return new NucleusKitModifier(this, (NucleusKit)kit);
+        }
+        return null;
     }
 }
 

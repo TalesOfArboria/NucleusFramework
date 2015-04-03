@@ -40,7 +40,6 @@ import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItemManager;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
 import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerialization;
-import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.signs.ISignManager;
@@ -236,15 +235,6 @@ public final class Nucleus {
         PreCon.isValid(_plugin._equipperManager != null, ERROR_NOT_READY);
 
         return _plugin._equipperManager.getEquipper(entityType);
-    }
-
-    /**
-     * Get the default kit manager.
-     */
-    public static KitManager getKitManager() {
-        PreCon.isValid(_plugin._kitManager != null, ERROR_NOT_READY);
-
-        return _plugin._kitManager;
     }
 
     /**

@@ -22,24 +22,26 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.providers.kits;
 
-package com.jcwhatever.nucleus.internal.commands.kits.items;
+import com.jcwhatever.nucleus.providers.IProvider;
+import com.jcwhatever.nucleus.utils.managers.INamedManager;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
+import org.bukkit.plugin.Plugin;
 
-@CommandInfo(
-        parent="kits",
-        command="items",
-        description="Manage chest kit items.")
+/**
+ * Equipment kit provider.
+ *
+ * <p>All methods from {@link IKitContext} apply to the global context.</p>
+ */
+public interface IKitProvider extends INamedManager<IKit>, IKitContext, IProvider {
 
-public final class ItemsCommand extends AbstractCommand {
-
-    public ItemsCommand() {
-        super();
-
-        registerCommand(AddSubCommand.class);
-        registerCommand(DelSubCommand.class);
-        registerCommand(ListSubCommand.class);
-    }
+    /**
+     * Get a separate kit provider context for a plugin to use.
+     *
+     * <p>Only provides one context for a plugin.</p>
+     *
+     * @param plugin  The plugin the context is for.
+     */
+    IKitContext pluginContext(Plugin plugin);
 }

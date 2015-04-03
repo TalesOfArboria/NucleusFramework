@@ -25,15 +25,14 @@
 
 package com.jcwhatever.nucleus.internal.commands.kits.items;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.commands.CommandInfo;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.kits.IKit;
-import com.jcwhatever.nucleus.utils.kits.IModifiableKit;
-import com.jcwhatever.nucleus.utils.kits.KitManager;
+import com.jcwhatever.nucleus.providers.kits.IKit;
+import com.jcwhatever.nucleus.providers.kits.IModifiableKit;
+import com.jcwhatever.nucleus.utils.Kits;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;
@@ -60,15 +59,13 @@ public final class AddSubCommand extends AbstractCommand {
         String kitName = args.getName("kitName");
         ItemStack[] items = args.getItemStack(sender, "items");
 
-        KitManager manager = Nucleus.getKitManager();
-
-        IKit kit = manager.get(kitName);
+        IKit kit = Kits.get(kitName);
         if (kit == null) {
             tellError(sender, NucLang.get(_KIT_NOT_FOUND, kitName));
             return; // finish
         }
 
-        IModifiableKit modKit = manager.modifyKit(kit);
+        IModifiableKit modKit = Kits.modifyKit(kit);
         modKit.addAnyItems(items);
         modKit.save();
 

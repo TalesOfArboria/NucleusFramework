@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.utils.kits;
+package com.jcwhatever.nucleus.internal.providers.kits;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.events.kits.GiveKitEvent;
+import com.jcwhatever.nucleus.providers.kits.events.GiveKitEvent;
+import com.jcwhatever.nucleus.providers.kits.IKit;
+import com.jcwhatever.nucleus.providers.kits.IKitContext;
 import com.jcwhatever.nucleus.utils.ArrayUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
@@ -54,9 +55,10 @@ import javax.annotation.Nullable;
 /**
  * An implementation of {@link IKit}.
  */
-public class Kit implements IKit {
+public class NucleusKit implements IKit {
 
     private final Plugin _plugin;
+    private final IKitContext _context;
     private final String _name;
     private final String _searchName;
 
@@ -66,14 +68,15 @@ public class Kit implements IKit {
     /**
      * Constructor.
      *
-     * @param plugin  The owning plugin.
-     * @param name    The name of the kit.
+     * @param context  The owning context.
+     * @param name     The name of the kit.
      */
-    public Kit(Plugin plugin, String name) {
-        PreCon.notNull(plugin);
+    public NucleusKit(IKitContext context, String name) {
+        PreCon.notNull(context);
         PreCon.notNullOrEmpty(name);
 
-        _plugin = plugin;
+        _plugin = context.getPlugin();
+        _context = context;
         _name = name;
         _searchName = name.toLowerCase();
         _items = new ArrayList<ItemStack>(15);
@@ -92,6 +95,11 @@ public class Kit implements IKit {
     @Override
     public String getSearchName() {
         return _searchName;
+    }
+
+    @Override
+    public IKitContext getContext() {
+        return _context;
     }
 
     @Override
@@ -197,8 +205,8 @@ public class Kit implements IKit {
                 !(entity instanceof LivingEntity))
             return;
 
-        final GiveKitEvent event = new GiveKitEvent(entity, Kit.this);
-        Nucleus.getEventManager().callBukkit(Kit.this, event);
+        final GiveKitEvent event = new GiveKitEvent(entity, NucleusKit.this);
+        Nucleus.getEventManager().callBukkit(NucleusKit.this, event);
 
         if (event.isCancelled())
             return;
@@ -220,8 +228,7 @@ public class Kit implements IKit {
                     for (ItemStack item : event.getItems()) {
                         inventory.addItem(item);
                     }
-                }
-                else if (equipment != null) {
+                } else if (equipment != null) {
                     List<ItemStack> items = event.getItems();
                     if (items.size() > 0)
                         equipment.setItemInHand(items.get(0));
@@ -230,8 +237,7 @@ public class Kit implements IKit {
                 // add equipment
                 if (equipment != null) {
                     giveEquipment(equipment, event);
-                }
-                else if (inventory != null) {
+                } else if (inventory != null) {
                     giveEquipmentInventory(inventory, event);
                 }
             }
@@ -501,4 +507,5 @@ public class Kit implements IKit {
             inventory.addItem(event.getBoots());
     }
 }
+
 

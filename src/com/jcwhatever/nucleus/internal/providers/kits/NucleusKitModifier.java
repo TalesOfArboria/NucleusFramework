@@ -22,8 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.kits;
+package com.jcwhatever.nucleus.internal.providers.kits;
 
+import com.jcwhatever.nucleus.providers.kits.IKitContext;
+import com.jcwhatever.nucleus.providers.kits.IModifiableKit;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 
@@ -35,26 +37,31 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * A {@link Kit} wrapper that allows modifying and saving
+ * A {@link NucleusKit} wrapper that allows modifying and saving
  * the kit contents.
  */
-public class KitModifier implements IModifiableKit {
+public class NucleusKitModifier implements IModifiableKit {
 
-    protected final KitManager _manager;
-    protected final Kit _kit;
+    protected final NucleusKitContext _context;
+    protected final NucleusKit _kit;
 
     /**
      * Constructor.
      *
-     * @param manager  The owning {@link KitManager}.
-     * @param kit      The {@link Kit} to modify.
+     * @param context  The owning {@link NucleusKitContext}.
+     * @param kit      The {@link NucleusKit} to modify.
      */
-    protected KitModifier(KitManager manager, Kit kit) {
-        PreCon.notNull(manager);
+    protected NucleusKitModifier(NucleusKitContext context, NucleusKit kit) {
+        PreCon.notNull(context);
         PreCon.notNull(kit);
 
-        _manager = manager;
+        _context = context;
         _kit = kit;
+    }
+
+    @Override
+    public IKitContext getContext() {
+        return _context;
     }
 
     @Override
@@ -122,7 +129,7 @@ public class KitModifier implements IModifiableKit {
 
     @Override
     public boolean save() {
-        _manager.save(this);
+        _context.save(this);
         return true;
     }
 
@@ -190,3 +197,4 @@ public class KitModifier implements IModifiableKit {
         return _kit.getPlugin();
     }
 }
+

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.kits;
+package com.jcwhatever.nucleus.providers.kits;
 
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
@@ -37,6 +37,11 @@ import javax.annotation.Nullable;
  * A kit of items that can be given (or taken) from an entity.
  */
 public interface IKit extends INamedInsensitive, IPluginOwned {
+
+    /**
+     * Get the kit context.
+     */
+    IKitContext getContext();
 
     /**
      * Get the kit helmet, if any.

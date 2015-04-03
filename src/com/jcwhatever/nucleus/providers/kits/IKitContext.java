@@ -22,24 +22,31 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.providers.kits;
 
-package com.jcwhatever.nucleus.internal.commands.kits.items;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.managers.INamedManager;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
+/**
+ * A kit provider context that allows plugins to keep their
+ * own collection of kits.
+ */
+public interface IKitContext extends INamedManager<IKit>, IPluginOwned {
 
-@CommandInfo(
-        parent="kits",
-        command="items",
-        description="Manage chest kit items.")
+    /**
+     * Creates a new kit.
+     *
+     * @param name The name of the kit.
+     * @return The created kit or null if the kit name already exists.
+     */
+    IKit add(String name);
 
-public final class ItemsCommand extends AbstractCommand {
-
-    public ItemsCommand() {
-        super();
-
-        registerCommand(AddSubCommand.class);
-        registerCommand(DelSubCommand.class);
-        registerCommand(ListSubCommand.class);
-    }
+    /**
+     * Get an {@link IModifiableKit} instance for the given git.
+     *
+     * @param kit The {@link IKit} to modify.
+     *
+     * @return The modifiable kit or null if the manager does not allow modifying the kit.
+     */
+    IModifiableKit modifyKit(IKit kit);
 }

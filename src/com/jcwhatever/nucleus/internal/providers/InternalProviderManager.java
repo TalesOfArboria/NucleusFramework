@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyBankProvide
 import com.jcwhatever.nucleus.internal.providers.economy.VaultEconomyProvider;
 import com.jcwhatever.nucleus.internal.providers.friends.NucleusFriendsProvider;
 import com.jcwhatever.nucleus.internal.providers.jail.NucleusJailProvider;
+import com.jcwhatever.nucleus.internal.providers.kits.NucleusKitProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.bukkit.BukkitProvider;
 import com.jcwhatever.nucleus.internal.providers.permissions.vault.VaultProvider;
 import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvider;
@@ -49,6 +50,7 @@ import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
 import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
 import com.jcwhatever.nucleus.providers.jail.IJailProvider;
+import com.jcwhatever.nucleus.providers.kits.IKitProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
@@ -92,6 +94,7 @@ public final class InternalProviderManager implements IProviderManager {
     private volatile INpcProvider _npc;
     private volatile IJailProvider _jail;
     private volatile IStorageProvider _defaultStorage;
+    private volatile IKitProvider _kits;
 
     private final YamlStorageProvider _yamlStorage = new YamlStorageProvider();
 
@@ -151,6 +154,11 @@ public final class InternalProviderManager implements IProviderManager {
         String prefJail = getPreferred(ProviderType.JAIL);
         if (NucleusJailProvider.NAME.equalsIgnoreCase(prefJail)) {
             _jail = add(new NucleusJailProvider());
+        }
+
+        String prefKit = getPreferred(ProviderType.KITS);
+        if (NucleusKitProvider.NAME.equalsIgnoreCase(prefKit)) {
+            _kits = add(new NucleusKitProvider());
         }
 
         // setup preferred internal permissions
@@ -271,6 +279,14 @@ public final class InternalProviderManager implements IProviderManager {
             addName(provider, ProviderType.JAIL);
             if (remove(_jail, ProviderType.JAIL)) {
                 _jail = add(provider);
+                isAdded = true;
+            }
+        }
+
+        if (provider instanceof IKitProvider) {
+            addName(provider, ProviderType.KITS);
+            if (remove(_kits, ProviderType.KITS)) {
+                _kits = add(provider);
                 isAdded = true;
             }
         }
@@ -409,6 +425,11 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
+    public IKitProvider getKitProvider() {
+        return _kits;
+    }
+
+    @Override
     public IStorageProvider getStorageProvider() {
         return _defaultStorage != null ? _defaultStorage : _yamlStorage;
     }
@@ -526,6 +547,9 @@ public final class InternalProviderManager implements IProviderManager {
 
             if (_friends == null)
                 _friends = new NucleusFriendsProvider();
+
+            if (_kits == null)
+                _kits = new NucleusKitProvider();
         }
     }
 

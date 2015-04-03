@@ -45,7 +45,6 @@ import com.jcwhatever.nucleus.internal.signs.InternalSignManager;
 import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
 import com.jcwhatever.nucleus.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
-import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
@@ -78,7 +77,6 @@ public final class BukkitPlugin extends NucleusPlugin {
     EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
-    KitManager _kitManager;
     NucleusCommandDispatcher _commandHandler;
     IMessengerFactory _messengerFactory;
 
@@ -166,8 +164,6 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _nmsManager = new InternalNmsManager();
         _commandHandler = new NucleusCommandDispatcher();
-
-        _kitManager = new KitManager(this, getDataNode().getNode("kits"));
 
         _scriptEngineManager = new InternalScriptEngineManager();
         _scriptEngineLoader = new ScriptEngineLoader(_scriptEngineManager);
