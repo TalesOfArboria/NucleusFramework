@@ -23,9 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.language.parser;
-
-import com.jcwhatever.nucleus.utils.language.InvalidLocalizedTextException;
+package com.jcwhatever.nucleus.internal.language.parser;
 
 import java.io.InputStream;
 import java.util.ArrayList;

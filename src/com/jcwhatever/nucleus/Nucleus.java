@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
+import com.jcwhatever.nucleus.managed.language.ILanguageManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
@@ -158,6 +159,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._itemSerialization != null, ERROR_NOT_READY);
 
         return _plugin._itemSerialization;
+    }
+
+    /**
+     * Get the global language manager.
+     */
+    public static ILanguageManager getLanguageManager() {
+        PreCon.isValid(_plugin._itemSerialization != null, ERROR_NOT_READY);
+
+        return _plugin._languageManager;
     }
 
     /**

@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.language.Localizable;
-import com.jcwhatever.nucleus.utils.language.Localized;
+import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 

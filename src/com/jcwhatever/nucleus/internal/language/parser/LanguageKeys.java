@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.language.parser;
+package com.jcwhatever.nucleus.internal.language.parser;
 
 import java.io.InputStream;
 import java.util.List;

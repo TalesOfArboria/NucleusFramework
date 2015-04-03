@@ -23,39 +23,21 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.commands.jail;
+package com.jcwhatever.nucleus.managed.language;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.providers.jail.IJail;
-import com.jcwhatever.nucleus.providers.jail.Jails;
-import com.jcwhatever.nucleus.managed.language.Localizable;
-
-import org.bukkit.command.CommandSender;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 
-@CommandInfo(
-        parent="jail",
-        command="clearreleasetp",
-        description="Clear location where players are teleported when they are released from the default jail.")
-
-public final class ClearReleaseTPSubCommand extends AbstractCommand {
-
-    @Localizable static final String _SUCCESS = "Default Jail release location cleared.";
-
-    @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
-
-        CommandException.checkNotConsole(this, sender);
-        
-        IJail jail = Jails.getServerJail();
-        jail.setReleaseLocation(null);
-
-        tellSuccess(sender, NucLang.get(_SUCCESS));
-    }
-
+/**
+ * Indicates a static final {@link java.lang.String} field or an annotation
+ * method that returns {@link java.lang.String} is a candidate for localization.
+ */
+@Documented
+@Target({ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Localizable {
 }
-

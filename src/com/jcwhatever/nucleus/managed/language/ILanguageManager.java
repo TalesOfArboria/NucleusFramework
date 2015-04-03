@@ -22,62 +22,31 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.managed.language;
 
-package com.jcwhatever.nucleus.utils.language.parser;
+import org.bukkit.plugin.Plugin;
 
-import com.jcwhatever.nucleus.utils.PreCon;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
- * Represents a single line from a language file.
+ * Interface for the global language manager.
  */
-public class LocalizedText {
-
-    private static final Pattern PATTERN_ESCAPED_NEW_LINE = Pattern.compile("\\n");
-
-    private final int _index;
-    private final String _text;
+public interface ILanguageManager {
 
     /**
-     * Constructor.
+     * Create a new language context for a plugins jar file.
      *
-     * @param index  The key index.
-     * @param text   The text.
+     * @param plugin  The owning plugin.
      */
-    public LocalizedText(int index, String text) {
-        PreCon.notNull(text);
-
-        _index = index;
-
-        Matcher matcher = PATTERN_ESCAPED_NEW_LINE.matcher(text);
-        _text = matcher.replaceAll("\n");
-    }
+    ILanguageContext createContext(Plugin plugin);
 
     /**
-     * Get the key index.
+     * Create a new language context.
+     *
+     * @param plugin   The owning plugin.
+     * @param context  Optional. An object instance from the jar file that the context is for.
+     *                 Otherwise, the plugin is the context. Use when a plugin loads from multiple jar
+     *                 files (modules) and a jar has its own language context.
      */
-    public int getIndex() {
-        return _index;
-    }
-
-    /**
-     * Get the text.
-     */
-    public String getText() {
-        return _text;
-    }
-
-    @Override
-    public int hashCode() {
-        return _index;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        return obj instanceof LocalizedText &&
-                ((LocalizedText) obj).getIndex() == _index;
-    }
+    ILanguageContext createContext(Plugin plugin, @Nullable Object context);
 }

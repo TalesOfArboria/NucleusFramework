@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.providers.jail.Jails;
 import com.jcwhatever.nucleus.utils.coords.NamedLocation;
-import com.jcwhatever.nucleus.utils.language.Localizable;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;

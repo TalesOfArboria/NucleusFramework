@@ -23,9 +23,8 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.language.parser;
+package com.jcwhatever.nucleus.internal.language.parser;
 
-import com.jcwhatever.nucleus.utils.language.InvalidLocalizedTextException;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import java.io.IOException;

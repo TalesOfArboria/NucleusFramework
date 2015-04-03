@@ -23,39 +23,61 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.commands.jail;
+package com.jcwhatever.nucleus.internal.language.parser;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.providers.jail.IJail;
-import com.jcwhatever.nucleus.providers.jail.Jails;
-import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.command.CommandSender;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+/**
+ * Represents a single line from a language file.
+ */
+public class LocalizedText {
 
-@CommandInfo(
-        parent="jail",
-        command="clearreleasetp",
-        description="Clear location where players are teleported when they are released from the default jail.")
+    private static final Pattern PATTERN_ESCAPED_NEW_LINE = Pattern.compile("\\n");
 
-public final class ClearReleaseTPSubCommand extends AbstractCommand {
+    private final int _index;
+    private final String _text;
 
-    @Localizable static final String _SUCCESS = "Default Jail release location cleared.";
+    /**
+     * Constructor.
+     *
+     * @param index  The key index.
+     * @param text   The text.
+     */
+    public LocalizedText(int index, String text) {
+        PreCon.notNull(text);
 
-    @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+        _index = index;
 
-        CommandException.checkNotConsole(this, sender);
-        
-        IJail jail = Jails.getServerJail();
-        jail.setReleaseLocation(null);
-
-        tellSuccess(sender, NucLang.get(_SUCCESS));
+        Matcher matcher = PATTERN_ESCAPED_NEW_LINE.matcher(text);
+        _text = matcher.replaceAll("\n");
     }
 
-}
+    /**
+     * Get the key index.
+     */
+    public int getIndex() {
+        return _index;
+    }
 
+    /**
+     * Get the text.
+     */
+    public String getText() {
+        return _text;
+    }
+
+    @Override
+    public int hashCode() {
+        return _index;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        return obj instanceof LocalizedText &&
+                ((LocalizedText) obj).getIndex() == _index;
+    }
+}

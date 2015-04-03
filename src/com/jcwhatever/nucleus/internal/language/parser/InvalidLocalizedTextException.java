@@ -23,18 +23,27 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.language;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
-
+package com.jcwhatever.nucleus.internal.language.parser;
 
 /**
- * Indicates the annotated method returns language localized strings
- * or a parameter requires a localized string.
+ * Thrown when a line from a language file is not valid.
  */
-@Documented
-@Target({ElementType.METHOD, ElementType.PARAMETER})
-public @interface Localized {
+public class InvalidLocalizedTextException extends Exception {
+
+    private final String _message;
+
+    /**
+     * Constructor.
+     *
+     * @param message  The exception message.
+     */
+    public InvalidLocalizedTextException(String message) {
+        _message = message;
+    }
+
+    @Override
+    public String getMessage() {
+        return _message;
+    }
+
 }

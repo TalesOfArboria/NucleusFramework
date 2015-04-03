@@ -30,7 +30,7 @@ import com.jcwhatever.nucleus.commands.exceptions.InvalidCommandSenderException.
 import com.jcwhatever.nucleus.commands.parameters.CommandParameter;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescription;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.language.Localizable;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.command.CommandSender;

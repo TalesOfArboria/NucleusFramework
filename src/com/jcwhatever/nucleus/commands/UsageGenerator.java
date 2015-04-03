@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.commands.arguments.ArgumentParser;
 import com.jcwhatever.nucleus.commands.parameters.CommandParameter;
 import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.language.Localizable;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 
 import java.util.LinkedList;
 import java.util.List;

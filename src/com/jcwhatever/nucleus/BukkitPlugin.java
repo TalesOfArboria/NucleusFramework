@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
 import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
 import com.jcwhatever.nucleus.internal.items.InternalItemSerializationManager;
+import com.jcwhatever.nucleus.internal.language.InternalLanguageManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
@@ -45,8 +46,8 @@ import com.jcwhatever.nucleus.internal.scripting.ScriptEngineLoader;
 import com.jcwhatever.nucleus.internal.signs.InternalSignManager;
 import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
-import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
+import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
 import org.bukkit.Bukkit;
@@ -75,6 +76,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalFloatingItemManager _floatingItemManager;
     InternalItemSerializationManager _itemSerialization;
     InternalScoreboardTracker _scoreboardTracker;
+    InternalLanguageManager _languageManager;
 
     EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
@@ -144,6 +146,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     @Override
     protected void onPreEnable() {
 
+        _languageManager = new InternalLanguageManager();
         _itemSerialization = new InternalItemSerializationManager();
         _scoreboardTracker = new InternalScoreboardTracker();
         _scheduler = new InternalTaskScheduler();

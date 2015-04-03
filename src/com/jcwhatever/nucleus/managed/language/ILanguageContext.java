@@ -22,28 +22,50 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.managed.language;
 
-package com.jcwhatever.nucleus.utils.language;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
- * Thrown when a line from a language file is not valid.
+ * A language context use for transforming internal text into text specified
+ * in language files within the contexts jar file or other external files.
  */
-public class InvalidLocalizedTextException extends Exception {
-
-    private final String _message;
+public interface ILanguageContext extends IPluginOwned {
 
     /**
-     * Constructor.
-     *
-     * @param message  The exception message.
+     * Clear all localizations.
      */
-    public InvalidLocalizedTextException(String message) {
-        _message = message;
-    }
+    void clear();
 
-    @Override
-    public String getMessage() {
-        return _message;
-    }
+    /**
+     * Reload internal localizations.
+     */
+    void reload();
 
+    /**
+     * Merge a language file into the language context.
+     *
+     * @param file  The language file to include
+     *
+     * @return  True if the file was merged, otherwise false.
+     */
+    boolean addFile(File file) throws FileNotFoundException;
+
+    /**
+     * Localize a text string.
+     *
+     * <p>The text must be a key that was parsed from the compiled
+     * jar file and is an entry in the lang.key.txt file in the plugins
+     * resource file.</p>
+     *
+     * <p>If an entry is not found, the unlocalized text is formatted and returned.</p>
+     *
+     * @param text    The text to localize.
+     * @param params  Optional format arguments.
+     */
+    @Localized
+    String get(String text, Object... params);
 }

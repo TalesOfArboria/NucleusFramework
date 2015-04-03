@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.internal;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
-import com.jcwhatever.nucleus.utils.language.Localized;
+import com.jcwhatever.nucleus.managed.language.Localized;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -39,14 +39,14 @@ public final class NucLang {
 
     @Localized
     public static String get(String text, Object... params) {
-        return Nucleus.getPlugin().getLanguageManager().get(text, params);
+        return Nucleus.getPlugin().getLanguageContext().get(text, params);
     }
 
     public static String get(Plugin plugin, String text, Object... params) {
 
         if (plugin instanceof NucleusPlugin) {
             NucleusPlugin generic = (NucleusPlugin)plugin;
-            return generic.getLanguageManager().get(text, params);
+            return generic.getLanguageContext().get(text, params);
         }
 
         return get(text, params);

@@ -22,22 +22,27 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.internal.language;
 
-package com.jcwhatever.nucleus.utils.language;
+import com.jcwhatever.nucleus.managed.language.ILanguageContext;
+import com.jcwhatever.nucleus.managed.language.ILanguageManager;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 
 /**
- * Indicates a static final {@link java.lang.String} field or an annotation
- * method that returns {@link java.lang.String} is a candidate for localization.
+ * Internal implementation of {@link ILanguageManager}.
  */
-@Documented
-@Target({ElementType.FIELD, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Localizable {
+public class InternalLanguageManager implements ILanguageManager {
+
+    @Override
+    public ILanguageContext createContext(Plugin plugin) {
+        return new InternalLanguageContext(plugin);
+    }
+
+    @Override
+    public ILanguageContext createContext(Plugin plugin, @Nullable Object context) {
+        return new InternalLanguageContext(plugin, context);
+    }
 }

@@ -26,13 +26,13 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.commands.CommandDispatcher;
+import com.jcwhatever.nucleus.managed.language.ILanguageContext;
 import com.jcwhatever.nucleus.managed.messaging.IChatPrefixed;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
-import com.jcwhatever.nucleus.utils.language.LanguageManager;
 
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
@@ -54,7 +54,7 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
 
     static List<NucleusPlugin> _enabled = new ArrayList<>(10);
 
-    private LanguageManager _languageManager;
+    private ILanguageContext _languageContext;
     private IDataNode _dataNode;
     private boolean _isDebugging;
     private IMessenger _messenger;
@@ -128,8 +128,8 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     /**
      * Get the plugins language manager.
      */
-    public LanguageManager getLanguageManager() {
-        return _languageManager;
+    public ILanguageContext getLanguageContext() {
+        return _languageContext;
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
 
         loadDataNode();
 
-        _languageManager = new LanguageManager(this);
+        _languageContext = Nucleus.getLanguageManager().createContext(this);
         Nucleus.registerPlugin(this);
 
         if (!(this instanceof BukkitPlugin))
