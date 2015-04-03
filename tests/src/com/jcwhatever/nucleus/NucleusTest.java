@@ -1,7 +1,7 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
-import com.jcwhatever.nucleus.storage.DataStorageUtil;
+import com.jcwhatever.nucleus.providers.storage.DataStorageUtil;
 
 /**
  * Helper to initialize Nucleus and Bukkit for testing.

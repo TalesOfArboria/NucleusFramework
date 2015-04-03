@@ -1,6 +1,4 @@
-package com.jcwhatever.nucleus.storage;
-
-import com.jcwhatever.nucleus.providers.storage.DataStorage;
+package com.jcwhatever.nucleus.providers.storage;
 
 /*
  * 
