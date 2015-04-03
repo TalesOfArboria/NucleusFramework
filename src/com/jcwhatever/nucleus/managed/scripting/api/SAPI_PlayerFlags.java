@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.scripting.api;
+package com.jcwhatever.nucleus.managed.scripting.api;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -32,95 +32,82 @@ import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
-
 /**
- * Provide scripts with meta data storage for general and player specific use.
+ * Provide scripts with API for setting flags on players.
  */
-public class SAPI_Meta implements IDisposable {
+public class SAPI_PlayerFlags implements IDisposable {
 
     private final IDataNode _dataNode;
-    private boolean _isDisposed;
 
     /**
      * Constructor.
      *
-     * @param dataNode  The data node to store and retrieve meta from.
+     * @param dataNode  The data node to store and retrieve flags from.
      */
-    public SAPI_Meta(IDataNode dataNode) {
+    public SAPI_PlayerFlags(IDataNode dataNode) {
         _dataNode = dataNode;
     }
 
     @Override
     public boolean isDisposed() {
-        return _isDisposed;
+        return false;
     }
 
     @Override
     public void dispose() {
-        _isDisposed = true;
+        // do nothing
     }
 
     /**
-     * Get meta data set on a player.
+     * Determine if a player has a flag set.
      *
-     * @param player  The player.
-     * @param key     The meta data key.
+     * @param player    The player to check
+     * @param flagName  The name of the flag
      *
-     * @return  The stored object or null.
+     * @return  True if the flag is set.
      */
-    @Nullable
-    public Object getPlayerMeta(Object player, String key) {
+    public boolean has(Object player, String flagName) {
         PreCon.notNull(player);
-        PreCon.notNullOrEmpty(key);
+        PreCon.notNullOrEmpty(flagName);
 
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        return _dataNode.get(p.getUniqueId().toString() + '.' + key);
+        return _dataNode.getBoolean(p.getUniqueId().toString() + '.' + flagName, false);
     }
 
     /**
-     * Set meta data value on a player.
+     * Set a flag on a player.
      *
-     * @param player  The player.
-     * @param key     The meta data key.
-     * @param value   The meta data value.
+     * @param player    The player.
+     * @param flagName  The name of the flag.
      */
-    public void setPlayerMeta(Object player, String key, @Nullable Object value) {
+    public void set(Object player, String flagName) {
         PreCon.notNull(player);
-        PreCon.notNull(key);
+        PreCon.notNullOrEmpty(flagName);
 
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        _dataNode.set(p.getUniqueId().toString() + '.' + key, value);
+        _dataNode.set(p.getUniqueId().toString() + '.' + flagName, true);
         _dataNode.save();
     }
 
     /**
-     * Get global meta data value.
+     * Clear a flag on a player.
      *
-     * @param key  The meta data key.
-     *
-     * @return  The stored object or null.
+     * @param player    The player.
+     * @param flagName  The name of the flag.
      */
-    public Object getMeta(String key) {
-        PreCon.notNullOrEmpty(key);
+    public void clear(Object player, String flagName) {
+        PreCon.notNull(player);
+        PreCon.notNullOrEmpty(flagName);
 
-        return _dataNode.get("global." + key);
-    }
+        Player p = PlayerUtils.getPlayer(player);
+        PreCon.notNull(p);
 
-    /**
-     * Set global meta data value.
-     *
-     * @param key    The meta data key.
-     * @param value  The meta data value.
-     */
-    public void setMeta(String key, @Nullable Object value) {
-        PreCon.notNullOrEmpty(key);
-
-        _dataNode.set("global." + key, value);
+        _dataNode.remove(p.getUniqueId().toString() + '.' + flagName);
         _dataNode.save();
     }
 }
+

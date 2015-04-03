@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.internal.scripting;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.jcwhatever.nucleus.scripting.IScriptApi;
-import com.jcwhatever.nucleus.scripting.IScriptApiRepo;
+import com.jcwhatever.nucleus.managed.scripting.IScriptApi;
+import com.jcwhatever.nucleus.managed.scripting.IScriptApiRepo;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;

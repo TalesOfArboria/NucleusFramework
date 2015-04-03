@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.scripting;
+package com.jcwhatever.nucleus.managed.scripting;
 
 import java.io.File;
 import java.util.List;

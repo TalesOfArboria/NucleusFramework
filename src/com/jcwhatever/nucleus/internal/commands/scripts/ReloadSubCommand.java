@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
-import com.jcwhatever.nucleus.scripting.IScript;
+import com.jcwhatever.nucleus.managed.scripting.IScript;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;

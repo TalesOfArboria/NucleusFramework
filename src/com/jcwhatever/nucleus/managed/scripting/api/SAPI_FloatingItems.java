@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.scripting.api;
+package com.jcwhatever.nucleus.managed.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.observer.subscriber.SubscriberLinkedList;

@@ -23,30 +23,54 @@
  */
 
 
-package com.jcwhatever.nucleus.scripting;
+package com.jcwhatever.nucleus.managed.scripting;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.plugin.Plugin;
 
 /**
- * Represents a script API object factory.
- *
- * <p>Used to retrieve an API object which is inserted into a script using
- * a specified variable name.</p>
- *
- * @see SimpleScriptApi
- * @see IScriptApiRepo
+ * Simple implementation of a script API.
  */
-public interface IScriptApi extends IPluginOwned, INamed {
+public class SimpleScriptApi implements IScriptApi {
+
+    private final Plugin _plugin;
+    private final String _name;
+    private final IApiObjectCreator _creator;
 
     /**
-     * Create a new instance of the API object for a specific script and plugin.
+     * Constructor.
      *
-     * @param plugin  The plugin the API is being instantiated for.
-     * @param script  The script the API is being instantiated for.
+     * @param plugin   The owning plugin
+     * @param name     The name of the API. Also used as the default script variable name.
+     * @param creator  Use to create new instances of the disposable API object.
      */
-    public IDisposable createApi(Plugin plugin, IEvaluatedScript script);
+    public SimpleScriptApi(Plugin plugin, String name, IApiObjectCreator creator) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(creator);
+
+        _plugin = plugin;
+        _name = name;
+        _creator = creator;
+    }
+
+    @Override
+    public final Plugin getPlugin() {
+        return _plugin;
+    }
+
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    @Override
+    public IDisposable createApi(Plugin plugin, IEvaluatedScript script) {
+        return _creator.create(plugin, script);
+    }
+
+    public interface IApiObjectCreator {
+        IDisposable create(Plugin plugin, IEvaluatedScript script);
+    }
 }

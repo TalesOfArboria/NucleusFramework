@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.scripting;
+package com.jcwhatever.nucleus.managed.scripting;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
 

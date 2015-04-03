@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.scripting;
+package com.jcwhatever.nucleus.managed.scripting;
 
 import org.bukkit.plugin.Plugin;
 

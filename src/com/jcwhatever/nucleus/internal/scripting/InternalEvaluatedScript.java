@@ -28,9 +28,9 @@ package com.jcwhatever.nucleus.internal.scripting;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
-import com.jcwhatever.nucleus.scripting.IScript;
-import com.jcwhatever.nucleus.scripting.IScriptApi;
+import com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript;
+import com.jcwhatever.nucleus.managed.scripting.IScript;
+import com.jcwhatever.nucleus.managed.scripting.IScriptApi;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 
@@ -49,7 +49,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 /**
- * NucleusFramework's default {@link com.jcwhatever.nucleus.scripting.IEvaluatedScript} implementation.
+ * NucleusFramework's default {@link com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript} implementation.
  *
  * <p>An evaluated script</p>
  */

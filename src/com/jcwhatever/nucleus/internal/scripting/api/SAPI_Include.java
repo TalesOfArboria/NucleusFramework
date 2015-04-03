@@ -28,10 +28,10 @@ package com.jcwhatever.nucleus.internal.scripting.api;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
-import com.jcwhatever.nucleus.scripting.IScript;
-import com.jcwhatever.nucleus.scripting.IScriptApi;
-import com.jcwhatever.nucleus.scripting.IScriptManager;
+import com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript;
+import com.jcwhatever.nucleus.managed.scripting.IScript;
+import com.jcwhatever.nucleus.managed.scripting.IScriptApi;
+import com.jcwhatever.nucleus.managed.scripting.IScriptManager;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 

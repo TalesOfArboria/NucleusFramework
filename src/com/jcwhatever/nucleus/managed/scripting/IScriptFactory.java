@@ -22,55 +22,25 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.managed.scripting;
 
-package com.jcwhatever.nucleus.scripting;
-
-import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.utils.PreCon;
-
-import org.bukkit.plugin.Plugin;
+import java.io.File;
+import javax.annotation.Nullable;
 
 /**
- * Simple implementation of a script API.
+ * Script factory to create new {@link IScript} instances.
+ *
+ * @see IScriptManager#getScriptFactory
  */
-public class SimpleScriptApi implements IScriptApi {
-
-    private final Plugin _plugin;
-    private final String _name;
-    private final IApiObjectCreator _creator;
+public interface IScriptFactory {
 
     /**
-     * Constructor.
+     * Invoked to get a new {@link IScript} instance.
      *
-     * @param plugin   The owning plugin
-     * @param name     The name of the API. Also used as the default script variable name.
-     * @param creator  Use to create new instances of the disposable API object.
+     * @param name      The name of the script.
+     * @param file      Optional file of the script.
+     * @param type      The script type. (script file extension)
+     * @param script    The script.
      */
-    public SimpleScriptApi(Plugin plugin, String name, IApiObjectCreator creator) {
-        PreCon.notNull(plugin);
-        PreCon.notNull(creator);
-
-        _plugin = plugin;
-        _name = name;
-        _creator = creator;
-    }
-
-    @Override
-    public final Plugin getPlugin() {
-        return _plugin;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    @Override
-    public IDisposable createApi(Plugin plugin, IEvaluatedScript script) {
-        return _creator.create(plugin, script);
-    }
-
-    public interface IApiObjectCreator {
-        IDisposable create(Plugin plugin, IEvaluatedScript script);
-    }
+    public IScript construct(String name, @Nullable File file, String type, String script);
 }

@@ -22,25 +22,31 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.scripting;
 
-import java.io.File;
-import javax.annotation.Nullable;
+package com.jcwhatever.nucleus.managed.scripting;
+
+import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
+
+import org.bukkit.plugin.Plugin;
 
 /**
- * Script factory to create new {@link IScript} instances.
+ * Represents a script API object factory.
  *
- * @see IScriptManager#getScriptFactory
+ * <p>Used to retrieve an API object which is inserted into a script using
+ * a specified variable name.</p>
+ *
+ * @see SimpleScriptApi
+ * @see IScriptApiRepo
  */
-public interface IScriptFactory {
+public interface IScriptApi extends IPluginOwned, INamed {
 
     /**
-     * Invoked to get a new {@link IScript} instance.
+     * Create a new instance of the API object for a specific script and plugin.
      *
-     * @param name      The name of the script.
-     * @param file      Optional file of the script.
-     * @param type      The script type. (script file extension)
-     * @param script    The script.
+     * @param plugin  The plugin the API is being instantiated for.
+     * @param script  The script the API is being instantiated for.
      */
-    public IScript construct(String name, @Nullable File file, String type, String script);
+    public IDisposable createApi(Plugin plugin, IEvaluatedScript script);
 }

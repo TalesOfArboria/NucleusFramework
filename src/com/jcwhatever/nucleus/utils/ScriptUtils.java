@@ -25,8 +25,8 @@
 
 package com.jcwhatever.nucleus.utils;
 
-import com.jcwhatever.nucleus.scripting.IScript;
-import com.jcwhatever.nucleus.scripting.IScriptFactory;
+import com.jcwhatever.nucleus.managed.scripting.IScript;
+import com.jcwhatever.nucleus.managed.scripting.IScriptFactory;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
