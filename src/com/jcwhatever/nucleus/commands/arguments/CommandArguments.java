@@ -34,6 +34,9 @@ import com.jcwhatever.nucleus.commands.exceptions.InvalidParameterException;
 import com.jcwhatever.nucleus.commands.exceptions.TooManyArgsException;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.blockselect.IBlockSelectHandler;
+import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector.BlockSelectResult;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.EnumUtils;
@@ -41,10 +44,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.items.MatchableItem;
-import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
-import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect;
-import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect.BlockSelectResult;
-import com.jcwhatever.nucleus.utils.player.PlayerBlockSelect.PlayerBlockSelectHandler;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -881,7 +880,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
             _msg.tell(p, "Click a block to select it's location...");
 
-            PlayerBlockSelect.query(p, new PlayerBlockSelectHandler() {
+            Nucleus.getBlockSelector().query(p, new IBlockSelectHandler() {
 
                 @Override
                 public BlockSelectResult onBlockSelect(Player player, Block selectedBlock, Action clickAction) {
@@ -935,7 +934,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      *
      * @throws InvalidArgumentException If the argument is not the name of one of the valid enum constants.
      */
-    public <T extends Enum<T>> T getEnum(String parameterName,  Class<T> enumClass, T[] validValues) throws InvalidArgumentException {
+    public <T extends Enum<T>> T getEnum(String parameterName,  Class<T> enumClass, T[] validValues)
+            throws InvalidArgumentException {
+
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(enumClass);
         PreCon.notNull(validValues);

@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
+import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
 import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
@@ -121,6 +122,15 @@ public final class Nucleus {
      */
     public static List<NucleusPlugin> getNucleusPlugins() {
         return new ArrayList<>(_pluginNameMap.values());
+    }
+
+    /**
+     * Get the global player block selector.
+     */
+    public static IBlockSelector getBlockSelector() {
+        PreCon.isValid(_plugin._blockSelector != null, ERROR_NOT_READY);
+
+        return _plugin._blockSelector;
     }
 
     /**

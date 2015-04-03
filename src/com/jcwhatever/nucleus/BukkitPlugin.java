@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.internal.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
+import com.jcwhatever.nucleus.internal.blockselect.InternalBlockSelector;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
 import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
@@ -79,6 +80,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalLanguageManager _languageManager;
     InternalEquipperManager _equipperManager;
     InternalLeashTracker _leashTracker;
+    InternalBlockSelector _blockSelector;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -113,7 +115,8 @@ public final class BukkitPlugin extends NucleusPlugin {
     /**
      * Constructor for testing.
     */
-    protected BukkitPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    protected BukkitPlugin(JavaPluginLoader loader, PluginDescriptionFile description,
+                           File dataFolder, File file) {
         super(loader, description, dataFolder, file);
 
         Nucleus._plugin = this;
@@ -162,6 +165,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _soundManager = new InternalSoundManager();
         _signManager = new InternalSignManager();
         _entityTracker = new InternalEntityTracker();
+        _blockSelector = new InternalBlockSelector();
     }
 
     @Override
