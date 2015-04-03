@@ -26,6 +26,8 @@
 package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
@@ -50,7 +52,7 @@ public abstract class Iteration3DTask extends QueueTask {
 
     private long _volume;
     private final Object _sync = new Object();
-    private int _delay = 10;
+    private IScheduledTask _task;
 
     /**
      * Constructor. Initializes the 3D task parameters.
@@ -180,7 +182,11 @@ public abstract class Iteration3DTask extends QueueTask {
     @Override
     protected final void onRun() {
         onIterateBegin();
-        Scheduler.runTaskLater(getPlugin(), _delay, new Iterator3D());
+
+        if (_task != null)
+            _task.cancel();
+
+        _task = Scheduler.runTaskRepeat(getPlugin(), 1, 10, new Iterator3D());
     }
 
     /**
@@ -229,13 +235,15 @@ public abstract class Iteration3DTask extends QueueTask {
     protected void onPreComplete() {}
 
     // The worker that performs the iterations
-    private class Iterator3D implements Runnable {
+    private class Iterator3D extends TaskHandler {
 
         @Override
         public void run() {
 
-            if (isEnded())
+            if (isEnded()) {
+                cancelTask();
                 return;
+            }
 
             synchronized (_sync) {
 
@@ -259,7 +267,7 @@ public abstract class Iteration3DTask extends QueueTask {
                                 onSegmentEnd(x, y, z);
 
                                 // schedule next segment
-                                Scheduler.runTaskLater(getPlugin(), _delay, this);
+                                // Scheduler.runTaskLater(getPlugin(), _delay, this);
                                 return;
                             }
 
@@ -273,8 +281,10 @@ public abstract class Iteration3DTask extends QueueTask {
 
                             onIterateItem(x, y, z);
 
-                            if (!isRunning())
+                            if (!isRunning()) {
+                                cancelTask();
                                 return;
+                            }
 
                             _iterations++;
                             completed++;
@@ -285,7 +295,7 @@ public abstract class Iteration3DTask extends QueueTask {
                 onPreComplete();
             }
             complete();
-
+            cancelTask();
         }
     }
 }

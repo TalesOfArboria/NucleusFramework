@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A project that accepts tasks to be completed in synchronous order.
+ * A project that accepts {@link QueueTask}'s to be completed in synchronous order.
  *
  * <p>A project is a {@link QueueTask} and therefore can be added to other projects.</p>
  *
@@ -78,12 +78,14 @@ public class QueueProject extends QueueTask {
      * Add a task to the project.
      *
      * @param task  The task to add.
+     *
+     * @throws IllegalStateException if the project is running.
      */
     public void addTask(QueueTask task) {
         PreCon.notNull(task);
 
         if (isRunning())
-            throw new IllegalAccessError("Cannot add tasks while the project is running.");
+            throw new IllegalStateException("Cannot add tasks while the project is running.");
 
         _tasks.add(task);
 
@@ -94,6 +96,8 @@ public class QueueProject extends QueueTask {
      * Add a collection of tasks.
      *
      * @param tasks  The tasks to add.
+     *
+     * @throws IllegalStateException if the project is running.
      */
     public void addTasks(Collection<? extends QueueTask> tasks) {
         PreCon.notNull(tasks);
@@ -157,7 +161,7 @@ public class QueueProject extends QueueTask {
         _managerTask.run();
     }
 
-    /**
+    /*
      * Runnable implementation responsible for running project tasks.
      */
     private class ProjectManager implements Runnable {

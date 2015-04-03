@@ -33,12 +33,10 @@ public enum TaskConcurrency {
      * The task should be run on the main thread.
      */
     MAIN_THREAD,
-
     /**
      * The task should be run on whichever thread is current.
      */
     CURRENT_THREAD,
-
     /**
      * The task should be run on an asynchronous thread.
      */

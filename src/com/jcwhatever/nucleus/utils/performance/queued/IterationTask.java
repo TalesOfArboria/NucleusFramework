@@ -26,6 +26,8 @@
 package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.utils.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
@@ -43,8 +45,7 @@ public abstract class IterationTask extends QueueTask {
 
     private boolean _lessThan;
     private final Object _sync = new Object();
-    private int _delay = 10;
-
+    private IScheduledTask _task;
 
     /**
      * Constructor. Initializes iteration variables.
@@ -105,7 +106,11 @@ public abstract class IterationTask extends QueueTask {
     @Override
     protected final void onRun() {
         onIterateBegin();
-        Scheduler.runTaskLater(getPlugin(), _delay, new Worker());
+
+        if (_task != null)
+            _task.cancel();
+
+        _task = Scheduler.runTaskRepeat(getPlugin(), 1, 10, new Worker());
     }
 
     /**
@@ -146,13 +151,15 @@ public abstract class IterationTask extends QueueTask {
     protected void onPreFinish() {}
 
     // the worker responsible for iterating
-    private class Worker implements Runnable {
+    private class Worker extends TaskHandler {
 
         @Override
         public void run() {
 
-            if (isEnded())
+            if (isEnded()) {
+                cancelTask();
                 return;
+            }
 
             synchronized (_sync) {
 
@@ -175,7 +182,7 @@ public abstract class IterationTask extends QueueTask {
                         onSegmentEnd(i);
 
                         // schedule next segment
-                        Scheduler.runTaskLater(getPlugin(), _delay, this);
+                        // Scheduler.runTaskLater(getPlugin(), _delay, this);
                         return;
                     }
 
@@ -183,8 +190,10 @@ public abstract class IterationTask extends QueueTask {
 
                     onIterateItem(i);
 
-                    if (!isRunning())
+                    if (!isRunning()) {
+                        cancelTask();
                         return;
+                    }
 
                     _iterations++;
                     completed++;
@@ -194,7 +203,7 @@ public abstract class IterationTask extends QueueTask {
                 onPreFinish();
             }
             complete();
-
+            cancelTask();
         }
     }
 }

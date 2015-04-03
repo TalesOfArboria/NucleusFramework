@@ -56,6 +56,12 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
 
     private QueueProject _parent;
 
+    /**
+     * Constructor.
+     *
+     * @param plugin       The owning plugin.
+     * @param concurrency  The preferred concurrency.
+     */
     public QueueTask (Plugin plugin, TaskConcurrency concurrency) {
         PreCon.notNull(plugin);
         PreCon.notNull(concurrency);
@@ -64,9 +70,6 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
         _concurrency = concurrency;
     }
 
-    /**
-     * Get the plugin that owns the task.
-     */
     @Override
     public final Plugin getPlugin() {
         return _plugin;

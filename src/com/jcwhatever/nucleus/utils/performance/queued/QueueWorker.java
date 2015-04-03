@@ -36,11 +36,11 @@ import java.util.LinkedList;
 
 /**
  *
- * A static utility to run {@link QueueTask}'s and {@link QueueProject}'s in synchronous order,
- * if if the task is asynchronous.
+ * A static utility to run {@link QueueTask}'s and {@link QueueProject}'s in
+ * synchronous order, even if the task is asynchronous.
  *
- * <p>Ensures large lag inducing operations are not performed at the same time, even if the operations are from
- * different plugins. Pause time is given between operations.</p>
+ * <p>Ensures large lag inducing operations are not performed at the same time, even if
+ * the operations are from different plugins. Pause time is given between operations.</p>
  *
  * @see QueueTask
  * @see QueueProject
@@ -72,8 +72,8 @@ public final class QueueWorker {
     /**
      * Add a task to the queue worker.
      *
-     * <p>If the queue worker is not already running, it
-     * will automatically start after the task is added.</p>
+     * <p>If the queue worker is not already running, it will automatically start
+     * after the task is added.</p>
      *
      * @param task  The task to add.
      */
@@ -101,16 +101,15 @@ public final class QueueWorker {
         run();
     }
 
-    // called when a task is added.
+    // invoked when a task is added.
     private void run() {
 
         if (_workerTask == null || _workerTask.isCancelled())
-            _workerTask = Scheduler.runTaskRepeat(Nucleus.getPlugin(), 10, 20, _worker);
+            _workerTask = Scheduler.runTaskRepeat(Nucleus.getPlugin(), 10, 10, _worker);
     }
 
-    /**
-     * Runnable implementation responsible for
-     * running project tasks.
+    /*
+     * Runnable implementation responsible for running project tasks.
      */
     private class Worker extends TaskHandler {
 
@@ -161,6 +160,4 @@ public final class QueueWorker {
             }
         }
     }
-
-
 }
