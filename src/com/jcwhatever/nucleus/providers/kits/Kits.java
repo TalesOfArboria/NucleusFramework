@@ -101,6 +101,6 @@ public final class Kits {
      * Get the kit provider.
      */
     public static IKitProvider provider() {
-        return Nucleus.getProviderManager().getKitProvider();
+        return Nucleus.getProviders().getKits();
     }
 }

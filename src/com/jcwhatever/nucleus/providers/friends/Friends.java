@@ -330,6 +330,6 @@ public final class Friends {
     }
 
     private static IFriendsProvider provider() {
-        return Nucleus.getProviderManager().getFriendsProvider();
+        return Nucleus.getProviders().getFriends();
     }
 }

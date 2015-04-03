@@ -128,6 +128,6 @@ public final class BankItems {
     }
 
     private static IBankItemsProvider provider() {
-        return Nucleus.getProviderManager().getBankItemsProvider();
+        return Nucleus.getProviders().getBankItems();
     }
 }

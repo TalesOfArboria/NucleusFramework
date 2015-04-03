@@ -52,7 +52,7 @@ public final class DataStorage {
         if (_isTransientOnly)
             return false;
 
-        IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
+        IStorageProvider provider = Nucleus.getProviders().getStorage(plugin);
         return provider.has(plugin, path);
     }
 
@@ -67,7 +67,7 @@ public final class DataStorage {
         if (_isTransientOnly)
             return new MemoryDataNode(plugin);
 
-        IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
+        IStorageProvider provider = Nucleus.getProviders().getStorage(plugin);
         return provider.get(plugin, path);
     }
 
@@ -84,7 +84,7 @@ public final class DataStorage {
         if (_isTransientOnly)
             return true;
 
-        IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(plugin);
+        IStorageProvider provider = Nucleus.getProviders().getStorage(plugin);
         return provider.remove(plugin, path);
     }
 

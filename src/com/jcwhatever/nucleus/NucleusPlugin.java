@@ -105,15 +105,9 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
         return isEnabled() && _isEnabled;
     }
 
-    /**
-     * Get the plugins chat message prefix.
-     */
     @Override
     public abstract String getChatPrefix();
 
-    /**
-     * Get the plugins console message prefix.
-     */
     @Override
     public abstract String getConsolePrefix();
 
@@ -126,7 +120,7 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     }
 
     /**
-     * Get the plugins language manager.
+     * Get the plugins language context.
      */
     public ILanguageContext getLanguageContext() {
         return _languageContext;
@@ -182,6 +176,8 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
 
     /**
      * Invoked when the plugin is instantiated.
+     *
+     * <p>Intended for optional override.</p>
      */
     protected void onInit() {
         // do nothing
@@ -189,13 +185,17 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
 
     /**
      * Invoked before the plugin config is loaded.
+     *
+     * <p>Intended for optional override.</p>
      */
     protected void onPreEnable() {
         // do nothing
     }
 
     /**
-     * Invoked after the plugin config is loaded but before it is enabled.
+     * Invoked after the plugin data node is loaded but before the plugin is enabled.
+     *
+     * <p>Intended for optional override.</p>
      */
     protected void onPostPreEnable() {
         // do nothing

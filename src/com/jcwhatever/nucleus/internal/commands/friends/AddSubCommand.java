@@ -75,7 +75,7 @@ public final class AddSubCommand extends AbstractCommand {
             
             String levelName = args.getString("level");
 
-            IFriendLevel level = Nucleus.getProviderManager().getFriendsProvider().getLevel(levelName);
+            IFriendLevel level = Nucleus.getProviders().getFriends().getLevel(levelName);
             if (level == null) {
                 tellError(sender, NucLang.get(_LEVEL_NOT_FOUND, levelName));
                 return; // finish

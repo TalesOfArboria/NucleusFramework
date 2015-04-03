@@ -73,13 +73,13 @@ public final class ListSubCommand extends AbstractCommand {
 
         if (showAll) {
 
-            IProviderManager manager = Nucleus.getProviderManager();
+            IProviderManager manager = Nucleus.getProviders();
 
-            Collection<String> names = manager.getAllProviderNames();
+            Collection<String> names = manager.getNames();
 
             for (String name : names) {
 
-                ProviderType type = manager.getProviderType(name);
+                ProviderType type = manager.getType(name);
 
                 pagin.add(name, type == null
                         ? NucLang.get(_LABEL_UNKNOWN_TYPE)
@@ -90,7 +90,7 @@ public final class ListSubCommand extends AbstractCommand {
 
             for (ProviderType type : ProviderType.values()) {
 
-                IProvider provider = Nucleus.getProviderManager().getProvider(type);
+                IProvider provider = Nucleus.getProviders().get(type);
 
                 pagin.add(type.getName(), provider == null
                         ? NucLang.get(_LABEL_NONE)

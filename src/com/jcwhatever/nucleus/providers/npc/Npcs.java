@@ -44,7 +44,7 @@ public class Npcs {
      * Determine if an NPC provider is installed.
      */
     public static boolean hasProvider() {
-        return Nucleus.getProviderManager().getNpcProvider() != null;
+        return Nucleus.getProviders().getNpcs() != null;
     }
 
     /**
@@ -97,6 +97,6 @@ public class Npcs {
     public static INpcProvider provider() {
         PreCon.supported(hasProvider());
 
-        return Nucleus.getProviderManager().getNpcProvider();
+        return Nucleus.getProviders().getNpcs();
     }
 }

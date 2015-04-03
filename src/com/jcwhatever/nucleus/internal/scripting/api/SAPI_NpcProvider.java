@@ -58,7 +58,7 @@ public class SAPI_NpcProvider implements IDisposable {
      * Determine if there is an NPC provider installed.
      */
     public boolean hasNpcProvider() {
-        return Nucleus.getProviderManager().getNpcProvider() != null;
+        return Nucleus.getProviders().getNpcs() != null;
     }
 
     /**
@@ -66,7 +66,7 @@ public class SAPI_NpcProvider implements IDisposable {
      */
     public INpcProvider getProvider() {
 
-        INpcProvider provider = Nucleus.getProviderManager().getNpcProvider();
+        INpcProvider provider = Nucleus.getProviders().getNpcs();
         if (provider == null)
             throw new UnsupportedOperationException("Npc provider is not installed.");
 

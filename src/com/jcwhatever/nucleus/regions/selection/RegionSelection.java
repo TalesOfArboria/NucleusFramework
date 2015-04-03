@@ -58,7 +58,7 @@ public class RegionSelection implements IRegionSelection {
      */
     @Nullable
     public static IRegionSelection get(Player player) {
-        return Nucleus.getProviderManager().getRegionSelectionProvider().getSelection(player);
+        return Nucleus.getProviders().getRegionSelection().getSelection(player);
     }
 
     protected final Object _sync = new Object();

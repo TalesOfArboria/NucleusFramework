@@ -73,7 +73,7 @@ public final class ListSubCommand extends AbstractCommand {
                 return; // finish
             }
 
-            IStorageProvider storageProvider = Nucleus.getProviderManager().getStorageProvider(plugin);
+            IStorageProvider storageProvider = Nucleus.getProviders().getStorage(plugin);
 
             tell(sender, _PLUGIN_PROVIDER, plugin.getName(), storageProvider.getInfo().getName());
             return;
@@ -81,8 +81,8 @@ public final class ListSubCommand extends AbstractCommand {
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
 
-        List<IStorageProvider> providers = Nucleus.getProviderManager().getStorageProviders();
-        IStorageProvider defaultProvider = Nucleus.getProviderManager().getStorageProvider();
+        List<IStorageProvider> providers = Nucleus.getProviders().getStorageProviders();
+        IStorageProvider defaultProvider = Nucleus.getProviders().getStorage();
 
         pagin.addFormatted(FormatTemplate.LIST_ITEM_DESCRIPTION, defaultProvider.getInfo().getName(), _LABEL_DEFAULT);
 

@@ -41,9 +41,9 @@ import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
 import com.jcwhatever.nucleus.internal.scoreboards.InternalScoreboardTracker;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptApiRepo;
+import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineLoader;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineManager;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
-import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineLoader;
 import com.jcwhatever.nucleus.internal.signs.InternalSignManager;
 import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
@@ -121,24 +121,22 @@ public final class BukkitPlugin extends NucleusPlugin {
     }
 
     /**
-     * Get the chat prefix.
+     * Get NucleusFramework's internal command handler.
      */
+    public NucleusCommandDispatcher getCommandHandler() {
+        return _commandHandler;
+    }
+
     @Override
     public String getChatPrefix() {
         return TextColor.BLUE + "[" + TextColor.WHITE + "Nucleus" + TextColor.BLUE + "] " + TextColor.WHITE;
     }
 
-    /**
-     * Get the console prefix.
-     */
     @Override
     public String getConsolePrefix() {
         return "[NucleusFramework] ";
     }
 
-    /**
-     * Determine if the plugin is finished loading.
-     */
     @Override
     public boolean isLoaded() {
         return isEnabled() && _isModulesReady;

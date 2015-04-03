@@ -313,7 +313,7 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
-    public <T extends IProvider> T getProvider(ProviderType providerType) {
+    public <T extends IProvider> T get(ProviderType providerType) {
         PreCon.notNull(providerType);
 
         @SuppressWarnings("unchecked")
@@ -361,7 +361,7 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Nullable
     @Override
-    public ProviderType getProviderType(String name) {
+    public ProviderType getType(String name) {
         PreCon.notNull(name);
 
         ProviderInfo info = _providerInfo.get(name.toLowerCase());
@@ -372,12 +372,12 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
-    public IPlayerLookupProvider getPlayerLookupProvider() {
+    public IPlayerLookupProvider getPlayerLookup() {
         return _playerLookup;
     }
 
     @Override
-    public IFriendsProvider getFriendsProvider() {
+    public IFriendsProvider getFriends() {
         if (_friends == null)
             _friends = new NucleusFriendsProvider();
 
@@ -385,7 +385,7 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
-    public IPermissionsProvider getPermissionsProvider() {
+    public IPermissionsProvider getPermissions() {
         if (_permissions == null) {
             _permissions = VaultProvider.hasVaultPermissions()
                     ? VaultProvider.getVaultProvider()
@@ -395,12 +395,12 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
-    public IRegionSelectProvider getRegionSelectionProvider() {
+    public IRegionSelectProvider getRegionSelection() {
         return _regionSelect;
     }
 
     @Override
-    public IBankItemsProvider getBankItemsProvider() {
+    public IBankItemsProvider getBankItems() {
 
         if (_bankItems == null)
             _bankItems = new BankItemsProvider();
@@ -409,44 +409,44 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
-    public IEconomyProvider getEconomyProvider() {
+    public IEconomyProvider getEconomy() {
         return _economy;
     }
 
     @Nullable
     @Override
-    public INpcProvider getNpcProvider() {
+    public INpcProvider getNpcs() {
         return _npc;
     }
 
     @Override
-    public IJailProvider getJailProvider() {
+    public IJailProvider getJails() {
         return _jail;
     }
 
     @Override
-    public IKitProvider getKitProvider() {
+    public IKitProvider getKits() {
         return _kits;
     }
 
     @Override
-    public IStorageProvider getStorageProvider() {
+    public IStorageProvider getStorage() {
         return _defaultStorage != null ? _defaultStorage : _yamlStorage;
     }
 
     @Override
-    public IStorageProvider getStorageProvider(Plugin plugin) {
+    public IStorageProvider getStorage(Plugin plugin) {
         PreCon.notNull(plugin);
 
         synchronized (_pluginStorage) {
 
             IStorageProvider pluginProvider = _pluginStorage.get(plugin.getName().toLowerCase());
-            return pluginProvider != null ? pluginProvider : getStorageProvider();
+            return pluginProvider != null ? pluginProvider : getStorage();
         }
     }
 
     @Override
-    public void setStorageProvider(Plugin plugin, IStorageProvider storageProvider) {
+    public void setStorage(Plugin plugin, IStorageProvider storageProvider) {
         PreCon.notNull(plugin);
         PreCon.notNull(storageProvider);
 
@@ -468,7 +468,7 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Nullable
     @Override
-    public IStorageProvider getStorageProvider(String name) {
+    public IStorageProvider getStorage(String name) {
         PreCon.notNullOrEmpty(name);
 
         return _storageProviders.get(name.toLowerCase());
@@ -480,7 +480,7 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
-    public Collection<String> getAllProviderNames() {
+    public Collection<String> getNames() {
 
         List<String> names = new ArrayList<>(_providerInfo.size());
         for (ProviderInfo info : _providerInfo.values())
@@ -490,7 +490,7 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
-    public Collection<String> getProviderNames(ProviderType type) {
+    public Collection<String> getNames(ProviderType type) {
         PreCon.notNull(type);
 
         return new HashSet<>(_providerNamesByApi.get(type));

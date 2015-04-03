@@ -66,13 +66,13 @@ public final class SetSubCommand extends AbstractCommand {
             return; // finish
         }
 
-        IStorageProvider provider = Nucleus.getProviderManager().getStorageProvider(storageName);
+        IStorageProvider provider = Nucleus.getProviders().getStorage(storageName);
         if (provider == null) {
             tellError(sender, NucLang.get(_PROVIDER_NOT_FOUND, storageName));
             return; // finish
         }
 
-        Nucleus.getProviderManager().setStorageProvider(plugin, provider);
+        Nucleus.getProviders().setStorage(plugin, provider);
 
         tellSuccess(sender, NucLang.get(_SUCCESS, plugin.getName(), provider.getInfo().getName()));
     }

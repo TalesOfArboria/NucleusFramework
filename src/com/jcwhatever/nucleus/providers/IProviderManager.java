@@ -82,7 +82,7 @@ public interface IProviderManager {
      * @return  The provider or null if none.
      */
     @Nullable
-    <T extends IProvider> T getProvider(ProviderType providerType);
+    <T extends IProvider> T get(ProviderType providerType);
 
     /**
      * Get the API type of the specified service provider.
@@ -92,49 +92,49 @@ public interface IProviderManager {
      * @return  The API type or null if not found.
      */
     @Nullable
-    ProviderType getProviderType(String name);
+    ProviderType getType(String name);
 
     /**
      * Get the player lookup provider.
      */
-    IPlayerLookupProvider getPlayerLookupProvider();
+    IPlayerLookupProvider getPlayerLookup();
 
     /**
      * Get the friends provider.
      */
-    IFriendsProvider getFriendsProvider();
+    IFriendsProvider getFriends();
 
     /**
      * Get the permissions provider.
      */
-    IPermissionsProvider getPermissionsProvider();
+    IPermissionsProvider getPermissions();
 
     /**
      * Get the region selection provider.
      */
-    IRegionSelectProvider getRegionSelectionProvider();
+    IRegionSelectProvider getRegionSelection();
 
     /**
      * Get the bank item provider.
      */
-    IBankItemsProvider getBankItemsProvider();
+    IBankItemsProvider getBankItems();
 
     /**
      * Get the economy provider.
      */
-    IEconomyProvider getEconomyProvider();
+    IEconomyProvider getEconomy();
 
     /**
      * Get the default data storage provider.
      */
-    IStorageProvider getStorageProvider();
+    IStorageProvider getStorage();
 
     /**
      * Get the data storage provider for a plugin.
      *
      * @param plugin  The plugin.
      */
-    IStorageProvider getStorageProvider(Plugin plugin);
+    IStorageProvider getStorage(Plugin plugin);
 
     /**
      * Set the data storage provider for a specific plugin.
@@ -144,7 +144,7 @@ public interface IProviderManager {
      * @param plugin           The plugin.
      * @param storageProvider  The storage provider.
      */
-    void setStorageProvider(Plugin plugin, IStorageProvider storageProvider);
+    void setStorage(Plugin plugin, IStorageProvider storageProvider);
 
     /**
      * Get a storage provider by name.
@@ -154,7 +154,7 @@ public interface IProviderManager {
      * @return Null if not found.
      */
     @Nullable
-    IStorageProvider getStorageProvider(String name);
+    IStorageProvider getStorage(String name);
 
     /**
      * Get all registered storage providers.
@@ -167,24 +167,24 @@ public interface IProviderManager {
      * @return  The NPC provider or null if there is none.
      */
     @Nullable
-    INpcProvider getNpcProvider();
+    INpcProvider getNpcs();
 
     /**
      * Get the jail provider.
      */
-    IJailProvider getJailProvider();
+    IJailProvider getJails();
 
     /**
      * Get the equipment kit provider.
      */
-    IKitProvider getKitProvider();
+    IKitProvider getKits();
 
     /**
      * Get the names of all providers that were loaded.
      *
      * <p>Includes the names of providers that were not used.</p>
      */
-    Collection<String> getAllProviderNames();
+    Collection<String> getNames();
 
     /**
      * Get the names of all providers that can be used for the specified
@@ -192,5 +192,5 @@ public interface IProviderManager {
      *
      * @param providerType  The provider API type.
      */
-    Collection<String> getProviderNames(ProviderType providerType);
+    Collection<String> getNames(ProviderType providerType);
 }

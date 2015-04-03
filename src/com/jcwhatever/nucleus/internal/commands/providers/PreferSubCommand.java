@@ -81,7 +81,7 @@ public final class PreferSubCommand extends AbstractCommand {
 
         if (args.getBoolean("clear")) {
 
-            Nucleus.getProviderManager().setPreferred(type, null);
+            Nucleus.getProviders().setPreferred(type, null);
 
             tellSuccess(sender, NucLang.get(_CLEARED, type.name()));
             return; // finish
@@ -89,7 +89,7 @@ public final class PreferSubCommand extends AbstractCommand {
 
         if (args.isDefaultValue("providerName")) {
 
-            String preferred = Nucleus.getProviderManager().getPreferred(type);
+            String preferred = Nucleus.getProviders().getPreferred(type);
             if (preferred == null) {
                 tell(sender, NucLang.get(_NO_PREFERRED, type.name()));
             }
@@ -100,14 +100,14 @@ public final class PreferSubCommand extends AbstractCommand {
         }
 
         String name = args.getString("providerName");
-        if (!Nucleus.getProviderManager().setPreferred(type, name)) {
+        if (!Nucleus.getProviders().setPreferred(type, name)) {
 
             tellError(sender, NucLang.get(_SET_FAILED));
             return;// finish
         }
 
         // see if the provider name is valid
-        Collection<String> names = Nucleus.getProviderManager().getProviderNames(type);
+        Collection<String> names = Nucleus.getProviders().getNames(type);
         boolean isProviderFound = false;
 
         for (String providerName : names) {

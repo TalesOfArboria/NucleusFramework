@@ -26,11 +26,10 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.events.manager.EventManager;
-import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
-import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.managed.language.ILanguageManager;
 import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
@@ -88,7 +87,7 @@ public final class Nucleus {
      *
      * @param name  The name of the plugin.
      *
-     * @return  Null if not found.
+     * @return  The plugin or null if not found.
      */
     @Nullable
     public static NucleusPlugin getNucleusPlugin(String name) {
@@ -134,6 +133,15 @@ public final class Nucleus {
     }
 
     /**
+     * Get the default entity equipper manager.
+     */
+    public static IEquipperManager getEquipperManager() {
+        PreCon.isValid(_plugin._equipperManager != null, ERROR_NOT_READY);
+
+        return _plugin._equipperManager;
+    }
+
+    /**
      * Get the global event manager.
      */
     public static EventManager getEventManager() {
@@ -152,7 +160,7 @@ public final class Nucleus {
     }
 
     /**
-     * Get the default {@link ItemStack} serialization manager.
+     * Get the global {@link ItemStack} serialization manager.
      */
     public static IItemStackSerialization getItemSerialization() {
         PreCon.isValid(_plugin._itemSerialization != null, ERROR_NOT_READY);
@@ -179,7 +187,45 @@ public final class Nucleus {
     }
 
     /**
-     * Get the default task scheduler.
+     * Get the global messenger factory.
+     */
+    public static IMessengerFactory getMessengerFactory() {
+
+        if (_plugin._messengerFactory == null)
+            _plugin._messengerFactory = new InternalMessengerFactory();
+
+        return _plugin._messengerFactory;
+    }
+
+    /**
+     * Get NucleusFramework's internal NMS manager.
+     */
+    public static NmsManager getNmsManager() {
+        PreCon.isValid(_plugin._nmsManager != null, ERROR_NOT_READY);
+
+        return _plugin._nmsManager;
+    }
+
+    /**
+     * Get the global provider manager.
+     */
+    public static IProviderManager getProviders() {
+        PreCon.isValid(_plugin._providerManager != null, ERROR_NOT_READY);
+
+        return _plugin._providerManager;
+    }
+
+    /**
+     * Get the global Region Manager.
+     */
+    public static IGlobalRegionManager getRegionManager() {
+        PreCon.isValid(_plugin._regionManager != null, ERROR_NOT_READY);
+
+        return _plugin._regionManager;
+    }
+
+    /**
+     * Get the global task scheduler.
      */
     public static ITaskScheduler getScheduler() {
         PreCon.isValid(_plugin._scheduler != null, ERROR_NOT_READY);
@@ -197,25 +243,16 @@ public final class Nucleus {
     }
 
     /**
-     * Get the global Region Manager.
+     * Get the global Script API Repository.
      */
-    public static IGlobalRegionManager getRegionManager() {
-        PreCon.isValid(_plugin._regionManager != null, ERROR_NOT_READY);
+    public static IScriptApiRepo getScriptApiRepo() {
+        PreCon.isValid(_plugin._scriptApiRepo != null, ERROR_NOT_READY);
 
-        return _plugin._regionManager;
+        return _plugin._scriptApiRepo;
     }
 
     /**
-     * Get the default entity equipper manager.
-     */
-    public static IEquipperManager getEquipperManager() {
-        PreCon.isValid(_plugin._equipperManager != null, ERROR_NOT_READY);
-
-        return _plugin._equipperManager;
-    }
-
-    /**
-     * Get the default script engine manager.
+     * Get the global script engine manager.
      *
      * <p>Engines returned from the script engine manager are singleton
      * instances that are used globally.</p>
@@ -227,21 +264,12 @@ public final class Nucleus {
     }
 
     /**
-     * Get the default script manager.
+     * Get the global script manager.
      */
     public static IScriptManager getScriptManager() {
         PreCon.isValid(_plugin._scriptManager != null, ERROR_NOT_READY);
 
         return _plugin._scriptManager;
-    }
-
-    /**
-     * Get the Script API Repository.
-     */
-    public static IScriptApiRepo getScriptApiRepo() {
-        PreCon.isValid(_plugin._scriptApiRepo != null, ERROR_NOT_READY);
-
-        return _plugin._scriptApiRepo;
     }
 
     /**
@@ -260,44 +288,6 @@ public final class Nucleus {
         PreCon.isValid(_plugin._soundManager != null, ERROR_NOT_READY);
 
         return _plugin._soundManager;
-    }
-
-    /**
-     * Get the default messenger factory instance.
-     */
-    public static IMessengerFactory getMessengerFactory() {
-
-        if (_plugin._messengerFactory == null)
-            _plugin._messengerFactory = new InternalMessengerFactory();
-
-        return _plugin._messengerFactory;
-    }
-
-    /**
-     * Get NucleusFramework's internal command handler.
-     */
-    public static NucleusCommandDispatcher getCommandHandler() {
-        PreCon.isValid(_plugin._commandHandler != null, ERROR_NOT_READY);
-
-        return _plugin._commandHandler;
-    }
-
-    /**
-     * Get NucleusFramework's internal NMS manager.
-     */
-    public static NmsManager getNmsManager() {
-        PreCon.isValid(_plugin._nmsManager != null, ERROR_NOT_READY);
-
-        return _plugin._nmsManager;
-    }
-
-    /**
-     * Get the provider manager.
-     */
-    public static IProviderManager getProviderManager() {
-        PreCon.isValid(_plugin._providerManager != null, ERROR_NOT_READY);
-
-        return _plugin._providerManager;
     }
 
     /*

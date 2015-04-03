@@ -224,7 +224,7 @@ public final class PlayerUtils {
      */
     @Nullable
     public static UUID getPlayerId(String playerName) {
-        return Nucleus.getProviderManager().getPlayerLookupProvider().getPlayerId(playerName);
+        return Nucleus.getProviders().getPlayerLookup().getPlayerId(playerName);
     }
 
     /**
@@ -238,7 +238,7 @@ public final class PlayerUtils {
      */
     @Nullable
     public static String getPlayerName(UUID playerId) {
-        return Nucleus.getProviderManager().getPlayerLookupProvider().getPlayerName(playerId);
+        return Nucleus.getProviders().getPlayerLookup().getPlayerName(playerId);
     }
 
     /**

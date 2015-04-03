@@ -190,8 +190,8 @@ public class CommandUtils implements IPluginOwned {
             return false;
         }
 
-        boolean isSuccess = Nucleus.getProviderManager()
-                .getRegionSelectionProvider().setSelection(p, new RegionSelection(p1, p2));
+        boolean isSuccess = Nucleus.getProviders()
+                .getRegionSelection().setSelection(p, new RegionSelection(p1, p2));
 
         if (!isSuccess) {
             tellError(p, NucLang.get(_SET_SELECTION_FAILED));

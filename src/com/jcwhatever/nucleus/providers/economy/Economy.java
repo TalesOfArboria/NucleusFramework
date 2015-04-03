@@ -438,7 +438,7 @@ public final class Economy {
      * Get the economy provider.
      */
     public static IEconomyProvider getProvider() {
-        return Nucleus.getProviderManager().getEconomyProvider();
+        return Nucleus.getProviders().getEconomy();
     }
 
     /**

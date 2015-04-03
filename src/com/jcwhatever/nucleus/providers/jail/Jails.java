@@ -149,6 +149,6 @@ public final class Jails {
     }
 
     private static IJailProvider provider() {
-        return Nucleus.getProviderManager().getJailProvider();
+        return Nucleus.getProviders().getJails();
     }
 }

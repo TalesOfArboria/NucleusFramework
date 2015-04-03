@@ -70,7 +70,7 @@ public class SAPI_ItemBank implements IDisposable {
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+        IBankItemsAccount account = Nucleus.getProviders().getBankItems()
                 .getAccount(p.getUniqueId());
 
         account.deposit(item, qty);
@@ -93,7 +93,7 @@ public class SAPI_ItemBank implements IDisposable {
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+        IBankItemsAccount account = Nucleus.getProviders().getBankItems()
                 .getAccount(p.getUniqueId());
 
         try {
@@ -115,7 +115,7 @@ public class SAPI_ItemBank implements IDisposable {
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+        IBankItemsAccount account = Nucleus.getProviders().getBankItems()
                 .getAccount(p.getUniqueId());
 
         List<IBankItem> items = account.getItems();
@@ -149,7 +149,7 @@ public class SAPI_ItemBank implements IDisposable {
         Player p = PlayerUtils.getPlayer(qty);
         PreCon.notNull(p);
 
-        IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+        IBankItemsAccount account = Nucleus.getProviders().getBankItems()
                 .getAccount(p.getUniqueId());
 
         IBankItem bankItem = account.getItem(item);
@@ -170,7 +170,7 @@ public class SAPI_ItemBank implements IDisposable {
         Player p = PlayerUtils.getPlayer(player);
         PreCon.notNull(p);
 
-        IBankItemsAccount account = Nucleus.getProviderManager().getBankItemsProvider()
+        IBankItemsAccount account = Nucleus.getProviders().getBankItems()
                 .getAccount(p.getUniqueId());
 
         IBankItem bankItem = account.getItem(item);

@@ -474,7 +474,7 @@ public final class Permissions {
      * Get the permissions provider.
      */
     public static IPermissionsProvider getProvider() {
-        return Nucleus.getProviderManager().getPermissionsProvider();
+        return Nucleus.getProviders().getPermissions();
     }
 
     /**
@@ -484,7 +484,7 @@ public final class Permissions {
      */
     public static IWorldPermissionsProvider getWorldProvider() {
         IWorldPermissionsProvider provider =
-                (IWorldPermissionsProvider)Nucleus.getProviderManager().getPermissionsProvider();
+                (IWorldPermissionsProvider)Nucleus.getProviders().getPermissions();
 
         if (provider == null)
             throw new UnsupportedOperationException();
@@ -499,7 +499,7 @@ public final class Permissions {
      */
     public static IGroupPermissionsProvider getGroupProvider() {
         IGroupPermissionsProvider provider =
-                (IGroupPermissionsProvider)Nucleus.getProviderManager().getPermissionsProvider();
+                (IGroupPermissionsProvider)Nucleus.getProviders().getPermissions();
 
         if (provider == null)
             throw new UnsupportedOperationException();
@@ -514,7 +514,7 @@ public final class Permissions {
      */
     public static IWorldGroupPermissionsProvider getWorldGroupProvider() {
         IWorldGroupPermissionsProvider provider =
-                (IWorldGroupPermissionsProvider)Nucleus.getProviderManager().getPermissionsProvider();
+                (IWorldGroupPermissionsProvider)Nucleus.getProviders().getPermissions();
 
         if (provider == null)
             throw new UnsupportedOperationException();
