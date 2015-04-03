@@ -81,18 +81,17 @@ public class YamlModuleInfo implements IModuleInfo, IPluginOwned {
         return _searchName;
     }
 
-    /*
-     * Determine if the module information was
-     * successfully loaded in the constructor.
+    /**
+     * Determine if the module information was successfully loaded in the constructor.
      */
     public boolean isValid() {
         return _isValid;
     }
 
     /**
-     * Called after the YAML file is loaded from the module
-     * and the name is parsed. This method can be overridden
-     * to read more data from the file.
+     * Invoked after the info file is loaded from the module and the name is parsed.
+     *
+     * <p>Intended for optional override to read more data from the file.</p>
      *
      * @param dataNode  The YAML module data node.
      *
@@ -102,8 +101,13 @@ public class YamlModuleInfo implements IModuleInfo, IPluginOwned {
         return true;
     }
 
-    /*
-     * Load module info from yaml string.
+    /**
+     * Load module info from jar file
+     *
+     * @param filename  The name of the resource within the jar file
+     * @param jarFile   The jar file the resource should be in.
+     *
+     * @return  True if the file was found and parsed, otherwise false.
      */
     protected boolean load(String filename, JarFile jarFile) {
 

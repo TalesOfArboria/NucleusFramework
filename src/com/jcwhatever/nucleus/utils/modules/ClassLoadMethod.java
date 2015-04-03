@@ -29,20 +29,17 @@ package com.jcwhatever.nucleus.utils.modules;
  */
 public enum ClassLoadMethod {
     /**
-     * The class to load is already known and
-     * can be directly loaded.
+     * The class to load is already known and can be directly loaded.
      */
     DIRECT,
     /**
-     * The class to load is unknown and must
-     * be searched for in the jar. There may be multiple
-     * results.
+     * The class to load is unknown and must be searched for in the jar.
+     * There may be multiple results.
      */
     SEARCH,
     /**
-     * The class to load may be known. If it is not, then
-     * search for it and ensure it can be loaded directly
-     * the next time it is loaded.
+     * The class to load may be known. If it is not, then search for it and
+     * ensure it can be loaded directly the next time it is loaded.
      */
     DIRECT_OR_SEARCH
 }

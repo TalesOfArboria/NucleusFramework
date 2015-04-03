@@ -83,9 +83,6 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
         _moduleClass = moduleClass;
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
@@ -104,8 +101,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     public abstract File getModuleFolder();
 
     /**
-     * Get the directory traversal used to
-     * find jar files.
+     * Get the directory traversal used to find jar files.
      */
     public abstract DirectoryTraversal getDirectoryTraversal();
 
@@ -117,8 +113,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Get a module by the name specified in its
-     * {@link IModuleInfo} data object.
+     * Get a module by the name specified in its {@link IModuleInfo} data object.
      */
     @Nullable
     public T getModule(String moduleName) {
@@ -144,8 +139,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Get all module classes from jar files
-     * in the module folder and instantiate them.
+     * Get all module classes from jar files in the module folder and instantiate them.
      */
     public void loadModules() {
 
@@ -188,8 +182,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Called after a module is loaded to add it to the
-     * appropriate collections.
+     * Invoked after a module is loaded to add it to the appropriate collections.
      */
     protected void addModule(IModuleInfo info, T instance) {
         _moduleInfo.put(instance, info);
@@ -197,8 +190,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Called to remove a module from the
-     * appropriate collections.
+     * Invoked to remove a module from the appropriate collections.
      *
      * @param name  The search name of the module.
      */
@@ -210,8 +202,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Get all module classes from jar files in
-     * the modules folder.
+     * Get all module classes from jar files in the modules folder.
      */
     protected List<Class<T>> getModuleClasses(Collection<File> files) {
 
@@ -274,7 +265,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     /**
      * Find module classes in the specified jar file.
      *
-     * @param file         The jar file to search in.
+     * @param file  The jar file to search in.
      *
      * @throws IOException
      * @throws ClassNotFoundException
@@ -369,13 +360,12 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
         return moduleClasses;
     }
 
-
     /**
      * Find a specific module class in the specified jar file.
      *
      * @param file  The jar file to search in.
      *
-     * @return  Null if class not found.
+     * @return  The class or null if not found.
      *
      * @throws IOException
      * @throws ClassNotFoundException
@@ -404,7 +394,6 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
 
         return getModuleClass(jarFile, className);
     }
-
 
     /**
      * Find a specific module class in the specified jar file.
@@ -497,9 +486,9 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Called to validate a jar file.
+     * Invoked to validate a jar file.
      *
-     * <p>Intended to be overridden if needed.</p>
+     * <p>Intended for optional override.</p>
      *
      * @param jarFile  The jar file to check.
      *
@@ -510,9 +499,9 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Called to validate a class name before loading the class.
+     * Invoked to validate a class name before loading the class.
      *
-     * <p>Intended to be overridden if needed.</p>
+     * <p>Intended for optional override.</p>
      *
      * @param className  The class name to validate.
      *
@@ -523,9 +512,9 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     }
 
     /**
-     * Called to valid a module type before instantiation.
+     * Invoked to valid a module type before instantiation.
      *
-     * <p>Intended to be overridden if needed.</p>
+     * <p>Intended for optional override.</p>
      *
      * @param type  The type to validate
      *
@@ -547,7 +536,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     /**
      * Get the name of the module class to load from the jar file.
      *
-     * <p>Only called when the {@link ClassLoadMethod} is {@link ClassLoadMethod#DIRECT}
+     * <p>Only invoked when the {@link ClassLoadMethod} is {@link ClassLoadMethod#DIRECT}
      * or {@link ClassLoadMethod#DIRECT_OR_SEARCH}.</p>
      *
      * @param jarFile  The jar file being loaded.
@@ -557,9 +546,8 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
     protected abstract String getModuleClassName(JarFile jarFile);
 
     /**
-     * Create a new instance of {@link IModuleInfo}
-     * and fill with information about the specified
-     * module.
+     * Create a new instance of {@link IModuleInfo} and fill with information
+     * about the specified module.
      *
      * @param moduleInstance  The module instance.
      *
