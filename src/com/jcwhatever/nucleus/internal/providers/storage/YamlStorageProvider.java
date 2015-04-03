@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.internal.providers.storage;
 
 import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
-import com.jcwhatever.nucleus.providers.IStorageProvider;
+import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;

@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.providers;
+package com.jcwhatever.nucleus.providers.storage;
 
+import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 

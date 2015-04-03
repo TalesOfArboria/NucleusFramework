@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.IStorageProvider;
+import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 
 import org.bukkit.plugin.Plugin;
 
