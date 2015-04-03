@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
-import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItemManager;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.managed.language.ILanguageManager;

@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.events.floatingitems;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItem;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.internal.floatingitems;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItem;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
 import com.jcwhatever.nucleus.utils.managers.NamedInsensitiveDataManager;
 
 import org.bukkit.Location;

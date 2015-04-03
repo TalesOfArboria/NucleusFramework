@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
-import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItem;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;

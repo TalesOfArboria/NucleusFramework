@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItem;
-import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItemManager;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
