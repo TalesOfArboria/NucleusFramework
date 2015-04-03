@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.managed.scoreboards;
 
 /**
  * Described the use of the scoreboard so the
- * {@link ScoreboardTracker} knows how the scoreboard
+ * {@link IScoreboardTracker} knows how the scoreboard
  * should be handled.
  *
  * @see IManagedScoreboard
