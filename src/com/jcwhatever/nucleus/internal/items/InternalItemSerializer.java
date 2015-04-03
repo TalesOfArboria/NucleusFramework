@@ -22,12 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer;
+package com.jcwhatever.nucleus.internal.items;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlers;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
+import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerializer;
+import com.jcwhatever.nucleus.internal.items.meta.IMetaHandler;
+import com.jcwhatever.nucleus.internal.items.meta.ItemMetaHandlers;
+import com.jcwhatever.nucleus.internal.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.ChatColor;
@@ -52,10 +53,10 @@ import javax.annotation.Nullable;
  *     MaterialName2...
  * </p>
  *
- * @see ItemStackDeserializer
+ * @see InternalItemDeserializer
  * @see ItemMetaHandlers
  */
-public class ItemStackSerializer {
+public class InternalItemSerializer implements IItemStackSerializer {
 
     private final StringBuilder _buffer;
     private final ItemMetaHandlers _metaHandlers;
@@ -78,7 +79,7 @@ public class ItemStackSerializer {
      *
      * @param size  The initial buffer size
      */
-    public ItemStackSerializer(int size) {
+    public InternalItemSerializer(int size) {
         this(size, ItemMetaHandlers.getGlobal(), SerializerOutputType.RAW);
     }
 
@@ -88,7 +89,7 @@ public class ItemStackSerializer {
      * @param size        The initial buffer size
      * @param outputType  The output type.
      */
-    public ItemStackSerializer(int size, SerializerOutputType outputType) {
+    public InternalItemSerializer(int size, SerializerOutputType outputType) {
         this(size, ItemMetaHandlers.getGlobal(), outputType);
     }
 
@@ -99,7 +100,7 @@ public class ItemStackSerializer {
      *
      * @param buffer  The {@link java.lang.StringBuilder} to append the results to.
      */
-    public ItemStackSerializer(StringBuilder buffer) {
+    public InternalItemSerializer(StringBuilder buffer) {
         this(buffer, ItemMetaHandlers.getGlobal(), SerializerOutputType.RAW);
     }
 
@@ -109,7 +110,7 @@ public class ItemStackSerializer {
      * @param buffer      The The {@link java.lang.StringBuilder} to append the results to.
      * @param outputType  The output type.
      */
-    public ItemStackSerializer(StringBuilder buffer, SerializerOutputType outputType) {
+    public InternalItemSerializer(StringBuilder buffer, SerializerOutputType outputType) {
         this(buffer, ItemMetaHandlers.getGlobal(), outputType);
     }
 
@@ -121,7 +122,7 @@ public class ItemStackSerializer {
      * @param size          The initial buffer size
      * @param metaHandlers  The {@link ItemMetaHandlers} to use.
      */
-    public ItemStackSerializer(int size, ItemMetaHandlers metaHandlers) {
+    public InternalItemSerializer(int size, ItemMetaHandlers metaHandlers) {
         this(size, metaHandlers, SerializerOutputType.RAW);
     }
 
@@ -132,7 +133,7 @@ public class ItemStackSerializer {
      * @param metaHandlers  The {@link ItemMetaHandlers} to use.
      * @param outputType    The output type.
      */
-    public ItemStackSerializer(int size, ItemMetaHandlers metaHandlers, SerializerOutputType outputType) {
+    public InternalItemSerializer(int size, ItemMetaHandlers metaHandlers, SerializerOutputType outputType) {
         PreCon.notNull(metaHandlers);
         PreCon.notNull(outputType);
 
@@ -149,7 +150,7 @@ public class ItemStackSerializer {
      * @param buffer  The {@link java.lang.StringBuilder} to append the results to.
      * @param metaHandlers  The {@link ItemMetaHandlers} to use.
      */
-    public ItemStackSerializer(StringBuilder buffer, ItemMetaHandlers metaHandlers) {
+    public InternalItemSerializer(StringBuilder buffer, ItemMetaHandlers metaHandlers) {
         this(buffer, metaHandlers, SerializerOutputType.RAW);
     }
 
@@ -160,7 +161,7 @@ public class ItemStackSerializer {
      * @param metaHandlers  The {@link ItemMetaHandlers} to use.
      * @param outputType    The output type.
      */
-    public ItemStackSerializer(StringBuilder buffer, ItemMetaHandlers metaHandlers,
+    public InternalItemSerializer(StringBuilder buffer, ItemMetaHandlers metaHandlers,
                                SerializerOutputType outputType) {
         PreCon.notNull(buffer);
         PreCon.notNull(metaHandlers);
@@ -171,16 +172,13 @@ public class ItemStackSerializer {
         _outputType = outputType;
     }
 
-    /**
-     * Serialize an {@link org.bukkit.inventory.ItemStack} and append the results to
-     * the current results.
-     *
-     * @param stack  The {@link org.bukkit.inventory.ItemStack} to serialize. Null values
-     *               are converted to {@link Material#AIR} with an amount of -1.
-     *
-     * @return Self for chaining.
-     */
-    public ItemStackSerializer append(@Nullable ItemStack stack) {
+    @Override
+    public int size() {
+        return _itemsAppended;
+    }
+
+    @Override
+    public InternalItemSerializer append(@Nullable ItemStack stack) {
 
         if (_itemsAppended > 0)
             _buffer.append(", ");
@@ -191,48 +189,22 @@ public class ItemStackSerializer {
         return this;
     }
 
-    /**
-     * Serialize a collection of {@link org.bukkit.inventory.ItemStack}'s and append the results
-     * to the current results.
-     *
-     * @param stacks  The {@link org.bukkit.inventory.ItemStack}'s to serialize.
-     *
-     * @return  Self for chaining.
-     */
-    public ItemStackSerializer appendAll(Collection<? extends ItemStack> stacks) {
+    @Override
+    public InternalItemSerializer appendAll(Collection<? extends ItemStack> stacks) {
         for (ItemStack stack : stacks) {
             append(stack);
         }
         return this;
     }
 
-    /**
-     * Serialize an array of {@link org.bukkit.inventory.ItemStack}'s and append the results
-     * to the current results.
-     *
-     * @param stacks  The array of {@link org.bukkit.inventory.ItemStack}'s to serialize.
-     *
-     * @param <T>  The ItemStack type
-     *
-     * @return  Self for chaining.
-     */
-    public <T extends ItemStack> ItemStackSerializer appendAll(T[] stacks) {
+    @Override
+    public <T extends ItemStack> InternalItemSerializer appendAll(T[] stacks) {
         for (ItemStack stack : stacks) {
             append(stack);
         }
         return this;
     }
 
-    /**
-     * Get the number of {@link org.bukkit.inventory.ItemStack}'s serialized.
-     */
-    public int size() {
-        return _itemsAppended;
-    }
-
-    /**
-     * Return the serialized result.
-     */
     @Override
     public String toString() {
         return _buffer.toString();
@@ -317,3 +289,4 @@ public class ItemStackSerializer {
         }
     }
 }
+

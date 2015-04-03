@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer.metahandlers;
+package com.jcwhatever.nucleus.internal.items.meta;
 
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.utils.PreCon;

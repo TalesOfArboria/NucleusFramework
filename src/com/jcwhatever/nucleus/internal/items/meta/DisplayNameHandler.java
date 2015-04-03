@@ -22,27 +22,27 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer.metahandlers;
+package com.jcwhatever.nucleus.internal.items.meta;
 
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles a book {@link org.bukkit.inventory.ItemStack} author meta.
+ * Handles {@link org.bukkit.inventory.ItemStack} display name meta.
  *
  * @see ItemMetaHandlers
  */
-public class BookAuthorHandler implements IMetaHandler {
+public class DisplayNameHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {
-        return "bookAuthor";
+        return "name";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class BookAuthorHandler implements IMetaHandler {
         PreCon.notNull(itemStack);
 
         ItemMeta meta = itemStack.getItemMeta();
-        return meta instanceof BookMeta;
+        return meta != null && meta.hasDisplayName();
     }
 
     @Override
@@ -58,15 +58,10 @@ public class BookAuthorHandler implements IMetaHandler {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (!(itemMeta instanceof BookMeta))
+        if (!meta.getName().equals(getMetaName()))
             return false;
 
-        BookMeta bookMeta = (BookMeta)itemMeta;
-
-        bookMeta.setAuthor(meta.getRawData());
-
-        itemStack.setItemMeta(bookMeta);
+        ItemStackUtils.setDisplayName(itemStack, meta.getRawData());
 
         return true;
     }
@@ -75,17 +70,13 @@ public class BookAuthorHandler implements IMetaHandler {
     public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null || !meta.hasDisplayName())
+            return new ArrayList<>(0);
+
         List<ItemMetaValue> result = new ArrayList<>(1);
 
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (!(itemMeta instanceof BookMeta))
-            return result;
-
-        BookMeta bookMeta = (BookMeta)itemMeta;
-
-        result.add(new ItemMetaValue(getMetaName(), bookMeta.getAuthor()));
-
-        itemStack.setItemMeta(bookMeta);
+        result.add(new ItemMetaValue(getMetaName(), meta.getDisplayName()));
 
         return result;
     }

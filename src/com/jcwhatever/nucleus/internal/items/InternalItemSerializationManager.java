@@ -22,23 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer;
+package com.jcwhatever.nucleus.internal.items;
+
+import com.jcwhatever.nucleus.utils.items.serializer.IItemStackDeserializer;
+import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerialization;
+import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerializer;
+import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 
 /**
- * Thrown if the {@link IItemStackDeserializer} fails to deserialize a string.
- *
- * @see IItemStackDeserializer
+ * Internal implementation of {@link IItemStackSerialization}.
  */
-public class InvalidItemStackStringException extends Exception {
+public class InternalItemSerializationManager implements IItemStackSerialization {
 
-    private final String _itemStackString;
-
-    public InvalidItemStackStringException(String itemStackString) {
-        _itemStackString = itemStackString;
+    @Override
+    public IItemStackDeserializer parse(String itemStackString) throws InvalidItemStackStringException {
+        return new InternalItemDeserializer(itemStackString);
     }
 
     @Override
-    public String getMessage() {
-        return "Failed to parse and deserialize item stack string: " + _itemStackString;
+    public IItemStackSerializer createSerializer() {
+        return new InternalItemSerializer(3 * 20);
+    }
+
+    @Override
+    public IItemStackSerializer createSerializer(int size) {
+        return new InternalItemSerializer(size * 20);
+    }
+
+    @Override
+    public IItemStackSerializer createSerializer(StringBuilder buffer) {
+        return new InternalItemSerializer(buffer);
     }
 }

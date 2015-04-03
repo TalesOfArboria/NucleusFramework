@@ -22,35 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer.metahandlers;
+package com.jcwhatever.nucleus.internal.items.meta;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
- * Handles {@link org.bukkit.inventory.ItemStack} enchantment meta.
+ * Handles a book {@link org.bukkit.inventory.ItemStack} title meta.
  *
  * @see ItemMetaHandlers
  */
-public class EnchantmentHandler implements IMetaHandler {
+public class BookTitleHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {
-        return "ench";
+        return "bookTitle";
     }
 
     @Override
     public boolean canHandle(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        return itemStack.getEnchantments().size() > 0;
+        ItemMeta meta = itemStack.getItemMeta();
+        return meta instanceof BookMeta;
     }
 
     @Override
@@ -58,24 +58,16 @@ public class EnchantmentHandler implements IMetaHandler {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
-        if (!meta.getName().equals(getMetaName()))
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (!(itemMeta instanceof BookMeta))
             return false;
 
-        String[] comp = TextUtils.PATTERN_COLON.split(meta.getRawData());
+        BookMeta bookMeta = (BookMeta)itemMeta;
 
-        Enchantment enchantment = Enchantment.getByName(comp[0]);
-        int level = 1;
+        bookMeta.setTitle(meta.getRawData());
 
-        if (comp.length > 0) {
-            try {
-                level = Integer.parseInt(comp[1]);
-            }
-            catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        }
+        itemStack.setItemMeta(bookMeta);
 
-        itemStack.addUnsafeEnchantment(enchantment, level);
         return true;
     }
 
@@ -83,20 +75,18 @@ public class EnchantmentHandler implements IMetaHandler {
     public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        int totalEnchants = itemStack.getEnchantments().size();
+        List<ItemMetaValue> result = new ArrayList<>(1);
 
-        if (totalEnchants == 0)
-            return new ArrayList<>(0);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (!(itemMeta instanceof BookMeta))
+            return result;
 
-        List<ItemMetaValue> results = new ArrayList<>(totalEnchants);
-        Set<Enchantment> enchantments = itemStack.getEnchantments().keySet();
+        BookMeta bookMeta = (BookMeta)itemMeta;
 
-        for (Enchantment enchant: enchantments) {
-            int level = itemStack.getEnchantmentLevel(enchant);
+        result.add(new ItemMetaValue(getMetaName(), bookMeta.getTitle()));
 
-            results.add(new ItemMetaValue(getMetaName(), enchant.getName() + ':' + level));
-        }
+        itemStack.setItemMeta(bookMeta);
 
-        return results;
+        return result;
     }
 }

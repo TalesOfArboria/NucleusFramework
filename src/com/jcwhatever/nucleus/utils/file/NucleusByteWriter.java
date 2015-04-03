@@ -26,9 +26,9 @@
 package com.jcwhatever.nucleus.utils.file;
 
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlers;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
+import com.jcwhatever.nucleus.internal.items.meta.IMetaHandler;
+import com.jcwhatever.nucleus.internal.items.meta.ItemMetaHandlers;
+import com.jcwhatever.nucleus.internal.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;

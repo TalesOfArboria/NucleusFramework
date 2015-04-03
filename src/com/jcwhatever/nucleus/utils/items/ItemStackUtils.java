@@ -25,11 +25,11 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.serializer.IItemStackDeserializer;
+import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerializer;
 import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
-import com.jcwhatever.nucleus.utils.items.serializer.ItemStackDeserializer;
-import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer;
-import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
@@ -89,7 +89,7 @@ public final class ItemStackUtils {
      *     <li>{@link MaterialData}</li>
      *     <li>The name or alternate name of a material. Valid names
      *     are from {@link NamedMaterialData}.</li>
-     *     <li>A item stack string serialized by {@link ItemStackSerializer}.</li>
+     *     <li>A item stack string serialized by an {@link IItemStackSerializer}.</li>
      * </ul>
      *
      * @param object  The object to retrieve an {@link ItemStack} from.
@@ -483,8 +483,8 @@ public final class ItemStackUtils {
      *
      * @return  Null if the string could not be parsed.
      *
-     * @see ItemStackSerializer
-     * @see ItemStackDeserializer
+     * @see IItemStackSerializer
+     * @see IItemStackDeserializer
      */
     @Nullable
     public static ItemStack[] parse(String itemString) throws InvalidItemStackStringException {
@@ -492,11 +492,11 @@ public final class ItemStackUtils {
         if (itemString == null || itemString.length() == 0)
             return new ItemStack[0];
 
-        ItemStackDeserializer parser;
+        IItemStackDeserializer parser;
 
-        parser = new ItemStackDeserializer(itemString);
+        parser = Nucleus.getItemSerialization().parse(itemString);
 
-        return parser.getResultArray();
+        return parser.getArray();
     }
 
     /**
@@ -504,11 +504,10 @@ public final class ItemStackUtils {
      *
      * @param stacks  The {@link ItemStack} collection.
      */
-    public static String serialize(Collection<ItemStack> stacks, SerializerOutputType outputType) {
+    public static String serialize(Collection<ItemStack> stacks) {
         PreCon.notNull(stacks);
-        PreCon.notNull(outputType);
 
-        return new ItemStackSerializer(stacks.size() * 20, outputType).appendAll(stacks).toString();
+        return Nucleus.getItemSerialization().createSerializer(stacks.size()).appendAll(stacks).toString();
     }
 
     /**
@@ -516,22 +515,9 @@ public final class ItemStackUtils {
      *
      * @param stacks  The {@link ItemStack}'s to serialize.
      */
-    public static String serialize(ItemStack[] stacks, SerializerOutputType outputType) {
+    public static String serialize(ItemStack... stacks) {
         PreCon.notNull(stacks);
-        PreCon.notNull(outputType);
 
-        return new ItemStackSerializer(stacks.length * 20, outputType).appendAll(stacks).toString();
-    }
-
-    /**
-     * Serialize an {@link ItemStack} into a string.
-     *
-     * @param stack  The {@link ItemStack}.
-     */
-    public static String serialize(ItemStack stack, SerializerOutputType outputType) {
-        PreCon.notNull(stack);
-        PreCon.notNull(outputType);
-
-        return new ItemStackSerializer(40, outputType).append(stack).toString();
+        return Nucleus.getItemSerialization().createSerializer(stacks.length).appendAll(stacks).toString();
     }
 }

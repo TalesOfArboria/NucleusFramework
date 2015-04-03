@@ -22,27 +22,27 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer.metahandlers;
+package com.jcwhatever.nucleus.internal.items.meta;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles {@link org.bukkit.inventory.ItemStack} lore meta.
+ * Handles a book {@link org.bukkit.inventory.ItemStack} author meta.
  *
  * @see ItemMetaHandlers
  */
-public class LoreHandler implements IMetaHandler {
+public class BookAuthorHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {
-        return "lore";
+        return "bookAuthor";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class LoreHandler implements IMetaHandler {
         PreCon.notNull(itemStack);
 
         ItemMeta meta = itemStack.getItemMeta();
-        return meta != null && meta.hasLore();
+        return meta instanceof BookMeta;
     }
 
     @Override
@@ -58,24 +58,15 @@ public class LoreHandler implements IMetaHandler {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
-        if (!meta.getName().equals(getMetaName()))
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (!(itemMeta instanceof BookMeta))
             return false;
 
-        List<String> currentLore = ItemStackUtils.getLore(itemStack);
+        BookMeta bookMeta = (BookMeta)itemMeta;
 
-        List<String> newLore = currentLore == null
-                ? new ArrayList<String>(5)
-                : new ArrayList<String>(currentLore.size() + 1);
+        bookMeta.setAuthor(meta.getRawData());
 
-        if (currentLore != null) {
-            for (String lore : currentLore) {
-                newLore.add(lore);
-            }
-        }
-
-        newLore.add(meta.getRawData());
-
-        ItemStackUtils.setLore(itemStack, newLore);
+        itemStack.setItemMeta(bookMeta);
 
         return true;
     }
@@ -84,19 +75,17 @@ public class LoreHandler implements IMetaHandler {
     public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null)
-            return new ArrayList<>(0);
-
-        List<String> lore = meta.getLore();
-        if (lore == null || lore.isEmpty())
-            return new ArrayList<>(0);
-
         List<ItemMetaValue> result = new ArrayList<>(1);
 
-        for (String line : lore) {
-            result.add(new ItemMetaValue(getMetaName(), line));
-        }
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (!(itemMeta instanceof BookMeta))
+            return result;
+
+        BookMeta bookMeta = (BookMeta)itemMeta;
+
+        result.add(new ItemMetaValue(getMetaName(), bookMeta.getAuthor()));
+
+        itemStack.setItemMeta(bookMeta);
 
         return result;
     }

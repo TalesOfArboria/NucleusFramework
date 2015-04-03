@@ -39,12 +39,14 @@ import com.jcwhatever.nucleus.utils.entity.IEntityTracker;
 import com.jcwhatever.nucleus.utils.floatingitems.IFloatingItemManager;
 import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
+import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.signs.ISignManager;
 
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,6 +149,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._floatingItemManager != null, ERROR_NOT_READY);
 
         return _plugin._floatingItemManager;
+    }
+
+    /**
+     * Get the default {@link ItemStack} serialization manager.
+     */
+    public static IItemStackSerialization getItemSerialization() {
+        PreCon.isValid(_plugin._itemSerialization != null, ERROR_NOT_READY);
+
+        return _plugin._itemSerialization;
     }
 
     /**

@@ -33,7 +33,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
@@ -542,7 +541,7 @@ public class YamlDataNode extends AbstractDataNode {
                 value = LocationUtils.serialize((Location) value, 3);
             }
             else if (value instanceof ItemStack) {
-                value = ItemStackUtils.serialize((ItemStack) value, SerializerOutputType.RAW);
+                value = ItemStackUtils.serialize((ItemStack) value);
             }
             else if (value instanceof ItemStack[]) {
                 ItemStack[] stored = ((ItemStack[]) value).clone();
@@ -551,7 +550,7 @@ public class YamlDataNode extends AbstractDataNode {
                         stored[i] = stored[i].clone();
                     }
                 }
-                value = ItemStackUtils.serialize((ItemStack[]) value, SerializerOutputType.RAW);
+                value = ItemStackUtils.serialize((ItemStack[]) value);
             }
             else if (value instanceof Enum<?>) {
                 Enum<?> e = (Enum<?>) value;

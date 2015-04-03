@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.internal.PlayerTracker;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
 import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
+import com.jcwhatever.nucleus.internal.items.InternalItemSerializationManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
@@ -72,6 +73,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalSignManager _signManager;
     InternalEntityTracker _entityTracker;
     InternalFloatingItemManager _floatingItemManager;
+    InternalItemSerializationManager _itemSerialization;
 
     EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
@@ -143,6 +145,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     @Override
     protected void onPreEnable() {
 
+        _itemSerialization = new InternalItemSerializationManager();
         _scheduler = new InternalTaskScheduler();
 
         _providerManager = new InternalProviderManager(_isTest);

@@ -22,13 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.serializer;
+package com.jcwhatever.nucleus.internal.items;
 
-import com.jcwhatever.nucleus.utils.converters.Converters;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaValue;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.IMetaHandler;
-import com.jcwhatever.nucleus.utils.items.serializer.metahandlers.ItemMetaHandlers;
+import com.jcwhatever.nucleus.internal.items.meta.IMetaHandler;
+import com.jcwhatever.nucleus.internal.items.meta.ItemMetaHandlers;
+import com.jcwhatever.nucleus.internal.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.converters.Converters;
+import com.jcwhatever.nucleus.utils.items.serializer.IItemStackDeserializer;
+import com.jcwhatever.nucleus.utils.items.serializer.InvalidItemStackStringException;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -42,15 +44,15 @@ import javax.annotation.Nullable;
 
 /**
  * Parses a string representing a single or multiple {@link org.bukkit.inventory.ItemStack}'s
- * serialized by {@link ItemStackSerializer}.
+ * serialized by {@link InternalItemSerializer}.
  * <p>
  *     Format: MaterialName[:ByteData][;Amount][{ metaName1: "metaValue1", metaName2: "metaValue2" }]
  * </p>
  *
- * @see ItemStackSerializer
+ * @see InternalItemSerializer
  * @see ItemMetaHandlers
  */
-public class ItemStackDeserializer {
+public class InternalItemDeserializer implements IItemStackDeserializer {
 
     private final String _itemString;
     private final ItemMetaHandlers _metaHandlers;
@@ -66,7 +68,7 @@ public class ItemStackDeserializer {
      *
      * @throws InvalidItemStackStringException
      */
-    public ItemStackDeserializer(String itemString) throws InvalidItemStackStringException {
+    public InternalItemDeserializer(String itemString) throws InvalidItemStackStringException {
         this(ItemMetaHandlers.getGlobal(), itemString);
     }
 
@@ -78,7 +80,7 @@ public class ItemStackDeserializer {
      *
      * @throws InvalidItemStackStringException
      */
-    public ItemStackDeserializer(ItemMetaHandlers metaHandlers, String itemString)
+    public InternalItemDeserializer(ItemMetaHandlers metaHandlers, String itemString)
             throws InvalidItemStackStringException {
         PreCon.notNull(metaHandlers);
         PreCon.notNull(itemString);
@@ -96,17 +98,16 @@ public class ItemStackDeserializer {
         }
     }
 
-    /**
-     * Get {@link org.bukkit.inventory.ItemStack} results as a list.
-     */
-    public List<ItemStack> getResultList() {
-        return new ArrayList<>(_results);
+    @Override
+    public List<ItemStack> getResults(List<ItemStack> output) {
+        PreCon.notNull(output);
+
+        output.addAll(_results);
+        return output;
     }
 
-    /**
-     * Get {@link org.bukkit.inventory.ItemStack} results as an array.
-     */
-    public ItemStack[] getResultArray() {
+    @Override
+    public ItemStack[] getArray() {
         return _results.toArray(new ItemStack[_results.size()]);
     }
 
@@ -431,3 +432,4 @@ public class ItemStackDeserializer {
         }
     }
 }
+

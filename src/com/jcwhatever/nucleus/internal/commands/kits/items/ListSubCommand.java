@@ -36,7 +36,6 @@ import com.jcwhatever.nucleus.utils.kits.KitManager;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.items.serializer.ItemStackSerializer.SerializerOutputType;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
 
 import org.bukkit.command.CommandSender;
@@ -90,7 +89,7 @@ public final class ListSubCommand extends AbstractCommand {
                 if (item == null)
                     continue;
 
-                pagin.add(ItemStackUtils.serialize(item, SerializerOutputType.COLOR));
+                pagin.add(ItemStackUtils.serialize(item));
             }
         }
 
@@ -104,7 +103,7 @@ public final class ListSubCommand extends AbstractCommand {
         else {
 
             for (ItemStack item : items) {
-                pagin.add(ItemStackUtils.serialize(item, SerializerOutputType.COLOR));
+                pagin.add(ItemStackUtils.serialize(item));
             }
         }
 
