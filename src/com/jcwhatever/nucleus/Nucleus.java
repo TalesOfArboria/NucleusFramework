@@ -43,7 +43,7 @@ import com.jcwhatever.nucleus.utils.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
 import com.jcwhatever.nucleus.utils.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardTracker;
-import com.jcwhatever.nucleus.utils.signs.ISignManager;
+import com.jcwhatever.nucleus.managed.signs.ISignManager;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;

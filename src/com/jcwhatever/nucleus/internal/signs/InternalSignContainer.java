@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
-import com.jcwhatever.nucleus.utils.signs.ISignContainer;
-import com.jcwhatever.nucleus.utils.signs.SignUtils;
+import com.jcwhatever.nucleus.managed.signs.ISignContainer;
+import com.jcwhatever.nucleus.utils.SignUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

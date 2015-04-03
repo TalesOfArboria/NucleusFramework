@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.signs;
+package com.jcwhatever.nucleus.managed.signs;
 
 import com.jcwhatever.nucleus.storage.IDataNode;
 

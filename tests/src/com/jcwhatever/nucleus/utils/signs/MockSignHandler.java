@@ -1,5 +1,8 @@
 package com.jcwhatever.nucleus.utils.signs;
 
+import com.jcwhatever.nucleus.managed.signs.ISignContainer;
+import com.jcwhatever.nucleus.managed.signs.SignHandler;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 

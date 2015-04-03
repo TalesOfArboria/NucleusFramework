@@ -23,10 +23,11 @@
  */
 
 
-package com.jcwhatever.nucleus.utils.signs;
+package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.managed.signs.ISignManager;
+import com.jcwhatever.nucleus.managed.signs.SignHandler;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;

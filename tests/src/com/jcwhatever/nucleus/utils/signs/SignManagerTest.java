@@ -9,6 +9,9 @@ import com.jcwhatever.bukkit.v1_8_R2.blocks.MockBlock;
 import com.jcwhatever.bukkit.v1_8_R2.blocks.MockSign;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
+import com.jcwhatever.nucleus.managed.signs.ISignContainer;
+import com.jcwhatever.nucleus.managed.signs.ISignManager;
+import com.jcwhatever.nucleus.managed.signs.SignHandler;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
