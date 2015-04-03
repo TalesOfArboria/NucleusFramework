@@ -31,6 +31,11 @@ package com.jcwhatever.nucleus.commands.exceptions;
  */
 public class InvalidParameterException extends CommandException {
 
+    /**
+     * Constructor.
+     *
+     * @param message  The message to tell the command sender.
+     */
     protected InvalidParameterException(String message) {
         super(message);
     }

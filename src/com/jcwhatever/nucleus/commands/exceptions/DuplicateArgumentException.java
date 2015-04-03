@@ -29,11 +29,15 @@ package com.jcwhatever.nucleus.commands.exceptions;
  * Thrown when two parameters with the same name are detected.
  *
  * <p>Exception can be thrown if there is an error in a command implementation
- * or if the command sender uses an optional argument twice or with then name of
- * a required parameter.</p>
+ * or if the command sender uses an optional argument twice.</p>
  */
 public class DuplicateArgumentException extends CommandException {
 
+    /**
+     * Constructor.
+     *
+     * @param message  The message to tell the command sender.
+     */
     protected DuplicateArgumentException(String message) {
         super(message);
     }

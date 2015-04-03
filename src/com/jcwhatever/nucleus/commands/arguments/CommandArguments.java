@@ -250,9 +250,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         String arg = getString(parameterName);
 
         // make sure the argument is a valid name
-        if (!TextUtils.isValidName(arg, maxLen)) {
-            invalidArg(parameterName, ArgumentValueType.NAME, maxLen);
-        }
+        if (!TextUtils.isValidName(arg, maxLen))
+            throw invalidArg(parameterName, ArgumentValueType.NAME, maxLen);
 
         return arg;
     }
@@ -269,9 +268,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // get the raw argument
         String value = getRawArgument(parameterName);
-        if (value == null) {
-            invalidArg(parameterName, ArgumentValueType.STRING);
-        }
+        if (value == null)
+            throw invalidArg(parameterName, ArgumentValueType.STRING);
 
         // make sure if pipes are used, that the argument is one of the possible values
         if (parameterName.indexOf('|') != -1) {
@@ -280,7 +278,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 if (value.equalsIgnoreCase(option))
                     return option;
             }
-            invalidArg(parameterName, ArgumentValueType.STRING);
+            throw invalidArg(parameterName, ArgumentValueType.STRING);
         }
 
         return value;
@@ -308,7 +306,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // make sure the argument was provided
         if (arg == null)
-            invalidArg(parameterName, ArgumentValueType.BOOLEAN);
+            throw invalidArg(parameterName, ArgumentValueType.BOOLEAN);
 
         // get boolean based on value
         arg = arg.toLowerCase();
@@ -326,8 +324,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             case "off":
                 return false;
             default:
-                invalidArg(parameterName, ArgumentValueType.BOOLEAN);
-                return false;
+                throw invalidArg(parameterName, ArgumentValueType.BOOLEAN);
         }
     }
 
@@ -344,9 +341,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // get the raw argument
         String value = getRawArgument(parameterName);
-        if (value == null) {
-            invalidArg(parameterName, ArgumentValueType.CHARACTER);
-        }
+        if (value == null)
+            throw invalidArg(parameterName, ArgumentValueType.CHARACTER);
 
         // make sure if pipes are used, that the argument is one of the possible values
         if (parameterName.indexOf('|') != -1) {
@@ -354,19 +350,18 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             for (String option : options) {
                 if (value.equalsIgnoreCase(option)) {
 
-                    if (option.length() != 1) {
-                        invalidArg(parameterName, ArgumentValueType.CHARACTER);
-                    }
+                    if (option.length() != 1)
+                        throw invalidArg(parameterName, ArgumentValueType.CHARACTER);
 
                     return option.charAt(0);
                 }
             }
-            invalidArg(parameterName, ArgumentValueType.CHARACTER);
+            throw invalidArg(parameterName, ArgumentValueType.CHARACTER);
         }
 
         // make sure the length of the value is exactly 1
         if (value.length() != 1)
-            invalidArg(parameterName, ArgumentValueType.CHARACTER);
+            throw invalidArg(parameterName, ArgumentValueType.CHARACTER);
 
         return value.charAt(0);
     }
@@ -396,7 +391,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         PreCon.notNullOrEmpty(parameterName);
 
-        byte result = 0;
+        byte result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -407,11 +402,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             result = Byte.parseByte(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
         }
 
         return result;
@@ -442,7 +437,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         PreCon.notNullOrEmpty(parameterName);
 
-        short result = 0;
+        short result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -453,11 +448,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             result = Short.parseShort(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            invalidArg(parameterName, ArgumentValueType.SHORT, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.SHORT, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.BYTE, minRange, maxRange);
         }
 
         return result;
@@ -487,7 +482,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     public int getInteger(String parameterName, int minRange, int maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
-        int result = 0;
+        int result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -498,11 +493,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             result = Integer.parseInt(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            invalidArg(parameterName, ArgumentValueType.INTEGER, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.INTEGER, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            invalidArg(parameterName, ArgumentValueType.INTEGER, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.INTEGER, minRange, maxRange);
         }
 
         return result;
@@ -532,7 +527,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     public long getLong(String parameterName, long minRange, long maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
-        long result = 0;
+        long result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -543,11 +538,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             result = Long.parseLong(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            invalidArg(parameterName, ArgumentValueType.LONG, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.LONG, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            invalidArg(parameterName, ArgumentValueType.LONG, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.LONG, minRange, maxRange);
         }
 
         return result;
@@ -579,7 +574,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         PreCon.notNullOrEmpty(parameterName);
 
-        float result = 0;
+        float result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -592,11 +587,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                     : Float.parseFloat(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            invalidArg(parameterName, ArgumentValueType.FLOAT, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.FLOAT, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            invalidArg(parameterName, ArgumentValueType.FLOAT, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.FLOAT, minRange, maxRange);
         }
 
         return result;
@@ -625,7 +620,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
     public double getDouble(String parameterName, double minRange, double maxRange) throws InvalidArgumentException {
         PreCon.notNullOrEmpty(parameterName);
 
-        double result = 0;
+        double result;
 
         // get the raw argument
         String arg = getRawArgument(parameterName);
@@ -638,11 +633,11 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                     : Double.parseDouble(arg);
         }
         catch (NullPointerException | NumberFormatException nfe) {
-            invalidArg(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange);
         }
 
         if (result < minRange || result > maxRange) {
-            invalidArg(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange);
+            throw invalidArg(parameterName, ArgumentValueType.DOUBLE, minRange, maxRange);
         }
 
         return result;
@@ -663,7 +658,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // make sure the argument was provided
         if (arg == null)
-            invalidArg(parameterName, ArgumentValueType.PERCENT);
+            throw invalidArg(parameterName, ArgumentValueType.PERCENT);
 
         // remove percent sign
         Matcher matcher = TextUtils.PATTERN_PERCENT.matcher(arg);
@@ -676,8 +671,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                     : Double.parseDouble(arg);
         }
         catch (NumberFormatException nfe) {
-            invalidArg(parameterName, ArgumentValueType.PERCENT);
-            return 0;
+            throw invalidArg(parameterName, ArgumentValueType.PERCENT);
         }
     }
 
@@ -726,15 +720,15 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
         // make sure the argument was provided
         if (arg == null)
-            invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
+            throw invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
 
         // Check for "inhand" keyword as argument
         if (arg.equalsIgnoreCase("inhand")) {
 
             // sender must be a player to use "inhand" keyword
-            if (!(sender instanceof Player)) {
-                invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
-            }
+            if (!(sender instanceof Player))
+                throw invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
+
 
             Player p = (Player)sender;
 
@@ -742,7 +736,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
 
             // sender must have an item in hand
             if (inhand == null || inhand.getType() == Material.AIR) {
-                invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
+                throw invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
             }
 
             return new ItemStack[] { inhand }; // finished
@@ -752,9 +746,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         if (arg.equalsIgnoreCase("hotbar")) {
 
             // sender must be a player to use "hotbar" keyword
-            if (!(sender instanceof Player)) {
-                invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
-            }
+            if (!(sender instanceof Player))
+                throw invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
 
             Player p = (Player)sender;
 
@@ -786,9 +779,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         if (arg.equalsIgnoreCase("inventory")) {
 
             // sender must be player to use "chest" keyword
-            if (!(sender instanceof Player)) {
-                invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
-            }
+            if (!(sender instanceof Player))
+                throw invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
+
 
             Player p = (Player)sender;
 
@@ -829,7 +822,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         }
 
         if (stacks == null)
-            invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
+            throw invalidArg(parameterName, ArgumentValueType.ITEMSTACK);
 
         // return result
         return stacks;
@@ -864,9 +857,8 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         String arg = getString(parameterName);
 
         // command sender must be a player
-        if (!(sender instanceof Player)) {
-            invalidArg(parameterName, ArgumentValueType.LOCATION);
-        }
+        if (!(sender instanceof Player))
+            throw invalidArg(parameterName, ArgumentValueType.LOCATION);
 
         Player p = (Player)sender;
 
@@ -898,7 +890,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
             });
         }
         else {
-            invalidArg(parameterName, ArgumentValueType.LOCATION);
+            throw invalidArg(parameterName, ArgumentValueType.LOCATION);
         }
     }
 
@@ -947,9 +939,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
         if (evalue == null) {
-            invalidArg(parameterName, ArgumentValueType.LOCATION);
-
-            CommandException.invalidArgument(_command,
+            throw CommandException.invalidArgument(_command,
                     _paramDescriptions.get(parameterName, validValues)
             );
         }
@@ -960,11 +950,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 return evalue;
         }
 
-        CommandException.invalidArgument(_command,
+        throw CommandException.invalidArgument(_command,
                 _paramDescriptions.get(parameterName, validValues)
         );
-
-        return null;
     }
 
     /**
@@ -994,7 +982,7 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         T evalue = EnumUtils.searchEnum(arg, enumClass);
 
         if (evalue == null) {
-            CommandException.invalidArgument(_command,
+            throw CommandException.invalidArgument(_command,
                     _paramDescriptions.get(parameterName, validValues)
             );
         }
@@ -1005,10 +993,9 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
                 return evalue;
         }
 
-        CommandException.invalidArgument(_command,
+        throw CommandException.invalidArgument(_command,
                 _paramDescriptions.get(parameterName, validValues)
         );
-        return null;
     }
 
     /**
@@ -1221,8 +1208,10 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
         return param.getValue();
     }
 
-    private void invalidArg(String parameterName, ArgumentValueType type, Object... args) throws InvalidArgumentException {
-        CommandException.invalidArgument(_command,
+    private InvalidArgumentException invalidArg(
+            String parameterName, ArgumentValueType type, Object... args) {
+
+        return CommandException.invalidArgument(_command,
                 _paramDescriptions.get(parameterName, type, args)
         );
     }

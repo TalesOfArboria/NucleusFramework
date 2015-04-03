@@ -74,9 +74,9 @@ public class ArgumentParser {
 
             // if there are no more parameters but there are still
             // arguments left, then there are too many arguments.
-            if (!arguments.isEmpty()) {
-                CommandException.tooManyArgs(command);
-            }
+            if (!arguments.isEmpty())
+                throw CommandException.tooManyArgs(command);
+
 
             // nothing left to do
             return results;
@@ -120,12 +120,12 @@ public class ArgumentParser {
                     // If there are still more static parameters, it means this
                     // is not the last parameter and the value is incorrect.
                     if (!staticParameters.isEmpty()) {
-                        CommandException.invalidArgument(command, parameter.getName());
+                        throw CommandException.invalidArgument(command, parameter.getName());
                     }
 
                     // No default value defined means a discreet value is expected.
                     else if (!parameter.hasDefaultValue()) {
-                        CommandException.missingRequiredArg(command, parameter);
+                        throw CommandException.missingRequiredArg(command, parameter);
                     }
 
                     // re-insert floating argument so the other parsers
@@ -145,15 +145,15 @@ public class ArgumentParser {
             if (value != null || parameter.hasDefaultValue()) {
                 CommandArgument argument = new CommandArgument(parameter, value);
 
-                if (results.getArgMap().containsKey(name)) {
-                    CommandException.duplicateArg(command, parameter);
-                }
+                if (results.getArgMap().containsKey(name))
+                    throw CommandException.duplicateArg(command, parameter);
+
 
                 results.getStaticArgs().add(argument);
                 results.getArgMap().put(name, argument);
             }
             else {
-                CommandException.missingRequiredArg(command, parameter);
+                throw CommandException.missingRequiredArg(command, parameter);
             }
         }
     }
@@ -171,7 +171,7 @@ public class ArgumentParser {
             String paramName = arguments.removeFirst();
 
             if (!paramName.startsWith(COMMON_PREFIX))
-                CommandException.invalidArgument(command, paramName);
+                throw CommandException.invalidArgument(command, paramName);
 
             // check for flag
             if (paramName.startsWith(FLAG_PREFIX)) {
@@ -179,9 +179,9 @@ public class ArgumentParser {
                 paramName = paramName.substring(FLAG_PREFIX.length());
 
                 FlagParameter parameter = flags.removeRetrieve(new FlagParameter(paramName, -1));
-                if (parameter == null) {
-                    CommandException.invalidFlag(command, paramName);
-                }
+                if (parameter == null)
+                    throw CommandException.invalidFlag(command, paramName);
+
 
                 results.setFlag(paramName, true);
             }
@@ -191,20 +191,18 @@ public class ArgumentParser {
                 paramName = paramName.substring(FLOATING_PREFIX.length());
 
                 CommandParameter parameter = parameters.removeRetrieve(new CommandParameter(paramName, null));
-                if (parameter == null) {
-                    CommandException.invalidParam(command, paramName);
-                }
+                if (parameter == null)
+                    throw CommandException.invalidParam(command, paramName);
 
-                if (arguments.isEmpty()) {
-                    CommandException.missingRequiredArg(command, parameter);
-                }
+                if (arguments.isEmpty())
+                    throw CommandException.missingRequiredArg(command, parameter);
 
                 String arg = parseArgValue(arguments.removeFirst(), arguments);
                 CommandArgument commandArgument = new CommandArgument(parameter, arg);
 
-                if (results.getArgMap().containsKey(paramName)) {
-                    CommandException.duplicateArg(command, parameter);
-                }
+                if (results.getArgMap().containsKey(paramName))
+                    throw CommandException.duplicateArg(command, parameter);
+
 
                 results.getFloatingArgs().add(commandArgument);
                 results.getArgMap().put(paramName, commandArgument);
@@ -219,7 +217,7 @@ public class ArgumentParser {
                     results.getFloatingArgs().add(commandArgument);
                     results.getArgMap().put(param.getName(), commandArgument);
                 } else {
-                    CommandException.missingRequiredArg(command, param);
+                    throw CommandException.missingRequiredArg(command, param);
                 }
             }
         }

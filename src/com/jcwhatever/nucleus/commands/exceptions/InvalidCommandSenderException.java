@@ -30,7 +30,11 @@ package com.jcwhatever.nucleus.commands.exceptions;
  */
 public class InvalidCommandSenderException extends CommandException {
 
-
+    /**
+     * Constructor.
+     *
+     * @param message  The message to tell the command sender.
+     */
     protected InvalidCommandSenderException(String message) {
         super(message);
     }

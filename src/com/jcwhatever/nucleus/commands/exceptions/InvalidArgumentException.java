@@ -30,6 +30,11 @@ package com.jcwhatever.nucleus.commands.exceptions;
  */
 public class InvalidArgumentException extends CommandException {
 
+    /**
+     * Constructor.
+     *
+     * @param message  The message to tell the command sender.
+     */
     protected InvalidArgumentException(String message) {
         super(message);
     }
