@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.scripting.IScriptApiRepo;
 import com.jcwhatever.nucleus.scripting.IScriptManager;
-import com.jcwhatever.nucleus.sounds.ISoundManager;
+import com.jcwhatever.nucleus.managed.sounds.ISoundManager;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
 import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItemManager;

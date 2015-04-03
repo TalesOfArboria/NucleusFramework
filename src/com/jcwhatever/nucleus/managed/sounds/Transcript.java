@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.sounds;
+package com.jcwhatever.nucleus.managed.sounds;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;

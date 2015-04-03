@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.sounds;
+package com.jcwhatever.nucleus.managed.sounds;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,10 +8,10 @@ import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusTest;
 import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
-import com.jcwhatever.nucleus.sounds.types.EffectSound;
-import com.jcwhatever.nucleus.sounds.types.MusicSound;
-import com.jcwhatever.nucleus.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.sounds.types.VoiceSound;
+import com.jcwhatever.nucleus.managed.sounds.types.EffectSound;
+import com.jcwhatever.nucleus.managed.sounds.types.MusicSound;
+import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.sounds.types.VoiceSound;
 import com.jcwhatever.nucleus.storage.YamlDataNode;
 import com.jcwhatever.nucleus.utils.file.FileUtils;
 

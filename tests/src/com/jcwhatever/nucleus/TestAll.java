@@ -8,7 +8,7 @@ import com.jcwhatever.nucleus.internal.providers.economy._InternalEconomyTestSui
 import com.jcwhatever.nucleus.internal.providers.friends._InternalFriendsTestSuite;
 import com.jcwhatever.nucleus.regions._RegionsTestSuite;
 import com.jcwhatever.nucleus.utils.signs._SignsTestSuite;
-import com.jcwhatever.nucleus.sounds._SoundsTestSuite;
+import com.jcwhatever.nucleus.managed.sounds._SoundsTestSuite;
 import com.jcwhatever.nucleus.storage._StorageTestSuite;
 import com.jcwhatever.nucleus.utils._UtilsTestSuite;
 import com.jcwhatever.nucleus.views._ViewTestSuite;

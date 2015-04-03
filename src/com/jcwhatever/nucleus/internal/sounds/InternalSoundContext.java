@@ -24,9 +24,9 @@
 
 package com.jcwhatever.nucleus.internal.sounds;
 
-import com.jcwhatever.nucleus.sounds.ISoundContext;
-import com.jcwhatever.nucleus.sounds.SoundSettings;
-import com.jcwhatever.nucleus.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
+import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
+import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 

@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.sounds.types;
+package com.jcwhatever.nucleus.managed.sounds.types;
 
 import com.jcwhatever.nucleus.storage.IDataNode;
 

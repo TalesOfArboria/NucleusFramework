@@ -28,8 +28,8 @@ package com.jcwhatever.nucleus.events.sounds;
 
 import com.jcwhatever.nucleus.mixins.ICancellable;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
-import com.jcwhatever.nucleus.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.sounds.SoundSettings;
+import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;

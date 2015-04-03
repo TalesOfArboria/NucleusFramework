@@ -22,16 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.sounds.playlist;
+package com.jcwhatever.nucleus.managed.sounds.playlist;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.sounds.PlayListLoopEvent;
 import com.jcwhatever.nucleus.events.sounds.PlayListTrackChangeEvent;
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.sounds.ISoundContext;
-import com.jcwhatever.nucleus.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.sounds.SoundSettings;
+import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
+import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;

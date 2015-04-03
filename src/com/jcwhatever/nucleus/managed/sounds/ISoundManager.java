@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.sounds;
+package com.jcwhatever.nucleus.managed.sounds;
 
-import com.jcwhatever.nucleus.sounds.types.ResourceSound;
+import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
 import org.bukkit.entity.Player;

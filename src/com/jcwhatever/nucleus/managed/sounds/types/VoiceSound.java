@@ -23,21 +23,34 @@
  */
 
 
-package com.jcwhatever.nucleus.sounds.types;
+package com.jcwhatever.nucleus.managed.sounds.types;
 
+import com.jcwhatever.nucleus.managed.sounds.Transcript;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
- * A resource sound that represents music.
+ * A resource sound that represents voice/dialog.
  */
-public class MusicSound extends ResourceSound {
+public class VoiceSound extends ResourceSound {
+
+    private final Transcript _transcript;
 
     /**
      * Constructor.
      *
-     * @param dataNode  The music sounds data node.
+     * @param dataNode  The resource sounds data node.
      */
-    public MusicSound(IDataNode dataNode) {
+    public VoiceSound(IDataNode dataNode) {
         super(dataNode);
+
+        String transcript = dataNode.getString("transcript", "");
+        _transcript = new Transcript(transcript);
+    }
+
+    /**
+     * Get the sounds {@link Transcript} object.
+     */
+    public final Transcript getTranscript() {
+        return _transcript;
     }
 }
