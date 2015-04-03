@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.utils.converters;
 
 import javax.annotation.Nullable;
 

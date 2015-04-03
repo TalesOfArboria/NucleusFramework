@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 /**
  * Abstract implementation of a value converter.
  */
-public abstract class Converter<T> {
+public abstract class Converter<T> implements IConverter<Object, T> {
 
     private ConverterTracker _tracker;
 
@@ -44,6 +44,7 @@ public abstract class Converter<T> {
      *
      * @return  The converted value or null if failed.
      */
+    @Override
     @Nullable
     public final T convert(@Nullable Object value) {
 
