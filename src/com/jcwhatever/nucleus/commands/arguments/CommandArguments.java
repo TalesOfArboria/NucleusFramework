@@ -835,21 +835,21 @@ public class CommandArguments implements Iterable<CommandArgument>, IPluginOwned
      * <p>Possible values are "current" or "select"</p>
      *
      * <p>If the argument value is "current", the players current location is returned via
-     * the {@link LocationResponse}.</p>
+     * the {@link ILocationHandler}.</p>
      *
      * <p>If the argument value is "select", the player is asked to click on the location
-     * to be selected and the value is return via the {@link LocationResponse}.</p>
+     * to be selected and the value is return via the {@link ILocationHandler}.</p>
      *
      * <p>If the {@link CommandSender} is not a player, the argument is always considered invalid.</p>
      *
      * @param sender           The {@link CommandSender} who executed the command
      * @param parameterName    The name of the arguments parameter
-     * @param locationHandler  The {@link LocationResponse} responsible for dealing with the return location.
+     * @param locationHandler  The {@link ILocationHandler} responsible for dealing with the return location.
      *
      * @throws InvalidArgumentException If the sender is not a player, or the argument is not "current" or "select"
      */
     public void getLocation (final CommandSender sender, String parameterName,
-                             final LocationResponse locationHandler) throws InvalidArgumentException {
+                             final ILocationHandler locationHandler) throws InvalidArgumentException {
         PreCon.notNull(sender);
         PreCon.notNullOrEmpty(parameterName);
         PreCon.notNull(locationHandler);

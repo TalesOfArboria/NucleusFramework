@@ -29,10 +29,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
- * Use as a callback to retrieve a location.
+ * A delegate to handle player location selection.
  */
-public abstract class LocationResponse {
+public interface ILocationHandler {
 
-    public abstract void onLocationRetrieved(Player p, Location result);
-
+    /**
+     * Invoked when a location is retrieved from a player.
+     *
+     * @param player  The player that selected a location.
+     * @param result  The location that was selected.
+     */
+    void onLocationRetrieved(Player player, Location result);
 }

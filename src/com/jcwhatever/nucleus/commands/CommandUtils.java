@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.commands;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.arguments.LocationResponse;
+import com.jcwhatever.nucleus.commands.arguments.ILocationHandler;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.nucleus.internal.NucLang;
@@ -342,24 +342,24 @@ public class CommandUtils implements IPluginOwned {
             case LOCATION:
 
                 // get location value to use
-                args.getLocation(sender, valueArgName, new LocationResponse() {
+                args.getLocation(sender, valueArgName, new ILocationHandler() {
 
                     @Override
-                    public void onLocationRetrieved (Player p, Location location) {
+                    public void onLocationRetrieved (Player player, Location location) {
 
                         if (settings.set(settingName, location)) {
                             String successMessage = NucLang.get(_SET_PROPERTY_SUCCESS, settingName,
                                     TextUtils.formatLocation(location, true));
 
-                            tellSuccess(p, successMessage);
+                            tellSuccess(player, successMessage);
 
                             if (onSuccess != null)
                                 onSuccess.run();
 
                         } else {
 
-                            tellError(p, NucLang.get(_SET_PROPERTY_FAILED, settingName));
-                            tell(p, NucLang.get(_PROPERTY_DESCRIPTION,
+                            tellError(player, NucLang.get(_SET_PROPERTY_FAILED, settingName));
+                            tell(player, NucLang.get(_PROPERTY_DESCRIPTION,
                                     propertyDefinition.getName(), propertyDefinition.getDescription()));
                         }
                     }
