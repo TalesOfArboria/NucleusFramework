@@ -186,7 +186,7 @@ public final class InternalMessengerFactory implements IMessengerFactory {
             return dataNode;
 
 
-        dataNode = DataStorage.get(plugin, new DataPath("important-messages"));
+        dataNode = DataStorage.get(plugin, new DataPath("nucleus.important-messages"));
         dataNode.load();
 
         _nodeCache.put(plugin, dataNode);
