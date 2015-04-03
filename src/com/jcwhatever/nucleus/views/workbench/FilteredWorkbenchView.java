@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.views.workbench;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
+import com.jcwhatever.nucleus.utils.items.ItemFilter;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
@@ -61,7 +61,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
     private static AnvilEventListener _eventListener;
     private static Map<InventoryView, FilteredWorkbenchView> _viewMap = new WeakHashMap<>(10);
 
-    private final ItemFilterManager _filter;
+    private final ItemFilter _filter;
 
     /**
      * Constructor.
@@ -69,7 +69,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
      * @param plugin         The views owning plugin.
      * @param filterManager  The filter manager used to allow or deny specific items.
      */
-    public FilteredWorkbenchView(Plugin plugin, ItemFilterManager filterManager) {
+    public FilteredWorkbenchView(Plugin plugin, ItemFilter filterManager) {
         super(plugin);
 
         _filter = filterManager;
@@ -79,7 +79,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
      * Get the views item filter manager.
      */
     @Nullable
-    public ItemFilterManager getFilterManager() {
+    public ItemFilter getFilterManager() {
         return _filter;
     }
 
@@ -134,7 +134,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
 
             ItemStack result = event.getRecipe().getResult();
 
-            ItemFilterManager filter = workbench.getFilterManager();
+            ItemFilter filter = workbench.getFilterManager();
             if (filter == null)
                 return;
 
@@ -155,7 +155,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
             if (workbench == null)
                 return;
 
-            ItemFilterManager filter = workbench.getFilterManager();
+            ItemFilter filter = workbench.getFilterManager();
             if (filter == null)
                 return;
 

@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
+import com.jcwhatever.nucleus.utils.items.ItemFilter;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.views.View;
@@ -61,7 +61,7 @@ public class FilteredAnvilView extends AnvilView {
     private static AnvilEventListener _eventListener;
     private static Map<Entity, ViewSession> _anvilMap = new WeakHashMap<>(20);
 
-    private final ItemFilterManager _filterManager;
+    private final ItemFilter _filterManager;
 
     /**
      * Constructor.
@@ -69,7 +69,7 @@ public class FilteredAnvilView extends AnvilView {
      * @param plugin         The owning plugin.
      * @param filterManager  The item filter manager.
      */
-    public FilteredAnvilView(Plugin plugin, @Nullable ItemFilterManager filterManager) {
+    public FilteredAnvilView(Plugin plugin, @Nullable ItemFilter filterManager) {
         super(plugin);
 
         _filterManager = filterManager;
@@ -81,7 +81,7 @@ public class FilteredAnvilView extends AnvilView {
     }
 
     @Nullable
-    public ItemFilterManager getFilterManager() {
+    public ItemFilter getFilterManager() {
         return _filterManager;
     }
 
@@ -138,7 +138,7 @@ public class FilteredAnvilView extends AnvilView {
 
             FilteredAnvilView view = (FilteredAnvilView)current;
 
-            ItemFilterManager filter = view.getFilterManager();
+            ItemFilter filter = view.getFilterManager();
             if (filter == null)
                 return;
 

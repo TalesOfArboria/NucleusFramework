@@ -46,7 +46,7 @@ import javax.annotation.Nullable;
 /**
  * A collection of ItemStacks that can be used for validation/filtering of ItemStacks.
  */
-public class ItemFilterManager implements IPluginOwned {
+public class ItemFilter implements IPluginOwned {
 
     @Localizable static final String _WHITELIST = "Whitelist";
     @Localizable static final String _BLACKLIST = "Blacklist";
@@ -90,7 +90,7 @@ public class ItemFilterManager implements IPluginOwned {
      * @param plugin    The owning plugin.
      * @param dataNode  Data node to save and load settings.
      */
-    public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode) {
+    public ItemFilter(Plugin plugin, @Nullable IDataNode dataNode) {
         this(plugin, dataNode, ItemStackMatcher.getDefault());
     }
 
@@ -101,7 +101,7 @@ public class ItemFilterManager implements IPluginOwned {
      * @param dataNode  The data node to save and load settings from.
      * @param matcher   The {@link ItemStackMatcher} to use to match items.
      */
-    public ItemFilterManager(Plugin plugin, @Nullable IDataNode dataNode, ItemStackMatcher matcher) {
+    public ItemFilter(Plugin plugin, @Nullable IDataNode dataNode, ItemStackMatcher matcher) {
         PreCon.notNull(plugin);
         PreCon.notNull(matcher);
 

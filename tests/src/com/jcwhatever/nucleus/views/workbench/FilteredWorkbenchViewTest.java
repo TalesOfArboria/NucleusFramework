@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
-import com.jcwhatever.nucleus.utils.items.ItemFilterManager;
+import com.jcwhatever.nucleus.utils.items.ItemFilter;
 import com.jcwhatever.nucleus.views.AbstractViewTest;
 import com.jcwhatever.nucleus.views.View;
 
@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 public class FilteredWorkbenchViewTest extends AbstractViewTest {
 
     static Plugin plugin = BukkitTester.mockPlugin("dummy");
-    static ItemFilterManager manager = new ItemFilterManager(plugin, new MemoryDataNode(plugin));
+    static ItemFilter manager = new ItemFilter(plugin, new MemoryDataNode(plugin));
 
     public FilteredWorkbenchViewTest() {
         super(new IViewGenerator() {
