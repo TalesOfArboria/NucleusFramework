@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.views;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;

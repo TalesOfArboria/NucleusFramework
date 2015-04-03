@@ -22,12 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.providers.npc;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.npc.INpc;
-import com.jcwhatever.nucleus.providers.npc.INpcProvider;
-import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
@@ -35,13 +33,11 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 
 /**
- * NPC provider utils.
- *
- * @see INpcProvider
+ * Static convenience methods for accessing the NPC provider.
  */
-public class NpcUtils {
+public class Npcs {
 
-    private NpcUtils() {
+    private Npcs() {
     }
 
     /**

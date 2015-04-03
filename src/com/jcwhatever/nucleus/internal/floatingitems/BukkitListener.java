@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.collections.CircularQueue;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemPickUpEvent;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItem;
 

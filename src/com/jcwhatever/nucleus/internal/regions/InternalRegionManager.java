@@ -41,9 +41,9 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
-import com.jcwhatever.nucleus.utils.NpcUtils;
+import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 
 import org.bukkit.Chunk;
@@ -168,7 +168,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
             return;
 
         // ignore NPC's
-        if (NpcUtils.isNpc(player))
+        if (Npcs.isNpc(player))
             return;
 
         if (!_listenerWorlds.contains(player.getWorld()))
@@ -189,7 +189,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     public void updatePlayerLocation(Player player, LeaveRegionReason reason) {
 
         // ignore NPC's
-        if (NpcUtils.isNpc(player))
+        if (Npcs.isNpc(player))
             return;
 
         synchronized (_sync) {
@@ -525,7 +525,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                 for (Player player : players) {
 
                     // do not process NPC's
-                    if (NpcUtils.isNpc(player))
+                    if (Npcs.isNpc(player))
                         continue;
 
                     // get locations that the player was recorded in between watcher cycles

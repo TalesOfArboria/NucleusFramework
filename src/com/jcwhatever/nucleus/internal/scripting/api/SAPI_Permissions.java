@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.internal.scripting.api;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.utils.Permissions;
+import com.jcwhatever.nucleus.providers.permissions.Permissions;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 

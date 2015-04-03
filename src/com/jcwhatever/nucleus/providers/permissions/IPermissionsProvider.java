@@ -46,7 +46,7 @@ import javax.annotation.Nullable;
  * @see IWorldPermissionsProvider
  * @see IGroupPermissionsProvider
  * @see IWorldGroupPermissionsProvider
- * @see com.jcwhatever.nucleus.utils.Permissions
+ * @see Permissions
  */
 public interface IPermissionsProvider extends IProvider {
 

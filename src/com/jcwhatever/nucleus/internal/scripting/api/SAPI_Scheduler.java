@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.internal.scripting.api;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
 import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 

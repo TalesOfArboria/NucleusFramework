@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.nms.INmsActionBarHandler;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 

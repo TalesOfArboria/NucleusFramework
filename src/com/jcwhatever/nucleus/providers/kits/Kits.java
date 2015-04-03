@@ -22,18 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.providers.kits;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.kits.IKit;
-import com.jcwhatever.nucleus.providers.kits.IKitProvider;
-import com.jcwhatever.nucleus.providers.kits.IModifiableKit;
 
 import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * Static convenience methods for the kit provider.
+ * Static convenience methods for accessing the kit provider.
  */
 public final class Kits {
 

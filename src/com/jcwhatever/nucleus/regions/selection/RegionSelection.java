@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.regions.selection;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;

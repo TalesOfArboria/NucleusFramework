@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.collections.players;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.MultiBiMap;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

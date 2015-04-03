@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.views;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;

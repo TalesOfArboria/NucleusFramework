@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.utils.DependencyRunner.DependencyStatus;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IDependantRunnable;
 import com.jcwhatever.nucleus.utils.DependencyRunner.IFinishHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 import com.jcwhatever.nucleus.utils.modules.ClassLoadMethod;
 import com.jcwhatever.nucleus.utils.modules.IModuleInfo;

@@ -23,15 +23,10 @@
  */
 
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.providers.permissions;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.permissions.IGroupPermissionsProvider;
-import com.jcwhatever.nucleus.providers.permissions.IPermission;
-import com.jcwhatever.nucleus.providers.permissions.IPermissionGroup;
-import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
-import com.jcwhatever.nucleus.providers.permissions.IWorldGroupPermissionsProvider;
-import com.jcwhatever.nucleus.providers.permissions.IWorldPermissionsProvider;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -44,7 +39,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * Permissions API utility
+ * Static convenience methods for accessing the permissions provider.
  */
 public final class Permissions {
 

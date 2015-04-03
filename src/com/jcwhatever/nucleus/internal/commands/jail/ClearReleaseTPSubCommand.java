@@ -31,7 +31,7 @@ import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
 import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.providers.jail.IJail;
-import com.jcwhatever.nucleus.utils.Jails;
+import com.jcwhatever.nucleus.providers.jail.Jails;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;

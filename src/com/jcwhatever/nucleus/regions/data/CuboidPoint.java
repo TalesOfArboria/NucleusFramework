@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.regions.data;
 
-import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;

@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.providers.jail.IJailSession;
-import com.jcwhatever.nucleus.utils.Jails;
+import com.jcwhatever.nucleus.providers.jail.Jails;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;

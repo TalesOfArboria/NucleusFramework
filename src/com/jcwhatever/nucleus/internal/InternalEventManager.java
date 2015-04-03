@@ -35,7 +35,7 @@ import com.jcwhatever.nucleus.internal.listeners.PlayerListener;
 import com.jcwhatever.nucleus.internal.listeners.VehicleListener;
 import com.jcwhatever.nucleus.internal.listeners.WeatherListener;
 import com.jcwhatever.nucleus.internal.listeners.WorldListener;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;

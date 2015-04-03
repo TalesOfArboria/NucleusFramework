@@ -22,12 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.providers.friends;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.friends.IFriend;
-import com.jcwhatever.nucleus.providers.friends.IFriendLevel;
-import com.jcwhatever.nucleus.providers.friends.IFriendsProvider;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
 
@@ -36,10 +34,10 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Static convenience methods for accessing the Friends providers
+ * Static convenience methods for accessing the Friend providers
  * default context.
  */
-public class Friends {
+public final class Friends {
 
     private Friends() {}
 

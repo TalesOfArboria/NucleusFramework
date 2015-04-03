@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.mixins.IPrioritizable;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
-import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -23,17 +23,14 @@
  */
 
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.managed.scheduler;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
-import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
 /**
- * Utility to reduce the amount of code needed to use
- * the NucleusFramework task scheduler.
+ * Utility to reduce the amount of code needed to use the NucleusFramework task scheduler.
  */
 public final class Scheduler {
 
@@ -125,7 +122,9 @@ public final class Scheduler {
      *
      * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    public static IScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
+    public static IScheduledTask runTaskRepeatAsync(Plugin plugin,
+                                                    int startTicks, int repeatTicks,
+                                                    Runnable runnable) {
         return Nucleus.getScheduler().runTaskRepeatAsync(plugin, startTicks, repeatTicks, runnable);
     }
 

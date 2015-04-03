@@ -6,6 +6,7 @@ import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
 import com.jcwhatever.bukkit.v1_8_R2.MockChunk;
 import com.jcwhatever.bukkit.v1_8_R2.MockWorld;
 import com.jcwhatever.nucleus.NucleusTest;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;

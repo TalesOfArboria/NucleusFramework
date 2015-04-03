@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.nms.INmsActionBarHandler;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;

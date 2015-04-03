@@ -25,7 +25,6 @@
 package com.jcwhatever.nucleus.providers.regionselect;
 
 import com.jcwhatever.nucleus.providers.IProvider;
-import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 
 import org.bukkit.entity.Player;
 

@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.utils;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 
 import org.bukkit.Location;
@@ -87,7 +88,7 @@ public final class BlockUtils {
                         location, startBlock.getType(), startBlock.getData().getData());
 
                 // schedule the removal of the block
-                Scheduler.runTaskLater(Nucleus.getPlugin(), removeDelayTicks, new Runnable () {
+                Scheduler.runTaskLater(Nucleus.getPlugin(), removeDelayTicks, new Runnable() {
 
                     @Override
                     public void run() {
@@ -106,8 +107,7 @@ public final class BlockUtils {
 
                                 landedBlock.setType(Material.AIR);
                             }
-                        }
-                        else {
+                        } else {
                             // remove the falling block if it has not
                             // become a block yet.
                             fallBlock.remove();

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.selection;
+package com.jcwhatever.nucleus.providers.regionselect;
 
 import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;

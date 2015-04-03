@@ -40,7 +40,7 @@ import com.jcwhatever.nucleus.sounds.types.MusicSound;
 import com.jcwhatever.nucleus.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.sounds.types.VoiceSound;
 import com.jcwhatever.nucleus.storage.DataPath;
-import com.jcwhatever.nucleus.storage.DataStorage;
+import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;

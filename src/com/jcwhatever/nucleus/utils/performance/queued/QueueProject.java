@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils.performance.queued;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;

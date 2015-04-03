@@ -22,12 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.providers.bankitems;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.bankitems.IBankItemsAccount;
-import com.jcwhatever.nucleus.providers.bankitems.IBankItemsBank;
-import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.entity.Player;
 
@@ -37,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Static convenience methods for accessing the bank items provider.
  */
-public class BankItems {
+public final class BankItems {
 
     private BankItems() {}
 

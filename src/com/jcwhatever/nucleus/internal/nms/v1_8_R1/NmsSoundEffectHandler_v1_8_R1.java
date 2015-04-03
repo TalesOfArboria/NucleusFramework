@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
 
 import org.bukkit.Bukkit;

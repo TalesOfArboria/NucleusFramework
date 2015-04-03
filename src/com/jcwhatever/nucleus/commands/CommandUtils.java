@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.messaging.IMessenger;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.storage.settings.ISettingsManager;
 import com.jcwhatever.nucleus.storage.settings.PropertyDefinition;

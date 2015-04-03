@@ -29,7 +29,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Represents a task scheduler.
  *
- * @see com.jcwhatever.nucleus.utils.Scheduler
+ * @see Scheduler
  * @see com.jcwhatever.nucleus.Nucleus#getScheduler
  */
 public interface ITaskScheduler {

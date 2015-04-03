@@ -1,5 +1,7 @@
 package com.jcwhatever.nucleus.regions.selection;
 
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
+
 import org.bukkit.Location;
 
 /**

@@ -52,7 +52,7 @@ import com.jcwhatever.nucleus.scripting.IScriptManager;
 import com.jcwhatever.nucleus.scripting.SimpleScriptApi;
 import com.jcwhatever.nucleus.scripting.SimpleScriptApi.IApiObjectCreator;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 

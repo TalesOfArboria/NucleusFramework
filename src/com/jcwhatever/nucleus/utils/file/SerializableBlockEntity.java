@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.utils.file;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

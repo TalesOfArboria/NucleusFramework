@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.IModifiableKit;
-import com.jcwhatever.nucleus.utils.Kits;
+import com.jcwhatever.nucleus.providers.kits.Kits;
 import com.jcwhatever.nucleus.utils.language.Localizable;
 
 import org.bukkit.command.CommandSender;

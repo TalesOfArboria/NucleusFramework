@@ -22,12 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils;
+package com.jcwhatever.nucleus.providers.jail;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.jail.IJail;
-import com.jcwhatever.nucleus.providers.jail.IJailProvider;
-import com.jcwhatever.nucleus.providers.jail.IJailSession;
+import com.jcwhatever.nucleus.utils.TimeScale;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -38,7 +36,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Jail provider static convenience methods.
+ * Static convenience methods for accessing the Jail provider.
  */
 public final class Jails {
 

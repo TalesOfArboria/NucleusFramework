@@ -23,15 +23,17 @@
  */
 
 
-package com.jcwhatever.nucleus.storage;
+package com.jcwhatever.nucleus.providers.storage;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
+import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.MemoryDataNode;
 
 import org.bukkit.plugin.Plugin;
 
 /**
- * Static convenience class for accessing the storage provider.
+ * Static convenience methods for accessing the storage provider.
  */
 public final class DataStorage {
 

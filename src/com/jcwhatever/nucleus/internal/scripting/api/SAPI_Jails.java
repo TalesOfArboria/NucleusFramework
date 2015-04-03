@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.internal.scripting.api;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.providers.jail.IJailSession;
-import com.jcwhatever.nucleus.utils.Jails;
+import com.jcwhatever.nucleus.providers.jail.Jails;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
