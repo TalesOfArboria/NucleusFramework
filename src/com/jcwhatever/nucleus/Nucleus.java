@@ -28,25 +28,23 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
-import com.jcwhatever.nucleus.managed.language.ILanguageManager;
-import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
-import com.jcwhatever.nucleus.providers.IProviderManager;
-import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
-import com.jcwhatever.nucleus.managed.scripting.IScriptApiRepo;
-import com.jcwhatever.nucleus.managed.scripting.IScriptManager;
-import com.jcwhatever.nucleus.managed.sounds.ISoundManager;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
 import com.jcwhatever.nucleus.managed.floatingitems.IFloatingItemManager;
-import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
-import com.jcwhatever.nucleus.utils.items.equipper.IEntityEquipper;
+import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
-import com.jcwhatever.nucleus.utils.nms.NmsManager;
+import com.jcwhatever.nucleus.managed.language.ILanguageManager;
+import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardTracker;
+import com.jcwhatever.nucleus.managed.scripting.IScriptApiRepo;
+import com.jcwhatever.nucleus.managed.scripting.IScriptManager;
 import com.jcwhatever.nucleus.managed.signs.ISignManager;
+import com.jcwhatever.nucleus.managed.sounds.ISoundManager;
+import com.jcwhatever.nucleus.providers.IProviderManager;
+import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.nms.NmsManager;
 
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -200,7 +198,7 @@ public final class Nucleus {
     /**
      * Get the default entity equipper manager.
      */
-    public static EntityEquipperManager getEquipperManager() {
+    public static IEquipperManager getEquipperManager() {
         PreCon.isValid(_plugin._equipperManager != null, ERROR_NOT_READY);
 
         return _plugin._equipperManager;
@@ -243,18 +241,6 @@ public final class Nucleus {
         PreCon.isValid(_plugin._signManager != null, ERROR_NOT_READY);
 
         return _plugin._signManager;
-    }
-
-    /**
-     * Get an entity equipper from the default entity equipper manager
-     * for the specified entity type.
-     *
-     * @param entityType  The entity type
-     */
-    public static IEntityEquipper getEquipper(EntityType entityType) {
-        PreCon.isValid(_plugin._equipperManager != null, ERROR_NOT_READY);
-
-        return _plugin._equipperManager.getEquipper(entityType);
     }
 
     /**

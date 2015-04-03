@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
 import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
 import com.jcwhatever.nucleus.internal.items.InternalItemSerializationManager;
+import com.jcwhatever.nucleus.internal.items.equipper.InternalEquipperManager;
 import com.jcwhatever.nucleus.internal.language.InternalLanguageManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
@@ -47,7 +48,6 @@ import com.jcwhatever.nucleus.internal.signs.InternalSignManager;
 import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
-import com.jcwhatever.nucleus.utils.items.equipper.EntityEquipperManager;
 import com.jcwhatever.nucleus.utils.text.TextColor;
 
 import org.bukkit.Bukkit;
@@ -77,8 +77,8 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalItemSerializationManager _itemSerialization;
     InternalScoreboardTracker _scoreboardTracker;
     InternalLanguageManager _languageManager;
+    InternalEquipperManager _equipperManager;
 
-    EntityEquipperManager _equipperManager;
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
     NucleusCommandDispatcher _commandHandler;
@@ -148,6 +148,7 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _languageManager = new InternalLanguageManager();
         _itemSerialization = new InternalItemSerializationManager();
+        _equipperManager = new InternalEquipperManager();
         _scoreboardTracker = new InternalScoreboardTracker();
         _scheduler = new InternalTaskScheduler();
 
@@ -158,7 +159,6 @@ public final class BukkitPlugin extends NucleusPlugin {
         _eventManager = new InternalEventManager(this);
         _scriptApiRepo = new InternalScriptApiRepo();
         _regionManager = new InternalRegionManager(this);
-        _equipperManager = new EntityEquipperManager();
         _soundManager = new InternalSoundManager();
         _signManager = new InternalSignManager();
         _entityTracker = new InternalEntityTracker();

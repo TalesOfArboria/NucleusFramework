@@ -22,37 +22,32 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.equipper;
+package com.jcwhatever.nucleus.managed.items.equipper;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
+import com.jcwhatever.nucleus.Nucleus;
 
-import java.util.List;
+import org.bukkit.entity.EntityType;
+import org.bukkit.plugin.Plugin;
 
 /**
- * Entity equipper. Used to give an {@link org.bukkit.inventory.ItemStack}
- * as equipment to an entity.
+ * Interface for the global entity equipper manager.
  *
- * @see EntityEquipperManager
+ * @see Nucleus#getEquipperManager
  */
-public interface IEntityEquipper {
+public interface IEquipperManager {
 
     /**
-     * Equip an entity with the specified {@link org.bukkit.inventory.ItemStack}.
+     * Create an entity equipper manager that is separate from the global
+     * context.
      *
-     * @param entity  The entity to equip.
-     * @param item    The item to equip the entity with.
-     *
-     * @return  True if the entity was equipped, otherwise false.
+     * @param plugin  The plugin the context is for.
      */
-    boolean equip(Entity entity, ItemStack item);
+    IEquipperContext getContext(Plugin plugin);
 
     /**
-     * Clear equipment from an entity.
+     * Get an equipper for the specified entity type.
      *
-     * @param entity  The entity whose equipment is to be cleared.
-     *
-     * @return  The cleared equipment.
+     * @param type  The entity type.
      */
-    List<ItemStack> clear(Entity entity);
+    IEquipper getEquipper(EntityType type);
 }

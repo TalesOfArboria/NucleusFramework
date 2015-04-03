@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.items.equipper;
+package com.jcwhatever.nucleus.internal.items.equipper.handler;
 
+import com.jcwhatever.nucleus.managed.items.equipper.IEquipper;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.materials.MaterialProperty;
 import com.jcwhatever.nucleus.utils.materials.Materials;
@@ -42,11 +43,8 @@ import java.util.Set;
 /**
  * Default equipper to use when an equipper is not registered
  * for an entity type.
- *
- * @see EntityEquipperManager
- * @see IEntityEquipper
  */
-public class DefaultEquipper implements IEntityEquipper {
+public class InternalDefaultEquipper implements IEquipper {
 
     @Override
     public boolean equip(Entity entity, ItemStack item) {
