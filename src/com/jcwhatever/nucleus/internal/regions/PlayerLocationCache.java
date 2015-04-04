@@ -28,7 +28,6 @@ import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Caches locations a player has been until they can be processed by
@@ -39,7 +38,7 @@ import java.util.List;
  */
 class PlayerLocationCache {
 
-    private final List<CachedLocation> _locationPool = new ArrayList<>(100);
+    private final ArrayList<CachedLocation> _locationPool = new ArrayList<>(100);
     private final LinkedList<CachedLocation> _cached = new LinkedList<>();
     private final PlayerLocations _removed = new PlayerLocations();
 
@@ -51,6 +50,8 @@ class PlayerLocationCache {
     // the min index the _poolIndex can be reset to, values below are in use
     // by PlayerLocations (_removed) instance.
     private volatile int _minIndex = 0;
+
+    private volatile int _capacity = 100;
 
     /**
      * Determine if the cache is empty.
@@ -140,9 +141,15 @@ class PlayerLocationCache {
 
             if (_poolIndex >= _locationPool.size()) {
 
+                if (_poolIndex >= _capacity) {
+                    _capacity += 50;
+                    _locationPool.ensureCapacity(_capacity);
+                }
+
                 // add a new location to the pool (expand pool)
                 CachedLocation location = new CachedLocation(reason);
                 _locationPool.add(location);
+                _poolIndex++;
                 return location;
             }
 
