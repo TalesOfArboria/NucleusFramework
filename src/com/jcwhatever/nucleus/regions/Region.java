@@ -32,7 +32,6 @@ import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
-import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -73,7 +72,7 @@ import javax.annotation.Nullable;
  * are only invoked by the global region manager if the implementing type invokes
  * {@link #setEventListener(boolean)} with a 'true' argument.</p>
  */
-public abstract class Region extends RegionSelection implements IRegion {
+public abstract class Region extends SimpleRegionSelection implements IRegion {
 
     private static final Map<Region, Void> _instances = new WeakHashMap<>(100);
     private static BukkitListener _bukkitListener;
@@ -275,7 +274,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     @Override
     public final boolean contains(Material material) {
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
 
             if (getWorld() == null)
                 return false;
@@ -299,8 +298,6 @@ public abstract class Region extends RegionSelection implements IRegion {
                 }
             }
 
-            _sync.notifyAll();
-
             return false;
         }
     }
@@ -308,7 +305,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     @Override
     public final LinkedList<Location> find(Material material) {
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
             LinkedList<Location> results = new LinkedList<>();
 
             if (getWorld() == null)
@@ -354,7 +351,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     @Override
     public final void removeEntities(Class<?>... entityTypes) {
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
             Collection<IChunkCoords> chunks = getChunkCoords();
             for (IChunkCoords chunkInfo : chunks) {
 
@@ -414,7 +411,7 @@ public abstract class Region extends RegionSelection implements IRegion {
 
     @Override
     public boolean equals(Object obj) {
-        synchronized (_sync) {
+        synchronized (getSync()) {
             return this == obj;
         }
     }

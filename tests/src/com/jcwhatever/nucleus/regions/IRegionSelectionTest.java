@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.regions.selection;
+package com.jcwhatever.nucleus.regions;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +11,7 @@ import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #isDefined} returns the correct value.
+     * Make sure {@link IRegionSelection#isDefined} returns the correct value.
      */
     @Test
     public void testIsDefined() throws Exception {
@@ -50,7 +51,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getWorld} returns the correct value.
+     * Make sure {@link IRegionSelection#getWorld} returns the correct value.
      */
     @Test
     public void testGetWorld() throws Exception {
@@ -66,7 +67,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getWorldName} returns the correct value.
+     * Make sure {@link IRegionSelection#getWorldName} returns the correct value.
      */
     @Test
     public void testGetWorldName() throws Exception {
@@ -90,7 +91,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #isWorldLoaded} returns the correct value.
+     * Make sure {@link IRegionSelection#isWorldLoaded} returns the correct value.
      */
     @Test
     public void testIsWorldLoaded() throws Exception {
@@ -114,7 +115,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getP1} and {@link #getP2} return the correct value.
+     * Make sure {@link IRegionSelection#getP1} and {@link IRegionSelection#getP2} return the correct value.
      */
     @Test
     public void testGetP1_P2() throws Exception {
@@ -132,7 +133,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getLowerPoint} returns the correct value.
+     * Make sure {@link IRegionSelection#getLowerPoint} returns the correct value.
      */
     @Test
     public void testGetLowerPoint() throws Exception {
@@ -151,7 +152,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getUpperPoint} returns the correct value.
+     * Make sure {@link IRegionSelection#getUpperPoint} returns the correct value.
      */
     @Test
     public void testGetUpperPoint() throws Exception {
@@ -170,7 +171,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getXStart} returns the correct value.
+     * Make sure {@link IRegionSelection#getXStart} returns the correct value.
      */
     @Test
     public void testGetXStart() throws Exception {
@@ -185,7 +186,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getYStart} returns the correct value.
+     * Make sure {@link IRegionSelection#getYStart} returns the correct value.
      */
     @Test
     public void testGetYStart() throws Exception {
@@ -200,7 +201,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getZStart} returns the correct value.
+     * Make sure {@link IRegionSelection#getZStart} returns the correct value.
      */
     @Test
     public void testGetZStart() throws Exception {
@@ -215,7 +216,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getXEnd} returns the correct value.
+     * Make sure {@link IRegionSelection#getXEnd} returns the correct value.
      */
     @Test
     public void testGetXEnd() throws Exception {
@@ -230,7 +231,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getYEnd} returns the correct value.
+     * Make sure {@link IRegionSelection#getYEnd} returns the correct value.
      */
     @Test
     public void testGetYEnd() throws Exception {
@@ -245,7 +246,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getZEnd} returns the correct value.
+     * Make sure {@link IRegionSelection#getZEnd} returns the correct value.
      */
     @Test
     public void testGetZEnd() throws Exception {
@@ -260,7 +261,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getXWidth} returns the correct value.
+     * Make sure {@link IRegionSelection#getXWidth} returns the correct value.
      */
     @Test
     public void testGetXWidth() throws Exception {
@@ -275,7 +276,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getZWidth} returns the correct value.
+     * Make sure {@link IRegionSelection#getZWidth} returns the correct value.
      */
     @Test
     public void testGetZWidth() throws Exception {
@@ -290,7 +291,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getYHeight} returns the correct value.
+     * Make sure {@link IRegionSelection#getYHeight} returns the correct value.
      */
     @Test
     public void testGetYHeight() throws Exception {
@@ -305,7 +306,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getXBlockWidth} returns the correct value.
+     * Make sure {@link IRegionSelection#getXBlockWidth} returns the correct value.
      */
     @Test
     public void testGetXBlockWidth() throws Exception {
@@ -320,7 +321,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getZBlockWidth} returns the correct value.
+     * Make sure {@link IRegionSelection#getZBlockWidth} returns the correct value.
      */
     @Test
     public void testGetZBlockWidth() throws Exception {
@@ -335,7 +336,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getYBlockHeight} returns the correct value.
+     * Make sure {@link IRegionSelection#getYBlockHeight} returns the correct value.
      */
     @Test
     public void testGetYBlockHeight() throws Exception {
@@ -350,7 +351,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getVolume} returns the correct value.
+     * Make sure {@link IRegionSelection#getVolume} returns the correct value.
      */
     @Test
     public void testGetVolume() throws Exception {
@@ -365,7 +366,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getCenter} returns the correct value.
+     * Make sure {@link IRegionSelection#getCenter} returns the correct value.
      */
     @Test
     public void testGetCenter() throws Exception {
@@ -380,7 +381,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getChunkX} returns the correct value.
+     * Make sure {@link IRegionSelection#getChunkX} returns the correct value.
      */
     @Test
     public void testGetChunkX() throws Exception {
@@ -395,7 +396,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getChunkZ} returns the correct value.
+     * Make sure {@link IRegionSelection#getChunkZ} returns the correct value.
      */
     @Test
     public void testGetChunkZ() throws Exception {
@@ -422,7 +423,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getChunkXWidth} returns the correct value.
+     * Make sure {@link IRegionSelection#getChunkXWidth} returns the correct value.
      */
     @Test
     public void testGetChunkXWidth() throws Exception {
@@ -443,7 +444,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getChunkZWidth} returns the correct value.
+     * Make sure {@link IRegionSelection#getChunkZWidth} returns the correct value.
      */
     @Test
     public void testGetChunkZWidth() throws Exception {
@@ -464,10 +465,10 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getChunks} returns the correct values.
+     * Make sure {@link IRegionSelection#getChunkCoords} returns the correct values.
      */
     @Test
-    public void testGetChunks() throws Exception {
+    public void testGetChunkCoords() throws Exception {
         IRegionSelection selection = getUndefinedSelection();
         assertEquals(0, selection.getChunkCoords().size());
 
@@ -485,7 +486,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getShape} returns the correct value.
+     * Make sure {@link IRegionSelection#getShape} returns the correct value.
      */
     @Test
     public void testGetShape() throws Exception {
@@ -543,7 +544,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #contains(Location)} returns the correct value.
+     * Make sure {@link IRegionSelection#contains(Location)} returns the correct value.
      */
     @Test
     public void testContains() throws Exception {
@@ -568,7 +569,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #contains(int, int, int)} returns the correct value.
+     * Make sure {@link IRegionSelection#contains(int, int, int)} returns the correct value.
      */
     @Test
     public void testContains1() throws Exception {
@@ -590,7 +591,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #contains(Location, boolean, boolean, boolean)} returns
+     * Make sure {@link IRegionSelection#contains(Location, boolean, boolean, boolean)} returns
      * the correct value.
      */
     @Test
@@ -640,7 +641,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #intersects(int, int)} returns the correct value.
+     * Make sure {@link IRegionSelection#intersects(int, int)} returns the correct value.
      */
     @Test
     public void testIntersects() throws Exception {
@@ -662,7 +663,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #intersects(Chunk)} returns the correct value.
+     * Make sure {@link IRegionSelection#intersects(Chunk)} returns the correct value.
      */
     @Test
     public void testIntersects1() throws Exception {
@@ -688,7 +689,7 @@ public abstract class IRegionSelectionTest {
     }
 
     /**
-     * Make sure {@link #getPoint} returns the correct value.
+     * Make sure {@link IRegionSelection#getPoint} returns the correct value.
      */
     @Test
     public void testGetPoint() throws Exception {

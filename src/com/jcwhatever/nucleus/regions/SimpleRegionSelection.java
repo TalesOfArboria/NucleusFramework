@@ -22,9 +22,8 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.selection;
+package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
@@ -38,7 +37,6 @@ import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,21 +48,9 @@ import javax.annotation.Nullable;
  * Contains pre-calculated variables regarding a cuboid region
  * of space as defined by two region locations.
  */
-public class RegionSelection implements IRegionSelection {
+public class SimpleRegionSelection implements IRegionSelection {
 
-    /**
-     * Get the specified players current region selection.
-     *
-     * @param player  The player to check.
-     *
-     * @return  Null if the player does not have a selected region.
-     */
-    @Nullable
-    public static IRegionSelection get(Player player) {
-        return Nucleus.getProviders().getRegionSelection().getSelection(player);
-    }
-
-    protected final Object _sync = new Object();
+    private final Object _sync = new Object();
 
     private SyncLocation _p1;
     private SyncLocation _p2;
@@ -99,7 +85,7 @@ public class RegionSelection implements IRegionSelection {
     /**
      * Empty Constructor.
      */
-    protected RegionSelection() {}
+    protected SimpleRegionSelection() {}
 
     /**
      * Constructor.
@@ -107,7 +93,7 @@ public class RegionSelection implements IRegionSelection {
      * @param p1  The first point location.
      * @param p2  The second point location.
      */
-    public RegionSelection(Location p1, Location p2) {
+    public SimpleRegionSelection(Location p1, Location p2) {
         PreCon.notNull(p1);
         PreCon.notNull(p2);
 
@@ -464,6 +450,13 @@ public class RegionSelection implements IRegionSelection {
         PreCon.notNull(location);
 
         return CuboidPoint.getCuboidPoint(location, this);
+    }
+
+    /**
+     * Get the synchronization object.
+     */
+    protected final Object getSync() {
+        return _sync;
     }
 
     /**

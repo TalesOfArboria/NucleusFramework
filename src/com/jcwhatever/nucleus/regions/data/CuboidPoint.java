@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.regions.data;
 
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
+import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;
@@ -89,7 +90,7 @@ public enum CuboidPoint {
 
     /**
      * Get the location represented by the {@link CuboidPoint} from the
-     * specified {@link com.jcwhatever.nucleus.regions.selection.RegionSelection}.
+     * specified {@link SimpleRegionSelection}.
      *
      * @param selection  The region selection to get a location from.
      */
@@ -101,7 +102,7 @@ public enum CuboidPoint {
 
     /**
      * Get the X coordinate represented by the {@link CuboidPoint} from the
-     * specified {@link com.jcwhatever.nucleus.regions.selection.RegionSelection}.
+     * specified {@link SimpleRegionSelection}.
      *
      * @param selection  The region selection to get an X coordinate from.
      */
@@ -111,7 +112,7 @@ public enum CuboidPoint {
 
     /**
      * Get the Y coordinate represented by the {@link CuboidPoint} from the
-     * specified {@link com.jcwhatever.nucleus.regions.selection.RegionSelection}.
+     * specified {@link SimpleRegionSelection}.
      *
      * @param selection  The region selection to get a Y coordinate from.
      */
@@ -121,7 +122,7 @@ public enum CuboidPoint {
 
     /**
      * Get the Z coordinate represented by the {@link CuboidPoint} from the
-     * specified {@link com.jcwhatever.nucleus.regions.selection.RegionSelection}.
+     * specified {@link SimpleRegionSelection}.
      *
      * @param selection  The region selection to get a Z coordinate from.
      */

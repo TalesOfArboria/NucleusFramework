@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
-import com.jcwhatever.nucleus.regions.selection.RegionSelection;
+import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.managed.language.Localizable;
@@ -97,7 +97,7 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
             if (p2 == null)
                 return null;
 
-            return new RegionSelection(p1.clone(), p2.clone());
+            return new SimpleRegionSelection(p1.clone(), p2.clone());
         }
     }
 

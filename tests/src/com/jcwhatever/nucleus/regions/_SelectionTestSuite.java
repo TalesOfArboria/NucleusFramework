@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.regions.selection;
+package com.jcwhatever.nucleus.regions;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

@@ -30,16 +30,17 @@ import com.jcwhatever.nucleus.commands.arguments.ILocationHandler;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
-import com.jcwhatever.nucleus.regions.selection.RegionSelection;
+import com.jcwhatever.nucleus.providers.regionselect.RegionSelection;
+import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
 import com.jcwhatever.nucleus.storage.settings.ISettingsManager;
 import com.jcwhatever.nucleus.storage.settings.PropertyDefinition;
 import com.jcwhatever.nucleus.storage.settings.PropertyValueType;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -191,7 +192,7 @@ public class CommandUtils implements IPluginOwned {
         }
 
         boolean isSuccess = Nucleus.getProviders()
-                .getRegionSelection().setSelection(p, new RegionSelection(p1, p2));
+                .getRegionSelection().setSelection(p, new SimpleRegionSelection(p1, p2));
 
         if (!isSuccess) {
             tellError(p, NucLang.get(_SET_SELECTION_FAILED));
@@ -208,7 +209,7 @@ public class CommandUtils implements IPluginOwned {
      *
      * @param p  The player
      *
-     * @return  {@link RegionSelection} object that defines the selection.
+     * @return  {@link SimpleRegionSelection} object that defines the selection.
      */
     @Nullable
     public IRegionSelection getRegionSelection(Player p) {

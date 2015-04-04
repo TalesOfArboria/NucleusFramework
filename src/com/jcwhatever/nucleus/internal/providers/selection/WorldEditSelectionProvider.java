@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
 import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
-import com.jcwhatever.nucleus.regions.selection.RegionSelection;
+import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -97,7 +97,7 @@ public final class WorldEditSelectionProvider extends Provider implements IRegio
                 return null;
             }
 
-            return new RegionSelection(sel.getMinimumPoint(), sel.getMaximumPoint());
+            return new SimpleRegionSelection(sel.getMinimumPoint(), sel.getMaximumPoint());
         }
     }
 

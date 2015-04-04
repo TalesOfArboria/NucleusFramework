@@ -1,7 +1,5 @@
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.regions.selection._SelectionTestSuite;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
