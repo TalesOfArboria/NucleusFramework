@@ -33,7 +33,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Global region manager interface
@@ -55,8 +54,7 @@ public interface IGlobalRegionManager {
     <T extends IRegion> boolean hasRegion(Location location, Class<T> regionClass);
 
     /**
-     * Determine if there is at least one region at the specified location
-     * of the specified type.
+     * Determine if there is at least one region at the specified location of the specified type.
      *
      * @param world        The world to check in.
      * @param x            The X coordinates to check.
@@ -67,21 +65,26 @@ public interface IGlobalRegionManager {
     <T extends IRegion> boolean hasRegion(World world, int x, int y, int z, Class<T> regionClass);
 
     /**
-     * Get a region created by the specified {@link org.bukkit.plugin.Plugin} with
+     * Get a list of regions created by the specified {@link org.bukkit.plugin.Plugin} with
      * the specified name.
+     *
+     * <p>Since a plugin can create regions in multiple contexts with the same name, more than 1
+     * region may be returned.</p>
      *
      * @param plugin  The regions owning plugin.
      * @param name    The name of the region.
      *
-     * @return  The {@link IRegion} or null if not found.
+     * @return  An unsorted list of regions.
      */
-    @Nullable
-    IRegion getRegion(Plugin plugin, String name);
+    List<IRegion> getRegions(Plugin plugin, String name);
 
     /**
      * Get a list of regions that contain the specified location.
      *
      * @param location  The location to check.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     List<IRegion> getRegions(Location location);
 
@@ -90,6 +93,9 @@ public interface IGlobalRegionManager {
      *
      * @param location     The location to check.
      * @param regionClass  The class of the regions to get.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     <T extends IRegion> List<T> getRegions(Location location, Class<T> regionClass);
 
@@ -100,6 +106,9 @@ public interface IGlobalRegionManager {
      * @param x      The x coordinates.
      * @param y      The y coordinates.
      * @param z      The z coordinates.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     List<IRegion> getRegions(World world, int x, int y, int z);
 
@@ -111,84 +120,97 @@ public interface IGlobalRegionManager {
      * @param y            The y coordinates.
      * @param z            The z coordinates.
      * @param regionClass  The class of the region type to get.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     <T extends IRegion> List<T> getRegions(World world, int x, int y, int z, Class<T> regionClass);
 
     /**
-     * Get a list of regions that the specified location
-     * is inside of and are player watchers/listeners.
+     * Get a list of regions that are region event listeners and contain the specified location.
      *
      * @param location  The location to check.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     List<IRegion> getListenerRegions(Location location);
 
     /**
-     * Get a list of regions that the specified location
-     * is inside of and are player watchers/listeners.
+     * Get a list of regions that are region event listeners and contain the specified location.
      *
      * @param location     The location to check.
      * @param regionClass  The class of the region type to get.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     <T extends IRegion> List<T> getListenerRegions(Location location, Class<T> regionClass);
 
     /**
-     * Get a list of regions that the specified location
-     * is inside of and are player watchers/listeners.
+     * Get a list of regions that are region event listeners and contain the specified location.
      *
      * @param world  The world to check.
      * @param x      The x coordinates.
      * @param y      The y coordinates.
      * @param z      The z coordinates.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     List<IRegion> getListenerRegions(World world, int x, int y, int z);
 
     /**
-     * Get a list of regions that the specified location
-     * is inside of and are player watchers/listeners.
+     * Get a list of regions that are region event listeners and contain the specified location.
      *
      * @param world        The world to check.
      * @param x            The x coordinates.
      * @param y            The y coordinates.
      * @param z            The z coordinates.
      * @param regionClass  The class of the region type to get.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     <T extends IRegion> List<T> getListenerRegions(World world, int x, int y, int z, Class<T> regionClass);
 
     /**
-     * Get a list of regions that the specified location
-     * is inside of and are player watchers/listeners.
+     * Get a list of regions that are region event listeners and contain the specified location.
      *
      * @param location      The location to check.
      * @param priorityType  The priority sorting type of the returned list.
+     *
+     * @return  A list sorted by the specified {@link PriorityType}.
      */
     List<IRegion> getListenerRegions(Location location, PriorityType priorityType);
 
     /**
-     * Get a list of regions that the specified location
-     * is inside of and are player watchers/listeners.
+     * Get a list of regions that are region event listeners and contain the specified location.
      *
      * @param location      The location to check.
      * @param priorityType  The priority sorting type of the returned list.
      * @param regionClass   The class of the regions to get.
+     *
+     * @return  A list sorted by the specified {@link PriorityType}.
      */
     <T extends IRegion> List<T> getListenerRegions(Location location, PriorityType priorityType,
                                                    Class<T> regionClass);
 
     /**
-     * Get a list of regions that the specified location
-     * is inside of and are player watchers/listeners.
+     * Get a list of regions that are region event listeners and contain the specified location.
      *
      * @param world         The world to check.
      * @param x             The X coordinates.
      * @param y             The Y coordinates.
      * @param z             The Z coordinates.
      * @param priorityType  The priority sorting type of the returned list.
+     *
+     * @return  A list sorted by the specified {@link PriorityType}.
      */
     List<IRegion> getListenerRegions(World world, int x, int y, int z, PriorityType priorityType);
 
     /**
-     * Get a list of regions that the specified location
-     * is inside of and are player watchers/listeners.
+     * Get a list of regions that are region event listeners and contain the specified location.
      *
      * @param world         The world to check.
      * @param x             The X coordinates.
@@ -196,6 +218,8 @@ public interface IGlobalRegionManager {
      * @param z             The Z coordinates.
      * @param priorityType  The priority sorting type of the returned list.
      * @param regionClass   The class of the region type to get.
+     *
+     * @return  A list sorted by the specified {@link PriorityType}.
      */
     <T extends IRegion> List<T> getListenerRegions(World world, int x, int y, int z,
                                                    PriorityType priorityType, Class<T> regionClass);
@@ -204,6 +228,9 @@ public interface IGlobalRegionManager {
      * Get all regions that intersect with the specified chunk.
      *
      * @param chunk  The chunk to check.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     List<IRegion> getRegionsInChunk(Chunk chunk);
 
@@ -212,6 +239,9 @@ public interface IGlobalRegionManager {
      *
      * @param chunk        The chunk to check.
      * @param regionClass  The class of the region type to get.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     <T extends IRegion> List<T> getRegionsInChunk(Chunk chunk, Class<T> regionClass);
 
@@ -221,6 +251,9 @@ public interface IGlobalRegionManager {
      * @param world  The world the chunk is in.
      * @param x      The chunks X coordinates.
      * @param z      The chunks Z coordinates.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     List<IRegion> getRegionsInChunk(World world, int x, int z);
 
@@ -231,6 +264,9 @@ public interface IGlobalRegionManager {
      * @param x            The chunks X coordinates.
      * @param z            The chunks Z coordinates.
      * @param regionClass  The class of the region type to get.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     <T extends IRegion> List<T> getRegionsInChunk(World world, int x, int z, Class<T> regionClass);
 
@@ -238,6 +274,9 @@ public interface IGlobalRegionManager {
      * Get all regions that a player is currently in.
      *
      * @param player  The player to check.
+     *
+     * @return  A list sorted by the priority returned from {@link IRegion#getPriority}.
+     * (highest to lowest order).
      */
     List<IRegion> getPlayerRegions(Player player);
 
@@ -249,5 +288,5 @@ public interface IGlobalRegionManager {
      * @param player   The player to forget.
      * @param region   The region to forget the player is in.
      */
-    public void forgetPlayer(Player player, IRegion region);
+    void forgetPlayer(Player player, IRegion region);
 }

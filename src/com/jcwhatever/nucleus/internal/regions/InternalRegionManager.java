@@ -25,6 +25,8 @@
 
 package com.jcwhatever.nucleus.internal.regions;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.ElementCounter;
 import com.jcwhatever.nucleus.collections.ElementCounter.RemovalPolicy;
@@ -32,6 +34,8 @@ import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.CachedLocation;
 import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.PlayerLocations;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.IRegionEventListener;
@@ -41,9 +45,7 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
-import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 
 import org.bukkit.Chunk;
@@ -94,7 +96,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     private final Map<Class<? extends IRegion>, RegionTypeManager<?>> _managers = new HashMap<>(15);
 
     // store regions by lookup name. lookup name is: PluginName:RegionName
-    private final Map<String, IRegion> _regionNameMap = new HashMap<>(35);
+    private final Multimap<String, IRegion> _regionNameMap =
+            MultimapBuilder.hashKeys(35).hashSetValues(5).build();
 
     private final PlayerWatcherAsync _watcherAsync = new PlayerWatcherAsync();
 
@@ -225,8 +228,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
     @Nullable
     @Override
-    public IRegion getRegion(Plugin plugin, String name) {
-        return _regionNameMap.get(getLookupName(plugin, name));
+    public List<IRegion> getRegions(Plugin plugin, String name) {
+        return new ArrayList<>(_regionNameMap.get(getLookupName(plugin, name)));
     }
 
     @Override
@@ -410,7 +413,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         ReadOnlyRegion readOnlyRegion = new ReadOnlyRegion(region);
         super.unregister(readOnlyRegion);
 
-        _regionNameMap.remove(getLookupName(region.getPlugin(), region));
+        _regionNameMap.remove(getLookupName(region.getPlugin(), region), readOnlyRegion);
     }
 
     @Override

@@ -37,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -77,11 +78,15 @@ public class SAPI_Regions implements IDisposable {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
         PreCon.isValid(plugin != null, "Plugin named '{0}' not found.", pluginName);
 
-        IRegion region = Nucleus.getRegionManager().getRegion(plugin, regionName);
-        PreCon.isValid(region != null, "Region named '{0}' from plugin named '{1}' not found.",
+        List<IRegion> regions = Nucleus.getRegionManager().getRegions(plugin, regionName);
+
+        PreCon.isValid(!regions.isEmpty(), "Region named '{0}' from plugin named '{1}' not found.",
                 regionName, pluginName);
 
-        return region;
+        PreCon.isValid(regions.size() == 1, "More than 1 region named '{0}' from plugin named '{1}' was found.",
+                regionName, pluginName);
+
+        return regions.get(0);
     }
 
     /**
