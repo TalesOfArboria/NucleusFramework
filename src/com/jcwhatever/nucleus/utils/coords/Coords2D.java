@@ -76,8 +76,8 @@ public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerial
      *
      * @param source  The source coordinates.
      */
-    public Coords2D(Coords2D source) {
-        this(source._x, source._z);
+    public Coords2D(ICoords2D source) {
+        this(source.getX(), source.getZ());
     }
 
     /**
@@ -89,8 +89,8 @@ public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerial
      * @param deltaX  The X coordinate values to add to the source coordinates.
      * @param deltaZ  The Z coordinate values to add to the source coordinates.
      */
-    public Coords2D(Coords2D source, double deltaX, double deltaZ) {
-        this(source._x + deltaX, source._z + deltaZ);
+    public Coords2D(ICoords2D source, double deltaX, double deltaZ) {
+        this(source.getX() + deltaX, source.getZ() + deltaZ);
     }
 
     /**
@@ -130,7 +130,7 @@ public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerial
      *
      * @param coords  The other coordinates.
      */
-    public double distance(Coords2D coords) {
+    public double distance(ICoords2D coords) {
         PreCon.notNull(coords);
 
         return Math.sqrt(distanceSquared(coords));
@@ -141,7 +141,7 @@ public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerial
      *
      * @param coords  The other coordinates.
      */
-    public double distance(Coords2Di coords) {
+    public double distance(ICoords2Di coords) {
         PreCon.notNull(coords);
 
         return Math.sqrt(distanceSquared(coords));
@@ -152,11 +152,11 @@ public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerial
      *
      * @param coords  The other coordinates.
      */
-    public double distanceSquared(Coords2D coords) {
+    public double distanceSquared(ICoords2D coords) {
         PreCon.notNull(coords);
 
-        double deltaX = coords._x - _x;
-        double deltaZ = coords._z - _z;
+        double deltaX = coords.getX() - _x;
+        double deltaZ = coords.getZ() - _z;
 
         return deltaX * deltaX + deltaZ * deltaZ;
     }
@@ -166,7 +166,7 @@ public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerial
      *
      * @param coords  The other coordinates.
      */
-    public double distanceSquared(Coords2Di coords) {
+    public double distanceSquared(ICoords2Di coords) {
         PreCon.notNull(coords);
 
         double deltaX = coords.getX() - _x;
@@ -181,7 +181,7 @@ public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerial
      *
      * @param coords  The other coordinates.
      */
-    public Coords2D getDelta(Coords2D coords) {
+    public Coords2D getDelta(ICoords2D coords) {
         PreCon.notNull(coords);
 
         double deltaX = getX() - coords.getX();
@@ -199,7 +199,7 @@ public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerial
      *
      * @return  The output {@link MutableCoords2D}.
      */
-    public MutableCoords2D getDelta(Coords2D coords, MutableCoords2D output) {
+    public MutableCoords2D getDelta(ICoords2D coords, MutableCoords2D output) {
         PreCon.notNull(coords);
 
         double deltaX = getX() - coords.getX();

@@ -59,7 +59,7 @@ public class MutableCoords2D extends Coords2D {
      *
      * @param source  The source coordinates.
      */
-    public MutableCoords2D(Coords2D source) {
+    public MutableCoords2D(ICoords2D source) {
         super(source);
     }
 
@@ -72,7 +72,7 @@ public class MutableCoords2D extends Coords2D {
      * @param deltaX  The X coordinate values to add to the source coordinates.
      * @param deltaZ  The Z coordinate values to add to the source coordinates.
      */
-    public MutableCoords2D(Coords2D source, double deltaX, double deltaZ) {
+    public MutableCoords2D(ICoords2D source, double deltaX, double deltaZ) {
         super(source, deltaX, deltaZ);
     }
 
@@ -97,11 +97,11 @@ public class MutableCoords2D extends Coords2D {
     }
 
     /**
-     * Copy values from a {@link Coords2D} instance.
+     * Copy values from a {@link ICoords2D} instance.
      *
      * @param coords  The coordinates to copy.
      */
-    public void copyFrom(Coords2D coords) {
+    public void copyFrom(ICoords2D coords) {
         PreCon.notNull(coords);
 
         super.setX(coords.getX());
@@ -109,11 +109,11 @@ public class MutableCoords2D extends Coords2D {
     }
 
     /**
-     * Copy values from a {@link Coords2Di} instance.
+     * Copy values from a {@link ICoords2Di} instance.
      *
      * @param coords  The coordinates to copy.
      */
-    public void copyFrom(Coords2Di coords) {
+    public void copyFrom(ICoords2Di coords) {
         PreCon.notNull(coords);
 
         super.setX(coords.getX());

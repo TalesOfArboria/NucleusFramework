@@ -85,8 +85,8 @@ public class Coords3D extends Coords2D implements ICoords3D {
      *
      * @param source  The source coordinates.
      */
-    public Coords3D(Coords3D source) {
-        this(source.getX(), source._y, source.getZ());
+    public Coords3D(ICoords3D source) {
+        this(source.getX(), source.getY(), source.getZ());
     }
 
     /**
@@ -99,8 +99,8 @@ public class Coords3D extends Coords2D implements ICoords3D {
      * @param deltaY  The Y coordinate values to add to the source coordinates.
      * @param deltaZ  The Z coordinate values to add to the source coordinates.
      */
-    public Coords3D(Coords3D source, double deltaX, double deltaY, double deltaZ) {
-        this(source.getX() + deltaX, source._y + deltaY, source.getZ() + deltaZ);
+    public Coords3D(ICoords3D source, double deltaX, double deltaY, double deltaZ) {
+        this(source.getX() + deltaX, source.getY() + deltaY, source.getZ() + deltaZ);
     }
 
     /**
@@ -123,7 +123,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
      *
      * @param coords  The other coordinates.
      */
-    public double distance(Coords3D coords) {
+    public double distance(ICoords3D coords) {
         PreCon.notNull(coords);
 
         return Math.sqrt(distanceSquared(coords));
@@ -134,7 +134,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
      *
      * @param coords  The other coordinates.
      */
-    public double distance(Coords3Di coords) {
+    public double distance(ICoords3Di coords) {
         PreCon.notNull(coords);
 
         return Math.sqrt(distanceSquared(coords));
@@ -145,11 +145,11 @@ public class Coords3D extends Coords2D implements ICoords3D {
      *
      * @param coords  The other coordinates.
      */
-    public double distanceSquared(Coords3D coords) {
+    public double distanceSquared(ICoords3D coords) {
         PreCon.notNull(coords);
 
         double deltaX = coords.getX() - getX();
-        double deltaY = coords._y - _y;
+        double deltaY = coords.getY() - _y;
         double deltaZ = coords.getZ() - getZ();
 
         return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
@@ -160,7 +160,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
      *
      * @param coords  The other coordinates.
      */
-    public double distanceSquared(Coords3Di coords) {
+    public double distanceSquared(ICoords3Di coords) {
         PreCon.notNull(coords);
 
         double deltaX = coords.getX() - getX();
@@ -176,7 +176,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
      *
      * @param coords  The other coordinates.
      */
-    public Coords3D getDelta(Coords3D coords) {
+    public Coords3D getDelta(ICoords3D coords) {
         PreCon.notNull(coords);
 
         double deltaX = getX() - coords.getX();

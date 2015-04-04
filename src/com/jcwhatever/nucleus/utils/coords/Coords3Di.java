@@ -85,8 +85,8 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      *
      * @param source  The source coordinates.
      */
-    public Coords3Di(Coords3Di source) {
-        this(source.getX(), source._y, source.getZ());
+    public Coords3Di(ICoords3Di source) {
+        this(source.getX(), source.getY(), source.getZ());
     }
 
     /**
@@ -99,8 +99,8 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      * @param deltaY  The Y coordinate values to add to the source coordinates.
      * @param deltaZ  The Z coordinate values to add to the source coordinates.
      */
-    public Coords3Di(Coords3Di source, int deltaX, int deltaY, int deltaZ) {
-        this(source.getX() + deltaX, source._y + deltaY, source.getZ() + deltaZ);
+    public Coords3Di(ICoords3Di source, int deltaX, int deltaY, int deltaZ) {
+        this(source.getX() + deltaX, source.getY() + deltaY, source.getZ() + deltaZ);
     }
 
     /**
@@ -118,7 +118,7 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      *
      * @param coords  The other coordinates.
      */
-    public double distance(Coords3D coords) {
+    public double distance(ICoords3D coords) {
         PreCon.notNull(coords);
 
         return Math.sqrt(distanceSquared(coords));
@@ -129,7 +129,7 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      *
      * @param coords  The other coordinates.
      */
-    public double distance(Coords3Di coords) {
+    public double distance(ICoords3Di coords) {
         PreCon.notNull(coords);
 
         return Math.sqrt(distanceSquared(coords));
@@ -140,7 +140,7 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      *
      * @param coords  The other coordinates.
      */
-    public double distanceSquared(Coords3D coords) {
+    public double distanceSquared(ICoords3D coords) {
         PreCon.notNull(coords);
 
         double deltaX = coords.getX() - getX();
@@ -155,11 +155,11 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      *
      * @param coords  The other coordinates.
      */
-    public double distanceSquared(Coords3Di coords) {
+    public double distanceSquared(ICoords3Di coords) {
         PreCon.notNull(coords);
 
         double deltaX = coords.getX() - getX();
-        double deltaY = coords._y - _y;
+        double deltaY = coords.getY() - _y;
         double deltaZ = coords.getZ() - getZ();
 
         return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
@@ -171,7 +171,7 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      *
      * @param coords  The other coordinates.
      */
-    public Coords3Di getDelta(Coords3Di coords) {
+    public Coords3Di getDelta(ICoords3Di coords) {
         PreCon.notNull(coords);
 
         int deltaX = getX() - coords.getX();
@@ -190,7 +190,7 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      *
      * @return  The output {@link MutableCoords3Di}.
      */
-    public MutableCoords3Di getDelta(Coords3Di coords, MutableCoords3Di output) {
+    public MutableCoords3Di getDelta(ICoords3Di coords, MutableCoords3Di output) {
         PreCon.notNull(coords);
         PreCon.notNull(output);
 

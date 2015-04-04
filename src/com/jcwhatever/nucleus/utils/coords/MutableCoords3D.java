@@ -59,7 +59,7 @@ public class MutableCoords3D extends Coords3D {
      *
      * @param source  The source coordinates.
      */
-    public MutableCoords3D(Coords3D source) {
+    public MutableCoords3D(ICoords3D source) {
         super(source);
     }
 
@@ -73,7 +73,7 @@ public class MutableCoords3D extends Coords3D {
      * @param deltaY  The Y coordinate values to add to the source coordinates.
      * @param deltaZ  The Z coordinate values to add to the source coordinates.
      */
-    public MutableCoords3D(Coords3D source, double deltaX, double deltaY, double deltaZ) {
+    public MutableCoords3D(ICoords3D source, double deltaX, double deltaY, double deltaZ) {
         super(source, deltaX, deltaY, deltaZ);
     }
 
@@ -108,11 +108,11 @@ public class MutableCoords3D extends Coords3D {
     }
 
     /**
-     * Copy X and Z values from a {@link Coords2D} instance.
+     * Copy X and Z values from a {@link ICoords2D} instance.
      *
      * @param coords  The coordinates to copy.
      */
-    public void copyFrom(Coords2D coords) {
+    public void copyFrom(ICoords2D coords) {
         PreCon.notNull(coords);
 
         super.setX(coords.getX());
@@ -120,11 +120,11 @@ public class MutableCoords3D extends Coords3D {
     }
 
     /**
-     * Copy X and Z values from a {@link Coords2Di} instance.
+     * Copy X and Z values from a {@link ICoords2Di} instance.
      *
      * @param coords  The coordinates to copy.
      */
-    public void copyFrom(Coords2Di coords) {
+    public void copyFrom(ICoords2Di coords) {
         PreCon.notNull(coords);
 
         super.setX(coords.getX());
@@ -132,11 +132,11 @@ public class MutableCoords3D extends Coords3D {
     }
 
     /**
-     * Copy values from a {@link Coords3D} instance.
+     * Copy values from a {@link ICoords3D} instance.
      *
      * @param coords  The coordinates to copy.
      */
-    public void copyFrom(Coords3D coords) {
+    public void copyFrom(ICoords3D coords) {
         PreCon.notNull(coords);
 
         super.setX(coords.getX());
@@ -145,11 +145,11 @@ public class MutableCoords3D extends Coords3D {
     }
 
     /**
-     * Copy values from a {@link Coords3Di} instance.
+     * Copy values from a {@link ICoords3Di} instance.
      *
      * @param coords  The coordinates to copy.
      */
-    public void copyFrom(Coords3Di coords) {
+    public void copyFrom(ICoords3Di coords) {
         PreCon.notNull(coords);
 
         super.setX(coords.getX());
