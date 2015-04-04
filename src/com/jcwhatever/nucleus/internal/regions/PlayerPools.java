@@ -24,40 +24,33 @@
 
 package com.jcwhatever.nucleus.internal.regions;
 
-import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
-import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
+import com.jcwhatever.nucleus.utils.PreCon;
 
-import javax.annotation.Nullable;
+import java.util.LinkedList;
+import java.util.UUID;
 
-enum RegionEventReason {
-    MOVE        (EnterRegionReason.MOVE,        LeaveRegionReason.MOVE),
-    DEAD        (null,                          LeaveRegionReason.DEAD),
-    TELEPORT    (EnterRegionReason.TELEPORT,    LeaveRegionReason.TELEPORT),
-    RESPAWN     (EnterRegionReason.RESPAWN,     LeaveRegionReason.DEAD),
-    JOIN_SERVER (EnterRegionReason.JOIN_SERVER, null),
-    QUIT_SERVER (null,                          LeaveRegionReason.QUIT_SERVER);
+/**
+ * Pools player location pools to prevent too many discarded {@link PlayerLocationCache}'s
+ * from existing in the tenure memory space on servers that experience large numbers
+ * of players coming and going.
+ */
+class PlayerPools {
 
-    private final EnterRegionReason _enter;
-    private final LeaveRegionReason _leave;
+    private LinkedList<PlayerLocationCache> _pools = new LinkedList<>();
 
-    RegionEventReason(EnterRegionReason enter, LeaveRegionReason leave) {
-        _enter = enter;
-        _leave = leave;
+    public PlayerLocationCache createLocationPool(UUID playerId) {
+        PreCon.notNull(playerId);
+
+        PlayerLocationCache pool;
+
+        pool = _pools.isEmpty() ? new PlayerLocationCache(playerId) : _pools.remove();
+
+        pool.setOwner(playerId);
+        return pool;
     }
 
-    /**
-     * Get the enter reason equivalent.
-     */
-    @Nullable
-    public EnterRegionReason getEnterReason() {
-        return _enter;
-    }
-
-    /**
-     * Get the leave reason equivalent.
-     */
-    @Nullable
-    public LeaveRegionReason getLeaveReason() {
-        return _leave;
+    public void repool(PlayerLocationCache pool) {
+        PreCon.notNull(pool);
+        _pools.add(pool);
     }
 }

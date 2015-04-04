@@ -28,6 +28,7 @@ import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.UUID;
 
 /**
  * Caches locations a player has been until they can be processed by
@@ -52,6 +53,36 @@ class PlayerLocationCache {
     private volatile int _minIndex = 0;
 
     private volatile int _capacity = 100;
+
+    private UUID _playerId;
+
+    /**
+     * Constructor.
+     *
+     * @param playerId  The initial owner.
+     */
+    public PlayerLocationCache(UUID playerId) {
+        _playerId = playerId;
+    }
+
+    /**
+     * Set the player owner of the cache.
+     *
+     * @param playerId The ID of the player.
+     */
+    public void setOwner(UUID playerId) {
+        _playerId = playerId;
+
+        // now that the cache is being used again, it's pool size has had time to settle.
+        _locationPool.trimToSize();
+    }
+
+    /**
+     * Get the caches owning player ID.
+     */
+    public UUID getPlayerId() {
+        return _playerId;
+    }
 
     /**
      * Determine if the cache is empty.

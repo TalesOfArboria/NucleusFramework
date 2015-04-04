@@ -87,10 +87,13 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     private final ElementCounter<World> _listenerWorlds = new ElementCounter<>(RemovalPolicy.REMOVE);
 
     // cached regions the player was detected in during last player watcher cycle.
-    private final Map<UUID, EventOrderedRegions<IRegion>> _playerCacheMap;
+    private final PlayerMap<EventOrderedRegions<IRegion>> _playerCacheMap;
 
     // locations the player was detected in between player watcher cycles.
-    private final Map<UUID, PlayerLocationCache> _playerLocationCache;
+    private final PlayerMap<PlayerLocationCache> _playerLocationCache;
+
+    // pool of player location pools
+    private final PlayerPools _pools = new PlayerPools();
 
     // store managers for individual region types.
     private final Map<Class<? extends IRegion>, RegionTypeManager<?>> _managers = new HashMap<>(15);
@@ -122,6 +125,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
         _playerCacheMap = new PlayerMap<>(plugin);
         _playerLocationCache = new PlayerMap<>(plugin);
+
         Scheduler.runTaskRepeat(plugin,  2, 2, new PlayerWatcher());
         Scheduler.runTaskRepeatAsync(plugin, 1, 1, _watcherAsync);
     }
@@ -198,7 +202,6 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         synchronized (_sync) {
 
             EventOrderedRegions<IRegion> regions = _playerCacheMap.remove(player.getUniqueId());
-
             if (regions == null)
                 return;
 
@@ -210,7 +213,16 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
                     region.getEventListener().onPlayerLeave(player, reason);
             }
 
-            clearPlayerLocations(player.getUniqueId());
+            if (reason == LeaveRegionReason.QUIT_SERVER) {
+                // re-pool location cache
+                PlayerLocationCache cache = _playerLocationCache.remove(player.getUniqueId());
+                if (cache != null) {
+                    _pools.repool(cache);
+                }
+            }
+            else {
+                clearPlayerLocations(player.getUniqueId());
+            }
         }
     }
 
@@ -444,7 +456,7 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
 
         PlayerLocationCache locations = _playerLocationCache.get(playerId);
         if (locations == null) {
-            locations = new PlayerLocationCache();
+            locations = _pools.createLocationPool(playerId);
             _playerLocationCache.put(playerId, locations);
         }
 
