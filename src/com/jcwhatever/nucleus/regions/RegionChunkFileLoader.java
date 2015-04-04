@@ -25,14 +25,14 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
-import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
-import com.jcwhatever.nucleus.utils.coords.ChunkBlockInfo;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.ChunkBlockInfo;
+import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
+import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
+import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
@@ -42,6 +42,7 @@ import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -58,7 +59,7 @@ public final class RegionChunkFileLoader {
     public static final int RESTORE_FILE_VERSION = 4;
     private Plugin _plugin;
     private IRegion _region;
-    private ChunkInfo _chunk;
+    private ICoords2Di _coords;
     private boolean _isLoading;
     private final LinkedList<ChunkBlockInfo> _blockInfo = new LinkedList<>();
     private final LinkedList<SerializableBlockEntity> _blockEntities = new LinkedList<>();
@@ -82,19 +83,19 @@ public final class RegionChunkFileLoader {
      * Constructor.
      *
      * @param region  The region to load a chunk file for.
-     * @param chunk   The region chunk that the file was created from.
+     * @param coords  The coords of the chunk that the file was created from.
      */
-    public RegionChunkFileLoader (IRegion region, ChunkInfo chunk) {
+    public RegionChunkFileLoader (IRegion region, ICoords2Di coords) {
         _region = region;
-        _chunk = chunk;
+        _coords = coords;
         _plugin = region.getPlugin();
     }
 
     /**
      * Get the chunk.
      */
-    public ChunkInfo getChunk() {
-        return _chunk;
+    public ICoords2Di getChunkCoord() {
+        return _coords;
     }
 
     /**
@@ -165,27 +166,28 @@ public final class RegionChunkFileLoader {
         if (isLoading())
             return project.cancel("Region cannot load because it is already loading.");
 
-        if (_chunk.getWorld().getBukkitWorld() == null) {
-            return project.cancel("Failed to get world '{0}' while loading region '{1}'.",
-                    _chunk.getWorld().getName(), _region.getName());
+        World world = _region.getWorld();
+
+        if (world == null) {
+            return project.cancel("Failed to get world while loading region '{0}'.",
+                    _region.getName());
         }
 
-        Chunk chunk = _chunk.getChunk();
+        Chunk chunk = _region.getWorld().getChunkAt(_coords.getX(), _coords.getZ());
         if (chunk == null) {
             return project.cancel("Failed to get chunk ({0}, {1}) in world '{0}' while building region '{1}'.",
-                    _chunk.getX(), _chunk.getZ(), _chunk.getWorld().getName());
+                    _coords.getX(), _coords.getZ(), world.getName());
         }
 
-        if (!chunk.isLoaded()) {
+        if (!chunk.isLoaded())
             chunk.load();
-        }
 
         _isLoading = true;
 
-        RegionChunkSection section = new RegionChunkSection(_region, _chunk);
+        RegionChunkSection section = new RegionChunkSection(_region, _coords);
         LoadChunkIterator iterator = new LoadChunkIterator(file, loadType, 8192,
                 section.getStartChunkX(), section.getStartY(), section.getStartChunkZ(),
-                section.getEndChunkX(), section.getEndY(), section.getEndChunkZ());
+                section.getEndChunkX(), section.getEndY(), section.getEndChunkZ(), chunk);
 
         project.addTask(iterator);
 
@@ -197,6 +199,8 @@ public final class RegionChunkFileLoader {
      *
      * @param file      The file.
      * @param loadType  The block load type.
+     *
+     * @return  A future to receive the load results.
      */
     public Future<QueueTask> load(File file, LoadType loadType) {
 
@@ -209,7 +213,7 @@ public final class RegionChunkFileLoader {
         return future;
     }
 
-    /**
+    /*
      * Iteration worker for loading region chunk data from a file.
      */
     private final class LoadChunkIterator extends Iteration3DTask {
@@ -223,11 +227,11 @@ public final class RegionChunkFileLoader {
          * Constructor
          */
         LoadChunkIterator (File file, LoadType loadType, long segmentSize, int xStart, int yStart, int zStart,
-                           int xEnd, int yEnd, int zEnd) {
+                           int xEnd, int yEnd, int zEnd, Chunk chunk) {
 
             super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
-            this.snapshot = _chunk.getChunk().getChunkSnapshot();
+            this.snapshot = chunk.getChunkSnapshot();
             this.file = file;
             this.loadType = loadType;
         }

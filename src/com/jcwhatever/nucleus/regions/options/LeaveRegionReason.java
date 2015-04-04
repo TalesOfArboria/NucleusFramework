@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.regions.options;
  * Reasons a player leaves a region.
  */
 public enum LeaveRegionReason {
+
     /**
      * The player moved out of the region.
      */

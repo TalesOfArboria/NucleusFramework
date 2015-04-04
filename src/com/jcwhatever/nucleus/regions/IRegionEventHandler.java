@@ -30,37 +30,35 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import org.bukkit.entity.Player;
 
 /**
- * Represents a callback that handles region events.
+ * A delegate that handles region events.
  */
 public interface IRegionEventHandler {
 
     /**
-     * Determine if the handler can handle player enter
-     * event for the specified player.
+     * Determine if the handler can handle player enter event for the specified player.
      *
      * @param player  The player who is entering the region.
      */
     boolean canDoPlayerEnter(Player player, EnterRegionReason reason);
 
     /**
-     * Determine if the handler can handle player leave
-     * event for the specified player.
+     * Determine if the handler can handle player leave event for the specified player.
      *
      * @param player  The player who is leaving the region.
      */
     boolean canDoPlayerLeave(Player player, LeaveRegionReason reason);
 
     /**
-     * Called when a player enters the region and
-     * the {@link #canDoPlayerEnter} method returned true.
+     * Invoked when a player enters the region and the {@link #canDoPlayerEnter} method
+     * returned true.
      *
      * @param player  The player entering the region.
      */
     void onPlayerEnter(Player player, EnterRegionReason reason);
 
     /**
-     * Called when a player leaves the region and
-     * the {@link #canDoPlayerLeave} method returned true.
+     * Invoked when a player leaves the region and the {@link #canDoPlayerLeave} method
+     * returned true.
      *
      * @param player  The player leaving the region.
      */

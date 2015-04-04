@@ -26,13 +26,13 @@
 package com.jcwhatever.nucleus.regions;
 
 import com.jcwhatever.nucleus.mixins.IReadOnly;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -40,8 +40,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -245,13 +244,13 @@ public final class ReadOnlyRegion implements IRegion, IReadOnly {
     }
 
     @Override
-    public LinkedList<Location> find (Material material) {
+    public Collection<Location> find (Material material) {
         return _region.find(material);
     }
 
     @Override
-    public List<ChunkInfo> getChunks () {
-        return _region.getChunks();
+    public Collection<IChunkCoords> getChunkCoords() {
+        return _region.getChunkCoords();
     }
 
     @Override

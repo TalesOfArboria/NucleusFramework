@@ -38,7 +38,8 @@ import javax.annotation.Nullable;
 /**
  * A region manager.
  */
-public abstract class RegionManager<T extends IRegion> extends NamedInsensitiveDataManager<T> implements IPluginOwned {
+public abstract class RegionManager<T extends IRegion> extends NamedInsensitiveDataManager<T>
+        implements IPluginOwned {
 
     protected final Plugin _plugin;
 

@@ -469,19 +469,19 @@ public abstract class IRegionSelectionTest {
     @Test
     public void testGetChunks() throws Exception {
         IRegionSelection selection = getUndefinedSelection();
-        assertEquals(0, selection.getChunks().size());
+        assertEquals(0, selection.getChunkCoords().size());
 
         Location p1 = new Location(_world, 17, 17, 17);
         Location p2 = new Location(_world, 18, 18, 18);
 
         selection = getSelection(p1, p2);
-        assertEquals(1, selection.getChunks().size());
+        assertEquals(1, selection.getChunkCoords().size());
 
         p1 = new Location(_world, 17, 17, 17);
         p2 = new Location(_world, 100, 100, 100);
 
         selection = getSelection(p1, p2);
-        assertEquals(36, selection.getChunks().size());
+        assertEquals(36, selection.getChunkCoords().size());
     }
 
     /**
@@ -699,28 +699,28 @@ public abstract class IRegionSelectionTest {
         IRegionSelection selection = getSelection(p1, p2);
 
         assertEquals(new Location(_world, -10, -10, -10),
-                selection.getPoint(CuboidPoint.X_MIN_Y_MIN_Z_MIN));
+                selection.getPoint(CuboidPoint.MIN_MIN_MIN));
 
         assertEquals(new Location(_world, -10, 20, -10),
-                selection.getPoint(CuboidPoint.X_MIN_Y_MAX_Z_MIN));
+                selection.getPoint(CuboidPoint.MIN_MAX_MIN));
 
         assertEquals(new Location(_world, -10, 20, 20),
-                selection.getPoint(CuboidPoint.X_MIN_Y_MAX_Z_MAX));
+                selection.getPoint(CuboidPoint.MIN_MAX_MAX));
 
         assertEquals(new Location(_world, -10, -10, 20),
-                selection.getPoint(CuboidPoint.X_MIN_Y_MIN_Z_MAX));
+                selection.getPoint(CuboidPoint.MIN_MIN_MAX));
 
         assertEquals(new Location(_world, 20, -10, -10),
-                selection.getPoint(CuboidPoint.X_MAX_Y_MIN_Z_MIN));
+                selection.getPoint(CuboidPoint.MAX_MIN_MIN));
 
         assertEquals(new Location(_world, 20, 20, -10),
-                selection.getPoint(CuboidPoint.X_MAX_Y_MAX_Z_MIN));
+                selection.getPoint(CuboidPoint.MAX_MAX_MIN));
 
         assertEquals(new Location(_world, 20, 20, 20),
-                selection.getPoint(CuboidPoint.X_MAX_Y_MAX_Z_MAX));
+                selection.getPoint(CuboidPoint.MAX_MAX_MAX));
 
         assertEquals(new Location(_world, 20, -10, 20),
-                selection.getPoint(CuboidPoint.X_MAX_Y_MIN_Z_MAX));
+                selection.getPoint(CuboidPoint.MAX_MIN_MAX));
     }
 
 }

@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.regions.data;
 
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
 import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
@@ -38,8 +38,7 @@ import org.bukkit.Location;
 import java.io.IOException;
 
 /**
- * Provides variables representing a section of a region
- * contained within a chunk.
+ * Provides variables representing a section of a region contained within a chunk.
  */
 public class RegionChunkSection implements IBinarySerializable {
 
@@ -98,11 +97,11 @@ public class RegionChunkSection implements IBinarySerializable {
      * Constructor.
      *
      * @param region  The region.
-     * @param chunk   The chunk to get chunk coordinates from.
+     * @param coords  The coordinates of the chunk.
      */
-    public RegionChunkSection (IRegionSelection region, ChunkInfo chunk) {
-        _chunkX = chunk.getX();
-        _chunkZ = chunk.getZ();
+    public RegionChunkSection (IRegionSelection region, ICoords2Di coords) {
+        _chunkX = coords.getX();
+        _chunkZ = coords.getZ();
         init(region.getP1(), region.getP2());
     }
 
@@ -119,42 +118,42 @@ public class RegionChunkSection implements IBinarySerializable {
     }
 
     /**
-     * Get the section cuboid first point location.
+     * Get the section cuboids first point location.
      */
     public Location getP1() {
         return _p1;
     }
 
     /**
-     * Get the section cuboid second point location.
+     * Get the section cuboids second point location.
      */
     public Location getP2() {
         return _p2;
     }
 
     /**
-     * Get the regions StartX value.
+     * Get the regions minimum X coordinate.
      */
     public int getRegionStartX() {
         return _regionStartX;
     }
 
     /**
-     * Get the regions EndX value.
+     * Get the regions maximum X coordinate.
      */
     public int getRegionEndX() {
         return _regionEndX;
     }
 
     /**
-     * Get the regions StartZ value.
+     * Get the regions minimum Z coordinate.
      */
     public int getRegionStartZ() {
         return _regionStartZ;
     }
 
     /**
-     * Get the regions EndZ value
+     * Get the regions maximum Z coordinate
      */
     public int getRegionEndZ() {
         return _regionEndZ;
@@ -175,96 +174,92 @@ public class RegionChunkSection implements IBinarySerializable {
     }
 
     /**
-     * Get the sections chunk X coordinate as
-     * a block coordinate.
+     * Get the sections chunk X coordinate as a block coordinate.
      */
     public int getChunkBlockX() {
         return _chunkBlockX;
     }
 
     /**
-     * Get the sections chunk Z coordinate as
-     * a block coordinate.
+     * Get the sections chunk Z coordinate as a block coordinate.
      */
     public int getChunkBlockZ() {
         return _chunkBlockZ;
     }
 
     /**
-     * Get the sections ending chunk X coordinate
-     * as a block coordinate.
+     * Get the sections ending chunk X coordinate as a block coordinate.
      */
     public int getChunkBlockEndX() {
         return _chunkBlockEndX;
     }
 
     /**
-     * Get the sections ending chunk Z coordinate
-     * as a block coordinate.
+     * Get the sections ending chunk Z coordinate as a block coordinate.
      */
     public int getChunkBlockEndZ() {
         return _chunkBlockEndZ;
     }
 
     /**
-     * Get the coordinates relative to the chunk
-     * where the section begins on the X axis.
+     * Get the coordinates relative to the chunk where the section begins
+     * on the X axis.
      */
     public int getStartChunkX() {
         return  _startChunkX;
     }
 
     /**
-     * Get the coordinates relative to the chunk
-     * where the section ends on the X axis.
+     * Get the coordinates relative to the chunk where the section ends on
+     * the X axis.
      */
     public int getEndChunkX() {
         return  _endChunkX;
     }
 
     /**
-     * Get the coordinates relative to the chunk
-     * where the section starts on the Z axis.
+     * Get the coordinates relative to the chunk where the section starts on
+     * the Z axis.
      */
     public int getStartChunkZ() {
         return _startChunkZ;
     }
 
     /**
-     * Get the coordinates relative to the chunk
-     * where the section ends on the Z axis.
+     * Get the coordinates relative to the chunk where the section ends on
+     * the Z axis.
      */
     public int getEndChunkZ() {
         return _endChunkZ;
     }
 
     /**
-     * Get the block coordinates relative to the world
-     * center where the section starts on the X axis.
+     * Get the block coordinates relative to the world center where the section
+     * starts on the X axis.
      */
     public int getStartBlockX() {
         return  _startBlockX;
     }
 
     /**
-     * Get the block coordinates relative to the world
-     * center where the section ends on the X axis.
+     * Get the block coordinates relative to the world center where the section
+     * ends on the X axis.
      */
     public int getEndBlockX() {
         return  _endBlockX;
     }
 
     /**
-     * Get the block coordinates relative to the world
-     * center where the section starts on the Z axis.
+     * Get the block coordinates relative to the world center where the section
+     * starts on the Z axis.
      */
     public int getStartBlockZ() {
         return _startBlockZ;
     }
 
     /**
-     * Get the block coordinates relative to the world
-     * center where the section ends on the Z axis.
+     * Get the block coordinates relative to the world center where the section
+     * ends on the Z axis.
      */
     public int getEndBlockZ() {
         return _endBlockZ;
@@ -279,8 +274,7 @@ public class RegionChunkSection implements IBinarySerializable {
     }
 
     /**
-     * Get the highest coordinates of the section
-     * on the Y axis.
+     * Get the highest coordinates of the section on the Y axis.
      */
     public int getEndY() {
         return _yEnd;

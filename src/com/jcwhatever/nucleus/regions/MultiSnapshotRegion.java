@@ -25,9 +25,9 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.result.Result;
@@ -38,8 +38,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -183,11 +183,10 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
     public void deleteData(String snapshotName) throws IOException {
         PreCon.notNull(snapshotName);
 
-        List<ChunkInfo> chunks = this.getChunks();
+        Collection<IChunkCoords> chunks = this.getChunkCoords();
 
-        for (ChunkInfo chunk : chunks) {
-            getChunkFile(chunk, snapshotName, true); // deletes file
+        for (IChunkCoords chunk : chunks) {
+            getChunkFile(chunk.getX(), chunk.getZ(), snapshotName, true); // deletes file
         }
     }
-
 }

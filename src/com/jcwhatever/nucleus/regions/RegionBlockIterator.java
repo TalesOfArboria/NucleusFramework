@@ -106,8 +106,7 @@ public class RegionBlockIterator implements Iterator<Block> {
     }
 
     /**
-     * Remove the current block. Sets the block material
-     * to {@link AIR}.
+     * Remove the current block. Sets the block material to {@link Material#AIR}.
      */
     @Override
     public void remove() {

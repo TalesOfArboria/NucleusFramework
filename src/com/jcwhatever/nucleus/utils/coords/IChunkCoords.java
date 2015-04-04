@@ -29,28 +29,23 @@ import org.bukkit.Chunk;
 import javax.annotation.Nullable;
 
 /**
- * Object that contains info about a chunk.
+ * Chunk coordinate data object.
+ *
+ * <p>Used to move and store information about a chunk without causing async issues
+ * associated with using {@link Chunk}.</p>
  */
-public interface IChunkInfo {
+public interface IChunkCoords extends ICoords2Di{
 
     /**
-     * Get the world the chunk is in.
+     * Get the name of the world the chunk is in.
      */
-    WorldInfo getWorld();
-
-    /**
-     * Get the chunk X coordinates.
-     */
-    int getX();
-
-    /**
-     * Get the chunk Z coordinates.
-     */
-    int getZ();
+    String getWorldName();
 
     /**
      * Get the chunk.
+     *
+     * @return  The chunk or null if it could not be retrieved.
      */
     @Nullable
-    public Chunk getChunk();
+    Chunk getChunk();
 }

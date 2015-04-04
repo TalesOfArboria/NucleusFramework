@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.block.Biome;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import javax.annotation.Nullable;
 
@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
  */
 public class BuildChunkSnapshot implements ChunkSnapshot {
 
-    private final ItemStack[][][] _regionMap;
+    private final MaterialData[][][] _regionMap;
     private final RegionChunkSection _s;
     private final int _xStart;
     private final int _zStart;
@@ -49,7 +49,7 @@ public class BuildChunkSnapshot implements ChunkSnapshot {
      * @param regionMap  A 3D array representing the region blocks.
      * @param section    The info about the section of the chunk in the region snapshot.
      */
-    public BuildChunkSnapshot(ItemStack[][][] regionMap, RegionChunkSection section) {
+    public BuildChunkSnapshot(MaterialData[][][] regionMap, RegionChunkSection section) {
         _regionMap = regionMap;
         _s = section;
 
@@ -83,11 +83,11 @@ public class BuildChunkSnapshot implements ChunkSnapshot {
      */
     @Override
     public int getBlockData(int x, int y, int z) {
-        ItemStack item = getItem(x, y, z);
-        if (item == null)
+        MaterialData material = getMaterial(x, y, z);
+        if (material == null)
             return 0;
 
-        return item.getData().getData();
+        return material.getData();
     }
 
     /**
@@ -117,11 +117,11 @@ public class BuildChunkSnapshot implements ChunkSnapshot {
      */
     @Override
     public int getBlockTypeId(int x, int y, int z) {
-        ItemStack item = getItem(x, y, z);
-        if (item == null)
+        MaterialData material = getMaterial(x, y, z);
+        if (material == null)
             return 0;
 
-        return item.getTypeId();
+        return material.getItemTypeId();
     }
 
     /**
@@ -186,7 +186,7 @@ public class BuildChunkSnapshot implements ChunkSnapshot {
     }
 
     @Nullable
-    private ItemStack getItem(int x, int y, int z) {
+    private MaterialData getMaterial(int x, int y, int z) {
         x = _xStart + x;
         z = _zStart + z;
         y = y - _s.getStartY();

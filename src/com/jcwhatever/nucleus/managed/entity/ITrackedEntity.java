@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.managed.entity;
 
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkCoords;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
@@ -71,7 +71,7 @@ public interface ITrackedEntity {
      *
      * @return  Self for chaining.
      */
-    ITrackedEntity onUnload(UpdateSubscriber<ChunkInfo> subscriber);
+    ITrackedEntity onUnload(UpdateSubscriber<ChunkCoords> subscriber);
 
     /**
      * Add an event handler to track when the entity instance is

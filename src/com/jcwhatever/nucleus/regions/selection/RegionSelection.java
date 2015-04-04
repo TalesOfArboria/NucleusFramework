@@ -26,12 +26,14 @@ package com.jcwhatever.nucleus.regions.selection;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
-import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.ChunkCoords;
+import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -39,6 +41,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -88,7 +91,7 @@ public class RegionSelection implements IRegionSelection {
     private int _chunkZ;
     private int _chunkXWidth;
     private int _chunkZWidth;
-    private List<ChunkInfo> _chunks;
+    private List<IChunkCoords> _chunks;
 
     private Location _center;
     private RegionShape _flatness = RegionShape.CUBOID;
@@ -334,9 +337,9 @@ public class RegionSelection implements IRegionSelection {
     }
 
     @Override
-    public final List<ChunkInfo> getChunks() {
+    public final Collection<IChunkCoords> getChunkCoords() {
         if (getWorld() == null || !isDefined())
-            return new ArrayList<>(0);
+            return CollectionUtils.unmodifiableList();
 
         if (_chunks != null)
             return _chunks;
@@ -349,17 +352,15 @@ public class RegionSelection implements IRegionSelection {
             int startZ = _chunkZ;
             int endZ = _chunkZ + _chunkZWidth - 1;
 
-            ArrayList<ChunkInfo> result = new ArrayList<ChunkInfo>((endX - startX) * (endZ - startZ));
+            List<IChunkCoords> result = new ArrayList<IChunkCoords>((endX - startX) * (endZ - startZ) + 1);
 
             for (int x = startX; x <= endX; x++) {
                 for (int z = startZ; z <= endZ; z++) {
-                    result.add(new ChunkInfo(getWorld(), x, z));
+                    result.add(new ChunkCoords(_p1.getWorldName(), x, z));
                 }
             }
 
-            _chunks = Collections.unmodifiableList(result);
-
-            return _chunks;
+            return _chunks = Collections.unmodifiableList(result);
         }
     }
 

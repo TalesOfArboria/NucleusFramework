@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.internal.entity;
 
 import com.google.common.collect.MapMaker;
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkCoords;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
 import com.jcwhatever.nucleus.managed.entity.ITrackedEntity;
@@ -129,7 +129,7 @@ public final class InternalEntityTracker implements IEntityTracker, Listener {
             if (tracked == null || isDisposed(tracked))
                 continue;
 
-            tracked.notifyChunkUnload(new ChunkInfo(event.getChunk()));
+            tracked.notifyChunkUnload(new ChunkCoords(event.getChunk()));
         }
     }
 

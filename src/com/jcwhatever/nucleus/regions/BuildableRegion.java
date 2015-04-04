@@ -26,9 +26,9 @@
 package com.jcwhatever.nucleus.regions;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.result.Result;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
@@ -44,7 +44,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
@@ -54,8 +54,7 @@ import javax.annotation.Nullable;
 
 
 /**
- * An abstract implementation of a region that can easily
- * build within itself.
+ * An abstract implementation of a region that can easily build within itself.
  */
 public abstract class BuildableRegion extends Region {
 
@@ -90,11 +89,10 @@ public abstract class BuildableRegion extends Region {
     }
 
     /**
-     * Get an empty 3D array representing the region which
-     * can be used to specify what to build.
+     * Create an empty 3D array representing the region which can be used to specify what to build.
      */
-    public final ItemStack[][][] getBuildArray() {
-        return new ItemStack[getXBlockWidth()][getYBlockHeight()][getZBlockWidth()];
+    public final MaterialData[][][] getBuildArray() {
+        return new MaterialData[getXBlockWidth()][getYBlockHeight()][getZBlockWidth()];
     }
 
     /**
@@ -102,6 +100,8 @@ public abstract class BuildableRegion extends Region {
      *
      * @param buildMethod  The method of building. (Speed vs Performance)
      * @param snapshots    The snapshots representing the build.
+     *
+     * @return  True if build started, false if build already in progress or region is not defined.
      */
     public final boolean build(BuildMethod buildMethod, Collection<? extends ChunkSnapshot> snapshots) {
 
@@ -178,8 +178,7 @@ public abstract class BuildableRegion extends Region {
     }
 
     /*
-     * Iteration worker for restoring a region area within the
-     * specified chunk.
+     * Iteration worker for building in region area within the specified chunk.
      */
     private static final class BuildChunkIterator extends Iteration3DTask {
 
@@ -199,9 +198,6 @@ public abstract class BuildableRegion extends Region {
             this.chunk = region.getWorld().getChunkAt(snapshot.getX(), snapshot.getZ());
         }
 
-        /*
-         * Store blocks to be changed so they can be updated all at once.
-         */
         @Override
         public void onIterateItem(int x, int y, int z) {
 
@@ -225,7 +221,7 @@ public abstract class BuildableRegion extends Region {
             Scheduler.runTaskSync(getPlugin(), 1, new UpdateBlocks());
         }
 
-        /**
+        /*
          * Update block states for chunk all at once on the
          * the main thread.
          */
@@ -241,5 +237,4 @@ public abstract class BuildableRegion extends Region {
             }
         }
     }
-
 }

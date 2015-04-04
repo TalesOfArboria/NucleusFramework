@@ -24,19 +24,19 @@
 
 package com.jcwhatever.nucleus.providers.regionselect;
 
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
+import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.util.List;
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * Represents basic math for a region
+ * Represents basic math for a region.
  */
 public interface IRegionSelection {
 
@@ -268,9 +268,9 @@ public interface IRegionSelection {
     int getChunkZWidth();
 
     /**
-     * Get all chunks the region intersects with.
+     * Get coordinates of all chunks the region intersects with.
      */
-    List<ChunkInfo> getChunks();
+    Collection<IChunkCoords> getChunkCoords();
 
     /**
      * Get the shape of the region selection.

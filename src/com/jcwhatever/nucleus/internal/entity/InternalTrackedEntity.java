@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.internal.entity;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkCoords;
 import com.jcwhatever.nucleus.utils.coords.ChunkUtils;
 import com.jcwhatever.nucleus.utils.coords.Coords2Di;
 import com.jcwhatever.nucleus.utils.coords.MutableCoords2Di;
@@ -121,7 +121,7 @@ public final class InternalTrackedEntity implements ITrackedEntity {
      * @return  Self for chaining.
      */
     @Override
-    public synchronized InternalTrackedEntity onUnload(UpdateSubscriber<ChunkInfo> subscriber) {
+    public synchronized InternalTrackedEntity onUnload(UpdateSubscriber<ChunkCoords> subscriber) {
         PreCon.notNull(subscriber);
 
         _updateAgents.getAgent("onUnload").addSubscriber(subscriber);
@@ -191,7 +191,7 @@ public final class InternalTrackedEntity implements ITrackedEntity {
     /**
      * Notify that the chunk the entity is in is unloading.
      */
-    synchronized void notifyChunkUnload(ChunkInfo info) {
+    synchronized void notifyChunkUnload(ChunkCoords info) {
 
         _updateAgents.update("onUnload", info);
     }

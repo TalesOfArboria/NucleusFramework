@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.regions.options;
  * Reasons a player enters a region.
  */
 public enum EnterRegionReason {
+
     /**
      * The player moved into the region.
      */

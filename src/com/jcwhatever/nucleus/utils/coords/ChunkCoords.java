@@ -26,9 +26,11 @@ package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
@@ -38,17 +40,17 @@ import javax.annotation.Nullable;
 /**
  * Contains information about a chunk.
  */
-public class ChunkInfo extends Coords2Di implements IChunkInfo {
+public class ChunkCoords extends Coords2Di implements IChunkCoords {
 
-    private WorldInfo _world;
+    private String _worldName;
 
     /**
      * Constructor.
      *
      * @param chunk  The chunk to get info from.
      */
-    public ChunkInfo(Chunk chunk) {
-        this(new WorldInfo(chunk.getWorld()),
+    public ChunkCoords(Chunk chunk) {
+        this(chunk.getWorld().getName(),
                 chunk.getX(), chunk.getZ());
     }
 
@@ -59,38 +61,61 @@ public class ChunkInfo extends Coords2Di implements IChunkInfo {
      * @param x      The chunk X coordinates.
      * @param z      The chunk Z coordinates.
      */
-    public ChunkInfo(World world, int x, int z) {
-        this(new WorldInfo(world), x, z);
+    public ChunkCoords(World world, int x, int z) {
+        this(world.getName(), x, z);
     }
 
     /**
      * Constructor.
      *
-     * @param world  The world the chunk is in.
-     * @param x      The chunk X coordinates.
-     * @param z      The chunk Z coordinates.
+     * @param world   The world the chunk is in.
+     * @param coords  The chunk coordinates.
      */
-    public ChunkInfo(WorldInfo world, int x, int z) {
+    public ChunkCoords(World world, Coords2Di coords) {
+        this(world.getName(), coords.getX(), coords.getZ());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param worldName   The name of the world the chunk is in.
+     * @param coords      The chunk coordinates.
+     */
+    public ChunkCoords(String worldName, Coords2Di coords) {
+        this(worldName, coords.getX(), coords.getZ());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param worldName  The world the chunk is in.
+     * @param x          The chunk X coordinates.
+     * @param z          The chunk Z coordinates.
+     */
+    public ChunkCoords(String worldName, int x, int z) {
         super(x, z);
-        _world = world;
+
+        PreCon.notNull(worldName);
+
+        _worldName = worldName;
     }
 
     /**
      * Protected constructor for serialization.
      */
-    protected ChunkInfo() {
+    protected ChunkCoords() {
         super();
     }
 
     @Override
-    public WorldInfo getWorld() {
-        return _world;
+    public String getWorldName() {
+        return _worldName;
     }
 
     @Override
     @Nullable
     public Chunk getChunk() {
-        World world = _world.getBukkitWorld();
+        World world = Bukkit.getWorld(_worldName);
         if (world == null)
             return null;
 
@@ -99,16 +124,16 @@ public class ChunkInfo extends Coords2Di implements IChunkInfo {
 
     @Override
     public int hashCode() {
-        return _world.hashCode() ^ getX() ^ getZ();
+        return _worldName.hashCode() ^ getX() ^ getZ();
     }
 
     @Override
     public boolean equals(Object obj) {
 
-        if (obj instanceof IChunkInfo) {
-            IChunkInfo other = (IChunkInfo)obj;
+        if (obj instanceof IChunkCoords) {
+            IChunkCoords other = (IChunkCoords)obj;
 
-            return other.getWorld().getName().equals(_world.getName()) &&
+            return other.getWorldName().equals(_worldName) &&
                     other.getX() == getX() && other.getZ() == getZ();
         }
 
@@ -117,19 +142,19 @@ public class ChunkInfo extends Coords2Di implements IChunkInfo {
 
     @Override
     public void serialize(IDataNode dataNode) {
-        dataNode.set("world", _world);
+        dataNode.set("world", _worldName);
         super.serialize(dataNode);
     }
 
     @Override
     public void deserialize(IDataNode dataNode) throws DeserializeException {
-        _world = dataNode.getSerializable("world", WorldInfo.class);
+        _worldName = dataNode.getString("world");
         super.deserialize(dataNode);
     }
 
     @Override
     public void serialize(NucleusByteWriter writer) throws IOException {
-        writer.write(_world);
+        writer.write(_worldName);
         super.serialize(writer);
     }
 
@@ -137,8 +162,8 @@ public class ChunkInfo extends Coords2Di implements IChunkInfo {
     public void deserialize(NucleusByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException {
 
-        _world = reader.getBinarySerializable(WorldInfo.class);
-        if (_world == null)
+        _worldName = reader.getString();
+        if (_worldName == null)
             throw new RuntimeException("Failed to deserialize world info.");
 
         super.deserialize(reader);
@@ -147,7 +172,7 @@ public class ChunkInfo extends Coords2Di implements IChunkInfo {
     @Override
     public String toString() {
         return getClass().getSimpleName() +
-                " { world:" + _world.getName() + ", x:" + getX() + ", z:" + getZ() + '}';
+                " { world:" + _worldName + ", x:" + getX() + ", z:" + getZ() + '}';
     }
 }
 

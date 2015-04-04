@@ -36,17 +36,20 @@ import javax.annotation.Nullable;
  *
  * <p>Each component in a points location is defined as MIN or MAX, the
  * smallest or largest value on the coordinates system.</p>
+ *
+ * <p>The coordinate order of the 3 MIN/MAX components in each constant
+ * name is: X Y Z</p>
  */
 public enum CuboidPoint {
 
-    X_MIN_Y_MIN_Z_MIN (CuboidPointType.MIN, CuboidPointType.MIN, CuboidPointType.MIN),
-    X_MIN_Y_MAX_Z_MIN (CuboidPointType.MIN, CuboidPointType.MAX, CuboidPointType.MIN),
-    X_MIN_Y_MAX_Z_MAX (CuboidPointType.MIN, CuboidPointType.MAX, CuboidPointType.MAX),
-    X_MIN_Y_MIN_Z_MAX (CuboidPointType.MIN, CuboidPointType.MIN, CuboidPointType.MAX),
-    X_MAX_Y_MIN_Z_MIN (CuboidPointType.MAX, CuboidPointType.MIN, CuboidPointType.MIN),
-    X_MAX_Y_MAX_Z_MIN (CuboidPointType.MAX, CuboidPointType.MAX, CuboidPointType.MIN),
-    X_MAX_Y_MAX_Z_MAX (CuboidPointType.MAX, CuboidPointType.MAX, CuboidPointType.MAX),
-    X_MAX_Y_MIN_Z_MAX (CuboidPointType.MAX, CuboidPointType.MIN, CuboidPointType.MAX);
+    MIN_MIN_MIN(CuboidPointType.MIN, CuboidPointType.MIN, CuboidPointType.MIN),
+    MIN_MAX_MIN(CuboidPointType.MIN, CuboidPointType.MAX, CuboidPointType.MIN),
+    MIN_MAX_MAX(CuboidPointType.MIN, CuboidPointType.MAX, CuboidPointType.MAX),
+    MIN_MIN_MAX(CuboidPointType.MIN, CuboidPointType.MIN, CuboidPointType.MAX),
+    MAX_MIN_MIN(CuboidPointType.MAX, CuboidPointType.MIN, CuboidPointType.MIN),
+    MAX_MAX_MIN(CuboidPointType.MAX, CuboidPointType.MAX, CuboidPointType.MIN),
+    MAX_MAX_MAX(CuboidPointType.MAX, CuboidPointType.MAX, CuboidPointType.MAX),
+    MAX_MIN_MAX(CuboidPointType.MAX, CuboidPointType.MIN, CuboidPointType.MAX);
 
     public enum CuboidPointType {
         MIN,

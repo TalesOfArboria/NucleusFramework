@@ -30,17 +30,15 @@ import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.mixins.IPlayerOwnable;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.mixins.IPrioritizable;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
-import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 
-import java.util.LinkedList;
-import java.util.UUID;
-import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Represents a persisted region.
@@ -59,53 +57,17 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
     Plugin getPlugin();
 
     /**
-     * Get the name of the region.
-     */
-    @Override
-    String getName();
-
-    /**
-     * Get the name of the region in lower case.
-     */
-    @Override
-    String getSearchName();
-
-    /**
-     * Get the id of the region player owner.
-     */
-    @Override
-    @Nullable
-    UUID getOwnerId();
-
-    /**
      * Get the sorting priority of the region.
      */
     @Override
     int getPriority();
 
     /**
-     * Determine if the region has a player owner.
-     */
-    @Override
-    boolean hasOwner();
-
-    /**
-     * Set the player owner of the region.
-     *
-     * @param ownerId  The id of the player owner.
-     *
-     * @return True if the owner was set.
-     */
-    @Override
-    boolean setOwner(@Nullable UUID ownerId);
-
-    /**
-     * Find locations in the region that are made
-     * of the specified {@link Material}.
+     * Find locations in the region that are made of the specified {@link Material}.
      *
      * @param material  The material to find.
      */
-    LinkedList<Location> find(Material material);
+    Collection<Location> find(Material material);
 
     /**
      * Refresh all chunks the region intersects with.
@@ -113,8 +75,7 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
     void refreshChunks();
 
     /**
-     * Determine if the region contains a block
-     * of the specified {@link Material}.
+     * Determine if the region contains a block of the specified {@link Material}.
      *
      * @param material  The material to find.
      */
@@ -128,8 +89,7 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
     void removeEntities (Class<?>... itemTypes);
 
     /**
-     * Determine if the region watches players to see
-     * if they enter or leave.
+     * Determine if the region watches players to see if they enter or leave.
      */
     boolean isEventListener();
 
@@ -139,8 +99,7 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
     IRegionEventListener getEventListener();
 
     /**
-     * Get the regions priority when handling player
-     * entering or leaving region.
+     * Get the regions priority when handling player entering or leaving region.
      *
      * @param priorityType  The priority type.
      */
@@ -161,10 +120,11 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
     boolean removeEventHandler(IRegionEventHandler handler);
 
     /**
-     * The same as calling {@link #getClass} method except
-     * in cases where the actual region is not represented by the
-     * implementer (wrappers), in which case the encapsulated
-     * regions class is returned.
+     * Get the region class.
+     *
+     * <p>The same as calling {@link #getClass} method except in cases where the actual
+     * region is not represented by the implementer (wrappers), in which case the
+     * encapsulated regions class is returned.</p>
      */
     Class<? extends IRegion> getRegionClass();
 }

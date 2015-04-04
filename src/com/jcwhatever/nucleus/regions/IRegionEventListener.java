@@ -30,13 +30,13 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import org.bukkit.entity.Player;
 
 /**
- * Interface for an object provided by a region to notify it
- * of region related events.
+ * Interface for an object provided by a region to allow the global region
+ * manager to notify it of related events.
  */
 public interface IRegionEventListener {
 
     /**
-     * Called when a player enters the region.
+     * Invoked when a player enters the region.
      *
      * @param player  The player that entered the region.
      * @param reason  The reason the player entered the region.
@@ -44,7 +44,7 @@ public interface IRegionEventListener {
     void onPlayerEnter (Player player, EnterRegionReason reason);
 
     /**
-     * Called when a player leaves the region.
+     * Invoked when a player leaves the region.
      *
      * @param player  The player that left the region.
      * @param reason  The reason the player left the region.

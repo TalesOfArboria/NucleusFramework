@@ -24,12 +24,12 @@
 
 package com.jcwhatever.nucleus.regions;
 
-import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
-import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
+import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
+import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.result.Result;
@@ -75,10 +75,10 @@ public class RegionChunkFileWriter {
      * Constructor.
      *
      * @param region  The region the snapshot is for.
-     * @param chunk   The chunk to snapshot.
+     * @param coords  The coordinates of the chunk to snapshot.
      */
-    public RegionChunkFileWriter (IRegion region, ChunkInfo chunk) {
-        this(region, chunk.getX(), chunk.getZ());
+    public RegionChunkFileWriter (IRegion region, IChunkCoords coords) {
+        this(region, coords.getX(), coords.getZ());
     }
 
     /**

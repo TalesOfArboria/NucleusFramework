@@ -33,7 +33,7 @@ import com.jcwhatever.nucleus.events.floatingitems.FloatingItemPickUpEvent;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
+import com.jcwhatever.nucleus.utils.coords.ChunkCoords;
 import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
 
 import org.bukkit.Location;
@@ -57,7 +57,7 @@ class BukkitListener implements Listener {
 
     private Map<UUID, InternalFloatingItem> _floatingItems = new HashMap<>(100);
 
-    private Multimap<ChunkInfo, InternalFloatingItem> _chunkMap =
+    private Multimap<ChunkCoords, InternalFloatingItem> _chunkMap =
             MultimapBuilder.hashKeys(100).hashSetValues(5).build();
 
     private Respawner _respawner = new Respawner();
@@ -82,7 +82,7 @@ class BukkitListener implements Listener {
         PreCon.notNull(item);
         PreCon.notNull(item.getLocation());
 
-        _chunkMap.put(new ChunkInfo(item.getLocation().getChunk()), item);
+        _chunkMap.put(new ChunkCoords(item.getLocation().getChunk()), item);
     }
 
     void unregisterPendingSpawn(InternalFloatingItem item) {
@@ -95,7 +95,7 @@ class BukkitListener implements Listener {
     private void onChunkLoad(ChunkLoadEvent event) {
 
         Collection<InternalFloatingItem> items =
-                _chunkMap.removeAll(new ChunkInfo(event.getChunk()));
+                _chunkMap.removeAll(new ChunkCoords(event.getChunk()));
 
         for (InternalFloatingItem item : items) {
             if (item.getLocation() != null)

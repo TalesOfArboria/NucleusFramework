@@ -28,7 +28,6 @@ package com.jcwhatever.nucleus.regions;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.regions.RegionOwnerChangedEvent;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority;
@@ -37,6 +36,7 @@ import com.jcwhatever.nucleus.regions.selection.RegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -54,6 +54,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -64,13 +65,13 @@ import javax.annotation.Nullable;
 /**
  * Abstract implementation of a region.
  *
- * <p>The region is registered with NucleusFramework's
- * {@link IGlobalRegionManager} as soon as it is defined (P1 and P2 coordinates set) via
- * the regions settings or by calling {@link #setCoords} method.</p>
+ * <p>The region is registered with NucleusFramework's {@link IGlobalRegionManager} as
+ * soon as it is defined (P1 and P2 coordinates set) via the regions settings or by
+ * invoking the {@link #setCoords} method.</p>
  *
  * <p>The regions protected methods {@link #onPlayerEnter} and {@link #onPlayerLeave}
- * are only called if the implementing type invokes {@link Region#setEventListener(boolean)}
- * with a 'true' argument.</p>
+ * are only invoked by the global region manager if the implementing type invokes
+ * {@link #setEventListener(boolean)} with a 'true' argument.</p>
  */
 public abstract class Region extends RegionSelection implements IRegion {
 
@@ -332,8 +333,6 @@ public abstract class Region extends RegionSelection implements IRegion {
                 }
             }
 
-            _sync.notifyAll();
-
             return results;
         }
     }
@@ -345,9 +344,9 @@ public abstract class Region extends RegionSelection implements IRegion {
         if (world == null)
             return;
 
-        List<ChunkInfo> chunks = getChunks();
+        Collection<IChunkCoords> chunks = getChunkCoords();
 
-        for (ChunkInfo chunk : chunks) {
+        for (IChunkCoords chunk : chunks) {
             world.refreshChunk(chunk.getX(), chunk.getZ());
         }
     }
@@ -356,14 +355,16 @@ public abstract class Region extends RegionSelection implements IRegion {
     public final void removeEntities(Class<?>... entityTypes) {
 
         synchronized (_sync) {
-            List<ChunkInfo> chunks = getChunks();
-            for (ChunkInfo chunkInfo : chunks) {
+            Collection<IChunkCoords> chunks = getChunkCoords();
+            for (IChunkCoords chunkInfo : chunks) {
+
                 Chunk chunk = chunkInfo.getChunk();
                 if (chunk == null)
-                    continue;
+                    return;
 
                 for (Entity entity : chunk.getEntities()) {
-                    if (this.contains(entity.getLocation())) {
+
+                    if (contains(entity.getLocation())) {
 
                         if (entityTypes == null || entityTypes.length == 0) {
                             entity.remove();
@@ -371,15 +372,17 @@ public abstract class Region extends RegionSelection implements IRegion {
                         }
 
                         for (Class<?> itemType : entityTypes) {
-                            if (itemType.isInstance(entity)) {
-                                entity.remove();
-                                break;
-                            }
+
+                            if (!itemType.isInstance(entity))
+                                continue;
+
+                            entity.remove();
+                            break;
                         }
                     }
                 }
+
             }
-            _sync.notifyAll();
         }
     }
 
@@ -417,10 +420,11 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /**
-     * Set the value of the player watcher flag and update
-     * the regions registration with the central region manager.
+     * Set the value of the event watcher flag and update the regions registration
+     * with the global region manager.
      *
-     * @param isEventListener  True to allow player enter and leave events.
+     * @param isEventListener  True to allow player enter and leave events. If entry/exit events
+     *                         are not used, false.
      */
     protected void setEventListener(boolean isEventListener) {
         if (isEventListener != _isEventListener) {
@@ -431,8 +435,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /**
-     * Causes the onPlayerEnter method to re-fire
-     * if the player is already in the region.
+     * Causes the onPlayerEnter method to re-fire if the player is already in the region.
      *
      * @param player  The player to forget.
      */
@@ -471,7 +474,7 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /*
-    * Update region math variables
+    * Update region math variables.
     */
     @Override
     protected void updateMath() {
@@ -482,138 +485,110 @@ public abstract class Region extends RegionSelection implements IRegion {
     }
 
     /**
-     * Called when the coordinates for the region are changed
+     * Invoked when the coordinates for the region are changed.
      *
-     * <p>Intended for override if needed.</p>
+     * <p>Intended for optional override.</p>
      *
      * @param p1  The first point location.
      * @param p2  The second point location.
      *
      * @throws IOException
      */
-    protected void onCoordsChanged(@SuppressWarnings("unused") @Nullable Location p1,
-                                   @SuppressWarnings("unused") @Nullable Location p2) {
+    protected void onCoordsChanged(@Nullable Location p1, @Nullable Location p2) {
         // do nothing
     }
 
     /**
-     * Called when a player enters the region,
-     * but only if the region is a player watcher and 
-     * canDoPlayerEnter() returns true.
+     * Invoked when a player enters the region, but only if the region is an event watcher and
+     * {@link #canDoPlayerEnter} returns true when invoked by the global region manager.
      *
-     * <p>Intended for override if needed.</p>
-     *
-     * @param p  the player entering the region.
-     */
-    protected void onPlayerEnter (@SuppressWarnings("unused") Player p,
-                                  @SuppressWarnings("unused") EnterRegionReason reason) {
-        // do nothing
-    }
-
-    /**
-     * Called when a player leaves the region,
-     * but only if the region is a player watcher and 
-     * canDoPlayerLeave() returns true.
-     *
-     * <p>Intended for override if needed.</p>
-     *
-     * @param player  the player leaving the region.
-     */
-    protected void onPlayerLeave (Player player,
-                                  LeaveRegionReason reason) {
-        // do nothing
-    }
-
-    /**
-     * Called to determine if {@link #onPlayerEnter}
-     * can be called on the specified player.
-     *
-     * <p>Intended for override if needed.</p>
+     * <p>Intended for optional override.</p>
      *
      * @param player  The player entering the region.
      */
-    protected boolean canDoPlayerEnter(Player player,
-                                       EnterRegionReason reason) {
-        return true;
+    protected void onPlayerEnter (Player player, EnterRegionReason reason) {
+        // do nothing
     }
 
     /**
-     * Called to determine if {@link #onPlayerLeave}
-     * can be called on the specified player.
+     * Invoked when a player leaves the region, but only if the region is an event watcher and
+     * {@link #canDoPlayerLeave} returns true when invoked by the global region manager.
      *
-     * <p>Intended for override if needed.</p>
+     * <p>Intended for optional override.</p>
      *
      * @param player  The player leaving the region.
      */
-    protected boolean canDoPlayerLeave(Player player,
-                                       LeaveRegionReason reason) {
+    protected void onPlayerLeave (Player player, LeaveRegionReason reason) {
+        // do nothing
+    }
+
+    /**
+     * Invoked to determine if {@link #onPlayerEnter} can be invoked on the specified player
+     * for the specified reason.
+     *
+     * <p>Normally returns true.</p>
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param player  The player entering the region.
+     *
+     * @return  True to allow further handling. Normally returns true unless overridden.
+     */
+    protected boolean canDoPlayerEnter(Player player, EnterRegionReason reason) {
         return true;
     }
 
     /**
-     * Called when the owner of the region is changed.
+     * Invoked to determine if {@link #onPlayerLeave} can be invoked on the specified player
+     * for the specified reason.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param player  The player leaving the region.
+     *
+     * @return  True to allow further handling. Normally returns true unless overridden.
+     */
+    protected boolean canDoPlayerLeave(Player player, LeaveRegionReason reason) {
+        return true;
+    }
+
+    /**
+     * Invoked when the owner of the region is changed.
      *
      * <p>Note that other plugins can easily change the region
-     * owner value.</p>
+     * owner value. If the owner is important, this should be used.</p>
      *
-     * <p>Intended for override if needed.</p>
+     * <p>Intended for optional override.</p>
      *
-     * @param oldOwnerId  The id of the previous owner of the region.
-     * @param newOwnerId  The id of the new owner of the region.
+     * @param oldOwnerId  The ID of the previous owner of the region.
+     * @param newOwnerId  The ID of the new owner of the region.
      *
-     * @return True to allow the owner change.
+     * @return  True to allow the owner change. Normally returns true unless overridden.
      */
-    protected boolean onOwnerChanged(@Nullable UUID oldOwnerId,
-                                     @Nullable UUID newOwnerId) {
+    protected boolean onOwnerChanged(@Nullable UUID oldOwnerId, @Nullable UUID newOwnerId) {
         return true;
     }
 
     /**
-     * Called when the region is disposed.
+     * Invoked when the region is disposed.
      *
-     * <p>Intended for override if needed.</p>
+     * <p>Intended for optional override.</p>
      */
     protected void onDispose() {
         // do nothings
     }
 
-    /**
-     * Used by {@link RegionManager} to execute onPlayerEnter event.
-     */
-    void doPlayerEnter (Player p, EnterRegionReason reason) {
-
-        if (canDoPlayerEnter(p, reason))
-            onPlayerEnter(p, reason);
-
-        for (IRegionEventHandler handler : _eventHandlers) {
-            if (handler.canDoPlayerEnter(p, reason)) {
-                handler.onPlayerEnter(p, reason);
-            }
-        }
-    }
-
-    /**
-     * Used by {@link RegionManager} to execute onPlayerLeave event.
-     */
-    void doPlayerLeave (Player p, LeaveRegionReason reason) {
-
-        if (canDoPlayerLeave(p, reason))
-            onPlayerLeave(p, reason);
-
-        for (IRegionEventHandler handler : _eventHandlers) {
-            if (handler.canDoPlayerLeave(p, reason)) {
-                handler.onPlayerLeave(p, reason);
-            }
-        }
-    }
-
+    // helper method to get internal region manager.
     private InternalRegionManager regionManager() {
         return (InternalRegionManager) Nucleus.getRegionManager();
     }
 
+    /*
+     * private implementation of IRegionEventListener
+     */
     private static class RegionListener implements IRegionEventListener {
 
-        private final Region _region;
+        final Region _region;
 
         RegionListener(Region region) {
             _region = region;
@@ -621,12 +596,28 @@ public abstract class Region extends RegionSelection implements IRegion {
 
         @Override
         public void onPlayerEnter(Player player, EnterRegionReason reason) {
-            _region.doPlayerEnter(player, reason);
+
+            if (_region.canDoPlayerEnter(player, reason))
+                onPlayerEnter(player, reason);
+
+            for (IRegionEventHandler handler : _region._eventHandlers) {
+                if (handler.canDoPlayerEnter(player, reason)) {
+                    handler.onPlayerEnter(player, reason);
+                }
+            }
         }
 
         @Override
         public void onPlayerLeave(Player player, LeaveRegionReason reason) {
-            _region.doPlayerLeave(player, reason);
+
+            if (_region.canDoPlayerLeave(player, reason))
+                onPlayerLeave(player, reason);
+
+            for (IRegionEventHandler handler : _region._eventHandlers) {
+                if (handler.canDoPlayerLeave(player, reason)) {
+                    handler.onPlayerLeave(player, reason);
+                }
+            }
         }
     }
 

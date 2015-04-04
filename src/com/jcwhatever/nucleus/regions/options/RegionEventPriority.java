@@ -29,6 +29,7 @@ package com.jcwhatever.nucleus.regions.options;
  * region manager in relation to other regions.
  */
 public enum RegionEventPriority {
+    
     /**
      * The last to be handled.
      */

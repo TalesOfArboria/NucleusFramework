@@ -29,9 +29,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.RegionChunkFileLoader.LoadType;
-import com.jcwhatever.nucleus.utils.coords.ChunkBlockInfo;
-import com.jcwhatever.nucleus.utils.coords.ChunkInfo;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.coords.ChunkBlockInfo;
+import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
+import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
 import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
 import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.utils.materials.Materials;
@@ -44,8 +45,8 @@ import com.jcwhatever.nucleus.utils.performance.queued.QueueWorker;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 
 import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Animals;
@@ -64,8 +65,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * Abstract implementation for a region that
- * is savable to and restorable from disk.
+ * Abstract implementation for a region that is savable to and restorable from disk.
  */
 public abstract class RestorableRegion extends BuildableRegion {
 
@@ -94,8 +94,7 @@ public abstract class RestorableRegion extends BuildableRegion {
     }
 
     /**
-     * Determine if region is currently
-     * int the process of being restored
+     * Determine if region is currently in the process of being restored
      * from disk.
      */
     public final boolean isRestoring() {
@@ -103,47 +102,48 @@ public abstract class RestorableRegion extends BuildableRegion {
     }
 
     /**
-     * Determine if region is currently
-     * in the process of saving to disk.
+     * Determine if region is currently in the process of saving to disk.
      */
     public final boolean isSaving() {
         return _isSaving;
     }
 
     /**
-     * Save region data to disk
+     * Save region data to disk.
+     *
+     * @return  A future to receive the results of the save operation.
      */
     public Future<QueueTask> saveData() throws IOException {
         return saveData("");
     }
 
-    /*
-     * Save region data to disk
+    /**
+     * Save region data to disk using a specific snapshot.
+     *
+     * @param snapshotName  The name of the snapshot to save.
+     *
+     * @return  A future to receive the results of the save operation.
      */
     protected Future<QueueTask> saveData(String snapshotName) throws IOException {
 
-        List<ChunkInfo> chunks = this.getChunks();
+        Collection<IChunkCoords> chunks = this.getChunkCoords();
 
         QueueProject project = new QueueProject(getPlugin());
 
-        if (chunks.size() == 0) {
-            project.cancel("Cannot save region because there are no chunks to save.");
-            return project.getResult();
-        }
+        if (chunks.size() == 0)
+            return project.cancel("Cannot save region because there are no chunks to save.");
 
-        if (isSaving() || isRestoring()) {
-            project.cancel("Cannot save region while it is already saving or restoring.");
-            return project.getResult();
-        }
+        if (isSaving() || isRestoring())
+            return project.cancel("Cannot save region while it is already saving or restoring.");
 
         _isSaving = true;
-        onSave();
+        onPreSave();
 
         NucMsg.debug(getPlugin(), "RestorableRegion: saving data for region '{0}'", getName());
 
-        for (ChunkInfo chunk : chunks) {
+        for (IChunkCoords chunk : chunks) {
             RegionChunkFileWriter writer = new RegionChunkFileWriter(this, chunk);
-            writer.saveData(getChunkFile(chunk, snapshotName, true), project);
+            writer.saveData(getChunkFile(chunk.getX(), chunk.getZ(), snapshotName, true), project);
         }
 
         QueueWorker.get().addTask(project);
@@ -159,27 +159,26 @@ public abstract class RestorableRegion extends BuildableRegion {
     }
 
     /**
-     * Determine if region data files exist
-     * and can be restored.
+     * Determine if region data files exist and can be restored.
      */
     public boolean canRestore() {
         return canRestore("");
     }
 
     /**
-     * Determine if region data files for a
-     * saved version of the region can be restored.
+     * Determine if region data files for a saved snapshot of the region can be restored.
      *
-     * @param version  The name of the restore version.
+     * @param snapshotName  The name of the snapshot.
      */
-    protected boolean canRestore(String version) {
-        List<ChunkInfo> chunks = getChunks();
+    protected boolean canRestore(String snapshotName) {
 
-        for (ChunkInfo chunk : chunks) {
+        Collection<IChunkCoords> chunks = getChunkCoords();
+
+        for (IChunkCoords chunk : chunks) {
             File file;
 
             try {
-                file = getChunkFile(chunk, version, false);
+                file = getChunkFile(chunk.getX(), chunk.getZ(), snapshotName, false);
             } catch (IOException e) {
                 return false;
             }
@@ -191,9 +190,11 @@ public abstract class RestorableRegion extends BuildableRegion {
     }
 
     /**
-     * Restore region from disk
+     * Restore region from disk.
      *
      * @param buildMethod  The method used to restore.
+     *
+     * @return  A future to receive the results of the restore operation.
      *
      * @throws IOException
      */
@@ -202,51 +203,47 @@ public abstract class RestorableRegion extends BuildableRegion {
     }
 
     /**
-     * Restore a saved version of the region from disk.
+     * Restore a saved snapshot of the region from disk.
      *
      * @param buildMethod  The method used to restore.
      * @param version      The name of the restore version.
+     *
+     * @return  A future to receive the results of the restore operation.
      *
      * @throws IOException
      */
     protected Future<QueueTask> restoreData(BuildMethod buildMethod, String version) throws IOException {
 
-        List<ChunkInfo> chunks = getChunks();
-
+        Collection<IChunkCoords> chunks = getChunkCoords();
         QueueProject restoreProject = new QueueProject(getPlugin());
 
-        if (chunks.size() == 0) {
+        if (chunks.size() == 0)
             return restoreProject.cancel("No chunks to restore.");
-        }
 
-        if (isSaving()) {
+        if (isSaving())
             return restoreProject.cancel("Region is still saving.");
-        }
 
-        if (isRestoring()) {
+        if (isRestoring())
             return restoreProject.cancel("Region is still restoring.");
-        }
 
-        if (!canRestore()) {
+        if (!canRestore())
             return restoreProject.cancel("Region cannot restore without restore files.");
-        }
 
         _isRestoring = true;
-        onRestore();
+        onPreRestore();
 
         removeEntities(Item.class, Monster.class, Animals.class);
         removeEntities(SerializableFurnitureEntity.getFurnitureClasses());
 
-        for (ChunkInfo chunk : chunks) {
+        for (IChunkCoords chunk : chunks) {
 
-            // create project for chunk
             QueueProject chunkProject = new QueueProject(getPlugin());
-
-            // create chunk loader
             RegionChunkFileLoader loader = new RegionChunkFileLoader(this, chunk);
 
             // add load task to chunk project
-            loader.loadInProject(getChunkFile(chunk, version, false), chunkProject, LoadType.MISMATCHED);
+            loader.loadInProject(
+                    getChunkFile(chunk.getX(), chunk.getZ(), version, false),
+                    chunkProject, LoadType.MISMATCHED);
 
             // add restore blocks to chunk project
             chunkProject.addTask(new RestoreBlocks(loader));
@@ -255,6 +252,7 @@ public abstract class RestorableRegion extends BuildableRegion {
             restoreProject.addTask(chunkProject);
         }
 
+        // run project based on build method
         switch (buildMethod) {
             case PERFORMANCE:
                 QueueWorker.get().addTask(restoreProject);
@@ -278,27 +276,19 @@ public abstract class RestorableRegion extends BuildableRegion {
             @Override
             public void on(Result<QueueTask> argument) {
                 _isRestoring = false;
-                onRestoreComplete();
+                onRestore();
             }
         });
     }
 
     /**
-     * Delete region data from disk
+     * Delete region data from disk.
      */
     public boolean deleteData() throws IOException {
         File regionData = getRegionDataFolder();
         return regionData.exists() && regionData.delete();
     }
 
-    /**
-     * Called when the coordinates are changed.
-     *
-     * @param p1  The first point location.
-     * @param p2  The second point location.
-     *
-     * @throws IOException
-     */
     @Override
     protected void onCoordsChanged(Location p1, Location p2) {
         super.onCoordsChanged(p1, p2);
@@ -314,13 +304,15 @@ public abstract class RestorableRegion extends BuildableRegion {
     }
 
     /**
-     * Called to get the save file prefix.
+     * Invoked to get the save file prefix.
      *
-     * <p>The prefix is used to distinguish the file from
-     * other regions that might contain the same chunk(s). The prefix should
-     * have a unique identifier for the region such as the region name.</p>
+     * <p>The prefix is used to distinguish the file from other regions that might
+     * contain the same chunk(s). The prefix should have a unique identifier for the
+     * region such as the region name.</p>
      */
-    protected abstract String getFilePrefix();
+    protected String getFilePrefix() {
+        return getName();
+    }
 
     /**
      * Get the region base data folder.
@@ -351,26 +343,6 @@ public abstract class RestorableRegion extends BuildableRegion {
     /**
      * Get the name of the file used to store data for the specified chunk.
      *
-     * @param chunk    The chunk snapshot.
-     * @param version  The name of the restore version.
-     */
-    protected final String getChunkFilename(ChunkSnapshot chunk, String version) {
-        return getChunkFilename(chunk.getX(), chunk.getZ(), version);
-    }
-
-    /**
-     * Get the name of the file used to store data for the specified chunk.
-     *
-     * @param chunk    The chunk snapshot.
-     * @param version  The name of the restore version.
-     */
-    protected final String getChunkFilename(Chunk chunk, String version) {
-        return getChunkFilename(chunk.getX(), chunk.getZ(), version);
-    }
-
-    /**
-     * Get the name of the file used to store data for the specified chunk.
-     *
      * @param chunkX   The chunk X coordinates.
      * @param chunkZ   The chunk Z coordinates.
      * @param version  The name of the restore version.
@@ -387,19 +359,6 @@ public abstract class RestorableRegion extends BuildableRegion {
     /**
      * Get the file used to store data for the specified chunk.
      *
-     * @param chunk             The chunk snapshot.
-     * @param version           The name of the restore version.
-     * @param doDeleteExisting  True to delete existing file.
-     *
-     * @throws IOException
-     */
-    protected final File getChunkFile(ChunkInfo chunk, String version, boolean doDeleteExisting) throws IOException {
-        return getChunkFile(chunk.getX(), chunk.getZ(), version, doDeleteExisting);
-    }
-
-    /**
-     * Get the file used to store data for the specified chunk.
-     *
      * @param chunkX            The chunk X coordinates.
      * @param chunkZ            The chunk Z coordinates.
      * @param version           The name of the restore version.
@@ -407,7 +366,9 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @throws IOException
      */
-    protected final File getChunkFile(int chunkX, int chunkZ, String version, boolean doDeleteExisting) throws IOException {
+    protected final File getChunkFile(int chunkX, int chunkZ, String version, boolean doDeleteExisting)
+            throws IOException {
+
         File dir = getRegionDataFolder();
         File file = new File(dir, getChunkFilename(chunkX, chunkZ, version));
 
@@ -421,28 +382,35 @@ public abstract class RestorableRegion extends BuildableRegion {
     }
 
     /**
-     * Called before the region is restored.
+     * Invoked before the region is restored.
+     *
+     * <p>Intended for optional override.</p>
+     */
+    protected void onPreRestore() {}
+
+    /**
+     * Invoked after the region is restored.
+     *
+     * <p>Intended for optional override.</p>
      */
     protected void onRestore() {}
 
     /**
-     * Called after the region is restored.
+     * Invoked before the region is saved.
+     *
+     * <p>Intended for optional override.</p>
      */
-    protected void onRestoreComplete() {}
+    protected void onPreSave() {}
 
     /**
-     * Called before the region is saved.
-     */
-    protected void onSave() {}
-
-    /**
-     * Called after the region is saved.
+     * Invoked after the region is saved.
+     *
+     * <p>Intended for optional override.</p>
      */
     protected void onSaveComplete() {}
 
-    /**
-     * Restore blocks from blockInfo stack on
-     * the main thread.
+    /*
+     * Restore blocks from blockInfo stack on the main thread.
      */
     private static final class RestoreBlocks extends QueueTask {
 
@@ -453,7 +421,12 @@ public abstract class RestorableRegion extends BuildableRegion {
             super(loader.getRegion().getPlugin(), TaskConcurrency.MAIN_THREAD);
 
             this.loader = loader;
-            this.chunk = loader.getChunk().getChunk();
+
+            ICoords2Di coords = loader.getChunkCoord();
+            World world = loader.getRegion().getWorld();
+            assert world != null;
+
+            this.chunk = world.getChunkAt(coords.getX(), coords.getZ());
         }
 
         @Override
@@ -555,7 +528,7 @@ public abstract class RestorableRegion extends BuildableRegion {
         }
     }
 
-    /**
+    /*
      * Restore block entities from file
      */
     final static class RestoreBlockEntities implements Runnable {
@@ -577,7 +550,7 @@ public abstract class RestorableRegion extends BuildableRegion {
 
     }
 
-    /**
+    /*
      * Restore entities from file.
      */
     static final class RestoreEntities implements Runnable {
@@ -599,7 +572,6 @@ public abstract class RestorableRegion extends BuildableRegion {
                 meta.spawn();
             }
         }
-
     }
 }
 
