@@ -29,6 +29,8 @@ import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.ChunkCoords;
+import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -47,10 +49,10 @@ import java.util.Set;
 public class RegionTypeManager<R extends IRegion> {
 
     // Player watcher regions chunk map. String key is chunk coordinates.
-    private final Map<String, EventOrderedRegions<R>> _listenerRegionsMap = new HashMap<>(10);
+    private final Map<IChunkCoords, EventOrderedRegions<R>> _listenerRegionsMap = new HashMap<>(10);
 
     // All regions chunk map. String key is chunk coordinates
-    private final Map<String, Set<R>> _allRegionsMap = new HashMap<>(15);
+    private final Map<IChunkCoords, Set<R>> _allRegionsMap = new HashMap<>(15);
 
     // hash set of all registered regions
     private final Set<R> _regions = new RegionSet<>(10, false);
@@ -116,7 +118,7 @@ public class RegionTypeManager<R extends IRegion> {
             int chunkX = (int)Math.floor((double)x / 16);
             int chunkZ = (int)Math.floor((double)z / 16);
 
-            String key = getChunkKey(world, chunkX, chunkZ);
+            IChunkCoords key = getChunkKey(world, chunkX, chunkZ);
 
             Set<R> regions = _allRegionsMap.get(key);
             if (regions == null)
@@ -229,7 +231,7 @@ public class RegionTypeManager<R extends IRegion> {
     public List<R> getRegionsInChunk(World world, int x, int z) {
         synchronized(_sync) {
 
-            String key = getChunkKey(world, x, z);
+            IChunkCoords key = getChunkKey(world, x, z);
 
             Set<R> regions = _allRegionsMap.get(key);
             if (regions == null)
@@ -245,7 +247,7 @@ public class RegionTypeManager<R extends IRegion> {
      */
     private <T extends Set<R>> List<R> getRegion(World world, int x, int y, int z,
                                                              PriorityType priorityType,
-                                                             Map<String, T> map) {
+                                                             Map<IChunkCoords, T> map) {
         synchronized(_sync) {
 
             List<R> results = new ArrayList<>(10);
@@ -258,7 +260,7 @@ public class RegionTypeManager<R extends IRegion> {
             int chunkX = (int)Math.floor((double)x / 16);
             int chunkZ = (int)Math.floor((double)z / 16);
 
-            String key = getChunkKey(world, chunkX, chunkZ);
+            IChunkCoords key = getChunkKey(world, chunkX, chunkZ);
 
             Set<R> regions = map.get(key);
             if (regions == null)
@@ -309,7 +311,7 @@ public class RegionTypeManager<R extends IRegion> {
                 for (int z= region.getChunkZ(); z < zMax; z++) {
 
                     //noinspection ConstantConditions
-                    String key = getChunkKey(region.getWorld(), x, z);
+                    IChunkCoords key = getChunkKey(region.getWorld(), x, z);
 
                     if (region.isEventListener()) {
 
@@ -361,7 +363,7 @@ public class RegionTypeManager<R extends IRegion> {
                 for (int z= region.getChunkZ(); z < zMax; z++) {
 
                     //noinspection ConstantConditions
-                    String key = getChunkKey(region.getWorld(), x, z);
+                    IChunkCoords key = getChunkKey(region.getWorld(), x, z);
 
                     removeFromMap(_listenerRegionsMap, key, region);
                     removeFromMap(_allRegionsMap, key, region);
@@ -393,7 +395,7 @@ public class RegionTypeManager<R extends IRegion> {
     /*
      * Remove a region from a region map.
      */
-    protected <T extends Set<R>> boolean removeFromMap(Map<String, T> map, String key, R region) {
+    protected <T extends Set<R>> boolean removeFromMap(Map<IChunkCoords, T> map, IChunkCoords key, R region) {
         Set<R> regions = map.get(key);
         return regions != null && regions.remove(region);
     }
@@ -401,7 +403,7 @@ public class RegionTypeManager<R extends IRegion> {
     /*
      * Get a regions chunk map key.
      */
-    protected String getChunkKey(World world, int x, int z) {
-        return world.getName() + '.' + String.valueOf(x) + '.' + String.valueOf(z);
+    protected IChunkCoords getChunkKey(World world, int x, int z) {
+        return new ChunkCoords(world, x, z);
     }
 }
