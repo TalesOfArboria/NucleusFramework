@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.internal.items.meta;
 
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.materials.Materials;
@@ -39,9 +41,9 @@ import java.util.List;
  * Handles {@link org.bukkit.inventory.ItemStack} color meta, as a byte number [0-15],
  * the name of the color, or in the case of leather, the RGB hex value.
  *
- * @see ItemMetaHandlers
+ * @see InternalItemMetaHandlers
  */
-public final class ColorHandler implements IMetaHandler {
+class ItemColor implements IItemMetaHandler {
 
     @Override
     public String getMetaName() {

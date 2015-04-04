@@ -37,17 +37,17 @@ import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Nucleus implementation of {@link IFriendsContext}.
  */
-class InternalFriendsContext implements IFriendsContext {
+class NucleusFriendsContext implements IFriendsContext {
 
     private final NucleusFriendsProvider _provider;
     private Map<UUID, FriendInfo> _friendInfo;
 
     protected final Object _sync = new Object();
 
-    public InternalFriendsContext(NucleusFriendsProvider provider) {
+    public NucleusFriendsContext(NucleusFriendsProvider provider) {
         PreCon.notNull(provider);
 
         _provider = provider;

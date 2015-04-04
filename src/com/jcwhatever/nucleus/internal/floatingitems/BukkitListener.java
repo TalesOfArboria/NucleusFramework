@@ -55,9 +55,9 @@ import java.util.UUID;
 
 class BukkitListener implements Listener {
 
-    private Map<UUID, InternalFloatingItem> _floatingItems = new HashMap<>(100);
+    private Map<UUID, FloatingItem> _floatingItems = new HashMap<>(100);
 
-    private Multimap<ChunkCoords, InternalFloatingItem> _chunkMap =
+    private Multimap<ChunkCoords, FloatingItem> _chunkMap =
             MultimapBuilder.hashKeys(100).hashSetValues(5).build();
 
     private Respawner _respawner = new Respawner();
@@ -66,26 +66,26 @@ class BukkitListener implements Listener {
         Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, 1, _respawner);
     }
 
-    void register(InternalFloatingItem item) {
+    void register(FloatingItem item) {
         PreCon.notNull(item);
 
         _floatingItems.put(item.getUniqueId(), item);
     }
 
-    void unregister(InternalFloatingItem item) {
+    void unregister(FloatingItem item) {
         PreCon.notNull(item);
 
         _floatingItems.remove(item.getUniqueId());
     }
 
-    void registerPendingSpawn(InternalFloatingItem item) {
+    void registerPendingSpawn(FloatingItem item) {
         PreCon.notNull(item);
         PreCon.notNull(item.getLocation());
 
         _chunkMap.put(new ChunkCoords(item.getLocation().getChunk()), item);
     }
 
-    void unregisterPendingSpawn(InternalFloatingItem item) {
+    void unregisterPendingSpawn(FloatingItem item) {
         PreCon.notNull(item);
 
         CollectionUtils.removeValue(_chunkMap, item);
@@ -94,10 +94,10 @@ class BukkitListener implements Listener {
     @EventHandler
     private void onChunkLoad(ChunkLoadEvent event) {
 
-        Collection<InternalFloatingItem> items =
+        Collection<FloatingItem> items =
                 _chunkMap.removeAll(new ChunkCoords(event.getChunk()));
 
-        for (InternalFloatingItem item : items) {
+        for (FloatingItem item : items) {
             if (item.getLocation() != null)
                 item.spawn(item.getLocation());
         }
@@ -106,7 +106,7 @@ class BukkitListener implements Listener {
     @EventHandler
     private void onPlayerTryPickup(PlayerPickupItemEvent event) {
 
-        final InternalFloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
+        final FloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
         if (item == null)
             return;
 
@@ -149,7 +149,7 @@ class BukkitListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerPickup(PlayerPickupItemEvent event) {
 
-        final InternalFloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
+        final FloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
         if (item == null)
             return;
 
@@ -160,7 +160,7 @@ class BukkitListener implements Listener {
     @EventHandler
     private void onItemDespawn(ItemDespawnEvent event) {
 
-        final InternalFloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
+        final FloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
         if (item == null)
             return;
 
@@ -173,7 +173,7 @@ class BukkitListener implements Listener {
         if (event.getEntity().getType() != EntityType.DROPPED_ITEM)
             return;
 
-        final InternalFloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
+        final FloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
         if (item == null)
             return;
 

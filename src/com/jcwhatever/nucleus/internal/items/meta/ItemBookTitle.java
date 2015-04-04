@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.internal.items.meta;
 
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.inventory.ItemStack;
@@ -36,9 +38,9 @@ import java.util.List;
 /**
  * Handles a book {@link org.bukkit.inventory.ItemStack} title meta.
  *
- * @see ItemMetaHandlers
+ * @see InternalItemMetaHandlers
  */
-public final class BookTitleHandler implements IMetaHandler {
+class ItemBookTitle implements IItemMetaHandler {
 
     @Override
     public String getMetaName() {

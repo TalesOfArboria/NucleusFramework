@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.internal.items.meta;
 
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandlers;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.ArrayList;
@@ -35,63 +37,28 @@ import javax.annotation.Nullable;
 /**
  * Manages {@link org.bukkit.inventory.ItemStack} meta data handlers.
  */
-public final class ItemMetaHandlers {
+public final class InternalItemMetaHandlers implements IItemMetaHandlers {
 
-    private static ItemMetaHandlers _global;
+    private final Map<String, IItemMetaHandler> _handlers = new HashMap<>(15);
 
-    /**
-     * Get the global singleton instance.
-     */
-    public static ItemMetaHandlers getGlobal() {
-        if (_global == null)
-            _global = createDefault();
-
-        return _global;
+    public InternalItemMetaHandlers() {
+        register(new ItemColor());
+        register(new ItemDisplayName());
+        register(new ItemEnchantment());
+        register(new ItemLore());
+        register(new ItemBookAuthor());
+        register(new ItemBookTitle());
+        register(new ItemBookPage());
     }
 
-    /**
-     * Create a new instance and fill with the default meta handlers.
-     */
-    public static ItemMetaHandlers createDefault() {
-        return fillDefault(new ItemMetaHandlers());
-    }
-
-    /**
-     * Fill an instance with the default meta handlers.
-     *
-     * @param output  The output instance to fill.
-     *
-     * @return  The output instance.
-     */
-    public static ItemMetaHandlers fillDefault(ItemMetaHandlers output) {
-        return output
-                .register(new ColorHandler())
-                .register(new DisplayNameHandler())
-                .register(new EnchantmentHandler())
-                .register(new LoreHandler())
-                .register(new BookAuthorHandler())
-                .register(new BookTitleHandler())
-                .register(new BookPageHandler());
-    }
-
-    private final Map<String, IMetaHandler> _handlers = new HashMap<>(15);
-
-    /**
-     * Get a meta handler by its case sensitive meta name.
-     *
-     * @param metaName  The meta name.
-     *
-     * @return  The meta handler or null if not found.
-     */
+    @Override
     @Nullable
-    public IMetaHandler getHandler(String metaName) {
+    public IItemMetaHandler getHandler(String metaName) {
         return _handlers.get(metaName);
     }
 
-    /**
-     * Get all registered meta handlers.
-     */
-    public List<IMetaHandler> getHandlers() {
+    @Override
+    public List<IItemMetaHandler> getHandlers() {
         return new ArrayList<>(_handlers.values());
     }
 
@@ -105,7 +72,7 @@ public final class ItemMetaHandlers {
      *
      * @return  Self for chaining.
      */
-    protected ItemMetaHandlers register(IMetaHandler handler) {
+    protected InternalItemMetaHandlers register(IItemMetaHandler handler) {
         PreCon.notNull(handler);
 
         _handlers.put(handler.getMetaName(), handler);

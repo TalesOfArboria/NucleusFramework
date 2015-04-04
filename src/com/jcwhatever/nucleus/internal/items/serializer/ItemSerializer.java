@@ -22,13 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.items;
+package com.jcwhatever.nucleus.internal.items.serializer;
 
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.items.meta.InternalItemMetaHandlers;
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandlers;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerializer;
-import com.jcwhatever.nucleus.internal.items.meta.IMetaHandler;
-import com.jcwhatever.nucleus.internal.items.meta.ItemMetaHandlers;
-import com.jcwhatever.nucleus.internal.items.meta.ItemMetaValue;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.ChatColor;
@@ -53,13 +55,13 @@ import javax.annotation.Nullable;
  *     MaterialName2...
  * </p>
  *
- * @see InternalItemDeserializer
- * @see ItemMetaHandlers
+ * @see ItemDeserializer
+ * @see InternalItemMetaHandlers
  */
-class InternalItemSerializer implements IItemStackSerializer {
+class ItemSerializer implements IItemStackSerializer {
 
     private final StringBuilder _buffer;
-    private final ItemMetaHandlers _metaHandlers;
+    private final IItemMetaHandlers _metaHandlers;
     private int _itemsAppended = 0;
     private SerializerOutputType _outputType = SerializerOutputType.RAW;
 
@@ -79,18 +81,8 @@ class InternalItemSerializer implements IItemStackSerializer {
      *
      * @param size  The initial buffer size
      */
-    public InternalItemSerializer(int size) {
-        this(size, ItemMetaHandlers.getGlobal(), SerializerOutputType.RAW);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param size        The initial buffer size
-     * @param outputType  The output type.
-     */
-    public InternalItemSerializer(int size, SerializerOutputType outputType) {
-        this(size, ItemMetaHandlers.getGlobal(), outputType);
+    public ItemSerializer(int size) {
+        this(size, SerializerOutputType.RAW);
     }
 
     /**
@@ -100,75 +92,36 @@ class InternalItemSerializer implements IItemStackSerializer {
      *
      * @param buffer  The {@link java.lang.StringBuilder} to append the results to.
      */
-    public InternalItemSerializer(StringBuilder buffer) {
-        this(buffer, ItemMetaHandlers.getGlobal(), SerializerOutputType.RAW);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param buffer      The The {@link java.lang.StringBuilder} to append the results to.
-     * @param outputType  The output type.
-     */
-    public InternalItemSerializer(StringBuilder buffer, SerializerOutputType outputType) {
-        this(buffer, ItemMetaHandlers.getGlobal(), outputType);
-    }
-
-    /**
-     * Constructor.
-     *
-     * <p>Raw output type.</p>
-     *
-     * @param size          The initial buffer size
-     * @param metaHandlers  The {@link ItemMetaHandlers} to use.
-     */
-    public InternalItemSerializer(int size, ItemMetaHandlers metaHandlers) {
-        this(size, metaHandlers, SerializerOutputType.RAW);
+    public ItemSerializer(StringBuilder buffer) {
+        this(buffer, SerializerOutputType.RAW);
     }
 
     /**
      * Constructor.
      *
      * @param size          The initial buffer size.
-     * @param metaHandlers  The {@link ItemMetaHandlers} to use.
      * @param outputType    The output type.
      */
-    public InternalItemSerializer(int size, ItemMetaHandlers metaHandlers, SerializerOutputType outputType) {
-        PreCon.notNull(metaHandlers);
+    public ItemSerializer(int size, SerializerOutputType outputType) {
         PreCon.notNull(outputType);
 
         _buffer = new StringBuilder(size);
-        _metaHandlers = metaHandlers;
+        _metaHandlers = Nucleus.getItemMetaHandlers();
         _outputType = outputType;
     }
 
     /**
      * Constructor.
      *
-     * <p>Raw output type.</p>
-     *
-     * @param buffer  The {@link java.lang.StringBuilder} to append the results to.
-     * @param metaHandlers  The {@link ItemMetaHandlers} to use.
-     */
-    public InternalItemSerializer(StringBuilder buffer, ItemMetaHandlers metaHandlers) {
-        this(buffer, metaHandlers, SerializerOutputType.RAW);
-    }
-
-    /**
-     * Constructor.
-     *
      * @param buffer        The {@link java.lang.StringBuilder} to append the results to.
-     * @param metaHandlers  The {@link ItemMetaHandlers} to use.
      * @param outputType    The output type.
      */
-    public InternalItemSerializer(StringBuilder buffer, ItemMetaHandlers metaHandlers,
-                               SerializerOutputType outputType) {
+    public ItemSerializer(StringBuilder buffer, SerializerOutputType outputType) {
         PreCon.notNull(buffer);
-        PreCon.notNull(metaHandlers);
         PreCon.notNull(outputType);
 
         _buffer = buffer;
-        _metaHandlers = metaHandlers;
+        _metaHandlers = Nucleus.getItemMetaHandlers();
         _outputType = outputType;
     }
 
@@ -178,7 +131,7 @@ class InternalItemSerializer implements IItemStackSerializer {
     }
 
     @Override
-    public InternalItemSerializer append(@Nullable ItemStack stack) {
+    public ItemSerializer append(@Nullable ItemStack stack) {
 
         if (_itemsAppended > 0)
             _buffer.append(", ");
@@ -190,7 +143,7 @@ class InternalItemSerializer implements IItemStackSerializer {
     }
 
     @Override
-    public InternalItemSerializer appendAll(Collection<? extends ItemStack> stacks) {
+    public ItemSerializer appendAll(Collection<? extends ItemStack> stacks) {
         for (ItemStack stack : stacks) {
             append(stack);
         }
@@ -198,7 +151,7 @@ class InternalItemSerializer implements IItemStackSerializer {
     }
 
     @Override
-    public <T extends ItemStack> InternalItemSerializer appendAll(T[] stacks) {
+    public <T extends ItemStack> ItemSerializer appendAll(T[] stacks) {
         for (ItemStack stack : stacks) {
             append(stack);
         }
@@ -255,11 +208,11 @@ class InternalItemSerializer implements IItemStackSerializer {
             buffy.append(stack.getAmount());
         }
 
-        List<IMetaHandler> handlers = _metaHandlers.getHandlers();
+        Collection<IItemMetaHandler> handlers = _metaHandlers.getHandlers();
 
         List<ItemMetaValue> metaObjects = new ArrayList<>(10);
 
-        for (IMetaHandler handler : handlers) {
+        for (IItemMetaHandler handler : handlers) {
             metaObjects.addAll(handler.getMeta(stack));
         }
 

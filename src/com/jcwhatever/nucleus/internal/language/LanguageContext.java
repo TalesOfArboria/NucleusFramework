@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link ILanguageContext}.
  */
-class InternalLanguageContext implements ILanguageContext {
+class LanguageContext implements ILanguageContext {
 
     private final Plugin _plugin;
     private final Object _owner;
@@ -57,7 +57,7 @@ class InternalLanguageContext implements ILanguageContext {
      *
      * @param plugin  The owning plugin.
      */
-    public InternalLanguageContext(Plugin plugin) {
+    public LanguageContext(Plugin plugin) {
         this(plugin, null);
     }
 
@@ -69,7 +69,7 @@ class InternalLanguageContext implements ILanguageContext {
      *                 Otherwise, the plugin is the owner. Use when a plugin loads from multiple jar
      *                 files (modules) and a jar has its own language manager.
      */
-    public InternalLanguageContext(Plugin plugin, @Nullable Object context) {
+    public LanguageContext(Plugin plugin, @Nullable Object context) {
         PreCon.notNull(plugin);
 
         _plugin = plugin;

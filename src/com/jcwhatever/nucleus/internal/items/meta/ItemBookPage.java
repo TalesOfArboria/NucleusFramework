@@ -24,25 +24,31 @@
 
 package com.jcwhatever.nucleus.internal.items.meta;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles {@link org.bukkit.inventory.ItemStack} display name meta.
+ * Handles a books page meta. Each page reference is a single page.
+ * (i.e 3 pages require 3 "bookPage" meta entries)
  *
- * @see ItemMetaHandlers
+ * <p>Each meta entry represents a page sequentially.
+ * (i.e. The first meta entry is page 1)</p>
+ *
+ * @see InternalItemMetaHandlers
  */
-public final class DisplayNameHandler implements IMetaHandler {
+class ItemBookPage implements IItemMetaHandler {
 
     @Override
     public String getMetaName() {
-        return "name";
+        return "bookPage";
     }
 
     @Override
@@ -50,7 +56,7 @@ public final class DisplayNameHandler implements IMetaHandler {
         PreCon.notNull(itemStack);
 
         ItemMeta meta = itemStack.getItemMeta();
-        return meta != null && meta.hasDisplayName();
+        return meta instanceof BookMeta;
     }
 
     @Override
@@ -58,10 +64,29 @@ public final class DisplayNameHandler implements IMetaHandler {
         PreCon.notNull(itemStack);
         PreCon.notNull(meta);
 
-        if (!meta.getName().equals(getMetaName()))
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (!(itemMeta instanceof BookMeta))
             return false;
 
-        ItemStackUtils.setDisplayName(itemStack, meta.getRawData());
+        BookMeta bookMeta = (BookMeta)itemMeta;
+
+        List<String> pages = bookMeta.getPages();
+
+        List<String> newPages = pages == null
+                ? new ArrayList<String>(5)
+                : new ArrayList<String>(pages.size() + 1);
+
+        if (pages != null) {
+            for (String page : pages) {
+                newPages.add(page);
+            }
+        }
+
+        newPages.add(meta.getRawData());
+
+        bookMeta.setPages(newPages);
+
+        itemStack.setItemMeta(bookMeta);
 
         return true;
     }
@@ -70,13 +95,24 @@ public final class DisplayNameHandler implements IMetaHandler {
     public List<ItemMetaValue> getMeta(ItemStack itemStack) {
         PreCon.notNull(itemStack);
 
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null || !meta.hasDisplayName())
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (!(itemMeta instanceof BookMeta))
             return new ArrayList<>(0);
 
-        List<ItemMetaValue> result = new ArrayList<>(1);
+        BookMeta bookMeta = (BookMeta)itemMeta;
 
-        result.add(new ItemMetaValue(getMetaName(), meta.getDisplayName()));
+        List<String> pages = bookMeta.getPages();
+
+        if (pages == null || pages.isEmpty())
+            return new ArrayList<>(0);
+
+        List<ItemMetaValue> result = new ArrayList<>(pages.size());
+
+        for (String page : pages) {
+            result.add(new ItemMetaValue(getMetaName(), page));
+        }
+
+        itemStack.setItemMeta(bookMeta);
 
         return result;
     }

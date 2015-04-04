@@ -29,6 +29,7 @@ import com.jcwhatever.nucleus.collections.timed.TimedHashMap;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.providers.friends.IFriend;
+import com.jcwhatever.nucleus.providers.friends.IFriendsContext;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.IDataNode;
@@ -39,16 +40,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/*
- * 
+/**
+ * Nucleus implementation of {@link IFriendsContext}.
  */
-class InternalNamedFriendsContext extends InternalFriendsContext implements INamedInsensitive {
+class NucleusNamedFriendsContext extends NucleusFriendsContext implements INamedInsensitive {
 
     private final String _name;
     private final String _searchName;
     private Map<UUID, FriendInfo> _friendInfo;
 
-    public InternalNamedFriendsContext(NucleusFriendsProvider provider, String name) {
+    public NucleusNamedFriendsContext(NucleusFriendsProvider provider, String name) {
         super(provider);
 
         _name = name;

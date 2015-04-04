@@ -22,15 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.items;
+package com.jcwhatever.nucleus.internal.items.serializer;
 
-import com.jcwhatever.nucleus.internal.items.meta.IMetaHandler;
-import com.jcwhatever.nucleus.internal.items.meta.ItemMetaHandlers;
-import com.jcwhatever.nucleus.internal.items.meta.ItemMetaValue;
-import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.converters.Converters;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.internal.items.meta.InternalItemMetaHandlers;
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackDeserializer;
 import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.converters.Converters;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -44,18 +45,17 @@ import javax.annotation.Nullable;
 
 /**
  * Parses a string representing a single or multiple {@link org.bukkit.inventory.ItemStack}'s
- * serialized by {@link InternalItemSerializer}.
+ * serialized by {@link ItemSerializer}.
  * <p>
  *     Format: MaterialName[:ByteData][;Amount][{ metaName1: "metaValue1", metaName2: "metaValue2" }]
  * </p>
  *
- * @see InternalItemSerializer
- * @see ItemMetaHandlers
+ * @see ItemSerializer
+ * @see InternalItemMetaHandlers
  */
-class InternalItemDeserializer implements IItemStackDeserializer {
+class ItemDeserializer implements IItemStackDeserializer {
 
     private final String _itemString;
-    private final ItemMetaHandlers _metaHandlers;
     private StringBuilder _buffer;
     private int _index = 0;
     private List<ItemStack> _results = new LinkedList<>();
@@ -68,24 +68,11 @@ class InternalItemDeserializer implements IItemStackDeserializer {
      *
      * @throws InvalidItemStackStringException
      */
-    public InternalItemDeserializer(String itemString) throws InvalidItemStackStringException {
-        this(ItemMetaHandlers.getGlobal(), itemString);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param itemString  The string to parse. The string must represent one or more
-     *                    {@link org.bukkit.inventory.ItemStack}'s
-     *
-     * @throws InvalidItemStackStringException
-     */
-    public InternalItemDeserializer(ItemMetaHandlers metaHandlers, String itemString)
+    public ItemDeserializer(String itemString)
             throws InvalidItemStackStringException {
-        PreCon.notNull(metaHandlers);
+
         PreCon.notNull(itemString);
 
-        _metaHandlers = metaHandlers;
         _itemString = itemString;
         _buffer = new StringBuilder(itemString.length());
 
@@ -171,7 +158,7 @@ class InternalItemDeserializer implements IItemStackDeserializer {
 
         for (ItemMetaValue meta : metaObjects) {
 
-            IMetaHandler handler = _metaHandlers.getHandler(meta.getName());
+            IItemMetaHandler handler = Nucleus.getItemMetaHandlers().getHandler(meta.getName());
             if (handler == null)
                 continue;
 

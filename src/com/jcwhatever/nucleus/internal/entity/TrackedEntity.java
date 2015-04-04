@@ -48,7 +48,7 @@ import java.util.UUID;
  *
  * @see EntityUtils#trackEntity
  */
-class InternalTrackedEntity implements ITrackedEntity {
+class TrackedEntity implements ITrackedEntity {
 
     private final UUID _uuid;
     private final InternalEntityTracker _tracker;
@@ -65,7 +65,7 @@ class InternalTrackedEntity implements ITrackedEntity {
      *
      * @param entity  The entity to track.
      */
-    InternalTrackedEntity(InternalEntityTracker tracker, Entity entity) {
+    TrackedEntity(InternalEntityTracker tracker, Entity entity) {
         PreCon.notNull(tracker);
         PreCon.notNull(entity);
 
@@ -121,7 +121,7 @@ class InternalTrackedEntity implements ITrackedEntity {
      * @return  Self for chaining.
      */
     @Override
-    public synchronized InternalTrackedEntity onUnload(UpdateSubscriber<ChunkCoords> subscriber) {
+    public synchronized TrackedEntity onUnload(UpdateSubscriber<ChunkCoords> subscriber) {
         PreCon.notNull(subscriber);
 
         _updateAgents.getAgent("onUnload").addSubscriber(subscriber);
@@ -138,7 +138,7 @@ class InternalTrackedEntity implements ITrackedEntity {
      * @return  Self for chaining.
      */
     @Override
-    public synchronized InternalTrackedEntity onUpdate(UpdateSubscriber<Entity> subscriber) {
+    public synchronized TrackedEntity onUpdate(UpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
         _updateAgents.getAgent("onUpdate").addSubscriber(subscriber);
@@ -154,7 +154,7 @@ class InternalTrackedEntity implements ITrackedEntity {
      * @return  Self for chaining.
      */
     @Override
-    public synchronized InternalTrackedEntity onDeath(UpdateSubscriber<Entity> subscriber) {
+    public synchronized TrackedEntity onDeath(UpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
         _updateAgents.getAgent("onDeath").addSubscriber(subscriber);

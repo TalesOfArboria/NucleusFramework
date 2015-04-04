@@ -22,35 +22,28 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.items;
+package com.jcwhatever.nucleus.managed.items.meta;
 
-import com.jcwhatever.nucleus.managed.items.serializer.IItemStackDeserializer;
-import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
-import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerializer;
-import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
+import java.util.Collection;
+import javax.annotation.Nullable;
 
 /**
- * Internal implementation of {@link IItemStackSerialization}.
+ * Interface for the global item serializer meta handler manager.
  */
-public final class InternalItemSerializationManager implements IItemStackSerialization {
+public interface IItemMetaHandlers {
 
-    @Override
-    public IItemStackDeserializer parse(String itemStackString) throws InvalidItemStackStringException {
-        return new InternalItemDeserializer(itemStackString);
-    }
+    /**
+     * Get a meta handler by its case sensitive meta name.
+     *
+     * @param metaName  The meta name.
+     *
+     * @return  The meta handler or null if not found.
+     */
+    @Nullable
+    IItemMetaHandler getHandler(String metaName);
 
-    @Override
-    public IItemStackSerializer createSerializer() {
-        return new InternalItemSerializer(3 * 20);
-    }
-
-    @Override
-    public IItemStackSerializer createSerializer(int size) {
-        return new InternalItemSerializer(size * 20);
-    }
-
-    @Override
-    public IItemStackSerializer createSerializer(StringBuilder buffer) {
-        return new InternalItemSerializer(buffer);
-    }
+    /**
+     * Get all registered meta handlers.
+     */
+    Collection<IItemMetaHandler> getHandlers();
 }

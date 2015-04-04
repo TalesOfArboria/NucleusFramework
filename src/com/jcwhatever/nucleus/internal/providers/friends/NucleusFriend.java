@@ -46,7 +46,7 @@ class NucleusFriend implements IFriend {
     private final UUID _friendId;
     private final IDataNode _dataNode;
     private final Date _befriendDate;
-    private final InternalFriendsContext _context;
+    private final NucleusFriendsContext _context;
     private final Object _sync = new Object();
 
     private String _name;
@@ -65,7 +65,7 @@ class NucleusFriend implements IFriend {
      * @param friendId  The ID of the player friend.
      * @param dataNode  The friend data node.
      */
-    NucleusFriend(InternalFriendsContext context, UUID sourceId, UUID friendId, IDataNode dataNode) {
+    NucleusFriend(NucleusFriendsContext context, UUID sourceId, UUID friendId, IDataNode dataNode) {
 
         _context = context;
         _sourceId = sourceId;

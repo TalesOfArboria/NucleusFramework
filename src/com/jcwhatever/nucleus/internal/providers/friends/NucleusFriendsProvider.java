@@ -57,7 +57,7 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
     public static final String NAME = "NucleusFriends";
 
     private final IDataNode _dataNode;
-    private final InternalFriendsContext _defaultContext;
+    private final NucleusFriendsContext _defaultContext;
     private final Comparator<Integer> _rawLevelSort = new RawLevelSorter();
     private final Map<String, IFriendsContext> _contexts = new HashMap<>(10);
     private final Map<String, IFriendLevel> _levelMap = new HashMap<>(15);
@@ -71,7 +71,7 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
                 "NucleusFriends", "Default friends provider."));
 
         _dataNode = DataStorage.get(Nucleus.getPlugin(), new DataPath("friends"));
-        _defaultContext = new InternalNamedFriendsContext(this, "_default");
+        _defaultContext = new NucleusNamedFriendsContext(this, "_default");
 
         registerLevel(FriendLevels.CASUAL);
         registerLevel(FriendLevels.CLOSE);
@@ -89,7 +89,7 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
     @Nullable
     @Override
     public IFriendsContext createTransientContext() {
-        return new InternalFriendsContext(this);
+        return new NucleusFriendsContext(this);
     }
 
     @Nullable
@@ -103,7 +103,7 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
                 return null;
         }
 
-        InternalNamedFriendsContext context = new InternalNamedFriendsContext(this, name);
+        NucleusNamedFriendsContext context = new NucleusNamedFriendsContext(this, name);
 
         synchronized (_sync) {
             _contexts.put(context.getSearchName(), context);
@@ -276,7 +276,7 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
     private void loadContexts() {
 
         for (IDataNode dataNode : _dataNode) {
-            InternalNamedFriendsContext context = new InternalNamedFriendsContext(this, dataNode.getName());
+            NucleusNamedFriendsContext context = new NucleusNamedFriendsContext(this, dataNode.getName());
             _contexts.put(context.getSearchName(), context);
         }
     }

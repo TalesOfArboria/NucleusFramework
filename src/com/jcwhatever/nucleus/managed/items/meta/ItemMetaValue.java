@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.items.meta;
+package com.jcwhatever.nucleus.managed.items.meta;
 
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -31,10 +31,10 @@ import com.jcwhatever.nucleus.utils.PreCon;
  * An intermediate meta object used to store raw data that is parsed from
  * or will be serialized into an {@link org.bukkit.inventory.ItemStack} String.
  *
- * @see ItemMetaHandlers
- * @see IMetaHandler
+ * @see IItemMetaHandlers
+ * @see IItemMetaHandler
  */
- public final class ItemMetaValue implements INamed {
+ public class ItemMetaValue implements INamed {
 
     private final String _name;
     private final String _rawData;

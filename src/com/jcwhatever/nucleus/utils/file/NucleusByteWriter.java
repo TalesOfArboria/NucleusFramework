@@ -25,11 +25,11 @@
 
 package com.jcwhatever.nucleus.utils.file;
 
-import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-import com.jcwhatever.nucleus.internal.items.meta.IMetaHandler;
-import com.jcwhatever.nucleus.internal.items.meta.ItemMetaHandlers;
-import com.jcwhatever.nucleus.internal.items.meta.ItemMetaValue;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +44,7 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -507,11 +508,11 @@ public class NucleusByteWriter extends OutputStream {
         write((int)itemStack.getDurability());
         write(itemStack.getAmount());
 
-        List<IMetaHandler> handlers = ItemMetaHandlers.getGlobal().getHandlers();
+        Collection<IItemMetaHandler> handlers = Nucleus.getItemMetaHandlers().getHandlers();
 
         List<ItemMetaValue> metaObjects = new ArrayList<>(10);
 
-        for (IMetaHandler handler : handlers) {
+        for (IItemMetaHandler handler : handlers) {
             metaObjects.addAll(handler.getMeta(itemStack));
         }
 

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.items.meta;
+package com.jcwhatever.nucleus.managed.items.meta;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -33,9 +33,9 @@ import java.util.List;
  * specific meta from an {@link org.bukkit.inventory.ItemStack} for use by a
  * serializer/deserializer.
  *
- * @see ItemMetaHandlers
+ * @see IItemMetaHandlers
  */
-public interface IMetaHandler {
+public interface IItemMetaHandler {
 
     /**
      * Get the name of the meta that is handled.

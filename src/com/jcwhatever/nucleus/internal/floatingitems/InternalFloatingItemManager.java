@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
  */
 public final class InternalFloatingItemManager implements IFloatingItemManager, Listener {
 
-    private final Map<Plugin, InternalFloatingContext> _contexts = new WeakHashMap<>(25);
+    private final Map<Plugin, FloatingItemContext> _contexts = new WeakHashMap<>(25);
 
     public InternalFloatingItemManager() {
         Bukkit.getPluginManager().registerEvents(this, Nucleus.getPlugin());
@@ -100,19 +100,19 @@ public final class InternalFloatingItemManager implements IFloatingItemManager, 
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
 
-        InternalFloatingContext context = _contexts.get(plugin);
+        FloatingItemContext context = _contexts.get(plugin);
         return context != null && context.remove(name);
     }
 
-    private InternalFloatingContext context(Plugin plugin) {
+    private FloatingItemContext context(Plugin plugin) {
 
-        InternalFloatingContext context = _contexts.get(plugin);
+        FloatingItemContext context = _contexts.get(plugin);
         if (context == null) {
 
             IDataNode dataNode = DataStorage.get(plugin, new DataPath("nucleus.floating-items"));
             dataNode.load();
 
-            context = new InternalFloatingContext(plugin, dataNode);
+            context = new FloatingItemContext(plugin, dataNode);
             _contexts.put(plugin, context);
         }
 

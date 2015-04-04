@@ -24,8 +24,10 @@
 
 package com.jcwhatever.nucleus.internal.items.meta;
 
-import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -36,9 +38,9 @@ import java.util.List;
 /**
  * Handles {@link org.bukkit.inventory.ItemStack} lore meta.
  *
- * @see ItemMetaHandlers
+ * @see InternalItemMetaHandlers
  */
-public final class LoreHandler implements IMetaHandler {
+class ItemLore implements IItemMetaHandler {
 
     @Override
     public String getMetaName() {

@@ -45,13 +45,13 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Tracks entities and updates {@link InternalTrackedEntity} objects.
+ * Tracks entities and updates {@link TrackedEntity} objects.
  *
  * @see EntityUtils#trackEntity
  */
 public final class InternalEntityTracker implements IEntityTracker, Listener {
 
-    private Map<UUID, InternalTrackedEntity> _entities = new MapMaker().concurrencyLevel(3)
+    private Map<UUID, TrackedEntity> _entities = new MapMaker().concurrencyLevel(3)
             .initialCapacity(25).makeMap();
 
     /**
@@ -66,29 +66,29 @@ public final class InternalEntityTracker implements IEntityTracker, Listener {
      *
      * @param entity  The entity to track.
      *
-     * @return  A new or cached {@link InternalTrackedEntity} instance.
+     * @return  A new or cached {@link TrackedEntity} instance.
      */
     @Override
-    public InternalTrackedEntity trackEntity(Entity entity) {
+    public TrackedEntity trackEntity(Entity entity) {
 
         if (entity instanceof Player)
             throw new IllegalArgumentException("Player entities cannot be tracked.");
 
-        InternalTrackedEntity tracked = _entities.get(entity.getUniqueId());
+        TrackedEntity tracked = _entities.get(entity.getUniqueId());
         if (tracked != null && !tracked.isDisposed())
             return tracked;
 
-        tracked = new InternalTrackedEntity(this, entity);
+        tracked = new TrackedEntity(this, entity);
         _entities.put(entity.getUniqueId(), tracked);
 
         return tracked;
     }
 
     /**
-     * Invoked when a {@link InternalTrackedEntity} is disposed so it can
+     * Invoked when a {@link TrackedEntity} is disposed so it can
      * be removed from the entity map.
      */
-    void disposeEntity(InternalTrackedEntity tracked) {
+    void disposeEntity(TrackedEntity tracked) {
         _entities.remove(tracked.getUniqueId());
     }
 
@@ -106,7 +106,7 @@ public final class InternalEntityTracker implements IEntityTracker, Listener {
 
         for (Entity entity : entities) {
 
-            InternalTrackedEntity tracked = _entities.get(entity.getUniqueId());
+            TrackedEntity tracked = _entities.get(entity.getUniqueId());
             if (tracked == null || isDisposed(tracked))
                 continue;
 
@@ -125,7 +125,7 @@ public final class InternalEntityTracker implements IEntityTracker, Listener {
 
         for (Entity entity : entities) {
 
-            InternalTrackedEntity tracked = _entities.get(entity.getUniqueId());
+            TrackedEntity tracked = _entities.get(entity.getUniqueId());
             if (tracked == null || isDisposed(tracked))
                 continue;
 
@@ -143,7 +143,7 @@ public final class InternalEntityTracker implements IEntityTracker, Listener {
         if (Double.compare(event.getEntity().getHealth(), 0.0D) != 0)
             return;
 
-        InternalTrackedEntity tracked = _entities.remove(event.getEntity().getUniqueId());
+        TrackedEntity tracked = _entities.remove(event.getEntity().getUniqueId());
         if (tracked == null || tracked.isDisposed())
             return;
 

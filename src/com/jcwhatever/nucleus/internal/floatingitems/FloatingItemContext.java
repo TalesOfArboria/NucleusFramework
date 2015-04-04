@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * Floating item context.
  */
-public class InternalFloatingContext extends NamedInsensitiveDataManager<IFloatingItem> {
+public class FloatingItemContext extends NamedInsensitiveDataManager<IFloatingItem> {
 
     private Plugin _plugin;
 
@@ -49,7 +49,7 @@ public class InternalFloatingContext extends NamedInsensitiveDataManager<IFloati
      * @param plugin    The owning plugin.
      * @param dataNode  The data node.
      */
-    protected InternalFloatingContext(Plugin plugin, IDataNode dataNode) {
+    protected FloatingItemContext(Plugin plugin, IDataNode dataNode) {
         super(dataNode, false);
 
         _plugin = plugin;
@@ -138,6 +138,6 @@ public class InternalFloatingContext extends NamedInsensitiveDataManager<IFloati
      */
     private IFloatingItem createFloatingItem(String name, ItemStack item,
                                              @Nullable Location location, IDataNode dataNode) {
-        return new InternalFloatingItem(_plugin, name, item, location, dataNode);
+        return new FloatingItem(_plugin, name, item, location, dataNode);
     }
 }

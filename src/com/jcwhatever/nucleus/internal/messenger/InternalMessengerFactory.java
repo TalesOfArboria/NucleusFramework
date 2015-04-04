@@ -68,7 +68,7 @@ public final class InternalMessengerFactory implements IMessengerFactory {
 
         IMessenger messenger = _messengers.get(plugin);
         if (messenger == null) {
-            messenger = new InternalMessenger(this, plugin, plugin);
+            messenger = new Messenger(this, plugin, plugin);
             _messengers.put(plugin, messenger);
         }
 
@@ -86,7 +86,7 @@ public final class InternalMessengerFactory implements IMessengerFactory {
 
         IMessenger messenger = _anonMessengers.get(plugin);
         if (messenger == null) {
-            messenger = new InternalAnonMessenger(this, plugin);
+            messenger = new AnonMessenger(this, plugin);
             _anonMessengers.put(plugin, messenger);
         }
 
@@ -100,7 +100,7 @@ public final class InternalMessengerFactory implements IMessengerFactory {
 
     @Override
     public IMessenger create(Plugin plugin, @Nullable Object prefixObject) {
-        return new InternalMessenger(this, plugin, prefixObject);
+        return new Messenger(this, plugin, prefixObject);
     }
 
     @Override

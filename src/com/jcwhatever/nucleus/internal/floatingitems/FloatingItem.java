@@ -58,7 +58,7 @@ import javax.annotation.Nullable;
  * Without the data node, expect left over items that can be picked
  * up after server restarts or crashes.</p>
  */
-class InternalFloatingItem implements IFloatingItem {
+class FloatingItem implements IFloatingItem {
 
     private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
     private static BukkitListener _listener;
@@ -89,10 +89,10 @@ class InternalFloatingItem implements IFloatingItem {
      * @param initialLocation  Optional initial location of the item.
      * @param dataNode         Data node to store item settings in.
      */
-    public InternalFloatingItem(Plugin plugin,
-                                String name, ItemStack item,
-                                @Nullable Location initialLocation,
-                                IDataNode dataNode) {
+    public FloatingItem(Plugin plugin,
+                        String name, ItemStack item,
+                        @Nullable Location initialLocation,
+                        IDataNode dataNode) {
 
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);
@@ -342,7 +342,7 @@ class InternalFloatingItem implements IFloatingItem {
     }
 
     @Override
-    public InternalFloatingItem onSpawn(IUpdateSubscriber<Entity> subscriber) {
+    public FloatingItem onSpawn(IUpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
         _agents.getAgent("onSpawn").register(subscriber);
@@ -351,7 +351,7 @@ class InternalFloatingItem implements IFloatingItem {
     }
 
     @Override
-    public InternalFloatingItem onDespawn(IUpdateSubscriber<Entity> subscriber) {
+    public FloatingItem onDespawn(IUpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
         _agents.getAgent("onDespawn").register(subscriber);
@@ -360,7 +360,7 @@ class InternalFloatingItem implements IFloatingItem {
     }
 
     @Override
-    public InternalFloatingItem onPickup(IUpdateSubscriber<Player> subscriber) {
+    public FloatingItem onPickup(IUpdateSubscriber<Player> subscriber) {
         PreCon.notNull(subscriber);
 
         _agents.getAgent("onPickup").register(subscriber);

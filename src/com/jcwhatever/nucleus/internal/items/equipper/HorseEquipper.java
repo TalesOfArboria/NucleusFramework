@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.items.equipper.handler;
+package com.jcwhatever.nucleus.internal.items.equipper;
 
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipper;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Equipper used for Horse entities.
  */
-public final class InternalHorseEquipper implements IEquipper {
+public final class HorseEquipper implements IEquipper {
 
     @Override
     public boolean equip(Entity entity, ItemStack item) {

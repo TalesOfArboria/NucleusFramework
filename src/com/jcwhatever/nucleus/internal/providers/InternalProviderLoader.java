@@ -51,7 +51,7 @@ import javax.annotation.Nullable;
 /**
  * Loads provider modules from /plugins/NucleusFramework/providers folder
  */
-public final class ProviderLoader extends JarModuleLoader<Provider> {
+public final class InternalProviderLoader extends JarModuleLoader<Provider> {
 
     private final InternalProviderManager _manager;
     private final File _folder;
@@ -59,12 +59,12 @@ public final class ProviderLoader extends JarModuleLoader<Provider> {
             new DependencyRunner<IDependantRunnable>(Nucleus.getPlugin());
 
     // keyed to module class name
-    private final Map<String, ProviderModuleInfo> _moduleInfoMap = new HashMap<>(10);
+    private final Map<String, InternalProviderModuleInfo> _moduleInfoMap = new HashMap<>(10);
 
     /**
      * Constructor.
      */
-    public ProviderLoader(InternalProviderManager providerManager) {
+    public InternalProviderLoader(InternalProviderManager providerManager) {
         super(Nucleus.getPlugin(), Provider.class);
 
         PreCon.notNull(providerManager);
@@ -132,7 +132,7 @@ public final class ProviderLoader extends JarModuleLoader<Provider> {
     @Override
     protected String getModuleClassName(JarFile jarFile) {
 
-        ProviderModuleInfo info = new ProviderModuleInfo(jarFile);
+        InternalProviderModuleInfo info = new InternalProviderModuleInfo(jarFile);
         if (!info.isValid())
             return null;
 
@@ -153,7 +153,7 @@ public final class ProviderLoader extends JarModuleLoader<Provider> {
     protected Provider instantiateModule(Class<Provider> clazz) {
 
         final Provider instance;
-        final ProviderModuleInfo info = _moduleInfoMap.get(clazz.getCanonicalName());
+        final InternalProviderModuleInfo info = _moduleInfoMap.get(clazz.getCanonicalName());
         if (info == null)
             return null;
 

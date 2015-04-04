@@ -25,7 +25,6 @@
 package com.jcwhatever.nucleus.internal.items.equipper;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.internal.items.equipper.handler.InternalDefaultEquipper;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipper;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperContext;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
@@ -42,11 +41,11 @@ import java.util.WeakHashMap;
  */
 public final class InternalEquipperManager implements IEquipperManager {
 
-    private static final IEquipper DEFAULT_EQUIPPER = new InternalDefaultEquipper();
+    private static final IEquipper DEFAULT_EQUIPPER = new DefaultEquipper();
 
     private final Map<Plugin, IEquipperContext> _contexts = new WeakHashMap<>(10);
     private final IEquipperContext _globalContext =
-            new InternalEquipperContext(Nucleus.getPlugin(), DEFAULT_EQUIPPER);
+            new EquipperContext(Nucleus.getPlugin(), DEFAULT_EQUIPPER);
 
     @Override
     public IEquipperContext getContext(Plugin plugin) {
@@ -55,7 +54,7 @@ public final class InternalEquipperManager implements IEquipperManager {
         IEquipperContext context = _contexts.get(plugin);
 
         if (context == null) {
-            context = new InternalEquipperContext(plugin, DEFAULT_EQUIPPER);
+            context = new EquipperContext(plugin, DEFAULT_EQUIPPER);
             _contexts.put(plugin, context);
         }
 

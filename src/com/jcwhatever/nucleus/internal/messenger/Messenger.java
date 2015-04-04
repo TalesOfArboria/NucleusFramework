@@ -53,7 +53,7 @@ import javax.annotation.Nullable;
 /**
  * Provide chat and console message utilities.
  */
-class InternalMessenger implements IMessenger {
+class Messenger implements IMessenger {
 
     private static Map<UUID, TimedHashSet<String>> _noSpamCache =
             new PlayerMap<TimedHashSet<String>>(Nucleus.getPlugin());
@@ -68,7 +68,7 @@ class InternalMessenger implements IMessenger {
     private int _spamDelay = 140;
     private LineWrapping _lineWrap = LineWrapping.ENABLED;
 
-    protected InternalMessenger(InternalMessengerFactory factory, Plugin plugin, @Nullable Object prefixSource) {
+    protected Messenger(InternalMessengerFactory factory, Plugin plugin, @Nullable Object prefixSource) {
         _plugin = plugin;
         _chatPrefix = InternalMessengerFactory.getChatPrefix(prefixSource);
         _consolePrefix = InternalMessengerFactory.getConsolePrefix(prefixSource);

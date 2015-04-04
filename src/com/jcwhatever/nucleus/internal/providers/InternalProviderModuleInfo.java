@@ -40,7 +40,7 @@ import java.util.jar.JarFile;
 /**
  * Module info for a provider.
  */
-public final class ProviderModuleInfo extends YamlModuleInfo implements IProviderInfo {
+public final class InternalProviderModuleInfo extends YamlModuleInfo implements IProviderInfo {
 
     private String _version;
     private int _logicalVersion;
@@ -54,7 +54,7 @@ public final class ProviderModuleInfo extends YamlModuleInfo implements IProvide
      *
      * @param jarFile  The jar file that contains the module info.
      */
-    public ProviderModuleInfo(JarFile jarFile) {
+    public InternalProviderModuleInfo(JarFile jarFile) {
         super(Nucleus.getPlugin(), "provider.yml", jarFile);
     }
 

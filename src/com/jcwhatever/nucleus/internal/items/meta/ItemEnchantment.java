@@ -24,6 +24,8 @@
 
 package com.jcwhatever.nucleus.internal.items.meta;
 
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
+import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -37,9 +39,9 @@ import java.util.Set;
 /**
  * Handles {@link org.bukkit.inventory.ItemStack} enchantment meta.
  *
- * @see ItemMetaHandlers
+ * @see InternalItemMetaHandlers
  */
-public final class EnchantmentHandler implements IMetaHandler {
+class ItemEnchantment implements IItemMetaHandler {
 
     @Override
     public String getMetaName() {
@@ -89,9 +91,9 @@ public final class EnchantmentHandler implements IMetaHandler {
             return new ArrayList<>(0);
 
         List<ItemMetaValue> results = new ArrayList<>(totalEnchants);
-        Set<Enchantment> enchantments = itemStack.getEnchantments().keySet();
+        Set<org.bukkit.enchantments.Enchantment> enchantments = itemStack.getEnchantments().keySet();
 
-        for (Enchantment enchant: enchantments) {
+        for (org.bukkit.enchantments.Enchantment enchant: enchantments) {
             int level = itemStack.getEnchantmentLevel(enchant);
 
             results.add(new ItemMetaValue(getMetaName(), enchant.getName() + ':' + level));

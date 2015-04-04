@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.internal.items.equipper;
 
-import com.jcwhatever.nucleus.internal.items.equipper.handler.InternalHorseEquipper;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipper;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperContext;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -39,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IEquipperContext}.
  */
-class InternalEquipperContext implements IEquipperContext {
+class EquipperContext implements IEquipperContext {
 
     private final Plugin _plugin;
     private final Map<EntityType, IEquipper> _equippers = new EnumMap<>(EntityType.class);
@@ -48,14 +47,14 @@ class InternalEquipperContext implements IEquipperContext {
     /**
      * Constructor.
      */
-    public InternalEquipperContext(Plugin plugin, IEquipper defaultEquipper) {
+    public EquipperContext(Plugin plugin, IEquipper defaultEquipper) {
         PreCon.notNull(plugin);
         PreCon.notNull(defaultEquipper);
 
         _plugin = plugin;
         _defaultEquipper = defaultEquipper;
 
-        setEquipper(EntityType.HORSE, new InternalHorseEquipper());
+        setEquipper(EntityType.HORSE, new HorseEquipper());
     }
 
     @Override

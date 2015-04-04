@@ -31,13 +31,14 @@ import com.jcwhatever.nucleus.internal.blockselect.InternalBlockSelector;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
 import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
-import com.jcwhatever.nucleus.internal.items.InternalItemSerializationManager;
+import com.jcwhatever.nucleus.internal.items.meta.InternalItemMetaHandlers;
+import com.jcwhatever.nucleus.internal.items.serializer.InternalItemSerializationManager;
 import com.jcwhatever.nucleus.internal.items.equipper.InternalEquipperManager;
 import com.jcwhatever.nucleus.internal.language.InternalLanguageManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
-import com.jcwhatever.nucleus.internal.providers.ProviderLoader;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderLoader;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.response.InternalResponseRequestor;
 import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
@@ -83,6 +84,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalLeashTracker _leashTracker;
     InternalBlockSelector _blockSelector;
     InternalResponseRequestor _responseRequestor;
+    InternalItemMetaHandlers _itemMetaHandlers;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -149,6 +151,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     protected void onPreEnable() {
 
         _languageManager = new InternalLanguageManager();
+        _itemMetaHandlers = new InternalItemMetaHandlers();
         _itemSerialization = new InternalItemSerializationManager();
         _equipperManager = new InternalEquipperManager();
         _scoreboardTracker = new InternalScoreboardTracker();
@@ -156,7 +159,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _leashTracker = new InternalLeashTracker();
 
         _providerManager = new InternalProviderManager(isTesting());
-        ProviderLoader providerLoader = new ProviderLoader(_providerManager);
+        InternalProviderLoader providerLoader = new InternalProviderLoader(_providerManager);
         providerLoader.loadModules();
 
         _eventManager = new InternalEventManager(this);

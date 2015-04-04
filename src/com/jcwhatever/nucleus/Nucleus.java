@@ -32,6 +32,7 @@ import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
 import com.jcwhatever.nucleus.managed.items.floating.IFloatingItemManager;
+import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandlers;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.managed.language.ILanguageManager;
 import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
@@ -168,6 +169,16 @@ public final class Nucleus {
         PreCon.isValid(_plugin._floatingItemManager != null, ERROR_NOT_READY);
 
         return _plugin._floatingItemManager;
+    }
+
+    /**
+     * Get the global {@link ItemStack} meta handlers used by the
+     * internal {@link ItemStack} serializer.
+     */
+    public static IItemMetaHandlers getItemMetaHandlers() {
+        PreCon.isValid(_plugin._itemSerialization != null, ERROR_NOT_READY);
+
+        return _plugin._itemMetaHandlers;
     }
 
     /**

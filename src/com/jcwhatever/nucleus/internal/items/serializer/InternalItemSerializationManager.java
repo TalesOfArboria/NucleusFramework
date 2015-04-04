@@ -22,27 +22,35 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.language;
+package com.jcwhatever.nucleus.internal.items.serializer;
 
-import com.jcwhatever.nucleus.managed.language.ILanguageContext;
-import com.jcwhatever.nucleus.managed.language.ILanguageManager;
-
-import org.bukkit.plugin.Plugin;
-
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackDeserializer;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
+import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerializer;
+import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
 
 /**
- * Internal implementation of {@link ILanguageManager}.
+ * Internal implementation of {@link IItemStackSerialization}.
  */
-public final class InternalLanguageManager implements ILanguageManager {
+public final class InternalItemSerializationManager implements IItemStackSerialization {
 
     @Override
-    public ILanguageContext createContext(Plugin plugin) {
-        return new LanguageContext(plugin);
+    public IItemStackDeserializer parse(String itemStackString) throws InvalidItemStackStringException {
+        return new ItemDeserializer(itemStackString);
     }
 
     @Override
-    public ILanguageContext createContext(Plugin plugin, @Nullable Object context) {
-        return new LanguageContext(plugin, context);
+    public IItemStackSerializer createSerializer() {
+        return new ItemSerializer(3 * 20);
+    }
+
+    @Override
+    public IItemStackSerializer createSerializer(int size) {
+        return new ItemSerializer(size * 20);
+    }
+
+    @Override
+    public IItemStackSerializer createSerializer(StringBuilder buffer) {
+        return new ItemSerializer(buffer);
     }
 }
