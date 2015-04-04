@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * 3D immutable coordinates with no {@link org.bukkit.World} context.
  */
-public class Coords3D extends Coords2D {
+public class Coords3D extends Coords2D implements ICoords3D {
 
     /**
      * Get {@link Coords3D} from a {@link org.bukkit.Location}.
@@ -108,16 +108,12 @@ public class Coords3D extends Coords2D {
      */
     protected Coords3D() {}
 
-    /**
-     * Get the Y coordinates.
-     */
+    @Override
     public double getY() {
         return _y;
     }
 
-    /**
-     * Get the Y coordinate as a floored integer whole number.
-     */
+    @Override
     public int getFloorY() {
         return getFloorValue(_y);
     }

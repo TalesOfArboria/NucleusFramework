@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 /**
  * 2D immutable coordinates.
  */
-public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
+public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerializable {
 
     /**
      * Get a {@link Coords2D} from a {@link org.bukkit.Chunk}.
@@ -105,30 +105,22 @@ public class Coords2D implements IDataNodeSerializable, IBinarySerializable {
         return _isImmutable;
     }
 
-    /**
-     * Get the X coordinates.
-     */
+    @Override
     public double getX() {
         return _x;
     }
 
-    /**
-     * Get the Z coordinates.
-     */
+    @Override
     public double getZ() {
         return _z;
     }
 
-    /**
-     * Get the X coordinate as a floored integer whole number.
-     */
+    @Override
     public int getFloorX() {
         return getFloorValue(_x);
     }
 
-    /**
-     * Get the Z coordinate as a floored integer whole number.
-     */
+    @Override
     public int getFloorZ() {
         return getFloorValue(_z);
     }
