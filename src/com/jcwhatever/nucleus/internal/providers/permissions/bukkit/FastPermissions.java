@@ -44,7 +44,7 @@ import java.util.Set;
  * <p>Normally modifies permissions using the Bukkit API. Use {@link BatchTracker#start} to start
  * a batch operation which prevents recalculations until all batch operations are completed.</p>
  */
-public class FastPermissions extends BatchTracker {
+public final class FastPermissions extends BatchTracker {
 
     private Set<Permission> _toRecalculate;
     private Set<Permission> _dontRecalculate;

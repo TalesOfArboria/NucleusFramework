@@ -34,7 +34,7 @@ import org.bukkit.entity.Player;
 /**
  * Reflected types for NMS version v1_8_R1
  */
-public class v1_8_R1 implements INmsHandler {
+class v1_8_R1 implements INmsHandler {
 
     static Reflection reflection = new Reflection("v1_8_R1");
 

@@ -67,7 +67,7 @@ import javax.annotation.Nullable;
 /**
  * Nucleus implementation of {@link ISoundManager}.
  */
-public class InternalSoundManager implements ISoundManager {
+public final class InternalSoundManager implements ISoundManager {
 
     private final Map<UUID, TimedArrayList<ISoundContext>> _playing = new HashMap<>(100);
     private Map<String, ResourceSound> _sounds;

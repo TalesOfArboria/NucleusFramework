@@ -85,5 +85,4 @@ public abstract class AbstractPermissionsProvider extends Provider implements IP
     private PluginManager manager() {
         return Bukkit.getPluginManager();
     }
-
 }

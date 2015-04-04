@@ -35,10 +35,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 
-/*
- * 
+/**
+ * Vault group permissions provider implementation.
  */
-public class VaultGroupProvider extends VaultProvider implements IGroupPermissionsProvider {
+public final class VaultGroupProvider extends VaultProvider implements IGroupPermissionsProvider {
 
     @Override
     public boolean addGroup(Plugin plugin, OfflinePlayer player, String groupName) {

@@ -35,7 +35,7 @@ import org.bukkit.entity.Player;
 /**
  * Nucleus implementation of {@link ISoundContext}.
  */
-public class InternalSoundContext implements ISoundContext {
+class InternalSoundContext implements ISoundContext {
 
     private final Player _player;
     private final ResourceSound _sound;

@@ -52,7 +52,7 @@ import java.util.List;
                 "plugin= Optional name of the the plugin to show the plugins data provider.",
                 "page= {PAGE}"})
 
-public final class ListSubCommand extends AbstractCommand {
+class ListSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Storage Providers";
     @Localizable static final String _PLUGIN_NOT_FOUND = "A plugin named '{0: plugin name}' was not found.";

@@ -32,7 +32,7 @@ import net.milkbowl.vault.economy.Economy;
 /**
  * Vault economy provider currency.
  */
-public class VaultCurrency implements ICurrency {
+class VaultCurrency implements ICurrency {
 
     private final Economy _economy;
 

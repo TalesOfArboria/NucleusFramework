@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IEquipperContext}.
  */
-public class InternalEquipperContext implements IEquipperContext {
+class InternalEquipperContext implements IEquipperContext {
 
     private final Plugin _plugin;
     private final Map<EntityType, IEquipper> _equippers = new EnumMap<>(EntityType.class);

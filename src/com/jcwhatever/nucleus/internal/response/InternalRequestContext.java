@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IRequestContext}.
  */
-public class InternalRequestContext implements IRequestContext {
+class InternalRequestContext implements IRequestContext {
 
     private final InternalResponseRequestor _requestor;
     private final Plugin _plugin;

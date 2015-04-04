@@ -53,7 +53,7 @@ import javax.annotation.Nullable;
 /**
  * Provide chat and console message utilities.
  */
-public class InternalMessenger implements IMessenger {
+class InternalMessenger implements IMessenger {
 
     private static Map<UUID, TimedHashSet<String>> _noSpamCache =
             new PlayerMap<TimedHashSet<String>>(Nucleus.getPlugin());

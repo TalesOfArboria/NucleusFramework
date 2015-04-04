@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IScoreboardTracker}.
  */
-public class InternalScoreboardTracker implements IScoreboardTracker {
+public final class InternalScoreboardTracker implements IScoreboardTracker {
 
     private final Map<UUID, PlayerScoreboards> _playerMap =
             new PlayerMap<PlayerScoreboards>(Nucleus.getPlugin(), 35);

@@ -51,7 +51,7 @@ import java.util.Collection;
         paramDescriptions = {
                 "page= {PAGE}"})
 
-public final class ListSubCommand extends AbstractCommand {
+class ListSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "My Friends";
 

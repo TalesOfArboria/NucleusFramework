@@ -55,7 +55,7 @@ import java.util.Collection;
                 "all= Optional. Include flag to show all discovered providers."
         })
 
-public final class ListSubCommand extends AbstractCommand {
+class ListSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Service Providers";
     @Localizable static final String _PAGINATOR_TITLE_ALL = "All Service Providers";

@@ -49,7 +49,7 @@ import java.util.Collection;
 
         paramDescriptions = "page= {PAGE}")
 
-public final class ListTPSubCommand extends AbstractCommand {
+class ListTPSubCommand extends AbstractCommand {
 
     @Localizable
     static final String _PAGINATOR_TITLE = "Jail Teleport Locations";

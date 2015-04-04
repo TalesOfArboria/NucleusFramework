@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-public class VaultEconomyBankProvider extends VaultEconomyProvider implements IBankEconomyProvider {
+public final class VaultEconomyBankProvider extends VaultEconomyProvider implements IBankEconomyProvider {
 
     public static boolean hasBankEconomy() {
 

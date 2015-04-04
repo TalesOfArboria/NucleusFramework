@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.language.parser;
+package com.jcwhatever.nucleus.internal.language;
 
 import java.io.InputStream;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Parsed language key file data.
  */
-public class LanguageKeys extends Language {
+class LanguageKeys extends Language {
 
     /**
      * Constructor.

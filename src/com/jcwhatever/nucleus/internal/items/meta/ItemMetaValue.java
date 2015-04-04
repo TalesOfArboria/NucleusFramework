@@ -34,7 +34,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
  * @see ItemMetaHandlers
  * @see IMetaHandler
  */
- public class ItemMetaValue implements INamed {
+ public final class ItemMetaValue implements INamed {
 
     private final String _name;
     private final String _rawData;

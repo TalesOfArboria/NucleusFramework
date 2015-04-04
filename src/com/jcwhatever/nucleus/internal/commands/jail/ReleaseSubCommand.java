@@ -48,7 +48,7 @@ import java.util.UUID;
 
         paramDescriptions = { "playerName= The name of the player to release." })
 
-public final class ReleaseSubCommand extends AbstractCommand {
+class ReleaseSubCommand extends AbstractCommand {
 
     @Localizable
     static final String _PLAYER_NOT_FOUND = "Could not find a player with the name '{0}'.";

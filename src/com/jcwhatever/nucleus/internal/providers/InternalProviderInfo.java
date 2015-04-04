@@ -31,10 +31,10 @@ import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.List;
 
-/*
- * 
+/**
+ * Internal implementation of {@link IProviderInfo}.
  */
-public class InternalProviderInfo implements IProviderInfo {
+public final class InternalProviderInfo implements IProviderInfo {
 
     private final Class<?> _module;
     private final String _name;

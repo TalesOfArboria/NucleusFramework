@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Nucleus implementation of {@link IBankItem}.
  */
-public class BankItem implements IBankItem {
+class BankItem implements IBankItem {
 
     private final UUID _id;
     private final BankItem _root;

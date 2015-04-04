@@ -42,7 +42,7 @@ import java.util.UUID;
 /*
  * 
  */
-public class InternalNamedFriendsContext extends InternalFriendsContext implements INamedInsensitive {
+class InternalNamedFriendsContext extends InternalFriendsContext implements INamedInsensitive {
 
     private final String _name;
     private final String _searchName;

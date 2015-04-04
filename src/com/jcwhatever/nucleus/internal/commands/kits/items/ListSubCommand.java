@@ -51,10 +51,9 @@ import org.bukkit.inventory.ItemStack;
                 "kitName= The name of the kit items will be added to. {NAME16}",
                 "page= {PAGE}"})
 
-public final class ListSubCommand extends AbstractCommand {
+class ListSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _PAGINATOR_TITLE = "Kit Items";
+    @Localizable static final String _PAGINATOR_TITLE = "Kit Items";
     @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
     @Localizable static final String _LABEL_ARMOR = "ARMOR";
     @Localizable static final String _LABEL_ITEMS = "ITEMS";

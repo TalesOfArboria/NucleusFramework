@@ -50,7 +50,7 @@ import org.bukkit.entity.Player;
         paramDescriptions = {"playerName= The name of the player to imprison.",
                              "minutes= The number of minutes the player will be imprisoned for."})
 
-public final class SendSubCommand extends AbstractCommand {
+class SendSubCommand extends AbstractCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND = "Could not find player '{0}'.";
     @Localizable static final String _FAILED = "Failed to send player to Default Jail. Make sure it is setup.";

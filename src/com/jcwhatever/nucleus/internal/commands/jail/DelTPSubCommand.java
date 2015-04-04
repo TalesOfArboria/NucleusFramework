@@ -45,7 +45,7 @@ import org.bukkit.command.CommandSender;
 
         paramDescriptions = { "name= The name of the teleport location. {NAME16}"})
 
-public final class DelTPSubCommand extends AbstractCommand {
+class DelTPSubCommand extends AbstractCommand {
 
     @Localizable static final String _NOT_FOUND = "A location named '{0}' was not found.";
     @Localizable static final String _FAILED = "Failed to remove location.";

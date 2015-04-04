@@ -45,7 +45,7 @@ import java.util.UUID;
         paramDescriptions = {
                 "amount= The amount to take. Must be a positive number."})
 
-public final class TakeMeSubCommand extends AbstractCommand {
+class TakeMeSubCommand extends AbstractCommand {
 
     @Localizable
     static final String _FAILED = "Failed to withdraw money.";

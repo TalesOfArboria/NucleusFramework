@@ -46,7 +46,7 @@ import java.util.UUID;
         paramDescriptions = { "friendName= The name of player to remove."},
         permissionDefault = PermissionDefault.TRUE)
 
-public final class DelSubCommand extends AbstractCommand {
+class DelSubCommand extends AbstractCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND = "A player named '{0: friend name}' was not found.";
     @Localizable static final String _NOT_FRIEND = "Player '{0}' is not in your friends list.";

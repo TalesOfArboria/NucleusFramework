@@ -47,7 +47,7 @@ import org.bukkit.command.CommandSender;
         paramDescriptions = {
                 "typeName= The name of the sign type."})
 
-public class UsageSubCommand extends AbstractCommand {
+class UsageSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE =
             "Usage for '{0: sign type name}'";

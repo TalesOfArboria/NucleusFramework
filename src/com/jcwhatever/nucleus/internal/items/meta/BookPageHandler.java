@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @see ItemMetaHandlers
  */
-public class BookPageHandler implements IMetaHandler {
+public final class BookPageHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

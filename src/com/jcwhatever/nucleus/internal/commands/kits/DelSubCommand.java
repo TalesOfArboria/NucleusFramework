@@ -45,10 +45,9 @@ import org.bukkit.command.CommandSender;
         paramDescriptions = {
                 "kitName= The name of the kit items will be added to. {NAME16}"})
 
-public final class DelSubCommand extends AbstractCommand {
+class DelSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
+    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
     @Localizable static final String _FAILED = "Failed to remove chest kit.";
     @Localizable static final String _SUCCESS = "Inventory kit '{0}' removed.";
 

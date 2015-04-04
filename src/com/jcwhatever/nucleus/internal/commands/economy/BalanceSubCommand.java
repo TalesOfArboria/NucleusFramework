@@ -47,7 +47,7 @@ import org.bukkit.permissions.PermissionDefault;
         paramDescriptions = {
                 "bank= Optional. The bank the account is in. Leave blank to check your global account."})
 
-public final class BalanceSubCommand extends AbstractCommand {
+class BalanceSubCommand extends AbstractCommand {
 
     @Localizable static final String _NO_BANK_SUPPORT =
             "The current economy provider does not support banks.";

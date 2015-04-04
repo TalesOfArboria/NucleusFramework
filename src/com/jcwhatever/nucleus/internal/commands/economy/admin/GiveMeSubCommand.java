@@ -45,7 +45,7 @@ import java.util.UUID;
         paramDescriptions = {
                 "amount= The amount to give. Must be a positive number."})
 
-public final class GiveMeSubCommand extends AbstractCommand {
+class GiveMeSubCommand extends AbstractCommand {
 
     @Localizable
     static final String _FAILED = "Failed to deposit money.";

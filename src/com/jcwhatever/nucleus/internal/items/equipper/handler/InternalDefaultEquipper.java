@@ -44,7 +44,7 @@ import java.util.Set;
  * Default equipper to use when an equipper is not registered
  * for an entity type.
  */
-public class InternalDefaultEquipper implements IEquipper {
+public final class InternalDefaultEquipper implements IEquipper {
 
     @Override
     public boolean equip(Entity entity, ItemStack item) {

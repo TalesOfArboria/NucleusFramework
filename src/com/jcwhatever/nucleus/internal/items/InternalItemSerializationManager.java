@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringExc
 /**
  * Internal implementation of {@link IItemStackSerialization}.
  */
-public class InternalItemSerializationManager implements IItemStackSerialization {
+public final class InternalItemSerializationManager implements IItemStackSerialization {
 
     @Override
     public IItemStackDeserializer parse(String itemStackString) throws InvalidItemStackStringException {

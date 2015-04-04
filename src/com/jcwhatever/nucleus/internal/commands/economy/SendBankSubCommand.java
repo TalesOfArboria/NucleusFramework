@@ -59,7 +59,7 @@ import java.util.UUID;
                 "bank= The name of the bank of the player you are sending money to. " +
                         "Leave blank to send money to the players global account."})
 
-public final class SendBankSubCommand extends AbstractCommand {
+class SendBankSubCommand extends AbstractCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND =
             "A player by the name '{0: player name}' was not found.";

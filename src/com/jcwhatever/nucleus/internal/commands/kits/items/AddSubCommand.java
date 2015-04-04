@@ -47,10 +47,9 @@ import org.bukkit.inventory.ItemStack;
         paramDescriptions = { "kitName= The name of the kit items will be added to. {NAME16}",
                               "items= The items to add. {ITEM_STACK}"})
 
-public final class AddSubCommand extends AbstractCommand {
+class AddSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
+    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
     @Localizable static final String _SUCCESS = "Added items to chest kit '{0}'.";
 
     @Override

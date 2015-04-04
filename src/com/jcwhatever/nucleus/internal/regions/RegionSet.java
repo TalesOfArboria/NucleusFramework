@@ -36,7 +36,7 @@ import java.util.TreeSet;
 /**
  * Region {@link java.util.Set} that sorts regions by priority.
  */
-public class RegionSet<E extends IRegion> extends SetWrapper<E> {
+class RegionSet<E extends IRegion> extends SetWrapper<E> {
 
     // set used when sorting is not needed
     private Set<E> _set;

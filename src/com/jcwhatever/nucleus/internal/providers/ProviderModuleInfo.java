@@ -40,7 +40,7 @@ import java.util.jar.JarFile;
 /**
  * Module info for a provider.
  */
-public class ProviderModuleInfo extends YamlModuleInfo implements IProviderInfo {
+public final class ProviderModuleInfo extends YamlModuleInfo implements IProviderInfo {
 
     private String _version;
     private int _logicalVersion;

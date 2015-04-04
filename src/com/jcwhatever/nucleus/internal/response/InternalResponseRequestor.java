@@ -56,7 +56,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IResponseRequestor}.
  */
-public class InternalResponseRequestor implements IResponseRequestor, Listener {
+public final class InternalResponseRequestor implements IResponseRequestor, Listener {
 
     @Localizable static final String _MULTIPLE_REQUESTS =
             "{YELLOW}Multiple requests for response found. Please be more specific:";

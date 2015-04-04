@@ -51,7 +51,7 @@ import java.util.Collection;
                 "clear= Optional. Include flag to clear preferred provider for the type."
         })
 
-public final class PreferSubCommand extends AbstractCommand {
+class PreferSubCommand extends AbstractCommand {
 
     @Localizable static final String _CLEARED =
             "Cleared preferred service provider for type {0: provider type}.";

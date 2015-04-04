@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 
 import javax.annotation.Nullable;
 
-enum RegionEventReason {
+public enum RegionEventReason {
     MOVE        (EnterRegionReason.MOVE,        LeaveRegionReason.MOVE),
     DEAD        (null,                          LeaveRegionReason.DEAD),
     TELEPORT    (EnterRegionReason.TELEPORT,    LeaveRegionReason.TELEPORT),

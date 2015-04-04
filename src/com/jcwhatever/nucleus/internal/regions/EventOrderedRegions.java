@@ -47,7 +47,7 @@ import java.util.Set;
  * <p>If only the {@link java.util.Set} implemented methods are used, the collection
  * performance should remain nearly the same as a {@link java.util.HashSet}.</p>
  */
-public class EventOrderedRegions<E extends IRegion> implements Set<E> {
+class EventOrderedRegions<E extends IRegion> implements Set<E> {
 
     // primary hash set
     private final Set<E> _hashSet;

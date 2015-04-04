@@ -46,7 +46,7 @@ import java.util.UUID;
                 "playerName= The name of the player to give money to.",
                 "amount= The amount to give. Must be a positive number."})
 
-public final class GiveSubCommand extends AbstractCommand {
+class GiveSubCommand extends AbstractCommand {
 
     @Localizable
     static final String _PLAYER_NOT_FOUND =

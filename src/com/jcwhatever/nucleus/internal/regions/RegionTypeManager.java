@@ -46,7 +46,7 @@ import java.util.Set;
 /**
  * A region manager responsible for storing a specific region type.
  */
-public class RegionTypeManager<R extends IRegion> {
+class RegionTypeManager<R extends IRegion> {
 
     // Player watcher regions chunk map. String key is chunk coordinates.
     private final Map<IChunkCoords, EventOrderedRegions<R>> _listenerRegionsMap = new HashMap<>(10);

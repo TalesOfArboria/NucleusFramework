@@ -42,7 +42,7 @@ import org.bukkit.command.CommandSender;
         command="clearreleasetp",
         description="Clear location where players are teleported when they are released from the default jail.")
 
-public final class ClearReleaseTPSubCommand extends AbstractCommand {
+class ClearReleaseTPSubCommand extends AbstractCommand {
 
     @Localizable static final String _SUCCESS = "Default Jail release location cleared.";
 

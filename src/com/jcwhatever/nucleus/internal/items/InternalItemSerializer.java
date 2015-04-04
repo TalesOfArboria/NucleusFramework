@@ -56,7 +56,7 @@ import javax.annotation.Nullable;
  * @see InternalItemDeserializer
  * @see ItemMetaHandlers
  */
-public class InternalItemSerializer implements IItemStackSerializer {
+class InternalItemSerializer implements IItemStackSerializer {
 
     private final StringBuilder _buffer;
     private final ItemMetaHandlers _metaHandlers;

@@ -46,7 +46,7 @@ import java.util.UUID;
                 "playerName= The name of the player to take away money from.",
                 "amount= The amount to take. Must be a positive number."})
 
-public final class TakeSubCommand extends AbstractCommand {
+class TakeSubCommand extends AbstractCommand {
 
     @Localizable
     static final String _PLAYER_NOT_FOUND = "A player by the name '{0}' was not found.";

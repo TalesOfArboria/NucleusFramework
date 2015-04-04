@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 /*
  * 
  */
-public class InternalFriendsContext implements IFriendsContext {
+class InternalFriendsContext implements IFriendsContext {
 
     private final NucleusFriendsProvider _provider;
     private Map<UUID, FriendInfo> _friendInfo;

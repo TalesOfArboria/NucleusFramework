@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * NucleusFramework economy account
  */
-public final class NucleusAccount implements IAccount {
+class NucleusAccount implements IAccount {
 
     private final UUID _playerId;
     private final NucleusBank _bank;

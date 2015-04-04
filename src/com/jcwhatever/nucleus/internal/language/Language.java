@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.language.parser;
+package com.jcwhatever.nucleus.internal.language;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * Parsed language localization data.
  */
-public class Language {
+class Language {
 
     private final Set<String> _versions;
     private final Set<LocalizedText> _localizedText;

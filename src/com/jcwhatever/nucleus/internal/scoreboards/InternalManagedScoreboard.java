@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IManagedScoreboard}
  */
-public class InternalManagedScoreboard implements IManagedScoreboard {
+class InternalManagedScoreboard implements IManagedScoreboard {
 
     private final InternalScoreboardTracker _tracker;
     private final ScoreboardLifespan _lifespan;

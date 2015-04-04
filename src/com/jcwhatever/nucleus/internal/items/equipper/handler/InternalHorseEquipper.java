@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Equipper used for Horse entities.
  */
-public class InternalHorseEquipper implements IEquipper {
+public final class InternalHorseEquipper implements IEquipper {
 
     @Override
     public boolean equip(Entity entity, ItemStack item) {

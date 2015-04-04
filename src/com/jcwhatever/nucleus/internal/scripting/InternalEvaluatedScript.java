@@ -53,7 +53,7 @@ import javax.script.SimpleScriptContext;
  *
  * <p>An evaluated script</p>
  */
-public class InternalEvaluatedScript implements IEvaluatedScript {
+class InternalEvaluatedScript implements IEvaluatedScript {
 
     private final IScript _parentScript;
     private final ScriptEngine _engine;

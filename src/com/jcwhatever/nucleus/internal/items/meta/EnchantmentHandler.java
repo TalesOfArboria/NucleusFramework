@@ -39,7 +39,7 @@ import java.util.Set;
  *
  * @see ItemMetaHandlers
  */
-public class EnchantmentHandler implements IMetaHandler {
+public final class EnchantmentHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

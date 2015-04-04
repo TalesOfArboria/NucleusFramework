@@ -49,7 +49,7 @@ import java.util.UUID;
                 "playerName= The name of the player to check.",
                 "bank= Optional. The bank the account is in. Leave blank to check global account."})
 
-public final class BalanceSubCommand extends AbstractCommand {
+class BalanceSubCommand extends AbstractCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND =
             "A player by the name '{0: player name}' was not found.";

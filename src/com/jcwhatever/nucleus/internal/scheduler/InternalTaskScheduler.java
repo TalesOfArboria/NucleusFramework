@@ -42,7 +42,7 @@ import java.util.concurrent.Callable;
  * Uses Bukkits Task Scheduler and adds use of TaskHandlers which
  * add functionality.
  */
-public class InternalTaskScheduler implements ITaskScheduler {
+public final class InternalTaskScheduler implements ITaskScheduler {
 
     @Override
     public IScheduledTask runTaskLater(Plugin plugin, Runnable runnable) {

@@ -46,7 +46,7 @@ import org.bukkit.command.CommandSender;
                 "scriptName= Optional. The name of the script to reload. Omit to reload all scripts."
         })
 
-public final class ReloadSubCommand extends AbstractCommand {
+class ReloadSubCommand extends AbstractCommand {
 
     @Localizable static final String _RELOAD_ALL = "Scripts reloaded.";
     @Localizable static final String _RELOAD_ONE = "Script '{0: script name}' reloaded.";

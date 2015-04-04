@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * Minecraft Tab List Header Footer Title  packet sender for NMS version v1_8_R2
  */
-public class NmsListHeaderFooterHandler_v1_8_R2 extends v1_8_R2 implements INmsListHeaderFooterHandler {
+public final class NmsListHeaderFooterHandler_v1_8_R2 extends v1_8_R2 implements INmsListHeaderFooterHandler {
 
     /**
      * Send the packet to a player.

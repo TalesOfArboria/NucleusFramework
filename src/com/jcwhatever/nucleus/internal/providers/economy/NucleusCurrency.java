@@ -33,7 +33,7 @@ import java.text.DecimalFormat;
 /**
  * Nucleus economy provider currency.
  */
-public class NucleusCurrency implements ICurrency {
+public final class NucleusCurrency implements ICurrency {
 
     private final String _singular;
     private final String _plural;

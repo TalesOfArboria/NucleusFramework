@@ -48,10 +48,9 @@ import org.bukkit.inventory.ItemStack;
                 "kitName= The name of the kit items will be added to. {NAME16}",
                 "items= The items to remove. {ITEM_STACK}"})
 
-public final class DelSubCommand extends AbstractCommand {
+class DelSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
+    @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
     @Localizable static final String _SUCCESS = "Removed items from chest kit '{1}'.";
 
     @Override

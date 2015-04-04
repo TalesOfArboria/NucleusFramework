@@ -67,10 +67,10 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Internal implementation of {@link IJailProvider}.
  */
-public class NucleusJailProvider extends Provider implements IJailProvider{
+public final class NucleusJailProvider extends Provider implements IJailProvider{
 
     public static final String NAME = "NucleusJails";
 

@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
  * A {@link NucleusKit} wrapper that allows modifying and saving
  * the kit contents.
  */
-public class NucleusKitModifier implements IModifiableKit {
+public final class NucleusKitModifier implements IModifiableKit {
 
     protected final NucleusKitContext _context;
     protected final NucleusKit _kit;

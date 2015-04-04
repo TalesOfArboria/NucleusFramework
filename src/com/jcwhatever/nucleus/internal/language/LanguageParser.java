@@ -23,7 +23,7 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.language.parser;
+package com.jcwhatever.nucleus.internal.language;
 
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 /*
  * Parse NucleusFramework language file from stream.
  */
-public class LanguageParser {
+class LanguageParser {
 
     private final InputStream _stream;
     private final Set<String> _versions = new HashSet<>(10);

@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @see ItemMetaHandlers
  */
-public class DisplayNameHandler implements IMetaHandler {
+public final class DisplayNameHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

@@ -52,7 +52,7 @@ import javax.annotation.Nullable;
 /**
  * Nucleus implementation of {@link IFriendsProvider}.
  */
-public class NucleusFriendsProvider extends Provider implements IFriendsProvider {
+public final class NucleusFriendsProvider extends Provider implements IFriendsProvider {
 
     public static final String NAME = "NucleusFriends";
 

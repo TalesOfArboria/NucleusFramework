@@ -43,7 +43,7 @@ import java.util.Collection;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-public class VaultBank implements IBank {
+class VaultBank implements IBank {
 
     private final String _name;
     private final Economy _economy;

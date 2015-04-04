@@ -53,9 +53,9 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * An implementation of {@link IKit}.
+ * Nucleus implementation of {@link IKit}.
  */
-public class NucleusKit implements IKit {
+class NucleusKit implements IKit {
 
     private final Plugin _plugin;
     private final IKitContext _context;

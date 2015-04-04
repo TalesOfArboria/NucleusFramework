@@ -34,7 +34,7 @@ import org.bukkit.entity.Player;
 /**
  * Minecraft named sound effect packet sender for NMS version v1_8_R1
  */
-public class NmsSoundEffectHandler_v1_8_R1 extends v1_8_R1 implements INmsSoundEffectHandler {
+public final class NmsSoundEffectHandler_v1_8_R1 extends v1_8_R1 implements INmsSoundEffectHandler {
 
     public NmsSoundEffectHandler_v1_8_R1() {
 

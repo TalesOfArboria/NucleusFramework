@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 /**
  * Manages handled signs.
  */
-public class InternalSignManager implements ISignManager {
+public final class InternalSignManager implements ISignManager {
 
     private static final Pattern PATTERN_HEADER_STRIPPER = Pattern.compile("[\\[\\]]");
     private static final SignHandlerRegistration REGISTRATION = new SignHandlerRegistration();

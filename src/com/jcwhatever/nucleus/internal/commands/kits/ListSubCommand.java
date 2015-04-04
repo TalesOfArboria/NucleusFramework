@@ -49,10 +49,9 @@ import java.util.Collection;
         paramDescriptions = {
                 "page= {PAGE}"})
 
-public final class ListSubCommand extends AbstractCommand {
+class ListSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _PAGINATOR_TITLE = "Kits";
+    @Localizable static final String _PAGINATOR_TITLE = "Kits";
     @Localizable static final String _FORMAT = "{GOLD}{0} {GRAY}({1} Items, {2} Armor)";
 
     @Override

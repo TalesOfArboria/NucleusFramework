@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * NucleusFramework bank
  */
-public final class NucleusBank implements IBank {
+class NucleusBank implements IBank {
 
     private final String _name;
     private final UUID _ownerId;

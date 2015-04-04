@@ -29,7 +29,10 @@ import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.OfflinePlayer;
 
-public class VaultGroupPermission implements IPermissionGroup, Comparable<IPermissionGroup> {
+/**
+ * Vault implementation of {@link IPermissionGroup}.
+ */
+public final class VaultGroupPermission implements IPermissionGroup, Comparable<IPermissionGroup> {
 
     private String _name;
 

@@ -28,11 +28,6 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.managed.language.ILanguageContext;
 import com.jcwhatever.nucleus.managed.language.Localized;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.internal.language.parser.InvalidLocalizedTextException;
-import com.jcwhatever.nucleus.internal.language.parser.Language;
-import com.jcwhatever.nucleus.internal.language.parser.LanguageKeys;
-import com.jcwhatever.nucleus.internal.language.parser.LanguageParser;
-import com.jcwhatever.nucleus.internal.language.parser.LocalizedText;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
@@ -49,7 +44,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link ILanguageContext}.
  */
-public class InternalLanguageContext implements ILanguageContext {
+class InternalLanguageContext implements ILanguageContext {
 
     private final Plugin _plugin;
     private final Object _owner;

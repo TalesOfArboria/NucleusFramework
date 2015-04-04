@@ -36,8 +36,8 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Floating item context.
  */
 public class InternalFloatingContext extends NamedInsensitiveDataManager<IFloatingItem> {
 

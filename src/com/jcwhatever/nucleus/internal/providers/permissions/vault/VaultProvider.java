@@ -42,7 +42,7 @@ import net.milkbowl.vault.permission.Permission;
 import javax.annotation.Nullable;
 
 /**
- * Vault interface implementation.
+ * Vault permissions interface implementation.
  */
 public class VaultProvider extends AbstractPermissionsProvider {
 

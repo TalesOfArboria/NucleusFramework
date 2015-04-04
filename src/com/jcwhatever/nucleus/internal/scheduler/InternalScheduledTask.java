@@ -33,7 +33,7 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * Internal {@link IScheduledTask} implementation.
  */
-public class InternalScheduledTask implements IScheduledTask {
+class InternalScheduledTask implements IScheduledTask {
 
     protected BukkitTask _task;
     protected Runnable _runnable;

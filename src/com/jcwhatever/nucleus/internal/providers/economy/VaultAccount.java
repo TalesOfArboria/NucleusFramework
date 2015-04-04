@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 /**
  * A Vault bank account
  */
-public final class VaultAccount implements IAccount {
+class VaultAccount implements IAccount {
 
     private final VaultEconomyProvider _provider;
     private final UUID _playerId;

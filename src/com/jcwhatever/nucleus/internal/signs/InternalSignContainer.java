@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link ISignContainer}.
  */
-public class InternalSignContainer implements ISignContainer {
+class InternalSignContainer implements ISignContainer {
 
     private final Sign _sign;
     private final Location _signLocation;

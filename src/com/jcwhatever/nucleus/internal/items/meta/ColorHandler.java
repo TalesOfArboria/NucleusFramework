@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @see ItemMetaHandlers
  */
-public class ColorHandler implements IMetaHandler {
+public final class ColorHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

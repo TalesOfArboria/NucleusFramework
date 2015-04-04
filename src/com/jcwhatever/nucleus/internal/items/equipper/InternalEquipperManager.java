@@ -40,7 +40,7 @@ import java.util.WeakHashMap;
 /**
  * Internal implementation of {@link IEquipperManager}.
  */
-public class InternalEquipperManager implements IEquipperManager {
+public final class InternalEquipperManager implements IEquipperManager {
 
     private static final IEquipper DEFAULT_EQUIPPER = new InternalDefaultEquipper();
 

@@ -43,9 +43,9 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
- * Nucleus default implementation of a kit provider.
+ * Nucleus implementation of a kit provider.
  */
-public class NucleusKitProvider extends Provider implements IKitProvider {
+public final class NucleusKitProvider extends Provider implements IKitProvider {
 
     public static final String NAME = "NucleusKits";
 

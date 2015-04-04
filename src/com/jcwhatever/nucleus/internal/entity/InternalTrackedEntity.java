@@ -48,7 +48,7 @@ import java.util.UUID;
  *
  * @see EntityUtils#trackEntity
  */
-public final class InternalTrackedEntity implements ITrackedEntity {
+class InternalTrackedEntity implements ITrackedEntity {
 
     private final UUID _uuid;
     private final InternalEntityTracker _tracker;

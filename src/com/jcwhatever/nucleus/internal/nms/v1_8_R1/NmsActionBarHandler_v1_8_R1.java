@@ -36,7 +36,7 @@ import org.bukkit.entity.Player;
 /**
  * Minecraft Action Bar sender for NMS version v1_8_R1
  */
-public class NmsActionBarHandler_v1_8_R1 extends v1_8_R1 implements INmsActionBarHandler {
+public final class NmsActionBarHandler_v1_8_R1 extends v1_8_R1 implements INmsActionBarHandler {
 
     /**
      * Send the action bar packet.

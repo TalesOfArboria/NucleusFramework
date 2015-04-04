@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @see ItemMetaHandlers
  */
-public class LoreHandler implements IMetaHandler {
+public final class LoreHandler implements IMetaHandler {
 
     @Override
     public String getMetaName() {

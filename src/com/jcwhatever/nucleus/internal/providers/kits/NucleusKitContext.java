@@ -37,10 +37,10 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 
-/*
- *
+/**
+ * Nucleus implementation of {@link IKitContext}.
  */
-public class NucleusKitContext extends NamedInsensitiveDataManager<IKit>
+public final class NucleusKitContext extends NamedInsensitiveDataManager<IKit>
         implements IKitContext, IPluginOwned {
 
     private final Plugin _plugin;

@@ -51,10 +51,10 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Nucleus Implementation of {@link IJail}.
  */
-public class NucleusJail implements IJail {
+class NucleusJail implements IJail {
 
     private final NucleusJailProvider _provider;
     private final Plugin _plugin;

@@ -44,7 +44,7 @@ import org.bukkit.entity.Player;
         description="Set location where players are teleported when they are released from the " +
                 "default jail to your current location.")
 
-public final class SetReleaseTPSubCommand extends AbstractCommand {
+class SetReleaseTPSubCommand extends AbstractCommand {
 
     @Localizable static final String _SUCCESS = "Default Jail release location set to your current location.";
 

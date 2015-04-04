@@ -30,7 +30,7 @@ import org.bukkit.plugin.Plugin;
  * A messenger that does not attach a chat prefix to
  * messages.
  */
-public class InternalAnonMessenger extends InternalMessenger {
+class InternalAnonMessenger extends InternalMessenger {
 
     protected InternalAnonMessenger(InternalMessengerFactory factory, Plugin plugin) {
         super(factory, plugin, null);

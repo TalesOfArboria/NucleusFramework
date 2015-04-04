@@ -46,7 +46,7 @@ import javax.annotation.Nullable;
 /**
  * Manages floating items.
  */
-public class InternalFloatingItemManager implements IFloatingItemManager, Listener {
+public final class InternalFloatingItemManager implements IFloatingItemManager, Listener {
 
     private final Map<Plugin, InternalFloatingContext> _contexts = new WeakHashMap<>(25);
 

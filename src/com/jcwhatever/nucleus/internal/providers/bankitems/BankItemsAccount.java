@@ -54,7 +54,7 @@ import javax.annotation.Nullable;
 /**
  * Nucleus implementation of {@link IBankItemsAccount}.
  */
-public class BankItemsAccount implements IBankItemsAccount {
+class BankItemsAccount implements IBankItemsAccount {
 
     private final UUID _ownerId;
     private final BankItemsBank _bank;

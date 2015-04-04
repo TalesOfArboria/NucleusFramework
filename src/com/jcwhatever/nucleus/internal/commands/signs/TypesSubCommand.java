@@ -52,7 +52,7 @@ import java.util.Collection;
                 "search= Optional. Specify a search filter."
         })
 
-public class TypesSubCommand extends AbstractCommand {
+class TypesSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE =
             "Sign Types";

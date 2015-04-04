@@ -38,7 +38,7 @@ import javax.script.ScriptEngineManager;
  * Extends {@link ScriptEngineManager} and provides singleton {@link javax.script.ScriptEngine}
  * instances.
  */
-public class InternalScriptEngineManager extends ScriptEngineManager {
+public final class InternalScriptEngineManager extends ScriptEngineManager {
 
     private final Map<String, ScriptEngine> _namedEngines = new HashMap<>(5);
     private final Map<String, ScriptEngine> _extEngines = new HashMap<>(15);

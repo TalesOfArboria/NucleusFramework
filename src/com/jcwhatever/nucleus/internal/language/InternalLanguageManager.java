@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link ILanguageManager}.
  */
-public class InternalLanguageManager implements ILanguageManager {
+public final class InternalLanguageManager implements ILanguageManager {
 
     @Override
     public ILanguageContext createContext(Plugin plugin) {

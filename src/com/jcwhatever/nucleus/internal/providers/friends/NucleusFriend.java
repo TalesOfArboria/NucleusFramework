@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 /**
  * Nucleus implementation of {@link IFriend}.
  */
-public class NucleusFriend implements IFriend {
+class NucleusFriend implements IFriend {
 
     private final UUID _sourceId;
     private final UUID _friendId;

@@ -34,10 +34,10 @@ import java.util.Date;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Nucleus implementation of {@link IJailSession}.
  */
-public class NucleusJailSession implements IJailSession {
+class NucleusJailSession implements IJailSession {
 
     private final NucleusJail _jail;
     private final UUID _playerId;

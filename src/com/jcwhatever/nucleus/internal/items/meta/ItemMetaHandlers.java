@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Manages {@link org.bukkit.inventory.ItemStack} meta data handlers.
  */
-public class ItemMetaHandlers {
+public final class ItemMetaHandlers {
 
     private static ItemMetaHandlers _global;
 

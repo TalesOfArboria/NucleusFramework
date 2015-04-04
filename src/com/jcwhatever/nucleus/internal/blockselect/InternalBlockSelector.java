@@ -44,7 +44,7 @@ import java.util.UUID;
 /**
  * Internal implementation of {@link IBlockSelector}.
  */
-public class InternalBlockSelector implements IBlockSelector, Listener {
+public final class InternalBlockSelector implements IBlockSelector, Listener {
 
     private final Map<UUID, IBlockSelectHandler> _handlers = new PlayerMap<>(Nucleus.getPlugin());
 

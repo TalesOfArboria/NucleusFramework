@@ -47,7 +47,7 @@ import org.bukkit.entity.Player;
 
         paramDescriptions = { "name= The name of the tp location. {NAME16}"})
 
-public final class AddTPSubCommand extends AbstractCommand {
+class AddTPSubCommand extends AbstractCommand {
 
     @Localizable
     static final String _DUPLICATE_NAME = "There is already a location named '{0}'.";

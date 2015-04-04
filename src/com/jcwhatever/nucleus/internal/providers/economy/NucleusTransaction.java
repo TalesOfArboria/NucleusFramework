@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * <p>Only works with {@link NucleusAccount} or {@link VaultAccount}.</p>
  */
-public class NucleusTransaction implements IEconomyTransaction {
+class NucleusTransaction implements IEconomyTransaction {
 
     private final Map<IAccount, Double> _balanceDelta = new HashMap<>(5);
     private boolean _isCommitted;

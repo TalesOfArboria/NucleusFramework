@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * Internal implementation of {@link IRequestContextBuilder}
  */
-public class InternalRequestContextBuilder implements IRequestContextBuilder {
+class InternalRequestContextBuilder implements IRequestContextBuilder {
 
     private final InternalResponseRequestor _requestor;
     private final Plugin _plugin;

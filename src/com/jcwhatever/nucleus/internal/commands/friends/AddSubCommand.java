@@ -53,7 +53,7 @@ import java.util.UUID;
         },
         permissionDefault = PermissionDefault.TRUE)
 
-public final class AddSubCommand extends AbstractCommand {
+class AddSubCommand extends AbstractCommand {
 
     @Localizable static final String _LEVEL_NOT_FOUND = "A friend level named '{0}' was not found.";
     @Localizable static final String _PLAYER_NOT_FOUND = "A player named '{0: friend name}' was not found.";

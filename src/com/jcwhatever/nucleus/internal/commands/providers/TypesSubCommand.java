@@ -48,7 +48,7 @@ import org.bukkit.command.CommandSender;
                 "search= Optional. Include to filter results by search term."
         })
 
-public final class TypesSubCommand extends AbstractCommand {
+class TypesSubCommand extends AbstractCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Service Provider Types";
 

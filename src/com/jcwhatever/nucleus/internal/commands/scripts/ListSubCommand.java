@@ -49,10 +49,9 @@ import javax.script.ScriptEngine;
         paramDescriptions = {
                 "page= {PAGE}"})
 
-public final class ListSubCommand extends AbstractCommand {
+class ListSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _PAGINATOR_TITLE = "Scripts";
+    @Localizable static final String _PAGINATOR_TITLE = "Scripts";
     @Localizable static final String _LABEL_NO_ENGINE = "<!no engine!>";
 
     @Override

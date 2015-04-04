@@ -23,61 +23,27 @@
  */
 
 
-package com.jcwhatever.nucleus.internal.language.parser;
-
-import com.jcwhatever.nucleus.utils.PreCon;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+package com.jcwhatever.nucleus.internal.language;
 
 /**
- * Represents a single line from a language file.
+ * Thrown when a line from a language file is not valid.
  */
-public class LocalizedText {
+class InvalidLocalizedTextException extends Exception {
 
-    private static final Pattern PATTERN_ESCAPED_NEW_LINE = Pattern.compile("\\n");
-
-    private final int _index;
-    private final String _text;
+    private final String _message;
 
     /**
      * Constructor.
      *
-     * @param index  The key index.
-     * @param text   The text.
+     * @param message  The exception message.
      */
-    public LocalizedText(int index, String text) {
-        PreCon.notNull(text);
-
-        _index = index;
-
-        Matcher matcher = PATTERN_ESCAPED_NEW_LINE.matcher(text);
-        _text = matcher.replaceAll("\n");
-    }
-
-    /**
-     * Get the key index.
-     */
-    public int getIndex() {
-        return _index;
-    }
-
-    /**
-     * Get the text.
-     */
-    public String getText() {
-        return _text;
+    public InvalidLocalizedTextException(String message) {
+        _message = message;
     }
 
     @Override
-    public int hashCode() {
-        return _index;
+    public String getMessage() {
+        return _message;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-
-        return obj instanceof LocalizedText &&
-                ((LocalizedText) obj).getIndex() == _index;
-    }
 }

@@ -45,10 +45,9 @@ import org.bukkit.command.CommandSender;
         paramDescriptions = {
                 "kitName= The name of the kit items will be added to. {NAME16}"})
 
-public final class AddSubCommand extends AbstractCommand {
+class AddSubCommand extends AbstractCommand {
 
-    @Localizable
-    static final String _KIT_ALREADY_EXISTS = "An chest kit named '{0}' already exists.";
+    @Localizable static final String _KIT_ALREADY_EXISTS = "An chest kit named '{0}' already exists.";
     @Localizable static final String _FAILED = "Failed to create chest kit.";
     @Localizable static final String _SUCCESS = "Inventory kit '{0}' created.";
 

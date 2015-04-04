@@ -41,7 +41,7 @@ import javax.script.ScriptEngine;
 /**
  * NucleusFramework's default {@link com.jcwhatever.nucleus.managed.scripting.IScript} implementation
  */
-public class InternalScript implements IScript {
+class InternalScript implements IScript {
 
     private final String _name;
     private final File _file;

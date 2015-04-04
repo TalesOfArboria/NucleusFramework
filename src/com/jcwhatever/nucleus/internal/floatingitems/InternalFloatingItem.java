@@ -58,7 +58,7 @@ import javax.annotation.Nullable;
  * Without the data node, expect left over items that can be picked
  * up after server restarts or crashes.</p>
  */
-public class InternalFloatingItem implements IFloatingItem {
+class InternalFloatingItem implements IFloatingItem {
 
     private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
     private static BukkitListener _listener;

@@ -42,7 +42,7 @@ import org.bukkit.entity.Player;
         command="setregion", 
         description="Set jail region using your current region selection.")
 
-public final class SetRegionSubCommand extends AbstractCommand {
+class SetRegionSubCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws CommandException {

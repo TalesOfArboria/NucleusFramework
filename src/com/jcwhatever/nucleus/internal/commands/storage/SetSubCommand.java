@@ -47,7 +47,7 @@ import org.bukkit.plugin.Plugin;
                 "pluginName= The name of the plugin that will have its storage provider changed.",
                 "storageName= The name of the storage provider."})
 
-public final class SetSubCommand extends AbstractCommand {
+class SetSubCommand extends AbstractCommand {
 
     @Localizable
     static final String _PLUGIN_NOT_FOUND = "A plugin named '{0: plugin name}' was not found.";
