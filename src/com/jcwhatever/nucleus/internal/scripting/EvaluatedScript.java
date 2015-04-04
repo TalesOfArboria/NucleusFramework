@@ -53,7 +53,7 @@ import javax.script.SimpleScriptContext;
  *
  * <p>An evaluated script</p>
  */
-class InternalEvaluatedScript implements IEvaluatedScript {
+class EvaluatedScript implements IEvaluatedScript {
 
     private final IScript _parentScript;
     private final ScriptEngine _engine;
@@ -70,8 +70,8 @@ class InternalEvaluatedScript implements IEvaluatedScript {
      * @param engine        The engine that evaluated the script.
      * @param scriptApis    The api that was included.
      */
-    public InternalEvaluatedScript(IScript parentScript, ScriptEngine engine,
-                                   @Nullable Collection<? extends IScriptApi> scriptApis) {
+    public EvaluatedScript(IScript parentScript, ScriptEngine engine,
+                           @Nullable Collection<? extends IScriptApi> scriptApis) {
 
         PreCon.notNull(parentScript);
         PreCon.notNull(engine);

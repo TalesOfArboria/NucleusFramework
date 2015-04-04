@@ -49,7 +49,7 @@ public final class InternalTaskScheduler implements ITaskScheduler {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
 
-        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        ScheduledTask task = new ScheduledTask(runnable, false);
         if (!plugin.isEnabled()) {
             pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
             return task;
@@ -67,7 +67,7 @@ public final class InternalTaskScheduler implements ITaskScheduler {
         PreCon.notNull(runnable);
         PreCon.positiveNumber(ticks);
 
-        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        ScheduledTask task = new ScheduledTask(runnable, false);
         if (!plugin.isEnabled()) {
             pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
             return task;
@@ -85,7 +85,7 @@ public final class InternalTaskScheduler implements ITaskScheduler {
         PreCon.notNull(runnable);
         PreCon.positiveNumber(ticks);
 
-        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        ScheduledTask task = new ScheduledTask(runnable, false);
         if (!plugin.isEnabled()) {
             pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
             return task;
@@ -104,7 +104,7 @@ public final class InternalTaskScheduler implements ITaskScheduler {
         PreCon.positiveNumber(startTicks);
         PreCon.positiveNumber(repeatTicks);
 
-        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        ScheduledTask task = new ScheduledTask(runnable, false);
         if (!plugin.isEnabled()) {
             pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
             return task;
@@ -123,7 +123,7 @@ public final class InternalTaskScheduler implements ITaskScheduler {
         PreCon.positiveNumber(startTicks);
         PreCon.positiveNumber(repeatTicks);
 
-        InternalScheduledTask task = new InternalScheduledTask(runnable, false);
+        ScheduledTask task = new ScheduledTask(runnable, false);
         if (!plugin.isEnabled()) {
             pluginDisabledMessage(plugin, Thread.currentThread().getStackTrace());
             return task;

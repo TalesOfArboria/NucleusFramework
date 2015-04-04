@@ -170,7 +170,7 @@ public final class InternalSoundManager implements ISoundManager {
         if (!settings.hasLocations())
             settings.addLocations(p.getLocation());
 
-        InternalSoundContext context = new InternalSoundContext(p, sound, settings);
+        SoundContext context = new SoundContext(p, sound, settings);
 
         // run event
         PlayResourceSoundEvent event = new PlayResourceSoundEvent(p, sound, settings);
@@ -214,7 +214,7 @@ public final class InternalSoundManager implements ISoundManager {
                         @Override
                         public void on(ISoundContext item) {
 
-                            ((InternalSoundContext)item).setFinished();
+                            ((SoundContext)item).setFinished();
 
                             ResourceSoundEndEvent event = new ResourceSoundEndEvent(item.getPlayer(),
                                     item.getResourceSound(), item.getSettings());

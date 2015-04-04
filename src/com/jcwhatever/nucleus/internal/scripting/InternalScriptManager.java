@@ -74,7 +74,7 @@ public final class InternalScriptManager implements IScriptManager {
     private static IScriptFactory _scriptFactory = new IScriptFactory() {
         @Override
         public IScript construct(String name, @Nullable File file, String type, String script) {
-            return new InternalScript(name, file, type, script);
+            return new Script(name, file, type, script);
         }
     };
 

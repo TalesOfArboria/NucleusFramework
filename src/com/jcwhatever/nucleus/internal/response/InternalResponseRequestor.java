@@ -75,8 +75,8 @@ public final class InternalResponseRequestor implements IResponseRequestor, List
 
                     for (IRequestContext request : requests) {
 
-                        if (request instanceof InternalRequestContext) {
-                            ((InternalRequestContext) request).timeout();
+                        if (request instanceof RequestContext) {
+                            ((RequestContext) request).timeout();
                         }
                     }
                 }
@@ -105,7 +105,7 @@ public final class InternalResponseRequestor implements IResponseRequestor, List
     public IRequestContextBuilder getContextBuilder(Plugin plugin) {
         PreCon.notNull(plugin);
 
-        return new InternalRequestContextBuilder(this, plugin);
+        return new RequestContextBuilder(this, plugin);
     }
 
     public void request(IRequestContext context) {

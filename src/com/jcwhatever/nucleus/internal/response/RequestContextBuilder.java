@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * Internal implementation of {@link IRequestContextBuilder}
  */
-class InternalRequestContextBuilder implements IRequestContextBuilder {
+class RequestContextBuilder implements IRequestContextBuilder {
 
     private final InternalResponseRequestor _requestor;
     private final Plugin _plugin;
@@ -53,7 +53,7 @@ class InternalRequestContextBuilder implements IRequestContextBuilder {
      * @param requestor  The parent requestor.
      * @param plugin     The contexts owning plugin.
      */
-    public InternalRequestContextBuilder(InternalResponseRequestor requestor, Plugin plugin) {
+    public RequestContextBuilder(InternalResponseRequestor requestor, Plugin plugin) {
         PreCon.notNull(plugin);
 
         _requestor = requestor;
@@ -99,7 +99,7 @@ class InternalRequestContextBuilder implements IRequestContextBuilder {
 
         @Override
         public IRequestContext build(CommandSender sender) {
-            return new InternalRequestContext(
+            return new RequestContext(
                     _requestor, _plugin, sender, _name, _timeout, _responseTypes);
         }
     }

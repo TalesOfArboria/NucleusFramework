@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IManagedScoreboard}
  */
-class InternalManagedScoreboard implements IManagedScoreboard {
+class ManagedScoreboard implements IManagedScoreboard {
 
     private final InternalScoreboardTracker _tracker;
     private final ScoreboardLifespan _lifespan;
@@ -54,9 +54,9 @@ class InternalManagedScoreboard implements IManagedScoreboard {
      * @param scoreboard  The scoreboard to manage.
      * @param lifespan    The lifespan type
      */
-    public InternalManagedScoreboard(InternalScoreboardTracker tracker,
-                                     Scoreboard scoreboard, ScoreboardLifespan lifespan,
-                                     @Nullable IScoreboardExtension extension) {
+    public ManagedScoreboard(InternalScoreboardTracker tracker,
+                             Scoreboard scoreboard, ScoreboardLifespan lifespan,
+                             @Nullable IScoreboardExtension extension) {
         PreCon.notNull(tracker);
         PreCon.notNull(lifespan);
         PreCon.notNull(scoreboard);

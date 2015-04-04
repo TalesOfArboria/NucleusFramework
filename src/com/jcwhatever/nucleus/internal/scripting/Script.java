@@ -41,7 +41,7 @@ import javax.script.ScriptEngine;
 /**
  * NucleusFramework's default {@link com.jcwhatever.nucleus.managed.scripting.IScript} implementation
  */
-class InternalScript implements IScript {
+class Script implements IScript {
 
     private final String _name;
     private final File _file;
@@ -56,7 +56,7 @@ class InternalScript implements IScript {
      * @param type      The script type.
      * @param script    The script source.
      */
-    public InternalScript(String name, @Nullable File file, String type, String script) {
+    public Script(String name, @Nullable File file, String type, String script) {
         PreCon.notNullOrEmpty(name);
         PreCon.notNullOrEmpty(type);
         PreCon.notNull(script);
@@ -124,7 +124,7 @@ class InternalScript implements IScript {
      */
     protected IEvaluatedScript instantiateEvaluatedScript(ScriptEngine engine,
                                                           @Nullable Collection<? extends IScriptApi> apiCollection) {
-        return new InternalEvaluatedScript(this, engine, apiCollection);
+        return new EvaluatedScript(this, engine, apiCollection);
     }
 
     /**

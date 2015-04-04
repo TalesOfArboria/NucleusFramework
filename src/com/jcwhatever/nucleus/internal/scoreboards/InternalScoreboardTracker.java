@@ -61,7 +61,7 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
         PreCon.notNull(scoreboard);
         PreCon.notNull(lifespan);
 
-        return new InternalManagedScoreboard(this, scoreboard, lifespan, extension);
+        return new ManagedScoreboard(this, scoreboard, lifespan, extension);
     }
 
     /**

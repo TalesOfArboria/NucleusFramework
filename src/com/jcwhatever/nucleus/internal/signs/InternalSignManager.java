@@ -164,7 +164,7 @@ public final class InternalSignManager implements ISignManager {
             if (location == null)
                 continue;
 
-            ISignContainer container = new InternalSignContainer(location, signNode);
+            ISignContainer container = new SignContainer(location, signNode);
 
             signs.add(container);
         }
@@ -357,7 +357,7 @@ public final class InternalSignManager implements ISignManager {
         SignChangeResult result = REGISTRATION.signChange(
                 handler,
                 event.getPlayer(),
-                new InternalSignContainer(sign.getLocation(), signNode, event));
+                new SignContainer(sign.getLocation(), signNode, event));
 
         if (result == null)
             throw new RuntimeException("A SignEventResult must be returned from SignHandler#onSignChange.");
@@ -403,7 +403,7 @@ public final class InternalSignManager implements ISignManager {
         SignClickResult result = REGISTRATION.signClick(
                 handler,
                 event.getPlayer(),
-                new InternalSignContainer(event.getSign().getLocation(), signNode));
+                new SignContainer(event.getSign().getLocation(), signNode));
 
         if (result == null)
             throw new RuntimeException("A SignClickResult must be returned from SignHandler#onSignClick.");
@@ -436,7 +436,7 @@ public final class InternalSignManager implements ISignManager {
         SignBreakResult result = REGISTRATION.signBreak(
                 handler,
                 event.getPlayer(),
-                new InternalSignContainer(sign.getLocation(), signNode));
+                new SignContainer(sign.getLocation(), signNode));
 
         if (result == null)
             throw new RuntimeException("A SignEventResult must be returned from SignHandler#onSignBreak.");
@@ -468,7 +468,7 @@ public final class InternalSignManager implements ISignManager {
             if (sign == null)
                 continue;
 
-            REGISTRATION.signLoad(handler, new InternalSignContainer(sign.getLocation(), signNode));
+            REGISTRATION.signLoad(handler, new SignContainer(sign.getLocation(), signNode));
         }
     }
 

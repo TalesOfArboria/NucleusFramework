@@ -33,7 +33,7 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * Internal {@link IScheduledTask} implementation.
  */
-class InternalScheduledTask implements IScheduledTask {
+class ScheduledTask implements IScheduledTask {
 
     protected BukkitTask _task;
     protected Runnable _runnable;
@@ -46,7 +46,7 @@ class InternalScheduledTask implements IScheduledTask {
      * @param runnable     The scheduled task handler.
      * @param isRepeating  Determine if the task is repeating.
      */
-    public InternalScheduledTask(Runnable runnable, boolean isRepeating) {
+    public ScheduledTask(Runnable runnable, boolean isRepeating) {
         _runnable = runnable;
         _isRepeating = isRepeating;
 

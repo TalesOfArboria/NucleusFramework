@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IRequestContext}.
  */
-class InternalRequestContext implements IRequestContext {
+class RequestContext implements IRequestContext {
 
     private final InternalResponseRequestor _requestor;
     private final Plugin _plugin;
@@ -57,9 +57,9 @@ class InternalRequestContext implements IRequestContext {
     private ResponseType _response;
     private boolean _hasRequested;
 
-    InternalRequestContext(InternalResponseRequestor requestor, Plugin plugin,
-                           CommandSender sender, String name,
-                           int timeout, Set<ResponseType> responseTypes) {
+    RequestContext(InternalResponseRequestor requestor, Plugin plugin,
+                   CommandSender sender, String name,
+                   int timeout, Set<ResponseType> responseTypes) {
 
         _requestor = requestor;
         _plugin = plugin;
@@ -163,25 +163,25 @@ class InternalRequestContext implements IRequestContext {
     }
 
     @Override
-    public InternalRequestContext onResult(IUpdateSubscriber<IRequestContext> subscriber) {
+    public RequestContext onResult(IUpdateSubscriber<IRequestContext> subscriber) {
         _agents.getAgent("onResult").addSubscriber(subscriber);
         return this;
     }
 
     @Override
-    public InternalRequestContext onRespond(IUpdateSubscriber<IRequestContext> subscriber) {
+    public RequestContext onRespond(IUpdateSubscriber<IRequestContext> subscriber) {
         _agents.getAgent("onRespond").addSubscriber(subscriber);
         return this;
     }
 
     @Override
-    public InternalRequestContext onCancel(IUpdateSubscriber<IRequestContext> subscriber) {
+    public RequestContext onCancel(IUpdateSubscriber<IRequestContext> subscriber) {
         _agents.getAgent("onCancel").addSubscriber(subscriber);
         return this;
     }
 
     @Override
-    public InternalRequestContext onTimeout(IUpdateSubscriber<IRequestContext> subscriber) {
+    public RequestContext onTimeout(IUpdateSubscriber<IRequestContext> subscriber) {
         _agents.getAgent("onTimeout").addSubscriber(subscriber);
         return this;
     }

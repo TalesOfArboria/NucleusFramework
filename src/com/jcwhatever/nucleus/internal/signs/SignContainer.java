@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link ISignContainer}.
  */
-class InternalSignContainer implements ISignContainer {
+class SignContainer implements ISignContainer {
 
     private final Sign _sign;
     private final Location _signLocation;
@@ -59,7 +59,7 @@ class InternalSignContainer implements ISignContainer {
      *
      * @param signLocation  The location of the sign.
      */
-    public InternalSignContainer(Location signLocation) {
+    public SignContainer(Location signLocation) {
         this(signLocation, null, null);
     }
 
@@ -69,7 +69,7 @@ class InternalSignContainer implements ISignContainer {
      * @param signLocation  The location of the sign.
      * @param signNode      The data node of the sign.
      */
-    public InternalSignContainer(Location signLocation, IDataNode signNode) {
+    public SignContainer(Location signLocation, IDataNode signNode) {
         this(signLocation, signNode, null);
     }
 
@@ -80,8 +80,8 @@ class InternalSignContainer implements ISignContainer {
      * @param signNode      The data node of the sign.
      * @param event         Sign change event.
      */
-    public InternalSignContainer(Location signLocation,
-                                 IDataNode signNode, @Nullable SignChangeEvent event) {
+    public SignContainer(Location signLocation,
+                         IDataNode signNode, @Nullable SignChangeEvent event) {
         PreCon.notNull(signLocation);
         PreCon.notNull(signNode);
 
