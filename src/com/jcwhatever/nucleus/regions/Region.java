@@ -595,7 +595,7 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         public void onPlayerEnter(Player player, EnterRegionReason reason) {
 
             if (_region.canDoPlayerEnter(player, reason))
-                onPlayerEnter(player, reason);
+                _region.onPlayerEnter(player, reason);
 
             for (IRegionEventHandler handler : _region._eventHandlers) {
                 if (handler.canDoPlayerEnter(player, reason)) {
@@ -608,7 +608,7 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         public void onPlayerLeave(Player player, LeaveRegionReason reason) {
 
             if (_region.canDoPlayerLeave(player, reason))
-                onPlayerLeave(player, reason);
+                _region.onPlayerLeave(player, reason);
 
             for (IRegionEventHandler handler : _region._eventHandlers) {
                 if (handler.canDoPlayerLeave(player, reason)) {
