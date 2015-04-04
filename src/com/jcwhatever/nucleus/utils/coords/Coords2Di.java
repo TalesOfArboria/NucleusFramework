@@ -55,6 +55,114 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
         return new Coords2Di(chunk.getX(), chunk.getZ());
     }
 
+    /**
+     * Get the distance from source coordinates to target coordinates.
+     *
+     * @param source  The source coordinates.
+     * @param target  The target coordinates.
+     */
+    public static double distance(ICoords2Di source, ICoords2Di target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        return Math.sqrt(distanceSquared(source, target));
+    }
+
+    /**
+     * Get the distance from this coordinates to another coordinates.
+     *
+     * @param source  The source coordinates.
+     * @param target  The other coordinates.
+     */
+    public static double distance(ICoords2Di source, ICoords2D target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        return Math.sqrt(distanceSquared(source, target));
+    }
+
+    /**
+     * Get distance squared between two coordinates.
+     *
+     * @param source  The source coordinates.
+     * @param target  The target coordinates.
+     */
+    public static double distanceSquared(ICoords2Di source, ICoords2Di target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        double deltaX = target.getX() - source.getX();
+        double deltaZ = target.getZ() - source.getZ();
+
+        return deltaX * deltaX + deltaZ * deltaZ;
+    }
+
+    /**
+     * Get distance squared between two coordinates.
+     *
+     * @param source  The source coordinates.
+     * @param target  The target coordinates.
+     */
+    public static double distanceSquared(ICoords2Di source, ICoords2D target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        double deltaX = target.getX() - source.getX();
+        double deltaZ = target.getZ() - source.getZ();
+
+        return deltaX * deltaX + deltaZ * deltaZ;
+    }
+
+    /**
+     * Get a {@link org.bukkit.Chunk} from the specified {@link org.bukkit.World}
+     * at the specified coordinates.
+     *
+     * @param coords  The chunk coordinates.
+     * @param world   The world the chunk is in.
+     */
+    public static Chunk getChunk(ICoords2Di coords, World world) {
+        PreCon.notNull(coords);
+        PreCon.notNull(world);
+
+        return world.getChunkAt(coords.getX(), coords.getZ());
+    }
+
+    /**
+     * Copy the X and Z values to an output {@link org.bukkit.Location}.
+     *
+     * @param coords  The coordinates to copy from.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    public static Location copyTo(ICoords2Di coords, Location output) {
+        PreCon.notNull(coords);
+        PreCon.notNull(output);
+
+        output.setX(coords.getX());
+        output.setZ(coords.getZ());
+        return output;
+    }
+
+    /**
+     * Copy the X and Z values to an output {@link org.bukkit.Location}.
+     *
+     * @param coords  The coords to copy from.
+     * @param world   The {@link org.bukkit.World} to put into the output {@link org.bukkit.Location}.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    public static Location copyTo(ICoords2Di coords, @Nullable World world, Location output) {
+        PreCon.notNull(coords);
+        PreCon.notNull(output);
+
+        output.setWorld(world);
+        output.setX(coords.getX());
+        output.setZ(coords.getZ());
+        return output;
+    }
+
     private int _x;
     private int _z;
     private boolean _isImmutable;
@@ -123,9 +231,7 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
      * @param coords The other coordinates.
      */
     public double distance(ICoords2D coords) {
-        PreCon.notNull(coords);
-
-        return Math.sqrt(distanceSquared(coords));
+        return distance(this, coords);
     }
 
     /**
@@ -134,9 +240,7 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
      * @param coords The other coordinates.
      */
     public double distance(ICoords2Di coords) {
-        PreCon.notNull(coords);
-
-        return Math.sqrt(distanceSquared(coords));
+        return distance(this, coords);
     }
 
     /**
@@ -145,12 +249,7 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
      * @param coords The other coordinates.
      */
     public double distanceSquared(ICoords2D coords) {
-        PreCon.notNull(coords);
-
-        double deltaX = coords.getX() - _x;
-        double deltaZ = coords.getZ() - _z;
-
-        return deltaX * deltaX + deltaZ * deltaZ;
+        return distanceSquared(this, coords);
     }
 
     /**
@@ -159,12 +258,7 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
      * @param coords The other coordinates.
      */
     public double distanceSquared(ICoords2Di coords) {
-        PreCon.notNull(coords);
-
-        double deltaX = coords.getX() - _x;
-        double deltaZ = coords.getZ() - _z;
-
-        return deltaX * deltaX + deltaZ * deltaZ;
+        return distanceSquared(this, coords);
     }
 
     /**
@@ -208,9 +302,7 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
      * @param world The world the chunk is in.
      */
     public Chunk getChunk(World world) {
-        PreCon.notNull(world);
-
-        return world.getChunkAt(getX(), getZ());
+        return getChunk(this, world);
     }
 
     /**
@@ -249,11 +341,7 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
      * @return  The output {@link org.bukkit.Location}.
      */
     public Location copyTo(Location output) {
-        PreCon.notNull(output);
-
-        output.setX(_x);
-        output.setZ(_z);
-        return output;
+        return copyTo(this, output);
     }
 
     /**
@@ -265,12 +353,7 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
      * @return  The output {@link org.bukkit.Location}.
      */
     public Location copyTo(@Nullable World world, Location output) {
-        PreCon.notNull(output);
-
-        output.setWorld(world);
-        output.setX(_x);
-        output.setZ(_z);
-        return output;
+        return copyTo(this, world, output);
     }
 
     @Override
@@ -311,11 +394,11 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
         if (obj == this)
             return true;
 
-        if (obj instanceof Coords2Di) {
-            Coords2Di other = (Coords2Di) obj;
+        if (obj instanceof ICoords2Di) {
+            ICoords2Di other = (ICoords2Di) obj;
 
-            return other._x == _x &&
-                    other._z == _z;
+            return other.getX() == _x &&
+                    other.getZ() == _z;
         }
 
         return false;

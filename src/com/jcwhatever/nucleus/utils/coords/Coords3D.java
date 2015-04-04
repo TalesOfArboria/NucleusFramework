@@ -61,6 +61,150 @@ public class Coords3D extends Coords2D implements ICoords3D {
         return new Coords3D(vector.getX(), vector.getY(), vector.getZ());
     }
 
+    /**
+     * Get the distance from a source coordinate to a target coordinate.
+     *
+     * @param source  The source coordinates
+     * @param target  The target coordinates.
+     */
+    public static double distance(ICoords3D source, ICoords3D target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        return Math.sqrt(distanceSquared(source, target));
+    }
+
+    /**
+     * Get the distance from a source coordinate to target coordinates.
+     *
+     * @param source  The source coordinates.
+     * @param target  The target coordinates.
+     */
+    public static double distance(ICoords3D source, ICoords3Di target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        return Math.sqrt(distanceSquared(source, target));
+    }
+
+    /**
+     * Get distance squared between two coordinates.
+     *
+     * @param source  The source coordinates.
+     * @param target  The target coordinates.
+     */
+    public static double distanceSquared(ICoords3D source, ICoords3D target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        double deltaX = target.getX() - source.getX();
+        double deltaY = target.getY() - source.getY();
+        double deltaZ = target.getZ() - source.getZ();
+
+        return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+    }
+
+    /**
+     * Get distance squared between two coordinates.
+     *
+     * @param source  The source coordinates.
+     * @param target  The target coordinates.
+     */
+    public static double distanceSquared(ICoords3D source, ICoords3Di target) {
+        PreCon.notNull(source);
+        PreCon.notNull(target);
+
+        double deltaX = target.getX() - source.getX();
+        double deltaY = target.getY() - source.getY();
+        double deltaZ = target.getZ() - source.getZ();
+
+        return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+    }
+
+    /**
+     * Get a {@link org.bukkit.block.Block} from the specified {@link org.bukkit.World}
+     * using specified coordinates.
+     *
+     * @param coords  The coordinate of the block.
+     * @param world   The {@link org.bukkit.World} the block is in.
+     */
+    public static Block getBlock(ICoords3D coords, World world) {
+        PreCon.notNull(coords);
+        PreCon.notNull(world);
+
+        return world.getBlockAt(coords.getFloorX(), coords.getFloorY(), coords.getFloorZ());
+    }
+
+    /**
+     * Create a new {@link org.bukkit.Location} from the coordinates.
+     *
+     * @param coords  The coordinates to convert.
+     * @param world   The {@link org.bukkit.World} value of the new location.
+     */
+    public static Location toLocation(ICoords3D coords, @Nullable World world) {
+        return toLocation(coords, new Location(world, 0, 0, 0));
+    }
+
+    /**
+     * Create a new {@link org.bukkit.Location} from the coordinates.
+     *
+     * @param coords  The coordinates to convert.
+     * @param world   The {@link org.bukkit.World} value of the new location.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output location.
+     */
+    public static Location toLocation(ICoords3D coords, @Nullable World world, Location output) {
+        toLocation(coords, output);
+        output.setWorld(world);
+        return output;
+    }
+
+    /**
+     * Copy coordinate values into an output {@link org.bukkit.Location}.
+     *
+     * @param coords  The coordinates to convert.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output location.
+     */
+    public static Location toLocation(ICoords3D coords, Location output) {
+        PreCon.notNull(coords);
+        PreCon.notNull(output);
+
+        output.setX(coords.getX());
+        output.setY(coords.getY());
+        output.setZ(coords.getZ());
+        return output;
+    }
+
+    /**
+     * Create a new {@link org.bukkit.util.Vector} from the coordinates.
+     *
+     * @param coords  The coordinates to convert.
+     */
+    public static Vector toVector(ICoords3D coords) {
+        return toVector(coords, new Vector(0, 0, 0));
+    }
+
+    /**
+     * Copy coordinate values into an output {@link org.bukkit.util.Vector}.
+     *
+     * @param coords  The coordinates to convert.
+     * @param output  The output {@link org.bukkit.util.Vector}.
+     *
+     * @return  The output location.
+     */
+    public static Vector toVector(ICoords3D coords, Vector output) {
+        PreCon.notNull(coords);
+        PreCon.notNull(output);
+
+        output.setX(coords.getX());
+        output.setY(coords.getY());
+        output.setZ(coords.getZ());
+        return output;
+    }
+
     private double _y;
     private boolean _canSeal;
 
@@ -119,55 +263,39 @@ public class Coords3D extends Coords2D implements ICoords3D {
     }
 
     /**
-     * Get the distance from this coordinates to another coordinates.
+     * Get the distance from this coordinates to target coordinates.
      *
-     * @param coords  The other coordinates.
+     * @param target  The target coordinates.
      */
-    public double distance(ICoords3D coords) {
-        PreCon.notNull(coords);
-
-        return Math.sqrt(distanceSquared(coords));
+    public double distance(ICoords3D target) {
+        return distance(this, target);
     }
 
     /**
-     * Get the distance from this coordinates to another coordinates.
+     * Get the distance from this coordinates to target coordinates.
      *
-     * @param coords  The other coordinates.
+     * @param target  The target coordinates.
      */
-    public double distance(ICoords3Di coords) {
-        PreCon.notNull(coords);
-
-        return Math.sqrt(distanceSquared(coords));
+    public double distance(ICoords3Di target) {
+        return distance(this, target);
     }
 
     /**
-     * Get the distance from this coordinates to another coordinates squared.
+     * Get the distance from this coordinates to target coordinates squared.
      *
-     * @param coords  The other coordinates.
+     * @param target  The other coordinates.
      */
-    public double distanceSquared(ICoords3D coords) {
-        PreCon.notNull(coords);
-
-        double deltaX = coords.getX() - getX();
-        double deltaY = coords.getY() - _y;
-        double deltaZ = coords.getZ() - getZ();
-
-        return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+    public double distanceSquared(ICoords3D target) {
+        return distanceSquared(this, target);
     }
 
     /**
-     * Get the distance from this coordinates to another coordinates squared.
+     * Get the distance from this coordinates to target coordinates squared.
      *
-     * @param coords  The other coordinates.
+     * @param target  The target coordinates.
      */
-    public double distanceSquared(ICoords3Di coords) {
-        PreCon.notNull(coords);
-
-        double deltaX = coords.getX() - getX();
-        double deltaY = coords.getY() - _y;
-        double deltaZ = coords.getZ() - getZ();
-
-        return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+    public double distanceSquared(ICoords3Di target) {
+        return distanceSquared(this, target);
     }
 
     /**
@@ -193,9 +321,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
      * @param world  The {@link org.bukkit.World} the block is in.
      */
     public Block getBlock(World world) {
-        PreCon.notNull(world);
-
-        return world.getBlockAt(getFloorX(), getFloorY(), getFloorZ());
+        return getBlock(this, world);
     }
 
     /**
@@ -204,7 +330,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
      * @param world  The {@link org.bukkit.World} value of the new location.
      */
     public Location toLocation(@Nullable World world) {
-        return toLocation(new Location(world, 0, 0, 0));
+        return toLocation(this, world);
     }
 
     /**
@@ -215,19 +341,14 @@ public class Coords3D extends Coords2D implements ICoords3D {
      * @return  The output location.
      */
     public Location toLocation(Location output) {
-        PreCon.notNull(output);
-
-        output.setX(getX());
-        output.setY(_y);
-        output.setZ(getZ());
-        return output;
+        return toLocation(this, output);
     }
 
     /**
      * Create a new {@link org.bukkit.util.Vector} from the coordinates.
      */
     public Vector toVector() {
-        return toVector(new Vector(0, 0, 0));
+        return toVector(this);
     }
 
     /**
@@ -238,10 +359,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
      * @return  The output location.
      */
     public Vector toVector(Vector output) {
-        output.setX(getX());
-        output.setY(_y);
-        output.setZ(getZ());
-        return output;
+        return toVector(this, output);
     }
 
     /**
@@ -258,37 +376,6 @@ public class Coords3D extends Coords2D implements ICoords3D {
      */
     public Coords2D to2D() {
         return new Coords2D(getX(), getZ());
-    }
-
-    /**
-     * Copy values to an output {@link org.bukkit.Location}.
-     *
-     * @param output  The output {@link org.bukkit.Location}.
-     *
-     * @return  The output {@link org.bukkit.Location}.
-     */
-    @Override
-    public Location copyTo(Location output) {
-        PreCon.notNull(output);
-
-        output.setY(_y);
-        return super.copyTo(output);
-    }
-
-    /**
-     * Copy values to an output {@link org.bukkit.Location}.
-     *
-     * @param world   The {@link org.bukkit.World} to put into the output {@link org.bukkit.Location}.
-     * @param output  The output {@link org.bukkit.Location}.
-     *
-     * @return  The output {@link org.bukkit.Location}.
-     */
-    @Override
-    public Location copyTo(@Nullable World world, Location output) {
-        PreCon.notNull(output);
-
-        output.setY(_y);
-        return super.copyTo(world, output);
     }
 
     @Override
@@ -331,11 +418,11 @@ public class Coords3D extends Coords2D implements ICoords3D {
         if (obj == this)
             return true;
 
-        if (obj instanceof Coords3D) {
-            Coords3D other = (Coords3D)obj;
+        if (obj instanceof ICoords3D) {
+            ICoords3D other = (ICoords3D)obj;
 
             return other.getX() == getX() &&
-                    other._y == _y &&
+                    other.getY() == _y &&
                     other.getZ() == getZ();
         }
 
