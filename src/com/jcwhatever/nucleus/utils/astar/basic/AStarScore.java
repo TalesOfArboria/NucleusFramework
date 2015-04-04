@@ -24,10 +24,11 @@
 
 package com.jcwhatever.nucleus.utils.astar.basic;
 
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarNode;
 import com.jcwhatever.nucleus.utils.astar.IAStarScore;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 import javax.annotation.Nullable;
 
@@ -116,8 +117,8 @@ public class AStarScore implements IAStarScore {
 
         while ((parentNode = getParentNode(currentNode)) != null) {
 
-            Coords3Di parent = parentNode.getCoords();
-            Coords3Di current = currentNode.getCoords();
+            ICoords3Di parent = parentNode.getCoords();
+            ICoords3Di current = currentNode.getCoords();
 
             int deltaX = Math.abs(current.getX() - parent.getX());
             int deltaY = Math.abs(current.getY() - parent.getY());
@@ -142,7 +143,7 @@ public class AStarScore implements IAStarScore {
      * Calculate and return the H score.
      */
     protected float calculateH() {
-        return (float)(_node.getCoords().distanceSquared(_destination.getCoords()));
+        return (float)(Coords3Di.distanceSquared(_node.getCoords(), _destination.getCoords()));
     }
 
     /**

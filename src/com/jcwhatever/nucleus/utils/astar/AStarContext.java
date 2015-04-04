@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.utils.astar;
 
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 /**
  * Stores context info related to a specific A-Star path search.
@@ -37,8 +37,8 @@ public class AStarContext {
     private final AStar _astar;
     private final IAStarNodeContainer _container;
 
-    private final Coords3Di _startCoords;
-    private final Coords3Di _destinationCoords;
+    private final ICoords3Di _startCoords;
+    private final ICoords3Di _destinationCoords;
 
     private final AStarNode _start;
     private final AStarNode _destination;
@@ -52,7 +52,7 @@ public class AStarContext {
      * @param destinationCoords   The search destination coordinates.
      */
     public AStarContext(AStar astar, IAStarNodeContainer container,
-                        Coords3Di startCoords, Coords3Di destinationCoords) {
+                        ICoords3Di startCoords, ICoords3Di destinationCoords) {
 
         PreCon.notNull(astar);
         PreCon.notNull(container);
@@ -98,14 +98,14 @@ public class AStarContext {
     /**
      * Get the start coordinates.
      */
-    public Coords3Di getStartCoords() {
+    public ICoords3Di getStartCoords() {
         return _startCoords;
     }
 
     /**
      * Get the destination coordinates.
      */
-    public Coords3Di getDestinationCoords() {
+    public ICoords3Di getDestinationCoords() {
         return _destinationCoords;
     }
 }

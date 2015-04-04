@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  */
 public class AStarResult {
 
-    private final LinkedList<Coords3Di> _nodes = new LinkedList<>();
+    private final LinkedList<ICoords3Di> _nodes = new LinkedList<>();
     private final AStarResultStatus _status;
 
     /**
@@ -98,7 +98,7 @@ public class AStarResult {
 
             while (current != null) {
 
-                Coords3Di coords = getCoords(current);
+                ICoords3Di coords = current.getAdjustedCoords();
 
                 _nodes.addFirst(coords);
 
@@ -110,7 +110,7 @@ public class AStarResult {
             }
             else {
 
-                boolean hasStart = _nodes.peekFirst().equals(getCoords(context.getStart()));
+                boolean hasStart = _nodes.peekFirst().equals(context.getStart().getAdjustedCoords());
                 boolean hasEnd = context.getAstar().getExaminer().isDestination(finalNode);
 
                 _status = hasStart && hasEnd
@@ -138,7 +138,7 @@ public class AStarResult {
     /**
      * Remove and return the next node coordinate in the result.
      */
-    public Coords3Di remove() {
+    public ICoords3Di remove() {
         return _nodes.removeFirst();
     }
 
@@ -150,7 +150,7 @@ public class AStarResult {
      * <p>Removing a coordinate using {@link #remove} also removes the coordinates
      * from the returned values.</p>
      */
-    public List<Coords3Di> values() {
+    public List<ICoords3Di> values() {
         return _nodes;
     }
 
@@ -168,14 +168,5 @@ public class AStarResult {
             return -1;
 
         return _nodes.size();
-    }
-
-    /**
-     * Invoked to get adjusted coordinate from a node.
-     */
-    protected Coords3Di getCoords(AStarNode node) {
-        // add 1 to y coordinates to adjust for entity pathing.
-        Coords3Di current = node.getCoords();
-        return new Coords3Di(current, 0, 1, 0);
     }
 }

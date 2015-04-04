@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.utils.astar.AStarContext;
 import com.jcwhatever.nucleus.utils.astar.AStarNode;
 import com.jcwhatever.nucleus.utils.astar.IAStarNodeFactory;
 import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 /**
  * Basic implementation of an {@link IAStarNodeFactory}.
@@ -40,7 +41,7 @@ public class AStarNodeFactory implements IAStarNodeFactory {
     }
 
     @Override
-    public AStarNode createNode(AStarContext context, Coords3Di coords) {
+    public AStarNode createNode(AStarContext context, ICoords3Di coords) {
         return new AStarNode(context, coords);
     }
 

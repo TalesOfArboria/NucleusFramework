@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 /**
  * A factory to instantiate new {@link AStarNode} instances.
@@ -47,7 +47,7 @@ public interface IAStarNodeFactory {
      * @param context  The node context.
      * @param coords   The node coordinates.
      */
-    AStarNode createNode(AStarContext context, Coords3Di coords);
+    AStarNode createNode(AStarContext context, ICoords3Di coords);
 
     /**
      * Create a new {@link AStarNode}.

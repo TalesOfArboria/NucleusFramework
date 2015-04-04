@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.utils.astar.AStarNode;
 import com.jcwhatever.nucleus.utils.astar.AStarResult;
 import com.jcwhatever.nucleus.utils.astar.IAStarNodeFactory;
 import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 import com.jcwhatever.nucleus.utils.coords.MutableCoords3Di;
 
 import java.util.LinkedList;
@@ -89,7 +90,7 @@ public class AStarPooledNodeFactory implements IAStarNodeFactory {
     }
 
     @Override
-    public AStarNode createNode(AStarContext context, Coords3Di coords) {
+    public AStarNode createNode(AStarContext context, ICoords3Di coords) {
 
         MutableCoords3Di mCoords = createCoords(coords.getX(), coords.getY(), coords.getZ());
         return createNode(context, mCoords);
@@ -99,7 +100,7 @@ public class AStarPooledNodeFactory implements IAStarNodeFactory {
     public AStarNode createNode(AStarContext context, AStarNode parent,
                                 int offsetX, int offsetY, int offsetZ) {
 
-        Coords3Di parentCoords = parent.getCoords();
+        ICoords3Di parentCoords = parent.getCoords();
 
         int x = parentCoords.getX() + offsetX;
         int y = parentCoords.getY() + offsetY;
@@ -115,7 +116,7 @@ public class AStarPooledNodeFactory implements IAStarNodeFactory {
         if (_maxSize >= 0 && _coordsPool.size() >= _maxSize)
             return;
 
-        Coords3Di coords = node.getCoords();
+        ICoords3Di coords = node.getCoords();
         if (coords instanceof MutableCoords3Di) {
             _coordsPool.add((MutableCoords3Di)coords);
         }

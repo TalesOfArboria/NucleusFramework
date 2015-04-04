@@ -24,8 +24,9 @@
 
 package com.jcwhatever.nucleus.utils.astar;
 
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 import javax.annotation.Nullable;
 
@@ -37,7 +38,7 @@ import javax.annotation.Nullable;
 public class AStarNode implements Comparable<AStarNode> {
 
     private AStarContext _context;
-    private Coords3Di _coords;
+    private ICoords3Di _coords;
     private int _offsetX;
     private int _offsetY;
     private int _offsetZ;
@@ -51,7 +52,7 @@ public class AStarNode implements Comparable<AStarNode> {
      * @param context      The search context.
      * @param coords  The node coordinates.
      */
-    public AStarNode(AStarContext context, Coords3Di coords) {
+    public AStarNode(AStarContext context, ICoords3Di coords) {
         PreCon.notNull(context);
         PreCon.notNull(coords);
 
@@ -68,8 +69,15 @@ public class AStarNode implements Comparable<AStarNode> {
     /**
      * Get the nodes coordinates.
      */
-    public Coords3Di getCoords() {
+    public ICoords3Di getCoords() {
         return _coords;
+    }
+
+    /**
+     * Get the coordinates adjusted for final result.
+     */
+    public ICoords3Di getAdjustedCoords() {
+        return new Coords3Di(_coords, 0, 1, 0);
     }
 
     /**
@@ -114,7 +122,7 @@ public class AStarNode implements Comparable<AStarNode> {
     public boolean isAdjacent(AStarNode node) {
         PreCon.notNull(node);
 
-        Coords3Di coords = node.getCoords();
+        ICoords3Di coords = node.getCoords();
 
         return Math.abs(coords.getX() - _coords.getX()) <= 1 &&
                 Math.abs(coords.getZ() - _coords.getZ()) <= 1;
@@ -170,7 +178,7 @@ public class AStarNode implements Comparable<AStarNode> {
      * @param context  The node context.
      * @param coords   The node coords.
      */
-    protected void init(@Nullable AStarContext context, @Nullable Coords3Di coords) {
+    protected void init(@Nullable AStarContext context, @Nullable ICoords3Di coords) {
 
         _context = context;
         _coords = coords;

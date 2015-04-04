@@ -67,7 +67,7 @@ public interface IAStarExaminer {
     /**
      * Specifies the result of {@link #isPathable}.
      */
-    public enum PathableResult {
+    enum PathableResult {
         /**
          * The node is not a pathable surface or there are obstructions
          * that disqualify it.

@@ -26,7 +26,8 @@ package com.jcwhatever.nucleus.utils.astar.pooled;
 
 import com.jcwhatever.nucleus.utils.astar.AStarContext;
 import com.jcwhatever.nucleus.utils.astar.AStarNode;
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
+import com.jcwhatever.nucleus.utils.coords.MutableCoords3Di;
 
 /**
  * An {@link AStarNode} for use with {@link AStarPooledNodeFactory}.
@@ -36,18 +37,39 @@ import com.jcwhatever.nucleus.utils.coords.Coords3Di;
  */
 public class AStarPooledNode extends AStarNode {
 
+    private MutableCoords3Di _coords;
+
     /**
      * Constructor.
      *
      * @param context     The search context.
-     * @param startCoords The node coordinates.
+     * @param coords The node coordinates.
      */
-    public AStarPooledNode(AStarContext context, Coords3Di startCoords) {
-        super(context, startCoords);
+    public AStarPooledNode(AStarContext context, MutableCoords3Di coords) {
+        super(context, coords);
+
+        _coords = coords;
     }
 
     @Override
-    protected void init(AStarContext context, Coords3Di startCoords) {
+    public ICoords3Di getAdjustedCoords() {
+
+        if (_coords != null) {
+            _coords.setY(_coords.getY() + 1);
+
+            return _coords;
+        }
+        else {
+            return super.getAdjustedCoords();
+        }
+    }
+
+    @Override
+    protected void init(AStarContext context, ICoords3Di startCoords) {
         super.init(context, startCoords);
+
+        _coords = startCoords instanceof MutableCoords3Di
+                ? (MutableCoords3Di) startCoords
+                : null;
     }
 }

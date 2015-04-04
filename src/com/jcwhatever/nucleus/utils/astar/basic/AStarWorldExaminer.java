@@ -24,12 +24,12 @@
 
 package com.jcwhatever.nucleus.utils.astar.basic;
 
-import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarContext;
 import com.jcwhatever.nucleus.utils.astar.AStarNode;
 import com.jcwhatever.nucleus.utils.astar.IAStarExaminer;
 import com.jcwhatever.nucleus.utils.astar.IAStarNodeContainer;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 
 import org.bukkit.Material;
@@ -53,17 +53,16 @@ public class AStarWorldExaminer implements IAStarExaminer {
      * Specifies how doorways are handled.
      */
     public enum DoorPathMode  {
+
         /**
          * Path through open doorways
          */
         OPEN,
-
         /**
          * Always path through doorways even if they
          * are closed.
          */
         IGNORE_CLOSED,
-
         /**
          * Never path through doorways even if they
          * are open.
@@ -157,14 +156,16 @@ public class AStarWorldExaminer implements IAStarExaminer {
         if (container.isClosed(to))
             return PathableResult.INVALID_POINT;
 
-        Coords3Di parent = from.getCoords();
-        Coords3Di candidate = to.getCoords();
+        ICoords3Di parent = from.getCoords();
+        ICoords3Di candidate = to.getCoords();
 
         int x = candidate.getX() - parent.getX();
         int y = candidate.getY() - parent.getY();
         int z = candidate.getZ() - parent.getZ();
 
-        Material material = candidate.getBlock(_world).getType();
+        Material material = _world
+                .getBlockAt(candidate.getX(), candidate.getY(), candidate.getZ())
+                .getType();
 
         // check candidate to see if its valid for the entity to stand on
         if (!Materials.isSurface(material) ||
@@ -205,7 +206,9 @@ public class AStarWorldExaminer implements IAStarExaminer {
      */
     protected boolean hasRoomForEntity(AStarNode node, DoorPathMode doorMode) {
 
-        Block block = node.getCoords().getBlock(_world);
+        ICoords3Di coords = node.getCoords();
+        Block block = _world
+                .getBlockAt(coords.getX(), coords.getY(), coords.getZ());
 
         int height = (int)Math.ceil(getEntityHeight());
 

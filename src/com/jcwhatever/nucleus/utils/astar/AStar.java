@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.astar.AStarResult.AStarResultStatus;
 import com.jcwhatever.nucleus.utils.astar.IAStarExaminer.PathableResult;
 import com.jcwhatever.nucleus.utils.coords.Coords3Di;
+import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 
 /**
  * A-Star based pathfinder engine.
@@ -124,13 +125,13 @@ public class AStar {
      * @param destination  The destination coordinates.
      * @param container    The node container to use.
      */
-    public AStarResult search(Coords3Di start, Coords3Di destination, IAStarNodeContainer container) {
+    public AStarResult search(ICoords3Di start, ICoords3Di destination, IAStarNodeContainer container) {
         PreCon.notNull(start);
         PreCon.notNull(destination);
 
-        if (start.distanceSquared(destination) >
-                getRangeSquared())
+        if (Coords3Di.distanceSquared(start, destination) > getRangeSquared()) {
             return new AStarResult(AStarResultStatus.RANGE_EXCEEDED);
+        }
 
         container.reset();
 
@@ -215,8 +216,7 @@ public class AStar {
         AStarContext context = parent.getContext();
 
         // check range
-        if (candidate.getCoords().distanceSquared(
-                context.getStartCoords()) > getRangeSquared()) {
+        if (Coords3Di.distanceSquared(candidate.getCoords(), context.getStartCoords()) > getRangeSquared()) {
             columns[x + 1][z + 1] = false;
             return;
         }
