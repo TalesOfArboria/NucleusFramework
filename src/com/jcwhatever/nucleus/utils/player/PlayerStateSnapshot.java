@@ -25,7 +25,9 @@
 
 package com.jcwhatever.nucleus.utils.player;
 
+import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.GameMode;
@@ -48,66 +50,7 @@ import javax.annotation.Nullable;
  * game mode, flight, health, food level, exp, fire ticks, fall distance,
  * and location.</p>
  */
-public class PlayerStateSnapshot {
-
-    /**
-     * Loads a players state from a data node into a {@link PlayerStateSnapshot}.
-     *
-     * @param dataNode  The data node the player state is stored on.
-     *
-     * @return  Null if the node does not have valid player state data.
-     */
-    @Nullable
-    public static PlayerStateSnapshot load(IDataNode dataNode) {
-
-        PlayerStateSnapshot snapshot = new PlayerStateSnapshot();
-
-        if ((snapshot._playerId = dataNode.getUUID("player-id")) == null)
-            return null;
-
-        if ((snapshot._items = dataNode.getItemStacks("items")) == null)
-            return null;
-
-        if ((snapshot._armor = dataNode.getItemStacks("armor")) == null)
-            return null;
-
-        if ((snapshot._location = dataNode.getLocation("location")) == null)
-            return null;
-
-        if ((snapshot._gameMode = dataNode.getEnum("gamemode", GameMode.class)) == null)
-            return null;
-
-        snapshot._health = dataNode.getDouble("health", 20);
-        snapshot._food = dataNode.getInteger("food", 20);
-        snapshot._level = dataNode.getInteger("levels", 0);
-        snapshot._exp = (float)dataNode.getDouble("exp", 0);
-        snapshot._flight = dataNode.getBoolean("flight", false);
-        snapshot._allowFlight = dataNode.getBoolean("allow-flight", false);
-        snapshot._fireTicks = dataNode.getInteger("fire-ticks", 0);
-        snapshot._fallDistance = (float)dataNode.getDouble("fall-distance", 0);
-
-        try {
-
-            IDataNode potionsNode = dataNode.getNode("potions");
-
-            snapshot._potions = new ArrayList<>(potionsNode.size());
-
-            for (IDataNode potionNode : potionsNode) {
-
-                PotionEffect effect = getEffectFromNode(potionNode);
-                if (effect == null)
-                    continue;
-
-                snapshot._potions.add(effect);
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-
-        return snapshot;
-    }
+public class PlayerStateSnapshot implements IDataNodeSerializable {
 
     private UUID _playerId;
     private ItemStack[] _items;
@@ -127,33 +70,33 @@ public class PlayerStateSnapshot {
     /**
      * Constructor.
      *
-     * @param p  The player to take a state snapshot from.
+     * @param player  The player to take a state snapshot from.
      */
-    public PlayerStateSnapshot(Player p) {
+    public PlayerStateSnapshot(Player player) {
 
-        _playerId = p.getUniqueId();
+        _playerId = player.getUniqueId();
 
-        _items = p.getInventory().getContents().clone();
-        _armor = p.getInventory().getArmorContents().clone();
-        _location = p.getLocation();
-        _gameMode = p.getGameMode();
-        _potions = new ArrayList<PotionEffect>(p.getActivePotionEffects());
-        _health = p.getHealth();
-        _food = p.getFoodLevel();
-        _level = p.getLevel();
-        _exp = p.getExp();
-        _flight = p.isFlying();
-        _allowFlight = p.getAllowFlight();
-        _fireTicks = p.getFireTicks();
-        _fallDistance = p.getFallDistance();
+        _items = player.getInventory().getContents().clone();
+        _armor = player.getInventory().getArmorContents().clone();
+        _location = player.getLocation();
+        _gameMode = player.getGameMode();
+        _potions = new ArrayList<PotionEffect>(player.getActivePotionEffects());
+        _health = player.getHealth();
+        _food = player.getFoodLevel();
+        _level = player.getLevel();
+        _exp = player.getExp();
+        _flight = player.isFlying();
+        _allowFlight = player.getAllowFlight();
+        _fireTicks = player.getFireTicks();
+        _fallDistance = player.getFallDistance();
     }
 
     /**
      * Private Constructor.
+     *
+     * <p>Used for serialization.</p>
      */
-    private PlayerStateSnapshot() {
-
-    }
+    private PlayerStateSnapshot() {}
 
     /**
      * Get the ID of the player the snapshot was
@@ -254,13 +197,8 @@ public class PlayerStateSnapshot {
         return _fallDistance;
     }
 
-    /**
-     * Save the player state to a data node.
-     *
-     * @param dataNode  The data node to store player state data on.
-     */
-    public void save(IDataNode dataNode) {
-
+    @Override
+    public void serialize(IDataNode dataNode) {
         dataNode.set("player-id", _playerId);
         dataNode.set("items", _items);
         dataNode.set("armor", _armor);
@@ -283,8 +221,54 @@ public class PlayerStateSnapshot {
             IDataNode effectNode = potionNode.getNode(UUID.randomUUID().toString());
             setEffectToNode(effect, effectNode);
         }
+    }
 
-        dataNode.save();
+    @Override
+    public void deserialize(IDataNode dataNode) throws DeserializeException {
+
+        if ((_playerId = dataNode.getUUID("player-id")) == null)
+            throw new DeserializeException("player-id not found.");
+
+        if ((_items = dataNode.getItemStacks("items")) == null)
+            throw new DeserializeException("items not found.");
+
+        if ((_armor = dataNode.getItemStacks("armor")) == null)
+            throw new DeserializeException("armor not found.");
+
+        if ((_location = dataNode.getLocation("location")) == null)
+            throw new DeserializeException("location not found.");
+
+        if ((_gameMode = dataNode.getEnum("gamemode", GameMode.class)) == null)
+            throw new DeserializeException("gamemode not found.");
+
+        _health = dataNode.getDouble("health", 20);
+        _food = dataNode.getInteger("food", 20);
+        _level = dataNode.getInteger("levels", 0);
+        _exp = (float)dataNode.getDouble("exp", 0);
+        _flight = dataNode.getBoolean("flight", false);
+        _allowFlight = dataNode.getBoolean("allow-flight", false);
+        _fireTicks = dataNode.getInteger("fire-ticks", 0);
+        _fallDistance = (float)dataNode.getDouble("fall-distance", 0);
+
+        try {
+
+            IDataNode potionsNode = dataNode.getNode("potions");
+
+            _potions = new ArrayList<>(potionsNode.size());
+
+            for (IDataNode potionNode : potionsNode) {
+
+                PotionEffect effect = getEffectFromNode(potionNode);
+                if (effect == null)
+                    continue;
+
+                _potions.add(effect);
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DeserializeException("Exception while reading potions.");
+        }
     }
 
     /*
@@ -321,6 +305,4 @@ public class PlayerStateSnapshot {
         dataNode.set("ambient", effect.isAmbient());
         dataNode.set("effect-name", effect.getType().getName());
     }
-
-
 }

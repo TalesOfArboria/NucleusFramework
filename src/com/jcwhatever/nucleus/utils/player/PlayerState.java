@@ -48,9 +48,8 @@ import javax.annotation.Nullable;
 
 /**
  * Saves and restores snapshots of a players state.
- * <p>
- *     When a players state is restored, saved state data is removed.
- * </p>
+ *
+ * <p>When a players state is restored, saved state data is removed.</p>
  */
 public class PlayerState implements IPluginOwned {
 
@@ -68,25 +67,25 @@ public class PlayerState implements IPluginOwned {
      * is made to see if a player state is saved to disk.</p>
      *
      * @param plugin  The owning plugin.
-     * @param p       The player.
+     * @param player  The player.
      *
      * @return  Null if no player state is stored.
      */
     @Nullable
-    public static PlayerState get(Plugin plugin, Player p) {
+    public static PlayerState get(Plugin plugin, Player player) {
         PreCon.notNull(plugin);
-        PreCon.notNull(p);
+        PreCon.notNull(player);
 
         PlayerMap<PlayerState> states = getStateMap(plugin);
-        PlayerState state = states.get(p.getUniqueId());
+        PlayerState state = states.get(player.getUniqueId());
 
         // load state from file, if any
         if (state == null) {
-            state = new PlayerState(plugin, p);
+            state = new PlayerState(plugin, player);
             if (!loadFromFile(state))
                 return null;
 
-            states.put(p.getUniqueId(), state);
+            states.put(player.getUniqueId(), state);
         }
 
         return state;
@@ -102,18 +101,18 @@ public class PlayerState implements IPluginOwned {
      * is created.</p>
      *
      * @param plugin  The owning plugin.
-     * @param p       The player.
+     * @param player  The player.
      */
-    public static PlayerState store(Plugin plugin, Player p) {
+    public static PlayerState store(Plugin plugin, Player player) {
         PreCon.notNull(plugin);
-        PreCon.notNull(p);
+        PreCon.notNull(player);
 
         PlayerMap<PlayerState> states = getStateMap(plugin);
 
-        PlayerState state = states.get(p.getUniqueId());
+        PlayerState state = states.get(player.getUniqueId());
         if (state == null) {
-            state = new PlayerState(plugin, p);
-            states.put(p.getUniqueId(), state);
+            state = new PlayerState(plugin, player);
+            states.put(player.getUniqueId(), state);
         }
 
         state.save();
@@ -126,15 +125,15 @@ public class PlayerState implements IPluginOwned {
      * and disk.
      *
      * @param plugin  The owning plugin.
-     * @param p       The player.
+     * @param player  The player.
      */
-    public static void clear(Plugin plugin, Player p) {
+    public static void clear(Plugin plugin, Player player) {
         PreCon.notNull(plugin);
-        PreCon.notNull(p);
+        PreCon.notNull(player);
 
         PlayerMap<PlayerState> states = getStateMap(plugin);
 
-        PlayerState state = states.remove(p.getUniqueId());
+        PlayerState state = states.remove(player.getUniqueId());
         if (state == null)
             return;
 
@@ -159,17 +158,14 @@ public class PlayerState implements IPluginOwned {
      * Private Constructor.
      *
      * @param plugin  The owning plugin.
-     * @param p       The player.
+     * @param player  The player.
      */
-    private PlayerState(Plugin plugin, Player p) {
-        _player = p;
-        _playerId = p.getUniqueId();
+    private PlayerState(Plugin plugin, Player player) {
+        _player = player;
+        _playerId = player.getUniqueId();
         _plugin = plugin;
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return null;
@@ -194,9 +190,8 @@ public class PlayerState implements IPluginOwned {
 
     /**
      * Records player chest and saves to disk.
-     * <p>
-     *     Overwrites any current saved data.
-     * </p>
+     *
+     * <p>Overwrites any current saved data.</p>
      *
      * @return  True if saving to disk is successful. Save to memory is always successful.
      */
@@ -207,18 +202,18 @@ public class PlayerState implements IPluginOwned {
         if (_plugin == null)
             return false;
 
-        IDataNode dataNode = DataStorage.get(_plugin, new DataPath("player-states." + _playerId));
+        IDataNode dataNode = DataStorage.get(_plugin, new DataPath("nucleus.player-states." + _playerId));
 
-        _snapshot.save(dataNode);
+        dataNode.set("", _snapshot);
+        dataNode.save();
 
         return true;
     }
 
     /**
      * Restore the players state.
-     * <p>
-     *     The stored to disk player state is deleted.
-     * </p>
+     *
+     * <p>The stored to disk player state is deleted.</p>
      *
      * @param restoreLocation  Specify if the players saved location should be restored.
      *
@@ -269,7 +264,7 @@ public class PlayerState implements IPluginOwned {
         });
 
         // remove back up state storage
-        DataStorage.remove(_plugin, new DataPath("player-states." + _playerId));
+        DataStorage.remove(_plugin, new DataPath("nucleus.player-states." + _playerId));
 
         // remove from state map
         getStateMap(_plugin).remove(_player.getUniqueId());
@@ -283,7 +278,7 @@ public class PlayerState implements IPluginOwned {
      */
     public void deleteFile() {
 
-        DataPath dataPath = new DataPath("player-states." + _playerId);
+        DataPath dataPath = new DataPath("nucleus.player-states." + _playerId);
 
         if (DataStorage.has(_plugin, dataPath)) {
             DataStorage.remove(_plugin, dataPath);
@@ -292,7 +287,7 @@ public class PlayerState implements IPluginOwned {
 
     /*
      * Get a player state map for the specified plugin.
-      * Finds the existing one or creates a new one.
+     * Finds the existing one or creates a new one.
      */
     private static PlayerMap<PlayerState> getStateMap(Plugin plugin) {
         PlayerMap<PlayerState> state = _statesByPlugin.get(plugin);
@@ -309,14 +304,16 @@ public class PlayerState implements IPluginOwned {
      */
     private static boolean loadFromFile(PlayerState state) {
 
-        if (!DataStorage.has(state._plugin, new DataPath("player-states." + state._playerId)))
+        if (!DataStorage.has(state._plugin, new DataPath("nucleus.player-states." + state._playerId)))
             return false;
 
-        IDataNode dataNode = DataStorage.get(state._plugin, new DataPath("player-states." + state._playerId));
+        IDataNode dataNode = DataStorage.get(state._plugin,
+                new DataPath("nucleus.player-states." + state._playerId));
+
         if (!dataNode.load())
             return false;
 
-        state._snapshot = PlayerStateSnapshot.load(dataNode);
+        state._snapshot = dataNode.getSerializable("", PlayerStateSnapshot.class);
 
         return state._snapshot != null;
     }
