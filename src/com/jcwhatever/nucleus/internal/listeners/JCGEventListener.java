@@ -89,13 +89,14 @@ public final class JCGEventListener implements Listener {
         // tell player missed important messages
         Nucleus.getMessengerFactory().tellImportant(p, true);
 
-        _regionManager
+        _regionManager.getPlayerWatcher()
                 .updatePlayerLocation(p, RegionEventReason.JOIN_SERVER);
     }
 
     @EventHandler(priority=EventPriority.LOW)
     private void onPlayerMove(PlayerMoveEvent event) {
-        _regionManager
+
+        _regionManager.getPlayerWatcher()
                 .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionEventReason.MOVE);
     }
 
@@ -105,13 +106,13 @@ public final class JCGEventListener implements Listener {
         if (event.getEntity().getHealth() > 0)
             return;
 
-        _regionManager
+        _regionManager.getPlayerWatcher()
                 .updatePlayerLocation(event.getEntity(), LeaveRegionReason.DEAD);
     }
 
     @EventHandler(priority=EventPriority.MONITOR)
     private void onPlayerRespawn(PlayerRespawnEvent event) {
-        _regionManager
+        _regionManager.getPlayerWatcher()
                 .updatePlayerLocation(event.getPlayer(), event.getRespawnLocation(), RegionEventReason.RESPAWN);
     }
 
@@ -119,7 +120,7 @@ public final class JCGEventListener implements Listener {
     private void onPlayerQuit(PlayerQuitEvent event) {
         PlayList.clearQueue(event.getPlayer());
 
-        _regionManager
+        _regionManager.getPlayerWatcher()
                 .updatePlayerLocation(event.getPlayer(), LeaveRegionReason.QUIT_SERVER);
     }
 
@@ -136,7 +137,7 @@ public final class JCGEventListener implements Listener {
         }
 
         if (event.getCause() != TeleportCause.UNKNOWN) {
-            _regionManager
+            _regionManager.getPlayerWatcher()
                     .updatePlayerLocation(event.getPlayer(), event.getTo(), RegionEventReason.TELEPORT);
         }
     }

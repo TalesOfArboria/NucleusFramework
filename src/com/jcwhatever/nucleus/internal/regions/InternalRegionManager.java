@@ -30,23 +30,14 @@ import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.ElementCounter;
 import com.jcwhatever.nucleus.collections.ElementCounter.RemovalPolicy;
-import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.CachedLocation;
-import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.PlayerLocations;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.regions.IRegion;
-import com.jcwhatever.nucleus.regions.IRegionEventListener;
 import com.jcwhatever.nucleus.regions.ReadOnlyRegion;
-import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
-import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -56,13 +47,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
@@ -86,15 +73,6 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     // worlds that have regions
     private final ElementCounter<World> _listenerWorlds = new ElementCounter<>(RemovalPolicy.REMOVE);
 
-    // cached regions the player was detected in during last player watcher cycle.
-    private final PlayerMap<EventOrderedRegions<IRegion>> _playerCacheMap;
-
-    // locations the player was detected in between player watcher cycles.
-    private final PlayerMap<PlayerLocationCache> _playerLocationCache;
-
-    // pool of player location pools
-    private final PlayerPools _pools = new PlayerPools();
-
     // store managers for individual region types.
     private final Map<Class<? extends IRegion>, RegionTypeManager<?>> _managers = new HashMap<>(15);
 
@@ -102,14 +80,8 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     private final Multimap<String, IRegion> _regionNameMap =
             MultimapBuilder.hashKeys(35).hashSetValues(5).build();
 
-    private final PlayerWatcherAsync _watcherAsync = new PlayerWatcherAsync();
-
-    private final Object _sync = new Object();
-
-    // IDs of players that have joined within a region and have not yet moved.
-    private Set<UUID> _joined = new HashSet<>(10);
-
-    private volatile boolean _isAsyncWatcherRunning;
+    // watch region and players to detect when players enter/leave regions
+    private final InternalPlayerWatcher _playerWatcher = new InternalPlayerWatcher(this);
 
     /**
      * Constructor
@@ -122,108 +94,14 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         if (Nucleus.getPlugin() != plugin) {
             throw new RuntimeException("InternalRegionManager should not be instantiated.");
         }
-
-        _playerCacheMap = new PlayerMap<>(plugin);
-        _playerLocationCache = new PlayerMap<>(plugin);
-
-        Scheduler.runTaskRepeat(plugin,  2, 2, new PlayerWatcher());
-        Scheduler.runTaskRepeatAsync(plugin, 1, 1, _watcherAsync);
     }
 
     /**
-     * Add a location that the player has moved to so it can be
-     * cached and processed by the player watcher the next time it
-     * runs.
-     *
-     * <p>The players current location is used.</p>
-     *
-     * @param player  The player.
-     * @param reason  The reason that will be used if the player enters a region.
+     * Get the internal player watcher to notify it of changes
+     * in the players position.
      */
-    public void updatePlayerLocation(Player player, RegionEventReason reason) {
-        PreCon.notNull(player);
-        PreCon.notNull(reason);
-
-        if (player.isDead())
-            return;
-
-        // ignore NPC's
-        if (player.hasMetadata("NPC"))
-            return;
-
-        if (!_listenerWorlds.contains(player.getWorld()))
-            return;
-
-        PlayerLocationCache locations = getPlayerLocations(player.getUniqueId());
-        player.getLocation(locations.add(reason));
-    }
-
-    /**
-     * Add a location that the player has moved to so it can be
-     * cached and processed by the player watcher the next time it
-     * runs.
-     *
-     * @param player    The player.
-     * @param location  The location to add.
-     * @param reason    The reason that will be used if the player enters a region.
-     */
-    public void updatePlayerLocation(Player player, Location location, RegionEventReason reason) {
-        PreCon.notNull(player);
-        PreCon.notNull(reason);
-
-        if (player.isDead())
-            return;
-
-        // ignore NPC's
-        if (Npcs.isNpc(player))
-            return;
-
-        if (!_listenerWorlds.contains(player.getWorld()))
-            return;
-
-        PlayerLocationCache locations = getPlayerLocations(player.getUniqueId());
-        LocationUtils.copy(location, locations.add(reason));
-    }
-
-    /**
-     * Update player location when the player does not have a location.
-     *
-     * <p>Declares the player as leaving all current regions.</p>
-     *
-     * @param player  The player.
-     * @param reason  The reason the player is leaving the regions.
-     */
-    public void updatePlayerLocation(Player player, LeaveRegionReason reason) {
-
-        // ignore NPC's
-        if (Npcs.isNpc(player))
-            return;
-
-        synchronized (_sync) {
-
-            EventOrderedRegions<IRegion> regions = _playerCacheMap.remove(player.getUniqueId());
-            if (regions == null)
-                return;
-
-            Iterator<IRegion> iterator = regions.iterator(PriorityType.LEAVE);
-            while (iterator.hasNext()) {
-                IRegion region = iterator.next();
-
-                if (region.isEventListener())
-                    region.getEventListener().onPlayerLeave(player, reason);
-            }
-
-            if (reason == LeaveRegionReason.QUIT_SERVER) {
-                // re-pool location cache
-                PlayerLocationCache cache = _playerLocationCache.remove(player.getUniqueId());
-                if (cache != null) {
-                    _pools.repool(cache);
-                }
-            }
-            else {
-                clearPlayerLocations(player.getUniqueId());
-            }
-        }
+    public InternalPlayerWatcher getPlayerWatcher() {
+        return _playerWatcher;
     }
 
     @Override
@@ -349,15 +227,11 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     public List<IRegion> getPlayerRegions(Player player) {
         PreCon.notNull(player);
 
-        if (_playerCacheMap == null)
-            return new ArrayList<>(0);
-
-        synchronized(_sync) {
-            Set<IRegion> regions = _playerCacheMap.get(player.getUniqueId());
+        synchronized(_playerWatcher) {
+            Set<IRegion> regions = _playerWatcher.getCurrentRegions(player.getUniqueId());
             if (regions == null)
                 return new ArrayList<>(0);
 
-            _sync.notifyAll();
             return new ArrayList<>(regions);
         }
     }
@@ -367,12 +241,9 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         PreCon.notNull(p);
         PreCon.notNull(region);
 
-        if (_playerCacheMap == null)
-            return;
+        synchronized(_playerWatcher) {
 
-        synchronized(_sync) {
-
-            Set<IRegion> regions = _playerCacheMap.get(p.getUniqueId());
+            Set<IRegion> regions = _playerWatcher.getCurrentRegions(p.getUniqueId());
             if (regions == null)
                 return;
 
@@ -448,27 +319,15 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
         }
     }
 
-    /*
-     * Get the cached movement locations of a player that have not been processed
-      * by the PlayerWatcher task yet.
+    /**
+     * Get direct reference to region event listener world counter.
+     *
+     * <p>Contains the worlds that contain event listening regions and
+     * the number of event listening regions in each of those worlds.</p>
+     *
      */
-    private PlayerLocationCache getPlayerLocations(UUID playerId) {
-
-        PlayerLocationCache locations = _playerLocationCache.get(playerId);
-        if (locations == null) {
-            locations = _pools.createLocationPool(playerId);
-            _playerLocationCache.put(playerId, locations);
-        }
-
-        return locations;
-    }
-
-    /*
-     * Clear cached movement locations of a player
-     */
-    private void clearPlayerLocations(UUID playerId) {
-        PlayerLocationCache locations = getPlayerLocations(playerId);
-        locations.clear();
+    ElementCounter<World> getListenerWorlds() {
+        return _listenerWorlds;
     }
 
     /*
@@ -508,224 +367,5 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
      */
     private String getLookupName(Plugin plugin, String name) {
         return plugin.getName() + ':' + name.toLowerCase();
-    }
-
-    /*
-     * Repeating task that determines which regions need events fired.
-     */
-    private final class PlayerWatcher implements Runnable {
-
-        @Override
-        public void run() {
-
-            // do not run while async watcher is running
-            if (_isAsyncWatcherRunning)
-                return;
-
-            // get worlds where listener regions exist
-            List<World> worlds = new ArrayList<World>(_listenerWorlds.getElements());
-
-            // get players in worlds with regions
-            for (World world : worlds) {
-
-                if (world == null)
-                    continue;
-
-                // get players currently in world
-                List<Player> players = world.getPlayers();
-                if (players == null || players.isEmpty())
-                    continue;
-
-                // process and add players to wp list
-                for (Player player : players) {
-
-                    // do not process NPC's
-                    if (Npcs.isNpc(player))
-                        continue;
-
-                    // get locations that the player was recorded in between watcher cycles
-                    PlayerLocationCache locations = getPlayerLocations(player.getUniqueId());
-
-                    // skip if there are no locations recorded
-                    if (locations.isEmpty() || !locations.canRemoveAll())
-                        continue;
-
-                    WorldPlayer worldPlayer = new WorldPlayer(player, locations.removeAll());
-                    _watcherAsync.queue.add(worldPlayer);
-
-                    // clear recorded player locations from cache
-                    locations.clear();
-                }
-            }
-
-            // end if there are no players to process
-            if (_watcherAsync.queue.isEmpty())
-                return;
-
-            // let the async watcher run
-            _isAsyncWatcherRunning = true;
-        }
-    }
-
-    /*
-     * Async portion of the player watcher
-     */
-    private class PlayerWatcherAsync implements Runnable {
-
-        final LinkedList<WorldPlayer> queue = new LinkedList<>();
-
-        @Override
-        public void run() {
-
-            if (!_isAsyncWatcherRunning)
-                return;
-
-            // iterate players
-            while (!queue.isEmpty()) {
-
-                WorldPlayer worldPlayer = queue.remove();
-
-                synchronized (_sync) {
-
-                    UUID playerId = worldPlayer.player.getUniqueId();
-
-                    // get regions the player is in (cached from previous check)
-                    EventOrderedRegions<IRegion> cachedRegions = _playerCacheMap.get(playerId);
-
-                    if (cachedRegions == null) {
-                        cachedRegions = new EventOrderedRegions<>(7);
-                        _playerCacheMap.put(playerId, cachedRegions);
-                    }
-
-                    // iterate cached locations
-                    while (!worldPlayer.locations.isEmpty()) {
-                        CachedLocation location = worldPlayer.locations.remove();
-
-                        if (location.getReason() == RegionEventReason.JOIN_SERVER) {
-                            // add player to _join set.
-                            _joined.add(playerId);
-
-                            // do not notify regions until player has moved.
-                            // allows time for player to load resource packs.
-                            continue;
-                        }
-
-                        boolean isJoining = _joined.contains(playerId);
-
-                        if (isJoining && location.getReason() != RegionEventReason.MOVE) {
-                            // ignore all other reasons until joined player moves
-                            continue;
-                        }
-
-                        // see which regions a player is actually in
-                        List<IRegion> inRegions = getListenerRegions(location, PriorityType.ENTER);
-
-                        // check for entered regions
-                        if (!inRegions.isEmpty()) {
-
-                            // get enter reason
-                            RegionEventReason reason = isJoining && _joined.remove(playerId)
-                                    ? RegionEventReason.JOIN_SERVER
-                                    : location.getReason();
-
-                            for (IRegion region : inRegions) {
-
-                                // check if player was not previously in region
-                                if (!cachedRegions.contains(region)) {
-
-                                    cachedRegions.add(region);
-                                    onPlayerEnter(region, worldPlayer.player, reason);
-                                }
-                            }
-                        }
-
-                        // check for regions player has left
-                        if (!cachedRegions.isEmpty()) {
-                            Iterator<IRegion> iterator = cachedRegions.iterator(PriorityType.LEAVE);
-                            while(iterator.hasNext()) {
-                                IRegion region = iterator.next();
-
-                                // check if player was previously in region
-                                if (!inRegions.contains(region)) {
-
-                                    iterator.remove();
-                                    onPlayerLeave(region, worldPlayer.player,
-                                            location.getReason());
-                                }
-                            }
-                        }
-                    }
-
-                    // recycle player locations so they can be reused
-                    worldPlayer.locations.recycle();
-
-                } // END synchronized
-
-            } // END while(queue.isEmpty)
-
-            _isAsyncWatcherRunning = false;
-
-        } // END run()
-
-        /*
-         * Executes doPlayerEnter method in the specified region on the main thread.
-         */
-        private void onPlayerEnter(final IRegion region, final Player p, RegionEventReason reason) {
-
-            final EnterRegionReason enterReason = reason.getEnterReason();
-            if (enterReason == null)
-                throw new AssertionError();
-
-            // run task on main thread
-            Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
-
-                @Override
-                public void run() {
-                    IRegionEventListener listener = region.getEventListener();
-                    if (listener == null)
-                        throw new NullPointerException("Region event listener cannot be null.");
-
-                    listener.onPlayerEnter(p, enterReason);
-                }
-            });
-        }
-
-        /*
-         * Executes doPlayerLeave method in the specified region on the main thread.
-         */
-        private void onPlayerLeave(final IRegion region, final Player p, RegionEventReason reason) {
-
-            final LeaveRegionReason leaveReason = reason.getLeaveReason();
-            if (leaveReason == null)
-                throw new AssertionError();
-
-            // run task on main thread
-            Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
-
-                @Override
-                public void run() {
-
-                    IRegionEventListener listener = region.getEventListener();
-                    if (listener == null)
-                        throw new NullPointerException("Region event listener cannot be null.");
-
-                    listener.onPlayerLeave(p, leaveReason);
-                }
-            });
-        }
-    }
-
-    /**
-     * Represents a player and the locations they have been
-     * since the last player watcher cycle.
-     */
-    private static class WorldPlayer {
-        public final Player player;
-        public final PlayerLocations locations;
-
-        public WorldPlayer(Player p, PlayerLocations locations) {
-            this.player = p;
-            this.locations = locations;
-        }
     }
 }
