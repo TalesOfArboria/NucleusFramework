@@ -32,7 +32,6 @@ import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.IRegionEventListener;
-import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -67,6 +66,9 @@ public final class InternalPlayerWatcher {
     // async player watcher
     private final PlayerWatcherAsync _watcherAsync = new PlayerWatcherAsync();
 
+    // sync region event caller
+    private final EventCaller _eventCaller = new EventCaller();
+
     // IDs of players that have joined the server within a region and have not yet moved.
     private Set<UUID> _joined = new HashSet<>(10);
 
@@ -86,7 +88,7 @@ public final class InternalPlayerWatcher {
         _playerRegionCache = new PlayerMap<>(Nucleus.getPlugin());
         _playerLocationCache = new PlayerMap<>(Nucleus.getPlugin());
 
-        Scheduler.runTaskRepeat(Nucleus.getPlugin(),  2, 2, new QueueFiller());
+        Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, 1, new QueueFiller());
         Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(), 1, 1, _watcherAsync);
     }
 
@@ -253,6 +255,11 @@ public final class InternalPlayerWatcher {
             if (_isAsyncWatcherRunning)
                 return;
 
+            // call queued region events
+            if (!_eventCaller.queue.isEmpty()) {
+                _eventCaller.run();
+            }
+
             // get worlds where listener regions exist
             List<World> worlds = new ArrayList<World>(_manager.getListenerWorlds().getElements());
 
@@ -375,7 +382,10 @@ public final class InternalPlayerWatcher {
                                 if (!cachedRegions.contains(region)) {
 
                                     cachedRegions.add(region);
-                                    onPlayerEnter(region, worldPlayer.player, reason);
+
+                                    _eventCaller.queue.addLast(new EventInfo(
+                                            region, worldPlayer.player, reason, true
+                                    ));
                                 }
                             }
                         }
@@ -398,8 +408,10 @@ public final class InternalPlayerWatcher {
                                 if (!locationRegions.contains(region)) {
 
                                     iterator.remove();
-                                    onPlayerLeave(region, worldPlayer.player,
-                                            location.getReason());
+
+                                    _eventCaller.queue.addLast(new EventInfo(
+                                            region, worldPlayer.player, location.getReason(), false
+                                    ));
                                 }
                             }
                         }
@@ -414,53 +426,6 @@ public final class InternalPlayerWatcher {
             _isAsyncWatcherRunning = false;
 
         } // END run()
-
-        /*
-         * Executes doPlayerEnter method in the specified region on the main thread.
-         */
-        private void onPlayerEnter(final IRegion region, final Player p, RegionEventReason reason) {
-
-            final EnterRegionReason enterReason = reason.getEnterReason();
-            if (enterReason == null)
-                throw new AssertionError();
-
-            // run task on main thread
-            Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
-
-                @Override
-                public void run() {
-                    IRegionEventListener listener = region.getEventListener();
-                    if (listener == null)
-                        throw new NullPointerException("Region event listener cannot be null.");
-
-                    listener.onPlayerEnter(p, enterReason);
-                }
-            });
-        }
-
-        /*
-         * Executes doPlayerLeave method in the specified region on the main thread.
-         */
-        private void onPlayerLeave(final IRegion region, final Player p, RegionEventReason reason) {
-
-            final LeaveRegionReason leaveReason = reason.getLeaveReason();
-            if (leaveReason == null)
-                throw new AssertionError();
-
-            // run task on main thread
-            Scheduler.runTaskSync(Nucleus.getPlugin(), new Runnable() {
-
-                @Override
-                public void run() {
-
-                    IRegionEventListener listener = region.getEventListener();
-                    if (listener == null)
-                        throw new NullPointerException("Region event listener cannot be null.");
-
-                    listener.onPlayerLeave(p, leaveReason);
-                }
-            });
-        }
     }
 
     /**
@@ -468,13 +433,62 @@ public final class InternalPlayerWatcher {
      * since the last player watcher cycle.
      */
     private static class WorldPlayer {
-        public final Player player;
-        public final PlayerLocations locations;
 
-        public WorldPlayer(Player p, PlayerLocations locations) {
-            this.player = p;
+        final Player player;
+        final PlayerLocations locations;
+
+        public WorldPlayer(Player player, PlayerLocations locations) {
+            this.player = player;
             this.locations = locations;
         }
     }
 
+    /**
+     * Contains info for a region event that needs to be called
+     */
+    private static class EventInfo {
+
+        final IRegion region;
+        final Player player;
+        final RegionEventReason reason;
+        final boolean isEntering;
+
+        EventInfo(IRegion region, Player player, RegionEventReason reason, boolean isEntering) {
+            this.region = region;
+            this.player = player;
+            this.reason = reason;
+            this.isEntering = isEntering;
+        }
+    }
+
+    /**
+     * Calls region events in queue on the main thread.
+     */
+    private static class EventCaller implements Runnable {
+
+        final LinkedList<EventInfo> queue = new LinkedList<EventInfo>();
+
+        @Override
+        public void run() {
+
+            while (!queue.isEmpty()) {
+                EventInfo info = queue.removeFirst();
+
+                IRegionEventListener listener = info.region.getEventListener();
+                if (listener == null) {
+                    try {
+                        throw new NullPointerException("Region event listener cannot be null.");
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+                }
+
+                if (info.isEntering)
+                    listener.onPlayerEnter(info.player, info.reason.getEnterReason());
+                else
+                    listener.onPlayerLeave(info.player, info.reason.getLeaveReason());
+            }
+        }
+    }
 }
