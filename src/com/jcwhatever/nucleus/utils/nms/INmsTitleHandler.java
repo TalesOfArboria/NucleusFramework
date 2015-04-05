@@ -32,8 +32,7 @@ import javax.annotation.Nullable;
  * Interface for NucleusFramework's Minecraft Titles handler.
  *
  * @see NmsUtils
- * @see com.jcwhatever.nucleus.utils.titles.Title
- */
+  */
 public interface INmsTitleHandler extends INmsHandler {
 
     /**

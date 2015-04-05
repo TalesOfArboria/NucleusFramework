@@ -43,6 +43,7 @@ import com.jcwhatever.nucleus.managed.scripting.IScriptApiRepo;
 import com.jcwhatever.nucleus.managed.scripting.IScriptManager;
 import com.jcwhatever.nucleus.managed.signs.ISignManager;
 import com.jcwhatever.nucleus.managed.sounds.ISoundManager;
+import com.jcwhatever.nucleus.managed.titles.ITitleManager;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.regions.IGlobalRegionManager;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -319,6 +320,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._soundManager != null, ERROR_NOT_READY);
 
         return _plugin._soundManager;
+    }
+
+    /**
+     * Get the global Minecraft title manager.
+     */
+    public static ITitleManager getTitleManager() {
+        PreCon.isValid(_plugin._titleManager != null, ERROR_NOT_READY);
+
+        return _plugin._titleManager;
     }
 
     /*

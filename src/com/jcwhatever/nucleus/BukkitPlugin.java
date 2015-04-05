@@ -49,6 +49,7 @@ import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineManager;
 import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.signs.InternalSignManager;
 import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
+import com.jcwhatever.nucleus.internal.titles.InternalTitleManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.text.TextColor;
@@ -85,6 +86,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalBlockSelector _blockSelector;
     InternalResponseRequestor _responseRequestor;
     InternalItemMetaHandlers _itemMetaHandlers;
+    InternalTitleManager _titleManager;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -176,6 +178,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     protected void onPostPreEnable() {
 
         _nmsManager = new InternalNmsManager();
+        _titleManager = new InternalTitleManager();
         _commandHandler = new NucleusCommandDispatcher();
 
         _scriptEngineManager = new InternalScriptEngineManager();

@@ -24,10 +24,10 @@
 
 package com.jcwhatever.nucleus.internal.scripting.api;
 
+import com.jcwhatever.nucleus.managed.titles.Titles;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.titles.ITitle;
-import com.jcwhatever.nucleus.utils.titles.Title;
+import com.jcwhatever.nucleus.managed.titles.ITitle;
 
 import javax.annotation.Nullable;
 
@@ -59,7 +59,6 @@ public class SAPI_Titles implements IDisposable {
 
         PreCon.notNullOrEmpty(title);
 
-        return new Title(title, subTitle,
-                fadeInTicks, stayTicks, fadeOutTicks);
+        return Titles.create(title, subTitle, fadeInTicks, stayTicks, fadeOutTicks);
     }
 }

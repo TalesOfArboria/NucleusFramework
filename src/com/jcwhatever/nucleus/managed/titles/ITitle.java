@@ -22,9 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.titles;
+package com.jcwhatever.nucleus.managed.titles;
 
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 /**
  * Interface for an object that represents a
@@ -66,7 +68,14 @@ public interface ITitle {
     /**
      * Show the title to the specified player.
      *
-     * @param p  The player to show the title to.
+     * @param player  The player to show the title to.
      */
-    void showTo(Player p);
+    void showTo(Player player);
+
+    /**
+     * Show the title to a collection of players.
+     *
+     * @param players  The players to show the title to.
+     */
+    void showTo(Collection<? extends Player> players);
 }

@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.titles;
+package com.jcwhatever.nucleus.internal.titles;
 
+import com.jcwhatever.nucleus.managed.titles.ITitle;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.nms.INmsTitleHandler;
@@ -33,12 +34,13 @@ import com.jcwhatever.nucleus.utils.text.TextComponents;
 
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
  * NucleusFramework's implementation of {@link ITitle}
  */
-public class Title implements ITitle {
+class Title implements ITitle {
 
     private final String _title;
     private final String _subTitle;
@@ -57,7 +59,7 @@ public class Title implements ITitle {
      * @param title     The title text.
      * @param subTitle  The sub title text.
      */
-    public Title(String title, @Nullable String subTitle) {
+    Title(String title, @Nullable String subTitle) {
         this(title, subTitle, -1, -1, -1);
     }
 
@@ -70,7 +72,7 @@ public class Title implements ITitle {
      * @param stayTime     The time spent being displayed.
      * @param fadeOutTime  The time spent fading out.
      */
-    public Title(String title, @Nullable String subTitle,
+    Title(String title, @Nullable String subTitle,
                  int fadeInTime, int stayTime, int fadeOutTime) {
         PreCon.notNull(title);
 
@@ -133,33 +135,33 @@ public class Title implements ITitle {
     /**
      * Show the title to the specified player.
      *
-     * @param p  The player to show the title to.
+     * @param player  The player to show the title to.
      */
     @Override
-    public void showTo(Player p) {
-        PreCon.notNull(p);
+    public void showTo(Player player) {
+        PreCon.notNull(player);
 
         INmsTitleHandler titleHandler = NmsUtils.getTitleHandler();
         if (titleHandler != null) {
 
-            titleHandler.send(p, _title, _subTitle, _fadeInTime, _stayTime, _fadeOutTime);
+            titleHandler.send(player, _title, _subTitle, _fadeInTime, _stayTime, _fadeOutTime);
 
             return;
         }
 
         // use commands as a fallback if there is no NMS title handler
 
-        String titleCommand = getCommand(p, TitleCommandType.TITLE);
+        String titleCommand = getCommand(player, TitleCommandType.TITLE);
         String subTitleCommand = null;
         String timesCommand = null;
 
         if (_subTitleComponents != null) {
-            subTitleCommand = getCommand(p, TitleCommandType.SUBTITLE);
+            subTitleCommand = getCommand(player, TitleCommandType.SUBTITLE);
         }
 
         // if one time is -1 then all times are -1
         if (getTime(_fadeInTime) != -1) {
-            timesCommand = getCommand(p, TitleCommandType.TIMES);
+            timesCommand = getCommand(player, TitleCommandType.TIMES);
         }
 
         if (timesCommand != null) {
@@ -171,6 +173,26 @@ public class Title implements ITitle {
         }
 
         Utils.executeAsConsole(titleCommand);
+    }
+
+    @Override
+    public void showTo(Collection<? extends Player> players) {
+        PreCon.notNull(players);
+
+        INmsTitleHandler titleHandler = NmsUtils.getTitleHandler();
+        if (titleHandler != null) {
+
+            for (Player player : players) {
+                titleHandler.send(player, _title, _subTitle, _fadeInTime, _stayTime, _fadeOutTime);
+            }
+
+            return;
+        }
+
+        // fallback if no title handler for current NMS version.
+        for (Player player : players) {
+            showTo(player);
+        }
     }
 
     public TextComponents getTitleComponents() {
