@@ -75,6 +75,8 @@ class PlayerLocationCache {
 
         // now that the cache is being used again, it's pool size has had time to settle.
         _locationPool.trimToSize();
+
+        _capacity = _locationPool.size();
     }
 
     /**
