@@ -22,18 +22,17 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.actionbar;
+package com.jcwhatever.nucleus.internal.actionbar;
 
+import com.jcwhatever.nucleus.managed.actionbar.ITimedActionBar;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
-import org.bukkit.entity.Player;
-
 /**
- * A {@link PersistentActionBar} that is automatically removed
- * when the specified duration ends.
+ * A {@link PersistentActionBar} that is automatically removed when the
+ * specified duration ends.
  */
-public class TimedActionBar extends PersistentActionBar {
+class TimedActionBar extends PersistentActionBar implements ITimedActionBar {
 
     /**
      * Constructor.
@@ -82,26 +81,12 @@ public class TimedActionBar extends PersistentActionBar {
     }
 
     /**
-     * Show the {@link TimedActionBar} to a player for
-     * the default duration.
-     *
-     * @param player  The player to show the bar to.
+     * Get the {@link PersistentActionBar} default time slice
+     * duration used when a player is shown more than 1
+     * {@link PersistentActionBar}.
      */
     @Override
-    public void show(Player player) {
-        super.show(player);
-    }
-
-    /**
-     * Show the {@link TimedActionBar} to a player for
-     * the specified duration.
-     *
-     * @param player     The player to show the action bar to.
-     * @param duration   The duration the player should see the bar for.
-     * @param timeScale  The time scale of the specified duration.
-     */
-    @Override
-    public void show(Player player, int duration, TimeScale timeScale) {
-        super.show(player, duration, timeScale);
+    public int getDuration() {
+        return getMinDuration();
     }
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.actionbar;
+package com.jcwhatever.nucleus.internal.actionbar;
 
 import com.jcwhatever.nucleus.utils.TimeScale;
 
@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * Internal class used by {@link BarSender} to track {@link PersistentActionBar}'s that are
  * being displayed to a specific player.
  */
-final class PlayerBar {
+class PlayerBar {
     private final PersistentActionBar _bar;
     private final Player _player;
     private final long _expires;

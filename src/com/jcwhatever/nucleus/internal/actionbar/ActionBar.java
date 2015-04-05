@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.actionbar;
+package com.jcwhatever.nucleus.internal.actionbar;
 
+import com.jcwhatever.nucleus.managed.actionbar.IActionBar;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.dynamic.DynamicTextBuilder;
@@ -31,10 +32,12 @@ import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
  * An action bar that can be displayed to players.
  */
-public class ActionBar {
+class ActionBar implements IActionBar {
 
     private final IDynamicText _text;
     private final int _hash;
@@ -61,23 +64,14 @@ public class ActionBar {
         _hash = dynamicText.hashCode();
     }
 
-    /**
-     * Get the action bar text.
-     */
+    @Override
     public IDynamicText getText() {
         return _text;
     }
 
-    /**
-     * Show the action bar to a player.
-     *
-     * <p>If the player is viewing 1 or more {@link PersistentActionBar}'s,
-     * a {@link TimedActionBar} is shown instead to ensure the text is given
-     * a proper time slice among the persisted bars.</p>
-     *
-     * @param player  The player to show the bar to.
-     */
-    public void show(Player player) {
+    @Override
+    public void showTo(Player player) {
+        PreCon.notNull(player);
 
         // make sure the player isn't looking at 1 or more
         // persistent action bars.
@@ -89,11 +83,20 @@ public class ActionBar {
             if (_persistent == null)
                 _persistent = new TimedActionBar(_text.nextText());
 
-            _persistent.show(player, 4, TimeScale.SECONDS);
+            _persistent.showTo(player, 4, TimeScale.SECONDS);
         }
         else {
 
             BarSender.send(player, this);
+        }
+    }
+
+    @Override
+    public void showTo(Collection<? extends Player> players) {
+        PreCon.notNull(players);
+
+        for (Player player : players) {
+            showTo(player);
         }
     }
 

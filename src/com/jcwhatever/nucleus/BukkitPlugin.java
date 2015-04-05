@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.internal.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
+import com.jcwhatever.nucleus.internal.actionbar.InternalActionBarManager;
 import com.jcwhatever.nucleus.internal.blockselect.InternalBlockSelector;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
@@ -87,6 +88,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalResponseRequestor _responseRequestor;
     InternalItemMetaHandlers _itemMetaHandlers;
     InternalTitleManager _titleManager;
+    InternalActionBarManager _actionBarManager;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -179,6 +181,7 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         _nmsManager = new InternalNmsManager();
         _titleManager = new InternalTitleManager();
+        _actionBarManager = new InternalActionBarManager();
         _commandHandler = new NucleusCommandDispatcher();
 
         _scriptEngineManager = new InternalScriptEngineManager();

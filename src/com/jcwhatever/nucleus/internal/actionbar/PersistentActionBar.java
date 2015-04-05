@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.actionbar;
+package com.jcwhatever.nucleus.internal.actionbar;
 
+import com.jcwhatever.nucleus.managed.actionbar.IPersistentActionBar;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.dynamic.DynamicTextBuilder;
@@ -31,11 +32,13 @@ import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
  * An action bar that persists on the players screen until the
  * {@link #hide} method is invoked.
  */
-public class PersistentActionBar extends ActionBar {
+class PersistentActionBar extends ActionBar implements IPersistentActionBar {
 
     /**
      * Determine if the player is currently viewing a persistent action bar.
@@ -101,40 +104,24 @@ public class PersistentActionBar extends ActionBar {
     }
 
     /**
-     * Get the {@link PersistentActionBar} default time slice
-     * duration used when a player is shown more than 1
-     * {@link PersistentActionBar}.
-     */
-    public int getDuration() {
-        return _defaultDuration;
-    }
-
-    /**
      * Get the default duration's {@link TimeScale}.
      */
     public TimeScale getTimeScale() {
         return _defaultTimeScale;
     }
 
-    /**
-     * Show the {@link PersistentActionBar} to a player.
-     *
-     * @param player  The player to show the bar to.
-     */
     @Override
-    public void show(Player player) {
-        show(player, _defaultDuration, _defaultTimeScale);
+    public void showTo(Player player) {
+        showTo(player, _defaultDuration, _defaultTimeScale);
     }
 
-    /**
-     * Show the {@link PersistentActionBar} to a player.
-     *
-     * @param player       The player to show the action bar to.
-     * @param minDuration  The min duration the player should see the bar if the player
-     *                     is viewing more than 1 {@link PersistentActionBar}.
-     * @param timeScale    The time scale of the specified duration.
-     */
-    public void show(Player player, int minDuration, TimeScale timeScale) {
+    @Override
+    public int getMinDuration() {
+        return _defaultDuration * _defaultTimeScale.getTimeFactor();
+    }
+
+    @Override
+    public void showTo(Player player, int minDuration, TimeScale timeScale) {
         PreCon.notNull(player);
         PreCon.greaterThanZero(minDuration);
         PreCon.notNull(timeScale);
@@ -142,20 +129,31 @@ public class PersistentActionBar extends ActionBar {
         BarSender.addBar(player, this, minDuration, timeScale);
     }
 
-    /**
-     * Hide the {@link PersistentActionBar} from the player.
-     *
-     * @param player  The player to remove the {@link PersistentActionBar} from.
-     */
+    @Override
+    public void showTo(Collection<? extends Player> player, int minDuration, TimeScale timeScale) {
+
+    }
+
+    @Override
     public void hide(Player player) {
         PreCon.notNull(player);
 
         BarSender.removeBar(player, this);
     }
 
+    @Override
+    public void hide(Collection<? extends Player> players) {
+        PreCon.notNull(players);
+
+        for (Player player : players) {
+            hide(player);
+        }
+    }
+
     /**
      * Hide the {@link PersistentActionBar} from all players.
      */
+    @Override
     public void hideAll() {
         BarSender.removeBar(this);
     }

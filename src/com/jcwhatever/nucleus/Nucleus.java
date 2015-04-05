@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus;
 import com.jcwhatever.nucleus.commands.response.IResponseRequestor;
 import com.jcwhatever.nucleus.events.manager.EventManager;
 import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
+import com.jcwhatever.nucleus.managed.actionbar.IActionBarManager;
 import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
 import com.jcwhatever.nucleus.managed.items.equipper.IEquipperManager;
@@ -125,6 +126,15 @@ public final class Nucleus {
      */
     public static List<NucleusPlugin> getNucleusPlugins() {
         return new ArrayList<>(_pluginNameMap.values());
+    }
+
+    /**
+     * Get the global action bar manager.
+     */
+    public static IActionBarManager getActionBarManager() {
+        PreCon.isValid(_plugin._actionBarManager != null, ERROR_NOT_READY);
+
+        return _plugin._actionBarManager;
     }
 
     /**

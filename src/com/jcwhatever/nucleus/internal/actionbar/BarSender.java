@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.actionbar;
+package com.jcwhatever.nucleus.internal.actionbar;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.SetMap;
@@ -214,6 +214,26 @@ class BarSender implements Runnable {
             synchronized (_sync) {
                 _playerMap.remove(bar.player().getUniqueId());
             }
+        }
+    }
+
+    /**
+     * Remove all action bars from a player.
+     *
+     * @param player  The player to remove the action bars from.
+     */
+    static void removePlayer(Player player) {
+        if (_nmsHandler == null)
+            return;
+
+        BarDistributor distributor = _playerMap.get(player.getUniqueId());
+        if (distributor == null)
+            return;
+
+        List<PlayerBar> bars = new ArrayList<>(distributor);
+
+        for (PlayerBar bar : bars) {
+            removeBar(player, bar.bar());
         }
     }
 

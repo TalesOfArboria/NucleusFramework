@@ -22,40 +22,44 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.nms;
+package com.jcwhatever.nucleus.managed.actionbar;
+
+import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
 
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
- * Interface for NucleusFramework's Minecraft Action Bar handler.
- *
- * @see NmsUtils
- * @see com.jcwhatever.nucleus.internal.actionbar.ActionBar
- * @see com.jcwhatever.nucleus.internal.actionbar.PersistentActionBar
- * @see com.jcwhatever.nucleus.internal.actionbar.TimedActionBar
+ * A {@link IPersistentActionBar} that is automatically removed
+ * when the specified duration ends.
  */
-public interface INmsActionBarHandler extends INmsHandler {
+public interface IActionBar {
 
     /**
-     * Send action bar text to a player.
-     *
-     * <p>The handler is responsible for converting the raw text
-     * to whatever format is required.</p>
-     *
-     * @param player   The player to send the text to.
-     * @param rawText  The raw text.
-     *
-     * @return  The json converted text.
+     * Get the action bar text.
      */
-    void send(Player player, String rawText);
+    IDynamicText getText();
 
     /**
-     * Send action bar text to a player.
+     * Show the action bar to a player.
      *
-     * <p>Bypasses the handlers text conversion.</p>
+     * <p>If the player is viewing 1 or more {@link IPersistentActionBar}'s,
+     * a {@link ITimedActionBar} is shown instead to ensure the text is given
+     * a proper time slice among the persisted bars.</p>
      *
-     * @param player    The player to send the text to.
-     * @param jsonText  The Json text.
+     * @param player  The player to show the bar to.
      */
-    void sendJson(Player player, String jsonText);
+    void showTo(Player player);
+
+    /**
+     * Show the action bar to a collection of players.
+     *
+     * <p>If the player is viewing 1 or more {@link IPersistentActionBar}'s,
+     * a {@link ITimedActionBar} is shown instead to ensure the text is given
+     * a proper time slice among the persisted bars.</p>
+     *
+     * @param players  The players to show the bar to.
+     */
+    void showTo(Collection<? extends Player> players);
 }

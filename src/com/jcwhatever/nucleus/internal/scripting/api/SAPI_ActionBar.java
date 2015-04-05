@@ -24,12 +24,13 @@
 
 package com.jcwhatever.nucleus.internal.scripting.api;
 
+import com.jcwhatever.nucleus.managed.actionbar.ActionBars;
+import com.jcwhatever.nucleus.managed.actionbar.IActionBar;
+import com.jcwhatever.nucleus.managed.actionbar.IPersistentActionBar;
+import com.jcwhatever.nucleus.managed.actionbar.ITimedActionBar;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
-import com.jcwhatever.nucleus.utils.actionbar.ActionBar;
-import com.jcwhatever.nucleus.utils.actionbar.PersistentActionBar;
-import com.jcwhatever.nucleus.utils.actionbar.TimedActionBar;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.dynamic.DynamicTextBuilder;
 import com.jcwhatever.nucleus.utils.text.dynamic.IDynamicText;
@@ -41,7 +42,7 @@ import java.util.WeakHashMap;
 
 public class SAPI_ActionBar implements IDisposable {
 
-    private final Map<PersistentActionBar, Void> _actionBars = new WeakHashMap<>(10);
+    private final Map<IPersistentActionBar, Void> _actionBars = new WeakHashMap<>(10);
     private boolean _isDisposed;
 
     @Override
@@ -52,7 +53,7 @@ public class SAPI_ActionBar implements IDisposable {
     @Override
     public void dispose() {
 
-        for (PersistentActionBar actionBar : _actionBars.keySet()) {
+        for (IPersistentActionBar actionBar : _actionBars.keySet()) {
             actionBar.hideAll();
         }
 
@@ -65,17 +66,15 @@ public class SAPI_ActionBar implements IDisposable {
      * @param player     The player to show the message to.
      * @param message    The message to show.
      */
-    public void show(Object player, Object message) {
+    public void show(Object player, String message) {
         PreCon.notNull(player, "player");
         PreCon.notNull(message, "message");
 
         Player p = PlayerUtils.getPlayer(player);
         PreCon.isValid(p != null, "Invalid player");
 
-        IDynamicText dynamicText = getDynamicText(message);
-
-        ActionBar actionBar = new ActionBar(dynamicText);
-        actionBar.show(p);
+        IActionBar actionBar = ActionBars.create(message);
+        actionBar.showTo(p);
     }
 
     /**
@@ -93,23 +92,23 @@ public class SAPI_ActionBar implements IDisposable {
 
         IDynamicText dynamicText = getDynamicText(message);
 
-        TimedActionBar timedActionBar = new TimedActionBar(dynamicText, ticks, TimeScale.TICKS);
-        timedActionBar.show(p);
+        ITimedActionBar timedActionBar = ActionBars.createTimed(dynamicText, ticks, TimeScale.TICKS);
+        timedActionBar.showTo(p);
 
         _actionBars.put(timedActionBar, null);
     }
 
     /**
-     * Create a new {@link PersistentActionBar} instance.
+     * Create a new {@link IPersistentActionBar} instance.
      *
      * @param text  The action bar text.
      */
-    public PersistentActionBar createPersistent(Object text) {
+    public IPersistentActionBar createPersistent(Object text) {
         PreCon.notNull(text, "text");
 
         IDynamicText dynamicText = getDynamicText(text);
 
-        PersistentActionBar actionBar = new PersistentActionBar(dynamicText);
+        IPersistentActionBar actionBar = ActionBars.createPersistent(dynamicText);
 
         _actionBars.put(actionBar, null);
 
@@ -117,18 +116,18 @@ public class SAPI_ActionBar implements IDisposable {
     }
 
     /**
-     * Create a new {@link TimedActionBar} instance.
+     * Create a new {@link ITimedActionBar} instance.
      *
      * @param ticks  The number of ticks the bar is visible for.
      * @param text   The action bar text.
      */
-    public TimedActionBar createTimed(int ticks, Object text) {
+    public ITimedActionBar createTimed(int ticks, Object text) {
         PreCon.greaterThanZero(ticks, "ticks");
         PreCon.notNull(text);
 
         IDynamicText dynamicText = getDynamicText(text);
 
-        TimedActionBar actionBar = new TimedActionBar(dynamicText, ticks, TimeScale.TICKS);
+        ITimedActionBar actionBar = ActionBars.createTimed(dynamicText, ticks, TimeScale.TICKS);
 
         _actionBars.put(actionBar, null);
 

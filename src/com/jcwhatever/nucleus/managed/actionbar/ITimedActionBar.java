@@ -22,40 +22,45 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.nms;
+package com.jcwhatever.nucleus.managed.actionbar;
+
+import com.jcwhatever.nucleus.utils.TimeScale;
 
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 /**
- * Interface for NucleusFramework's Minecraft Action Bar handler.
- *
- * @see NmsUtils
- * @see com.jcwhatever.nucleus.internal.actionbar.ActionBar
- * @see com.jcwhatever.nucleus.internal.actionbar.PersistentActionBar
- * @see com.jcwhatever.nucleus.internal.actionbar.TimedActionBar
+ * A {@link IPersistentActionBar} that is automatically removed when the specified
+ * duration ends.
  */
-public interface INmsActionBarHandler extends INmsHandler {
+public interface ITimedActionBar extends IPersistentActionBar {
 
     /**
-     * Send action bar text to a player.
+     * Get default amount of time in ticks the action bar is displayed for.
+     * {@link IPersistentActionBar}.
      *
-     * <p>The handler is responsible for converting the raw text
-     * to whatever format is required.</p>
-     *
-     * @param player   The player to send the text to.
-     * @param rawText  The raw text.
-     *
-     * @return  The json converted text.
+     * <p>This value is used when a value is not provided.</p>
      */
-    void send(Player player, String rawText);
+    int getDuration();
 
     /**
-     * Send action bar text to a player.
+     * Show the action bar to a player.
      *
-     * <p>Bypasses the handlers text conversion.</p>
-     *
-     * @param player    The player to send the text to.
-     * @param jsonText  The Json text.
+     * @param player     The player to show the action bar to.
+     * @param duration   The duration the player should see the bar for.
+     * @param timeScale  The time scale of the specified duration.
      */
-    void sendJson(Player player, String jsonText);
+    @Override
+    void showTo(Player player, int duration, TimeScale timeScale);
+
+    /**
+     * Show the action bar to a player.
+     *
+     * @param player     The player to show the action bar to.
+     * @param duration   The duration the player should see the bar for.
+     * @param timeScale  The time scale of the specified duration.
+     */
+    @Override
+    void showTo(Collection<? extends Player> player, int duration, TimeScale timeScale);
 }
