@@ -53,6 +53,7 @@ import javax.annotation.Nullable;
 /**
  * Provide chat and console message utilities.
  */
+
 class Messenger implements IMessenger {
 
     private static Map<UUID, TimedHashSet<String>> _noSpamCache =
@@ -226,7 +227,7 @@ class Messenger implements IMessenger {
     }
 
     @Override
-    public void broadcast(Collection<Player> exclude, Object message, Object... params) {
+    public void broadcast(Collection<? extends Player> exclude, Object message, Object... params) {
         broadcast(exclude, _lineWrap, message, params);
     }
 
@@ -243,7 +244,8 @@ class Messenger implements IMessenger {
     }
 
     @Override
-    public void broadcast(Collection<Player> exclude, LineWrapping lineWrapping, Object message, Object... params) {
+    public void broadcast(Collection<? extends Player> exclude,
+                          LineWrapping lineWrapping, Object message, Object... params) {
         PreCon.notNull(lineWrapping);
         PreCon.notNull(exclude);
         PreCon.notNull(message);

@@ -111,7 +111,8 @@ public interface IMessenger extends IPluginOwned {
      *
      * @return  True if the message was displayed.
      */
-    boolean tellNoSpam(CommandSender sender, Integer ticks, LineWrapping lineWrapping, Object message, Object...params);
+    boolean tellNoSpam(CommandSender sender,
+                       Integer ticks, LineWrapping lineWrapping, Object message, Object...params);
 
     /**
      * Tell a message to a {@link  org.bukkit.command.CommandSender} and cache it for
@@ -211,7 +212,7 @@ public interface IMessenger extends IPluginOwned {
      * @param message  The message to display.
      * @param params   Optional formatting parameters.
      */
-    void broadcast(Collection<Player> exclude, Object message, Object...params);
+    void broadcast(Collection<? extends Player> exclude, Object message, Object...params);
 
     /**
      * Broadcast a message to all players on the server.
@@ -230,7 +231,8 @@ public interface IMessenger extends IPluginOwned {
      * @param message       The message to display.
      * @param params        Optional formatting parameters.
      */
-    void broadcast(Collection<Player> exclude, LineWrapping lineWrapping, Object message, Object... params);
+    void broadcast(Collection<? extends Player> exclude,
+                   LineWrapping lineWrapping, Object message, Object... params);
 
     /**
      * Display an information message in the console.
