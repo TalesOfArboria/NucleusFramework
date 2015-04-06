@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.storage.serialize;
 
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.reflection.ReflectionUtils;
 
 import org.bukkit.Location;
@@ -40,6 +41,24 @@ import java.lang.reflect.Modifier;
  *
  * <p>Reduces boilerplate code needed to load and save an objects settings at
  * the cost of performance.</p>
+ *
+ * <p>Only the following field types can be serialized: (Primitive wrappers are not supported)</p>
+ *
+ * <ul>
+ *     <li>boolean</li>
+ *     <li>byte</li>
+ *     <li>short</li>
+ *     <li>int</li>
+ *     <li>long</li>
+ *     <li>float</li>
+ *     <li>double</li>
+ *     <li>String</li>
+ *     <li>instance of {@link Enum}</li>
+ *     <li>{@link Location}</li>
+ *     <li>{@link ItemStack}</li>
+ *     <li>{@link ItemStack[]}</li>
+ *     <li>instance of {@link IDataNodeSerializable}</li>
+ * </ul>
  */
 public final class DataFieldSerializer {
 
@@ -98,10 +117,26 @@ public final class DataFieldSerializer {
      * Deserialize data field values stored in a data node to the corresponding fields
      * in the specified object.
      *
+     * <p>Ignores/skips over fields that do not have a corresponding value in the specified
+     * data node. This includes values that were saved as null.</p>
+     *
      * @param object    The object to deserialize data field values into.
      * @param dataNode  The data node where the values are stored.
      */
     public static void deserializeInto(Object object, IDataNode dataNode) {
+        deserializeInto(object, dataNode, true);
+    }
+
+    /**
+     * Deserialize data field values stored in a data node to the corresponding fields
+     * in the specified object.
+     *
+     * @param object         The object to deserialize data field values into.
+     * @param dataNode       The data node where the values are stored.
+     * @param ignoreMissing  True to ignore missing/null nodes, false to set the field to
+     *                       null or primitive default value.
+     */
+    public static void deserializeInto(Object object, IDataNode dataNode, boolean ignoreMissing) {
 
         Class<?> clazz = object.getClass();
 
@@ -118,11 +153,16 @@ public final class DataFieldSerializer {
             if (keyName.isEmpty())
                 keyName = field.getName();
 
+            if (ignoreMissing && !dataNode.hasNode(keyName))
+                continue;
+
             if (Modifier.isFinal(field.getModifiers()))
                 ReflectionUtils.removeFinal(field);
 
+            boolean isStatic = Modifier.isStatic(field.getModifiers());
+
             try {
-                setField(field, object, keyName, dataNode);
+                setField(field, isStatic ? null : object, keyName, dataNode);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -136,78 +176,70 @@ public final class DataFieldSerializer {
 
         Object defaultValue = field.get(object);
 
-        if (clazz.isAssignableFrom(boolean.class) || clazz.isAssignableFrom(Boolean.class)) {
-            field.set(object, dataNode.getBoolean(keyName, (boolean) defaultValue));
+        if (clazz.equals(boolean.class)) {
+            field.setBoolean(object, dataNode.getBoolean(keyName));
         }
-        else if (clazz.isAssignableFrom(byte.class) || clazz.isAssignableFrom(Byte.class)) {
-            field.set(object, (byte)dataNode.getInteger(keyName, (byte)defaultValue));
+        else if (clazz.equals(byte.class)) {
+            field.setByte(object, (byte) dataNode.getInteger(keyName));
         }
-        else if (clazz.isAssignableFrom(short.class) || clazz.isAssignableFrom(Short.class)) {
-            field.set(object, (short)dataNode.getInteger(keyName, (short)defaultValue));
+        else if (clazz.equals(short.class)) {
+            field.setShort(object, (short) dataNode.getInteger(keyName));
         }
-        else if (clazz.isAssignableFrom(char.class) || clazz.isAssignableFrom(Character.class)) {
-            field.set(object, (char)dataNode.getInteger(keyName, (char)defaultValue));
+        else if (clazz.equals(char.class)) {
+            field.setChar(object, (char) dataNode.getInteger(keyName));
         }
-        else if (clazz.isAssignableFrom(int.class) || clazz.isAssignableFrom(Integer.class)) {
-            field.set(object, dataNode.getInteger(keyName, (int) defaultValue));
+        else if (clazz.equals(int.class)) {
+            field.setInt(object, dataNode.getInteger(keyName));
         }
-        else if (clazz.isAssignableFrom(long.class) || clazz.isAssignableFrom(Long.class)) {
-            field.set(object, dataNode.getLong(keyName, (long)defaultValue));
+        else if (clazz.equals(long.class)) {
+            field.setLong(object, dataNode.getLong(keyName));
         }
-        else if (clazz.isAssignableFrom(float.class) || clazz.isAssignableFrom(Float.class)) {
-            field.set(object, (float)dataNode.getDouble(keyName, (float)defaultValue));
+        else if (clazz.equals(float.class)) {
+            field.setFloat(object, (float) dataNode.getDouble(keyName));
         }
-        else if (clazz.isAssignableFrom(double.class) || clazz.isAssignableFrom(Double.class)) {
-            field.set(object, dataNode.getDouble(keyName, (double)defaultValue));
+        else if (clazz.equals(double.class)) {
+            field.setDouble(object, dataNode.getDouble(keyName));
         }
-        else if (clazz.isAssignableFrom(String.class)) {
-            field.set(object, dataNode.getString(keyName, (String)defaultValue));
+        else if (clazz.equals(String.class)) {
+            field.set(object, dataNode.getString(keyName));
         }
-        else if (clazz.isAssignableFrom(Enum.class)) {
+        else if (clazz.isEnum()) {
             //noinspection unchecked
-            field.set(object, dataNode.getEnumGeneric(keyName, (Enum) defaultValue, (Class<? extends Enum<?>>)clazz));
+            field.set(object, dataNode.getEnumGeneric(keyName, null, (Class<? extends Enum<?>>)clazz));
         }
-        else if (clazz.isAssignableFrom(Location.class)) {
-            field.set(object, dataNode.getLocation(keyName, (Location) defaultValue));
+        else if (clazz.equals(Location.class)) {
+            SyncLocation syncLocation = dataNode.getLocation(keyName);
+            field.set(object, syncLocation != null ? syncLocation.getBukkitLocation() : (Location) defaultValue);
         }
-        else if (clazz.isAssignableFrom(ItemStack.class)) {
-            ItemStack[] stacks = dataNode.getItemStacks(keyName, (ItemStack) defaultValue);
+        else if (clazz.equals(ItemStack.class)) {
+            ItemStack[] stacks = dataNode.getItemStacks(keyName);
             field.set(object, stacks != null && stacks.length > 0 ? stacks[0] : null);
         }
-        else if (clazz.isAssignableFrom(ItemStack[].class)) {
-            field.set(object, dataNode.getItemStacks(keyName, (ItemStack[])defaultValue));
+        else if (clazz.equals(ItemStack[].class)) {
+            field.set(object, dataNode.getItemStacks(keyName));
         }
-        else if (clazz.isAssignableFrom(IDataNodeSerializable.class)) {
+        else if (IDataNodeSerializable.class.isAssignableFrom(clazz)) {
             //noinspection unchecked
             Object result = dataNode.getSerializable(keyName, (Class<? extends IDataNodeSerializable>)clazz);
-            if (result != null)
-                field.set(object, result);
+            field.set(object, result);
         }
     }
 
     private static boolean canSerialize(Class<?> clazz) {
 
-        return clazz.isAssignableFrom(boolean.class) ||
-                clazz.isAssignableFrom(Boolean.class) ||
-                clazz.isAssignableFrom(byte.class) ||
-                clazz.isAssignableFrom(Byte.class) ||
-                clazz.isAssignableFrom(char.class) ||
-                clazz.isAssignableFrom(Character.class) ||
-                clazz.isAssignableFrom(short.class) ||
-                clazz.isAssignableFrom(Short.class) ||
-                clazz.isAssignableFrom(int.class) ||
-                clazz.isAssignableFrom(Integer.class) ||
-                clazz.isAssignableFrom(long.class) ||
-                clazz.isAssignableFrom(Long.class) ||
-                clazz.isAssignableFrom(float.class) ||
-                clazz.isAssignableFrom(Float.class) ||
-                clazz.isAssignableFrom(double.class) ||
-                clazz.isAssignableFrom(Double.class) ||
-                clazz.isAssignableFrom(String.class) ||
-                clazz.isAssignableFrom(Enum.class) ||
-                clazz.isAssignableFrom(Location.class) ||
-                clazz.isAssignableFrom(ItemStack.class) ||
-                clazz.isAssignableFrom(ItemStack[].class) ||
-                clazz.isAssignableFrom(IDataNodeSerializable.class);
+        return clazz.equals(boolean.class) ||
+                clazz.equals(byte.class) ||
+                clazz.equals(char.class) ||
+                clazz.equals(short.class) ||
+                clazz.equals(int.class) ||
+                clazz.equals(long.class) ||
+                clazz.equals(float.class) ||
+                clazz.equals(double.class) ||
+                clazz.isEnum() ||
+                clazz.equals(String.class) ||
+                clazz.equals(Location.class) ||
+                clazz.equals(ItemStack.class) ||
+                clazz.equals(ItemStack[].class) ||
+                IDataNodeSerializable.class.isAssignableFrom(clazz);
     }
 }
