@@ -45,6 +45,10 @@ import javax.annotation.Nullable;
  * thread where it's not safe to retrieve the Bukkit {@link org.bukkit.World} object.
  * The {@link SyncLocation} can hold the name of the world until it's safe to retrieve the
  * Bukkit {@link org.bukkit.World} (safety is determined by the coder using the class).</p>
+ *
+ * <p>When using {@link Location#equals} on a {@link SyncLocation}, the result is always false.
+ * however when reversed, a {@link SyncLocation} will be able to compare itself to a
+ * {@link Location} instance.</p>
  */
 public class SyncLocation extends Location {
 
