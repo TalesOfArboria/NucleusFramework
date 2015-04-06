@@ -148,18 +148,20 @@ public class ReflectionUtils {
      * @param field  The field.
      *
      * @return  True if successful, otherwise false.
-     *
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
      */
-    public static boolean removeFinal(Field field) throws NoSuchFieldException, IllegalAccessException {
+    public static boolean removeFinal(Field field)  {
         PreCon.notNull(field);
 
         field.setAccessible(true);
 
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        try {
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            return false;
+        }
 
         return true;
     }
