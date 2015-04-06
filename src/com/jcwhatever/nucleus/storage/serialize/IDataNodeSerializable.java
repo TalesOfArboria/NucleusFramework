@@ -22,29 +22,36 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.storage;
+package com.jcwhatever.nucleus.storage.serialize;
 
-import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
+import com.jcwhatever.nucleus.storage.DeserializeException;
+import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
- * Thrown when an object that implements {@link IDataNodeSerializable} is
- * unable to deserialize data from the provided {@link IDataNode}.
+ * An interface for an object that can serialize and deserialize
+ * itself to and from a data node.
  */
-public class DeserializeException extends Exception {
-
-    private final String _message;
+public interface IDataNodeSerializable {
 
     /**
-     * Constructor.
+     * Serialize information into the provided data node.
      *
-     * @param message  The error message.
+     * <p>The data node provided is dedicated to the object.</p>
+     *
+     * @param dataNode  The data node.
      */
-    public DeserializeException(String message) {
-        _message = message;
-    }
+    void serialize(IDataNode dataNode);
 
-    @Override
-    public String getMessage() {
-        return _message;
-    }
+    /**
+     * Deserialize information from the provided data node
+     * into the serializable object.
+     *
+     * <p>The data node provided is dedicated to the object.</p>
+     *
+     * @param dataNode  The data node.
+     *
+     * @throws DeserializeException if the implementation cannot deserialize using the
+     * data provided.
+     */
+    void deserialize(IDataNode dataNode) throws DeserializeException;
 }

@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.storage.IDataNodeSerializable;
+import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.utils.PreCon;
 

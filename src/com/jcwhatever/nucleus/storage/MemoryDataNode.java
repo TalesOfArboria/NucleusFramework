@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.collections.TreeEntryNode;
+import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;

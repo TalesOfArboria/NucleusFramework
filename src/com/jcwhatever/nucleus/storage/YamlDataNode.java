@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.storage;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentMultimap;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentSetMultimap;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;

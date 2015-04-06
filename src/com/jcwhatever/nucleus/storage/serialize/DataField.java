@@ -22,33 +22,25 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.storage;
+package com.jcwhatever.nucleus.storage.serialize;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * An interface for an object that can serialize and deserialize
- * itself to and from a data node.
+ * A field annotation that denotes a field can be saved to a data node
+ * via {@link DataFieldSerializer}.
  */
-public interface IDataNodeSerializable {
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DataField {
 
     /**
-     * Serialize information into the provided data node.
+     * The data node key name.
      *
-     * <p>The data node provided is dedicated to the object.</p>
-     *
-     * @param dataNode  The data node.
+     * <p>Optional. If not specified, the name of the field is used.</p>
      */
-    void serialize(IDataNode dataNode);
-
-    /**
-     * Deserialize information from the provided data node
-     * into the serializable object.
-     *
-     * <p>The data node provided is dedicated to the object.</p>
-     *
-     * @param dataNode  The data node.
-     *
-     * @throws DeserializeException if the implementation cannot deserialize using the
-     * data provided.
-     */
-    void deserialize(IDataNode dataNode) throws DeserializeException;
+    String keyName() default "";
 }

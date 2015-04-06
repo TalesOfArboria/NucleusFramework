@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.storage;
 
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
+import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
 
