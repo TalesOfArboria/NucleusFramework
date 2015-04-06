@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.storage;
+package com.jcwhatever.nucleus.storage.serialize;
 
-import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
+import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**
  * Thrown when an object that implements {@link IDataNodeSerializable} is

@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.storage.serialize;
 
-import com.jcwhatever.nucleus.storage.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
 /**

@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.utils.coords;
 
-import com.jcwhatever.nucleus.storage.DeserializeException;
+import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
