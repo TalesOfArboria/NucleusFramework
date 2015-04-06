@@ -32,8 +32,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 /**
- * Entity equipper. Used to give an {@link org.bukkit.inventory.ItemStack}
- * as equipment to an entity.
+ * Entity item equipper.
+ *
+ * <p>Used to give an {@link org.bukkit.inventory.ItemStack} as equipment to an
+ * entity.</p>
  *
  * @see IEquipperManager
  * @see Nucleus#getEquipperManager

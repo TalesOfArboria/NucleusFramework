@@ -41,8 +41,7 @@ import java.util.TreeMap;
 import javax.annotation.Nullable;
 
 /**
- * Represents Text formatting codes and provides
- * related utilities.
+ * Represents Text formatting codes and provides related utilities.
  */
 public class TextFormat {
 
@@ -389,7 +388,10 @@ public class TextFormat {
         if (len == 0)
             return new TextFormats("", null);
 
-        StringBuilder sb = Bukkit.getServer() != null && Bukkit.isPrimaryThread() ? _smallBuffer : new StringBuilder(6);
+        StringBuilder sb = Bukkit.getServer() != null && Bukkit.isPrimaryThread()
+                ? _smallBuffer
+                : new StringBuilder(6);
+
         List<TextFormat> formats = new ArrayList<>(2);
         sb.setLength(0);
 

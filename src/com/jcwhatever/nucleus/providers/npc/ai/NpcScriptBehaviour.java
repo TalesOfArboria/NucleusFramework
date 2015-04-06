@@ -235,8 +235,9 @@ public abstract class NpcScriptBehaviour<A extends INpcBehaviourAgent> implement
     }
 
     /**
-     * Reset handler for use by a script. Supports
-     * shorthand functions.
+     * Reset handler for use by a script.
+     *
+     * <p>Supports shorthand functions.</p>
      */
     public interface IResetHandler {
 
@@ -249,8 +250,9 @@ public abstract class NpcScriptBehaviour<A extends INpcBehaviourAgent> implement
     }
 
     /**
-     * canRun handler for use by a script. Supports
-     * shorthand functions.
+     * canRun handler for use by a script.
+     *
+     * <p>Supports shorthand functions.</p>
      */
     public interface ICanRunHandler {
 
@@ -263,8 +265,9 @@ public abstract class NpcScriptBehaviour<A extends INpcBehaviourAgent> implement
     }
 
     /**
-     * canRun handler for use by a script. Supports
-     * shorthand functions.
+     * canRun handler for use by a script.
+     *
+     * <p>Supports shorthand functions.</p>
      */
     public interface ICostHandler {
 
@@ -277,8 +280,9 @@ public abstract class NpcScriptBehaviour<A extends INpcBehaviourAgent> implement
     }
 
     /**
-     * onFirstRun handler for use by a script. Supports
-     * shorthand functions.
+     * onFirstRun handler for use by a script.
+     *
+     * <p>Supports shorthand functions.</p>
      */
     public interface IOnFirstRun {
 
@@ -291,14 +295,14 @@ public abstract class NpcScriptBehaviour<A extends INpcBehaviourAgent> implement
     }
 
     /**
-     * run handler for use by a script. Supports
-     * shorthand functions.
+     * run handler for use by a script.
+     *
+     * <p>Supports shorthand functions.</p>
      */
     public interface IOnRunHandler {
 
         /**
-         * Invoked when the behaviours {@link#run}
-         * method is invoked.
+         * Invoked when the behaviours {@link#run} method is invoked.
          *
          * @param agent  The behaviour agent.
          */
@@ -306,8 +310,9 @@ public abstract class NpcScriptBehaviour<A extends INpcBehaviourAgent> implement
     }
 
     /**
-     * onPause handler for use by a script. Supports
-     * shorthand functions.
+     * onPause handler for use by a script.
+     *
+     * <p>Supports shorthand functions.</p>
      */
     public interface IOnPauseHandler {
 

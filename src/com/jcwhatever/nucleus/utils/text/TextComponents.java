@@ -69,8 +69,8 @@ public class TextComponents implements Iterable<TextComponent> {
     }
 
     /**
-     * Get the text used to generate the
-     * {@link TextComponent}'s in the collection.
+     * Get the text used to generate the {@link TextComponent}'s in
+     * the collection.
      */
     public String getText() {
         return _text;
@@ -99,16 +99,14 @@ public class TextComponents implements Iterable<TextComponent> {
     }
 
     /**
-     * Get the number of {@link TextComponent}'s in
-     * the collection.
+     * Get the number of {@link TextComponent}'s in the collection.
      */
     public int size() {
         return _components.size();
     }
 
     /**
-     * Get the {@link TextComponent} at the specified
-     * index location.
+     * Get the {@link TextComponent} at the specified index location.
      *
      * @param index  The index.
      */

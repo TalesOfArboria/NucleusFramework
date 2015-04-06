@@ -42,9 +42,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Converts a collection of root nodes into a list of
- * strings that can be used to display the node hierarchy
- * in chat.
+ * Converts a collection of root nodes into a list of strings that can be used
+ * to display the node hierarchy in chat.
  */
 public class ChatTree<T extends IHierarchyNode<T>> implements IPluginOwned, Iterable<T> {
 

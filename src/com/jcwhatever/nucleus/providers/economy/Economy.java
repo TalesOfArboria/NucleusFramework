@@ -42,11 +42,9 @@ public final class Economy {
     private Economy() {}
 
     /**
-     * Create a new transaction to perform multiple
-     * operations on before executing them.
+     * Create a new transaction to perform multiple operations on before executing them.
      *
-     * <p>If the transaction fails, the economy operations
-     * performed in it are undone.</p>
+     * <p>If the transaction fails, the economy operations performed in it are undone.</p>
      */
     public static IEconomyTransaction createTransaction() {
         return getProvider().createTransaction();
@@ -62,7 +60,7 @@ public final class Economy {
     /**
      * Get a players global account.
      *
-     * @param playerId  The id of the player.
+     * @param playerId  The ID of the player.
      */
     public static IAccount getAccount(UUID playerId) {
         PreCon.notNull(playerId);
@@ -71,10 +69,11 @@ public final class Economy {
     }
 
     /**
-     * Get a players global account balance. The currency of the
-     * balance is the economy providers currency.
+     * Get a players global account balance.
      *
-     * @param playerId  The id of the player.
+     * <p>The currency of the balance is the economy providers default currency.</p>
+     *
+     * @param playerId  The ID of the player.
      */
     public static double getBalance(UUID playerId) {
         PreCon.notNull(playerId);
@@ -89,7 +88,7 @@ public final class Economy {
     /**
      * Get a players global account balance.
      *
-     * @param playerId  The id of the player.
+     * @param playerId  The ID of the player.
      * @param currency  The currency to return the amount in.
      */
     public static double getBalance(UUID playerId, ICurrency currency) {
@@ -105,8 +104,8 @@ public final class Economy {
     /**
      * Transfer money between two players global accounts.
      *
-     * @param giverPlayerId     The id of the player who is giving money
-     * @param receiverPlayerId  The id of the player who is receiving money
+     * @param giverPlayerId     The ID of the player who is giving money
+     * @param receiverPlayerId  The ID of the player who is receiving money
      * @param amount            The amount of money to transfer.
      *
      * @return  A {@link Future} that returns the result of the transaction.
@@ -120,8 +119,8 @@ public final class Economy {
     /**
      * Transfer money between two players global accounts.
      *
-     * @param giverPlayerId     The id of the player who is giving money
-     * @param receiverPlayerId  The id of the player who is receiving money
+     * @param giverPlayerId     The ID of the player who is giving money
+     * @param receiverPlayerId  The ID of the player who is receiving money
      * @param amount            The amount of money to transfer.
      *
      * @return  A {@link Future} that returns the result of the transaction.
@@ -150,8 +149,9 @@ public final class Economy {
     }
 
     /**
-     * Transfer money between two accounts. The currency of the amount
-     * transferred is the economy providers default currency.
+     * Transfer money between two accounts.
+     *
+     * <p>The currency of the amount transferred is the economy providers default currency.</p>
      *
      * @param fromAccount  The account to transfer money out of.
      * @param toAccount    The account to transfer money into.
@@ -191,10 +191,11 @@ public final class Economy {
     }
 
     /**
-     * Deposit money into a players global account. The currency
-     * of the amount is the economy providers currency.
+     * Deposit money into a players global account.
      *
-     * @param playerId  The id of the player to give money to.
+     * <p>The currency of the amount is the economy providers default currency.</p>
+     *
+     * @param playerId  The ID of the player to give money to.
      * @param amount    The amount to give the player.
      *
      * @return  A {@link Future} to retrieve the result of the transaction.
@@ -206,7 +207,7 @@ public final class Economy {
     /**
      * Deposit money into a players global account.
      *
-     * @param playerId  The id of the player to give money to.
+     * @param playerId  The ID of the player to give money to.
      * @param amount    The amount to give the player.
      * @param currency  The currency of the amount.
      *
@@ -230,10 +231,11 @@ public final class Economy {
     }
 
     /**
-     * Withdraw money from a players global account. The currency
-     * of the amount is the economy providers currency.
+     * Withdraw money from a players global account.
      *
-     * @param playerId  The id of the player to take money from.
+     * <p>The currency of the amount is the economy providers default currency.</p>
+     *
+     * @param playerId  The ID of the player to take money from.
      * @param amount    The amount to take.
      *
      * @return  A {@link Future} to retrieve the result of the transaction.
@@ -245,7 +247,7 @@ public final class Economy {
     /**
      * Withdraw money from a players global account.
      *
-     * @param playerId  The id of the player to take money from.
+     * @param playerId  The ID of the player to take money from.
      * @param amount    The amount to take.
      * @param currency  The currency of the amount.
      *
@@ -271,11 +273,12 @@ public final class Economy {
 
     /**
      * Deposit or withdraw money from a players global account depending on the value provided.
-     * The currency of the amount is the economy providers default currency.
+     *
+     * <p>The currency of the amount is the economy providers default currency.</p>
      *
      * <p>Positive values are deposited, negative values are withdrawn.</p>
      *
-     * @param playerId  The id of the player.
+     * @param playerId  The ID of the player.
      * @param amount    The amount to deposit or withdraw.
      *
      * @return  A {@link Future} to retrieve the result of the transaction.
@@ -297,7 +300,7 @@ public final class Economy {
      *
      * <p>Positive values are deposited, negative values are withdrawn.</p>
      *
-     * @param playerId  The id of the player.
+     * @param playerId  The ID of the player.
      * @param amount    The amount to deposit or withdraw.
      *
      * @return  A {@link Future} to retrieve the result of the transaction.
@@ -318,9 +321,9 @@ public final class Economy {
     }
 
     /**
-     * Deposit or withdraw money from an account depending on the
-     * value provided. The currency of the amount is the economy providers
-     * currency.
+     * Deposit or withdraw money from an account depending on the value provided.
+     *
+     * <p>The currency of the amount is the economy providers default currency.</p>
      *
      * <p>Positive values are deposited, negative values are withdrawn.</p>
      *
@@ -334,8 +337,7 @@ public final class Economy {
     }
 
     /**
-     * Deposit or withdraw money from an account depending on the
-     * value provided.
+     * Deposit or withdraw money from an account depending on the value provided.
      *
      * <p>Positive values are deposited, negative values are withdrawn.</p>
      *

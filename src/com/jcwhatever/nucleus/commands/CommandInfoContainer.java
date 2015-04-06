@@ -30,6 +30,7 @@ import com.jcwhatever.nucleus.commands.parameters.FlagParameter;
 import com.jcwhatever.nucleus.commands.parameters.ParameterDescriptions;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.language.Localized;
+import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.permissions.PermissionDefault;
@@ -45,7 +46,7 @@ import javax.annotation.Nullable;
 /**
  * Container for a commands {@link CommandInfo} annotation.
  */
-public class CommandInfoContainer {
+public class CommandInfoContainer implements IPluginOwned {
 
     private final AbstractCommand _command;
     private final CommandInfo _commandInfo;
@@ -76,7 +77,7 @@ public class CommandInfoContainer {
      *
      * @param command      The command to get annotation info from.
      * @param rootCommand  The commands root command.
-     * @param info         The commands {CommandInfo} annotation.
+     * @param info         The commands {@link CommandInfo} annotation.
      */
     public CommandInfoContainer(AbstractCommand command, @Nullable AbstractCommand rootCommand,
                                 CommandInfo info) {
@@ -97,9 +98,7 @@ public class CommandInfoContainer {
         _flags = toFlagParameters(getRawFlagParams());
     }
 
-    /**
-     * Get the owning plugin.
-     */
+    @Override
     public Plugin getPlugin() {
         return _plugin;
     }
@@ -146,8 +145,7 @@ public class CommandInfoContainer {
     }
 
     /**
-     * Get the name of the top level command in the commands
-     * hierarchy.
+     * Get the name of the top level command in the commands hierarchy.
      */
     public String getRootName() {
         if (_rootCommand == null)
@@ -157,32 +155,32 @@ public class CommandInfoContainer {
     }
 
     /**
-     * Get the name of the top level command in the commands
-     * hierarchy.
+     * Get the current alias name of the root command in the commands hierarchy used
+     * in the current command context.
      */
-    public String getRootSessionName() {
+    public String getRootAliasName() {
         if (_rootCommand == null)
-            return getSessionName();
+            return getCurrentAlias();
 
-        return _rootCommand.getInfo().getSessionName();
+        return _rootCommand.getInfo().getCurrentAlias();
     }
 
     /**
-     * Get the name of the root command for display purposes in the
-     * current session.
+     * Get the current alias name of the command used in the current command
+     * context.
      */
-    public String getSessionName() {
+    public String getCurrentAlias() {
         return _sessionRootName;
     }
 
     /**
-     * Set the name of the root command for display in the
-     * current session.
+     * Set the current alias name of the command used in the current command
+     * context.
      *
-     * @param rootName  The root command name.
+     * @param aliasName  The command alias.
      */
-    void setSessionRootName(String rootName) {
-        _sessionRootName = rootName;
+    void setCurrentAlias(String aliasName) {
+        _sessionRootName = aliasName;
     }
 
     /**

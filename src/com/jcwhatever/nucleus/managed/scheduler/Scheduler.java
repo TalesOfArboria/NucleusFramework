@@ -102,7 +102,8 @@ public final class Scheduler {
      *
      * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    public static IScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
+    public static IScheduledTask runTaskRepeat(Plugin plugin,
+                                               int startTicks, int repeatTicks, Runnable runnable) {
         return Nucleus.getScheduler().runTaskRepeat(plugin, startTicks, repeatTicks, runnable);
     }
 

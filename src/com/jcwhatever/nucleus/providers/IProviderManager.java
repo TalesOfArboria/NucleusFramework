@@ -138,8 +138,9 @@ public interface IProviderManager {
 
     /**
      * Set the data storage provider for a specific plugin.
-     * Only sets the setting for the plugin. A restart of the
-     * server is required in order for the setting to take effect.
+     *
+     * <p>Only sets the setting for the plugin. A restart of the server is required
+     * in order for the setting to take effect.</p>
      *
      * @param plugin           The plugin.
      * @param storageProvider  The storage provider.

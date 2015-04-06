@@ -37,20 +37,33 @@ import java.util.UUID;
  */
 public interface IMessenger extends IPluginOwned {
 
-    public enum LineWrapping {
+    /**
+     * Specifies chat message line wrapping mode.
+     */
+    enum LineWrapping {
+
+        /**
+         * Lines are actively wrapped.
+         *
+         * <p>Lines are wrapped by the {@link IMessenger} implementation and
+         * the line prefix is added before each wrapped line.</p>
+         */
         ENABLED,
+        /**
+         * Line wrapping disabled.
+         *
+         * <p>Messages are lined wrapped by Minecraft without a line prefix.</p>
+         */
         DISABLED
     }
 
     /**
-     * Get the number of characters allowed in a line
-     * for line wrapped messages.
+     * Get the number of characters allowed in a line for line wrapped messages.
      */
     int getLineWrapCount();
 
     /**
-     * Set the number of characters allowed in a line
-     * for line wrapped messages.
+     * Set the number of characters allowed in a line for line wrapped messages.
      *
      * @param characterCount  The number of characters.
      */
@@ -69,14 +82,14 @@ public interface IMessenger extends IPluginOwned {
     void setDefaultLineWrap(LineWrapping lineWrapping);
 
     /**
-     * Get the time in ticks that are delayed before the
-     * same no-spam message can be displayed again.
+     * Get the time in ticks that are delayed before the same no-spam message can
+     * be displayed again.
      */
     int getDefaultNoSpamDelay();
 
     /**
-     * Set the time in ticks that are delayed before the
-     * same no-spam message can be displayed again.
+     * Set the time in ticks that are delayed before the same no-spam message can
+     * be displayed again.
      *
      * @param delay  The delay in ticks.
      */
@@ -157,8 +170,10 @@ public interface IMessenger extends IPluginOwned {
     boolean tell(CommandSender sender, LineWrapping lineWrapping, Object message, Object...params);
 
     /**
-     * Tell an important message to the specified player. If the player is not
-     * online, the message is cached and displayed to the player at the next log in.
+     * Tell an important message to the specified player.
+     *
+     * <p>If the player is not online, the message is cached and displayed to the
+     * player at the next log in.</p>
      *
      * @param player    The player.
      * @param context   The message context. alphanumerics only.
@@ -168,8 +183,10 @@ public interface IMessenger extends IPluginOwned {
     void tellImportant(Player player, String context, Object message, Object...params);
 
     /**
-     * Tell an important message to the specified player. If the player is not
-     * online, the message is cached and displayed to the player at the next log in.
+     * Tell an important message to the specified player.
+     *
+     * <p>If the player is not online, the message is cached and displayed to the
+     * player at the next log in.</p>
      *
      * @param playerId  The id of the player.
      * @param context   The message context. alphanumerics only.
@@ -187,8 +204,8 @@ public interface IMessenger extends IPluginOwned {
     void broadcast(Object message, Object... params);
 
     /**
-     * Broadcast a message to all players on the server, excluding
-     * players from a specified collection of players.
+     * Broadcast a message to all players on the server, excluding players from a
+     * specified collection of players.
      *
      * @param exclude  The players to exclude from the broadcast.
      * @param message  The message to display.

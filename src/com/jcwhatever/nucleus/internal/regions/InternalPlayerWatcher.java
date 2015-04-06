@@ -50,8 +50,9 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-/*
- * 
+/**
+ * Watches and tracks players for the purpose of detecting
+ * entry and exit from event listening regions.
  */
 public final class InternalPlayerWatcher {
 

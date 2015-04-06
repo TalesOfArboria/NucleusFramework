@@ -48,7 +48,14 @@ public class RegionOwnerChangedEvent extends Event implements Cancellable, ICanc
     private final UUID _oldId;
     private UUID _newId;
     private boolean _isCancelled;
-    
+
+    /**
+     * Constructor.
+     *
+     * @param region  The region whose owner has changed.
+     * @param oldId   The ID of the old owner.
+     * @param newId   The ID of the new owner.
+     */
     public RegionOwnerChangedEvent(ReadOnlyRegion region,
                                    @Nullable UUID oldId, @Nullable UUID newId) {
         PreCon.notNull(region);

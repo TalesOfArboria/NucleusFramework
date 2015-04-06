@@ -27,9 +27,8 @@ package com.jcwhatever.nucleus.utils;
 import javax.annotation.Nullable;
 
 /**
- * Used as a method return value to return a nullable result
- * along with a flag indicating if the operation to retrieve
- * the result is a success.
+ * Used as a method return value to return a nullable result along with a flag
+ * indicating if the operation to retrieve the result is a success.
  *
  * <p>Useful when an operation can succeed but still return a null result.</p>
  *

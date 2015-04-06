@@ -69,7 +69,6 @@ public class CommandDispatcher implements
     @Localizable static final String _COMMAND_NOT_FOUND =
             "{RED}Command not found. Type '{0: usage}' for help.";
 
-
     private final Plugin _plugin;
     private AbstractCommand _defaultRoot;
     private CommandCollection _rootCommands;
@@ -107,9 +106,6 @@ public class CommandDispatcher implements
         registerCommands();
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
@@ -123,7 +119,7 @@ public class CommandDispatcher implements
     }
 
     /**
-     * Called by Bukkit when a command is executed.
+     * Invoked by Bukkit when a command is executed.
      */
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String rootName, String[] rootArguments) {
@@ -133,7 +129,7 @@ public class CommandDispatcher implements
             rootCommand = _defaultRoot;
         }
 
-        rootCommand.getInfo().setSessionRootName(rootName);
+        rootCommand.getInfo().setCurrentAlias(rootName);
 
         CommandParser parser = new CommandParser(rootCommand);
         ParsedCommand parsed = parser.parseCommand(rootCommand.getCommandCollection(), rootArguments);

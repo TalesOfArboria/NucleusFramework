@@ -40,7 +40,7 @@ public interface IItemStackDeserializer {
      *
      * @param output  The output {@link List}.
      *
-     * @return  The
+     * @return  The output {@link List}.
      */
     List<ItemStack> getResults(List<ItemStack> output);
 

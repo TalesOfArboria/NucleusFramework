@@ -40,8 +40,9 @@ public final class BankItems {
     private BankItems() {}
 
     /**
-     * Get a players global bank item account. If the account
-     * does not exist, it is created.
+     * Get a players global bank item account.
+     *
+     * <p>If the account does not exist, it is created.</p>
      *
      * @param playerId  The ID of the player.
      */
@@ -50,8 +51,9 @@ public final class BankItems {
     }
 
     /**
-     * Get a players global bank item account. If the account
-     * does not exist, it is created.
+     * Get a players global bank item account.
+     *
+     * <p>If the account does not exist, it is created.</p>
      *
      * @param player  The player.
      */
@@ -83,8 +85,10 @@ public final class BankItems {
     }
 
     /**
-     * Get or create a bank. If the bank already exists, the
-     * existing bank is returned. Otherwise a new bank is created.
+     * Get or create a bank.
+     *
+     * <p>If the bank already exists, the existing bank is returned. Otherwise a
+     * new bank is created.</p>
      *
      * <p>A newly created bank will not have a player owner.</p>
      *
@@ -95,8 +99,10 @@ public final class BankItems {
     }
 
     /**
-     * Get or create a bank. If the bank already exists, the
-     * existing bank is returned. Otherwise a new bank is created.
+     * Get or create a bank.
+     *
+     * <p>If the bank already exists, the existing bank is returned. Otherwise a
+     * new bank is created.</p>
      *
      * @param bankName  The name of the bank.
      * @param ownerId   The id of the banks player owner. Only used if the bank is created.
@@ -106,8 +112,10 @@ public final class BankItems {
     }
 
     /**
-     * Get or create a bank. If the bank already exists, the
-     * existing bank is returned. Otherwise a new bank is created.
+     * Get or create a bank.
+     *
+     * <p>If the bank already exists, the existing bank is returned. Otherwise a
+     * new bank is created.</p>
      *
      * @param bankName  The name of the bank.
      * @param owner     The banks player owner. Only used if the bank is created.

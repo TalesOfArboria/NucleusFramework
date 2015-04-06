@@ -89,7 +89,7 @@ public class AnvilItemRenameEvent extends Event implements
 	}
 
 	/**
-	 * Get the item that is being renamed..
+	 * Get the item that is being renamed.
 	 */
 	public ItemStack getItem() {
 		return _item;

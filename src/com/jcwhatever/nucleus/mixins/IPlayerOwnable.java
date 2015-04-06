@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 public interface IPlayerOwnable {
 
     /**
-     * Get the id of the object owner.
+     * Get the ID of the object owner.
      */
     @Nullable
     UUID getOwnerId();
@@ -46,7 +46,7 @@ public interface IPlayerOwnable {
     /**
      * Set the object owner.
      *
-     * @param ownerId  The id of the player owner.
+     * @param ownerId  The ID of the player owner.
      *
      * @return True if change is successful.
      */

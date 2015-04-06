@@ -73,7 +73,7 @@ public class SignInteractEvent extends Event
 	}
 
 	/**
-	 * Get the player that interacted with the sign..
+	 * Get the player that interacted with the sign.
 	 */
 	@Override
 	public Player getPlayer() {
@@ -109,8 +109,7 @@ public class SignInteractEvent extends Event
 	}
 
 	/**
-	 * Determine if the player will be able to
-	 * use the item in hand.
+	 * Determine if the player will be able to use the item in hand.
 	 */
 	public Result useItemInHand() {
 		return _parentEvent.useItemInHand();

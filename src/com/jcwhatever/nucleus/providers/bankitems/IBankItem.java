@@ -51,8 +51,10 @@ import java.util.UUID;
 public interface IBankItem extends IPaginator<IBankItem>, Iterable<IBankItem> {
 
     /**
-     * A unique identifier for the account {@link IBankItem}. The id is only
-     * unique to the root item. All sub items share the same ID as their root.
+     * A unique identifier for the account {@link IBankItem}.
+     *
+     * <p>The ID is only unique to the root item. All sub items share the same ID as
+     * their root.</p>
      */
     UUID getId();
 
@@ -62,9 +64,9 @@ public interface IBankItem extends IPaginator<IBankItem>, Iterable<IBankItem> {
     boolean isRootItem();
 
     /**
-     * Get the root item for the current {@link IBankItem}. If the
-     * current items is the the master item, the current item is
-     * returned.
+     * Get the root item for the current {@link IBankItem}.
+     *
+     * <p>If the current items is the the master item, the current item is returned.</p>
      */
     IBankItem getRootItem();
 

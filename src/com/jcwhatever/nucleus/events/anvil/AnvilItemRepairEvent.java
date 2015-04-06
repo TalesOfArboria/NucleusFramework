@@ -71,7 +71,7 @@ public class AnvilItemRepairEvent extends Event
 	}
 
 	/**
-	 * Get the inventory of the anvil that is repairing the item..
+	 * Get the inventory of the anvil that is repairing the item.
 	 */
 	public AnvilInventory getAnvilInventory() {
 		return _anvilInventory;

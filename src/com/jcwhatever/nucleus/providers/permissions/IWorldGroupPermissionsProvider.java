@@ -29,7 +29,6 @@ import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
-import javax.annotation.Nullable;
 
 /**
  * A permissions provider that supports world group permissions.
@@ -74,6 +73,5 @@ public interface IWorldGroupPermissionsProvider extends IPermissionsProvider {
      * @param player  The player to check.
      * @param world   The world.
      */
-    @Nullable
     Collection<IPermissionGroup> getGroups(OfflinePlayer player, World world);
 }

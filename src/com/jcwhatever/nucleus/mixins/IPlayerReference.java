@@ -28,8 +28,7 @@ package com.jcwhatever.nucleus.mixins;
 import org.bukkit.entity.Player;
 
 /**
- * Mixin defines an implementation as being a
- * {@link org.bukkit.entity.Player} wrapper.
+ * Mixin defines an implementation as being a {@link org.bukkit.entity.Player} wrapper.
  */
 public interface IPlayerReference {
 

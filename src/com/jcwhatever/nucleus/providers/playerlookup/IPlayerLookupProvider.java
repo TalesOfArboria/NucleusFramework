@@ -40,12 +40,10 @@ public interface IPlayerLookupProvider extends IProvider {
     /**
      * Get a players unique ID from their player name.
      *
-     * <p>Should return the name of the player even if they
-     * are not logged into the server so long as the player
-     * has previously logged into the server. The implementation
-     * may also provide the name of players who have not logged
-     * in before, but this is not required or guaranteed to be
-     * the case.</p>
+     * <p>Should return the name of the player even if they are not logged into the
+     * server so long as the player has previously logged into the server. The
+     * implementation may also provide the name of players who have not logged
+     * in before, but this is not required or guaranteed to be the case.</p>
      *
      * @param playerName  The player name.
      *
@@ -57,12 +55,10 @@ public interface IPlayerLookupProvider extends IProvider {
     /**
      * Get a player name from a unique player ID.
      *
-     * <p>Should return the name of the player even if they
-     * are not logged into the server so long as the player
-     * has previously logged into the server. The implementation
-     * may also provide the name of players who have not logged
-     * in before, but this is not required or guaranteed to be
-     * the case.</p>
+     * <p>Should return the name of the player even if they are not logged into the
+     * server so long as the player has previously logged into the server. The
+     * implementation may also provide the name of players who have not logged
+     * in before, but this is not required or guaranteed to be the case.</p>
      *
      * @param playerId  The ID of the player.
      *

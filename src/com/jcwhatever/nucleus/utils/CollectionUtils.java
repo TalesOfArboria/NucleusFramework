@@ -42,15 +42,14 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * Collection utilities
+ * Collection utilities.
  */
 public class CollectionUtils {
 
     private CollectionUtils() {}
 
     /**
-     * Search a collection for valid candidates using an
-     * {@link IValidator} to validate.
+     * Search a collection for valid candidates using an {@link IValidator} to validate.
      *
      * @param searchCandidates  The search candidates.
      * @param validator         The validator.

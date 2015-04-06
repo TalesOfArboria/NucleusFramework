@@ -275,11 +275,8 @@ public class ChatPaginator implements IPluginOwned {
     /**
      * Add all objects from a collection.
      *
-     * <p>
-     *     Each item in the collection is 1 item in the paginator.
-     *     Multiple objects can be added per item by placing them in
-     *     an {@link java.lang.Object[]}
-     * </p>
+     * <p>Each item in the collection is 1 item in the paginator. Multiple objects can
+     * be added per item by placing them in an {@link java.lang.Object[]}</p>
      *
      * @param collection  The collection to add.
      */

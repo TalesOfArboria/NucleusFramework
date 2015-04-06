@@ -26,8 +26,8 @@ package com.jcwhatever.nucleus.managed.blockselect;
 
 import org.bukkit.entity.Player;
 
-/*
- * 
+/**
+ * Interface for the global player block selector.
  */
 public interface IBlockSelector {
 

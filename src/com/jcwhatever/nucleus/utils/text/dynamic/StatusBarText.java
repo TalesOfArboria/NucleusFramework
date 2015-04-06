@@ -95,16 +95,14 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Get the character used to indicate
-     * a percentage.
+     * Get the character used to indicate a percentage.
      */
     public char getFullChar() {
         return _fullChar;
     }
 
     /**
-     * Set the character used to indicate
-     * a percentage.
+     * Set the character used to indicate a percentage.
      *
      * @param ch  The character.
      */
@@ -124,16 +122,14 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Get the character used to indicate
-     * a partial percentage.
+     * Get the character used to indicate a partial percentage.
      */
     public char getPartialChar() {
         return _partialChar;
     }
 
     /**
-     * Set the character used to indicate
-     * a partial percentage.
+     * Set the character used to indicate a partial percentage.
      *
      * @param ch  The character.
      */
@@ -153,16 +149,14 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Get the character used to indicate
-     * no percentage.
+     * Get the character used to indicate no percentage.
      */
     public char getEmptyChar() {
         return _emptyChar;
     }
 
     /**
-     * Set the character used to indicate
-     * no percentage.
+     * Set the character used to indicate no percentage.
      *
      * @param ch  The character.
      */
@@ -182,16 +176,14 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Get the character color used to indicate
-     * a percentage.
+     * Get the character color used to indicate a percentage.
      */
     public TextColor getFullColor() {
         return _fullColor;
     }
 
     /**
-     * Set the character color used to indicate
-     * a percentage.
+     * Set the character color used to indicate a percentage.
      *
      * @param color  The color.
      */
@@ -212,16 +204,14 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Get the character color used to indicate
-     * a partial percentage.
+     * Get the character color used to indicate a partial percentage.
      */
     public TextColor getPartialColor() {
         return _partialColor;
     }
 
     /**
-     * Set the character color used to indicate
-     * a partial percentage.
+     * Set the character color used to indicate a partial percentage.
      *
      * @param color  The color.
      */
@@ -242,8 +232,7 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Get the character color used to indicate
-     * no percentage.
+     * Get the character color used to indicate no percentage.
      *
      * @return  The color.
      */
@@ -252,8 +241,7 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Set the character color used to indicate
-     * no percentage.
+     * Set the character color used to indicate no percentage.
      *
      * @param color  The color.
      */
@@ -274,8 +262,7 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Get the current percentage displayed by
-     * the bar.
+     * Get the current percentage displayed by the bar.
      *
      * @return  The percent is a number between 0.0 and 1.0
      * where 1.0 = 100%.
@@ -285,8 +272,7 @@ public class StatusBarText implements IDynamicText {
     }
 
     /**
-     * Set the current percentage displayed by
-     * the bar.
+     * Set the current percentage displayed by the bar.
      *
      * @param percent  The percent. The percent is a number between 0.0
      *                 and 1.0 where 1.0 = 100%

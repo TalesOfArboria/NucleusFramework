@@ -29,8 +29,7 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 
 /**
- * Interface for an object that represents a
- * Minecraft title.
+ * Interface for an object that represents a Minecraft title.
  */
 public interface ITitle {
 

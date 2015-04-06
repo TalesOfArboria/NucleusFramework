@@ -71,8 +71,8 @@ public class QueuedText implements IDynamicText {
     }
 
     /**
-     * Get a builder used to add queued events to
-     * the {@link QueuedText} instance.
+     * Get a builder used to add queued events to the {@link QueuedText}
+     * instance.
      */
     public QueueTextBuilder getBuilder() {
         return new QueueTextBuilder();

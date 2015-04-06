@@ -247,7 +247,7 @@ public class CommandException extends Exception {
     // get inline command help usage
     private static String getInlineUsage(AbstractCommand command) {
         UsageGenerator usageGenerator = new UsageGenerator();
-        return usageGenerator.generate(command, command.getInfo().getRootSessionName(),
+        return usageGenerator.generate(command, command.getInfo().getRootAliasName(),
                 UsageGenerator.INLINE_HELP);
     }
 

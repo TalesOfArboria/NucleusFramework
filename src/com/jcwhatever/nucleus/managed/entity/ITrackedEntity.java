@@ -44,7 +44,7 @@ import java.util.UUID;
 public interface ITrackedEntity {
 
     /**
-     * The entities unique id.
+     * The entities unique ID.
      */
     UUID getUniqueId();
 

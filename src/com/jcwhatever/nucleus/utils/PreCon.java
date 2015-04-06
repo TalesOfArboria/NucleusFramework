@@ -30,8 +30,8 @@ import com.jcwhatever.nucleus.utils.text.TextUtils;
 import javax.annotation.Nullable;
 
 /**
- * Static methods used at the beginning of methods
- * to check method arguments quickly.
+ * Static methods used at the beginning of methods to check method
+ * arguments quickly.
  *
  * All methods throw an exception if conditions are not met.
  */

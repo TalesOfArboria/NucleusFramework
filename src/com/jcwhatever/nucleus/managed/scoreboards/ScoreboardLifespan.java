@@ -35,14 +35,18 @@ package com.jcwhatever.nucleus.managed.scoreboards;
 public enum ScoreboardLifespan {
 
     /**
-     * The scoreboard is not persisted. If the player views another scoreboard,
-     * the transient scoreboard is discarded.
+     * The scoreboard is not persisted.
+     *
+     * <p>If the player views another scoreboard, the transient scoreboard is
+     * discarded.</p>
      */
     TRANSIENT,
     /**
-     * The scoreboard is persisted. If the player views another scoreboard,
-     * the persistent scoreboard is held and re-shown once the player is
-     * no longer viewing the other scoreboard.
+     * The scoreboard is persisted.
+     *
+     * <p>If the player views another scoreboard, the persistent scoreboard is
+     * held and re-shown once the player is no longer viewing the other
+     * scoreboard.</p>
      */
     PERSISTENT
 }

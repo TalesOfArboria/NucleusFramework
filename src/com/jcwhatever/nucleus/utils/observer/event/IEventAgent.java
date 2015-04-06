@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
 import javax.annotation.Nullable;
 
 /**
- * An agent between producers of events and {@link IEventSubscriber}'s
- * registered with the agent.
+ * An agent between producers of events and {@link IEventSubscriber}'s registered
+ * with the agent.
  *
  * <p>The agent accepts {@link com.jcwhatever.nucleus.utils.observer.ISubscriber}
  * instances for registration as all {@link ISubscriberAgent} implementations must.
@@ -38,13 +38,18 @@ import javax.annotation.Nullable;
  * wish to receive events from the agent. The implementation decides how
  * the non-event subscribers are used but must at the least hold a reference
  * to the subscriber until it un-registers.</p>
+ *
+ * <p>If you're usage context does not require event priorities and event cancelling,
+ * it is recommended to use {@link com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber}
+ * in conjunction with {@link com.jcwhatever.nucleus.utils.observer.update.IUpdateAgent}
+ * instead.</p>
  */
 public interface IEventAgent<E> extends ISubscriberAgent {
 
     /**
-     * Call by an event producer to notify event subscribers.
+     * Invoked by an event producer to notify event subscribers.
      *
-     * @param caller  Optional object that is the caller of the event
+     * @param caller  Optional object that is the caller of the event.
      * @param event   The event.
      */
     void call(@Nullable Object caller, E event);

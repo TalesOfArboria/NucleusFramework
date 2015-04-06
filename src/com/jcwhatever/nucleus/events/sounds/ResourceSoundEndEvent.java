@@ -35,8 +35,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when a resource pack sound that was played
- * to a player finishes.
+ * Called when a resource pack sound that was played to a player finishes.
  */
 public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 	
@@ -49,16 +48,16 @@ public class ResourceSoundEndEvent extends Event implements IPlayerReference {
 	/**
 	 * Constructor.
 	 *
-	 * @param p         The player the sound was played to.
+	 * @param player    The player the sound was played to.
 	 * @param sound     The sound that ended.
 	 * @param settings  The settings the sound was played with.
 	 */
-	public ResourceSoundEndEvent(Player p, ResourceSound sound, SoundSettings settings) {
-		PreCon.notNull(p);
+	public ResourceSoundEndEvent(Player player, ResourceSound sound, SoundSettings settings) {
+		PreCon.notNull(player);
 		PreCon.notNull(sound);
 		PreCon.notNull(settings);
 
-		_player = p;
+		_player = player;
 		_sound = sound;
 		_settings = settings;
 	}

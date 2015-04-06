@@ -69,7 +69,7 @@ public interface IEvaluatedScript extends IDisposable {
     boolean canInvoke();
 
     /**
-     * Invoke a function in the script using the.
+     * Invoke a function in the script.
      *
      * <p>Returns null if the method {@link #canInvoke}
      * returns false.</p>

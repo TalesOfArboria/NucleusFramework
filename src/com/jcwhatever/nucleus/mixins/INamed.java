@@ -25,8 +25,7 @@
 package com.jcwhatever.nucleus.mixins;
 
 /**
- * Mixin interface that represents an object
- * that has a name.
+ * Mixin interface that represents an object that has a name.
  */
 public interface INamed {
 

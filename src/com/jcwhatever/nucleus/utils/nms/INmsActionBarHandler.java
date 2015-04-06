@@ -24,15 +24,21 @@
 
 package com.jcwhatever.nucleus.utils.nms;
 
+import com.jcwhatever.nucleus.managed.actionbar.ActionBars;
+import com.jcwhatever.nucleus.managed.actionbar.IActionBar;
+import com.jcwhatever.nucleus.managed.actionbar.IPersistentActionBar;
+import com.jcwhatever.nucleus.managed.actionbar.ITimedActionBar;
+
 import org.bukkit.entity.Player;
 
 /**
  * Interface for NucleusFramework's Minecraft Action Bar handler.
  *
  * @see NmsUtils
- * @see com.jcwhatever.nucleus.internal.actionbar.ActionBar
- * @see com.jcwhatever.nucleus.internal.actionbar.PersistentActionBar
- * @see com.jcwhatever.nucleus.internal.actionbar.TimedActionBar
+ * @see ActionBars
+ * @see IActionBar
+ * @see IPersistentActionBar
+ * @see ITimedActionBar
  */
 public interface INmsActionBarHandler extends INmsHandler {
 
@@ -44,8 +50,6 @@ public interface INmsActionBarHandler extends INmsHandler {
      *
      * @param player   The player to send the text to.
      * @param rawText  The raw text.
-     *
-     * @return  The json converted text.
      */
     void send(Player player, String rawText);
 

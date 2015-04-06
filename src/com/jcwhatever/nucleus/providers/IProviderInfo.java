@@ -36,31 +36,31 @@ public interface IProviderInfo extends INamedInsensitive {
     /**
      * Get the module version as a displayable string.
      */
-    public String getVersion();
+    String getVersion();
 
     /**
      * Get the logical version of the module.
      */
-    public int getLogicalVersion();
+    int getLogicalVersion();
 
     /**
      * Get the modules description.
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Get the class name of the module.
      */
-    public String getModuleClassName();
+    String getModuleClassName();
 
     /**
      * Get the names of Bukkit plugins the module depends on.
      */
-    public List<String> getBukkitDepends();
+    List<String> getBukkitDepends();
 
     /**
      * Get the names of Bukkit plugins the module can depend on but
      * does not require.
      */
-    public List<String> getBukkitSoftDepends();
+    List<String> getBukkitSoftDepends();
 }

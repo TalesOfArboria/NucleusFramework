@@ -53,6 +53,25 @@ public class TextFormatterSettings {
     private volatile char _escapedCache;
 
     /**
+     * Specifies how a formatting aspects are handled.
+     */
+    public enum FormatPolicy {
+
+        /**
+         * Formatting component is formatted.
+         */
+        FORMAT,
+        /**
+         * Ignored the formatting component, left as is.
+         */
+        IGNORE,
+        /**
+         * Remove the formatting component.
+         */
+        REMOVE
+    }
+
+    /**
      * Constructor.
      *
      * @param formatters  A map of formatters to use.
@@ -154,8 +173,8 @@ public class TextFormatterSettings {
     }
 
     /**
-     * Determine if format arguments are formatted before
-     * being inserted into the format template.
+     * Determine if format arguments are formatted before being inserted into the
+     * format template.
      */
     public boolean isArgsFormatted() {
         return _isArgsFormatted;
@@ -226,16 +245,15 @@ public class TextFormatterSettings {
     }
 
     /**
-     * Determine if line returns sequences should be formatted
-     * into actual line returns, ignored, or removed.
+     * Determine if line returns sequences should be formatted into actual line returns,
+     * ignored, or removed.
      */
     public FormatPolicy getLineReturnPolicy() {
         return _lineReturnPolicy;
     }
 
     /**
-     * Set line return sequences formatted into actual line returns,
-     * ignored, or removed.
+     * Set line return sequences formatted into actual line returns, ignored, or removed.
      *
      * @param policy  The format policy to use.
      *
@@ -250,16 +268,14 @@ public class TextFormatterSettings {
     }
 
     /**
-     * Determine if unicode sequences should be formatted
-     * into unicode characters.
+     * Determine if unicode sequences should be formatted into unicode characters.
      */
     public FormatPolicy getUnicodePolicy() {
         return _unicodePolicy;
     }
 
     /**
-     * Set unicode sequences formatted into unicode characters,
-     * ignored, or removed.
+     * Set unicode sequences formatted into unicode characters, ignored, or removed.
      *
      * @param policy  The format policy to use.
      *
@@ -274,16 +290,14 @@ public class TextFormatterSettings {
     }
 
     /**
-     * Determine if color tags should be formatted into color codes,
-     * ignored, or removed.
+     * Determine if color tags should be formatted into color codes, ignored, or removed.
      */
     public FormatPolicy getColorPolicy() {
         return _colorPolicy;
     }
 
     /**
-     * Set color tags formatted into color codes,
-     * ignored, or removed.
+     * Set color tags formatted into color codes, ignored, or removed.
      *
      * @param policy  The format policy to use.
      *
@@ -298,8 +312,7 @@ public class TextFormatterSettings {
     }
 
     /**
-     * Determine if tags (excluding color tags) should be formatted,
-     * ignored, or removed.
+     * Determine if tags (excluding color tags) should be formatted, ignored, or removed.
      */
     public FormatPolicy getTagPolicy() {
         return _tagPolicy;
@@ -338,23 +351,5 @@ public class TextFormatterSettings {
 
     Map<String, ITagFormatter> getFormatMap() {
         return _formatters;
-    }
-
-    /**
-     * Specifies how a formatting aspects are handled.
-     */
-    public enum FormatPolicy {
-        /**
-         * Formatting component is formatted.
-         */
-        FORMAT,
-        /**
-         * Ignored the formatting component, left as is.
-         */
-        IGNORE,
-        /**
-         * Remove the formatting component.
-         */
-        REMOVE
     }
 }

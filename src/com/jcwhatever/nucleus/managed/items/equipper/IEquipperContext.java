@@ -31,7 +31,7 @@ import org.bukkit.entity.EntityType;
 import javax.annotation.Nullable;
 
 /**
- * An entity equipper that is separate from the global equipper context.
+ * An entity item equipper that is separate from the global equipper context.
  */
 public interface IEquipperContext extends IPluginOwned {
 
@@ -43,7 +43,7 @@ public interface IEquipperContext extends IPluginOwned {
     void setDefaultEquipper(IEquipper equipper);
 
     /**
-     * Register an equipper instance.
+     * Set equipper used for the specified entity type..
      *
      * @param type      The entity type the equipper is for.
      * @param equipper  The equipper or null to remove.
@@ -51,7 +51,9 @@ public interface IEquipperContext extends IPluginOwned {
     void setEquipper(EntityType type, @Nullable IEquipper equipper);
 
     /**
-     * Register an equipper instance.
+     * Remove equipper from the specified entity type.
+     *
+     * <p>The default equipper is used.</p>
      *
      * @param type  The entity type the equipper is for.
      */
@@ -61,6 +63,8 @@ public interface IEquipperContext extends IPluginOwned {
      * Get an equipper for the specified entity type.
      *
      * @param type  The entity type.
+     *
+     * @return  The entity type specific equipper or the default equipper.
      */
     IEquipper getEquipper(EntityType type);
 }

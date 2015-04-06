@@ -77,12 +77,24 @@ public class CachedReflectedType {
         loadConstructors();
     }
 
+    /**
+     * Get all constructors with the specified number of parameters.
+     *
+     * @param count  The parameter count.
+     */
     public Collection<Constructor<?>> constructorsByCount(int count) {
         synchronized (_constructors) {
             return CollectionUtils.unmodifiableList(_constructors.get(count));
         }
     }
 
+    /**
+     * Get a field by name.
+     *
+     * @param name  The name of the field.
+     *
+     * @return the {@link ReflectedField} or null if not found.
+     */
     @Nullable
     public ReflectedField fieldByName(String name) {
         synchronized (_fieldsByName) {
@@ -90,6 +102,13 @@ public class CachedReflectedType {
         }
     }
 
+    /**
+     * Get a static field by name.
+     *
+     * @param name  The name of the field.
+     *
+     * @return  The {@link ReflectedField} or null if not found.
+     */
     @Nullable
     public ReflectedField staticFieldByName(String name) {
         synchronized (_staticFieldsByName) {
@@ -97,24 +116,45 @@ public class CachedReflectedType {
         }
     }
 
+    /**
+     * Get all fields of a specified value type.
+     *
+     * @param type  The value type class.
+     */
     public Collection<ReflectedField> fieldsByType(Class<?> type) {
         synchronized (_fieldsByType) {
             return CollectionUtils.unmodifiableList(_fieldsByType.get(type));
         }
     }
 
+    /**
+     * Get all methods with the specified name.
+     *
+     * @param name  The method name.
+     */
     public Collection<Method> methodsByName(String name) {
         synchronized (_methods) {
             return CollectionUtils.unmodifiableList(_methods.get(name));
         }
     }
 
+    /**
+     * Get all static methods with the specified name.
+     *
+     * @param name  The static method name.
+     */
     public Collection<Method> staticMethodsByName(String name) {
         synchronized (_staticMethods) {
             return CollectionUtils.unmodifiableList(_staticMethods.get(name));
         }
     }
 
+    /**
+     * Get the encapsulated class.
+     */
+    public Class<?> getHandle() {
+        return _clazz;
+    }
 
     // load all constructors from the encapsulated class.
     private void loadConstructors() {
@@ -163,12 +203,5 @@ public class CachedReflectedType {
                 _methods.put(method.getName(), method);
             }
         }
-    }
-
-    /**
-     * Get the encapsulated class.
-     */
-    public Class<?> getHandle() {
-        return _clazz;
     }
 }

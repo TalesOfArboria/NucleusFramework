@@ -76,9 +76,9 @@ public class UsageGenerator {
      */
     public String generate(AbstractCommand command) {
 
-        String rootCommandName = command.getInfo().getRootSessionName();
+        String rootCommandName = command.getInfo().getRootAliasName();
         if (rootCommandName == null) {
-            rootCommandName = command.getInfo().getSessionName();
+            rootCommandName = command.getInfo().getCurrentAlias();
         }
 
         return generate(command, rootCommandName);

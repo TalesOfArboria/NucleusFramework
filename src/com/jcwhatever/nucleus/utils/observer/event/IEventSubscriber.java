@@ -29,6 +29,14 @@ import javax.annotation.Nullable;
 
 /**
  * A type that subscribes to events received from an {@link IEventAgent}.
+ *
+ * <p>Usage is similar in context to an update subscriber except the event subscriber
+ * is more complex.</p>
+ *
+ * <p>If you're usage context does not require event priorities and event cancelling,
+ * it is recommended to use {@link com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber}
+ * in conjunction with {@link com.jcwhatever.nucleus.utils.observer.update.IUpdateAgent}
+ * instead.</p>
  */
 public interface IEventSubscriber<E> extends ISubscriber, Comparable<IEventSubscriber<E>> {
 
@@ -44,7 +52,7 @@ public interface IEventSubscriber<E> extends ISubscriber, Comparable<IEventSubsc
     boolean isCancelIgnored();
 
     /**
-     * Called by an {@link IEventAgent} to notify the subscriber
+     * Invoked by an {@link IEventAgent} to notify the subscriber
      * of an event.
      *
      * @param source  The source of the event.

@@ -45,6 +45,7 @@ public class NpcSpawnEvent extends NpcEvent implements Cancellable, ICancellable
      * Specifies a reason for an NPC to spawn.
      */
     public enum NpcSpawnReason {
+
         /**
          * The NPC was invoked to spawn by a plugin or script.
          */

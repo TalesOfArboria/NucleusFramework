@@ -37,7 +37,7 @@ import org.bukkit.scoreboard.Scoreboard;
  * then removed, the previous scoreboard is applied. This does not apply to transient
  * scoreboards which are removed when another scoreboard is shown.</p>
  *
- * <p>When the scoreboard is no longer in use, invoked the {@link #dispose} method to
+ * <p>When the scoreboard is no longer in use, invoke the {@link #dispose} method to
  * unregister objectives and flag the {@link IManagedScoreboard} as disposed.</p>
  *
  * @see IScoreboardTracker

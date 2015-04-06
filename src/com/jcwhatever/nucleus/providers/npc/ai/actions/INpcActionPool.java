@@ -30,10 +30,9 @@ import com.jcwhatever.nucleus.providers.npc.ai.INpcBehaviour;
 /**
  * A pool of {@link INpcAction} for a goal or action to use.
  *
- * <p>The pool is used to select one of many possible actions. The action chosen to run
- * is based on the result of its {@link INpcBehaviour#canRun}
- * method and the cost of running the action as determined by invoking
- * {@link INpcBehaviour#getCost}.</p>
+ * <p>The pool is used to select one of many possible actions. The action chosen to
+ * run is based on the result of its {@link INpcBehaviour#canRun} method and the
+ * cost of running the action as determined by invoking {@link INpcBehaviour#getCost}.</p>
  */
 public interface INpcActionPool extends INpcBehaviourPool<INpcAction> {
 }

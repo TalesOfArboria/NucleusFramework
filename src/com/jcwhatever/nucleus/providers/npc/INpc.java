@@ -45,14 +45,17 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
     INpcRegistry getRegistry();
 
     /**
-     * Get the NPC's personal name. This is the name displayed
-     * above the NPC entity.
+     * Get the NPC's personal name.
+     *
+     * <p>This is the name displayed above the NPC entity.</p>
      */
     String getNPCName();
 
     /**
-     * Spawn the NPC in the specified location. If the NPC is already spawned,
-     * the NPC is teleported to the new location.
+     * Spawn the NPC in the specified location.
+     *
+     * <p>If the NPC is already spawned, the NPC is teleported to the
+     * new location.</p>
      *
      * <p>If the NPC is teleported, no NPC spawn events are called.</p>
      *

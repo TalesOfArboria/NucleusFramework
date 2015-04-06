@@ -197,8 +197,8 @@ public final class InventoryUtils {
     }
 
     /**
-     * Gets the number of items of the specified stack that
-     * can be stored in the specified inventory.
+     * Gets the number of items of the specified stack that can be stored in
+     * the specified inventory.
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
@@ -208,8 +208,8 @@ public final class InventoryUtils {
     }
 
     /**
-     * Gets the number of items of the specified stack that
-     * can be stored in the specified inventory.
+     * Gets the number of items of the specified stack that can be stored in
+     * the specified inventory.
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
@@ -243,8 +243,8 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified inventory
-     * for the specified stack.
+     * Determine if there is enough room in the specified inventory for the
+     * specified stack.
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.
@@ -254,8 +254,8 @@ public final class InventoryUtils {
     }
 
     /**
-     * Determine if there is enough room in the specified inventory
-     * for the specified stack.
+     * Determine if there is enough room in the specified inventory for the
+     * specified stack.
      *
      * @param inventory  The inventory to check.
      * @param itemStack  The {@link org.bukkit.inventory.ItemStack} to check.

@@ -74,9 +74,11 @@ public class Npcs {
     }
 
     /**
-     * Get an NPC from an entity. If the entity is an NPC from any registry
-     * created by the provider, the entities {@link com.jcwhatever.nucleus.providers.npc.INpc} instance will
-     * be returned.
+     * Get an {@link INpc} from an {@link Entity}.
+     *
+     * <p>If the entity is an NPC from any registry created by the provider,
+     * the entities {@link com.jcwhatever.nucleus.providers.npc.INpc} instance
+     * will be returned.</p>
      *
      * @param entity The possible NPC {@link org.bukkit.entity.Entity}.
      *

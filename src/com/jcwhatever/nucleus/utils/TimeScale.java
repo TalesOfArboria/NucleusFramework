@@ -25,8 +25,7 @@
 package com.jcwhatever.nucleus.utils;
 
 /**
- * Specifies the time scale of a time unit of
- * measure.
+ * Specifies the time scale of a time unit of measure.
  */
 public enum TimeScale {
     /**
@@ -61,8 +60,8 @@ public enum TimeScale {
     }
 
     /**
-     * Get the factor to apply to a unit of time
-     * of the time scale to convert it to milliseconds.
+     * Get the factor to apply to a unit of time of the time scale to convert
+     * it to milliseconds.
      */
     public int getTimeFactor() {
         return _timeFactor;

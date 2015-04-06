@@ -49,8 +49,9 @@ public interface IBankItemsBank extends INamedInsensitive {
     Date getCreatedDate();
 
     /**
-     * Get the last access date/time of the bank. If the bank has
-     * never been accessed, the created date is returned.
+     * Get the last access date/time of the bank.
+     *
+     * <p>If the bank has never been accessed, the created date is returned.</p>
      */
     Date getLastAccess();
 
@@ -72,8 +73,10 @@ public interface IBankItemsBank extends INamedInsensitive {
     IBankItemsAccount getAccount(UUID playerId);
 
     /**
-     * Get or create a player bank account. If the account already exists,
-     * the existing account is returned. Otherwise a new one is created.
+     * Get or create a player bank account.
+     *
+     * <p>If the account already exists, the existing account is returned.
+     * Otherwise a new one is created.</p>
      *
      * @param playerId  The ID of the player account owner.
      */
@@ -83,7 +86,6 @@ public interface IBankItemsBank extends INamedInsensitive {
      * Delete a players account from the bank.
      *
      * @param playerId  The ID of the player.
-     * @return
      */
     boolean deleteAccount(UUID playerId);
 }

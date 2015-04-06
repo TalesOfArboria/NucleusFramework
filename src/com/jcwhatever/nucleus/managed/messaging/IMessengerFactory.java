@@ -35,8 +35,7 @@ import javax.annotation.Nullable;
 public interface IMessengerFactory {
 
     /**
-     * Gets or creates a singleton instance of a messenger
-     * for the specified plugin.
+     * Gets or creates a singleton instance of a messenger for the specified plugin.
      *
      * @param plugin  The plugin.
      */

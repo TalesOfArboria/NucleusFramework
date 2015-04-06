@@ -181,8 +181,7 @@ public abstract class IterationTask extends QueueTask {
 
                         onSegmentEnd(i);
 
-                        // schedule next segment
-                        // Scheduler.runTaskLater(getPlugin(), _delay, this);
+                        // end segment
                         return;
                     }
 

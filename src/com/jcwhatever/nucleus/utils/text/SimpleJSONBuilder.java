@@ -277,7 +277,8 @@ public class SimpleJSONBuilder {
     }
 
     // generate a text property segment.
-    private static void getJsonTextSegment(Appendable buffer, TextComponent segment, boolean escape) throws IOException {
+    private static void getJsonTextSegment(Appendable buffer, TextComponent segment, boolean escape)
+            throws IOException {
         buffer.append("text:");
 
         if (escape)

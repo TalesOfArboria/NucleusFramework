@@ -32,15 +32,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Used for types that need to keep multiple update agents for multiple
- * update contexts.
+ * Used for types that need to keep multiple update agents for multiple update contexts.
  *
  * <p>{@link NamedUpdateAgents} uses a lazy initialization approach to
- * prevent using resources if they are not needed. Calling the {@link #getAgent}
+ * prevent using resources if they are not needed. Invoking the {@link #getAgent}
  * method always returns a result. If the agent is not present, a new one is created.</p>
  *
  * <p>Use {@link #hasAgent} to determine if the agent has been created yet.</p>
  *
+ * <p>Use {@link #update} to send updates to subscribers of a named agent without causing
+ * the unnecessary object initialization that would happen if the update were to be done
+ * by invoking {@link #getAgent} first.</p>
  */
 public class NamedUpdateAgents {
 
@@ -66,8 +68,7 @@ public class NamedUpdateAgents {
     }
 
     /**
-     * Determine if the tracker contains an agent
-     * by a certain name.
+     * Determine if the tracker contains an agent by a certain name.
      *
      * @param name The name of the agent.
      */

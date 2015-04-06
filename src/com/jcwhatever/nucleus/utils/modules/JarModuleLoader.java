@@ -494,7 +494,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
      *
      * @return  True if valid, false to deny.
      */
-    protected boolean isValidJarFile(@SuppressWarnings("unused") JarFile jarFile) {
+    protected boolean isValidJarFile(JarFile jarFile) {
         return true;
     }
 
@@ -507,7 +507,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
      *
      * @return  True if valid, false to deny.
      */
-    protected boolean isValidClassName(@SuppressWarnings("unused") String className) {
+    protected boolean isValidClassName(String className) {
         return true;
     }
 
@@ -520,7 +520,7 @@ public abstract class JarModuleLoader<T> implements IPluginOwned {
      *
      * @return  True if valid, false to deny.
      */
-    protected boolean isValidType(@SuppressWarnings("unused") Class<T> type) {
+    protected boolean isValidType(Class<T> type) {
         return true;
     }
 

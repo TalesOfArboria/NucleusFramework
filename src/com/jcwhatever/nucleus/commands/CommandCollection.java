@@ -73,8 +73,8 @@ public class CommandCollection implements ICommandOwner, Iterable<AbstractComman
     }
 
     /**
-     * Determine if the collection has a command that
-     * can be called by the specified name.
+     * Determine if the collection has a command that can be called by the
+     * specified name.
      *
      * @param name  The command name.
      */
@@ -85,8 +85,7 @@ public class CommandCollection implements ICommandOwner, Iterable<AbstractComman
     }
 
     /**
-     * Determine if the collection has a command of the
-     * specified type class.
+     * Determine if the collection has a command of the specified type class.
      *
      * @param commandClass  The command class.
      */
@@ -97,8 +96,7 @@ public class CommandCollection implements ICommandOwner, Iterable<AbstractComman
     }
 
     /**
-     * Get a command from the collection that can be
-     * called by the specified name.
+     * Get a command from the collection that can be called by the specified name.
      *
      * @param name  The name of the command.
      *
@@ -113,8 +111,7 @@ public class CommandCollection implements ICommandOwner, Iterable<AbstractComman
     }
 
     /**
-     * Get a command from the collection that is of
-     * the specified type class.
+     * Get a command from the collection that is of the specified type class.
      *
      * @param commandClass  The command class.
      *
@@ -133,8 +130,8 @@ public class CommandCollection implements ICommandOwner, Iterable<AbstractComman
     }
 
     /**
-     * Get a command using the first argument of a string array
-     * as the commands call name.
+     * Get a command using the first argument of a string array as the commands
+     * call name.
      *
      * @param commands  The string array.
      *
@@ -151,8 +148,7 @@ public class CommandCollection implements ICommandOwner, Iterable<AbstractComman
     }
 
     /**
-     * Get all the call names used by the commands in
-     * the collection.
+     * Get all the call names used by the commands in the collection.
      */
     @Override
     public List<String> getCommandNames() {
@@ -256,8 +252,8 @@ public class CommandCollection implements ICommandOwner, Iterable<AbstractComman
     }
 
     /**
-     * Remove the command that can be called by the specified name
-     * and all other call names used by it.
+     * Remove the command that can be called by the specified name and all other
+     * call names used by it.
      *
      * <p>Effectively removes the command.</p>
      *

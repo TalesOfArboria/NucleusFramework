@@ -332,7 +332,7 @@ public abstract class AbstractCommand
 
         // add usage and description
         pagin.add(_usageGenerator.generate(this,
-                getInfo().getRootSessionName(), template), description);
+                getInfo().getRootAliasName(), template), description);
 
         if (!paramDescriptions.isEmpty()) {
 

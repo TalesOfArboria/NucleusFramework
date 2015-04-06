@@ -53,14 +53,18 @@ public interface INpcState {
 
     /**
      * Get the NPC entity location or the location the entity was add
-     * when last despawned. If the entity was never spawned, returns null.
+     * when last despawned.
+     *
+     * <p>If the entity was never spawned, returns null.</p>
      */
     @Nullable
     Location getLocation();
 
     /**
      * Get the NPC entity location or the location the entity was add
-     * when last despawned. If the entity was never spawned, returns null.
+     * when last despawned.
+     *
+     * <p>If the entity was never spawned, returns null.</p>
      *
      * <p>Copies the result location values into the provided location instance.</p>
      *

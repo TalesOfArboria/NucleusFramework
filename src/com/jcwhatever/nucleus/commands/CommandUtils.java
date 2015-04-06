@@ -59,8 +59,7 @@ import javax.annotation.Nullable;
  */
 public class CommandUtils implements IPluginOwned {
 
-    @Localizable
-    private static final String _SAME_WORLD_REGION_SELECT =
+    @Localizable private static final String _SAME_WORLD_REGION_SELECT =
             "You need to be in the same world as the region selection.";
 
     @Localizable private static final String _INVALID_REGION =
@@ -108,9 +107,6 @@ public class CommandUtils implements IPluginOwned {
         _msg = Nucleus.getMessengerFactory().create(plugin);
     }
 
-    /**
-     * Get the owning plugin
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
@@ -172,54 +168,53 @@ public class CommandUtils implements IPluginOwned {
      * Set the specified players region selection.
      * Handles error message if any.
      *
-     * @param p   The player
-     * @param p1  The first location of the selection.
-     * @param p2  The second location of the selection.
+     * @param player  The player
+     * @param p1      The first location of the selection.
+     * @param p2      The second location of the selection.
      */
-    public boolean setRegionSelection(Player p, Location p1, Location p2) {
-        PreCon.notNull(p);
+    public boolean setRegionSelection(Player player, Location p1, Location p2) {
+        PreCon.notNull(player);
         PreCon.notNull(p1);
         PreCon.notNull(p2);
 
-        if (!p.getWorld().equals(p1.getWorld())) {
-            tellError(p, NucLang.get(_SAME_WORLD_REGION_SELECT));
+        if (!player.getWorld().equals(p1.getWorld())) {
+            tellError(player, NucLang.get(_SAME_WORLD_REGION_SELECT));
             return false;
         }
 
         if (!p1.getWorld().equals(p2.getWorld())) {
-            tellError(p, NucLang.get(_INVALID_REGION));
+            tellError(player, NucLang.get(_INVALID_REGION));
             return false;
         }
 
         boolean isSuccess = Nucleus.getProviders()
-                .getRegionSelection().setSelection(p, new SimpleRegionSelection(p1, p2));
+                .getRegionSelection().setSelection(player, new SimpleRegionSelection(p1, p2));
 
         if (!isSuccess) {
-            tellError(p, NucLang.get(_SET_SELECTION_FAILED));
+            tellError(player, NucLang.get(_SET_SELECTION_FAILED));
             return false;
         }
 
         return true;
-
     }
 
     /**
      * Get the specified players current region selection.
      * Handles error message if any.
      *
-     * @param p  The player
+     * @param player  The player
      *
      * @return  {@link SimpleRegionSelection} object that defines the selection.
      */
     @Nullable
-    public IRegionSelection getRegionSelection(Player p) {
-        PreCon.notNull(p);
+    public IRegionSelection getRegionSelection(Player player) {
+        PreCon.notNull(player);
 
-        IRegionSelection selection = RegionSelection.get(p);
+        IRegionSelection selection = RegionSelection.get(player);
 
         // Check for region selection
         if (selection == null) {
-            tellError(p, NucLang.get(_NO_REGION_SELECTED));
+            tellError(player, NucLang.get(_NO_REGION_SELECTED));
             return null;
         }
 
@@ -254,7 +249,8 @@ public class CommandUtils implements IPluginOwned {
      * @param sender           The command sender
      * @param settings         The settings manager that contains and defines possible settings.
      * @param args             The command arguments provided by the command sender.
-     * @param propertyArgName  The name of the command argument parameter that contains the property name of the setting.
+     * @param propertyArgName  The name of the command argument parameter that contains the
+     *                         property name of the setting.
      *
      * @return True if completed successfully.
      *
@@ -286,8 +282,10 @@ public class CommandUtils implements IPluginOwned {
      * @param sender           The command sender
      * @param settings         The settings manager that contains and defines possible settings.
      * @param args             The command arguments provided by the command sender.
-     * @param propertyArgName  The name of the command argument parameter that contains the property name of the setting..
-     * @param valueArgName     The name of the command argument parameter that contains the value of the property.
+     * @param propertyArgName  The name of the command argument parameter that contains the property
+     *                         name of the setting.
+     * @param valueArgName     The name of the command argument parameter that contains the value
+     *                         of the property.
      *
      * @return  True if operation completed successfully.
      *
@@ -307,8 +305,10 @@ public class CommandUtils implements IPluginOwned {
      * @param sender           The command sender
      * @param settings         The settings manager that contains and defines possible settings.
      * @param args             The command arguments provided by the command sender.
-     * @param propertyArgName  The name of the command argument parameter that contains the property name of the setting..
-     * @param valueArgName     The name of the command argument parameter that contains the value of the property.
+     * @param propertyArgName  The name of the command argument parameter that contains the property name
+     *                         of the setting.
+     * @param valueArgName     The name of the command argument parameter that contains the value of the
+     *                         property.
      * @param onSuccess        A runnable to run if the setting is successfully set.
      *
      * @return  True if operation completed successfully.

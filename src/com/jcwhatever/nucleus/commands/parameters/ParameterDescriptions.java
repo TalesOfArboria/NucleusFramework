@@ -40,8 +40,8 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Parses parameter description from a commands info annotation
- * and makes them available.
+ * Parses parameter description from a commands info annotation and makes them
+ * available.
  */
 public class ParameterDescriptions implements IPluginOwned {
 
@@ -63,17 +63,13 @@ public class ParameterDescriptions implements IPluginOwned {
         parseDescriptions();
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _command.getPlugin();
     }
 
     /**
-     * Determine if there are descriptions
-     * available.
+     * Determine if there are descriptions available.
      */
     public boolean isEmpty() {
         return _descriptionMap.isEmpty();

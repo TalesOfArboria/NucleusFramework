@@ -57,8 +57,7 @@ public class FlagParameter implements INamed {
     }
 
     /**
-     * Get the index order of the flag in the
-     * annotation flags definition.
+     * Get the index order of the flag in the annotation flags definition.
      */
     public int getDefinitionIndex() {
         return _definitionIndex;

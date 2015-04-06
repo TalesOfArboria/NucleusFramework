@@ -151,7 +151,6 @@ public class UpdateAgent<A> implements IUpdateAgent<A>, IDisposable {
         _isDisposed = true;
     }
 
-
     private Set<ISubscriber> subscribers() {
 
         if (_subscribers == null) {

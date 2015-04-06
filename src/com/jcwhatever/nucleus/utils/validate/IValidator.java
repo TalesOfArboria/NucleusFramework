@@ -34,7 +34,7 @@ package com.jcwhatever.nucleus.utils.validate;
 public interface IValidator<E> {
 
     /**
-     * Called to validate an entry.
+     * Invoked to validate an entry.
      *
      * @param element  The element to be validated.
      */

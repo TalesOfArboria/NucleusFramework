@@ -142,6 +142,7 @@ public final class TextUtils {
      * Specify case sensitivity.
      */
     public enum CaseSensitivity {
+
         /**
          * Characters must be exact.
          */
@@ -156,6 +157,7 @@ public final class TextUtils {
      * Specify optional title case parsing options.
      */
     public enum TitleCaseOption {
+
         /**
          * Forces casing. All letters are lower cased unless they are the
          * first letter of a word larger than 3 characters.
@@ -178,13 +180,14 @@ public final class TextUtils {
 
     /**
      * Determine if a string is valid for use as a name.
-     * The string must begin with a letter and use only
-     * alphanumeric characters and underscores.
      *
-     * <p>The string must also be at least 1 character in length
-     * and be no more than 16 characters long.</p>
+     * <p>The string must begin with a letter and use only alphanumeric characters
+     * and underscores.</p>
      *
-     * @param name  The name to check
+     * <p>The string must also be at least 1 character in length and be no more
+     * than 16 characters long.</p>
+     *
+     * @param name  The name to check.
      */
     public static boolean isValidName(String name) {
         return isValidName(name, 16);
@@ -192,13 +195,14 @@ public final class TextUtils {
 
     /**
      * Determine if a string is valid for use as a name.
-     * The string must begin with a letter and use only
-     * alphanumeric characters and underscores.
+     *
+     * <p>The string must begin with a letter and use only alphanumeric
+     * characters and underscores.</p>
      *
      * <p>The string must also be at least 1 character in length.</p>
      *
-     * @param name    The name to check
-     * @param maxLen  The max length of the name
+     * @param name    The name to check.
+     * @param maxLen  The max length of the name.
      */
     public static boolean isValidName(@Nullable String name, int maxLen) {
         PreCon.greaterThanZero(maxLen);
@@ -208,8 +212,8 @@ public final class TextUtils {
     }
 
     /**
-     * Search a collection of strings for candidates that start with
-     * the specified prefix.
+     * Search a collection of strings for candidates that start with the specified
+     * prefix.
      *
      * @param prefix            The prefix to search for.
      * @param searchCandidates  The search candidates.
@@ -219,8 +223,8 @@ public final class TextUtils {
     }
 
     /**
-     * Search a collection of strings for candidates that start with
-     * the specified prefix.
+     * Search a collection of strings for candidates that start with the specified
+     * prefix.
      *
      * @param prefix            The prefix to search for.
      * @param searchCandidates  The search candidates.
@@ -255,8 +259,8 @@ public final class TextUtils {
     }
 
     /**
-     * Search a collection of strings for candidates that end with
-     * the specified suffix.
+     * Search a collection of strings for candidates that end with the specified
+     * suffix.
      *
      * @param suffix            The suffix to search for.
      * @param searchCandidates  The search candidates.
@@ -267,8 +271,8 @@ public final class TextUtils {
     }
 
     /**
-     * Search a collection of strings for candidates that end with
-     * the specified suffix.
+     * Search a collection of strings for candidates that end with the specified
+     * suffix.
      *
      * @param suffix            The suffix to search for.
      * @param searchCandidates  The search candidates.
@@ -303,8 +307,8 @@ public final class TextUtils {
     }
 
     /**
-     * Search a collection of strings for candidates that contain the
-     * specified search text.
+     * Search a collection of strings for candidates that contain the specified
+     * search text.
      *
      * @param searchText        The text to search for.
      * @param searchCandidates  The search candidates.
@@ -316,8 +320,8 @@ public final class TextUtils {
     }
 
     /**
-     * Search a collection of strings for candidates that contain the
-     * specified search text.
+     * Search a collection of strings for candidates that contain the specified
+     * search text.
      *
      * @param searchText        The text to search for.
      * @param searchCandidates  The search candidates.
@@ -352,8 +356,8 @@ public final class TextUtils {
     }
 
     /**
-     * Search a collection of strings for valid candidates using an
-     * {@link IValidator} to validate.
+     * Search a collection of strings for valid candidates using an {@link IValidator}
+     * to validate.
      *
      * @param searchCandidates  The search candidates.
      * @param entryValidator    The entry validator.
@@ -363,11 +367,11 @@ public final class TextUtils {
     }
 
     /**
-     * Pad the right side of a string with the specified characters
+     * Pad the right side of a string with the specified characters.
      *
-     * @param s        The String to pad
-     * @param length   The number of characters to pad
-     * @param pad      The character to path with
+     * @param s        The String to pad.
+     * @param length   The number of characters to pad.
+     * @param pad      The character to path with.
      */
     public static String padRight(String s, int length, char pad) {
         PreCon.notNull(s);
@@ -384,19 +388,19 @@ public final class TextUtils {
     /**
      * Pad the right side of a string with spaces.
      *
-     * @param s       The String to pad
-     * @param length  The number of spaces to pad with
+     * @param s       The String to pad.
+     * @param length  The number of spaces to pad with.
      */
     public static String padRight(String s, int length) {
         return TextUtils.padRight(s, length, ' ');
     }
 
     /**
-     * Pad the left side of a string with the specified characters
+     * Pad the left side of a string with the specified characters.
      *
-     * @param s       The String to pad
-     * @param length  The number of characters to pad
-     * @param pad     The character to path with
+     * @param s       The String to pad.
+     * @param length  The number of characters to pad.
+     * @param pad     The character to path with.
      */
     public static String padLeft(String s, int length, char pad) {
         PreCon.notNull(s);
@@ -411,23 +415,22 @@ public final class TextUtils {
     }
 
     /**
-     * Pad left side of specified string with spaces
+     * Pad left side of specified string with spaces.
      *
-     * @param s       The string to pad
-     * @param length  The number of spaces to pad with
+     * @param s       The string to pad.
+     * @param length  The number of spaces to pad with.
      */
     public static String padLeft(String s, int length) {
         return TextUtils.padLeft(s, length, ' ');
     }
 
     /**
-     * Reduce the number of characters in a string by removing
-     * characters from the end.
+     * Reduce the number of characters in a string by removing characters from the end.
      *
-     * <p>Returns input string if input string length is
-     * less than or equal to 16 characters.</p>
+     * <p>Returns input string if input string length is less than or equal to 16
+     * characters.</p>
      *
-     * @param s       The string to truncate
+     * @param s       The string to truncate.
      * @param length  The new length of the string.
      */
     public static String truncate(String s, int length) {
@@ -443,10 +446,11 @@ public final class TextUtils {
 
     /**
      * Reduce the number of characters in a string to 16.
-     * Returns input string if input string length is
-     * less than or equal to 16 characters.
      *
-     * @param s  The string to truncate
+     * <p>Returns input string if input string length is less than or equal to
+     * 16 characters.</p>
+     *
+     * @param s  The string to truncate.
      */
     public static String truncate(String s) {
         return TextUtils.truncate(s, 16);
@@ -455,7 +459,7 @@ public final class TextUtils {
     /**
      * Converts supplied string to camel casing.
      *
-     * @param s  the string to convert
+     * @param s  The string to convert.
      */
     public static String camelCase(String s) {
         PreCon.notNull(s);
@@ -485,7 +489,7 @@ public final class TextUtils {
      *
      * <p>Additional operations can be added.</p>
      *
-     * @param text     The string to modify
+     * @param text     The string to modify.
      * @param options  Parsing options.
      */
     public static String titleCase(String text, TitleCaseOption... options) {
@@ -551,11 +555,11 @@ public final class TextUtils {
     }
 
     /**
-     * Concatenates a collection into a single string using the
-     * specified separator string.
+     * Concatenates a collection into a single string using the specified separator
+     * string.
      *
-     * @param collection  The collection to concatenate
-     * @param separator   The string to insert between elements
+     * @param collection  The collection to concatenate.
+     * @param separator   The string to insert between elements.
      */
     public static String concat(Collection<?> collection, String separator) {
         //noinspection ConstantConditions
@@ -563,12 +567,12 @@ public final class TextUtils {
     }
 
     /**
-     * Concatenates a collection into a single string using the
-     * specified separator string.
+     * Concatenates a collection into a single string using the specified separator
+     * string.
      *
-     * @param collection  The collection to concatenate
-     * @param separator   The string to insert between elements
-     * @param emptyValue  The string to return if the collection is null or empty
+     * @param collection  The collection to concatenate.
+     * @param separator   The string to insert between elements.
+     * @param emptyValue  The string to return if the collection is null or empty.
      */
     @Nullable
     public static String concat(Collection<?> collection, String separator, String emptyValue) {
@@ -588,11 +592,10 @@ public final class TextUtils {
     }
 
     /**
-     * Concatenates an array in a single string using the
-     * specified separator string.
+     * Concatenates an array in a single string using the specified separator string.
      *
-     * @param strArray   The array to concatenate
-     * @param separator  The string to insert between elements
+     * @param strArray   The array to concatenate.
+     * @param separator  The string to insert between elements.
      */
     public static <T> String concat(T[] strArray, @Nullable String separator) {
         //noinspection ConstantConditions
@@ -600,12 +603,11 @@ public final class TextUtils {
     }
 
     /**
-     * Concatenates an array into a single string using the
-     * specified separator string.
+     * Concatenates an array into a single string using the specified separator string.
      *
-     * @param strArray    The array to concatenate
-     * @param separator   The string to insert between elements
-     * @param emptyValue  The string to return if the array is null or empty
+     * @param strArray    The array to concatenate.
+     * @param separator   The string to insert between elements.
+     * @param emptyValue  The string to return if the array is null or empty.
      */
     @Nullable
     public static <T> String concat(T[] strArray, @Nullable String separator, @Nullable String emptyValue) {
@@ -613,12 +615,11 @@ public final class TextUtils {
     }
 
     /**
-     * Concatenates an array into a single string using the
-     * specified separator string.
+     * Concatenates an array into a single string using the specified separator string.
      *
-     * @param startIndex  The index to start concatenating at
-     * @param strArray    The array to concatenate
-     * @param separator   The separator to insert between elements
+     * @param startIndex  The index to start concatenating at.
+     * @param strArray    The array to concatenate.
+     * @param separator   The separator to insert between elements.
      */
     public static <T> String concat(int startIndex, T[] strArray, @Nullable String separator) {
         //noinspection ConstantConditions
@@ -626,27 +627,25 @@ public final class TextUtils {
     }
 
     /**
-     * Concatenates an array into a single string using the
-     * specified separator string.
+     * Concatenates an array into a single string using the specified separator string.
      *
-     * @param startIndex  The index to start concatenating at
-     * @param strArray    The array to concatenate
-     * @param separator   The separator to insert between elements
-     * @param emptyValue  The value to return if the array is empty or null
+     * @param startIndex  The index to start concatenating at.
+     * @param strArray    The array to concatenate.
+     * @param separator   The separator to insert between elements.
+     * @param emptyValue  The value to return if the array is empty or null.
      */
     @Nullable
-    public static <T> String concat(int startIndex, T[] strArray, @Nullable String separator, @Nullable String emptyValue) {
+    public static <T> String concat(int startIndex, T[] strArray,
+                                    @Nullable String separator, @Nullable String emptyValue) {
         return concat(startIndex, strArray.length, strArray, separator, emptyValue);
     }
 
-
     /**
-     * Concatenates an array into a single string using the
-     * specified separator string.
+     * Concatenates an array into a single string using the specified separator string.
      *
-     * @param startIndex  The index to start concatenating at
-     * @param endIndexP1    The index to stop concatenating at (+1, add 1 to the end index)
-     * @param strArray    The array to concatenate
+     * @param startIndex  The index to start concatenating at.
+     * @param endIndexP1  The index to stop concatenating at (+1, add 1 to the end index).
+     * @param strArray    The array to concatenate.
      */
     public static <T> String concat(int startIndex, int endIndexP1, T[] strArray) {
         //noinspection ConstantConditions
@@ -655,27 +654,26 @@ public final class TextUtils {
 
 
     /**
-     * Concatenates an array into a single string using the
-     * specified separator string.
+     * Concatenates an array into a single string using the specified separator string.
      *
-     * @param startIndex  The index to start concatenating at
-     * @param endIndexP1    The index to stop concatenating at (+1, add 1 to the end index)
-     * @param strArray    The array to concatenate
-     * @param separator   The separator to insert between elements
+     * @param startIndex  The index to start concatenating at.
+     * @param endIndexP1  The index to stop concatenating at (+1, add 1 to the end index).
+     * @param strArray    The array to concatenate.
+     * @param separator   The separator to insert between elements.
      */
-    public static <T> String concat(int startIndex, int endIndexP1, T[] strArray, @Nullable String separator) {
+    public static <T> String concat(int startIndex, int endIndexP1,
+                                    T[] strArray, @Nullable String separator) {
         //noinspection ConstantConditions
         return concat(startIndex, endIndexP1, strArray, separator, "");
     }
 
 
     /**
-     * Concatenates an array into a single string using the
-     * specified separator string.
+     * Concatenates an array into a single string using the specified separator string.
      *
-     * @param startIndex  The index to start concatenating at
-     * @param endIndexP1    The index to stop concatenating at (+1, add 1 to the end index)
-     * @param strArray    The array to concatenate
+     * @param startIndex  The index to start concatenating at.
+     * @param endIndexP1  The index to stop concatenating at (+1, add 1 to the end index).
+     * @param strArray    The array to concatenate.
      */
     @Nullable
     public static <T> String concat(int startIndex, int endIndexP1, T[] strArray,
@@ -708,25 +706,26 @@ public final class TextUtils {
     }
 
     /**
-     * Splits a string into multiple string based on max
-     * character length specified for a line.
+     * Splits a string into multiple string based on max character length specified
+     * for a line.
      *
-     * @param str                   The string to split/paginate
-     * @param maxLineLen            The max length of a line
-     * @param excludeColorsFromLen  True to exclude color characters from length calculations
+     * @param str                   The string to split/paginate.
+     * @param maxLineLen            The max length of a line.
+     * @param excludeColorsFromLen  True to exclude color characters from length
+     *                              calculations.
      */
     public static List<String> paginateString(String str, int maxLineLen, boolean excludeColorsFromLen) {
         return paginateString(str, null, maxLineLen, excludeColorsFromLen);
     }
 
     /**
-     * Splits a string into multiple string based on max
-     * character length specified for a line.
+     * Splits a string into multiple string based on max character length specified
+     * for a line.
      *
-     * @param str                   The string to split/paginate
-     * @param linePrefix            The prefix to append to each line
+     * @param str                   The string to split/paginate.
+     * @param linePrefix            The prefix to append to each line.
      * @param maxLineLen            The max length of a line. Must be greater than 1.
-     * @param excludeColorsFromLen  True to exclude color characters from length calculations
+     * @param excludeColorsFromLen  True to exclude color characters from length calculations.
      */
     public static List<String> paginateString(String str, @Nullable String linePrefix,
                                               int maxLineLen, boolean excludeColorsFromLen) {
@@ -811,8 +810,8 @@ public final class TextUtils {
     /**
      * Format a location into a human readable string.
      *
-     * @param loc       The location to format
-     * @param addColor  True to add color
+     * @param loc       The location to format.
+     * @param addColor  True to add color.
      */
     public static String formatLocation(Location loc, boolean addColor) {
         if (loc == null)
@@ -827,7 +826,7 @@ public final class TextUtils {
             worldName = loc.getWorld().getName();
         }
 
-        DecimalFormat format = new DecimalFormat("###.##");
+        DecimalFormat format = new DecimalFormat("###.#");
         return TextUtils.format(addColor ? _LOCATION_FORMAT_COLOR : _LOCATION_FORMAT,
                 format.format(loc.getX()),
                 format.format(loc.getY()),
@@ -836,12 +835,13 @@ public final class TextUtils {
     }
 
     /**
-     * Format text string by replacing placeholders with the information
-     * about the specified plugin.
+     * Format text string by replacing placeholders with the information about the
+     * specified plugin.
      *
-     * <p>Placeholders: {plugin-version}, {plugin-name}, {plugin-full-name}, {plugin-author}, {plugin-command}</p>
+     * <p>Placeholders: {plugin-version}, {plugin-name}, {plugin-full-name},
+     * {plugin-author}, {plugin-command}</p>
      *
-     * @param plugin  The plugin
+     * @param plugin  The plugin.
      * @param msg     The message to format plugin info into.
      * @param args    Optional message format arguments.
      */
@@ -850,12 +850,13 @@ public final class TextUtils {
     }
 
     /**
-     * Format text string by replacing placeholders with the information
-     * about the specified plugin.
+     * Format text string by replacing placeholders with the information about the
+     * specified plugin.
      *
-     * <p>Placeholders: {plugin-version}, {plugin-name}, {plugin-full-name}, {plugin-author}, {plugin-command}</p>
+     * <p>Placeholders: {plugin-version}, {plugin-name}, {plugin-full-name},
+     * {plugin-author}, {plugin-command}</p>
      *
-     * @param plugin    The plugin
+     * @param plugin    The plugin.
      * @param settings  The settings to use.
      * @param msg       The message to format plugin info into.
      * @param args      Optional message format arguments.
@@ -884,8 +885,8 @@ public final class TextUtils {
     }
 
     /**
-     * Formats text string by replacing placeholders (i.e {0})
-     * with the string representation of the objects provided.
+     * Formats text string by replacing placeholders (i.e {0}) with the string
+     * representation of the objects provided.
      *
      * <p>The index order of the object params as provided is mapped to the number
      * inside the placeholder. </p>
@@ -901,8 +902,8 @@ public final class TextUtils {
     }
 
     /**
-     * Formats text string by replacing placeholders (i.e {0})
-     * with the string representation of the objects provided.
+     * Formats text string by replacing placeholders (i.e {0}) with the string
+     * representation of the objects provided.
      *
      * <p>The index order of the object params as provided is mapped to the number
      * inside the placeholder. </p>
@@ -923,8 +924,8 @@ public final class TextUtils {
     }
 
     /**
-     * Formats text string by replacing placeholders (i.e {0})
-     * with the string representation of the object params provided.
+     * Formats text string by replacing placeholders (i.e {0}) with the string
+     * representation of the object params provided.
      *
      * <p>The index order of the objects as provided is mapped to the number
      * inside the placeholder. </p>
@@ -1034,8 +1035,8 @@ public final class TextUtils {
     }
 
     /**
-     * Parse a boolean from a string and include "yes" and "1"
-     * as values that return true.
+     * Parse a boolean from a string and include "yes" and "1" as values that
+     * return true.
      *
      * @param string  The string to parse.
      */
@@ -1054,8 +1055,7 @@ public final class TextUtils {
     }
 
     /**
-     * Parse a byte value from a string and return a default
-     * value if parsing fails.
+     * Parse a byte value from a string and return a default value if parsing fails.
      *
      * @param string      The string to parse.
      * @param defaultVal  The default value to return if parsing fails.
@@ -1073,8 +1073,7 @@ public final class TextUtils {
     }
 
     /**
-     * Parse a short value from a string and return a default
-     * value if parsing fails.
+     * Parse a short value from a string and return a default value if parsing fails.
      *
      * @param string      The string to parse.
      * @param defaultVal  The default value to return if parsing fails.
@@ -1092,8 +1091,8 @@ public final class TextUtils {
     }
 
     /**
-     * Parse an integer value from a string and return a default
-     * value if parsing fails.
+     * Parse an integer value from a string and return a default value if parsing
+     * fails.
      *
      * @param string      The string to parse.
      * @param defaultVal  The default value to return if parsing fails.
@@ -1111,8 +1110,7 @@ public final class TextUtils {
     }
 
     /**
-     * Parse a long value from a string and return a default
-     * value if parsing fails.
+     * Parse a long value from a string and return a default value if parsing fails.
      *
      * @param string      The string to parse.
      * @param defaultVal  The default value to return if parsing fails.
@@ -1130,8 +1128,7 @@ public final class TextUtils {
     }
 
     /**
-     * Parse a float value from a string and return a default
-     * value if parsing fails.
+     * Parse a float value from a string and return a default value if parsing fails.
      *
      * @param string      The string to parse.
      * @param defaultVal  The default value to return if parsing fails.
@@ -1149,8 +1146,7 @@ public final class TextUtils {
     }
 
     /**
-     * Parse a double value from a string and return a default
-     * value if parsing fails.
+     * Parse a double value from a string and return a default value if parsing fails.
      *
      * @param string      The string to parse.
      * @param defaultVal  The default value to return if parsing fails.
@@ -1187,13 +1183,12 @@ public final class TextUtils {
     }
 
     /**
-     * Parse the {@link java.util.UUID}'s from the supplied collection
-     * of strings. If a string cannot be parsed, it is not
-     * included in the results.
+     * Parse the {@link java.util.UUID}'s from the supplied collection of strings.
      *
-     * <p>Failure to parse one or more results can be detected by
-     * compare the size of the result with the size of the input
-     * collection.</p>
+     * <p>If a string cannot be parsed, it is not included in the results.</p>
+     *
+     * <p>Failure to parse one or more results can be detected by compare the size
+     * of the result with the size of the input collection.</p>
      *
      * @param strings  The string collection to parse.
      */
@@ -1213,12 +1208,11 @@ public final class TextUtils {
 
     /**
      * Parse the {@link java.util.UUID}'s from the supplied string array.
-     * If a string cannot be parsed, it is not included in the
-     * results..
      *
-     * <p>Failure to parse one or more results can be detected by
-     * compare the size of the result with the size of the input
-     * collection.</p>
+     * <p>If a string cannot be parsed, it is not included in the results.</p>
+     *
+     * <p>Failure to parse one or more results can be detected by compare the
+     * size of the result with the size of the input collection.</p>
      *
      * @param strings  The string array to parse.
      */

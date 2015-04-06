@@ -28,6 +28,7 @@ package com.jcwhatever.nucleus.utils.modules;
  * Specifies how classes are loaded from a jar file.
  */
 public enum ClassLoadMethod {
+
     /**
      * The class to load is already known and can be directly loaded.
      */

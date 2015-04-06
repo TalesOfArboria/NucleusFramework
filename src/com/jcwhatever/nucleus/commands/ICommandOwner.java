@@ -47,7 +47,7 @@ public interface ICommandOwner {
     boolean unregisterCommand(Class<? extends AbstractCommand> commandClass);
 
     /**
-     * Get a command by name
+     * Get a command by name.
      */
     @Nullable
     AbstractCommand getCommand(String commandName);

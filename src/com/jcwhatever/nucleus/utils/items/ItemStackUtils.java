@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.utils.items;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackDeserializer;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerializer;
@@ -61,20 +62,18 @@ public final class ItemStackUtils {
     public static final ItemStack AIR = new ItemStack(Material.AIR);
 
     /**
-     * Used to specify if a display name for an {@link ItemStack}
-     * is required or optional.
+     * Used to specify if a display name for an {@link ItemStack} is required or
+     * optional.
      */
     public enum DisplayNameOption {
-        /**
-         * Name is required and the items material name
-         * can be used as a substitute if a display name
-         * is not set.
-         */
-        REQUIRED,
 
         /**
-         * Name is optional and null is expected if
-         * the display name is not set.
+         * Name is required and the items material name can be used as a substitute
+         * if a display name is not set.
+         */
+        REQUIRED,
+        /**
+         * Name is optional and null is expected if the display name is not set.
          */
         OPTIONAL
     }
@@ -180,15 +179,18 @@ public final class ItemStackUtils {
      *
      * @param stack  The {@link ItemStack}.
      */
-    @Nullable
     public static List<String> getLore(ItemStack stack) {
         PreCon.notNull(stack);
 
         ItemMeta meta = stack.getItemMeta();
         if (meta == null)
-            return null;
+            return CollectionUtils.unmodifiableList();
 
-        return meta.getLore();
+        List<String> result = meta.getLore();
+        if (result == null)
+            return CollectionUtils.unmodifiableList();
+
+        return CollectionUtils.unmodifiableList(result);
     }
 
     /**
@@ -388,7 +390,7 @@ public final class ItemStackUtils {
      * @param enchantName  The enchantment to add.
      * @param level        The enchantment level.
      *
-     * @return True if the enchantName was found and applied, otherwise false.
+     * @return  True if the enchantName was found and applied, otherwise false.
      */
     public static boolean addEnchantment(ItemStack stack, String enchantName, int level) {
         PreCon.notNull(stack);
@@ -437,7 +439,8 @@ public final class ItemStackUtils {
      * @param stack            The item stack.
      * @param enchantmentName  The name of the enchantment to remove.
      *
-     * @return  Null if the enchantment name is not found or the item did not have the enchantment.
+     * @return  Null if the enchantment name is not found or the item did not have
+     * the enchantment.
      */
     @Nullable
     public static EnchantmentLevel removeEnchantment(ItemStack stack, String enchantmentName) {
@@ -507,7 +510,8 @@ public final class ItemStackUtils {
     public static String serialize(Collection<ItemStack> stacks) {
         PreCon.notNull(stacks);
 
-        return Nucleus.getItemSerialization().createSerializer(stacks.size()).appendAll(stacks).toString();
+        return Nucleus.getItemSerialization()
+                .createSerializer(stacks.size()).appendAll(stacks).toString();
     }
 
     /**
@@ -518,6 +522,7 @@ public final class ItemStackUtils {
     public static String serialize(ItemStack... stacks) {
         PreCon.notNull(stacks);
 
-        return Nucleus.getItemSerialization().createSerializer(stacks.length).appendAll(stacks).toString();
+        return Nucleus.getItemSerialization()
+                .createSerializer(stacks.length).appendAll(stacks).toString();
     }
 }

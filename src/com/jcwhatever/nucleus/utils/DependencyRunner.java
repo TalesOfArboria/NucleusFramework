@@ -59,6 +59,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
      * Specifies that status of dependencies.
      */
     public enum DependencyStatus {
+
         /**
          * Dependencies are not ready.
          */
@@ -99,9 +100,6 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
         _timeoutSeconds = timeoutSeconds;
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _plugin;
@@ -242,7 +240,7 @@ public class DependencyRunner<T extends IDependantRunnable> implements IPluginOw
         }
 
         /*
-         * Called when the watcher is finished.
+         * Invoked when the watcher is finished.
          */
         @Override
         protected void onCancel() {

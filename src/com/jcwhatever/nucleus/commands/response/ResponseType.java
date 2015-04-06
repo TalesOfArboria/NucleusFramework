@@ -34,6 +34,13 @@ import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.Map;
 
+/**
+ * A response expected from a player that has received a response request.
+ *
+ * <p>The response is given in the form of a command. The command that the
+ * player must execute is the command name retrieved by invoking
+ * {@link #getCommandName}.</p>
+ */
 public class ResponseType {
 
     @Localizable static final String _YES = "yes";
@@ -71,16 +78,31 @@ public class ResponseType {
 
     private String _commandName;
 
+    /**
+     * Constructor.
+     *
+     * @param commandName  The response command.
+     */
     public ResponseType (String commandName) {
         PreCon.notNullOrEmpty(commandName);
         _commandName = commandName;
     }
 
+    /**
+     * Get the command that must be executed by a player to use
+     * the response type.
+     */
     @Localized
     public String getCommandName() {
         return NucLang.get(_commandName);
     }
 
+    /**
+     * Get an existing {@link ResponseType} that matches the specified
+     * command name or create a new one.
+     *
+     * @param commandName  The command.
+     */
     public static ResponseType from(String commandName) {
         PreCon.notNullOrEmpty(commandName);
 

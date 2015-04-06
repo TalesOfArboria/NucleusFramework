@@ -48,8 +48,8 @@ public final class SignUtils {
     private SignUtils() {}
 
     /**
-     * Register a {@link SignHandler} implementation to be used
-     * by the global {@link ISignManager}.
+     * Register a {@link SignHandler} implementation to be used by the global
+     * {@link ISignManager}.
      *
      * @param handler  The handler to register.
      *
@@ -63,8 +63,8 @@ public final class SignUtils {
     }
 
     /**
-     * Unregister a {@link SignHandler} implementation to be used
-     * by the global {@link ISignManager}.
+     * Unregister a {@link SignHandler} implementation to be used by the global
+     * {@link ISignManager}.
      *
      * @param handler  The handler to unregister.
      *
@@ -301,9 +301,10 @@ public final class SignUtils {
     }
 
     /**
-     * Get the number of consecutively adjacent signs next to a
-     * source block in the specified direction. Resulting number
-     * does not include the source block.
+     * Get the number of consecutively adjacent signs next to a source block in the
+     * specified direction.
+     *
+     * <p>Resulting number does not include the source block.</p>
      *
      * @param source     The block to look from.
      * @param direction  The direction to look.

@@ -37,8 +37,9 @@ import javax.annotation.Nullable;
 public interface IBankItemsProvider extends IProvider {
 
     /**
-     * Get a players global bank item account. If the account
-     * does not exist, it is created.
+     * Get a players global bank item account.
+     *
+     * <p>If the account does not exist, it is created.</p>
      *
      * @param playerId  The ID of the player.
      */
@@ -62,8 +63,10 @@ public interface IBankItemsProvider extends IProvider {
     IBankItemsBank getBank(String bankName);
 
     /**
-     * Get or create a bank. If the bank already exists, the
-     * existing bank is returned. Otherwise a new bank is created.
+     * Get or create a bank.
+     *
+     * <p>If the bank already exists, the existing bank is returned. Otherwise a
+     * new bank is created.</p>
      *
      * <p>A newly created bank will not have a player owner.</p>
      *
@@ -72,11 +75,13 @@ public interface IBankItemsProvider extends IProvider {
     IBankItemsBank createBank(String bankName);
 
     /**
-     * Get or create a bank. If the bank already exists, the
-     * existing bank is returned. Otherwise a new bank is created.
+     * Get or create a bank.
+     *
+     * <p>If the bank already exists, the existing bank is returned. Otherwise a
+     * new bank is created.</p>
      *
      * @param bankName  The name of the bank.
-     * @param ownerId   The id of the banks player owner. Only used if the bank is created.
+     * @param ownerId   The ID of the banks player owner. Only used if the bank is created.
      */
     IBankItemsBank createBank(String bankName, @Nullable UUID ownerId);
 

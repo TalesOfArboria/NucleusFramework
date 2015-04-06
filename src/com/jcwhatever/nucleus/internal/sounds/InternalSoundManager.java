@@ -151,13 +151,13 @@ public final class InternalSoundManager implements ISoundManager {
     }
 
     @Override
-    public Future<ISoundContext> playSound(Plugin plugin, final Player playing, ResourceSound sound,
+    public Future<ISoundContext> playSound(Plugin plugin, final Player player, ResourceSound sound,
                                         SoundSettings settings) {
-        return playSound(plugin, playing, sound, settings, null);
+        return playSound(plugin, player, sound, settings, null);
     }
 
     @Override
-    public Future<ISoundContext> playSound(final Plugin plugin, Player p, ResourceSound sound,
+    public Future<ISoundContext> playSound(final Plugin plugin, Player player, ResourceSound sound,
                                         SoundSettings settings,
                                         final @Nullable Collection<Player> transcriptViewers) {
         PreCon.notNull(plugin);
@@ -168,12 +168,12 @@ public final class InternalSoundManager implements ISoundManager {
 
         // substitute players location if no locations are provided.
         if (!settings.hasLocations())
-            settings.addLocations(p.getLocation());
+            settings.addLocations(player.getLocation());
 
-        SoundContext context = new SoundContext(p, sound, settings);
+        SoundContext context = new SoundContext(player, sound, settings);
 
         // run event
-        PlayResourceSoundEvent event = new PlayResourceSoundEvent(p, sound, settings);
+        PlayResourceSoundEvent event = new PlayResourceSoundEvent(player, sound, settings);
         Nucleus.getEventManager().callBukkit(null, event);
 
         // see if the event was cancelled
@@ -185,12 +185,12 @@ public final class InternalSoundManager implements ISoundManager {
         // run play sound command
         for (Location location : settings.getLocations()) {
 
-            if (location.getWorld() == null || !location.getWorld().equals(p.getWorld()))
+            if (location.getWorld() == null || !location.getWorld().equals(player.getWorld()))
                 continue;
 
             if (nmsHandler != null) {
                 // send sound packet to player
-                nmsHandler.send(p, sound.getName(),
+                nmsHandler.send(player, sound.getName(),
                         location.getX(), location.getY(), location.getZ(),
                         settings.getVolume(), settings.getPitch());
             }
@@ -204,7 +204,7 @@ public final class InternalSoundManager implements ISoundManager {
         }
 
         // get timed list to store playing object in.
-        TimedArrayList<ISoundContext> currentPlaying = _playing.get(p.getUniqueId());
+        TimedArrayList<ISoundContext> currentPlaying = _playing.get(player.getUniqueId());
 
         if (currentPlaying == null) {
 
@@ -223,7 +223,7 @@ public final class InternalSoundManager implements ISoundManager {
                         }
                     });
 
-            _playing.put(p.getUniqueId(), currentPlaying);
+            _playing.put(player.getUniqueId(), currentPlaying);
         }
 
         // add playing sound to timed list, will expire when the song ends.

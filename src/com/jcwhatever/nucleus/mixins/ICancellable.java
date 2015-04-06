@@ -26,7 +26,7 @@
 package com.jcwhatever.nucleus.mixins;
 
 /**
- * Mixin interface for a cancellable type
+ * Mixin interface for a cancellable type.
  */
 public interface ICancellable {
 

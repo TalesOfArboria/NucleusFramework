@@ -38,9 +38,9 @@ public interface IScriptEventSubscriber<E> {
     /**
      * Invoked when an event that is subscribed to is called.
      *
-     * @param event  The called event.
-     * @param handle The scripts subscribers {@link IDisposable} wrapper which
-     *               can be used to un-subscribe.
+     * @param event   The called event.
+     * @param handle  The script subscribers {@link IDisposable} wrapper which
+     *                can be used to un-subscribe from within the script.
      */
     void onEvent(E event, IDisposable handle);
 }

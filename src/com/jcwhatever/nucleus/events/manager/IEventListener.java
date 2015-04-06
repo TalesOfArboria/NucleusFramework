@@ -30,8 +30,7 @@ import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import org.bukkit.plugin.Plugin;
 
 /**
- * An interface flag that indicates a class has
- * NucleusFramework event handlers.
+ * An interface flag that indicates a class has NucleusFramework event handlers.
  */
 public interface IEventListener extends IPluginOwned {
 

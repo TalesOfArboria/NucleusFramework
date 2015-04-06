@@ -49,14 +49,16 @@ public interface IBankItemsAccount {
     Date getCreatedDate();
 
     /**
-     * Get the date/time the account was last accessed. If the
-     * account has never been accessed, the created date is returned.
+     * Get the date/time the account was last accessed.
+     *
+     * <p>If the account has never been accessed, the created date is returned.</p>
      */
     Date getLastAccess();
 
     /**
-     * Get the bank the account is from. Returns null if the
-     * account is a global account.
+     * Get the bank the account is from.
+     *
+     * @return  Null if the account is a global account.
      */
     @Nullable
     IBankItemsBank getBank();
@@ -67,16 +69,16 @@ public interface IBankItemsAccount {
     int getBalance();
 
     /**
-     * Get the sum of the amounts of all items in the account
-     * that are of the specified material.
+     * Get the sum of the amounts of all items in the account that are of
+     * the specified material.
      *
      * @param material  The material.
      */
     int getBalance(Material material);
 
     /**
-     * Get the sum of the amounts of all items in the account
-     * that are of the specified material data.
+     * Get the sum of the amounts of all items in the account that are of
+     * the specified material data.
      *
      * @param materialData  The material data.
      */
@@ -146,8 +148,7 @@ public interface IBankItemsAccount {
     List<ItemStack> withdraw();
 
     /**
-     * Withdraw all items that are of the specified material
-     * from the account.
+     * Withdraw all items that are of the specified material from the account.
      *
      * @param material  The material.
      *
@@ -156,8 +157,7 @@ public interface IBankItemsAccount {
     List<ItemStack> withdraw(Material material) throws InsufficientItemsException;
 
     /**
-     * Withdraw the specified amount of items that are of the
-     * specified material from the account.
+     * Withdraw the specified amount of items that are of the specified material from the account.
      *
      * @param material  The material.
      * @param amount    The amount to withdraw.
@@ -170,8 +170,7 @@ public interface IBankItemsAccount {
             throws InsufficientItemsException;
 
     /**
-     * Withdraw all items that are of the specified material data
-     * from the account.
+     * Withdraw all items that are of the specified material data from the account.
      *
      * @param materialData  The material data.
      *
@@ -180,8 +179,8 @@ public interface IBankItemsAccount {
     List<ItemStack> withdraw(MaterialData materialData) throws InsufficientItemsException;
 
     /**
-     * Withdraw the specified amount of items that are of the specified
-     * material data from the account.
+     * Withdraw the specified amount of items that are of the specified material data
+     * from the account.
      *
      * @param materialData  The material data.
      * @param amount        The amount to withdraw.

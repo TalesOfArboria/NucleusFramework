@@ -40,7 +40,7 @@ import java.util.Set;
  */
 public class SoundSettings {
 
-    private Set<Location> _locations = new HashSet<>(3);
+    private final Set<Location> _locations = new HashSet<>(3);
     private float _volume = 1.0F;
     private float _pitch = 1.0F;
 

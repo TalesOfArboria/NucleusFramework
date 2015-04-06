@@ -62,6 +62,7 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
      * Specify the result of handling a sign change event.
      */
     public enum SignChangeResult {
+
         /**
          * The sign is valid.
          */
@@ -76,6 +77,7 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
      * Specify the result of handling a sign click event.
      */
     public enum SignClickResult {
+
         /**
          * The event was handled.
          */
@@ -90,6 +92,7 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
      * Specify the result of handling a sign break event.
      */
     public enum SignBreakResult {
+
         /**
          * Allow the sign to be broken.
          */
@@ -132,8 +135,9 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
     }
 
     /**
-     * Get a display name for the sign. Returns the sign handler name
-     * with underscores converted to spaces.
+     * Get a display name for the sign.
+     *
+     * <p>Returns the sign handler name with underscores converted to spaces.</p>
      */
     public final String getDisplayName() {
         if (_displayName == null) {
@@ -207,9 +211,10 @@ public abstract class SignHandler implements INamedInsensitive, IPluginOwned {
 
     /**
      * Invoked when a sign handled by the sign handler is broken by a {@link Player}.
-     * Sign break is only invoked when the player is capable of breaking a sign instantly.
+     *
+     * <p>Sign break is only invoked when the player is capable of breaking a sign instantly.
      * (i.e creative mode) The sign cannot be broken unless the player is capable of
-     * instant break.
+     * instant break.</p>
      *
      * @param player  The {@link Player} who is breaking the sign.
      * @param sign    The encapsulated {@link org.bukkit.block.Sign}.

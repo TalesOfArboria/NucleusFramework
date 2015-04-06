@@ -96,7 +96,7 @@ public enum ProviderType implements INamedInsensitive {
     private final String _searchName;
     private final Class<? extends IProvider> _apiType;
 
-    private ProviderType(String name, Class<? extends IProvider> apiType) {
+    ProviderType(String name, Class<? extends IProvider> apiType) {
 
         _name = name;
         _searchName = name.toLowerCase();

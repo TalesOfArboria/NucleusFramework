@@ -25,9 +25,9 @@
 package com.jcwhatever.nucleus.mixins;
 
 /**
- * Represents a named object whose name is not
- * case sensitive in look ups. A search name
- * is provided in lowercase letters.
+ * Represents a named object whose name is not case sensitive in look ups.
+ *
+ * <p>A search name is provided in lowercase letters.</p>
  */
 public interface INamedInsensitive extends INamed {
 

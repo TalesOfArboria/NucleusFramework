@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An abstract implementation of a subscriber agent.
+ * An abstract implementation of an {@link ISubscriberAgent}.
  *
  * <p>Provides the basic implementation of tracking and removing
  * subscribers and handling disposal.</p>

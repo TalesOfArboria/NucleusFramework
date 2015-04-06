@@ -29,14 +29,15 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 
 /**
- * Repository of script API's that can be instantiated and retrieved.
+ * Repository of script API's registered by plugins that can be
+ * retrieved for use in scripts.
  *
  * @see com.jcwhatever.nucleus.Nucleus#getScriptApiRepo
  */
 public interface IScriptApiRepo {
 
     /**
-     * Register a script API with the repository so other plugins can use it.
+     * Register a script API with the repository so scripts request and use it.
      *
      * @param api  The api to register.
      */
@@ -44,9 +45,6 @@ public interface IScriptApiRepo {
 
     /**
      * Unregister a script API from the repository.
-     *
-     * <p>Plugins are expected to unregister their API types
-     * when they are disabled.</p>
      *
      * @param api  The API to remove.
      */

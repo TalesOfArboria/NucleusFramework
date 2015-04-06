@@ -57,8 +57,6 @@ public abstract class Iteration3DTask extends QueueTask {
     /**
      * Constructor. Initializes the 3D task parameters.
      *
-     * <p>Note: The start values for the 3D points must be smaller than the end values</p>
-     *
      * @param plugin       The owning plugin
      * @param concurrency  The task concurrency. (Main thread or Async)
      * @param segmentSize  The number of iterations to perform before pausing
@@ -266,8 +264,7 @@ public abstract class Iteration3DTask extends QueueTask {
 
                                 onSegmentEnd(x, y, z);
 
-                                // schedule next segment
-                                // Scheduler.runTaskLater(getPlugin(), _delay, this);
+                                // end segment
                                 return;
                             }
 

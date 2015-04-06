@@ -48,10 +48,10 @@ import java.util.Set;
  */
 class RegionTypeManager<R extends IRegion> {
 
-    // Player watcher regions chunk map. String key is chunk coordinates.
+    // Player watcher regions chunk map.
     private final Map<IChunkCoords, EventOrderedRegions<R>> _listenerRegionsMap = new HashMap<>(10);
 
-    // All regions chunk map. String key is chunk coordinates
+    // All regions chunk map.
     private final Map<IChunkCoords, Set<R>> _allRegionsMap = new HashMap<>(15);
 
     // hash set of all registered regions

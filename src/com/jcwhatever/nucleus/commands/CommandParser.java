@@ -37,8 +37,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Parses command strings to find the intended command
- * and arguments.
+ * Parses command string arrays to find the intended command and arguments.
  */
 public class CommandParser {
 
@@ -69,9 +68,10 @@ public class CommandParser {
     }
 
     /**
-     * Get a command instance using a string path. The format of the
-     * path is the command names separated by periods.
-     * i.e. "command.subcommand1.subcommand2"
+     * Get a command instance using a string path.
+     *
+     * <p>The format of the path is the command names separated by periods.
+     * i.e. "command.subcommand1.subcommand2"</p>
      *
      * <p>The command collection provided should be the commands at the root
      * of the intended command path. Sub commands are found by traversing the
@@ -100,17 +100,18 @@ public class CommandParser {
     /**
      * Get a list of commands for tab complete.
      *
-     * @param sender       The command sender.
-     * @param args         The base command arguments.
+     * @param commandOwner  The command the args are for.
+     * @param sender        The command sender.
+     * @param args          The base command arguments.
      */
-    public ParsedTabComplete parseTabComplete(ICommandOwner commandCollection,
+    public ParsedTabComplete parseTabComplete(ICommandOwner commandOwner,
                                               CommandSender sender, String[] args) {
-        PreCon.notNull(commandCollection);
+        PreCon.notNull(commandOwner);
         PreCon.notNull(sender);
         PreCon.notNull(args);
 
         // get the primary command from the first argument
-        ParsedCommand parsed = parse(commandCollection, args, true);
+        ParsedCommand parsed = parse(commandOwner, args, true);
         if (parsed == null || args.length == 1) {
 
             List<String> result;
@@ -118,12 +119,12 @@ public class CommandParser {
             if (args[0].isEmpty()) {
                 result = args.length == 1
                         // get all commands (that can be seen)
-                        ? filterCommandNames(sender, "", commandCollection)
+                        ? filterCommandNames(sender, "", commandOwner)
                         : new ArrayList<String>(5);
             } else {
 
                 // get possible command matches
-                result = filterCommandNames(sender, args[0], commandCollection);
+                result = filterCommandNames(sender, args[0], commandOwner);
             }
 
             return new ParsedTabComplete(result, null, ArrayUtils.EMPTY_STRING_ARRAY);
@@ -156,8 +157,10 @@ public class CommandParser {
         return tabComplete;
     }
 
-    // Filter a command owners command names based on a search name and if the
-    // sub command is help visible.
+    /*
+     * Filter a command owners command names based on a search name and if the
+     * sub command is help visible.
+     */
     private List<String> filterCommandNames(final CommandSender sender,
                                             String searchName,
                                             final ICommandOwner commandOwner) {
@@ -177,7 +180,9 @@ public class CommandParser {
                 });
     }
 
-    // internal command parser
+    /*
+     * internal command parser
+     */
     private ParsedCommand parse(ICommandOwner commandCollection, String[] components, boolean isStrict) {
         PreCon.notNull(commandCollection);
         PreCon.notNull(components);

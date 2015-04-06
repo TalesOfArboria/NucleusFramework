@@ -77,31 +77,31 @@ public interface ISoundManager {
      * Play a resource sound to a player at the players location.
      *
      * @param plugin  The requesting plugin.
-     * @param p       The player who will hear the sound.
+     * @param player  The player who will hear the sound.
      * @param sound   The resource sound to play.
      *
      * @return  A future used to run a success callback when the sound is finished playing.
      */
-    Future<ISoundContext> playSound(Plugin plugin, Player p, ResourceSound sound);
+    Future<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound);
 
     /**
      * Play a resource sound to a player.
      *
      * @param plugin    The requesting plugin.
-     * @param p         The player who will hear the sound.
+     * @param player    The player who will hear the sound.
      * @param sound     The resource sound to play.
      * @param settings  The settings to use.
      *
      * @return  A future used to run a success callback when the sound is finished playing.
      */
-    Future<ISoundContext> playSound(Plugin plugin, final Player p, ResourceSound sound,
-                                        SoundSettings settings);
+    Future<ISoundContext> playSound(Plugin plugin, Player player,
+                                    ResourceSound sound, SoundSettings settings);
 
     /**
      * Play a resource sound to a player.
      *
      * @param plugin             The requesting plugin.
-     * @param p                  The player who will hear the sound.
+     * @param player             The player who will hear the sound.
      * @param sound              The resource sound to play.
      * @param settings           The settings to use to play the sound. The settings are cloned
      *                           within the method. If the setting has no locations, the players
@@ -110,7 +110,7 @@ public interface ISoundManager {
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    Future<ISoundContext> playSound(final Plugin plugin, Player p, ResourceSound sound,
-                                        SoundSettings settings,
-                                        final @Nullable Collection<Player> transcriptViewers);
+    Future<ISoundContext> playSound(Plugin plugin, Player player,
+                                    ResourceSound sound, SoundSettings settings,
+                                    @Nullable Collection<Player> transcriptViewers);
 }

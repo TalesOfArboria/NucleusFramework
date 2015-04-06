@@ -38,9 +38,9 @@ public interface IScriptUpdateSubscriber<A> {
     /**
      * Invoked when an update that is subscribed to happens.
      *
-     * @param argument The update argument.
-     * @param handle   The scripts subscribers {@link IDisposable} wrapper which
-     *                 can be used to un-subscribe.
+     * @param argument  The update argument.
+     * @param handle    The script subscribers {@link IDisposable} wrapper which
+     *                  can be used to un-subscribe from within the script.
      */
     void on(A argument, IDisposable handle);
 }

@@ -42,9 +42,8 @@ public class TextFormatterResult implements CharSequence {
     }
 
     /**
-     * Determine if the result is parsed or if the
-     * formatter determined if parsing was not needed
-     * and returned the format template.
+     * Determine if the result is parsed or if the formatter determined if
+     * parsing was not needed and returned the format template.
      *
      * @return  True if parsed, False if template is result.
      */
@@ -53,12 +52,11 @@ public class TextFormatterResult implements CharSequence {
     }
 
     /**
-     * Determine if color was parsed. Does not always indicate the
-     * presence of color since the parser may not have actually
-     * parsed the template.
+     * Determine if color was parsed. Does not always indicate the presence of
+     * color since the parser may not have actually parsed the template.
      *
-     * <p>If the template is parsed and the settings indicate that
-     * color should be ignored or removed, false is returned.</p>
+     * <p>If the template is parsed and the settings indicate that color should
+     * be ignored or removed, false is returned.</p>
      */
     public boolean parsedColor() {
         return _parsedColor;

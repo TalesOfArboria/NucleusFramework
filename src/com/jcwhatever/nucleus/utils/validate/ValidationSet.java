@@ -39,6 +39,11 @@ public class ValidationSet<E> extends SetWrapper<E> implements IValidator<E> {
     protected final Set<E> _set;
     protected ValidationPolicy _policy = ValidationPolicy.WHITELIST;
 
+    public enum ValidationPolicy {
+        WHITELIST,
+        BLACKLIST
+    }
+
     /**
      * Constructor.
      */
@@ -100,10 +105,5 @@ public class ValidationSet<E> extends SetWrapper<E> implements IValidator<E> {
     @Override
     protected Set<E> set() {
         return _set;
-    }
-
-    public enum ValidationPolicy {
-        WHITELIST,
-        BLACKLIST
     }
 }

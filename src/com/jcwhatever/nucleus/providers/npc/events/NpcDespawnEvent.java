@@ -45,6 +45,7 @@ public class NpcDespawnEvent extends NpcEvent implements Cancellable, ICancellab
      * Specifies a reason for the NPC being despawned.
      */
     public enum NpcDespawnReason {
+
         /**
          * The NPC was invoked to despawn by a plugin or script.
          */

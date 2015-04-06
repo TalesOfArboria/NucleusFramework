@@ -29,8 +29,15 @@ import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import javax.annotation.Nullable;
 
 /**
- * An update subscriber that receives updates from an
- * {@link IUpdateAgent}.
+ * An update subscriber that receives updates from an {@link IUpdateAgent}.
+ *
+ * <p>Usage is similar in context to an event subscriber except the update subscriber is
+ * simpler.</p>
+ *
+ * <p>If you're usage context would be better served with event priorities and event cancelling,
+ * it is recommended to use {@link com.jcwhatever.nucleus.utils.observer.event.IEventSubscriber}
+ * in conjunction with {@link com.jcwhatever.nucleus.utils.observer.event.IEventAgent}
+ * instead.</p>
  */
 public interface IUpdateSubscriber<A> extends ISubscriber {
 

@@ -32,9 +32,31 @@ import java.util.List;
  */
 public interface IPaginator<E> {
 
+    enum PageStartIndex {
+        /**
+         * Page indexes are zero based, meaning the first page is specified
+         * with the integer 0.
+         */
+        ZERO (0),
+        /**
+         * Page indexes are one based, meaning the first page is specified
+         * with the integer 1.
+         */
+        ONE (1);
+
+        private final int _startIndex;
+
+        PageStartIndex(int startIndex) {
+            _startIndex = startIndex;
+        }
+
+        public int getStartIndex() {
+            return _startIndex;
+        }
+    }
+
     /**
-     * Determine the index number used to represent
-     * the first page.
+     * Determine the index number used to represent the first page.
      */
     PageStartIndex getPageStartIndex();
 
@@ -68,34 +90,7 @@ public interface IPaginator<E> {
     List<E> getPage(int page);
 
     /**
-     * Get an iterator to iterate over the elements of the
-     * specified page.
+     * Get an iterator to iterate over the elements of the specified page.
      */
     Iterator<E> iterator(int page);
-
-
-    public enum PageStartIndex {
-        /**
-         * Page indexes are zero based, meaning
-         * the first page is specified with the
-         * integer 0.
-         */
-        ZERO (0),
-        /**
-         * Page indexes are one based, meaning
-         * the first page is specified with the
-         * integer 1.
-         */
-        ONE (1);
-
-        private final int _startIndex;
-
-        PageStartIndex(int startIndex) {
-            _startIndex = startIndex;
-        }
-
-        public int getStartIndex() {
-            return _startIndex;
-        }
-    }
 }

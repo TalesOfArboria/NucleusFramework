@@ -91,8 +91,8 @@ public final class Rand {
     }
 
     /**
-     * Get a random integer equal to or between the specified minimum
-     * and maximum amount.
+     * Get a random integer equal to or between the specified minimum and maximum
+     * amount.
      *
      * @param min  The minimum result.
      * @param max  The maximum result.
@@ -104,8 +104,7 @@ public final class Rand {
     }
 
     /**
-     * Get a random integer from 0 up to the
-     * specified maximum number.
+     * Get a random integer from 0 up to the specified maximum number.
      *
      * @param max  The maximum result.
      */
@@ -121,8 +120,8 @@ public final class Rand {
     }
 
     /**
-     * Get a random double equal to or between
-     * the specified minimum and maximum amount.
+     * Get a random double equal to or between the specified minimum and maximum
+     * amount.
      *
      * @param min  The minimum result.
      * @param max  The maximum result.
@@ -132,8 +131,7 @@ public final class Rand {
     }
 
     /**
-     * Get a random double from 0 up to the
-     * specified maximum number.
+     * Get a random double from 0 up to the specified maximum number.
      *
      * @param max  The maximum result.
      */
@@ -151,10 +149,8 @@ public final class Rand {
     /**
      * Get a random alphabet string of the specified length.
      *
-     * <p>
-     *     Returned string should be safe to use in contexts
-     *     such as node names in config files.
-     * </p>
+     * <p>Returned string should be safe to use in contexts such as node names in
+     * config files.</p>
      *
      * @param length  The length of the returned string.
      */
@@ -165,13 +161,10 @@ public final class Rand {
     }
 
     /**
-     * Get a random string of characters, including symbols,
-     * of the specified length.
+     * Get a random string of characters, including symbols, of the specified length.
      *
-     * <p>
-     *     May not be safe to use where the usage context
-     *     does not allow for symbols in the string.
-     * </p>
+     * <p>May not be safe to use where the usage context does not allow for symbols in
+     * the string.</p>
      *
      * @param length  The length of the returned string.
      */
@@ -182,8 +175,7 @@ public final class Rand {
     }
 
     /**
-     * Get a random string of characters using the specified
-     * character pool.
+     * Get a random string of characters using the specified character pool.
      *
      * @param length         The length of the returned string.
      * @param characterPool  The pool of characters to construct a string with.
@@ -205,7 +197,8 @@ public final class Rand {
 
     /**
      * Get a random boolean using the specified chance.
-     * The maximum effective chance is 100.
+     *
+     * <p>The maximum effective chance is 100.</p>
      *
      * @param chance  The chance of getting a result of true.
      */
@@ -215,7 +208,8 @@ public final class Rand {
 
     /**
      * Get a random boolean using the specified chance.
-     * The maximum effective chance is 1.0.
+     *
+     * <p>The maximum effective chance is 1.0.</p>
      *
      * @param chance  The chance of getting a result of true.
      */
@@ -225,7 +219,8 @@ public final class Rand {
 
     /**
      * Roll dice of the specified number of sides.
-     * Maximum effective sides is 100.
+     *
+     * <p>Maximum effective sides is 100.</p>
      *
      * @param sides  The number of sides the dice has.
      */

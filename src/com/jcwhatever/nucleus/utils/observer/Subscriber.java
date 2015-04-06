@@ -30,10 +30,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An abstract implementation of a subscriber.
+ * An abstract implementation of an {@link ISubscriber}.
  *
- * <p>Provides the basic implementation of tracking and removing
- * agents and handling disposal.</p>
+ * <p>Provides the basic implementation of subscribing to and un-subscribing from
+ * agents as well as handling disposal.</p>
  */
 public abstract class Subscriber implements ISubscriber {
 

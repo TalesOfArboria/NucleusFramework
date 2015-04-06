@@ -25,8 +25,8 @@
 package com.jcwhatever.nucleus.providers.bankitems;
 
 /**
- * An exception thrown when attempting to perform an operation
- * without sufficient items in an item account.
+ * An exception thrown when attempting to perform an operation without sufficient
+ * items in an item account.
  */
 public class InsufficientItemsException extends Exception {
 }

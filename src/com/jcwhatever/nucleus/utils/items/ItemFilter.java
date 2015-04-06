@@ -97,7 +97,7 @@ public class ItemFilter implements IPluginOwned {
     /**
      * Constructor.
      *
-     * @param plugin    The owning plugin
+     * @param plugin    The owning plugin.
      * @param dataNode  The data node to save and load settings from.
      * @param matcher   The {@link ItemStackMatcher} to use to match items.
      */

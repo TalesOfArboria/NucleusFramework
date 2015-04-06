@@ -52,8 +52,7 @@ public final class FileUtils {
     private FileUtils() {}
 
     /**
-     * Specifies how sub directories are traversed when
-     * searching for script files.
+     * Specifies how sub directories are traversed when searching for files.
      */
     public enum DirectoryTraversal {
         /**
@@ -170,8 +169,8 @@ public final class FileUtils {
     }
 
     /**
-     * Get the relative path of a file using a base path
-     * to specify the absolute portion.
+     * Get the relative path of a file using a base path to specify the
+     * absolute portion.
      *
      * @param base  The absolute portion of the path.
      * @param path  The absolute path to convert to a relative path.
@@ -241,8 +240,8 @@ public final class FileUtils {
     /**
      * Get text file contents as a string.
      *
-     * @param file           The file to scan.
-     * @param charSet        The encoding type used by the text file.
+     * @param file     The file to scan.
+     * @param charSet  The encoding type used by the text file.
      *
      * @return  Null if file not found.
      *
@@ -300,9 +299,9 @@ public final class FileUtils {
      * Get text file contents as a string from a file contained in a
      * zip file.
      *
-     * @param zipFile        The zip file that contains the text file.
-     * @param fileName       The name and path of the text file.
-     * @param charSet        The encoding type used by the text file.
+     * @param zipFile   The zip file that contains the text file.
+     * @param fileName  The name and path of the text file.
+     * @param charSet   The encoding type used by the text file.
      *
      * @return  Null if file not found or error reading the file.
      *
@@ -420,9 +419,9 @@ public final class FileUtils {
      *
      * <p>The method finishes when the line producer returns null</p>
      *
-     * @param file           The file to write.
-     * @param charset        The encoding to use.
-     * @param lineProducer   The line producer.
+     * @param file          The file to write.
+     * @param charset       The encoding to use.
+     * @param lineProducer  The line producer.
      *
      * @return  The number of lines written.
      */
@@ -555,8 +554,7 @@ public final class FileUtils {
     }
 
     /**
-     * Interface for getting the next line
-     * to write to a text file.
+     * Interface for getting the next line to write to a text file.
      */
     public interface ITextLineProducer {
 

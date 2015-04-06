@@ -39,7 +39,7 @@ import org.bukkit.event.HandlerList;
 import javax.annotation.Nullable;
 
 /**
- * Called when a playlist track changes
+ * Called when a playlist track changes.
  */
 public class PlayListTrackChangeEvent extends Event
         implements IPlayerReference, Cancellable, ICancellable {

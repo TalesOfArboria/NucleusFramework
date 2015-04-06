@@ -113,8 +113,7 @@ public class InventorySnapshot {
     }
 
     /**
-     * Get the amount of items in the snapshot that
-     * match the specified item.
+     * Get the amount of items in the snapshot that match the specified item.
      *
      * @param itemStack  The item stack to check.
      */
@@ -130,8 +129,7 @@ public class InventorySnapshot {
     }
 
     /**
-     * Get the amount of items in the snapshot that
-     * match the specified wrapped item.
+     * Get the amount of items in the snapshot that match the specified wrapped item.
      *
      * @param matchable  The wrapper with the item to check.
      */

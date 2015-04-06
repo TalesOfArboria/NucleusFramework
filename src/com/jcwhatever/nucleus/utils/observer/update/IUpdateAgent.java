@@ -29,8 +29,15 @@ import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
 import javax.annotation.Nullable;
 
 /**
- * An update agent which producers can use to send updates
- * to {@link IUpdateSubscriber}'s that are registered with the agent.
+ * An update agent which producers can use to send updates to {@link IUpdateSubscriber}'s that
+ * are registered with the agent.
+ *
+ * <p>Usage is similar in context to an event agent except the update agent is simpler.</p>
+ *
+ * <p>If you're usage context would be better served with event priorities and event cancelling,
+ * it is recommended to use {@link com.jcwhatever.nucleus.utils.observer.event.IEventSubscriber}
+ * in conjunction with {@link com.jcwhatever.nucleus.utils.observer.event.IEventAgent}
+ * instead.</p>
  */
 public interface IUpdateAgent<A> extends ISubscriberAgent {
 

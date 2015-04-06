@@ -48,6 +48,12 @@ public final class ResponseRequestor {
         return Nucleus.getResponseRequestor().getContextBuilder(plugin);
     }
 
+    /**
+     * Get all response requests that are currently pending a response from
+     * the specified command sender.
+     *
+     * @param sender  The command sender.
+     */
     public static Collection<IRequestContext> getRequests(CommandSender sender) {
         return Nucleus.getResponseRequestor().getRequests(sender);
     }

@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.commands.AbstractCommand;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.language.Localized;
+import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextFormatter.ITagFormatter;
@@ -39,7 +40,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * A command parameter description.
  */
-public class ParameterDescription implements IPluginOwned {
+public class ParameterDescription implements IPluginOwned, INamed {
 
     @Localizable
     public static final String NAME16 =
@@ -176,17 +177,12 @@ public class ParameterDescription implements IPluginOwned {
                 NucLang.get(command.getPlugin(), TextUtils.concat(1, descComp, "=")));
     }
 
-    /**
-     * Get the owning plugin.
-     */
     @Override
     public Plugin getPlugin() {
         return _command.getPlugin();
     }
 
-    /**
-     * Get the parameter name.
-     */
+    @Override
     public String getName() {
         return _parameterName;
     }

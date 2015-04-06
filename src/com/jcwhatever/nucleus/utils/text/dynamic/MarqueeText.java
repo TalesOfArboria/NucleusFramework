@@ -104,8 +104,7 @@ public class MarqueeText implements IDynamicText {
     }
 
     /**
-     * Get the text currently being displayed
-     * by the marquee.
+     * Get the text currently being displayed by the marquee.
      */
     public String getCurrentText() {
         return _currentText;

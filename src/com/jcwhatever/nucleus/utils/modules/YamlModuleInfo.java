@@ -36,9 +36,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.jar.JarFile;
 
 /**
- * A basic implementation of {@link IModuleInfo} designed to
- * read a Yaml file inside the module jar file to retrieve the
- * name of the module.
+ * A basic implementation of {@link IModuleInfo} designed to read a Yaml file
+ * inside the module jar file to retrieve the name of the module.
  *
  * <p>The data node property name for the name is 'name'.</p>
  */
@@ -53,9 +52,9 @@ public class YamlModuleInfo implements IModuleInfo, IPluginOwned {
     /**
      * Constructor.
      *
-     * @param plugin       The owning plugin.
-     * @param fileName     The name and path of the resource file in the jar.
-     * @param jarFile      The jar file the module info is in.
+     * @param plugin    The owning plugin.
+     * @param fileName  The name and path of the resource file in the jar.
+     * @param jarFile   The jar file the module info is in.
      */
     public YamlModuleInfo(Plugin plugin, String fileName, JarFile jarFile) {
         PreCon.notNull(plugin);
@@ -97,7 +96,7 @@ public class YamlModuleInfo implements IModuleInfo, IPluginOwned {
      *
      * @return  True if all required information was found.
      */
-    protected boolean onLoad(@SuppressWarnings("unused") IDataNode dataNode) {
+    protected boolean onLoad(IDataNode dataNode) {
         return true;
     }
 

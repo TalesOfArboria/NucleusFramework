@@ -44,13 +44,11 @@ public final class BlockUtils {
     private BlockUtils() {}
 
     /**
-     * Converts the specified block to a falling block and
-     * removes the fallen block after the specified delay.
+     * Converts the specified block to a falling block and removes the fallen
+     * block after the specified delay.
      *
-     * <p>
-     *     If the falling block has not reached the ground and turned into
-     *     a block after the delay has elapsed, the falling block is removed.
-     * </p>
+     * <p>If the falling block has not reached the ground and turned into
+     * a block after the delay has elapsed, the falling block is removed.</p>
      *
      * @param block             The block to drop.
      * @param removeDelayTicks  The delay in ticks before removing the fallen block.
@@ -63,10 +61,8 @@ public final class BlockUtils {
      * Converts the block at the specified location to a falling block and
      * removes the fallen block after the specified delay.
      *
-     * <p>
-     *     If the falling block has not reached the ground and turned into
-     *     a block after the delay has elapsed, the falling block is removed.
-     * </p>
+     * <p>If the falling block has not reached the ground and turned into
+     * a block after the delay has elapsed, the falling block is removed.</p>
      *
      * @param location          The location of the block to drop.
      * @param removeDelayTicks  The delay in ticks before removing the fallen block.
