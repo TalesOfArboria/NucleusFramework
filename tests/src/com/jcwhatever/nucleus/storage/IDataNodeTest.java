@@ -359,8 +359,9 @@ public abstract class IDataNodeTest {
 
     private void testSet(IDataNode dataNode) {
 
-        dataNode.set("testSet.test", "node");
+        boolean isSet = dataNode.set("testSet.test", "node");
 
+        assertEquals(true, isSet);
         assertEquals(true, dataNode.hasNode("testSet"));
         assertEquals(true, dataNode.hasNode("testSet.test"));
 
@@ -371,6 +372,14 @@ public abstract class IDataNodeTest {
         String value = node.getString("test");
 
         assertEquals("node", value);
+
+        // test nulling value
+        isSet = dataNode.set("testSet.test", null);
+        assertEquals(true, isSet);
+
+        // test nulling value on non-existing node key
+        isSet = dataNode.set("testSet.test2", null);
+        assertEquals(true, isSet);
     }
 
     /**

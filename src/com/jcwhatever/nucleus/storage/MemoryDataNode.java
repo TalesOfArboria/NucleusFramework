@@ -241,8 +241,7 @@ public class MemoryDataNode extends AbstractDataNode {
         else if (value != null) {
             setNodeFromPath(keyPath, value);
         } else {
-            if (!removeNode(keyPath))
-                return false;
+            removeNode(keyPath);
         }
         return true;
     }
