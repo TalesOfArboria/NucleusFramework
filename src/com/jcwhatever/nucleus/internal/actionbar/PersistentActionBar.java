@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.actionbar;
 
+import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
 import com.jcwhatever.nucleus.managed.actionbar.IPersistentActionBar;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -122,16 +123,33 @@ class PersistentActionBar extends ActionBar implements IPersistentActionBar {
 
     @Override
     public void showTo(Player player, int minDuration, TimeScale timeScale) {
+        showTo(player, minDuration, timeScale, ActionBarPriority.DEFAULT);
+    }
+
+    @Override
+    public void showTo(Player player, int minDuration, TimeScale timeScale, ActionBarPriority priority) {
         PreCon.notNull(player);
         PreCon.greaterThanZero(minDuration);
         PreCon.notNull(timeScale);
 
-        BarSender.addBar(player, this, minDuration, timeScale);
+        BarSender.addBar(player, this, minDuration, timeScale, priority);
     }
 
     @Override
-    public void showTo(Collection<? extends Player> player, int minDuration, TimeScale timeScale) {
+    public void showTo(Collection<? extends Player> players, int minDuration, TimeScale timeScale) {
+        showTo(players, minDuration, timeScale, ActionBarPriority.DEFAULT);
+    }
 
+    @Override
+    public void showTo(Collection<? extends Player> players,
+                       int minDuration, TimeScale timeScale, ActionBarPriority priority) {
+        PreCon.notNull(players);
+        PreCon.greaterThanZero(minDuration);
+        PreCon.notNull(timeScale);
+
+        for (Player player : players) {
+            showTo(player, minDuration, timeScale, priority);
+        }
     }
 
     @Override

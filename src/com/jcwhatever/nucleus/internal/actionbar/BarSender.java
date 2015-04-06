@@ -25,9 +25,12 @@
 package com.jcwhatever.nucleus.internal.actionbar;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.ElementCounter;
+import com.jcwhatever.nucleus.collections.ElementCounter.RemovalPolicy;
 import com.jcwhatever.nucleus.collections.SetMap;
 import com.jcwhatever.nucleus.collections.WeakHashSetMap;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
+import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.collections.timed.TimedDistributor;
 import com.jcwhatever.nucleus.internal.NucMsg;
@@ -114,14 +117,16 @@ class BarSender implements Runnable {
      *                   action bar is an instance of {@link TimedActionBar}, then duration
      *                   represents the time the bar is displayed before being automatically removed.
      * @param timeScale  The time scale value.
+     * @param priority   The action bar priority.
      */
     static void addBar(Player player, PersistentActionBar actionBar,
-                       int duration, TimeScale timeScale) {
+                       int duration, TimeScale timeScale, ActionBarPriority priority) {
 
         if (_nmsHandler == null)
             return;
 
-        PlayerBar playerBar = new PlayerBar(player, actionBar, duration, timeScale);
+        PlayerBar playerBar = new PlayerBar(player, actionBar, duration, timeScale, priority);
+
         BarDistributor distributor = BarSender.getDistributor(player);
 
         synchronized (distributor._sync) {
@@ -129,6 +134,20 @@ class BarSender implements Runnable {
             // ensure distributor does not already contain the playerBar
             if (distributor.contains(playerBar))
                 return;
+
+            switch (priority) {
+                case DEFAULT:
+                    if (distributor.priority.contains(ActionBarPriority.HIGH)) {
+                        return;
+                    }
+                    break;
+                case LOW:
+                    if (distributor.priority.contains(ActionBarPriority.HIGH) ||
+                            distributor.priority.contains(ActionBarPriority.DEFAULT)) {
+                        return;
+                    }
+                    break;
+            }
 
             // add playerBar to distributor
             distributor.add(playerBar, duration, timeScale);
@@ -154,8 +173,9 @@ class BarSender implements Runnable {
         if (_nmsHandler == null)
             return;
 
-        PlayerBar playerBar = new PlayerBar(player, actionBar, 0, null);
+        PlayerBar playerBar = new PlayerBar(player, actionBar, 0, null, null);
         BarDistributor distributor = BarSender.getDistributor(player);
+
         boolean isEmpty;
 
         synchronized (distributor._sync) {
@@ -207,6 +227,7 @@ class BarSender implements Runnable {
 
         synchronized (distributor._sync) {
             distributor.remove(bar);
+            distributor.priority.subtract(bar.priority());
             isEmpty = distributor.isEmpty();
         }
 
@@ -259,6 +280,32 @@ class BarSender implements Runnable {
         }
 
         return distributor;
+    }
+
+    /**
+     * Get the current priority of the action bar being displayed to
+     * a player, if any.
+     *
+     * @param player  The player.
+     *
+     * @return  The priority or {@link ActionBarPriority#LOW} if no action bars
+     * are being displayed.
+     */
+    static ActionBarPriority getPriority(Player player) {
+
+        BarDistributor distributor = getDistributor(player);
+        if (distributor == null)
+            return ActionBarPriority.LOW;
+
+        synchronized (distributor._sync) {
+
+            if (distributor.priority.contains(ActionBarPriority.HIGH))
+                return ActionBarPriority.HIGH;
+            else if (distributor.priority.contains(ActionBarPriority.DEFAULT))
+                return ActionBarPriority.DEFAULT;
+        }
+
+        return ActionBarPriority.LOW;
     }
 
 
@@ -349,5 +396,8 @@ class BarSender implements Runnable {
 
     static class BarDistributor extends TimedDistributor<PlayerBar> {
         final Object _sync = new Object();
+
+        final ElementCounter<ActionBarPriority> priority =
+                new ElementCounter<ActionBarPriority>(RemovalPolicy.REMOVE);
     }
 }

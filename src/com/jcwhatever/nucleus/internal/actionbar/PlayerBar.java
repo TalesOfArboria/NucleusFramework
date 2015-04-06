@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.actionbar;
 
+import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
 import com.jcwhatever.nucleus.utils.TimeScale;
 
 import org.bukkit.entity.Player;
@@ -39,6 +40,7 @@ class PlayerBar {
     private final Player _player;
     private final long _expires;
     private volatile long _nextUpdate;
+    private final ActionBarPriority _priority;
 
     /**
      * Constructor.
@@ -47,10 +49,14 @@ class PlayerBar {
      * @param bar        The {@link PersistentActionBar} that is being viewed.
      * @param duration   The minimum time slice duration.
      * @param timeScale  The minimum time slice durations time scale.
+     * @param priority   The action bar priority.
      */
-    PlayerBar(Player player, PersistentActionBar bar, int duration, @Nullable TimeScale timeScale) {
+    PlayerBar(Player player, PersistentActionBar bar,
+              int duration, @Nullable TimeScale timeScale, ActionBarPriority priority) {
+
         _player = player;
         _bar = bar;
+        _priority = priority;
 
         _expires = timeScale != null && bar instanceof TimedActionBar
                 ? System.currentTimeMillis() + (duration * timeScale.getTimeFactor())
@@ -62,6 +68,13 @@ class PlayerBar {
      */
     public PersistentActionBar bar() {
         return _bar;
+    }
+
+    /**
+     * Get the priority.
+     */
+    public ActionBarPriority priority() {
+        return _priority;
     }
 
     /**

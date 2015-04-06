@@ -110,6 +110,8 @@ public interface IActionBarManager {
     /**
      * Show an {@link IActionBar} to a player.
      *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
      * @param player  The player to show the action bar to.
      * @param text    The text the action bar displays.
      */
@@ -118,13 +120,35 @@ public interface IActionBarManager {
     /**
      * Show an {@link IActionBar} to a player.
      *
+     * @param player    The player to show the action bar to.
+     * @param text      The text the action bar displays.
+     * @param priority  The action bar priority.
+     */
+    void showTo(Player player, String text, ActionBarPriority priority);
+
+    /**
+     * Show an {@link IActionBar} to a player.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
      * @param player  The player to show the action bar to.
      * @param text    The text the action bar displays.
      */
     void showTo(Player player, IDynamicText text);
 
     /**
+     * Show an {@link IActionBar} to a player.
+     *
+     * @param player    The player to show the action bar to.
+     * @param text      The text the action bar displays.
+     * @param priority  The action bar priority.
+     */
+    void showTo(Player player, IDynamicText text, ActionBarPriority priority);
+
+    /**
      * Show an {@link IActionBar} to a collection of players.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
      *
      * @param players  The players to show the action bar to.
      * @param text     The text the action bar displays.
@@ -134,13 +158,35 @@ public interface IActionBarManager {
     /**
      * Show an {@link IActionBar} to a collection of players.
      *
+     * @param players   The players to show the action bar to.
+     * @param text      The text the action bar displays.
+     * @param priority  The action bar priority.
+     */
+    void showTo(Collection<? extends Player> players, String text, ActionBarPriority priority);
+
+    /**
+     * Show an {@link IActionBar} to a collection of players.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
      * @param players  The players to show the action bar to.
      * @param text    The text the action bar displays.
      */
     void showTo(Collection<? extends Player> players, IDynamicText text);
 
     /**
+     * Show an {@link IActionBar} to a collection of players.
+     *
+     * @param players   The players to show the action bar to.
+     * @param text      The text the action bar displays.
+     * @param priority  The action bar priority.
+     */
+    void showTo(Collection<? extends Player> players, IDynamicText text, ActionBarPriority priority);
+
+    /**
      * Show an {@link ITimedActionBar} to a player.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
      *
      * @param player     The player to show the action bar to.
      * @param text       The text the action bar displays.
@@ -156,18 +202,47 @@ public interface IActionBarManager {
      * @param text       The text the action bar displays.
      * @param duration   The duration to display the action bar for.
      * @param timeScale  The time scale of the specified duration.
+     * @param priority   The action bar priority.
+     */
+    void showTimed(Player player, String text,
+                   int duration, TimeScale timeScale, ActionBarPriority priority);
+
+    /**
+     * Show an {@link ITimedActionBar} to a player.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
+     * @param player     The player to show the action bar to.
+     * @param text       The text the action bar displays.
+     * @param duration   The duration to display the action bar for.
+     * @param timeScale  The time scale of the specified duration.
      */
     void showTimed(Player player, IDynamicText text, int duration, TimeScale timeScale);
 
     /**
+     * Show an {@link ITimedActionBar} to a player.
+     *
+     * @param player     The player to show the action bar to.
+     * @param text       The text the action bar displays.
+     * @param duration   The duration to display the action bar for.
+     * @param timeScale  The time scale of the specified duration.
+     * @param priority   The action bar priority.
+     */
+    void showTimed(Player player, IDynamicText text,
+                   int duration, TimeScale timeScale, ActionBarPriority priority);
+
+    /**
      * Show an {@link ITimedActionBar} to a collection of players.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
      *
      * @param players    The players to show the action bar to.
      * @param text       The text the action bar displays.
      * @param duration   The duration to display the action bar for.
      * @param timeScale  The time scale of the specified duration.
      */
-    void showTimed(Collection<? extends Player> players, String text, int duration, TimeScale timeScale);
+    void showTimed(Collection<? extends Player> players, String text,
+                   int duration, TimeScale timeScale);
 
     /**
      * Show an {@link ITimedActionBar} to a collection of players.
@@ -176,8 +251,35 @@ public interface IActionBarManager {
      * @param text       The text the action bar displays.
      * @param duration   The duration to display the action bar for.
      * @param timeScale  The time scale of the specified duration.
+     * @param priority   The action bar priority.
      */
-    void showTimed(Collection<? extends Player> players, IDynamicText text, int duration, TimeScale timeScale);
+    void showTimed(Collection<? extends Player> players, String text,
+                   int duration, TimeScale timeScale, ActionBarPriority priority);
+
+    /**
+     * Show an {@link ITimedActionBar} to a collection of players.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
+     * @param players    The players to show the action bar to.
+     * @param text       The text the action bar displays.
+     * @param duration   The duration to display the action bar for.
+     * @param timeScale  The time scale of the specified duration.
+     */
+    void showTimed(Collection<? extends Player> players, IDynamicText text,
+                   int duration, TimeScale timeScale);
+
+    /**
+     * Show an {@link ITimedActionBar} to a collection of players.
+     *
+     * @param players    The players to show the action bar to.
+     * @param text       The text the action bar displays.
+     * @param duration   The duration to display the action bar for.
+     * @param timeScale  The time scale of the specified duration.
+     * @param priority   The action bar priority.
+     */
+    void showTimed(Collection<? extends Player> players, IDynamicText text,
+                   int duration, TimeScale timeScale, ActionBarPriority priority);
 
     /**
      * Clear all persistent and timed action bars being displayed to a player.

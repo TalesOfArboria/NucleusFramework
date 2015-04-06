@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.actionbar;
 
+import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
 import com.jcwhatever.nucleus.managed.actionbar.IActionBar;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -71,7 +72,17 @@ class ActionBar implements IActionBar {
 
     @Override
     public void showTo(Player player) {
+        showTo(player, ActionBarPriority.DEFAULT);
+    }
+
+    @Override
+    public void showTo(Player player, ActionBarPriority priority) {
         PreCon.notNull(player);
+
+        ActionBarPriority currentPriority = BarSender.getPriority(player);
+
+        if (currentPriority.isHigherPriority(priority))
+            return;
 
         // make sure the player isn't looking at 1 or more
         // persistent action bars.
@@ -83,7 +94,7 @@ class ActionBar implements IActionBar {
             if (_persistent == null)
                 _persistent = new TimedActionBar(_text.nextText());
 
-            _persistent.showTo(player, 4, TimeScale.SECONDS);
+            _persistent.showTo(player, 4, TimeScale.SECONDS, priority);
         }
         else {
 
@@ -93,10 +104,16 @@ class ActionBar implements IActionBar {
 
     @Override
     public void showTo(Collection<? extends Player> players) {
+        showTo(players, ActionBarPriority.DEFAULT);
+    }
+
+    @Override
+    public void showTo(Collection<? extends Player> players, ActionBarPriority priority) {
         PreCon.notNull(players);
+        PreCon.notNull(priority);
 
         for (Player player : players) {
-            showTo(player);
+            showTo(player, priority);
         }
     }
 

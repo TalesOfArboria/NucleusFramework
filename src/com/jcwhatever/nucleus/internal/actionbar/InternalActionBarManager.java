@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.actionbar;
 
+import com.jcwhatever.nucleus.managed.actionbar.ActionBarPriority;
 import com.jcwhatever.nucleus.managed.actionbar.IActionBar;
 import com.jcwhatever.nucleus.managed.actionbar.IActionBarManager;
 import com.jcwhatever.nucleus.managed.actionbar.IPersistentActionBar;
@@ -92,8 +93,18 @@ public final class InternalActionBarManager implements IActionBarManager {
     }
 
     @Override
+    public void showTo(Player player, String text, ActionBarPriority priority) {
+        new ActionBar(text).showTo(player, priority);
+    }
+
+    @Override
     public void showTo(Player player, IDynamicText text) {
         new ActionBar(text).showTo(player);
+    }
+
+    @Override
+    public void showTo(Player player, IDynamicText text, ActionBarPriority priority) {
+        new ActionBar(text).showTo(player, priority);
     }
 
     @Override
@@ -102,8 +113,18 @@ public final class InternalActionBarManager implements IActionBarManager {
     }
 
     @Override
+    public void showTo(Collection<? extends Player> players, String text, ActionBarPriority priority) {
+        new ActionBar(text).showTo(players, priority);
+    }
+
+    @Override
     public void showTo(Collection<? extends Player> players, IDynamicText text) {
         new ActionBar(text).showTo(players);
+    }
+
+    @Override
+    public void showTo(Collection<? extends Player> players, IDynamicText text, ActionBarPriority priority) {
+        new ActionBar(text).showTo(players, priority);
     }
 
     @Override
@@ -112,18 +133,44 @@ public final class InternalActionBarManager implements IActionBarManager {
     }
 
     @Override
+    public void showTimed(Player player, String text,
+                          int duration, TimeScale timeScale, ActionBarPriority priority) {
+        new TimedActionBar(text, duration, timeScale).showTo(player, priority);
+    }
+
+    @Override
     public void showTimed(Player player, IDynamicText text, int duration, TimeScale timeScale) {
         new TimedActionBar(text, duration, timeScale).showTo(player);
     }
 
     @Override
-    public void showTimed(Collection<? extends Player> players, String text, int duration, TimeScale timeScale) {
+    public void showTimed(Player player, IDynamicText text,
+                          int duration, TimeScale timeScale, ActionBarPriority priority) {
+        new TimedActionBar(text, duration, timeScale).showTo(player, priority);
+    }
+
+    @Override
+    public void showTimed(Collection<? extends Player> players, String text,
+                          int duration, TimeScale timeScale) {
         new TimedActionBar(text, duration, timeScale).showTo(players);
     }
 
     @Override
-    public void showTimed(Collection<? extends Player> players, IDynamicText text, int duration, TimeScale timeScale) {
+    public void showTimed(Collection<? extends Player> players, String text,
+                          int duration, TimeScale timeScale, ActionBarPriority priority) {
+        new TimedActionBar(text, duration, timeScale).showTo(players, priority);
+    }
+
+    @Override
+    public void showTimed(Collection<? extends Player> players, IDynamicText text,
+                          int duration, TimeScale timeScale) {
         new TimedActionBar(text, duration, timeScale).showTo(players);
+    }
+
+    @Override
+    public void showTimed(Collection<? extends Player> players, IDynamicText text,
+                          int duration, TimeScale timeScale, ActionBarPriority priority) {
+        new TimedActionBar(text, duration, timeScale).showTo(players, priority);
     }
 
     @Override

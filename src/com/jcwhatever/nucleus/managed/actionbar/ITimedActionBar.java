@@ -47,6 +47,8 @@ public interface ITimedActionBar extends IPersistentActionBar {
     /**
      * Show the action bar to a player.
      *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
      * @param player     The player to show the action bar to.
      * @param duration   The duration the player should see the bar for.
      * @param timeScale  The time scale of the specified duration.
@@ -60,7 +62,32 @@ public interface ITimedActionBar extends IPersistentActionBar {
      * @param player     The player to show the action bar to.
      * @param duration   The duration the player should see the bar for.
      * @param timeScale  The time scale of the specified duration.
+     * @param priority   The action bar priority.
      */
     @Override
-    void showTo(Collection<? extends Player> player, int duration, TimeScale timeScale);
+    void showTo(Player player, int duration, TimeScale timeScale, ActionBarPriority priority);
+
+    /**
+     * Show the action bar to a player.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
+     * @param players    The player to show the action bar to.
+     * @param duration   The duration the player should see the bar for.
+     * @param timeScale  The time scale of the specified duration.
+     */
+    @Override
+    void showTo(Collection<? extends Player> players, int duration, TimeScale timeScale);
+
+    /**
+     * Show the action bar to a player.
+     *
+     * @param players    The player to show the action bar to.
+     * @param duration   The duration the player should see the bar for.
+     * @param timeScale  The time scale of the specified duration.
+     * @param priority   The action bar priority.
+     */
+    @Override
+    void showTo(Collection<? extends Player> players,
+                int duration, TimeScale timeScale, ActionBarPriority priority);
 }

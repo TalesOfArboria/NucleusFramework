@@ -44,6 +44,8 @@ public interface IActionBar {
     /**
      * Show the action bar to a player.
      *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
      * <p>If the player is viewing 1 or more {@link IPersistentActionBar}'s,
      * a {@link ITimedActionBar} is shown instead to ensure the text is given
      * a proper time slice among the persisted bars.</p>
@@ -53,7 +55,21 @@ public interface IActionBar {
     void showTo(Player player);
 
     /**
+     * Show the action bar to a player.
+     *
+     * <p>If the player is viewing 1 or more {@link IPersistentActionBar}'s,
+     * a {@link ITimedActionBar} is shown instead to ensure the text is given
+     * a proper time slice among the persisted bars.</p>
+     *
+     * @param player    The player to show the bar to.
+     * @param priority  The action bar priority.
+     */
+    void showTo(Player player, ActionBarPriority priority);
+
+    /**
      * Show the action bar to a collection of players.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
      *
      * <p>If the player is viewing 1 or more {@link IPersistentActionBar}'s,
      * a {@link ITimedActionBar} is shown instead to ensure the text is given
@@ -62,4 +78,16 @@ public interface IActionBar {
      * @param players  The players to show the bar to.
      */
     void showTo(Collection<? extends Player> players);
+
+    /**
+     * Show the action bar to a collection of players.
+     *
+     * <p>If the player is viewing 1 or more {@link IPersistentActionBar}'s,
+     * a {@link ITimedActionBar} is shown instead to ensure the text is given
+     * a proper time slice among the persisted bars.</p>
+     *
+     * @param players   The players to show the bar to.
+     * @param priority  The action bar priority.
+     */
+    void showTo(Collection<? extends Player> players, ActionBarPriority priority);
 }

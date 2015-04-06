@@ -46,6 +46,8 @@ public interface IPersistentActionBar extends IActionBar {
     /**
      * Show the action bar to a player.
      *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
      * @param player       The player to show the action bar to.
      * @param minDuration  The min duration the player should see the bar if the player
      *                     is viewing more than 1 {@link IPersistentActionBar}.
@@ -60,8 +62,33 @@ public interface IPersistentActionBar extends IActionBar {
      * @param minDuration  The min duration the player should see the bar if the player
      *                     is viewing more than 1 {@link IPersistentActionBar}.
      * @param timeScale    The time scale of the specified duration.
+     * @param priority     The action bar priority.
      */
-    void showTo(Collection<? extends Player> player, int minDuration, TimeScale timeScale);
+    void showTo(Player player, int minDuration, TimeScale timeScale, ActionBarPriority priority);
+
+    /**
+     * Show the action bar to a player.
+     *
+     * <p>Displays using {@link ActionBarPriority#DEFAULT}.</p>
+     *
+     * @param players      The players to show the action bar to.
+     * @param minDuration  The min duration the player should see the bar if the player
+     *                     is viewing more than 1 {@link IPersistentActionBar}.
+     * @param timeScale    The time scale of the specified duration.
+     */
+    void showTo(Collection<? extends Player> players, int minDuration, TimeScale timeScale);
+
+    /**
+     * Show the action bar to a player.
+     *
+     * @param players      The players to show the action bar to.
+     * @param minDuration  The min duration the player should see the bar if the player
+     *                     is viewing more than 1 {@link IPersistentActionBar}.
+     * @param timeScale    The time scale of the specified duration.
+     * @param priority     The action bar priority.
+     */
+    void showTo(Collection<? extends Player> players,
+                int minDuration, TimeScale timeScale, ActionBarPriority priority);
 
     /**
      * Hide the action bar from the player.
