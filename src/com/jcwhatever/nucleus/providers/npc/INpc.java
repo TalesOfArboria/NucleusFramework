@@ -25,7 +25,6 @@
 package com.jcwhatever.nucleus.providers.npc;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.mixins.INamedInsensitive;
 import com.jcwhatever.nucleus.providers.npc.ai.INpcState;
 import com.jcwhatever.nucleus.storage.IDataNode;
 
@@ -37,7 +36,7 @@ import javax.annotation.Nullable;
 /**
  * Interface for an NPC.
  */
-public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, IDisposable {
+public interface INpc extends INpcState, INpcScriptEvents, IDisposable {
 
     /**
      * Get the NPC's owning registry.
@@ -45,11 +44,26 @@ public interface INpc extends INpcState, INpcScriptEvents, INamedInsensitive, ID
     INpcRegistry getRegistry();
 
     /**
-     * Get the NPC's personal name.
-     *
-     * <p>This is the name displayed above the NPC entity.</p>
+     * Get the name used to uniquely identify an NPC within its own
+     * registry.
      */
-    String getNPCName();
+    String getLookupName();
+
+    /**
+     * Get the NPC's display name.
+     *
+     * <p>This is the name seen above the NPC.</p>
+     */
+    String getDisplayName();
+
+    /**
+     * Set the display name of the NPC.
+     *
+     * @param name  The display name.
+     *
+     * @return  Self for chaining.
+     */
+    INpc setDisplayName(String name);
 
     /**
      * Spawn the NPC in the specified location.
