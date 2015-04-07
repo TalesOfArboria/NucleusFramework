@@ -22,18 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import javax.annotation.Nullable;
 
 /**
  * Base implementation of an instance wrapper.
- *
- * @see ReflectedInstance
- * @see ReflectedArray
  */
-public abstract class Instance {
+abstract class Instance {
 
     private final ReflectedType _type;
     private final Object _instance;

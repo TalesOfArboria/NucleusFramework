@@ -32,14 +32,15 @@ import com.jcwhatever.nucleus.internal.blockselect.InternalBlockSelector;
 import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
 import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
 import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
+import com.jcwhatever.nucleus.internal.items.equipper.InternalEquipperManager;
 import com.jcwhatever.nucleus.internal.items.meta.InternalItemMetaHandlers;
 import com.jcwhatever.nucleus.internal.items.serializer.InternalItemSerializationManager;
-import com.jcwhatever.nucleus.internal.items.equipper.InternalEquipperManager;
 import com.jcwhatever.nucleus.internal.language.InternalLanguageManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
 import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
-import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderLoader;
+import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
+import com.jcwhatever.nucleus.internal.reflection.InternalReflectionManager;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
 import com.jcwhatever.nucleus.internal.response.InternalResponseRequestor;
 import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
@@ -89,6 +90,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalItemMetaHandlers _itemMetaHandlers;
     InternalTitleManager _titleManager;
     InternalActionBarManager _actionBarManager;
+    InternalReflectionManager _reflectionManager;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -154,6 +156,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     @Override
     protected void onPreEnable() {
 
+        _reflectionManager = new InternalReflectionManager();
         _languageManager = new InternalLanguageManager();
         _itemMetaHandlers = new InternalItemMetaHandlers();
         _itemSerialization = new InternalItemSerializationManager();

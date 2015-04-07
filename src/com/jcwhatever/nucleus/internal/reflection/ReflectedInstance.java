@@ -22,24 +22,19 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
+
+import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Encapsulates an object instance and provides reflection
- * utilities.
- *
- * <p>An instance of this type can be obtained from {@link ReflectedType}.</p>
- *
- * @see ReflectedType
- * @see Reflection
- * @see ReflectionUtils
+ * Internal implementation of {@link IReflectedInstance}.
  */
-public class ReflectedInstance extends Instance {
+class ReflectedInstance extends Instance implements IReflectedInstance {
 
-    private Map<Class<?>, Fields> _fields;
+    private Map<Class<?>, ReflectedInstanceFields> _fields;
 
     /**
      * Constructor.
@@ -51,58 +46,39 @@ public class ReflectedInstance extends Instance {
         super(type, instance);
     }
 
-    /**
-     * Get an instance field value.
-     *
-     * @param fieldName  The name of the field. If an alias is defined in the parent
-     *                   {@link ReflectedType}, the alias can be used.
-     *
-     * @see ReflectedType#fieldAlias
-     */
+    @Override
     public Object get(String fieldName) {
         ReflectedField field = getReflectedType().getField(fieldName);
         return field.get(getHandle());
     }
 
-    /**
-     * Set an instance field value.
-     *
-     * @param fieldName  The name of the field. If an alias is defined in the parent
-     *                   {@link ReflectedType}, the alias can be used.
-     * @param value      The value to set.
-     *
-     * @see ReflectedType#fieldAlias
-     */
+    @Override
     public void set(String fieldName, Object value) {
         ReflectedField field = getReflectedType().getField(fieldName);
         field.set(getHandle(), value);
     }
 
-    /**
-     * Get fields from the instance of the specified class
-     * type.
-     *
-     * @param fieldType  The field class type.
-     */
-    public Fields getFields(Class<?> fieldType) {
+    @Override
+    public ReflectedInstanceFields getFields() {
+        return getFields(Object.class);
+    }
+
+    @Override
+    public ReflectedInstanceFields getFields(Class<?> fieldType) {
 
         if (_fields == null) {
             _fields = new HashMap<>(10);
         }
 
-        Fields fields = _fields.get(fieldType);
+        ReflectedInstanceFields fields = _fields.get(fieldType);
         if (fields == null) {
-            fields = new Fields(getReflectedType().getFields(fieldType), getHandle());
+
+            fields = new ReflectedInstanceFields(
+                    this, getReflectedType().getCachedType().fieldsByType(fieldType));
+
             _fields.put(fieldType, fields);
         }
 
         return fields;
-    }
-
-    /**
-     * Get all fields from the instance.
-     */
-    public Fields getFields() {
-        return getFields(Object.class);
     }
 }

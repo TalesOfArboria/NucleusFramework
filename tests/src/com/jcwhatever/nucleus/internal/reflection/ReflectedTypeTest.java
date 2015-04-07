@@ -1,26 +1,39 @@
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
-import com.jcwhatever.nucleus.utils.reflection.ReflectableType.ReflectableTestEnum;
+import com.jcwhatever.nucleus.NucleusTest;
+import com.jcwhatever.nucleus.internal.reflection.ReflectableType.ReflectableTestEnum;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedArray;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedField;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedType;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedTypeFields;
+import com.jcwhatever.nucleus.managed.reflection.IReflection;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.List;
 
 public class ReflectedTypeTest {
 
-    private Reflection reflection = new Reflection(BukkitTester.NMS_TEST_VERSION);
+    private IReflectedType reflectedClass;
+    private IReflectedType reflectedEnum;
 
-    private ReflectedType reflectedClass = reflection.type(ReflectableType.class);
-    private ReflectedType reflectedEnum = reflection.type(ReflectableTestEnum.class);
+    @BeforeClass
+    public static void beforeClass() {
+        NucleusTest.init();
+    }
 
     @Before
-    public void resetStaticField() {
+    public void before() {
         ReflectableType.staticField = true;
+
+        IReflection reflection = new ReflectionContext(BukkitTester.NMS_TEST_VERSION);
+        reflectedClass = reflection.type(ReflectableType.class);
+        reflectedEnum = reflection.type(ReflectableTestEnum.class);
     }
 
     @Test
@@ -32,7 +45,7 @@ public class ReflectedTypeTest {
     @Test
     public void testGetFields() throws Exception {
 
-        List<ReflectedField> fields = reflectedClass.getFields(Object.class);
+        IReflectedTypeFields fields = reflectedClass.getFields(Object.class);
 
         assertEquals(4, fields.size());
 
@@ -58,7 +71,7 @@ public class ReflectedTypeTest {
     @Test
     public void testGetField() throws Exception {
 
-        ReflectedField field = reflectedClass.getField("field1");
+        IReflectedField field = reflectedClass.getField("field1");
 
         assertTrue(field != null);
 
@@ -66,15 +79,13 @@ public class ReflectedTypeTest {
 
         assertEquals(false, field.isStatic());
 
-        assertEquals(String.class, field.getType().getHandle());
-
-        assertEquals(ReflectableType.class, field.getOwnerType().getHandle());
+        assertEquals(String.class, field.getReflectedType().getHandle());
     }
 
     @Test
     public void testGetStaticField() throws Exception {
 
-        ReflectedField field = reflectedClass.getStaticField("staticField");
+        IReflectedField field = reflectedClass.getField("staticField");
 
         assertTrue(field != null);
 
@@ -82,9 +93,7 @@ public class ReflectedTypeTest {
 
         assertEquals(true, field.isStatic());
 
-        assertEquals(boolean.class, field.getType().getHandle());
-
-        assertEquals(ReflectableType.class, field.getOwnerType().getHandle());
+        assertEquals(boolean.class, field.getReflectedType().getHandle());
     }
 
     @Test
@@ -153,7 +162,7 @@ public class ReflectedTypeTest {
         reflectedClass.constructorAlias("constructor");
         reflectedClass.constructorAlias("constructor2", String.class);
 
-        ReflectedInstance instance = reflectedClass.constructReflect("constructor");
+        IReflectedInstance instance = reflectedClass.constructReflect("constructor");
         assertTrue(instance.getHandle() instanceof ReflectableType);
 
         instance = reflectedClass.constructReflect("constructor2", "arg");
@@ -161,29 +170,9 @@ public class ReflectedTypeTest {
     }
 
     @Test
-    public void testNewInstance() throws Exception {
-
-        Object instance = reflectedClass.newInstance();
-        assertTrue(instance instanceof ReflectableType);
-
-        instance = reflectedClass.newInstance("arg");
-        assertTrue(instance instanceof ReflectableType);
-    }
-
-    @Test
-    public void testNewReflectedInstance() throws Exception {
-
-        ReflectedInstance instance = reflectedClass.newReflectedInstance();
-        assertTrue(instance.getHandle() instanceof ReflectableType);
-
-        instance = reflectedClass.newReflectedInstance("arg");
-        assertTrue(instance.getHandle() instanceof ReflectableType);
-    }
-
-    @Test
     public void testNewArray() throws Exception {
 
-        ReflectedArray array = reflectedClass.newArray(10);
+        IReflectedArray array = reflectedClass.newArray(10);
 
         assertTrue(array.getHandle() instanceof ReflectableType[]);
 
@@ -193,7 +182,7 @@ public class ReflectedTypeTest {
     @Test
     public void testNewArray1() throws Exception {
 
-        ReflectedArray array = reflectedClass.newArray(10, 10, 10);
+        IReflectedArray array = reflectedClass.newArray(10, 10, 10);
 
         assertTrue(array.getHandle() instanceof ReflectableType[][][]);
 
@@ -205,7 +194,7 @@ public class ReflectedTypeTest {
 
         ReflectableType instance = new ReflectableType();
 
-        ReflectedInstance reflected = reflectedClass.reflect(instance);
+        IReflectedInstance reflected = reflectedClass.reflect(instance);
 
         assertTrue(reflected.getHandle() == instance);
     }
@@ -215,7 +204,7 @@ public class ReflectedTypeTest {
 
         ReflectableType[] array = new ReflectableType[1];
 
-        ReflectedArray reflectedArray = reflectedClass.reflectArray(array);
+        IReflectedArray reflectedArray = reflectedClass.reflectArray(array);
 
         assertTrue(reflectedArray.getHandle() == array);
 
@@ -232,7 +221,7 @@ public class ReflectedTypeTest {
 
         reflectedClass.fieldAlias("a", "field1");
 
-        ReflectedField field = reflectedClass.getField("a");
+        IReflectedField field = reflectedClass.getField("a");
 
         assertTrue(field != null);
 
@@ -240,10 +229,7 @@ public class ReflectedTypeTest {
 
         assertEquals(false, field.isStatic());
 
-        assertEquals(String.class, field.getType().getHandle());
-
-        assertEquals(ReflectableType.class, field.getOwnerType().getHandle());
-
+        assertEquals(String.class, field.getReflectedType().getHandle());
     }
 
     @Test
@@ -286,14 +272,16 @@ public class ReflectedTypeTest {
         reflectedClass.method("staticMethod1");
         reflectedClass.method("staticMethod2", boolean.class);
 
+        reflectedClass.constructorAlias("new");
+
         // Test with a method that has no parameters.
-        ReflectedInstance instance = reflectedClass.newReflectedInstance();
+        IReflectedInstance instance = reflectedClass.constructReflect("new");
 
         Object obj = instance.invoke("method1");
         assertEquals("string", obj);
 
         //  Test with parameters
-        instance = reflectedClass.newReflectedInstance();
+        instance = reflectedClass.constructReflect("new");
         instance.invoke("method2", "test");
         assertEquals("test", ((ReflectableType)instance.getHandle()).field1);
 
@@ -317,15 +305,17 @@ public class ReflectedTypeTest {
         reflectedClass.methodAlias("c", "staticMethod1");
         reflectedClass.methodAlias("d", "staticMethod2", boolean.class);
 
+        reflectedClass.constructorAlias("new");
+
 
         // Test with a method that has no parameters.
-        ReflectedInstance instance = reflectedClass.newReflectedInstance();
+        IReflectedInstance instance = reflectedClass.constructReflect("new");
 
         Object obj = instance.invoke("a");
         assertEquals("string", obj);
 
         //  Test with parameters
-        instance = reflectedClass.newReflectedInstance();
+        instance = reflectedClass.constructReflect("new");
 
         instance.invoke("b", "test");
         assertEquals("test", ((ReflectableType)instance.getHandle()).field1);

@@ -22,8 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
+import com.jcwhatever.nucleus.managed.reflection.IReflection;
+import com.jcwhatever.nucleus.managed.reflection.Reflection;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.util.Map;
@@ -31,12 +33,9 @@ import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 /**
- * A reflection manager used for a specific NMS version.
- *
- * <p>Intended for use as a modular reflection system where reflection code for different
- * NMS versions are kept separate and used as needed for the detected version.</p>
+ * Internal implementation of {@link IReflection}.
  */
-public class Reflection {
+class ReflectionContext implements IReflection {
 
     static final String CRAFT_BASE_PACKAGE = "org.bukkit.craftbukkit";
     static final String NMS_BASE_PACKAGE = "net.minecraft.server";
@@ -54,24 +53,13 @@ public class Reflection {
      * @param nmsVersion  The nms version the instance is for. This is the version
      *                    package name used by the NMS classes. (i.e v1_8_R1)
      */
-    public Reflection(String nmsVersion) {
+    public ReflectionContext(String nmsVersion) {
         PreCon.notNullOrEmpty(nmsVersion);
 
         _nmsVersion = nmsVersion;
     }
 
-    /**
-     * Get a {@link ReflectedType} instance from the specified class name.
-     *
-     * <p>For primitive types, use the primitive name ie "int".</p>
-     *
-     * <p>For NMS and CraftBukkit classes, use the class name without
-     * the craft package version.</p>
-     *
-     * <p>All other types use full class name.</p>
-     *
-     * @param className  The name of the class.
-     */
+    @Override
     public ReflectedType type(String className) {
         PreCon.notNullOrEmpty(className);
 
@@ -89,16 +77,7 @@ public class Reflection {
         return new ReflectedType(type);
     }
 
-    /**
-     * Get a {@link ReflectedType} instance from the specified NMS class name.
-     *
-     * <p>Returns a cached version or a new version.</p>
-     *
-     * <p>Use the class name excluding the base package (net.minecraft.server) and
-     * nms version.</p>
-     *
-     * @param nmsClassName  The name of the class.
-     */
+    @Override
     public ReflectedType nmsType(String nmsClassName) {
         PreCon.notNullOrEmpty(nmsClassName);
 
@@ -107,16 +86,7 @@ public class Reflection {
         return type(nmsClassName);
     }
 
-    /**
-     * Get a {@link ReflectedType} instance from the specified Craft class name.
-     *
-     * <p>Returns a cached version or a new version.</p>
-     *
-     * <p>Use the class name excluding the base package (org.bukkit.craftbukkit) and
-     * nms version.</p>
-     *
-     * @param craftClassName  The name of the class.
-     */
+    @Override
     public ReflectedType craftType(String craftClassName) {
         PreCon.notNullOrEmpty(craftClassName);
 
@@ -125,13 +95,7 @@ public class Reflection {
         return type(craftClassName);
     }
 
-    /**
-     * Get a {@link ReflectedType} instance from the specified class.
-     *
-     * <p>Returns a cached version or a new version.</p>
-     *
-     * @param clazz  The class to wrap.
-     */
+    @Override
     public ReflectedType type(Class<?> clazz) {
         CachedReflectedType type = _typeCache.get(clazz);
         if (type != null)
@@ -143,21 +107,19 @@ public class Reflection {
         return new ReflectedType(type);
     }
 
-    /**
+    /*
      * Gets a class from a class name.
      *
-     * <p>For primitive types, use the primitive name ie "int".</p>
+     * For primitive types, use the primitive name ie "int".
      *
-     * <p>For NMS and CraftBukkit classes, use the class name without
-     * the craft package version.</p>
+     * For NMS and CraftBukkit classes, use the class name without
+     * the craft package version.
      *
-     * <p>All other types, use full class name.</p>
-     *
-     * @param versionlessClassName
+     * All other types, use full class name.
      */
     private Class<?> classFromName(String versionlessClassName) {
 
-        Class<?> primitive = ReflectionUtils.NAMES_TO_PRIMITIVES.get(versionlessClassName);
+        Class<?> primitive = Reflection.NAMES_TO_PRIMITIVES.get(versionlessClassName);
         if (primitive != null)
             return primitive;
 
@@ -185,26 +147,22 @@ public class Reflection {
         }
     }
 
-    /**
+    /*
      * Get the current CraftBukkit class name using a class name without a version.
      *
-     * <p>If the package name is org.bukkit.craftbukkit.v1_7_R0.CraftServer, then
-     * the correct input is org.bukkit.craftbukkit.CraftServer</p>
-     *
-     * @param versionlessClassName  The class name without the CraftBukkit version package name.
+     * If the package name is org.bukkit.craftbukkit.v1_7_R0.CraftServer, then
+     * the correct input is org.bukkit.craftbukkit.CraftServer
      */
     private String getCraftClassName(String versionlessClassName) {
         return CRAFT_BASE_PACKAGE + CRAFT_BASE_PACKAGE_PATTERN.matcher(versionlessClassName)
                 .replaceFirst("");
     }
 
-    /**
+    /*
      * Get the current NMS class name using a class name without a version.
      *
-     * <p>If the package name is net.minecraft.server.v1_8_R1.CraftServer, then
-     * the correct input is net.minecraft.server.CraftServer</p>
-     *
-     * @param versionlessClassName  The class name without the CraftBukkit version package name.
+     * If the package name is net.minecraft.server.v1_8_R1.CraftServer, then
+     * the correct input is net.minecraft.server.CraftServer
      */
     private String getNMSClassName(String versionlessClassName) {
         return NMS_BASE_PACKAGE + NMS_BASE_PACKAGE_PATTERN.matcher(versionlessClassName)

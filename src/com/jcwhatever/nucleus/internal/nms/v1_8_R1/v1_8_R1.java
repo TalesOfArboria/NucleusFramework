@@ -24,10 +24,11 @@
 
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
+import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedType;
+import com.jcwhatever.nucleus.managed.reflection.IReflection;
+import com.jcwhatever.nucleus.managed.reflection.Reflection;
 import com.jcwhatever.nucleus.utils.nms.INmsHandler;
-import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
-import com.jcwhatever.nucleus.utils.reflection.ReflectedType;
-import com.jcwhatever.nucleus.utils.reflection.Reflection;
 
 import org.bukkit.entity.Player;
 
@@ -36,38 +37,38 @@ import org.bukkit.entity.Player;
  */
 class v1_8_R1 implements INmsHandler {
 
-    static Reflection reflection = new Reflection("v1_8_R1");
+    static IReflection reflection = Reflection.newContext();
 
-    static ReflectedType _IChatBaseComponent = reflection.nmsType("IChatBaseComponent");
+    static IReflectedType _IChatBaseComponent = reflection.nmsType("IChatBaseComponent");
 
-    static ReflectedType _EnumTitleAction = reflection.nmsType("EnumTitleAction");
+    static IReflectedType _EnumTitleAction = reflection.nmsType("EnumTitleAction");
 
-    static ReflectedType _EntityPlayer = reflection.nmsType("EntityPlayer");
+    static IReflectedType _EntityPlayer = reflection.nmsType("EntityPlayer");
 
-    static ReflectedType _Packet = reflection.nmsType("Packet");
+    static IReflectedType _Packet = reflection.nmsType("Packet");
 
-    static ReflectedType _PacketPlayOutTitle = reflection.nmsType("PacketPlayOutTitle")
+    static IReflectedType _PacketPlayOutTitle = reflection.nmsType("PacketPlayOutTitle")
             .constructorAlias("new", _EnumTitleAction.getHandle(), _IChatBaseComponent.getHandle())
             .constructorAlias("newTimes", int.class, int.class, int.class);
 
-    static ReflectedType _PacketPlayOutChat = reflection.nmsType("PacketPlayOutChat")
+    static IReflectedType _PacketPlayOutChat = reflection.nmsType("PacketPlayOutChat")
             .constructorAlias("new", _IChatBaseComponent.getHandle(), byte.class);
 
-    static ReflectedType _PacketPlayOutPlayerListHeaderFooter = reflection.nmsType("PacketPlayOutPlayerListHeaderFooter")
+    static IReflectedType _PacketPlayOutPlayerListHeaderFooter = reflection.nmsType("PacketPlayOutPlayerListHeaderFooter")
             .constructorAlias("new")
             .constructorAlias("newHeader", _IChatBaseComponent.getHandle())
             .fieldAlias("footer", "b");
 
-    static ReflectedType _PacketPlayOutNamedSoundEffect = reflection.nmsType("PacketPlayOutNamedSoundEffect")
+    static IReflectedType _PacketPlayOutNamedSoundEffect = reflection.nmsType("PacketPlayOutNamedSoundEffect")
             .constructorAlias("new", String.class, double.class, double.class, double.class, float.class, float.class);
 
-    static ReflectedType _ChatSerializer = reflection.nmsType("ChatSerializer")
+    static IReflectedType _ChatSerializer = reflection.nmsType("ChatSerializer")
             .methodAlias("serialize", "a", String.class);
 
-    static ReflectedType _PlayerConnection = reflection.nmsType("PlayerConnection")
+    static IReflectedType _PlayerConnection = reflection.nmsType("PlayerConnection")
             .method("sendPacket", _Packet.getHandle());
 
-    static ReflectedType _CraftPlayer = reflection.craftType("entity.CraftPlayer")
+    static IReflectedType _CraftPlayer = reflection.craftType("entity.CraftPlayer")
             .method("getHandle");
 
     protected boolean _isAvailable = true;
@@ -88,9 +89,9 @@ class v1_8_R1 implements INmsHandler {
 
         try {
 
-            ReflectedInstance entityPlayer = getEntityPlayer(player);
+            IReflectedInstance entityPlayer = getEntityPlayer(player);
 
-            ReflectedInstance connection = _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
+            IReflectedInstance connection = _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
 
             connection.invoke("sendPacket", packet);
         }
@@ -105,11 +106,11 @@ class v1_8_R1 implements INmsHandler {
      *
      * @param player The player.
      */
-    ReflectedInstance getConnection(Player player) {
+    IReflectedInstance getConnection(Player player) {
 
         try {
 
-            ReflectedInstance entityPlayer = getEntityPlayer(player);
+            IReflectedInstance entityPlayer = getEntityPlayer(player);
 
             return _PlayerConnection.reflect(entityPlayer.get("playerConnection"));
         }
@@ -120,11 +121,11 @@ class v1_8_R1 implements INmsHandler {
     }
 
     /**
-     * Get the {@link net.minecraft.server.EntityPlayer} nms object of the player.
+     * Get the net.minecraft.server.EntityPlayer nms object of the player.
      *
      * @param player  The player.
      */
-    ReflectedInstance getEntityPlayer(Player player) {
+    IReflectedInstance getEntityPlayer(Player player) {
         try {
             return _EntityPlayer.reflect(_CraftPlayer.reflect(player).invoke("getHandle"));
         }

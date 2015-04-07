@@ -22,29 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
+import com.jcwhatever.nucleus.managed.reflection.IReflectedInstanceFields;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Stores fields for a reflected instance.
- *
- * <p>An instance of this type can be obtained from {@link ReflectedInstance}.</p>
- *
- * @see ReflectedInstance
- * @see Reflection
- * @see ReflectionUtils
+ * Internal implementation of {@link IReflectedInstanceFields}.
  */
-public class Fields {
+public class ReflectedInstanceFields extends ReflectedTypeFields implements IReflectedInstanceFields {
 
     private final List<ReflectedField> _fields;
-    private final Object _instance;
-
-    private Map<String, ReflectedField> _nameMap;
+    private final ReflectedInstance _instance;
 
     /**
      * Constructor.
@@ -52,54 +44,27 @@ public class Fields {
      * @param fields     The fields in the instance of the specified type.
      * @param instance   The instance the fields are from.
      */
-    Fields(List<ReflectedField> fields, Object instance) {
-        PreCon.notNull(fields);
+    ReflectedInstanceFields(ReflectedInstance instance, List<ReflectedField> fields) {
+        super(instance.getReflectedType(), fields);
+
         PreCon.notNull(instance);
+        PreCon.notNull(fields);
 
         _instance = instance;
         _fields = fields;
     }
 
-    /**
-     * Get the total number of stored fields.
-     */
-    public int size() {
-        return _fields.size();
+    @Override
+    public ReflectedInstance getReflectedInstance() {
+        return _instance;
     }
 
-    /**
-     * Get the name of a field by index order.
-     *
-     * @param index  The field index position.
-     */
-    public String name(int index) {
-        PreCon.positiveNumber(index);
-
-        return _fields.get(index).getName();
-    }
-
-    /**
-     * Get the value of a field by index position.
-     *
-     * @param index  The fields index position.
-     *
-     * @param <T>  The return type.
-     *
-     * @return  Null if failed to access the field.
-     */
+    @Override
     public <T> T get(int index) {
         return get(_fields.get(index));
     }
 
-    /**
-     * Get the value of a field by name.
-     *
-     * @param fieldName  The name of the field.
-     *
-     * @param <T>  The return type.
-     *
-     * @return Null if value is null or failed to access the field.
-     */
+    @Override
     public <T> T get(String fieldName) {
         Map<String, ReflectedField> nameMap = getNameMap();
 
@@ -110,22 +75,12 @@ public class Fields {
         return get(field);
     }
 
-    /**
-     * Set the value of a field at the specified index position.
-     *
-     * @param index  The fields index position.
-     * @param value  The value to set.
-     */
+    @Override
     public void set(int index, Object value) {
-        _fields.get(index).set(_instance, value);
+        _fields.get(index).set(_instance.getHandle(), value);
     }
 
-    /**
-     * Set the value of a field by name.
-     *
-     * @param fieldName  The name of the field.
-     * @param value      The value to set.
-     */
+    @Override
     public void set(String fieldName, Object value) {
         Map<String, ReflectedField> nameMap = getNameMap();
 
@@ -133,32 +88,12 @@ public class Fields {
         if (field == null)
             throw new RuntimeException("Field named " + fieldName + " not found.");
 
-        field.set(_instance, value);
-    }
-
-    /**
-     * Get the encapsulated field by index position.
-     *
-     * @param index  The fields index position.
-     */
-    public ReflectedField getField(int index) {
-        return _fields.get(index);
+        field.set(_instance.getHandle(), value);
     }
 
     // get the value of a field
     private <T> T get(ReflectedField field) {
         //noinspection unchecked
-        return (T)field.get(_instance);
-    }
-
-    // initialize and get the name map
-    private Map<String, ReflectedField> getNameMap() {
-        if (_nameMap == null) {
-            _nameMap = new HashMap<>(_fields.size());
-            for (ReflectedField field : _fields) {
-                _nameMap.put(field.getName(), field);
-            }
-        }
-        return _nameMap;
+        return (T)field.get(_instance.getHandle());
     }
 }

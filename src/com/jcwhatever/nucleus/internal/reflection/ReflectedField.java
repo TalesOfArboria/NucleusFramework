@@ -22,24 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
+
+import com.jcwhatever.nucleus.managed.reflection.IReflectedField;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import javax.annotation.Nullable;
 
 /**
- * An encapsulated field.
- *
- * <p>Encapsulated fields are made accessible.</p>
- *
- * <p>An instance of this type can be obtained from {@link ReflectedInstance}.</p>
- *
- * @see ReflectedType
- * @see Reflection
- * @see ReflectionUtils
+ * Internal implementation of {@link IReflectedField}.
  */
-public class ReflectedField {
+class ReflectedField implements IReflectedField {
 
     private Field _field;
     private CachedReflectedType _type;
@@ -59,124 +53,80 @@ public class ReflectedField {
         field.setAccessible(true);
     }
 
-    /**
-     * Get the field name.
-     */
-    public String getName() {
-        return _field.getName();
-    }
+    @Override
+    public ReflectedType getReflectedType() {
 
-    /**
-     * Get the field modifiers.
-     */
-    public int getModifiers() {
-        return _modifiers;
-    }
-
-    /**
-     * Get the field modifiers as they are now.
-     */
-    public int getCurrentModifiers() {
-        return _field.getModifiers();
-    }
-
-    /**
-     * Determine if the field is static.
-     */
-    public boolean isStatic() {
-        return Modifier.isStatic(_modifiers);
-    }
-
-    /**
-     * Determine if the field is final.
-     */
-    public boolean isFinal() {
-        return Modifier.isFinal(_modifiers);
-    }
-
-    /**
-     * Determine if the field is private.
-     */
-    public boolean isPrivate() {
-        return Modifier.isPrivate(_modifiers);
-    }
-
-    /**
-     * Determine if the field is native.
-     */
-    public boolean isNative() {
-        return Modifier.isNative(_modifiers);
-    }
-
-    /**
-     * Determine if the field is protected.
-     */
-    public boolean isProtected() {
-        return Modifier.isProtected(_modifiers);
-    }
-
-    /**
-     * Determine if the field is public.
-     */
-    public boolean isPublic() {
-        return Modifier.isPublic(_modifiers);
-    }
-
-    /**
-     * Determine if the field is strict.
-     */
-    public boolean isStrict() {
-        return Modifier.isStrict(_modifiers);
-    }
-
-    /**
-     * Determine if the field is synchronized.
-     */
-    public boolean isSynchronized() {
-        return Modifier.isSynchronized(_modifiers);
-    }
-
-    /**
-     * Determine if the field is transient.
-     */
-    public boolean isTransient() {
-        return Modifier.isTransient(_modifiers);
-    }
-
-    /**
-     * Determine if the field is volatile.
-     */
-    public boolean isVolatile() {
-        return Modifier.isVolatile(_modifiers);
-    }
-
-    /**
-     * Get the type the field is in.
-     */
-    public ReflectedType getOwnerType() {
-        return new ReflectedType(_type);
-    }
-
-    /**
-     * Get the field type.
-     */
-    public ReflectedType getType() {
-
-        CachedReflectedType type = Reflection._typeCache.get(_field.getType());
+        CachedReflectedType type = ReflectionContext._typeCache.get(_field.getType());
         if (type == null) {
 
             type = new CachedReflectedType(_field.getType());
-            Reflection._typeCache.put(_field.getType(), type);
+            ReflectionContext._typeCache.put(_field.getType(), type);
         }
 
         return new ReflectedType(type);
     }
 
-    /**
-     * Get the field value.
-     *
-     * @param instance  The instance to get the value from. Null for static.
-     */
+    @Override
+    public String getName() {
+        return _field.getName();
+    }
+
+    @Override
+    public int getModifiers() {
+        return _modifiers;
+    }
+
+    @Override
+    public int getCurrentModifiers() {
+        return _field.getModifiers();
+    }
+
+    @Override
+    public boolean isStatic() {
+        return Modifier.isStatic(_modifiers);
+    }
+
+    @Override
+    public boolean isFinal() {
+        return Modifier.isFinal(_modifiers);
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return Modifier.isPrivate(_modifiers);
+    }
+
+    @Override
+    public boolean isNative() {
+        return Modifier.isNative(_modifiers);
+    }
+
+    @Override
+    public boolean isProtected() {
+        return Modifier.isProtected(_modifiers);
+    }
+
+    @Override
+    public boolean isPublic() {
+        return Modifier.isPublic(_modifiers);
+    }
+
+    @Override
+    public boolean isStrict() {
+        return Modifier.isStrict(_modifiers);
+    }
+
+    @Override
+    public boolean isTransient() {
+        return Modifier.isTransient(_modifiers);
+    }
+
+    @Override
+    public boolean isVolatile() {
+        return Modifier.isVolatile(_modifiers);
+    }
+
+    @Override
     public Object get(@Nullable Object instance) {
         try {
             return _field.get(instance);
@@ -191,12 +141,7 @@ public class ReflectedField {
         }
     }
 
-    /**
-     * Set the field value.
-     *
-     * @param instance  The instance to set the value on. Null for static.
-     * @param value     The value to set.
-     */
+    @Override
     public void set(@Nullable Object instance, @Nullable Object value) {
         try {
             _field.set(instance, value);
@@ -206,10 +151,8 @@ public class ReflectedField {
         }
     }
 
-    /**
-     * Get the {@link java.lang.reflect.Field} object.
-     */
-    public Field getField() {
+    @Override
+    public Field getHandle() {
         try {
             return _type.getHandle().getField(_field.getName());
         } catch (NoSuchFieldException e) {

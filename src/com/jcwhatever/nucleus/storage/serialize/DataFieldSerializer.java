@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.storage.serialize;
 
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-import com.jcwhatever.nucleus.utils.reflection.ReflectionUtils;
+import com.jcwhatever.nucleus.managed.reflection.Reflection;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -157,7 +157,7 @@ public final class DataFieldSerializer {
                 continue;
 
             if (Modifier.isFinal(field.getModifiers()))
-                ReflectionUtils.removeFinal(field);
+                Reflection.removeFinal(field);
 
             boolean isStatic = Modifier.isStatic(field.getModifiers());
 

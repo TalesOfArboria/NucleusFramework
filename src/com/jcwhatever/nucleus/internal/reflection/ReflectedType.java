@@ -22,33 +22,28 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
-import com.jcwhatever.nucleus.utils.CollectionUtils;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedArray;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedType;
+import com.jcwhatever.nucleus.managed.reflection.Reflection;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * A wrapper for a Java class that provides reflection helpers.
- *
- * <p>Uses the global cache for field and method lookup. However, any field/method/enum
- * aliases assigned are unique to the instance.</p>
- *
- * <p>A new instance of {@link ReflectedType} can be retrieved using {@link Reflection} class.</p>
- *
- * @see Reflection
- * @see ReflectionUtils
+ * Internal implementation of {@link IReflectedType}.
  */
-public class ReflectedType {
+class ReflectedType implements IReflectedType {
 
     private final CachedReflectedType _cached;
     private Map<String, Method> _aliasMethods;
@@ -68,36 +63,25 @@ public class ReflectedType {
     }
 
     /**
-     * Get the encapsulated class.
+     * Get the cached reflected type.
      */
-    public Class<?> getHandle() {
-        return _cached.getHandle();
+    public CachedReflectedType getCachedType() {
+        return _cached;
     }
 
-    /**
-     * Get fields of the specified type.
-     *
-     * <p>Only stores by the field type. Super types
-     * are not stored.</p>
-     *
-     * <p>Specifying the {@link java.lang.Object} type returns all fields.</p>
-     *
-     * @param fieldType  The field type.
-     */
-    public List<ReflectedField> getFields(Class<?> fieldType) {
+    @Override
+    public ReflectedTypeFields getFields() {
+        return getFields(Object.class);
+    }
+
+    @Override
+    public ReflectedTypeFields getFields(Class<?> fieldType) {
         PreCon.notNull(fieldType, "fieldType");
 
-        return CollectionUtils.unmodifiableList(_cached.fieldsByType(fieldType));
+        return new ReflectedTypeFields(this, _cached.fieldsByType(fieldType));
     }
 
-    /**
-     * Get a field from the type by name.
-     *
-     * @param name  The field name. If an alias is defined,
-     *              the alias can be used.
-     *
-     * @see ReflectedType#fieldAlias
-     */
+    @Override
     public ReflectedField getField(String name) {
         PreCon.notNullOrEmpty(name, "name");
 
@@ -115,42 +99,7 @@ public class ReflectedType {
         return field;
     }
 
-    /**
-     * Get a static field from the type by name.
-     *
-     * @param name  The field name. If an alias is defined,
-     *              the alias can be used.
-     *
-     * @see ReflectedType#fieldAlias
-     */
-    public ReflectedField getStaticField(String name) {
-        PreCon.notNullOrEmpty(name, "name");
-
-        if (_aliasFields != null) {
-            ReflectedField field = _aliasFields.get(name);
-            if (field != null)
-                return field;
-        }
-
-        ReflectedField field = _cached.staticFieldByName(name);
-        if (field == null) {
-            throw new RuntimeException("Field " + name + " not found in type " + getHandle().getName());
-        }
-
-        return field;
-    }
-
-    /**
-     * Get an enum constant from the type.
-     *
-     * @param constantName  The enum constant name. If an alias is defined,
-     *                      the alias can be used.
-     *
-     * @return  The enum constant.
-     *
-     * @see ReflectedType#enumConst
-     * @see ReflectedType#enumAlias
-     */
+    @Override
     public Object getEnum(String constantName) {
         PreCon.notNullOrEmpty(constantName, "constantName");
 
@@ -163,44 +112,29 @@ public class ReflectedType {
         return getEnumConstant(constantName);
     }
 
-    /**
-     * Get a static field value.
-     *
-     * @param fieldName  The name of the field. If an alias is defined,
-     *                   the alias can be used.
-     *
-     * @see ReflectedType#fieldAlias
-     */
+    @Override
     public Object get(String fieldName) {
-        ReflectedField field = getStaticField(fieldName);
+        ReflectedField field = getField(fieldName);
+
+        if (!field.isStatic()) {
+            throw new RuntimeException("Field " + fieldName + " is not static.");
+        }
+
         return field.get(null);
     }
 
-    /**
-     * Set a static field value.
-     *
-     * @param fieldName  The name of the field. If an alias is defined,
-     *                   the alias can be used.
-     * @param value      The value to set.
-     *
-     * @see ReflectedType#fieldAlias
-     */
+    @Override
     public void set(String fieldName, Object value) {
-        ReflectedField field = getStaticField(fieldName);
+        ReflectedField field = getField(fieldName);
+
+        if (!field.isStatic()) {
+            throw new RuntimeException("Field " + fieldName + " is not static.");
+        }
+
         field.set(null, value);
     }
 
-    /**
-     * Create a new instance of the encapsulated class using
-     * a pre-registered constructor alias.
-     *
-     * @param alias      The registered alias name of the constructor signature.
-     * @param arguments  The constructor arguments.
-     *
-     * @return  The new instance.
-     *
-     * @see ReflectedType#constructorAlias
-     */
+    @Override
     public Object construct(String alias, Object... arguments) {
         PreCon.notNullOrEmpty(alias, "alias");
         PreCon.notNull(arguments, "arguments");
@@ -220,19 +154,8 @@ public class ReflectedType {
         }
     }
 
-    /**
-     * Create a new instance of the encapsulated class using
-     * a pre-registered constructor alias and wrap in
-     * {@link ReflectedInstance}.
-     *
-     * @param alias      The registered alias name of the constructor signature.
-     * @param arguments  The constructor arguments.
-     *
-     * @return  The new instance.
-     *
-     * @see ReflectedType#constructorAlias
-     */
-    public ReflectedInstance constructReflect(String alias, Object... arguments) {
+    @Override
+    public IReflectedInstance constructReflect(String alias, Object... arguments) {
         PreCon.notNullOrEmpty(alias, "alias");
         PreCon.notNull(arguments, "arguments");
 
@@ -264,7 +187,7 @@ public class ReflectedType {
         else {
             constructor = constructors.size() == 1
                     ? constructors.iterator().next()
-                    : ReflectionUtils.findConstructorByArgs(constructors, arguments);
+                    : Reflection.findConstructorByArgs(constructors, arguments);
         }
 
         if (constructor == null)
@@ -298,15 +221,8 @@ public class ReflectedType {
         return new ReflectedInstance(this, instance);
     }
 
-    /**
-     * Create a new array whose component type is
-     * the encapsulated class.
-     *
-     * @param size  The size of the array.
-     *
-     * @return  {@link ReflectedArray} instance.
-     */
-    public ReflectedArray newArray(int size) {
+    @Override
+    public IReflectedArray newArray(int size) {
         PreCon.positiveNumber(size);
 
         Object array = Array.newInstance(_cached.getHandle(), size);
@@ -314,15 +230,9 @@ public class ReflectedType {
         return new ReflectedArray(this, array);
     }
 
-    /**
-     * Create a new array whose component type is
-     * that of the encapsulated class.
-     *
-     * @param sizes  The size of each array dimension.
-     *
-     * @return  {@link ReflectedArray} instance.
-     */
-    public ReflectedArray newArray(int... sizes) {
+
+    @Override
+    public IReflectedArray newArray(int... sizes) {
         PreCon.greaterThanZero(sizes.length, "At least one array dimension must be specified.");
 
         Object array = Array.newInstance(_cached.getHandle(), sizes);
@@ -330,44 +240,21 @@ public class ReflectedType {
         return new ReflectedArray(this, array);
     }
 
-    /**
-     * Create a new {@link ReflectedInstance} to encapsulate
-     * an object instance that is known to be of the same
-     * type as the encapsulated class.
-     *
-     * @param instance  The instance to wrap.
-     */
+    @Override
     public ReflectedInstance reflect(Object instance) {
         PreCon.notNull(instance, "instance");
 
         return new ReflectedInstance(this, instance);
     }
 
-    /**
-     * Create a new {@link ReflectedArray} to encapsulate
-     * an array instance that is known to be of the same
-     * type as the encapsulated class.
-     *
-     * @param instance  The instance to wrap.
-     */
+    @Override
     public ReflectedArray reflectArray(Object instance) {
         PreCon.notNull(instance, "instance");
 
         return new ReflectedArray(this, instance);
     }
 
-    /**
-     * Register a constructor signature under an alias name.
-     *
-     * <p></p>Improves performance by allowing the specific constructor to be
-     * retrieved by the alias name. Use {@link #construct} or {@link #constructReflect}
-     * to create new instances using the alias name.
-     *
-     * @param alias      The constructor alias.
-     * @param signature  The constructor signature.
-     *
-     * @return  Self for chaining.
-     */
+    @Override
     public ReflectedType constructorAlias(String alias, Class<?>... signature) {
         PreCon.notNullOrEmpty(alias, "alias");
         PreCon.notNull(signature, "signature");
@@ -393,22 +280,7 @@ public class ReflectedType {
         return this;
     }
 
-    /**
-     * Register a field alias name.
-     *
-     * <p>Used to assign a readable name to obfuscated fields and/or
-     * improve performance by pre-defining a field.</p>
-     *
-     * <p>Can be used for static or non-static fields.</p>
-     *
-     * @param fieldAlias  The field alias. Can be the actual field name.
-     * @param fieldName   The actual field name.
-     *
-     * @return  Self for chaining.
-     *
-     * @see ReflectedInstance#get
-     * @see ReflectedInstance#set
-     */
+    @Override
     public ReflectedType fieldAlias(String fieldAlias, String fieldName) {
         PreCon.notNullOrEmpty(fieldAlias, "fieldAlias");
         PreCon.notNullOrEmpty(fieldName, "fieldName");
@@ -428,17 +300,7 @@ public class ReflectedType {
         return this;
     }
 
-    /**
-     * Register an enum constant alias name.
-     *
-     * <p>Used to assign a readable name to obfuscated enum constants and/or
-     * improve performance by pre-defining and caching enum constant.</p>
-     *
-     * @param constantAlias  The alias name.
-     * @param constantName   The actual enum constant name.
-     *
-     * @return  Self for chaining.
-     */
+    @Override
     public ReflectedType enumAlias(String constantAlias, String constantName) {
         PreCon.notNullOrEmpty(constantAlias, "constantAlias");
         PreCon.notNullOrEmpty(constantName, "constantName");
@@ -454,13 +316,7 @@ public class ReflectedType {
         return this;
     }
 
-    /**
-     * Register an enum constant for faster lookup.
-     *
-     * @param constantName  The constant name.
-     *
-     * @return  Self for chaining.
-     */
+    @Override
     public ReflectedType enumConst(String constantName) {
         PreCon.notNullOrEmpty(constantName, "constantName");
 
@@ -475,26 +331,7 @@ public class ReflectedType {
         return this;
     }
 
-    /**
-     * Registers a method name to a specific signature.
-     *
-     * <p>Does not allow for overloaded methods. Each registered name must be unique. Use an
-     * alias for overloads.</p>
-     *
-     * <p>Improves code readability and method lookup performance.</p>
-     *
-     * <p>Can be used for static or non-static methods.</p>
-     *
-     * @param methodName  The method name.
-     * @param signature   The argument types of the method.
-     *
-     * @return Self for chaining.
-     *
-     * @see Instance#invoke
-     * @see ReflectedType#invoke
-     * @see ReflectedType#invokeStatic
-     * @see ReflectedType#methodAlias
-     */
+    @Override
     public ReflectedType method(String methodName, Class<?>... signature) {
         PreCon.notNullOrEmpty(methodName, "methodName");
         PreCon.notNull(signature, "argTypes");
@@ -521,26 +358,7 @@ public class ReflectedType {
         return this;
     }
 
-    /**
-     * Register a method alias name to a specific method signature to aid
-     * in code readability and method lookup performance.
-     *
-     * <p>Can also be used to assign a unique alias to a method that has overloads.</p>
-     *
-     * <p>Can be used for static or non-static methods.</p>
-     *
-     * @param alias       The alias for the method. Can match an actual method name
-     *                    but will prevent use of overloads.
-     * @param methodName  The name of the method.
-     * @param signature   The argument types of the method.
-     *
-     * @return Self for chaining.
-     *
-     * @see Instance#invoke
-     * @see ReflectedType#invoke
-     * @see ReflectedType#invokeStatic
-     * @see ReflectedType#method
-     */
+    @Override
     public ReflectedType methodAlias(String alias, String methodName, Class<?>... signature) {
         PreCon.notNullOrEmpty(alias, "alias");
         PreCon.notNullOrEmpty(methodName, "methodName");
@@ -569,19 +387,7 @@ public class ReflectedType {
         return this;
     }
 
-    /**
-     * Invoke a static method on the encapsulated class.
-     *
-     * @param staticMethodName  The name of the static method.
-     * @param arguments         The method arguments.
-     *
-     * @param <V>  The return type.
-     *
-     * @return  Null if the method returns null or void.
-     *
-     * @see ReflectedType#method
-     * @see ReflectedType#methodAlias
-     */
+    @Override
     @Nullable
     public <V> V invokeStatic(String staticMethodName, Object... arguments) {
         PreCon.notNull(staticMethodName, "staticMethodName");
@@ -590,21 +396,7 @@ public class ReflectedType {
         return invoke(null, staticMethodName, arguments);
     }
 
-    /**
-     * Invoke a method on an instance of the encapsulated class.
-     *
-     * @param instance    The instance.
-     * @param methodName  The name of the method. If an alias is defined,
-     *                    the alias can be used.
-     * @param arguments   The method arguments.
-     *
-     * @param <V>  The return type.
-     *
-     * @return  Null if the method returns null or void.
-     *
-     * @see ReflectedType#method
-     * @see ReflectedType#methodAlias
-     */
+    @Override
     @Nullable
     public <V> V invoke(@Nullable Object instance, String methodName, Object... arguments) {
         PreCon.notNullOrEmpty(methodName, "methodName");
@@ -614,19 +406,24 @@ public class ReflectedType {
 
         if (method == null) {
 
-            Collection<Method> methods = instance != null
-                    ? _cached.methodsByName(methodName)
-                    : _cached.staticMethodsByName(methodName);
+            Collection<Method> methods = _cached.methodsByName(methodName);
 
             // get method definition
             if (methods.size() == 1) {
                 method = methods.iterator().next();
             } else {
-                method = ReflectionUtils.findMethodByArgs(methods, methodName, arguments);
+                method = Reflection.findMethodByArgs(methods, methodName, arguments);
                 if (method == null)
                     throw new RuntimeException("Method '" + methodName +
                             "' not found in type " + _cached.getHandle().getCanonicalName());
             }
+        }
+
+        if (instance == null && !Modifier.isStatic(method.getModifiers())) {
+            throw new RuntimeException("Method " + methodName + " is not static.");
+        }
+        else if (instance != null && Modifier.isStatic(method.getModifiers())) {
+            throw new RuntimeException("Method " + methodName + " is static.");
         }
 
         Object result;
@@ -642,6 +439,11 @@ public class ReflectedType {
         V castedResult = (V)result;
 
         return castedResult;
+    }
+
+    @Override
+    public Class<?> getHandle() {
+        return _cached.getHandle();
     }
 
     private Object getEnumConstant(String constantName) {
@@ -678,5 +480,4 @@ public class ReflectedType {
         throw new RuntimeException("Failed to find enum constant named " +
                 constantName + " in type " + getHandle().getName());
     }
-
 }

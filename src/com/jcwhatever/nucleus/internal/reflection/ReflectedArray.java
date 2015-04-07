@@ -22,21 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
+import com.jcwhatever.nucleus.managed.reflection.IReflectedArray;
+import com.jcwhatever.nucleus.managed.reflection.Reflection;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.lang.reflect.Array;
 
 /**
- * Encapsulates an array and provides reflection utilities.
- *
- * <p>An instance of this type can be obtained from {@link ReflectedType}.</p>
- *
- * @see Reflection
- * @see ReflectionUtils
+ * Internal implementation of {@link IReflectedArray}.
  */
-public class ReflectedArray extends Instance {
+class ReflectedArray extends Instance implements IReflectedArray {
 
     private final int _length;
     private final int _dimensions;
@@ -51,39 +48,25 @@ public class ReflectedArray extends Instance {
         super(type, instance);
 
         _length = Array.getLength(instance);
-        _dimensions = ReflectionUtils.getArrayDimensions(instance);
+        _dimensions = Reflection.getArrayDimensions(instance);
     }
 
-    /**
-     * Get the length of the arrays first dimension.
-     */
+    @Override
     public int length() {
         return _length;
     }
 
-    /**
-     * Get the number of dimensions in the array.
-     */
+    @Override
     public int getDimensions() {
         return _dimensions;
     }
 
-    /**
-     * Get a value from the array at the specified
-     * index position.
-     *
-     * @param index  The index position.
-     */
+    @Override
     public Object get(int index) {
         return Array.get(getHandle(), index);
     }
 
-    /**
-     * Get a value from the array at the specified
-     * index position.
-     *
-     * @param indexes  The index position.
-     */
+    @Override
     public Object get(int... indexes) {
         PreCon.lessThanEqual(indexes.length, _dimensions, "Too many dimensions.");
 
@@ -102,48 +85,26 @@ public class ReflectedArray extends Instance {
         return obj;
     }
 
-    /**
-     * Get a value from the array at the specified
-     * index position and encapsulate the value in
-     * a {@link ReflectedInstance}.
-     *
-     * @param index  The index position.
-     */
+    @Override
     public ReflectedInstance getReflected(int index) {
         Object object = get(index);
 
         return new ReflectedInstance(getReflectedType(), object);
     }
 
-    /**
-     * Get a value from the array at the specified
-     * index position and encapsulate the value in
-     * a {@link ReflectedInstance}.
-     *
-     * @param indexes  The index position.
-     */
+    @Override
     public ReflectedInstance getReflected(int... indexes) {
         Object object = get(indexes);
 
         return new ReflectedInstance(getReflectedType(), object);
     }
 
-    /**
-     * Set the value at the specified index position.
-     *
-     * @param value  The value to set.
-     * @param index  The index position.
-     */
+    @Override
     public void set(Object value, int index) {
         Array.set(getHandle(), index, value);
     }
 
-    /**
-     * Set the value at the specified index position.
-     *
-     * @param value  The value to set.
-     * @param indexes  The index position.
-     */
+    @Override
     public void set(Object value, int... indexes) {
         PreCon.lessThanEqual(indexes.length, _dimensions, "Too many dimensions.");
 
@@ -171,7 +132,7 @@ public class ReflectedArray extends Instance {
             throw new RuntimeException("Instance is not an array.");
         }
 
-        Class<?> componentType = ReflectionUtils.getArrayComponentType(instance);
+        Class<?> componentType = Reflection.getArrayComponentType(instance);
 
         if (!type.getHandle().isAssignableFrom(componentType)) {
             throw new RuntimeException("Array components don't match type.");

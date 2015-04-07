@@ -26,7 +26,7 @@ package com.jcwhatever.nucleus.internal.providers.permissions.bukkit;
 
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.utils.BatchTracker;
-import com.jcwhatever.nucleus.utils.reflection.ReflectionUtils;
+import com.jcwhatever.nucleus.managed.reflection.Reflection;
 
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
@@ -164,7 +164,7 @@ public final class FastPermissions extends BatchTracker {
 
 
         Field field = pm.getClass().getDeclaredField("permissions");
-        if (!ReflectionUtils.removeFinal(field))
+        if (!Reflection.removeFinal(field))
             return false;
 
         @SuppressWarnings("unchecked")

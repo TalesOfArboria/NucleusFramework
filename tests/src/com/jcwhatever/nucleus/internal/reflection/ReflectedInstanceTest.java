@@ -1,4 +1,4 @@
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class ReflectedInstanceTest {
 
-    private Reflection reflection = new Reflection(BukkitTester.NMS_TEST_VERSION);
+    private ReflectionContext reflection = new ReflectionContext(BukkitTester.NMS_TEST_VERSION);
     private ReflectedType reflectedClass = reflection.type(ReflectableType.class);
 
 
@@ -46,7 +46,7 @@ public class ReflectedInstanceTest {
 
         ReflectedInstance instance = reflectedClass.newReflectedInstance();
 
-        Fields fields = instance.getFields();
+        ReflectedInstanceFields fields = instance.getFields();
         assertTrue(fields != null);
     }
 }

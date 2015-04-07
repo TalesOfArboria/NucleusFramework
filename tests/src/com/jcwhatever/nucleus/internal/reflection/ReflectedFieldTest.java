@@ -1,19 +1,20 @@
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
+import com.jcwhatever.nucleus.NucleusTest;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
 
 public class ReflectedFieldTest {
 
-    private Reflection reflection = new Reflection(BukkitTester.NMS_TEST_VERSION);
-    private ReflectedType reflectedClass = reflection.type(ReflectableType.class);
-    private ReflectedInstance instance = reflectedClass.newReflectedInstance();
-
+    @BeforeClass
+    public static void beforeClass() {
+        NucleusTest.init();
+    }
 
     private ReflectedField getTestField() throws Exception {
 
@@ -109,14 +110,6 @@ public class ReflectedFieldTest {
     }
 
     @Test
-    public void testIsSynchronized() throws Exception {
-
-        ReflectedField field = getTestField();
-
-        assertEquals(false, field.isSynchronized());
-    }
-
-    @Test
     public void testIsTransient() throws Exception {
 
         ReflectedField field = getTestField();
@@ -133,19 +126,11 @@ public class ReflectedFieldTest {
     }
 
     @Test
-    public void testGetOwnerType() throws Exception {
-
-        ReflectedField field = getTestField();
-
-        assertEquals(ReflectableType.class, field.getOwnerType().getHandle());
-    }
-
-    @Test
     public void testGetType() throws Exception {
 
         ReflectedField field = getTestField();
 
-        assertEquals(String.class, field.getType().getHandle());
+        assertEquals(String.class, field.getReflectedType().getHandle());
     }
 
     @Test

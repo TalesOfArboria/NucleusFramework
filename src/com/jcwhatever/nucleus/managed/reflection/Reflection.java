@@ -22,9 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.managed.reflection;
 
 import com.google.common.collect.ImmutableMap;
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.PreCon;
 
 import java.lang.reflect.Constructor;
@@ -38,9 +39,9 @@ import javax.annotation.Nullable;
 /**
  * Reflection utilities.
  */
-public class ReflectionUtils {
+public final class Reflection {
 
-    private ReflectionUtils () {}
+    private Reflection() {}
 
     /**
      * Maps primitive types to wrapper types.
@@ -91,14 +92,11 @@ public class ReflectionUtils {
             .build();
 
     /**
-     * Create a new {@link Reflection} instance for the specified
+     * Create a new {@link IReflection} instance for the current
      * NMS version.
-     *
-     * @param nmsVersion  The nms version. This is the version package name
-     *                    used by the NMS classes. (i.e v1_8_R1)
      */
-    public static Reflection newReflection(String nmsVersion) {
-        return new Reflection(nmsVersion);
+    public static IReflection newContext() {
+        return Nucleus.getReflectionManager().newContext();
     }
 
     /**

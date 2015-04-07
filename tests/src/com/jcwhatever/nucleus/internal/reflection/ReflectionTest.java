@@ -1,28 +1,33 @@
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
 import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
+import com.jcwhatever.nucleus.NucleusTest;
 
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.minecraft.server.v1_8_R2.EntityLiving;
 
 public class ReflectionTest {
 
-
     private static class ReflectableTestClass {}
 
+    @BeforeClass
+    public static void beforeClass() {
+        NucleusTest.init();
+    }
 
     @Test
     public void testType() throws Exception {
 
-        Reflection reflection = new Reflection(BukkitTester.NMS_TEST_VERSION);
+        ReflectionContext reflection = new ReflectionContext(BukkitTester.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.type(
-                "com.jcwhatever.nucleus.utils.reflection.ReflectionTest$ReflectableTestClass");
+                "com.jcwhatever.nucleus.internal.reflection.ReflectionTest$ReflectableTestClass");
 
         assertNotNull(reflected);
         assertEquals(ReflectableTestClass.class, reflected.getHandle());
@@ -31,7 +36,7 @@ public class ReflectionTest {
     @Test
     public void testType1() throws Exception {
 
-        Reflection reflection = new Reflection(BukkitTester.NMS_TEST_VERSION);
+        ReflectionContext reflection = new ReflectionContext(BukkitTester.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.type(ReflectableTestClass.class);
 
@@ -42,7 +47,7 @@ public class ReflectionTest {
     @Test
     public void testNmsType() throws Exception {
 
-        Reflection reflection = new Reflection(BukkitTester.NMS_TEST_VERSION);
+        ReflectionContext reflection = new ReflectionContext(BukkitTester.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.nmsType("EntityLiving");
         assertNotNull(reflected);
@@ -52,7 +57,7 @@ public class ReflectionTest {
     @Test
     public void testCraftType() throws Exception {
 
-        Reflection reflection = new Reflection(BukkitTester.NMS_TEST_VERSION);
+        ReflectionContext reflection = new ReflectionContext(BukkitTester.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.craftType("entity.CraftPlayer");
         assertNotNull(reflected);

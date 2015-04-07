@@ -25,10 +25,10 @@
 package com.jcwhatever.nucleus.internal.nms.v1_8_R1;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.nms.INmsTitleHandler;
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.managed.reflection.IReflectedInstance;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.utils.reflection.ReflectedInstance;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.nms.INmsTitleHandler;
 import com.jcwhatever.nucleus.utils.text.SimpleJSONBuilder;
 
 import org.bukkit.Bukkit;
@@ -102,7 +102,7 @@ public final class NmsTitleHandler_v1_8_R1 extends v1_8_R1 implements INmsTitleH
 
         try {
 
-            ReflectedInstance connection = getConnection(player);
+            IReflectedInstance connection = getConnection(player);
 
             // times packet
             Object timesPacket = _PacketPlayOutTitle.construct("newTimes", fadeIn, stay, fadeOut);

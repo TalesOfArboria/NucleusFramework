@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
@@ -31,21 +31,16 @@ import com.jcwhatever.nucleus.utils.CollectionUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
  * Stores globally available data about a class type.
- *
- * <p>Used internally to improve performance.</p>
- *
- * @see Reflection
- * @see ReflectionUtils
  */
-public class CachedReflectedType {
+class CachedReflectedType {
 
     private final Class<?> _clazz;
 
@@ -56,12 +51,8 @@ public class CachedReflectedType {
             MultimapBuilder.hashKeys(10).arrayListValues().build();
 
     private final Map<String, ReflectedField> _fieldsByName = new HashMap<>(10);
-    private final Map<String, ReflectedField> _staticFieldsByName = new HashMap<>(10);
 
     private final Multimap<String, Method> _methods =
-            MultimapBuilder.hashKeys(10).arrayListValues().build();
-
-    private final Multimap<String, Method> _staticMethods =
             MultimapBuilder.hashKeys(10).arrayListValues().build();
 
     /**
@@ -103,25 +94,11 @@ public class CachedReflectedType {
     }
 
     /**
-     * Get a static field by name.
-     *
-     * @param name  The name of the field.
-     *
-     * @return  The {@link ReflectedField} or null if not found.
-     */
-    @Nullable
-    public ReflectedField staticFieldByName(String name) {
-        synchronized (_staticFieldsByName) {
-            return _staticFieldsByName.get(name);
-        }
-    }
-
-    /**
      * Get all fields of a specified value type.
      *
      * @param type  The value type class.
      */
-    public Collection<ReflectedField> fieldsByType(Class<?> type) {
+    public List<ReflectedField> fieldsByType(Class<?> type) {
         synchronized (_fieldsByType) {
             return CollectionUtils.unmodifiableList(_fieldsByType.get(type));
         }
@@ -135,17 +112,6 @@ public class CachedReflectedType {
     public Collection<Method> methodsByName(String name) {
         synchronized (_methods) {
             return CollectionUtils.unmodifiableList(_methods.get(name));
-        }
-    }
-
-    /**
-     * Get all static methods with the specified name.
-     *
-     * @param name  The static method name.
-     */
-    public Collection<Method> staticMethodsByName(String name) {
-        synchronized (_staticMethods) {
-            return CollectionUtils.unmodifiableList(_staticMethods.get(name));
         }
     }
 
@@ -180,12 +146,7 @@ public class CachedReflectedType {
             _fieldsByType.put(field.getType(), reflectedField);
             _fieldsByType.put(Object.class, reflectedField);
 
-            if (reflectedField.isStatic()) {
-                _staticFieldsByName.put(field.getName(), reflectedField);
-            }
-            else {
-                _fieldsByName.put(field.getName(), reflectedField);
-            }
+            _fieldsByName.put(field.getName(), reflectedField);
         }
     }
 
@@ -196,12 +157,7 @@ public class CachedReflectedType {
         for (Method method : methods) {
             method.setAccessible(true);
 
-            if (Modifier.isStatic(method.getModifiers())) {
-                _staticMethods.put(method.getName(), method);
-            }
-            else {
-                _methods.put(method.getName(), method);
-            }
+            _methods.put(method.getName(), method);
         }
     }
 }

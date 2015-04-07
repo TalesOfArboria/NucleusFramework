@@ -1,6 +1,6 @@
-package com.jcwhatever.nucleus.utils.reflection;
+package com.jcwhatever.nucleus.internal.reflection;
 
-/* 
+/*
  * 
  */
 public class ReflectableType {
