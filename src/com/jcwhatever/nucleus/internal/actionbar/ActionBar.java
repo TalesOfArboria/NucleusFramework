@@ -92,7 +92,7 @@ class ActionBar implements IActionBar {
             // or it wont get very much screen time, if any.
 
             if (_persistent == null)
-                _persistent = new TimedActionBar(_text.nextText());
+                _persistent = new TimedActionBar(_text);
 
             _persistent.showTo(player, 4, TimeScale.SECONDS, priority);
         }

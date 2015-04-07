@@ -117,6 +117,11 @@ class PersistentActionBar extends ActionBar implements IPersistentActionBar {
     }
 
     @Override
+    public void showTo(Player player, ActionBarPriority priority) {
+        showTo(player, _defaultDuration, _defaultTimeScale, priority);
+    }
+
+    @Override
     public int getMinDuration() {
         return _defaultDuration * _defaultTimeScale.getTimeFactor();
     }
