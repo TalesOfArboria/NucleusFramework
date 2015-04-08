@@ -24,22 +24,22 @@ public class SubscriberRunnable implements Runnable {
 
         SubscriberAgent agent = new SubscriberAgent() {};
 
-        _subscriber.register(agent);
+        _subscriber.subscribe(agent);
 
         assertEquals(1, agent.getSubscribers().size());
         assertEquals(1, _subscriber.getAgents().size());
 
-        _subscriber.unregister(agent);
+        _subscriber.unsubscribe(agent);
 
         assertEquals(0, agent.getSubscribers().size());
         assertEquals(0, _subscriber.getAgents().size());
 
-        _subscriber.addAgent(agent);
+        _subscriber.registerReference(agent);
 
         assertEquals(0, agent.getSubscribers().size());
         assertEquals(1, _subscriber.getAgents().size());
 
-        _subscriber.removeAgent(agent);
+        _subscriber.unregisterReference(agent);
 
         assertEquals(0, agent.getSubscribers().size());
         assertEquals(0, _subscriber.getAgents().size());

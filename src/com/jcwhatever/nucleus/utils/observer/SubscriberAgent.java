@@ -42,12 +42,12 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
     private boolean _isDisposed;
 
     @Override
-    public boolean register(ISubscriber subscriber) {
+    public boolean addSubscriber(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         synchronized (_sync) {
-            if (addSubscriber(subscriber)) {
-                subscriber.addAgent(this);
+            if (registerReference(subscriber)) {
+                subscriber.registerReference(this);
                 return true;
             }
             return false;
@@ -55,7 +55,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
     }
 
     @Override
-    public boolean unregister(ISubscriber subscriber) {
+    public boolean removeSubscriber(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         synchronized (_sync) {
@@ -63,8 +63,8 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
             if (!hasSubscribers())
                 return false;
 
-            if (removeSubscriber(subscriber)) {
-                subscriber.removeAgent(this);
+            if (unregisterReference(subscriber)) {
+                subscriber.unregisterReference(this);
                 return true;
             }
             return false;
@@ -72,7 +72,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
     }
 
     @Override
-    public boolean addSubscriber(ISubscriber subscriber) {
+    public boolean registerReference(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         if (isDisposed())
@@ -84,7 +84,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
     }
 
     @Override
-    public boolean removeSubscriber(ISubscriber subscriber) {
+    public boolean unregisterReference(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         synchronized (_sync) {
@@ -123,7 +123,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
             if (hasSubscribers()) {
 
                 for (ISubscriber subscriber : subscribers()) {
-                    subscriber.removeAgent(this);
+                    subscriber.unregisterReference(this);
                 }
 
                 _subscribers.clear();

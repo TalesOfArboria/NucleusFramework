@@ -35,7 +35,7 @@ import java.util.Set;
  * <p>The type must keep a reference to all of its subscribers.</p>
  *
  * <p>The implementation is expected to remove itself from all of its subscribers
- * using the {@link ISubscriber#unregister} method that subscribers provide if
+ * using the {@link ISubscriber#unsubscribe} method that subscribers provide if
  * the agent is disposed.</p>
  *
  * <p>The implementation is expected to hold a reference to any and all {@link ISubscriber}'s
@@ -47,60 +47,60 @@ import java.util.Set;
 public interface ISubscriberAgent extends IDisposable {
 
     /**
-     * Register a subscriber.
+     * Subscribe a subscriber to the agent.
      *
-     * <p>Equivalent to invoking {@link #addSubscriber} except the subscribers
-     * {@link ISubscriber#addAgent} method is invoked to simultaneously add the agent
+     * <p>Equivalent to invoking {@link #registerReference} except the subscribers
+     * {@link ISubscriber#registerReference} method is invoked to simultaneously add the agent
      * to the subscriber being registered.</p>
      *
      * @param subscriber  The subscriber to register.
      */
-    boolean register(ISubscriber subscriber);
+    boolean addSubscriber(ISubscriber subscriber);
 
     /**
-     * Unregister a subscriber.
+     * Unsubscribe a subscriber from the agent.
      *
-     * <p>Equivalent to invoking {@link #removeSubscriber} except the subscribers
-     * {@link ISubscriber#removeAgent} method is invoked with to simultaneously remove
+     * <p>Equivalent to invoking {@link #unregisterReference} except the subscribers
+     * {@link ISubscriber#unregisterReference} method is invoked with to simultaneously remove
      * the agent from the subscriber being unregistered.</p>
      *
      * @param subscriber  The subscriber to unregister.
      */
-    boolean unregister(ISubscriber subscriber);
+    boolean removeSubscriber(ISubscriber subscriber);
 
     /**
      * Adds a subscriber.
      *
-     * <p>Equivalent to invoking {@link #register} except that the subscribers
-     * {@link ISubscriber#addAgent} method is NOT invoked.</p>
+     * <p>Equivalent to invoking {@link #addSubscriber} except that the subscribers
+     * {@link ISubscriber#registerReference} method is NOT invoked.</p>
      *
      * <p>Should only be invoked by an {@link ISubscriber} implementation that
      * already has a reference to the subscriber due to its
-     * {@link ISubscriber#register(ISubscriberAgent)} method being invoked.
+     * {@link ISubscriber#subscribe(ISubscriberAgent)} method being invoked.
      * Avoid this method for all other contexts.</p>
      *
      * @param subscriber  The subscriber to add.
      *
      * @return  True if the subscriber was added.
      */
-    boolean addSubscriber(ISubscriber subscriber);
+    boolean registerReference(ISubscriber subscriber);
 
     /**
      * Remove a subscriber.
      *
-     * <p>Equivalent to invoking {@link #unregister} except that the subscribers
-     * {@link ISubscriber#removeAgent} method is NOT invoked.
+     * <p>Equivalent to invoking {@link #removeSubscriber} except that the subscribers
+     * {@link ISubscriber#unregisterReference} method is NOT invoked.
      *
      * <p>Should only be invoked by an {@link ISubscriber} implementation that
      * already has already removed its reference to the subscriber due to its
-     * {@link ISubscriber#unregister(ISubscriberAgent)} method being invoked.
+     * {@link ISubscriber#unsubscribe(ISubscriberAgent)} method being invoked.
      * Avoid this method for all other contexts.</p>
      *
      * @param subscriber  The subscriber to remove.
      *
      * @return  True if found and removed.
      */
-    boolean removeSubscriber(ISubscriber subscriber);
+    boolean unregisterReference(ISubscriber subscriber);
 
     /**
      * Get all subscribers of the agent.

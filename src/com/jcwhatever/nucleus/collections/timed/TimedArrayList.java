@@ -306,7 +306,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     public TimedArrayList<E> onLifespanEnd(IUpdateSubscriber<E> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onLifespanEnd").register(subscriber);
+        _agents.getAgent("onLifespanEnd").addSubscriber(subscriber);
 
         return this;
     }
@@ -321,7 +321,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     public TimedArrayList<E> onEmpty(IUpdateSubscriber<TimedArrayList<E>> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onEmpty").register(subscriber);
+        _agents.getAgent("onEmpty").addSubscriber(subscriber);
 
         return this;
     }

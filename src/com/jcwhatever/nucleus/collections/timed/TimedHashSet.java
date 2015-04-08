@@ -285,7 +285,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
     public TimedHashSet<E> onLifespanEnd(IUpdateSubscriber<E> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onLifespanEnd").register(subscriber);
+        _agents.getAgent("onLifespanEnd").addSubscriber(subscriber);
 
         return this;
     }
@@ -301,7 +301,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
     public TimedHashSet<E> onEmpty(IUpdateSubscriber<TimedHashSet<E>> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onEmpty").register(subscriber);
+        _agents.getAgent("onEmpty").addSubscriber(subscriber);
 
         return this;
     }

@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
  * A map of {@link ISubscriberAgent} which automatically removes agents
  * when they are disposed.
  *
- * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unregister} method
+ * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unsubscribe} method
  * of all {@link ISubscriber} instances that are observing it when it's disposed.</p>
  *
  * <p>The map has its own internal subscriber which is used to observe the agents in
@@ -121,7 +121,7 @@ public abstract class AgentMap<K, V extends ISubscriberAgent>
 
         boolean isChanged = false;
         for (ISubscriberAgent agent : agents) {
-            isChanged = agent.unregister(subscriber) || isChanged;
+            isChanged = agent.removeSubscriber(subscriber) || isChanged;
         }
 
         return isChanged;
@@ -174,7 +174,7 @@ public abstract class AgentMap<K, V extends ISubscriberAgent>
         if (isDisposed())
             throw new RuntimeException("Cannot use a disposed AgentMap.");
 
-        _mapSubscriber.register(value);
+        _mapSubscriber.subscribe(value);
     }
 
     @Override

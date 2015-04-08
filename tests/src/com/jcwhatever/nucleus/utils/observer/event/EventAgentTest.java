@@ -24,7 +24,7 @@ public class EventAgentTest {
 
         assertEquals(0, agent.getSubscribers().size());
 
-        agent.register(subscriber);
+        agent.addSubscriber(subscriber);
 
         // ensure subscriber is added to agent
         assertEquals(1, agent.getSubscribers().size());
@@ -41,7 +41,7 @@ public class EventAgentTest {
         callResults.clear();
 
         // test unregister
-        agent.unregister(subscriber);
+        agent.removeSubscriber(subscriber);
 
         // ensure subscriber is removed from agent
         assertEquals(0, agent.getSubscribers().size());
@@ -84,12 +84,12 @@ public class EventAgentTest {
 
 
         // add events out of order to ensure they are sorted to the correct order
-        agent.register(normal);
-        agent.register(high);
-        agent.register(low);
-        agent.register(watcher);
-        agent.register(last);
-        agent.register(first);
+        agent.addSubscriber(normal);
+        agent.addSubscriber(high);
+        agent.addSubscriber(low);
+        agent.addSubscriber(watcher);
+        agent.addSubscriber(last);
+        agent.addSubscriber(first);
 
         agent.call(this, "testEvent");
 
@@ -119,9 +119,9 @@ public class EventAgentTest {
                 .setPriority(EventSubscriberPriority.WATCHER);
 
 
-        agent.register(first);
-        agent.register(last);
-        agent.register(watcher);
+        agent.addSubscriber(first);
+        agent.addSubscriber(last);
+        agent.addSubscriber(watcher);
 
         CancelEvent event = new CancelEvent();
         assertEquals(false, event.isCancelled());
@@ -166,10 +166,10 @@ public class EventAgentTest {
         EventSubscriber<CancelEvent> watcher = getSubscriber(callResults)
                 .setPriority(EventSubscriberPriority.WATCHER);
 
-        agent.register(first);
-        agent.register(normal);
-        agent.register(last);
-        agent.register(watcher);
+        agent.addSubscriber(first);
+        agent.addSubscriber(normal);
+        agent.addSubscriber(last);
+        agent.addSubscriber(watcher);
 
         CancelEvent event = new CancelEvent();
         assertEquals(false, event.isCancelled());

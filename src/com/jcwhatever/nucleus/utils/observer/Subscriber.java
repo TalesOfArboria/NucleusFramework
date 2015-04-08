@@ -42,12 +42,12 @@ public abstract class Subscriber implements ISubscriber {
     protected final Object _sync = new Object();
 
     @Override
-    public boolean register(ISubscriberAgent agent) {
+    public boolean subscribe(ISubscriberAgent agent) {
         PreCon.notNull(agent);
 
         synchronized (_sync) {
-            if (addAgent(agent)) {
-                agent.addSubscriber(this);
+            if (registerReference(agent)) {
+                agent.registerReference(this);
                 return true;
             }
         }
@@ -55,11 +55,11 @@ public abstract class Subscriber implements ISubscriber {
     }
 
     @Override
-    public boolean unregister(ISubscriberAgent agent) {
+    public boolean unsubscribe(ISubscriberAgent agent) {
         synchronized (_sync) {
 
-            if (removeAgent(agent)) {
-                agent.removeSubscriber(this);
+            if (unregisterReference(agent)) {
+                agent.unregisterReference(this);
                 return true;
             }
         }
@@ -67,7 +67,7 @@ public abstract class Subscriber implements ISubscriber {
     }
 
     @Override
-    public boolean addAgent(ISubscriberAgent agent) {
+    public boolean registerReference(ISubscriberAgent agent) {
         PreCon.notNull(agent);
 
         synchronized (_sync) {
@@ -80,7 +80,7 @@ public abstract class Subscriber implements ISubscriber {
     }
 
     @Override
-    public boolean removeAgent(ISubscriberAgent agent) {
+    public boolean unregisterReference(ISubscriberAgent agent) {
         PreCon.notNull(agent);
 
         synchronized (_sync) {
@@ -118,7 +118,7 @@ public abstract class Subscriber implements ISubscriber {
             if (hasAgents()) {
 
                 for (ISubscriberAgent agent : agents()) {
-                    agent.removeSubscriber(this);
+                    agent.unregisterReference(this);
                 }
 
                 _agents.clear();

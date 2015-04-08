@@ -27,7 +27,7 @@ public class UpdateAgentTest {
 
         assertEquals(0, agent.getSubscribers().size());
 
-        agent.register(subscriber);
+        agent.addSubscriber(subscriber);
 
         // ensure subscriber is added to agent
         assertEquals(1, agent.getSubscribers().size());
@@ -44,7 +44,7 @@ public class UpdateAgentTest {
         updateResults.clear();
 
         // test unregister
-        agent.unregister(subscriber);
+        agent.removeSubscriber(subscriber);
 
         // ensure subscriber is removed from agent
         assertEquals(0, agent.getSubscribers().size());

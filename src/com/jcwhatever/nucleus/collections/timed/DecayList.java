@@ -157,7 +157,7 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
     public DecayList<E> onDecay(IUpdateSubscriber<E> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onDecay").register(subscriber);
+        _agents.getAgent("onDecay").addSubscriber(subscriber);
 
         return this;
     }
@@ -173,7 +173,7 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
     public DecayList<E> onEmpty(IUpdateSubscriber<DecayList<E>> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onEmpty").register(subscriber);
+        _agents.getAgent("onEmpty").addSubscriber(subscriber);
 
         return this;
     }

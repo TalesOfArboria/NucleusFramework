@@ -309,7 +309,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
                 subscriber.on(parent._finalResult);
             }
 
-            agent.register(subscriber);
+            agent.addSubscriber(subscriber);
 
             parent._hasFutureSubscribers = true;
         }

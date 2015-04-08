@@ -68,20 +68,20 @@ public abstract class CollectionSubscriber implements ISubscriber {
     protected abstract void removeFromCollection(ISubscriberAgent agent);
 
     @Override
-    public boolean register(ISubscriberAgent agent) {
-        if (!_subscriber.addAgent(agent))
+    public boolean subscribe(ISubscriberAgent agent) {
+        if (!_subscriber.registerReference(agent))
             return false;
 
-        agent.addSubscriber(this);
+        agent.registerReference(this);
         return true;
     }
 
     @Override
-    public boolean unregister(ISubscriberAgent agent) {
-        if (!_subscriber.removeAgent(agent))
+    public boolean unsubscribe(ISubscriberAgent agent) {
+        if (!_subscriber.unregisterReference(agent))
             return false;
 
-        agent.removeSubscriber(this);
+        agent.unregisterReference(this);
 
         removeFromCollection(agent);
 
@@ -89,17 +89,17 @@ public abstract class CollectionSubscriber implements ISubscriber {
     }
 
     public final boolean safeUnregister(ISubscriberAgent agent) {
-        return _subscriber.unregister(agent);
+        return _subscriber.unsubscribe(agent);
     }
 
     @Override
-    public boolean addAgent(ISubscriberAgent agent) {
-        return _subscriber.addAgent(agent);
+    public boolean registerReference(ISubscriberAgent agent) {
+        return _subscriber.registerReference(agent);
     }
 
     @Override
-    public boolean removeAgent(ISubscriberAgent agent) {
-        if (_subscriber.removeAgent(agent)) {
+    public boolean unregisterReference(ISubscriberAgent agent) {
+        if (_subscriber.unregisterReference(agent)) {
             removeFromCollection(agent);
             return true;
         }

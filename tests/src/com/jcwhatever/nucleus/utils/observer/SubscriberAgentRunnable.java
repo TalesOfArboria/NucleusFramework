@@ -25,12 +25,12 @@ public class SubscriberAgentRunnable implements Runnable {
 
         Subscriber subscriber = new Subscriber() {};
 
-        _agent.register(subscriber);
+        _agent.addSubscriber(subscriber);
 
         assertEquals(1, _agent.getSubscribers().size());
         assertEquals(1, subscriber.getAgents().size());
 
-        _agent.unregister(subscriber);
+        _agent.removeSubscriber(subscriber);
 
         assertEquals(0, _agent.getSubscribers().size());
         assertEquals(0, subscriber.getAgents().size());
@@ -40,7 +40,7 @@ public class SubscriberAgentRunnable implements Runnable {
         assertEquals(1, _agent.getSubscribers().size());
         assertEquals(0, subscriber.getAgents().size());
 
-        _agent.removeSubscriber(subscriber);
+        _agent.unregisterReference(subscriber);
 
         assertEquals(0, _agent.getSubscribers().size());
         assertEquals(0, subscriber.getAgents().size());

@@ -80,42 +80,42 @@ public class UpdateAgent<A> implements IUpdateAgent<A>, IDisposable {
     }
 
     @Override
-    public synchronized boolean register(ISubscriber subscriber) {
+    public synchronized boolean addSubscriber(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         if (isDisposed())
             throw new RuntimeException("Cannot use a disposed UpdateSubject");
 
         if (subscribers().add(subscriber)) {
-            subscriber.addAgent(this);
+            subscriber.registerReference(this);
             return true;
         }
         return false;
     }
 
     @Override
-    public synchronized boolean unregister(ISubscriber subscriber) {
+    public synchronized boolean removeSubscriber(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         if (_subscribers == null)
             return false;
 
         if (_subscribers.remove(subscriber)) {
-            subscriber.removeAgent(this);
+            subscriber.unregisterReference(this);
             return true;
         }
         return false;
     }
 
     @Override
-    public synchronized boolean addSubscriber(ISubscriber subscriber) {
+    public synchronized boolean registerReference(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         return subscribers().add(subscriber);
     }
 
     @Override
-    public synchronized boolean removeSubscriber(ISubscriber subscriber) {
+    public synchronized boolean unregisterReference(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         return _subscribers != null && _subscribers.remove(subscriber);
@@ -142,7 +142,7 @@ public class UpdateAgent<A> implements IUpdateAgent<A>, IDisposable {
         if (_subscribers != null) {
             Set<ISubscriber> subscribers = getSubscribers();
             for (ISubscriber subscriber : subscribers) {
-                subscriber.removeAgent(this);
+                subscriber.unregisterReference(this);
             }
 
             _subscribers.clear();

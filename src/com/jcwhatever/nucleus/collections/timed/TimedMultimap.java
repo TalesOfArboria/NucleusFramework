@@ -226,7 +226,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     public TimedMultimap<K, V> onLifespanEnd(IUpdateSubscriber<Entry<K, Collection<V>>> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onLifespanEnd").register(subscriber);
+        _agents.getAgent("onLifespanEnd").addSubscriber(subscriber);
 
         return this;
     }
@@ -242,7 +242,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     public TimedMultimap<K, V> onEmpty(IUpdateSubscriber<TimedMultimap<K, V>> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onEmpty").register(subscriber);
+        _agents.getAgent("onEmpty").addSubscriber(subscriber);
 
         return this;
     }

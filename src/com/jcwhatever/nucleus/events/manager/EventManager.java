@@ -183,7 +183,7 @@ public class EventManager implements IPluginOwned, IDisposable {
 
         EventAgent agent = getEventAgent(event, true);
 
-        agent.register(subscriber);
+        agent.addSubscriber(subscriber);
 
 
         _pluginEventMap.put(plugin, subscriber);
@@ -224,7 +224,7 @@ public class EventManager implements IPluginOwned, IDisposable {
             EventAgent agent = getEventAgent(wrapper.event, true);
 
             //noinspection unchecked
-            agent.register(subscriber);
+            agent.addSubscriber(subscriber);
         }
 
 

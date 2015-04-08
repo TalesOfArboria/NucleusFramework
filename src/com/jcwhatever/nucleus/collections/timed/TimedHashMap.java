@@ -242,7 +242,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
     public TimedHashMap<K, V> onLifespanEnd(IUpdateSubscriber<Entry<K, V>> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onLifespanEnd").register(subscriber);
+        _agents.getAgent("onLifespanEnd").addSubscriber(subscriber);
 
         return this;
     }
@@ -258,7 +258,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
     public TimedHashMap<K, V> onEmpty(IUpdateSubscriber<TimedHashMap<K, V>> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onEmpty").register(subscriber);
+        _agents.getAgent("onEmpty").addSubscriber(subscriber);
 
         return this;
     }

@@ -108,11 +108,11 @@ public class EventAgent implements IEventAgent, IDisposable {
     }
 
     @Override
-    public synchronized boolean register(ISubscriber subscriber) {
+    public synchronized boolean addSubscriber(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         if (_subscribers.add(subscriber)) {
-            subscriber.addAgent(this);
+            subscriber.registerReference(this);
 
             if (subscriber instanceof IEventSubscriber) {
                 _eventSubscribers.add((IEventSubscriber)subscriber);
@@ -127,11 +127,11 @@ public class EventAgent implements IEventAgent, IDisposable {
     }
 
     @Override
-    public synchronized boolean unregister(ISubscriber subscriber) {
+    public synchronized boolean removeSubscriber(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         if (_subscribers.remove(subscriber)) {
-            subscriber.removeAgent(this);
+            subscriber.unregisterReference(this);
             //noinspection SuspiciousMethodCalls
             _eventSubscribers.remove(subscriber);
             return true;
@@ -140,7 +140,7 @@ public class EventAgent implements IEventAgent, IDisposable {
     }
 
     @Override
-    public synchronized boolean addSubscriber(ISubscriber subscriber) {
+    public synchronized boolean registerReference(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         if (_subscribers.add(subscriber)) {
@@ -153,7 +153,7 @@ public class EventAgent implements IEventAgent, IDisposable {
     }
 
     @Override
-    public synchronized boolean removeSubscriber(ISubscriber subscriber) {
+    public synchronized boolean unregisterReference(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
         //noinspection SuspiciousMethodCalls
@@ -183,7 +183,7 @@ public class EventAgent implements IEventAgent, IDisposable {
 
         Set<ISubscriber> subscribers = getSubscribers();
         for (ISubscriber subscriber : subscribers) {
-            subscriber.removeAgent(this);
+            subscriber.unregisterReference(this);
         }
 
         _eventSubscribers.clear();

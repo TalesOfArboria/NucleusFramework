@@ -59,7 +59,7 @@ public class AgentMapTest {
             Set<ISubscriber> subscribers = getSubscribers();
 
             for (ISubscriber subscriber : subscribers) {
-                subscriber.unregister(this);
+                subscriber.unsubscribe(this);
             }
         }
     }

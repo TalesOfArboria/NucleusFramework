@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  * A deque of {@link ISubscriberAgent} which automatically removes agents
  * when they are disposed.
  *
- * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unregister} method
+ * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unsubscribe} method
  * of all {@link ISubscriber} instances that are observing it when it's disposed.</p>
  *
  * <p>The collection has its own internal subscriber which is used to observe the agents in
@@ -125,7 +125,7 @@ public abstract class AgentDeque<E extends ISubscriberAgent>
 
         boolean isChanged = false;
         for (ISubscriberAgent agent : agents) {
-            isChanged = agent.unregister(subscriber) || isChanged;
+            isChanged = agent.removeSubscriber(subscriber) || isChanged;
         }
 
         return isChanged;
@@ -157,7 +157,7 @@ public abstract class AgentDeque<E extends ISubscriberAgent>
         if (_isDisposed)
             throw new RuntimeException("Cannot use a disposed AgentDeque.");
 
-        _collectionSubscriber.register(e);
+        _collectionSubscriber.subscribe(e);
     }
 
     @Override

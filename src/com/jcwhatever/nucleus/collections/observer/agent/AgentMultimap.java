@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
  * A {@link com.google.common.collect.Multimap} of {@link ISubscriberAgent} which
  * automatically removes agents when they are disposed.
  *
- * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unregister} method
+ * <p>Assumes the agent is properly implemented and calls the {@link ISubscriber#unsubscribe} method
  * of all {@link com.jcwhatever.nucleus.utils.observer.ISubscriber} instances that are
  * observing it when it's disposed.</p>
  *
@@ -126,7 +126,7 @@ public abstract class AgentMultimap<K, V extends ISubscriberAgent>
 
         boolean isChanged = false;
         for (ISubscriberAgent agent : agents) {
-            isChanged = agent.unregister(subscriber) || isChanged;
+            isChanged = agent.removeSubscriber(subscriber) || isChanged;
         }
 
         return isChanged;
@@ -220,7 +220,7 @@ public abstract class AgentMultimap<K, V extends ISubscriberAgent>
         }
 
         if (count == 1) {
-            _mapSubscriber.register(agent);
+            _mapSubscriber.subscribe(agent);
         }
     }
 

@@ -35,7 +35,7 @@ public class EventSubscriberTest {
 
         assertEquals(0, subscriber.getAgents().size());
 
-        subscriber.register(agent);
+        subscriber.subscribe(agent);
 
         // ensure agent is added to subscriber
         assertEquals(1, subscriber.getAgents().size());
@@ -53,7 +53,7 @@ public class EventSubscriberTest {
         callResults.clear();
 
         // test unregister
-        subscriber.unregister(agent);
+        subscriber.unsubscribe(agent);
 
         // ensure the agent was removed from the subscriber
         assertEquals(0, subscriber.getAgents().size());

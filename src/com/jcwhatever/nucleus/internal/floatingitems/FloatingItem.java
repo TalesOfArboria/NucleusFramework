@@ -345,7 +345,7 @@ class FloatingItem implements IFloatingItem {
     public FloatingItem onSpawn(IUpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onSpawn").register(subscriber);
+        _agents.getAgent("onSpawn").addSubscriber(subscriber);
 
         return this;
     }
@@ -354,7 +354,7 @@ class FloatingItem implements IFloatingItem {
     public FloatingItem onDespawn(IUpdateSubscriber<Entity> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onDespawn").register(subscriber);
+        _agents.getAgent("onDespawn").addSubscriber(subscriber);
 
         return this;
     }
@@ -363,7 +363,7 @@ class FloatingItem implements IFloatingItem {
     public FloatingItem onPickup(IUpdateSubscriber<Player> subscriber) {
         PreCon.notNull(subscriber);
 
-        _agents.getAgent("onPickup").register(subscriber);
+        _agents.getAgent("onPickup").addSubscriber(subscriber);
 
         return this;
     }

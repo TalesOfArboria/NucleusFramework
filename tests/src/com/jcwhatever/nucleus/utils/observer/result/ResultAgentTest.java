@@ -48,7 +48,7 @@ public class ResultAgentTest {
 
         };
 
-        agent.register(subscriber);
+        agent.addSubscriber(subscriber);
 
         agent.sendResult(new Result<String>(1.0D, 1.0D, "success"));
 

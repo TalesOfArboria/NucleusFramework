@@ -140,7 +140,7 @@ public class Transcript {
 
         final PriorityQueue<Paragraph> paragraphs = new PriorityQueue<Paragraph>(_paragraphs);
         final IUpdateAgent<String> agent = new UpdateAgent<>(1);
-        agent.register(subscriber);
+        agent.addSubscriber(subscriber);
 
         Paragraph first = paragraphs.peek();
         if (first.getStartTimeSeconds() == 0) {
