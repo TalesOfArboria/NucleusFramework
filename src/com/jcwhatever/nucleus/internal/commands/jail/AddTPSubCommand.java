@@ -25,15 +25,16 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.providers.jail.Jails;
 import com.jcwhatever.nucleus.utils.coords.NamedLocation;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -47,17 +48,16 @@ import org.bukkit.entity.Player;
 
         paramDescriptions = { "name= The name of the tp location. {NAME16}"})
 
-class AddTPSubCommand extends AbstractCommand {
+class AddTPSubCommand extends AbstractCommand implements IExecutableCommand {
 
-    @Localizable
-    static final String _DUPLICATE_NAME = "There is already a location named '{0}'.";
+    @Localizable static final String _DUPLICATE_NAME = "There is already a location named '{0}'.";
     @Localizable static final String _FAILED = "Failed to add location.";
     @Localizable static final String _SUCCESS = "Your current location has been added to the default jail and is named '{0}'.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        CommandException.checkNotConsole(this, sender);
+        CommandException.checkNotConsole(getPlugin(), this, sender);
 
         String name = args.getName("name");
 

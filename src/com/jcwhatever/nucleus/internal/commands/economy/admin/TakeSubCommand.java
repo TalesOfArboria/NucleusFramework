@@ -24,11 +24,12 @@
 
 package com.jcwhatever.nucleus.internal.commands.economy.admin;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -46,15 +47,14 @@ import java.util.UUID;
                 "playerName= The name of the player to take away money from.",
                 "amount= The amount to take. Must be a positive number."})
 
-class TakeSubCommand extends AbstractCommand {
+class TakeSubCommand extends AbstractCommand implements IExecutableCommand {
 
-    @Localizable
-    static final String _PLAYER_NOT_FOUND = "A player by the name '{0}' was not found.";
+    @Localizable static final String _PLAYER_NOT_FOUND = "A player by the name '{0}' was not found.";
     @Localizable static final String _FAILED = "Failed to withdraw money.";
     @Localizable static final String _SUCCESS = "Took {0: currency amount} from player '{1: player name}'.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         String playerName = args.getName("playerName");
         double amount = args.getDouble("amount");

@@ -29,29 +29,38 @@ import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.internal.actionbar.InternalActionBarManager;
 import com.jcwhatever.nucleus.internal.blockselect.InternalBlockSelector;
-import com.jcwhatever.nucleus.internal.commands.NucleusCommandDispatcher;
-import com.jcwhatever.nucleus.internal.entity.InternalEntityTracker;
-import com.jcwhatever.nucleus.internal.floatingitems.InternalFloatingItemManager;
-import com.jcwhatever.nucleus.internal.items.equipper.InternalEquipperManager;
-import com.jcwhatever.nucleus.internal.items.meta.InternalItemMetaHandlers;
-import com.jcwhatever.nucleus.internal.items.serializer.InternalItemSerializationManager;
-import com.jcwhatever.nucleus.internal.language.InternalLanguageManager;
+import com.jcwhatever.nucleus.internal.commands.economy.NEconomyCommand;
+import com.jcwhatever.nucleus.internal.commands.friends.NFriendsCommand;
+import com.jcwhatever.nucleus.internal.commands.jail.JailCommand;
+import com.jcwhatever.nucleus.internal.commands.kits.KitsCommand;
+import com.jcwhatever.nucleus.internal.commands.plugins.PluginsCommand;
+import com.jcwhatever.nucleus.internal.commands.providers.ProvidersCommand;
+import com.jcwhatever.nucleus.internal.commands.scripts.ScriptsCommand;
+import com.jcwhatever.nucleus.internal.commands.signs.SignsCommand;
+import com.jcwhatever.nucleus.internal.commands.storage.StorageCommand;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
-import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
+import com.jcwhatever.nucleus.internal.managed.commands.InternalCommandManager;
+import com.jcwhatever.nucleus.internal.managed.commands.response.InternalResponseRequestor;
+import com.jcwhatever.nucleus.internal.managed.entity.InternalEntityTracker;
+import com.jcwhatever.nucleus.internal.managed.items.equipper.InternalEquipperManager;
+import com.jcwhatever.nucleus.internal.managed.items.floating.InternalFloatingItemManager;
+import com.jcwhatever.nucleus.internal.managed.items.meta.InternalItemMetaHandlers;
+import com.jcwhatever.nucleus.internal.managed.items.serializer.InternalItemSerializationManager;
+import com.jcwhatever.nucleus.internal.managed.language.InternalLanguageManager;
+import com.jcwhatever.nucleus.internal.managed.nms.InternalNmsManager;
+import com.jcwhatever.nucleus.internal.managed.reflection.InternalReflectionManager;
+import com.jcwhatever.nucleus.internal.managed.scheduler.InternalTaskScheduler;
+import com.jcwhatever.nucleus.internal.managed.scoreboards.InternalScoreboardTracker;
+import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptApiRepo;
+import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptEngineLoader;
+import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptEngineManager;
+import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptManager;
+import com.jcwhatever.nucleus.internal.managed.signs.InternalSignManager;
+import com.jcwhatever.nucleus.internal.managed.sounds.InternalSoundManager;
+import com.jcwhatever.nucleus.internal.managed.titles.InternalTitleManager;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderLoader;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderManager;
-import com.jcwhatever.nucleus.internal.reflection.InternalReflectionManager;
 import com.jcwhatever.nucleus.internal.regions.InternalRegionManager;
-import com.jcwhatever.nucleus.internal.response.InternalResponseRequestor;
-import com.jcwhatever.nucleus.internal.scheduler.InternalTaskScheduler;
-import com.jcwhatever.nucleus.internal.scoreboards.InternalScoreboardTracker;
-import com.jcwhatever.nucleus.internal.scripting.InternalScriptApiRepo;
-import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineLoader;
-import com.jcwhatever.nucleus.internal.scripting.InternalScriptEngineManager;
-import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
-import com.jcwhatever.nucleus.internal.signs.InternalSignManager;
-import com.jcwhatever.nucleus.internal.sounds.InternalSoundManager;
-import com.jcwhatever.nucleus.internal.titles.InternalTitleManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.utils.text.TextColor;
@@ -91,10 +100,10 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalTitleManager _titleManager;
     InternalActionBarManager _actionBarManager;
     InternalReflectionManager _reflectionManager;
+    InternalCommandManager _commandManager;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
-    NucleusCommandDispatcher _commandHandler;
     IMessengerFactory _messengerFactory;
 
     InternalScriptEngineLoader _scriptEngineLoader;
@@ -129,13 +138,6 @@ public final class BukkitPlugin extends NucleusPlugin {
         super(loader, description, dataFolder, file);
 
         Nucleus._plugin = this;
-    }
-
-    /**
-     * Get NucleusFramework's internal command handler.
-     */
-    public NucleusCommandDispatcher getCommandHandler() {
-        return _commandHandler;
     }
 
     @Override
@@ -185,7 +187,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _nmsManager = new InternalNmsManager();
         _titleManager = new InternalTitleManager();
         _actionBarManager = new InternalActionBarManager();
-        _commandHandler = new NucleusCommandDispatcher();
+        _commandManager = new InternalCommandManager();
 
         _scriptEngineManager = new InternalScriptEngineManager();
         _scriptEngineLoader = new InternalScriptEngineLoader(_scriptEngineManager);
@@ -198,7 +200,16 @@ public final class BukkitPlugin extends NucleusPlugin {
     protected void onEnablePlugin() {
 
         registerEventListeners(new JCGEventListener(_regionManager));
-        registerCommands(_commandHandler);
+
+        registerCommand(NEconomyCommand.class);
+        registerCommand(NFriendsCommand.class);
+        registerCommand(JailCommand.class);
+        registerCommand(KitsCommand.class);
+        registerCommand(PluginsCommand.class);
+        registerCommand(ProvidersCommand.class);
+        registerCommand(ScriptsCommand.class);
+        registerCommand(SignsCommand.class);
+        registerCommand(StorageCommand.class);
 
         loadScriptManager();
 

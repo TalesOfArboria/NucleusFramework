@@ -25,11 +25,12 @@
 package com.jcwhatever.nucleus.internal.commands.storage;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 
@@ -47,15 +48,14 @@ import org.bukkit.plugin.Plugin;
                 "pluginName= The name of the plugin that will have its storage provider changed.",
                 "storageName= The name of the storage provider."})
 
-class SetSubCommand extends AbstractCommand {
+class SetSubCommand extends AbstractCommand implements IExecutableCommand {
 
-    @Localizable
-    static final String _PLUGIN_NOT_FOUND = "A plugin named '{0: plugin name}' was not found.";
+    @Localizable static final String _PLUGIN_NOT_FOUND = "A plugin named '{0: plugin name}' was not found.";
     @Localizable static final String _PROVIDER_NOT_FOUND = "A data storage provider named '{0: provider name}' was not found.";
     @Localizable static final String _SUCCESS = "Data storage provider for plugin '{0: plugin name}' set to provider named '{1 : provider name}'. Server restart required to take effect.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         String pluginName = args.getString("pluginName");
         String storageName = args.getString("storageName");

@@ -25,11 +25,12 @@
 package com.jcwhatever.nucleus.internal.commands.storage;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
@@ -52,7 +53,7 @@ import java.util.List;
                 "plugin= Optional name of the the plugin to show the plugins data provider.",
                 "page= {PAGE}"})
 
-class ListSubCommand extends AbstractCommand {
+class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Storage Providers";
     @Localizable static final String _PLUGIN_NOT_FOUND = "A plugin named '{0: plugin name}' was not found.";
@@ -60,7 +61,7 @@ class ListSubCommand extends AbstractCommand {
     @Localizable static final String _LABEL_DEFAULT = "[Default]";
 
     @Override
-    public void execute (CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
 
         int page = args.getInteger("page");
 

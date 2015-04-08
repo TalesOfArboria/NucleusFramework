@@ -24,15 +24,16 @@
 
 package com.jcwhatever.nucleus.internal.commands.economy;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.providers.economy.Economy;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
-import com.jcwhatever.nucleus.providers.economy.Economy;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.result.Result;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -53,7 +54,7 @@ import java.util.UUID;
                 "playerName= The name of the player to give money to.",
                 "amount= The amount to give. Must be a positive number."})
 
-class SendSubCommand extends AbstractCommand {
+class SendSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable
     static final String _PLAYER_NOT_FOUND =
@@ -75,9 +76,9 @@ class SendSubCommand extends AbstractCommand {
             "Sent {0: currency amount} to player '{1: player name}'. New Balance is {2: account balance}";
 
     @Override
-    public void execute(final CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(final CommandSender sender, ICommandArguments args) throws CommandException {
 
-        CommandException.checkNotConsole(this, sender);
+        CommandException.checkNotConsole(getPlugin(), this, sender);
 
         Player player = (Player)sender;
 

@@ -25,16 +25,17 @@
 package com.jcwhatever.nucleus.internal.commands.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.IProviderManager;
 import com.jcwhatever.nucleus.providers.ProviderType;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.text.TextUtils.FormatTemplate;
 
 import org.bukkit.command.CommandSender;
@@ -55,7 +56,7 @@ import java.util.Collection;
                 "all= Optional. Include flag to show all discovered providers."
         })
 
-class ListSubCommand extends AbstractCommand {
+class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _PAGINATOR_TITLE = "Service Providers";
     @Localizable static final String _PAGINATOR_TITLE_ALL = "All Service Providers";
@@ -63,7 +64,7 @@ class ListSubCommand extends AbstractCommand {
     @Localizable static final String _LABEL_NONE = "<none>";
 
     @Override
-    public void execute (CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
 
         int page = args.getInteger("page");
         boolean showAll = args.getBoolean("all");

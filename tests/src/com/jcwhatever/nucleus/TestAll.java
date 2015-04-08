@@ -1,7 +1,7 @@
 package com.jcwhatever.nucleus;
 
 import com.jcwhatever.nucleus.collections._CollectionsTestSuite;
-import com.jcwhatever.nucleus.commands._CommandsTestSuite;
+import com.jcwhatever.nucleus.internal.managed.commands._CommandsTestSuite;
 import com.jcwhatever.nucleus.events.manager._ManagerTestSuite;
 import com.jcwhatever.nucleus.internal._InternalTestSuite;
 import com.jcwhatever.nucleus.managed.sounds._SoundsTestSuite;

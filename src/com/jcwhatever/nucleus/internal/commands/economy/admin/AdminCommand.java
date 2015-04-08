@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.internal.commands.economy.admin;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 
 @CommandInfo(
         command="admin",

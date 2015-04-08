@@ -25,15 +25,16 @@
 
 package com.jcwhatever.nucleus.internal.commands.kits.items;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.kits.IKit;
 import com.jcwhatever.nucleus.providers.kits.IModifiableKit;
 import com.jcwhatever.nucleus.providers.kits.Kits;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -47,13 +48,13 @@ import org.bukkit.inventory.ItemStack;
         paramDescriptions = { "kitName= The name of the kit items will be added to. {NAME16}",
                               "items= The items to add. {ITEM_STACK}"})
 
-class AddSubCommand extends AbstractCommand {
+class AddSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _KIT_NOT_FOUND = "An chest kit named '{0}' was not found.";
     @Localizable static final String _SUCCESS = "Added items to chest kit '{0}'.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         String kitName = args.getName("kitName");
         ItemStack[] items = args.getItemStack(sender, "items");

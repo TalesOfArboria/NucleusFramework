@@ -25,14 +25,15 @@
 package com.jcwhatever.nucleus.internal.commands.scripts;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.internal.scripting.InternalScriptManager;
-import com.jcwhatever.nucleus.managed.scripting.IScript;
+import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptManager;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.managed.scripting.IScript;
 
 import org.bukkit.command.CommandSender;
 
@@ -46,7 +47,7 @@ import org.bukkit.command.CommandSender;
                 "scriptName= Optional. The name of the script to reload. Omit to reload all scripts."
         })
 
-class ReloadSubCommand extends AbstractCommand {
+class ReloadSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _RELOAD_ALL = "Scripts reloaded.";
     @Localizable static final String _RELOAD_ONE = "Script '{0: script name}' reloaded.";
@@ -54,7 +55,7 @@ class ReloadSubCommand extends AbstractCommand {
     @Localizable static final String _FAILED = "Failed to reload script named '{0: script name}'.";
 
     @Override
-    public void execute (CommandSender sender, CommandArguments args) throws InvalidArgumentException {
+    public void execute (CommandSender sender, ICommandArguments args) throws InvalidArgumentException {
 
 
         if (args.isDefaultValue("scriptName")) {

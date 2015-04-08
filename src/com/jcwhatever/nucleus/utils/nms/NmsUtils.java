@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.utils.nms;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.internal.nms.InternalNmsManager;
+import com.jcwhatever.nucleus.internal.managed.nms.InternalNmsManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;

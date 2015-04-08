@@ -24,12 +24,14 @@
 
 package com.jcwhatever.nucleus.internal.commands.economy;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.UsageGenerator;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.commands.economy.admin.AdminCommand;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.ICommandUsageGenerator;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
@@ -39,7 +41,7 @@ import org.bukkit.permissions.PermissionDefault;
         description="Economy commands.",
         permissionDefault = PermissionDefault.TRUE)
 
-public final class NEconomyCommand extends AbstractCommand {
+public final class NEconomyCommand extends AbstractCommand implements IExecutableCommand {
 
     public NEconomyCommand() {
         super();
@@ -52,14 +54,16 @@ public final class NEconomyCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         // show balance
         BalanceSubCommand command = (BalanceSubCommand) getCommand("balance");
         if (command != null)
-            command.execute(sender, new CommandArguments(command));
+            command.execute(sender, args);
 
-        UsageGenerator generator = new UsageGenerator(UsageGenerator.INLINE_HELP);
-        tell(sender, "{GRAY}Type '{0: usage}' for more commands.", generator.generate(this));
+        ICommandUsageGenerator generator =
+                Nucleus.getCommandManager().getUsageGenerator(ICommandUsageGenerator.INLINE_HELP);
+
+        tell(sender, "{GRAY}Type '{0: usage}' for more commands.", generator.generate(getRegistered()));
     }
 }

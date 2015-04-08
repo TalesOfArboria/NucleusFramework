@@ -25,13 +25,14 @@
 package com.jcwhatever.nucleus.internal.commands.providers;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.providers.ProviderType;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.providers.ProviderType;
 
 import org.bukkit.command.CommandSender;
 
@@ -51,7 +52,7 @@ import java.util.Collection;
                 "clear= Optional. Include flag to clear preferred provider for the type."
         })
 
-class PreferSubCommand extends AbstractCommand {
+class PreferSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _CLEARED =
             "Cleared preferred service provider for type {0: provider type}.";
@@ -75,7 +76,7 @@ class PreferSubCommand extends AbstractCommand {
             "A server restart is required for provider changes to take effect.";
 
     @Override
-    public void execute (CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
 
         ProviderType type = args.getEnum("providerType", ProviderType.class);
 

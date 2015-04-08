@@ -25,7 +25,8 @@
 
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.nucleus.commands.CommandDispatcher;
+import com.jcwhatever.nucleus.managed.commands.ICommand;
+import com.jcwhatever.nucleus.managed.commands.ICommandDispatcher;
 import com.jcwhatever.nucleus.managed.language.ILanguageContext;
 import com.jcwhatever.nucleus.managed.messaging.IChatPrefixed;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
@@ -44,7 +45,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * An abstract implementation of a Bukkit plugin with
@@ -55,6 +56,7 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     static List<NucleusPlugin> _enabled = new ArrayList<>(10);
 
     private ILanguageContext _languageContext;
+    private ICommandDispatcher _commandDispatcher;
     private IDataNode _dataNode;
     private boolean _isDebugging;
     private IMessenger _messenger;
@@ -150,11 +152,17 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
         return _anonMessenger;
     }
 
+    /**
+     * Get the plugins command dispatcher.
+     */
+    public ICommandDispatcher getCommandDispatcher() {
+        return _commandDispatcher;
+    }
+
     @Override
     public final void onEnable() {
 
         onPreEnable();
-
         _messenger = Nucleus.getMessengerFactory().get(this);
         _anonMessenger = Nucleus.getMessengerFactory().getAnon(this);
 
@@ -167,6 +175,17 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
             _enabled.add(this);
 
         onPostPreEnable();
+
+        _commandDispatcher = Nucleus.getCommandManager().createDispatcher(this);
+
+        Map<String, Map<String, Object>> commands = getDescription().getCommands();
+        if (commands != null) {
+            for (String cmd : commands.keySet()) {
+                PluginCommand command = getCommand(cmd);
+                command.setExecutor(_commandDispatcher);
+                command.setTabCompleter(_commandDispatcher);
+            }
+        }
     }
 
     @Override
@@ -220,18 +239,10 @@ public abstract class NucleusPlugin extends JavaPlugin implements IChatPrefixed 
     protected abstract void onDisablePlugin();
 
     /**
-     * Register all commands defined in the plugin.yml
-     * file to the specified dispatcher.
-     *
-     * @param dispatcher  The dispatcher to register.
+     * Register a command.
      */
-    protected void registerCommands(CommandDispatcher dispatcher) {
-        Set<String> commands = getDescription().getCommands().keySet();
-        for (String cmd : commands) {
-            PluginCommand command = getCommand(cmd);
-            command.setExecutor(dispatcher);
-            command.setTabCompleter(dispatcher);
-        }
+    protected void registerCommand(Class<? extends ICommand> commandClass) {
+        _commandDispatcher.registerCommand(commandClass);
     }
 
     /**

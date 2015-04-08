@@ -25,8 +25,8 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 
 
 @CommandInfo(
@@ -46,7 +46,5 @@ public final class JailCommand extends AbstractCommand {
         registerCommand(SendSubCommand.class);
         registerCommand(SetRegionSubCommand.class);
         registerCommand(SetReleaseTPSubCommand.class);
-        
     }
-
 }

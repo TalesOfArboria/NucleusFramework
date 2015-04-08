@@ -24,11 +24,12 @@
 
 package com.jcwhatever.nucleus.internal.commands.economy.admin;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.Economy;
 
@@ -45,16 +46,16 @@ import java.util.UUID;
         paramDescriptions = {
                 "amount= The amount to give. Must be a positive number."})
 
-class GiveMeSubCommand extends AbstractCommand {
+class GiveMeSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable
     static final String _FAILED = "Failed to deposit money.";
     @Localizable static final String _SUCCESS = "Gave you {0: currency amount}.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        CommandException.checkNotConsole(this, sender);
+        CommandException.checkNotConsole(getPlugin(), this, sender);
 
         UUID playerId = ((Player)sender).getUniqueId();
         double amount = args.getDouble("amount");

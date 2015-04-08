@@ -24,15 +24,16 @@
 
 package com.jcwhatever.nucleus.internal.commands.economy.admin;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.providers.economy.Economy;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
-import com.jcwhatever.nucleus.providers.economy.Economy;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -49,7 +50,7 @@ import java.util.UUID;
                 "playerName= The name of the player to check.",
                 "bank= Optional. The bank the account is in. Leave blank to check global account."})
 
-class BalanceSubCommand extends AbstractCommand {
+class BalanceSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND =
             "A player by the name '{0: player name}' was not found.";
@@ -70,7 +71,7 @@ class BalanceSubCommand extends AbstractCommand {
             "The players balance is {0: currency balance} at bank '{1: bank name}'.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         String playerName = args.getName("playerName");
         String bankName = args.getString("bank");

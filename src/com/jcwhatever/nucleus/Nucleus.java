@@ -25,9 +25,10 @@
 
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.nucleus.commands.response.IResponseRequestor;
+import com.jcwhatever.nucleus.managed.commands.ICommandManager;
+import com.jcwhatever.nucleus.managed.commands.response.IResponseRequestor;
 import com.jcwhatever.nucleus.events.manager.EventManager;
-import com.jcwhatever.nucleus.internal.messenger.InternalMessengerFactory;
+import com.jcwhatever.nucleus.internal.managed.messenger.InternalMessengerFactory;
 import com.jcwhatever.nucleus.managed.actionbar.IActionBarManager;
 import com.jcwhatever.nucleus.managed.blockselect.IBlockSelector;
 import com.jcwhatever.nucleus.managed.entity.IEntityTracker;
@@ -145,6 +146,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._blockSelector != null, ERROR_NOT_READY);
 
         return _plugin._blockSelector;
+    }
+
+    /**
+     * Get the global command manager.
+     */
+    public static ICommandManager getCommandManager() {
+        PreCon.isValid(_plugin._commandManager != null, ERROR_NOT_READY);
+
+        return _plugin._commandManager;
     }
 
     /**

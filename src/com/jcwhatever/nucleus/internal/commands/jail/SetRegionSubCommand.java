@@ -25,13 +25,14 @@
 
 package com.jcwhatever.nucleus.internal.commands.jail;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.providers.jail.IJail;
-import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.providers.jail.Jails;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,12 +43,12 @@ import org.bukkit.entity.Player;
         command="setregion", 
         description="Set jail region using your current region selection.")
 
-class SetRegionSubCommand extends AbstractCommand {
+class SetRegionSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        CommandException.checkNotConsole(this, sender);
+        CommandException.checkNotConsole(getPlugin(), this, sender);
 
         IRegionSelection sel = getRegionSelection((Player) sender);
         if (sel == null)

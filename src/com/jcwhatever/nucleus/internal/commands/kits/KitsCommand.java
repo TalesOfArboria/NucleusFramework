@@ -25,8 +25,8 @@
 
 package com.jcwhatever.nucleus.internal.commands.kits;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.internal.commands.kits.items.ItemsCommand;
 
 @CommandInfo(

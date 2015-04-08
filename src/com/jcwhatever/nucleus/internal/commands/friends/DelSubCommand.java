@@ -24,13 +24,14 @@
 
 package com.jcwhatever.nucleus.internal.commands.friends;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.internal.NucLang;
-import com.jcwhatever.nucleus.providers.friends.Friends;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.providers.friends.Friends;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -46,16 +47,16 @@ import java.util.UUID;
         paramDescriptions = { "friendName= The name of player to remove."},
         permissionDefault = PermissionDefault.TRUE)
 
-class DelSubCommand extends AbstractCommand {
+class DelSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _PLAYER_NOT_FOUND = "A player named '{0: friend name}' was not found.";
     @Localizable static final String _NOT_FRIEND = "Player '{0}' is not in your friends list.";
     @Localizable static final String _SUCCESS =  "Player '{0}' removed from your friends list.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        CommandException.checkNotConsole(this, sender);
+        CommandException.checkNotConsole(getPlugin(), this, sender);
 
         String name = args.getString("friendName");
 
