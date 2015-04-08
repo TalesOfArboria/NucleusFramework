@@ -27,7 +27,7 @@ public class ReflectionTest {
         ReflectionContext reflection = new ReflectionContext(BukkitTester.NMS_TEST_VERSION);
 
         ReflectedType reflected = reflection.type(
-                "com.jcwhatever.nucleus.internal.reflection.ReflectionTest$ReflectableTestClass");
+                "com.jcwhatever.nucleus.internal.managed.reflection.ReflectionTest$ReflectableTestClass");
 
         assertNotNull(reflected);
         assertEquals(ReflectableTestClass.class, reflected.getHandle());
