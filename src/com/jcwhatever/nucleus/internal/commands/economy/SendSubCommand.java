@@ -56,8 +56,7 @@ import java.util.UUID;
 
 class SendSubCommand extends AbstractCommand implements IExecutableCommand {
 
-    @Localizable
-    static final String _PLAYER_NOT_FOUND =
+    @Localizable static final String _PLAYER_NOT_FOUND =
             "A player by the name '{0}' was not found.";
 
     @Localizable static final String _NO_SEND_ACCOUNT =
@@ -86,28 +85,20 @@ class SendSubCommand extends AbstractCommand implements IExecutableCommand {
         final double amount = args.getDouble("amount");
 
         UUID receiverId = PlayerUtils.getPlayerId(receiverName);
-        if (receiverId == null) {
-            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, receiverName));
-            return; // finish
-        }
+        if (receiverId == null)
+            throw new CommandException(NucLang.get(_PLAYER_NOT_FOUND, receiverName));
 
         final IAccount account = Economy.getAccount(player.getUniqueId());
-        if (account == null) {
-            tellError(sender, NucLang.get(_NO_SEND_ACCOUNT));
-            return; //finish
-        }
+        if (account == null)
+            throw new CommandException(NucLang.get(_NO_SEND_ACCOUNT));
 
         IAccount receiverAccount = Economy.getAccount(receiverId);
-        if (receiverAccount == null) {
-            tellError(sender, NucLang.get(_NO_RECEIVE_ACCOUNT, receiverName));
-            return; // finish
-        }
+        if (receiverAccount == null)
+            throw new CommandException(NucLang.get(_NO_RECEIVE_ACCOUNT, receiverName));
 
         double balance = account.getBalance();
-        if (balance < amount) {
-            tellError(sender, NucLang.get(_NOT_ENOUGH_MONEY, balance));
-            return; // finish
-        }
+        if (balance < amount)
+            throw new CommandException(NucLang.get(_NOT_ENOUGH_MONEY, balance));
 
         Economy.transfer(account, receiverAccount, amount)
                 .onError(new FutureSubscriber<IEconomyTransaction>() {

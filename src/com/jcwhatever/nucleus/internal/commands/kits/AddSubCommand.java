@@ -58,16 +58,12 @@ class AddSubCommand extends AbstractCommand implements IExecutableCommand {
         String kitName = args.getName("kitName");
 
         IKit kit = Kits.get(kitName);
-        if (kit != null) {
-            tellError(sender, NucLang.get(_KIT_ALREADY_EXISTS, kitName));
-            return; // finish
-        }
+        if (kit != null)
+            throw new CommandException(NucLang.get(_KIT_ALREADY_EXISTS, kitName));
 
         kit = Kits.add(kitName);
-        if (kit == null) {
-            tellError(sender, NucLang.get(_FAILED));
-            return; // finish
-        }
+        if (kit == null)
+            throw new CommandException(NucLang.get(_FAILED));
 
         tellSuccess(sender, NucLang.get(_SUCCESS, kit.getName()));
     }

@@ -60,18 +60,13 @@ class DelTPSubCommand extends AbstractCommand implements IExecutableCommand {
         IJail jail = Jails.getServerJail();
 
         NamedLocation current = jail.getTeleport(name);
-        if (current == null) {
-            tellError(sender, NucLang.get(_NOT_FOUND, name));
-            return; // finished
-        }
+        if (current == null)
+            throw new CommandException(NucLang.get(_NOT_FOUND, name));
 
-        if (!jail.removeTeleport(name)) {
-            tellError(sender, NucLang.get(_FAILED));
-            return; // finished
-        }
+        if (!jail.removeTeleport(name))
+            throw new CommandException(NucLang.get(_FAILED));
 
         tellSuccess(sender, NucLang.get(_SUCCESS, name));
     }
-
 }
 

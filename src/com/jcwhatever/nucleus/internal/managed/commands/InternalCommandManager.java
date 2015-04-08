@@ -39,8 +39,8 @@ public class InternalCommandManager implements ICommandManager {
 
     private static final ICommandContainerFactory COMMAND_FACTORY = new ICommandContainerFactory() {
         @Override
-        public CommandContainer create(Plugin plugin, ICommand command) {
-            return new CommandContainer(plugin, command, this);
+        public RegisteredCommand create(Plugin plugin, ICommand command) {
+            return new RegisteredCommand(plugin, command, this);
         }
     };
 

@@ -41,7 +41,8 @@ public interface ICommandParameter extends INamed {
     /**
      * Get the default value.
      *
-     * @return  Null if there is no default value.
+     * @return  The default value as a string or null if there is no
+     * default value.
      */
     @Nullable
     String getDefaultValue();

@@ -58,15 +58,11 @@ class DelSubCommand extends AbstractCommand implements IExecutableCommand {
         String kitName = args.getName("kitName");
 
         IKit kit = Kits.get(kitName);
-        if (kit == null) {
-            tellError(sender, NucLang.get(_KIT_NOT_FOUND, kitName));
-            return; // finish
-        }
+        if (kit == null)
+            throw new CommandException(NucLang.get(_KIT_NOT_FOUND, kitName));
 
-        if (!Kits.remove(kitName)) {
-            tellError(sender, NucLang.get(_FAILED));
-            return; // finish
-        }
+        if (!Kits.remove(kitName))
+            throw new CommandException(NucLang.get(_FAILED));
 
         tellSuccess(sender, NucLang.get(_SUCCESS, kit.getName()));
     }

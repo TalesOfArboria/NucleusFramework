@@ -80,29 +80,23 @@ class BalanceSubCommand extends AbstractCommand implements IExecutableCommand {
         }
         else {
 
-            if (!Economy.hasBankSupport()) {
-                tellError(sender, NucLang.get(_NO_BANK_SUPPORT));
-                return; // finish
-            }
+            if (!Economy.hasBankSupport())
+                throw new CommandException(NucLang.get(_NO_BANK_SUPPORT));
 
             IBank bank = Economy.getBank(bankName);
-            if (bank == null) {
-                tellError(sender, NucLang.get(_BANK_NOT_FOUND, bankName));
-                return; // finish
-            }
+            if (bank == null)
+                throw new CommandException(NucLang.get(_BANK_NOT_FOUND, bankName));
 
             IAccount account = bank.getAccount(player.getUniqueId());
-            if (account == null) {
-                tellError(sender, NucLang.get(_ACCOUNT_NOT_FOUND, bank.getName()));
-                return; // finish
-            }
+            if (account == null)
+                throw new CommandException(NucLang.get(_ACCOUNT_NOT_FOUND, bank.getName()));
 
             if (account.getBalance() >= 0) {
                 tellSuccess(sender, NucLang.get(_BANK_BALANCE,
                         Economy.getCurrency().format(account.getBalance()), bank.getName()));
             }
             else {
-                tellError(sender, NucLang.get(_BANK_BALANCE,
+                throw new CommandException(NucLang.get(_BANK_BALANCE,
                         Economy.getCurrency().format(account.getBalance()), bank.getName()));
             }
         }

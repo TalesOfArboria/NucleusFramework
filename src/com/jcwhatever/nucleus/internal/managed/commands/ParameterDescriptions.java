@@ -52,7 +52,7 @@ class ParameterDescriptions implements IParameterDescriptions {
     /**
      * Constructor.
      *
-     * @param command  The command to get parameter descriptions from..
+     * @param command  The command to get parameter descriptions from.
      */
     public ParameterDescriptions(IRegisteredCommand command) {
         PreCon.notNull(command);
@@ -141,7 +141,6 @@ class ParameterDescriptions implements IParameterDescriptions {
         return new ParameterDescription(_command, parameterName,
                 ArgumentValueType.getEnumDescription(validEnumValues));
     }
-
 
     private void parseDescriptions() {
         if (_descriptionMap != null)

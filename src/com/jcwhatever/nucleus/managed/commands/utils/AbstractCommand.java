@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.managed.commands.ICommandDispatcher;
 import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.arguments.ILocationHandler;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.exceptions.InvalidArgumentException;
 import com.jcwhatever.nucleus.managed.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IInitializableCommand;
@@ -40,7 +41,6 @@ import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.ChatPaginator;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
-import com.jcwhatever.nucleus.providers.permissions.Permissions;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.providers.regionselect.RegionSelection;
 import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
@@ -48,22 +48,21 @@ import com.jcwhatever.nucleus.storage.settings.ISettingsManager;
 import com.jcwhatever.nucleus.storage.settings.PropertyDefinition;
 import com.jcwhatever.nucleus.storage.settings.PropertyValueType;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextColor;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 /**
- * Base implementation of a command
+ * An abstract implementation of a command that adds common protected
+ * utility methods for use in the command implementation.
  *
  * <p>The command implementation must have an {@link CommandInfo} annotation.</p>
  */
@@ -146,19 +145,6 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
     }
 
     /**
-     * Determine if a command sender can see the command in help.
-     */
-    protected boolean isHelpVisible(CommandSender sender) {
-
-        // determine if the CommandSender has permission to use the command
-        if (sender instanceof Player && !Permissions.has((Player) sender, _command.getPermission().getName()))
-            return false;
-
-        // determine if the commands is visible in help
-        return _command.getInfo().isHelpVisible();
-    }
-
-    /**
      * Send a debug message to the console.
      *
      * @param msg     The message to send.
@@ -176,30 +162,11 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
     }
 
     /**
-     * Tell the {@link org.bukkit.command.CommandSender} that something is enabled
-     * or disabled.
-     *
-     * <p>Use format tag {e} to specify where to place the word Enabled or Disabled.</p>
-     */
-    protected void tellEnabled(CommandSender sender, String msg, boolean isEnabled, Object...params) {
-        PreCon.notNull(sender);
-        PreCon.notNull(msg);
-        PreCon.notNull(params);
-
-        Matcher matcher = FORMAT_ENABLE.matcher(msg);
-        msg = matcher.replaceAll("{" + params.length +'}');
-
-        params = ArrayUtils.add(params, isEnabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
-
-        _msg.tell(sender, msg, params);
-    }
-
-    /**
      * Tell the {@link org.bukkit.command.CommandSender} the command
      * executed the request successfully.
      */
     protected void tellSuccess(CommandSender sender, String msg, Object... params) {
-        _msg.tell(sender, ChatColor.GREEN + msg, params);
+        _msg.tell(sender, TextColor.GREEN + msg, params);
     }
 
     /**
@@ -207,62 +174,57 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * perform the requested task.
      */
     protected void tellError(CommandSender sender, String msg, Object... params) {
-        _msg.tell(sender, ChatColor.RED + msg, params);
+        _msg.tell(sender, TextColor.RED + msg, params);
     }
 
     /**
      * Set the specified players region selection.
-     * Handles error message if any.
+     *
+     * <p>Handles error message if any.</p>
      *
      * @param player  The player
      * @param p1      The first location of the selection.
      * @param p2      The second location of the selection.
+     *
+     * @throws CommandException if failed to set region selection.
      */
-    protected boolean setRegionSelection(Player player, Location p1, Location p2) {
+    protected void setRegionSelection(Player player, Location p1, Location p2) throws CommandException {
         PreCon.notNull(player);
         PreCon.notNull(p1);
         PreCon.notNull(p2);
 
-        if (!player.getWorld().equals(p1.getWorld())) {
-            tellError(player, NucLang.get(_SAME_WORLD_REGION_SELECT));
-            return false;
-        }
+        if (!player.getWorld().equals(p1.getWorld()))
+            throw new CommandException(NucLang.get(_SAME_WORLD_REGION_SELECT));
 
-        if (!p1.getWorld().equals(p2.getWorld())) {
-            tellError(player, NucLang.get(_INVALID_REGION));
-            return false;
-        }
+        if (!p1.getWorld().equals(p2.getWorld()))
+            throw new CommandException(NucLang.get(_INVALID_REGION));
 
         boolean isSuccess = Nucleus.getProviders()
                 .getRegionSelection().setSelection(player, new SimpleRegionSelection(p1, p2));
 
-        if (!isSuccess) {
-            tellError(player, NucLang.get(_SET_SELECTION_FAILED));
-            return false;
-        }
-
-        return true;
+        if (!isSuccess)
+            throw new CommandException(NucLang.get(_SET_SELECTION_FAILED));
     }
 
     /**
      * Get the specified players current region selection.
-     * Handles error message if any.
+     *
+     * <p>Handles error message if any.</p>
      *
      * @param player  The player
      *
-     * @return  {@link SimpleRegionSelection} object that defines the selection.
+     * @return  {@link IRegionSelection} object that defines the selection.
+     *
+     * @throws CommandException if the player does not have a region selected.
      */
-    @Nullable
-    protected IRegionSelection getRegionSelection(Player player) {
+    protected IRegionSelection getRegionSelection(Player player) throws CommandException {
         PreCon.notNull(player);
 
         IRegionSelection selection = RegionSelection.get(player);
 
         // Check for region selection
-        if (selection == null) {
-            tellError(player, NucLang.get(_NO_REGION_SELECTED));
-            return null;
-        }
+        if (selection == null)
+            throw new CommandException(NucLang.get(_NO_REGION_SELECTED));
 
         return selection;
     }
@@ -290,7 +252,8 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
 
     /**
      * Clear a setting from a settings manager back to it's default value.
-     * Handles error and success messages.
+     *
+     * <p>Handles error and success messages.</p>
      *
      * @param sender           The command sender
      * @param settings         The settings manager that contains and defines possible settings.
@@ -298,32 +261,29 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * @param propertyArgName  The name of the command argument parameter that contains the
      *                         property name of the setting.
      *
-     * @return True if completed successfully.
-     *
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if the setting cannot be cleared due to an incorrect argument
+     * or other problem.
      */
     protected void clearSetting(CommandSender sender, final ISettingsManager settings,
-                             ICommandArguments args, String propertyArgName) throws InvalidArgumentException {
+                             ICommandArguments args, String propertyArgName)
+            throws CommandException {
 
         final String settingName = args.getString(propertyArgName);
 
         PropertyDefinition defs = settings.getDefinitions().get(settingName);
-        if (defs == null) {
-            tellError(sender, NucLang.get(_UNRECOGNIZED_PROPERTY, settingName));
-            return; // finish
-        }
+        if (defs == null)
+            throw new CommandException(NucLang.get(_UNRECOGNIZED_PROPERTY, settingName));
 
-        if (!settings.set(settingName, null)) {
-            tellError(sender, NucLang.get(_CLEAR_PROPERTY_FAILED, settingName));
-            return; // finish
-        }
+        if (!settings.set(settingName, null))
+            throw new CommandException(NucLang.get(_CLEAR_PROPERTY_FAILED, settingName));
 
         tellSuccess(sender, NucLang.get(_CLEAR_PROPERTY_SUCCESS, settingName));
     }
 
     /**
-     * Set a setting into a settings manager using user command input. Handles error and success
-     * messages to the user.
+     * Set a setting into a settings manager using user command input.
+     *
+     * <p>Handles error and success messages to the user.</p>
      *
      * @param sender           The command sender
      * @param settings         The settings manager that contains and defines possible settings.
@@ -333,21 +293,21 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      * @param valueArgName     The name of the command argument parameter that contains the value
      *                         of the property.
      *
-     * @return  True if operation completed successfully.
-     *
      * @throws InvalidArgumentException       If the value provided by the command sender is not valid.
      * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
+     * @throws CommandException               for all other problems.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,
                            ICommandArguments args, String propertyArgName, String valueArgName)
-            throws InvalidArgumentException, InvalidCommandSenderException {
+            throws CommandException {
 
         setSetting(sender, settings, args, propertyArgName, valueArgName, null);
     }
 
     /**
-     * Set a setting into a settings manager using user command input. Handles error and success
-     * messages to the user.
+     * Set a setting into a settings manager using user command input.
+     *
+     * <p>Handles error and success messages to the user.</p>
      *
      * @param sender           The command sender
      * @param settings         The settings manager that contains and defines possible settings.
@@ -358,15 +318,14 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
      *                         property.
      * @param onSuccess        A runnable to run if the setting is successfully set.
      *
-     * @return  True if operation completed successfully.
-     *
-     * @throws InvalidArgumentException       If the value provided by the command sender is not valid.
-     * @throws InvalidCommandSenderException  If the command sender cannot set the value due to sender type.
+     * @throws InvalidArgumentException       if the value provided by the command sender is not valid.
+     * @throws InvalidCommandSenderException  if the command sender cannot set the value due to sender type.
+     * @throws CommandException               for all other problems.
      */
     protected void setSetting(CommandSender sender, final ISettingsManager settings,
                            ICommandArguments args, String propertyArgName,
                            String valueArgName, @Nullable final Runnable onSuccess)
-            throws InvalidArgumentException, InvalidCommandSenderException {
+            throws CommandException {
 
         PreCon.notNull(sender);
         PreCon.notNull(settings);
@@ -379,10 +338,8 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
 
         // get settings definitions
         final PropertyDefinition propertyDefinition = settings.getDefinitions().get(settingName);
-        if (propertyDefinition == null) {
-            tellError(sender, NucLang.get(_UNRECOGNIZED_PROPERTY, settingName));
-            return; // finish
-        }
+        if (propertyDefinition == null)
+            throw new CommandException(NucLang.get(_UNRECOGNIZED_PROPERTY, settingName));
 
         PropertyValueType valueType = propertyDefinition.getValueType();
 
@@ -427,10 +384,11 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
 
         // make sure the result is valid
         if (!settings.set(settingName, value)) {
-            tellError(sender, NucLang.get(_INVALID_PROPERTY_VALUE, value, settingName));
-            tell(sender, NucLang.get(_PROPERTY_DESCRIPTION,
-                    propertyDefinition.getName(), propertyDefinition.getDescription()));
-            return; // finish
+            throw new CommandException(
+                    NucLang.get(_INVALID_PROPERTY_VALUE, value, settingName) + '\n' +
+                            NucLang.get(_PROPERTY_DESCRIPTION,
+                                    propertyDefinition.getName(), propertyDefinition.getDescription())
+            );
         }
 
         tellSuccess(sender, NucLang.get(_SET_PROPERTY_SUCCESS, settingName, args.getString(valueArgName)));

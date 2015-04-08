@@ -64,20 +64,15 @@ class SendSubCommand extends AbstractCommand implements IExecutableCommand {
         int minutes = args.getInteger("minutes");
         
         Player player = PlayerUtils.getPlayer(playerName);
-        if (player == null) {
-            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, playerName));
-            return; // finish
-        }
-        
+        if (player == null)
+            throw new CommandException(NucLang.get(_PLAYER_NOT_FOUND, playerName));
+
         IJail jail = Jails.getServerJail();
         IJailSession session = jail.imprison(player, minutes, TimeScale.MINUTES);
         
-        if (session == null) {
-            tellError(sender, NucLang.get(_FAILED));
-            return; // finish
-        }
-        
+        if (session == null)
+            throw new CommandException(NucLang.get(_FAILED));
+
         tellSuccess(sender, NucLang.get(_SUCCESS, playerName, minutes));
     }
-
 }

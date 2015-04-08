@@ -102,63 +102,53 @@ class SendBankSubCommand extends AbstractCommand implements IExecutableCommand {
         final String bankName = args.getString("bank");
 
         UUID receiverId = PlayerUtils.getPlayerId(receiverName);
-        if (receiverId == null) {
-            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, receiverName));
-            return; // finish
-        }
+        if (receiverId == null)
+            throw new CommandException(NucLang.get(_PLAYER_NOT_FOUND, receiverName));
 
         // Get command senders account
         IAccount myAccount;
         if (myBankName.isEmpty()) {
+
             myAccount = Economy.getAccount(player.getUniqueId());
-            if (myAccount == null) {
-                tellError(sender, NucLang.get(_NO_SEND_ACCOUNT));
-                return; //finish
-            }
+            if (myAccount == null)
+                throw new CommandException(NucLang.get(_NO_SEND_ACCOUNT));
+
         } else {
+
             IBank myBank = Economy.getBank(myBankName);
-            if (myBank == null) {
-                tellError(sender, NucLang.get(_BANK_NOT_FOUND, myBankName));
-                return; // finish
-            }
+            if (myBank == null)
+                throw new CommandException(NucLang.get(_BANK_NOT_FOUND, myBankName));
 
             myAccount = myBank.getAccount(player.getUniqueId());
 
-            if (myAccount == null) {
-                tellError(sender, NucLang.get(_NO_SEND_ACCOUNT_AT_BANK, myBank.getName()));
-                return; // finish
-            }
+            if (myAccount == null)
+                throw new CommandException(NucLang.get(_NO_SEND_ACCOUNT_AT_BANK, myBank.getName()));
         }
 
         // Get receivers account
         IAccount receiverAccount;
         if (bankName.isEmpty()) {
+
             receiverAccount = Economy.getAccount(receiverId);
-            if (receiverAccount == null) {
-                tellError(sender, NucLang.get(_NO_RECEIVE_ACCOUNT, receiverName));
-                return; // finish
-            }
+            if (receiverAccount == null)
+                throw new CommandException(NucLang.get(_NO_RECEIVE_ACCOUNT, receiverName));
+
         }
         else {
+
             IBank bank = Economy.getBank(bankName);
-            if (bank == null) {
-                tellError(sender, NucLang.get(_BANK_NOT_FOUND, myBankName));
-                return; // finish
-            }
+            if (bank == null)
+                throw new CommandException(NucLang.get(_BANK_NOT_FOUND, myBankName));
 
             receiverAccount = bank.getAccount(receiverId);
-            if (receiverAccount == null) {
-                tellError(sender, NucLang.get(_NO_RECEIVE_ACCOUNT_AT_BANK, receiverName, bank.getName()));
-                return; // finish
-            }
+            if (receiverAccount == null)
+                throw new CommandException(NucLang.get(_NO_RECEIVE_ACCOUNT_AT_BANK, receiverName, bank.getName()));
         }
 
         // check command senders balance
         double balance = myAccount.getBalance();
-        if (balance < amount) {
-            tellError(sender, NucLang.get(_NOT_ENOUGH_MONEY, balance));
-            return; // finish
-        }
+        if (balance < amount)
+            throw new CommandException(NucLang.get(_NOT_ENOUGH_MONEY, balance));
 
         final IAccount finalMyAccount = myAccount;
 

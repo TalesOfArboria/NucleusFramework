@@ -34,14 +34,15 @@ import com.jcwhatever.nucleus.managed.commands.parameters.IParameterDescription;
 import com.jcwhatever.nucleus.managed.commands.utils.ICommandUsageGenerator;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Abstract implementation of an exception that is caught when thrown while executing
- * a command in order to display an error message to the command sender.
+ * An exception that is caught when thrown while executing a command in order
+ * to display an error message to the command sender.
  */
 public class CommandException extends Exception {
 
@@ -272,16 +273,16 @@ public class CommandException extends Exception {
                 ICommandUsageGenerator.INLINE_HELP);
     }
 
-
     private String _message;
 
     /**
      * Constructor.
      *
      * @param message  Exception message.
+     * @param args     Optional format arguments.
      */
-    public CommandException(String message) {
-        _message = message;
+    public CommandException(String message, Object... args) {
+        _message = TextUtils.format(message, args);
     }
 
     @Override

@@ -69,10 +69,8 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
             String pluginName = args.getString("plugin");
 
             Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
-            if (plugin == null) {
-                tellError(sender, NucLang.get(_PLUGIN_NOT_FOUND, pluginName));
-                return; // finish
-            }
+            if (plugin == null)
+                throw new CommandException(NucLang.get(_PLUGIN_NOT_FOUND, pluginName));
 
             IStorageProvider storageProvider = Nucleus.getProviders().getStorage(plugin);
 

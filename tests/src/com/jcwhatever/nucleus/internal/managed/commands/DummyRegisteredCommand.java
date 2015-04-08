@@ -13,10 +13,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.annotation.Annotation;
 
-public class DummyRegisteredCommand extends CommandContainer {
+public class DummyRegisteredCommand extends RegisteredCommand {
 
     private DummyCommandExecutable _executable;
-    private CommandInfoContainer _info;
+    private RegisteredCommandInfo _info;
 
     /**
      * Constructor.
@@ -44,15 +44,15 @@ public class DummyRegisteredCommand extends CommandContainer {
     }
 
     @Override
-    public CommandInfoContainer getInfo() {
+    public RegisteredCommandInfo getInfo() {
         if (_info == null && getDispatcher() != null)
-            _info = new CommandInfoContainer(this, null);
+            _info = new RegisteredCommandInfo(this, null);
 
         return _info;
     }
 
     public void setInfo(CommandInfo commandInfo) {
-        _info = new CommandInfoContainer(this, null, commandInfo);
+        _info = new RegisteredCommandInfo(this, null, commandInfo);
     }
 
     public static CommandInfo createInfoAnnotation(final String parent,

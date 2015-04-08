@@ -39,7 +39,8 @@ class Flag implements IFlagParameter {
      * Constructor.
      *
      * @param flagName         The parameter name.
-     * @param definitionIndex  The index position of the flag in the annotation flags definition.
+     * @param definitionIndex  The index position of the flag in the annotation
+     *                         flags definition.
      */
     public Flag(String flagName, int definitionIndex) {
         PreCon.notNullOrEmpty(flagName);
@@ -54,7 +55,7 @@ class Flag implements IFlagParameter {
     }
 
     @Override
-    public int getDefinitionIndex() {
+    public int getIndex() {
         return _definitionIndex;
     }
 

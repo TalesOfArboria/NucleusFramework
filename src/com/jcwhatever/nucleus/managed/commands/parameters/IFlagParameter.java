@@ -34,5 +34,5 @@ public interface IFlagParameter extends INamed {
     /**
      * Get the index order of the flag in the annotation flags definition.
      */
-    int getDefinitionIndex();
+    int getIndex();
 }

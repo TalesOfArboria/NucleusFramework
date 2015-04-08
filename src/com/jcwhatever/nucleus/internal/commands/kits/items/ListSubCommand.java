@@ -67,10 +67,8 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
         int	page = args.getInteger("page");
 
         IKit kit = Kits.get(kitName);
-        if (kit == null) {
-            tellError(sender, NucLang.get(_KIT_NOT_FOUND, kitName));
-            return; // finish
-        }
+        if (kit == null)
+            throw new CommandException(NucLang.get(_KIT_NOT_FOUND, kitName));
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 5, NucLang.get(_PAGINATOR_TITLE));
 

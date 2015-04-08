@@ -52,7 +52,8 @@ class AddTPSubCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _DUPLICATE_NAME = "There is already a location named '{0}'.";
     @Localizable static final String _FAILED = "Failed to add location.";
-    @Localizable static final String _SUCCESS = "Your current location has been added to the default jail and is named '{0}'.";
+    @Localizable static final String _SUCCESS =
+            "Your current location has been added to the default jail and is named '{0}'.";
 
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
@@ -68,17 +69,12 @@ class AddTPSubCommand extends AbstractCommand implements IExecutableCommand {
         IJail jail = Jails.getServerJail();
 
         NamedLocation current = jail.getTeleport(name);
-        if (current != null) {
-            tellError(sender, NucLang.get(_DUPLICATE_NAME, name));
-            return; // finished
-        }
+        if (current != null)
+            throw new CommandException(NucLang.get(_DUPLICATE_NAME, name));
 
-        if (!jail.addTeleport(name, loc)) {
-            tellError(sender, NucLang.get(_FAILED));
-            return; // finished
-        }
+        if (!jail.addTeleport(name, loc))
+            throw new CommandException(NucLang.get(_FAILED));
 
         tellSuccess(sender, NucLang.get(_SUCCESS, name));
     }
-
 }

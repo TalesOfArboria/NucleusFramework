@@ -34,6 +34,7 @@ import com.jcwhatever.nucleus.managed.commands.ICommand;
 import com.jcwhatever.nucleus.managed.commands.ICommandDispatcher;
 import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
@@ -61,6 +62,8 @@ import javax.annotation.Nullable;
  */
 class CommandDispatcher implements ICommandDispatcher {
 
+    private static final String ERROR_TEMPLATE = "{RED}{0}";
+
     @Localizable static final String _ACCESS_DENIED = "{RED}Access denied.";
 
     @Localizable static final String _COMMAND_INCOMPLETE =
@@ -70,7 +73,7 @@ class CommandDispatcher implements ICommandDispatcher {
             "{RED}Command not found. Type '{0: usage}' for help.";
 
     private final Plugin _plugin;
-    private CommandContainer _defaultRoot;
+    private RegisteredCommand _defaultRoot;
     private CommandCollection _rootCommands;
     private final IMessenger _msg;
     private final Set<String> _pluginCommands;
@@ -98,10 +101,8 @@ class CommandDispatcher implements ICommandDispatcher {
             _pluginCommands = new HashSet<>(plugin.getDescription().getCommands().keySet());
         }
 
-        _defaultRoot = new CommandContainer(getPlugin(), new AboutCommand(), commandFactory);
+        _defaultRoot = new RegisteredCommand(getPlugin(), new AboutCommand(), commandFactory);
         _defaultRoot.setDispatcher(this, null);
-
-        registerCommands();
     }
 
     @Override
@@ -112,10 +113,9 @@ class CommandDispatcher implements ICommandDispatcher {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String rootName, String[] rootArguments) {
 
-        CommandContainer rootCommand = _rootCommands.getCommand(cmd.getName());
-        if (rootCommand == null) {
+        RegisteredCommand rootCommand = _rootCommands.getCommand(cmd.getName());
+        if (rootCommand == null)
             rootCommand = _defaultRoot;
-        }
 
         rootCommand.getInfo().setCurrentAlias(rootName);
 
@@ -124,16 +124,16 @@ class CommandDispatcher implements ICommandDispatcher {
 
         if (parsed == null) {
             // command not found
-            NucMsg.tell(getPlugin(), sender, "{RED}{0}", NucLang.get(_COMMAND_NOT_FOUND, rootName));
+            NucMsg.tell(getPlugin(), sender, ERROR_TEMPLATE, NucLang.get(_COMMAND_NOT_FOUND, rootName));
             return true; // finish
         }
 
-        CommandContainer command = parsed.getCommand();
+        RegisteredCommand command = parsed.getCommand();
         String[] rawArguments = parsed.getArguments();
 
         // Check if the player has permissions to run the command
         if (sender instanceof Player && !Permissions.has((Player)sender, command.getPermission().getName())) {
-            NucMsg.tell(getPlugin(), sender, "{RED}{0}", NucLang.get(_ACCESS_DENIED));
+            NucMsg.tell(getPlugin(), sender, ERROR_TEMPLATE, NucLang.get(_ACCESS_DENIED));
             return true;
         }
 
@@ -159,9 +159,9 @@ class CommandDispatcher implements ICommandDispatcher {
         }
 
         // Determine if the command can execute or if it requires sub commands
-        if (!command.canExecute()) {
+        if (!(command.getCommand() instanceof IExecutableCommand)) {
             NucMsg.tell(getPlugin(), sender,
-                    "{RED}{0}", NucLang.get(_COMMAND_INCOMPLETE,
+                    ERROR_TEMPLATE, NucLang.get(_COMMAND_INCOMPLETE,
                             _usageGenerator.generate(command, rootName, UsageGenerator.INLINE_HELP)));
             return true; // finished
         }
@@ -173,7 +173,7 @@ class CommandDispatcher implements ICommandDispatcher {
             arguments = new Arguments(command, rawArguments);
 
         } catch (CommandException e) {
-            NucMsg.tell(getPlugin(), sender, "{RED}{0}", e.getMessage());
+            NucMsg.tell(getPlugin(), sender, ERROR_TEMPLATE, e.getMessage());
             return true; // finished
         }
 
@@ -182,7 +182,7 @@ class CommandDispatcher implements ICommandDispatcher {
             command.execute(sender, arguments);
         }
         catch (CommandException e) {
-            NucMsg.tell(getPlugin(), sender, "{RED}{0}", e.getMessage());
+            NucMsg.tell(getPlugin(), sender, ERROR_TEMPLATE, e.getMessage());
         }
 
         return true;
@@ -194,7 +194,7 @@ class CommandDispatcher implements ICommandDispatcher {
         if (args.length == 0)
             return new ArrayList<>(0);
 
-        CommandContainer rootCommand = _rootCommands.getCommand(args[0]);
+        RegisteredCommand rootCommand = _rootCommands.getCommand(args[0]);
         if (rootCommand == null) {
             rootCommand = _defaultRoot;
         }
@@ -202,7 +202,7 @@ class CommandDispatcher implements ICommandDispatcher {
         CommandParser _parser = new CommandParser(rootCommand);
         ParsedTabComplete parsed = _parser.parseTabComplete(rootCommand, sender, args);
 
-        CommandContainer command = parsed.getCommand();
+        RegisteredCommand command = parsed.getCommand();
         String[] arguments = parsed.getArguments();
         List<String> matches = parsed.getMatches();
 
@@ -237,7 +237,7 @@ class CommandDispatcher implements ICommandDispatcher {
             return false;
         }
 
-        CommandContainer command = _rootCommands.getCommand(rootName);
+        RegisteredCommand command = _rootCommands.getCommand(rootName);
         if (command == null)
             throw new AssertionError();
 
@@ -269,7 +269,7 @@ class CommandDispatcher implements ICommandDispatcher {
     @Override
     public IRegisteredCommand getCommand(String commandName) {
 
-        CommandContainer result = _rootCommands.getCommand(commandName);
+        RegisteredCommand result = _rootCommands.getCommand(commandName);
         if (result == null) {
             result = _defaultRoot.getCommand(commandName);
         }
@@ -293,20 +293,6 @@ class CommandDispatcher implements ICommandDispatcher {
     @Override
     public Collection<String> getCommandNames() {
         return _rootCommands.getCommandNames();
-    }
-
-    /**
-     * Invoked after initialization when the command dispatcher
-     * is ready to accept command registrations.
-     *
-     * <p>Intended to be overridden by a class that extends
-     * {@link CommandDispatcher}.</p>
-     *
-     * <p>Used for convenience. Commands can still be registered
-     * outside of the dispatcher any time after instantiating it.</p>
-     */
-    protected void registerCommands () {
-        // do nothing
     }
 
     // determine if the arguments provided are

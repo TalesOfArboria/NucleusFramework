@@ -26,7 +26,7 @@ public class UsageGeneratorTest {
                 BukkitTester.mockPlugin("dummy"),
                 new ICommandContainerFactory() {
                     @Override
-                    public CommandContainer create(Plugin plugin, ICommand command) {
+                    public RegisteredCommand create(Plugin plugin, ICommand command) {
                         return new DummyRegisteredCommand(plugin, command, this);
                     }
                 }

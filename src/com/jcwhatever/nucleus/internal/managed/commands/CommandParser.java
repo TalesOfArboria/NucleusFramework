@@ -42,14 +42,14 @@ import javax.annotation.Nullable;
  */
 class CommandParser {
 
-    private final CommandContainer _rootCommand;
+    private final RegisteredCommand _rootCommand;
 
     /**
      * Constructor.
      *
      * @param rootCommand  The root command.
      */
-    public CommandParser(CommandContainer rootCommand) {
+    public CommandParser(RegisteredCommand rootCommand) {
         PreCon.notNull(rootCommand);
 
         _rootCommand = rootCommand;
@@ -82,7 +82,7 @@ class CommandParser {
      * @param commandPath        The path of the command.
      */
     @Nullable
-    public CommandContainer parsePath(CommandCollection commandCollection, String commandPath) {
+    public RegisteredCommand parsePath(CommandCollection commandCollection, String commandPath) {
         PreCon.notNull(commandPath);
 
         String[] pathComp = TextUtils.PATTERN_DOT.split(commandPath);
@@ -131,7 +131,7 @@ class CommandParser {
             return new ParsedTabComplete(result, null, ArrayUtils.EMPTY_STRING_ARRAY);
         }
 
-        final CommandContainer command = parsed.getCommand();
+        final RegisteredCommand command = parsed.getCommand();
         final String[] arguments = parsed.getArguments();
         ParsedTabComplete tabComplete;
 
@@ -174,7 +174,7 @@ class CommandParser {
                 new IValidator<String>() {
                     @Override
                     public boolean isValid(String element) {
-                        CommandContainer subCommand = (CommandContainer)commandOwner.getCommand(element);
+                        RegisteredCommand subCommand = (RegisteredCommand)commandOwner.getCommand(element);
                         return subCommand != null && subCommand.isHelpVisible(sender) &&
                                 element.toLowerCase().startsWith(caseSearchName);
                     }
@@ -189,10 +189,10 @@ class CommandParser {
         PreCon.notNull(components);
 
         // get the primary command from the first argument
-        CommandContainer command = null;
+        RegisteredCommand command = null;
 
         if (components.length > 0 && !components[0].isEmpty()) {
-            command = (CommandContainer)commandCollection.getCommand(components[0]);
+            command = (RegisteredCommand)commandCollection.getCommand(components[0]);
         }
 
         // primary command not found
@@ -218,7 +218,7 @@ class CommandParser {
      * {@link AbstractCommand} implementation that should be used to execute the command
      * as well as the arguments to be used for the returned command.
      */
-    private ParsedCommand getCommand(CommandContainer parentCommand, @Nullable String[] args, int depth) {
+    private ParsedCommand getCommand(RegisteredCommand parentCommand, @Nullable String[] args, int depth) {
         PreCon.notNull(parentCommand);
 
         if (args == null || args.length == 0)
@@ -227,7 +227,7 @@ class CommandParser {
         String subCmd = args[0].toLowerCase();
         String[] params = ArrayUtils.reduceStart(1, args);
 
-        CommandContainer subCommand = subCmd.isEmpty() ? null : parentCommand.getCommand(subCmd);
+        RegisteredCommand subCommand = subCmd.isEmpty() ? null : parentCommand.getCommand(subCmd);
         if (subCommand == null)
             return new ParsedCommand(parentCommand, args, depth);
         else {
@@ -244,11 +244,11 @@ class CommandParser {
      */
     public final static class ParsedCommand {
 
-        private final CommandContainer _command;
+        private final RegisteredCommand _command;
         private final String[] _arguments;
         private final int _depth;
 
-        ParsedCommand(CommandContainer command, String[] arguments, int depth) {
+        ParsedCommand(RegisteredCommand command, String[] arguments, int depth) {
             _command = command;
             _arguments = arguments;
             _depth = depth;
@@ -257,7 +257,7 @@ class CommandParser {
         /**
          * Get the command.
          */
-        public CommandContainer getCommand() {
+        public RegisteredCommand getCommand() {
             return _command;
         }
 
@@ -282,11 +282,11 @@ class CommandParser {
      */
     public final static class ParsedTabComplete {
 
-        private final CommandContainer _command;
+        private final RegisteredCommand _command;
         private final String[] _arguments;
         private final List<String> _matches;
 
-        ParsedTabComplete(List<String> matches, @Nullable CommandContainer command, String[] arguments) {
+        ParsedTabComplete(List<String> matches, @Nullable RegisteredCommand command, String[] arguments) {
             _command = command;
             _matches = matches;
             _arguments = arguments;
@@ -304,7 +304,7 @@ class CommandParser {
          * Get the command that was parsed, if any.
          */
         @Nullable
-        public CommandContainer getCommand() {
+        public RegisteredCommand getCommand() {
             return _command;
         }
 

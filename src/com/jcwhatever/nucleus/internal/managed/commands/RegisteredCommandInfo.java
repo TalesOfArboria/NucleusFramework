@@ -46,11 +46,11 @@ import javax.annotation.Nullable;
 /**
  * Container for a commands {@link CommandInfo} annotation.
  */
-class CommandInfoContainer implements IRegisteredCommandInfo {
+class RegisteredCommandInfo implements IRegisteredCommandInfo {
 
-    private final CommandContainer _command;
+    private final RegisteredCommand _command;
     private final CommandInfo _commandInfo;
-    private final CommandContainer _rootCommand;
+    private final RegisteredCommand _rootCommand;
     private final Plugin _plugin;
     private final String _usage;
 
@@ -68,7 +68,7 @@ class CommandInfoContainer implements IRegisteredCommandInfo {
      * @param command      The command to get annotation info from.
      * @param rootCommand  The commands root command.
      */
-    public CommandInfoContainer(CommandContainer command, @Nullable CommandContainer rootCommand) {
+    public RegisteredCommandInfo(RegisteredCommand command, @Nullable RegisteredCommand rootCommand) {
         this(command, rootCommand, command.getCommand().getClass().getAnnotation(CommandInfo.class));
     }
 
@@ -79,8 +79,8 @@ class CommandInfoContainer implements IRegisteredCommandInfo {
      * @param rootCommand  The commands root command.
      * @param info         The commands {@link CommandInfo} annotation.
      */
-    public CommandInfoContainer(CommandContainer command, @Nullable CommandContainer rootCommand,
-                                CommandInfo info) {
+    public RegisteredCommandInfo(RegisteredCommand command, @Nullable RegisteredCommand rootCommand,
+                                 CommandInfo info) {
         PreCon.notNull(command);
         PreCon.notNull(info);
 
@@ -130,7 +130,7 @@ class CommandInfoContainer implements IRegisteredCommandInfo {
 
     @Override
     @Nullable
-    public CommandContainer getRoot() {
+    public RegisteredCommand getRoot() {
         return _rootCommand;
     }
 

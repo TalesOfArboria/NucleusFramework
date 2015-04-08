@@ -91,7 +91,7 @@ class Arguments implements ICommandArguments {
     /**
      * Constructor. Validates while assuming no arguments are provided.
      *
-     * @param command      The command the arguments are being parsed for.
+     * @param command  The command the arguments are being parsed for.
      *
      * @throws InvalidArgumentException    If a value provided is not valid.
      * @throws DuplicateArgumentException  If a parameter is defined in the arguments more than once.

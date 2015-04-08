@@ -61,17 +61,13 @@ class DelSubCommand extends AbstractCommand implements IExecutableCommand {
         String name = args.getString("friendName");
 
         UUID friendId = PlayerUtils.getPlayerId(name);
-        if (friendId == null) {
-            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, name));
-            return; // finish
-        }
+        if (friendId == null)
+            throw new CommandException(NucLang.get(_PLAYER_NOT_FOUND, name));
 
         Player player = (Player)sender;
 
-        if (!Friends.remove(player, friendId)) {
-            tellError(sender, NucLang.get(_NOT_FRIEND, name));
-            return; // finish
-        }
+        if (!Friends.remove(player, friendId))
+            throw new CommandException(_NOT_FRIEND, name);
 
         tellSuccess(sender, NucLang.get(_SUCCESS, name));
     }

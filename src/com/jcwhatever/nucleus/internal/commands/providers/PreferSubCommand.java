@@ -101,11 +101,9 @@ class PreferSubCommand extends AbstractCommand implements IExecutableCommand {
         }
 
         String name = args.getString("providerName");
-        if (!Nucleus.getProviders().setPreferred(type, name)) {
 
-            tellError(sender, NucLang.get(_SET_FAILED));
-            return;// finish
-        }
+        if (!Nucleus.getProviders().setPreferred(type, name))
+            throw new CommandException(NucLang.get(_SET_FAILED));
 
         // see if the provider name is valid
         Collection<String> names = Nucleus.getProviders().getNames(type);

@@ -63,7 +63,7 @@ import javax.annotation.Nullable;
  *
  * <p>The command implementation must have an {@link CommandInfo} annotation.</p>
  */
-class CommandContainer implements IRegisteredCommand {
+class RegisteredCommand implements IRegisteredCommand {
 
     @Localizable static final String _COMMAND_PAGINATOR_TITLE = "Commands";
 
@@ -84,12 +84,11 @@ class CommandContainer implements IRegisteredCommand {
     private final CommandCollection _subCommands;
     private final UsageGenerator _usageGenerator = new UsageGenerator();
 
-    private CommandInfoContainer _info;
+    private RegisteredCommandInfo _info;
     private CommandDispatcher _dispatcher;
 
-    private CommandContainer _parent;
+    private RegisteredCommand _parent;
     private IPermission _permission;
-    private boolean _canExecute;
     protected IMessenger _msg;
 
     private Set<Class<? extends ICommand>> _subCommandQueue = new HashSet<>(20);
@@ -97,7 +96,7 @@ class CommandContainer implements IRegisteredCommand {
     /**
      * Constructor.
      */
-    public CommandContainer(Plugin plugin, ICommand command, ICommandContainerFactory commandFactory) {
+    public RegisteredCommand(Plugin plugin, ICommand command, ICommandContainerFactory commandFactory) {
         super();
 
         PreCon.notNull(plugin);
@@ -127,12 +126,7 @@ class CommandContainer implements IRegisteredCommand {
     }
 
     @Override
-    public boolean canExecute() {
-        return _canExecute;
-    }
-
-    @Override
-    public CommandInfoContainer getInfo() {
+    public RegisteredCommandInfo getInfo() {
         return _info;
     }
 
@@ -143,7 +137,7 @@ class CommandContainer implements IRegisteredCommand {
 
     @Override
     @Nullable
-    public CommandContainer getParent() {
+    public RegisteredCommand getParent() {
         return _parent;
     }
 
@@ -177,7 +171,7 @@ class CommandContainer implements IRegisteredCommand {
 
     @Override
     @Nullable
-    public CommandContainer getCommand(String subCommandName) {
+    public RegisteredCommand getCommand(String subCommandName) {
         PreCon.notNullOrEmpty(subCommandName);
 
         return _subCommands.getCommand(subCommandName);
@@ -216,7 +210,7 @@ class CommandContainer implements IRegisteredCommand {
             return false;
         }
 
-        CommandContainer command = _subCommands.getCommand(commandName);
+        RegisteredCommand command = _subCommands.getCommand(commandName);
         if (command == null)
             throw new AssertionError();
 
@@ -266,7 +260,7 @@ class CommandContainer implements IRegisteredCommand {
 
             List<String> permissions = new ArrayList<String>(20);
 
-            CommandContainer parent = this;
+            RegisteredCommand parent = this;
 
             permissions.add(getInfo().getName());
 
@@ -395,17 +389,17 @@ class CommandContainer implements IRegisteredCommand {
         ChatPaginator pagin = new ChatPaginator(getPlugin(), 6,
                 NucLang.get(getPlugin(), _COMMAND_PAGINATOR_TITLE));
 
-        if (canExecute() && isHelpVisible(sender)) {
+        if (_command instanceof IExecutableCommand && isHelpVisible(sender)) {
 
             // add command to paginator
             pagin.add(_usageGenerator.generate(this), getInfo().getDescription());
         }
 
-        List<CommandContainer> subCommands = new ArrayList<>(20);
+        List<RegisteredCommand> subCommands = new ArrayList<>(20);
 
         for (IRegisteredCommand regcmd : getCommands()) {
 
-            CommandContainer cmd = (CommandContainer)regcmd;
+            RegisteredCommand cmd = (RegisteredCommand)regcmd;
 
             // Determine if the command has its own own sub commands
             // and put aside so it can be displayed at the end of the
@@ -419,7 +413,7 @@ class CommandContainer implements IRegisteredCommand {
                 continue;
             }
 
-            CommandInfoContainer info = cmd.getInfo();
+            RegisteredCommandInfo info = cmd.getInfo();
 
             // add command to paginator
             pagin.add(_usageGenerator.generate(cmd), info.getDescription());
@@ -427,13 +421,13 @@ class CommandContainer implements IRegisteredCommand {
 
         // Add commands that were set aside because they have sub commands
         // and render differently
-        for (CommandContainer cmd : subCommands) {
+        for (RegisteredCommand cmd : subCommands) {
 
             if (!cmd.isHelpVisible(sender)) {
                 continue;
             }
 
-            CommandInfoContainer info = cmd.getInfo();
+            RegisteredCommandInfo info = cmd.getInfo();
 
             // add info to get sub commands help to paginator
             pagin.add(_usageGenerator.generate(cmd), info.getDescription());
@@ -459,14 +453,11 @@ class CommandContainer implements IRegisteredCommand {
         return _subCommands;
     }
 
-    /**
+    /*
      * Determine if the supplied command name matches one of the
      * command names of the this command.
-     *
-     * @param parentName     The command name to match
-     * @param possibleNames  A {@link String[]} of valid names
      */
-    protected boolean isCommandMatch(@Nullable String parentName, String[] possibleNames) {
+    private boolean isCommandMatch(@Nullable String parentName, String[] possibleNames) {
         PreCon.notNull(possibleNames);
 
         if (parentName == null)
@@ -479,32 +470,10 @@ class CommandContainer implements IRegisteredCommand {
         return false;
     }
 
-    /**
-     * Determine if one of the supplied command names match any one of the
-     * command names of the this command.
-     *
-     * @param parentNames    A {@link String[]} of possible names
-     * @param possibleNames  A {@link String[]} of valid names
+    /*
+     * Set the commands dispatcher. Initializes command.
      */
-    protected boolean isCommandMatch(String[] parentNames, String[] possibleNames) {
-        PreCon.notNull(parentNames);
-        PreCon.notNull(possibleNames);
-
-        for (String possibleName : possibleNames) {
-            for (String parentName : parentNames) {
-                if (parentName.equalsIgnoreCase(possibleName))
-                    return true;
-            }
-
-        }
-        return false;
-    }
-
-    /**
-     * Set the commands dispatcher
-     * Should only be called by the dispatcher or parent command
-     */
-    final void setDispatcher(CommandDispatcher dispatcher, @Nullable CommandContainer rootCommand) {
+    final void setDispatcher(CommandDispatcher dispatcher, @Nullable RegisteredCommand rootCommand) {
         PreCon.notNull(dispatcher);
 
         if (_dispatcher != null)
@@ -513,7 +482,7 @@ class CommandContainer implements IRegisteredCommand {
         _dispatcher = dispatcher;
         _msg = Nucleus.getMessengerFactory().create(dispatcher.getPlugin());
 
-        _info = new CommandInfoContainer(this, rootCommand);
+        _info = new RegisteredCommandInfo(this, rootCommand);
 
         // register queued sub commands
         for (Class<? extends ICommand> commandClass : _subCommandQueue) {
@@ -526,12 +495,10 @@ class CommandContainer implements IRegisteredCommand {
         // set command handler in sub commands
         for (IRegisteredCommand subCommand : getCommands()) {
             if (subCommand.getDispatcher() == null) {
-                ((CommandContainer)subCommand)
+                ((RegisteredCommand)subCommand)
                         .setDispatcher(_dispatcher, rootCommand != null ? rootCommand : this);
             }
         }
-
-        _canExecute = _command instanceof IExecutableCommand;
 
         // register permission
         getPermission();

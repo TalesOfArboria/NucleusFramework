@@ -77,20 +77,16 @@ class AddSubCommand extends AbstractCommand implements IExecutableCommand {
             String levelName = args.getString("level");
 
             IFriendLevel level = Nucleus.getProviders().getFriends().getLevel(levelName);
-            if (level == null) {
-                tellError(sender, NucLang.get(_LEVEL_NOT_FOUND, levelName));
-                return; // finish
-            }
+            if (level == null)
+                throw new CommandException(NucLang.get(_LEVEL_NOT_FOUND, levelName));
 
             name = level.getName();
             rawLevel = level.getRawLevel();
         }
 
         UUID friendId = PlayerUtils.getPlayerId(name);
-        if (friendId == null) {
-            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, name));
-            return; // finish
-        }
+        if (friendId == null)
+            throw new CommandException(NucLang.get(_PLAYER_NOT_FOUND, name));
 
         Player player = (Player)sender;
 

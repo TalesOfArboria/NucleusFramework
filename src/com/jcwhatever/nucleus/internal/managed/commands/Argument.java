@@ -32,8 +32,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import javax.annotation.Nullable;
 
 /**
- * A data storage object that represents
- * a single supplied parameter to a command.
+ * A data storage object that represents a single supplied parameter to a command.
  */
 class Argument implements ICommandArgument {
 

@@ -94,7 +94,7 @@ class Parameter implements ICommandParameter {
                 ((Parameter) obj)._parameterName.equals(_parameterName);
     }
 
-    protected void parseRawParameter(ParseResult result, String rawParameter) {
+    private void parseRawParameter(ParseResult result, String rawParameter) {
         String[] paramComp = TextUtils.PATTERN_EQUALS.split(rawParameter, -1);
         result.parameterName = paramComp[0];
 
@@ -104,9 +104,9 @@ class Parameter implements ICommandParameter {
             result.defaultValue = result.defaultValue.trim();
     }
 
-    protected static class ParseResult {
-        public String parameterName;
-        public String defaultValue;
+    static class ParseResult {
+        String parameterName;
+        String defaultValue;
     }
 }
 

@@ -61,16 +61,12 @@ class SetSubCommand extends AbstractCommand implements IExecutableCommand {
         String storageName = args.getString("storageName");
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
-        if (plugin == null) {
-            tellError(sender, NucLang.get(_PLUGIN_NOT_FOUND, pluginName));
-            return; // finish
-        }
+        if (plugin == null)
+            throw new CommandException(NucLang.get(_PLUGIN_NOT_FOUND, pluginName));
 
         IStorageProvider provider = Nucleus.getProviders().getStorage(storageName);
-        if (provider == null) {
-            tellError(sender, NucLang.get(_PROVIDER_NOT_FOUND, storageName));
-            return; // finish
-        }
+        if (provider == null)
+            throw new CommandException(NucLang.get(_PROVIDER_NOT_FOUND, storageName));
 
         Nucleus.getProviders().setStorage(plugin, provider);
 

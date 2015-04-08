@@ -32,6 +32,10 @@ import java.util.Collection;
 
 /**
  * A command mixin interface for a command that can handle tab completion.
+ *
+ * <p>If a command implements this mixin, the {@link #onTabComplete} method
+ * is invoked when applicable to allow the command to modify the completions
+ * collection.</p>
  */
 public interface ITabCompletable extends ICommand {
 

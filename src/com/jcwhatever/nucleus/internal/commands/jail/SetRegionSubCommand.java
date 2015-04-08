@@ -51,14 +51,11 @@ class SetRegionSubCommand extends AbstractCommand implements IExecutableCommand 
         CommandException.checkNotConsole(getPlugin(), this, sender);
 
         IRegionSelection sel = getRegionSelection((Player) sender);
-        if (sel == null)
-            return; // finish
-        
+
         IJail jail = Jails.getServerJail();
 
         jail.getRegion().setCoords(sel.getP1(), sel.getP2());
 
         tellSuccess(sender, "Default Jail region set to your current region selection.");
     }
-
 }

@@ -60,22 +60,17 @@ class ReleaseSubCommand extends AbstractCommand implements IExecutableCommand {
         String playerName = args.getName("playerName");
         
         UUID playerId = PlayerUtils.getPlayerId(playerName);
-        if (playerId == null) {
-            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, playerName));
-            return; // finish
-        }
-        
+        if (playerId == null)
+            throw new CommandException(NucLang.get(_PLAYER_NOT_FOUND, playerName));
+
         IJailSession jailSession = Jails.getSession(playerId);
         
-        if (jailSession == null) {
-            tellError(sender, NucLang.get(_PLAYER_NOT_IMPRISONED, playerName));
-            return; // finish
-        }
-        
+        if (jailSession == null)
+            throw new CommandException(NucLang.get(_PLAYER_NOT_IMPRISONED, playerName));
+
         jailSession.release();
         
         tellSuccess(sender, NucLang.get(_SUCCESS, playerName));
     }
-
 }
 

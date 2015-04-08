@@ -53,15 +53,11 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
 
     // keyed to command name
     private final Plugin _plugin;
-    private final Map<String, CommandContainer> _commandMap;
+    private final Map<String, RegisteredCommand> _commandMap;
     private final Map<Class<? extends ICommand>, IRegisteredCommand> _classMap;
     private final ICommandContainerFactory _factory;
 
     private List<IRegisteredCommand> _sortedCommands;
-
-    public interface ICommandContainerFactory {
-        CommandContainer create(Plugin plugin, ICommand command);
-    }
 
     /**
      * Constructor.
@@ -120,7 +116,7 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
 
     @Override
     @Nullable
-    public CommandContainer getCommand(String name) {
+    public RegisteredCommand getCommand(String name) {
         PreCon.notNull(name);
 
         return _commandMap.get(name);
@@ -134,10 +130,10 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
      * @return  Null if not found.
      */
     @Nullable
-    public CommandContainer getCommand(Class<? extends ICommand> commandClass) {
+    public RegisteredCommand getCommand(Class<? extends ICommand> commandClass) {
         PreCon.notNull(commandClass);
 
-        return (CommandContainer)_classMap.get(commandClass);
+        return (RegisteredCommand)_classMap.get(commandClass);
     }
 
     /**
@@ -149,7 +145,7 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
      * @return  Null if the command was not found.
      */
     @Nullable
-    public CommandContainer fromFirst(String[] commands) {
+    public RegisteredCommand fromFirst(String[] commands) {
         PreCon.notNull(commands);
 
         if (commands.length == 0)
@@ -201,7 +197,7 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
      * @return  The primary call name of the command or null if the command could not be added.
      */
     @Nullable
-    public String addCommand(CommandContainer container) {
+    public String addCommand(RegisteredCommand container) {
         PreCon.notNull(container);
 
         if (container.getDispatcher() != null) {
@@ -251,11 +247,11 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
     public boolean remove(String name) {
         PreCon.notNull(name);
 
-        CommandContainer command = _commandMap.remove(name.toLowerCase());
+        RegisteredCommand command = _commandMap.remove(name.toLowerCase());
         if (command == null)
             return false;
 
-        Set<CommandContainer> commands = new HashSet<>(_commandMap.values());
+        Set<RegisteredCommand> commands = new HashSet<>(_commandMap.values());
         if (!commands.contains(command)) {
             _classMap.remove(command.getCommand().getClass());
         }
@@ -275,7 +271,7 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
     public boolean removeAll(String name) {
         PreCon.notNull(name);
 
-        CommandContainer command = _commandMap.remove(name);
+        RegisteredCommand command = _commandMap.remove(name);
         if (command == null)
             return false;
 
@@ -290,15 +286,15 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
      *
      * @return  True if found and removed.
      */
-    public boolean removeAll(CommandContainer container) {
+    public boolean removeAll(RegisteredCommand container) {
         PreCon.notNull(container);
 
-        Iterator<Entry<String, CommandContainer>> iterator = _commandMap.entrySet().iterator();
+        Iterator<Entry<String, RegisteredCommand>> iterator = _commandMap.entrySet().iterator();
 
         boolean hasChanged = false;
 
         while (iterator.hasNext()) {
-            Entry<String, CommandContainer> entry = iterator.next();
+            Entry<String, RegisteredCommand> entry = iterator.next();
 
             if (entry.getValue().equals(container)) {
                 iterator.remove();
@@ -320,12 +316,12 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
     public boolean removeAll(Class<? extends ICommand> commandClass) {
         PreCon.notNull(commandClass);
 
-        Iterator<Entry<String, CommandContainer>> iterator = _commandMap.entrySet().iterator();
+        Iterator<Entry<String, RegisteredCommand>> iterator = _commandMap.entrySet().iterator();
 
         boolean hasChanged = false;
 
         while (iterator.hasNext()) {
-            Entry<String, CommandContainer> entry = iterator.next();
+            Entry<String, RegisteredCommand> entry = iterator.next();
 
             Class<? extends ICommand> clazz = entry.getValue().getCommand().getClass();
 
@@ -369,7 +365,7 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
         return new Iterator<IRegisteredCommand>() {
 
             Iterator<IRegisteredCommand> iter = new ArrayList<>(_classMap.values()).iterator();
-            CommandContainer current;
+            RegisteredCommand current;
 
             @Override
             public boolean hasNext() {
@@ -377,8 +373,8 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
             }
 
             @Override
-            public CommandContainer next() {
-                return current = (CommandContainer)iter.next();
+            public RegisteredCommand next() {
+                return current = (RegisteredCommand)iter.next();
             }
 
             @Override
@@ -396,5 +392,19 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
     public <T> T[] toArray(T[] a) {
         //noinspection SuspiciousToArrayCall
         return _classMap.values().toArray(a);
+    }
+
+    /**
+     * Interface for a {@link RegisteredCommand} instance factory.
+     */
+    public interface ICommandContainerFactory {
+
+        /**
+         * Create a new {@link RegisteredCommand} instance.
+         *
+         * @param plugin   The owning plugin.
+         * @param command  The command to register.
+         */
+        RegisteredCommand create(Plugin plugin, ICommand command);
     }
 }

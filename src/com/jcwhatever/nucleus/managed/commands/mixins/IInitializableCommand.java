@@ -30,6 +30,9 @@ import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
 /**
  * Command mixin interface for a command that needs to be initialized
  * after being registered.
+ *
+ * <p>If a command implements this mixin, the {@link #init} method is invoked
+ * when the commands {@link IRegisteredCommand} instance is created.</p>
  */
 public interface IInitializableCommand extends ICommand {
 

@@ -33,6 +33,9 @@ import org.bukkit.command.CommandSender;
 /**
  * A command mixin interface for a command that that can be executed.
  *
+ * <p>If a command implements this mixin, the {@link #execute} method
+ * is invoked when a command sender attempts to execute the command.</p>
+ *
  * <p>Commands that are not executable are generally parents of
  * sub commands and are used for categorization/namespacing only.</p>
  */

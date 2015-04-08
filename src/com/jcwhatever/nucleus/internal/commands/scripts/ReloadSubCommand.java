@@ -29,7 +29,7 @@ import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptManager;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
-import com.jcwhatever.nucleus.managed.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
@@ -55,8 +55,7 @@ class ReloadSubCommand extends AbstractCommand implements IExecutableCommand {
     @Localizable static final String _FAILED = "Failed to reload script named '{0: script name}'.";
 
     @Override
-    public void execute (CommandSender sender, ICommandArguments args) throws InvalidArgumentException {
-
+    public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
 
         if (args.isDefaultValue("scriptName")) {
             Nucleus.getScriptManager().reload();
@@ -70,15 +69,11 @@ class ReloadSubCommand extends AbstractCommand implements IExecutableCommand {
             InternalScriptManager manager = (InternalScriptManager)Nucleus.getScriptManager();
 
             IScript script = manager.getScript(scriptName);
-            if (script == null) {
-                tellError(sender, NucLang.get(_SCRIPT_NOT_FOUND, scriptName));
-                return; // finish
-            }
+            if (script == null)
+                throw new CommandException(NucLang.get(_SCRIPT_NOT_FOUND, scriptName));
 
-            if (!manager.reload(scriptName)) {
-                tellError(sender, NucLang.get(_FAILED, scriptName));
-                return; // finish
-            }
+            if (!manager.reload(scriptName))
+                throw new CommandException(NucLang.get(_FAILED, scriptName));
 
             tellSuccess(sender, NucLang.get(_RELOAD_ONE, scriptName));
         }

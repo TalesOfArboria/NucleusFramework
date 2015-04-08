@@ -60,15 +60,11 @@ class TakeSubCommand extends AbstractCommand implements IExecutableCommand {
         double amount = args.getDouble("amount");
 
         UUID playerId = PlayerUtils.getPlayerId(playerName);
-        if (playerId == null) {
-            tellError(sender, NucLang.get(_PLAYER_NOT_FOUND, playerName));
-            return; // finish
-        }
+        if (playerId == null)
+            throw new CommandException(NucLang.get(_PLAYER_NOT_FOUND, playerName));
 
-        if (Economy.withdraw(playerId, amount) == null) {
-            tellError(sender, NucLang.get(_FAILED));
-            return; // finish
-        }
+        if (Economy.withdraw(playerId, amount) == null)
+            throw new CommandException(NucLang.get(_FAILED));
 
         tellSuccess(sender, NucLang.get(_SUCCESS, Economy.getCurrency().format(amount), playerName));
     }

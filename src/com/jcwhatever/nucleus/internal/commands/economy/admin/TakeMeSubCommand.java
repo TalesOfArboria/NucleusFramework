@@ -60,10 +60,8 @@ class TakeMeSubCommand extends AbstractCommand implements IExecutableCommand {
         UUID playerId = ((Player)sender).getUniqueId();
         double amount = args.getDouble("amount");
 
-        if (Economy.withdraw(playerId, amount) == null) {
-            tellError(sender, NucLang.get(_FAILED));
-            return; // finish
-        }
+        if (Economy.withdraw(playerId, amount) == null)
+            throw new CommandException(NucLang.get(_FAILED));
 
         tellSuccess(sender, NucLang.get(_SUCCESS, Economy.getCurrency().format(amount), sender.getName()));
     }

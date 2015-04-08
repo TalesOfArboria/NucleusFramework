@@ -41,8 +41,7 @@ import org.bukkit.plugin.Plugin;
  */
 class ParameterDescription implements IParameterDescription {
 
-    @Localizable
-    public static final String NAME16 =
+    @Localizable public static final String NAME16 =
             "Must be no more than 16 characters in length and " +
                     "include only alphanumeric characters. Underscores are allowed.";
 
@@ -138,6 +137,7 @@ class ParameterDescription implements IParameterDescription {
     /**
      * Constructor.
      *
+     * @param command        The registered command the parameter is from.
      * @param parameterName  The parameter name.
      * @param description    The parameter description.
      */
@@ -154,6 +154,7 @@ class ParameterDescription implements IParameterDescription {
     /**
      * Constructor.
      *
+     * @param command         The registered command the parameter is from.
      * @param rawDescription  The raw description to parse.
      */
     public ParameterDescription(IRegisteredCommand command, String rawDescription) {

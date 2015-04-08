@@ -65,10 +65,8 @@ class UsageSubCommand extends AbstractCommand implements IExecutableCommand {
         String typeName = args.getName("typeName");
 
         SignHandler handler = Nucleus.getSignManager().getSignHandler(typeName);
-        if (handler == null) {
-            tellError(sender, NucLang.get(_HANDLER_NOT_FOUND, typeName));
-            return; // finished
-        }
+        if (handler == null)
+            throw new CommandException(NucLang.get(_HANDLER_NOT_FOUND, typeName));
 
         ChatPaginator pagin = createPagin(NucLang.get(_PAGINATOR_TITLE, handler.getName()));
 

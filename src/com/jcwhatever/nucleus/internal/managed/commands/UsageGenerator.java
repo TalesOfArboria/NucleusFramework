@@ -71,7 +71,7 @@ class UsageGenerator implements ICommandUsageGenerator {
 
     @Override
     public String generate(IRegisteredCommand command, String rootCommandName) {
-        PreCon.isValid(command instanceof CommandContainer);
+        PreCon.isValid(command instanceof RegisteredCommand);
 
         if (_defaultTemplate != null) {
             return generate(command, rootCommandName, _defaultTemplate);
@@ -82,20 +82,20 @@ class UsageGenerator implements ICommandUsageGenerator {
             return generate(command, rootCommandName, hardCodeUsage);
         }
 
-        return ((CommandContainer)command).getCommandCollection().size() == 0
+        return ((RegisteredCommand)command).getCommandCollection().size() == 0
                 ? generate(command, rootCommandName, ICommandUsageGenerator.HELP_USAGE)
                 : generate(command, rootCommandName, ICommandUsageGenerator.HELP_USAGE_HAS_SUB_COMMANDS);
     }
 
     @Override
     public String generate(IRegisteredCommand command, String rootCommandName, String template) {
-        PreCon.isValid(command instanceof CommandContainer);
+        PreCon.isValid(command instanceof RegisteredCommand);
 
-        LinkedList<CommandContainer> parentCommands = new LinkedList<>();
+        LinkedList<RegisteredCommand> parentCommands = new LinkedList<>();
         StringBuilder commandPath = new StringBuilder(30);
 
         if (command.getParent() != null) {
-            CommandContainer parent = (CommandContainer)command;
+            RegisteredCommand parent = (RegisteredCommand)command;
 
             while ((parent = parent.getParent()) != null && parent.getParent() != null) {
                 if (command != parent) {

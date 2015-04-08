@@ -46,11 +46,6 @@ public interface IRegisteredCommand extends
     IRegisteredCommandInfo getInfo();
 
     /**
-     * Determine if the command can be executed.
-     */
-    boolean canExecute();
-
-    /**
      * Get the command handler
      */
     ICommandDispatcher getDispatcher();
