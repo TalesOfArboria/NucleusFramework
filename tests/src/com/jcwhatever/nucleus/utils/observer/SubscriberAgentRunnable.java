@@ -35,7 +35,7 @@ public class SubscriberAgentRunnable implements Runnable {
         assertEquals(0, _agent.getSubscribers().size());
         assertEquals(0, subscriber.getAgents().size());
 
-        _agent.addSubscriber(subscriber);
+        _agent.registerReference(subscriber);
 
         assertEquals(1, _agent.getSubscribers().size());
         assertEquals(0, subscriber.getAgents().size());
