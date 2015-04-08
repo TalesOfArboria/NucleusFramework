@@ -23,8 +23,9 @@
  */
 
 
-package com.jcwhatever.nucleus.regions;
+package com.jcwhatever.nucleus.regions.file;
 
+import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
