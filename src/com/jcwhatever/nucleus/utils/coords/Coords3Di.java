@@ -146,13 +146,7 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      * @return  The output location.
      */
     public static Location toLocation(ICoords3Di coords, Location output) {
-        PreCon.notNull(coords);
-        PreCon.notNull(output);
-
-        output.setX(coords.getX());
-        output.setY(coords.getY());
-        output.setZ(coords.getZ());
-        return output;
+        return copyTo(coords, output);
     }
 
     /**
@@ -178,6 +172,44 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
 
         output.setX(coords.getX());
         output.setY(coords.getY());
+        output.setZ(coords.getZ());
+        return output;
+    }
+
+    /**
+     * Copy the coordinate to an output {@link org.bukkit.Location}.
+     *
+     * @param coords  The coordinates to copy from.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    public static Location copyTo(ICoords3Di coords, Location output) {
+        PreCon.notNull(coords);
+        PreCon.notNull(output);
+
+        output.setX(coords.getX());
+        output.setY(coords.getX());
+        output.setZ(coords.getZ());
+        return output;
+    }
+
+    /**
+     * Copy the coordinate values to an output {@link org.bukkit.Location}.
+     *
+     * @param coords  The coords to copy from.
+     * @param world   The {@link org.bukkit.World} to put into the output {@link org.bukkit.Location}.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    public static Location copyTo(ICoords3Di coords, @Nullable World world, Location output) {
+        PreCon.notNull(coords);
+        PreCon.notNull(output);
+
+        output.setWorld(world);
+        output.setX(coords.getX());
+        output.setY(coords.getX());
         output.setZ(coords.getZ());
         return output;
     }
@@ -372,6 +404,31 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
      */
     public Coords2Di to2Di() {
         return new Coords2Di(getX(), getZ());
+    }
+
+    /**
+     * Copy the coordinate values to an output {@link org.bukkit.Location}.
+     *
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    @Override
+    public Location copyTo(Location output) {
+        return copyTo(this, output);
+    }
+
+    /**
+     * Copy the coordinate values to an output {@link org.bukkit.Location}.
+     *
+     * @param world   The {@link org.bukkit.World} to put into the output {@link org.bukkit.Location}.
+     * @param output  The output {@link org.bukkit.Location}.
+     *
+     * @return  The output {@link org.bukkit.Location}.
+     */
+    @Override
+    public Location copyTo(@Nullable World world, Location output) {
+        return copyTo(this, world, output);
     }
 
     @Override
