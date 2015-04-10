@@ -162,6 +162,9 @@ public class BasicByteReader extends InputStream implements IByteReader {
 
         int size = getInteger();
 
+        if (size == -1)
+            return null;
+
         if (size == 0)
             return new byte[0];
 
@@ -240,7 +243,7 @@ public class BasicByteReader extends InputStream implements IByteReader {
     @Nullable
     public BigDecimal getBigDecimal() throws IOException {
         try {
-            return getObject(BigDecimal.class);
+            return deserializeObject(BigDecimal.class);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new AssertionError();
@@ -261,7 +264,7 @@ public class BasicByteReader extends InputStream implements IByteReader {
     @Nullable
     public BigInteger getBigInteger() throws IOException {
         try {
-            return getObject(BigInteger.class);
+            return deserializeObject(BigInteger.class);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new AssertionError();
@@ -416,11 +419,11 @@ public class BasicByteReader extends InputStream implements IByteReader {
      * @throws IOException
      */
     @Override
+    @Nullable
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
         String constantName = getSmallString();
         if (constantName == null) {
-            throw new IOException(
-                    "Could not find an enum: " + enumClass.getName());
+            return null;
         }
 
         T e = EnumUtils.getEnum(constantName, enumClass);
@@ -434,19 +437,29 @@ public class BasicByteReader extends InputStream implements IByteReader {
     }
 
     /**
-     * Get the next 16 bytes as a UUID.
+     * Get the next 16-17 bytes as a UUID.
+     *
+     * <p>The UUID is read as a boolean value (See {@link #getBoolean}. If
+     * the boolean value is "true", the next 16 bytes are read as the UUID. If
+     * the boolean value is "false", null is returned.</p>
      *
      * @throws IOException
      */
     @Override
+    @Nullable
     public UUID getUUID() throws IOException {
 
-        resetBooleanBuffer();
+        boolean hasValue = getBoolean();
 
-        long most = getLong();
-        long least = getLong();
+        if (hasValue) {
 
-        return new UUID(most, least);
+            long most = getLong();
+            long least = getLong();
+            return new UUID(most, least);
+        }
+        else {
+            return null;
+        }
     }
 
     /**
@@ -466,16 +479,48 @@ public class BasicByteReader extends InputStream implements IByteReader {
      * @throws IOException
      */
     @Override
+    @Nullable
     public SyncLocation getLocation() throws IOException {
+        return getLocation(new SyncLocation((String)null, 0, 0, 0));
+    }
 
-        final String worldName = getSmallString();
-        double x = getDouble();
-        double y = getDouble();
-        double z = getDouble();
-        float yaw = getFloat();
-        float pitch = getFloat();
+    /**
+     * Get the next group of bytes as a location.
+     *
+     * <p>The location is read as follows:</p>
+     *
+     * <ul>
+     *     <li>The world name - UTF-8 byte array preceded with a byte to indicate length.</li>
+     *     <li>The X value - Double (See {@link #getDouble})</li>
+     *     <li>The Y value - Double (See {@link #getDouble})</li>
+     *     <li>The Z value - Double (See {@link #getDouble})</li>
+     *     <li>The Yaw value - Double (See {@link #getDouble})</li>
+     *     <li>The Pitch value - Double (See {@link #getDouble})</li>
+     * </ul>
+     *
+     * @throws IOException
+     */
+    @Override
+    @Nullable
+    public SyncLocation getLocation(SyncLocation output) throws IOException {
+        PreCon.notNull(output);
 
-        return new SyncLocation(worldName, x, y, z, yaw, pitch);
+        output.setWorld(getSmallString());
+        try {
+            output.setX(getDouble());
+        }
+        catch (Exception e) {
+            if (e.getMessage().equals("Failed to read double value."))
+                return null;
+
+            throw e;
+        }
+        output.setY(getDouble());
+        output.setZ(getDouble());
+        output.setYaw(getFloat());
+        output.setPitch(getFloat());
+
+        return output;
     }
 
     /**
@@ -487,12 +532,37 @@ public class BasicByteReader extends InputStream implements IByteReader {
      * @throws IOException
      */
     @Override
+    @Nullable
     public EulerAngle getEulerAngle() throws IOException {
-        double x = getDouble();
-        double y = getDouble();
-        double z = getDouble();
+        return getEulerAngle(new EulerAngle(0, 0, 0));
+    }
 
-        return new EulerAngle(x, y, z);
+    /**
+     * Get the next group of bytes as an EulerAngle.
+     *
+     * <p>The angle is read as x, y and z value as doubles.
+     * (See {@link #getDouble})</p>
+     *
+     * @throws IOException
+     */
+    @Override
+    @Nullable
+    public EulerAngle getEulerAngle(EulerAngle output) throws IOException {
+        PreCon.notNull(output);
+
+        try {
+            output.setX(getDouble());
+        }
+        catch (IOException e) {
+            if (e.getMessage().equals("Failed to read double value."))
+                return null;
+
+            throw e;
+        }
+        output.setY(getDouble());
+        output.setZ(getDouble());
+
+        return output;
     }
 
     /**
@@ -503,12 +573,36 @@ public class BasicByteReader extends InputStream implements IByteReader {
      * @throws IOException
      */
     @Override
+    @Nullable
     public Vector getVector() throws IOException {
-        double x = getDouble();
-        double y = getDouble();
-        double z = getDouble();
+        return getVector(new Vector(0, 0, 0));
+    }
 
-        return new Vector(x, y, z);
+    /**
+     * Get the next group of bytes as a Vector.
+     *
+     * <p>The vector is read as x, y, and z value as doubles.</p>
+     *
+     * @throws IOException
+     */
+    @Override
+    @Nullable
+    public Vector getVector(Vector output) throws IOException {
+        PreCon.notNull(output);
+
+        try {
+            output.setX(getDouble());
+        }
+        catch (IOException e) {
+            if (e.getMessage().equals("Failed to read double value."))
+                return null;
+
+            throw e;
+        }
+        output.setY(getDouble());
+        output.setZ(getDouble());
+
+        return output;
     }
 
     /**
@@ -542,6 +636,9 @@ public class BasicByteReader extends InputStream implements IByteReader {
 
         // read basic data
         Material type = getEnum(Material.class);
+        if (type == null)
+            throw new IOException("Failed to read ItemStack material.");
+
         short durability = (short)getInteger();
         int amount = getInteger();
 
@@ -572,7 +669,7 @@ public class BasicByteReader extends InputStream implements IByteReader {
     }
 
     /**
-     * Get an {@link IBinarySerializable} object.
+     * Get an {@link IByteSerializable} object.
      *
      * <p>A boolean is read (See {@link #getBoolean} to indicate if the object
      * is null (0 = null) and if not null a new object is instantiate via empty
@@ -587,7 +684,7 @@ public class BasicByteReader extends InputStream implements IByteReader {
      */
     @Override
     @Nullable
-    public <T extends IBinarySerializable> T getBinarySerializable(Class<T> objectClass)
+    public <T extends IByteSerializable> T deserialize(Class<T> objectClass)
             throws IOException, InstantiationException {
 
         PreCon.notNull(objectClass);
@@ -633,7 +730,7 @@ public class BasicByteReader extends InputStream implements IByteReader {
      */
     @Override
     @Nullable
-    public <T extends Serializable> T getObject(Class<T> objectClass)
+    public <T extends Serializable> T deserializeObject(Class<T> objectClass)
             throws IOException, ClassNotFoundException {
         PreCon.notNull(objectClass);
 

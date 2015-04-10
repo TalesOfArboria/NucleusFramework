@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
+import com.jcwhatever.nucleus.utils.file.IByteSerializable;
 import com.jcwhatever.nucleus.utils.file.IByteReader;
 import com.jcwhatever.nucleus.utils.file.IByteWriter;
 
@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 /**
  * 2D immutable coordinates.
  */
-public class Coords2D implements ICoords2D, IDataNodeSerializable, IBinarySerializable {
+public class Coords2D implements ICoords2D, IDataNodeSerializable, IByteSerializable {
 
     /**
      * Get a {@link Coords2D} from a {@link org.bukkit.Chunk}.

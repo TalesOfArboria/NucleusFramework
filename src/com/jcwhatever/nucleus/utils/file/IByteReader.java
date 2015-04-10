@@ -76,13 +76,11 @@ public interface IByteReader {
     /**
      * Get the next byte array.
      *
-     * <p>Gets an array by first reading an integer (4 bytes) which
-     * indicates the length of the array, then reads the number of bytes indicated.</p>
-     *
-     * <p>If the number of bytes indicated is 0, then an empty byte array is returned.</p>
+     * @return  The bytes or null if written as null.
      *
      * @throws IOException
      */
+    @Nullable
     byte[] getBytes() throws IOException;
 
     /**
@@ -109,6 +107,8 @@ public interface IByteReader {
     /**
      * Read the next group of bytes as a {@link BigDecimal}.
      *
+     * @return  The {@link BigDecimal} or null if written as null.
+     *
      * @throws IOException
      */
     @Nullable
@@ -117,6 +117,8 @@ public interface IByteReader {
     /**
      * Read the next group of bytes as a {@link BigInteger}.
      *
+     * @return  The {@link BigInteger} or null if written as null.
+     *
      * @throws IOException
      */
     @Nullable
@@ -124,6 +126,8 @@ public interface IByteReader {
 
     /**
      * Get the next group of bytes as a string.
+     *
+     * @return  The string or null if written as null.
      *
      * @throws IOException
      */
@@ -135,6 +139,8 @@ public interface IByteReader {
      *
      * @param charset  The character set encoding to use.
      *
+     * @return  The String or null if written as null.
+     *
      * @throws IOException
      */
     @Nullable
@@ -143,6 +149,8 @@ public interface IByteReader {
     /**
      * Get the next group of bytes as a UTF-8 string that is expected to be
      * no more than 255 bytes in length.
+     *
+     * @return  The string or null if written as null.
      *
      * @throws IOException
      */
@@ -170,43 +178,93 @@ public interface IByteReader {
      *
      * @param <T>  The enum type.
      *
-     * @throws IOException
-     */
-    <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException;
-
-    /**
-     * Get the next 16 bytes as a UUID.
+     * @return  The enum or null if written as null.
      *
      * @throws IOException
      */
+    @Nullable
+    <T extends Enum<T>> T getEnum(@Nullable Class<T> enumClass) throws IOException;
+
+    /**
+     * Get the next 16 bytes as a {@link UUID}.
+     *
+     * @return  The {@link UUID} or null if written as null.
+     *
+     * @throws IOException
+     */
+    @Nullable
     UUID getUUID() throws IOException;
 
     /**
-     * Get the next group of bytes as a location.
+     * Get the next group of bytes as a {@link SyncLocation}.
+     *
+     * @return  The {@link SyncLocation} or null if written as null.
      *
      * @throws IOException
      */
+    @Nullable
     SyncLocation getLocation() throws IOException;
 
     /**
-     * Get the next group of bytes as an EulerAngle.
+     * Get the next group of bytes as a {@link SyncLocation}.
      *
-     * <p>The angle is read as x, y and z value as doubles.
-     * (See {@link #getDouble})</p>
+     * @param output  The output {@link SyncLocation} to put values into.
+     *
+     * @return  The output {@link SyncLocation} or null if written as null.
      *
      * @throws IOException
      */
+    @Nullable
+    SyncLocation getLocation(SyncLocation output) throws IOException;
+
+    /**
+     * Get the next group of bytes as an {@link EulerAngle}.
+     *
+     * @return  The {@link EulerAngle} or null if written as null.
+     *
+     * @throws IOException
+     */
+    @Nullable
     EulerAngle getEulerAngle() throws IOException;
 
     /**
-     * Get the next group of bytes as a Vector.
+     * Get the next group of bytes as an {@link EulerAngle}.
+     *
+     * @param output  The {@link EulerAngle} to put values into.
+     *
+     * @return  The output {@link EulerAngle} or null if written as null.
      *
      * @throws IOException
      */
+    @Nullable
+    EulerAngle getEulerAngle(EulerAngle output) throws IOException;
+
+    /**
+     * Get the next group of bytes as a {@link Vector}.
+     *
+     * @return  The {@link Vector} or null if written as null.
+     *
+     * @throws IOException
+     */
+    @Nullable
     Vector getVector() throws IOException;
 
     /**
-     * Get the next group of bytes as an item stack.
+     * Get the next group of bytes as a {@link Vector}.
+     *
+     * @param output  The output {@link Vector} to put values into.
+     *
+     * @return  The output {@link Vector} or null if written as null.
+     *
+     * @throws IOException
+     */
+    @Nullable
+    Vector getVector(Vector output) throws IOException;
+
+    /**
+     * Get the next group of bytes as an {@link ItemStack}.
+     *
+     * @return  The {@link ItemStack} or null if written as null.
      *
      * @throws IOException
      */
@@ -214,20 +272,22 @@ public interface IByteReader {
     ItemStack getItemStack() throws IOException;
 
     /**
-     * Get an {@link IBinarySerializable} object.
+     * Get an {@link IByteSerializable} object.
      *
      * @param objectClass  The object class.
+     *
+     * @return  The {@link IByteSerializable} object or null if written as null.
      *
      * @param <T>  The object type.
      *
      * @throws Exception
      */
     @Nullable
-    <T extends IBinarySerializable> T getBinarySerializable(Class<T> objectClass)
+    <T extends IByteSerializable> T deserialize(Class<T> objectClass)
             throws IOException, InstantiationException;
 
     /**
-     * Deserialize an object from the next set of bytes.
+     * Deserialize a {@link Serializable} object from the next set of bytes.
      *
      * @param objectClass  The object class.
      *
@@ -239,6 +299,6 @@ public interface IByteReader {
      * @throws ClassNotFoundException
      */
     @Nullable
-    <T extends Serializable> T getObject(Class<T> objectClass)
+    <T extends Serializable> T deserializeObject(Class<T> objectClass)
             throws IOException, ClassNotFoundException;
 }

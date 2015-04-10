@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
+import com.jcwhatever.nucleus.utils.file.IByteSerializable;
 import com.jcwhatever.nucleus.utils.file.IByteReader;
 import com.jcwhatever.nucleus.utils.file.IByteWriter;
 
@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Contains information about a World.
  */
-public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IBinarySerializable {
+public class WorldInfo implements IWorldInfo, IDataNodeSerializable, IByteSerializable {
 
     private UUID _id;
     private String _worldName;

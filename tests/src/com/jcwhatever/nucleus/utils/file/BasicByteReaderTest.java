@@ -16,7 +16,7 @@ import java.util.UUID;
 /**
  * Tests {@link BasicByteReader}.
  */
-public class NucleusByteReaderTest {
+public class BasicByteReaderTest {
 
     private enum TestEnum {
         CONSTANT,
@@ -24,7 +24,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getBytesRead} returns the correct value.
+     * Make sure {@link BasicByteReader#getBytesRead} returns the correct value.
      */
     @Test
     public void testGetBytesRead() throws Exception {
@@ -41,7 +41,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #read} returns the correct value.
+     * Make sure {@link BasicByteReader#read} returns the correct value.
      */
     @Test
     public void testRead() throws Exception {
@@ -56,7 +56,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #skip} works correctly.
+     * Make sure {@link BasicByteReader#skip} works correctly.
      */
     @Test
     public void testSkip() throws Exception {
@@ -70,7 +70,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getBoolean} returns the correct value.
+     * Make sure {@link BasicByteReader#getBoolean} returns the correct value.
      */
     @Test
     public void testGetBoolean() throws Exception {
@@ -96,7 +96,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getByte} returns the correct value.
+     * Make sure {@link BasicByteReader#getByte} returns the correct value.
      */
     @Test
     public void testGetByte() throws Exception {
@@ -110,7 +110,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getBytes} returns the correct value.
+     * Make sure {@link BasicByteReader#getBytes} returns the correct value.
      */
     @Test
     public void testGetBytes() throws Exception {
@@ -122,7 +122,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link getShort} returns the correct value.
+     * Make sure {@link BasicByteReader#getShort} returns the correct value.
      */
     @Test
     public void testGetShort() throws Exception {
@@ -134,7 +134,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getInteger} returns the correct value.
+     * Make sure {@link BasicByteReader#getInteger} returns the correct value.
      */
     @Test
     public void testGetInteger() throws Exception {
@@ -146,7 +146,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getLong} returns the correct value.
+     * Make sure {@link BasicByteReader#getLong} returns the correct value.
      */
     @Test
     public void testGetLong() throws Exception {
@@ -158,7 +158,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getString} returns the correct value.
+     * Make sure {@link BasicByteReader#getString} returns the correct value.
      */
     @Test
     public void testGetString() throws Exception {
@@ -182,7 +182,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getSmallString} returns the correct value.
+     * Make sure {@link BasicByteReader#getSmallString} returns the correct value.
      */
     @Test
     public void testGetSmallString() throws Exception {
@@ -197,7 +197,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getFloat} returns the correct value.
+     * Make sure {@link BasicByteReader#getFloat} returns the correct value.
      */
     @Test
     public void testGetFloat() throws Exception {
@@ -212,7 +212,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getDouble} returns the correct value.
+     * Make sure {@link BasicByteReader#getDouble} returns the correct value.
      */
     @Test
     public void testGetDouble() throws Exception {
@@ -227,7 +227,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getEnum} returns the correct value.
+     * Make sure {@link BasicByteReader#getEnum} returns the correct value.
      */
     @Test
     public void testGetEnum() throws Exception {
@@ -241,7 +241,7 @@ public class NucleusByteReaderTest {
     }
 
     /**
-     * Make sure {@link #getUUID} returns the correct value.
+     * Make sure {@link BasicByteReader#getUUID} returns the correct value.
      */
     @Test
     public void testGetUUID() throws Exception {
@@ -251,10 +251,15 @@ public class NucleusByteReaderTest {
         byte[] most = getLongBytes(uuid.getMostSignificantBits());
         byte[] least = getLongBytes(uuid.getLeastSignificantBits());
 
-        byte[] bytes = new byte[16];
+        byte[] temp = new byte[16];
 
-        ArrayUtils.copyFromStart(most, bytes);
-        ArrayUtils.copyFromEnd(least, bytes);
+        ArrayUtils.copyFromStart(most, temp);
+        ArrayUtils.copyFromEnd(least, temp);
+
+        byte[] bytes = new byte[17];
+        bytes[0] = 1;
+
+        System.arraycopy(temp, 0, bytes, 1, bytes.length - 1);
 
         BasicByteReader reader = getReader(bytes);
 

@@ -16,7 +16,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Tests {@link BasicByteReader} and {@link BasicByteWriter} inter-compatibility.
  */
-public class NucleusByteReaderWriterTest {
+public class BasicByteReaderWriterTest {
 
 
     /**

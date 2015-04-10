@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.utils.file;
 /* 
  * 
  */
-public interface IAppliedSerializable extends IBinarySerializable {
+public interface IAppliedSerializable extends IByteSerializable {
 
     /**
      * Apply the serialized data to its original source.

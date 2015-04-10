@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.regions.data;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
-import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
+import com.jcwhatever.nucleus.utils.file.IByteSerializable;
 import com.jcwhatever.nucleus.utils.file.IByteReader;
 import com.jcwhatever.nucleus.utils.file.IByteWriter;
 
@@ -40,7 +40,7 @@ import java.io.IOException;
 /**
  * Provides variables representing a section of a region contained within a chunk.
  */
-public class RegionChunkSection implements IBinarySerializable {
+public class RegionChunkSection implements IByteSerializable {
 
     private int _chunkX;
     private int _chunkZ;

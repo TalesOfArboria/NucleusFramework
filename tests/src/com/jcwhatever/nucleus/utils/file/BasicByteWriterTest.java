@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Tests {@link BasicByteWriter}.
  */
-public class NucleusByteWriterTest {
+public class BasicByteWriterTest {
 
     /**
      * Make sure {@link #getBytesWritter} returns the correct value.

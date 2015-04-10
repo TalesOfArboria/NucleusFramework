@@ -222,7 +222,7 @@ public class RegionChunkFileLoader {
                 }
                 else {
                     // get the chunk section info
-                    reader.getBinarySerializable(RegionChunkSection.class);
+                    reader.deserialize(RegionChunkSection.class);
                 }
 
                 // get the volume of the region
@@ -300,7 +300,7 @@ public class RegionChunkFileLoader {
                 for (int i=0; i < totalEntities; i++) {
 
                     SerializableBlockEntity state =
-                            reader.getBinarySerializable(SerializableBlockEntity.class);
+                            reader.deserialize(SerializableBlockEntity.class);
 
                     if (state == null)
                         continue;
@@ -320,7 +320,7 @@ public class RegionChunkFileLoader {
                 for (int i=0; i < totalEntities; i++) {
 
                     SerializableFurnitureEntity state =
-                            reader.getBinarySerializable(SerializableFurnitureEntity.class);
+                            reader.deserialize(SerializableFurnitureEntity.class);
 
                     if (state == null)
                         continue;

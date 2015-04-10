@@ -28,7 +28,6 @@ package com.jcwhatever.nucleus.utils.file;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.items.meta.IItemMetaHandler;
 import com.jcwhatever.nucleus.managed.items.meta.ItemMetaValue;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 
 import org.bukkit.Location;
@@ -145,7 +144,11 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
         // write buffered booleans
         writeBooleans();
 
-        if (byteArray == null || byteArray.length == 0) {
+        if (byteArray == null) {
+            write(-1);
+            return;
+        }
+        else if (byteArray.length == 0) {
             write(0);
             return;
         }
@@ -360,12 +363,12 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      * <p>If the string is empty then the byte 0 is written
      * and no array bytes are written.</p>
      *
-     * @param text     The text to write. Can be null.
+     * @param text  The text to write. Can be null.
      *
      * @throws IOException
      */
     @Override
-    public void writeSmallString(String text) throws IOException {
+    public void writeSmallString(@Nullable String text) throws IOException {
 
         // write buffered booleans
         writeBooleans();
@@ -407,8 +410,12 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      * @throws IOException
      */
     @Override
-    public <T extends Enum<T>> void write(T enumConstant) throws IOException {
-        PreCon.notNull(enumConstant);
+    public <T extends Enum<T>> void write(@Nullable T enumConstant) throws IOException {
+
+        if (enumConstant == null) {
+            writeSmallString(null);
+            return;
+        }
 
         writeSmallString(enumConstant.name());
     }
@@ -416,7 +423,8 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
     /**
      * Write a UUID.
      *
-     * <p>The UUID is written as 16 bytes, the first 8 bytes are the most
+     * <p>The UUID is written as 16-7 bytes. A boolean is written first to indicate if
+     * the value is null. If the value is not null, the next 8 bytes are the most
      * significant bits while the last 8 bytes are the least significant bits.</p>
      *
      * @param uuid  The UUID to write.
@@ -424,9 +432,14 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      * @throws IOException
      */
     @Override
-    public void write(UUID uuid) throws IOException {
-        PreCon.notNull(uuid);
+    public void write(@Nullable UUID uuid) throws IOException {
 
+        if (uuid == null) {
+            write(false);
+            return;
+        }
+
+        write(true);
         write(uuid.getMostSignificantBits());
         write(uuid.getLeastSignificantBits());
     }
@@ -450,8 +463,14 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      * @throws IOException
      */
     @Override
-    public void write(Location location) throws IOException {
-        PreCon.notNull(location);
+    public void write(@Nullable Location location) throws IOException {
+
+
+        if (location == null) {
+            writeSmallString(null);
+            writeSmallString(null);
+            return;
+        }
 
         String worldName = null;
 
@@ -481,12 +500,16 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      * @throws IOException
      */
     @Override
-    public void write(EulerAngle angle) throws IOException {
-        PreCon.notNull(angle);
+    public void write(@Nullable EulerAngle angle) throws IOException {
 
-        write(angle.getX());
-        write(angle.getY());
-        write(angle.getZ());
+        if (angle == null) {
+            writeSmallString(null);
+        }
+        else {
+            write(angle.getX());
+            write(angle.getY());
+            write(angle.getZ());
+        }
     }
 
     /**
@@ -500,12 +523,16 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      * @throws IOException
      */
     @Override
-    public void write(Vector vector) throws IOException {
-        PreCon.notNull(vector);
+    public void write(@Nullable Vector vector) throws IOException {
 
-        write(vector.getX());
-        write(vector.getY());
-        write(vector.getZ());
+        if (vector == null) {
+            writeSmallString(null);
+        }
+        else {
+            write(vector.getX());
+            write(vector.getY());
+            write(vector.getZ());
+        }
     }
 
     /**
@@ -562,7 +589,7 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
     }
 
     /**
-     * Serialize an {@link IBinarySerializable} object.
+     * Serialize an {@link IByteSerializable} object.
      *
      * <p>A boolean is written to indicate if the object is null (0 = null) and if not
      * null the object serializes itself into the stream.</p>
@@ -574,7 +601,7 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      * @throws IOException
      */
     @Override
-    public <T extends IBinarySerializable> void write(@Nullable T object) throws IOException {
+    public <T extends IByteSerializable> void write(@Nullable T object) throws IOException {
         write(object != null);
         if (object == null)
             return;

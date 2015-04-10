@@ -6,9 +6,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         FileUtilsTest.class,
-        NucleusByteReaderTest.class,
-        NucleusByteWriterTest.class,
-        NucleusByteReaderWriterTest.class
+        BasicByteReaderTest.class,
+        BasicByteWriterTest.class,
+        BasicByteReaderWriterTest.class
 })
 public class _FileTestSuite {
 }

@@ -164,18 +164,18 @@ public interface IByteWriter {
      *
      * @throws IOException
      */
-    void writeSmallString(String text) throws IOException;
+    void writeSmallString(@Nullable String text) throws IOException;
 
     /**
      * Write an enum.
      *
-     * @param enumConstant  The enum constant.
+     * @param enumConstant  The enum constant. Can be null.
      *
      * @param <T>  The enum type.
      *
      * @throws IOException
      */
-    <T extends Enum<T>> void write(T enumConstant) throws IOException;
+    <T extends Enum<T>> void write(@Nullable T enumConstant) throws IOException;
 
     /**
      * Write a UUID.
@@ -183,50 +183,50 @@ public interface IByteWriter {
      * <p>The UUID is written as 16 bytes, the first 8 bytes are the most
      * significant bits while the last 8 bytes are the least significant bits.</p>
      *
-     * @param uuid  The UUID to write.
+     * @param uuid  The UUID to write. Can be null.
      *
      * @throws IOException
      */
-    void write(UUID uuid) throws IOException;
+    void write(@Nullable UUID uuid) throws IOException;
 
     /**
      * Write a {@link Location}.
      *
-     * @param location  The location.
+     * @param location  The location. Can be null.
      *
      * @throws IOException
      */
-    void write(Location location) throws IOException;
+    void write(@Nullable Location location) throws IOException;
 
     /**
      * Write an {@link EulerAngle}.
      *
-     * @param angle  The angle.
+     * @param angle  The angle. Can be null.
      *
      * @throws IOException
      */
-    void write(EulerAngle angle) throws IOException;
+    void write(@Nullable EulerAngle angle) throws IOException;
 
     /**
      * Write an {@link Vector}.
      *
-     * @param vector  The vector.
+     * @param vector  The vector. Can be null.
      *
      * @throws IOException
      */
-    void write(Vector vector) throws IOException;
+    void write(@Nullable Vector vector) throws IOException;
 
     /**
      * Write an {@link ItemStack}.
      *
-     * @param itemStack  The item stack.
+     * @param itemStack  The item stack. Can be null.
      *
      * @throws IOException
      */
     void write(@Nullable ItemStack itemStack) throws IOException;
 
     /**
-     * Serialize an {@link IBinarySerializable} object.
+     * Serialize an {@link IByteSerializable} object.
      *
      * @param object  The object to serialize.
      *
@@ -234,7 +234,7 @@ public interface IByteWriter {
      *
      * @throws IOException
      */
-    <T extends IBinarySerializable> void write(@Nullable T object) throws IOException;
+    <T extends IByteSerializable> void write(@Nullable T object) throws IOException;
 
     /**
      * Serialize an object.
