@@ -291,8 +291,13 @@ public abstract class Iteration3DTask extends QueueTask {
 
                 onPreComplete();
             }
-            complete();
+
             cancelTask();
+        }
+
+        @Override
+        protected void onCancel() {
+            complete();
         }
     }
 }

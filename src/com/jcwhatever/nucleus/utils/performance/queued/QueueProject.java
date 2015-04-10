@@ -78,18 +78,15 @@ public class QueueProject extends QueueTask {
      * Add a task to the project.
      *
      * @param task  The task to add.
-     *
-     * @throws IllegalStateException if the project is running.
      */
     public void addTask(QueueTask task) {
         PreCon.notNull(task);
 
-        if (isRunning())
-            throw new IllegalStateException("Cannot add tasks while the project is running.");
-
-        _tasks.add(task);
-
         task.setParentProject(this);
+
+        synchronized (_tasks) {
+            _tasks.add(task);
+        }
     }
 
     /**
@@ -109,15 +106,25 @@ public class QueueProject extends QueueTask {
     /**
      * Get all tasks in the project.
      *
-     * <p>Do not invoke while the task is running. Check {@link #isRunning} first.</p>
-     *
      * @throws java.lang.IllegalStateException if the project is running.
      */
     public List<QueueTask> getTasks() {
-        if (isRunning())
-            throw new IllegalStateException("Cannot retrieve tasks while the project is running.");
 
-        return new ArrayList<QueueTask>(_tasks);
+        synchronized (_tasks) {
+            return new ArrayList<QueueTask>(_tasks);
+        }
+    }
+
+    /**
+     * Run all tasks immediately.
+     */
+    public void runFast() {
+        synchronized (_tasks) {
+            while (!_tasks.isEmpty()) {
+                QueueTask task = _tasks.removeFirst();
+                task.run();
+            }
+        }
     }
 
     @Override
@@ -147,15 +154,20 @@ public class QueueProject extends QueueTask {
         }
 
         if (task.isComplete()) {
-            if (_completed == null)
-                _completed = new HashSet<>(_tasks.size() + 1);
+            if (_completed == null) {
+                synchronized (_tasks) {
+                    _completed = new HashSet<>(_tasks.size() + 1);
+                }
+            }
 
             _completed.add(task);
         }
 
         // ensure tasks executed independently are removed.
         if (task.isEnded()) {
-            _tasks.remove(task);
+            synchronized (_tasks) {
+                _tasks.remove(task);
+            }
         }
 
         _managerTask.run();
@@ -175,14 +187,16 @@ public class QueueProject extends QueueTask {
                 return;
 
             // check if all tasks are completed
-            if (_tasks.isEmpty()) {
-                complete();
-                _currentTask = null;
-                return;
-            }
+            synchronized (_tasks) {
+                if (_tasks.isEmpty()) {
+                    complete();
+                    _currentTask = null;
+                    return;
+                }
 
-            // get next item in queue
-            _currentTask = _tasks.removeFirst();
+                // get next item in queue
+                _currentTask = _tasks.removeFirst();
+            }
 
             // make sure the task project hasn't been cancelled
             if (_currentTask.isCancelled()) {

@@ -201,8 +201,13 @@ public abstract class IterationTask extends QueueTask {
 
                 onPreFinish();
             }
-            complete();
+
             cancelTask();
         }
+    }
+
+    @Override
+    protected void onCancel() {
+        complete();
     }
 }
