@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -144,12 +144,12 @@ class NucleusTransaction implements IEconomyTransaction {
     }
 
     @Override
-    public synchronized Future<IEconomyTransaction> commit() {
+    public synchronized IFutureResult<IEconomyTransaction> commit() {
         return commit(false);
     }
 
     @Override
-    public synchronized Future<IEconomyTransaction> commit(boolean force) {
+    public synchronized IFutureResult<IEconomyTransaction> commit(boolean force) {
 
         checkCommitted();
 
@@ -188,7 +188,7 @@ class NucleusTransaction implements IEconomyTransaction {
         return commit(deposit, withdraw);
     }
 
-    private Future<IEconomyTransaction> commit(
+    private IFutureResult<IEconomyTransaction> commit(
             Map<IAccount, Double> deposits, final Map<IAccount, Double> withdrawals) {
 
         final Map<IAccount, Double> deposited = new HashMap<>(7);

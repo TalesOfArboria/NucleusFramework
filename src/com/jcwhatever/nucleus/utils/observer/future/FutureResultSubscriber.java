@@ -22,29 +22,52 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.observer.result;
-
+package com.jcwhatever.nucleus.utils.observer.future;
 
 import com.jcwhatever.nucleus.utils.observer.Subscriber;
+import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 
 /**
- * An abstract implementation for a type that can subscribe to results
- * from an {@link IResultAgent}.
+ * A subscriber delegate for use with {@link FutureResultAgent}.
  *
- * <p>The methods of {@link IResultSubscriber} are empty implementations intended
- * to be overridden as needed.</p>
+ * @see FutureResultAgent
+ * @see IFutureResult
  */
-public abstract class ResultSubscriber<R> extends Subscriber implements IResultSubscriber<R> {
+public abstract class FutureResultSubscriber<R> extends Subscriber
+        implements IUpdateSubscriber<Result<R>> {
 
+    /**
+     * Invoked when the subscriber receives any result.
+     *
+     * @param result  The result
+     */
     @Override
-    public void onResult(Result<R> result) {}
+    public abstract void on(Result<R> result);
 
-    @Override
+    /**
+     * Invoked when the subscriber receives a success result.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param result  The result
+     */
     public void onSuccess(Result<R> result) {}
 
-    @Override
+    /**
+     * Invoked when the subscriber receives a cancel result.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param result  The result.
+     */
     public void onCancel(Result<R> result) {}
 
-    @Override
+    /**
+     * Invoked when the subscriber receives an error result.
+     *
+     * <p>Intended for optional override.</p>
+     *
+     * @param result  The result.
+     */
     public void onError(Result<R> result) {}
 }

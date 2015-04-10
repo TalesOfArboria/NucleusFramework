@@ -27,8 +27,8 @@ package com.jcwhatever.nucleus.storage;
 import com.jcwhatever.nucleus.collections.TreeEntryNode;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
@@ -107,9 +107,9 @@ public class MemoryDataNode extends AbstractDataNode {
     }
 
     @Override
-    public Future<IDataNode> loadAsync() {
+    public IFuture loadAsync() {
 
-        return new FutureResultAgent<IDataNode>().success(this);
+        return new FutureAgent().success(null);
     }
 
     @Override
@@ -119,11 +119,11 @@ public class MemoryDataNode extends AbstractDataNode {
     }
 
     @Override
-    public Future<IDataNode> save() {
+    public IFuture save() {
 
         cleanAll();
 
-        return new FutureResultAgent<IDataNode>().success(this);
+        return new FutureAgent().success(null);
     }
 
     @Override
@@ -132,8 +132,8 @@ public class MemoryDataNode extends AbstractDataNode {
     }
 
     @Override
-    public Future<IDataNode> save(File destination) {
-        return new FutureResultAgent<IDataNode>().cancel(this);
+    public IFuture save(File destination) {
+        return new FutureAgent().cancel(null);
     }
 
     @Override

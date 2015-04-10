@@ -22,13 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.observer.result;
+package com.jcwhatever.nucleus.utils.observer.future;
 
 import javax.annotation.Nullable;
 
 /**
- * Stores info about a result that is used with result agents
+ * Stores info about a result that is used with {@link FutureResultAgent}
  * and subscribers.
+ *
+ * @see FutureResultAgent
+ * @see FutureResultSubscriber
+ * @see IFutureResult
+ * @see ResultBuilder
  */
 public class Result<R> {
 

@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -84,9 +84,9 @@ public interface IAccount {
      * For providers that use disk based storage, this is effectively the same as invoking
      * {@link #getBalance}.</p>
      *
-     * @return  A {@link Future} containing the balance result.
+     * @return  An {@link IFutureResult} containing the balance result.
      */
-    Future<Double> getLatestBalance();
+    IFutureResult<Double> getLatestBalance();
 
     /**
      * Get the players balance in the specified currency.
@@ -106,9 +106,9 @@ public interface IAccount {
      *
      * @param currency  The currency to convert the result to.
      *
-     * @return  A {@link Future} containing the balance result.
+     * @return  A {@link IFutureResult} containing the balance result.
      */
-    Future<Double> getLatestBalance(ICurrency currency);
+    IFutureResult<Double> getLatestBalance(ICurrency currency);
 
     /**
      * Get the underlying account object if the object is wrapped. Otherwise, the handle is

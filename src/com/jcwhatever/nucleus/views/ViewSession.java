@@ -26,14 +26,14 @@ package com.jcwhatever.nucleus.views;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.mixins.IMeta;
 import com.jcwhatever.nucleus.mixins.IPlayerReference;
 import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -246,14 +246,14 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      * @throws java.lang.IllegalStateException if there is no current view or the view
      * session is disposed.
      */
-    public Future<View> previous() {
+    public IFuture previous() {
         if (_current == null)
             throw new IllegalStateException("No previous view.");
 
         if (_isDisposed)
             throw new IllegalStateException("Cannot use a disposed ViewSession.");
 
-        final FutureResultAgent<View> agent = new FutureResultAgent<>();
+        final FutureAgent agent = new FutureAgent();
 
         Scheduler.runTaskLater(_current.view.getPlugin(), new Runnable() {
             @Override
@@ -264,10 +264,10 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
                     if (_current == null) {
                         dispose();
                     }
-                    agent.success(getCurrent());
+                    agent.success();
                 }
                 else {
-                    agent.cancel(getCurrent());
+                    agent.cancel();
                 }
             }
         });
@@ -307,13 +307,13 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      *
      * @throws IllegalStateException if the view session is disposed.
      */
-    public Future<View> next(final View view) {
+    public IFuture next(final View view) {
         PreCon.notNull(view);
 
         if (_isDisposed)
             throw new IllegalStateException("Cannot use a disposed ViewSession.");
 
-        final FutureResultAgent<View> agent = new FutureResultAgent<>();
+        final FutureAgent agent = new FutureAgent();
 
         view.setViewSession(this);
 
@@ -326,7 +326,7 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
                 @Override
                 public void run() {
                     if (_current.view.open(ViewOpenReason.FIRST)) {
-                        agent.success(getCurrent());
+                        agent.success();
                     }
                     else {
                         _first = null;
@@ -351,11 +351,11 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
                     if (_current.view.close(ViewCloseReason.NEXT)) {
 
                         _current = current;
-                        agent.success(getCurrent());
+                        agent.success();
                     }
                     else {
                         prev.next = origNext;
-                        agent.cancel(getCurrent());
+                        agent.cancel();
                     }
                 }
             });
@@ -375,31 +375,31 @@ public final class ViewSession implements IMeta, Iterable<View>, IPlayerReferenc
      *
      * @throws IllegalStateException if the view session is disposed.
      */
-    public Future<View> refresh() {
+    public IFuture refresh() {
 
         if (_isDisposed)
             throw new IllegalStateException("Cannot use a disposed ViewSession.");
 
-        final FutureResultAgent<View> agent = new FutureResultAgent<>();
+        final FutureAgent agent = new FutureAgent();
 
         final View view = getCurrent();
         if (view == null) {
-            return agent.cancel(null, "No current view to refresh.");
+            return agent.cancel("No current view to refresh.");
         }
 
         if (!view.close(ViewCloseReason.REFRESH)) {
-            return agent.cancel(view);
+            return agent.cancel();
         }
 
         Scheduler.runTaskLater(view.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 if (view.open(ViewOpenReason.REFRESH)) {
-                    agent.success(view);
+                    agent.success();
                 }
                 else {
                     // error: refresh is not an appropriate time to not be able to re-open the view.
-                    agent.error(view);
+                    agent.error();
                 }
             }
         });

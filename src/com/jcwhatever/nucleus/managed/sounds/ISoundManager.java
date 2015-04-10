@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.managed.sounds;
 
 import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -82,7 +82,7 @@ public interface ISoundManager {
      *
      * @return  A future used to run a success callback when the sound is finished playing.
      */
-    Future<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound);
+    IFutureResult<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound);
 
     /**
      * Play a resource sound to a player.
@@ -94,7 +94,7 @@ public interface ISoundManager {
      *
      * @return  A future used to run a success callback when the sound is finished playing.
      */
-    Future<ISoundContext> playSound(Plugin plugin, Player player,
+    IFutureResult<ISoundContext> playSound(Plugin plugin, Player player,
                                     ResourceSound sound, SoundSettings settings);
 
     /**
@@ -110,7 +110,7 @@ public interface ISoundManager {
      *
      * @return  A future used to run a callback when the sound is finished playing.
      */
-    Future<ISoundContext> playSound(Plugin plugin, Player player,
+    IFutureResult<ISoundContext> playSound(Plugin plugin, Player player,
                                     ResourceSound sound, SoundSettings settings,
                                     @Nullable Collection<Player> transcriptViewers);
 }

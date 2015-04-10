@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.providers.economy;
 
 import com.jcwhatever.nucleus.mixins.INamed;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -116,7 +116,7 @@ public interface IBank extends INamed {
      *
      * @return  A future indicating the result of the account deletion.
      */
-    Future<Void> deleteAccount(UUID playerId);
+    IFuture deleteAccount(UUID playerId);
 
     /**
      * Get the underlying bank object if the object is wrapped. Otherwise,

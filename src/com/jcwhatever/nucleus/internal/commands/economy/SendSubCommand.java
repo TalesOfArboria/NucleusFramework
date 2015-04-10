@@ -34,8 +34,8 @@ import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.providers.economy.Economy;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
-import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.Result;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -101,13 +101,13 @@ class SendSubCommand extends AbstractCommand implements IExecutableCommand {
             throw new CommandException(NucLang.get(_NOT_ENOUGH_MONEY, balance));
 
         Economy.transfer(account, receiverAccount, amount)
-                .onError(new FutureSubscriber<IEconomyTransaction>() {
+                .onError(new FutureResultSubscriber<IEconomyTransaction>() {
                     @Override
                     public void on(Result<IEconomyTransaction> result) {
                         tellError(sender, NucLang.get(_FAILED));
                     }
                 })
-                .onSuccess(new FutureSubscriber<IEconomyTransaction>() {
+                .onSuccess(new FutureResultSubscriber<IEconomyTransaction>() {
                     @Override
                     public void on(Result<IEconomyTransaction> result) {
                         tellSuccess(sender, NucLang.get(_SUCCESS,

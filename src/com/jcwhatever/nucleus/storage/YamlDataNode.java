@@ -28,16 +28,16 @@ package com.jcwhatever.nucleus.storage;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentMultimap;
 import com.jcwhatever.nucleus.collections.observer.agent.AgentSetMultimap;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
-import com.jcwhatever.nucleus.utils.observer.result.ResultBuilder;
-import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -96,7 +96,7 @@ public class YamlDataNode extends AbstractDataNode {
     // instantiated on root only
     private final ConfigurationSection _section;
     private final Map<String, YamlDataNode> _cachedNodes;
-    private final AgentMultimap<IDataNode, FutureResultAgent<IDataNode>> _saveAgents;
+    private final AgentMultimap<IDataNode, FutureAgent> _saveAgents;
     private volatile boolean _isLoaded;
     private volatile IScheduledTask _saveTask;
     protected String _yamlString;
@@ -246,10 +246,9 @@ public class YamlDataNode extends AbstractDataNode {
     }
 
     @Override
-    public Future<IDataNode> loadAsync() {
+    public IFuture loadAsync() {
 
-        final FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
-        final ResultBuilder<IDataNode> resultBuilder = new ResultBuilder<IDataNode>().result(this);
+        final FutureAgent agent = new FutureAgent();
 
         Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
 
@@ -261,10 +260,11 @@ public class YamlDataNode extends AbstractDataNode {
 
                     boolean isLoaded = load();
 
-                    agent.sendResult(
+                    agent.sendStatus(
                             isLoaded
-                                    ? resultBuilder.success().build()
-                                    : resultBuilder.error().build()
+                                    ? FutureStatus.SUCCESS
+                                    : FutureStatus.ERROR,
+                            null
                     );
                 }
                 finally {
@@ -319,9 +319,9 @@ public class YamlDataNode extends AbstractDataNode {
     }
 
     @Override
-    public Future<IDataNode> save() {
+    public IFuture save() {
 
-        final FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
+        final FutureAgent agent = new FutureAgent();
 
         getRoot()._saveAgents.put(this, agent);
 
@@ -338,7 +338,7 @@ public class YamlDataNode extends AbstractDataNode {
                 public void run() {
 
                     final boolean isSaved = saveSync();
-                    final Collection<FutureResultAgent<IDataNode>> agents =
+                    final Collection<FutureAgent> agents =
                             getRoot()._saveAgents.removeAll(YamlDataNode.this);
 
                     getRoot()._saveTask = null;
@@ -352,12 +352,12 @@ public class YamlDataNode extends AbstractDataNode {
                         @Override
                         public void run() {
 
-                            for (FutureResultAgent<IDataNode> agent : agents) {
+                            for (FutureAgent agent : agents) {
 
                                 if (isSaved)
-                                    agent.success(YamlDataNode.this);
+                                    agent.success();
                                 else
-                                    agent.error(YamlDataNode.this);
+                                    agent.error();
                             }
                         }
                     });
@@ -367,9 +367,9 @@ public class YamlDataNode extends AbstractDataNode {
         }
         else {
             if (saveSync()) {
-                agent.success(this);
+                agent.success();
             } else {
-                agent.error(this);
+                agent.error();
             }
         }
 
@@ -395,10 +395,9 @@ public class YamlDataNode extends AbstractDataNode {
     }
 
     @Override
-    public Future<IDataNode> save(final File destination) {
+    public IFuture save(final File destination) {
 
-        final FutureResultAgent<IDataNode> agent = new FutureResultAgent<>();
-        final ResultBuilder<IDataNode> resultBuilder = new ResultBuilder<IDataNode>().result(this);
+        final FutureAgent agent = new FutureAgent();
 
         // save on alternate thread
         Scheduler.runTaskLaterAsync(_plugin, 1, new Runnable() {
@@ -416,10 +415,11 @@ public class YamlDataNode extends AbstractDataNode {
 
                     @Override
                     public void run() {
-                        agent.sendResult(
+                        agent.sendStatus(
                                 isSaved
-                                        ? resultBuilder.success().build()
-                                        : resultBuilder.error().build());
+                                        ? FutureStatus.SUCCESS
+                                        : FutureStatus.ERROR,
+                                null);
                     }
                 });
             }

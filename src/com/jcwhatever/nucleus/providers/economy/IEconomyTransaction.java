@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 /**
  * Represents a type used to perform transactions.
@@ -190,11 +190,11 @@ public interface IEconomyTransaction {
      *
      * <p>If the transaction fails, any operations that have been performed should be undone.</p>
      *
-     * @return  A {@link Future} that returns the result of the transaction.
+     * @return  An {@link IFutureResult} that returns the result of the transaction.
      *
      * @throws IllegalStateException if the transaction has already been committed.
      */
-    Future<IEconomyTransaction> commit();
+    IFutureResult<IEconomyTransaction> commit();
 
     /**
      * Commit the transaction.
@@ -205,9 +205,9 @@ public interface IEconomyTransaction {
      *               funds leaving them with a negative balance. This may still fail if the economy
      *               provider does not support or allow negative balances.
      *
-     * @return  A {@link Future} that returns the result of the transaction.
+     * @return  An {@link IFutureResult} that returns the result of the transaction.
      *
      * @throws IllegalStateException if the transaction has already been committed.
      */
-    Future<IEconomyTransaction> commit(boolean force);
+    IFutureResult<IEconomyTransaction> commit(boolean force);
 }

@@ -34,10 +34,9 @@ import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
 import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 
 import org.bukkit.Chunk;
@@ -160,7 +159,7 @@ public final class RegionChunkFileLoader {
      * @param project   The project to add the loading task to.
      * @param loadType  The callback to run when load is finished.
      */
-    public Future<QueueTask> loadInProject(File file, QueueProject project, LoadType loadType) {
+    public IFuture loadInProject(File file, QueueProject project, LoadType loadType) {
         PreCon.notNull(file);
         PreCon.notNull(project);
 
@@ -203,11 +202,11 @@ public final class RegionChunkFileLoader {
      *
      * @return  A future to receive the load results.
      */
-    public Future<QueueTask> load(File file, LoadType loadType) {
+    public IFuture load(File file, LoadType loadType) {
 
         QueueProject project = new QueueProject(_plugin);
 
-        Future<QueueTask> future = loadInProject(file, project, loadType);
+        IFuture future = loadInProject(file, project, loadType);
 
         project.run();
 

@@ -25,7 +25,7 @@
 package com.jcwhatever.nucleus.managed.sounds;
 
 import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import org.bukkit.entity.Player;
 
@@ -58,5 +58,5 @@ public interface ISoundContext {
     /**
      * Get a future used to run a success callback when the sound is finished.
      */
-    Future<ISoundContext> getFuture();
+    IFutureResult<ISoundContext> getFuture();
 }

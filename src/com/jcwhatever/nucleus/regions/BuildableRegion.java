@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
@@ -167,9 +167,9 @@ public abstract class BuildableRegion extends Region {
                 break;
         }
 
-        project.getResult().onResult(new FutureSubscriber<QueueTask>() {
+        project.getResult().onStatus(new FutureSubscriber() {
             @Override
-            public void on(Result<QueueTask> argument) {
+            public void on(FutureStatus status, @Nullable String message) {
                 _isBuilding = false;
             }
         });

@@ -28,7 +28,7 @@ package com.jcwhatever.nucleus.storage;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.coords.SyncLocation;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -99,10 +99,9 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
     /**
      * Load the data asynchronously.
      *
-     * @return A future object to get the result with. The result is the data node
-     * that {@link #save} was invoked from.
+     * @return A future object to get the operation result status.
      */
-    Future<IDataNode> loadAsync();
+    IFuture loadAsync();
 
     /**
      * Save the data from the main thread.
@@ -122,10 +121,9 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      * <p>This method is expected to prevent excessive saving. If save is called multiple times
      * in a row within a short amount of time, the save operation should only be completed once.</p>
      *
-     * @return  A future object to get the results with. The result is the
-     * data node that {@link #save} method was invoked from.
+     * @return  A future object to get the operation result status.
      */
-    Future<IDataNode> save();
+    IFuture save();
 
     /**
      * Save the data to the specified file from the main thread.
@@ -147,10 +145,9 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      *
      * @param destination  The destination file.
      *
-     * @return  A future object to get the results with. The result is the
-     * data node that {@link #save} was invoked from.
+     * @return  A future object to get the operation result status.
      */
-    Future<IDataNode> save(File destination);
+    IFuture save(File destination);
 
     /**
      * Determine if the node contains unsaved changes.

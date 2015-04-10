@@ -3,6 +3,9 @@ package com.jcwhatever.nucleus.utils.observer.result;
 import static org.junit.Assert.assertEquals;
 
 import com.jcwhatever.nucleus.utils.observer.SubscriberAgentRunnable;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.Result;
 
 import org.junit.Test;
 
@@ -15,7 +18,7 @@ public class ResultAgentTest {
     @Test
     public void basicTest() throws Exception {
 
-        ResultAgent<String> agent = new ResultAgent<>();
+        FutureResultAgent<String> agent = new FutureResultAgent<>();
 
         SubscriberAgentRunnable test = new SubscriberAgentRunnable(agent);
         test.run();
@@ -24,10 +27,10 @@ public class ResultAgentTest {
         final List<String> resultList = new ArrayList<>(5);
 
 
-        ResultSubscriber<String> subscriber = new ResultSubscriber<String>() {
+        FutureResultSubscriber<String> subscriber = new FutureResultSubscriber<String>() {
 
             @Override
-            public void onResult(Result<String> result) {
+            public void on(Result<String> result) {
                 resultList.add("RESULT");
             }
 

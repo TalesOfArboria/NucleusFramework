@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Result;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -143,8 +143,8 @@ class VaultBank implements IBank {
      * Cannot delete a vault bank account.
      */
     @Override
-    public Future<Void> deleteAccount(UUID playerId) {
-        return new FutureResultAgent<Void>().error(null, "Vault accounts cannot be deleted.");
+    public IFuture deleteAccount(UUID playerId) {
+        return new FutureAgent().error("Vault accounts cannot be deleted.");
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.jcwhatever.nucleus.utils.observer.result;
 
 import static org.junit.Assert.assertEquals;
 
+import com.jcwhatever.nucleus.utils.observer.future.Result;
+
 import org.junit.Test;
 
 public class ResultTest {

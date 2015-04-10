@@ -31,12 +31,11 @@ import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
 import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
 import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
 import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
-import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
-import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 
 import org.bukkit.Chunk;
@@ -156,7 +155,7 @@ public class RegionChunkFileWriter {
      *
      * @param file  The file to save to.
      */
-    public Future<QueueTask> saveData(File file) {
+    public IFuture saveData(File file) {
         return saveData(file, null);
     }
 
@@ -170,7 +169,7 @@ public class RegionChunkFileWriter {
      * @param file     The file to save to.
      * @param project  The optional project to add tasks to.
      */
-    public Future<QueueTask> saveData(File file, @Nullable QueueProject project) {
+    public IFuture saveData(File file, @Nullable QueueProject project) {
         PreCon.notNull(file);
 
         boolean runNow = project == null;
@@ -193,9 +192,9 @@ public class RegionChunkFileWriter {
             project.run();
         }
 
-        return project.getResult().onResult(new FutureSubscriber<QueueTask>() {
+        return project.getResult().onStatus(new FutureSubscriber() {
             @Override
-            public void on(Result<QueueTask> argument) {
+            public void on(FutureStatus status, @Nullable String message) {
                 _isSaving = false;
             }
         });

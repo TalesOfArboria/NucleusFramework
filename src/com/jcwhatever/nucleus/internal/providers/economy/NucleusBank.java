@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.FutureAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import java.util.HashMap;
@@ -124,12 +124,12 @@ class NucleusBank implements IBank {
     }
 
     @Override
-    public synchronized Future<Void> deleteAccount(UUID playerId) {
+    public synchronized IFuture deleteAccount(UUID playerId) {
         PreCon.notNull(playerId);
 
         IAccount account = _accounts.remove(playerId);
         if (account == null)
-            return new FutureResultAgent<Void>().error(null, "Account not found");
+            return new FutureAgent().error("Account not found");
 
         _balance -= account.getBalance();
 
@@ -137,7 +137,7 @@ class NucleusBank implements IBank {
         node.remove();
         node.save();
 
-        return new FutureResultAgent<Void>().success(null, "Account deleted.");
+        return new FutureAgent().success("Account deleted.");
     }
 
     @Override

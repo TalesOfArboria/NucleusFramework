@@ -22,10 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.observer.result;
+package com.jcwhatever.nucleus.utils.observer.future;
 
 /**
  * A utility to help with building a {@link Result}.
+ *
+ * @see Result
  */
 public class ResultBuilder<R> {
 

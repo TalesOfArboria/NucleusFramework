@@ -22,37 +22,48 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.observer.result;
+package com.jcwhatever.nucleus.utils.observer.future;
 
-import com.jcwhatever.nucleus.collections.observer.agent.AgentHashMap;
-import com.jcwhatever.nucleus.collections.observer.agent.AgentMap;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.update.UpdateAgent;
+import com.jcwhatever.nucleus.utils.observer.ISubscriber;
+import com.jcwhatever.nucleus.utils.observer.SubscriberAgent;
+import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
+
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * Used for returning asynchronous results from a method. Intended
- * for transient use. Once the final result is achieved the agent should be
- * discarded/disposed.
+ * Used for returning asynchronous results from a method.
+ *
+ * @see FutureResultSubscriber
+ * @see IFutureResult
  */
-public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent<R> {
+public class FutureResultAgent<R> extends SubscriberAgent {
+
+    private final FutureResult<R> _future;
+    private final NamedUpdateAgents _updateAgents = new NamedUpdateAgents();
 
     private Result<R> _finalResult;
-    private final Future<R> _future;
-    private AgentMap<String, UpdateAgent<Result<R>>> _updateAgents =
-            new AgentHashMap<String, UpdateAgent<Result<R>>>()
-                    .set("onResult", new UpdateAgent<Result<R>>())
-                    .set("onSuccess", new UpdateAgent<Result<R>>())
-                    .set("onCancel", new UpdateAgent<Result<R>>())
-                    .set("onError", new UpdateAgent<Result<R>>());
+    private boolean _hasFutureSubscribers;
 
-    boolean _hasFutureSubscribers;
-
+    /**
+     * Constructor.
+     */
     public FutureResultAgent() {
-        _future = new Future<>(this);
+        _future = new FutureResult<>(this);
     }
 
     @Override
+    public boolean hasSubscribers() {
+        return super.hasSubscribers() || _hasFutureSubscribers;
+    }
+
+    /**
+     * Send result to subscribers.
+     *
+     * @param result  The result.
+     */
     public void sendResult(Result<R> result) {
         PreCon.notNull(result);
 
@@ -60,24 +71,44 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
             _finalResult = result;
         }
 
-        super.sendResult(result);
+        if (!hasSubscribers())
+            return;
+
+        if (result.isSuccess()) {
+            sendSuccess(result);
+        }
+        else if (result.isComplete()) {
+
+            if (result.isCancelled()) {
+                sendCancel(result);
+            }
+            else {
+                sendError(result);
+            }
+        }
+
+        sendResultOnly(result);
     }
 
     /**
-     * Declare the result cancelled. The same as calling
-     * {@link #sendResult} with a generic cancel result.
+     * Declare the result cancelled.
+     *
+     * <p>The same as invoking {@link #sendResult} with a generic
+     * cancel result.</p>
      *
      * <p>The result object and message are null.</p>
      *
      * @return The agents future.
      */
-    public Future<R> cancel() {
+    public FutureResult<R> cancel() {
         return cancel(null, null);
     }
 
     /**
-     * Declare the result cancelled. The same as calling
-     * {@link #sendResult} with a generic cancel result.
+     * Declare the result cancelled.
+     *
+     * <p>The same as invoking {@link #sendResult} with a generic
+     * cancel result.</p>
      *
      * <p>The result message is null.</p>
      *
@@ -85,20 +116,22 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
      *
      * @return The agents future.
      */
-    public Future<R> cancel(@Nullable R result) {
+    public FutureResult<R> cancel(@Nullable R result) {
         return cancel(result, null);
     }
 
     /**
-     * Declare the result cancelled. The same as calling
-     * {@link #sendResult} with a generic cancel result.
+     * Declare the result cancelled.
+     *
+     * <p>The same as calling {@link #sendResult} with a generic
+     * cancel result.</p>
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
      *
      * @return The agents future.
      */
-    public Future<R> cancel(@Nullable R result, @Nullable String message) {
+    public FutureResult<R> cancel(@Nullable R result, @Nullable String message) {
 
         sendResult(new ResultBuilder<R>()
                 .cancel()
@@ -110,20 +143,24 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
     }
 
     /**
-     * Declare an error in the result. The same as calling
-     * {@link #sendResult} with a generic error result.
+     * Declare an error in the result.
+     *
+     * <p>The same as invoking {@link #sendResult} with a generic
+     * error result.</p>
      *
      * <p>The result object and message are null.</p>
      *
      * @return The agents future.
      */
-    public Future<R> error() {
+    public FutureResult<R> error() {
         return error(null, null);
     }
 
     /**
-     * Declare an error in the result. The same as calling
-     * {@link #sendResult} with a generic error result.
+     * Declare an error in the result.
+     *
+     * <p>The same as invoking {@link #sendResult} with a generic
+     * error result.</p>
      *
      * <p>The result message is null.</p>
      *
@@ -131,20 +168,22 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
      *
      * @return The agents future.
      */
-    public Future<R> error(@Nullable R result) {
+    public FutureResult<R> error(@Nullable R result) {
         return error(result, null);
     }
 
     /**
-     * Declare an error in the result. The same as calling
-     * {@link #sendResult} with a generic error result.
+     * Declare an error in the result.
+     *
+     * <p>The same as invoking {@link #sendResult} with a generic
+     * error result.</p>
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
      *
      * @return The agents future.
      */
-    public Future<R> error(@Nullable R result, @Nullable String message) {
+    public FutureResult<R> error(@Nullable R result, @Nullable String message) {
 
         sendResult(new ResultBuilder<R>()
                 .error()
@@ -156,20 +195,24 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
     }
 
     /**
-     * Declare the result a success. The same as calling
-     * {@link #sendResult} with a generic success result.
+     * Declare the result a success.
+     *
+     * <p>The same as invoking {@link #sendResult} with a generic
+     * success result.</p>
      *
      * <p>The result object and message are null.</p>
      *
      * @return The agents future.
      */
-    public Future<R> success() {
+    public FutureResult<R> success() {
         return success(null, null);
     }
 
     /**
-     * Declare the result a success. The same as calling
-     * {@link #sendResult} with a generic success result.
+     * Declare the result a success.
+     *
+     * <p>The same as invoking {@link #sendResult} with a generic
+     * success result.</p>
      *
      * <p>The result message is null.</p>
      *
@@ -177,20 +220,22 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
      *
      * @return The agents future.
      */
-    public Future<R> success(@Nullable R result) {
+    public FutureResult<R> success(@Nullable R result) {
         return success(result, null);
     }
 
     /**
-     * Declare the result a success. The same as calling
-     * {@link #sendResult} with a generic success result.
+     * Declare the result a success.
+     *
+     * <p>The same as invoking {@link #sendResult} with a generic
+     * success result.</p>
      *
      * @param result   The result object.
      * @param message  The message to send with the result.
      *
      * @return The agents future.
      */
-    public Future<R> success(@Nullable R result, @Nullable String message) {
+    public FutureResult<R> success(@Nullable R result, @Nullable String message) {
 
         sendResult(new ResultBuilder<R>()
                 .success()
@@ -205,65 +250,76 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
      * Get a future that can be returned so that a method caller can
      * attach {@link com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber}'s.
      */
-    public Future<R> getFuture() {
+    public FutureResult<R> getFuture() {
         return _future;
     }
 
-    // send the result update
-    @Override
     protected void sendResultOnly(Result<R> result) {
 
-        super.sendResultOnly(result);
+        List<ISubscriber> list = new ArrayList<>(subscribers());
 
-        UpdateAgent<Result<R>> agent = _updateAgents.get("onResult");
-        agent.update(result);
+        for (ISubscriber subscriber : list) {
+            if (subscriber instanceof FutureResultSubscriber) {
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).on(result);
+            }
+        }
+
+        _updateAgents.update("onResult", result);
     }
 
-    // send the result update for success
-    @Override
     protected void sendSuccess(Result<R> result) {
 
-        super.sendSuccess(result);
+        List<ISubscriber> list = new ArrayList<>(subscribers());
 
-        UpdateAgent<Result<R>> agent = _updateAgents.get("onSuccess");
-        agent.update(result);
+        for (ISubscriber subscriber : list) {
+            if (subscriber instanceof FutureResultSubscriber) {
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).onSuccess(result);
+            }
+        }
+
+        _updateAgents.update("onSuccess", result);
     }
 
-    // send the result update for an error
-    @Override
     protected void sendError(Result<R> result) {
 
-        super.sendError(result);
+        List<ISubscriber> list = new ArrayList<>(subscribers());
 
-        UpdateAgent<Result<R>> agent = _updateAgents.get("onError");
-        agent.update(result);
+        for (ISubscriber subscriber : list) {
+            if (subscriber instanceof FutureResultSubscriber) {
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).onError(result);
+            }
+        }
+
+        _updateAgents.update("onError", result);
     }
 
-    // send the result update for cancelled
-    @Override
     protected void sendCancel(Result<R> result) {
 
-        super.sendCancel(result);
+        List<ISubscriber> list = new ArrayList<>(subscribers());
 
-        UpdateAgent<Result<R>> agent = _updateAgents.get("onCancel");
-        agent.update(result);
+        for (ISubscriber subscriber : list) {
+            if (subscriber instanceof FutureResultSubscriber) {
+                //noinspection unchecked
+                ((FutureResultSubscriber<R>) subscriber).onCancel(result);
+            }
+        }
+
+        _updateAgents.update("onCancel", result);
     }
 
-    @Override
-    public boolean hasSubscribers() {
-        return super.hasSubscribers() || _hasFutureSubscribers;
-    }
-
-    public static class Future<R> implements IFuture<R> {
+    private static class FutureResult<R> implements IFutureResult<R> {
 
         FutureResultAgent<R> parent;
 
-        private Future(FutureResultAgent<R> parent) {
+        private FutureResult(FutureResultAgent<R> parent) {
             this.parent = parent;
         }
 
         @Override
-        public Future<R> onResult(FutureSubscriber<R> subscriber) {
+        public FutureResult<R> onResult(FutureResultSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
             addSubscriber("onResult", subscriber, parent._finalResult != null);
@@ -272,7 +328,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
         }
 
         @Override
-        public Future<R> onSuccess(FutureSubscriber<R> subscriber) {
+        public FutureResult<R> onSuccess(FutureResultSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
             addSubscriber("onSuccess", subscriber, parent._finalResult != null &&
@@ -282,7 +338,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
         }
 
         @Override
-        public Future<R> onCancel(FutureSubscriber<R> subscriber) {
+        public FutureResult<R> onCancel(FutureResultSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
             addSubscriber("onCancel", subscriber, parent._finalResult != null &&
@@ -292,7 +348,7 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
         }
 
         @Override
-        public Future<R> onError(FutureSubscriber<R> subscriber) {
+        public FutureResult<R> onError(FutureResultSubscriber<R> subscriber) {
             PreCon.notNull(subscriber);
 
             addSubscriber("onError", subscriber, parent._finalResult != null &&
@@ -302,17 +358,14 @@ public class FutureResultAgent<R> extends ResultAgent<R> implements IResultAgent
         }
 
         private void addSubscriber(String agentName,
-                                   FutureSubscriber<R> subscriber, boolean updateNow) {
-            UpdateAgent<Result<R>> agent = parent._updateAgents.get(agentName);
+                                   FutureResultSubscriber<R> subscriber, boolean updateNow) {
 
             if (updateNow) {
                 subscriber.on(parent._finalResult);
             }
 
-            agent.addSubscriber(subscriber);
-
+            parent._updateAgents.getAgent(agentName).addSubscriber(subscriber);
             parent._hasFutureSubscribers = true;
         }
     }
-
 }

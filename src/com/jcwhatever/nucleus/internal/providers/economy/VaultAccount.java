@@ -31,8 +31,8 @@ import com.jcwhatever.nucleus.providers.economy.ICurrency;
 import com.jcwhatever.nucleus.providers.economy.events.EconDepositEvent;
 import com.jcwhatever.nucleus.providers.economy.events.EconWithdrawEvent;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import org.bukkit.Bukkit;
 
@@ -81,12 +81,12 @@ class VaultAccount implements IAccount {
     }
 
     @Override
-    public Future<Double> getLatestBalance() {
+    public IFutureResult<Double> getLatestBalance() {
         return new FutureResultAgent<Double>().success(getBalance());
     }
 
     @Override
-    public Future<Double> getLatestBalance(ICurrency currency) {
+    public IFutureResult<Double> getLatestBalance(ICurrency currency) {
         return new FutureResultAgent<Double>().success(getBalance(currency));
     }
 

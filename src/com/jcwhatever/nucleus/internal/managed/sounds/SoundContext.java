@@ -27,8 +27,8 @@ package com.jcwhatever.nucleus.internal.managed.sounds;
 import com.jcwhatever.nucleus.managed.sounds.ISoundContext;
 import com.jcwhatever.nucleus.managed.sounds.SoundSettings;
 import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import org.bukkit.entity.Player;
 
@@ -77,11 +77,11 @@ class SoundContext implements ISoundContext {
     }
 
     @Override
-    public Future<ISoundContext> getFuture() {
+    public IFutureResult<ISoundContext> getFuture() {
         return _agent.getFuture();
     }
 
-    Future<ISoundContext> setFinished() {
+    IFutureResult<ISoundContext> setFinished() {
         _isFinished = true;
 
         return _agent.success(this);

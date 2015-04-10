@@ -38,9 +38,9 @@ import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
 import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
 import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.utils.materials.Materials;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
-import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueWorker;
@@ -115,7 +115,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @return  A future to receive the results of the save operation.
      */
-    public Future<QueueTask> saveData() throws IOException {
+    public IFuture saveData() throws IOException {
         return saveData("");
     }
 
@@ -126,7 +126,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @return  A future to receive the results of the save operation.
      */
-    protected Future<QueueTask> saveData(String snapshotName) throws IOException {
+    protected IFuture saveData(String snapshotName) throws IOException {
 
         Collection<IChunkCoords> chunks = this.getChunkCoords();
 
@@ -150,9 +150,9 @@ public abstract class RestorableRegion extends BuildableRegion {
 
         QueueWorker.get().addTask(project);
 
-        return project.getResult().onResult(new FutureSubscriber<QueueTask>() {
+        return project.getResult().onStatus(new FutureSubscriber() {
             @Override
-            public void on(Result<QueueTask> argument) {
+            public void on(FutureStatus status, @Nullable String message) {
                 _isSaving = false;
                 onSaveComplete();
                 NucMsg.debug(getPlugin(), "Restorable Region '{0}' save complete.", getName());
@@ -200,7 +200,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @throws IOException
      */
-    public Future<QueueTask> restoreData(BuildMethod buildMethod) throws IOException {
+    public IFuture restoreData(BuildMethod buildMethod) throws IOException {
         return restoreData(buildMethod, "");
     }
 
@@ -214,7 +214,7 @@ public abstract class RestorableRegion extends BuildableRegion {
      *
      * @throws IOException
      */
-    protected Future<QueueTask> restoreData(BuildMethod buildMethod, String version) throws IOException {
+    protected IFuture restoreData(BuildMethod buildMethod, String version) throws IOException {
 
         Collection<IChunkCoords> chunks = getChunkCoords();
         QueueProject restoreProject = new QueueProject(getPlugin());
@@ -274,9 +274,9 @@ public abstract class RestorableRegion extends BuildableRegion {
                 break;
         }
 
-        return restoreProject.getResult().onResult(new FutureSubscriber<QueueTask>() {
+        return restoreProject.getResult().onStatus(new FutureSubscriber() {
             @Override
-            public void on(Result<QueueTask> argument) {
+            public void on(FutureStatus status, @Nullable String message) {
                 _isRestoring = false;
                 onRestore();
             }

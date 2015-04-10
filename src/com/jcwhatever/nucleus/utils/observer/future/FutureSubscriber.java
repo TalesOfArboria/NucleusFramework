@@ -22,42 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.observer.result;
+package com.jcwhatever.nucleus.utils.observer.future;
 
-import com.jcwhatever.nucleus.utils.observer.ISubscriber;
+import com.jcwhatever.nucleus.utils.observer.Subscriber;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
+
+import javax.annotation.Nullable;
 
 /**
- * A subscriber of a result.
+ * A subscriber delegate for use with {@link FutureAgent}.
+ *
+ * @see IFuture
+ * @see FutureAgent
  */
-public interface IResultSubscriber<R> extends ISubscriber {
+public abstract class FutureSubscriber extends Subscriber {
 
     /**
-     * Called when a result is available. Always called
-     * along with {@link #onSuccess}, {@link #onCancel}, or
-     * {@link #onError}.
+     * Invoked when an operations status becomes available.
      *
-     * @param result  The result.
+     * @param status   The status.
+     * @param message  Optional status message.
      */
-    void onResult(Result<R> result);
-
-    /**
-     * Called when the result is successful.
-     *
-     * @param result  The result.
-     */
-    void onSuccess(Result<R> result);
-
-    /**
-     * Called when the result is cancelled.
-     *
-     * @param result  The result.
-     */
-    void onCancel(Result<R> result);
-
-    /**
-     * Called when there is an error.
-     *
-     * @param result  The result.
-     */
-    void onError(Result<R> result);
+    public abstract void on(FutureStatus status, @Nullable String message);
 }

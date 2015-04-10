@@ -36,8 +36,8 @@ import com.jcwhatever.nucleus.utils.MetaStore;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.Result;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -506,7 +506,7 @@ public abstract class PlayList implements IPluginOwned {
     /**
      * Task to ensure the next song in the player queue is played.
      */
-    private class TrackChanger extends FutureSubscriber<ISoundContext> {
+    private class TrackChanger extends FutureResultSubscriber<ISoundContext> {
 
         private final WeakReference<Player> _player;
         private final PlayerSoundQueue _soundQueue;

@@ -27,8 +27,8 @@ package com.jcwhatever.nucleus.providers.economy;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultAgent;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import java.util.List;
 import java.util.UUID;
@@ -108,9 +108,9 @@ public final class Economy {
      * @param receiverPlayerId  The ID of the player who is receiving money
      * @param amount            The amount of money to transfer.
      *
-     * @return  A {@link Future} that returns the result of the transaction.
+     * @return  A {@link IFutureResult} that returns the result of the transaction.
      */
-    public static Future<IEconomyTransaction> transfer(
+    public static IFutureResult<IEconomyTransaction> transfer(
             UUID giverPlayerId, UUID receiverPlayerId, double amount) {
 
         return transfer(giverPlayerId, receiverPlayerId, amount, getCurrency());
@@ -123,9 +123,9 @@ public final class Economy {
      * @param receiverPlayerId  The ID of the player who is receiving money
      * @param amount            The amount of money to transfer.
      *
-     * @return  A {@link Future} that returns the result of the transaction.
+     * @return  A {@link IFutureResult} that returns the result of the transaction.
      */
-    public static Future<IEconomyTransaction> transfer(
+    public static IFutureResult<IEconomyTransaction> transfer(
             UUID giverPlayerId, UUID receiverPlayerId, double amount, ICurrency currency) {
 
         PreCon.notNull(giverPlayerId);
@@ -157,9 +157,9 @@ public final class Economy {
      * @param toAccount    The account to transfer money into.
      * @param amount       The amount to transfer.
      *
-     * @return  A {@link Future} that returns the result of the transaction.
+     * @return  A {@link IFutureResult} that returns the result of the transaction.
      */
-    public static Future<IEconomyTransaction> transfer(
+    public static IFutureResult<IEconomyTransaction> transfer(
             IAccount fromAccount, IAccount toAccount, double amount) {
 
         return transfer(fromAccount, toAccount, amount, getCurrency());
@@ -173,9 +173,9 @@ public final class Economy {
      * @param amount       The amount to transfer.
      * @param currency     The currency of the amount.
      *
-     * @return  A {@link Future} that returns the result of the transaction.
+     * @return  A {@link IFutureResult} that returns the result of the transaction.
      */
-    public static Future<IEconomyTransaction> transfer(
+    public static IFutureResult<IEconomyTransaction> transfer(
             IAccount fromAccount, IAccount toAccount, double amount, ICurrency currency) {
 
         PreCon.notNull(fromAccount);
@@ -198,9 +198,9 @@ public final class Economy {
      * @param playerId  The ID of the player to give money to.
      * @param amount    The amount to give the player.
      *
-     * @return  A {@link Future} to retrieve the result of the transaction.
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static Future<IEconomyTransaction> deposit(UUID playerId, double amount) {
+    public static IFutureResult<IEconomyTransaction> deposit(UUID playerId, double amount) {
         return deposit(playerId, amount, getCurrency());
     }
 
@@ -211,9 +211,9 @@ public final class Economy {
      * @param amount    The amount to give the player.
      * @param currency  The currency of the amount.
      *
-     * @return  A {@link Future} to retrieve the result of the transaction.
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static Future<IEconomyTransaction> deposit(UUID playerId, double amount, ICurrency currency) {
+    public static IFutureResult<IEconomyTransaction> deposit(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
@@ -238,9 +238,9 @@ public final class Economy {
      * @param playerId  The ID of the player to take money from.
      * @param amount    The amount to take.
      *
-     * @return  A {@link Future} to retrieve the result of the transaction.
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static Future<IEconomyTransaction> withdraw(UUID playerId, double amount) {
+    public static IFutureResult<IEconomyTransaction> withdraw(UUID playerId, double amount) {
         return withdraw(playerId, amount, getCurrency());
     }
 
@@ -251,9 +251,9 @@ public final class Economy {
      * @param amount    The amount to take.
      * @param currency  The currency of the amount.
      *
-     * @return  A {@link Future} to retrieve the result of the transaction.
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static Future<IEconomyTransaction> withdraw(UUID playerId, double amount, ICurrency currency) {
+    public static IFutureResult<IEconomyTransaction> withdraw(UUID playerId, double amount, ICurrency currency) {
         PreCon.notNull(playerId);
         PreCon.positiveNumber(amount);
         PreCon.notNull(currency);
@@ -281,9 +281,9 @@ public final class Economy {
      * @param playerId  The ID of the player.
      * @param amount    The amount to deposit or withdraw.
      *
-     * @return  A {@link Future} to retrieve the result of the transaction.
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static Future<IEconomyTransaction> depositOrWithdraw(UUID playerId, double amount) {
+    public static IFutureResult<IEconomyTransaction> depositOrWithdraw(UUID playerId, double amount) {
         PreCon.notNull(playerId);
 
         IAccount account = getProvider().getAccount(playerId);
@@ -303,9 +303,9 @@ public final class Economy {
      * @param playerId  The ID of the player.
      * @param amount    The amount to deposit or withdraw.
      *
-     * @return  A {@link Future} to retrieve the result of the transaction.
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static Future<IEconomyTransaction> depositOrWithdraw(
+    public static IFutureResult<IEconomyTransaction> depositOrWithdraw(
             UUID playerId, double amount, ICurrency currency) {
 
         PreCon.notNull(playerId);
@@ -330,9 +330,9 @@ public final class Economy {
      * @param account  The account.
      * @param amount   The amount to deposit or withdraw.
      *
-     * @return  A {@link Future} to retrieve the result of the transaction.
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static Future<IEconomyTransaction> depositOrWithdraw(IAccount account, double amount) {
+    public static IFutureResult<IEconomyTransaction> depositOrWithdraw(IAccount account, double amount) {
         return depositOrWithdraw(account, amount, getCurrency());
     }
 
@@ -345,9 +345,9 @@ public final class Economy {
      * @param amount    The amount to deposit or withdraw.
      * @param currency  The currency of the amount.
      *
-     * @return  A {@link Future} to retrieve the result of the transaction.
+     * @return  A {@link IFutureResult} to retrieve the result of the transaction.
      */
-    public static Future<IEconomyTransaction> depositOrWithdraw(
+    public static IFutureResult<IEconomyTransaction> depositOrWithdraw(
             IAccount account, double amount, ICurrency currency) {
 
         PreCon.notNull(account);

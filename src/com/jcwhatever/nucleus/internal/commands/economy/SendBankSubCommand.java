@@ -35,8 +35,8 @@ import com.jcwhatever.nucleus.providers.economy.Economy;
 import com.jcwhatever.nucleus.providers.economy.IAccount;
 import com.jcwhatever.nucleus.providers.economy.IBank;
 import com.jcwhatever.nucleus.providers.economy.IEconomyTransaction;
-import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.observer.future.FutureResultSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.Result;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.command.CommandSender;
@@ -154,13 +154,13 @@ class SendBankSubCommand extends AbstractCommand implements IExecutableCommand {
 
         // transfer money
         Economy.transfer(myAccount, receiverAccount, amount)
-                .onError(new FutureSubscriber<IEconomyTransaction>() {
+                .onError(new FutureResultSubscriber<IEconomyTransaction>() {
                     @Override
                     public void on(Result<IEconomyTransaction> result) {
                         tellError(sender, NucLang.get(_FAILED));
                     }
                 })
-                .onSuccess(new FutureSubscriber<IEconomyTransaction>() {
+                .onSuccess(new FutureResultSubscriber<IEconomyTransaction>() {
                     @Override
                     public void on(Result<IEconomyTransaction> result) {
                         tellSuccess(sender, NucLang.get(_SUCCESS, Economy.getCurrency().format(amount),

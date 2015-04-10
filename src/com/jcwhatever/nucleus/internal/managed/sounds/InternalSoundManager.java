@@ -39,8 +39,8 @@ import com.jcwhatever.nucleus.managed.sounds.types.MusicDiskSound;
 import com.jcwhatever.nucleus.managed.sounds.types.MusicSound;
 import com.jcwhatever.nucleus.managed.sounds.types.ResourceSound;
 import com.jcwhatever.nucleus.managed.sounds.types.VoiceSound;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -48,7 +48,7 @@ import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.Utils;
 import com.jcwhatever.nucleus.utils.nms.INmsSoundEffectHandler;
 import com.jcwhatever.nucleus.utils.nms.NmsUtils;
-import com.jcwhatever.nucleus.utils.observer.result.FutureResultAgent.Future;
+import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
 
 import org.bukkit.Location;
@@ -146,18 +146,18 @@ public final class InternalSoundManager implements ISoundManager {
     }
 
     @Override
-    public Future<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound) {
+    public IFutureResult<ISoundContext> playSound(Plugin plugin, Player player, ResourceSound sound) {
         return playSound(plugin, player, sound, new SoundSettings(), null);
     }
 
     @Override
-    public Future<ISoundContext> playSound(Plugin plugin, final Player player, ResourceSound sound,
+    public IFutureResult<ISoundContext> playSound(Plugin plugin, final Player player, ResourceSound sound,
                                         SoundSettings settings) {
         return playSound(plugin, player, sound, settings, null);
     }
 
     @Override
-    public Future<ISoundContext> playSound(final Plugin plugin, Player player, ResourceSound sound,
+    public IFutureResult<ISoundContext> playSound(final Plugin plugin, Player player, ResourceSound sound,
                                         SoundSettings settings,
                                         final @Nullable Collection<Player> transcriptViewers) {
         PreCon.notNull(plugin);

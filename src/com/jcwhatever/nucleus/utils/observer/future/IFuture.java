@@ -22,45 +22,58 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.observer.result;
+package com.jcwhatever.nucleus.utils.observer.future;
 
 /**
- * An object used to add {@link FutureSubscriber}'s to the
- * futures agent in order to receive updates about the result
- * of an operation.
+ * An object used to add {@link FutureSubscriber}'s to the futures agent in
+ * order to receive an update about the outcome of an operation.
+ *
+ * @see FutureAgent
+ * @see FutureSubscriber
  */
-public interface IFuture<R> {
+public interface IFuture {
 
     /**
-     * Called when a result is available. Always called
-     * along with {@link #onSuccess}, {@link #onCancel}, or
-     * {@link #onError}.
-     *
-     * @param subscriber  The result update subscriber.
+     * Specifies the status of an operation.
      */
-    IFuture<R> onResult(FutureSubscriber<R> subscriber);
+    enum FutureStatus {
+        CANCEL,
+        ERROR,
+        SUCCESS
+    }
 
     /**
-     * Adds an update subscriber to receive an update when and
-     * if the result is successful.
+     * Add a {@link FutureSubscriber} to be invoked when the related operation
+     * is completed.
      *
-     * @param subscriber  The result update subscriber.
+     * <p>Always invoked along with {@link #onSuccess}, {@link #onCancel}, or
+     * {@link #onError}.</p>
+     *
+     * @param subscriber  The subscriber.
      */
-    IFuture<R> onSuccess(FutureSubscriber<R> subscriber);
+    IFuture onStatus(FutureSubscriber subscriber);
 
     /**
-     * Adds an update subscriber to receive an update when and
-     * if the result is cancelled.
+     * Add a {@link FutureSubscriber} to be invoked if the related operation
+     * is completed successfully.
      *
-     * @param subscriber  The result update subscriber.
+     * @param subscriber  The subscriber.
      */
-    IFuture<R> onCancel(FutureSubscriber<R> subscriber);
+    IFuture onSuccess(FutureSubscriber subscriber);
 
     /**
-     * Adds an update subscriber to receive an update when and
-     * if the result fails.
+     * Add a {@link FutureSubscriber} to be invoked if the related operation
+     * is cancelled.
      *
-     * @param subscriber  The result update subscriber.
+     * @param subscriber  The subscriber.
      */
-    IFuture<R> onError(FutureSubscriber<R> subscriber);
+    IFuture onCancel(FutureSubscriber subscriber);
+
+    /**
+     * Add a {@link FutureSubscriber} to be invoked if the related operation
+     * ends due to an error.
+     *
+     * @param subscriber  The subscriber.
+     */
+    IFuture onError(FutureSubscriber subscriber);
 }

@@ -22,16 +22,45 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.observer.result;
-
-import com.jcwhatever.nucleus.utils.observer.update.UpdateSubscriber;
+package com.jcwhatever.nucleus.utils.observer.future;
 
 /**
- * An abstract implementation designed to reduce the amount of inline code needed
- * when subscribing to a {@link FutureResultAgent}.
+ * An object used to add {@link FutureResultSubscriber}'s to a futures agent in
+ * order to receive updates about the result of an operation.
+ *
+ * @see FutureResultAgent
+ * @see FutureResultSubscriber
  */
-public abstract class FutureSubscriber<R> extends UpdateSubscriber<Result<R>> {
+public interface IFutureResult<R> {
 
-    @Override
-    public abstract void on(Result<R> result);
+    /**
+     * Add a subscriber to be invoked when a result is available.
+     *
+     * <p>Always called along with {@link #onSuccess}, {@link #onCancel}, or
+     * {@link #onError}.</p>
+     *
+     * @param subscriber  The subscriber.
+     */
+    IFutureResult<R> onResult(FutureResultSubscriber<R> subscriber);
+
+    /**
+     * Add a subscriber to be invoked when a success result is available.
+     *
+     * @param subscriber  The subscriber.
+     */
+    IFutureResult<R> onSuccess(FutureResultSubscriber<R> subscriber);
+
+    /**
+     * Add a subscriber to be invoked when a cancel result is available.
+     *
+     * @param subscriber  The subscriber.
+     */
+    IFutureResult<R> onCancel(FutureResultSubscriber<R> subscriber);
+
+    /**
+     * Add a subscriber to be invoked when an error result is available.
+     *
+     * @param subscriber  The subscriber.
+     */
+    IFutureResult<R> onError(FutureResultSubscriber<R> subscriber);
 }

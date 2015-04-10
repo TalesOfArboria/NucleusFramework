@@ -11,8 +11,8 @@ import com.jcwhatever.nucleus.storage.IDataNode.AutoSaveMode;
 import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.items.ItemStackBuilder;
-import com.jcwhatever.nucleus.utils.observer.result.FutureSubscriber;
-import com.jcwhatever.nucleus.utils.observer.result.Result;
+import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
+import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /*
  * 
@@ -119,7 +120,7 @@ public abstract class IDataNodeTest {
     }
 
     /**
-     * Make sure {@link #isDirty} method returns the correct value.
+     * Make sure {@link IDataNode#isDirty} method returns the correct value.
      */
     @Test
     public void testDirty() {
@@ -922,9 +923,9 @@ public abstract class IDataNodeTest {
             public void run() {
 
                 IDataNode dataNode = _generator.generateRoot();
-                dataNode.loadAsync().onResult(new FutureSubscriber<IDataNode>() {
+                dataNode.loadAsync().onStatus(new FutureSubscriber() {
                     @Override
-                    public void on(Result<IDataNode> result) {
+                    public void on(FutureStatus status, @Nullable String message) {
 
                         _testLoadRunCount++;
 
@@ -963,9 +964,9 @@ public abstract class IDataNodeTest {
 
                 dataNode = _generator.generateRoot();
 
-                dataNode.save().onResult(new FutureSubscriber<IDataNode>() {
+                dataNode.save().onStatus(new FutureSubscriber() {
                     @Override
-                    public void on(Result<IDataNode> result) {
+                    public void on(FutureStatus status, @Nullable String message) {
 
                         _testSaveRunCount++;
 
