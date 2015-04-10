@@ -38,14 +38,14 @@ import java.util.Set;
 public abstract class SubscriberAgent implements ISubscriberAgent {
 
     private Set<ISubscriber> _subscribers;
-    protected final Object _sync = new Object();
-    private boolean _isDisposed;
+    private final Object _sync = new Object();
+    private volatile boolean _isDisposed;
 
     @Override
     public boolean addSubscriber(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
             if (registerReference(subscriber)) {
                 subscriber.registerReference(this);
                 return true;
@@ -58,7 +58,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
     public boolean removeSubscriber(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
 
             if (!hasSubscribers())
                 return false;
@@ -78,7 +78,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
         if (isDisposed())
             throw new RuntimeException("Cannot use a disposed SubscriberAgent.");
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
             return subscribers().add(subscriber);
         }
     }
@@ -87,7 +87,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
     public boolean unregisterReference(ISubscriber subscriber) {
         PreCon.notNull(subscriber);
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
             return hasSubscribers() && subscribers().remove(subscriber);
         }
     }
@@ -95,7 +95,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
     @Override
     public Set<ISubscriber> getSubscribers() {
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
 
             if (!hasSubscribers())
                 return new HashSet<>(0);
@@ -115,7 +115,7 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
         if (_isDisposed)
             return;
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
 
             if (_isDisposed)
                 return;
@@ -126,21 +126,34 @@ public abstract class SubscriberAgent implements ISubscriberAgent {
                     subscriber.unregisterReference(this);
                 }
 
-                _subscribers.clear();
+                subscribers().clear();
             }
 
             _isDisposed = true;
         }
     }
 
+    /**
+     * Invoked to get the set of subscribers.
+     */
     protected Set<ISubscriber> subscribers() {
         if (_subscribers == null)
-            _subscribers = new HashSet<>(5);
+            _subscribers = new HashSet<>(7);
 
         return _subscribers;
     }
 
+    /**
+     * Determine if there is at least 1 subscriber.
+     */
     protected boolean hasSubscribers() {
         return _subscribers != null && !_subscribers.isEmpty();
+    }
+
+    /**
+     * Get the object used for synchronization.
+     */
+    protected Object getSync() {
+        return _sync;
     }
 }

@@ -39,13 +39,13 @@ public abstract class Subscriber implements ISubscriber {
 
     private Set<ISubscriberAgent> _agents;
     private volatile boolean _isDisposed;
-    protected final Object _sync = new Object();
+    private final Object _sync = new Object();
 
     @Override
     public boolean subscribe(ISubscriberAgent agent) {
         PreCon.notNull(agent);
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
             if (registerReference(agent)) {
                 agent.registerReference(this);
                 return true;
@@ -56,7 +56,7 @@ public abstract class Subscriber implements ISubscriber {
 
     @Override
     public boolean unsubscribe(ISubscriberAgent agent) {
-        synchronized (_sync) {
+        synchronized (getSync()) {
 
             if (unregisterReference(agent)) {
                 agent.unregisterReference(this);
@@ -70,10 +70,10 @@ public abstract class Subscriber implements ISubscriber {
     public boolean registerReference(ISubscriberAgent agent) {
         PreCon.notNull(agent);
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
 
             if (isDisposed())
-                throw new RuntimeException("Cannot use a disposed subscriber.");
+                throw new IllegalStateException("Cannot use a disposed subscriber.");
 
             return agents().add(agent);
         }
@@ -83,14 +83,14 @@ public abstract class Subscriber implements ISubscriber {
     public boolean unregisterReference(ISubscriberAgent agent) {
         PreCon.notNull(agent);
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
             return hasAgents() && agents().remove(agent);
         }
     }
 
     @Override
     public Set<ISubscriberAgent> getAgents() {
-        synchronized (_sync) {
+        synchronized (getSync()) {
 
             if (!hasAgents())
                 return new HashSet<>(0);
@@ -110,7 +110,7 @@ public abstract class Subscriber implements ISubscriber {
         if (_isDisposed)
             return;
 
-        synchronized (_sync) {
+        synchronized (getSync()) {
 
             if (_isDisposed)
                 return;
@@ -128,6 +128,9 @@ public abstract class Subscriber implements ISubscriber {
         }
     }
 
+    /**
+     * Get the set of agents.
+     */
     protected Set<ISubscriberAgent> agents() {
         if (_agents == null)
             _agents = new HashSet<>(3);
@@ -135,7 +138,17 @@ public abstract class Subscriber implements ISubscriber {
         return _agents;
     }
 
+    /**
+     * Determine if there is at least 1 agent.
+     */
     protected boolean hasAgents() {
         return _agents != null && !_agents.isEmpty();
+    }
+
+    /**
+     * Get the object used for synchronization.
+     */
+    protected Object getSync() {
+        return _sync;
     }
 }

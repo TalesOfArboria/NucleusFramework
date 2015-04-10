@@ -40,7 +40,8 @@ import java.util.Set;
  * unregistered/removed.</p>
  *
  * <p>When the subscriber is disposed, it removes itself from all its registered
- * agents by invoking the agents {@link ISubscriberAgent#unregisterReference} method.</p>
+ * agents by invoking the agents {@link ISubscriberAgent#unregisterReference}
+ * method.</p>
  */
 public interface ISubscriber extends IDisposable {
 
@@ -61,8 +62,8 @@ public interface ISubscriber extends IDisposable {
      * Unsubscribe from an agent.
      *
      * <p>Equivalent to invoking {@link #unregisterReference} except the
-     * {@link ISubscriberAgent#unregisterReference} method of the agent being unregistered
-     * is invoked with the subscriber as its argument.</p>
+     * {@link ISubscriberAgent#unregisterReference} method of the agent being
+     * unregistered is invoked with the subscriber as its argument.</p>
      *
      * @param agent  The agent to unregister.
      *

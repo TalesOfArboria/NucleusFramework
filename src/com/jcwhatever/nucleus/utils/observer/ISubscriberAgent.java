@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.mixins.IDisposable;
 import java.util.Set;
 
 /**
- * A type that intermediates between a producer and subscriber and may possibly act
- * as a producer.
+ * A type that intermediates between a producer and subscriber and may possibly
+ * act as a producer.
  *
  * <p>The type must keep a reference to all of its subscribers.</p>
  *
@@ -38,11 +38,12 @@ import java.util.Set;
  * using the {@link ISubscriber#unsubscribe} method that subscribers provide if
  * the agent is disposed.</p>
  *
- * <p>The implementation is expected to hold a reference to any and all {@link ISubscriber}'s
- * that register or add themselves, even if the agent implementation cannot interact with the
- * subscriber implementation. The agent must keep the reference to the subscriber and treat
- * it as a member through methods of the {@link ISubscriberAgent} interface until the subscriber
- * is de-registered/removed.</p>
+ * <p>The implementation is expected to hold a reference to any and all
+ * {@link ISubscriber}'s that register or add themselves, even if the agent
+ * implementation cannot interact with the subscriber implementation. The agent must
+ * keep the reference to the subscriber and treat it as a member through methods of
+ * the {@link ISubscriberAgent} interface until the subscriber is
+ * de-registered/removed.</p>
  */
 public interface ISubscriberAgent extends IDisposable {
 
@@ -50,8 +51,8 @@ public interface ISubscriberAgent extends IDisposable {
      * Subscribe a subscriber to the agent.
      *
      * <p>Equivalent to invoking {@link #registerReference} except the subscribers
-     * {@link ISubscriber#registerReference} method is invoked to simultaneously add the agent
-     * to the subscriber being registered.</p>
+     * {@link ISubscriber#registerReference} method is invoked to simultaneously add
+     * the agent to the subscriber being registered.</p>
      *
      * @param subscriber  The subscriber to register.
      */
@@ -61,8 +62,8 @@ public interface ISubscriberAgent extends IDisposable {
      * Unsubscribe a subscriber from the agent.
      *
      * <p>Equivalent to invoking {@link #unregisterReference} except the subscribers
-     * {@link ISubscriber#unregisterReference} method is invoked with to simultaneously remove
-     * the agent from the subscriber being unregistered.</p>
+     * {@link ISubscriber#unregisterReference} method is invoked with to simultaneously
+     * remove the agent from the subscriber being unregistered.</p>
      *
      * @param subscriber  The subscriber to unregister.
      */

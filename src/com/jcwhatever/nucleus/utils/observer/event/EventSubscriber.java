@@ -69,7 +69,7 @@ public abstract class EventSubscriber<E> extends Subscriber implements IEventSub
 
     @Override
     public int compareTo(IEventSubscriber<E> o) {
-        synchronized (_sync) {
+        synchronized (getSync()) {
             return Integer.compare(getPriority().getSortOrder(), o.getPriority().getSortOrder());
         }
     }

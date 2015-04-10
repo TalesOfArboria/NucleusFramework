@@ -183,9 +183,11 @@ public class FutureAgent extends SubscriberAgent {
             }
         }
 
-        Collection<FutureSubscriber> subscribers = _subscribers.get(agentName);
-        for (FutureSubscriber subscriber : subscribers) {
-            subscriber.on(status, message);
+        synchronized (_subscribers) {
+            Collection<FutureSubscriber> subscribers = _subscribers.get(agentName);
+            for (FutureSubscriber subscriber : subscribers) {
+                subscriber.on(status, message);
+            }
         }
     }
 
