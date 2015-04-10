@@ -93,7 +93,7 @@ public final class JCGEventListener implements Listener {
                 .updatePlayerLocation(p, RegionEventReason.JOIN_SERVER);
     }
 
-    @EventHandler(priority=EventPriority.LOW)
+    @EventHandler(priority=EventPriority.MONITOR)
     private void onPlayerMove(PlayerMoveEvent event) {
 
         _regionManager.getPlayerWatcher()

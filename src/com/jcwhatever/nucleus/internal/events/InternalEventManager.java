@@ -22,22 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal;
+package com.jcwhatever.nucleus.internal.events;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.manager.BukkitEventForwarder;
 import com.jcwhatever.nucleus.events.manager.EventManager;
-import com.jcwhatever.nucleus.internal.listeners.BlockListener;
-import com.jcwhatever.nucleus.internal.listeners.EnchantmentListener;
-import com.jcwhatever.nucleus.internal.listeners.EntityListener;
-import com.jcwhatever.nucleus.internal.listeners.HangingListener;
-import com.jcwhatever.nucleus.internal.listeners.InventoryListener;
-import com.jcwhatever.nucleus.internal.listeners.PlayerListener;
-import com.jcwhatever.nucleus.internal.listeners.VehicleListener;
-import com.jcwhatever.nucleus.internal.listeners.WeatherListener;
-import com.jcwhatever.nucleus.internal.listeners.WorldListener;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -45,23 +36,18 @@ import org.bukkit.plugin.Plugin;
  */
 public final class InternalEventManager extends EventManager {
 
+    private final GlobalForwarder _forwarder;
+
     public InternalEventManager(Plugin plugin) {
         super(plugin, null);
+
+        _forwarder = new GlobalForwarder(this);
 
         Scheduler.runTaskLater(Nucleus.getPlugin(), new Runnable() {
             @Override
             public void run() {
 
-                // register Bukkit listeners which forward events to Nucleus's global event manager
-                Bukkit.getPluginManager().registerEvents(new BlockListener(), Nucleus.getPlugin());
-                Bukkit.getPluginManager().registerEvents(new EnchantmentListener(), Nucleus.getPlugin());
-                Bukkit.getPluginManager().registerEvents(new EntityListener(), Nucleus.getPlugin());
-                Bukkit.getPluginManager().registerEvents(new HangingListener(), Nucleus.getPlugin());
-                Bukkit.getPluginManager().registerEvents(new InventoryListener(), Nucleus.getPlugin());
-                Bukkit.getPluginManager().registerEvents(new PlayerListener(), Nucleus.getPlugin());
-                Bukkit.getPluginManager().registerEvents(new VehicleListener(), Nucleus.getPlugin());
-                Bukkit.getPluginManager().registerEvents(new WeatherListener(), Nucleus.getPlugin());
-                Bukkit.getPluginManager().registerEvents(new WorldListener(), Nucleus.getPlugin());
+                BukkitEventForwarder.registerBukkitEvents(_forwarder);
             }
         });
     }

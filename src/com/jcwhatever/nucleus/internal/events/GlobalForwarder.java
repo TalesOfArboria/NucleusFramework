@@ -22,28 +22,32 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.internal.listeners;
+package com.jcwhatever.nucleus.internal.events;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.events.manager.BukkitEventForwarder;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.enchantment.EnchantItemEvent;
-import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
 
-public final class EnchantmentListener implements Listener {
+/**
+ * Global forwarder for the global event manager.
+ */
+class GlobalForwarder extends BukkitEventForwarder {
 
-    @EventHandler
-    private void onEnchantItem(EnchantItemEvent event) {
+    private final InternalEventManager _manager;
 
-        Nucleus.getEventManager().call(this, event);
+    /**
+     * Constructor.
+     */
+    GlobalForwarder(InternalEventManager manager) {
+        super(Nucleus.getPlugin(), EventPriority.HIGH);
+
+        _manager = manager;
     }
 
-    @EventHandler
-    private void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
-
-        Nucleus.getEventManager().call(this, event);
+    @Override
+    protected void onEvent(Event event) {
+        _manager.call(this, event);
     }
-
 }

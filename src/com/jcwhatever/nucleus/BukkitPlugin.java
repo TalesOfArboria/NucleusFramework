@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.nucleus.internal.InternalEventManager;
+import com.jcwhatever.nucleus.internal.events.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.internal.actionbar.InternalActionBarManager;
