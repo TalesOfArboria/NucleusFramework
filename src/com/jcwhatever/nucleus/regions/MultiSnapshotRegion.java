@@ -25,19 +25,19 @@
 
 package com.jcwhatever.nucleus.regions;
 
+import com.jcwhatever.nucleus.regions.file.IRegionFileFactory;
+import com.jcwhatever.nucleus.regions.file.IRegionFileLoader.LoadSpeed;
+import com.jcwhatever.nucleus.regions.file.basic.BasicFileFactory;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture.FutureStatus;
-import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -46,11 +46,11 @@ import javax.annotation.Nullable;
  * An abstract implementation of a restorable region
  * with multiple named saved snapshots.
  *
- * <p>The primary snapshot is the snapshot with an empty name.</p>
+ * <p>The default snapshot name is "default".</p>
  */
 public abstract class MultiSnapshotRegion extends RestorableRegion {
 
-    private String _currentSnapshot = "";
+    private final SnapshotFileFactory _fileFactory = new SnapshotFileFactory();
 
     /**
      * Constructor.
@@ -73,27 +73,53 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
         super(plugin, name, dataNode);
     }
 
+    @Override
+    public SnapshotFileFactory getFileFactory() {
+
+        if (_fileFactory.fileFactory == null)
+            _fileFactory.fileFactory = new BasicFileFactory();
+
+        return _fileFactory;
+    }
+
+    @Override
+    public void setFileFactory(IRegionFileFactory fileFactory) {
+        PreCon.notNull(fileFactory);
+
+        _fileFactory.fileFactory = fileFactory;
+    }
+
     /**
-     * Get the current snapshot state of the region.
+     * Get the name of the current snapshot.
      *
-     * <p>This is only accurate after an initial snapshot restore.
-     * When the region is first loaded, the current known snapshot defaults to the primary,
-     * which is an empty string.</p>
+     * <p>The default snapshot name is "default".</p>
      */
     public String getCurrentSnapshot() {
-        return _currentSnapshot;
+        return getFileFactory().snapshotName;
+    }
+
+    /**
+     * Set the current snapshot name.
+     *
+     * @param snapshotName  The snapshot name.
+     */
+    public void setCurrentSnapshot(String snapshotName) {
+        PreCon.notNullOrEmpty(snapshotName);
+
+        getFileFactory().snapshotName = snapshotName;
     }
 
     /**
      * Get the names of stored snapshots.
      *
-     * <p>Snapshot names are retrieved by file name.</p>
+     * <p>Snapshot names are retrieved by file name, therefore this
+     * only returns names of snapshots that have been saved.</p>
      *
      * @throws IOException
      */
     public Set<String> getSnapshotNames() throws IOException {
 
-        File folder = getRegionDataFolder();
+        File folder = _fileFactory.getRegionDirectory(this);
 
         File[] files = folder.listFiles();
         if (files == null)
@@ -103,12 +129,10 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
 
         for (File file : files) {
 
-            String[] comp = TextUtils.PATTERN_DOT.split(file.getName());
-
-            if (comp.length != 8)
+            if (!file.isDirectory())
                 continue;
 
-            names.add(comp[6]);
+            names.add(file.getName());
         }
 
         return names;
@@ -119,44 +143,38 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      *
      * @param snapshotName  The name of the snapshot.
      */
-    @Override
     public boolean canRestore(String snapshotName) {
-        return super.canRestore(snapshotName);
-    }
 
-    /**
-     * Restore primary snapshot.
-     *
-     * @param buildMethod  The method used to restore.
-     *
-     * @throws IOException
-     */
-    @Override
-    public IFuture restoreData(BuildMethod buildMethod) throws IOException {
+        String current = getFileFactory().snapshotName;
 
-        return super.restoreData(buildMethod).onSuccess(new FutureSubscriber() {
-            @Override
-            public void on(FutureStatus status, @Nullable String message) {
-                _currentSnapshot = "";
-            }
-        });
+        getFileFactory().snapshotName = snapshotName;
+
+        boolean canRestore = getFileFormat().getLoader(this, _fileFactory).canRead();
+
+        getFileFactory().snapshotName = current;
+
+        return canRestore;
     }
 
     /**
      * Restore the specified snapshot.
      *
-     * @param buildMethod   The method used to restore.
+     * @param loadSpeed     The speed of the restore.
      * @param snapshotName  The name of the snapshot.
      *
      * @throws IOException
      */
-    @Override
-    public IFuture restoreData(BuildMethod buildMethod, final String snapshotName) throws IOException {
-        return super.restoreData(buildMethod, snapshotName)
+    public IFuture restoreData(LoadSpeed loadSpeed, final String snapshotName) throws IOException {
+
+        final String currentSnapshot = getFileFactory().snapshotName;
+
+        getFileFactory().snapshotName = snapshotName;
+
+        return super.restoreData(loadSpeed)
                 .onSuccess(new FutureSubscriber() {
                     @Override
                     public void on(FutureStatus status, @Nullable String message) {
-                        _currentSnapshot = snapshotName;
+                        getFileFactory().snapshotName = currentSnapshot;
                     }
                 });
     }
@@ -168,9 +186,18 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      *
      * @throws IOException
      */
-    @Override
     public IFuture saveData(String snapshotName) throws IOException {
-        return super.saveData(snapshotName);
+
+        final String currentSnapshot = getFileFactory().snapshotName;
+
+        getFileFactory().snapshotName = snapshotName;
+
+        return super.saveData().onStatus(new FutureSubscriber() {
+            @Override
+            public void on(FutureStatus status, @Nullable String message) {
+                getFileFactory().snapshotName = currentSnapshot;
+            }
+        });
     }
 
     /**
@@ -183,10 +210,50 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
     public void deleteData(String snapshotName) throws IOException {
         PreCon.notNull(snapshotName);
 
-        Collection<IChunkCoords> chunks = this.getChunkCoords();
+        final String currentSnapshot = getFileFactory().snapshotName;
 
-        for (IChunkCoords chunk : chunks) {
-            getChunkFile(chunk.getX(), chunk.getZ(), snapshotName, true); // deletes file
+        getFileFactory().snapshotName = snapshotName;
+
+        super.deleteData();
+
+        getFileFactory().snapshotName = currentSnapshot;
+    }
+
+    public static class SnapshotFileFactory implements IRegionFileFactory {
+
+        String snapshotName = "default";
+        IRegionFileFactory fileFactory;
+
+        private SnapshotFileFactory() {}
+
+        @Override
+        public String getFilename(IRegion region) {
+            return fileFactory.getFilename(region);
+        }
+
+        @Override
+        public File getDirectory(IRegion region) throws IOException {
+
+            File regionFolder = getRegionDirectory(region);
+
+            File snapshotFolder = new File(regionFolder, snapshotName);
+            if (!snapshotFolder.exists() && !snapshotFolder.mkdirs()) {
+                throw new IOException("Failed to create snapshot folder.");
+            }
+
+            return snapshotFolder;
+        }
+
+        public File getRegionDirectory(IRegion region) throws IOException {
+            return fileFactory.getDirectory(region);
+        }
+
+        public String getSnapshotName() {
+            return snapshotName;
+        }
+
+        public IRegionFileFactory getInnerFactory() {
+            return fileFactory;
         }
     }
 }

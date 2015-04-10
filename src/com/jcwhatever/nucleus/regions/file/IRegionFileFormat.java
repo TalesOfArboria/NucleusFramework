@@ -22,27 +22,29 @@
  * THE SOFTWARE.
  */
 
+package com.jcwhatever.nucleus.regions.file;
 
-package com.jcwhatever.nucleus.regions;
+import com.jcwhatever.nucleus.regions.IRegion;
 
 /**
- * Specifies how a region should build within itself.
+ * Interface for a region file format.
  */
-public enum BuildMethod {
+public interface IRegionFileFormat {
 
     /**
-     * Build method maximizes server performance
-     * at the cost of build speed.
+     * Get a new instance of a loader of the file format for a region.
+     *
+     * @param region           The region the loader is for.
+     * @param filenameFactory  The filename factory used to get the region files.
      */
-    PERFORMANCE,
+    IRegionFileLoader getLoader(IRegion region, IRegionFileFactory filenameFactory);
+
     /**
-     * Build method is balanced to increase server performance
-     * but not reduce the build speed as much.
+     * Get a new instance of a writer of the file format for a region.
+     *
+     * @param region           The region the writer is for.
+     * @param filenameFactory  The filename factory used to get the region files.
+     * @return
      */
-    BALANCED,
-    /**
-     * Build method will build as fast as possible while
-     * possibly sacrificing server performance.
-     */
-    FAST
+    IRegionFileWriter getWriter(IRegion region, IRegionFileFactory filenameFactory);
 }

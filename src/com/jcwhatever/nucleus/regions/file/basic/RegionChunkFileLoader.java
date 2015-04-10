@@ -23,13 +23,14 @@
  */
 
 
-package com.jcwhatever.nucleus.regions.file;
+package com.jcwhatever.nucleus.regions.file.basic;
 
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
+import com.jcwhatever.nucleus.regions.file.IRegionFileData;
+import com.jcwhatever.nucleus.regions.file.IRegionFileLoader.LoadType;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.coords.ChunkBlockInfo;
 import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
 import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
 import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
@@ -37,6 +38,7 @@ import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 import com.jcwhatever.nucleus.utils.performance.queued.Iteration3DTask;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueProject;
+import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
 
 import org.bukkit.Chunk;
@@ -48,36 +50,19 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.LinkedList;
 
 /**
  * Loads a regions chunk block data from a file.
  */
-public final class RegionChunkFileLoader {
+public class RegionChunkFileLoader {
 
     public static final int COMPATIBLE_FILE_VERSION = 3;
     public static final int RESTORE_FILE_VERSION = 4;
+
     private Plugin _plugin;
     private IRegion _region;
     private ICoords2Di _coords;
     private boolean _isLoading;
-    private final LinkedList<ChunkBlockInfo> _blockInfo = new LinkedList<>();
-    private final LinkedList<SerializableBlockEntity> _blockEntities = new LinkedList<>();
-    private final LinkedList<SerializableFurnitureEntity> _entities = new LinkedList<>();
-
-    /**
-     * Specifies what blocks are loaded from the file.
-     */
-    public enum LoadType {
-        /**
-         * Loads all blocks info from the file
-         */
-        ALL_BLOCKS,
-        /**
-         * Loads blocks that do no match the current chunk.
-         */
-        MISMATCHED
-    }
 
     /**
      * Constructor.
@@ -106,62 +91,23 @@ public final class RegionChunkFileLoader {
     }
 
     /**
-     * Determine if the file is in the process
-     * of being loaded.
+     * Determine if the file is in the process of being loaded.
      */
     public boolean isLoading() {
         return _isLoading;
     }
 
     /**
-     * Get block info loaded from the file.
-     *
-     * <p>Do not access while loading from file.</p>
-     */
-    public LinkedList<ChunkBlockInfo> getBlockInfo() {
-        if (_isLoading)
-            throw new IllegalStateException("Cannot access block info while data " +
-                    "is being loaded from file.");
-
-        return _blockInfo;
-    }
-
-    /**
-     * Get block entity data loaded from the file.
-     *
-     * <p>Do not access while loading from file.</p>
-     */
-    public LinkedList<SerializableBlockEntity> getBlockEntityInfo() {
-        if (_isLoading)
-            throw new IllegalStateException("Cannot access block entity info while " +
-                    "data is being loaded from file.");
-
-        return _blockEntities;
-    }
-
-    /**
-     * Get entity data loaded from the file.
-     *
-     * <p>Do not access while loading from file.</p>
-     */
-    public LinkedList<SerializableFurnitureEntity> getFurnitureEntityInfo() {
-        if (_isLoading)
-            throw new IllegalStateException("Cannot access furniture entity " +
-                    "info while data is being loaded from file.");
-
-        return _entities;
-    }
-
-    /**
      * Load data from a specific file.
      *
      * @param file      The file.
-     * @param project   The project to add the loading task to.
-     * @param loadType  The callback to run when load is finished.
+     * @param loadType  The type of data to load from the file.
+     * @param builder      The data container to load data into.
      */
-    public IFuture loadInProject(File file, QueueProject project, LoadType loadType) {
+    public IFuture loadInProject(File file, QueueProject project, LoadType loadType, IRegionFileData builder) {
         PreCon.notNull(file);
-        PreCon.notNull(project);
+        PreCon.notNull(loadType);
+        PreCon.notNull(builder);
 
         if (isLoading())
             return project.cancel("Region cannot load because it is already loading.");
@@ -185,7 +131,7 @@ public final class RegionChunkFileLoader {
         _isLoading = true;
 
         RegionChunkSection section = new RegionChunkSection(_region, _coords);
-        LoadChunkIterator iterator = new LoadChunkIterator(file, loadType, 8192,
+        LoadChunkIterator iterator = new LoadChunkIterator(project, file, loadType, builder, 8192,
                 section.getStartChunkX(), section.getStartY(), section.getStartChunkZ(),
                 section.getEndChunkX(), section.getEndY(), section.getEndChunkZ(), chunk);
 
@@ -202,11 +148,11 @@ public final class RegionChunkFileLoader {
      *
      * @return  A future to receive the load results.
      */
-    public IFuture load(File file, LoadType loadType) {
+    public IFuture load(File file, LoadType loadType, IRegionFileData data) {
 
         QueueProject project = new QueueProject(_plugin);
 
-        IFuture future = loadInProject(file, project, loadType);
+        IFuture future = loadInProject(file, project, loadType, data);
 
         project.run();
 
@@ -222,18 +168,23 @@ public final class RegionChunkFileLoader {
         private final ChunkSnapshot snapshot;
         private final File file;
         private final LoadType loadType;
+        private final IRegionFileData builder;
+        private final QueueProject project;
 
         /**
          * Constructor
          */
-        LoadChunkIterator (File file, LoadType loadType, long segmentSize, int xStart, int yStart, int zStart,
+        LoadChunkIterator (QueueProject project, File file, LoadType loadType, IRegionFileData builder,
+                           long segmentSize, int xStart, int yStart, int zStart,
                            int xEnd, int yEnd, int zEnd, Chunk chunk) {
 
             super(_plugin, TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
+            this.project = project;
             this.snapshot = chunk.getChunkSnapshot();
             this.file = file;
             this.loadType = loadType;
+            this.builder = builder;
         }
 
         /**
@@ -241,8 +192,6 @@ public final class RegionChunkFileLoader {
          */
         @Override
         protected void onIterateBegin() {
-            _blockInfo.clear();
-            _blockEntities.clear();
 
             try {
 
@@ -312,7 +261,8 @@ public final class RegionChunkFileLoader {
 
                 type = EnumUtils.getEnum(typeName, Material.class);
                 if (type == null) {
-                    fail("Failed to read from file. Found a block type in file that is not a valid type: " + typeName);
+                    fail("Failed to read from file. Found a block type in file that is not a " +
+                            "valid type: " + typeName);
                     return;
                 }
 
@@ -330,13 +280,16 @@ public final class RegionChunkFileLoader {
             }
 
             if (loadType == LoadType.ALL_BLOCKS || !isBlockMatch(x, y, z, type, data)) {
-                _blockInfo.add(new ChunkBlockInfo(x, y, z, type, data, light, skylight));
+                //_blockInfo.add(new ChunkBlockInfo(x, y, z, type, data, light, skylight));
+                this.builder.addBlock(
+                        (snapshot.getX() * 16) + x, y, (snapshot.getZ() * 16) + z,
+                        type, data, light, skylight);
             }
         }
 
         /**
-         * Read block entities and entities from file on
-         * successful completion of loading blocks.
+         * Read block entities and entities from file on successful completion
+         * of loading blocks.
          */
         @Override
         protected void onPreComplete() {
@@ -346,11 +299,14 @@ public final class RegionChunkFileLoader {
 
                 for (int i=0; i < totalEntities; i++) {
 
-                    SerializableBlockEntity state = reader.getBinarySerializable(SerializableBlockEntity.class);
+                    SerializableBlockEntity state =
+                            reader.getBinarySerializable(SerializableBlockEntity.class);
+
                     if (state == null)
                         continue;
 
-                    _blockEntities.push(state);
+                    this.builder.addBlockEntity(state);
+                    //_blockEntities.push(state);
                 }
             }
             catch (IOException | IllegalArgumentException | InstantiationException e) {
@@ -364,17 +320,24 @@ public final class RegionChunkFileLoader {
 
                 for (int i=0; i < totalEntities; i++) {
 
-                    SerializableFurnitureEntity state = reader.getBinarySerializable(SerializableFurnitureEntity.class);
+                    SerializableFurnitureEntity state =
+                            reader.getBinarySerializable(SerializableFurnitureEntity.class);
+
                     if (state == null)
                         continue;
 
-                    _entities.push(state);
+                    this.builder.addEntity(state);
+                    //_entities.push(state);
                 }
             }
             catch (IOException | IllegalArgumentException | InstantiationException e) {
                 e.printStackTrace();
                 fail("Failed to read Entities from file.");
             }
+
+            QueueTask task = this.builder.commit();
+            if (task != null)
+                this.project.addTask(task);
         }
 
         @Override
@@ -403,6 +366,5 @@ public final class RegionChunkFileLoader {
 
             return chunkType == type && chunkData == data;
         }
-
     }
 }

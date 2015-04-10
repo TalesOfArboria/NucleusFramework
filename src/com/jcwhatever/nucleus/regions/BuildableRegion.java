@@ -61,6 +61,24 @@ public abstract class BuildableRegion extends Region {
     private boolean _isBuilding;
 
     /**
+     * Specifies the build speed.
+     */
+    public enum BuildSpeed {
+        /**
+         * Maximize server performance at the cost of build speed.
+         */
+        PERFORMANCE,
+        /**
+         * Balanced between speed and performance.
+         */
+        BALANCED,
+        /**
+         * Build as fast as possible.
+         */
+        FAST
+    }
+
+    /**
      * Constructor.
      *
      * @param plugin  The owning plugin.
@@ -98,12 +116,12 @@ public abstract class BuildableRegion extends Region {
     /**
      * Build in the region using the specified chunk snapshots.
      *
-     * @param buildMethod  The method of building. (Speed vs Performance)
-     * @param snapshots    The snapshots representing the build.
+     * @param buildSpeed  The speed of building.
+     * @param snapshots   The snapshots representing the build.
      *
      * @return  True if build started, false if build already in progress or region is not defined.
      */
-    public final boolean build(BuildMethod buildMethod, Collection<? extends ChunkSnapshot> snapshots) {
+    public final boolean build(BuildSpeed buildSpeed, Collection<? extends ChunkSnapshot> snapshots) {
 
         // already building
         if (_isBuilding)
@@ -150,7 +168,7 @@ public abstract class BuildableRegion extends Region {
             project.addTask(iterator);
         }
 
-        switch (buildMethod) {
+        switch (buildSpeed) {
             case PERFORMANCE:
                 QueueWorker.get().addTask(project);
                 break;

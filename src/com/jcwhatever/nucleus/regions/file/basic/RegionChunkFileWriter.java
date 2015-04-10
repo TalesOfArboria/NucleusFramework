@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.regions.file;
+package com.jcwhatever.nucleus.regions.file.basic;
 
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
@@ -275,8 +275,8 @@ public class RegionChunkFileWriter {
         }
 
         /**
-         * Write Block Entities and Entities to end of file
-         * after block data is successfully written.
+         * Write Block Entities and Entities to end of file after block data is
+         * successfully written.
          */
         @Override
         protected void onPreComplete() {
@@ -324,6 +324,5 @@ public class RegionChunkFileWriter {
                 }
             }
         }
-
     }
 }
