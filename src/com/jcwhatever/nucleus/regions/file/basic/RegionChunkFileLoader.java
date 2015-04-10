@@ -305,8 +305,7 @@ public class RegionChunkFileLoader {
                     if (state == null)
                         continue;
 
-                    this.builder.addBlockEntity(state);
-                    //_blockEntities.push(state);
+                    this.builder.addSerializable(state);
                 }
             }
             catch (IOException | IllegalArgumentException | InstantiationException e) {
@@ -326,8 +325,7 @@ public class RegionChunkFileLoader {
                     if (state == null)
                         continue;
 
-                    this.builder.addEntity(state);
-                    //_entities.push(state);
+                    this.builder.addSerializable(state);
                 }
             }
             catch (IOException | IllegalArgumentException | InstantiationException e) {

@@ -56,7 +56,7 @@ import java.io.IOException;
  *    <li>{@link org.bukkit.entity.ArmorStand}</li>
  * </ul>
  */
-public class SerializableFurnitureEntity implements IBinarySerializable {
+public class SerializableFurnitureEntity implements IAppliedSerializable {
 
     /**
      * Determine if an entity is a furniture entity
@@ -114,15 +114,12 @@ public class SerializableFurnitureEntity implements IBinarySerializable {
     private boolean _hasArmorArms;
     private boolean _isArmorSmall;
 
-
-
-
     /**
      * Constructor.
      *
      * <p>Required by {@link NucleusByteReader} to deserialize.</p>
      */
-    public SerializableFurnitureEntity() {}
+    private SerializableFurnitureEntity() {}
 
     /**
      * Constructor.
@@ -196,64 +193,14 @@ public class SerializableFurnitureEntity implements IBinarySerializable {
      * Apply the stored {@link Entity} data to the
      * supplied {@link Entity} object.
      */
-    public void apply(Entity entity) {
-
-        entity.teleport(_location);
-
-        if (entity instanceof Directional && _facing != null) {
-
-            Directional directional = (Directional)entity;
-            directional.setFacingDirection(_facing);
-        }
-
-        if (entity instanceof Painting && _art != null) {
-            Painting painting = (Painting)entity;
-
-            painting.setArt(_art);
-        }
-
-        if (entity instanceof ItemFrame && _frameItem != null) {
-            ItemFrame frame = (ItemFrame)entity;
-
-            frame.setItem(_frameItem);
-            frame.setRotation(_frameRotation);
-        }
-
-        if (entity instanceof ArmorStand && _hasArmorStand) {
-            ArmorStand stand = (ArmorStand)entity;
-
-             stand.setItemInHand(_itemInHand);
-             stand.setHelmet(_helmet);
-             stand.setChestplate(_chestplate);
-             stand.setLeggings(_leggings);
-             stand.setBoots(_boots);
-             stand.setHeadPose(_headPose);
-             stand.setBodyPose(_bodyPose);
-             stand.setLeftArmPose(_leftArmPose);
-             stand.setRightArmPose(_rightArmPose);
-             stand.setLeftLegPose(_leftLegPose);
-             stand.setRightLegPose(_rightLegPose);
-             stand.setBasePlate(_hasArmorBasePlate);
-             stand.setGravity(_hasArmorGravity);
-             stand.setVisible(_isArmorVisible);
-             stand.setArms(_hasArmorArms);
-             stand.setSmall(_isArmorSmall);
-        }
-    }
-
-    /**
-     * Spawn the entity in its original location.
-     */
-    public boolean spawn() {
-
-        if (_facing == null)
-            return false;
+    @Override
+    public boolean apply() {
 
         Block block = getLocation().getBlock().getRelative(_facing.getOppositeFace());
 
         Entity entity = getLocation().getWorld().spawnEntity(block.getLocation(), getType());
 
-        apply(entity);
+        applyToEntity(entity);
 
         return true;
     }
@@ -356,5 +303,55 @@ public class SerializableFurnitureEntity implements IBinarySerializable {
             _leftLegPose = reader.getEulerAngle();
             _rightLegPose = reader.getEulerAngle();
         }
+    }
+
+    private boolean applyToEntity(Entity entity) {
+
+        entity.teleport(_location);
+
+        if (entity instanceof Directional && _facing != null) {
+
+            Directional directional = (Directional)entity;
+            directional.setFacingDirection(_facing);
+        }
+
+        if (entity instanceof Painting && _art != null) {
+            Painting painting = (Painting)entity;
+
+            painting.setArt(_art);
+        }
+
+        if (entity instanceof ItemFrame && _frameItem != null) {
+            ItemFrame frame = (ItemFrame)entity;
+
+            frame.setItem(_frameItem);
+            frame.setRotation(_frameRotation);
+        }
+
+        if (entity instanceof ArmorStand && _hasArmorStand) {
+            ArmorStand stand = (ArmorStand)entity;
+
+            stand.setItemInHand(_itemInHand);
+            stand.setHelmet(_helmet);
+            stand.setChestplate(_chestplate);
+            stand.setLeggings(_leggings);
+            stand.setBoots(_boots);
+            stand.setHeadPose(_headPose);
+            stand.setBodyPose(_bodyPose);
+            stand.setLeftArmPose(_leftArmPose);
+            stand.setRightArmPose(_rightArmPose);
+            stand.setLeftLegPose(_leftLegPose);
+            stand.setRightLegPose(_rightLegPose);
+            stand.setBasePlate(_hasArmorBasePlate);
+            stand.setGravity(_hasArmorGravity);
+            stand.setVisible(_isArmorVisible);
+            stand.setArms(_hasArmorArms);
+            stand.setSmall(_isArmorSmall);
+        }
+
+        if (_facing == null)
+            return false;
+
+        return true;
     }
 }

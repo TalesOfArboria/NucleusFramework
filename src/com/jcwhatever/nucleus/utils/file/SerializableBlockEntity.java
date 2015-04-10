@@ -64,7 +64,7 @@ import javax.annotation.Nullable;
  *     <li>{@link org.bukkit.block.Skull}</li>
  * </ul>
  */
-public class SerializableBlockEntity implements IBinarySerializable {
+public class SerializableBlockEntity implements IAppliedSerializable {
 
     private Location _location;
     private Material _material;
@@ -99,7 +99,7 @@ public class SerializableBlockEntity implements IBinarySerializable {
      *
      * <p>Required by {@link NucleusByteReader} to deserialize.</p>
      */
-    public SerializableBlockEntity() {}
+    private SerializableBlockEntity() {}
 
     /**
      * Constructor.
@@ -179,10 +179,11 @@ public class SerializableBlockEntity implements IBinarySerializable {
      * Apply the stored {@link org.bukkit.block.BlockState} data to the location
      * the original {@link org.bukkit.block.BlockState} was taken from.
      */
-    public void apply() {
+    @Override
+    public boolean apply() {
 
         if (getLocation() == null)
-            return;
+            return false;
 
         final BlockState blockState = getLocation().getBlock().getState();
 
@@ -205,8 +206,9 @@ public class SerializableBlockEntity implements IBinarySerializable {
                 }
             });
         }
-    }
 
+        return true;
+    }
 
     @Override
     public void serialize(NucleusByteWriter writer) throws IOException {

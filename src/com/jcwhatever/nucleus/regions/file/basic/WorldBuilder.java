@@ -29,8 +29,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.regions.file.IRegionFileData;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
-import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
+import com.jcwhatever.nucleus.utils.file.IAppliedSerializable;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 import com.jcwhatever.nucleus.utils.performance.queued.TaskConcurrency;
@@ -94,16 +93,9 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
     }
 
     @Override
-    public void addBlockEntity(SerializableBlockEntity blockEntity) {
+    public void addSerializable(IAppliedSerializable blockEntity) {
         synchronized (_sync) {
-            _builder.tileQueue.addLast(blockEntity);
-        }
-    }
-
-    @Override
-    public void addEntity(SerializableFurnitureEntity entity) {
-        synchronized (_sync) {
-            _builder.entityQueue.addLast(entity);
+            _builder.serializables.addLast(blockEntity);
         }
     }
 
@@ -151,8 +143,7 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
 
         World world;
         LinkedList<BlockInfo> blockQueue = new LinkedList<>();
-        LinkedList<SerializableBlockEntity> tileQueue = new LinkedList<>();
-        LinkedList<SerializableFurnitureEntity> entityQueue = new LinkedList<>();
+        LinkedList<IAppliedSerializable> serializables = new LinkedList<>();
 
         /**
          * Constructor.
@@ -232,17 +223,10 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
                 }
             }
 
-            // restore tiles
-            while (!tileQueue.isEmpty()) {
-                SerializableBlockEntity meta = tileQueue.removeFirst();
+            // restore serializables
+            while (!serializables.isEmpty()) {
+                IAppliedSerializable meta = serializables.removeFirst();
                 meta.apply();
-            }
-
-            // restore entities
-            while (!entityQueue.isEmpty()) {
-                SerializableFurnitureEntity meta = entityQueue.removeFirst();
-
-                meta.spawn();
             }
 
             complete();

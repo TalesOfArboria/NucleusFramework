@@ -24,8 +24,7 @@
 
 package com.jcwhatever.nucleus.regions.file;
 
-import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
-import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
+import com.jcwhatever.nucleus.utils.file.IAppliedSerializable;
 import com.jcwhatever.nucleus.utils.performance.queued.QueueTask;
 
 import org.bukkit.Material;
@@ -52,18 +51,11 @@ public interface IRegionFileData {
     void addBlock(int x, int y, int z, Material material, int data, int light, int skylight);
 
     /**
-     * Add a block entity (tile entity) that was read from a file.
+     * Add a serialized object that was read from a file.
      *
      * @param blockEntity  The block entity to add.
      */
-    void addBlockEntity(SerializableBlockEntity blockEntity);
-
-    /**
-     * Add an entity (tile entity) that was read from a file.
-     *
-     * @param entity  The entity to add.
-     */
-    void addEntity(SerializableFurnitureEntity entity);
+    void addSerializable(IAppliedSerializable blockEntity);
 
     /**
      * Commit the previously added data.
