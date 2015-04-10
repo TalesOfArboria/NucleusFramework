@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.managed.reflection;
 
 import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.IWrapper;
 
 import java.lang.reflect.Field;
 import javax.annotation.Nullable;
@@ -32,7 +33,7 @@ import javax.annotation.Nullable;
 /**
  * Interface for a wrapper of a {@link Field}.
  */
-public interface IReflectedField extends INamed {
+public interface IReflectedField extends INamed, IWrapper<Field> {
 
     /**
      * Get the field type.
@@ -112,5 +113,6 @@ public interface IReflectedField extends INamed {
     /**
      * Get the {@link java.lang.reflect.Field} object.
      */
+    @Override
     Field getHandle();
 }

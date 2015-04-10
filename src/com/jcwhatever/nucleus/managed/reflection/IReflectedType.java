@@ -24,12 +24,14 @@
 
 package com.jcwhatever.nucleus.managed.reflection;
 
+import com.jcwhatever.nucleus.mixins.IWrapper;
+
 import javax.annotation.Nullable;
 
 /**
  * Interface for a reflected type.
  */
-public interface IReflectedType {
+public interface IReflectedType extends IWrapper<Class<?>> {
 
     /**
      * Get all fields of the specified type.
@@ -292,5 +294,6 @@ public interface IReflectedType {
     /**
      * Get the encapsulated class.
      */
+    @Override
     Class<?> getHandle();
 }

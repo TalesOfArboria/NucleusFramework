@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.managed.reflection;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.jcwhatever.nucleus.mixins.IWrapper;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 
 import java.lang.reflect.Constructor;
@@ -40,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * Stores globally available data about a class type.
  */
-class CachedReflectedType {
+class CachedReflectedType implements IWrapper<Class<?>> {
 
     private final Class<?> _clazz;
 
@@ -118,6 +119,7 @@ class CachedReflectedType {
     /**
      * Get the encapsulated class.
      */
+    @Override
     public Class<?> getHandle() {
         return _clazz;
     }

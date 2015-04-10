@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
+import com.jcwhatever.nucleus.mixins.IWrapper;
 import com.jcwhatever.nucleus.providers.IProvider;
 
 import java.util.UUID;
@@ -34,7 +35,7 @@ import javax.annotation.Nullable;
  *
  * <p>Should be implemented by a type that extends {@link com.jcwhatever.nucleus.providers.Provider}.</p>
  */
-public interface IEconomyProvider extends IProvider {
+public interface IEconomyProvider extends IProvider, IWrapper<Object> {
 
     /**
      * Get the default currency of the provider.
@@ -65,5 +66,6 @@ public interface IEconomyProvider extends IProvider {
      * Get the underlying economy provider if the provider is wrapped. Otherwise, the handle is
      * the {@link IEconomyProvider} instance.
      */
+    @Override
     Object getHandle();
 }

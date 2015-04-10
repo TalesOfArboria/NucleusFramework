@@ -24,12 +24,14 @@
 
 package com.jcwhatever.nucleus.managed.reflection;
 
+import com.jcwhatever.nucleus.mixins.IWrapper;
+
 import javax.annotation.Nullable;
 
 /**
  * A reflected instance of an object.
  */
-public interface IReflectedInstance {
+public interface IReflectedInstance extends IWrapper<Object> {
 
     /**
      * Get the {@link IReflectedType} of the instance.
@@ -88,5 +90,6 @@ public interface IReflectedInstance {
     /**
      * Get the encapsulated object instance.
      */
+    @Override
     Object getHandle();
 }

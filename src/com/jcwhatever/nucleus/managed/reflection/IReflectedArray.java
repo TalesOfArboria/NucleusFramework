@@ -24,10 +24,12 @@
 
 package com.jcwhatever.nucleus.managed.reflection;
 
+import com.jcwhatever.nucleus.mixins.IWrapper;
+
 /**
  * Interface for a reflected array instance.
  */
-public interface IReflectedArray {
+public interface IReflectedArray extends IWrapper<Object> {
 
     /**
      * Get the {@link IReflectedType} of the instance.
@@ -93,5 +95,6 @@ public interface IReflectedArray {
     /**
      * Get the encapsulated array instance.
      */
+    @Override
     Object getHandle();
 }

@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.providers.economy;
 
+import com.jcwhatever.nucleus.mixins.IWrapper;
 import com.jcwhatever.nucleus.utils.observer.future.IFutureResult;
 
 import java.util.UUID;
@@ -35,7 +36,7 @@ import javax.annotation.Nullable;
  * <p>Depending on implementation, an account may support multiple balances of each currency or
  * a single balance convertible to different currencies.</p>
  */
-public interface IAccount {
+public interface IAccount extends IWrapper<Object> {
 
     /**
      * Get the account owners unique Minecraft ID.
@@ -114,5 +115,6 @@ public interface IAccount {
      * Get the underlying account object if the object is wrapped. Otherwise, the handle is
      * the {@link IAccount} instance.
      */
+    @Override
     Object getHandle();
 }

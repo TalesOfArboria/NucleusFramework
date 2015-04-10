@@ -24,13 +24,15 @@
 
 package com.jcwhatever.nucleus.internal.managed.reflection;
 
+import com.jcwhatever.nucleus.mixins.IWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
+
 import javax.annotation.Nullable;
 
 /**
  * Base implementation of an instance wrapper.
  */
-abstract class Instance {
+abstract class Instance implements IWrapper<Object> {
 
     private final ReflectedType _type;
     private final Object _instance;
@@ -81,6 +83,7 @@ abstract class Instance {
     /**
      * Get the encapsulated object instance.
      */
+    @Override
     public Object getHandle() {
         return _instance;
     }

@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus.collections.observer.subscriber;
 
+import com.jcwhatever.nucleus.mixins.IWrapper;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.observer.ISubscriber;
 import com.jcwhatever.nucleus.utils.observer.ISubscriberAgent;
@@ -37,7 +38,7 @@ import java.util.Set;
  * <p>The {@link CollectionAgent} is a wrapper in case an implementation of the
  * collection needs to add its agent to a super class that uses {@link CollectionAgent}.
  */
-public abstract class CollectionAgent implements ISubscriberAgent {
+public abstract class CollectionAgent implements ISubscriberAgent, IWrapper<ISubscriberAgent> {
 
     private final ISubscriberAgent _agent;
 
@@ -55,10 +56,10 @@ public abstract class CollectionAgent implements ISubscriberAgent {
     /**
      * Get the encapsulated agent.
      */
+    @Override
     public ISubscriberAgent getHandle() {
         return _agent;
     }
-
 
     /**
      * Invoked when a subscriber is removed from the {@link CollectionAgent}

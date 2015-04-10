@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.providers.economy;
 
 import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.IWrapper;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
 
 import java.util.UUID;
@@ -36,7 +37,7 @@ import javax.annotation.Nullable;
  * <p>Depending on implementation, a bank may support multiple balances of each currency or
  * a single balance convertible to different currencies.</p>
  */
-public interface IBank extends INamed {
+public interface IBank extends INamed, IWrapper<Object> {
 
     /**
      * Get the ID of the bank owner.
@@ -122,5 +123,6 @@ public interface IBank extends INamed {
      * Get the underlying bank object if the object is wrapped. Otherwise,
      * the handle is the {@link IBank} instance.
      */
+    @Override
     Object getHandle();
 }

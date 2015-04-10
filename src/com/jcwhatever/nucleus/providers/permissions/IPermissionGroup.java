@@ -26,6 +26,7 @@
 package com.jcwhatever.nucleus.providers.permissions;
 
 import com.jcwhatever.nucleus.mixins.INamed;
+import com.jcwhatever.nucleus.mixins.IWrapper;
 
 import org.bukkit.OfflinePlayer;
 
@@ -34,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a permissions group.
  */
-public interface IPermissionGroup extends INamed {
+public interface IPermissionGroup extends INamed, IWrapper<Object> {
 
     /**
      * Get the name of the permissions group.
@@ -52,6 +53,7 @@ public interface IPermissionGroup extends INamed {
     /**
      * Get the underlying permission object.
      */
+    @Override
     @Nullable
     Object getHandle();
 }
