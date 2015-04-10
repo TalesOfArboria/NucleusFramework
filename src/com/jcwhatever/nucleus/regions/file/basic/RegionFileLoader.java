@@ -144,7 +144,12 @@ public class RegionFileLoader extends AbstractRegionFileAccess implements IRegio
             }
         });
 
-        return agent.getFuture();
+        return agent.getFuture().onStatus(new FutureSubscriber() {
+            @Override
+            public void on(FutureStatus status, @Nullable String message) {
+                region.getMeta().set(META_IS_READING, null);
+            }
+        });
     }
 
     private void runProject(QueueProject project, LoadSpeed speed) {
