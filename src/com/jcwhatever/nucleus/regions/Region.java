@@ -140,14 +140,6 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         return _plugin;
     }
 
-    /**
-     * Get the regions data node.
-     */
-    @Nullable
-    public IDataNode getDataNode() {
-        return _dataNode;
-    }
-
     @Override
     public int getPriority() {
         return 0;
@@ -193,7 +185,9 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
 
         UUID oldId = _ownerId;
 
-        RegionOwnerChangedEvent event = new RegionOwnerChangedEvent(new ReadOnlyRegion(this), oldId, ownerId);
+        RegionOwnerChangedEvent event = new RegionOwnerChangedEvent(
+                new ReadOnlyRegion(this), oldId, ownerId);
+
         Nucleus.getEventManager().callBukkit(this, event);
 
         if (event.isCancelled())
@@ -408,12 +402,19 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         return _name.hashCode();
     }
 
-
     @Override
     public boolean equals(Object obj) {
         synchronized (getSync()) {
             return this == obj;
         }
+    }
+
+    /**
+     * Get the regions data node.
+     */
+    @Nullable
+    protected IDataNode getDataNode() {
+        return _dataNode;
     }
 
     /**
@@ -466,8 +467,12 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
         initCoords(p1, p2);
 
         _ownerId = dataNode.getUUID("owner-id");
-        _enterPriority = dataNode.getEnum("region-enter-priority", _enterPriority, RegionEventPriority.class);
-        _leavePriority = dataNode.getEnum("region-leave-priority", _leavePriority, RegionEventPriority.class);
+
+        _enterPriority = dataNode.getEnum(
+                "region-enter-priority", _enterPriority, RegionEventPriority.class);
+
+        _leavePriority = dataNode.getEnum(
+                "region-leave-priority", _leavePriority, RegionEventPriority.class);
     }
 
     /*
