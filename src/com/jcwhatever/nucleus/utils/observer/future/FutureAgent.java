@@ -203,7 +203,7 @@ public class FutureAgent extends SubscriberAgent {
         public Future onStatus(FutureSubscriber subscriber) {
             PreCon.notNull(subscriber);
 
-            addSubscriber("onResult", subscriber);
+            addSubscriber("onStatus", subscriber);
 
             return this;
         }
