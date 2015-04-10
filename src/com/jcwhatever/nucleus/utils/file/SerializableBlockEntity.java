@@ -97,7 +97,7 @@ public class SerializableBlockEntity implements IAppliedSerializable {
     /**
      * Constructor.
      *
-     * <p>Required by {@link NucleusByteReader} to deserialize.</p>
+     * <p>Required by {@link BasicByteReader} to deserialize.</p>
      */
     private SerializableBlockEntity() {}
 
@@ -211,7 +211,7 @@ public class SerializableBlockEntity implements IAppliedSerializable {
     }
 
     @Override
-    public void serialize(NucleusByteWriter writer) throws IOException {
+    public void serialize(IByteWriter writer) throws IOException {
 
         if (getLocation() == null || getMaterial() == null)
             throw new RuntimeException("No data to serialize.");
@@ -281,7 +281,7 @@ public class SerializableBlockEntity implements IAppliedSerializable {
     }
 
     @Override
-    public void deserialize(NucleusByteReader reader) throws IOException {
+    public void deserialize(IByteReader reader) throws IOException {
 
         _location = reader.getLocation();
         _material = reader.getEnum(Material.class);

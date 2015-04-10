@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
- * Tests {@link NucleusByteReader}.
+ * Tests {@link BasicByteReader}.
  */
 public class NucleusByteReaderTest {
 
@@ -29,7 +29,7 @@ public class NucleusByteReaderTest {
     @Test
     public void testGetBytesRead() throws Exception {
 
-        NucleusByteReader reader = getReader(new byte[] { 0, 0, 0});
+        BasicByteReader reader = getReader(new byte[] { 0, 0, 0});
 
         reader.getByte();
         reader.getByte();
@@ -46,7 +46,7 @@ public class NucleusByteReaderTest {
     @Test
     public void testRead() throws Exception {
 
-        NucleusByteReader reader = getReader(new byte[] { 0, 1, 2});
+        BasicByteReader reader = getReader(new byte[] { 0, 1, 2});
 
         assertEquals(0, reader.getByte());
         assertEquals(1, reader.getByte());
@@ -60,7 +60,7 @@ public class NucleusByteReaderTest {
      */
     @Test
     public void testSkip() throws Exception {
-        NucleusByteReader reader = getReader(new byte[] { 0, 1, 2});
+        BasicByteReader reader = getReader(new byte[] { 0, 1, 2});
 
         assertEquals(0, reader.getByte());
         reader.skip(1);
@@ -75,7 +75,7 @@ public class NucleusByteReaderTest {
     @Test
     public void testGetBoolean() throws Exception {
 
-        NucleusByteReader reader = getReader(new byte[] { 0xF, 0, 0xF });
+        BasicByteReader reader = getReader(new byte[] { 0xF, 0, 0xF });
 
         assertEquals(true, reader.getBoolean());
         assertEquals(true, reader.getBoolean());
@@ -100,7 +100,7 @@ public class NucleusByteReaderTest {
      */
     @Test
     public void testGetByte() throws Exception {
-        NucleusByteReader reader = getReader(new byte[] { 0, 1, 2 });
+        BasicByteReader reader = getReader(new byte[] { 0, 1, 2 });
 
         assertEquals(0, reader.getByte());
         assertEquals(1, reader.getByte());
@@ -114,7 +114,7 @@ public class NucleusByteReaderTest {
      */
     @Test
     public void testGetBytes() throws Exception {
-        NucleusByteReader reader = getReader(new byte[] { 0, 0, 0, 1, 5 });
+        BasicByteReader reader = getReader(new byte[] { 0, 0, 0, 1, 5 });
 
         assertArrayEquals(new byte[]{5}, reader.getBytes());
 
@@ -126,7 +126,7 @@ public class NucleusByteReaderTest {
      */
     @Test
     public void testGetShort() throws Exception {
-        NucleusByteReader reader = getReader(new byte[] { 0, 5 });
+        BasicByteReader reader = getReader(new byte[] { 0, 5 });
 
         assertEquals(5, reader.getShort());
 
@@ -138,7 +138,7 @@ public class NucleusByteReaderTest {
      */
     @Test
     public void testGetInteger() throws Exception {
-        NucleusByteReader reader = getReader(new byte[] { 0, 0, 0, 5 });
+        BasicByteReader reader = getReader(new byte[] { 0, 0, 0, 5 });
 
         assertEquals(5, reader.getInteger());
 
@@ -150,7 +150,7 @@ public class NucleusByteReaderTest {
      */
     @Test
     public void testGetLong() throws Exception {
-        NucleusByteReader reader = getReader(new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 });
+        BasicByteReader reader = getReader(new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 });
 
         assertEquals(5, reader.getLong());
 
@@ -173,7 +173,7 @@ public class NucleusByteReaderTest {
 
         bytes[1] = (byte)stringBytes.length; // string length
 
-        NucleusByteReader reader = getReader(bytes);
+        BasicByteReader reader = getReader(bytes);
 
         assertEquals("test", reader.getString());
 
@@ -189,7 +189,7 @@ public class NucleusByteReaderTest {
 
         byte[] bytes  = getSmallStringBytes("test");
 
-        NucleusByteReader reader = getReader(bytes);
+        BasicByteReader reader = getReader(bytes);
 
         assertEquals("test", reader.getSmallString());
 
@@ -204,7 +204,7 @@ public class NucleusByteReaderTest {
 
         byte[] bytes  = getSmallStringBytes("0.1");
 
-        NucleusByteReader reader = getReader(bytes);
+        BasicByteReader reader = getReader(bytes);
 
         assertEquals(0.1F, reader.getFloat(), 0.0F);
 
@@ -219,7 +219,7 @@ public class NucleusByteReaderTest {
 
         byte[] bytes  = getSmallStringBytes("0.1");
 
-        NucleusByteReader reader = getReader(bytes);
+        BasicByteReader reader = getReader(bytes);
 
         assertEquals(0.1D, reader.getDouble(), 0.0D);
 
@@ -233,7 +233,7 @@ public class NucleusByteReaderTest {
     public void testGetEnum() throws Exception {
         byte[] bytes  = getSmallStringBytes(TestEnum.CONSTANT.name());
 
-        NucleusByteReader reader = getReader(bytes);
+        BasicByteReader reader = getReader(bytes);
 
         assertEquals(TestEnum.CONSTANT, reader.getEnum(TestEnum.class));
 
@@ -256,18 +256,18 @@ public class NucleusByteReaderTest {
         ArrayUtils.copyFromStart(most, bytes);
         ArrayUtils.copyFromEnd(least, bytes);
 
-        NucleusByteReader reader = getReader(bytes);
+        BasicByteReader reader = getReader(bytes);
 
         assertEquals(uuid, reader.getUUID());
 
         reader.close();
     }
 
-    private NucleusByteReader getReader(byte[] array) {
+    private BasicByteReader getReader(byte[] array) {
 
         InputStream stream = new ByteArrayInputStream(array);
 
-        return new NucleusByteReader(stream);
+        return new BasicByteReader(stream);
     }
 
     private byte[] getSmallStringBytes(String test) {

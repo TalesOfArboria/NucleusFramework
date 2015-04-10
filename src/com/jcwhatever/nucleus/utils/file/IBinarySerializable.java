@@ -28,12 +28,12 @@ package com.jcwhatever.nucleus.utils.file;
 import java.io.IOException;
 
 /**
- * Mixin used by {@link NucleusByteWriter} to serialize an object and by
- * {@link NucleusByteReader} to subsequently deserialize data from a stream.
+ * Mixin used by {@link BasicByteWriter} to serialize an object and by
+ * {@link BasicByteReader} to subsequently deserialize data from a stream.
  *
  * <p>The implementer must be able to serialize itself into the stream using the
- * provided instance of {@link NucleusByteWriter} and deserialize data into an empty
- * instance of itself using the {@link NucleusByteReader}.</p>
+ * provided instance of {@link BasicByteWriter} and deserialize data into an empty
+ * instance of itself using the {@link BasicByteReader}.</p>
  *
  * <p>For de-serialization, the implementer is required to have an empty constructor.
  * The constructor does not have to be public.</p>
@@ -41,17 +41,17 @@ import java.io.IOException;
 public interface IBinarySerializable {
 
     /**
-     * Serialize the object into a {@link NucleusByteWriter} stream.
+     * Serialize the object into a {@link BasicByteWriter} stream.
      *
      * @param writer  The writer.
      */
-    void serialize(NucleusByteWriter writer) throws IOException;
+    void serialize(IByteWriter writer) throws IOException;
 
     /**
      * Deserialize information from the reader into the {@link IBinarySerializable} object.
      *
      * @param reader  The reader.
      */
-    void deserialize(NucleusByteReader reader)
+    void deserialize(IByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException;
 }

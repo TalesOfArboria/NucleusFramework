@@ -24,13 +24,13 @@
 
 package com.jcwhatever.nucleus.utils.coords;
 
-import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
-import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
-import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
+import com.jcwhatever.nucleus.utils.file.IByteReader;
+import com.jcwhatever.nucleus.utils.file.IByteWriter;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -370,13 +370,13 @@ public class Coords2Di implements ICoords2Di, IDataNodeSerializable, IBinarySeri
     }
 
     @Override
-    public void serialize(NucleusByteWriter writer) throws IOException {
+    public void serialize(IByteWriter writer) throws IOException {
         writer.write(_x);
         writer.write(_z);
     }
 
     @Override
-    public void deserialize(NucleusByteReader reader)
+    public void deserialize(IByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException {
 
         _x = reader.getInteger();

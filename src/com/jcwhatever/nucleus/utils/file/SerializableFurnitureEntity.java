@@ -117,7 +117,7 @@ public class SerializableFurnitureEntity implements IAppliedSerializable {
     /**
      * Constructor.
      *
-     * <p>Required by {@link NucleusByteReader} to deserialize.</p>
+     * <p>Required by {@link BasicByteReader} to deserialize.</p>
      */
     private SerializableFurnitureEntity() {}
 
@@ -213,7 +213,7 @@ public class SerializableFurnitureEntity implements IAppliedSerializable {
     }
 
     @Override
-    public void serialize(NucleusByteWriter writer) throws IOException {
+    public void serialize(IByteWriter writer) throws IOException {
 
         writer.write(_location);
         writer.write(_type);
@@ -262,7 +262,7 @@ public class SerializableFurnitureEntity implements IAppliedSerializable {
     }
 
     @Override
-    public void deserialize(NucleusByteReader reader) throws IOException, ClassNotFoundException {
+    public void deserialize(IByteReader reader) throws IOException, ClassNotFoundException {
 
         _location = reader.getLocation();
         _type = reader.getEnum(EntityType.class);

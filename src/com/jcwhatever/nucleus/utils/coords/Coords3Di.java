@@ -24,11 +24,11 @@
 
 package com.jcwhatever.nucleus.utils.coords;
 
-import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
-import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
+import com.jcwhatever.nucleus.utils.file.IByteReader;
+import com.jcwhatever.nucleus.utils.file.IByteWriter;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -446,13 +446,13 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
     }
 
     @Override
-    public void serialize(NucleusByteWriter writer) throws IOException {
+    public void serialize(IByteWriter writer) throws IOException {
         super.serialize(writer);
         writer.write(_y);
     }
 
     @Override
-    public void deserialize(NucleusByteReader reader)
+    public void deserialize(IByteReader reader)
             throws IOException, ClassNotFoundException, InstantiationException {
 
         super.deserialize(reader);

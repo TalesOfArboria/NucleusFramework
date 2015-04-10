@@ -24,11 +24,11 @@
 
 package com.jcwhatever.nucleus.utils.coords;
 
-import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
-import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
+import com.jcwhatever.nucleus.utils.file.IByteReader;
+import com.jcwhatever.nucleus.utils.file.IByteWriter;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -122,7 +122,7 @@ public final class ChunkBlockInfo extends Coords3Di
     }
 
     @Override
-    public void serialize(NucleusByteWriter writer) throws IOException {
+    public void serialize(IByteWriter writer) throws IOException {
         writer.write((byte)((getX() << 4) | (getY() & 0xF)));
         writer.write((short)getY());
         writer.write(_material);
@@ -131,7 +131,9 @@ public final class ChunkBlockInfo extends Coords3Di
     }
 
     @Override
-    public void deserialize(NucleusByteReader reader) throws IOException, ClassNotFoundException, InstantiationException {
+    public void deserialize(IByteReader reader)
+            throws IOException, ClassNotFoundException, InstantiationException {
+
         int xz = reader.getByte();
         int x = xz >> 4;
         int z = xz & 0xF;

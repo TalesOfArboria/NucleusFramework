@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Tests {@link NucleusByteWriter}.
+ * Tests {@link BasicByteWriter}.
  */
 public class NucleusByteWriterTest {
 
@@ -21,7 +21,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testGetBytesWritten() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write((byte)1);
 
@@ -52,7 +52,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testWriteBoolean() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(true);
         writer.write(false);
@@ -74,7 +74,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testWriteByte() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write((byte)5);
         writer.flush();
@@ -92,7 +92,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testWriteBytes() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(new byte[] { 1, 2, 3, 4, 5});
         writer.flush();
@@ -110,7 +110,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testWriteShort() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write((short)5);
         writer.flush();
@@ -128,7 +128,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testWriteInteger() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(5);
         writer.flush();
@@ -146,7 +146,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testWriteLong() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(5L);
         writer.flush();
@@ -164,7 +164,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testWriteFloat() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(1.0F);
         writer.flush();
@@ -182,7 +182,7 @@ public class NucleusByteWriterTest {
     @Test
     public void testWriteDouble() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(1.0D);
         writer.flush();
@@ -201,7 +201,7 @@ public class NucleusByteWriterTest {
     public void testWriteString() throws Exception {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write("test");
         writer.flush();
@@ -228,7 +228,7 @@ public class NucleusByteWriterTest {
     public void testWriteSmallString() throws Exception {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.writeSmallString("test");
         writer.flush();

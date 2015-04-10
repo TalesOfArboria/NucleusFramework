@@ -29,8 +29,8 @@ import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
 import com.jcwhatever.nucleus.utils.file.IBinarySerializable;
-import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
-import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
+import com.jcwhatever.nucleus.utils.file.IByteReader;
+import com.jcwhatever.nucleus.utils.file.IByteWriter;
 
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
@@ -345,7 +345,7 @@ public class RegionChunkSection implements IBinarySerializable {
     }
 
     @Override
-    public void serialize(NucleusByteWriter writer) throws IOException {
+    public void serialize(IByteWriter writer) throws IOException {
         PreCon.notNull(writer);
 
         writer.write(_p1);
@@ -356,7 +356,7 @@ public class RegionChunkSection implements IBinarySerializable {
     }
 
     @Override
-    public void deserialize(NucleusByteReader reader) throws IOException, InstantiationException {
+    public void deserialize(IByteReader reader) throws IOException, InstantiationException {
         PreCon.notNull(reader);
 
         Location p1 = reader.getLocation();

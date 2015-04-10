@@ -51,9 +51,9 @@ import javax.annotation.Nullable;
 
 /**
  * Write bytes to a stream. In order to read the stream
- * properly, {@link NucleusByteReader} needs to be used.
+ * properly, {@link BasicByteReader} needs to be used.
  */
-public class NucleusByteWriter extends OutputStream {
+public class BasicByteWriter extends OutputStream implements IByteWriter {
 
     private static final byte[] BOOLEAN_FLAGS = new byte[] { 1, 2, 4, 8, 16, 32, 64 };
 
@@ -69,13 +69,14 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @param outputStream  The output stream.
      */
-    public NucleusByteWriter(OutputStream outputStream) {
+    public BasicByteWriter(OutputStream outputStream) {
         _stream = outputStream;
     }
 
     /**
      * Get the number of bytes written.
      */
+    @Override
     public long getBytesWritten() {
         return _bytesWritten;
     }
@@ -93,6 +94,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(boolean booleanValue) throws IOException {
 
         if (_booleanCount == 7) {
@@ -113,6 +115,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(byte byteValue) throws IOException {
 
         // write buffered booleans
@@ -158,6 +161,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(short shortValue) throws IOException {
 
         // write buffered booleans
@@ -198,6 +202,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(long longValue) throws IOException {
 
         // write buffered booleans
@@ -225,6 +230,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(float floatValue) throws IOException {
         writeSmallString(String.valueOf(floatValue));
     }
@@ -239,6 +245,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(double doubleValue) throws IOException {
         writeSmallString(String.valueOf(doubleValue));
     }
@@ -253,6 +260,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(@Nullable BigDecimal decimal) throws IOException {
         write((Serializable) decimal);
     }
@@ -267,6 +275,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(@Nullable BigInteger integer) throws IOException {
         write((Serializable) integer);
     }
@@ -287,6 +296,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(@Nullable String text) throws IOException {
         write(text, StandardCharsets.UTF_16);
     }
@@ -308,6 +318,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(@Nullable String text, Charset charset) throws IOException {
 
         // write buffered booleans
@@ -352,6 +363,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void writeSmallString(String text) throws IOException {
 
         // write buffered booleans
@@ -393,6 +405,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public <T extends Enum<T>> void write(T enumConstant) throws IOException {
         PreCon.notNull(enumConstant);
 
@@ -409,6 +422,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(UUID uuid) throws IOException {
         PreCon.notNull(uuid);
 
@@ -434,6 +448,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(Location location) throws IOException {
         PreCon.notNull(location);
 
@@ -464,6 +479,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(EulerAngle angle) throws IOException {
         PreCon.notNull(angle);
 
@@ -497,6 +513,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public void write(@Nullable ItemStack itemStack) throws IOException {
 
         write(itemStack != null);
@@ -536,6 +553,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public <T extends IBinarySerializable> void write(@Nullable T object) throws IOException {
         write(object != null);
         if (object == null)
@@ -554,6 +572,7 @@ public class NucleusByteWriter extends OutputStream {
      *
      * @throws IOException
      */
+    @Override
     public <T extends Serializable> void write(@Nullable T object) throws IOException {
 
         // write null flag

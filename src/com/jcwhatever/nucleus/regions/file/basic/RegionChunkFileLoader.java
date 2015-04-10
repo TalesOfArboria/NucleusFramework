@@ -32,7 +32,7 @@ import com.jcwhatever.nucleus.regions.file.IRegionFileLoader.LoadType;
 import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.ICoords2Di;
-import com.jcwhatever.nucleus.utils.file.NucleusByteReader;
+import com.jcwhatever.nucleus.utils.file.BasicByteReader;
 import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
 import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.utils.observer.future.IFuture;
@@ -164,7 +164,7 @@ public class RegionChunkFileLoader {
      */
     private final class LoadChunkIterator extends Iteration3DTask {
 
-        private NucleusByteReader reader;
+        private BasicByteReader reader;
         private final ChunkSnapshot snapshot;
         private final File file;
         private final LoadType loadType;
@@ -195,7 +195,7 @@ public class RegionChunkFileLoader {
 
             try {
 
-                reader = new NucleusByteReader(new FileInputStream(file));
+                reader = new BasicByteReader(new FileInputStream(file));
 
                 // Read restore file version
                 int restoreFileVersion = reader.getInteger();

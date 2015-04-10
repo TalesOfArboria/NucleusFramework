@@ -14,7 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Tests {@link NucleusByteReader} and {@link NucleusByteWriter} inter-compatibility.
+ * Tests {@link BasicByteReader} and {@link BasicByteWriter} inter-compatibility.
  */
 public class NucleusByteReaderWriterTest {
 
@@ -25,7 +25,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testBoolean() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(true);
         writer.write(false);
@@ -38,7 +38,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(true, reader.getBoolean());
         assertEquals(false, reader.getBoolean());
@@ -55,7 +55,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testByte() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write((byte)5);
         writer.flush();
@@ -64,7 +64,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(5, reader.getByte());
 
@@ -77,7 +77,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testBytes() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(new byte[] { 1, 2, 3, 4, 5});
         writer.flush();
@@ -86,7 +86,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, reader.getBytes());
 
@@ -99,7 +99,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testShort() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write((short)5);
         writer.flush();
@@ -108,7 +108,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(5, reader.getShort());
 
@@ -121,7 +121,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testInteger() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(5);
         writer.flush();
@@ -130,7 +130,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(5, reader.getInteger());
 
@@ -143,7 +143,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testLong() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(5L);
         writer.flush();
@@ -153,7 +153,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(5, reader.getLong());
 
@@ -167,7 +167,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testFloat() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(1.0F);
         writer.flush();
@@ -176,7 +176,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(1.0f, reader.getFloat(), 1.0f);
 
@@ -190,7 +190,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testWriteDouble() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write(1.0D);
         writer.flush();
@@ -199,7 +199,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(1.0D, reader.getDouble(), 1.0D);
 
@@ -213,7 +213,7 @@ public class NucleusByteReaderWriterTest {
     public void testString() throws Exception {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.write("test");
         writer.flush();
@@ -222,7 +222,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals("test", reader.getString());
 
@@ -236,7 +236,7 @@ public class NucleusByteReaderWriterTest {
     public void testSmallString() throws Exception {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         writer.writeSmallString("test");
         writer.flush();
@@ -245,7 +245,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals("test", reader.getSmallString());
 
@@ -258,7 +258,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testLocation() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         // null world location
         Location location = new SyncLocation((String)null, 10.0D, 10.0D, 10.0D, 7f, 8f);
@@ -272,7 +272,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(location, reader.getLocation());
         assertEquals(location, reader.getLocation());
@@ -287,7 +287,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testLocation1() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         BukkitTester.init();
         World world = BukkitTester.world("world");
@@ -303,7 +303,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(location, reader.getLocation());
         assertEquals(location, reader.getLocation());
@@ -315,7 +315,7 @@ public class NucleusByteReaderWriterTest {
     @Test
     public void testLocation2() throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        NucleusByteWriter writer =  new NucleusByteWriter(stream);
+        BasicByteWriter writer =  new BasicByteWriter(stream);
 
         BukkitTester.init();
         World world = BukkitTester.world("world");
@@ -333,7 +333,7 @@ public class NucleusByteReaderWriterTest {
         writer.close();
 
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        NucleusByteReader reader = new NucleusByteReader(input);
+        BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals(new SyncLocation(location1), reader.getLocation());
         assertEquals(new SyncLocation(location2), reader.getLocation());

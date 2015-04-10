@@ -28,7 +28,7 @@ import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
-import com.jcwhatever.nucleus.utils.file.NucleusByteWriter;
+import com.jcwhatever.nucleus.utils.file.BasicByteWriter;
 import com.jcwhatever.nucleus.utils.file.SerializableBlockEntity;
 import com.jcwhatever.nucleus.utils.file.SerializableFurnitureEntity;
 import com.jcwhatever.nucleus.utils.observer.future.FutureSubscriber;
@@ -206,7 +206,7 @@ public class RegionChunkFileWriter {
      */
     private final class SaveChunkIterator extends Iteration3DTask {
 
-        private NucleusByteWriter writer;
+        private BasicByteWriter writer;
         private final File file;
 
         public SaveChunkIterator (File file, long segmentSize,
@@ -224,7 +224,7 @@ public class RegionChunkFileWriter {
         protected void onIterateBegin() {
 
             try {
-                writer = new NucleusByteWriter(new FileOutputStream(file));
+                writer = new BasicByteWriter(new FileOutputStream(file));
                 writer.write(SAVE_FILE_VERSION);
 
                 // write region name
