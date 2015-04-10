@@ -35,6 +35,7 @@ import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -492,6 +493,22 @@ public class BasicByteReader extends InputStream implements IByteReader {
         double z = getDouble();
 
         return new EulerAngle(x, y, z);
+    }
+
+    /**
+     * Get the next group of bytes as a Vector.
+     *
+     * <p>The vector is read as x, y, and z value as doubles.</p>
+     *
+     * @throws IOException
+     */
+    @Override
+    public Vector getVector() throws IOException {
+        double x = getDouble();
+        double y = getDouble();
+        double z = getDouble();
+
+        return new Vector(x, y, z);
     }
 
     /**

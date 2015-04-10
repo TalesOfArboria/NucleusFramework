@@ -28,6 +28,7 @@ import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -196,6 +197,13 @@ public interface IByteReader {
      * @throws IOException
      */
     EulerAngle getEulerAngle() throws IOException;
+
+    /**
+     * Get the next group of bytes as a Vector.
+     *
+     * @throws IOException
+     */
+    Vector getVector() throws IOException;
 
     /**
      * Get the next group of bytes as an item stack.

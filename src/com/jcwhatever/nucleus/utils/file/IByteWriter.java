@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.utils.file;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -205,6 +206,15 @@ public interface IByteWriter {
      * @throws IOException
      */
     void write(EulerAngle angle) throws IOException;
+
+    /**
+     * Write an {@link Vector}.
+     *
+     * @param vector  The vector.
+     *
+     * @throws IOException
+     */
+    void write(Vector vector) throws IOException;
 
     /**
      * Write an {@link ItemStack}.

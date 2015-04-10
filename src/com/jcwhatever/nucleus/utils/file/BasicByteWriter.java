@@ -34,6 +34,7 @@ import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -486,6 +487,25 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
         write(angle.getX());
         write(angle.getY());
         write(angle.getZ());
+    }
+
+    /**
+     * Write a {@link Vector}.
+     *
+     * <p>The vector is written as three doubles representing
+     * x, y and z. (See {@link #write(double)}</p>
+     *
+     * @param vector  The vector.
+     *
+     * @throws IOException
+     */
+    @Override
+    public void write(Vector vector) throws IOException {
+        PreCon.notNull(vector);
+
+        write(vector.getX());
+        write(vector.getY());
+        write(vector.getZ());
     }
 
     /**
