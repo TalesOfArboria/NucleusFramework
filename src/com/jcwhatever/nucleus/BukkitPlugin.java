@@ -24,6 +24,7 @@
 
 package com.jcwhatever.nucleus;
 
+import com.jcwhatever.nucleus.internal.commands.regions.RegionsCommand;
 import com.jcwhatever.nucleus.internal.events.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
@@ -207,6 +208,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         registerCommand(KitsCommand.class);
         registerCommand(PluginsCommand.class);
         registerCommand(ProvidersCommand.class);
+        registerCommand(RegionsCommand.class);
         registerCommand(ScriptsCommand.class);
         registerCommand(SignsCommand.class);
         registerCommand(StorageCommand.class);
