@@ -28,25 +28,26 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.internal.providers.InternalProviderInfo;
+import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.providers.Provider;
 import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.jail.IJailSession;
-import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.DateUtils;
 import com.jcwhatever.nucleus.utils.DateUtils.TimeRound;
 import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -318,14 +319,23 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
                     if (releaseLoc == null)
                         releaseLoc = session.getReleaseLocation();
 
+                    if (releaseLoc == null) {
+                        World world = session.getJail().getRegion().getWorld();
+
+                        if (world != null)
+                            releaseLoc = world.getSpawnLocation();
+                    }
+
                     if (!session.isReleased())
                         session.release();
 
-                    p.teleport(releaseLoc);
+                    if (releaseLoc != null)
+                        p.teleport(releaseLoc);
                 }
                 else if (!silent) {
 
-                    long releaseMinutes = DateUtils.getDeltaMinutes(now, session.getExpiration(), TimeRound.ROUND_UP);
+                    long releaseMinutes = DateUtils
+                            .getDeltaMinutes(now, session.getExpiration(), TimeRound.ROUND_UP);
 
                     Long lastMessageMin = session.getMeta().get(RELEASE_MESSAGE_META);
                     if (lastMessageMin == null ||

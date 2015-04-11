@@ -101,7 +101,8 @@ class NucleusJail implements IJail {
         PreCon.greaterThanZero(duration);
         PreCon.notNull(timeScale);
 
-        return imprison(player, new Date(System.currentTimeMillis() + (duration * timeScale.getTimeFactor())));
+        return imprison(player,
+                new Date(System.currentTimeMillis() + (duration * timeScale.getTimeFactor())));
     }
 
     @Nullable
@@ -279,13 +280,10 @@ class NucleusJail implements IJail {
          */
         public Bounds(Plugin plugin, String name, @Nullable IDataNode dataNode) {
             super(plugin, name, dataNode);
+
+            setEventListener(true);
         }
 
-        /**
-         * Determine if the {@link #onPlayerLeave} method can be called.
-         *
-         * @param player  The player leaving the region.
-         */
         @Override
         protected boolean canDoPlayerLeave(Player player, LeaveRegionReason reason) {
             PreCon.notNull(player);
@@ -293,11 +291,6 @@ class NucleusJail implements IJail {
             return reason != LeaveRegionReason.QUIT_SERVER && isPrisoner(player);
         }
 
-        /**
-         * Prevent imprisoned players from leaving the jail region.
-         *
-         * @param player  The player leaving the region.
-         */
         @Override
         protected void onPlayerLeave (final Player player, LeaveRegionReason reason) {
             PreCon.notNull(player);
@@ -315,7 +308,6 @@ class NucleusJail implements IJail {
                     player.teleport(tpLocation);
                 }
             });
-
         }
     }
 }
