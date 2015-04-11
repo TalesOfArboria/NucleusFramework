@@ -26,20 +26,18 @@
 package com.jcwhatever.nucleus.utils.items;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackDeserializer;
 import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerializer;
 import com.jcwhatever.nucleus.managed.items.serializer.InvalidItemStackStringException;
+import com.jcwhatever.nucleus.utils.CollectionUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.MaterialData;
@@ -339,142 +337,6 @@ public final class ItemStackUtils {
             return laMeta.getColor();
         }
         return null;
-    }
-
-    /**
-     * Add enchantments to an {@link ItemStack}.
-     *
-     * @param stack         The {@link ItemStack} to add enchantments to.
-     * @param enchantments  Enchantments to add
-     */
-    public static void addEnchantments(ItemStack stack, Collection<EnchantmentLevel> enchantments) {
-        PreCon.notNull(stack);
-        PreCon.notNull(enchantments);
-
-        ItemMeta meta = stack.getItemMeta();
-
-        // check for enchantment storage items such as enchanted books
-        if (meta instanceof EnchantmentStorageMeta) {
-            EnchantmentStorageMeta storage = (EnchantmentStorageMeta)meta;
-
-            for (EnchantmentLevel enchant : enchantments) {
-                storage.addStoredEnchant(enchant.getEnchantment(), enchant.getLevel(), true);
-            }
-
-            stack.setItemMeta(storage);
-        }
-        else {
-            for (EnchantmentLevel enchant : enchantments) {
-                stack.addUnsafeEnchantment(enchant.getEnchantment(), enchant.getLevel());
-            }
-        }
-    }
-
-    /**
-     * Add an enchantment to an {@link ItemStack}.
-     *
-     * @param stack    The {@link ItemStack}.
-     * @param enchant  The {@link EnchantmentLevel} containing enchantment info.
-     */
-    public static void addEnchantment(ItemStack stack, EnchantmentLevel enchant) {
-        PreCon.notNull(stack);
-        PreCon.notNull(enchant);
-
-        addEnchantment(stack, enchant.getEnchantment(), enchant.getLevel());
-    }
-
-    /**
-     * Add an enchantment to an {@link ItemStack}.
-     *
-     * @param stack        The {@link ItemStack}.
-     * @param enchantName  The enchantment to add.
-     * @param level        The enchantment level.
-     *
-     * @return  True if the enchantName was found and applied, otherwise false.
-     */
-    public static boolean addEnchantment(ItemStack stack, String enchantName, int level) {
-        PreCon.notNull(stack);
-        PreCon.notNullOrEmpty(enchantName);
-        PreCon.positiveNumber(level);
-
-        Enchantment enchantment = Enchantment.getByName(enchantName);
-        if (enchantment == null)
-            return false;
-
-        addEnchantment(stack, enchantment, level);
-
-        return true;
-    }
-
-    /**
-     * Add an enchantment to an {@link ItemStack}.
-     *
-     * @param stack    The item stack.
-     * @param enchant  The enchantment to add.
-     * @param level    The enchantment level.
-     */
-    public static void addEnchantment(ItemStack stack, Enchantment enchant, int level) {
-        PreCon.notNull(stack);
-        PreCon.notNull(enchant);
-        PreCon.positiveNumber(level);
-
-        ItemMeta meta = stack.getItemMeta();
-
-        // check for enchantment storage items such as enchanted books
-        if (meta instanceof EnchantmentStorageMeta) {
-            EnchantmentStorageMeta storage = (EnchantmentStorageMeta)meta;
-            storage.addStoredEnchant(enchant, level, true);
-            stack.setItemMeta(storage);
-        }
-        else {
-            stack.addUnsafeEnchantment(enchant, level);
-        }
-    }
-
-    /**
-     * Removes an enchantment from an {@link ItemStack} and returns an
-     * {@link EnchantmentLevel} containing the enchantment and enchantment
-     * level before it was removed.
-     *
-     * @param stack            The item stack.
-     * @param enchantmentName  The name of the enchantment to remove.
-     *
-     * @return  Null if the enchantment name is not found or the item did not have
-     * the enchantment.
-     */
-    @Nullable
-    public static EnchantmentLevel removeEnchantment(ItemStack stack, String enchantmentName) {
-        PreCon.notNull(stack);
-        PreCon.notNullOrEmpty(enchantmentName);
-
-        Enchantment enchantment = Enchantment.getByName(enchantmentName);
-        if (enchantment == null)
-            return null;
-
-        return removeEnchantment(stack, enchantment);
-    }
-
-    /**
-     * Removes an enchantment from an {@link ItemStack} and returns an
-     * {@link EnchantmentLevel} containing the enchantment and enchantment
-     * level before it was removed.
-     *
-     * @param stack        The item stack.
-     * @param enchantment  The enchantment to remove.
-     *
-     * @return  Null if the item did not have the enchantment
-     */
-    @Nullable
-    public static EnchantmentLevel removeEnchantment(ItemStack stack, Enchantment enchantment) {
-        PreCon.notNull(stack);
-        PreCon.notNull(enchantment);
-
-        if (!stack.getEnchantments().containsKey(enchantment))
-            return null;
-
-        int level = stack.removeEnchantment(enchantment);
-
-        return new EnchantmentLevel(level, enchantment);
     }
 
     /**

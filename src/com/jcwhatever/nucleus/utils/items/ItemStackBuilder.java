@@ -24,8 +24,10 @@
 
 package com.jcwhatever.nucleus.utils.items;
 
-import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.enchantment.EnchantUtils;
+import com.jcwhatever.nucleus.utils.enchantment.IEnchantmentLevel;
+import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -49,7 +51,7 @@ public class ItemStackBuilder {
     private Short _durability;
     private String _display;
     private List<String> _lore;
-    private List<EnchantmentLevel> _enchantments;
+    private List<IEnchantmentLevel> _enchantments;
     private Color _color;
 
     /**
@@ -189,7 +191,7 @@ public class ItemStackBuilder {
         if (_enchantments == null)
             _enchantments = new ArrayList<>(15);
 
-        _enchantments.add(new EnchantmentLevel(level, enchantment));
+        _enchantments.add(EnchantUtils.wrap(level, enchantment));
 
         return this;
     }
@@ -281,7 +283,7 @@ public class ItemStackBuilder {
 
         if (_enchantments != null) {
 
-            for (EnchantmentLevel wrapper : _enchantments) {
+            for (IEnchantmentLevel wrapper : _enchantments) {
                 itemStack.addUnsafeEnchantment(wrapper.getEnchantment(), wrapper.getLevel());
             }
         }

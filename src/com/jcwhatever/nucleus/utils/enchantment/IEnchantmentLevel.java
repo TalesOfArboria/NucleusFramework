@@ -22,45 +22,23 @@
  * THE SOFTWARE.
  */
 
-
-package com.jcwhatever.nucleus.utils.items;
-
-import com.jcwhatever.nucleus.utils.PreCon;
+package com.jcwhatever.nucleus.utils.enchantment;
 
 import org.bukkit.enchantments.Enchantment;
 
 /**
- * A wrapper to hold an Enchantment as well as its level.
+ * Interface for a wrapper that contains an enchantment and the enchantment
+ * level.
  */
-public class EnchantmentLevel {
-
-    private final int _level;
-    private final Enchantment _enchantment;
-
-    /**
-     * Constructor.
-     *
-     * @param enchant  The enchantment.
-     * @param level    The enchantment level.
-     */
-    public EnchantmentLevel(int level, Enchantment enchant) {
-        PreCon.notNull(enchant);
-
-        _enchantment = enchant;
-        _level = level;
-    }
+public interface IEnchantmentLevel {
 
     /**
      * Get the enchantment.
      */
-    public Enchantment getEnchantment() {
-        return _enchantment;
-    }
+    Enchantment getEnchantment();
 
     /**
      * Get the enchantment level.
      */
-    public int getLevel() {
-        return _level;
-    }
+    int getLevel();
 }
