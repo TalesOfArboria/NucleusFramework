@@ -33,8 +33,6 @@ import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent.NpcSpawnReason;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
-import org.bukkit.potion.PotionEffectType;
-
 /**
  * Abstract implementation of an NPC Trait.
  *
@@ -266,33 +264,6 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * <p>Intended for optional override.</p>
      */
     protected void onDisable() {}
-
-    /**
-     * Get a {@link org.bukkit.potion.PotionEffectType} from an object. The object must be
-     * an instance of {@link org.bukkit.potion.PotionEffectType} or the name of the type.
-     *
-     * @param object  The potion effect type or name.
-     *
-     * @return  The potion effect type.
-     */
-    protected PotionEffectType getPotionEffectType(Object object) {
-
-        if (object instanceof String) {
-            String name = ((String)object).toUpperCase();
-
-            PotionEffectType type = PotionEffectType.getByName(name);
-            if (type == null)
-                throw new IllegalArgumentException(name + " is not a valid PotionEffectType.");
-
-            return type;
-        }
-        else if (object instanceof PotionEffectType) {
-            return (PotionEffectType)object;
-        }
-        else {
-            throw new IllegalArgumentException("Expected PotionEffectType or name of type.");
-        }
-    }
 
     /**
      * Initialize the trait or re-init.
