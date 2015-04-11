@@ -212,7 +212,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
         PreCon.notNull(output);
 
         output.setX(coords.getX());
-        output.setY(coords.getX());
+        output.setY(coords.getY());
         output.setZ(coords.getZ());
         return output;
     }
@@ -232,7 +232,7 @@ public class Coords3D extends Coords2D implements ICoords3D {
 
         output.setWorld(world);
         output.setX(coords.getX());
-        output.setY(coords.getX());
+        output.setY(coords.getY());
         output.setZ(coords.getZ());
         return output;
     }

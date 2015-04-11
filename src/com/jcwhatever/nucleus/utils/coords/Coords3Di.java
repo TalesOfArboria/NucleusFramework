@@ -189,7 +189,7 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
         PreCon.notNull(output);
 
         output.setX(coords.getX());
-        output.setY(coords.getX());
+        output.setY(coords.getY());
         output.setZ(coords.getZ());
         return output;
     }
@@ -209,7 +209,7 @@ public class Coords3Di extends Coords2Di implements ICoords3Di {
 
         output.setWorld(world);
         output.setX(coords.getX());
-        output.setY(coords.getX());
+        output.setY(coords.getY());
         output.setZ(coords.getZ());
         return output;
     }
