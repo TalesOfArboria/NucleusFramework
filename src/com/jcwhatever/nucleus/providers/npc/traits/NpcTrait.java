@@ -31,10 +31,7 @@ import com.jcwhatever.nucleus.providers.npc.INpcRegistry;
 import com.jcwhatever.nucleus.providers.npc.events.NpcDespawnEvent.NpcDespawnReason;
 import com.jcwhatever.nucleus.providers.npc.events.NpcSpawnEvent.NpcSpawnReason;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.EnumUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.potion.PotionEffectType;
 
@@ -269,53 +266,6 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * <p>Intended for optional override.</p>
      */
     protected void onDisable() {}
-
-    /**
-     * Get an enum from an object.
-     *
-     * <p>The object must be an instance of the enum or the name of the enum.</p>
-     *
-     * @param name       The enum constant name.
-     * @param enumClass  The enum class.
-     *
-     * @param <T>  The enum type.
-     *
-     * @return  The enum constant.
-     */
-    protected <T extends Enum> T getEnum(Object name, Class<T> enumClass) {
-
-        if (name instanceof String) {
-
-            String str = (String) name;
-
-            if (str.equals(".random")) {
-                T[] constants = enumClass.getEnumConstants();
-                return Rand.get(constants);
-            } else if (str.startsWith(".oneOf:")) {
-
-                str = str.substring(7);
-
-                String[] options = TextUtils.PATTERN_COMMA.split(str);
-                str = Rand.get(options).trim();
-            }
-
-            T result = (T) EnumUtils.searchEnum(str, enumClass);
-            if (result == null)
-                throw new IllegalArgumentException("Invalid enum constant name for type: " +
-                        enumClass.getName() +
-                        "\nValid values are: " +
-                        TextUtils.concat(enumClass.getEnumConstants(), ", "));
-
-            return result;
-        }
-        else if (enumClass.isInstance(name)) {
-            return enumClass.cast(name);
-        }
-        else {
-            throw new IllegalArgumentException("Invalid type provided. Unable to convert to type: "
-                    + enumClass.getName());
-        }
-    }
 
     /**
      * Get a {@link org.bukkit.potion.PotionEffectType} from an object. The object must be

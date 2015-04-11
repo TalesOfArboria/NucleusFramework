@@ -25,6 +25,8 @@
 
 package com.jcwhatever.nucleus.utils;
 
+import com.jcwhatever.nucleus.utils.text.TextUtils;
+
 import javax.annotation.Nullable;
 
 /**
@@ -235,5 +237,56 @@ public final class EnumUtils {
             }
         }
         return def;
+    }
+
+    /**
+     * Get an enum from an object.
+     *
+     * <p>The object must be an instance of the enum or the name of the enum.</p>
+     *
+     * @param name       The enum constant name. Other valid values are ".random" to choose a
+     *                   random constant or ".oneOf: constantName1,constantName2" to randomly
+     *                   choose on of the specified constants.
+     * @param enumClass  The enum class.
+     *
+     * @param <T>  The enum type.
+     *
+     * @return  The enum constant.
+     *
+     * @throws IllegalArgumentException if the object cannot be converted to an enum constant.
+     */
+    public static <T extends Enum> T getEnum(Object name, Class<T> enumClass) {
+
+        if (name instanceof String) {
+
+            String str = (String) name;
+
+            if (str.equals(".random")) {
+                T[] constants = enumClass.getEnumConstants();
+                return Rand.get(constants);
+            } else if (str.startsWith(".oneOf:")) {
+
+                str = str.substring(7);
+
+                String[] options = TextUtils.PATTERN_COMMA.split(str);
+                str = Rand.get(options).trim();
+            }
+
+            T result = (T) EnumUtils.searchEnum(str, enumClass);
+            if (result == null)
+                throw new IllegalArgumentException("Invalid enum constant name for type: " +
+                        enumClass.getName() +
+                        "\nValid values are: " +
+                        TextUtils.concat(enumClass.getEnumConstants(), ", "));
+
+            return result;
+        }
+        else if (enumClass.isInstance(name)) {
+            return enumClass.cast(name);
+        }
+        else {
+            throw new IllegalArgumentException("Invalid type provided. Unable to convert to type: "
+                    + enumClass.getName());
+        }
     }
 }
