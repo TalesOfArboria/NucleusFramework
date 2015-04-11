@@ -51,7 +51,7 @@ import org.bukkit.potion.PotionEffectType;
  * one Npc at a time, but can be reused for a different NPC once its current NPC is disposed.
  * If the trait cannot be reused, override the {@link #isReusable} method and return false.</p>
  *
- * <p>Whenever the trait is assigned to an {@link INpc}, the {@link #onAdd} method is invoked. This
+ * <p>Whenever the trait is assigned to an {@link INpc}, the {@link #onAttach} method is invoked. This
  * method is intended for optional override and passes the new {@link INpc} as argument.</p>
  */
 public abstract class NpcTrait implements INamed, IDisposable {
@@ -209,7 +209,7 @@ public abstract class NpcTrait implements INamed, IDisposable {
      * @inheritDoc
      *
      * <p>Note that the trait may be un-disposed if the provider reuses it.
-     * This can be detected by overriding {@link #onAdd}.</p>
+     * This can be detected by overriding {@link #onAttach}.</p>
      */
     @Override
     public final void dispose() {
@@ -226,33 +226,24 @@ public abstract class NpcTrait implements INamed, IDisposable {
     }
 
     /**
-     * Invoked when the trait is added to an {@link INpc}.
-     *
-     * <p>This is invoked by the external implementations of the
-     * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
+     * Invoked when the trait is attached to an {@link INpc}.
      *
      * <p>Intended for optional override.</p>
      *
-     * @param npc  The npc that trait is being added to.
+     * @param npc  The npc that trait is being attached to.
      */
-    protected void onAdd(INpc npc) {}
+    protected void onAttach(INpc npc) {}
 
     /**
-     * Invoked when the trait is removed from an {@link INpc} and/or
+     * Invoked when the trait is detached from an {@link INpc} and/or
      * disposed.
-     *
-     * <p>This is invoked by the external implementations of the
-     * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      *
      * <p>Intended for optional override.</p>
      */
-    protected void onRemove() {}
+    protected void onDetach() {}
 
     /**
      * Invoked when traits NPC is spawned.
-     *
-     * <p>This is invoked by the external implementations of the
-     * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      *
      * <p>Intended for optional override.</p>
      */
@@ -260,9 +251,6 @@ public abstract class NpcTrait implements INamed, IDisposable {
 
     /**
      * Invoked when the traits NPC is despawned.
-     *
-     * <p>This is invoked by the external implementations of the
-     * {@link com.jcwhatever.nucleus.providers.npc.INpcProvider}.</p>
      *
      * <p>Intended for optional override.</p>
      */
@@ -283,8 +271,9 @@ public abstract class NpcTrait implements INamed, IDisposable {
     protected void onDisable() {}
 
     /**
-     * Get an enum from an object. The object must be an instance of the
-     * enum or the name of the enum.
+     * Get an enum from an object.
+     *
+     * <p>The object must be an instance of the enum or the name of the enum.</p>
      *
      * @param name       The enum constant name.
      * @param enumClass  The enum class.
@@ -367,6 +356,6 @@ public abstract class NpcTrait implements INamed, IDisposable {
 
         _isDisposed = false;
         _npc = npc;
-        onAdd(npc);
+        onAttach(npc);
     }
 }

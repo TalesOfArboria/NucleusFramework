@@ -140,7 +140,7 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
      * @param npc  The {@link INpc} to initially create the trait for. A reference to the argument
      *             should not be held in the returned NpcTrait. It should only be used to make initial
      *             trait setup decisions. Use the traits {@link NpcTrait#getNpc} method to get the
-     *             traits NPC or the {@link INpc} argument in the {@link NpcTrait#onAdd} method.
+     *             traits NPC or the {@link INpc} argument in the {@link NpcTrait#onAttach} method.
      */
     protected abstract NpcTrait createTrait(INpc npc);
 
@@ -172,7 +172,7 @@ public abstract class NpcTraitType implements INamed, IPluginOwned {
             PreCon.notNull(trait);
 
             checkRegistration(trait);
-            trait.onRemove();
+            trait.onDetach();
         }
 
         /**
