@@ -522,34 +522,34 @@ public final class InternalProviderManager implements IProviderManager {
         // add default providers
         if (!isLoading) {
             if (_jail == null) {
-                _jail = new NucleusJailProvider();
+                _jail = add(new NucleusJailProvider());
             }
 
             if (_regionSelect == null) {
-                _regionSelect = WorldEditSelectionProvider.isWorldEditInstalled()
+                _regionSelect = add(WorldEditSelectionProvider.isWorldEditInstalled()
                         ? new WorldEditSelectionProvider()
-                        : new NucleusSelectionProvider();
+                        : new NucleusSelectionProvider());
             }
 
             if (_economy == null) {
-                _economy = VaultEconomyProvider.hasVaultEconomy()
+                _economy = add(VaultEconomyProvider.hasVaultEconomy()
                         ? VaultEconomyBankProvider.hasBankEconomy()
                         ? new VaultEconomyBankProvider()
                         : new VaultEconomyProvider()
-                        : new NucleusEconomyProvider(Nucleus.getPlugin());
+                        : new NucleusEconomyProvider(Nucleus.getPlugin()));
             }
 
             if (_playerLookup == null)
-                _playerLookup = new InternalPlayerLookupProvider(Nucleus.getPlugin());
+                _playerLookup = add(new InternalPlayerLookupProvider(Nucleus.getPlugin()));
 
             if (_bankItems == null)
-                _bankItems = new BankItemsProvider();
+                _bankItems = add(new BankItemsProvider());
 
             if (_friends == null)
-                _friends = new NucleusFriendsProvider();
+                _friends = add(new NucleusFriendsProvider());
 
             if (_kits == null)
-                _kits = new NucleusKitProvider();
+                _kits = add(new NucleusKitProvider());
         }
     }
 
