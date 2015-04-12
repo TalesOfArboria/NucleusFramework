@@ -378,19 +378,33 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Override
     public IFriendsProvider getFriends() {
-        if (_friends == null)
-            _friends = new NucleusFriendsProvider();
+
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
+        if (_friends == null) {
+            _friends = add(new NucleusFriendsProvider());
+            _friends.registerTypes();
+            _friends.enable();
+        }
 
         return _friends;
     }
 
     @Override
     public IPermissionsProvider getPermissions() {
+
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
         if (_permissions == null) {
-            _permissions = VaultProvider.hasVaultPermissions()
+            _permissions = add(VaultProvider.hasVaultPermissions()
                     ? VaultProvider.getVaultProvider()
-                    : new BukkitProvider();
+                    : new BukkitProvider());
+            _permissions.registerTypes();
+            _permissions.enable();
         }
+
         return _permissions;
     }
 
@@ -402,14 +416,34 @@ public final class InternalProviderManager implements IProviderManager {
     @Override
     public IBankItemsProvider getBankItems() {
 
-        if (_bankItems == null)
-            _bankItems = new BankItemsProvider();
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
+        if (_bankItems == null) {
+            _bankItems = add(new BankItemsProvider());
+            _bankItems.registerTypes();
+            _bankItems.enable();
+        }
 
         return _bankItems;
     }
 
     @Override
     public IEconomyProvider getEconomy() {
+
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
+        if (_economy == null) {
+            _economy = add(VaultEconomyProvider.hasVaultEconomy()
+                    ? VaultEconomyBankProvider.hasBankEconomy()
+                    ? new VaultEconomyBankProvider()
+                    : new VaultEconomyProvider()
+                    : new NucleusEconomyProvider(Nucleus.getPlugin()));
+            _economy.registerTypes();
+            _economy.enable();
+        }
+
         return _economy;
     }
 
@@ -421,11 +455,31 @@ public final class InternalProviderManager implements IProviderManager {
 
     @Override
     public IJailProvider getJails() {
+
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
+        if (_jail == null) {
+            _jail = add(new NucleusJailProvider());
+            _jail.registerTypes();
+            _jail.enable();
+        }
+
         return _jail;
     }
 
     @Override
     public IKitProvider getKits() {
+
+        // lazy load default provider to prevent it from being loaded
+        // if never used, specify default provider as the preferred
+        // provider to force load at startup
+        if (_kits == null) {
+            _kits = add(new NucleusKitProvider());
+            _kits.registerTypes();
+            _kits.enable();
+        }
+
         return _kits;
     }
 
@@ -496,6 +550,11 @@ public final class InternalProviderManager implements IProviderManager {
         return new HashSet<>(_providerNamesByApi.get(type));
     }
 
+    /**
+     * Register a storage provider.
+     *
+     * @param storageProvider  The storage provider to register
+     */
     public void registerStorageProvider(IStorageProvider storageProvider) {
         PreCon.notNull(storageProvider);
 
@@ -516,14 +575,16 @@ public final class InternalProviderManager implements IProviderManager {
         }
     }
 
+    /**
+     * Set the loading flag.
+     *
+     * <p>Loads required default providers if not set when flag is set to false.</p>
+     */
     void setLoading(boolean isLoading) {
         _isProvidersLoading = isLoading;
 
-        // add default providers
+        // load default providers that must be loaded immediately.
         if (!isLoading) {
-            if (_jail == null) {
-                _jail = add(new NucleusJailProvider());
-            }
 
             if (_regionSelect == null) {
                 _regionSelect = add(WorldEditSelectionProvider.isWorldEditInstalled()
@@ -531,30 +592,15 @@ public final class InternalProviderManager implements IProviderManager {
                         : new NucleusSelectionProvider());
             }
 
-            if (_economy == null) {
-                _economy = add(VaultEconomyProvider.hasVaultEconomy()
-                        ? VaultEconomyBankProvider.hasBankEconomy()
-                        ? new VaultEconomyBankProvider()
-                        : new VaultEconomyProvider()
-                        : new NucleusEconomyProvider(Nucleus.getPlugin()));
-            }
-
             if (_playerLookup == null)
                 _playerLookup = add(new InternalPlayerLookupProvider(Nucleus.getPlugin()));
-
-            if (_bankItems == null)
-                _bankItems = add(new BankItemsProvider());
-
-            if (_friends == null)
-                _friends = add(new NucleusFriendsProvider());
-
-            if (_kits == null)
-                _kits = add(new NucleusKitProvider());
         }
     }
 
-    // remove provider from primary list, returns true unless specified provider is the
-    // preferred provider, in which case the provider is not removed.
+    /*
+     * Remove provider from load list, returns true unless specified provider is the
+     * preferred provider, in which case the provider is not removed.
+     */
     private boolean remove(@Nullable IProvider provider, ProviderType providerType) {
         if (provider == null)
             return true;
@@ -567,6 +613,9 @@ public final class InternalProviderManager implements IProviderManager {
         return true;
     }
 
+    /*
+     * Add provider to load list.
+     */
     private <T extends IProvider> T add(IProvider provider) {
         _providers.add(provider);
 
@@ -576,11 +625,17 @@ public final class InternalProviderManager implements IProviderManager {
         return cast;
     }
 
+    /*
+     * Add providers ProviderInfo and type->name lookup
+     */
     private void addName(IProvider provider, ProviderType type) {
         _providerInfo.put(provider.getInfo().getSearchName(), new ProviderInfo(provider, type));
         _providerNamesByApi.put(type, provider.getInfo().getName());
     }
 
+    /*
+     * Add providers ProviderInfo and type->name lookup
+     */
     private void addName(String name, ProviderType type) {
         _providerInfo.put(name.toLowerCase(), new ProviderInfo(name, type));
         _providerNamesByApi.put(type, name);
