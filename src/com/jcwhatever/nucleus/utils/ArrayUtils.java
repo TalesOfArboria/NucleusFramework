@@ -2602,10 +2602,128 @@ public final class ArrayUtils {
         return outputArray;
     }
 
-    private static <T> T[] newArray(Class<T> arrayClass, int size) {
+    /**
+     * Reset all array elements to null.
+     *
+     * @param array  The array to reset.
+     *
+     * @param <T>  The array component type.
+     */
+    public static <T> void reset(T[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = null;
+    }
+
+    /**
+     * Reset all array elements to false.
+     *
+     * @param array  The array to reset.
+     */
+    public static void reset(boolean[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = false;
+    }
+
+    /**
+     * Reset all array elements to zero.
+     *
+     * @param array  The array to reset.
+     */
+    public static void reset(byte[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = 0;
+    }
+
+    /**
+     * Reset all array elements to zero.
+     *
+     * @param array  The array to reset.
+     */
+    public static void reset(short[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = 0;
+    }
+
+    /**
+     * Reset all array elements to zero.
+     *
+     * @param array  The array to reset.
+     */
+    public static void reset(char[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = 0;
+    }
+
+    /**
+     * Reset all array elements to zero.
+     *
+     * @param array  The array to reset.
+     */
+    public static void reset(int[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = 0;
+    }
+
+    /**
+     * Reset all array elements to zero.
+     *
+     * @param array  The array to reset.
+     */
+    public static void reset(long[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = 0;
+    }
+
+    /**
+     * Reset all array elements to zero.
+     *
+     * @param array  The array to reset.
+     */
+    public static void reset(float[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = 0;
+    }
+
+    /**
+     * Reset all array elements to zero.
+     *
+     * @param array  The array to reset.
+     */
+    public static void reset(double[] array) {
+        PreCon.notNull(array);
+
+        for (int i=0; i < array.length; i++)
+            array[i] = 0;
+    }
+
+    /**
+     * Create a new array of the specified component type.
+     *
+     * @param componentClass  The component type.
+     * @param size            The array size.
+     *
+     * @param <T>  The component type.
+     */
+    public static <T> T[] newArray(Class<T> componentClass, int size) {
 
         @SuppressWarnings("unchecked")
-        T[] newArray = (T[])Array.newInstance(arrayClass, size);
+        T[] newArray = (T[])Array.newInstance(componentClass, size);
 
         return newArray;
     }
