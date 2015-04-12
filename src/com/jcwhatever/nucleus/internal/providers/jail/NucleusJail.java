@@ -26,16 +26,17 @@ package com.jcwhatever.nucleus.internal.providers.jail;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucMsg;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.providers.jail.IJail;
 import com.jcwhatever.nucleus.providers.jail.IJailSession;
 import com.jcwhatever.nucleus.regions.Region;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.coords.NamedLocation;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.TimeScale;
+import com.jcwhatever.nucleus.utils.coords.NamedLocation;
+import com.jcwhatever.nucleus.utils.coords.SyncLocation;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.GameMode;
@@ -78,6 +79,8 @@ class NucleusJail implements IJail {
         _searchName = name.toLowerCase();
         _dataNode = dataNode;
         _bounds = new Bounds(plugin, name, dataNode.getNode("bounds"));
+
+        load();
     }
 
     @Override
@@ -174,7 +177,7 @@ class NucleusJail implements IJail {
 
         IDataNode teleportNode = _dataNode.getNode("teleport");
         teleportNode.set(teleport.getSearchName(), teleport);
-        _dataNode.save();
+        teleportNode.save();
 
         return true;
     }
@@ -191,7 +194,7 @@ class NucleusJail implements IJail {
 
         IDataNode teleportNode = _dataNode.getNode("teleport");
         teleportNode.set(name, null);
-        _dataNode.save();
+        teleportNode.save();
 
         return true;
     }
@@ -267,6 +270,23 @@ class NucleusJail implements IJail {
     private void checkDisposed() {
         if (_isDisposed)
             throw new IllegalStateException("Cannot use a disposed jail.");
+    }
+
+    private void load() {
+        IDataNode teleportNode = _dataNode.getNode("teleport");
+
+        for (IDataNode node : teleportNode) {
+
+            SyncLocation syncLocation = node.getLocation("");
+            if (syncLocation == null)
+                continue;
+
+            NamedLocation location = new NamedLocation(node.getName(), syncLocation);
+
+            _jailLocations.put(location.getSearchName(), location);
+        }
+
+        _releaseLocation = _dataNode.getLocation("release-location");
     }
 
     public class Bounds extends Region {
