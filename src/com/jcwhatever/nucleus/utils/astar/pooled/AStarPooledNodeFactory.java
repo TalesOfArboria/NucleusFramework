@@ -32,8 +32,9 @@ import com.jcwhatever.nucleus.utils.astar.IAStarNodeFactory;
 import com.jcwhatever.nucleus.utils.coords.Coords3Di;
 import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
 import com.jcwhatever.nucleus.utils.coords.MutableCoords3Di;
-
-import java.util.LinkedList;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolRecycleHandler;
+import com.jcwhatever.nucleus.utils.performance.pool.SimplePool;
 
 /**
  * A {@link com.jcwhatever.nucleus.utils.astar.IAStarNodeFactory} implementation
@@ -50,10 +51,35 @@ import java.util.LinkedList;
  */
 public class AStarPooledNodeFactory implements IAStarNodeFactory {
 
-    private final LinkedList<MutableCoords3Di> _coordsPool = new LinkedList<>();
-    private final LinkedList<AStarPooledNode> _nodePool = new LinkedList<>();
+    private static final IPoolElementFactory<MutableCoords3Di> COORDS_FACTORY =
+            new IPoolElementFactory<MutableCoords3Di>() {
+                @Override
+                public MutableCoords3Di create() {
+                    return new MutableCoords3Di();
+                }
+            };
 
-    private int _maxSize = -1;
+    private static final IPoolElementFactory<AStarPooledNode> NODE_FACTORY =
+            new IPoolElementFactory<AStarPooledNode>() {
+                @Override
+                public AStarPooledNode create() {
+                    return new AStarPooledNode();
+                }
+            };
+
+    private static final IPoolRecycleHandler<AStarPooledNode> NODE_RECYCLER =
+            new IPoolRecycleHandler<AStarPooledNode>() {
+                @Override
+                public void onRecycle(AStarPooledNode element) {
+                    element.init(null, null);
+                }
+            };
+
+    private final SimplePool<MutableCoords3Di> _coordsPool =
+            new SimplePool<MutableCoords3Di>(MutableCoords3Di.class, 100, COORDS_FACTORY);
+
+    private final SimplePool<AStarPooledNode> _nodePool =
+            new SimplePool<AStarPooledNode>(AStarPooledNode.class, 100, NODE_FACTORY, NODE_RECYCLER);
 
     /**
      * Get the max number of objects to pool.
@@ -63,7 +89,7 @@ public class AStarPooledNodeFactory implements IAStarNodeFactory {
      * @return  The max number or -1 for unlimited.
      */
     public int getMaxSize() {
-        return _maxSize;
+        return _nodePool.maxSize();
     }
 
     /**
@@ -72,7 +98,8 @@ public class AStarPooledNodeFactory implements IAStarNodeFactory {
      * @param maxSize  The max number of objects to pool or -1 for unlimited.
      */
     public void setMaxSize(int maxSize) {
-        _maxSize = maxSize;
+        _nodePool.setMaxSize(maxSize);
+        _coordsPool.setMaxSize(maxSize);
     }
 
     /**
@@ -80,6 +107,7 @@ public class AStarPooledNodeFactory implements IAStarNodeFactory {
      */
     public void clearPool() {
         _nodePool.clear();
+        _coordsPool.clear();
     }
 
     @Override
@@ -113,41 +141,31 @@ public class AStarPooledNodeFactory implements IAStarNodeFactory {
 
     protected void pool(AStarPooledNode node) {
 
-        if (_maxSize >= 0 && _coordsPool.size() >= _maxSize)
-            return;
-
         ICoords3Di coords = node.getCoords();
         if (coords instanceof MutableCoords3Di) {
-            _coordsPool.add((MutableCoords3Di)coords);
+            _coordsPool.recycle((MutableCoords3Di) coords);
         }
 
-        node.init(null, null);
-        _nodePool.add(node);
+        _nodePool.recycle(node);
     }
 
     private MutableCoords3Di createCoords(int x, int y, int z) {
 
-        if (_coordsPool.isEmpty()) {
-            return new MutableCoords3Di(x, y, z);
-        }
-        else {
-            MutableCoords3Di coords = _coordsPool.remove();
-            coords.setX(x);
-            coords.setY(y);
-            coords.setZ(z);
-            return coords;
-        }
+        MutableCoords3Di coords = _coordsPool.retrieve();
+        assert coords != null;
+
+        coords.setX(x);
+        coords.setY(y);
+        coords.setZ(z);
+        return coords;
     }
 
     private AStarPooledNode createNode(AStarContext context, MutableCoords3Di coords) {
 
-        if (_coordsPool.isEmpty()) {
-            return new AStarPooledNode(context, coords);
-        }
-        else {
-            AStarPooledNode node = _nodePool.remove();
-            node.init(context, coords);
-            return node;
-        }
+        AStarPooledNode node = _nodePool.retrieve();
+        assert node != null;
+
+        node.init(context, coords);
+        return node;
     }
 }

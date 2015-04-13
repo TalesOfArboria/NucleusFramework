@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.internal.regions;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.CachedLocation;
-import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.PlayerLocations;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.regions.IRegion;
@@ -36,6 +35,9 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.nucleus.utils.performance.pool.SimpleCheckoutPool.CheckedOutElements;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.SimplePool;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -74,7 +76,7 @@ public final class InternalPlayerWatcher {
     private Set<UUID> _joined = new HashSet<>(10);
 
     // pool of player location caches
-    private final PlayerPools _pools = new PlayerPools();
+    private final SimplePool<PlayerLocationCache> _pools;
 
     private volatile boolean _isAsyncWatcherRunning;
 
@@ -88,6 +90,13 @@ public final class InternalPlayerWatcher {
         _manager = manager;
         _playerRegionCache = new PlayerMap<>(Nucleus.getPlugin());
         _playerLocationCache = new PlayerMap<>(Nucleus.getPlugin());
+        _pools = new SimplePool<PlayerLocationCache>(PlayerLocationCache.class, 100,
+                new IPoolElementFactory<PlayerLocationCache>() {
+                    @Override
+                    public PlayerLocationCache create() {
+                        return new PlayerLocationCache();
+                    }
+                });
 
         Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, 1, new QueueFiller());
         Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(), 1, 1, _watcherAsync);
@@ -182,7 +191,7 @@ public final class InternalPlayerWatcher {
                 // re-pool location cache
                 PlayerLocationCache cache = _playerLocationCache.remove(player.getUniqueId());
                 if (cache != null) {
-                    _pools.repool(cache);
+                    _pools.recycle(cache);
                 }
             }
         }
@@ -199,7 +208,10 @@ public final class InternalPlayerWatcher {
 
         PlayerLocationCache locations = _playerLocationCache.get(playerId);
         if (locations == null) {
-            locations = _pools.createLocationPool(playerId);
+            locations = _pools.retrieve();
+            assert locations != null;
+
+            locations.setOwner(playerId);
             _playerLocationCache.put(playerId, locations);
         }
 
@@ -240,7 +252,7 @@ public final class InternalPlayerWatcher {
      */
     private void clearPlayerLocations(UUID playerId) {
         PlayerLocationCache locations = getPlayerLocations(playerId);
-        locations.clear();
+        locations.getCheckedOut().recycle();
     }
 
     /*
@@ -287,14 +299,11 @@ public final class InternalPlayerWatcher {
 
                     synchronized (InternalPlayerWatcher.this) {
                         // skip if there are no locations recorded
-                        if (locations.isEmpty() || !locations.canRemoveAll())
+                        if (locations.getCheckedOut().size() == 0)
                             continue;
 
-                        WorldPlayer worldPlayer = new WorldPlayer(player, locations.removeAll());
+                        WorldPlayer worldPlayer = new WorldPlayer(player, locations.getCheckedOut());
                         _watcherAsync.queue.add(worldPlayer);
-
-                        // clear recorded player locations from cache
-                        locations.clear();
                     }
                 }
             }
@@ -344,9 +353,7 @@ public final class InternalPlayerWatcher {
                 }
 
                 // iterate the players cached locations
-                while (!worldPlayer.locations.isEmpty()) {
-
-                    CachedLocation location = worldPlayer.locations.remove();
+                for (CachedLocation location : worldPlayer.locations) {
 
                     if (location.getReason() == RegionEventReason.JOIN_SERVER) {
                         // add player to _join set.
@@ -436,9 +443,9 @@ public final class InternalPlayerWatcher {
     private static class WorldPlayer {
 
         final Player player;
-        final PlayerLocations locations;
+        final CheckedOutElements<CachedLocation> locations;
 
-        public WorldPlayer(Player player, PlayerLocations locations) {
+        public WorldPlayer(Player player, CheckedOutElements<CachedLocation> locations) {
             this.player = player;
             this.locations = locations;
         }

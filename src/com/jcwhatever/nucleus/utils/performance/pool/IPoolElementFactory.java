@@ -22,47 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.utils.astar.pooled;
-
-import com.jcwhatever.nucleus.utils.astar.AStarContext;
-import com.jcwhatever.nucleus.utils.astar.AStarNode;
-import com.jcwhatever.nucleus.utils.coords.ICoords3Di;
-import com.jcwhatever.nucleus.utils.coords.MutableCoords3Di;
+package com.jcwhatever.nucleus.utils.performance.pool;
 
 /**
- * An {@link AStarNode} for use with {@link AStarPooledNodeFactory}.
+ * Interface for a delegate that creates new instances of
+ * the pool element type.
  *
- * <p>See documentation in {@link AStarPooledNodeFactory} for more information about
- * the problems of using pooling.</p>
+ * @param <T>  The pool element type.
  */
-public class AStarPooledNode extends AStarNode {
-
-    private MutableCoords3Di _coords;
+public interface IPoolElementFactory<T> {
 
     /**
-     * Constructor.
+     * Create a new pool element instance.
      */
-    protected AStarPooledNode() {}
-
-    @Override
-    public ICoords3Di getAdjustedCoords() {
-
-        if (_coords != null) {
-            _coords.setY(_coords.getY() + 1);
-
-            return _coords;
-        }
-        else {
-            return super.getAdjustedCoords();
-        }
-    }
-
-    @Override
-    protected void init(AStarContext context, ICoords3Di startCoords) {
-        super.init(context, startCoords);
-
-        _coords = startCoords instanceof MutableCoords3Di
-                ? (MutableCoords3Di) startCoords
-                : null;
-    }
+    T create();
 }

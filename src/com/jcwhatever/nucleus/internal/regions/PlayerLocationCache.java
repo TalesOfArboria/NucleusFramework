@@ -24,10 +24,13 @@
 
 package com.jcwhatever.nucleus.internal.regions;
 
+import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.CachedLocation;
+import com.jcwhatever.nucleus.utils.performance.pool.SimpleCheckoutPool;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolRecycleHandler;
+
 import org.bukkit.Location;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -37,32 +40,29 @@ import java.util.UUID;
  * <p>Keeps a pool of locations for reuse to prevent excessive
  * new object generation.</p>
  */
-class PlayerLocationCache {
+class PlayerLocationCache extends SimpleCheckoutPool<CachedLocation> {
 
-    private final ArrayList<CachedLocation> _locationPool = new ArrayList<>(100);
-    private final LinkedList<CachedLocation> _cached = new LinkedList<>();
-    private final PlayerLocations _removed = new PlayerLocations();
+    private static final IPoolElementFactory<CachedLocation> ELEMENT_FACTORY =
+            new IPoolElementFactory<CachedLocation>() {
+                @Override
+                public CachedLocation create() {
+                    return new CachedLocation();
+                }
+            };
 
-    private volatile boolean _isRemovedDiscarded = true;
-
-    // The index location to check for an unused pooled location.
-    private volatile int _poolIndex = 0;
-
-    // the min index the _poolIndex can be reset to, values below are in use
-    // by PlayerLocations (_removed) instance.
-    private volatile int _minIndex = 0;
-
-    private volatile int _capacity = 100;
+    private static final IPoolRecycleHandler<CachedLocation> RECYCLE_HANDLER =
+            new IPoolRecycleHandler<CachedLocation>() {
+                @Override
+                public void onRecycle(CachedLocation element) {
+                    element.setWorld(null);
+                    element.reason = null;
+                }
+            };
 
     private UUID _playerId;
 
-    /**
-     * Constructor.
-     *
-     * @param playerId  The initial owner.
-     */
-    public PlayerLocationCache(UUID playerId) {
-        _playerId = playerId;
+    public PlayerLocationCache() {
+        super(CachedLocation.class, 75, ELEMENT_FACTORY, RECYCLE_HANDLER);
     }
 
     /**
@@ -72,11 +72,6 @@ class PlayerLocationCache {
      */
     public void setOwner(UUID playerId) {
         _playerId = playerId;
-
-        // now that the cache is being used again, it's pool size has had time to settle.
-        _locationPool.trimToSize();
-
-        _capacity = _locationPool.size();
     }
 
     /**
@@ -84,39 +79,6 @@ class PlayerLocationCache {
      */
     public UUID getPlayerId() {
         return _playerId;
-    }
-
-    /**
-     * Determine if the cache is empty.
-     */
-    public boolean isEmpty() {
-
-        boolean isEmpty;
-
-        synchronized (_cached) {
-            isEmpty = _cached.isEmpty();
-        }
-
-        if (isEmpty) {
-
-            if (_isRemovedDiscarded)
-                _minIndex = 0;
-
-            _poolIndex = _minIndex;
-
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Clear cached locations.
-     */
-    public void clear() {
-        _poolIndex = _minIndex;
-        synchronized (_cached) {
-            _cached.clear();
-        }
     }
 
     /**
@@ -128,110 +90,20 @@ class PlayerLocationCache {
      * @param reason  The reason the location is being added.
      */
     public Location add(RegionEventReason reason) {
-        CachedLocation location = getPooledLocation(reason);
-        synchronized (_cached) {
+
+        synchronized (this) {
 
             if (reason == RegionEventReason.JOIN_SERVER ||
                     reason == RegionEventReason.TELEPORT) {
-                clear();
-            }
-            _cached.addLast(location);
-        }
-        return location;
-    }
-
-    /**
-     * Determine if {@link #canRemoveAll} can be invoked.
-     */
-    public boolean canRemoveAll() {
-        return _isRemovedDiscarded;
-    }
-
-    /**
-     * Remove all cached locations and return them in a {@link PlayerLocations} instance.
-     *
-     * <p>Since locations are reused from a pool, only one {@link PlayerLocations} instance
-     * can be used per {@link PlayerLocationCache} at one time. The current instance must be
-     * discarded before {@link #removeAll} can be invoked again.</p>
-     */
-    public PlayerLocations removeAll() {
-        if (!_isRemovedDiscarded)
-            throw new IllegalStateException("The PlayerLocations instance is already in use.");
-
-        _removed.fill();
-        _minIndex = _poolIndex;
-        clear();
-
-        return _removed;
-    }
-
-    /*
-     * Get an available location from the pool of locations.
-     */
-    private CachedLocation getPooledLocation(RegionEventReason reason) {
-
-        synchronized (_locationPool) {
-
-            if (_poolIndex >= _locationPool.size()) {
-
-                if (_poolIndex >= _capacity) {
-                    _capacity += 50;
-                    _locationPool.ensureCapacity(_capacity);
-                }
-
-                // add a new location to the pool (expand pool)
-                CachedLocation location = new CachedLocation(reason);
-                _locationPool.add(location);
-                _poolIndex++;
-                return location;
+                getCheckedOut().clear();
             }
 
-            // use a location from the pool
-            CachedLocation result = _locationPool.get(_poolIndex);
-            result.reason = reason;
-            _poolIndex++;
+            CachedLocation location = checkout();
+            assert location != null;
 
-            return result;
-        }
-    }
+            location.reason = reason;
 
-    /**
-     * Holds cached locations removed from the parent cache.
-     *
-     * <p>Can only be used for one operation at a time.</p>
-     */
-    class PlayerLocations {
-
-        private LinkedList<CachedLocation> locations = new LinkedList<>();
-
-        void fill() {
-            _isRemovedDiscarded = false;
-            locations.clear();
-            synchronized (_cached) {
-                locations.addAll(_cached);
-            }
-        }
-
-        /**
-         * Determine if the snapshot is empty.
-         */
-        public boolean isEmpty() {
-            return locations.isEmpty();
-        }
-
-        /**
-         * Remove and return the first item.
-         */
-        public CachedLocation remove() {
-            return locations.removeFirst();
-        }
-
-        /**
-         * Recycle the snapshot.
-         */
-        public void recycle() {
-            _minIndex = 0;
-            _isRemovedDiscarded = true;
+            return location;
         }
     }
 
@@ -243,10 +115,8 @@ class PlayerLocationCache {
 
         RegionEventReason reason;
 
-        CachedLocation(RegionEventReason reason) {
+        CachedLocation() {
             super(null, 0, 0, 0);
-
-            this.reason = reason;
         }
 
         /**

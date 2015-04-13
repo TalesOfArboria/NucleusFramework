@@ -22,35 +22,20 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.internal.regions;
-
-import com.jcwhatever.nucleus.utils.PreCon;
-
-import java.util.LinkedList;
-import java.util.UUID;
+package com.jcwhatever.nucleus.utils.performance.pool;
 
 /**
- * Pools player location pools to prevent too many discarded {@link PlayerLocationCache}'s
- * from existing in the tenure memory space on servers that experience large numbers
- * of players coming and going.
+ * Interface for a delegate that handles teardown of a pool
+ * element when it is recycled.
+ *
+ * @param <T>  The pool element type.
  */
-class PlayerPools {
+public interface IPoolRecycleHandler<T> {
 
-    private LinkedList<PlayerLocationCache> _pools = new LinkedList<>();
-
-    public PlayerLocationCache createLocationPool(UUID playerId) {
-        PreCon.notNull(playerId);
-
-        PlayerLocationCache pool;
-
-        pool = _pools.isEmpty() ? new PlayerLocationCache(playerId) : _pools.remove();
-
-        pool.setOwner(playerId);
-        return pool;
-    }
-
-    public void repool(PlayerLocationCache pool) {
-        PreCon.notNull(pool);
-        _pools.add(pool);
-    }
+    /**
+     * Invoked after an element is recycled.
+     *
+     * @param element  The recycled element.
+     */
+    void onRecycle(T element);
 }

@@ -40,11 +40,8 @@ import com.jcwhatever.nucleus.internal.providers.selection.NucleusSelectionProvi
 import com.jcwhatever.nucleus.internal.providers.selection.WorldEditSelectionProvider;
 import com.jcwhatever.nucleus.internal.providers.storage.YamlStorageProvider;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
 import com.jcwhatever.nucleus.providers.IProvider;
 import com.jcwhatever.nucleus.providers.IProviderManager;
-import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
-import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 import com.jcwhatever.nucleus.providers.ProviderType;
 import com.jcwhatever.nucleus.providers.bankitems.IBankItemsProvider;
 import com.jcwhatever.nucleus.providers.economy.IEconomyProvider;
@@ -53,6 +50,9 @@ import com.jcwhatever.nucleus.providers.jail.IJailProvider;
 import com.jcwhatever.nucleus.providers.kits.IKitProvider;
 import com.jcwhatever.nucleus.providers.npc.INpcProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionsProvider;
+import com.jcwhatever.nucleus.providers.playerlookup.IPlayerLookupProvider;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelectProvider;
+import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.MemoryDataNode;
@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,8 +83,8 @@ public final class InternalProviderManager implements IProviderManager {
     private Multimap<ProviderType, String> _providerNamesByApi =
             MultimapBuilder.enumKeys(ProviderType.class).hashSetValues().build();
 
-    // primary providers in use
-    private Set<IProvider> _providers = new HashSet<>(25);
+    // providers that need to be enabled
+    private Set<IProvider> _toEnable = new HashSet<>(25);
 
     private volatile IPlayerLookupProvider _playerLookup;
     private volatile IFriendsProvider _friends;
@@ -187,13 +188,30 @@ public final class InternalProviderManager implements IProviderManager {
      */
     public void enableProviders() {
 
-        for (IProvider provider : _providers) {
-            provider.registerTypes();
+        Iterator<IProvider> iterator = _toEnable.iterator();
+        while (iterator.hasNext()) {
+
+            IProvider provider = iterator.next();
+
+            try {
+                provider.registerTypes();
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+                iterator.remove();
+            }
         }
 
-        for (IProvider provider : _providers) {
-            provider.enable();
+        for (IProvider provider : _toEnable) {
+            try {
+                provider.enable();
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
+
+        _toEnable.clear();
     }
 
     /**
@@ -383,7 +401,7 @@ public final class InternalProviderManager implements IProviderManager {
         // if never used, specify default provider as the preferred
         // provider to force load at startup
         if (_friends == null) {
-            _friends = add(new NucleusFriendsProvider());
+            _friends = new NucleusFriendsProvider();
             _friends.registerTypes();
             _friends.enable();
         }
@@ -398,9 +416,9 @@ public final class InternalProviderManager implements IProviderManager {
         // if never used, specify default provider as the preferred
         // provider to force load at startup
         if (_permissions == null) {
-            _permissions = add(VaultProvider.hasVaultPermissions()
+            _permissions = VaultProvider.hasVaultPermissions()
                     ? VaultProvider.getVaultProvider()
-                    : new BukkitProvider());
+                    : new BukkitProvider();
             _permissions.registerTypes();
             _permissions.enable();
         }
@@ -420,7 +438,7 @@ public final class InternalProviderManager implements IProviderManager {
         // if never used, specify default provider as the preferred
         // provider to force load at startup
         if (_bankItems == null) {
-            _bankItems = add(new BankItemsProvider());
+            _bankItems = new BankItemsProvider();
             _bankItems.registerTypes();
             _bankItems.enable();
         }
@@ -435,11 +453,11 @@ public final class InternalProviderManager implements IProviderManager {
         // if never used, specify default provider as the preferred
         // provider to force load at startup
         if (_economy == null) {
-            _economy = add(VaultEconomyProvider.hasVaultEconomy()
+            _economy = VaultEconomyProvider.hasVaultEconomy()
                     ? VaultEconomyBankProvider.hasBankEconomy()
                     ? new VaultEconomyBankProvider()
                     : new VaultEconomyProvider()
-                    : new NucleusEconomyProvider(Nucleus.getPlugin()));
+                    : new NucleusEconomyProvider(Nucleus.getPlugin());
             _economy.registerTypes();
             _economy.enable();
         }
@@ -460,7 +478,7 @@ public final class InternalProviderManager implements IProviderManager {
         // if never used, specify default provider as the preferred
         // provider to force load at startup
         if (_jail == null) {
-            _jail = add(new NucleusJailProvider());
+            _jail = new NucleusJailProvider();
             _jail.registerTypes();
             _jail.enable();
         }
@@ -475,7 +493,7 @@ public final class InternalProviderManager implements IProviderManager {
         // if never used, specify default provider as the preferred
         // provider to force load at startup
         if (_kits == null) {
-            _kits = add(new NucleusKitProvider());
+            _kits = new NucleusKitProvider();
             _kits.registerTypes();
             _kits.enable();
         }
@@ -609,7 +627,7 @@ public final class InternalProviderManager implements IProviderManager {
         if (preferred != null && provider.getInfo().getSearchName().equals(preferred))
             return false;
 
-        _providers.remove(provider);
+        _toEnable.remove(provider);
         return true;
     }
 
@@ -617,7 +635,7 @@ public final class InternalProviderManager implements IProviderManager {
      * Add provider to load list.
      */
     private <T extends IProvider> T add(IProvider provider) {
-        _providers.add(provider);
+        _toEnable.add(provider);
 
         @SuppressWarnings("unchecked")
         T cast = (T)provider;

@@ -60,6 +60,11 @@ public class AStarNode implements Comparable<AStarNode> {
     }
 
     /**
+     * Constructor.
+     */
+    protected AStarNode() {}
+
+    /**
      * Get the nodes search context.
      */
     public AStarContext getContext() {
