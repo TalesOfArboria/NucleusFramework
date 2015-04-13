@@ -68,6 +68,10 @@ class SelectSubCommand extends AbstractCommand implements IExecutableCommand {
     @Localizable static final String _NAMED_REGION_NOT_FOUND =
             "Could not find a region named '{0: region name}' at your location.";
 
+    @Localizable static final String _SUCCESS =
+            "Region selection set using the coordinates from region " +
+                    "'{0: region name}' from plugin '{1: plugin name}'.";
+
     @Override
     public void execute (CommandSender sender, ICommandArguments args) throws CommandException {
 
@@ -114,9 +118,7 @@ class SelectSubCommand extends AbstractCommand implements IExecutableCommand {
 
         RegionSelection.set(p, new SimpleRegionSelection(region.getP1(), region.getP2()));
 
-        tellSuccess(sender,
-                "Region selection set using the coordinates from region " +
-                "'{0: region name}' from plugin '{1: plugin name}'.",
-                region.getName(), region.getPlugin().getName());
+        tellSuccess(sender, NucLang.get(_SUCCESS,
+                region.getName(), region.getPlugin().getName()));
     }
 }
