@@ -39,7 +39,9 @@ public final class EnumUtils {
     /**
      * Get an enum by its constant name. The constant name is case sensitive.
      *
-     * @param constantName  The name of the enum constant.
+     * @param constantName  The enum constant name. Other valid values are ".random" to choose a
+     *                      random constant or ".oneOf: constantName1,constantName2" to randomly
+     *                      choose on of the specified constants.
      * @param enumClass     The enum class.
      *
      * @param <T>  The enum type.
@@ -57,7 +59,9 @@ public final class EnumUtils {
     /**
      * Get an enum by its constant name. The constant name is case sensitive.
      *
-     * @param constantName  The name of the enum constant.
+     * @param constantName  The enum constant name. Other valid values are ".random" to choose a
+     *                      random constant or ".oneOf: constantName1,constantName2" to randomly
+     *                      choose on of the specified constants.
      * @param enumClass     The enum class.
      * @param def           The default value to return if the constant is not found.
      *
@@ -66,11 +70,17 @@ public final class EnumUtils {
      * @return  Default value if the enum does not have a constant with the specified name.
      */
     @Nullable
-    public static <T extends Enum<T>> T getEnum(String constantName, Class<T> enumClass, @Nullable T def) {
+    public static <T extends Enum<T>> T getEnum(
+            String constantName, Class<T> enumClass, @Nullable T def) {
+
         PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
 
         if (!constantName.isEmpty()) {
+
+            if (constantName.startsWith("."))
+                return getAlternateEnum(constantName, enumClass, def);
+
             T value;
             try {
                 value = Enum.valueOf(enumClass, constantName);
@@ -86,7 +96,9 @@ public final class EnumUtils {
     /**
      * Get an enum by its constant name. The constant name is case insensitive.
      *
-     * @param constantName  The name of the enum constant.
+     * @param constantName  The enum constant name. Other valid values are ".random" to choose a
+     *                      random constant or ".oneOf: constantName1,constantName2" to randomly
+     *                      choose on of the specified constants.
      * @param enumClass     The enum class.
      *
      * @param <T>  The enum type.
@@ -104,7 +116,9 @@ public final class EnumUtils {
     /**
      * Get an enum by its constant name. The constant name is case insensitive.
      *
-     * @param constantName  The name of the enum constant.
+     * @param constantName  The enum constant name. Other valid values are ".random" to choose a
+     *                      random constant or ".oneOf: constantName1,constantName2" to randomly
+     *                      choose on of the specified constants.
      * @param enumClass     The enum class.
      * @param def           The default value to return if the constant is not found.
      *
@@ -113,11 +127,16 @@ public final class EnumUtils {
      * @return  Default value if the enum does not have a constant with the specified name.
      */
     @Nullable
-    public static <T extends Enum<T>> T searchEnum(String constantName, Class<T> enumClass, @Nullable T def) {
+    public static <T extends Enum<T>> T searchEnum(
+            String constantName, Class<T> enumClass, @Nullable T def) {
+
         PreCon.notNull(constantName);
         PreCon.notNull(enumClass);
 
         if (!constantName.isEmpty()) {
+
+            if (constantName.startsWith("."))
+                return getAlternateEnum(constantName, enumClass, def);
 
             T[] constants = enumClass.getEnumConstants();
 
@@ -259,26 +278,13 @@ public final class EnumUtils {
 
         if (name instanceof String) {
 
-            String str = (String) name;
-
-            if (str.equals(".random")) {
-                T[] constants = enumClass.getEnumConstants();
-                return Rand.get(constants);
-            } else if (str.startsWith(".oneOf:")) {
-
-                str = str.substring(7);
-
-                String[] options = TextUtils.PATTERN_COMMA.split(str);
-                str = Rand.get(options).trim();
-            }
-
-            T result = (T) EnumUtils.searchEnum(str, enumClass);
-            if (result == null)
+            T result = searchEnum((String)name, enumClass);
+            if (result == null) {
                 throw new IllegalArgumentException("Invalid enum constant name for type: " +
                         enumClass.getName() +
                         "\nValid values are: " +
                         TextUtils.concat(enumClass.getEnumConstants(), ", "));
-
+            }
             return result;
         }
         else if (enumClass.isInstance(name)) {
@@ -288,5 +294,24 @@ public final class EnumUtils {
             throw new IllegalArgumentException("Invalid type provided. Unable to convert to type: "
                     + enumClass.getName());
         }
+    }
+
+    private static <T extends Enum> T getAlternateEnum(
+            String alternateName, Class<T> enumClass, @Nullable T def) {
+
+        if (alternateName.equals(".random")) {
+            T[] constants = enumClass.getEnumConstants();
+            return Rand.get(constants);
+        } else if (alternateName.startsWith(".oneOf:")) {
+
+            alternateName = alternateName.substring(7);
+
+            String[] options = TextUtils.PATTERN_COMMA.split(alternateName);
+            alternateName = Rand.get(options).trim();
+
+            return getEnum(alternateName, enumClass, def);
+        }
+
+        return def;
     }
 }
