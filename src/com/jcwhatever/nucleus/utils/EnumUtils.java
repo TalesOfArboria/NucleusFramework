@@ -309,7 +309,7 @@ public final class EnumUtils {
             String[] options = TextUtils.PATTERN_COMMA.split(alternateName);
             alternateName = Rand.get(options).trim();
 
-            return getEnum(alternateName, enumClass, def);
+            return searchEnum(alternateName, enumClass, def);
         }
 
         return def;
