@@ -25,20 +25,21 @@
 
 package com.jcwhatever.nucleus.collections.timed;
 
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
-import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
-import com.jcwhatever.nucleus.managed.scheduler.TaskHandler;
 
 import org.bukkit.plugin.Plugin;
 
-import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * A Linked List that begins removing first in items at interval if new
@@ -59,19 +60,18 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
 
     private static final long serialVersionUID = -532564384179678355L;
 
+    private static final WeakHashMap<DecayList, Void> _instances = new WeakHashMap<>(10);
+
+    // removes a single item from the list when run.
+    private static transient Rot _rot;
+
     private final Plugin _plugin;
 
     // the decay interval in ticks
     private int _decay;
 
-    // task that removes items at interval.
-    private transient IScheduledTask _decayTask;
-
-    // task that initiates the repeating decay task.
-    private transient IScheduledTask _resetRotTask;
-
-    // removes a single item from the list when run.
-    private transient Rot _rot;
+    // last decay check time
+    private transient long _lastDecayCheck;
 
     // holds subscribers to be notified whenever an item is removed due to decay
     // or the list is empty.
@@ -100,7 +100,7 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
         PreCon.notNull(timeScale);
 
         _plugin = plugin;
-        _decay = Math.max(1, (decayInterval * timeScale.getTimeFactor()) / 50);
+        _decay = Math.max(50, decayInterval * timeScale.getTimeFactor());
     }
 
     /**
@@ -142,7 +142,7 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
      * @param timeScale  The timeScale of the interval. The maximum resolution is 1 tick.
      */
     public void setDecayInterval(int interval, TimeScale timeScale) {
-        _decay = Math.max(1, (interval * timeScale.getTimeFactor()) / 50);
+        _decay = Math.max(50, interval * timeScale.getTimeFactor());
         scheduleRemoval();
     }
 
@@ -204,79 +204,59 @@ public class DecayList<E> extends LinkedList<E> implements IPluginOwned {
 
     @Override
     public void clear() {
-        if (_decayTask != null) {
-            _decayTask.cancel();
-            _decayTask = null;
-        }
+        _instances.remove(this);
         super.clear();
     }
 
     // begins or resets the decay timer
     protected void scheduleRemoval() {
 
-        // check if a repeating task is already scheduled to be started.
-        if (_resetRotTask != null)
-            return;
-
-        // cancel the current repeating task
-        if (_decayTask != null)
-            _decayTask.cancel();
-
         // make sure there is a rot instance.
-        if (_rot == null)
-            _rot = new Rot<E>(this);
+        if (_rot == null) {
+            _rot = new Rot();
 
-        // use a separate task to schedule the repeating task so it is not
-        // repeatedly rescheduled when performing multiple operations on the
-        // decay list
-        _resetRotTask = Scheduler.runTaskLater(_plugin, new Runnable() {
-            @Override
-            public void run() {
+            Scheduler.runTaskRepeat(Nucleus.getPlugin(), 1, 1, _rot);
+        }
 
-                // schedule the repeating task.
-                _decayTask = Scheduler.runTaskRepeat(
-                        _plugin, _decay, _decay, _rot);
+        if (!_instances.containsKey(this))
+            _instances.put(this, null);
 
-                // set to null to indicate a new repeating task can
-                // now be scheduled
-                _resetRotTask = null;
-            }
-        });
+        _lastDecayCheck = System.currentTimeMillis();
     }
 
-    private static class Rot<E> extends TaskHandler {
+    private static class Rot implements Runnable {
 
-        // a weak reference to the parent instance. used to hold the reference
-        // when available and to know when to remove the scheduled rot task if
-        // the parent decay list is no longer being used.
-        private final WeakReference<DecayList<E>> parent;
-
-        Rot(DecayList<E> parent) {
-            super();
-            this.parent = new WeakReference<DecayList<E>>(parent);
-        }
+        final List<DecayList> lists = new ArrayList<>(10);
 
         @Override
         public void run() {
 
-            DecayList<E> parent = this.parent.get();
+            lists.addAll(_instances.keySet());
 
-            if (parent == null || parent.isEmpty()) {
-                cancelTask();
-                return;
+            long time = System.currentTimeMillis();
+
+            for (DecayList list : lists) {
+
+                if (list.isEmpty()) {
+                    _instances.remove(list);
+                    continue;
+                }
+
+                if (list._lastDecayCheck + list._decay > time)
+                    continue;
+
+                Object removed = list.remove();
+
+                list._agents.update("onDecay", removed);
+
+                if (list.isEmpty()) {
+                    list._agents.update("onEmpty", list);
+                }
+
+                list._lastDecayCheck = time;
             }
 
-            // remove a single item
-            E removed = parent.remove();
-
-            if (parent._agents.hasAgent("onDecay")) {
-                parent._agents.getAgent("onDecay").update(removed);
-            }
-
-            if (parent.isEmpty() && parent._agents.hasAgent("onEmpty")) {
-                parent._agents.getAgent("onEmpty").update(parent);
-            }
+            lists.clear();
         }
     }
-
 }
