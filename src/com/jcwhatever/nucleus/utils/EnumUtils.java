@@ -274,7 +274,7 @@ public final class EnumUtils {
      *
      * @throws IllegalArgumentException if the object cannot be converted to an enum constant.
      */
-    public static <T extends Enum> T getEnum(Object name, Class<T> enumClass) {
+    public static <T extends Enum<T>> T getEnum(Object name, Class<T> enumClass) {
 
         if (name instanceof String) {
 
@@ -296,7 +296,7 @@ public final class EnumUtils {
         }
     }
 
-    private static <T extends Enum> T getAlternateEnum(
+    private static <T extends Enum<T>> T getAlternateEnum(
             String alternateName, Class<T> enumClass, @Nullable T def) {
 
         if (alternateName.equals(".random")) {
