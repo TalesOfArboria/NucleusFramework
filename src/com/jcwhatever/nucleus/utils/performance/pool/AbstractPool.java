@@ -248,7 +248,7 @@ public abstract class AbstractPool<E> {
 
             E element = elements[start + i];
             if (element == null)
-                throw new NullPointerException("Null element found in array that is being recycled.");
+                continue;
 
             _pool[i + _poolIndex + 1] = element;
 
@@ -267,28 +267,53 @@ public abstract class AbstractPool<E> {
      * Expand the size of the pool.
      */
     protected void expandPool() {
-        _pool = expand(_pool);
+        _pool = expand(_pool, _maxSize);
     }
 
     /**
      * Resize the pool to a specific size.
      */
     protected void resizePool(int size) {
-        _pool = resize(_pool, size);
+        _pool = resize(_pool, size, _maxSize);
+    }
+
+    /**
+     * Determine if a resize is possible given the current size of
+     * an array and its maximum size.
+     */
+    protected boolean canResize(int size, int maxSize) {
+        return maxSize < 0 || size <= _maxSize;
+    }
+
+    /**
+     * Limit the resize size given the desired size and the maximum
+     * size of an array.
+     */
+    protected int limitResize(int desiredSize, int maxSize) {
+        if (maxSize > -1 && desiredSize > _maxSize)
+            return maxSize;
+
+        return desiredSize;
     }
 
     /**
      * Expand the size of a pool.
      */
-    protected E[] expand(E[] array) {
+    protected E[] expand(E[] array, int maxSize) {
         int newSize = array.length + (int)Math.max(10, Math.min(100, Math.ceil(array.length * 0.15D)));
-        return resize(array, newSize);
+        return resize(array, newSize, maxSize);
     }
 
     /**
      * Resize a pool to a specific size.
      */
-    protected E[] resize(E[] array, int size) {
+    protected E[] resize(E[] array, int size, int maxSize) {
+
+        if (!canResize(array.length, maxSize))
+            return array;
+
+        size = limitResize(size, maxSize);
+
         E[] newArray = ArrayUtils.newArray(getElementClass(), size);
         return ArrayUtils.copyFromStart(array, newArray);
     }

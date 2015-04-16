@@ -126,4 +126,30 @@ public class SimpleCheckoutPoolTest {
 
         assertEquals(12, pool.pool().length);
     }
+
+    @Test
+    public void testRecycle() throws Exception {
+
+        SimpleCheckoutPool<PoolElement> pool = getPool(4);
+
+        PoolElement elm1 = pool.checkout();
+
+        PoolElement elm2 = pool.checkout();
+
+        PoolElement elm3 = pool.checkout();
+
+        PoolElement elm4 = pool.checkout();
+
+        assertEquals(4, pool.getCheckedOut().size());
+
+        pool.recycle(elm1);
+
+        assertEquals(3, pool.getCheckedOut().size());
+
+        pool.recycle(elm2);
+        pool.recycle(elm3);
+        pool.recycle(elm4);
+
+        assertEquals(0, pool.getCheckedOut().size());
+    }
 }

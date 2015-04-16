@@ -102,8 +102,11 @@ public class SimpleCheckoutPool<E> extends AbstractPool<E> {
             if (element == null)
                 return null;
 
-            if (_checkedOut.size() + 1 >= _checkedOut.array.length)
-                _checkedOut.array = expand(_checkedOut.array);
+            if (maxSize() > -1 && _checkedOut.size() >= maxSize())
+                return element;
+
+            if (_checkedOut.size() + 1 > _checkedOut.array.length)
+                _checkedOut.array = expand(_checkedOut.array, maxSize());
 
             _checkedOut.arrayIndex++;
             _checkedOut.array[_checkedOut.arrayIndex] = element;
@@ -162,9 +165,17 @@ public class SimpleCheckoutPool<E> extends AbstractPool<E> {
             super.fitToSize(padding);
 
             if (_checkedOut.size() <= pool().length) {
-                _checkedOut.array = resize(_checkedOut.array, pool().length);
+                _checkedOut.array = resize(_checkedOut.array, pool().length, -1);
             }
         }
+    }
+
+    @Override
+    public boolean recycle(E element) {
+
+        boolean result = super.recycle(element);
+        _checkedOut.recycled(element);
+        return result;
     }
 
     /**
@@ -267,6 +278,30 @@ public class SimpleCheckoutPool<E> extends AbstractPool<E> {
                     throw new UnsupportedOperationException();
                 }
             };
+        }
+
+        void recycled(E element) {
+
+            if (arrayIndex == -1)
+                return;
+
+            int i = 0;
+
+            // remove element from array
+            for (; i <= arrayIndex; i++) {
+                if (array[i].equals(element)) {
+                    array[i] = null;
+                    break;
+                }
+            }
+
+            // compact array
+            for (i++; i <= arrayIndex; i++) {
+                array[i - 1] = array[i];
+            }
+
+            array[arrayIndex] = null;
+            arrayIndex--;
         }
     }
 }
