@@ -39,6 +39,8 @@ import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
 import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.SimpleConcurrentPool;
 
 import org.bukkit.plugin.Plugin;
 
@@ -103,6 +105,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
     private transient long _nextCleanup;
 
     private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
+    private final transient SimpleConcurrentPool<DateEntry> _entryPool;
 
     /**
      * Constructor. Default lifespan is 20 ticks.
@@ -152,6 +155,14 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
         _keySetWrapper = new KeySetWrapper();
         _entrySetWrapper = new EntrySetWrapper();
 
+        _entryPool = new SimpleConcurrentPool<DateEntry>(DateEntry.class, size,
+                new IPoolElementFactory<DateEntry>() {
+                    @Override
+                    public DateEntry create() {
+                        return new DateEntry<>(TimedHashMap.this);
+                    }
+                });
+
         synchronized (_instances) {
             _instances.put(this, null);
         }
@@ -189,7 +200,12 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
         DateEntry<K, V> previous;
 
         synchronized (_sync) {
-            previous = _map.put(key, new DateEntry<K, V>(key, value, lifespan, timeScale));
+
+            @SuppressWarnings("unchecked")
+            DateEntry<K, V> entry = (DateEntry<K, V>)_entryPool.retrieve();
+            assert entry != null;
+
+            previous = _map.put(key, entry.asEntry(key, value, lifespan, timeScale));
         }
 
         if (previous == null)
@@ -225,10 +241,36 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
         synchronized (_sync) {
 
             for (Map.Entry<? extends K, ? extends V> entry : entries.entrySet()) {
-                _map.put(entry.getKey(), new DateEntry<K, V>(
+
+                @SuppressWarnings("unchecked")
+                DateEntry<K, V> dateEntry = (DateEntry<K, V>)_entryPool.retrieve();
+                assert dateEntry != null;
+
+                _map.put(entry.getKey(), dateEntry.asEntry(
                         entry.getKey(), entry.getValue(), lifespan, timeScale));
             }
         }
+    }
+
+    /**
+     * Set the maximum size of the internal object pool used
+     * for pooling internal instances.
+     *
+     * @param poolSize  The maximum pool size. -1 for "infinite".
+     *
+     * @return  Self for chaining.
+     */
+    public TimedHashMap<K, V> setMaxPoolSize(int poolSize) {
+        _entryPool.setMaxSize(poolSize);
+        return this;
+    }
+
+    /**
+     * Get the maximum size of the internal object pool used
+     * for pooling internal instances.
+     */
+    public int getMaxPoolSize() {
+        return _entryPool.maxSize();
     }
 
     /**
@@ -271,6 +313,11 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
     @Override
     public void clear() {
         synchronized (_sync) {
+
+            for (Entry<K, DateEntry<K, V>> entry : _map.entrySet()) {
+                entry.getValue().recycle();
+            }
+
             _map.clear();
         }
     }
@@ -322,6 +369,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
                 //noinspection SuspiciousMethodCalls
                 _map.remove(key);
                 onLifespanEnd(getEntry(entry.key, entry.value));
+                entry.recycle();
                 return false;
             }
 
@@ -389,7 +437,10 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
             if (value == null)
                 return null;
 
-            return value.value;
+            V result = value.value;
+            value.recycle();
+
+            return result;
         }
     }
 
@@ -397,12 +448,10 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
         if (!_agents.hasAgent("onLifespanEnd"))
             return;
 
-        _agents.getAgent("onLifespanEnd").update(value);
+        _agents.update("onLifespanEnd", value);
 
-        if (!_map.isEmpty() || !_agents.hasAgent("onEmpty"))
-            return;
-
-        _agents.getAgent("onEmpty").update(this);
+        if (_map.isEmpty())
+            _agents.update("onEmpty", this);
     }
 
     private void cleanup() {
@@ -424,6 +473,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
             if (entry.getValue().isExpired()) {
                 iterator.remove();
                 onLifespanEnd(getEntry(entry.getKey(), entry.getValue().value));
+                entry.getValue().recycle();
             }
         }
     }
@@ -502,30 +552,57 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
             @Override
             protected DateEntry<K, V> unconvert(K key, V external) {
-                return new DateEntry<K, V>(key, external, _lifespan, TimeScale.MILLISECONDS);
+
+                @SuppressWarnings("unchecked")
+                DateEntry<K, V> dateEntry = (DateEntry<K, V>)_entryPool.retrieve();
+                assert dateEntry != null;
+
+                return dateEntry.asEntry(key, external, _lifespan, TimeScale.MILLISECONDS);
             }
         };
     }
 
     private static final class DateEntry<K, V> {
 
-        final K key;
-        final V value;
-        final long expires;
-        final Object match;
+        TimedHashMap<K, V> parent;
+        K key;
+        V value;
+        long expires;
+        Object match;
+        boolean isRecycled;
 
-        DateEntry(K key,V value, long lifespan, TimeScale timeScale) {
+        DateEntry(TimedHashMap<K, V> parent) {
+            this.parent = parent;
+        }
+
+        DateEntry<K, V> asEntry(K key,V value, long lifespan, TimeScale timeScale) {
             this.key = key;
             this.value = value;
             this.expires = System.currentTimeMillis() + (lifespan * timeScale.getTimeFactor());
             this.match = value;
+            this.isRecycled = false;
+            return this;
         }
 
-        DateEntry(Object match) {
+        DateEntry<K, V> asMatcher(Object match) {
             this.key = null;
             this.match = match;
             this.expires = 0;
             this.value = null;
+            this.isRecycled = false;
+            return this;
+        }
+
+        void recycle() {
+            if (this.isRecycled)
+                return;
+
+            this.isRecycled = true;
+            this.key = null;
+            this.value = null;
+            this.match = null;
+
+            parent._entryPool.recycle(this);
         }
 
         boolean isExpired() {
@@ -579,7 +656,16 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
         @Override
         public boolean contains(Object o) {
             synchronized (_sync) {
-                return _map.values().contains(new DateEntry(o));
+
+                @SuppressWarnings("unchecked")
+                DateEntry<K, V> dateEntry = (DateEntry<K, V>)_entryPool.retrieve();
+                assert dateEntry != null;
+
+                boolean result = _map.values().contains(dateEntry.asMatcher(o));
+
+                dateEntry.recycle();
+
+                return result;
             }
         }
 
@@ -669,13 +755,22 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
 
         @Override
         public boolean containsAll(Collection<?> c) {
+            PreCon.notNull(c);
+
+            @SuppressWarnings("unchecked")
+            DateEntry<K, V> dateEntry = (DateEntry<K, V>)_entryPool.retrieve();
+            assert dateEntry != null;
 
             synchronized (_sync) {
+
                 for (Object obj : c) {
-                    if (!_map.values().contains(new DateEntry(obj)))
+
+                    if (!_map.values().contains(dateEntry.asMatcher(obj)))
                         return false;
                 }
             }
+
+            dateEntry.recycle();
 
             return true;
         }
@@ -806,6 +901,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
                         if (value == null)
                             return false;
 
+                        //noinspection EqualsBetweenInconvertibleTypes
                         if (!value.equals(entry.getValue()))
                             return false;
 
@@ -813,6 +909,7 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
                             //noinspection SuspiciousMethodCalls
                             _map.remove(entry.getKey());
                             onLifespanEnd(getEntry(value.key, value.value));
+                            value.recycle();
                             return false;
                         }
 

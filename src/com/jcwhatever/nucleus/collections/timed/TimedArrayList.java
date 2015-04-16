@@ -30,15 +30,17 @@ import com.jcwhatever.nucleus.collections.wrap.ConversionListIteratorWrapper;
 import com.jcwhatever.nucleus.collections.wrap.ConversionListWrapper;
 import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
 import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
+import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
-import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.SimpleConcurrentPool;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
 
 import org.bukkit.plugin.Plugin;
@@ -109,6 +111,8 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
     private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
 
+    private final transient SimpleConcurrentPool<Element> _elementPool;
+
     /**
      * Constructor. Default item lifespan is 20 ticks.
      */
@@ -153,6 +157,14 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         _list = new ArrayList<>(size);
         _sync = this;
 
+        _elementPool = new SimpleConcurrentPool<Element>(Element.class, 50,
+                new IPoolElementFactory<Element>() {
+                    @Override
+                    public Element create() {
+                        return new Element<>(TimedArrayList.this);
+                    }
+                });
+
         synchronized (_instances) {
             _instances.put(this, null);
         }
@@ -184,10 +196,12 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         PreCon.positiveNumber(lifespan);
         PreCon.notNull(timeScale);
 
-        Element<E> entry = new Element<>(item, lifespan, timeScale);
+        @SuppressWarnings("unchecked")
+        Element<E> nelm = (Element<E>)_elementPool.retrieve();
+        assert nelm != null;
 
         synchronized (_sync) {
-            return _list.add(entry);
+            return _list.add(nelm.asElement(item, lifespan, timeScale));
         }
     }
 
@@ -219,10 +233,12 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         PreCon.positiveNumber(lifespan);
         PreCon.notNull(timeScale);
 
-        Element<E> entry = new Element<>(item, lifespan, timeScale);
+        @SuppressWarnings("unchecked")
+        Element<E> nelm = (Element<E>)_elementPool.retrieve();
+        assert nelm != null;
 
         synchronized (_sync) {
-            _list.add(index, entry);
+            _list.add(index, nelm.asElement(item, lifespan, timeScale));
         }
     }
 
@@ -289,11 +305,37 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         List<Element<E>> list = new ArrayList<>(collection.size());
 
         for (E item : collection) {
-            list.add(new Element<E>(item, lifespan, timeScale));
+
+            @SuppressWarnings("unchecked")
+            Element<E> nelm = (Element<E>)_elementPool.retrieve();
+            assert nelm != null;
+
+            list.add(nelm.asElement(item, lifespan, timeScale));
         }
         synchronized (_sync) {
             return _list.addAll(index, list);
         }
+    }
+
+    /**
+     * Set the maximum size of the internal object pool used
+     * for pooling internal instances.
+     *
+     * @param poolSize  The maximum pool size. -1 for "infinite".
+     *
+     * @return  Self for chaining.
+     */
+    public TimedArrayList<E> setMaxPoolSize(int poolSize) {
+        _elementPool.setMaxSize(poolSize);
+        return this;
+    }
+
+    /**
+     * Get the maximum size of the internal object pool used
+     * for pooling internal instances.
+     */
+    public int getMaxPoolSize() {
+        return _elementPool.maxSize();
     }
 
     /**
@@ -357,6 +399,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
                 if (entry.isExpired()) {
                     iterator.remove();
                     onLifespanEnd(entry.element);
+                    _elementPool.recycle(entry);
                     continue;
                 }
 
@@ -438,6 +481,11 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     @Override
     public void clear() {
         synchronized (_sync) {
+
+            for (Element<E> element : _list) {
+                element.recycle();
+            }
+
             _list.clear();
         }
     }
@@ -455,11 +503,20 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     @Nullable
     public E set(int index, E element) {
         synchronized (_sync) {
-            Element<E> previous = _list.set(index, new Element<E>(element, _lifespan, TimeScale.MILLISECONDS));
+
+            @SuppressWarnings("unchecked")
+            Element<E> nelm = (Element<E>)_elementPool.retrieve();
+            assert nelm != null;
+
+            Element<E> previous = _list.set(index, nelm.asElement(element, _lifespan, TimeScale.MILLISECONDS));
             if (previous == null)
                 return null;
 
-            return previous.element;
+            E prev = previous.element;
+
+            previous.recycle();
+
+            return prev;
         }
     }
 
@@ -468,8 +525,13 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         PreCon.notNull(item);
 
         synchronized (_sync) {
+
+            @SuppressWarnings("unchecked")
+            Element<E> nelm = (Element<E>)_elementPool.retrieve();
+            assert nelm != null;
+
             //noinspection unchecked
-            return _list.remove(new Element(item));
+            return _list.remove(nelm.asMatcher(item));
         }
     }
 
@@ -481,10 +543,16 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
             cleanup();
 
+            @SuppressWarnings("unchecked")
+            Element<E> nelm = (Element<E>)_elementPool.retrieve();
+            assert nelm != null;
+
             for (Object obj : c) {
-                if (!_list.contains(new Element<E>(obj)))
+                if (!_list.contains(nelm.asMatcher(obj)))
                     return false;
             }
+
+            _elementPool.recycle(nelm);
 
             return true;
         }
@@ -501,7 +569,11 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
             if (previous == null)
                 return null;
 
-            return previous.element;
+            E prev = previous.element;
+
+            previous.recycle();
+
+            return prev;
         }
     }
 
@@ -519,6 +591,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
                 if (entry.isExpired()) {
                     iterator.remove();
                     onLifespanEnd(entry.element);
+                    entry.recycle();
                     i--;
                 } else if (o.equals(entry.element)) {
                     return i;
@@ -581,7 +654,11 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
                     @SuppressWarnings("unchecked")
                     E element = (E)external;
 
-                    return new Element<E>(element, _lifespan, _timeScale);
+                    @SuppressWarnings("unchecked")
+                    Element<E> nelm = (Element<E>)_elementPool.retrieve();
+                    assert nelm != null;
+
+                    return nelm.asElement(element, _lifespan, _timeScale);
                 }
             };
         }
@@ -614,12 +691,10 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     }
 
     private void onLifespanEnd(E item) {
-        if (_agents.hasAgent("onLifespanEnd")) {
-            _agents.getAgent("onLifespanEnd").update(item);
-        }
+        _agents.update("onLifespanEnd", item);
 
-        if (isEmpty() && _agents.hasAgent("onEmpty")) {
-            _agents.getAgent("onEmpty").update(this);
+        if (isEmpty()) {
+            _agents.update("onEmpty", this);
         }
     }
 
@@ -645,6 +720,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
             if (element.isExpired()) {
                 _list.remove(i);
                 onLifespanEnd(element.element);
+                element.recycle();
             }
         }
     }
@@ -655,13 +731,14 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
 
         _janitor = Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(),
                 JANITOR_INITIAL_DELAY_TICKS, JANITOR_INTERVAL_TICKS, new Runnable() {
+
+                    List<TimedArrayList> lists = new ArrayList<TimedArrayList>(20);
+
                     @Override
                     public void run() {
 
-                        List<TimedArrayList> lists;
-
                         synchronized (_instances) {
-                            lists = new ArrayList<TimedArrayList>(_instances.keySet());
+                            lists.addAll(_instances.keySet());
                         }
 
                         for (TimedArrayList list : lists) {
@@ -678,29 +755,56 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
                                 list.cleanup();
                             }
                         }
+
+                        lists.clear();
                     }
                 });
     }
 
     private final static class Element<T> {
-        final T element;
-        final long expires;
-        final Object matcher;
 
-        Element(T item, long lifespan, TimeScale timeScale) {
+        TimedArrayList<T> parent;
+        T element;
+        long expires;
+        Object matcher;
+        boolean isRecycled;
+
+        Element(TimedArrayList<T> parent) {
+            this.parent = parent;
+        }
+
+        Element<T> asElement(T item, long lifespan, TimeScale timeScale) {
             this.element = item;
             this.expires = System.currentTimeMillis() + (lifespan * timeScale.getTimeFactor());
             this.matcher = item;
+            this.isRecycled = false;
+
+            return this;
         }
 
-        Element(Object matcher) {
+        Element<T> asMatcher(Object matcher) {
             this.element = null;
             this.expires = 0;
             this.matcher = matcher;
+            this.isRecycled = false;
+
+            return this;
         }
 
         boolean isExpired() {
             return System.currentTimeMillis() >= expires;
+        }
+
+        void recycle() {
+
+            if (this.isRecycled)
+                return;
+
+            this.isRecycled = true;
+            this.element = null;
+            this.matcher = null;
+
+            parent._elementPool.recycle(this);
         }
 
         @Override
@@ -745,7 +849,11 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
             @SuppressWarnings("unchecked")
             E e = (E)external;
 
-            return new Element<E>(e, _lifespan, _timeScale);
+            @SuppressWarnings("unchecked")
+            Element<E> nelm = (Element<E>)_elementPool.retrieve();
+            assert nelm != null;
+
+            return nelm.asElement(e, _lifespan, _timeScale);
         }
 
         @Override
@@ -779,6 +887,7 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
                 if (peek.isExpired()) {
                     iterator.remove();
                     onLifespanEnd(peek.element);
+                    peek.recycle();
                 } else {
                     return true;
                 }

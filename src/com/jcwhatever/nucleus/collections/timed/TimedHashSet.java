@@ -27,21 +27,22 @@ package com.jcwhatever.nucleus.collections.timed;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.wrap.IteratorWrapper;
+import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
-import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.SimpleConcurrentPool;
 
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +96,9 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
     private transient long _nextCleanup;
 
     private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
+    private final transient List<Entry<E, ExpireInfo>> _cleanupList = new ArrayList<>(20);
+
+    private final transient SimpleConcurrentPool<ExpireInfo> _expirePool;
 
     /**
      * Constructor. Default lifespan is 20 ticks.
@@ -140,6 +144,14 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
         _timeScale = timeScale;
         _expireMap = new HashMap<>(size);
 
+        _expirePool = new SimpleConcurrentPool<ExpireInfo>(ExpireInfo.class, size,
+                new IPoolElementFactory<ExpireInfo>() {
+                    @Override
+                    public ExpireInfo create() {
+                        return new ExpireInfo();
+                    }
+                });
+
         synchronized (_instances) {
             _instances.put(this, null);
         }
@@ -181,10 +193,14 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
             if (info.isExpired()) {
                 _expireMap.remove(item);
                 onLifespanEnd(item);
+                _expirePool.recycle(info);
                 return false;
             }
 
-            _expireMap.put(item, new ExpireInfo(lifespan, timeScale));
+            ExpireInfo expireInfo = _expirePool.retrieve();
+            assert expireInfo != null;
+
+            _expireMap.put(item, expireInfo.set(lifespan, timeScale));
 
             return true;
         }
@@ -227,7 +243,10 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         synchronized (_sync) {
 
-            _expireMap.put(item, new ExpireInfo(lifespan, timeScale));
+            ExpireInfo expireInfo = _expirePool.retrieve();
+            assert expireInfo != null;
+
+            _expireMap.put(item, expireInfo.set(lifespan, timeScale));
             return true;
         }
     }
@@ -267,11 +286,36 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         synchronized (_sync) {
             for (E item : collection) {
-                _expireMap.put(item, new ExpireInfo(lifespan, timeScale));
+
+                ExpireInfo expireInfo = _expirePool.retrieve();
+                assert expireInfo != null;
+
+                _expireMap.put(item, expireInfo.set(lifespan, timeScale));
             }
         }
 
         return true;
+    }
+
+    /**
+     * Set the maximum size of the internal object pool used
+     * for pooling internal instances.
+     *
+     * @param poolSize  The maximum pool size. -1 for "infinite".
+     *
+     * @return  Self for chaining.
+     */
+    public TimedHashSet<E> setMaxPoolSize(int poolSize) {
+        _expirePool.setMaxSize(poolSize);
+        return this;
+    }
+
+    /**
+     * Get the maximum size of the internal object pool used
+     * for pooling internal instances.
+     */
+    public int getMaxPoolSize() {
+        return _expirePool.maxSize();
     }
 
     /**
@@ -341,6 +385,7 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
             if (info.isExpired()) {
                 //noinspection SuspiciousMethodCalls
                 _expireMap.remove(o);
+                _expirePool.recycle(info);
                 return false;
             }
 
@@ -398,6 +443,11 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
     @Override
     public void clear() {
         synchronized (_sync) {
+
+            for (Entry<E, ExpireInfo> entry : _expireMap.entrySet()) {
+                _expirePool.recycle(entry.getValue());
+            }
+
             _expireMap.clear();
         }
     }
@@ -408,8 +458,13 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         synchronized (_sync) {
             ExpireInfo info = _expireMap.remove(item);
-            if (info == null || info.isExpired())
+            if (info == null)
                 return false;
+
+            if (info.isExpired()) {
+                _expirePool.recycle(info);
+                return false;
+            }
         }
 
         return true;
@@ -435,8 +490,13 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
             for (Object item : collection) {
                 //noinspection SuspiciousMethodCalls
                 ExpireInfo info = _expireMap.remove(item);
-                if (info != null && !info.isExpired())
+                if (info == null)
+                    continue;
+
+                if (!info.isExpired())
                     isChanged = true;
+
+                _expirePool.recycle(info);
             }
 
             return isChanged;
@@ -445,12 +505,10 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
     private void onLifespanEnd(E item) {
 
-        if (_agents.hasAgent("onLifespanEnd")) {
-            _agents.getAgent("onLifespanEnd").update(item);
-        }
+        _agents.update("onLifespanEnd", item);
 
-        if (_expireMap.isEmpty() && _agents.hasAgent("onEmpty")) {
-            _agents.getAgent("onEmpty").update(this);
+        if (_expireMap.isEmpty()) {
+            _agents.update("onEmpty", this);
         }
     }
 
@@ -465,14 +523,18 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         _nextCleanup = System.currentTimeMillis() + MIN_CLEANUP_INTERVAL_MS;
 
-        Set<Entry<E, ExpireInfo>> entries = new HashSet<>(_expireMap.entrySet());
+        _cleanupList.addAll(_expireMap.entrySet());
 
-        for (Entry<E, ExpireInfo> entry : entries) {
-            if (entry.getValue().isExpired()) {
-                _expireMap.remove(entry.getKey());
-                onLifespanEnd(entry.getKey());
-            }
+        for (Entry<E, ExpireInfo> entry : _cleanupList) {
+            if (!entry.getValue().isExpired())
+                continue;
+
+            _expireMap.remove(entry.getKey());
+            onLifespanEnd(entry.getKey());
+            _expirePool.recycle(entry.getValue());
         }
+
+        _cleanupList.clear();
     }
 
     private void startJanitor() {
@@ -481,13 +543,14 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         _janitor = Scheduler.runTaskRepeatAsync(Nucleus.getPlugin(),
                 JANITOR_INITIAL_DELAY_TICKS, JANITOR_INTERVAL_TICKS, new Runnable() {
+
+                    List<TimedHashSet> sets = new ArrayList<>(15);
+
                     @Override
                     public void run() {
 
-                        List<TimedHashSet> sets;
-
                         synchronized (_instances) {
-                            sets = new ArrayList<TimedHashSet>(_instances.keySet());
+                            sets.addAll(_instances.keySet());
                         }
 
                         for (TimedHashSet set : sets) {
@@ -506,6 +569,8 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
                                 set.cleanup();
                             }
                         }
+
+                        sets.clear();
                     }
                 });
     }
@@ -514,8 +579,9 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
 
         long expires;
 
-        ExpireInfo(long lifespan, TimeScale timeScale) {
+        ExpireInfo set(long lifespan, TimeScale timeScale) {
             expires = System.currentTimeMillis() + (lifespan * timeScale.getTimeFactor());
+            return this;
         }
 
         boolean isExpired() {

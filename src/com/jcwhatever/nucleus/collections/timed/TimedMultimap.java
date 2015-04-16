@@ -31,22 +31,23 @@ import com.jcwhatever.nucleus.collections.wrap.CollectionWrapper;
 import com.jcwhatever.nucleus.collections.wrap.MapWrapper;
 import com.jcwhatever.nucleus.collections.wrap.SetWrapper;
 import com.jcwhatever.nucleus.collections.wrap.SyncStrategy;
+import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.mixins.IPluginOwned;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.observer.update.IUpdateSubscriber;
 import com.jcwhatever.nucleus.utils.observer.update.NamedUpdateAgents;
-import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
+import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.SimpleConcurrentPool;
 
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -92,7 +93,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
 
     private final Plugin _plugin;
     private final Multimap<K, V> _map;
-    private final Map<K, ExpireInfo> _expireMap;
+    private final Map<K, ExpireInfo<K>> _expireMap;
 
     private final int _lifespan;
     private final TimeScale _timeScale;
@@ -107,6 +108,9 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     private transient long _nextCleanup;
 
     private final transient NamedUpdateAgents _agents = new NamedUpdateAgents();
+    private final transient List<Map.Entry<K, ExpireInfo<K>>> _cleanupList = new ArrayList<>(20);
+
+    private final transient SimpleConcurrentPool<ExpireInfo> _expirePool;
 
     /**
      * Constructor. Default lifespan is 20 ticks.
@@ -138,6 +142,14 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         _values = new ValuesWrapper();
         _entries = new EntriesWrapper();
         _asMap = new AsMapWrapper();
+
+        _expirePool = new SimpleConcurrentPool<ExpireInfo>(ExpireInfo.class, 50,
+                new IPoolElementFactory<ExpireInfo>() {
+                    @Override
+                    public ExpireInfo create() {
+                        return new ExpireInfo<>(TimedMultimap.this);
+                    }
+                });
 
         synchronized (_instances) {
             _instances.put(this, null);
@@ -176,7 +188,12 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         synchronized (_sync) {
 
             if (_map.put(key, value)) {
-                _expireMap.put(key, new ExpireInfo(key, lifespan, timeScale));
+
+                @SuppressWarnings("unchecked")
+                ExpireInfo<K> expireInfo = (ExpireInfo<K>)_expirePool.retrieve();
+                assert expireInfo != null;
+
+                _expireMap.put(key, expireInfo.set(key, lifespan, timeScale));
 
                 return true;
             }
@@ -214,6 +231,27 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
                 put(entry.getKey(), entry.getValue(), lifespan, timeScale);
             }
         }
+    }
+
+    /**
+     * Set the maximum size of the internal object pool used
+     * for pooling internal instances.
+     *
+     * @param poolSize  The maximum pool size. -1 for "infinite".
+     *
+     * @return  Self for chaining.
+     */
+    public TimedMultimap<K, V> setMaxPoolSize(int poolSize) {
+        _expirePool.setMaxSize(poolSize);
+        return this;
+    }
+
+    /**
+     * Get the maximum size of the internal object pool used
+     * for pooling internal instances.
+     */
+    public int getMaxPoolSize() {
+        return _expirePool.maxSize();
     }
 
     /**
@@ -372,7 +410,12 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     public Collection<V> replaceValues(@Nullable K k, Iterable<? extends V> iterable) {
         synchronized (_sync) {
             Collection<V> result = _map.replaceValues(k, iterable);
-            _expireMap.put(k, new ExpireInfo(k, _lifespan, TimeScale.MILLISECONDS));
+
+            @SuppressWarnings("unchecked")
+            ExpireInfo<K> expireInfo = (ExpireInfo<K>)_expirePool.retrieve();
+            assert expireInfo != null;
+
+            _expireMap.put(k, expireInfo.set(k, _lifespan, TimeScale.MILLISECONDS));
             return result;
         }
     }
@@ -380,8 +423,11 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     @Override
     public Collection<V> removeAll(@Nullable Object o) {
         Collection<V> result = _map.removeAll(o);
-        //noinspection SuspiciousMethodCalls
-        _expireMap.remove(o);
+
+        //noinspection unchecked,SuspiciousMethodCalls
+        ExpireInfo<K> expireInfo = _expireMap.remove(o);
+        if (expireInfo != null)
+            expireInfo.recycle();
 
         return result;
     }
@@ -391,15 +437,8 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         PreCon.notNull(key);
 
         synchronized (_sync) {
-
-            if (_map.remove(key, value)) {
-                //noinspection SuspiciousMethodCalls
-                _expireMap.remove(key);
-                return true;
-            }
+            return _map.remove(key, value);
         }
-
-        return false;
     }
 
     @Override
@@ -416,20 +455,18 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         return isChanged;
     }
 
-
     private void onLifespanEnd(final K key, final Collection<V> values) {
-        if (_agents.hasAgent("onLifespanEnd")) {
-            _agents.getAgent("onLifespanEnd").update(getEntry(key, values));
-        }
 
-        if (isEmpty() && _agents.hasAgent("onEmpty")) {
-            _agents.getAgent("onEmpty").update(this);
+        _agents.update("onLifespanEnd", getEntry(key, values));
+
+        if (isEmpty()) {
+            _agents.update("onEmpty", this);
         }
     }
 
     private boolean isExpiredRemove(Object key) {
         //noinspection SuspiciousMethodCalls
-        ExpireInfo info = _expireMap.get(key);
+        ExpireInfo<K> info = _expireMap.get(key);
         if (info == null)
             return true;
 
@@ -442,6 +479,8 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
             _expireMap.remove(key);
 
             onLifespanEnd(info.key, collection);
+
+            info.recycle();
 
             return true;
         }
@@ -460,22 +499,26 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
 
         _nextCleanup = System.currentTimeMillis() + MIN_CLEANUP_INTERVAL_MS;
 
-        Set<Map.Entry<K, ExpireInfo>> entries = new HashSet<>(_expireMap.entrySet());
+        _cleanupList.addAll(_expireMap.entrySet());
 
         // iterate over entry set for items to remove
-        for (Map.Entry<K, ExpireInfo> entry : entries) {
+        for (Map.Entry<K, ExpireInfo<K>> entry : _cleanupList) {
 
             // check if entry is expired
-            if (entry.getValue().isExpired()) {
+            if (!entry.getValue().isExpired())
+                continue;
 
-                _expireMap.remove(entry.getKey());
+            _expireMap.remove(entry.getKey());
 
-                Collection<V> removed = _map.removeAll(entry.getKey());
+            Collection<V> removed = _map.removeAll(entry.getKey());
 
-                // notify subscribers
-                onLifespanEnd(entry.getKey(), removed);
-            }
+            // notify subscribers
+            onLifespanEnd(entry.getKey(), removed);
+
+            entry.getValue().recycle();
         }
+
+        _cleanupList.clear();
     }
 
     private Entry<K, Collection<V>> getEntry(final K key, final Collection<V> values) {
@@ -514,13 +557,14 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
 
             _janitor = Scheduler.runTaskRepeatAsync(
                     Nucleus.getPlugin(), JANITOR_INITIAL_DELAY_TICKS, JANITOR_INTERVAL_TICKS, new Runnable() {
+
+                        List<TimedMultimap> maps = new ArrayList<>(20);
+
                         @Override
                         public void run() {
 
-                            List<TimedMultimap> maps;
-
                             synchronized (_instances) {
-                                maps = new ArrayList<>(_instances.keySet());
+                                maps.addAll(_instances.keySet());
                             }
 
                             for (TimedMultimap map : maps) {
@@ -536,18 +580,38 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
                                     map.cleanup();
                                 }
                             }
+
+                            maps.clear();
                         }
                     });
         }
     }
 
-    private final class ExpireInfo {
-        final K key;
-        final long expires;
+    private static final class ExpireInfo<K> {
 
-        ExpireInfo(K key, long lifespan, TimeScale timeScale) {
+        TimedMultimap<K, ?> parent;
+        K key;
+        long expires;
+        boolean isRecycled;
+
+        ExpireInfo(TimedMultimap<K, ?> parent) {
+            this.parent = parent;
+        }
+
+        ExpireInfo<K> set(K key, long lifespan, TimeScale timeScale) {
             this.key = key;
             this.expires = System.currentTimeMillis() + (lifespan * timeScale.getTimeFactor());
+            this.isRecycled = false;
+            return this;
+        }
+
+        void recycle() {
+            if (this.isRecycled)
+                return;
+
+            this.isRecycled = true;
+            this.key = null;
+            this.parent._expirePool.recycle(this);
         }
 
         boolean isExpired() {
@@ -570,13 +634,20 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         protected void onRemoved(Object o) {
             synchronized (TimedMultimap.this._sync) {
                 //noinspection SuspiciousMethodCalls
-                _expireMap.remove(o);
+                ExpireInfo<K> info = _expireMap.remove(o);
+                if (info != null)
+                    info.recycle();
             }
         }
 
         @Override
         protected void onClear(Collection<K> values) {
             synchronized (TimedMultimap.this._sync) {
+
+                for (ExpireInfo info : _expireMap.values()) {
+                    info.recycle();
+                }
+
                 _expireMap.clear();
             }
         }
@@ -623,7 +694,13 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         @Override
         protected void onAdded(Entry<K, V> entry) {
             synchronized (TimedMultimap.this._sync) {
-                _expireMap.put(entry.getKey(), new ExpireInfo(entry.getKey(), _lifespan, TimeScale.MILLISECONDS));
+
+                @SuppressWarnings("unchecked")
+                ExpireInfo<K> expireInfo = (ExpireInfo<K>)_expirePool.retrieve();
+                assert expireInfo != null;
+
+                _expireMap.put(entry.getKey(),
+                        expireInfo.set(entry.getKey(), _lifespan, TimeScale.MILLISECONDS));
             }
         }
 
@@ -635,6 +712,11 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         @Override
         protected void onClear(Collection<Entry<K, V>> values) {
             synchronized (TimedMultimap.this._sync) {
+
+                for (ExpireInfo<K> info : _expireMap.values()) {
+                    info.recycle();
+                }
+
                 _expireMap.clear();
             }
         }
