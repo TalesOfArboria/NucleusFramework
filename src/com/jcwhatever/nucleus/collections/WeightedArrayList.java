@@ -35,13 +35,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * An array list of weighted items. The weight of an item
- * affects the results when an item is randomly chosen from the
- * list using the {@link #getRandom} method.
- * <p>
- *     Adding items using the {@link java.util.List} implementation
- *     gives items the default weight.
- * </p>
+ * An array list of weighted items.
+ *
+ * <p>The weight of an item affects the results when an item is randomly chosen
+ * from the list using the {@link #getRandom} method.</p>
+ *
+ * <p>Adding items using the {@link java.util.List} implementation gives items
+ * the default weight.</p>
  *
  * @param <T>  The item type.
  */
@@ -50,11 +50,18 @@ public class WeightedArrayList<T> implements List<T> {
     private int _sumOfWeight = 0;
     private List<Weighted<T>> _weightedItems;
 
-
+    /**
+     * Constructor.
+     */
     public WeightedArrayList() {
         _weightedItems = new ArrayList<>(20);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param size  The initial capacity.
+     */
     public WeightedArrayList(int size) {
         PreCon.positiveNumber(size);
 

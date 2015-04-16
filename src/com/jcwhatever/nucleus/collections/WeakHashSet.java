@@ -38,14 +38,27 @@ public class WeakHashSet<E> extends SetWrapper<E> {
 
     private final transient Set<E> _set;
 
+    /**
+     * Constructor.
+     */
     public WeakHashSet() {
         this(10);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param size  The initial capacity.
+     */
     public WeakHashSet(int size) {
         _set = Collections.newSetFromMap(new WeakHashMap<E, Boolean>(size));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param collection  The initial collection.
+     */
     public WeakHashSet(Collection<E> collection) {
         _set = Collections.newSetFromMap(new WeakHashMap<E, Boolean>(collection.size() + 5));
         _set.addAll(collection);

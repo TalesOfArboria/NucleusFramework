@@ -209,8 +209,7 @@ public class WeakCollection<E> implements Collection<E> {
     }
 
     /**
-     * Determine if all items in the specified collection
-     * are present in the {@link WeakList}.
+     * Determine if all items in the specified collection are present.
      */
     @Override
     public boolean containsAll(Collection<?> collection) {
