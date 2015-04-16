@@ -123,7 +123,7 @@ public abstract class AbstractPool<E> {
 
         _maxSize = maxSize;
 
-        if (_maxSize > -1)
+        if (_maxSize > -1 && _maxSize < pool().length)
             resizePool(maxSize);
     }
 
