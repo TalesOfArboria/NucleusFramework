@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.utils.file;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -107,6 +108,7 @@ public class SerializableBlockEntity implements IAppliedSerializable {
      * @param blockState  The {@link org.bukkit.block.BlockState} that needs to be serialized.
      */
     public SerializableBlockEntity(BlockState blockState) {
+        PreCon.notNull(blockState);
 
         _location = blockState.getLocation();
         _material = blockState.getType();
@@ -239,8 +241,8 @@ public class SerializableBlockEntity implements IAppliedSerializable {
 
             writer.write(_contents.length);
 
-            for (ItemStack _content : _contents) {
-                writer.write(_content);
+            for (ItemStack content : _contents) {
+                writer.write(content);
             }
         }
 

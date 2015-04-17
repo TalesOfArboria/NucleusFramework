@@ -25,6 +25,8 @@
 
 package com.jcwhatever.nucleus.utils.file;
 
+import com.jcwhatever.nucleus.utils.PreCon;
+
 import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.Rotation;
@@ -127,6 +129,7 @@ public class SerializableFurnitureEntity implements IAppliedSerializable {
      * @param entity  The {@link org.bukkit.entity.Entity} that needs to be serialized.
      */
     public SerializableFurnitureEntity(Entity entity) {
+        PreCon.notNull(entity);
 
         _location = entity.getLocation();
         _type = entity.getType();
