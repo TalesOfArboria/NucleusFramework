@@ -199,9 +199,16 @@ public class SerializableFurnitureEntity implements IAppliedSerializable {
     @Override
     public boolean apply() {
 
-        Block block = getLocation().getBlock().getRelative(_facing.getOppositeFace());
+        Block block = getLocation().getBlock();
+        Entity entity;
 
-        Entity entity = getLocation().getWorld().spawnEntity(block.getLocation(), getType());
+        try {
+            entity = getLocation().getWorld().spawnEntity(block.getLocation(), getType());
+        }
+        catch (Exception e) {
+            Location opposite = block.getRelative(_facing.getOppositeFace()).getLocation();
+            entity = getLocation().getWorld().spawnEntity(opposite, getType());
+        }
 
         applyToEntity(entity);
 
