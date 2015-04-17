@@ -304,6 +304,7 @@ public class BasicByteReader extends InputStream implements IByteReader {
     @Override
     @Nullable
     public String getString(Charset charset) throws IOException {
+        PreCon.notNull(charset);
 
         resetBooleanBuffer();
 
@@ -371,9 +372,21 @@ public class BasicByteReader extends InputStream implements IByteReader {
      */
     @Override
     public float getFloat() throws IOException {
+
+        resetBooleanBuffer();
+
         String str = getSmallString();
         if (str == null || str.isEmpty())
             throw new IOException("Failed to read float value.");
+
+        if (str.equals("NaN"))
+            return Float.NaN;
+
+        if (str.equals("nInf"))
+            return Float.NEGATIVE_INFINITY;
+
+        if (str.equals("pInf"))
+            return Float.POSITIVE_INFINITY;
 
         try {
             return Float.parseFloat(str);
@@ -393,9 +406,21 @@ public class BasicByteReader extends InputStream implements IByteReader {
      */
     @Override
     public double getDouble() throws IOException {
+
+        resetBooleanBuffer();
+
         String str = getSmallString();
         if (str == null || str.isEmpty())
             throw new IOException("Failed to read double value.");
+
+        if (str.equals("NaN"))
+            return Double.NaN;
+
+        if (str.equals("nInf"))
+            return Double.NEGATIVE_INFINITY;
+
+        if (str.equals("pInf"))
+            return Double.POSITIVE_INFINITY;
 
         try {
             return Double.parseDouble(str);
@@ -421,6 +446,10 @@ public class BasicByteReader extends InputStream implements IByteReader {
     @Override
     @Nullable
     public <T extends Enum<T>> T getEnum(Class<T> enumClass) throws IOException {
+        PreCon.notNull(enumClass);
+
+        resetBooleanBuffer();
+
         String constantName = getSmallString();
         if (constantName == null) {
             return null;
@@ -735,7 +764,6 @@ public class BasicByteReader extends InputStream implements IByteReader {
         PreCon.notNull(objectClass);
 
         boolean isNull = !getBoolean();
-
         if (isNull)
             return null;
 

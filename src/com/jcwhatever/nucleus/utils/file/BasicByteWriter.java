@@ -236,7 +236,18 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      */
     @Override
     public void write(float floatValue) throws IOException {
-        writeSmallString(String.valueOf(floatValue));
+
+        if (Float.isNaN(floatValue)) {
+            writeSmallString("NaN");
+        } else if (Float.isInfinite(floatValue)) {
+            if (floatValue < 0)
+                writeSmallString("nInf");
+            else
+                writeSmallString("pInf");
+        }
+        else {
+            writeSmallString(String.valueOf(floatValue));
+        }
     }
 
     /**
@@ -251,7 +262,19 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      */
     @Override
     public void write(double doubleValue) throws IOException {
-        writeSmallString(String.valueOf(doubleValue));
+
+        if (Double.isNaN(doubleValue)) {
+            writeSmallString("NaN");
+        } else if (Double.isInfinite(doubleValue)) {
+
+            if (doubleValue < 0)
+                writeSmallString("nInf");
+            else
+                writeSmallString("pInf");
+        }
+        else {
+            writeSmallString(String.valueOf(doubleValue));
+        }
     }
 
     /**
@@ -330,7 +353,7 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
 
         // handle null text
         if (text == null) {
-            write(-1);
+            write((short)-1);
             return;
         }
         // handle empty text
@@ -385,6 +408,9 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
         }
 
         byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+
+        if (bytes.length > Byte.MAX_VALUE)
+            throw new IllegalArgumentException("text cannot be larger than " + Byte.MAX_VALUE + " in length.");
 
         // write string byte length
         write((byte)bytes.length);
@@ -464,7 +490,6 @@ public class BasicByteWriter extends OutputStream implements IByteWriter {
      */
     @Override
     public void write(@Nullable Location location) throws IOException {
-
 
         if (location == null) {
             writeSmallString(null);

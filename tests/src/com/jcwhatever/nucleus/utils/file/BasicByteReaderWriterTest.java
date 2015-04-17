@@ -230,6 +230,52 @@ public class BasicByteReaderWriterTest {
     }
 
     /**
+     * Make sure the reader understands the writers strings.
+     */
+    @Test
+    public void testNullString() throws Exception {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        BasicByteWriter writer =  new BasicByteWriter(stream);
+
+        writer.write((String)null);
+        writer.flush();
+
+        byte[] bytes = stream.toByteArray();
+        writer.close();
+
+        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        BasicByteReader reader = new BasicByteReader(input);
+
+        assertEquals(null, reader.getString());
+
+        input.close();
+    }
+
+    /**
+     * Make sure the reader understands the writers strings.
+     */
+    @Test
+    public void testEmptyString() throws Exception {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        BasicByteWriter writer =  new BasicByteWriter(stream);
+
+        writer.write("");
+        writer.flush();
+
+        byte[] bytes = stream.toByteArray();
+        writer.close();
+
+        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        BasicByteReader reader = new BasicByteReader(input);
+
+        assertEquals("", reader.getString());
+
+        input.close();
+    }
+
+    /**
      * Make sure the reader understands the writers small strings.
      */
     @Test
@@ -248,6 +294,52 @@ public class BasicByteReaderWriterTest {
         BasicByteReader reader = new BasicByteReader(input);
 
         assertEquals("test", reader.getSmallString());
+
+        input.close();
+    }
+
+    /**
+     * Make sure the reader understands the writers small strings.
+     */
+    @Test
+    public void testNullSmallString() throws Exception {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        BasicByteWriter writer =  new BasicByteWriter(stream);
+
+        writer.writeSmallString(null);
+        writer.flush();
+
+        byte[] bytes = stream.toByteArray();
+        writer.close();
+
+        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        BasicByteReader reader = new BasicByteReader(input);
+
+        assertEquals(null, reader.getSmallString());
+
+        input.close();
+    }
+
+    /**
+     * Make sure the reader understands the writers small strings.
+     */
+    @Test
+    public void testEmptySmallString() throws Exception {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        BasicByteWriter writer =  new BasicByteWriter(stream);
+
+        writer.writeSmallString("");
+        writer.flush();
+
+        byte[] bytes = stream.toByteArray();
+        writer.close();
+
+        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        BasicByteReader reader = new BasicByteReader(input);
+
+        assertEquals("", reader.getSmallString());
 
         input.close();
     }
@@ -339,6 +431,36 @@ public class BasicByteReaderWriterTest {
         assertEquals(new SyncLocation(location2), reader.getLocation());
         assertEquals(new SyncLocation(location1), reader.getLocation());
         assertEquals(new SyncLocation(location2), reader.getLocation());
+
+        input.close();
+    }
+
+    /**
+     * Make sure the reader understands the writers locations (null world)
+     */
+    @Test
+    public void testNullLocation() throws Exception {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        BasicByteWriter writer =  new BasicByteWriter(stream);
+
+        // world location
+        Location location = new SyncLocation(
+                BukkitTester.world("mockWorld"), 10.0D, 10.0D, 10.0D, 7f, 8f);
+
+        writer.write((Location)null);
+        writer.write(location);
+        writer.write(location);
+        writer.flush();
+
+        byte[] bytes = stream.toByteArray();
+        writer.close();
+
+        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        BasicByteReader reader = new BasicByteReader(input);
+
+        assertEquals(null, reader.getLocation());
+        assertEquals(location, reader.getLocation());
+        assertEquals(location, reader.getLocation());
 
         input.close();
     }
