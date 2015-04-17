@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.regions.file.basic;
 
+import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
 import com.jcwhatever.nucleus.regions.file.IRegionFileData;
@@ -50,6 +51,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import javax.annotation.Nullable;
 
 /**
  * Loads a regions chunk block data from a file.
@@ -203,7 +205,7 @@ public class RegionChunkFileLoader {
                 // make sure the file version is correct
                 if (restoreFileVersion != RESTORE_FILE_VERSION &&
                         restoreFileVersion != COMPATIBLE_FILE_VERSION) {
-                    cancel("Invalid region file. File is an old version and is no longer valid.");
+                    cancel("Invalid region file. File version is not compatible.");
                     _isLoading = false;
                     return;
                 }
@@ -235,8 +237,8 @@ public class RegionChunkFileLoader {
                 }
             }
             catch (IOException | InstantiationException e) {
-                e.printStackTrace();
-                fail("Failed to read file header.");
+                handleException(e, "Failed to read header from file for chunk ({0}, {1}).",
+                        snapshot.getX(), snapshot.getZ());
             }
         }
 
@@ -255,14 +257,17 @@ public class RegionChunkFileLoader {
 
                 String typeName = reader.getSmallString();
                 if (typeName == null) {
-                    fail("Failed to read from file. Found a null block type in file.");
+                    handleException(null, "Failed to read from file for chunk ({0}, {1}). " +
+                                    "Found a null block type in file.",
+                            snapshot.getX(), snapshot.getZ());
                     return;
                 }
 
                 type = EnumUtils.getEnum(typeName, Material.class);
                 if (type == null) {
-                    fail("Failed to read from file. Found a block type in file that is not a " +
-                            "valid type: " + typeName);
+                    handleException(null, "Failed to read from file for chunk ({0}, {1}). " +
+                                    "Found a block type in file that is not a valid type: {2}",
+                            snapshot.getX(), snapshot.getZ(), typeName);
                     return;
                 }
 
@@ -272,10 +277,9 @@ public class RegionChunkFileLoader {
 
                 light = ls >> 4;
                 skylight = (ls & 0x0F);
-            }
-            catch (IOException io) {
-                io.printStackTrace();
-                fail("Failed to read from file.");
+            } catch (IOException e) {
+                handleException(e, "Failed to read from file for chunk ({0}, {1}).",
+                        snapshot.getX(), snapshot.getZ());
                 return;
             }
 
@@ -309,8 +313,9 @@ public class RegionChunkFileLoader {
                 }
             }
             catch (IOException | IllegalArgumentException | InstantiationException e) {
-                e.printStackTrace();
-                fail("Failed to read Block Entities from file.");
+                handleException(e, "Failed to read Block Entities from file for chunk ({0}, {1}).",
+                        snapshot.getX(), snapshot.getZ());
+                return;
             }
 
             // Read entities
@@ -327,10 +332,10 @@ public class RegionChunkFileLoader {
 
                     this.builder.addSerializable(state);
                 }
-            }
-            catch (IOException | IllegalArgumentException | InstantiationException e) {
-                e.printStackTrace();
-                fail("Failed to read Entities from file.");
+            } catch (IOException | IllegalArgumentException | InstantiationException e) {
+                handleException(e, "Failed to read Entities from file for chunk ({0}, {1}).",
+                        snapshot.getX(), snapshot.getZ());
+                return;
             }
 
             QueueTask task = this.builder.commit();
@@ -345,9 +350,9 @@ public class RegionChunkFileLoader {
                     // close the file
                     reader.close();
                 }
-                catch (IOException io) {
-                    cancel("Failed to close region data file.");
-                    io.printStackTrace();
+                catch (IOException e) {
+                    handleException(e, "Failed to close region data file for chunk ({0}, {1}).",
+                            snapshot.getX(), snapshot.getZ());
                 }
             }
 
@@ -363,6 +368,16 @@ public class RegionChunkFileLoader {
             int chunkData = snapshot.getBlockData(x, y, z);
 
             return chunkType == type && chunkData == data;
+        }
+
+        /*
+         * Handles displaying error messages and failing the task.
+         */
+        private void handleException(@Nullable Exception e, String message, Object... args) {
+            fail(message, args);
+            NucMsg.warning(message, args);
+            if (e != null)
+                e.printStackTrace();
         }
     }
 }
