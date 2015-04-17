@@ -137,11 +137,11 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
         if (isEnded())
             return _resultAgent.getFuture();
 
-        onCancel();
-        onEnd();
-
         _isRunning = false;
         _isCancelled = true;
+
+        onCancel();
+        onEnd();
 
         if (reason != null)
             reason = TextUtils.format(reason, args);
@@ -163,6 +163,66 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
 
         if (_isRunning)
             onRun();
+    }
+
+    /**
+     * Implementation should invoke this if the task is completed successfully.
+     */
+    protected final IFuture complete() {
+
+        if (isEnded())
+            return _resultAgent.getFuture();
+
+        _isRunning = false;
+        _isComplete = true;
+
+        onComplete();
+        onEnd();
+
+        _resultAgent.sendStatus(FutureStatus.SUCCESS, "Completed.");
+
+        if (_parent != null)
+            _parent.update(this);
+
+        return _resultAgent.getFuture();
+    }
+
+    /**
+     * Implementation should invoke this if the task fails.
+     *
+     * @param reason  Optional message describing the reason the task failed.
+     * @param args    Optional message format arguments.
+     */
+    protected final IFuture fail(@Nullable String reason, Object... args) {
+
+        if (isEnded())
+            return _resultAgent.getFuture();
+
+        _isRunning = false;
+        _isFailed = true;
+
+        onFail();
+        onEnd();
+
+        if (reason != null)
+            reason = TextUtils.format(reason, args);
+
+        _resultAgent.sendStatus(FutureStatus.ERROR, reason);
+
+        if (_parent != null)
+            _parent.update(this);
+
+        return _resultAgent.getFuture();
+    }
+
+    /**
+     * Used by the parent project to set itself as parent.
+     */
+    void setParentProject(QueueProject project) {
+        if (_parent != null)
+            throw new IllegalStateException("A task cannot have more than one project parent.");
+
+        _parent = project;
     }
 
     /**
@@ -197,64 +257,4 @@ public abstract class QueueTask implements IPluginOwned, Runnable {
      * <p>Intended for optional override.</p>
      */
     protected void onEnd() {}
-
-    /**
-     * Implementation should invoke this if the task is completed successfully.
-     */
-    protected final IFuture complete() {
-
-        if (isEnded())
-            return _resultAgent.getFuture();
-
-        onComplete();
-        onEnd();
-
-        _isRunning = false;
-        _isComplete = true;
-
-        _resultAgent.sendStatus(FutureStatus.SUCCESS, "Completed.");
-
-        if (_parent != null)
-            _parent.update(this);
-
-        return _resultAgent.getFuture();
-    }
-
-    /**
-     * Implementation should invoke this if the task fails.
-     *
-     * @param reason  Optional message describing the reason the task failed.
-     * @param args    Optional message format arguments.
-     */
-    protected final IFuture fail(@Nullable String reason, Object... args) {
-
-        if (isEnded())
-            return _resultAgent.getFuture();
-
-        onFail();
-        onEnd();
-
-        _isRunning = false;
-        _isFailed = true;
-
-        if (reason != null)
-            reason = TextUtils.format(reason, args);
-
-        _resultAgent.sendStatus(FutureStatus.ERROR, reason);
-
-        if (_parent != null)
-            _parent.update(this);
-
-        return _resultAgent.getFuture();
-    }
-
-    /**
-     * Used by the parent project to set itself as parent.
-     */
-    void setParentProject(QueueProject project) {
-        if (_parent != null)
-            throw new IllegalStateException("A task cannot have more than one project parent.");
-
-        _parent = project;
-    }
 }

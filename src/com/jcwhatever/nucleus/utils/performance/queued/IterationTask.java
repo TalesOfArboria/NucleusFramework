@@ -110,7 +110,7 @@ public abstract class IterationTask extends QueueTask {
         if (_task != null)
             _task.cancel();
 
-        _task = Scheduler.runTaskRepeat(getPlugin(), 1, 10, new Worker());
+        _task = Scheduler.runTaskRepeat(getPlugin(), 1, 1, new Worker());
     }
 
     /**
@@ -148,7 +148,7 @@ public abstract class IterationTask extends QueueTask {
      *
      * <p>Intended for optional override.</p>
      */
-    protected void onPreFinish() {}
+    protected void onPreComplete() {}
 
     // the worker responsible for iterating
     private class Worker extends TaskHandler {
@@ -198,10 +198,8 @@ public abstract class IterationTask extends QueueTask {
                     completed++;
 
                 }
-
-                onPreFinish();
             }
-
+            onPreComplete();
             cancelTask();
         }
     }

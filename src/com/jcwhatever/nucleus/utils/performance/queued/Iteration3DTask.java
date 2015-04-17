@@ -184,7 +184,7 @@ public abstract class Iteration3DTask extends QueueTask {
         if (_task != null)
             _task.cancel();
 
-        _task = Scheduler.runTaskRepeat(getPlugin(), 1, 10, new Iterator3D());
+        _task = Scheduler.runTaskRepeat(getPlugin(), 1, 1, new Iterator3D());
     }
 
     /**
@@ -288,10 +288,9 @@ public abstract class Iteration3DTask extends QueueTask {
                         }
                     }
                 }
-
-                onPreComplete();
             }
 
+            onPreComplete();
             cancelTask();
         }
 
