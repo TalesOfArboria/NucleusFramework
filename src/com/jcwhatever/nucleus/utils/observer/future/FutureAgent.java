@@ -238,7 +238,15 @@ public class FutureAgent extends SubscriberAgent {
         private void addSubscriber(String agentName, FutureSubscriber subscriber) {
 
             if (parent._finalStatus != null) {
-                subscriber.on(parent._finalStatus, parent._finalMessage);
+
+                FutureStatus status = parent._finalStatus;
+
+                if (agentName.equals("onStatus") ||
+                        (status == FutureStatus.SUCCESS && agentName.equals("onSuccess")) ||
+                        (status == FutureStatus.CANCEL && agentName.equals("onCancel")) ||
+                        (status == FutureStatus.ERROR && agentName.equals("onError"))) {
+                    subscriber.on(parent._finalStatus, parent._finalMessage);
+                }
             }
 
             if (!parent.isDisposed()) {
