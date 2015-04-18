@@ -43,8 +43,6 @@ public interface IExecutableCommand extends ICommand {
 
     /**
      * Invoked to execute the command.
-     *
-     * <p>Intended to be overridden by implementation if needed.</p>
      */
     void execute(CommandSender sender, ICommandArguments args)
             throws CommandException;

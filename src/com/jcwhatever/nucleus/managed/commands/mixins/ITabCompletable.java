@@ -43,8 +43,6 @@ public interface ITabCompletable extends ICommand {
      * Invoked to get a list of possible tab complete values from the command based
      * on the current text.
      *
-     * <p>Intended to be overridden by implementation if needed.</p>
-     *
      * @param sender      The command sender.
      * @param arguments   This command arguments currently entered by the command sender.
      *                    not including the command and command path.

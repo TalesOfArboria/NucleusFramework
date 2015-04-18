@@ -36,5 +36,10 @@ import com.jcwhatever.nucleus.managed.commands.IRegisteredCommand;
  */
 public interface IInitializableCommand extends ICommand {
 
+    /**
+     * Invoked when the command is registered and instantiated.
+     *
+     * @param registeredCommand  The registered command container.
+     */
     void init(IRegisteredCommand registeredCommand);
 }
