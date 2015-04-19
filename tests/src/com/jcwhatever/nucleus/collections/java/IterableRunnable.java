@@ -1,7 +1,6 @@
 package com.jcwhatever.nucleus.collections.java;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -44,7 +43,7 @@ public class IterableRunnable<E> implements Runnable {
             // test iterator hasNext, next through entire collection
             for (int i = 0; i < _size; i++) {
                 assertEquals(true, iterator.hasNext());
-                assertNotNull(iterator.next());
+                iterator.next();
             }
 
             // test hasNext after iteration complete
