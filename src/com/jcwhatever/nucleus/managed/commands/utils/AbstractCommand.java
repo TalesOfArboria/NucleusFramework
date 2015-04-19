@@ -57,7 +57,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
-import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 /**
@@ -100,8 +99,6 @@ public abstract class AbstractCommand implements IInitializableCommand, IPluginO
 
     @Localizable private static final String _PROPERTY_DESCRIPTION =
             "Description for '{0: property value}':\n{GRAY}{1: description}";
-
-    private static final Pattern FORMAT_ENABLE = Pattern.compile("\\{e}");
 
     private LinkedList<Class<? extends ICommand>> _registerQueue;
     private IRegisteredCommand _command;
