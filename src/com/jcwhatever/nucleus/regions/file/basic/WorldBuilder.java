@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -88,14 +89,14 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
     @Override
     public void addBlock(int x, int y, int z, Material material, int data, int light, int skylight) {
         synchronized (_sync) {
-            _builder.blockQueue.addLast(new BlockInfo(x, y, z, material, data));
+            _builder.blockQueue.add(new BlockInfo(x, y, z, material, data));
         }
     }
 
     @Override
     public void addSerializable(IAppliedSerializable blockEntity) {
         synchronized (_sync) {
-            _builder.serializables.addLast(blockEntity);
+            _builder.serializables.add(blockEntity);
         }
     }
 
@@ -142,8 +143,8 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
     private static class Builder extends QueueTask {
 
         World world;
-        LinkedList<BlockInfo> blockQueue = new LinkedList<>();
-        LinkedList<IAppliedSerializable> serializables = new LinkedList<>();
+        Queue<BlockInfo> blockQueue = new LinkedList<>();
+        Queue<IAppliedSerializable> serializables = new LinkedList<>();
 
         /**
          * Constructor.
@@ -163,7 +164,7 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
             LinkedList<BlockInfo> multiBlocks = new LinkedList<>();
 
             while (!blockQueue.isEmpty()) {
-                BlockInfo info = blockQueue.removeFirst();
+                BlockInfo info = blockQueue.remove();
 
                 // skip multi-blocks and restore afterwards
                 if (Materials.isMultiBlock(info.material)) {
@@ -225,7 +226,7 @@ public class WorldBuilder implements IRegionFileData, IPluginOwned {
 
             // restore serializables
             while (!serializables.isEmpty()) {
-                IAppliedSerializable meta = serializables.removeFirst();
+                IAppliedSerializable meta = serializables.remove();
                 meta.apply();
             }
 

@@ -25,6 +25,7 @@
 package com.jcwhatever.nucleus.internal.regions;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.collections.ArrayQueue;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
 import com.jcwhatever.nucleus.internal.regions.PlayerLocationCache.CachedLocation;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
@@ -35,8 +36,8 @@ import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.options.RegionEventPriority.PriorityType;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
-import com.jcwhatever.nucleus.utils.performance.pool.SimpleCheckoutPool.CheckedOutElements;
 import com.jcwhatever.nucleus.utils.performance.pool.IPoolElementFactory;
+import com.jcwhatever.nucleus.utils.performance.pool.SimpleCheckoutPool.CheckedOutElements;
 import com.jcwhatever.nucleus.utils.performance.pool.SimplePool;
 
 import org.bukkit.Location;
@@ -48,6 +49,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -322,7 +324,7 @@ public final class InternalPlayerWatcher {
      */
     private class PlayerWatcherAsync implements Runnable {
 
-        final LinkedList<WorldPlayer> queue = new LinkedList<>();
+        final Queue<WorldPlayer> queue = new ArrayQueue<>(100);
 
         @Override
         public void run() {

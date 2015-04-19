@@ -25,6 +25,7 @@
 
 package com.jcwhatever.nucleus.regions;
 
+import com.jcwhatever.nucleus.collections.ArrayQueue;
 import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.regions.data.RegionChunkSection;
@@ -48,8 +49,8 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import javax.annotation.Nullable;
 
 
@@ -202,7 +203,7 @@ public abstract class BuildableRegion extends Region {
 
         private final ChunkSnapshot snapshot;
         private final Chunk chunk;
-        private final LinkedList<BlockState> blocks = new LinkedList<>();
+        private final Queue<BlockState> blocks;
 
         public BuildChunkIterator (Region region, ChunkSnapshot snapshot, long segmentSize,
                                    int xStart, int yStart, int zStart,
@@ -210,6 +211,7 @@ public abstract class BuildableRegion extends Region {
 
             super(region.getPlugin(), TaskConcurrency.ASYNC, segmentSize, xStart, yStart, zStart, xEnd, yEnd, zEnd);
 
+            this.blocks = new ArrayQueue<>((int)this.getVolume());
             this.snapshot = snapshot;
 
             //noinspection ConstantConditions
@@ -249,7 +251,7 @@ public abstract class BuildableRegion extends Region {
             public final void run() {
 
                 while (!blocks.isEmpty()) {
-                    BlockState state = blocks.removeFirst();
+                    BlockState state = blocks.remove();
                     state.update(true, false);
                 }
             }
