@@ -181,8 +181,6 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -257,19 +255,7 @@ public abstract class BukkitEventForwarder implements IPluginOwned, IDisposable 
 
         _isDisposed = true;
 
-        for (Class<? extends Event> clazz : _registered) {
-
-            try {
-                Method method = clazz.getDeclaredMethod("getHandlers");
-
-                HandlerList list = (HandlerList) method.invoke(null);
-                list.unregister(_dummyListener);
-            }
-            catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
+        HandlerList.unregisterAll(_dummyListener);
         _registered.clear();
     }
 
