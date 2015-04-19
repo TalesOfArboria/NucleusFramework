@@ -38,28 +38,35 @@ public class SimpleConcurrentPool<E> extends SimplePool<E> {
     /**
      * Constructor.
      *
-     * @param clazz           The class of the pool type.
-     * @param size            The initial capacity of the pool.
-     * @param elementFactory  The element factory used to create new elements when
-     *                        the pool is empty.
+     * @param capacity  The initial capacity of the pool.
      */
-    public SimpleConcurrentPool(Class<E> clazz, int size, IPoolElementFactory<E> elementFactory) {
-        super(clazz, size, elementFactory, null);
+    public SimpleConcurrentPool(int capacity) {
+        this(capacity, null, null);
     }
 
     /**
      * Constructor.
      *
-     * @param clazz           The class of the pool type.
-     * @param size            The initial capacity of the pool.
+     * @param capacity        The initial capacity of the pool.
+     * @param elementFactory  The element factory used to create new elements when
+     *                        the pool is empty.
+     */
+    public SimpleConcurrentPool(int capacity, IPoolElementFactory<E> elementFactory) {
+        super(capacity, elementFactory, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param capacity        The initial capacity of the pool.
      * @param elementFactory  The element factory used to create new elements when
      *                        the pool is empty.
      * @param recycleHandler  The handler to give a recycled element to for object teardown.
      */
-    public SimpleConcurrentPool(Class<E> clazz, int size,
-                      IPoolElementFactory<E> elementFactory,
+    public SimpleConcurrentPool(int capacity,
+                      @Nullable IPoolElementFactory<E> elementFactory,
                       @Nullable IPoolRecycleHandler<E> recycleHandler) {
-        super(clazz, size, elementFactory, recycleHandler);
+        super(capacity, elementFactory, recycleHandler);
     }
 
     @Override
@@ -105,7 +112,7 @@ public class SimpleConcurrentPool<E> extends SimplePool<E> {
     }
 
     @Override
-    public int recycleAll(E[] elements, int start, int length) {
+    public <T> int recycleAll(T[] elements, int start, int length) {
         synchronized (_sync) {
             return super.recycleAll(elements, start, length);
         }

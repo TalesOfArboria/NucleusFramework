@@ -44,42 +44,39 @@ public class SimpleCheckoutPool<E> extends AbstractPool<E> {
     /**
      * Constructor.
      *
-     * @param clazz           The class of the pool type.
-     * @param size            The initial capacity of the pool.
+     * @param capacity  The initial capacity of the pool.
      */
-    public SimpleCheckoutPool(Class<E> clazz, int size) {
-        this(clazz, size, null, null);
+    public SimpleCheckoutPool(int capacity) {
+        this(capacity, null, null);
     }
 
     /**
      * Constructor.
      *
-     * @param clazz           The class of the pool type.
-     * @param size            The initial capacity of the pool.
+     * @param capacity        The initial capacity of the pool.
      * @param elementFactory  The element factory used to create new elements when
      *                        the pool is empty.
      */
-    public SimpleCheckoutPool(Class<E> clazz, int size,
+    public SimpleCheckoutPool(int capacity,
                               @Nullable IPoolElementFactory<E> elementFactory) {
 
-        this(clazz, size, elementFactory, null);
+        this(capacity, elementFactory, null);
     }
 
     /**
      * Constructor.
      *
-     * @param clazz           The class of the pool type.
-     * @param size            The initial capacity of the pool.
+     * @param capacity        The initial capacity of the pool.
      * @param elementFactory  The element factory used to create new elements when
      *                        the pool is empty.
      * @param recycleHandler  The handler to give a recycled element to for object teardown.
      */
-    public SimpleCheckoutPool(Class<E> clazz, int size,
+    public SimpleCheckoutPool(int capacity,
                               @Nullable IPoolElementFactory<E> elementFactory,
                               @Nullable IPoolRecycleHandler<E> recycleHandler) {
-        super(clazz, size, elementFactory, recycleHandler);
+        super(capacity, elementFactory, recycleHandler);
 
-        _checkedOut.array = ArrayUtils.newArray(clazz, size);
+        _checkedOut.array = new Object[capacity];
     }
 
     /**
@@ -196,7 +193,7 @@ public class SimpleCheckoutPool<E> extends AbstractPool<E> {
     public static class CheckedOutElements<E> implements Iterable<E> {
 
         final SimpleCheckoutPool<E> parent;
-        E[] array;
+        Object[] array;
         int arrayIndex = -1;
 
         /**
@@ -270,7 +267,11 @@ public class SimpleCheckoutPool<E> extends AbstractPool<E> {
                 @Override
                 public E next() {
                     index++;
-                    return array[index];
+
+                    @SuppressWarnings("unchecked")
+                    E element = (E)array[index];
+
+                    return element;
                 }
 
                 @Override

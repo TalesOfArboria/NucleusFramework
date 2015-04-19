@@ -76,10 +76,10 @@ public class AStarPooledNodeFactory implements IAStarNodeFactory {
             };
 
     private final SimplePool<MutableCoords3Di> _coordsPool =
-            new SimplePool<MutableCoords3Di>(MutableCoords3Di.class, 100, COORDS_FACTORY);
+            new SimplePool<MutableCoords3Di>(100, COORDS_FACTORY);
 
     private final SimplePool<AStarPooledNode> _nodePool =
-            new SimplePool<AStarPooledNode>(AStarPooledNode.class, 100, NODE_FACTORY, NODE_RECYCLER);
+            new SimplePool<AStarPooledNode>(100, NODE_FACTORY, NODE_RECYCLER);
 
     /**
      * Get the max number of objects to pool.

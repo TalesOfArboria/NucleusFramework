@@ -101,39 +101,45 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
     private final transient SimpleConcurrentPool<ExpireInfo> _expirePool;
 
     /**
-     * Constructor. Default lifespan is 20 ticks.
+     * Constructor.
+     *
+     * <p>Default lifespan is 20 ticks.</p>
      */
     public TimedHashSet(Plugin plugin) {
         this(plugin, 10, 20, TimeScale.TICKS);
     }
 
     /**
-     * Constructor. Default lifespan is 20 ticks.
+     * Constructor.
      *
-     * @param size  The initial capacity.
-     */
-    public TimedHashSet(Plugin plugin, int size) {
-        this(plugin, size, 20, TimeScale.TICKS);
-    }
-
-    /**
-     * Constructor. Default lifespan is 20 ticks.
+     * <p>Default lifespan is 20 ticks.</p>
      *
-     * @param size             The initial capacity.
-     * @param defaultLifespan  The default lifespan.
+     * @param capacity  The initial capacity.
      */
-    public TimedHashSet(Plugin plugin, int size, int defaultLifespan) {
-        this(plugin, size, defaultLifespan, TimeScale.TICKS);
+    public TimedHashSet(Plugin plugin, int capacity) {
+        this(plugin, capacity, 20, TimeScale.TICKS);
     }
 
     /**
      * Constructor.
      *
-     * @param size             The initial capacity.
+     * <p>Default lifespan is 20 ticks.</p>
+     *
+     * @param capacity         The initial capacity.
+     * @param defaultLifespan  The default lifespan.
+     */
+    public TimedHashSet(Plugin plugin, int capacity, int defaultLifespan) {
+        this(plugin, capacity, defaultLifespan, TimeScale.TICKS);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param capacity         The initial capacity.
      * @param defaultLifespan  The default lifespan.
      * @param timeScale        The lifespan time scale.
      */
-    public TimedHashSet(Plugin plugin, int size, int defaultLifespan, TimeScale timeScale) {
+    public TimedHashSet(Plugin plugin, int capacity, int defaultLifespan, TimeScale timeScale) {
         PreCon.notNull(plugin);
         PreCon.positiveNumber(defaultLifespan);
         PreCon.notNull(timeScale);
@@ -142,9 +148,9 @@ public class TimedHashSet<E> implements Set<E>, IPluginOwned {
         _sync = this;
         _lifespan = defaultLifespan * timeScale.getTimeFactor();
         _timeScale = timeScale;
-        _expireMap = new HashMap<>(size);
+        _expireMap = new HashMap<>(capacity);
 
-        _expirePool = new SimpleConcurrentPool<ExpireInfo>(ExpireInfo.class, size,
+        _expirePool = new SimpleConcurrentPool<ExpireInfo>(capacity,
                 new IPoolElementFactory<ExpireInfo>() {
                     @Override
                     public ExpireInfo create() {

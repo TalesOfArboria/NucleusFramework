@@ -108,39 +108,35 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
     private final transient SimpleConcurrentPool<DateEntry> _entryPool;
 
     /**
-     * Constructor. Default lifespan is 20 ticks.
+     * Constructor.
+     *
+     * <p>Default lifespan is 20 ticks.</p>
+     *
+     * <p>The initial capacity is 10.</p>
      */
     public TimedHashMap(Plugin plugin) {
         this(plugin, 10, 20, TimeScale.TICKS);
     }
 
     /**
-     * Constructor. Default lifespan is 20 ticks.
+     * Constructor.
      *
-     * @param size  The initial capacity of the map.
-     */
-    public TimedHashMap(Plugin plugin, int size) {
-        this(plugin, size, 20, TimeScale.TICKS);
-    }
-
-    /**
-     * Constructor. Time scale is in ticks.
+     * <p>Default lifespan is 20 ticks.</p>
      *
-     * @param size             The initial capacity of the map.
-     * @param defaultLifespan  The default lifespan of items in ticks.
+     * @param capacity  The initial capacity of the map.
      */
-    public TimedHashMap(Plugin plugin, int size, int defaultLifespan) {
-        this(plugin, size, defaultLifespan, TimeScale.TICKS);
+    public TimedHashMap(Plugin plugin, int capacity) {
+        this(plugin, capacity, 20, TimeScale.TICKS);
     }
 
     /**
      * Constructor.
      *
-     * @param size             The initial capacity of the map.
+     * @param capacity         The initial capacity of the map.
      * @param defaultLifespan  The default lifespan of items in ticks.
      * @param timeScale        The lifespan time scale.
      */
-    public TimedHashMap(Plugin plugin, int size, int defaultLifespan, TimeScale timeScale) {
+    public TimedHashMap(Plugin plugin, int capacity, int defaultLifespan, TimeScale timeScale) {
         PreCon.notNull(plugin);
         PreCon.positiveNumber(defaultLifespan);
         PreCon.notNull(timeScale);
@@ -150,12 +146,12 @@ public class TimedHashMap<K, V> implements Map<K, V>, IPluginOwned {
         _strategy = new SyncStrategy(this);
         _lifespan = defaultLifespan * timeScale.getTimeFactor();
         _timeScale = timeScale;
-        _map = new HashMap<>(size);
+        _map = new HashMap<>(capacity);
         _valuesWrapper = new ValuesWrapper();
         _keySetWrapper = new KeySetWrapper();
         _entrySetWrapper = new EntrySetWrapper();
 
-        _entryPool = new SimpleConcurrentPool<DateEntry>(DateEntry.class, size,
+        _entryPool = new SimpleConcurrentPool<DateEntry>(capacity,
                 new IPoolElementFactory<DateEntry>() {
                     @Override
                     public DateEntry create() {

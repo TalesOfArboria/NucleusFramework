@@ -62,7 +62,7 @@ class PlayerLocationCache extends SimpleCheckoutPool<CachedLocation> {
     private UUID _playerId;
 
     public PlayerLocationCache() {
-        super(CachedLocation.class, 75, ELEMENT_FACTORY, RECYCLE_HANDLER);
+        super(75, ELEMENT_FACTORY, RECYCLE_HANDLER);
     }
 
     /**

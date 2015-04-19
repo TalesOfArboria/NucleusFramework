@@ -92,7 +92,7 @@ public final class InternalPlayerWatcher {
         _manager = manager;
         _playerRegionCache = new PlayerMap<>(Nucleus.getPlugin());
         _playerLocationCache = new PlayerMap<>(Nucleus.getPlugin());
-        _pools = new SimplePool<PlayerLocationCache>(PlayerLocationCache.class, 100,
+        _pools = new SimplePool<PlayerLocationCache>(100,
                 new IPoolElementFactory<PlayerLocationCache>() {
                     @Override
                     public PlayerLocationCache create() {

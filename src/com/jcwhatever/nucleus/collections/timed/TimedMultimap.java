@@ -113,7 +113,9 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
     private final transient SimpleConcurrentPool<ExpireInfo> _expirePool;
 
     /**
-     * Constructor. Default lifespan is 20 ticks.
+     * Constructor.
+     *
+     * <p>Default lifespan is 20 ticks.</p>
      */
     public TimedMultimap(Plugin plugin) {
         this(plugin, 20, TimeScale.TICKS);
@@ -143,7 +145,7 @@ public abstract class TimedMultimap<K, V> implements Multimap<K, V>, IPluginOwne
         _entries = new EntriesWrapper();
         _asMap = new AsMapWrapper();
 
-        _expirePool = new SimpleConcurrentPool<ExpireInfo>(ExpireInfo.class, 50,
+        _expirePool = new SimpleConcurrentPool<ExpireInfo>(50,
                 new IPoolElementFactory<ExpireInfo>() {
                     @Override
                     public ExpireInfo create() {

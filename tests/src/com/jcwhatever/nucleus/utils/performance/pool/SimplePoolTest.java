@@ -14,7 +14,7 @@ public class SimplePoolTest {
     }
 
     private SimplePool<PoolElement> getPool(int size) {
-        return new SimplePool<PoolElement>(PoolElement.class, size,
+        return new SimplePool<PoolElement>(size,
                 new IPoolElementFactory<PoolElement>() {
                     @Override
                     public PoolElement create() {

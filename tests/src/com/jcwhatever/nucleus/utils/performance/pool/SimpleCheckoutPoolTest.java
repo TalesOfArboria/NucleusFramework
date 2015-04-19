@@ -16,7 +16,7 @@ public class SimpleCheckoutPoolTest {
     }
 
     private SimpleCheckoutPool<PoolElement> getPool(int size) {
-        return new SimpleCheckoutPool<>(PoolElement.class, size,
+        return new SimpleCheckoutPool<>(size,
                 new IPoolElementFactory<PoolElement>() {
                     @Override
                     public PoolElement create() {

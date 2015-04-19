@@ -34,64 +34,50 @@ import javax.annotation.Nullable;
  */
 public abstract class AbstractPool<E> {
 
-    private final Class<E> _clazz;
     private final IPoolElementFactory<E> _elementFactory;
     private final IPoolRecycleHandler<E> _recycleHandler;
 
-    private E[] _pool;
+    private Object[] _pool;
     private int _poolIndex = -1;
     private int _maxSize = -1;
 
     /**
      * Constructor.
      *
-     * @param clazz  The class of the pool type.
-     * @param size   The initial capacity of the pool.
+     * @param capacity  The initial capacity of the pool.
      */
-    public AbstractPool(Class<E> clazz, int size) {
-        this(clazz, size, null, null);
+    public AbstractPool(int capacity) {
+        this(capacity, null, null);
     }
 
     /**
      * Constructor.
      *
-     * @param clazz           The class of the pool type.
-     * @param size            The initial capacity of the pool.
+     * @param capacity        The initial capacity of the pool.
      * @param elementFactory  The element factory used to create new elements when
      *                        the pool is empty.
      */
-    public AbstractPool(Class<E> clazz, int size,
+    public AbstractPool(int capacity,
                       @Nullable IPoolElementFactory<E> elementFactory) {
 
-        this(clazz, size, elementFactory, null);
+        this(capacity, elementFactory, null);
     }
 
     /**
      * Constructor.
      *
-     * @param clazz           The class of the pool type.
-     * @param size            The initial capacity of the pool.
+     * @param capacity        The initial capacity of the pool.
      * @param elementFactory  The element factory used to create new elements when
      *                        the pool is empty.
      * @param recycleHandler  The handler to give a recycled element to for object teardown.
      */
-    public AbstractPool(Class<E> clazz, int size,
+    public AbstractPool(int capacity,
                       @Nullable IPoolElementFactory<E> elementFactory,
                       @Nullable IPoolRecycleHandler<E> recycleHandler) {
 
-        PreCon.notNull(clazz);
-
-        _clazz = clazz;
-        _pool = ArrayUtils.newArray(clazz, size);
+        _pool = new Object[capacity];
         _elementFactory = elementFactory;
         _recycleHandler = recycleHandler;
-    }
-
-    /**
-     * Get the pooled element class.
-     */
-    public Class<E> getElementClass() {
-        return _clazz;
     }
 
     /**
@@ -184,7 +170,8 @@ public abstract class AbstractPool<E> {
         if (_poolIndex == -1)
             return _elementFactory == null ? null : _elementFactory.create();
 
-        E element = _pool[_poolIndex];
+        @SuppressWarnings("unchecked")
+        E element = (E)_pool[_poolIndex];
         _pool[_poolIndex] = null;
 
         _poolIndex--;
@@ -228,7 +215,7 @@ public abstract class AbstractPool<E> {
      *
      * @return  The number of elements recycled.
      */
-    protected int recycleAll(E[] elements, int start, int length) {
+    protected <T> int recycleAll(T[] elements, int start, int length) {
         PreCon.notNull(elements, "elements");
         PreCon.positiveNumber(start, "start");
         PreCon.lessThan(start, elements.length, "start");
@@ -246,7 +233,8 @@ public abstract class AbstractPool<E> {
             if (maxSize() > -1 && _poolIndex + i + 2 > maxSize())
                 break;
 
-            E element = elements[start + i];
+            @SuppressWarnings("unchecked")
+            E element = (E)elements[start + i];
             if (element == null)
                 continue;
 
@@ -299,7 +287,7 @@ public abstract class AbstractPool<E> {
     /**
      * Expand the size of a pool.
      */
-    protected E[] expand(E[] array, int maxSize) {
+    protected Object[] expand(Object[] array, int maxSize) {
         int newSize = array.length + (int)Math.max(10, Math.min(100, Math.ceil(array.length * 0.15D)));
         return resize(array, newSize, maxSize);
     }
@@ -307,14 +295,14 @@ public abstract class AbstractPool<E> {
     /**
      * Resize a pool to a specific size.
      */
-    protected E[] resize(E[] array, int size, int maxSize) {
+    protected Object[] resize(Object[] array, int size, int maxSize) {
 
         if (!canResize(array.length, maxSize))
             return array;
 
         size = limitResize(size, maxSize);
 
-        E[] newArray = ArrayUtils.newArray(getElementClass(), size);
+        Object[] newArray = new Object[size];
         return ArrayUtils.copyFromStart(array, newArray);
     }
 
@@ -322,7 +310,7 @@ public abstract class AbstractPool<E> {
     /**
      * Get the pool array.
      */
-    protected E[] pool() {
+    protected Object[] pool() {
         return _pool;
     }
 

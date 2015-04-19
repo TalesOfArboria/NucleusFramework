@@ -114,39 +114,35 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
     private final transient SimpleConcurrentPool<Element> _elementPool;
 
     /**
-     * Constructor. Default item lifespan is 20 ticks.
+     * Constructor.
+     *
+     * <p>Default item lifespan is 20 ticks.</p>
+     *
+     * <p>Initial capacity is 10.</p>
      */
     public TimedArrayList(Plugin plugin) {
         this(plugin, 10, 20, TimeScale.TICKS);
     }
 
     /**
-     * Constructor. Default item lifespan is 20 ticks.
+     * Constructor.
      *
-     * @param size  The initial capacity of the list.
+     * <p>Default item lifespan is 20 ticks.</p>
+     *
+     * @param capacity  The initial capacity of the list.
      */
-    public TimedArrayList(Plugin plugin, int size) {
-        this(plugin, size, 20, TimeScale.TICKS);
+    public TimedArrayList(Plugin plugin, int capacity) {
+        this(plugin, capacity, 20, TimeScale.TICKS);
     }
 
     /**
-     * Constructor. Specify default item lifespan in ticks.
+     * Constructor.
      *
-     * @param size         The initial capacity of the list.
-     * @param defaultTime  The default lifespan of items.
-     */
-    public TimedArrayList(Plugin plugin, int size, int defaultTime) {
-        this(plugin, size, defaultTime, TimeScale.TICKS);
-    }
-
-    /**
-     * Constructor. Specify default item lifespan and time scale.
-     *
-     * @param size         The initial capacity of the list.
+     * @param capacity     The initial capacity of the list.
      * @param defaultTime  The default lifespan of items.
      * @param timeScale    The lifespan time scale.
      */
-    public TimedArrayList(Plugin plugin, int size, int defaultTime, TimeScale timeScale) {
+    public TimedArrayList(Plugin plugin, int capacity, int defaultTime, TimeScale timeScale) {
         PreCon.notNull(plugin);
         PreCon.positiveNumber(defaultTime);
         PreCon.notNull(timeScale);
@@ -154,10 +150,10 @@ public class TimedArrayList<E> implements List<E>, IPluginOwned {
         _plugin = plugin;
         _lifespan = defaultTime * timeScale.getTimeFactor();
         _timeScale = timeScale;
-        _list = new ArrayList<>(size);
+        _list = new ArrayList<>(capacity);
         _sync = this;
 
-        _elementPool = new SimpleConcurrentPool<Element>(Element.class, 50,
+        _elementPool = new SimpleConcurrentPool<Element>(50,
                 new IPoolElementFactory<Element>() {
                     @Override
                     public Element create() {
