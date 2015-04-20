@@ -255,6 +255,12 @@ public final class InternalRegionManager extends RegionTypeManager<IRegion> impl
     public void register(IRegion region) {
         PreCon.notNull(region);
 
+        if (region.isDisposed()) {
+            NucMsg.debug("Failed to register region '{0}' from plugin '{1}' with RegionManager because " +
+                    "it is disposed.", region.getName(), region.getPlugin().getName());
+            return;
+        }
+
         if (!region.isDefined() || !region.isWorldLoaded()) {
             NucMsg.debug("Failed to register region '{0}' with RegionManager because " +
                     "it's coords are undefined. Region Type: {1}", region.getName(), region.getClass().getName());
