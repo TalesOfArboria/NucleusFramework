@@ -33,20 +33,20 @@ import org.bukkit.inventory.ItemStack;
 /**
  * An {@link org.bukkit.inventory.ItemStack} wrapper.
  *
- * <p>Provides built in {@link ItemStackMatcher} support in the {@link #equals} and
- *  {@link #hashCode} methods making the wrapper ideal for use as a hash key that
- *  represents the item.</p>
+ * <p>Provides built in {@link ItemStackMatcher} support in the {@link #equals}
+ * and {@link #hashCode} methods making the wrapper ideal for use as a hash key
+ * that represents the item.</p>
  *
- * <p>{@link #hashCode} method returns the hash of the encapsulated {@link org.bukkit.inventory.ItemStack}'s
- * {@link org.bukkit.Material} type so that different {@link ItemStackMatcher} compare operations
- * can be used to find an {@link org.bukkit.inventory.ItemStack} by key or in a hash set.</p>
+ * <p>{@link #hashCode} method returns the hash based on the encapsulated
+ * {@link org.bukkit.inventory.ItemStack}'s {@link org.bukkit.Material} type so
+ * that different {@link ItemStackMatcher} compare operations can be used to find
+ * an {@link org.bukkit.inventory.ItemStack} by key or in a hash set.</p>
  *
  */
 public class MatchableItem {
 
     private ItemStack _itemStack;
     private ItemStackMatcher _matcher;
-    private int _hash = -1;
 
     /**
      * Constructor.
@@ -56,10 +56,7 @@ public class MatchableItem {
      * @param itemStack  The {@link ItemStack} to encapsulate.
      */
     public MatchableItem(ItemStack itemStack) {
-        PreCon.notNull(itemStack);
-
-        _itemStack = itemStack;
-        _matcher = ItemStackMatcher.getDefault();
+        this(itemStack, ItemStackMatcher.getDefault());
     }
 
     /**
@@ -72,8 +69,17 @@ public class MatchableItem {
         PreCon.notNull(itemStack);
         PreCon.notNull(matcher );
 
-        _itemStack = itemStack;
-        this._matcher = matcher ;
+        setItem(itemStack);
+        setMatcher(matcher);
+    }
+
+    /**
+     * Constructor.
+     */
+    protected MatchableItem(ItemStackMatcher matcher) {
+        PreCon.notNull(matcher);
+
+        setMatcher(matcher);
     }
 
     /**
@@ -99,16 +105,17 @@ public class MatchableItem {
 
     @Override
     public int hashCode() {
-        if (_hash == -1) {
-            _hash = 1;
-            _hash = _hash * 31 + _itemStack.getTypeId();
-        }
+        if (_itemStack == null)
+            return 0;
 
-        return _hash;
+        return 31 + _itemStack.getTypeId();
     }
 
     @Override
     public boolean equals(Object o) {
+        if (_itemStack == null)
+            return false;
+
         if (o instanceof ItemStack) {
             return _matcher.isMatch(_itemStack, (ItemStack) o);
         }
@@ -119,5 +126,27 @@ public class MatchableItem {
         }
 
         return false;
+    }
+
+    /**
+     * Set the current matchable {@link ItemStack}.
+     *
+     * @param itemStack  The {@link ItemStack}.
+     */
+    protected void setItem(ItemStack itemStack) {
+        PreCon.notNull(itemStack);
+
+        _itemStack = itemStack;
+    }
+
+    /**
+     * Set the current {@link ItemStackMatcher}.
+     *
+     * @param matcher  The {@link ItemStackMatcher}.
+     */
+    protected void setMatcher(ItemStackMatcher matcher) {
+        PreCon.notNull(matcher);
+
+        _matcher = matcher;
     }
 }
