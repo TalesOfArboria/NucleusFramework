@@ -61,7 +61,7 @@ public interface ITaskScheduler {
      *
      * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    IScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable);
+    IScheduledTask runTaskLater(Plugin plugin, long ticks, Runnable runnable);
 
     /**
      * Run a task on a new asynchronous thread after a specified number
@@ -77,7 +77,7 @@ public interface ITaskScheduler {
      *
      * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    IScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable);
+    IScheduledTask runTaskLaterAsync(Plugin plugin, long ticks, Runnable runnable);
 
     /**
      * Run a task on a repeating schedule after a specified number of ticks
@@ -94,7 +94,7 @@ public interface ITaskScheduler {
      *
      * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    IScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
+    IScheduledTask runTaskRepeat(Plugin plugin, long startTicks, long repeatTicks, Runnable runnable);
 
     /**
      * Run a task on a new asynchronous repeating schedule after a specified number
@@ -112,7 +112,7 @@ public interface ITaskScheduler {
      *
      * @return  A {@link IScheduledTask} instance to keep track of the task.
      */
-    IScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable);
+    IScheduledTask runTaskRepeatAsync(Plugin plugin, long startTicks, long repeatTicks, Runnable runnable);
 
     /**
      * Run a task on the main thread at the next available chance.
@@ -124,7 +124,7 @@ public interface ITaskScheduler {
      * @param plugin    The owning plugin.
      * @param runnable  The {@link java.lang.Runnable} to run later.
      */
-    void runTaskSync(Plugin plugin, final Runnable runnable);
+    void runTaskSync(Plugin plugin, Runnable runnable);
 
     /**
      * Run a task on the main thread after the specified number of ticks have
@@ -138,5 +138,5 @@ public interface ITaskScheduler {
      * @param ticks     The number of ticks to wait before running the task.
      * @param runnable  The {@link java.lang.Runnable} to run later.
      */
-    void runTaskSync(Plugin plugin, int ticks, Runnable runnable);
+    void runTaskSync(Plugin plugin, long ticks, Runnable runnable);
 }

@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
@@ -55,10 +56,11 @@ public final class InternalTaskScheduler implements ITaskScheduler {
             return task;
         }
 
-        BukkitTask bukkitTask = Bukkit.getScheduler().runTask(plugin, runnable);
-        task.setBukkitTask(bukkitTask);
+        BukkitTask bukkitTask = runnable instanceof BukkitRunnable
+            ? ((BukkitRunnable) runnable).runTask(plugin)
+            : Bukkit.getScheduler().runTask(plugin, runnable);
 
-        return task;
+        return task.setBukkitTask(bukkitTask);
     }
 
     @Override
@@ -73,10 +75,11 @@ public final class InternalTaskScheduler implements ITaskScheduler {
             return task;
         }
 
-        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(plugin, runnable, ticks);
-        task.setBukkitTask(bukkitTask);
+        BukkitTask bukkitTask = runnable instanceof BukkitRunnable
+            ? ((BukkitRunnable) runnable).runTaskLater(plugin, ticks)
+            : Bukkit.getScheduler().runTaskLater(plugin, runnable, ticks);
 
-        return task;
+        return task.setBukkitTask(bukkitTask);
     }
 
     @Override
@@ -91,10 +94,11 @@ public final class InternalTaskScheduler implements ITaskScheduler {
             return task;
         }
 
-        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, runnable, ticks);
-        task.setBukkitTask(bukkitTask);
+        BukkitTask bukkitTask = runnable instanceof BukkitRunnable
+            ? ((BukkitRunnable) runnable).runTaskLaterAsynchronously(plugin, ticks)
+            : Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, runnable, ticks);
 
-        return task;
+        return task.setBukkitTask(bukkitTask);
     }
 
     @Override
@@ -110,10 +114,11 @@ public final class InternalTaskScheduler implements ITaskScheduler {
             return task;
         }
 
-        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, runnable, startTicks, repeatTicks);
-        task.setBukkitTask(bukkitTask);
+        BukkitTask bukkitTask = runnable instanceof BukkitRunnable
+            ? ((BukkitRunnable) runnable).runTaskTimer(plugin, startTicks, repeatTicks)
+            : Bukkit.getScheduler().runTaskTimer(plugin, runnable, startTicks, repeatTicks);
 
-        return task;
+        return task.setBukkitTask(bukkitTask);
     }
 
     @Override
@@ -129,11 +134,11 @@ public final class InternalTaskScheduler implements ITaskScheduler {
             return task;
         }
 
-        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
-                plugin, runnable, startTicks, repeatTicks);
-        task.setBukkitTask(bukkitTask);
+        BukkitTask bukkitTask = runnable instanceof BukkitRunnable
+                ? ((BukkitRunnable) runnable).runTaskTimerAsynchronously(plugin, startTicks, repeatTicks)
+                : Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, startTicks, repeatTicks);
 
-        return task;
+        return task.setBukkitTask(bukkitTask);
     }
 
     @Override

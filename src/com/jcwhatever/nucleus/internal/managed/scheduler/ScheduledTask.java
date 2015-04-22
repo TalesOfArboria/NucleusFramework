@@ -63,10 +63,12 @@ class ScheduledTask implements IScheduledTask {
     /**
      * Set the {@link org.bukkit.scheduler.BukkitTask}.
      */
-    public void setBukkitTask(BukkitTask task) {
+    public ScheduledTask setBukkitTask(BukkitTask task) {
         PreCon.notNull(task);
 
         _task = task;
+
+        return this;
     }
 
     /**
