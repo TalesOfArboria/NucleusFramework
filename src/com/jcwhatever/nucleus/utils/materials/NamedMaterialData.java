@@ -108,6 +108,11 @@ public final class NamedMaterialData {
     static {
         _alternateNames
 
+                .add("CHAIN_HELMET", new MaterialData(Material.CHAINMAIL_HELMET))
+                .add("CHAIN_CHESTPLATE", new MaterialData(Material.CHAINMAIL_CHESTPLATE))
+                .add("CHAIN_LEGGINGS", new MaterialData(Material.CHAINMAIL_LEGGINGS))
+                .add("CHAIN_BOOTS", new MaterialData(Material.CHAINMAIL_BOOTS))
+
                 .add("GRANITE", new MaterialData(Material.STONE, (byte) 1))
                 .add("POLISHED_GRANITE", new MaterialData(Material.STONE, (byte) 2))
                 .add("SMOOTH_GRANITE", new MaterialData(Material.STONE, (byte) 2))
