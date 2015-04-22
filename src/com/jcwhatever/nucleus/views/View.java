@@ -99,15 +99,6 @@ public abstract class View implements IPluginOwned, IPlayerReference {
     public abstract Inventory getInventory();
 
     /**
-     * Determine if the view is capable of generating an
-     * {@link org.bukkit.inventory.InventoryView} instance.
-     *
-     * <p>The result is not affected by whether or not the inventory
-     * view has been shown yet.</p>
-     */
-    public abstract boolean isInventoryViewable();
-
-    /**
      * Get the most recent reason the view was closed.
      *
      * <p>Used by {@link ViewEventListener} to determine how

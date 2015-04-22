@@ -27,6 +27,7 @@ package com.jcwhatever.nucleus.internal.managed.scripting.api.views;
 import com.jcwhatever.nucleus.collections.WeakHashSet;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.items.ItemFilter;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 import com.jcwhatever.nucleus.views.menu.MenuItemBuilder;
@@ -37,13 +38,13 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
 
-public class SAPI_MenuView implements IDisposable {
+public class SAPI_Views implements IDisposable {
 
     private final Plugin _plugin;
-    private final Set<ScriptMenuView> _menuViews = new WeakHashSet<>(10);
+    private final Set<IDisposable> _views = new WeakHashSet<>(10);
     private boolean _isDisposed;
 
-    public SAPI_MenuView(Plugin plugin) {
+    public SAPI_Views(Plugin plugin) {
         PreCon.notNull(plugin);
 
         _plugin = plugin;
@@ -57,10 +58,10 @@ public class SAPI_MenuView implements IDisposable {
     @Override
     public void dispose() {
 
-        for (ScriptMenuView menuView : _menuViews) {
-            menuView.dispose();
+        for (IDisposable view : _views) {
+            view.dispose();
         }
-        _menuViews.clear();
+        _views.clear();
         _isDisposed = true;
     }
 
@@ -98,8 +99,46 @@ public class SAPI_MenuView implements IDisposable {
         PreCon.isValid(p != null, "Invalid player object.");
 
         ScriptMenuView menuView = new ScriptMenuView(_plugin, p, title);
-        _menuViews.add(menuView);
+        _views.add(menuView);
 
         return menuView;
+    }
+
+    /**
+     * Create a new workbench view.
+     *
+     * @param player  The {@link org.bukkit.entity.Player} the view is for. Argument can also be
+     *                the player name, the players UUID or an
+     *                {@link com.jcwhatever.nucleus.mixins.IPlayerReference} instance.
+     */
+    public ScriptWorkbenchView createWorkbench(Object player) {
+        PreCon.notNull(player);
+
+        Player p = PlayerUtils.getPlayer(player);
+        PreCon.isValid(p != null, "Invalid player object.");
+
+        ScriptWorkbenchView view = new ScriptWorkbenchView(_plugin, p, new ItemFilter(_plugin, null));
+        _views.add(view);
+
+        return view;
+    }
+
+    /**
+     * Create a new anvil view.
+     *
+     * @param player  The {@link org.bukkit.entity.Player} the view is for. Argument can also be
+     *                the player name, the players UUID or an
+     *                {@link com.jcwhatever.nucleus.mixins.IPlayerReference} instance.
+     */
+    public ScriptAnvilView createAnvil(Object player) {
+        PreCon.notNull(player);
+
+        Player p = PlayerUtils.getPlayer(player);
+        PreCon.isValid(p != null, "Invalid player object.");
+
+        ScriptAnvilView view = new ScriptAnvilView(_plugin, p, new ItemFilter(_plugin, null));
+        _views.add(view);
+
+        return view;
     }
 }

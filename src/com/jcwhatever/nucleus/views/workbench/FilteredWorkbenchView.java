@@ -79,7 +79,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
      * Get the views item filter manager.
      */
     @Nullable
-    public ItemFilter getFilterManager() {
+    public ItemFilter getItemFilter() {
         return _filter;
     }
 
@@ -134,7 +134,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
 
             ItemStack result = event.getRecipe().getResult();
 
-            ItemFilter filter = workbench.getFilterManager();
+            ItemFilter filter = workbench.getItemFilter();
             if (filter == null)
                 return;
 
@@ -155,7 +155,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
             if (workbench == null)
                 return;
 
-            ItemFilter filter = workbench.getFilterManager();
+            ItemFilter filter = workbench.getItemFilter();
             if (filter == null)
                 return;
 

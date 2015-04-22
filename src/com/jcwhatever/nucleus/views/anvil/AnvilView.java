@@ -24,28 +24,25 @@
 
 package com.jcwhatever.nucleus.views.anvil;
 
-import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import javax.annotation.Nullable;
 
 /**
  * An implementation of an anvil view.
  */
 public class AnvilView extends View {
+
+    private Inventory _inventory;
+    private InventoryView _inventoryView;
 
     /**
      * Constructor.
@@ -58,36 +55,10 @@ public class AnvilView extends View {
 
     @Override
     protected boolean openView(ViewOpenReason reason) {
-        Block block = getViewSession().getSessionBlock();
-        if (block == null || block.getType() != Material.ANVIL) {
-            throw new IllegalStateException("Anvil Views must have an anvil source block.");
-        }
 
-        Location loc = block.getLocation();
+        _inventory = Bukkit.createInventory(getPlayer(), InventoryType.ANVIL);
 
-        if (!getPlayer().getClass().getName().contains("CraftPlayer")) {
-            NucMsg.debug(getPlugin(), "Unable to open anvil view because of incorrect Player implementation.");
-            return false;
-        }
-
-        try {
-
-            Player p = getPlayer();
-
-            Method getHandle = p.getClass().getDeclaredMethod("getHandle");
-
-            Object entityHuman = getHandle.invoke(p);
-
-            Method openAnvil = entityHuman.getClass().getDeclaredMethod("openAnvil", int.class, int.class, int.class);
-
-            openAnvil.invoke(entityHuman, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-
-        }
-        catch (NoSuchMethodException | SecurityException | IllegalAccessException |
-                IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-            return false;
-        }
+        _inventoryView = getPlayer().openInventory(_inventory);
 
         return true;
     }
@@ -105,17 +76,12 @@ public class AnvilView extends View {
     @Nullable
     @Override
     public InventoryView getInventoryView() {
-        return null; // no inventory view available
+        return _inventoryView;
     }
 
     @Nullable
     @Override
     public Inventory getInventory() {
-        return null; // no inventory available
-    }
-
-    @Override
-    public boolean isInventoryViewable() {
-        return false;
+        return _inventory;
     }
 }

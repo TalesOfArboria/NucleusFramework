@@ -46,11 +46,6 @@ public class MockView extends View {
     }
 
     @Override
-    public boolean isInventoryViewable() {
-        return true;
-    }
-
-    @Override
     protected boolean openView(ViewOpenReason reason) {
 
         onOpenReason = reason;

@@ -41,9 +41,9 @@ import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Regions;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Scheduler;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Sounds;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Titles;
-import com.jcwhatever.nucleus.internal.managed.scripting.api.views.SAPI_MenuView;
+import com.jcwhatever.nucleus.internal.managed.scripting.api.views.SAPI_Views;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
-import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.managed.scripting.IScript;
 import com.jcwhatever.nucleus.managed.scripting.IScriptApi;
@@ -51,8 +51,8 @@ import com.jcwhatever.nucleus.managed.scripting.IScriptFactory;
 import com.jcwhatever.nucleus.managed.scripting.IScriptManager;
 import com.jcwhatever.nucleus.managed.scripting.SimpleScriptApi;
 import com.jcwhatever.nucleus.managed.scripting.SimpleScriptApi.IApiObjectCreator;
+import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
 
@@ -166,9 +166,18 @@ public final class InternalScriptManager implements IScriptManager {
         if (current != null)
             current.dispose();
 
-        IEvaluatedScript evaluated = script.evaluate(_api);
-        if (evaluated == null)
+        IEvaluatedScript evaluated;
+
+        try {
+
+            evaluated = script.evaluate(_api);
+            if (evaluated == null)
+                return false;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
             return false;
+        }
 
         _evaluated.put(script.getName().toLowerCase(), evaluated);
 
@@ -391,10 +400,10 @@ public final class InternalScriptManager implements IScriptManager {
                 return new SAPI_NpcProvider(plugin);
             }
         }));
-        _api.add(new SimpleScriptApi(plugin, "menuViews", new IApiObjectCreator() {
+        _api.add(new SimpleScriptApi(plugin, "views", new IApiObjectCreator() {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
-                return new SAPI_MenuView(plugin);
+                return new SAPI_Views(plugin);
             }
         }));
         _api.add(new SimpleScriptApi(plugin, "regions", new IApiObjectCreator() {

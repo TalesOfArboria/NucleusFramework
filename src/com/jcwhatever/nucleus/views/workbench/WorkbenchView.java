@@ -68,11 +68,6 @@ public class WorkbenchView extends View {
     }
 
     @Override
-    public boolean isInventoryViewable() {
-        return true;
-    }
-
-    @Override
     protected boolean openView(ViewOpenReason reason) {
         _inventoryView = getPlayer().openWorkbench(getPlayer().getLocation(), true);
         return true;

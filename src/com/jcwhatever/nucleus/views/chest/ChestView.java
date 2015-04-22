@@ -107,11 +107,6 @@ public abstract class ChestView extends View {
     }
 
     @Override
-    public boolean isInventoryViewable() {
-        return true;
-    }
-
-    @Override
     protected final boolean openView(ViewOpenReason reason) {
         ChestEventListener.register(this);
 

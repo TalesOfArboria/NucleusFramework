@@ -28,9 +28,9 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRenameEvent;
 import com.jcwhatever.nucleus.events.anvil.AnvilItemRepairEvent;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.utils.items.ItemFilter;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
-import com.jcwhatever.nucleus.managed.language.Localizable;
 import com.jcwhatever.nucleus.views.View;
 import com.jcwhatever.nucleus.views.ViewCloseReason;
 import com.jcwhatever.nucleus.views.ViewOpenReason;
@@ -66,22 +66,23 @@ public class FilteredAnvilView extends AnvilView {
     /**
      * Constructor.
      *
-     * @param plugin         The owning plugin.
-     * @param filterManager  The item filter manager.
+     * @param plugin      The owning plugin.
+     * @param itemFilter  The item filter manager.
      */
-    public FilteredAnvilView(Plugin plugin, @Nullable ItemFilter filterManager) {
+    public FilteredAnvilView(Plugin plugin, @Nullable ItemFilter itemFilter) {
         super(plugin);
 
-        _filterManager = filterManager;
+        _filterManager = itemFilter;
 
-        if (_eventListener == null) {
-            _eventListener = new AnvilEventListener();
-            Bukkit.getPluginManager().registerEvents(_eventListener, Nucleus.getPlugin());
-        }
+        if (_eventListener != null)
+            return;
+
+        _eventListener = new AnvilEventListener();
+        Bukkit.getPluginManager().registerEvents(_eventListener, Nucleus.getPlugin());
     }
 
     @Nullable
-    public ItemFilter getFilterManager() {
+    public ItemFilter getItemFilter() {
         return _filterManager;
     }
 
@@ -138,7 +139,7 @@ public class FilteredAnvilView extends AnvilView {
 
             FilteredAnvilView view = (FilteredAnvilView)current;
 
-            ItemFilter filter = view.getFilterManager();
+            ItemFilter filter = view.getItemFilter();
             if (filter == null)
                 return;
 
