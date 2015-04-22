@@ -24,8 +24,6 @@
 
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.nucleus.internal.commands.regions.RegionsCommand;
-import com.jcwhatever.nucleus.internal.events.InternalEventManager;
 import com.jcwhatever.nucleus.internal.InternalLeashTracker;
 import com.jcwhatever.nucleus.internal.InternalPlayerTracker;
 import com.jcwhatever.nucleus.internal.actionbar.InternalActionBarManager;
@@ -36,10 +34,13 @@ import com.jcwhatever.nucleus.internal.commands.jail.JailCommand;
 import com.jcwhatever.nucleus.internal.commands.kits.KitsCommand;
 import com.jcwhatever.nucleus.internal.commands.plugins.PluginsCommand;
 import com.jcwhatever.nucleus.internal.commands.providers.ProvidersCommand;
+import com.jcwhatever.nucleus.internal.commands.regions.RegionsCommand;
 import com.jcwhatever.nucleus.internal.commands.scripts.ScriptsCommand;
 import com.jcwhatever.nucleus.internal.commands.signs.SignsCommand;
 import com.jcwhatever.nucleus.internal.commands.storage.StorageCommand;
+import com.jcwhatever.nucleus.internal.events.InternalEventManager;
 import com.jcwhatever.nucleus.internal.listeners.JCGEventListener;
+import com.jcwhatever.nucleus.internal.listeners.StartupListener;
 import com.jcwhatever.nucleus.internal.managed.commands.InternalCommandManager;
 import com.jcwhatever.nucleus.internal.managed.commands.response.InternalResponseRequestor;
 import com.jcwhatever.nucleus.internal.managed.entity.InternalEntityTracker;
@@ -158,6 +159,8 @@ public final class BukkitPlugin extends NucleusPlugin {
 
     @Override
     protected void onPreEnable() {
+
+        new StartupListener().preventLogins();
 
         _reflectionManager = new InternalReflectionManager();
         _languageManager = new InternalLanguageManager();
