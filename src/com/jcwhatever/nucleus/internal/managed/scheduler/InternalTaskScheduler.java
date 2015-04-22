@@ -64,7 +64,7 @@ public final class InternalTaskScheduler implements ITaskScheduler {
     }
 
     @Override
-    public IScheduledTask runTaskLater(Plugin plugin, int ticks, Runnable runnable) {
+    public IScheduledTask runTaskLater(Plugin plugin, long ticks, Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
         PreCon.positiveNumber(ticks);
@@ -83,7 +83,7 @@ public final class InternalTaskScheduler implements ITaskScheduler {
     }
 
     @Override
-    public IScheduledTask runTaskLaterAsync(Plugin plugin, int ticks, Runnable runnable) {
+    public IScheduledTask runTaskLaterAsync(Plugin plugin, long ticks, Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
         PreCon.positiveNumber(ticks);
@@ -102,7 +102,9 @@ public final class InternalTaskScheduler implements ITaskScheduler {
     }
 
     @Override
-    public IScheduledTask runTaskRepeat(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
+    public IScheduledTask runTaskRepeat(
+            Plugin plugin, long startTicks, long repeatTicks, Runnable runnable) {
+
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
         PreCon.positiveNumber(startTicks);
@@ -122,7 +124,9 @@ public final class InternalTaskScheduler implements ITaskScheduler {
     }
 
     @Override
-    public IScheduledTask runTaskRepeatAsync(Plugin plugin, int startTicks, int repeatTicks, Runnable runnable) {
+    public IScheduledTask runTaskRepeatAsync(
+            Plugin plugin, long startTicks, long repeatTicks, Runnable runnable) {
+
         PreCon.notNull(plugin);
         PreCon.notNull(runnable);
         PreCon.positiveNumber(startTicks);
@@ -150,7 +154,7 @@ public final class InternalTaskScheduler implements ITaskScheduler {
     }
 
     @Override
-    public void runTaskSync(Plugin plugin, int ticks, Runnable runnable) {
+    public void runTaskSync(Plugin plugin, long ticks, Runnable runnable) {
         PreCon.notNull(plugin);
         PreCon.positiveNumber(ticks);
         PreCon.notNull(runnable);
