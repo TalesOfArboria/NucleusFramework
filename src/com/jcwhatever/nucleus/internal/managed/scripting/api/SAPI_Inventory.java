@@ -26,13 +26,20 @@
 package com.jcwhatever.nucleus.internal.managed.scripting.api;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.utils.EnumUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.inventory.InventoryUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackMatcher;
+import com.jcwhatever.nucleus.utils.materials.NamedMaterialData;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Provide scripts with API access to chest helper functions.
@@ -171,6 +178,41 @@ public class SAPI_Inventory implements IDisposable {
      */
     public List<ItemStack> remove(Inventory inventory, ItemStack itemStack, ItemStackMatcher comparer, int qty) {
         return InventoryUtils.removeAmount(inventory, itemStack, comparer, qty);
+    }
+
+    /**
+     * Create an item stack with the specified material name and optional data.
+     *
+     * @param materialName  The {@link Material} enum or material name.
+     * @param data          Optional. The material data value.
+     *
+     * @see NamedMaterialData
+     */
+    public ItemStack createItem(Object materialName, @Nullable Object data) {
+        PreCon.notNull(materialName, "materialName");
+
+        MaterialData materialData;
+
+        if (materialName instanceof String) {
+            materialData = NamedMaterialData.get((String)materialName);
+            PreCon.isValid(materialData != null, "materialName is invalid: {0}", materialName);
+        }
+        else {
+            Material material = EnumUtils.getEnum(materialName, Material.class);
+            materialData = new MaterialData(material);
+        }
+
+        if (data != null) {
+
+            if (data instanceof Number) {
+                materialData.setData(((Number)data).byteValue());
+            }
+            else if (data instanceof String) {
+                materialData.setData(TextUtils.parseByte((String)data, (byte)0));
+            }
+        }
+
+        return materialData.toItemStack();
     }
 }
 
