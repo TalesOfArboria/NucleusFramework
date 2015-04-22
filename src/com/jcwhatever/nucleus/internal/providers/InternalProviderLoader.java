@@ -102,18 +102,6 @@ public final class InternalProviderLoader extends JarModuleLoader<Provider> {
             @Override
             public void onFinish(List<IDependantRunnable> notRun) {
 
-                List<Provider> providers = getModules();
-
-                _manager.setLoading(true);
-
-                for (Provider provider : providers) {
-
-                    if (!_manager.addProvider(provider)) {
-                        NucMsg.debug("Failed to add service provider: '{0}'", provider.getInfo().getName());
-                        removeModule(provider.getInfo().getName());
-                    }
-                }
-
                 _manager.setLoading(false);
                 _manager.enableProviders();
 
@@ -121,6 +109,7 @@ public final class InternalProviderLoader extends JarModuleLoader<Provider> {
             }
         });
 
+        _manager.setLoading(true);
         _depend.start();
     }
 
@@ -168,30 +157,42 @@ public final class InternalProviderLoader extends JarModuleLoader<Provider> {
         }
 
         instance.setInfo(info);
-        _depend.add(new IDependantRunnable() {
-
-            @Override
-            public DependencyStatus getDependencyStatus() {
-
-                boolean dependsReady = info.isDependsReady();
-                boolean softReady = info.isSoftDependsReady();
-
-                if (dependsReady && softReady) {
-                    return DependencyStatus.READY;
-                }
-                else {
-                    return dependsReady
-                            ? DependencyStatus.REQUIRED_READY
-                            : DependencyStatus.NOT_READY;
-                }
-            }
-
-            @Override
-            public void run() {
-                // do nothing
-            }
-        });
+        _depend.add(new DependantRunnable(instance, info));
 
         return instance;
+    }
+
+    private class DependantRunnable implements IDependantRunnable {
+
+        final Provider provider;
+        final InternalProviderModuleInfo info;
+
+        DependantRunnable(Provider provider, InternalProviderModuleInfo info) {
+            this.provider = provider;
+            this.info = info;
+        }
+
+        @Override
+        public DependencyStatus getDependencyStatus() {
+            boolean dependsReady = info.isDependsReady();
+            boolean softReady = info.isSoftDependsReady();
+
+            if (dependsReady && softReady) {
+                return DependencyStatus.READY;
+            }
+            else {
+                return dependsReady
+                        ? DependencyStatus.REQUIRED_READY
+                        : DependencyStatus.NOT_READY;
+            }
+        }
+
+        @Override
+        public void run() {
+            if (!_manager.addProvider(provider)) {
+                NucMsg.debug("Failed to add service provider: '{0}'", provider.getInfo().getName());
+                removeModule(provider.getInfo().getName());
+            }
+        }
     }
 }
