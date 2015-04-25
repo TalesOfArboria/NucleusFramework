@@ -32,7 +32,9 @@ import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Events;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Include;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Inventory;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_ItemBank;
+import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Items;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Jails;
+import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Locations;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Msg;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_NpcProvider;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Permissions;
@@ -42,6 +44,9 @@ import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Scheduler;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Sounds;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Titles;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.views.SAPI_Views;
+import com.jcwhatever.nucleus.internal.managed.scripting.items.InternalScriptItemManager;
+import com.jcwhatever.nucleus.internal.managed.scripting.locations.InternalScriptLocationManager;
+import com.jcwhatever.nucleus.internal.managed.scripting.regions.InternalScriptRegionManager;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript;
@@ -51,7 +56,13 @@ import com.jcwhatever.nucleus.managed.scripting.IScriptFactory;
 import com.jcwhatever.nucleus.managed.scripting.IScriptManager;
 import com.jcwhatever.nucleus.managed.scripting.SimpleScriptApi;
 import com.jcwhatever.nucleus.managed.scripting.SimpleScriptApi.IApiObjectCreator;
+import com.jcwhatever.nucleus.managed.scripting.items.IScriptItemManager;
+import com.jcwhatever.nucleus.managed.scripting.locations.IScriptLocationManager;
+import com.jcwhatever.nucleus.managed.scripting.regions.IScriptRegionManager;
 import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.providers.storage.DataStorage;
+import com.jcwhatever.nucleus.storage.DataPath;
+import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.ScriptUtils;
 import com.jcwhatever.nucleus.utils.file.FileUtils.DirectoryTraversal;
@@ -73,7 +84,7 @@ public final class InternalScriptManager implements IScriptManager {
 
     private static IScriptFactory _scriptFactory = new IScriptFactory() {
         @Override
-        public IScript construct(String name, @Nullable File file, String type, String script) {
+        public IScript create(String name, @Nullable File file, String type, String script) {
             return new Script(name, file, type, script);
         }
     };
@@ -90,6 +101,21 @@ public final class InternalScriptManager implements IScriptManager {
     // default script apis included in all evaluated scripts
     private final List<IScriptApi> _api = new ArrayList<>(15);
 
+    // global managers
+    private InternalScriptItemManager _itemManager;
+    private InternalScriptLocationManager _locationManager;
+    private InternalScriptRegionManager _regionManager;
+
+    // plugin context managers
+    private Map<Plugin, InternalScriptItemManager> _itemManagers;
+    private Map<Plugin, InternalScriptLocationManager> _locationManagers;
+    private Map<Plugin, InternalScriptRegionManager> _regionManagers;
+
+    /**
+     * Constructor.
+     *
+     * @param scriptFolder  The folder where scripts are kept.
+     */
     public InternalScriptManager(File scriptFolder) {
         PreCon.notNull(scriptFolder);
 
@@ -118,6 +144,117 @@ public final class InternalScriptManager implements IScriptManager {
         return Nucleus.getScriptEngineManager();
     }
 
+    @Override
+    public IScriptItemManager getItems() {
+
+        if (_itemManager == null) {
+            IDataNode dataNode = DataStorage.get(
+                    Nucleus.getPlugin(), new DataPath("script-items"));
+            dataNode.load();
+
+            _itemManager = new InternalScriptItemManager(dataNode);
+        }
+
+        return _itemManager;
+    }
+
+    @Override
+    public IScriptItemManager getItems(Plugin plugin) {
+        PreCon.notNull(plugin);
+
+        if (plugin.equals(Nucleus.getPlugin()))
+            return getItems();
+
+        if (_itemManagers == null)
+            _itemManagers = new HashMap<>(10);
+
+        InternalScriptItemManager manager = _itemManagers.get(plugin);
+        if (manager == null) {
+            IDataNode dataNode = DataStorage.get(
+                    plugin, new DataPath("nucleus.script-items"));
+            dataNode.load();
+
+            manager = new InternalScriptItemManager(dataNode);
+            _itemManagers.put(plugin, manager);
+        }
+
+        return manager;
+    }
+
+    @Override
+    public IScriptLocationManager getLocations() {
+
+        if (_locationManager == null) {
+            IDataNode dataNode = DataStorage.get(
+                    Nucleus.getPlugin(), new DataPath("script-locations"));
+            dataNode.load();
+
+            _locationManager = new InternalScriptLocationManager(dataNode);
+        }
+
+        return _locationManager;
+    }
+
+    @Override
+    public IScriptLocationManager getLocations(Plugin plugin) {
+        PreCon.notNull(plugin);
+
+        if (plugin.equals(Nucleus.getPlugin()))
+            return getLocations();
+
+        if (_locationManagers == null)
+            _locationManagers = new HashMap<>(10);
+
+        InternalScriptLocationManager manager = _locationManagers.get(plugin);
+        if (manager == null) {
+            IDataNode dataNode = DataStorage.get(
+                    Nucleus.getPlugin(), new DataPath("nucleus.script-locations"));
+            dataNode.load();
+
+            manager = new InternalScriptLocationManager(dataNode);
+            _locationManagers.put(plugin, manager);
+        }
+
+        return manager;
+    }
+
+    @Override
+    public IScriptRegionManager getRegions() {
+
+        if (_regionManager == null) {
+            IDataNode dataNode = DataStorage.get(
+                    Nucleus.getPlugin(), new DataPath("script-regions"));
+            dataNode.load();
+
+            _regionManager = new InternalScriptRegionManager(dataNode);
+        }
+
+        return _regionManager;
+    }
+
+    @Override
+    public IScriptRegionManager getRegions(Plugin plugin) {
+        PreCon.notNull(plugin);
+
+        if (plugin.equals(Nucleus.getPlugin()))
+            return getRegions();
+
+        if (_regionManagers == null)
+            _regionManagers = new HashMap<>(10);
+
+        InternalScriptRegionManager manager = _regionManagers.get(plugin);
+        if (manager == null) {
+            IDataNode dataNode = DataStorage.get(
+                    Nucleus.getPlugin(), new DataPath("nucleus.script-regions"));
+            dataNode.load();
+
+            manager = new InternalScriptRegionManager(dataNode);
+            _regionManagers.put(plugin, manager);
+        }
+
+        return manager;
+    }
+
     /**
      * Load scripts from script folder.
      *
@@ -133,8 +270,8 @@ public final class InternalScriptManager implements IScriptManager {
         if (!_scriptFolder.exists())
             return;
 
-        List<IScript> scripts = ScriptUtils.loadScripts(Nucleus.getPlugin(),
-                getEngineManager(), _scriptFolder, _includeFolder,
+        List<IScript> scripts = ScriptUtils.loadScripts(
+                Nucleus.getPlugin(), getEngineManager(), _scriptFolder, _includeFolder,
                 DirectoryTraversal.RECURSIVE,
                 getScriptFactory());
 
@@ -332,10 +469,22 @@ public final class InternalScriptManager implements IScriptManager {
                 return new SAPI_ItemBank();
             }
         }));
+        _api.add(new SimpleScriptApi(plugin, "items", new IApiObjectCreator() {
+            @Override
+            public IDisposable create(Plugin plugin, IEvaluatedScript script) {
+                return new SAPI_Items();
+            }
+        }));
         _api.add(new SimpleScriptApi(plugin, "jails", new IApiObjectCreator() {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
                 return new SAPI_Jails();
+            }
+        }));
+        _api.add(new SimpleScriptApi(plugin, "locations", new IApiObjectCreator() {
+            @Override
+            public IDisposable create(Plugin plugin, IEvaluatedScript script) {
+                return new SAPI_Locations();
             }
         }));
         _api.add(new SimpleScriptApi(plugin, "msg", new IApiObjectCreator() {

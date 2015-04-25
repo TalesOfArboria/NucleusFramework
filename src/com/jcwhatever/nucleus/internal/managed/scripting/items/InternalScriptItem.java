@@ -22,25 +22,45 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.scripting;
+package com.jcwhatever.nucleus.internal.managed.scripting.items;
 
-import java.io.File;
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.managed.scripting.items.IScriptItem;
+
+import org.bukkit.inventory.ItemStack;
 
 /**
- * Script factory to create new {@link IScript} instances.
- *
- * @see IScriptManager#getScriptFactory
+ * A named {@link ItemStack} that can be retrieved from scripts
  */
-public interface IScriptFactory {
+public final class InternalScriptItem implements IScriptItem {
+
+    private final String _name;
+    private final String _searchName;
+    private final ItemStack _itemStack;
 
     /**
-     * Invoked to get a new {@link IScript} instance.
+     * Constructor.
      *
-     * @param name      The name of the script.
-     * @param file      Optional file of the script.
-     * @param type      The script type. (script file extension)
-     * @param script    The script.
+     * @param name       The name of the {@link ItemStack}
+     * @param itemStack  The {@link ItemStack}
      */
-    public IScript create(String name, @Nullable File file, String type, String script);
+    public InternalScriptItem(String name, ItemStack itemStack) {
+        _name = name;
+        _itemStack = itemStack;
+        _searchName = name.toLowerCase();
+    }
+
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    @Override
+    public String getSearchName() {
+        return _searchName;
+    }
+
+    @Override
+    public ItemStack getItem() {
+        return _itemStack.clone();
+    }
 }

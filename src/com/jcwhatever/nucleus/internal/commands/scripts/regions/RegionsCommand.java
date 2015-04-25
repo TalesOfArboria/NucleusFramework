@@ -22,25 +22,24 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.scripting;
 
-import java.io.File;
-import javax.annotation.Nullable;
+package com.jcwhatever.nucleus.internal.commands.scripts.regions;
 
-/**
- * Script factory to create new {@link IScript} instances.
- *
- * @see IScriptManager#getScriptFactory
- */
-public interface IScriptFactory {
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 
-    /**
-     * Invoked to get a new {@link IScript} instance.
-     *
-     * @param name      The name of the script.
-     * @param file      Optional file of the script.
-     * @param type      The script type. (script file extension)
-     * @param script    The script.
-     */
-    public IScript create(String name, @Nullable File file, String type, String script);
+@CommandInfo(
+        command={"regions"},
+        description="Manage quest regions.")
+public class RegionsCommand extends AbstractCommand {
+
+    public RegionsCommand() {
+        super();
+
+        registerCommand(AddSubCommand.class);
+        registerCommand(AddAnchorSubCommand.class);
+        registerCommand(DelSubCommand.class);
+        registerCommand(RedefineSubCommand.class);
+        registerCommand(ListSubCommand.class);
+    }
 }

@@ -22,25 +22,29 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.scripting;
+package com.jcwhatever.nucleus.managed.scripting.regions;
 
-import java.io.File;
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.regions.IRegion;
+import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
+
+import org.bukkit.entity.Player;
 
 /**
- * Script factory to create new {@link IScript} instances.
- *
- * @see IScriptManager#getScriptFactory
+ * Interface for a script region.
  */
-public interface IScriptFactory {
+public interface IScriptRegion extends IRegion {
 
     /**
-     * Invoked to get a new {@link IScript} instance.
+     * Add a subscriber to be updated when a player enters the region.
      *
-     * @param name      The name of the script.
-     * @param file      Optional file of the script.
-     * @param type      The script type. (script file extension)
-     * @param script    The script.
+     * @param subscriber  The enter event subscriber.
      */
-    public IScript create(String name, @Nullable File file, String type, String script);
+    boolean onEnter(IScriptUpdateSubscriber<Player> subscriber);
+
+    /**
+     * Add a subscriber to be updated when a player leaves the region.
+     *
+     * @param subscriber  The subscriber.
+     */
+    boolean onLeave(IScriptUpdateSubscriber<Player> subscriber);
 }

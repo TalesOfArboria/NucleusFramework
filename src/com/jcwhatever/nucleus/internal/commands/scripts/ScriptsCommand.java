@@ -24,8 +24,11 @@
 
 package com.jcwhatever.nucleus.internal.commands.scripts;
 
-import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.internal.commands.scripts.items.ItemsCommand;
+import com.jcwhatever.nucleus.internal.commands.scripts.locations.LocationsCommand;
+import com.jcwhatever.nucleus.internal.commands.scripts.regions.RegionsCommand;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 
 @CommandInfo(
         command="scripts",
@@ -38,5 +41,9 @@ public final class ScriptsCommand extends AbstractCommand {
 
         registerCommand(ListSubCommand.class);
         registerCommand(ReloadSubCommand.class);
+
+        registerCommand(ItemsCommand.class);
+        registerCommand(LocationsCommand.class);
+        registerCommand(RegionsCommand.class);
     }
 }

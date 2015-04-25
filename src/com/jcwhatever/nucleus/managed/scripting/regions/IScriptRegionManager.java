@@ -22,25 +22,44 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.scripting;
+package com.jcwhatever.nucleus.managed.scripting.regions;
 
-import java.io.File;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
+import com.jcwhatever.nucleus.utils.managers.INamedManager;
+
+import org.bukkit.Location;
+
 import javax.annotation.Nullable;
 
 /**
- * Script factory to create new {@link IScript} instances.
- *
- * @see IScriptManager#getScriptFactory
+ * Interface for the global script region manager.
  */
-public interface IScriptFactory {
+public interface IScriptRegionManager extends INamedManager<IScriptRegion> {
 
     /**
-     * Invoked to get a new {@link IScript} instance.
+     * Add a new region.
      *
-     * @param name      The name of the script.
-     * @param file      Optional file of the script.
-     * @param type      The script type. (script file extension)
-     * @param script    The script.
+     * @param name       The node name of the region.
+     * @param selection  The regions coordinates.
+     *
+     * @return  Null if the manager already has a region by the specified node name.
      */
-    public IScript create(String name, @Nullable File file, String type, String script);
+    @Nullable
+    IScriptRegion add(String name, IRegionSelection selection);
+
+    /**
+     * Add a scripting region using an anchor location and radius.
+     *
+     * <p>The script region is created with the anchor as its center location.
+     * Although the term 'radius' is used, the region is not a sphere, it will be
+     * a perfect cube.</p>
+     *
+     * @param name    The name of the region.
+     * @param anchor  The anchor location.
+     * @param radius  The radius.
+     *
+     * @return  The newly created {@link IScriptRegion} or null if failed.
+     */
+    @Nullable
+    IScriptRegion addFromAnchor(String name, Location anchor, int radius);
 }

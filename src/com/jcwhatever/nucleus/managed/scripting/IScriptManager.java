@@ -24,6 +24,12 @@
 
 package com.jcwhatever.nucleus.managed.scripting;
 
+import com.jcwhatever.nucleus.managed.scripting.items.IScriptItemManager;
+import com.jcwhatever.nucleus.managed.scripting.locations.IScriptLocationManager;
+import com.jcwhatever.nucleus.managed.scripting.regions.IScriptRegionManager;
+
+import org.bukkit.plugin.Plugin;
+
 import java.io.File;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -53,7 +59,43 @@ public interface IScriptManager {
     /**
      * Get the script engine manager.
      */
-    public ScriptEngineManager getEngineManager();
+    ScriptEngineManager getEngineManager();
+
+    /**
+     * Get the global script item manager.
+     */
+    IScriptItemManager getItems();
+
+    /**
+     * Get a script item manager for a plugin context.
+     *
+     * @param plugin  The plugin context.
+     */
+    IScriptItemManager getItems(Plugin plugin);
+
+    /**
+     * Get the global script locations manager.
+     */
+    IScriptLocationManager getLocations();
+
+    /**
+     * Get a script location manager for a plugin context.
+     *
+     * @param plugin  The plugin context.
+     */
+    IScriptLocationManager getLocations(Plugin plugin);
+
+    /**
+     * Get the global script region manager.
+     */
+    IScriptRegionManager getRegions();
+
+    /**
+     * Get a script region manager for a plugin context.
+     *
+     * @param plugin  The plugin context.
+     */
+    IScriptRegionManager getRegions(Plugin plugin);
 
     /*
      * Reload scripts and re-evaluate.

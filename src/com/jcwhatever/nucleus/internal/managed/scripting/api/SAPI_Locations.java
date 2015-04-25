@@ -22,25 +22,56 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.scripting;
 
-import java.io.File;
+package com.jcwhatever.nucleus.internal.managed.scripting.api;
+
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.coords.NamedLocation;
+
+import org.bukkit.Location;
+
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**
- * Script factory to create new {@link IScript} instances.
- *
- * @see IScriptManager#getScriptFactory
+ * Sub script API for named locations that can be retrieved by scripts.
  */
-public interface IScriptFactory {
+public class SAPI_Locations implements IDisposable {
+
+    private boolean _isDisposed;
+
+    @Override
+    public boolean isDisposed() {
+        return _isDisposed;
+    }
+
+    @Override
+    public void dispose() {
+        _isDisposed = true;
+    }
 
     /**
-     * Invoked to get a new {@link IScript} instance.
+     * Get a quest script location by name.
      *
-     * @param name      The name of the script.
-     * @param file      Optional file of the script.
-     * @param type      The script type. (script file extension)
-     * @param script    The script.
+     * @param name  The name of the location.
      */
-    public IScript create(String name, @Nullable File file, String type, String script);
+    @Nullable
+    public Location get(String name) {
+        PreCon.notNullOrEmpty(name);
+
+        NamedLocation result = Nucleus.getScriptManager().getLocations().get(name);
+        if (result == null)
+            return null;
+
+        return result.toLocation();
+    }
+
+    /**
+     * Get all script location objects.
+     */
+    public Collection<NamedLocation> getScriptLocations() {
+        return Nucleus.getScriptManager().getLocations().getAll();
+    }
 }

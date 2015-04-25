@@ -22,25 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.scripting;
+package com.jcwhatever.nucleus.internal.commands.scripts.items;
 
-import java.io.File;
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 
-/**
- * Script factory to create new {@link IScript} instances.
- *
- * @see IScriptManager#getScriptFactory
- */
-public interface IScriptFactory {
+@CommandInfo(
+        command={"items"},
+        description="Manage quest items.")
+public class ItemsCommand extends AbstractCommand {
 
-    /**
-     * Invoked to get a new {@link IScript} instance.
-     *
-     * @param name      The name of the script.
-     * @param file      Optional file of the script.
-     * @param type      The script type. (script file extension)
-     * @param script    The script.
-     */
-    public IScript create(String name, @Nullable File file, String type, String script);
+    public ItemsCommand() {
+        super();
+
+        registerCommand(AddSubCommand.class);
+        registerCommand(DelSubCommand.class);
+        registerCommand(ListSubCommand.class);
+    }
 }

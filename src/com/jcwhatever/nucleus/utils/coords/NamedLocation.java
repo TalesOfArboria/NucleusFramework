@@ -75,7 +75,8 @@ public class NamedLocation extends Location implements INamedInsensitive {
      * @param yaw    The yaw angle.
      * @param pitch  The pitch angle.
      */
-    public NamedLocation(String name, World world, double x, double y, double z, float yaw, float pitch) {
+    public NamedLocation(String name, World world,
+                         double x, double y, double z, float yaw, float pitch) {
         super(world, x, y, z, yaw, pitch);
 
         PreCon.notNullOrEmpty(name);
@@ -95,4 +96,31 @@ public class NamedLocation extends Location implements INamedInsensitive {
 		
 		return _searchName;
 	}
+
+    /**
+     * Create a new Bukkit {@link Location} from the named location.
+     */
+    public Location toLocation() {
+        return toLocation(new Location(null, 0, 0, 0));
+    }
+
+    /**
+     * Copy values to an output {@link Location}.
+     *
+     * @param output  The output {@link Location}.
+     *
+     * @return  The output {@link Location}.
+     */
+    public Location toLocation(Location output) {
+        PreCon.notNull(output);
+
+        output.setWorld(getWorld());
+        output.setX(getX());
+        output.setY(getY());
+        output.setZ(getZ());
+        output.setYaw(getYaw());
+        output.setPitch(getPitch());
+
+        return output;
+    }
 }

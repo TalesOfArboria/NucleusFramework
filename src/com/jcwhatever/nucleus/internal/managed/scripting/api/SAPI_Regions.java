@@ -25,19 +25,23 @@
 package com.jcwhatever.nucleus.internal.managed.scripting.api;
 
 import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.managed.scripting.regions.IScriptRegion;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.regions.IRegionEventHandler;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.observer.script.IScriptUpdateSubscriber;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -45,6 +49,7 @@ import javax.annotation.Nullable;
  */
 public class SAPI_Regions implements IDisposable {
 
+    private Set<IScriptRegion> _referencedRegions = new HashSet<>(15);
     private final LinkedList<ScriptRegionEvents> _eventHandlers = new LinkedList<>();
     private boolean _isDisposed;
 
@@ -60,7 +65,24 @@ public class SAPI_Regions implements IDisposable {
             _eventHandlers.remove().dispose();
         }
 
+        for (IScriptRegion region : _referencedRegions) {
+            region.dispose();
+        }
+        _referencedRegions = null;
+
         _isDisposed = true;
+    }
+
+    /**
+     * Get a script region by name.
+     *
+     * @param name  The name of the script region.
+     */
+    @Nullable
+    public IScriptRegion get(String name) {
+        PreCon.notNullOrEmpty(name);
+
+        return Nucleus.getScriptManager().getRegions().get(name);
     }
 
     /**
@@ -90,6 +112,25 @@ public class SAPI_Regions implements IDisposable {
     }
 
     /**
+     * Add a handler to execute whenever a player enters a script region.
+     *
+     * @param regionName  The name of the script region.
+     * @param onEnter     The handler.
+     */
+    public void onEnter(String regionName, IScriptUpdateSubscriber<Player> onEnter) {
+        PreCon.notNullOrEmpty(regionName);
+        PreCon.notNull(onEnter);
+
+        IScriptRegion region = Nucleus.getScriptManager().getRegions().get(regionName);
+        if (region == null) {
+            throw new RuntimeException("Failed to find quest region named:" + regionName);
+        }
+
+        region.onEnter(onEnter);
+        _referencedRegions.add(region);
+    }
+
+    /**
      * Attach an event handler to a region to be called when a player enters it.
      *
      * @param pluginName    The name of the regions owning plugin.
@@ -103,6 +144,25 @@ public class SAPI_Regions implements IDisposable {
         ScriptRegionEvents handler = new ScriptRegionEvents(region, enterHandler, null);
         region.addEventHandler(handler);
         _eventHandlers.add(handler);
+    }
+
+    /**
+     * Add a handler to execute whenever a player leaves a script region.
+     *
+     * @param regionName  The name of the script region.
+     * @param onLeave     The handler.
+     */
+    public void onLeave(String regionName, IScriptUpdateSubscriber<Player> onLeave) {
+        PreCon.notNullOrEmpty(regionName);
+        PreCon.notNull(onLeave);
+
+        IScriptRegion region = Nucleus.getScriptManager().getRegions().get(regionName);
+        if (region == null) {
+            throw new RuntimeException("Failed to find quest region named:" + regionName);
+        }
+
+        region.onLeave(onLeave);
+        _referencedRegions.add(region);
     }
 
     /**

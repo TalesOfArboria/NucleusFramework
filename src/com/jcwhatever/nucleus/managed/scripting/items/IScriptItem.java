@@ -22,25 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.jcwhatever.nucleus.managed.scripting;
+package com.jcwhatever.nucleus.managed.scripting.items;
 
-import java.io.File;
-import javax.annotation.Nullable;
+import com.jcwhatever.nucleus.mixins.INamedInsensitive;
+
+import org.bukkit.inventory.ItemStack;
 
 /**
- * Script factory to create new {@link IScript} instances.
- *
- * @see IScriptManager#getScriptFactory
+ * Interface for a script {@link ItemStack}.
  */
-public interface IScriptFactory {
+public interface IScriptItem extends INamedInsensitive {
 
     /**
-     * Invoked to get a new {@link IScript} instance.
+     * Get the item stack.
      *
-     * @param name      The name of the script.
-     * @param file      Optional file of the script.
-     * @param type      The script type. (script file extension)
-     * @param script    The script.
+     * @return  A clone of the {@link ItemStack}.
      */
-    public IScript create(String name, @Nullable File file, String type, String script);
+    ItemStack getItem();
 }

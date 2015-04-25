@@ -132,7 +132,7 @@ public final class ScriptUtils {
 
                 reader.close();
 
-                IScript script = scriptFactory.construct(name, file, type, buffer.toString());
+                IScript script = scriptFactory.create(name, file, type, buffer.toString());
                 if (script != null)
                     result.add(script);
 
@@ -184,7 +184,7 @@ public final class ScriptUtils {
 
             String scriptType = getScriptType(scriptFile);
 
-            return scriptFactory.construct(scriptName, scriptFile, scriptType, buffer.toString());
+            return scriptFactory.create(scriptName, scriptFile, scriptType, buffer.toString());
 
         } catch (IOException e) {
             e.printStackTrace();
