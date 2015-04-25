@@ -62,6 +62,7 @@ public final class LocationUtils {
     };
 
     private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location TELEPORT_LOCATION = new Location(null, 0, 0, 0);
 
     /**
      * Copy the values from a source {@link org.bukkit.Location} to a new
@@ -201,6 +202,8 @@ public final class LocationUtils {
      *
      * @param entity    The entity to teleport.
      * @param location  The teleport location.
+     *
+     * @return  True if successful.
      */
     public static boolean teleportCentered(Entity entity, Location location) {
         PreCon.notNull(entity);
@@ -210,6 +213,27 @@ public final class LocationUtils {
                 Bukkit.isPrimaryThread() ? CENTERED_LOCATION : new Location(null, 0, 0, 0));
 
         return entity.teleport(adjusted, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    }
+
+    /**
+     * Teleport an entity to a {@link org.bukkit.Location}.
+     *
+     * <p>Fixes entities/players falling through floor.</p>
+     *
+     * @param entity    The entity to teleport.
+     * @param location  The location to teleport the entity to.
+     *
+     * @return  True if successful.
+     */
+    public static boolean teleport(Entity entity, Location location) {
+        PreCon.notNull(entity);
+        PreCon.notNull(location);
+
+        Location adjusted = Bukkit.isPrimaryThread()
+                ? copy(location, TELEPORT_LOCATION).add(0, 0.01D, 0)
+                : copy(location).add(0, 0.01D, 0);
+
+        return entity.teleport(adjusted);
     }
 
     /**
