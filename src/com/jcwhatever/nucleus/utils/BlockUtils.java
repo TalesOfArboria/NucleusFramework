@@ -29,10 +29,10 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.FallingBlock;
 
@@ -41,7 +41,45 @@ import org.bukkit.entity.FallingBlock;
  */
 public final class BlockUtils {
 
+    private static Location BLOCK_LOCATION = new Location(null, 0, 0, 0);
+
     private BlockUtils() {}
+
+    /**
+     * Converts the specified block to a falling block.
+     *
+     * @param block  The block to drop.
+     */
+    public static FallingBlock dropBlock(Block block) {
+        PreCon.notNull(block);
+
+        Location location = Bukkit.isPrimaryThread()
+                ? block.getLocation(BLOCK_LOCATION)
+                : block.getLocation();
+
+        block.setType(Material.AIR);
+
+        // spawn a falling block
+        return block.getWorld().spawnFallingBlock(
+                location, block.getType(), block.getData());
+    }
+
+    /**
+     * Converts the block at the specified location to a falling block.
+     *
+     * @param location  The location of the block to drop.
+     */
+    public static FallingBlock dropBlock(Location location) {
+        PreCon.notNull(location);
+
+        Block block = location.getBlock();
+
+        block.setType(Material.AIR);
+
+        // spawn a falling block
+        return block.getWorld().spawnFallingBlock(
+                location, block.getType(), block.getData());
+    }
 
     /**
      * Converts the specified block to a falling block and removes the fallen
@@ -68,6 +106,7 @@ public final class BlockUtils {
      * @param removeDelayTicks  The delay in ticks before removing the fallen block.
      */
     public static void dropRemoveBlock(final Location location, final int removeDelayTicks) {
+        PreCon.notNull(location);
 
         final BlockState startBlock = location.getBlock().getState();
 
@@ -114,15 +153,5 @@ public final class BlockUtils {
                 });
             }
         });
-    }
-
-    /**
-     * Get the block adjacent to the specified block.
-     *
-     * @param block      The block to check.
-     * @param direction  The direction to search for the adjacent block.
-     */
-    public static Block getAdjacentBlock(Block block, BlockFace direction) {
-        return block.getRelative(direction).getState().getBlock();
     }
 }
