@@ -9,6 +9,10 @@ import com.jcwhatever.nucleus.utils.ArrayUtils;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /* 
  * 
  */
@@ -95,7 +99,7 @@ public class ArrayQueueTest {
         queue.toArray(array);
 
         assertEquals(5, array.length);
-        assertArrayEquals(new Object[] {
+        assertArrayEquals(new Object[]{
                 "test", "test2", "test3", "test4", null
 
         }, array);
@@ -257,17 +261,115 @@ public class ArrayQueueTest {
     }
 
     @Test
-    public void testPoll() throws Exception {
+    public void testExpansionAddAll() throws Exception {
 
+        ArrayQueue<String> queue = new ArrayQueue<>(10);
+        List<String> list = ArrayUtils.asList(
+                "test", "test2", "test3", "test4", "test5", "test6", "test7",
+                "test8", "test9"
+        );
+
+        queue.addAll(new ArrayList<String>(list));
+
+        Iterator<String> iterator = queue.iterator();
+        int total = 0;
+        int current = 0;
+        while (iterator.hasNext()) {
+            String val = iterator.next();
+            assertEquals(list.get(current), val);
+            current++;
+            total++;
+        }
+
+        assertEquals(list.size(), total);
+
+        queue.addAll(list);
+
+        iterator = queue.iterator();
+        total = 0;
+        current = 0;
+        while (iterator.hasNext()) {
+            String val = iterator.next();
+            assertEquals(list.get(current % list.size()), val);
+            current++;
+            total++;
+        }
+
+        assertEquals(list.size() * 2, total);
+
+        for (String listVal : list) {
+            String val = queue.remove();
+            assertEquals(listVal, val);
+        }
+
+        iterator = queue.iterator();
+        total = 0;
+        current = 0;
+        while (iterator.hasNext()) {
+            String val = iterator.next();
+            assertEquals(list.get(current), val);
+            current++;
+            total++;
+        }
+
+        assertEquals(list.size(), total);
     }
 
-    @Test
-    public void testElement() throws Exception {
-
-    }
 
     @Test
-    public void testPeek() throws Exception {
+    public void testExpansionAdd() throws Exception {
 
+        ArrayQueue<String> queue = new ArrayQueue<>(10);
+        List<String> list = ArrayUtils.asList(
+                "test", "test2", "test3", "test4", "test5", "test6", "test7",
+                "test8", "test9"
+        );
+
+        for (String listVal : list)
+            queue.add(listVal);
+
+        Iterator<String> iterator = queue.iterator();
+        int total = 0;
+        int current = 0;
+        while (iterator.hasNext()) {
+            String val = iterator.next();
+            assertEquals(list.get(current), val);
+            current++;
+            total++;
+        }
+
+        assertEquals(list.size(), total);
+
+        for (String listVal : list)
+            queue.add(listVal);
+
+        iterator = queue.iterator();
+        total = 0;
+        current = 0;
+        while (iterator.hasNext()) {
+            String val = iterator.next();
+            assertEquals(list.get(current % list.size()), val);
+            current++;
+            total++;
+        }
+
+        assertEquals(list.size() * 2, total);
+
+        for (String listVal : list) {
+            String val = queue.remove();
+            assertEquals(listVal, val);
+        }
+
+        iterator = queue.iterator();
+        total = 0;
+        current = 0;
+        while (iterator.hasNext()) {
+            String val = iterator.next();
+            assertEquals(list.get(current), val);
+            current++;
+            total++;
+        }
+
+        assertEquals(list.size(), total);
     }
 }
