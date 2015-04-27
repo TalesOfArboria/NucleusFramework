@@ -88,17 +88,12 @@ public final class InternalScriptRegion extends Region implements IScriptRegion 
 
     @Override
     protected void onPlayerEnter(Player player, EnterRegionReason reason) {
-
-        if (!_agents.hasAgent("onEnter"))
-            return;
-
-        _agents.getAgent("onEnter").update(player);
+        _agents.update("onEnter", player);
     }
 
     @Override
     protected void onPlayerLeave(Player player, LeaveRegionReason reason) {
-
-        _agents.getAgent("onLeave").update(player);
+        _agents.update("onLeave", player);
     }
 
     @Override
@@ -109,5 +104,12 @@ public final class InternalScriptRegion extends Region implements IScriptRegion 
     @Override
     protected boolean canDoPlayerLeave(Player player, LeaveRegionReason reason) {
         return _agents.hasAgent("onLeave");
+    }
+
+    @Override
+    protected void onDispose() {
+        super.onDispose();
+
+        _agents.disposeAgents();
     }
 }
