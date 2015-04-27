@@ -91,13 +91,16 @@ public class SAPI_Items implements IDisposable {
         _isDisposed = true;
     }
 
-    @Nullable
-    public ItemStack getItem(String name) {
+    /**
+     * Get a script item by name.
+     *
+     * @param name  The name of the script item.
+     */
+    public ItemStack get(String name) {
         PreCon.notNullOrEmpty(name);
 
         IScriptItem item = Nucleus.getScriptManager().getItems().get(name);
-        if (item == null)
-            return null;
+        PreCon.isValid(item != null, "A script item named '{0}' was not found.", name);
 
         return item.getItem();
     }
