@@ -47,6 +47,7 @@ import com.jcwhatever.nucleus.internal.managed.scripting.api.views.SAPI_Views;
 import com.jcwhatever.nucleus.internal.managed.scripting.items.InternalScriptItemManager;
 import com.jcwhatever.nucleus.internal.managed.scripting.locations.InternalScriptLocationManager;
 import com.jcwhatever.nucleus.internal.managed.scripting.regions.InternalScriptRegionManager;
+import com.jcwhatever.nucleus.internal.managed.scripting.regions.InternalScriptRegionManagerWrapper;
 import com.jcwhatever.nucleus.managed.messaging.IMessenger;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript;
@@ -220,6 +221,17 @@ public final class InternalScriptManager implements IScriptManager {
 
     @Override
     public IScriptRegionManager getRegions() {
+        return new InternalScriptRegionManagerWrapper(Nucleus.getPlugin());
+    }
+
+    /**
+     * Get a direct reference to the global region manager.
+     *
+     * <p>The instance goes out of scope when scripts are reloaded and
+     * should not be stored. Use {@link #getRegions()} if a cached reference
+     * needs to be held.</p>
+     */
+    public IScriptRegionManager getRegionsDirect() {
 
         if (_regionManager == null) {
             IDataNode dataNode = DataStorage.get(
@@ -234,10 +246,24 @@ public final class InternalScriptManager implements IScriptManager {
 
     @Override
     public IScriptRegionManager getRegions(Plugin plugin) {
+        return new InternalScriptRegionManagerWrapper(plugin);
+    }
+
+    /**
+     * Get a direct reference to the region manager for the specified
+     * plugin context.
+     *
+     * <p>The instance goes out of scope when scripts are reloaded and
+     * should not be stored. Use {@link #getRegions(Plugin)} if a cached
+     * reference needs to be held.</p>
+     *
+     * @param plugin  The plugin context.
+     */
+    public IScriptRegionManager getRegionsDirect(Plugin plugin) {
         PreCon.notNull(plugin);
 
         if (plugin.equals(Nucleus.getPlugin()))
-            return getRegions();
+            return getRegionsDirect();
 
         if (_regionManagers == null)
             _regionManagers = new HashMap<>(10);
@@ -336,6 +362,9 @@ public final class InternalScriptManager implements IScriptManager {
 
             _scripts.put(script.getName().toLowerCase(), script);
         }
+
+        _regionManager = null;
+        _regionManagers = null;
 
         evaluate(script);
         return true;
