@@ -213,7 +213,12 @@ class EvaluatedScript implements IEvaluatedScript {
         }
 
         for (IDisposable api : _apiObjects) {
-            api.dispose();
+            try {
+                api.dispose();
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
 
         _isDisposed = true;
