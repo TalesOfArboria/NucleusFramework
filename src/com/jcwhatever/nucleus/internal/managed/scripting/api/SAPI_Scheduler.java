@@ -85,7 +85,12 @@ public class SAPI_Scheduler implements IDisposable {
         TaskHandler handler = new TaskHandler() {
             @Override
             public void run() {
-                runnable.run();
+                try {
+                    runnable.run();
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -127,7 +132,12 @@ public class SAPI_Scheduler implements IDisposable {
         TaskHandler handler = new TaskHandler() {
             @Override
             public void run() {
-                runnable.run();
+                try {
+                    runnable.run();
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
