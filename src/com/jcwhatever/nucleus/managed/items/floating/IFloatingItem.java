@@ -100,6 +100,28 @@ public interface IFloatingItem extends IPluginOwned, INamedInsensitive, IDisposa
     void setCanPickup(boolean canPickup);
 
     /**
+     * Determine if pickup is simulated.
+     *
+     * <p>Simulated pickup is where the item appears to have been picked
+     * up but does not end up in the players inventory.</p>
+     *
+     * <p>Value is ignored if {@link #canPickup} returns true.</p>
+     */
+    boolean isPickupSimulated();
+
+    /**
+     * Set pickup simulation.
+     *
+     * <p>Simulated pickup is where the item appears to have been picked
+     * up but does not end up in the players inventory.</p>
+     *
+     * <p>Value is ignored if {@link #canPickup} returns true.</p>
+     *
+     * @param isPickupSimulated  True to simulate pickup, otherwise false.
+     */
+    void setPickupSimulated(boolean isPickupSimulated);
+
+    /**
      * Determine if the item is spawned centered within the block at
      * the spawn location.
      */

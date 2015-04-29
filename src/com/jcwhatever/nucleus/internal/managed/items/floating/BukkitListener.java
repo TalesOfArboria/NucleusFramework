@@ -30,11 +30,11 @@ import com.google.common.collect.MultimapBuilder;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.CircularQueue;
 import com.jcwhatever.nucleus.events.floatingitems.FloatingItemPickUpEvent;
+import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.coords.ChunkCoords;
-import com.jcwhatever.nucleus.managed.items.floating.IFloatingItem;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -104,7 +104,7 @@ class BukkitListener implements Listener {
     }
 
     @EventHandler
-    private void onPlayerTryPickup(PlayerPickupItemEvent event) {
+    private void onPlayerTryPickup(final PlayerPickupItemEvent event) {
 
         final FloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
         if (item == null)
@@ -119,7 +119,7 @@ class BukkitListener implements Listener {
         itemToGive.setItemMeta(meta);
 
         // prevent or allow pickup
-        if (!item.canPickup()) {
+        if (!item.canPickup() && !item.isPickupSimulated()) {
             event.setCancelled(true);
         }
 
@@ -138,11 +138,16 @@ class BukkitListener implements Listener {
             itemToGive.setItemMeta(meta);
             return;
         }
+        else if (item.isPickupSimulated()) {
+            event.setCancelled(true);
+            item.despawn();
+        }
 
         final Location location = item.getLocation();
 
         if (location != null) {
-            _respawner.queue.add(new RespawnEntry(item, item.getRespawnTimeSeconds() * 1000));
+            _respawner.queue.add(new RespawnEntry(item,
+                    System.currentTimeMillis() + (item.getRespawnTimeSeconds() * 1000)));
         }
     }
 

@@ -72,6 +72,7 @@ class FloatingItem implements IFloatingItem {
     private UUID _entityId;
     private ITrackedEntity _trackedEntity;
     private boolean _canPickup;
+    private boolean _simulatePickup;
     private boolean _isCentered = true;
     private int _respawnTimeSeconds = 20;
     private boolean _isSpawned;
@@ -185,6 +186,19 @@ class FloatingItem implements IFloatingItem {
         _canPickup = canPickup;
 
         _dataNode.set("can-pickup", canPickup);
+        _dataNode.save();
+    }
+
+    @Override
+    public boolean isPickupSimulated() {
+        return _simulatePickup;
+    }
+
+    @Override
+    public void setPickupSimulated(boolean isPickupSimulated) {
+        _simulatePickup = isPickupSimulated;
+
+        _dataNode.set("simulate-pickup", isPickupSimulated);
         _dataNode.save();
     }
 
