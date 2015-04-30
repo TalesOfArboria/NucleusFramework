@@ -27,15 +27,15 @@ package com.jcwhatever.nucleus.internal.commands.scripts.regions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.internal.NucLang;
+import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptManager;
 import com.jcwhatever.nucleus.internal.managed.scripting.regions.InternalScriptRegion;
+import com.jcwhatever.nucleus.internal.managed.scripting.regions.InternalScriptRegionManager;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
-import com.jcwhatever.nucleus.managed.scripting.regions.IScriptRegion;
-import com.jcwhatever.nucleus.managed.scripting.regions.IScriptRegionManager;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 
 import org.bukkit.command.CommandSender;
@@ -65,15 +65,16 @@ class RedefineSubCommand extends AbstractCommand implements IExecutableCommand {
 
         String regionName = args.getName("regionName", 48);
 
-        IScriptRegionManager regionManager = Nucleus.getScriptManager().getRegions();
+        InternalScriptRegionManager regionManager = ((InternalScriptManager)
+                Nucleus.getScriptManager()).getRegionsDirect();
 
-        IScriptRegion region = regionManager.get(regionName);
+        InternalScriptRegion region = regionManager.get(regionName);
         if (region == null)
             throw new CommandException(NucLang.get(_REGION_NOT_FOUND), regionName);
 
         IRegionSelection selection = getRegionSelection((Player) sender);
 
-        ((InternalScriptRegion)region).setCoords(selection.getP1(), selection.getP2());
+        region.setCoords(selection.getP1(), selection.getP2());
 
         tellSuccess(sender, NucLang.get(_SUCCESS), region.getName());
     }

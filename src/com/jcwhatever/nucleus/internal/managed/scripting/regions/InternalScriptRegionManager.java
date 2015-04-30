@@ -26,8 +26,6 @@
 package com.jcwhatever.nucleus.internal.managed.scripting.regions;
 
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.managed.scripting.regions.IScriptRegion;
-import com.jcwhatever.nucleus.managed.scripting.regions.IScriptRegionManager;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.RegionManager;
 import com.jcwhatever.nucleus.regions.SimpleRegionSelection;
@@ -41,8 +39,7 @@ import javax.annotation.Nullable;
 /**
  * Manages quest scripting regions.
  */
-public final class InternalScriptRegionManager extends RegionManager<IScriptRegion>
-    implements IScriptRegionManager {
+public final class InternalScriptRegionManager extends RegionManager<InternalScriptRegion> {
 
     /**
      * Constructor.
@@ -53,9 +50,8 @@ public final class InternalScriptRegionManager extends RegionManager<IScriptRegi
         super(Nucleus.getPlugin(), dataNode, true);
     }
 
-    @Override
     @Nullable
-    public IScriptRegion addFromAnchor(String name, Location anchor, int radius) {
+    public InternalScriptRegion addFromAnchor(String name, Location anchor, int radius) {
         PreCon.notNull(name);
         PreCon.notNull(anchor);
         PreCon.greaterThanZero(radius);
@@ -81,7 +77,7 @@ public final class InternalScriptRegionManager extends RegionManager<IScriptRegi
 
     @Nullable
     @Override
-    protected void save(IScriptRegion item, IDataNode itemNode) {
+    protected void save(InternalScriptRegion item, IDataNode itemNode) {
         // do nothing
     }
 

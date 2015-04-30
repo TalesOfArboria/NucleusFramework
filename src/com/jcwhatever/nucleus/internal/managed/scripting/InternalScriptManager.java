@@ -41,6 +41,7 @@ import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Permissions;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Rand;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Regions;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Scheduler;
+import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Scoreboard;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Sounds;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.SAPI_Titles;
 import com.jcwhatever.nucleus.internal.managed.scripting.api.views.SAPI_Views;
@@ -231,7 +232,7 @@ public final class InternalScriptManager implements IScriptManager {
      * should not be stored. Use {@link #getRegions()} if a cached reference
      * needs to be held.</p>
      */
-    public IScriptRegionManager getRegionsDirect() {
+    public InternalScriptRegionManager getRegionsDirect() {
 
         if (_regionManager == null) {
             IDataNode dataNode = DataStorage.get(
@@ -259,7 +260,7 @@ public final class InternalScriptManager implements IScriptManager {
      *
      * @param plugin  The plugin context.
      */
-    public IScriptRegionManager getRegionsDirect(Plugin plugin) {
+    public InternalScriptRegionManager getRegionsDirect(Plugin plugin) {
         PreCon.notNull(plugin);
 
         if (plugin.equals(Nucleus.getPlugin()))
@@ -362,9 +363,6 @@ public final class InternalScriptManager implements IScriptManager {
 
             _scripts.put(script.getName().toLowerCase(), script);
         }
-
-        _regionManager = null;
-        _regionManagers = null;
 
         evaluate(script);
         return true;
@@ -552,6 +550,12 @@ public final class InternalScriptManager implements IScriptManager {
             @Override
             public IDisposable create(Plugin plugin, IEvaluatedScript script) {
                 return new SAPI_Scheduler(plugin);
+            }
+        }));
+        _api.add(new SimpleScriptApi(plugin, "scoreboards", new IApiObjectCreator() {
+            @Override
+            public IDisposable create(Plugin plugin, IEvaluatedScript script) {
+                return new SAPI_Scoreboard();
             }
         }));
         _api.add(new SimpleScriptApi(plugin, "include", new IApiObjectCreator() {

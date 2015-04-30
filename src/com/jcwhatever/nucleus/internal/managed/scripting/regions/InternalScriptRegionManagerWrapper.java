@@ -34,7 +34,10 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
@@ -46,6 +49,7 @@ import javax.annotation.Nullable;
 public class InternalScriptRegionManagerWrapper implements IScriptRegionManager {
 
     private final Plugin _plugin;
+    private final Map<String, IScriptRegion> _regionMap = new HashMap<>(15);
 
     public InternalScriptRegionManagerWrapper(Plugin plugin) {
         PreCon.notNull(plugin);
@@ -56,13 +60,26 @@ public class InternalScriptRegionManagerWrapper implements IScriptRegionManager 
     @Nullable
     @Override
     public IScriptRegion add(String name, IRegionSelection selection) {
-        return manager().add(name, selection);
+
+        InternalScriptRegion region = manager().add(name, selection);
+        if (region == null)
+            return null;
+
+        IScriptRegion scriptRegion = region.getScriptRegion();
+        _regionMap.put(region.getSearchName(), scriptRegion);
+
+        return addScriptRegion(region);
     }
 
     @Nullable
     @Override
     public IScriptRegion addFromAnchor(String name, Location anchor, int radius) {
-        return manager().addFromAnchor(name, anchor, radius);
+
+        InternalScriptRegion region = manager().addFromAnchor(name, anchor, radius);
+        if (region == null)
+            return null;
+
+        return addScriptRegion(region);
     }
 
     @Override
@@ -73,20 +90,51 @@ public class InternalScriptRegionManagerWrapper implements IScriptRegionManager 
     @Nullable
     @Override
     public IScriptRegion get(String name) {
-        return manager().get(name);
+        PreCon.notNullOrEmpty(name);
+
+        IScriptRegion scriptRegion = _regionMap.get(name.toLowerCase());
+        if (scriptRegion != null)
+            return scriptRegion;
+
+        InternalScriptRegion region = manager().get(name);
+        if (region == null)
+            return null;
+
+        return addScriptRegion(region);
     }
 
     @Override
     public Collection<IScriptRegion> getAll() {
-        return manager().getAll();
+
+        Collection<InternalScriptRegion> regions = manager().getAll();
+
+        for (InternalScriptRegion region : regions) {
+
+            if (_regionMap.containsKey(region.getSearchName()))
+                continue;
+
+            addScriptRegion(region);
+        }
+
+        return new ArrayList<>(_regionMap.values());
     }
 
     @Override
     public boolean remove(String name) {
-        return manager().remove(name);
+        if (manager().remove(name)) {
+            _regionMap.remove(name.toLowerCase());
+            return true;
+        }
+        return false;
     }
 
-    private IScriptRegionManager manager() {
+    private IScriptRegion addScriptRegion(InternalScriptRegion region) {
+        IScriptRegion scriptRegion = region.getScriptRegion();
+        _regionMap.put(region.getSearchName(), scriptRegion);
+        return scriptRegion;
+    }
+
+    private InternalScriptRegionManager manager() {
         return ((InternalScriptManager)Nucleus.getScriptManager()).getRegionsDirect(_plugin);
     }
 }

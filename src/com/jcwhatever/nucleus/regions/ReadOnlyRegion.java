@@ -52,7 +52,7 @@ import javax.annotation.Nullable;
  * <p>Allows other plugins to retrieve region info without giving full access
  * to a region, which could cause issues with the regions owning plugin.</p>
  */
-public final class ReadOnlyRegion implements IRegion, IReadOnly {
+public class ReadOnlyRegion implements IRegion, IReadOnly {
 
     private IRegion _region;
 
