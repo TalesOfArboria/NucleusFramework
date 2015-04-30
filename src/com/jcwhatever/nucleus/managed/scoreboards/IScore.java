@@ -24,8 +24,8 @@
 
 package com.jcwhatever.nucleus.managed.scoreboards;
 
-/*
- * 
+/**
+ * Interface for a managed scoreboard score.
  */
 public interface IScore {
 
@@ -68,5 +68,5 @@ public interface IScore {
     /**
      * Get the owning scoreboard.
      */
-    IManagedScoreboard getScoreboard();
+    IScoreboard getScoreboard();
 }

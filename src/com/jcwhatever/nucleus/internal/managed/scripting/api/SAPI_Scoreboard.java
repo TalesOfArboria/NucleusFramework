@@ -31,9 +31,7 @@ import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
 import com.jcwhatever.nucleus.managed.scoreboards.ScoreboardLifespan;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Map;
 import java.util.Set;
@@ -54,10 +52,8 @@ public class SAPI_Scoreboard implements IDisposable {
      */
     public IManagedScoreboard create(@Nullable Runnable onApply, @Nullable Runnable onRemove) {
 
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
         IManagedScoreboard managedScoreboard = Nucleus.getScoreboardTracker()
-                .manage(scoreboard, ScoreboardLifespan.PERSISTENT,
+                .create(ScoreboardLifespan.PERSISTENT,
                         new ScoreboardExtension(onApply, onRemove));
 
         _scoreboards.put(managedScoreboard, null);
@@ -99,6 +95,11 @@ public class SAPI_Scoreboard implements IDisposable {
         ScoreboardExtension(@Nullable Runnable apply, @Nullable Runnable remove) {
             this.apply = apply;
             this.remove = remove;
+        }
+
+        @Override
+        public void onAttach(IManagedScoreboard scoreboard) {
+            // do nothing
         }
 
         @Override

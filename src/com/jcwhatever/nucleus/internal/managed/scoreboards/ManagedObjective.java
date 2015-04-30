@@ -24,9 +24,9 @@
 
 package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
-import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IObjective;
 import com.jcwhatever.nucleus.managed.scoreboards.IScore;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -43,11 +43,11 @@ import java.util.WeakHashMap;
  */
 class ManagedObjective implements IObjective {
 
-    private final IManagedScoreboard _scoreboard;
+    private final IScoreboard _scoreboard;
     private final Objective _objective;
     private final Map<Score, IScore> _scores = new WeakHashMap<>(10);
 
-    ManagedObjective(IManagedScoreboard scoreboard, Objective objective) {
+    ManagedObjective(IScoreboard scoreboard, Objective objective) {
         _scoreboard = scoreboard;
         _objective = objective;
     }
@@ -78,7 +78,7 @@ class ManagedObjective implements IObjective {
     }
 
     @Override
-    public IManagedScoreboard getScoreboard() {
+    public IScoreboard getScoreboard() {
         return _scoreboard;
     }
 

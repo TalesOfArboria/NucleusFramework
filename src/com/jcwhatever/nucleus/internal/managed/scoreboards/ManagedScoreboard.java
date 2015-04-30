@@ -29,6 +29,7 @@ import com.google.common.collect.SetMultimap;
 import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IObjective;
 import com.jcwhatever.nucleus.managed.scoreboards.IScore;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
 import com.jcwhatever.nucleus.managed.scoreboards.ITeam;
 import com.jcwhatever.nucleus.managed.scoreboards.ScoreboardLifespan;
@@ -50,9 +51,9 @@ import javax.annotation.Nullable;
 /**
  * Internal implementation of {@link IManagedScoreboard}
  */
-class ManagedScoreboard implements IManagedScoreboard {
+class ManagedScoreboard implements IScoreboard {
 
-    private final InternalScoreboardTracker _tracker;
+    private final InternalScoreboardManager _tracker;
     private final ScoreboardLifespan _lifespan;
     private final IScoreboardExtension _extension;
     private final Scoreboard _scoreboard;
@@ -68,7 +69,7 @@ class ManagedScoreboard implements IManagedScoreboard {
      * @param scoreboard  The scoreboard to manage.
      * @param lifespan    The lifespan type
      */
-    public ManagedScoreboard(InternalScoreboardTracker tracker,
+    public ManagedScoreboard(InternalScoreboardManager tracker,
                              Scoreboard scoreboard, ScoreboardLifespan lifespan,
                              @Nullable IScoreboardExtension extension) {
         PreCon.notNull(tracker);
@@ -79,6 +80,10 @@ class ManagedScoreboard implements IManagedScoreboard {
         _lifespan = lifespan;
         _scoreboard = scoreboard;
         _extension = extension;
+
+        if (extension != null) {
+            extension.onAttach(this);
+        }
     }
 
     public Scoreboard getHandle() {

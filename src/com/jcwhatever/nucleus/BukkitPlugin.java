@@ -52,7 +52,7 @@ import com.jcwhatever.nucleus.internal.managed.language.InternalLanguageManager;
 import com.jcwhatever.nucleus.internal.managed.nms.InternalNmsManager;
 import com.jcwhatever.nucleus.internal.managed.reflection.InternalReflectionManager;
 import com.jcwhatever.nucleus.internal.managed.scheduler.InternalTaskScheduler;
-import com.jcwhatever.nucleus.internal.managed.scoreboards.InternalScoreboardTracker;
+import com.jcwhatever.nucleus.internal.managed.scoreboards.InternalScoreboardManager;
 import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptApiRepo;
 import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptEngineLoader;
 import com.jcwhatever.nucleus.internal.managed.scripting.InternalScriptEngineManager;
@@ -92,7 +92,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalEntityTracker _entityTracker;
     InternalFloatingItemManager _floatingItemManager;
     InternalItemSerializationManager _itemSerialization;
-    InternalScoreboardTracker _scoreboardTracker;
+    InternalScoreboardManager _scoreboardTracker;
     InternalLanguageManager _languageManager;
     InternalEquipperManager _equipperManager;
     InternalLeashTracker _leashTracker;
@@ -167,7 +167,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _itemMetaHandlers = new InternalItemMetaHandlers();
         _itemSerialization = new InternalItemSerializationManager();
         _equipperManager = new InternalEquipperManager();
-        _scoreboardTracker = new InternalScoreboardTracker();
+        _scoreboardTracker = new InternalScoreboardManager();
         _scheduler = new InternalTaskScheduler();
         _leashTracker = new InternalLeashTracker();
 

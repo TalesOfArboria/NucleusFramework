@@ -24,9 +24,9 @@
 
 package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
-import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IObjective;
 import com.jcwhatever.nucleus.managed.scoreboards.IScore;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 
 import org.bukkit.scoreboard.Score;
 
@@ -35,11 +35,11 @@ import org.bukkit.scoreboard.Score;
  */
 class ManagedScore implements IScore {
 
-    private final IManagedScoreboard _scoreboard;
+    private final IScoreboard _scoreboard;
     private final IObjective _objective;
     private final Score _score;
 
-    ManagedScore(IManagedScoreboard scoreboard, IObjective objective, Score score) {
+    ManagedScore(IScoreboard scoreboard, IObjective objective, Score score) {
         _scoreboard = scoreboard;
         _objective = objective;
         _score = score;
@@ -80,7 +80,7 @@ class ManagedScore implements IScore {
     }
 
     @Override
-    public IManagedScoreboard getScoreboard() {
+    public IScoreboard getScoreboard() {
         return _scoreboard;
     }
 

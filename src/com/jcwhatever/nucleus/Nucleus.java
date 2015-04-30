@@ -41,7 +41,7 @@ import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
 import com.jcwhatever.nucleus.managed.reflection.IReflectionManager;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
-import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardTracker;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardManager;
 import com.jcwhatever.nucleus.managed.scripting.IScriptApiRepo;
 import com.jcwhatever.nucleus.managed.scripting.IScriptManager;
 import com.jcwhatever.nucleus.managed.signs.ISignManager;
@@ -298,7 +298,7 @@ public final class Nucleus {
     /**
      * Get the global scoreboard tracker.
      */
-    public static IScoreboardTracker getScoreboardTracker() {
+    public static IScoreboardManager getScoreboardTracker() {
         PreCon.isValid(_plugin._scoreboardTracker != null, ERROR_NOT_READY);
 
         return _plugin._scoreboardTracker;

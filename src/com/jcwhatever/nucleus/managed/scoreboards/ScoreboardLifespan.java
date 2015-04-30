@@ -26,11 +26,11 @@ package com.jcwhatever.nucleus.managed.scoreboards;
 
 /**
  * Described the use of the scoreboard so the
- * {@link IScoreboardTracker} knows how the scoreboard
+ * {@link IScoreboardManager} knows how the scoreboard
  * should be handled.
  *
  * @see IManagedScoreboard
- * @see IScoreboardTracker
+ * @see IScoreboardManager
  */
 public enum ScoreboardLifespan {
 

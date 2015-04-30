@@ -63,7 +63,7 @@ public interface IObjective {
     /**
      * Get the owning scoreboard.
      */
-    IManagedScoreboard getScoreboard();
+    IScoreboard getScoreboard();
 
     /**
      * Unregister and remove the objective from its owning scoreboard.

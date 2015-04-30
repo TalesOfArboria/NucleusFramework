@@ -29,8 +29,8 @@ import org.bukkit.scoreboard.NameTagVisibility;
 
 import java.util.Set;
 
-/*
- * 
+/**
+ * Interface for a managed scoreboard team.
  */
 public interface ITeam {
 
@@ -130,7 +130,7 @@ public interface ITeam {
     /**
      * Get the parent scoreboard.
      */
-    IManagedScoreboard getScoreboard();
+    IScoreboard getScoreboard();
 
     /**
      * Add a player to the team.

@@ -34,6 +34,13 @@ import org.bukkit.entity.Player;
 public interface IScoreboardExtension {
 
     /**
+     * Invoked when the extension is attached to a scoreboard.
+     *
+     * @param scoreboard  The managed scoreboard.
+     */
+    void onAttach(IManagedScoreboard scoreboard);
+
+    /**
      * Invoked after a managed scoreboard is applied to a player.
      *
      * @param player      The player.

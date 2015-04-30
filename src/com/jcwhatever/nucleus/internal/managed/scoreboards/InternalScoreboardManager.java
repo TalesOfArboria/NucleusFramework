@@ -26,12 +26,14 @@ package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.players.PlayerMap;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
-import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardTracker;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardManager;
 import com.jcwhatever.nucleus.managed.scoreboards.ScoreboardLifespan;
+import com.jcwhatever.nucleus.utils.PreCon;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -41,9 +43,9 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
- * Internal implementation of {@link IScoreboardTracker}.
+ * Internal implementation of {@link IScoreboardManager}.
  */
-public final class InternalScoreboardTracker implements IScoreboardTracker {
+public final class InternalScoreboardManager implements IScoreboardManager {
 
     private final Map<UUID, PlayerScoreboards> _playerMap =
             new PlayerMap<PlayerScoreboards>(Nucleus.getPlugin(), 35);
@@ -51,17 +53,17 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
     private final Object _sync = new Object();
 
     @Override
-    public IManagedScoreboard manage(Scoreboard scoreboard, ScoreboardLifespan lifespan) {
-        return manage(scoreboard, lifespan, null);
+    public IScoreboard create(ScoreboardLifespan lifespan) {
+        return create(lifespan, null);
     }
 
     @Override
-    public IManagedScoreboard manage(Scoreboard scoreboard, ScoreboardLifespan lifespan,
+    public IScoreboard create(ScoreboardLifespan lifespan,
                                      @Nullable IScoreboardExtension extension) {
-        PreCon.notNull(scoreboard);
         PreCon.notNull(lifespan);
 
-        return new ManagedScoreboard(this, scoreboard, lifespan, extension);
+        return new ManagedScoreboard(
+                this, Bukkit.getScoreboardManager().getNewScoreboard(), lifespan, extension);
     }
 
     /**

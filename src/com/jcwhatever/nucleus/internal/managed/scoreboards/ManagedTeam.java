@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
-import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
+import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.ITeam;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -39,10 +39,10 @@ import java.util.Set;
  */
 class ManagedTeam implements ITeam {
 
-    private final IManagedScoreboard _scoreboard;
+    private final IScoreboard _scoreboard;
     private final Team _team;
 
-    ManagedTeam(IManagedScoreboard scoreboard, Team team) {
+    ManagedTeam(IScoreboard scoreboard, Team team) {
         _scoreboard = scoreboard;
         _team = team;
     }
@@ -128,7 +128,7 @@ class ManagedTeam implements ITeam {
     }
 
     @Override
-    public IManagedScoreboard getScoreboard() {
+    public IScoreboard getScoreboard() {
         return _scoreboard;
     }
 

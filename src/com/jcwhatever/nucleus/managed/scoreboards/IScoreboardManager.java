@@ -24,8 +24,6 @@
 
 package com.jcwhatever.nucleus.managed.scoreboards;
 
-import org.bukkit.scoreboard.Scoreboard;
-
 import javax.annotation.Nullable;
 
 /**
@@ -35,34 +33,30 @@ import javax.annotation.Nullable;
  *
  * <p>Helps reduce plugin scoreboard conflicts by acting as the central
  * scoreboard manager. Each plugin can simply apply their scoreboards via
- * {@link IScoreboardTracker} to ensure that when a plugin is done showing a
+ * {@link IScoreboardManager} to ensure that when a plugin is done showing a
  * scoreboard to a player, the previous scoreboard is re-shown.</p>
  *
  * @see IManagedScoreboard
  */
-public interface IScoreboardTracker {
+public interface IScoreboardManager {
 
     /**
-     * Create an {@link IManagedScoreboard} instance for a {@link Scoreboard} so
-     * it can be tracked.
+     * Create a new managed scoreboard.
      *
-     * @param scoreboard  The scoreboard to manage.
-     * @param lifespan    The intended life span of the scoreboard.
+     * @param lifespan  The intended life span of the scoreboard.
      *
-     * @return  The managed scoreboard.
+     * @return  The scoreboard.
      */
-    IManagedScoreboard manage(Scoreboard scoreboard, ScoreboardLifespan lifespan);
+    IScoreboard create(ScoreboardLifespan lifespan);
 
     /**
-     * Create an {@link IManagedScoreboard} instance for a {@link Scoreboard} so
-     * it can be tracked.
+     * Create a new managed scoreboard.
      *
-     * @param scoreboard  The scoreboard to manage.
      * @param lifespan    The intended life span of the scoreboard.
      * @param extension   The extension to use with the managed scoreboard.
      *
-     * @return  The managed scoreboard.
+     * @return  The scoreboard.
      */
-    IManagedScoreboard manage(Scoreboard scoreboard, ScoreboardLifespan lifespan,
+    IScoreboard create(ScoreboardLifespan lifespan,
                               @Nullable IScoreboardExtension extension);
 }
