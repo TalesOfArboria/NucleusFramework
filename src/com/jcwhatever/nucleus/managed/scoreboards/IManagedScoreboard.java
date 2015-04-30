@@ -26,8 +26,12 @@ package com.jcwhatever.nucleus.managed.scoreboards;
 
 import com.jcwhatever.nucleus.mixins.IDisposable;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.DisplaySlot;
+
+import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Wraps a {@link org.bukkit.scoreboard.Scoreboard} so that it can be tracked
@@ -48,11 +52,6 @@ public interface IManagedScoreboard extends IDisposable {
      * Determine how the scoreboards lifespan is handled.
      */
     ScoreboardLifespan getLifespan();
-
-    /**
-     * Get the encapsulated scoreboard.
-     */
-    Scoreboard getScoreboard();
 
     /**
      * Apply the scoreboard to the specified player.
@@ -81,4 +80,102 @@ public interface IManagedScoreboard extends IDisposable {
      * @return  True if found and removed, otherwise false.
      */
     boolean remove(Player player);
+
+    /**
+     * Get the scoreboard extension.
+     *
+     * @see IScoreboardExtension
+     */
+    @Nullable
+    IScoreboardExtension getExtension();
+
+    /**
+     * Register an get a new scoreboard objective.
+     *
+     * @param name      The name of the objective.
+     * @param criteria  The objective criteria.
+     *
+     * @return  The new objective.
+     */
+    IObjective registerNewObjective(String name, String criteria);
+
+    /**
+     * Get a registered objective by name.
+     *
+     * @param name  The name of the objective.
+     *
+     * @return  The objective or null if not found.
+     */
+    IObjective getObjective(String name);
+
+    /**
+     * Get all registered objectives with the specified criteria.
+     *
+     * @param criteria  The criteria to search for.
+     */
+    Set<IObjective> getObjectivesByCriteria(String criteria);
+
+    /**
+     * Get all registered objectives.
+     */
+    Set<IObjective> getObjectives();
+
+    /**
+     * Get the objective assigned to the specified display slot.
+     *
+     * @param slot  The display slot.
+     */
+    IObjective getObjective(DisplaySlot slot);
+
+    /**
+     * Get scores for the specified entry.
+     *
+     * @param entry  The entry.
+     */
+    Set<IScore> getScores(String entry);
+
+    /**
+     * Reset the scores for a specified entry.
+     *
+     * @param entry  The entry.
+     */
+    void resetScores(String entry);
+
+    /**
+     * Register a new team.
+     *
+     * @param name  The name of the team.
+     */
+    ITeam registerNewTeam(String name);
+
+    /**
+     * Get the team a player is on.
+     *
+     * @param player  The player to check.
+     */
+    ITeam getPlayerTeam(OfflinePlayer player);
+
+    /**
+     * Get a team by name.
+     *
+     * @param name  The name of the team.
+     */
+    ITeam getTeam(String name);
+
+    /**
+     * Get all registered teams.
+     */
+    Set<ITeam> getTeams();
+
+    /**
+     * Get all score entries.
+     */
+    Set<String> getEntries();
+
+    /**
+     * Clear display slot.
+     *
+     * @param slot  The display slot.
+     */
+    void clearSlot(DisplaySlot slot);
 }

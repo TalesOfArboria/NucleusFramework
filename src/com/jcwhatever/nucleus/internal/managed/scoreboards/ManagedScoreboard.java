@@ -24,16 +24,27 @@
 
 package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
-import com.jcwhatever.nucleus.utils.PreCon;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
+import com.jcwhatever.nucleus.managed.scoreboards.IObjective;
+import com.jcwhatever.nucleus.managed.scoreboards.IScore;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
+import com.jcwhatever.nucleus.managed.scoreboards.ITeam;
 import com.jcwhatever.nucleus.managed.scoreboards.ScoreboardLifespan;
+import com.jcwhatever.nucleus.utils.PreCon;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
@@ -45,6 +56,9 @@ class ManagedScoreboard implements IManagedScoreboard {
     private final ScoreboardLifespan _lifespan;
     private final IScoreboardExtension _extension;
     private final Scoreboard _scoreboard;
+    private final Map<Objective, IObjective> _objectives = new WeakHashMap<>(10);
+    private final SetMultimap<String, IObjective> _objectivesByCriteria =
+            MultimapBuilder.hashKeys(10).hashSetValues(10).build();
     private boolean _isDisposed;
 
     /**
@@ -67,14 +81,13 @@ class ManagedScoreboard implements IManagedScoreboard {
         _extension = extension;
     }
 
-    @Override
-    public ScoreboardLifespan getLifespan() {
-        return _lifespan;
+    public Scoreboard getHandle() {
+        return _scoreboard;
     }
 
     @Override
-    public final Scoreboard getScoreboard() {
-        return _scoreboard;
+    public ScoreboardLifespan getLifespan() {
+        return _lifespan;
     }
 
     @Override
@@ -106,6 +119,143 @@ class ManagedScoreboard implements IManagedScoreboard {
         return false;
     }
 
+    @Nullable
+    @Override
+    public IScoreboardExtension getExtension() {
+        return _extension;
+    }
+
+    @Override
+    public ManagedObjective registerNewObjective(String name, String criteria) {
+
+        Objective objective = _scoreboard.registerNewObjective(name, criteria);
+
+        ManagedObjective managed = new ManagedObjective(this, objective);
+        _objectives.put(objective, managed);
+        _objectivesByCriteria.put(criteria, managed);
+
+        return managed;
+    }
+
+    @Override
+    public IObjective getObjective(String name) {
+        Objective objective = _scoreboard.getObjective(name);
+        if (objective == null)
+            return null;
+
+        IObjective managed = _objectives.get(objective);
+        if (managed == null) {
+            managed = new ManagedObjective(this, objective);
+            _objectives.put(objective, managed);
+        }
+
+        return managed;
+    }
+
+    @Override
+    public Set<IObjective> getObjectivesByCriteria(String criteria) {
+        PreCon.notNullOrEmpty(criteria);
+        Set<IObjective> result = _objectivesByCriteria.get(criteria);
+
+        return new HashSet<>(result);
+    }
+
+    @Override
+    public Set<IObjective> getObjectives() {
+        return new HashSet<>(_objectives.values());
+    }
+
+    @Override
+    public IObjective getObjective(DisplaySlot slot) {
+        Objective objective = _scoreboard.getObjective(slot);
+        if (objective == null)
+            return null;
+
+        IObjective managed = _objectives.get(objective);
+        if (managed == null) {
+            managed = new ManagedObjective(this, objective);
+            _objectives.put(objective, managed);
+        }
+
+        return managed;
+    }
+
+    @Override
+    public Set<IScore> getScores(String entry) {
+
+        Set<IScore> scores = new HashSet<>(_objectives.size());
+
+        for (IObjective objective : _objectives.values()) {
+            IScore score = objective.getScore(entry);
+            if (score == null)
+                continue;
+
+            scores.add(score);
+        }
+
+        return scores;
+    }
+
+    @Override
+    public void resetScores(String entry) {
+        _scoreboard.resetScores(entry);
+    }
+
+    Map<Team, ITeam> _teams = new WeakHashMap<>(10);
+
+    @Override
+    public ITeam registerNewTeam(String name) {
+        Team team = _scoreboard.registerNewTeam(name);
+        ManagedTeam managed = new ManagedTeam(this, team);
+        _teams.put(team, managed);
+        return managed;
+    }
+
+    @Override
+    public ITeam getPlayerTeam(OfflinePlayer player) {
+        Team team = _scoreboard.getPlayerTeam(player);
+        if (team == null)
+            return null;
+
+        ITeam managed = _teams.get(team);
+        if (managed == null) {
+            managed = new ManagedTeam(this, team);
+            _teams.put(team, managed);
+        }
+
+        return managed;
+    }
+
+    @Override
+    public ITeam getTeam(String name) {
+        Team team = _scoreboard.getTeam(name);
+        if (team == null)
+            return null;
+
+        ITeam managed = _teams.get(team);
+        if (managed == null) {
+            managed = new ManagedTeam(this, team);
+            _teams.put(team, managed);
+        }
+
+        return managed;
+    }
+
+    @Override
+    public Set<ITeam> getTeams() {
+        return new HashSet<>(_teams.values());
+    }
+
+    @Override
+    public Set<String> getEntries() {
+        return _scoreboard.getEntries();
+    }
+
+    @Override
+    public void clearSlot(DisplaySlot slot) {
+        _scoreboard.clearSlot(slot);
+    }
+
     @Override
     public boolean isDisposed() {
         return _isDisposed;
@@ -118,6 +268,17 @@ class ManagedScoreboard implements IManagedScoreboard {
             objective.unregister();
         }
         _isDisposed = true;
+    }
+
+    @Override
+    public int hashCode() {
+        return _scoreboard.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ManagedScoreboard &&
+                ((ManagedScoreboard) obj)._scoreboard.equals(_scoreboard);
     }
 }
 

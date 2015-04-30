@@ -74,7 +74,7 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
      *
      * @return  True if applied or transient, false if already applied.
      */
-    public boolean apply(Player player, IManagedScoreboard scoreboard) {
+    public boolean apply(Player player, ManagedScoreboard scoreboard) {
         PreCon.notNull(player);
         PreCon.notNull(scoreboard);
 
@@ -84,7 +84,7 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
         synchronized (_sync) {
 
             if (scoreboard.getLifespan() == ScoreboardLifespan.TRANSIENT) {
-                player.setScoreboard(scoreboard.getScoreboard());
+                player.setScoreboard(scoreboard.getHandle());
                 return true;
             }
 
@@ -97,7 +97,7 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
             }
 
             // apply scoreboard
-            player.setScoreboard(scoreboard.getScoreboard());
+            player.setScoreboard(scoreboard.getHandle());
 
             // make sure the scoreboard isn't already the most recent scoreboard
             if (!scoreboards.isEmpty()) {
@@ -128,7 +128,7 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
      * @param player      The player.
      * @param scoreboard  The scoreboard to remove.
      */
-    public boolean remove(Player player, IManagedScoreboard scoreboard) {
+    public boolean remove(Player player, ManagedScoreboard scoreboard) {
         PreCon.notNull(player);
         PreCon.notNull(scoreboard);
 
@@ -143,18 +143,18 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
 
             if (scoreboard.getLifespan() == ScoreboardLifespan.TRANSIENT) {
 
-                IManagedScoreboard managed = scoreboards != null && !scoreboards.isEmpty()
+                ManagedScoreboard managed = scoreboards != null && !scoreboards.isEmpty()
                         ? scoreboards.peek()
                         : null;
 
-                if (scoreboard.getScoreboard().equals(player.getScoreboard())) {
-                    setScoreboard(player, managed != null ? managed.getScoreboard() : null);
+                if (scoreboard.getHandle().equals(player.getScoreboard())) {
+                    setScoreboard(player, managed != null ? managed.getHandle() : null);
                 }
                 return true;
             }
 
-            IManagedScoreboard current = scoreboards.peek();
-            IManagedScoreboard next = null;
+            ManagedScoreboard current = scoreboards.peek();
+            ManagedScoreboard next = null;
             boolean isRemoved;
 
             if (scoreboard.equals(current)) {
@@ -169,9 +169,9 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
             }
 
             if (next != null) {
-                setScoreboard(player, next.getScoreboard());
+                setScoreboard(player, next.getHandle());
             }
-            else if (scoreboard.getScoreboard().equals(player.getScoreboard())) {
+            else if (scoreboard.getHandle().equals(player.getScoreboard())) {
                 setScoreboard(player, null);
             }
 
@@ -183,5 +183,5 @@ public final class InternalScoreboardTracker implements IScoreboardTracker {
         player.setScoreboard(scoreboard);
     }
 
-    private static class PlayerScoreboards extends LinkedList<IManagedScoreboard> {}
+    private static class PlayerScoreboards extends LinkedList<ManagedScoreboard> {}
 }
