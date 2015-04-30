@@ -121,7 +121,7 @@ public abstract class Subscriber implements ISubscriber {
                     agent.unregisterReference(this);
                 }
 
-                _agents.clear();
+                agents().clear();
             }
 
             _isDisposed = true;
