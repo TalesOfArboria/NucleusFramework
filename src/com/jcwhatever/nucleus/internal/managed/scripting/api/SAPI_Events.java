@@ -191,20 +191,25 @@ public class SAPI_Events implements IDisposable {
             @Override
             public void execute(Listener listener, Event event) throws EventException {
 
-                //noinspection unchecked
-                handler.onEvent(event, new IDisposable() {
+                try {
+                    //noinspection unchecked
+                    handler.onEvent(event, new IDisposable() {
 
-                    @Override
-                    public boolean isDisposed() {
-                        return isDisposed;
-                    }
+                        @Override
+                        public boolean isDisposed() {
+                            return isDisposed;
+                        }
 
-                    @Override
-                    public void dispose() {
-                        isDisposed = true;
-                        handlerList.unregister(dummyListener);
-                    }
-                });
+                        @Override
+                        public void dispose() {
+                            isDisposed = true;
+                            handlerList.unregister(dummyListener);
+                        }
+                    });
+
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
         };
 
