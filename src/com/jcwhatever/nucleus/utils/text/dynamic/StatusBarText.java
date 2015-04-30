@@ -44,6 +44,7 @@ public class StatusBarText implements IDynamicText {
     private volatile TextColor _fullColor = TextColor.GREEN;
     private volatile TextColor _partialColor = TextColor.DARK_GREEN;
     private volatile TextColor _emptyColor = TextColor.DARK_GRAY;
+    private volatile int _refreshCount = 0;
 
     private final Object _sync = new Object();
 
@@ -333,7 +334,17 @@ public class StatusBarText implements IDynamicText {
 
     @Override
     public int getRefreshRate() {
-        return _isUpdateRequired ? 1 : 0;
+
+        if (_isUpdateRequired) {
+            _refreshCount = 5;
+            return 1;
+        }
+        else if (_refreshCount > 0) {
+            _refreshCount--;
+            return 1;
+        }
+
+        return 0;
     }
 
     @Override
