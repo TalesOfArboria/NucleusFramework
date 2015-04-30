@@ -24,7 +24,7 @@
 
 package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
-import com.jcwhatever.nucleus.managed.scoreboards.IObjective;
+import com.jcwhatever.nucleus.managed.scoreboards.IScorableObjective;
 import com.jcwhatever.nucleus.managed.scoreboards.IScore;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -41,7 +41,7 @@ import java.util.WeakHashMap;
 /**
  * Managed scoreboard objective.
  */
-class ManagedObjective implements IObjective {
+class ManagedObjective implements IScorableObjective {
 
     private final IScoreboard _scoreboard;
     private final Objective _objective;

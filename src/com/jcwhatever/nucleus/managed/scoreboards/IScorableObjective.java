@@ -24,60 +24,24 @@
 
 package com.jcwhatever.nucleus.managed.scoreboards;
 
-import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.OfflinePlayer;
 
 /**
- * Interface for a managed scoreboard objective.
+ * Interface for an objective with a score.
  */
-public interface IObjective {
+public interface IScorableObjective extends IObjective {
 
     /**
-     * Get the objective name.
-     */
-    String getName();
-
-    /**
-     * Get the objective display name.
-     */
-    String getDisplayName();
-
-    /**
-     * Set the objective display name.
+     * Get a players score.
      *
-     * @param displayName  The display name.
-     * @param args         Optional format arguments.
+     * @param player  The player.
      */
-    void setDisplayName(String displayName, Object... args);
+    IScore getScore(OfflinePlayer player);
 
     /**
-     * Get the scoreboard criteria.
-     */
-    String getCriteria();
-
-    /**
-     * Determine if the objective can be modified.
-     */
-    boolean isModifiable();
-
-    /**
-     * Get the owning scoreboard.
-     */
-    IScoreboard getScoreboard();
-
-    /**
-     * Unregister and remove the objective from its owning scoreboard.
-     */
-    void unregister();
-
-    /**
-     * Set the objectives display slot.
+     * Get the score of an entry.
      *
-     * @param displaySlot  The objectives display slot.
+     * @param entry  The entry.
      */
-    void setDisplaySlot(DisplaySlot displaySlot);
-
-    /**
-     * Get the objectives display slot.
-     */
-    DisplaySlot getDisplaySlot();
+    IScore getScore(String entry);
 }

@@ -35,14 +35,14 @@ import java.util.Set;
 public interface IScoreboard extends IManagedScoreboard {
 
     /**
-     * Register an get a new scoreboard objective.
+     * Register and get a new scoreboard objective.
      *
      * @param name      The name of the objective.
      * @param criteria  The objective criteria.
      *
      * @return  The new objective.
      */
-    IObjective registerNewObjective(String name, String criteria);
+    IScorableObjective registerNewObjective(String name, String criteria);
 
     /**
      * Get a registered objective by name.

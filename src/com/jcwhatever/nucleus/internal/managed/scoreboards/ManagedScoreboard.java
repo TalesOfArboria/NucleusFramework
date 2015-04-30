@@ -28,6 +28,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
 import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IObjective;
+import com.jcwhatever.nucleus.managed.scoreboards.IScorableObjective;
 import com.jcwhatever.nucleus.managed.scoreboards.IScore;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardExtension;
@@ -191,7 +192,10 @@ class ManagedScoreboard implements IScoreboard {
         Set<IScore> scores = new HashSet<>(_objectives.size());
 
         for (IObjective objective : _objectives.values()) {
-            IScore score = objective.getScore(entry);
+            if (!(objective instanceof IScorableObjective))
+                continue;
+
+            IScore score = ((IScorableObjective) objective).getScore(entry);
             if (score == null)
                 continue;
 
