@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
+import com.jcwhatever.nucleus.managed.scoreboards.IHudObjective;
 import com.jcwhatever.nucleus.managed.scoreboards.IManagedScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.IObjective;
 import com.jcwhatever.nucleus.managed.scoreboards.IScorableObjective;
@@ -139,6 +140,18 @@ class ManagedScoreboard implements IScoreboard {
         ManagedObjective managed = new ManagedObjective(this, objective);
         _objectives.put(objective, managed);
         _objectivesByCriteria.put(criteria, managed);
+
+        return managed;
+    }
+
+    @Override
+    public IHudObjective registerNewHud(String name) {
+
+        Objective objective = _scoreboard.registerNewObjective(name, "dummy");
+
+        ManagedHudObjective managed = new ManagedHudObjective(this, objective);
+        _objectives.put(objective, managed);
+        _objectivesByCriteria.put("dummy", managed);
 
         return managed;
     }

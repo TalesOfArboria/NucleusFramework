@@ -120,9 +120,6 @@ public final class BukkitPlugin extends NucleusPlugin {
 
         Nucleus._plugin = this;
 
-        // allow script engines to find nucleus classes
-        Thread.currentThread().setContextClassLoader(getClassLoader());
-
         // init rhino javascript engine if present
         try {
             initRhinoClassLoader();
@@ -232,6 +229,9 @@ public final class BukkitPlugin extends NucleusPlugin {
     }
 
     private void loadScriptManager() {
+
+        // allow script engines to find nucleus classes
+        Thread.currentThread().setContextClassLoader(getClassLoader());
 
         File scriptFolder = new File(getDataFolder(), "scripts");
         if (!scriptFolder.exists() && !scriptFolder.mkdirs()) {

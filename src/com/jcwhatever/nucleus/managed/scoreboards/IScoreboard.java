@@ -45,6 +45,15 @@ public interface IScoreboard extends IManagedScoreboard {
     IScorableObjective registerNewObjective(String name, String criteria);
 
     /**
+     * Register and get a new scoreboard HUD objective.
+     *
+     * @param name  The name of the objective.
+     *
+     * @return  The new HUD objective.
+     */
+    IHudObjective registerNewHud(String name);
+
+    /**
      * Get a registered objective by name.
      *
      * @param name  The name of the objective.

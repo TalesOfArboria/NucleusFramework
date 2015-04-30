@@ -24,61 +24,76 @@
 
 package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
-import com.jcwhatever.nucleus.managed.scoreboards.IScorableObjective;
-import com.jcwhatever.nucleus.managed.scoreboards.IScore;
+import com.jcwhatever.nucleus.managed.scoreboards.IObjective;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
-import org.bukkit.OfflinePlayer;
+import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-
-import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
- * Managed scoreboard objective.
+ * Abstract scoreboard objective.
  */
-public class ManagedObjective extends AbstractObjective implements IScorableObjective {
+public abstract class AbstractObjective implements IObjective {
 
     private final IScoreboard _scoreboard;
     private final Objective _objective;
-    private final Map<Score, IScore> _scores = new WeakHashMap<>(10);
 
-    ManagedObjective(IScoreboard scoreboard, Objective objective) {
-        super(scoreboard, objective);
-
+    AbstractObjective(IScoreboard scoreboard, Objective objective) {
         _scoreboard = scoreboard;
         _objective = objective;
     }
 
     @Override
-    public IScore getScore(OfflinePlayer player) {
-        return getScore(player.getName());
+    public String getName() {
+        return _objective.getName();
     }
 
     @Override
-    public IScore getScore(String entry) {
-        Score score = _objective.getScore(entry);
-        if (score == null)
-            return null;
-
-        IScore managed = _scores.get(score);
-        if (managed == null) {
-            managed = new ManagedScore(_scoreboard, this, score);
-            _scores.put(score, managed);
-        }
-
-        return managed;
+    public String getDisplayName() {
+        return _objective.getDisplayName();
     }
 
     @Override
-    public int hashCode() {
-        return _objective.hashCode();
+    public void setDisplayName(String displayName, Object... args) {
+        _objective.setDisplayName(TextUtils.format(displayName, args));
+    }
+
+    // for script compatibility
+    public void setDisplayName(String displayName) {
+        _objective.setDisplayName(TextUtils.format(displayName));
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof ManagedObjective &&
-                ((ManagedObjective) obj)._objective.equals(_objective);
+    public String getCriteria() {
+        return _objective.getCriteria();
+    }
+
+    @Override
+    public boolean isModifiable() {
+        return _objective.isModifiable();
+    }
+
+    @Override
+    public IScoreboard getScoreboard() {
+        return _scoreboard;
+    }
+
+    @Override
+    public void unregister() {
+        _objective.unregister();
+    }
+
+    @Override
+    public void setDisplaySlot(DisplaySlot displaySlot) {
+        PreCon.notNull(displaySlot);
+
+        _objective.setDisplaySlot(displaySlot);
+    }
+
+    @Override
+    public DisplaySlot getDisplaySlot() {
+        return _objective.getDisplaySlot();
     }
 }
