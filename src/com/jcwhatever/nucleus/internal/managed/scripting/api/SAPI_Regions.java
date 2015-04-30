@@ -78,11 +78,15 @@ public class SAPI_Regions implements IDisposable {
      *
      * @param name  The name of the script region.
      */
-    @Nullable
     public IScriptRegion get(String name) {
         PreCon.notNullOrEmpty(name);
 
-        return Nucleus.getScriptManager().getRegions().get(name);
+        IScriptRegion region = Nucleus.getScriptManager().getRegions().get(name);
+        PreCon.isValid(region != null, "Region named '{0}' not found.", name);
+
+        _referencedRegions.add(region);
+
+        return region;
     }
 
     /**
