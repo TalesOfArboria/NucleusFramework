@@ -76,7 +76,7 @@ public class EventAgent implements IEventAgent, IDisposable {
             // check for cancelled event and determine if the subscriber
             // will still be notified of the event.
             if (subscriber.getPriority() != EventSubscriberPriority.WATCHER &&
-                    isCancelled && !subscriber.isCancelIgnored()) {
+                    isCancelled && !subscriber.isInvokedForCancelled()) {
 
                 skippedSubscribers.add(subscriber);
                 continue;

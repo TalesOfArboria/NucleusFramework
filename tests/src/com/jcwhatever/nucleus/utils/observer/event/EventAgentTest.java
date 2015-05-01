@@ -136,7 +136,7 @@ public class EventAgentTest {
         event.setCancelled(false);
         assertEquals(false, event.isCancelled());
 
-        last.setCancelIgnored(true);
+        last.setInvokedForCancelled(true);
 
         agent.call(this, event);
 
@@ -160,7 +160,7 @@ public class EventAgentTest {
                 .setPriority(EventSubscriberPriority.NORMAL);
 
         EventSubscriber<CancelEvent> last = getUncancellingSubscriber(callResults);
-                last.setCancelIgnored(true)
+                last.setInvokedForCancelled(true)
                 .setPriority(EventSubscriberPriority.HIGH);
 
         EventSubscriber<CancelEvent> watcher = getSubscriber(callResults)

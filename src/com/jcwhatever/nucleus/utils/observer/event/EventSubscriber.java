@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 public abstract class EventSubscriber<E> extends Subscriber implements IEventSubscriber<E> {
 
     private EventSubscriberPriority _priority = EventSubscriberPriority.NORMAL;
-    private boolean _isCancelIgnored;
+    private boolean _isInvokedForCancelled;
 
     @Override
     public abstract void onEvent(@Nullable Object caller, E event);
@@ -55,12 +55,12 @@ public abstract class EventSubscriber<E> extends Subscriber implements IEventSub
     }
 
     @Override
-    public boolean isCancelIgnored() {
-        return _isCancelIgnored;
+    public boolean isInvokedForCancelled() {
+        return _isInvokedForCancelled;
     }
 
-    public <T extends EventSubscriber> T setCancelIgnored(boolean isIgnored) {
-        _isCancelIgnored = isIgnored;
+    public <T extends EventSubscriber> T setInvokedForCancelled(boolean isIgnored) {
+        _isInvokedForCancelled = isIgnored;
 
         @SuppressWarnings("unchecked")
         T self = (T)this;

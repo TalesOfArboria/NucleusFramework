@@ -89,6 +89,9 @@ import javax.annotation.Nullable;
  * <p>In order to prevent undesired dropping of events, the event type should not override the equals method, or
  * if it does, should compare instances using ==.</p>
  *
+ * <p>Note: The event manager runs events slightly different from Bukkit events. When an event is cancelled,
+ * all event handlers that would have been called after are not called unless they have been set to be invoked
+ * even if the event is cancelled. If a handler un-cancels an event, any handler that was skipped is then run.</p>
  */
 public class EventManager implements IPluginOwned, IDisposable {
 
@@ -102,7 +105,7 @@ public class EventManager implements IPluginOwned, IDisposable {
      * Remove all registered event handlers and listeners from
      * the specified plugin from all event managers.
      *
-     * <p>Automatically called when a plugin is disabled.</p>
+     * <p>Automatically invoked when a plugin is disabled.</p>
      *
      * @param plugin  The plugin.
      */
@@ -463,7 +466,7 @@ public class EventManager implements IPluginOwned, IDisposable {
             method.setAccessible(true);
 
             setPriority(annotation.priority());
-            setCancelIgnored(annotation.ignoreCancelled());
+            setInvokedForCancelled(annotation.invokeForCancelled());
         }
 
         @Override

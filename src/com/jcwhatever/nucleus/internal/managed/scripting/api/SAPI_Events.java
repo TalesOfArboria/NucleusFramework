@@ -90,7 +90,9 @@ public class SAPI_Events implements IDisposable {
      * Registers an event handler.
      *
      * @param eventName  The event class name.
-     * @param priority   The event priority as a string.
+     * @param priority   The event priority as a string. Can specify "invokeForCancelled".
+     *                   ie. "NORMAL:invokeForCancelled". By default, handlers are not invoked if
+     *                   event is cancelled by another handler.
      * @param handler    The event handler.
      *
      * @return True if successfully registered.
@@ -101,11 +103,11 @@ public class SAPI_Events implements IDisposable {
         PreCon.notNull(handler);
 
         String[] priorityComp = TextUtils.PATTERN_COLON.split(priority);
-        boolean ignoreCancelled = false;
+        boolean ignoreCancelled = true;
 
         if (priorityComp.length == 2) {
-            if (priorityComp[1].equalsIgnoreCase("ignoreCancelled")) {
-                ignoreCancelled = true;
+            if (priorityComp[1].equalsIgnoreCase("invokeForCancelled")) {
+                ignoreCancelled = false;
                 priority = priorityComp[0];
             }
         }
@@ -145,7 +147,7 @@ public class SAPI_Events implements IDisposable {
 
         ScriptEventSubscriber subscriber = new ScriptEventSubscriber<>(handler);
         subscriber.setPriority(eventPriority);
-        subscriber.setCancelIgnored(ignoreCancelled);
+        subscriber.setInvokedForCancelled(!ignoreCancelled);
 
         //noinspection unchecked
         Nucleus.getEventManager().register(_plugin, event, subscriber);

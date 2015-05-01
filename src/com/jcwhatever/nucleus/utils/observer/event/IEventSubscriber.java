@@ -49,7 +49,7 @@ public interface IEventSubscriber<E> extends ISubscriber, Comparable<IEventSubsc
      * Determine if the subscriber should still be notified
      * of an event if it's cancelled.
      */
-    boolean isCancelIgnored();
+    boolean isInvokedForCancelled();
 
     /**
      * Invoked by an {@link IEventAgent} to notify the subscriber

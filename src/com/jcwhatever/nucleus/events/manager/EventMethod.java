@@ -46,8 +46,13 @@ public @interface EventMethod {
     EventSubscriberPriority priority() default EventSubscriberPriority.NORMAL;
 
     /**
-     * Determine if the handler should be run even if the
-     * event is already cancelled.
+     * Determine if the handler should be run even if the event is already
+     * cancelled.
+     *
+     * <p>This is the opposite of Bukkits "ignoreCancelled" parameter. By default,
+     * event handlers are not invoked if a previous handler cancels the event. Setting
+     * {@link #invokeForCancelled()} to true allows the event handler to be invoked
+     * even if the event has been cancelled.</p>
      */
-    boolean ignoreCancelled() default false;
+    boolean invokeForCancelled() default false;
 }
