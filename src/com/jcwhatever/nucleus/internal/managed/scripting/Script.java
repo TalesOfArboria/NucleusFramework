@@ -100,6 +100,7 @@ class Script implements IScript {
         IEvaluatedScript script = instantiateEvaluatedScript(engine, apiCollection);
 
         if (!eval(engine, script.getContext())) {
+            script.dispose();
             return null;
         }
 
@@ -117,7 +118,7 @@ class Script implements IScript {
     }
 
     /**
-     * Called to instantiate a new evaluated script.
+     * Invoked to instantiate a new evaluated script.
      *
      * @param engine         The scripts engine.
      * @param apiCollection  Optional initial api collection.
@@ -128,16 +129,15 @@ class Script implements IScript {
     }
 
     /**
-     * Called to evaluate the script into the specified engine.
+     * Invoked to evaluate the script into the specified engine.
      *
      * @param engine   The engine to evaluate the script into.
      * @param context  The script context.
      *
-     * @return Null if evaluation failed.
+     * @return True if successful, otherwise false.
      */
     protected boolean eval(ScriptEngine engine, ScriptContext context) {
 
         return ScriptUtils.eval(engine, context, this).hasResult();
     }
-
 }

@@ -45,7 +45,6 @@ import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 /**
  * Script utilities.
@@ -267,7 +266,7 @@ public final class ScriptUtils {
 
             return new Result<Object>(true, result);
 
-        } catch (ScriptException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             return new Result<Object>(false);
         }
