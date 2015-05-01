@@ -105,6 +105,12 @@ public class InternalScriptRegionManagerWrapper implements IScriptRegionManager 
 
     @Override
     public Collection<IScriptRegion> getAll() {
+        return getAll(new ArrayList<IScriptRegion>(_regionMap.size()));
+    }
+
+    @Override
+    public <T extends Collection<IScriptRegion>> T getAll(T output) {
+        PreCon.notNull(output);
 
         Collection<InternalScriptRegion> regions = manager().getAll();
 
@@ -116,7 +122,8 @@ public class InternalScriptRegionManagerWrapper implements IScriptRegionManager 
             addScriptRegion(region);
         }
 
-        return new ArrayList<>(_regionMap.values());
+        output.addAll(_regionMap.values());
+        return output;
     }
 
     @Override

@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.managed.scoreboards;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.DisplaySlot;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Scoreboard wrapper interface.
@@ -67,12 +67,31 @@ public interface IScoreboard extends IManagedScoreboard {
      *
      * @param criteria  The criteria to search for.
      */
-    Set<IObjective> getObjectivesByCriteria(String criteria);
+    Collection<IObjective> getObjectivesByCriteria(String criteria);
+
+    /**
+     * Get all registered objectives with the specified criteria.
+     *
+     * @param criteria  The criteria to search for.
+     * @param output    The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IObjective>> T getObjectivesByCriteria(String criteria, T output);
 
     /**
      * Get all registered objectives.
      */
-    Set<IObjective> getObjectives();
+    Collection<IObjective> getObjectives();
+
+    /**
+     * Get all registered objectives.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IObjective>> T getObjectives(T output);
 
     /**
      * Get the objective assigned to the specified display slot.
@@ -86,7 +105,17 @@ public interface IScoreboard extends IManagedScoreboard {
      *
      * @param entry  The entry.
      */
-    Set<IScore> getScores(String entry);
+    Collection<IScore> getScores(String entry);
+
+    /**
+     * Get scores for the specified entry.
+     *
+     * @param entry   The entry.
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IScore>> T getScores(String entry, T output);
 
     /**
      * Reset the scores for a specified entry.
@@ -119,12 +148,30 @@ public interface IScoreboard extends IManagedScoreboard {
     /**
      * Get all registered teams.
      */
-    Set<ITeam> getTeams();
+    Collection<ITeam> getTeams();
+
+    /**
+     * Get all registered teams.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<ITeam>> T getTeams(T output);
 
     /**
      * Get all score entries.
      */
-    Set<String> getEntries();
+    Collection<String> getEntries();
+
+    /**
+     * Get all score entries.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<String>> T getEntries(T output);
 
     /**
      * Clear display slot.

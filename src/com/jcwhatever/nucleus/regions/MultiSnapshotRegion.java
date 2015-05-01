@@ -38,6 +38,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -118,24 +119,34 @@ public abstract class MultiSnapshotRegion extends RestorableRegion {
      * @throws IOException
      */
     public Set<String> getSnapshotNames() throws IOException {
+        return getSnapshotNames(new HashSet<String>(15));
+    }
+
+    /**
+     * Get the names of stored snapshots.
+     *
+     * <p>Snapshot names are retrieved by file name, therefore this
+     * only returns names of snapshots that have been saved.</p>
+     *
+     * @throws IOException
+     */
+    public <T extends Collection<String>> T getSnapshotNames(T output) throws IOException {
 
         File folder = _fileFactory.getRegionDirectory(this);
 
         File[] files = folder.listFiles();
         if (files == null)
-            return new HashSet<>(0);
-
-        Set<String> names = new HashSet<String>(files.length);
+            return output;
 
         for (File file : files) {
 
             if (!file.isDirectory())
                 continue;
 
-            names.add(file.getName());
+            output.add(file.getName());
         }
 
-        return names;
+        return output;
     }
 
     /**

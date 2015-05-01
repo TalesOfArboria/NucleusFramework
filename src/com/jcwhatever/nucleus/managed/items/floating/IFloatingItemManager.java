@@ -93,6 +93,16 @@ public interface IFloatingItemManager {
     Collection<IFloatingItem> getAll(Plugin plugin);
 
     /**
+     * Get all items owned by the specified plugin.
+     *
+     * @param plugin  The owning plugin.
+     * @param output  The output collection to place results into.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IFloatingItem>> T getAll(Plugin plugin, T output);
+
+    /**
      * Remove an item.
      *
      * @param plugin  The items owning plugin.

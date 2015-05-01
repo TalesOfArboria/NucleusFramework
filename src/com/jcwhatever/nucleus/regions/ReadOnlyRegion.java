@@ -249,8 +249,18 @@ public class ReadOnlyRegion implements IRegion, IReadOnly {
     }
 
     @Override
+    public <T extends Collection<Location>> T find(Material material, T output) {
+        return _region.find(material, output);
+    }
+
+    @Override
     public Collection<IChunkCoords> getChunkCoords() {
         return _region.getChunkCoords();
+    }
+
+    @Override
+    public <T extends Collection<IChunkCoords>> T getChunkCoords(T output) {
+        return _region.getChunkCoords(output);
     }
 
     @Override

@@ -69,9 +69,28 @@ public interface IGroupPermissionsProvider extends IPermissionsProvider {
     Collection<IPermissionGroup> getGroups();
 
     /**
+     * Get a string array of group permission names.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IPermissionGroup>> T getGroups(T output);
+
+    /**
      * Get a string array of groups the specified player is in.
      *
      * @param player  The player to check.
      */
     Collection<IPermissionGroup> getGroups(OfflinePlayer player);
+
+    /**
+     * Get a string array of groups the specified player is in.
+     *
+     * @param player  The player to check.
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IPermissionGroup>> T getGroups(OfflinePlayer player, T output);
 }

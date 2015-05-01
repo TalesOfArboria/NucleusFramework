@@ -34,9 +34,9 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -201,7 +201,19 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      * <p>Direct child nodes are the immediate children of the node and do
      * not include children of the immediate children.</p>
      */
-    Set<String> getSubNodeNames();
+    Collection<String> getSubNodeNames();
+
+    /**
+     * Get the names of the direct child nodes.
+     *
+     * <p>Direct child nodes are the immediate children of the node and do
+     * not include children of the immediate children.</p>
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<String>> T getSubNodeNames(T output);
 
     /**
      * Get the names of the direct child nodes of the specified child node.
@@ -211,7 +223,20 @@ public interface IDataNode extends Iterable<IDataNode>, IPluginOwned {
      *
      * @param nodePath  The relative path of the child node.
      */
-    Set<String> getSubNodeNames(String nodePath);
+    Collection<String> getSubNodeNames(String nodePath);
+
+    /**
+     * Get the names of the direct child nodes of the specified child node.
+     *
+     * <p>Direct child nodes are the immediate children of the node and do
+     * not include children of the immediate children.</p>
+     *
+     * @param nodePath  The relative path of the child node.
+     * @param output    The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<String>> T getSubNodeNames(String nodePath, T output);
 
     /**
      * Clear all data in the node.

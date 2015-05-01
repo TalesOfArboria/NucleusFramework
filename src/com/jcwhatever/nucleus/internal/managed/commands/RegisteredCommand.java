@@ -183,8 +183,18 @@ class RegisteredCommand implements IRegisteredCommand {
     }
 
     @Override
+    public <T extends Collection<IRegisteredCommand>> T getCommands(T output) {
+        return _subCommands.getCommands(output);
+    }
+
+    @Override
     public Collection<String> getCommandNames() {
         return _subCommands.getCommandNames();
+    }
+
+    @Override
+    public <T extends Collection<String>> T getCommandNames(T output) {
+        return _subCommands.getCommandNames(output);
     }
 
     @Override

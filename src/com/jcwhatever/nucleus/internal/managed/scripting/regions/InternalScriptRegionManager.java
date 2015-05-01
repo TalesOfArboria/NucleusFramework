@@ -34,6 +34,7 @@ import com.jcwhatever.nucleus.utils.PreCon;
 
 import org.bukkit.Location;
 
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 /**

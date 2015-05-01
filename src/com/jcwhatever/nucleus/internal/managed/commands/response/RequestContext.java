@@ -120,6 +120,14 @@ class RequestContext implements IRequestContext {
     }
 
     @Override
+    public <T extends Collection<ResponseType>> T getResponseTypes(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_responseTypes);
+        return output;
+    }
+
+    @Override
     public boolean isCancelled() {
         return _isCancelled;
     }

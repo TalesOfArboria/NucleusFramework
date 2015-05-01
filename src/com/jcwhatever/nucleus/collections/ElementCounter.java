@@ -310,8 +310,19 @@ public class ElementCounter<E> implements Iterable<ElementCount<E>> {
      * Get a new hash set containing the items that were counted.
      */
     public Set<E> getElements() {
-
         return new HashSet<E>(_countMap.keySet());
+    }
+
+    /**
+     * Get a new hash set containing the items that were counted.
+     *
+     * @param output  The output collection to add results to.
+     */
+    public <T extends Collection<E>> T getElements(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_countMap.keySet());
+        return output;
     }
 
     /**

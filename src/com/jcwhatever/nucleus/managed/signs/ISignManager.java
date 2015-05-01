@@ -30,7 +30,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Sign;
 
 import java.util.Collection;
-import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -72,12 +71,32 @@ public interface ISignManager {
     Collection<SignHandler> getSignHandlers();
 
     /**
+     * Get all sign handlers.
+     *
+     * @param output  The output collection to place results into.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<SignHandler>> T getSignHandlers(T output);
+
+    /**
      * Get all signs saved to the config handled by the specified
      * sign handler.
      *
      * @param signHandlerName  The name of the sign handler.
      */
-    List<ISignContainer> getSigns(String signHandlerName);
+    Collection<ISignContainer> getSigns(String signHandlerName);
+
+    /**
+     * Get all signs saved to the config handled by the specified
+     * sign handler.
+     *
+     * @param signHandlerName  The name of the sign handler.
+     * @param output           The output collection to put results into.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<ISignContainer>> T getSigns(String signHandlerName, T output);
 
     /**
      * Get the text lines for a handled sign from the config.

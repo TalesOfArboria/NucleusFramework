@@ -42,7 +42,6 @@ import com.jcwhatever.nucleus.managed.sounds.types.VoiceSound;
 import com.jcwhatever.nucleus.providers.storage.DataStorage;
 import com.jcwhatever.nucleus.storage.DataPath;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.Utils;
@@ -57,7 +56,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,14 +87,26 @@ public final class InternalSoundManager implements ISoundManager {
 
     @Override
     public Collection<ResourceSound> getSounds() {
-        return Collections.unmodifiableCollection(_sounds.values());
+        return new ArrayList<>(_sounds.values());
+    }
+
+    @Override
+    public <T extends Collection<ResourceSound>> T getSounds(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_sounds.values());
+        return output;
     }
 
     @Override
     public <T extends ResourceSound> Collection<T> getSounds(Class<T> type) {
-        PreCon.notNull(type);
+        return getSounds(type, new ArrayList<T>(_sounds.size()));
+    }
 
-        List<T> results = new ArrayList<>(_sounds.size());
+    @Override
+    public <T extends ResourceSound, E extends Collection<T>> E getSounds(Class<T> type, E output) {
+        PreCon.notNull(type);
+        PreCon.notNull(output);
 
         for (ResourceSound sound : _sounds.values()) {
 
@@ -105,44 +115,55 @@ public final class InternalSoundManager implements ISoundManager {
                 @SuppressWarnings("unchecked")
                 T result = (T) sound;
 
-                results.add(result);
+                output.add(result);
             }
         }
 
-        return Collections.unmodifiableCollection(results);
+        return output;
     }
 
     @Override
     public Collection<ResourceSound> getSounds(Player player) {
+        return getSounds(player, new ArrayList<ResourceSound>(10));
+    }
+
+    @Override
+    public <T extends Collection<ResourceSound>> T getSounds(Player player, T output) {
         PreCon.notNull(player);
+        PreCon.notNull(output);
 
         List<ISoundContext> playing = _playing.get(player.getUniqueId());
 
         if (playing == null || playing.isEmpty())
-            return CollectionUtils.unmodifiableList();
-
-        List<ResourceSound> result = new ArrayList<>(playing.size());
+            return output;
 
         //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (playing) {
             for (ISoundContext play : playing) {
-                result.add(play.getResourceSound());
+                output.add(play.getResourceSound());
             }
         }
 
-        return CollectionUtils.unmodifiableList(result);
+        return output;
     }
 
     @Override
     public Collection<ISoundContext> getContexts(Player player) {
+        return getContexts(player, new ArrayList<ISoundContext>(7));
+    }
+
+    @Override
+    public <T extends Collection<ISoundContext>> T getContexts(Player player, T output) {
         PreCon.notNull(player);
+        PreCon.notNull(output);
 
         List<ISoundContext> playing = _playing.get(player.getUniqueId());
 
         if (playing == null || playing.isEmpty())
-            return CollectionUtils.unmodifiableList();
+            return output;
 
-        return CollectionUtils.unmodifiableList(playing);
+        output.addAll(playing);
+        return output;
     }
 
     @Override

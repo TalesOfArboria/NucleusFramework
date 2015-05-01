@@ -26,6 +26,7 @@ package com.jcwhatever.nucleus.collections;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -124,13 +125,23 @@ public class HashMapMap<K1, K2, V> extends HashMap<K1, HashMap<K2, V>> {
      * Get all values.
      */
     public Set<V> valueSet() {
+        return valueSet(new HashSet<V>(size() * 5));
+    }
 
-        HashSet<V> values = new HashSet<>(size() * 5);
+    /**
+     * Get all values.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    public <T extends Collection<V>> T valueSet(T output) {
+        PreCon.notNull(output);
 
         for (Entry<K1, HashMap<K2, V>> entry : entrySet()) {
-            values.addAll(entry.getValue().values());
+            output.addAll(entry.getValue().values());
         }
 
-        return values;
+        return output;
     }
 }

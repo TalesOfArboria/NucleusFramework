@@ -341,6 +341,20 @@ public class TextFormatterSettings {
     }
 
     /**
+     * Get all default tag formatters.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    public <T extends Collection<ITagFormatter>> T getFormatters(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_formatters.values());
+        return output;
+    }
+
+    /**
      * Get a default tag formatter by case sensitive tag.
      *
      * @param tag  The tag text.

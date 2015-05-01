@@ -52,11 +52,30 @@ public interface ISoundManager {
     Collection<ResourceSound> getSounds();
 
     /**
+     * Get all resource sounds.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<ResourceSound>> T getSounds(T output);
+
+    /**
      * Get resource sounds by type.
      *
      * @param type  The type to look for.
      */
     <T extends ResourceSound> Collection<T> getSounds(Class<T> type);
+
+    /**
+     * Get resource sounds by type.
+     *
+     * @param type    The type to look for.
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends ResourceSound, E extends Collection<T>> E getSounds(Class<T> type, E output);
 
     /**
      * Get the resource sounds being played to the specified player.
@@ -66,12 +85,33 @@ public interface ISoundManager {
     Collection<ResourceSound> getSounds(Player player);
 
     /**
+     * Get the resource sounds being played to the specified player.
+     *
+     * @param player  The player to check.
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<ResourceSound>> T getSounds(Player player, T output);
+
+    /**
      * Get information about the resource sounds being played
      * for the specified player.
      *
      * @param player  The player to check.
      */
     Collection<ISoundContext> getContexts(Player player);
+
+    /**
+     * Get information about the resource sounds being played
+     * for the specified player.
+     *
+     * @param player  The player to check.
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<ISoundContext>> T getContexts(Player player, T output);
 
     /**
      * Play a resource sound to a player at the players location.

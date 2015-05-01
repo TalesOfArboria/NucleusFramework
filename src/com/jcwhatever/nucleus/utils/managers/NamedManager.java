@@ -27,8 +27,8 @@ package com.jcwhatever.nucleus.utils.managers;
 import com.jcwhatever.nucleus.mixins.INamed;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -41,9 +41,9 @@ import javax.annotation.Nullable;
  * call the protected {@link #add} method from your implementation
  * to add a new item.</p>
  */
-public abstract class NamedManager<T extends INamed> implements INamedManager<T> {
+public abstract class NamedManager<E extends INamed> implements INamedManager<E> {
 
-    protected Map<String, T> _map = new HashMap<>(15);
+    protected Map<String, E> _map = new HashMap<>(15);
 
     @Override
     public boolean contains(String name) {
@@ -54,22 +54,30 @@ public abstract class NamedManager<T extends INamed> implements INamedManager<T>
 
     @Override
     @Nullable
-    public T get(String name) {
+    public E get(String name) {
         PreCon.notNull(name);
 
         return _map.get(getName(name));
     }
 
     @Override
-    public Collection<T> getAll() {
-        return Collections.unmodifiableCollection(_map.values());
+    public Collection<E> getAll() {
+        return new ArrayList<>(_map.values());
+    }
+
+    @Override
+    public <T extends Collection<E>> T getAll(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_map.values());
+        return output;
     }
 
     @Override
     public boolean remove(String name) {
         PreCon.notNull(name);
 
-        T item = _map.remove(getName(name));
+        E item = _map.remove(getName(name));
         if (item == null)
             return false;
 
@@ -83,21 +91,21 @@ public abstract class NamedManager<T extends INamed> implements INamedManager<T>
      *
      * @param removed  The removed item.
      */
-    protected void onRemove(T removed) {}
+    protected void onRemove(E removed) {}
 
     /**
      * Invoked when an item is added.
      *
      * @param added  The added item.
      */
-    protected boolean onAdd(T added) { return true; }
+    protected boolean onAdd(E added) { return true; }
 
     /**
      * Add a new item to the manager.
      *
      * @param item  The item to add.
      */
-    protected boolean add(T item) {
+    protected boolean add(E item) {
         _map.put(getName(item), item);
         return onAdd(item);
     }
@@ -116,7 +124,7 @@ public abstract class NamedManager<T extends INamed> implements INamedManager<T>
      *
      * @param item  The item to check.
      */
-    protected String getName(T item) {
+    protected String getName(E item) {
         return item.getName();
     }
 }

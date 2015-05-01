@@ -76,6 +76,15 @@ public interface IFriendsProvider extends IProvider {
     Collection<IFriendsContext> getContexts();
 
     /**
+     * Get all friendship contexts.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IFriendsContext>> T getContexts(T output);
+
+    /**
      * Remove a named context.
      *
      * @param name  The name of the context.

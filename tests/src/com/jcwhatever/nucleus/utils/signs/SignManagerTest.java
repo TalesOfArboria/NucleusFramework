@@ -27,7 +27,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Tests Nucleus {@link ISignManager} implementation.
@@ -90,7 +89,7 @@ public class SignManagerTest {
     public void testGetSigns() throws Exception {
 
         // baseline test: should be no signs
-        List<ISignContainer> signs = _signManager.getSigns(_signHandler.getName());
+        Collection<ISignContainer> signs = _signManager.getSigns(_signHandler.getName());
         assertEquals(0, signs.size());
 
         // place a new sign

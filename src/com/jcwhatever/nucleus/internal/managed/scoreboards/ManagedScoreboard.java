@@ -44,6 +44,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -174,14 +175,30 @@ class ManagedScoreboard implements IScoreboard {
     @Override
     public Set<IObjective> getObjectivesByCriteria(String criteria) {
         PreCon.notNullOrEmpty(criteria);
-        Set<IObjective> result = _objectivesByCriteria.get(criteria);
 
-        return new HashSet<>(result);
+        return new HashSet<>(_objectivesByCriteria.get(criteria));
+    }
+
+    @Override
+    public <T extends Collection<IObjective>> T getObjectivesByCriteria(String criteria, T output) {
+        PreCon.notNullOrEmpty(criteria);
+        PreCon.notNull(output);
+
+        output.addAll(_objectivesByCriteria.get(criteria));
+        return output;
     }
 
     @Override
     public Set<IObjective> getObjectives() {
         return new HashSet<>(_objectives.values());
+    }
+
+    @Override
+    public <T extends Collection<IObjective>> T getObjectives(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_objectives.values());
+        return output;
     }
 
     @Override
@@ -200,9 +217,14 @@ class ManagedScoreboard implements IScoreboard {
     }
 
     @Override
-    public Set<IScore> getScores(String entry) {
+    public Collection<IScore> getScores(String entry) {
+        return getScores(entry, new HashSet<IScore>(_objectives.size()));
+    }
 
-        Set<IScore> scores = new HashSet<>(_objectives.size());
+    @Override
+    public <T extends Collection<IScore>> T getScores(String entry, T output) {
+        PreCon.notNullOrEmpty(entry);
+        PreCon.notNull(output);
 
         for (IObjective objective : _objectives.values()) {
             if (!(objective instanceof IScorableObjective))
@@ -212,10 +234,10 @@ class ManagedScoreboard implements IScoreboard {
             if (score == null)
                 continue;
 
-            scores.add(score);
+            output.add(score);
         }
 
-        return scores;
+        return output;
     }
 
     @Override
@@ -269,8 +291,24 @@ class ManagedScoreboard implements IScoreboard {
     }
 
     @Override
+    public <T extends Collection<ITeam>> T getTeams(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_teams.values());
+        return output;
+    }
+
+    @Override
     public Set<String> getEntries() {
         return _scoreboard.getEntries();
+    }
+
+    @Override
+    public <T extends Collection<String>> T getEntries(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_scoreboard.getEntries());
+        return output;
     }
 
     @Override

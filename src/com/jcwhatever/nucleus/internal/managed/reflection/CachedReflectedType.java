@@ -74,9 +74,10 @@ class CachedReflectedType implements IWrapper<Class<?>> {
      *
      * @param count  The parameter count.
      */
-    public Collection<Constructor<?>> constructorsByCount(int count) {
+    public <T extends Collection<Constructor<?>>> T constructorsByCount(int count, T output) {
         synchronized (_constructors) {
-            return CollectionUtils.unmodifiableList(_constructors.get(count));
+            output.addAll(_constructors.get(count));
+            return output;
         }
     }
 
@@ -110,9 +111,10 @@ class CachedReflectedType implements IWrapper<Class<?>> {
      *
      * @param name  The method name.
      */
-    public Collection<Method> methodsByName(String name) {
+    public <T extends Collection<Method>> T methodsByName(String name, T output) {
         synchronized (_methods) {
-            return CollectionUtils.unmodifiableList(_methods.get(name));
+            output.addAll(_methods.get(name));
+            return output;
         }
     }
 

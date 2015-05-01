@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 /**
  * Interface for a manager of {@link INamed} objects.
  */
-public interface INamedManager<T extends INamed> {
+public interface INamedManager<E extends INamed> {
 
     /**
      * Determine if the manager contains an item.
@@ -49,12 +49,21 @@ public interface INamedManager<T extends INamed> {
      * @return  Null if the item was not found.
      */
     @Nullable
-    T get(String name);
+    E get(String name);
 
     /**
      * Get all managed items.
      */
-    Collection<T> getAll();
+    Collection<E> getAll();
+
+    /**
+     * Get all managed items.
+     *
+     * @param output  The output collection to place results into.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<E>> T getAll(T output);
 
     /**
      * Remove an item.

@@ -35,6 +35,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +47,8 @@ import javax.annotation.Nullable;
 class ReflectedType implements IReflectedType {
 
     private final CachedReflectedType _cached;
+    private final Collection<Constructor<?>> _constructorOutput = new ArrayList<>(5);
+    private final Collection<Method> _methodOutput = new ArrayList<>(5);
     private Map<String, Method> _aliasMethods;
     private Map<String, ReflectedField> _aliasFields;
     private Map<String, Constructor<?>> _aliasConstructors;
@@ -177,7 +180,8 @@ class ReflectedType implements IReflectedType {
     public Object newInstance(Object... arguments) {
         PreCon.notNull(arguments, "arguments");
 
-        Collection<Constructor<?>> constructors = _cached.constructorsByCount(arguments.length);
+        _constructorOutput.clear();
+        Collection<Constructor<?>> constructors = _cached.constructorsByCount(arguments.length, _constructorOutput);
 
         Constructor<?> constructor;
 
@@ -406,7 +410,8 @@ class ReflectedType implements IReflectedType {
 
         if (method == null) {
 
-            Collection<Method> methods = _cached.methodsByName(methodName);
+            _methodOutput.clear();
+            Collection<Method> methods = _cached.methodsByName(methodName, _methodOutput);
 
             // get method definition
             if (methods.size() == 1) {

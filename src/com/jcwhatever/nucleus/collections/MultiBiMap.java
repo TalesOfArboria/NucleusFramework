@@ -161,6 +161,23 @@ public class MultiBiMap<K, V> implements SetMultimap<K, V> {
     }
 
     /**
+     * Get a list of keys associated with the specified value.
+     *
+     * @param value   The value to check.
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    @Nullable
+    public <T extends Collection<K>> T getKeys(V value, T output) {
+        PreCon.notNull(value);
+        PreCon.notNull(output);
+
+        output.addAll(_valueToKey.get(value));
+        return output;
+    }
+
+    /**
      * Return the first value associated with a key in the map.
      *
      * @param key  The key to check.

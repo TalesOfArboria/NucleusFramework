@@ -84,6 +84,21 @@ public class SAPI_FloatingItems implements IDisposable {
     }
 
     /**
+     * Get all floating items.
+     *
+     * @param pluginName  The name of the plugin context.
+     */
+    public <T extends Collection<IFloatingItem>> T getItems(String pluginName, T output) {
+        PreCon.notNullOrEmpty(pluginName);
+        PreCon.notNull(output);
+
+        Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+        PreCon.isValid(plugin != null, "plugin not found.");
+
+        return Nucleus.getFloatingItems().getAll(plugin, output);
+    }
+
+    /**
      * Get a floating item by name.
      *
      * @param pluginName  The name of the plugin context.

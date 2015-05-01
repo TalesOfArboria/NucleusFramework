@@ -70,6 +70,16 @@ public interface IRegion extends IRegionSelection, INamedInsensitive,
     Collection<Location> find(Material material);
 
     /**
+     * Find locations in the region that are made of the specified {@link Material}.
+     *
+     * @param material  The material to find.
+     * @param output    The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<Location>> T find(Material material, T output);
+
+    /**
      * Refresh all chunks the region intersects with.
      */
     void refreshChunks();

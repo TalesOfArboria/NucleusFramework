@@ -26,12 +26,14 @@ package com.jcwhatever.nucleus.internal.managed.scoreboards;
 
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboard;
 import com.jcwhatever.nucleus.managed.scoreboards.ITeam;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Team;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -118,8 +120,24 @@ class ManagedTeam implements ITeam {
     }
 
     @Override
+    public <T extends Collection<OfflinePlayer>> T getPlayers(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_team.getPlayers());
+        return output;
+    }
+
+    @Override
     public Set<String> getEntries() {
         return _team.getEntries();
+    }
+
+    @Override
+    public <T extends Collection<String>> T getEntries(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_team.getEntries());
+        return output;
     }
 
     @Override

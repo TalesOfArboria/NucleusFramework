@@ -27,7 +27,7 @@ package com.jcwhatever.nucleus.managed.scoreboards;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.NameTagVisibility;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Interface for a managed scoreboard team.
@@ -115,12 +115,30 @@ public interface ITeam {
     /**
      * Get players on team.
      */
-    Set<OfflinePlayer> getPlayers();
+    Collection<OfflinePlayer> getPlayers();
+
+    /**
+     * Get players on team.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<OfflinePlayer>> T getPlayers(T output);
 
     /**
      * Get all entry names.
      */
-    Set<String> getEntries();
+    Collection<String> getEntries();
+
+    /**
+     * Get all entry names.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<String>> T getEntries(T output);
 
     /**
      * Get the number of entries on the team.

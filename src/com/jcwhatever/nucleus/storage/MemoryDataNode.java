@@ -34,11 +34,11 @@ import com.jcwhatever.nucleus.utils.text.TextUtils;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -161,17 +161,33 @@ public class MemoryDataNode extends AbstractDataNode {
     }
 
     @Override
-    public Set<String> getSubNodeNames() {
+    public Collection<String> getSubNodeNames() {
         return _node.getChildKeySet();
     }
 
     @Override
-    public Set<String> getSubNodeNames(String nodePath) {
+    public <T extends Collection<String>> T getSubNodeNames(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_node.getChildKeySet());
+        return output;
+    }
+
+    @Override
+    public Collection<String> getSubNodeNames(String nodePath) {
+        return getSubNodeNames(nodePath, new HashSet<String>(0));
+    }
+
+    @Override
+    public <T extends Collection<String>> T getSubNodeNames(String nodePath, T output) {
+        PreCon.notNull(nodePath);
+        PreCon.notNull(output);
+
         TreeEntryNode<String, Object> treeNode = getNodeFromPath(nodePath, false);
         if (treeNode == null)
-            return new HashSet<>(0);
+            return output;
 
-        return treeNode.getChildKeySet();
+        return treeNode.getChildKeySet(output);
     }
 
     @Override

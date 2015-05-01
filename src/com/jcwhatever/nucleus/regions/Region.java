@@ -299,12 +299,18 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
 
     @Override
     public final LinkedList<Location> find(Material material) {
+        return find(material, new LinkedList<Location>());
+    }
+
+    @Override
+    public final <T extends Collection<Location>> T find(Material material, T output) {
+        PreCon.notNull(material);
+        PreCon.notNull(output);
 
         synchronized (getSync()) {
-            LinkedList<Location> results = new LinkedList<>();
 
             if (getWorld() == null)
-                return results;
+                return output;
 
             int xlen = getXEnd();
             int ylen = getYEnd();
@@ -320,12 +326,12 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
                         if (block.getType() != material)
                             continue;
 
-                        results.add(block.getLocation());
+                        output.add(block.getLocation());
                     }
                 }
             }
 
-            return results;
+            return output;
         }
     }
 

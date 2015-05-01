@@ -273,6 +273,15 @@ public interface IRegionSelection {
     Collection<IChunkCoords> getChunkCoords();
 
     /**
+     * Get coordinates of all chunks the region intersects with.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IChunkCoords>> T getChunkCoords(T output);
+
+    /**
      * Get the shape of the region selection.
      */
     RegionShape getShape();

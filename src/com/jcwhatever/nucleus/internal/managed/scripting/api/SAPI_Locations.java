@@ -74,4 +74,17 @@ public class SAPI_Locations implements IDisposable {
     public Collection<NamedLocation> getScriptLocations() {
         return Nucleus.getScriptManager().getLocations().getAll();
     }
+
+    /**
+     * Get all script location objects.
+     *
+     * @param output  The output collection to put results into.
+     *
+     * @return  The output collection.
+     */
+    public <T extends Collection<NamedLocation>> T getScriptLocations(T output) {
+        PreCon.notNull(output);
+        
+        return Nucleus.getScriptManager().getLocations().getAll(output);
+    }
 }

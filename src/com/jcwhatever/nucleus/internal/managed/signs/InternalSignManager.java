@@ -3,11 +3,7 @@ package com.jcwhatever.nucleus.internal.managed.signs;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.signs.SignInteractEvent;
 import com.jcwhatever.nucleus.internal.NucMsg;
-import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-import com.jcwhatever.nucleus.utils.SignUtils;
 import com.jcwhatever.nucleus.managed.signs.ISignContainer;
 import com.jcwhatever.nucleus.managed.signs.ISignManager;
 import com.jcwhatever.nucleus.managed.signs.SignHandler;
@@ -15,6 +11,9 @@ import com.jcwhatever.nucleus.managed.signs.SignHandler.SignBreakResult;
 import com.jcwhatever.nucleus.managed.signs.SignHandler.SignChangeResult;
 import com.jcwhatever.nucleus.managed.signs.SignHandler.SignClickResult;
 import com.jcwhatever.nucleus.managed.signs.SignHandler.SignHandlerRegistration;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.SignUtils;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Bukkit;
@@ -33,7 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -147,16 +145,27 @@ public final class InternalSignManager implements ISignManager {
     }
 
     @Override
-    public List<ISignContainer> getSigns(String signHandlerName) {
+    public <T extends Collection<SignHandler>> T getSignHandlers(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_handlerMap.values());
+        return output;
+    }
+
+    @Override
+    public Collection<ISignContainer> getSigns(String signHandlerName) {
+        return getSigns(signHandlerName, new ArrayList<ISignContainer>(20));
+    }
+
+    @Override
+    public <T extends Collection<ISignContainer>> T getSigns(String signHandlerName, T output) {
         PreCon.notNullOrEmpty(signHandlerName);
 
         SignHandler handler = _handlerMap.get(signHandlerName.toLowerCase());
         if (handler == null)
-            return CollectionUtils.unmodifiableList();
+            return output;
 
         IDataNode handlerNode = getHandlerNode(handler);
-
-        List<ISignContainer> signs = new ArrayList<>(handlerNode.size());
 
         for (IDataNode signNode : handlerNode) {
 
@@ -166,11 +175,12 @@ public final class InternalSignManager implements ISignManager {
 
             ISignContainer container = new SignContainer(location, signNode);
 
-            signs.add(container);
+            output.add(container);
         }
 
-        return Collections.unmodifiableList(signs);
+        return output;
     }
+
     @Override
     @Nullable
     public String[] getSavedLines(Sign sign) {

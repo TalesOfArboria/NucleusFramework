@@ -36,6 +36,7 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -159,7 +160,16 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
      */
     @Override
     public List<String> getCommandNames() {
-        return new ArrayList<>(_commandMap.keySet());
+        return getCommandNames(new ArrayList<String>(_commandMap.size()));
+    }
+
+    @Override
+    public <T extends Collection<String>> T getCommandNames(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_commandMap.keySet());
+
+        return output;
     }
 
     /**
@@ -340,6 +350,11 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
 
     @Override
     public List<IRegisteredCommand> getCommands() {
+        return getCommands(new ArrayList<IRegisteredCommand>(_classMap.size()));
+    }
+
+    @Override
+    public <T extends Collection<IRegisteredCommand>> T getCommands(T output) {
         if (_sortedCommands == null) {
 
             _sortedCommands = new ArrayList<>(_classMap.values());
@@ -347,7 +362,9 @@ class CommandCollection implements ICommandOwner, IPluginOwned, Iterable<IRegist
             Collections.sort(_sortedCommands);
         }
 
-        return new ArrayList<>(_sortedCommands);
+        output.addAll(_sortedCommands);
+
+        return output;
     }
 
     @Override

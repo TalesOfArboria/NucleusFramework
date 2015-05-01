@@ -552,13 +552,26 @@ public final class InternalProviderManager implements IProviderManager {
     }
 
     @Override
+    public <T extends Collection<IStorageProvider>> T getStorageProviders(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_storageProviders.values());
+        return output;
+    }
+
+    @Override
     public Collection<String> getNames() {
+        return getNames(new ArrayList<String>(_providerInfo.size()));
+    }
 
-        List<String> names = new ArrayList<>(_providerInfo.size());
+    @Override
+    public <T extends Collection<String>> T getNames(T output) {
+        PreCon.notNull(output);
+
         for (ProviderInfo info : _providerInfo.values())
-            names.add(info.name);
+            output.add(info.name);
 
-        return names;
+        return output;
     }
 
     @Override
@@ -566,6 +579,15 @@ public final class InternalProviderManager implements IProviderManager {
         PreCon.notNull(type);
 
         return new HashSet<>(_providerNamesByApi.get(type));
+    }
+
+    @Override
+    public <T extends Collection<String>> T getNames(ProviderType providerType, T output) {
+        PreCon.notNull(providerType);
+        PreCon.notNull(output);
+
+        output.addAll(_providerNamesByApi.get(providerType));
+        return output;
     }
 
     /**

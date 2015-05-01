@@ -40,7 +40,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -168,8 +167,18 @@ public class ItemFilter implements IPluginOwned {
     /**
      * Get the set of matchable items from the collection.
      */
-    public Set<MatchableItem> getMatchable() {
+    public Collection<MatchableItem> getMatchable() {
         return CollectionUtils.unmodifiableSet(_filterItems.keySet());
+    }
+
+    /**
+     * Get the set of matchable items from the collection.
+     */
+    public <T extends Collection<MatchableItem>> T getMatchable(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_filterItems.keySet());
+        return output;
     }
 
     /**

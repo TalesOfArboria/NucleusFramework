@@ -96,6 +96,18 @@ public final class InternalFloatingItemManager implements IFloatingItemManager, 
     }
 
     @Override
+    public <T extends Collection<IFloatingItem>> T getAll(Plugin plugin, T output) {
+        PreCon.notNull(plugin);
+        PreCon.notNull(output);
+
+        // cast required for compiler
+        @SuppressWarnings("unchecked")
+        T result = (T)context(plugin).getAll(output);
+
+        return result;
+    }
+
+    @Override
     public boolean remove(Plugin plugin, String name) {
         PreCon.notNull(plugin);
         PreCon.notNullOrEmpty(name);

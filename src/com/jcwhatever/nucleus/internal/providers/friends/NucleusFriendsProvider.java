@@ -130,6 +130,16 @@ public final class NucleusFriendsProvider extends Provider implements IFriendsPr
     }
 
     @Override
+    public <T extends Collection<IFriendsContext>> T getContexts(T output) {
+        PreCon.notNull(output);
+
+        synchronized (_sync) {
+            output.addAll(_contexts.values());
+            return output;
+        }
+    }
+
+    @Override
     public boolean removeContext(String name) {
         PreCon.notNullOrEmpty(name);
 

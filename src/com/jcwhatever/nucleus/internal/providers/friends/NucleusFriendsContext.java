@@ -30,8 +30,8 @@ import com.jcwhatever.nucleus.providers.friends.IFriendsContext;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -59,6 +59,11 @@ class NucleusFriendsContext implements IFriendsContext {
 
     @Override
     public Collection<IFriend> getAll(UUID playerId) {
+        return getAll(playerId, new ArrayList<IFriend>(5));
+    }
+
+    @Override
+    public <T extends Collection<IFriend>> T getAll(UUID playerId, T output) {
         PreCon.notNull(playerId);
 
         lazyLoadFriends(playerId);
@@ -68,7 +73,8 @@ class NucleusFriendsContext implements IFriendsContext {
 
             assert friendInfo != null;
 
-            return Collections.unmodifiableCollection(friendInfo.friends.values());
+            output.addAll(friendInfo.friends.values());
+            return output;
         }
     }
 

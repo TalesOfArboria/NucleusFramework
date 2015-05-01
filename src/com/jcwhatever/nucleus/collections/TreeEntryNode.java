@@ -129,12 +129,29 @@ public class TreeEntryNode<K, V> implements Iterable<TreeEntryNode<K, V>> {
     }
 
     /**
-     * Get the child key set..
+     * Get the child key set.
      */
     public Set<K> getChildKeySet() {
         return _children != null
-                ? Collections.unmodifiableSet(_children.keySet())
+                ? new HashSet<>(_children.keySet())
                 : new HashSet<K>(0);
+    }
+
+    /**
+     * Get the child key set.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    public <T extends Collection<K>> T getChildKeySet(T output) {
+        PreCon.notNull(output);
+
+        if (_children == null)
+            return output;
+
+        output.addAll(_children.keySet());
+        return output;
     }
 
     /**

@@ -43,6 +43,16 @@ public interface ILeashTracker {
     Collection<Entity> getLeashed(Player player);
 
     /**
+     * Get all entities currently leashed to a player.
+     *
+     * @param player  The player to check.
+     * @param output  The output collection to put results into.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<Entity>> T getLeashed(Player player, T output);
+
+    /**
      * Get the player an {@link org.bukkit.entity.Entity} is leashed to.
      *
      * @param entity  The {@link org.bukkit.entity.Entity} to check.

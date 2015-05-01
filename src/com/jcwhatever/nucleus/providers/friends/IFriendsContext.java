@@ -41,6 +41,16 @@ public interface IFriendsContext {
     Collection<IFriend> getAll(UUID playerId);
 
     /**
+     * Get friends of the specified player.
+     *
+     * @param playerId  The ID of the player.
+     * @param output    The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IFriend>> T getAll(UUID playerId, T output);
+
+    /**
      * Get the friend object that represents the friend relationship
      * of the specified player to the specified friend player.
      *

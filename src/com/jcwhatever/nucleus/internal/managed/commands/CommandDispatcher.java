@@ -282,9 +282,14 @@ class CommandDispatcher implements ICommandDispatcher {
      */
     @Override
     public Collection<IRegisteredCommand> getCommands() {
-        Collection<IRegisteredCommand> commands = _rootCommands.getCommands();
-        commands.add(_defaultRoot);
-        return commands;
+        return getCommands(new ArrayList<IRegisteredCommand>(_rootCommands.size() + 1));
+    }
+
+    @Override
+    public <T extends Collection<IRegisteredCommand>> T getCommands(T output) {
+        _rootCommands.getCommands(output);
+        output.add(_defaultRoot);
+        return output;
     }
 
     /**
@@ -293,6 +298,11 @@ class CommandDispatcher implements ICommandDispatcher {
     @Override
     public Collection<String> getCommandNames() {
         return _rootCommands.getCommandNames();
+    }
+
+    @Override
+    public <T extends Collection<String>> T getCommandNames(T output) {
+        return _rootCommands.getCommandNames(output);
     }
 
     // determine if the arguments provided are

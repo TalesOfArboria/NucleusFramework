@@ -73,6 +73,15 @@ public interface IRequestContext extends IPluginOwned, INamedInsensitive {
     Collection<ResponseType> getResponseTypes();
 
     /**
+     * Get the requested response types.
+     *
+     * @param output  The output collection to place results into.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<ResponseType>> T getResponseTypes(T output);
+
+    /**
      * Determine if the request is cancelled.
      */
     boolean isCancelled();

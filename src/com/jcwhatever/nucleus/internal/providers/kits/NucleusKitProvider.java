@@ -115,6 +115,13 @@ public final class NucleusKitProvider extends Provider implements IKitProvider {
     }
 
     @Override
+    public <T extends Collection<IKit>> T getAll(T output) {
+        PreCon.notNull(output);
+
+        return _globalContext.getAll(output);
+    }
+
+    @Override
     public boolean remove(String name) {
         return _globalContext.remove(name);
     }

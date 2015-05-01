@@ -31,7 +31,6 @@ import com.jcwhatever.nucleus.internal.NucMsg;
 import com.jcwhatever.nucleus.managed.scheduler.IScheduledTask;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.storage.serialize.IDataNodeSerializable;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.items.ItemStackUtils;
@@ -52,10 +51,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -472,29 +471,42 @@ public class YamlDataNode extends AbstractDataNode {
     }
 
     @Override
-    public Set<String> getSubNodeNames() {
-        return getSubNodeNames("");
+    public Collection<String> getSubNodeNames() {
+        return getSubNodeNames("", new HashSet<String>(0));
     }
 
     @Override
-    public Set<String> getSubNodeNames(String nodePath) {
+    public <T extends Collection<String>> T getSubNodeNames(T output) {
+        return getSubNodeNames("", output);
+    }
+
+    @Override
+    public Collection<String> getSubNodeNames(String nodePath) {
+        return getSubNodeNames(nodePath, new HashSet<String>(0));
+    }
+
+    @Override
+    public <T extends Collection<String>> T getSubNodeNames(String nodePath, T output) {
         PreCon.notNull(nodePath);
+        PreCon.notNull(output);
 
         if (_section == null) {
             //noinspection TailRecursion
-            return getRoot().getSubNodeNames(getFullPath(nodePath));
+            return getRoot().getSubNodeNames(getFullPath(nodePath), output);
         }
 
         getRoot()._read.lock();
         try {
-            ConfigurationSection section;
-            if (_section.get(nodePath) == null) {
-                return CollectionUtils.unmodifiableSet();
-            }
-            //noinspection unchecked
-            return (section = _section.getConfigurationSection(nodePath)) != null
-                    ? CollectionUtils.unmodifiableSet(section.getKeys(false))
-                    : CollectionUtils.unmodifiableSet(String.class);
+
+            if (_section.get(nodePath) == null)
+                return output;
+
+            ConfigurationSection section = _section.getConfigurationSection(nodePath);
+            if (section == null)
+                return output;
+
+            output.addAll(section.getKeys(false));
+            return output;
         }
         finally {
             getRoot()._read.unlock();
@@ -655,7 +667,7 @@ public class YamlDataNode extends AbstractDataNode {
     public void clear() {
 
         if (isRoot()) {
-            Set<String> keys = getSubNodeNames();
+            Collection<String> keys = getSubNodeNames();
             for (String key : keys) {
                 set(key, null);
             }

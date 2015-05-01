@@ -38,7 +38,6 @@ import com.jcwhatever.nucleus.providers.storage.IStorageProvider;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
-import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -160,7 +159,16 @@ public interface IProviderManager {
     /**
      * Get all registered storage providers.
      */
-    List<IStorageProvider> getStorageProviders();
+    Collection<IStorageProvider> getStorageProviders();
+
+    /**
+     * Get all registered storage providers.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IStorageProvider>> T getStorageProviders(T output);
 
     /**
      * Get the NPC provider.
@@ -188,10 +196,32 @@ public interface IProviderManager {
     Collection<String> getNames();
 
     /**
+     * Get the names of all providers that were loaded.
+     *
+     * <p>Includes the names of providers that were not used.</p>
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<String>> T getNames(T output);
+
+    /**
      * Get the names of all providers that can be used for the specified
      * service provider API type.
      *
      * @param providerType  The provider API type.
      */
     Collection<String> getNames(ProviderType providerType);
+
+    /**
+     * Get the names of all providers that can be used for the specified
+     * service provider API type.
+     *
+     * @param providerType  The provider API type.
+     * @param output        The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<String>> T getNames(ProviderType providerType, T output);
 }

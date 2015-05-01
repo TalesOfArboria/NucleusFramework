@@ -58,7 +58,25 @@ public interface ICommandOwner {
     Collection<IRegisteredCommand> getCommands();
 
     /**
+     * Get all commands.
+     *
+     * @param output  The output collection to put results into.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<IRegisteredCommand>> T getCommands(T output);
+
+    /**
      * Get the sub command names.
      */
     Collection<String> getCommandNames();
+
+    /**
+     * Get the sub command names.
+     *
+     * @param output  The output collection to put results into.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<String>> T getCommandNames(T output);
 }

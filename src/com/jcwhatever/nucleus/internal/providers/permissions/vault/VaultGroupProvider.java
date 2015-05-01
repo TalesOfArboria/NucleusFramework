@@ -24,7 +24,6 @@
 
 package com.jcwhatever.nucleus.internal.providers.permissions.vault;
 
-import com.jcwhatever.nucleus.collections.wrap.WrappedArrayList;
 import com.jcwhatever.nucleus.providers.permissions.IGroupPermissionsProvider;
 import com.jcwhatever.nucleus.providers.permissions.IPermissionGroup;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -33,6 +32,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -60,33 +60,41 @@ public final class VaultGroupProvider extends VaultProvider implements IGroupPer
 
     @Override
     public Collection<IPermissionGroup> getGroups() {
+        return getGroups(new ArrayList<IPermissionGroup>(25));
+    }
+
+    @Override
+    public <T extends Collection<IPermissionGroup>> T getGroups(T output) {
+        PreCon.notNull(output);
 
         String[] groupNames = _perms.getGroups();
 
-        IPermissionGroup[] array = new IPermissionGroup[groupNames.length];
-
-        for (int i=0; i < array.length; i++) {
-            array[i] = new VaultGroupPermission(groupNames[i]);
+        for (String groupName : groupNames) {
+            output.add(new VaultGroupPermission(groupName));
         }
 
-        return new WrappedArrayList<>(array);
+        return output;
     }
 
     @Override
     public Collection<IPermissionGroup> getGroups(OfflinePlayer player) {
+        return getGroups(player, new ArrayList<IPermissionGroup>(10));
+    }
+
+    @Override
+    public <T extends Collection<IPermissionGroup>> T getGroups(OfflinePlayer player, T output) {
         PreCon.notNull(player);
+        PreCon.notNull(output);
 
         if (!(player instanceof Player))
-            return new WrappedArrayList<>(new IPermissionGroup[0]);
+            return output;
 
         String[] groupNames = _perms.getPlayerGroups((Player)player);
 
-        IPermissionGroup[] array = new IPermissionGroup[groupNames.length];
-
-        for (int i=0; i < array.length; i++) {
-            array[i] = new VaultGroupPermission(groupNames[i]);
+        for (String groupName : groupNames) {
+            output.add(new VaultGroupPermission(groupName));
         }
 
-        return new WrappedArrayList<>(array);
+        return output;
     }
 }

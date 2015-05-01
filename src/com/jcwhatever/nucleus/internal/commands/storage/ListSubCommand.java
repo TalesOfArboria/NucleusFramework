@@ -40,7 +40,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import java.util.List;
+import java.util.Collection;
 
 @CommandInfo(
         parent="storage",
@@ -80,7 +80,7 @@ class ListSubCommand extends AbstractCommand implements IExecutableCommand {
 
         ChatPaginator pagin = new ChatPaginator(Nucleus.getPlugin(), 7, NucLang.get(_PAGINATOR_TITLE));
 
-        List<IStorageProvider> providers = Nucleus.getProviders().getStorageProviders();
+        Collection<IStorageProvider> providers = Nucleus.getProviders().getStorageProviders();
         IStorageProvider defaultProvider = Nucleus.getProviders().getStorage();
 
         pagin.addFormatted(FormatTemplate.LIST_ITEM_DESCRIPTION, defaultProvider.getInfo().getName(), _LABEL_DEFAULT);

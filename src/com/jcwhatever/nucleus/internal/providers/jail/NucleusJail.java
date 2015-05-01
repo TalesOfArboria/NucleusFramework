@@ -222,6 +222,14 @@ class NucleusJail implements IJail {
         return new ArrayList<>(_jailLocations.values());
     }
 
+    @Override
+    public <T extends Collection<NamedLocation>> T getTeleports(T output) {
+        PreCon.notNull(output);
+
+        output.addAll(_jailLocations.values());
+        return output;
+    }
+
     @Nullable
     @Override
     public Location getReleaseLocation() {

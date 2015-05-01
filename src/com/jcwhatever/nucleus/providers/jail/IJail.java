@@ -135,6 +135,15 @@ public interface IJail extends IPluginOwned, INamedInsensitive, IDisposable {
     Collection<NamedLocation> getTeleports();
 
     /**
+     * Get all teleport locations.
+     *
+     * @param output  The output collection to add results to.
+     *
+     * @return  The output collection.
+     */
+    <T extends Collection<NamedLocation>> T getTeleports(T output);
+
+    /**
      * Get the location a player is teleported to when released.
      *
      * @return  The release location or null if not set. How players are released when no

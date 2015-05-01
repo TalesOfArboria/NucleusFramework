@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.internal;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.collections.WeakHashSet;
 import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
@@ -43,9 +42,9 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -67,14 +66,18 @@ public class InternalLeashTracker implements ILeashTracker, Listener {
 
     @Override
     public Collection<Entity> getLeashed(Player player) {
+        return getLeashed(player, new ArrayList<Entity>(10));
+    }
+
+    @Override
+    public <T extends Collection<Entity>> T getLeashed(Player player, T output) {
         PreCon.notNull(player);
+        PreCon.notNull(output);
 
         synchronized (_playerMap) {
             Set<Entity> entities = _playerMap.get(player.getUniqueId());
             if (entities == null)
-                return CollectionUtils.unmodifiableList(Entity.class);
-
-            Set<Entity> result = new HashSet<>(entities.size());
+                return output;
 
             Iterator<Entity> iterator = entities.iterator();
             while (iterator.hasNext()) {
@@ -85,12 +88,12 @@ public class InternalLeashTracker implements ILeashTracker, Listener {
                     iterator.remove();
                 }
                 else {
-                    result.add(entity);
+                    output.add(entity);
                 }
             }
-
-            return CollectionUtils.unmodifiableSet(result);
         }
+
+        return output;
     }
 
     @Override

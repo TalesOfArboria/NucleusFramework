@@ -27,7 +27,6 @@ package com.jcwhatever.nucleus.regions;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.data.CuboidPoint;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
-import com.jcwhatever.nucleus.utils.CollectionUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.ChunkCoords;
 import com.jcwhatever.nucleus.utils.coords.IChunkCoords;
@@ -40,7 +39,6 @@ import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -324,11 +322,24 @@ public class SimpleRegionSelection implements IRegionSelection {
 
     @Override
     public final Collection<IChunkCoords> getChunkCoords() {
-        if (getWorld() == null || !isDefined())
-            return CollectionUtils.unmodifiableList();
 
         if (_chunks != null)
-            return _chunks;
+            return new ArrayList<>(_chunks);
+
+        return getChunkCoords(new ArrayList<IChunkCoords>(1));
+    }
+
+    @Override
+    public <T extends Collection<IChunkCoords>> T getChunkCoords(T output) {
+        PreCon.notNull(output);
+
+        if (getWorld() == null || !isDefined())
+            return output;
+
+        if (_chunks != null) {
+            output.addAll(_chunks);
+            return output;
+        }
 
         synchronized (_sync) {
 
@@ -346,7 +357,8 @@ public class SimpleRegionSelection implements IRegionSelection {
                 }
             }
 
-            return _chunks = Collections.unmodifiableList(result);
+            output.addAll(_chunks = result);
+            return output;
         }
     }
 
