@@ -93,7 +93,7 @@ public final class JCGEventListener implements Listener {
                 .updatePlayerLocation(p, RegionEventReason.JOIN_SERVER);
     }
 
-    @EventHandler(priority=EventPriority.MONITOR)
+    @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled = true)
     private void onPlayerMove(PlayerMoveEvent event) {
 
         _regionManager.getPlayerWatcher()
@@ -103,6 +103,7 @@ public final class JCGEventListener implements Listener {
     @EventHandler(priority=EventPriority.MONITOR)
     private void onPlayerDeath(PlayerDeathEvent event) {
 
+        // check for "cancelled" event
         if (event.getEntity().getHealth() > 0)
             return;
 
@@ -124,7 +125,7 @@ public final class JCGEventListener implements Listener {
                 .updatePlayerLocation(event.getPlayer(), LeaveRegionReason.QUIT_SERVER);
     }
 
-    @EventHandler(priority=EventPriority.MONITOR)
+    @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled = true)
     private void onPlayerTeleport(PlayerTeleportEvent event) {
 
         if (event.getFrom() == null || event.getTo() == null)
@@ -142,7 +143,7 @@ public final class JCGEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority=EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlayerInteract(PlayerInteractEvent event) {
 
         if (!event.hasBlock()) {
@@ -170,10 +171,8 @@ public final class JCGEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority=EventPriority.NORMAL, ignoreCancelled = true)
     private void onInventoryClick(InventoryClickEvent event) {
-        if (event.isCancelled())
-            return;
 
         HumanEntity entity = event.getWhoClicked();
 

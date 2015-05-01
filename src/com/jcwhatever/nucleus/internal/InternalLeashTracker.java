@@ -113,7 +113,7 @@ public class InternalLeashTracker implements ILeashTracker, Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onPlayerLeash(PlayerLeashEntityEvent event) {
 
         UUID playerId = event.getPlayer().getUniqueId();
@@ -126,13 +126,17 @@ public class InternalLeashTracker implements ILeashTracker, Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onPlayerUnleash(PlayerUnleashEntityEvent event) {
         removePlayerLeash(event.getPlayer().getUniqueId(), event.getEntity());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void onDeath(EntityDeathEvent event) {
+
+        // check for "cancelled" event
+        if (event.getEntity().getHealth() > 0)
+            return;
 
         UUID playerId = _entityMap.remove(event.getEntity());
         if (playerId == null)
@@ -141,7 +145,7 @@ public class InternalLeashTracker implements ILeashTracker, Listener {
         _playerMap.remove(playerId);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onCreatureSpawn(CreatureSpawnEvent event) {
 
         if (!event.getEntity().isLeashed())

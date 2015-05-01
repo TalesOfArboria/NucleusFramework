@@ -33,6 +33,7 @@ import com.jcwhatever.nucleus.views.chest.ChestEventInfo.ItemStackSource;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -75,7 +76,7 @@ class ChestEventListener implements Listener {
     /*
      * Inventory Click Event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onInventoryClick(InventoryClickEvent event) {
 
         ViewSession session = _chestSessionMap.get(event.getWhoClicked());

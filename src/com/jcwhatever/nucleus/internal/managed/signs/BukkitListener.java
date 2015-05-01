@@ -47,7 +47,7 @@ class BukkitListener implements Listener {
         _manager = manager;
     }
 
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled = true)
     private void onSignChange(SignChangeEvent event) {
 
         BlockState state = event.getBlock().getState();
@@ -56,7 +56,7 @@ class BukkitListener implements Listener {
         _manager.signChange(sign, event);
     }
 
-    @EventHandler(priority=EventPriority.HIGHEST)
+    @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled = true)
     private void onBlockBreak(BlockBreakEvent event) {
 
         // Signs
@@ -74,7 +74,7 @@ class BukkitListener implements Listener {
 
     }
 
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled = true)
     private void onSignInteract(SignInteractEvent event) {
 
         _manager.signClick(event);

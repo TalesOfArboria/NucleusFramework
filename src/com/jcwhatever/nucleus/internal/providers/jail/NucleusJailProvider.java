@@ -357,7 +357,7 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
 
     final class BukkitEventListener implements Listener {
 
-        @EventHandler(priority = EventPriority.HIGH)
+        @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
         private void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
 
             // prevent prisoners from using commands
@@ -366,7 +366,7 @@ public final class NucleusJailProvider extends Provider implements IJailProvider
             }
         }
 
-        @EventHandler(priority = EventPriority.HIGH)
+        @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
         private void onPlayerInteract(PlayerInteractEvent event) {
 
             // prevent prisoners from interacting

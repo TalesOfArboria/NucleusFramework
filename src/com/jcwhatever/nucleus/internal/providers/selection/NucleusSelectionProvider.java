@@ -119,8 +119,9 @@ public final class NucleusSelectionProvider extends Provider implements IRegionS
 
     private class BukkitEventListener implements Listener {
 
-        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
         private void onPlayerInteract(PlayerInteractEvent event) {
+
             if (!event.hasBlock())
                 return;
 

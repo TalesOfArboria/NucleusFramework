@@ -148,7 +148,7 @@ public class FilteredWorkbenchView extends WorkbenchView {
             }
         }
 
-        @EventHandler(priority = EventPriority.HIGHEST)
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         private void onCraftItem(CraftItemEvent event) {
 
             FilteredWorkbenchView workbench = _viewMap.get(event.getView());

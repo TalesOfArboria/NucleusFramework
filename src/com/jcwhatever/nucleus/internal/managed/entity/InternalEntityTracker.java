@@ -118,7 +118,7 @@ public final class InternalEntityTracker implements IEntityTracker, Listener {
     /**
      * Handle chunk unload
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onChunkUnload(ChunkUnloadEvent event) {
 
         Entity[] entities = event.getChunk().getEntities();
@@ -140,7 +140,7 @@ public final class InternalEntityTracker implements IEntityTracker, Listener {
     private void onEntityDestroy(EntityDeathEvent event) {
 
         // Make sure the event wasn't "cancelled"
-        if (Double.compare(event.getEntity().getHealth(), 0.0D) != 0)
+        if (event.getEntity().getHealth() > 0)
             return;
 
         TrackedEntity tracked = _entities.remove(event.getEntity().getUniqueId());

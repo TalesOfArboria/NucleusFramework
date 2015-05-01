@@ -176,7 +176,7 @@ public final class InternalResponseRequestor implements IResponseRequestor, List
         }
     }
 
-    @EventHandler(priority= EventPriority.HIGHEST)
+    @EventHandler(priority= EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 
         if (onResponse(event.getPlayer(), event.getMessage())) {

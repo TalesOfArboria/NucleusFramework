@@ -75,7 +75,7 @@ public final class InternalBlockSelector implements IBlockSelector, Listener {
         _handlers.remove(player.getUniqueId());
     }
 
-    @EventHandler(priority= EventPriority.HIGHEST)
+    @EventHandler(priority= EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPlayerSelectBlock(PlayerInteractEvent event) {
 
         // make sure the event has a block

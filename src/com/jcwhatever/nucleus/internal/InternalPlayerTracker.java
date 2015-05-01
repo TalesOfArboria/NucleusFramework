@@ -166,11 +166,8 @@ public final class InternalPlayerTracker {
             }
         }
 
-        @EventHandler(priority = EventPriority.MONITOR)
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onPlayerTeleport(PlayerTeleportEvent event) {
-
-            if (event.isCancelled())
-                return;
 
             if (event.getTo() == null) {
                 NucMsg.warning("Teleport using a null destination location detected.");

@@ -114,12 +114,12 @@ public class FilteredAnvilView extends AnvilView {
      */
     static class AnvilEventListener implements Listener {
 
-        @EventHandler(priority = EventPriority.MONITOR)
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onAnvilItemRepair(AnvilItemRepairEvent event) {
             check(event.getPlayer(), event.getItem());
         }
 
-        @EventHandler(priority = EventPriority.MONITOR)
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onAnvilItemRename(AnvilItemRenameEvent event) {
             check(event.getPlayer(), event.getItem());
         }

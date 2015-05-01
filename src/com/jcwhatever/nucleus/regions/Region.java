@@ -46,6 +46,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
@@ -646,7 +647,7 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
             }
         }
 
-        @EventHandler
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onWorldUnload(WorldUnloadEvent event) {
 
             String worldName = event.getWorld().getName();

@@ -103,7 +103,7 @@ class BukkitListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPlayerTryPickup(final PlayerPickupItemEvent event) {
 
         final FloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
@@ -151,7 +151,7 @@ class BukkitListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onPlayerPickup(PlayerPickupItemEvent event) {
 
         final FloatingItem item = _floatingItems.get(event.getItem().getUniqueId());
@@ -162,7 +162,7 @@ class BukkitListener implements Listener {
         item.onPickup(event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onItemDespawn(ItemDespawnEvent event) {
 
         final FloatingItem item = _floatingItems.get(event.getEntity().getUniqueId());
@@ -173,7 +173,7 @@ class BukkitListener implements Listener {
             event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onItemDestroyed(EntityDamageEvent event) {
         if (event.getEntity().getType() != EntityType.DROPPED_ITEM)
             return;
