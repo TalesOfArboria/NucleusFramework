@@ -36,6 +36,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.ProjectileSource;
@@ -614,6 +615,160 @@ public final class EntityUtils {
         }
 
         return results;
+    }
+
+    /**
+     * Determine if there is an entity of a specified type within the specified radius
+     * of a source entity.
+     *
+     * @param sourceEntity  The source entity to check from.
+     * @param type          The {@link EntityType} to search for.
+     * @param radius        The radius entities must be within to be returned.
+     */
+    public static boolean hasNearbyEntityType(Entity sourceEntity, EntityType type, double radius) {
+        return hasNearbyEntityType(sourceEntity, type, radius, radius, radius, null);
+    }
+
+    /**
+     * Determine if there is an entity of a specified type within the specified radius
+     * of a source entity.
+     *
+     * @param sourceEntity   The source entity to check from.
+     * @param type           The {@link EntityType} to search for.
+     * @param radius         The radius entities must be within to be returned.
+     * @param validator      Optional validator used to validate each entity of the specified type
+     *                       found within the radius.
+     */
+    public static boolean hasNearbyEntityType(Entity sourceEntity, EntityType type, double radius,
+                                              @Nullable IValidator<Entity> validator) {
+        return hasNearbyEntityType(sourceEntity, type, radius, radius, radius, validator);
+    }
+
+    /**
+     * Determine if there is an entity of a specified type within the specified radius
+     * of a source entity.
+     *
+     * @param sourceEntity  The source entity to check from.
+     * @param type          The {@link EntityType} to search for.
+     * @param radiusX       The x-axis radius entities must be within to be returned.
+     * @param radiusY       The y-axis radius entities must be within to be returned.
+     * @param radiusZ       The z-axis radius entities must be within to be returned.
+     * @param validator     Optional validator used to validate each entity of the specified type
+     *                      found within the radius.
+     */
+    public static boolean hasNearbyEntityType(Entity sourceEntity, EntityType type,
+                                              double radiusX, double radiusY, double radiusZ,
+                                              @Nullable IValidator<Entity> validator) {
+        PreCon.notNull(sourceEntity);
+        PreCon.notNull(type);
+        PreCon.positiveNumber(radiusX);
+        PreCon.positiveNumber(radiusY);
+        PreCon.positiveNumber(radiusZ);
+
+        List<Entity> entities = sourceEntity.getNearbyEntities(radiusX, radiusY, radiusZ);
+
+        for (Entity entity : entities) {
+
+            if (entity.getType() != type)
+                continue;
+
+            if (validator != null && !validator.isValid(entity))
+                continue;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if there is an entity of a specified type within the specified radius
+     * of a location.
+     *
+     * @param location   The location to check from.
+     * @param type       The {@link EntityType} to search for.
+     * @param radius     The radius entities must be within to be returned.
+     */
+    public static boolean hasNearbyEntityType(Location location, EntityType type, double radius) {
+        return hasNearbyEntityType(location, type, radius, radius, radius, null);
+    }
+
+    /**
+     * Determine if there is an entity of a specified type within the specified radius
+     * of a location.
+     *
+     * @param location   The location to check from.
+     * @param type       The {@link EntityType} to search for.
+     * @param radius     The radius entities must be within to be returned.
+     * @param validator  Optional validator used to validate each entity of the specified type
+     *                   found within the radius.
+     */
+    public static boolean hasNearbyEntityType(Location location, EntityType type, double radius,
+                                              @Nullable IValidator<Entity> validator) {
+        return hasNearbyEntityType(location, type, radius, radius, radius, validator);
+    }
+
+    /**
+     * Determine if there is an entity of a specified type within the specified radius
+     * of a location.
+     *
+     * @param location   The location to check from.
+     * @param type       The {@link EntityType} to search for.
+     * @param radiusX    The x-axis radius entities must be within to be returned.
+     * @param radiusY    The y-axis radius entities must be within to be returned.
+     * @param radiusZ    The z-axis radius entities must be within to be returned.
+     * @param validator  Optional validator used to validate each entity of the specified type
+     *                   found within the radius.
+     */
+    public static boolean hasNearbyEntityType(Location location, EntityType type,
+                                              double radiusX, double radiusY, double radiusZ,
+                                              @Nullable IValidator<Entity> validator) {
+        PreCon.notNull(location);
+        PreCon.notNull(type);
+        PreCon.positiveNumber(radiusX);
+        PreCon.positiveNumber(radiusY);
+        PreCon.positiveNumber(radiusZ);
+
+        World world = location.getWorld();
+        if (world == null)
+            return false;
+
+        int xStart = getStartChunk(location.getX(), radiusX);
+        int xEnd = getEndChunk(location.getX(), radiusX);
+        int zStart = getStartChunk(location.getZ(), radiusZ);
+        int zEnd = getEndChunk(location.getZ(), radiusZ);
+
+        for (int x = xStart; x <= xEnd; x++) {
+            for (int z = zStart; z <= zEnd; z++) {
+
+                Chunk chunk = world.getChunkAt(x, z);
+                if (!chunk.isLoaded())
+                    chunk.load();
+
+                Entity[] entities = chunk.getEntities();
+
+                for (Entity entity : entities) {
+
+                    if (entity.getType() != type)
+                        continue;
+
+                    if (!entity.getWorld().equals(world))
+                        continue;
+
+                    Location entityLocation = getEntityLocation(entity, NEARBY_ENTITY_LOCATION);
+
+                    if (!LocationUtils.isInRange(location, entityLocation, radiusX, radiusY, radiusZ))
+                        continue;
+
+                    if (validator != null && !validator.isValid(entity))
+                        continue;
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
