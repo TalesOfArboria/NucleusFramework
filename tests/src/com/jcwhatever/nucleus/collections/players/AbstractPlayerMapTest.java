@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.collections.players;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.NucleusTest;
 
 import org.bukkit.entity.Player;

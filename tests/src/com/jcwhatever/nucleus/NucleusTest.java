@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus;
 
-import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.providers.storage.DataStorageUtil;
 
 /**

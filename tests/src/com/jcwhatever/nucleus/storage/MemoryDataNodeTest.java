@@ -1,6 +1,6 @@
 package com.jcwhatever.nucleus.storage;
 
-import com.jcwhatever.bukkit.v1_8_R2.MockPlugin;
+import com.jcwhatever.v1_8_R2.MockPlugin;
 
 public class MemoryDataNodeTest extends IDataNodeTest {
 

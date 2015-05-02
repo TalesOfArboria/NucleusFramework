@@ -3,7 +3,7 @@ package com.jcwhatever.nucleus.views.menu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R2.BukkitTester;
 import com.jcwhatever.nucleus.collections.ArrayListPaginator;
 import com.jcwhatever.nucleus.mixins.IPaginator;
 import com.jcwhatever.nucleus.mixins.IPaginator.PageStartIndex;

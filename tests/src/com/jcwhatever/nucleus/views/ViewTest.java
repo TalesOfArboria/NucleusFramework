@@ -2,7 +2,7 @@ package com.jcwhatever.nucleus.views;
 
 import static org.junit.Assert.assertEquals;
 
-import com.jcwhatever.bukkit.v1_8_R2.BukkitTester;
+import com.jcwhatever.v1_8_R2.BukkitTester;
 
 import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
