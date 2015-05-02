@@ -181,8 +181,13 @@ public final class InternalScoreboardManager implements IScoreboardManager {
         }
     }
 
-    private void setScoreboard(Player player, Scoreboard scoreboard) {
-        player.setScoreboard(scoreboard);
+    private void setScoreboard(Player player, @Nullable Scoreboard scoreboard) {
+        if (scoreboard == null) {
+            player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+        }
+        else {
+            player.setScoreboard(scoreboard);
+        }
     }
 
     private static class PlayerScoreboards extends LinkedList<ManagedScoreboard> {}
