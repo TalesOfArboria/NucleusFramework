@@ -172,19 +172,19 @@ public abstract class Region extends SimpleRegionSelection implements IRegion {
 
     @Override
     @Nullable
-    public final UUID getOwnerId() {
+    public UUID getOwnerId() {
         return _ownerId;
     }
 
     @Override
-    public final boolean hasOwner() {
+    public boolean hasOwner() {
         return _ownerId != null;
     }
 
     @Override
-    public final boolean setOwner(@Nullable UUID ownerId) {
+    public boolean setOwner(@Nullable UUID ownerId) {
 
-        UUID oldId = _ownerId;
+        UUID oldId = getOwnerId();
 
         RegionOwnerChangedEvent event = new RegionOwnerChangedEvent(
                 new ReadOnlyRegion(this), oldId, ownerId);
