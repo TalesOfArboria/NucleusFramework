@@ -174,5 +174,19 @@ public class ChunkCoords extends Coords2Di implements IChunkCoords {
         return getClass().getSimpleName() +
                 " { world:" + _worldName + ", x:" + getX() + ", z:" + getZ() + '}';
     }
+
+    /**
+     * Set the world name.
+     *
+     * @param worldName  The name of the world.
+     *
+     * @throws java.lang.IllegalStateException if the object is immutable.
+     */
+    protected void setWorldName(String worldName) {
+        if (isImmutable())
+            throw new IllegalStateException("Coordinate is immutable.");
+
+        _worldName = worldName;
+    }
 }
 
