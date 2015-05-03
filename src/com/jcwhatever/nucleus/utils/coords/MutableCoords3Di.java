@@ -25,6 +25,8 @@
 package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.ThreadSingletons;
+import com.jcwhatever.nucleus.utils.ThreadSingletons.ISingletonFactory;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -33,6 +35,18 @@ import org.bukkit.util.Vector;
  * 3D mutable integer coordinates.
  */
 public class MutableCoords3Di extends Coords3Di {
+
+    /**
+     * Create a new {@link ThreadSingletons} instance.
+     */
+    public static ThreadSingletons<MutableCoords3Di> createThreadSingletons() {
+        return new ThreadSingletons<>(new ISingletonFactory<MutableCoords3Di>() {
+            @Override
+            public MutableCoords3Di create() {
+                return new MutableCoords3Di();
+            }
+        });
+    }
 
     /**
      * Constructor.

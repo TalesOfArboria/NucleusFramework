@@ -24,6 +24,9 @@
 
 package com.jcwhatever.nucleus.utils.coords;
 
+import com.jcwhatever.nucleus.utils.ThreadSingletons;
+import com.jcwhatever.nucleus.utils.ThreadSingletons.ISingletonFactory;
+
 import org.bukkit.World;
 
 /**
@@ -31,7 +34,24 @@ import org.bukkit.World;
  */
 public class MutableChunkCoords extends ChunkCoords {
 
-    public MutableChunkCoords() {}
+    /**
+     * Create a new {@link ThreadSingletons} instance.
+     */
+    public static ThreadSingletons<MutableChunkCoords> createThreadSingletons() {
+        return new ThreadSingletons<>(new ISingletonFactory<MutableChunkCoords>() {
+            @Override
+            public MutableChunkCoords create() {
+                return new MutableChunkCoords();
+            }
+        });
+    }
+
+    /**
+     * Constructor.
+     */
+    public MutableChunkCoords() {
+        super((String)null, 0, 0);
+    }
 
     /**
      * Constructor.

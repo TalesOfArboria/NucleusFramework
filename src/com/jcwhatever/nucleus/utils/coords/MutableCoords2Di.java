@@ -25,6 +25,8 @@
 package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.ThreadSingletons;
+import com.jcwhatever.nucleus.utils.ThreadSingletons.ISingletonFactory;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -34,6 +36,18 @@ import org.bukkit.util.Vector;
  * 2D mutable integer coordinates.
  */
 public class MutableCoords2Di extends Coords2Di {
+
+    /**
+     * Create a new {@link ThreadSingletons} instance.
+     */
+    public static ThreadSingletons<MutableCoords2Di> createThreadSingletons() {
+        return new ThreadSingletons<>(new ISingletonFactory<MutableCoords2Di>() {
+            @Override
+            public MutableCoords2Di create() {
+                return new MutableCoords2Di();
+            }
+        });
+    }
 
     /**
      * Constructor.
