@@ -39,6 +39,7 @@ import com.jcwhatever.nucleus.managed.items.serializer.IItemStackSerialization;
 import com.jcwhatever.nucleus.managed.language.ILanguageManager;
 import com.jcwhatever.nucleus.managed.leash.ILeashTracker;
 import com.jcwhatever.nucleus.managed.messaging.IMessengerFactory;
+import com.jcwhatever.nucleus.managed.particles.IParticleEffectFactory;
 import com.jcwhatever.nucleus.managed.reflection.IReflectionManager;
 import com.jcwhatever.nucleus.managed.scheduler.ITaskScheduler;
 import com.jcwhatever.nucleus.managed.scoreboards.IScoreboardManager;
@@ -248,6 +249,15 @@ public final class Nucleus {
         PreCon.isValid(_plugin._nmsManager != null, ERROR_NOT_READY);
 
         return _plugin._nmsManager;
+    }
+
+    /**
+     * Get NucleusFramework's particle effect factory.
+     */
+    public static IParticleEffectFactory getParticleEffects() {
+        PreCon.isValid(_plugin._particleFactory != null, ERROR_NOT_READY);
+
+        return _plugin._particleFactory;
     }
 
     /**

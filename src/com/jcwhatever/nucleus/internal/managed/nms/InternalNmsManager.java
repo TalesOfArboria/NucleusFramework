@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R1.NmsSoundEffectHandler
 import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R1.NmsTitleHandler_v1_8_R1;
 import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsActionBarHandler_v1_8_R2;
 import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsListHeaderFooterHandler_v1_8_R2;
+import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsParticleEffectHandler_v1_8_R2;
 import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsSoundEffectHandler_v1_8_R2;
 import com.jcwhatever.nucleus.internal.managed.nms.v1_8_R2.NmsTitleHandler_v1_8_R2;
 import com.jcwhatever.nucleus.utils.nms.NmsManager;
@@ -49,6 +50,11 @@ public final class InternalNmsManager extends NmsManager {
      * The name of the internal list header/footer handler.
      */
     public static final String LIST_HEADER_FOOTER = "LIST_HEADER_FOOTER";
+
+    /**
+     * The name of the internal particle effect handler.
+     */
+    public static final String PARTICLE_EFFECT = "PARTICLE_EFFECT";
 
     /**
      * The name of the internal titles handler.
@@ -72,5 +78,6 @@ public final class InternalNmsManager extends NmsManager {
         registerHandler("v1_8_R2", ACTION_BAR, NmsActionBarHandler_v1_8_R2.class);
         registerHandler("v1_8_R2", LIST_HEADER_FOOTER, NmsListHeaderFooterHandler_v1_8_R2.class);
         registerHandler("v1_8_R2", SOUND_EFFECT, NmsSoundEffectHandler_v1_8_R2.class);
+        registerHandler("v1_8_R2", PARTICLE_EFFECT, NmsParticleEffectHandler_v1_8_R2.class);
     }
 }

@@ -50,6 +50,7 @@ import com.jcwhatever.nucleus.internal.managed.items.meta.InternalItemMetaHandle
 import com.jcwhatever.nucleus.internal.managed.items.serializer.InternalItemSerializationManager;
 import com.jcwhatever.nucleus.internal.managed.language.InternalLanguageManager;
 import com.jcwhatever.nucleus.internal.managed.nms.InternalNmsManager;
+import com.jcwhatever.nucleus.internal.managed.particles.InternalParticleEffectFactory;
 import com.jcwhatever.nucleus.internal.managed.reflection.InternalReflectionManager;
 import com.jcwhatever.nucleus.internal.managed.scheduler.InternalTaskScheduler;
 import com.jcwhatever.nucleus.internal.managed.scoreboards.InternalScoreboardManager;
@@ -103,6 +104,7 @@ public final class BukkitPlugin extends NucleusPlugin {
     InternalActionBarManager _actionBarManager;
     InternalReflectionManager _reflectionManager;
     InternalCommandManager _commandManager;
+    InternalParticleEffectFactory _particleFactory;
 
     ITaskScheduler _scheduler;
     ScriptEngineManager _scriptEngineManager;
@@ -188,6 +190,7 @@ public final class BukkitPlugin extends NucleusPlugin {
         _nmsManager = new InternalNmsManager();
         _titleManager = new InternalTitleManager();
         _actionBarManager = new InternalActionBarManager();
+        _particleFactory = new InternalParticleEffectFactory();
         _commandManager = new InternalCommandManager();
 
         _scriptEngineManager = new InternalScriptEngineManager();

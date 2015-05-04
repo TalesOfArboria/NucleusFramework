@@ -59,6 +59,14 @@ class v1_8_R2 implements INmsHandler {
             .constructorAlias("newHeader", _IChatBaseComponent.getHandle())
             .fieldAlias("footer", "b");
 
+    static IReflectedType _EnumParticle = reflection.nmsType("EnumParticle");
+
+    static IReflectedType _PacketPlayOutWorldParticles = reflection.nmsType("PacketPlayOutWorldParticles")
+            .constructorAlias("new", _EnumParticle.getHandle(), boolean.class,
+                    float.class, float.class, float.class,
+                    float.class, float.class, float.class,
+                    float.class, int.class, int[].class);
+
     static IReflectedType _PacketPlayOutNamedSoundEffect = reflection.nmsType("PacketPlayOutNamedSoundEffect")
             .constructorAlias("new", String.class, double.class, double.class, double.class, float.class, float.class);
 

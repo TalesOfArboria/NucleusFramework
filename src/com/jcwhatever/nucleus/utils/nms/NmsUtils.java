@@ -143,6 +143,16 @@ public final class NmsUtils {
     }
 
     /**
+     * Get NucleusFrameworks internal particle effect handler.
+     *
+     * @return  The particle effect handler or null if a handler for the current version of
+     * Minecraft does not exist.
+     */
+    public static INmsParticleEffectHandler getParticleEffectHandler() {
+        return Nucleus.getNmsManager().getHandler(InternalNmsManager.PARTICLE_EFFECT);
+    }
+
+    /**
      * Get NucleusFramework's internal sound effect handler.
      *
      * @return  The sound effect handler or null if a handler for the current version of
