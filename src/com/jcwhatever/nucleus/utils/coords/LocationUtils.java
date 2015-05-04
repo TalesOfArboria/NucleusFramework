@@ -27,6 +27,8 @@ package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Rand;
+import com.jcwhatever.nucleus.utils.ThreadSingletons;
+import com.jcwhatever.nucleus.utils.ThreadSingletons.ISingletonFactory;
 import com.jcwhatever.nucleus.utils.materials.Materials;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.nucleus.utils.validate.IValidator;
@@ -61,8 +63,22 @@ public final class LocationUtils {
             BlockFace.SOUTH
     };
 
-    private static final Location CENTERED_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location TELEPORT_LOCATION = new Location(null, 0, 0, 0);
+    private static final ISingletonFactory<Location> SINGLETON_FACTORY = new ISingletonFactory<Location>() {
+        @Override
+        public Location create() {
+            return new Location(null, 0, 0, 0);
+        }
+    };
+
+    private static final ThreadSingletons<Location> MUTABLE_LOCATIONS =
+            new ThreadSingletons<>(SINGLETON_FACTORY);
+
+    /**
+     * Create a new {@link ThreadSingletons}.
+     */
+    public static ThreadSingletons<Location> createThreadSingleton() {
+        return new ThreadSingletons<>(SINGLETON_FACTORY);
+    }
 
     /**
      * Copy the values from a source {@link org.bukkit.Location} to a new
@@ -209,8 +225,7 @@ public final class LocationUtils {
         PreCon.notNull(entity);
         PreCon.notNull(location);
 
-        Location adjusted = getCenteredLocation(location,
-                Bukkit.isPrimaryThread() ? CENTERED_LOCATION : new Location(null, 0, 0, 0));
+        Location adjusted = getCenteredLocation(location, MUTABLE_LOCATIONS.get());
 
         return entity.teleport(adjusted, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
@@ -230,7 +245,7 @@ public final class LocationUtils {
         PreCon.notNull(location);
 
         Location adjusted = Bukkit.isPrimaryThread()
-                ? copy(location, TELEPORT_LOCATION).add(0, 0.01D, 0)
+                ? copy(location, MUTABLE_LOCATIONS.get()).add(0, 0.01D, 0)
                 : copy(location).add(0, 0.01D, 0);
 
         return entity.teleport(adjusted);
