@@ -36,6 +36,7 @@ public class ThreadSingletons<S> {
 
     private final S _mainSingleton;
     private final ISingletonFactory<S> _factory;
+    private final Object _sync = new Object();
     private Map<Thread, S> _singletons;
 
     /**
@@ -58,19 +59,21 @@ public class ThreadSingletons<S> {
         if (Bukkit.isPrimaryThread())
             return _mainSingleton;
 
-        if (_singletons == null)
-            _singletons = new WeakHashMap<>(10);
+        synchronized (_sync) {
+            if (_singletons == null)
+                _singletons = new WeakHashMap<>(10);
 
-        Thread thread = Thread.currentThread();
+            Thread thread = Thread.currentThread();
 
-        S singleton = _singletons.get(thread);
+            S singleton = _singletons.get(thread);
 
-        if (singleton == null) {
-            singleton = _factory.create();
-            _singletons.put(Thread.currentThread(), singleton);
+            if (singleton == null) {
+                singleton = _factory.create();
+                _singletons.put(Thread.currentThread(), singleton);
+            }
+
+            return singleton;
         }
-
-        return singleton;
     }
 
     /**
