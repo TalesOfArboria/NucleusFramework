@@ -26,7 +26,6 @@ package com.jcwhatever.nucleus.utils.coords;
 
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.storage.serialize.DeserializeException;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.file.IByteReader;
 import com.jcwhatever.nucleus.utils.file.IByteWriter;
 
@@ -92,10 +91,8 @@ public class ChunkCoords extends Coords2Di implements IChunkCoords {
      * @param x          The chunk X coordinates.
      * @param z          The chunk Z coordinates.
      */
-    public ChunkCoords(String worldName, int x, int z) {
+    public ChunkCoords(@Nullable String worldName, int x, int z) {
         super(x, z);
-
-        PreCon.notNull(worldName);
 
         _worldName = worldName;
     }
