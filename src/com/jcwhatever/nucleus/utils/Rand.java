@@ -147,6 +147,24 @@ public final class Rand {
     }
 
     /**
+     * Get a random gaussian double with an average of 0 and a
+     * deviation of 1.
+     */
+    public static double getGaussian() {
+        return ThreadLocalRandom.current().nextGaussian();
+    }
+
+    /**
+     * Get a random gaussian double.
+     *
+     * @param average    The average.
+     * @param deviation  The deviation from average.
+     */
+    public static double getGaussian(double average, double deviation) {
+        return ThreadLocalRandom.current().nextGaussian() * deviation + average;
+    }
+
+    /**
      * Get a random alphabet string of the specified length.
      *
      * <p>Returned string should be safe to use in contexts such as node names in
